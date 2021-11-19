@@ -12,8 +12,18 @@
   "action": {
     "default_title": "Open the Transaction Simulator"
   },
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["tabs", "webRequest", "declarativeNetRequest"],
   "background": {
     "service_worker": "build/background.js"
+  },
+  "host_permissions": ["<all_urls>"],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "removeHeader",
+        "enabled": true,
+        "path": "removeHeaders.json"
+      }
+    ]
   }
 }
