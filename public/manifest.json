@@ -1,0 +1,19 @@
+{
+  "name": "Transaction Simulator",
+  "description": "Simulate dApp interactions and record transactions",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "zodiac.png",
+    "32": "zodiac.png",
+    "48": "zodiac.png",
+    "128": "zodiac.png"
+  },
+  "action": {
+    "default_title": "Open the Transaction Simulator"
+  },
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "build/background.js"
+  }
+}

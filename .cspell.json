@@ -1,0 +1,16 @@
+{
+  "version": "0.2",
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
+  "language": "en",
+  "words": [
+    "esbuild",
+    "prebuild"
+  ],
+  "flagWords": [],
+  "ignorePaths": [
+    "yarn.lock",
+    "node_modules/**",
+    "tsconfig.json",
+    "public/build/**"
+  ]
+}
