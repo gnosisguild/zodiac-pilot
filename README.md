@@ -4,17 +4,29 @@ Chrome extension to simulate dApp interactions and record transactions.
 
 ## Contribute
 
-#### Build for production
+### Run in development
+
+Build a development bundle of the extension in watch mode:
+
+```
+yarn dev
+```
+
+The build output is written to public/build.
+
+To enable the extension in Chrome, follow these steps:
+
+1. Open the Extension Management page by navigating to [chrome://extensions].
+2. Enable Developer Mode by clicking the toggle switch at the top right of the page.
+3. Click the **Load unpacked** button and select the `transaction-simulator/public` directory.
+
+### Package for production
 
 ```
 yarn build
 ```
 
-#### Watch for development
-
-```
-yarn dev
-```
+TODO: figure out how to package for the Chrome extension store
 
 ## How it works
 
