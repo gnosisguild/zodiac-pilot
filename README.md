@@ -25,4 +25,8 @@ For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options
 The `domains` list in the filter only includes this extension's ID.
 This is crucial as must lift the cross origin restrictions only for the extension but not generally.
 
-### Intercept and and re-route RPC calls to service worker
+### Inject Ethereum provider
+
+When the simulator iframe opens any page, we inject the build/inject.js script via the `content_scripts` option in the extension manifest.
+
+This script runs in the context of the page loaded in the iframe and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) provider JavaScript API at `window.ethereum`.

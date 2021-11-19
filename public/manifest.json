@@ -25,5 +25,13 @@
         "path": "removeHeaders.json"
       }
     ]
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "js": ["build/inject.js"]
+    }
+  ]
 }

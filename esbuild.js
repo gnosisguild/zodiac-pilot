@@ -2,7 +2,7 @@ const esbuild = require('esbuild')
 
 esbuild
   .build({
-    entryPoints: ['./src/background.ts', './src/app.tsx'],
+    entryPoints: ['./src/background.ts', './src/inject.ts', './src/app.tsx'],
     bundle: true,
     minify: process.env.NODE_ENV !== 'production',
     sourcemap: process.env.NODE_ENV !== 'production',

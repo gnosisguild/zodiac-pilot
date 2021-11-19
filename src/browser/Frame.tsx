@@ -5,8 +5,13 @@ interface Props {}
 
 const BrowserFrame: React.FC<Props> = () => {
   const location = useLocation()
-  console.log({ location })
-  return <iframe src={location} style={{ display: 'block' }}></iframe>
+  return (
+    <iframe
+      name="transaction-simulator"
+      src={location}
+      style={{ display: 'block', width: '100%', height: 900 }}
+    ></iframe>
+  )
 }
 
 export default BrowserFrame
