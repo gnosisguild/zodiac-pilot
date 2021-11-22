@@ -17,7 +17,7 @@ The build output is written to public/build.
 To enable the extension in Chrome, follow these steps:
 
 1. Open the Extension Management page by navigating to [chrome://extensions].
-2. Enable Developer Mode by clicking the toggle switch at the top right of the page.
+2. Enable **Developer Mode** by clicking the toggle switch at the top right of the page.
 3. Click the **Load unpacked** button and select the `transaction-simulator/public` directory.
 
 ### Package for production
@@ -37,8 +37,19 @@ For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options
 The `domains` list in the filter only includes this extension's ID.
 This is crucial as must lift the cross origin restrictions only for the extension but not generally.
 
-### Inject Ethereum provider
+### Inject EIP-1193 provider
 
-When the simulator iframe opens any page, we inject the build/inject.js script via the `content_scripts` option in the extension manifest.
+When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the dApp.
+This happens via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
 
-This script runs in the context of the page loaded in the iframe and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) provider JavaScript API at `window.ethereum`.
+The injected script then runs in the context of the dApp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
+The injected provider pretends to be a MetaMask provider, but actually forwards all JSON-RPC calls to the parent extension page via `window.postMessage`.
+
+### Automatically connect to injected provider for dApps using Web3Modal
+
+TODO
+
+If the dApp does not use Web3Modal, the user will have to manually connect to MetaMask using the dApp's user interface.
+Since the provider injected by the simulator disguises as MetaMask this will establish the connection.
+
+###
