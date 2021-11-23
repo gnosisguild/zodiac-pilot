@@ -43,7 +43,10 @@ When the simulator iframe opens any page, we inject the build/inject.js script a
 This happens via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
 
 The injected script then runs in the context of the dApp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
-The injected provider pretends to be a MetaMask provider, but actually forwards all JSON-RPC calls to the parent extension page via `window.postMessage`.
+The injected provider pretends to be a MetaMask provider, but actually forwards all EIP-1193 `request` calls to the parent extension page via `window.postMessage`.
+
+In a similar fashion, events are bridged over the window message interface.
+Whenever the a new event listener is attached to the provider in the iframe, the bridge will subscribe to the respective event in the host provider.
 
 ### Automatically connect to injected provider for dApps using Web3Modal
 

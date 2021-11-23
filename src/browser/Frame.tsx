@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
-import { handleMessage } from '../eip1193Bridge/host'
+
+// import BridgeHost from '../bridge/host'
+
 import { useLocation } from './location'
 
 interface Props {}
@@ -7,13 +9,13 @@ interface Props {}
 const BrowserFrame: React.FC<Props> = () => {
   const location = useLocation()
 
-  useEffect(() => {
-    window.addEventListener('message', handleMessage)
+  // useEffect(() => {
+  //   new BridgeHost()
 
-    return () => {
-      window.removeEventListener('message', handleMessage)
-    }
-  }, [])
+  //   return () => {
+  //     window.removeEventListener('message', handleMessage)
+  //   }
+  // }, [])
 
   return (
     <>

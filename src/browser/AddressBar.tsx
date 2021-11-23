@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+
 import { updateLocation, useLocation } from './location'
 
-const AddressBar: React.FC<{}> = () => {
+const AddressBar: React.FC = () => {
   const location = useLocation()
   return (
     <div>
