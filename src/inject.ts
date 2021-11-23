@@ -1,7 +1,7 @@
-import { Eip1193IframeBridge } from './Eip1193IframeBridge'
+import Eip1193BridgeIframe from './eip1193Bridge/iframe'
 declare let window: Window & { ethereum: any }
 
 console.log('injected', document.title)
-window.ethereum = new Eip1193IframeBridge()
+window.ethereum = new Eip1193BridgeIframe()
 
 export {}

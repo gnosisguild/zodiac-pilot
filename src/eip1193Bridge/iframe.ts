@@ -3,21 +3,31 @@ interface Request {
   params?: Array<any>
 }
 
-export class Eip1193IframeBridge {
+export default class Eip1193BridgeIframe {
   private messageId = 0
 
-  request(request: Request): Promise<any> {
+  request(request: { method: string; params?: Array<any> }): Promise<any> {
+    return this.send(request.method, request.params || [])
+  }
+
+  async send(method: string, params?: Array<any>): Promise<any> {
     const currentMessageId = this.messageId
     this.messageId++
+    const request = { method, params }
 
-    console.log('bridging...', request)
+    console.log('bridging...')
 
     return new Promise((resolve, reject) => {
-      window.parent.postMessage({
-        transactionSimulatorBridgeSend: true,
-        request,
-        messageId: currentMessageId,
-      })
+      if (!window.top) throw new Error('Must run inside iframe')
+
+      window.top.postMessage(
+        {
+          transactionSimulatorBridgeRequest: true,
+          request,
+          messageId: currentMessageId,
+        },
+        '*'
+      )
 
       const handleMessage = (ev: MessageEvent) => {
         const { transactionSimulatorBridgeResponse, messageId, error, result } =
