@@ -1,4 +1,6 @@
 const esbuild = require('esbuild')
+const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
+const stdLibBrowser = require('node-stdlib-browser')
 
 esbuild
   .build({
@@ -13,9 +15,14 @@ esbuild
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : false,
     target: ['chrome96'],
     outdir: './public/build',
+    inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     define: {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+      global: 'window',
+      // process: 'process',
+      // Buffer: 'Buffer',
     },
+    plugins: [plugin(stdLibBrowser)],
     watch: process.env.NODE_ENV === 'development' && {
       onRebuild() {
         console.log('Rebuild successful.')

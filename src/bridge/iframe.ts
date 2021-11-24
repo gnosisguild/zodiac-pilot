@@ -2,11 +2,10 @@ import { EventEmitter } from 'events'
 
 type Listener = (...args: any[]) => void
 
-type EventType = string | number
 export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
-  private bridgedEvents: Set<EventType>
+  private bridgedEvents: Set<string | symbol>
 
   constructor() {
     super()
@@ -76,7 +75,7 @@ export default class BridgeIframe extends EventEmitter {
   }
 
   // Wrap base implementation to subscribe to this event also from the host provider.
-  on(type: string | number, listener: Listener): this {
+  on(type: string | symbol, listener: Listener): this {
     if (!window.top) throw new Error('Must run inside iframe')
     if (!this.bridgedEvents.has(type)) {
       window.top.postMessage(

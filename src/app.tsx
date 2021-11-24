@@ -1,7 +1,7 @@
-import { Web3Provider } from '@ethersproject/providers'
 import React from 'react'
 import ReactDom from 'react-dom'
 
+import WalletConnectProvider from './WalletConnectProvider'
 import Browser from './browser'
 
 // const handleConnect = async () => {
@@ -17,7 +17,9 @@ import Browser from './browser'
 
 ReactDom.render(
   <React.StrictMode>
-    <Browser />
+    <WalletConnectProvider>
+      <Browser />
+    </WalletConnectProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

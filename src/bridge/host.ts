@@ -1,33 +1,28 @@
+import { Eip1193Bridge } from '@ethersproject/experimental'
+import { providers } from 'ethers'
+
 interface Request {
   method: string
   params?: Array<any>
 }
 
+type Listener = (...args: any[]) => void
+
 export default class BridgeHost {
+  private bridgedProvider: Eip1193Bridge
+  private bridgedEvents: { [type: string]: Listener }
   private source: WindowProxy | undefined
-  private bridgedEvents: Set<string>
 
-  constructor() {
-    this.bridgedEvents = new Set()
-  }
-
-  bridgeEvent = ({ type, data }: ProviderMessage) => {
-    if (!this.source) throw new Error('source must be set')
-    this.source.postMessage(
-      {
-        transactionSimulatorBridgeEventEmit: true,
-        type,
-        args: [data],
-      },
-      '*'
-    )
+  constructor(provider: providers.Web3Provider) {
+    this.bridgedProvider = new Eip1193Bridge(provider.getSigner(), provider)
+    this.bridgedEvents = {}
   }
 
   removeAllListeners() {
-    this.bridgedEvents.forEach((type) => {
-      provider.removeListener(type, this.bridgeEvent)
+    Object.entries(this.bridgedEvents).forEach(([type, listener]) => {
+      this.bridgedProvider.removeListener(type, listener)
     })
-    this.bridgedEvents.clear()
+    this.bridgedEvents = {}
   }
 
   initBridge(event: MessageEvent<any>) {
@@ -39,6 +34,7 @@ export default class BridgeHost {
       throw new Error('Expected message to originate from window')
     }
     this.source = event.source
+    console.log('INIT')
     this.removeAllListeners()
   }
 
@@ -50,7 +46,7 @@ export default class BridgeHost {
 
   private async handleRequest(request: Request, messageId: number) {
     console.log('request', messageId, request)
-    const response = await provider.request(request)
+    const response = await this.bridgedProvider.request(request)
 
     if (!this.source) throw new Error('source must be set')
     this.source.postMessage(
@@ -65,9 +61,23 @@ export default class BridgeHost {
 
   private handleEventListen(type: string) {
     console.log('subscribe', type)
-    if (!this.bridgedEvents.has(type)) {
-      this.bridgedEvents.add(type)
-      provider.on(type, this.bridgeEvent)
+
+    // only bridge each event once
+    if (!this.bridgedEvents[type]) {
+      if (!this.source) throw new Error('source must be set')
+      this.bridgedEvents[type] = (...args: any[]) => {
+        if (!this.source) throw new Error('source must be set')
+        console.log(`bridged ${type} event emitted`)
+        this.source.postMessage(
+          {
+            transactionSimulatorBridgeEventEmit: true,
+            type,
+            args,
+          },
+          '*'
+        )
+      }
+      this.bridgedProvider.on(type, this.bridgedEvents[type])
     }
   }
 
@@ -88,13 +98,15 @@ export default class BridgeHost {
       return
     }
 
-    this.assertConsistentSource(ev)
+    console.log('message', ev.data, ev.source, this.source)
 
     if (transactionSimulatorBridgeRequest) {
+      this.assertConsistentSource(ev)
       this.handleRequest(request, messageId)
     }
 
     if (transactionSimulatorBridgeEventListen) {
+      this.assertConsistentSource(ev)
       this.handleEventListen(type)
     }
   }
