@@ -4,7 +4,8 @@
   "language": "en",
   "words": [
     "esbuild",
-    "prebuild"
+    "prebuild",
+    "walletconnect"
   ],
   "flagWords": [],
   "ignorePaths": [

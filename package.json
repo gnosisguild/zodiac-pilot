@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "prebuild": "rimraf build",
+    "prebuild": "rimraf public/build",
     "build": "NODE_ENV=production node esbuild.js",
     "dev": "NODE_ENV=development node esbuild.js",
     "check": "yarn check:prettier && yarn check:lint && yarn check:spelling",
@@ -26,6 +26,7 @@
     "@types/react-dom": "^17.0.11",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "@walletconnect/client": "^2.0.0-beta.20",
     "cspell": "^5.13.0",
     "esbuild": "^0.13.14",
     "eslint": "^7.32.0",

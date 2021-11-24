@@ -35,6 +35,7 @@
     }
   ],
   "web_accessible_resources": [
+    { "resources": ["*.map"], "matches": ["<all_urls>"] },
     {
       "resources": ["build/inject.js"],
       "matches": ["<all_urls>"]

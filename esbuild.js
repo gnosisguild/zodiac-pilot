@@ -10,7 +10,7 @@ esbuild
     ],
     bundle: true,
     minify: process.env.NODE_ENV !== 'production',
-    sourcemap: process.env.NODE_ENV !== 'production',
+    sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : false,
     target: ['chrome96'],
     outdir: './public/build',
     define: {
