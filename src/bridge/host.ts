@@ -1,14 +1,8 @@
-import ganache, { ProviderMessage } from 'ganache'
-
-// const provider = new ethers.providers.Web3Provider(ganache.provider())
-const provider = ganache.provider()
-
 interface Request {
   method: string
   params?: Array<any>
 }
 
-// TODO When a new page loads in the iframe we need to remove all current event listeners
 export default class BridgeHost {
   private source: WindowProxy | undefined
   private bridgedEvents: Set<string>

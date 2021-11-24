@@ -24,6 +24,7 @@ const BrowserFrame: React.FC<Props> = () => {
   return (
     <>
       <iframe
+        title="Transaction Simulator"
         name="transaction-simulator"
         src={location}
         style={{ display: 'block', width: '100%', height: 900 }}
