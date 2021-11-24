@@ -15,7 +15,6 @@ export default class BridgeHost {
 
   constructor() {
     this.bridgedEvents = new Set()
-    window.addEventListener('message', this.handleMessage)
   }
 
   bridgeEvent = ({ type, data }: ProviderMessage) => {

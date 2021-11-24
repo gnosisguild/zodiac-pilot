@@ -96,5 +96,15 @@ export default class BridgeIframe extends EventEmitter {
     console.log('enable was called')
   }
 
+  chainId = '0x1'
   isMetaMask = true
+  networkVersion = '1'
+  selectedAddress = null
+
+  _metamask = {
+    isUnlocked: async () => true,
+    requestBatch: () => {
+      throw new Error()
+    },
+  }
 }
