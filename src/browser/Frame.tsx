@@ -5,22 +5,25 @@ import BridgeHost from '../bridge/host'
 
 import { useLocation } from './location'
 
-const BrowserFrame: React.FC = () => {
-  const location = useLocation()
+type Props = {
+  targetAvatar: string
+}
 
+const BrowserFrame: React.FC<Props> = ({ targetAvatar }) => {
+  const location = useLocation()
   const provider = useWalletConnectClient()
 
   useEffect(() => {
     if (!provider) return
 
-    const bridgeHost = new BridgeHost(provider)
+    const bridgeHost = new BridgeHost(provider, targetAvatar)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
     window.addEventListener('message', handle)
 
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [provider])
+  }, [targetAvatar, provider])
 
   return (
     <>

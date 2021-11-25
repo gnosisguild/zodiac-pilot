@@ -3,8 +3,6 @@ import { Eip1193Bridge } from '@ethersproject/experimental'
 import { Provider } from '@ethersproject/providers'
 import { Signer } from 'ethers'
 
-const DAO_SAFE = '0x87eb5F76C3785936406fa93654F39b2087FD8068'
-
 interface TxInfo {
   data: string
   from?: string
@@ -24,26 +22,28 @@ const encode = (tx: TxInfo) =>
   )
 
 export class Eip1193Provider extends Eip1193Bridge {
+  private targetAvatar: string
   async wrapTransaction(tx: TxInfo): Promise<TxInfo> {
     return {
       data: encode(tx),
-      from: await this.signer.getAddress(), // ?
-      to: DAO_SAFE,
+      from: await this.signer.getAddress(),
+      to: this.targetAvatar,
       value: '0x0',
     }
   }
 
-  constructor(signer: Signer, provider?: Provider) {
+  constructor(provider: Provider, signer: Signer, targetAvatar: string) {
     super(signer, provider)
+    this.targetAvatar = targetAvatar
   }
 
   async send(method: string, params: Array<any> = []): Promise<any> {
     switch (method) {
       case 'eth_requestAccounts': {
-        return [DAO_SAFE]
+        return [this.targetAvatar]
       }
       case 'eth_accounts': {
-        return [DAO_SAFE]
+        return [this.targetAvatar]
       }
       case 'eth_estimateGas': {
         if (params[1] && params[1] !== 'latest') {

@@ -5,8 +5,10 @@ import { updateLocation, useLocation } from './location'
 const AddressBar: React.FC = () => {
   const location = useLocation()
   return (
-    <div>
+    <>
+      <label htmlFor="dapp-url">Url </label>
       <input
+        id="dapp-url"
         type="text"
         defaultValue={location}
         key={location}
@@ -16,7 +18,7 @@ const AddressBar: React.FC = () => {
           }
         }}
       />
-    </div>
+    </>
   )
 }
 

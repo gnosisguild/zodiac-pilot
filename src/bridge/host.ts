@@ -14,8 +14,12 @@ export default class BridgeHost {
   private bridgedEvents: { [type: string]: Listener }
   private source: WindowProxy | undefined
 
-  constructor(provider: providers.Web3Provider) {
-    this.bridgedProvider = new Eip1193Provider(provider.getSigner(), provider)
+  constructor(provider: providers.Web3Provider, targetAvatar: string) {
+    this.bridgedProvider = new Eip1193Provider(
+      provider,
+      provider.getSigner(),
+      targetAvatar
+    )
 
     this.bridgedEvents = {}
   }
