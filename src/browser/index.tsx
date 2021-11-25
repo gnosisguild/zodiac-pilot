@@ -3,7 +3,7 @@ import React from 'react'
 import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
 
-const Browser: React.FC<{}> = () => {
+const Browser: React.FC = () => {
   return (
     <div>
       <AddressBar />
