@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { useWalletConnectClient } from '../WalletConnectProvider'
+import { Eip1193Provider } from '../bridge/Eip1193Provider'
 import BridgeHost from '../bridge/host'
 
 import { useLocation } from './location'
@@ -11,19 +12,25 @@ type Props = {
 
 const BrowserFrame: React.FC<Props> = ({ targetAvatar }) => {
   const location = useLocation()
-  const provider = useWalletConnectClient()
+  const { provider, connector } = useWalletConnectClient()
 
   useEffect(() => {
-    if (!provider) return
+    if (!provider || !connector) return
 
-    const bridgeHost = new BridgeHost(provider, targetAvatar)
+    const providerEip1193 = new Eip1193Provider(
+      provider,
+      provider.getSigner(),
+      connector,
+      targetAvatar
+    )
+    const bridgeHost = new BridgeHost(providerEip1193)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
     window.addEventListener('message', handle)
 
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [targetAvatar, provider])
+  }, [targetAvatar, provider, connector])
 
   return (
     <>

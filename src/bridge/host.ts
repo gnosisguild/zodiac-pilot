@@ -1,5 +1,3 @@
-import { providers } from 'ethers'
-
 import { Eip1193Provider } from './Eip1193Provider'
 
 interface Request {
@@ -10,23 +8,18 @@ interface Request {
 type Listener = (...args: any[]) => void
 
 export default class BridgeHost {
-  private bridgedProvider: Eip1193Provider
+  private provider: Eip1193Provider
   private bridgedEvents: { [type: string]: Listener }
   private source: WindowProxy | undefined
 
-  constructor(provider: providers.Web3Provider, targetAvatar: string) {
-    this.bridgedProvider = new Eip1193Provider(
-      provider,
-      provider.getSigner(),
-      targetAvatar
-    )
-
+  constructor(provider: Eip1193Provider) {
     this.bridgedEvents = {}
+    this.provider = provider
   }
 
   removeAllListeners() {
     Object.entries(this.bridgedEvents).forEach(([type, listener]) => {
-      this.bridgedProvider.removeListener(type, listener)
+      this.provider.removeListener(type, listener)
     })
     this.bridgedEvents = {}
   }
@@ -52,7 +45,7 @@ export default class BridgeHost {
 
   private async handleRequest(request: Request, messageId: number) {
     console.log('request', messageId, request)
-    const response = await this.bridgedProvider.request(request)
+    const response = await this.provider.request(request)
 
     if (!this.source) throw new Error('source must be set')
     this.source.postMessage(
@@ -83,7 +76,7 @@ export default class BridgeHost {
           '*'
         )
       }
-      this.bridgedProvider.on(type, this.bridgedEvents[type])
+      this.provider.on(type, this.bridgedEvents[type])
     }
   }
 

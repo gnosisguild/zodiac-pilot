@@ -1,23 +1,33 @@
+import { IConnector } from '@walletconnect/types'
 import WalletConnectWeb3Provider from '@walletconnect/web3-provider'
 import { providers } from 'ethers'
 import React, { useContext, useEffect, useState } from 'react'
 
-const WalletConnectContext = React.createContext<
-  providers.Web3Provider | undefined
->(undefined)
+interface ConnectorState {
+  provider: providers.Web3Provider | undefined
+  connector: IConnector | undefined
+}
 
-export const useWalletConnectClient = (): providers.Web3Provider => {
-  const value = useContext(WalletConnectContext)
-  if (!value) throw new Error('must be wrapped by <WalletConnectProvider>')
-  return value
+const WalletConnectContext = React.createContext<ConnectorState>({
+  provider: undefined,
+  connector: undefined,
+})
+
+export const useWalletConnectClient = (): ConnectorState => {
+  const { provider, connector } = useContext(WalletConnectContext)
+  if (!provider || !connector) {
+    throw new Error('must be wrapped by <WalletConnectProvider>')
+  }
+  return { provider, connector }
 }
 
 const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [provider, setProvider] = useState<providers.Web3Provider | undefined>(
-    undefined
-  )
+  const [{ provider, connector }, setState] = useState<ConnectorState>({
+    provider: undefined,
+    connector: undefined,
+  })
 
   useEffect(() => {
     async function init() {
@@ -26,7 +36,12 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
       })
       await walletConnectProvider.enable()
 
-      setProvider(new providers.Web3Provider(walletConnectProvider))
+      const connector = await walletConnectProvider.getWalletConnector()
+
+      setState({
+        provider: new providers.Web3Provider(walletConnectProvider),
+        connector,
+      })
     }
 
     init()
@@ -37,7 +52,7 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return (
-    <WalletConnectContext.Provider value={provider}>
+    <WalletConnectContext.Provider value={{ provider, connector }}>
       {children}
     </WalletConnectContext.Provider>
   )

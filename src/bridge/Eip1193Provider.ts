@@ -1,16 +1,24 @@
 import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { Eip1193Bridge } from '@ethersproject/experimental'
 import { Provider } from '@ethersproject/providers'
+import { IConnector, ITxData } from '@walletconnect/types'
 import { Signer } from 'ethers'
 
 import { wrapRequestToAvatar } from './encoding'
 
 export class Eip1193Provider extends Eip1193Bridge {
   private targetAvatar: string
+  private connector: IConnector
 
-  constructor(provider: Provider, signer: Signer, targetAvatar: string) {
+  constructor(
+    provider: Provider,
+    signer: Signer,
+    connector: IConnector,
+    targetAvatar: string
+  ) {
     super(signer, provider)
     this.targetAvatar = targetAvatar
+    this.connector = connector
   }
 
   async send(method: string, params: Array<any> = []): Promise<any> {
@@ -36,9 +44,13 @@ export class Eip1193Provider extends Eip1193Bridge {
         }
 
         const request = params[0] as TransactionRequest
-        const wrappedRep = await wrapRequestToAvatar(request, this.signer)
+        const wrappedReq = await wrapRequestToAvatar(request, this.signer)
         try {
-          const response = await this.signer.sendTransaction(wrappedRep)
+          //const response = await this.signer.sendTransaction(wrappedRep)
+          const response = await this.connector.sendTransaction(
+            wrappedReq as ITxData
+          )
+          debugger
           return response.hash
         } catch (e) {
           console.error(e)
