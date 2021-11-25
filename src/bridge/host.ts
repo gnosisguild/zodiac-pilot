@@ -1,5 +1,6 @@
-import { Eip1193Bridge } from '@ethersproject/experimental'
 import { providers } from 'ethers'
+
+import { Eip1193Provider } from './Eip1193Provider'
 
 interface Request {
   method: string
@@ -9,12 +10,13 @@ interface Request {
 type Listener = (...args: any[]) => void
 
 export default class BridgeHost {
-  private bridgedProvider: Eip1193Bridge
+  private bridgedProvider: Eip1193Provider
   private bridgedEvents: { [type: string]: Listener }
   private source: WindowProxy | undefined
 
   constructor(provider: providers.Web3Provider) {
-    this.bridgedProvider = new Eip1193Bridge(provider.getSigner(), provider)
+    this.bridgedProvider = new Eip1193Provider(provider.getSigner(), provider)
+
     this.bridgedEvents = {}
   }
 

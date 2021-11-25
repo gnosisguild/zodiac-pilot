@@ -37,9 +37,12 @@ export default class BridgeIframe extends EventEmitter {
   async send(method: string, params?: Array<any>): Promise<any> {
     const currentMessageId = this.messageId
     this.messageId++
-    const request = { method, params }
+    // Note: for method: 'eth_accounts', this method is being called incorrectly
+    const { uMethod, uParams } = maybeUnpackIncorrectSend(method, params)
 
-    console.log('bridging...')
+    const request = { method: uMethod, params: uParams }
+
+    console.log('bridging...', request)
 
     return new Promise((resolve, reject) => {
       if (!window.top) throw new Error('Must run inside iframe')
@@ -94,16 +97,30 @@ export default class BridgeIframe extends EventEmitter {
   async enable() {
     console.log('enable was called')
   }
-
-  chainId = '0x1'
   isMetaMask = true
-  networkVersion = '1'
-  selectedAddress = null
 
   _metamask = {
     isUnlocked: async () => true,
     requestBatch: () => {
       throw new Error()
     },
+  }
+}
+
+// we have to take a close look at this
+function maybeUnpackIncorrectSend(method: string, params?: Array<any>) {
+  const uMethod =
+    (typeof method !== 'string' &&
+      (method as { method: string; params?: Array<any> })?.method) ||
+    method
+
+  const uParams =
+    (typeof method !== 'string' &&
+      (method as { params?: Array<any> }).params) ||
+    params
+
+  return {
+    uMethod,
+    uParams,
   }
 }
