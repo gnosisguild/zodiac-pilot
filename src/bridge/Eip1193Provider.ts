@@ -1,36 +1,12 @@
-import { Interface } from '@ethersproject/abi'
+import { TransactionRequest } from '@ethersproject/abstract-provider'
 import { Eip1193Bridge } from '@ethersproject/experimental'
 import { Provider } from '@ethersproject/providers'
 import { Signer } from 'ethers'
 
-interface TxInfo {
-  data: string
-  from?: string
-  to: string
-  value: string
-  gas?: string
-}
-
-const avatarInterface = new Interface([
-  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
-])
-
-const encode = (tx: TxInfo) =>
-  avatarInterface.encodeFunctionData(
-    'execTransactionFromModule(address,uint256,bytes,uint8)',
-    [tx.to, tx.value, tx.data, 0]
-  )
+import { wrapRequestToAvatar } from './encoding'
 
 export class Eip1193Provider extends Eip1193Bridge {
   private targetAvatar: string
-  async wrapTransaction(tx: TxInfo): Promise<TxInfo> {
-    return {
-      data: encode(tx),
-      from: await this.signer.getAddress(),
-      to: this.targetAvatar,
-      value: '0x0',
-    }
-  }
 
   constructor(provider: Provider, signer: Signer, targetAvatar: string) {
     super(signer, provider)
@@ -49,8 +25,9 @@ export class Eip1193Provider extends Eip1193Bridge {
         if (params[1] && params[1] !== 'latest') {
           throw new Error('estimateGas does not support blockTag')
         }
-        const wrappedTx = await this.wrapTransaction(params[0])
-        const result = await this.provider.estimateGas(wrappedTx)
+        const request = params[0] as TransactionRequest
+        const wrappedReq = await wrapRequestToAvatar(request, this.signer)
+        const result = await this.provider.estimateGas(wrappedReq)
         return result.toHexString()
       }
       case 'eth_sendTransaction': {
@@ -58,15 +35,11 @@ export class Eip1193Provider extends Eip1193Bridge {
           return new Error('eth_sendTransaction requires an account')
         }
 
-        const wrappedTx = await this.wrapTransaction(params[0])
-        console.log(1, { params, wrappedTx })
+        const request = params[0] as TransactionRequest
+        const wrappedRep = await wrapRequestToAvatar(request, this.signer)
         try {
-          const tx = await this.signer.sendTransaction({
-            ...wrappedTx,
-            gasLimit: wrappedTx.gas,
-          })
-          console.error(2, { params, wrappedTx, txHash: tx.hash, tx })
-          return tx.hash
+          const response = await this.signer.sendTransaction(wrappedRep)
+          return response.hash
         } catch (e) {
           console.error(e)
         }
