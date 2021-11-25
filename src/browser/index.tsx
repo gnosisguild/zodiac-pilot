@@ -1,7 +1,7 @@
 import React from 'react'
 
-import BrowserFrame from './Frame'
 import AddressBar from './AddressBar'
+import BrowserFrame from './Frame'
 
 const Browser: React.FC<{}> = () => {
   return (
