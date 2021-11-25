@@ -11,11 +11,11 @@ export class Eip1193Provider extends Eip1193Bridge {
     switch (method) {
       case 'eth_requestAccounts': {
         const account = await this.signer.getAddress()
-        return account
+        return [account]
       }
-      case 'net_version': {
-        return '1'
-      }
+      // case 'net_version': {
+      //   return '1'
+      // }
 
       default:
         return super.send(method, params)

@@ -1,5 +1,5 @@
 // When clicking the extension button, load the current tab's page in the simulation browser
-chrome.action.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener(() => {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
     const tab = tabs[0]
     if (tab && tab.id && tab.url) {

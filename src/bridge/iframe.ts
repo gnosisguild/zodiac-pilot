@@ -37,10 +37,8 @@ export default class BridgeIframe extends EventEmitter {
   async send(method: string, params?: Array<any>): Promise<any> {
     const currentMessageId = this.messageId
     this.messageId++
-    // Note: for method: 'eth_accounts', this method is being called incorrectly
-    const { uMethod, uParams } = maybeUnpackIncorrectSend(method, params)
 
-    const request = { method: uMethod, params: uParams }
+    const request = { method, params }
 
     console.log('bridging...', request)
 
@@ -57,8 +55,12 @@ export default class BridgeIframe extends EventEmitter {
       )
 
       const handleMessage = (ev: MessageEvent) => {
-        const { transactionSimulatorBridgeResponse, messageId, error, result } =
-          ev.data
+        const {
+          transactionSimulatorBridgeResponse,
+          messageId,
+          error,
+          response,
+        } = ev.data
         if (
           transactionSimulatorBridgeResponse &&
           messageId === currentMessageId
@@ -68,7 +70,8 @@ export default class BridgeIframe extends EventEmitter {
           if (error) {
             reject(error)
           } else {
-            resolve(result)
+            console.log('response', messageId, response)
+            resolve(response)
           }
         }
       }
@@ -92,35 +95,5 @@ export default class BridgeIframe extends EventEmitter {
     }
     EventEmitter.prototype.on.call(this, type, listener)
     return this
-  }
-
-  async enable() {
-    console.log('enable was called')
-  }
-  isMetaMask = true
-
-  _metamask = {
-    isUnlocked: async () => true,
-    requestBatch: () => {
-      throw new Error()
-    },
-  }
-}
-
-// we have to take a close look at this
-function maybeUnpackIncorrectSend(method: string, params?: Array<any>) {
-  const uMethod =
-    (typeof method !== 'string' &&
-      (method as { method: string; params?: Array<any> })?.method) ||
-    method
-
-  const uParams =
-    (typeof method !== 'string' &&
-      (method as { params?: Array<any> }).params) ||
-    params
-
-  return {
-    uMethod,
-    uParams,
   }
 }
