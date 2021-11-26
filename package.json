@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@ethersproject/experimental": "^5.5.0",
+    "@gnosis.pm/safe-service-client": "^1.0.1",
     "@types/chrome": "^0.0.164",
     "@types/events": "^3.0.0",
     "@types/react": "^17.0.35",

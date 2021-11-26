@@ -4,8 +4,8 @@ import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
 import Target from './Target'
 
-const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
-//const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
+//const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
+const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
 
 const Browser: React.FC = () => {
   const [target, setTarget] = useState(DAO_SAFE)

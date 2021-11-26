@@ -70,7 +70,6 @@ export default class BridgeIframe extends EventEmitter {
           if (error) {
             reject(error)
           } else {
-            console.log('response', messageId, response)
             resolve(response)
           }
         }

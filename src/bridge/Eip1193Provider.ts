@@ -5,6 +5,7 @@ import { IConnector, ITxData } from '@walletconnect/types'
 import { Signer } from 'ethers'
 
 import { wrapRequestToAvatar } from './encoding'
+import { waitForMultisigExecution } from './safe'
 
 export class Eip1193Provider extends Eip1193Bridge {
   private targetAvatar: string
@@ -45,17 +46,17 @@ export class Eip1193Provider extends Eip1193Bridge {
 
         const request = params[0] as TransactionRequest
         const wrappedReq = await wrapRequestToAvatar(request, this.signer)
-        try {
-          //const response = await this.signer.sendTransaction(wrappedRep)
-          const response = await this.connector.sendTransaction(
-            wrappedReq as ITxData
-          )
-          debugger
-          return response.hash
-        } catch (e) {
-          console.error(e)
-        }
-        break
+
+        const safeTxHash = await this.connector.sendTransaction(
+          wrappedReq as ITxData
+        )
+
+        const txHash = await waitForMultisigExecution(
+          this.connector.chainId,
+          safeTxHash
+        )
+
+        return txHash
       }
 
       default:
