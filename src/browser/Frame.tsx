@@ -34,14 +34,17 @@ const BrowserFrame: React.FC<Props> = ({ avatar, targetModule }) => {
   }, [avatar, targetModule, provider])
 
   return (
-    <>
-      <iframe
-        title="Transaction Simulator"
-        name="transaction-simulator"
-        src={location}
-        style={{ display: 'block', width: '100%', height: 900 }}
-      />
-    </>
+    <iframe
+      title="Transaction Simulator"
+      name="transaction-simulator"
+      src={location}
+      style={{
+        display: 'block',
+        width: '100%',
+        height: '100%',
+        border: 'none',
+      }}
+    />
   )
 }
 

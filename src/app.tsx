@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDom from 'react-dom'
 
 import WalletConnectProvider from './WalletConnectProvider'
+import './global.css'
+import classNames from './app.module.css'
 import Browser from './browser'
 
 // const handleConnect = async () => {
@@ -18,7 +20,9 @@ import Browser from './browser'
 ReactDom.render(
   <React.StrictMode>
     <WalletConnectProvider>
-      <Browser />
+      <div className={classNames.page}>
+        <Browser />
+      </div>
     </WalletConnectProvider>
   </React.StrictMode>,
   document.getElementById('root')

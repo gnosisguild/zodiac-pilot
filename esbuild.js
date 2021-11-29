@@ -1,4 +1,5 @@
 const esbuild = require('esbuild')
+const cssModulesPlugin = require('esbuild-css-modules-plugin')
 const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
 const stdLibBrowser = require('node-stdlib-browser')
 
@@ -13,6 +14,7 @@ esbuild
     bundle: true,
     minify: process.env.NODE_ENV !== 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : false,
+    loader: { '.svg': 'file' },
     target: ['chrome96'],
     outdir: './public/build',
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
@@ -22,7 +24,7 @@ esbuild
       // process: 'process',
       // Buffer: 'Buffer',
     },
-    plugins: [plugin(stdLibBrowser)],
+    plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
     watch: process.env.NODE_ENV === 'development' && {
       onRebuild() {
         console.log('Rebuild successful.')

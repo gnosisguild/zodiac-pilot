@@ -9,7 +9,6 @@ import { waitForMultisigExecution } from './safe'
 export class Eip1193Provider extends EventEmitter {
   private avatar: string
   private targetModule: string
-
   private provider: WalletConnectEthereumProvider
 
   constructor(
