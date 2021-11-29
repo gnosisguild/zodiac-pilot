@@ -4,6 +4,7 @@
   "language": "en",
   "words": [
     "esbuild",
+    "ethersproject",
     "prebuild",
     "walletconnect"
   ],

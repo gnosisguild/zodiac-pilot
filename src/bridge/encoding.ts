@@ -1,25 +1,23 @@
 import { Interface } from '@ethersproject/abi'
-import { TransactionRequest } from '@ethersproject/abstract-provider'
-import { Signer } from 'ethers'
+import { ITxData } from '@walletconnect/types'
 
 const AvatarInterface = new Interface([
   'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
 ])
 
-export async function wrapRequestToAvatar(
-  request: TransactionRequest,
-  signer: Signer
-): Promise<TransactionRequest> {
-  const signerAddress = await signer.getAddress()
-
+export function wrapRequest(
+  request: ITxData,
+  from: string,
+  targetModule: string
+): ITxData {
   const data = AvatarInterface.encodeFunctionData(
     'execTransactionFromModule(address,uint256,bytes,uint8)',
     [request.to, request.value, request.data, 0]
   )
 
   return {
-    from: signerAddress,
-    to: request.from,
+    from,
+    to: targetModule,
     data: data,
     value: '0x0',
   }

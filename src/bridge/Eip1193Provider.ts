@@ -1,66 +1,97 @@
-import { TransactionRequest } from '@ethersproject/abstract-provider'
-import { Eip1193Bridge } from '@ethersproject/experimental'
-import { Provider } from '@ethersproject/providers'
-import { IConnector, ITxData } from '@walletconnect/types'
-import { Signer } from 'ethers'
+import EventEmitter from 'events'
 
-import { wrapRequestToAvatar } from './encoding'
+import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
+import { ITxData } from '@walletconnect/types'
+
+import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
 
-export class Eip1193Provider extends Eip1193Bridge {
-  private targetAvatar: string
-  private connector: IConnector
+export class Eip1193Provider extends EventEmitter {
+  private avatar: string
+  private targetModule: string
+
+  private provider: WalletConnectEthereumProvider
 
   constructor(
-    provider: Provider,
-    signer: Signer,
-    connector: IConnector,
-    targetAvatar: string
+    provider: WalletConnectEthereumProvider,
+    avatar: string,
+    targetModule: string
   ) {
-    super(signer, provider)
-    this.targetAvatar = targetAvatar
-    this.connector = connector
+    super()
+    this.provider = provider
+    this.avatar = avatar
+    this.targetModule = targetModule
   }
 
-  async send(method: string, params: Array<any> = []): Promise<any> {
+  async request(request: {
+    method: string
+    params?: Array<any>
+  }): Promise<any> {
+    const { method, params = [] } = request
+
     switch (method) {
       case 'eth_requestAccounts': {
-        return [this.targetAvatar]
+        return [this.avatar]
       }
+
       case 'eth_accounts': {
-        return [this.targetAvatar]
+        return [this.avatar]
       }
+
       case 'eth_estimateGas': {
-        if (params[1] && params[1] !== 'latest') {
-          throw new Error('estimateGas does not support blockTag')
-        }
-        const request = params[0] as TransactionRequest
-        const wrappedReq = await wrapRequestToAvatar(request, this.signer)
-        const result = await this.provider.estimateGas(wrappedReq)
-        return result.toHexString()
+        const [request, ...rest] = params
+        const wrappedReq = await wrapRequest(
+          request,
+          this.provider.accounts[0],
+          this.targetModule
+        )
+
+        return await this.provider.request({
+          method,
+          params: [wrappedReq, ...rest],
+        })
       }
+
+      // TODO: shall we impersonate the avatar for calls?
+      // case 'eth_call': {
+      //   const [call, ...rest] = params
+      //   return this.provider.request({
+      //     method,
+      //     params: [{ ...call, from: this.avatar }, ...rest],
+      //   })
+      // }
+
       case 'eth_sendTransaction': {
-        if (!this.signer) {
-          return new Error('eth_sendTransaction requires an account')
-        }
+        const request = params[0] as ITxData
+        const wrappedReq = await wrapRequest(
+          request,
+          this.provider.accounts[0],
+          this.targetModule
+        )
 
-        const request = params[0] as TransactionRequest
-        const wrappedReq = await wrapRequestToAvatar(request, this.signer)
-
-        const safeTxHash = await this.connector.sendTransaction(
-          wrappedReq as ITxData
+        const safeTxHash = await this.provider.connector.sendTransaction(
+          wrappedReq
         )
 
         const txHash = await waitForMultisigExecution(
-          this.connector.chainId,
+          this.provider.chainId,
           safeTxHash
         )
 
         return txHash
       }
 
-      default:
-        return super.send(method, params)
+      case 'eth_signTransaction': {
+        const request = params[0] as ITxData
+        const wrappedReq = await wrapRequest(
+          request,
+          this.provider.accounts[0],
+          this.targetModule
+        )
+        return await this.provider.connector.signTransaction(wrappedReq)
+      }
     }
+
+    return await this.provider.request(request)
   }
 }

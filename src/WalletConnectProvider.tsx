@@ -1,47 +1,32 @@
-import { IConnector } from '@walletconnect/types'
-import WalletConnectWeb3Provider from '@walletconnect/web3-provider'
-import { providers } from 'ethers'
+import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import React, { useContext, useEffect, useState } from 'react'
 
-interface ConnectorState {
-  provider: providers.Web3Provider | undefined
-  connector: IConnector | undefined
-}
+const WalletConnectContext = React.createContext<
+  WalletConnectEthereumProvider | undefined
+>(undefined)
 
-const WalletConnectContext = React.createContext<ConnectorState>({
-  provider: undefined,
-  connector: undefined,
-})
-
-export const useWalletConnectClient = (): ConnectorState => {
-  const { provider, connector } = useContext(WalletConnectContext)
-  if (!provider || !connector) {
+export const useWalletConnectClient = (): WalletConnectEthereumProvider => {
+  const provider = useContext(WalletConnectContext)
+  if (!provider) {
     throw new Error('must be wrapped by <WalletConnectProvider>')
   }
-  return { provider, connector }
+  return provider
 }
 
 const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [{ provider, connector }, setState] = useState<ConnectorState>({
-    provider: undefined,
-    connector: undefined,
-  })
+  const [provider, setProvider] = useState<
+    WalletConnectEthereumProvider | undefined
+  >(undefined)
 
   useEffect(() => {
     async function init() {
-      const walletConnectProvider = new WalletConnectWeb3Provider({
-        infuraId: 'e301e57e9a51407eb39df231874e0563',
+      const provider = new WalletConnectEthereumProvider({
+        infuraId: 'e301e57e9a51407eb39df231874e0563', // TODO: invalidate this ID soon!
       })
-      await walletConnectProvider.enable()
-
-      const connector = await walletConnectProvider.getWalletConnector()
-
-      setState({
-        provider: new providers.Web3Provider(walletConnectProvider),
-        connector,
-      })
+      await provider.enable()
+      setProvider(provider)
     }
 
     init()
@@ -52,7 +37,7 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return (
-    <WalletConnectContext.Provider value={{ provider, connector }}>
+    <WalletConnectContext.Provider value={provider}>
       {children}
     </WalletConnectContext.Provider>
   )
