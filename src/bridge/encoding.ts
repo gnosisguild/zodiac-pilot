@@ -8,7 +8,7 @@ const AvatarInterface = new Interface([
 export function wrapRequest(
   request: ITxData,
   from: string,
-  targetModule: string
+  to: string
 ): ITxData {
   const data = AvatarInterface.encodeFunctionData(
     'execTransactionFromModule(address,uint256,bytes,uint8)',
@@ -17,7 +17,7 @@ export function wrapRequest(
 
   return {
     from,
-    to: targetModule,
+    to,
     data: data,
     value: '0x0',
   }

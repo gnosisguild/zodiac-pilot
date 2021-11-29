@@ -7,19 +7,20 @@ import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
 
 export class Eip1193Provider extends EventEmitter {
-  private avatar: string
-  private targetModule: string
+  private avatarAddress: string
+  private targetAddress: string
+
   private provider: WalletConnectEthereumProvider
 
   constructor(
     provider: WalletConnectEthereumProvider,
-    avatar: string,
-    targetModule: string
+    avatarAddress: string,
+    targetAddress: string
   ) {
     super()
     this.provider = provider
-    this.avatar = avatar
-    this.targetModule = targetModule
+    this.avatarAddress = avatarAddress
+    this.targetAddress = targetAddress
   }
 
   async request(request: {
@@ -30,11 +31,11 @@ export class Eip1193Provider extends EventEmitter {
 
     switch (method) {
       case 'eth_requestAccounts': {
-        return [this.avatar]
+        return [this.avatarAddress]
       }
 
       case 'eth_accounts': {
-        return [this.avatar]
+        return [this.avatarAddress]
       }
 
       case 'eth_estimateGas': {
@@ -42,7 +43,7 @@ export class Eip1193Provider extends EventEmitter {
         const wrappedReq = await wrapRequest(
           request,
           this.provider.accounts[0],
-          this.targetModule
+          this.targetAddress
         )
 
         return await this.provider.request({
@@ -52,6 +53,7 @@ export class Eip1193Provider extends EventEmitter {
       }
 
       // TODO: shall we impersonate the avatar for calls?
+      // ^ good question, lets discuss tomorrow and maybe ask around. First hunch, I guess it wont make the difference because calls are paramterized? I.e., you don't need to impersonate to query public data?
       // case 'eth_call': {
       //   const [call, ...rest] = params
       //   return this.provider.request({
@@ -65,7 +67,7 @@ export class Eip1193Provider extends EventEmitter {
         const wrappedReq = await wrapRequest(
           request,
           this.provider.accounts[0],
-          this.targetModule
+          this.targetAddress
         )
 
         const safeTxHash = await this.provider.connector.sendTransaction(
@@ -85,7 +87,7 @@ export class Eip1193Provider extends EventEmitter {
         const wrappedReq = await wrapRequest(
           request,
           this.provider.accounts[0],
-          this.targetModule
+          this.targetAddress
         )
         return await this.provider.connector.signTransaction(wrappedReq)
       }

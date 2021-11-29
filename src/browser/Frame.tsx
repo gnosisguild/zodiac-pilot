@@ -7,11 +7,11 @@ import BridgeHost from '../bridge/host'
 import { useLocation } from './location'
 
 type Props = {
-  avatar: string
-  targetModule: string
+  avatarAddress: string
+  targetAddress: string
 }
 
-const BrowserFrame: React.FC<Props> = ({ avatar, targetModule }) => {
+const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
   const location = useLocation()
   const provider = useWalletConnectClient()
 
@@ -20,9 +20,8 @@ const BrowserFrame: React.FC<Props> = ({ avatar, targetModule }) => {
 
     const providerEip1193 = new Eip1193Provider(
       provider,
-      // provider.getSigner(),
-      avatar,
-      targetModule
+      avatarAddress,
+      targetAddress
     )
     const bridgeHost = new BridgeHost(providerEip1193)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
@@ -31,7 +30,7 @@ const BrowserFrame: React.FC<Props> = ({ avatar, targetModule }) => {
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [avatar, targetModule, provider])
+  }, [avatarAddress, targetAddress, provider])
 
   return (
     <iframe
