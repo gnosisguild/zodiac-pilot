@@ -33,7 +33,6 @@ export default class BridgeHost {
       throw new Error('Expected message to originate from window')
     }
     this.source = event.source
-    console.log('INIT')
     this.removeAllListeners()
   }
 
@@ -96,8 +95,6 @@ export default class BridgeHost {
       this.initBridge(ev)
       return
     }
-
-    console.log('message', ev.data, ev.source, this.source)
 
     if (transactionSimulatorBridgeRequest) {
       this.assertConsistentSource(ev)

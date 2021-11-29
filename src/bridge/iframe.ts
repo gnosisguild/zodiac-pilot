@@ -40,8 +40,6 @@ export default class BridgeIframe extends EventEmitter {
 
     const request = { method, params }
 
-    console.log('bridging...', request)
-
     return new Promise((resolve, reject) => {
       if (!window.top) throw new Error('Must run inside iframe')
 
