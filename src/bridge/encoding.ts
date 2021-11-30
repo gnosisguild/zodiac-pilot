@@ -12,7 +12,7 @@ export function wrapRequest(
 ): ITxData {
   const data = AvatarInterface.encodeFunctionData(
     'execTransactionFromModule(address,uint256,bytes,uint8)',
-    [request.to, request.value, request.data, 0]
+    [request.to, request.value || 0, request.data, 0]
   )
 
   return {
