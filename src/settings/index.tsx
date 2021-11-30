@@ -24,8 +24,12 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
 )
 
 const Settings: React.FC = () => {
-  const [avatarAddress, setAvatarAddress] = useState(DAO_SAFE)
-  const [targetAddress, setTargetAddress] = useState(DAO_SAFE)
+  const [avatarAddress, setAvatarAddress] = useState(
+    localStorage.getItem('avatarAddress') || DAO_SAFE
+  )
+  const [targetAddress, setTargetAddress] = useState(
+    localStorage.getItem('targetAddress') || DAO_SAFE
+  )
   const location = useLocation()
   const [url, setUrl] = useState(location.startsWith('http') ? location : '')
   const { provider } = useWalletConnectProvider()
@@ -34,6 +38,8 @@ const Settings: React.FC = () => {
     useSafeModuleInfo(avatarAddress)
 
   const submit = () => {
+    localStorage.setItem('avatarAddress', avatarAddress)
+    localStorage.setItem('targetAddress', targetAddress)
     updateLocation(url)
   }
   console.log({ url, avatarAddress, targetAddress })

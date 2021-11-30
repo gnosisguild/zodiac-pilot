@@ -1,18 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Address, Box, Flex } from '../components'
+import { updateLocation } from '../location'
 
 import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
 import classNames from './index.module.css'
 
-const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
-
 const Browser: React.FC = () => {
   const { provider } = useWalletConnectProvider()
-  const avatarAddress = DAO_SAFE
-  const targetAddress = DAO_SAFE
+  const avatarAddress = localStorage.getItem('avatarAddress')
+  const targetAddress = localStorage.getItem('targetAddress')
+
+  const redirectToSettings = !avatarAddress || !targetAddress
+  useEffect(() => {
+    if (redirectToSettings) {
+      updateLocation('settings')
+    }
+  }, [redirectToSettings])
+
+  if (redirectToSettings) {
+    return null
+  }
+
   return (
     <div className={classNames.browser}>
       <div className={classNames.topBar}>
