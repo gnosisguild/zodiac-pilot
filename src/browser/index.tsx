@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
 
 import { Box } from '../components'
+import { useSafeModuleInfo } from '../hooks/useSafeModuleInfo'
 
 import Address from './Address'
 import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
 import classNames from './index.module.css'
 
-//const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
-const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
+const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
+//const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
 
 const Browser: React.FC = () => {
   const [avatarAddress, setAvatar] = useState(DAO_SAFE)
   const [targetAddress, setTarget] = useState(DAO_SAFE)
+
+  const { loading, isValidSafe, enabledModules } =
+    useSafeModuleInfo(avatarAddress)
+
   return (
     <div className={classNames.browser}>
       <div className={classNames.topBar}>
@@ -26,6 +31,8 @@ const Browser: React.FC = () => {
       </div>
       <div className={classNames.main}>
         <Box className={classNames.frame}>
+          {loading && <p>Loading</p>}
+          {!isValidSafe && <p>Invalid Safe</p>}
           <BrowserFrame
             key={avatarAddress}
             avatarAddress={avatarAddress}

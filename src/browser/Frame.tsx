@@ -32,6 +32,8 @@ const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
     }
   }, [avatarAddress, targetAddress, provider])
 
+  return null
+
   return (
     <iframe
       title="Transaction Simulator"
