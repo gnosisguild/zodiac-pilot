@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blockies {
+  overflow: hidden;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+}
+.blockies canvas {
+  margin-top: -2px;
+  margin-left: -2px;
+}
+
+.address {
+}
+
+.copy {
+}
+
+.link {
+}

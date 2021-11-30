@@ -4,7 +4,7 @@ import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 
-import { useWalletConnectClient } from '../WalletConnectProvider'
+import { useWalletConnectProvider } from '../WalletConnectProvider'
 
 export const useSafeModuleInfo = (
   safeAddress: string
@@ -13,17 +13,17 @@ export const useSafeModuleInfo = (
   const [isValidSafe, setIsValidSafe] = useState(false)
   const [enabledModules, setEnabledModules] = useState<string[]>([])
 
-  const wc = useWalletConnectClient()
+  const { provider } = useWalletConnectProvider()
 
   useEffect(() => {
     setLoading(true)
-    fetchSafeModules(wc, safeAddress)
+    fetchSafeModules(provider, safeAddress)
       .then(({ isValidSafe, enabledModules }) => {
         setIsValidSafe(isValidSafe)
         setEnabledModules(enabledModules)
       })
       .finally(() => setLoading(false))
-  }, [wc, safeAddress])
+  }, [provider, safeAddress])
 
   return { loading, isValidSafe, enabledModules }
 }

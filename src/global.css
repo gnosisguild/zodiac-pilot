@@ -1,3 +1,9 @@
+:root {
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 16px;
+}
+
 body {
   font-family: Spectral;
   color: white;
@@ -6,4 +12,36 @@ body {
   background: url(./zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
   overflow: hidden;
+}
+
+a {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+h1 {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 48px;
+  line-height: 73px;
+  text-align: center;
+  margin: 0;
+}
+
+input,
+select {
+  background-color: transparent;
+  color: white;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid white;
+  line-height: 20px;
+  padding: 8px 12px;
+  height: 38px;
+}
+
+.walletconnect-modal__base {
+  color: black;
 }

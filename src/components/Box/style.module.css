@@ -1,4 +1,28 @@
 .box {
-  border: 1px solid white;
-  padding: 4px;
+  border: 1px solid #d9d4ad4d;
+  position: relative;
+}
+.bg {
+  background-color: rgba(217, 212, 173, 0.1);
+  background-clip: padding-box;
+}
+.double {
+  border: 4px double #d9d4ad4d;
+}
+.rounded {
+  border-radius: 50%;
+}
+.roundedLeft {
+  border-top-left-radius: 5000px;
+  border-bottom-left-radius: 5000px;
+}
+
+.p1 {
+  padding: var(--spacing-1);
+}
+.p2 {
+  padding: var(--spacing-2);
+}
+.p3 {
+  padding: var(--spacing-3);
 }

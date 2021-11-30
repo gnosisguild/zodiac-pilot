@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 
-import { useWalletConnectClient } from '../WalletConnectProvider'
+import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Eip1193Provider } from '../bridge/Eip1193Provider'
 import BridgeHost from '../bridge/host'
-
-import { useLocation } from './location'
+import { useLocation } from '../location'
 
 type Props = {
   avatarAddress: string
@@ -13,7 +12,7 @@ type Props = {
 
 const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
   const location = useLocation()
-  const provider = useWalletConnectClient()
+  const { provider } = useWalletConnectProvider()
 
   useEffect(() => {
     if (!provider) return
