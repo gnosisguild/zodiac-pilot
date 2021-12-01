@@ -88,12 +88,14 @@ const Settings: React.FC = () => {
                 ) : (
                   <Button
                     onClick={async () => {
-                      // TODO for some reason the modal doesn't open again after dismissing it once
                       try {
                         await provider.disconnect()
                         await provider.enable()
                       } catch (e) {
-                        console.log('caught', e)
+                        // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
+                        // This fixes it:
+                        // @ts-expect-error signer is a private property, but we didn't find another way
+                        provider.signer.disconnect()
                       }
                     }}
                   >
