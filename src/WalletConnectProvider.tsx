@@ -31,12 +31,12 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
       })
       // @ts-expect-error signer is a private property, but we didn't find another way
       provider.signer.on('connect', () => {
-        console.log('WallectConnect connected')
+        console.log('WalletConnect connected')
         setState({ provider, connected: true })
       })
 
       provider.on('disconnect', () => {
-        console.log('WallectConnect disconnected')
+        console.log('WalletConnect disconnected')
         setState({ provider, connected: false })
       })
 
@@ -47,7 +47,7 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [])
 
   if (!state.provider) {
-    return <span>Loading...</span>
+    return null
   }
 
   return (

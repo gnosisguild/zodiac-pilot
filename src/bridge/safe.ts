@@ -1,13 +1,27 @@
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 
+const TX_SERVICE_URL: Record<string, string | undefined> = {
+  '1': 'https://safe-transaction.gnosis.io',
+  '4': 'https://safe-transaction.rinkeby.gnosis.io',
+  '100': 'https://safe-transaction.xdai.gnosis.io',
+  '73799': 'https://safe-transaction.volta.gnosis.io',
+  '246': 'https://safe-transaction.ewc.gnosis.io',
+  '137': 'https://safe-transaction.polygon.gnosis.io',
+  '56': 'https://safe-transaction.bsc.gnosis.io',
+  '42161': 'https://safe-transaction.arbitrum.gnosis.io',
+}
+
 export function waitForMultisigExecution(
   chainId: number,
   safeTxHash: string
 ): Promise<string> {
+  const url = TX_SERVICE_URL[`${chainId}`]
+  if (!url) {
+    throw new Error(`service not available for chain #${chainId}`)
+  }
+
   // TODO pass different URLs according to chainId
-  const safeService = new SafeServiceClient(
-    'https://safe-transaction.rinkeby.gnosis.io'
-  )
+  const safeService = new SafeServiceClient(url)
 
   return new Promise((resolve, reject) => {
     function tryAgain() {

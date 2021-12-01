@@ -5,7 +5,6 @@ import WalletConnectProvider, {
   useWalletConnectProvider,
 } from './WalletConnectProvider'
 import './global.css'
-import classNames from './app.module.css'
 import Browser from './browser'
 import { updateLocation, useLocation } from './location'
 import Settings from './settings'
@@ -25,8 +24,7 @@ const Routes: React.FC = () => {
       updateLocation(`settings;${location}`)
     }
   }, [location, settingsRouteMatch, settingsRequired])
-
-  if (settingsRequired) return null
+  if (!settingsRouteMatch && settingsRequired) return null
 
   if (settingsRouteMatch) {
     return (
@@ -42,9 +40,7 @@ const Routes: React.FC = () => {
 ReactDom.render(
   <React.StrictMode>
     <WalletConnectProvider>
-      <div className={classNames.page}>
-        <Routes />
-      </div>
+      <Routes />
     </WalletConnectProvider>
   </React.StrictMode>,
   document.getElementById('root')

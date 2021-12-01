@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Box, Button, Flex } from '../components'
-import { updateLocation, useLocation } from '../location'
+import { updateLocation } from '../location'
 
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
