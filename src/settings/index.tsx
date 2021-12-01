@@ -61,6 +61,12 @@ const Settings: React.FC = () => {
       <Box double p={3}>
         <Flex direction="column" gap={3}>
           <Box p={3}>
+            <p className="intro-text">
+              This app allows you to control a Safe via a Zodiac modifier from
+              an enabled account. <a href="#docs">Read more here.</a>
+            </p>
+          </Box>
+          <Box p={3}>
             <Flex direction="column" gap={3}>
               <Field label="DAO Safe">
                 <input

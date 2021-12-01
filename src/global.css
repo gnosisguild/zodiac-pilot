@@ -35,7 +35,11 @@ body {
 a {
   color: white;
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: rgba(252, 248, 217, 0.8);
 }
 
 h1 {
@@ -44,6 +48,10 @@ h1 {
   font-size: 48px;
   line-height: 73px;
   text-align: center;
+  margin: 0;
+}
+
+p {
   margin: 0;
 }
 
