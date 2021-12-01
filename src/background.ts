@@ -15,4 +15,13 @@ chrome.action.onClicked.addListener(() => {
   })
 })
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (
+    changeInfo.status === 'complete' &&
+    tab.url?.startsWith('chrome-extension://ccoggacobochanffcgfimdohaancehmi')
+  ) {
+    chrome.runtime.sendMessage({ type: 'navigationDetected' })
+  }
+})
+
 export {}

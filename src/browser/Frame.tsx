@@ -33,8 +33,9 @@ const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
 
   return (
     <iframe
-      title="Transaction Simulator"
-      name="transaction-simulator"
+      id="pilot-frame"
+      name="pilot-frame"
+      title="Transaction Pilot"
       src={location}
       style={{
         display: 'block',

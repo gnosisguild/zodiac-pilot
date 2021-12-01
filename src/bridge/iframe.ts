@@ -16,15 +16,15 @@ export default class BridgeIframe extends EventEmitter {
     // If the host provider emits one of the bridged events, this will be posted as a message to the iframe window.
     // We pick up on these messages here and emit the event to our listeners.
     window.addEventListener('message', (ev) => {
-      const { transactionSimulatorBridgeEventEmit, type, args } = ev.data
-      if (transactionSimulatorBridgeEventEmit) {
+      const { transactionPilotBridgeEventEmit, type, args } = ev.data
+      if (transactionPilotBridgeEventEmit) {
         this.emit(type, ...args)
       }
     })
 
     window.top.postMessage(
       {
-        transactionSimulatorBridgeInit: true,
+        transactionPilotBridgeInit: true,
       },
       '*'
     )
@@ -45,7 +45,7 @@ export default class BridgeIframe extends EventEmitter {
 
       window.top.postMessage(
         {
-          transactionSimulatorBridgeRequest: true,
+          transactionPilotBridgeRequest: true,
           request,
           messageId: currentMessageId,
         },
@@ -53,16 +53,9 @@ export default class BridgeIframe extends EventEmitter {
       )
 
       const handleMessage = (ev: MessageEvent) => {
-        const {
-          transactionSimulatorBridgeResponse,
-          messageId,
-          error,
-          response,
-        } = ev.data
-        if (
-          transactionSimulatorBridgeResponse &&
-          messageId === currentMessageId
-        ) {
+        const { transactionPilotBridgeResponse, messageId, error, response } =
+          ev.data
+        if (transactionPilotBridgeResponse && messageId === currentMessageId) {
           window.removeEventListener('message', handleMessage)
 
           if (error) {
@@ -83,7 +76,7 @@ export default class BridgeIframe extends EventEmitter {
     if (!this.bridgedEvents.has(type)) {
       window.top.postMessage(
         {
-          transactionSimulatorBridgeEventListen: true,
+          transactionPilotBridgeEventListen: true,
           type,
         },
         '*'
