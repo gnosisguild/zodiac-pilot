@@ -4,8 +4,26 @@
   --spacing-3: 16px;
 }
 
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff)
+      format('woff2'),
+    url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2) format('woff');
+}
+
+/* spectral-regular - latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
+    url(./fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
+}
+
 body {
-  font-family: Spectral;
+  font-family: 'Spectral';
   color: white;
   min-height: 100vh;
   font-size: 16px;
@@ -32,6 +50,7 @@ h1 {
 input,
 select {
   background-color: transparent;
+  font-family: 'Roboto Mono', monospace;
   color: white;
   display: block;
   width: 100%;
