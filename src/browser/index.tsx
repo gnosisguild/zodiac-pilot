@@ -2,13 +2,14 @@ import React, { useEffect } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Address, Box, Flex } from '../components'
-import { updateLocation } from '../location'
+import { updateLocation, useLocation } from '../location'
 
 import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
 import classNames from './index.module.css'
 
 const Browser: React.FC = () => {
+  const location = useLocation()
   const { provider } = useWalletConnectProvider()
   const avatarAddress = localStorage.getItem('avatarAddress')
   const targetAddress = localStorage.getItem('targetAddress')
@@ -29,7 +30,7 @@ const Browser: React.FC = () => {
       <div className={classNames.topBar}>
         <Flex gap={3}>
           <AddressBar />
-          <a href="#settings">
+          <a href={`#${encodeURIComponent(`settings;${location}`)}`}>
             <Box roundedLeft>
               <Address address={provider.accounts[0]} />
             </Box>

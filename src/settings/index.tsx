@@ -23,15 +23,15 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   </Box>
 )
 
-const Settings: React.FC = () => {
+const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const [avatarAddress, setAvatarAddress] = useState(
     localStorage.getItem('avatarAddress') || DAO_SAFE
   )
   const [targetAddress, setTargetAddress] = useState(
     localStorage.getItem('targetAddress') || DAO_SAFE
   )
-  const location = useLocation()
-  const [url, setUrl] = useState(location.startsWith('http') ? location : '')
+
+  const [url, setUrl] = useState(initialUrl)
   const { provider, connected } = useWalletConnectProvider()
 
   const { loading, isValidSafe, enabledModules } =
