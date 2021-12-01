@@ -22,7 +22,7 @@ esbuild
     },
     target: ['chrome96'],
     outdir: './public/build',
-    publicPath: './build',
+    publicPath: '/build',
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     define: {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
