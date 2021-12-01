@@ -6,6 +6,7 @@ import { updateLocation, useLocation } from '../location'
 
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
+import walletConnectLogoUrl from '../wallet-connect-logo.png'
 
 //const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
 const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
@@ -14,7 +15,7 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   <Box double bg p={3}>
     {label ? (
       <label>
-        <div>{label}</div>
+        <div className="field-label">{label}</div>
         {children}
       </label>
     ) : (
@@ -92,6 +93,7 @@ const Settings: React.FC = () => {
                       }
                     }}
                   >
+                    <img src={walletConnectLogoUrl} />
                     Connect Pilot Account
                   </Button>
                 )}
