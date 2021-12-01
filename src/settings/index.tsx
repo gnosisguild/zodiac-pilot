@@ -32,7 +32,7 @@ const Settings: React.FC = () => {
   )
   const location = useLocation()
   const [url, setUrl] = useState(location.startsWith('http') ? location : '')
-  const { provider } = useWalletConnectProvider()
+  const { provider, connected } = useWalletConnectProvider()
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
@@ -42,7 +42,7 @@ const Settings: React.FC = () => {
     localStorage.setItem('targetAddress', targetAddress)
     updateLocation(url)
   }
-  console.log({ url, avatarAddress, targetAddress })
+
   return (
     <div className={classes.container}>
       <h1>Transaction Pilot</h1>
@@ -78,8 +78,13 @@ const Settings: React.FC = () => {
               </Field>
 
               <Field>
-                {provider.connected ? (
-                  <span>connected to {provider.accounts[0]}</span>
+                {connected ? (
+                  <>
+                    <span>connected to {provider.accounts[0]}</span>
+                    <Button onClick={() => provider.disconnect()}>
+                      Disconnect
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     onClick={async () => {

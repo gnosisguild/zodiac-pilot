@@ -42,6 +42,6 @@ select {
   height: 38px;
 }
 
-.walletconnect-modal__base {
+.walletconnect-modal__base a {
   color: black;
 }

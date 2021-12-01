@@ -31,10 +31,12 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
         infuraId: 'e301e57e9a51407eb39df231874e0563', // TODO: invalidate this ID soon!
       })
 
-      provider.on('connect', () => {
+      provider.on('chainChanged', () => {
+        console.log('CONNNNNNN')
         setState({ provider, connected: true })
       })
       provider.on('disconnect', () => {
+        console.log('DISCOOO')
         setState({ provider, connected: false })
       })
 
