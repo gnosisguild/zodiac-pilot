@@ -54,6 +54,10 @@ const Settings: React.FC = () => {
 
     return options
   }
+
+  const shortenAddress = (address: string) => {
+    return address.substr(0, 6) + '...' + address.substr(-4)
+  }
   return (
     <div className={classes.container}>
       <h1>Transaction Pilot</h1>
@@ -92,7 +96,20 @@ const Settings: React.FC = () => {
 
               <Field>
                 {provider.connected ? (
-                  <span>connected to {provider.accounts[0]}</span>
+                  <div>
+                    <div>Pilot Account</div>
+                    <div className={classes.connectedAccount}>
+                      <div className={classes.walletLogo}>
+                        <img
+                          src={walletConnectLogoUrl}
+                          alt="wallet connect logo"
+                        />
+                      </div>
+                      <div className={classes.connectedAddress}>
+                        {provider.accounts[0]}
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <Button
                     onClick={async () => {

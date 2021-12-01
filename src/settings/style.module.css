@@ -9,3 +9,43 @@
 h1 {
   margin-bottom: 32px;
 }
+
+.connectedAccount {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.walletLogo {
+  border: 1px solid rgba(0, 166, 56, 0.47);
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 50px;
+  margin-right: 8px;
+}
+
+.walletLogo:before {
+  content: ' ';
+  position: absolute;
+  z-index: 1;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 1px solid rgba(0, 166, 56, 0.47);
+  border-radius: 50px;
+  pointer-events: none;
+}
+
+.walletLogo img {
+  width: 50%;
+}
+
+.connectedAddress {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}

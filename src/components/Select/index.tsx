@@ -5,6 +5,8 @@ const StyledSelect = (props: any) => {
   const customStyles = {
     control: (provided: React.CSSProperties, state: any) => ({
       ...provided,
+      fontFamily: "'Roboto Mono', monospace",
+      fontSize: '14px',
       borderRadius: 0,
       background: 'rgba(217, 212, 173, 0.01)',
       borderColor: state.isFocused ? 'rgba(217, 212, 173, 1)' : 'white',

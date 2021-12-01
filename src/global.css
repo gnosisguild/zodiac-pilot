@@ -57,6 +57,7 @@ p {
 
 input,
 select {
+  font-size: 14px;
   background-color: transparent;
   font-family: 'Roboto Mono', monospace;
   color: white;
