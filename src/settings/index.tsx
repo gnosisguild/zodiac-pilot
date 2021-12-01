@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { Box, Button, Flex } from '../components'
+import { Box, Button, Flex, Select } from '../components'
 import { updateLocation, useLocation } from '../location'
+import walletConnectLogoUrl from '../wallet-connect-logo.png'
 
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
-import walletConnectLogoUrl from '../wallet-connect-logo.png'
 
 //const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
 const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
@@ -44,6 +44,16 @@ const Settings: React.FC = () => {
     updateLocation(url)
   }
   console.log({ url, avatarAddress, targetAddress })
+
+  const makeSelectOptions = () => {
+    const options = [{ value: targetAddress, label: targetAddress }]
+
+    enabledModules.map((address) => {
+      options.push({ value: address, label: address })
+    })
+
+    return options
+  }
   return (
     <div className={classes.container}>
       <h1>Transaction Pilot</h1>
@@ -64,18 +74,14 @@ const Settings: React.FC = () => {
               </Field>
 
               <Field label="Zodiac Modifier or Module Address">
-                <select
-                  onChange={(a) => {
-                    setTargetAddress(a.target.value)
+                <Select
+                  options={makeSelectOptions()}
+                  onChange={(selected: { value: string; label: string }) => {
+                    setTargetAddress(selected.value)
                   }}
-                  value={targetAddress}
+                  value={{ value: targetAddress, label: targetAddress }}
                   disabled={loading || !isValidSafe}
-                >
-                  <option key={avatarAddress}>{avatarAddress}</option>
-                  {enabledModules.map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
+                />
               </Field>
 
               <Field>
@@ -93,7 +99,7 @@ const Settings: React.FC = () => {
                       }
                     }}
                   >
-                    <img src={walletConnectLogoUrl} />
+                    <img src={walletConnectLogoUrl} alt="wallet connect logo" />
                     Connect Pilot Account
                   </Button>
                 )}
