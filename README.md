@@ -62,3 +62,5 @@ The browser back button should function as usual and when reloading the extensio
 Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 
 The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
+This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.runtime.sendMessage`.
+For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.

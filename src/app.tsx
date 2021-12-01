@@ -6,7 +6,7 @@ import WalletConnectProvider, {
 } from './WalletConnectProvider'
 import './global.css'
 import Browser from './browser'
-import { updateLocation, useLocation } from './location'
+import { pushLocation, useLocation } from './location'
 import Settings from './settings'
 
 const Routes: React.FC = () => {
@@ -21,7 +21,7 @@ const Routes: React.FC = () => {
   // redirect to settings page if more settings are required
   useEffect(() => {
     if (!settingsRouteMatch && settingsRequired) {
-      updateLocation(`settings;${location}`)
+      pushLocation(`settings;${location}`)
     }
   }, [location, settingsRouteMatch, settingsRequired])
   if (!settingsRouteMatch && settingsRequired) return null

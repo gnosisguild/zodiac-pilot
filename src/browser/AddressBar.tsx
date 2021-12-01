@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { updateLocation, useLocation } from '../location'
+import { pushLocation, useLocation } from '../location'
 
 const AddressBar: React.FC = () => {
   const location = useLocation()
@@ -11,7 +11,7 @@ const AddressBar: React.FC = () => {
       key={location}
       onKeyPress={(ev) => {
         if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
-          updateLocation(ev.target.value)
+          pushLocation(ev.target.value)
         }
       }}
     />

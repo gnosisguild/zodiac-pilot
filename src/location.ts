@@ -18,13 +18,18 @@ chrome.runtime.onMessage.addListener((message) => {
       if (transactionPilotHrefResponse) {
         console.log('iframe navigated to', href)
         window.removeEventListener('message', handleMessage)
+        replaceLocation(href)
       }
     }
     window.addEventListener('message', handleMessage)
   }
 })
 
-export const updateLocation = (url: string) => {
+export const replaceLocation = (url: string) => {
+  window.history.replaceState({}, '', '#' + encodeURIComponent(url))
+}
+
+export const pushLocation = (url: string) => {
   window.location.hash = encodeURIComponent(url)
 }
 

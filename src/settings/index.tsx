@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Box, Button, Flex } from '../components'
-import { updateLocation } from '../location'
+import { pushLocation } from '../location'
 
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
@@ -40,7 +40,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const submit = () => {
     localStorage.setItem('avatarAddress', avatarAddress)
     localStorage.setItem('targetAddress', targetAddress)
-    updateLocation(url)
+    pushLocation(url)
   }
 
   return (

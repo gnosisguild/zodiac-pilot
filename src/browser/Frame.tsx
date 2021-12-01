@@ -30,6 +30,7 @@ const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
       window.removeEventListener('message', handle)
     }
   }, [avatarAddress, targetAddress, provider])
+  console.log('iframe', location)
 
   return (
     <iframe

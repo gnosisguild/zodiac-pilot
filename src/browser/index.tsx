@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Address, Box, Flex } from '../components'
-import { updateLocation, useLocation } from '../location'
+import { pushLocation, useLocation } from '../location'
 
 import AddressBar from './AddressBar'
 import BrowserFrame from './Frame'
@@ -17,7 +17,7 @@ const Browser: React.FC = () => {
   const redirectToSettings = !avatarAddress || !targetAddress
   useEffect(() => {
     if (redirectToSettings) {
-      updateLocation('settings')
+      pushLocation('settings')
     }
   }, [redirectToSettings])
 
