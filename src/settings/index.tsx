@@ -99,11 +99,11 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                       <div className={classes.connectedAddress}>
                         {provider.accounts[0]}
                       </div>
-
-                      <Button onClick={() => provider.disconnect()}>
-                        Disconnect
-                      </Button>
                     </div>
+
+                    <Button onClick={() => provider.disconnect()}>
+                      Disconnect
+                    </Button>
                   </div>
                 ) : (
                   <Button

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { Address, Box, Flex } from '../components'
+import { Address, BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
 
 import AddressBar from './AddressBar'
@@ -35,11 +35,11 @@ const Browser: React.FC = () => {
       <div className={classNames.topBar}>
         <Flex gap={3}>
           <AddressBar onSubmit={setInitialLocation} />
-          <a href={`#${encodeURIComponent(`settings;${location}`)}`}>
+          <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
             <Box roundedLeft>
               <Address address={provider.accounts[0]} />
             </Box>
-          </a>
+          </BlockLink>
         </Flex>
       </div>
       <div className={classNames.main}>

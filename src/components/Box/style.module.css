@@ -1,22 +1,15 @@
 .box {
-  border: 1px solid #d9d4ad4d;
+  border: 1px solid rgba(217, 212, 173, 0.3);
   position: relative;
 }
 .bg {
   background-color: rgba(217, 212, 173, 0.1);
   background-clip: padding-box;
 }
-.double:before {
-  content: ' ';
-  position: absolute;
-  z-index: 1;
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
-  border: 1px solid rgba(217, 212, 173, 0.3);
-  pointer-events: none;
+.double {
+  border: 4px double rgba(217, 212, 173, 0.3);
 }
+
 .rounded {
   border-radius: 50%;
 }

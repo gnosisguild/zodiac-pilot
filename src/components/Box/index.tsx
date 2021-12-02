@@ -1,4 +1,4 @@
-import cls from 'classnames'
+import cn from 'classnames'
 import React from 'react'
 
 import classNames from './style.module.css'
@@ -22,7 +22,7 @@ const Box: React.FC<Props> = ({
   p = 1,
 }) => (
   <div
-    className={cls(className, classNames.box, classNames[`p${p}`], {
+    className={cn(className, classNames.box, classNames[`p${p}`], {
       [classNames.double]: double,
       [classNames.rounded]: rounded,
       [classNames.bg]: bg,
