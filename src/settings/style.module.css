@@ -11,9 +11,13 @@ h1 {
 }
 
 .connectedAccount {
+  position: relative;
   margin-top: 4px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid rgba(217, 212, 173, 0.8);
 }
 
 .walletLogo {
@@ -47,5 +51,12 @@ h1 {
 
 .connectedAddress {
   font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}
+
+.disconnectButton {
+  background: none;
+  width: fit-content;
+  padding: 4px 8px;
   font-size: 14px;
 }
