@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Address, Box, Flex } from '../components'
@@ -10,6 +10,11 @@ import classNames from './index.module.css'
 
 const Browser: React.FC = () => {
   const location = useLocation()
+
+  // When the user browses in the iframe the location will update constantly.
+  // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
+  const [initialLocation, setInitialLocation] = useState(location)
+
   const { provider } = useWalletConnectProvider()
   const avatarAddress = localStorage.getItem('avatarAddress')
   const targetAddress = localStorage.getItem('targetAddress')
@@ -29,7 +34,7 @@ const Browser: React.FC = () => {
     <div className={classNames.browser}>
       <div className={classNames.topBar}>
         <Flex gap={3}>
-          <AddressBar />
+          <AddressBar onSubmit={setInitialLocation} />
           <a href={`#${encodeURIComponent(`settings;${location}`)}`}>
             <Box roundedLeft>
               <Address address={provider.accounts[0]} />
@@ -40,6 +45,7 @@ const Browser: React.FC = () => {
       <div className={classNames.main}>
         <Box className={classNames.frame} double>
           <BrowserFrame
+            src={initialLocation}
             avatarAddress={avatarAddress}
             targetAddress={targetAddress}
           />

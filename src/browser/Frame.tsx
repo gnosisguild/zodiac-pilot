@@ -3,15 +3,18 @@ import React, { useEffect } from 'react'
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Eip1193Provider } from '../bridge/Eip1193Provider'
 import BridgeHost from '../bridge/host'
-import { useLocation } from '../location'
 
 type Props = {
+  src: string
   avatarAddress: string
   targetAddress: string
 }
 
-const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
-  const location = useLocation()
+const BrowserFrame: React.FC<Props> = ({
+  src,
+  avatarAddress,
+  targetAddress,
+}) => {
   const { provider } = useWalletConnectProvider()
 
   useEffect(() => {
@@ -30,14 +33,13 @@ const BrowserFrame: React.FC<Props> = ({ avatarAddress, targetAddress }) => {
       window.removeEventListener('message', handle)
     }
   }, [avatarAddress, targetAddress, provider])
-  console.log('iframe', location)
 
   return (
     <iframe
       id="pilot-frame"
       name="pilot-frame"
       title="Transaction Pilot"
-      src={location}
+      src={src}
       style={{
         display: 'block',
         width: '100%',
