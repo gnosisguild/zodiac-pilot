@@ -1,5 +1,5 @@
 .box {
-  border: 1px solid #d9d4ad4d;
+  border: 1px solid rgba(217, 212, 173, 0.3);
   position: relative;
 }
 .bg {
@@ -7,8 +7,9 @@
   background-clip: padding-box;
 }
 .double {
-  border: 4px double #d9d4ad4d;
+  border: 4px double rgba(217, 212, 173, 0.3);
 }
+
 .rounded {
   border-radius: 50%;
 }

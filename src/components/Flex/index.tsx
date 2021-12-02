@@ -1,4 +1,4 @@
-import cls from 'classnames'
+import cn from 'classnames'
 import React from 'react'
 
 import classes from './style.module.css'
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Flex: React.FC<Props> = ({ gap, direction = 'row', children }) => (
-  <div className={cls(classes.flex, classes[`gap${gap}`], classes[direction])}>
+  <div className={cn(classes.flex, classes[`gap${gap}`], classes[direction])}>
     {children}
   </div>
 )

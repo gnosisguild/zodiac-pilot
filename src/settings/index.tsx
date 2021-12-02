@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { Box, Button, Flex } from '../components'
+import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
+import walletConnectLogoUrl from '../wallet-connect-logo.png'
 
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
@@ -14,7 +15,7 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   <Box double bg p={3}>
     {label ? (
       <label>
-        <div>{label}</div>
+        <div className="field-label">{label}</div>
         {children}
       </label>
     ) : (
@@ -43,12 +44,23 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
     pushLocation(url)
   }
 
+  const targetOptions = [
+    { value: targetAddress, label: targetAddress },
+    ...enabledModules.map((address) => ({ value: address, label: address })),
+  ]
+
   return (
     <div className={classes.container}>
       <h1>Transaction Pilot</h1>
 
       <Box double p={3}>
         <Flex direction="column" gap={3}>
+          <Box p={3}>
+            <p className="intro-text">
+              This app allows you to control a Safe via a Zodiac modifier from
+              an enabled account. <a href="#docs">Read more here.</a>
+            </p>
+          </Box>
           <Box p={3}>
             <Flex direction="column" gap={3}>
               <Field label="DAO Safe">
@@ -63,28 +75,36 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
               </Field>
 
               <Field label="Zodiac Modifier or Module Address">
-                <select
-                  onChange={(a) => {
-                    setTargetAddress(a.target.value)
+                <Select
+                  options={targetOptions}
+                  onChange={(selected: { value: string; label: string }) => {
+                    setTargetAddress(selected.value)
                   }}
-                  value={targetAddress}
+                  value={{ value: targetAddress, label: targetAddress }}
                   disabled={loading || !isValidSafe}
-                >
-                  <option key={avatarAddress}>{avatarAddress}</option>
-                  {enabledModules.map((value) => (
-                    <option key={value}>{value}</option>
-                  ))}
-                </select>
+                />
               </Field>
 
               <Field>
                 {connected ? (
-                  <>
-                    <span>connected to {provider.accounts[0]}</span>
+                  <div>
+                    <div>Pilot Account</div>
+                    <div className={classes.connectedAccount}>
+                      <div className={classes.walletLogo}>
+                        <img
+                          src={walletConnectLogoUrl}
+                          alt="wallet connect logo"
+                        />
+                      </div>
+                      <div className={classes.connectedAddress}>
+                        {provider.accounts[0]}
+                      </div>
+                    </div>
+
                     <Button onClick={() => provider.disconnect()}>
                       Disconnect
                     </Button>
-                  </>
+                  </div>
                 ) : (
                   <Button
                     onClick={async () => {
@@ -99,6 +119,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                       }
                     }}
                   >
+                    <img src={walletConnectLogoUrl} alt="wallet connect logo" />
                     Connect Pilot Account
                   </Button>
                 )}

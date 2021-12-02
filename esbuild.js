@@ -14,9 +14,15 @@ esbuild
     bundle: true,
     minify: process.env.NODE_ENV !== 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : false,
-    loader: { '.svg': 'file' },
+    loader: {
+      '.svg': 'file',
+      '.woff': 'file',
+      '.woff2': 'file',
+      '.png': 'file',
+    },
     target: ['chrome96'],
     outdir: './public/build',
+    publicPath: '/build',
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     define: {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,

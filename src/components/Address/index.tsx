@@ -1,4 +1,4 @@
-import cls from 'classnames'
+import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import React from 'react'
 import Blockies from 'react-blockies'
@@ -44,7 +44,7 @@ const Address: React.FC<Props> = ({
   const displayAddress = `${start}...${end}`
 
   return (
-    <div className={cls(className, classes.container)} title={address}>
+    <div className={cn(className, classes.container)} title={address}>
       <Box rounded>
         <div className={classes.blockies}>
           <Blockies seed={address} size={8} scale={3} />
