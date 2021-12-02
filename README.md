@@ -40,10 +40,10 @@ The different scripts communicate exclusively via message passing. Extension pag
 
 ### Open Dapps in iframe
 
-For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options` and `Content-Security-Policy` HTTP response headers for any requests originating from the extension domain. See: [public/removeHeaders.json](public/removeHeaders.json).
+For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options` and `Content-Security-Policy` HTTP response headers for any requests originating from tabs showing our extension.
 
-The `domains` list in the filter only includes this extension's ID.
-This is crucial as must lift the cross origin restrictions only for the extension but not generally.
+As we don't want to generally lift cross origin restrictions, we dynamically adjust the condition under which the [declarativeNetRequest](https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/) rule applies.
+In our background script, we track tabs running our extension and will apply the header removal only for requests originating from any of these tabs.
 
 ### Inject EIP-1193 provider
 

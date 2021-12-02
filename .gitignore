@@ -1,6 +1,5 @@
 node_modules
 public/build
-public/_metadata
 
 *.log
 .DS_Store

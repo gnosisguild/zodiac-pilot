@@ -103,4 +103,5 @@ label .field-label {
 
 .walletconnect-modal__base a {
   color: black;
+  text-decoration: none;
 }
