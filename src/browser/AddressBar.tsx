@@ -1,8 +1,11 @@
 import React from 'react'
 
-import { updateLocation, useLocation } from '../location'
+import { pushLocation, useLocation } from '../location'
+interface Props {
+  onSubmit(location: string): void
+}
 
-const AddressBar: React.FC = () => {
+const AddressBar: React.FC<Props> = ({ onSubmit }) => {
   const location = useLocation()
   return (
     <input
@@ -11,7 +14,8 @@ const AddressBar: React.FC = () => {
       key={location}
       onKeyPress={(ev) => {
         if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
-          updateLocation(ev.target.value)
+          pushLocation(ev.target.value)
+          onSubmit(ev.target.value)
         }
       }}
     />

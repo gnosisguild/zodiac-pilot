@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { Box, Button, Flex, Select } from '../components'
-import { updateLocation, useLocation } from '../location'
+import { pushLocation } from '../location'
 import walletConnectLogoUrl from '../wallet-connect-logo.png'
 
 import classes from './style.module.css'
@@ -24,16 +24,16 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   </Box>
 )
 
-const Settings: React.FC = () => {
+const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const [avatarAddress, setAvatarAddress] = useState(
     localStorage.getItem('avatarAddress') || DAO_SAFE
   )
   const [targetAddress, setTargetAddress] = useState(
     localStorage.getItem('targetAddress') || DAO_SAFE
   )
-  const location = useLocation()
-  const [url, setUrl] = useState(location.startsWith('http') ? location : '')
-  const { provider } = useWalletConnectProvider()
+
+  const [url, setUrl] = useState(initialUrl)
+  const { provider, connected } = useWalletConnectProvider()
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
@@ -41,23 +41,14 @@ const Settings: React.FC = () => {
   const submit = () => {
     localStorage.setItem('avatarAddress', avatarAddress)
     localStorage.setItem('targetAddress', targetAddress)
-    updateLocation(url)
-  }
-  console.log({ url, avatarAddress, targetAddress })
-
-  const makeSelectOptions = () => {
-    const options = [{ value: targetAddress, label: targetAddress }]
-
-    enabledModules.map((address) => {
-      options.push({ value: address, label: address })
-    })
-
-    return options
+    pushLocation(url)
   }
 
-  const shortenAddress = (address: string) => {
-    return address.substr(0, 6) + '...' + address.substr(-4)
-  }
+  const targetOptions = [
+    { value: targetAddress, label: targetAddress },
+    ...enabledModules.map((address) => ({ value: address, label: address })),
+  ]
+
   return (
     <div className={classes.container}>
       <h1>Transaction Pilot</h1>
@@ -85,7 +76,7 @@ const Settings: React.FC = () => {
 
               <Field label="Zodiac Modifier or Module Address">
                 <Select
-                  options={makeSelectOptions()}
+                  options={targetOptions}
                   onChange={(selected: { value: string; label: string }) => {
                     setTargetAddress(selected.value)
                   }}
@@ -95,7 +86,7 @@ const Settings: React.FC = () => {
               </Field>
 
               <Field>
-                {provider.connected ? (
+                {connected ? (
                   <div>
                     <div>Pilot Account</div>
                     <div className={classes.connectedAccount}>
@@ -108,17 +99,23 @@ const Settings: React.FC = () => {
                       <div className={classes.connectedAddress}>
                         {provider.accounts[0]}
                       </div>
+
+                      <Button onClick={() => provider.disconnect()}>
+                        Disconnect
+                      </Button>
                     </div>
                   </div>
                 ) : (
                   <Button
                     onClick={async () => {
-                      // TODO for some reason the modal doesn't open again after dismissing it once
                       try {
                         await provider.disconnect()
                         await provider.enable()
                       } catch (e) {
-                        console.log('caught', e)
+                        // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
+                        // This fixes it:
+                        // @ts-expect-error signer is a private property, but we didn't find another way
+                        provider.signer.disconnect()
                       }
                     }}
                   >

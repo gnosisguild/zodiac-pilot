@@ -1,4 +1,4 @@
-if (window.name === 'transaction-simulator') {
+if (window.name === 'pilot-frame') {
   const node = document.createElement('script')
   node.src = chrome.runtime.getURL('build/inject.js')
 

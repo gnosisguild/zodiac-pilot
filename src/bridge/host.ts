@@ -49,7 +49,7 @@ export default class BridgeHost {
     if (!this.source) throw new Error('source must be set')
     this.source.postMessage(
       {
-        transactionSimulatorBridgeResponse: true,
+        transactionPilotBridgeResponse: true,
         messageId,
         response,
       },
@@ -68,7 +68,7 @@ export default class BridgeHost {
         console.log(`bridged ${type} event emitted`)
         this.source.postMessage(
           {
-            transactionSimulatorBridgeEventEmit: true,
+            transactionPilotBridgeEventEmit: true,
             type,
             args,
           },
@@ -81,27 +81,27 @@ export default class BridgeHost {
 
   handleMessage(ev: MessageEvent<any>) {
     const {
-      transactionSimulatorBridgeInit,
+      transactionPilotBridgeInit,
 
-      transactionSimulatorBridgeRequest,
+      transactionPilotBridgeRequest,
       messageId,
       request,
 
-      transactionSimulatorBridgeEventListen,
+      transactionPilotBridgeEventListen,
       type,
     } = ev.data
 
-    if (transactionSimulatorBridgeInit) {
+    if (transactionPilotBridgeInit) {
       this.initBridge(ev)
       return
     }
 
-    if (transactionSimulatorBridgeRequest) {
+    if (transactionPilotBridgeRequest) {
       this.assertConsistentSource(ev)
       this.handleRequest(request, messageId)
     }
 
-    if (transactionSimulatorBridgeEventListen) {
+    if (transactionPilotBridgeEventListen) {
       this.assertConsistentSource(ev)
       this.handleEventListen(type)
     }

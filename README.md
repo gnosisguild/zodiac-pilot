@@ -1,4 +1,4 @@
-# Transaction Simulator
+# Transaction Pilot
 
 Chrome extension to simulate dApp interactions and record transactions.
 
@@ -30,6 +30,14 @@ TODO: figure out how to package for the Chrome extension store
 
 ## How it works
 
+The extension consists of three different interacting pieces:
+
+- **extension page:** This is the main app rendering the iframe. Entrypoint: [./public/index.html] together with [./src/app.tsx]
+- **background script:** A [service worker script](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#service-workers) that allows to hook into different Chrome events and APIs: [./src/background.ts]
+- **injected script:** Whenever we load any page in the iframe, we inject [./src/inject.ts] into the page so that this script runs in the context of that page. The injection happens via the [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) at [./src/contentScript.ts].
+
+The different scripts communicate exclusively via message passing. Extension page and background script use `chrome.runtime.sendMessage` while extension page and injected script talk via `window.postMessage`.
+
 ### Open dApps in iframe
 
 For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options` and `Content-Security-Policy` HTTP response headers for any requests originating from the extension domain. See: [public/removeHeaders.json].
@@ -40,7 +48,6 @@ This is crucial as must lift the cross origin restrictions only for the extensio
 ### Inject EIP-1193 provider
 
 When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the dApp.
-This happens via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
 
 The injected script then runs in the context of the dApp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
 The injected provider forwards all `request` calls to the parent extension page via `window.postMessage`.
@@ -48,11 +55,12 @@ The injected provider forwards all `request` calls to the parent extension page 
 In a similar fashion, events are bridged over the window message interface.
 Whenever the a new event listener is attached to the provider in the iframe, the bridge will subscribe to the respective event in the host provider.
 
-### Automatically connect to injected provider for dApps using Web3Modal
+### Syncing iframe location
 
-TODO
+The problem: When the user navigates the dApp, the address bar of the Transaction Pilot should update accordingly.
+The browser back button should function as usual and when reloading the extension page the iframe should continue showing the original page.
+Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 
-If the dApp does not use Web3Modal, the user will have to manually connect to MetaMask using the dApp's user interface.
-Since the provider injected by the simulator disguises as MetaMask this will establish the connection.
-
-###
+The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
+This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.runtime.sendMessage`.
+For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.
