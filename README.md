@@ -16,7 +16,7 @@ The build output is written to public/build.
 
 To enable the extension in Chrome, follow these steps:
 
-1. Open the Extension Management page by navigating to [chrome://extensions].
+1. Open the Extension Management page by navigating to [chrome://extensions](chrome://extensions).
 2. Enable **Developer Mode** by clicking the toggle switch at the top right of the page.
 3. Click the **Load unpacked** button and select the `transaction-pilot/public` directory.
 
@@ -32,9 +32,9 @@ TODO: figure out how to package for the Chrome extension store
 
 The extension consists of three different interacting pieces:
 
-- **extension page:** This is the main app rendering the iframe. Entrypoint: [public/index.html] together with [src/app.tsx]
+- **extension page:** This is the main app rendering the iframe. Entrypoint: [public/index.html](public/index.html) together with [src/app.tsx](src/app.tsx)
 - **background script:** A [service worker script](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#service-workers) that allows to hook into different Chrome events and APIs: [src/background.ts]
-- **injected script:** Whenever we load any page in the iframe, we inject [src/inject.ts] into the page so that this script runs in the context of that page. The injection happens via the [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) at [src/contentScript.ts].
+- **injected script:** Whenever we load any page in the iframe, we inject [src/inject.ts](src/inject.ts) into the page so that this script runs in the context of that page. The injection happens via the [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) at [src/contentScript.ts](src/contentScript.ts).
 
 The different scripts communicate exclusively via message passing. Extension page and background script use `chrome.runtime.sendMessage` while extension page and injected script talk via `window.postMessage`.
 
