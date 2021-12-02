@@ -27,7 +27,7 @@ body {
   color: white;
   min-height: 100vh;
   font-size: 16px;
-  background: url(./zodiac-bg.svg) 0% 0% / cover fixed;
+  background: url(./images/zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
   overflow: hidden;
 }
