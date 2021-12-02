@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Chrome extension to simulate dApp interactions and record transactions",
   "main": "index.js",
-  "repository": "https://github.com/gnosis/transaction-simulator.git",
+  "repository": "https://github.com/gnosis/transaction-pilot.git",
   "author": "Jan-Felix <jan-felix.schwarz@gnosis.io>",
   "license": "MIT",
   "private": true,
