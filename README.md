@@ -1,6 +1,6 @@
 # Transaction Pilot
 
-Chrome extension to simulate dApp interactions and record transactions.
+Chrome extension to simulate Dapp interactions and record transactions.
 
 ## Contribute
 
@@ -38,18 +38,18 @@ The extension consists of three different interacting pieces:
 
 The different scripts communicate exclusively via message passing. Extension page and background script use `chrome.runtime.sendMessage` while extension page and injected script talk via `window.postMessage`.
 
-### Open dApps in iframe
+### Open Dapps in iframe
 
-For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options` and `Content-Security-Policy` HTTP response headers for any requests originating from the extension domain. See: [public/removeHeaders.json].
+For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options` and `Content-Security-Policy` HTTP response headers for any requests originating from the extension domain. See: [public/removeHeaders.json](public/removeHeaders.json).
 
 The `domains` list in the filter only includes this extension's ID.
 This is crucial as must lift the cross origin restrictions only for the extension but not generally.
 
 ### Inject EIP-1193 provider
 
-When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the dApp.
+When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the Dapp.
 
-The injected script then runs in the context of the dApp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
+The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
 The injected provider forwards all `request` calls to the parent extension page via `window.postMessage`.
 
 In a similar fashion, events are bridged over the window message interface.
@@ -57,7 +57,7 @@ Whenever the a new event listener is attached to the provider in the iframe, the
 
 ### Syncing iframe location
 
-The problem: When the user navigates the dApp, the address bar of the Transaction Pilot should update accordingly.
+The problem: When the user navigates the Dapp, the address bar of the Transaction Pilot should update accordingly.
 The browser back button should function as usual and when reloading the extension page the iframe should continue showing the original page.
 Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 
