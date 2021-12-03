@@ -19,7 +19,7 @@ const AddressStack: React.FC<Props> = ({
   return (
     <div className={classNames.addressStack}>
       <Box roundedLeft double p={2} className={classNames.address}>
-        <Address address={connectedAddress} />
+        <Address address={avatarAddress} />
       </Box>
       <Box roundedLeft double p={2} className={classNames.address}>
         <Address address={targetAddress} />
@@ -30,7 +30,7 @@ const AddressStack: React.FC<Props> = ({
         p={2}
         className={cn(classNames.address, classNames.lastAddress)}
       >
-        <Address address={avatarAddress} />
+        <Address address={connectedAddress} />
       </Box>
     </div>
   )
