@@ -80,7 +80,7 @@ export default class BridgeIframe extends EventEmitter {
       const result = await this.request({ method, params })
       return { method, result }
     } catch (e) {
-      return { method, error: new Error(e as string) }
+      return { method, error: e as Error }
     }
   }
 
@@ -93,7 +93,7 @@ export default class BridgeIframe extends EventEmitter {
       const result = await this.request(request)
       callback(undefined, { method: request.method, result })
     } catch (e) {
-      const error = new Error(e as string)
+      const error = e as Error
       callback(error, { method: request.method, error })
     }
   }

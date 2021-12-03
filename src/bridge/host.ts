@@ -44,15 +44,22 @@ export default class BridgeHost {
 
   private async handleRequest(request: Request, messageId: number) {
     console.log('REQ', messageId, request)
-    const response = await this.provider.request(request)
-
     if (!this.source) throw new Error('source must be set')
+
+    let response
+    let error
+    try {
+      response = await this.provider.request(request)
+    } catch (e) {
+      error = e
+    }
 
     this.source.postMessage(
       {
         transactionPilotBridgeResponse: true,
         messageId,
         response,
+        error,
       },
       '*'
     )
