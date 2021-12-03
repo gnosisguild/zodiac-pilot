@@ -16,10 +16,13 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
       type="text"
       defaultValue={location}
       key={location}
+      placeholder="Type a url"
       onKeyPress={(ev) => {
         if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
-          pushLocation(ev.target.value)
-          onSubmit(ev.target.value)
+          if (!ev.target.value.trim()) return
+          const url = prependHttp(ev.target.value)
+          pushLocation(url)
+          onSubmit(url)
         }
       }}
     />
@@ -27,3 +30,15 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
 }
 
 export default UrlInput
+
+// From: https://github.com/sindresorhus/prepend-http, Copyright (c) Sindre Sorhus
+// MIT licensed (https://github.com/sindresorhus/prepend-http/blob/main/license)
+export const prependHttp = (url: string) => {
+  const trimmed = url.trim()
+
+  if (/^\.*\/|^(?!localhost)\w+?:/.test(trimmed)) {
+    return trimmed
+  }
+
+  return trimmed.replace(/^(?!(?:\w+?:)?\/\/)/, 'http://')
+}

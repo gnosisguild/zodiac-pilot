@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
+import { prependHttp } from '../browser/UrlInput'
 import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
 import walletConnectLogoUrl from '../wallet-connect-logo.png'
@@ -41,7 +42,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const submit = () => {
     localStorage.setItem('avatarAddress', avatarAddress)
     localStorage.setItem('targetAddress', targetAddress)
-    pushLocation(url)
+    pushLocation(prependHttp(url))
   }
 
   const targetOptions = [
@@ -144,6 +145,13 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   placeholder="https://any.app"
                   onChange={(ev) => {
                     setUrl(ev.target.value)
+                  }}
+                  onKeyPress={(ev) => {
+                    if (ev.key === 'Enter') {
+                      if (url && avatarAddress && targetAddress) {
+                        submit()
+                      }
+                    }
                   }}
                 />
               </Field>
