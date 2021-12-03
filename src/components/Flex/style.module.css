@@ -7,6 +7,21 @@
 .column {
   flex-direction: column;
 }
+.start {
+  justify-content: start;
+}
+.end {
+  justify-content: end;
+}
+.center {
+  justify-content: center;
+}
+.spaceAround {
+  justify-content: space-around;
+}
+.spaceBetween {
+  justify-content: space-between;
+}
 
 .gap0 {
   gap: 0;

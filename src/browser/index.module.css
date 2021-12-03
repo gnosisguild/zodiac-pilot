@@ -18,4 +18,42 @@
 
 .frame {
   height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.addressInput {
+  background-color: rgba(217, 212, 173, 0.1);
+  min-width: 300px;
+}
+
+.appName {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-3) !important;
+}
+
+.addressContainer {
+  background: black;
+  box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.addressContainer:nth-child(2) {
+  transform: translateX(-30px);
+}
+.addressContainer:nth-child(3) {
+  transform: translateX(-60px);
+}
+.addressStack {
+  display: flex;
+  transform: translateX(60px);
+}
+.addressStack:hover .addressContainer,
+.addressStack:hover .addressContainer:before {
+  border-color: rgba(217, 212, 173, 0.5);
+}
+.lastAddress > div {
+  padding-right: var(--spacing-3);
 }
