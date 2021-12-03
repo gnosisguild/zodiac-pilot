@@ -25,6 +25,9 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
           onSubmit(url)
         }
       }}
+      onFocus={(ev) => {
+        ev.target.select()
+      }}
     />
   )
 }
