@@ -9,8 +9,19 @@ import BrowserFrame from './Frame'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 
+// This disables elastic scroll behavior on Macs
+const useNoPageScroll = () => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = 'auto'
+    }
+  }, [])
+}
+
 const Browser: React.FC = () => {
   const location = useLocation()
+  useNoPageScroll()
 
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
