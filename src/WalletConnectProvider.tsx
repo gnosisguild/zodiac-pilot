@@ -27,8 +27,9 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     async function init() {
       const provider = new WalletConnectEthereumProvider({
-        infuraId: 'e301e57e9a51407eb39df231874e0563', // TODO: invalidate this ID soon!
+        infuraId: 'b81b456501e34bed8a85a3c2ff8f4577',
       })
+
       // @ts-expect-error signer is a private property, but we didn't find another way
       provider.signer.on('connect', () => {
         console.log('WalletConnect connected')
