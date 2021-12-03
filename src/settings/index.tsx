@@ -55,7 +55,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
 
   return (
     <div className={classes.container}>
-      <h1>Transaction Pilot</h1>
+      <h1>Zodiac Pilot</h1>
 
       <Box double p={3}>
         <Flex direction="column" gap={3}>
