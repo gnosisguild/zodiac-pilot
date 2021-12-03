@@ -14,6 +14,7 @@ import lidoLogo from '../../images/lido.png'
 import paraswapLogo from '../../images/paraswap.png'
 import reflexerLogo from '../../images/reflexer.png'
 import saddleLogo from '../../images/saddle.png'
+import searchIcon from '../../images/search-icon.svg'
 import uniswapLogo from '../../images/uniswap.png'
 import unitLogo from '../../images/unit.png'
 import yearnLogo from '../../images/yearn.png'
@@ -70,6 +71,9 @@ const AppPicker: React.FC<Props> = ({ onPick }) => {
   return (
     <Box>
       <Box bg double>
+        <i className={classes.inputIcon}>
+          <img src={searchIcon} alt="search-icon" />
+        </i>
         <input
           type="text"
           value={appFilter}
@@ -77,11 +81,12 @@ const AppPicker: React.FC<Props> = ({ onPick }) => {
           onChange={(ev) => {
             setAppFilter(ev.target.value)
           }}
+          className={classes.pickerInput}
         />
       </Box>
       <ul className={classes.appListContainer}>
         {apps
-          .filter((app) => app.name.includes(appFilter))
+          .filter((app) => app.name.toLowerCase().includes(appFilter))
           .map((app) => (
             <li key={app.name}>
               <button
