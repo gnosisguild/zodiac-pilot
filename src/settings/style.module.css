@@ -60,3 +60,13 @@ h1 {
   padding: 4px 8px;
   font-size: 14px;
 }
+
+.fieldLabel {
+  margin-bottom: 0.3em;
+}
+
+.error {
+  color: crimson;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}

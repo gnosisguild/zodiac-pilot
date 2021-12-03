@@ -29,7 +29,6 @@ body {
   font-size: 16px;
   background: url(./zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
-  overflow: hidden;
 }
 
 #root {
@@ -95,10 +94,6 @@ select:focus {
 
 option {
   padding: 0;
-}
-
-label .field-label {
-  margin-bottom: 0.3em;
 }
 
 .walletconnect-modal__base a {

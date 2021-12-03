@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
+import { wrapRequest } from '../bridge/encoding'
 import { prependHttp } from '../browser/UrlInput'
 import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
@@ -9,14 +10,11 @@ import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
-//const DAO_SAFE = '0x5f4E63608483421764fceEF23F593A5d0D6C9F4D'
-const DAO_SAFE = '0x87eb5f76c3785936406fa93654f39b2087fd8068'
-
 const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   <Box double bg p={3}>
     {label ? (
       <label>
-        <div className="field-label">{label}</div>
+        <div className={classes.fieldLabel}>{label}</div>
         {children}
       </label>
     ) : (
@@ -25,12 +23,49 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   </Box>
 )
 
+const useSanityCheck = ({
+  avatarAddress,
+  targetAddress,
+}: {
+  avatarAddress: string
+  targetAddress: string
+}) => {
+  const [error, setError] = useState(null)
+  const { provider, connected } = useWalletConnectProvider()
+
+  useEffect(() => {
+    const testCall = () => {
+      const transactionRequest = wrapRequest(
+        {
+          to: '0x0000000000000000000000000000000000000000',
+          data: '0x00',
+          from: avatarAddress,
+        },
+        provider.accounts[0],
+        targetAddress
+      )
+
+      return provider.request({
+        method: 'eth_call',
+        params: [transactionRequest, 'latest'],
+      })
+    }
+
+    if (connected && avatarAddress && targetAddress) {
+      setError(null)
+      testCall().catch((e) => setError(e))
+    }
+  }, [avatarAddress, targetAddress, provider, connected])
+
+  return error
+}
+
 const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const [avatarAddress, setAvatarAddress] = useState(
-    localStorage.getItem('avatarAddress') || DAO_SAFE
+    localStorage.getItem('avatarAddress') || ''
   )
   const [targetAddress, setTargetAddress] = useState(
-    localStorage.getItem('targetAddress') || DAO_SAFE
+    localStorage.getItem('targetAddress') || ''
   )
 
   const [url, setUrl] = useState(initialUrl)
@@ -46,13 +81,15 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   }
 
   const targetOptions = [
-    { value: targetAddress, label: targetAddress },
+    { value: avatarAddress, label: avatarAddress },
     ...enabledModules.map((address) => ({ value: address, label: address })),
   ]
 
   const shortAddress = (address: string) => {
     return address.substr(0, 7) + '...' + address.substr(-5)
   }
+
+  const error = useSanityCheck({ avatarAddress, targetAddress })
 
   return (
     <div className={classes.container}>
@@ -131,6 +168,17 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   </Button>
                 )}
               </Field>
+
+              {error && (
+                <>
+                  <div>
+                    There seems to be a problem with the entered addresses:
+                  </div>
+                  <Box p={3} className={classes.error}>
+                    {error}
+                  </Box>
+                </>
+              )}
             </Flex>
           </Box>
 
