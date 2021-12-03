@@ -8,11 +8,11 @@ interface Props {
   onSubmit(location: string): void
 }
 
-const AddressBar: React.FC<Props> = ({ onSubmit }) => {
+const UrlInput: React.FC<Props> = ({ onSubmit }) => {
   const location = useLocation()
   return (
     <input
-      className={classes.addressInput}
+      className={classes.urlInput}
       type="text"
       defaultValue={location}
       key={location}
@@ -26,4 +26,4 @@ const AddressBar: React.FC<Props> = ({ onSubmit }) => {
   )
 }
 
-export default AddressBar
+export default UrlInput

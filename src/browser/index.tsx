@@ -1,12 +1,12 @@
-import cn from 'classnames'
 import React, { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { Address, BlockLink, Box, Flex } from '../components'
+import { BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
 
-import AddressBar from './AddressBar'
+import AddressStack from './AddressStack'
 import BrowserFrame from './Frame'
+import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 
 const Browser: React.FC = () => {
@@ -40,41 +40,17 @@ const Browser: React.FC = () => {
               <Box className={classNames.appName} double>
                 Zodiac Pilot
               </Box>
-              <Box className={classNames.addressBar} double>
-                <AddressBar onSubmit={setInitialLocation} />
+              <Box double>
+                <UrlInput onSubmit={setInitialLocation} />
               </Box>
             </Flex>
           </Box>
           <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
-            <div className={classNames.addressStack}>
-              <Box
-                roundedLeft
-                double
-                p={2}
-                className={classNames.addressContainer}
-              >
-                <Address address={targetAddress} />
-              </Box>
-              <Box
-                roundedLeft
-                double
-                p={2}
-                className={classNames.addressContainer}
-              >
-                <Address address={avatarAddress} />
-              </Box>
-              <Box
-                roundedLeft
-                double
-                p={2}
-                className={cn(
-                  classNames.addressContainer,
-                  classNames.lastAddress
-                )}
-              >
-                <Address address={provider.accounts[0]} />
-              </Box>
-            </div>
+            <AddressStack
+              connectedAddress={provider.accounts[0]}
+              targetAddress={targetAddress}
+              avatarAddress={avatarAddress}
+            />
           </BlockLink>
         </Flex>
       </div>
