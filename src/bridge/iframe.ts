@@ -1,7 +1,5 @@
 import { EventEmitter } from 'events'
 
-type Listener = (...args: any[]) => void
-
 interface JsonRpcRequest {
   method: string
   params?: Array<any>
@@ -16,22 +14,9 @@ interface JsonRpcResponse {
 export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
-  private bridgedEvents: Set<string | symbol>
-
   constructor() {
     super()
-
     if (!window.top) throw new Error('Must run inside iframe')
-    this.bridgedEvents = new Set()
-
-    // If the host provider emits one of the bridged events, this will be posted as a message to the iframe window.
-    // We pick up on these messages here and emit the event to our listeners.
-    window.addEventListener('message', (ev) => {
-      const { transactionPilotBridgeEventEmit, type, args } = ev.data
-      if (transactionPilotBridgeEventEmit) {
-        this.emit(type, ...args)
-      }
-    })
 
     window.top.postMessage(
       {
@@ -96,22 +81,5 @@ export default class BridgeIframe extends EventEmitter {
       const error = e as Error
       callback(error, { method: request.method, error })
     }
-  }
-
-  // Wrap base implementation to subscribe to this event also from the host provider.
-  on(type: string | symbol, listener: Listener): this {
-    if (!window.top) throw new Error('Must run inside iframe')
-    if (!this.bridgedEvents.has(type)) {
-      window.top.postMessage(
-        {
-          transactionPilotBridgeEventListen: true,
-          type,
-        },
-        '*'
-      )
-      this.bridgedEvents.add(type)
-    }
-    EventEmitter.prototype.on.call(this, type, listener)
-    return this
   }
 }

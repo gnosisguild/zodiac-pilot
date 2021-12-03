@@ -5,23 +5,12 @@ interface Request {
   params?: Array<any>
 }
 
-type Listener = (...args: any[]) => void
-
 export default class BridgeHost {
   private provider: Eip1193Provider
-  private bridgedEvents: { [type: string]: Listener }
   private source: WindowProxy | undefined
 
   constructor(provider: Eip1193Provider) {
-    this.bridgedEvents = {}
     this.provider = provider
-  }
-
-  removeAllListeners() {
-    Object.entries(this.bridgedEvents).forEach(([type, listener]) => {
-      this.provider.removeListener(type, listener)
-    })
-    this.bridgedEvents = {}
   }
 
   initBridge(event: MessageEvent<any>) {
@@ -33,7 +22,6 @@ export default class BridgeHost {
       throw new Error('Expected message to originate from window')
     }
     this.source = event.source
-    this.removeAllListeners()
   }
 
   private assertConsistentSource(event: MessageEvent<any>) {
@@ -65,28 +53,6 @@ export default class BridgeHost {
     )
   }
 
-  private handleEventListen(type: string) {
-    console.debug('subscribe', type)
-
-    // only bridge each event once
-    if (!this.bridgedEvents[type]) {
-      if (!this.source) throw new Error('source must be set')
-      this.bridgedEvents[type] = (...args: any[]) => {
-        if (!this.source) throw new Error('source must be set')
-        console.debug(`bridged ${type} event emitted`)
-        this.source.postMessage(
-          {
-            transactionPilotBridgeEventEmit: true,
-            type,
-            args,
-          },
-          '*'
-        )
-      }
-      this.provider.on(type, this.bridgedEvents[type])
-    }
-  }
-
   handleMessage(ev: MessageEvent<any>) {
     const {
       transactionPilotBridgeInit,
@@ -94,9 +60,6 @@ export default class BridgeHost {
       transactionPilotBridgeRequest,
       messageId,
       request,
-
-      transactionPilotBridgeEventListen,
-      type,
     } = ev.data
 
     if (transactionPilotBridgeInit) {
@@ -107,11 +70,6 @@ export default class BridgeHost {
     if (transactionPilotBridgeRequest) {
       this.assertConsistentSource(ev)
       this.handleRequest(request, messageId)
-    }
-
-    if (transactionPilotBridgeEventListen) {
-      this.assertConsistentSource(ev)
-      this.handleEventListen(type)
     }
   }
 }

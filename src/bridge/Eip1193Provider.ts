@@ -1,12 +1,10 @@
-import EventEmitter from 'events'
-
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ITxData } from '@walletconnect/types'
 
 import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
 
-export class Eip1193Provider extends EventEmitter {
+export class Eip1193Provider {
   private avatarAddress: string
   private targetAddress: string
 
@@ -17,7 +15,6 @@ export class Eip1193Provider extends EventEmitter {
     avatarAddress: string,
     targetAddress: string
   ) {
-    super()
     this.provider = provider
     this.avatarAddress = avatarAddress
     this.targetAddress = targetAddress
