@@ -57,15 +57,13 @@ export class Eip1193Provider extends EventEmitter {
         })
       }
 
-      // TODO: shall we impersonate the avatar for calls?
-      // ^ good question, lets discuss tomorrow and maybe ask around. First hunch, I guess it wont make the difference because calls are paramterized? I.e., you don't need to impersonate to query public data?
-      // case 'eth_call': {
-      //   const [call, ...rest] = params
-      //   return this.provider.request({
-      //     method,
-      //     params: [{ ...call, from: this.avatar }, ...rest],
-      //   })
-      // }
+      case 'eth_call': {
+        const [call, ...rest] = params
+        return this.provider.request({
+          method,
+          params: [{ ...call, from: this.avatarAddress }, ...rest],
+        })
+      }
 
       case 'eth_sendTransaction': {
         const request = params[0] as ITxData

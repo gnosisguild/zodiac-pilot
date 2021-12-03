@@ -162,7 +162,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
             disabled={!url || !avatarAddress || !targetAddress}
             onClick={submit}
           >
-            Start Transaction Pilot
+            Takeoff
           </Button>
         </Flex>
       </Box>

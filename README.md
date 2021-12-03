@@ -50,10 +50,15 @@ In our background script, we track tabs running our extension and will apply the
 When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the Dapp.
 
 The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
-The injected provider forwards all `request` calls to the parent extension page via `window.postMessage`.
+The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are handled with our [Eip1193Provider](src/bridge/Eip1193Provider.ts).
 
 In a similar fashion, events are bridged over the window message interface.
-Whenever the a new event listener is attached to the provider in the iframe, the bridge will subscribe to the respective event in the host provider.
+Whenever a new event listener is attached to the provider in the iframe, the bridge will subscribe to the respective event in the host provider.
+
+### Wrapping of transactions
+
+The [Eip1193Provider](src/bridge/Eip1193Provider.ts) takes any transaction requests received from the iframe and encodes them into `execTransactionFromModule` function calls to the configured target module address.
+It the forwards the wrapped transaction request to the WalletConnect provider.
 
 ### Syncing iframe location
 
