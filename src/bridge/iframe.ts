@@ -2,6 +2,17 @@ import { EventEmitter } from 'events'
 
 type Listener = (...args: any[]) => void
 
+interface JsonRpcRequest {
+  method: string
+  params?: Array<any>
+}
+
+interface JsonRpcResponse {
+  method: string
+  result?: unknown
+  error?: Error
+}
+
 export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
@@ -30,19 +41,12 @@ export default class BridgeIframe extends EventEmitter {
     )
   }
 
-  request(request: { method: string; params?: Array<any> }): Promise<any> {
-    return this.send(request.method, request.params || [])
-  }
-
-  async send(method: string, params?: Array<any>): Promise<any> {
+  request(request: JsonRpcRequest): Promise<any> {
     const currentMessageId = this.messageId
     this.messageId++
 
-    const request = { method, params }
-
     return new Promise((resolve, reject) => {
       if (!window.top) throw new Error('Must run inside iframe')
-
       window.top.postMessage(
         {
           transactionPilotBridgeRequest: true,
@@ -57,7 +61,7 @@ export default class BridgeIframe extends EventEmitter {
           ev.data
         if (transactionPilotBridgeResponse && messageId === currentMessageId) {
           window.removeEventListener('message', handleMessage)
-
+          console.log('RES', messageId, response)
           if (error) {
             reject(error)
           } else {
@@ -68,6 +72,30 @@ export default class BridgeIframe extends EventEmitter {
 
       window.addEventListener('message', handleMessage)
     })
+  }
+
+  // Legacy API (still used by some Dapps)
+  async send(method: string, params?: Array<any>): Promise<JsonRpcResponse> {
+    try {
+      const result = await this.request({ method, params })
+      return { method, result }
+    } catch (e) {
+      return { method, error: new Error(e as string) }
+    }
+  }
+
+  // Legacy API (still used by some Dapps)
+  async sendAsync(
+    request: JsonRpcRequest,
+    callback: (error: Error | undefined, response: JsonRpcResponse) => unknown
+  ) {
+    try {
+      const result = await this.request(request)
+      callback(undefined, { method: request.method, result })
+    } catch (e) {
+      const error = new Error(e as string)
+      callback(error, { method: request.method, error })
+    }
   }
 
   // Wrap base implementation to subscribe to this event also from the host provider.

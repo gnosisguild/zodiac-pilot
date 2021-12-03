@@ -38,6 +38,11 @@ export class Eip1193Provider extends EventEmitter {
         return [this.avatarAddress]
       }
 
+      // curve.fi is unhappy without this
+      case 'wallet_switchEthereumChain': {
+        return true
+      }
+
       case 'eth_estimateGas': {
         const [request, ...rest] = params
         const wrappedReq = await wrapRequest(
