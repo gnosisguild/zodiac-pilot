@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import React, { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../WalletConnectProvider'
@@ -33,17 +34,52 @@ const Browser: React.FC = () => {
   return (
     <div className={classNames.browser}>
       <div className={classNames.topBar}>
-        <Flex gap={3}>
-          <AddressBar onSubmit={setInitialLocation} />
+        <Flex gap={3} justifyContent="spaceBetween">
+          <Box>
+            <Flex gap={1}>
+              <Box className={classNames.appName} double>
+                Zodiac Pilot
+              </Box>
+              <Box className={classNames.addressBar} double>
+                <AddressBar onSubmit={setInitialLocation} />
+              </Box>
+            </Flex>
+          </Box>
           <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
-            <Box roundedLeft>
-              <Address address={provider.accounts[0]} />
-            </Box>
+            <div className={classNames.addressStack}>
+              <Box
+                roundedLeft
+                double
+                p={2}
+                className={classNames.addressContainer}
+              >
+                <Address address={targetAddress} />
+              </Box>
+              <Box
+                roundedLeft
+                double
+                p={2}
+                className={classNames.addressContainer}
+              >
+                <Address address={avatarAddress} />
+              </Box>
+              <Box
+                roundedLeft
+                double
+                p={2}
+                className={cn(
+                  classNames.addressContainer,
+                  classNames.lastAddress
+                )}
+              >
+                <Address address={provider.accounts[0]} />
+              </Box>
+            </div>
           </BlockLink>
         </Flex>
       </div>
       <div className={classNames.main}>
-        <Box className={classNames.frame} double>
+        <Box className={classNames.frame} double p={2}>
           <BrowserFrame
             src={initialLocation}
             avatarAddress={avatarAddress}

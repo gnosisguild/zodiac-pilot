@@ -9,11 +9,11 @@ const StyledSelect = (props: any) => {
       fontSize: '14px',
       borderRadius: 0,
       background: 'rgba(217, 212, 173, 0.01)',
-      borderColor: state.isFocused ? 'rgba(217, 212, 173, 1)' : 'white',
+      borderColor: state.isFocused ? 'white' : 'rgba(217, 212, 173, 0.8)',
       boxShadow: 'none',
       cursor: 'pointer',
       '&:hover': {
-        borderColor: 'rgba(217, 212, 173, 1)',
+        borderColor: 'white',
       },
     }),
     valueContainer: (provided: React.CSSProperties) => ({
@@ -30,6 +30,8 @@ const StyledSelect = (props: any) => {
       ...provided,
       background: state.isSelected ? 'rgba(217, 212, 173, 0.5)' : 'none',
       color: 'white',
+      fontFamily: "'Roboto Mono', monospace",
+      fontSize: '14px',
       cursor: 'pointer',
       '&:hover': {
         background: 'rgba(217, 212, 173, 0.2)',

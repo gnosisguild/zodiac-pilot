@@ -74,7 +74,7 @@ select {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid white;
+  border: 1px solid rgba(217, 212, 173, 0.8);
   line-height: 20px;
   padding: 8px 10px;
   height: 38px;
@@ -82,14 +82,14 @@ select {
 
 input:hover:enabled,
 select:hover:enabled {
-  border-color: rgba(217, 212, 173, 0.8);
+  border-color: white;
 }
 
 input:active,
 select:active,
 input:focus,
 select:focus {
-  border: 1px solid rgba(217, 212, 173, 0.8);
+  border: 1px solid white;
   outline: none;
 }
 

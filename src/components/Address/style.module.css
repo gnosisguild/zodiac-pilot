@@ -2,6 +2,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  background-color: rgba(217, 212, 173, 0.2);
+  padding-right: 30px;
 }
 
 .blockies {
@@ -16,6 +18,8 @@
 }
 
 .address {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
 }
 
 .copy {

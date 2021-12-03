@@ -49,9 +49,13 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
     ...enabledModules.map((address) => ({ value: address, label: address })),
   ]
 
+  const shortAddress = (address: string) => {
+    return address.substr(0, 7) + '...' + address.substr(-5)
+  }
+
   return (
     <div className={classes.container}>
-      <h1>Transaction Pilot</h1>
+      <h1>Zodiac Pilot</h1>
 
       <Box double p={3}>
         <Flex direction="column" gap={3}>
@@ -97,13 +101,15 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                         />
                       </div>
                       <div className={classes.connectedAddress}>
-                        {provider.accounts[0]}
+                        {shortAddress(provider.accounts[0])}
                       </div>
+                      <Button
+                        onClick={() => provider.disconnect()}
+                        className={classes.disconnectButton}
+                      >
+                        Disconnect
+                      </Button>
                     </div>
-
-                    <Button onClick={() => provider.disconnect()}>
-                      Disconnect
-                    </Button>
                   </div>
                 ) : (
                   <Button

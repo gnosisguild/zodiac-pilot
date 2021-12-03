@@ -6,8 +6,17 @@
   background-color: rgba(217, 212, 173, 0.1);
   background-clip: padding-box;
 }
-.double {
-  border: 4px double rgba(217, 212, 173, 0.3);
+
+.double:before {
+  content: ' ';
+  position: absolute;
+  z-index: 1;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 1px solid rgba(217, 212, 173, 0.3);
+  pointer-events: none;
 }
 
 .rounded {
@@ -18,12 +27,17 @@
   border-bottom-left-radius: 5000px;
 }
 
+.roundedLeft:before {
+  border-top-left-radius: 5000px;
+  border-bottom-left-radius: 5000px;
+}
+
 .p1 {
-  padding: var(--spacing-1);
+  padding: calc(var(--spacing-1) - 1px);
 }
 .p2 {
-  padding: var(--spacing-2);
+  padding: calc(var(--spacing-2) - 1px);
 }
 .p3 {
-  padding: var(--spacing-3);
+  padding: calc(var(--spacing-3) - 1px);
 }
