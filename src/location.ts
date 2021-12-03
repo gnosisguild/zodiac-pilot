@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((message) => {
     const handleMessage = (ev: MessageEvent) => {
       const { transactionPilotHrefResponse, href } = ev.data
       if (transactionPilotHrefResponse && href !== lastHref) {
-        console.log('iframe navigated to', href)
+        console.debug('iframe navigated to', href)
         window.removeEventListener('message', handleMessage)
         replaceLocation(href) // don't push as this would mess with the browsing history
         lastHref = href

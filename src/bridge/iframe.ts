@@ -61,7 +61,7 @@ export default class BridgeIframe extends EventEmitter {
           ev.data
         if (transactionPilotBridgeResponse && messageId === currentMessageId) {
           window.removeEventListener('message', handleMessage)
-          console.log('RES', messageId, response)
+          console.debug('RES', messageId, response)
           if (error) {
             reject(error)
           } else {

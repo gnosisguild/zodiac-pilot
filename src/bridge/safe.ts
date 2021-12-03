@@ -31,7 +31,6 @@ export function waitForMultisigExecution(
     }
 
     async function poll() {
-      console.log('POLL - calling for ', safeTxHash)
       let safeMultisigTxResponse
 
       // NOTE1: after pushing the approve on the wc-safe-app the record takes
@@ -43,17 +42,16 @@ export function waitForMultisigExecution(
       try {
         safeMultisigTxResponse = await safeService.getTransaction(safeTxHash)
       } catch (e) {
-        console.log(e)
+        console.log('poll error', e)
         return tryAgain()
       }
 
       const { isExecuted, isSuccessful, transactionHash } =
         safeMultisigTxResponse
 
-      console.log(
-        'POLL - for ',
+      console.debug(
+        'poll tx',
         safeTxHash,
-        ' ',
         isExecuted,
         isSuccessful,
         transactionHash

@@ -43,7 +43,7 @@ export default class BridgeHost {
   }
 
   private async handleRequest(request: Request, messageId: number) {
-    console.log('REQ', messageId, request)
+    console.debug('REQ', messageId, request)
     if (!this.source) throw new Error('source must be set')
 
     let response
@@ -66,14 +66,14 @@ export default class BridgeHost {
   }
 
   private handleEventListen(type: string) {
-    console.log('subscribe', type)
+    console.debug('subscribe', type)
 
     // only bridge each event once
     if (!this.bridgedEvents[type]) {
       if (!this.source) throw new Error('source must be set')
       this.bridgedEvents[type] = (...args: any[]) => {
         if (!this.source) throw new Error('source must be set')
-        console.log(`bridged ${type} event emitted`)
+        console.debug(`bridged ${type} event emitted`)
         this.source.postMessage(
           {
             transactionPilotBridgeEventEmit: true,
