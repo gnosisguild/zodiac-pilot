@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import { AppPicker } from '../components'
-import { filterApps } from '../components/AppPicker'
+import { AppSearch } from '../components'
 import { pushLocation, useLocation } from '../location'
 
 import classes from './index.module.css'
@@ -41,8 +40,6 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
   const onBlur = useCallback(() => setHasFocus(false), [])
   const ref = useOnBlur(onBlur)
 
-  const hasMatchingApps = filterApps(value).length > 0
-
   return (
     <div className={classes.urlInput} ref={ref}>
       <input
@@ -65,10 +62,9 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
         }}
       />
 
-      {hasFocus && hasMatchingApps && (
+      {hasFocus && (
         <div className={classes.appPickerDropdown}>
-          <AppPicker
-            query={value}
+          <AppSearch
             onPick={(url) => {
               pushLocation(url)
               onSubmit(url)
