@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { wrapRequest } from '../bridge/encoding'
 import { prependHttp } from '../browser/UrlInput'
 import { Box, Button, Flex, Select } from '../components'
 import { AppSearch } from '../components'
@@ -9,6 +7,7 @@ import { pushLocation } from '../location'
 
 import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
+import useAddressDryRun from './useAddressDryRun'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
 
 const Field: React.FC<{ label?: string }> = ({ label, children }) => (
@@ -24,49 +23,12 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   </Box>
 )
 
-const useSanityCheck = ({
-  avatarAddress,
-  targetAddress,
-}: {
-  avatarAddress: string
-  targetAddress: string
-}) => {
-  const [error, setError] = useState(null)
-  const { provider, connected } = useWalletConnectProvider()
-
-  useEffect(() => {
-    const testCall = () => {
-      const transactionRequest = wrapRequest(
-        {
-          to: '0x0000000000000000000000000000000000000000',
-          data: '0x00',
-          from: avatarAddress,
-        },
-        provider.accounts[0],
-        targetAddress
-      )
-
-      return provider.request({
-        method: 'eth_call',
-        params: [transactionRequest, 'latest'],
-      })
-    }
-
-    if (connected && avatarAddress && targetAddress) {
-      setError(null)
-      testCall().catch((e) => setError(e))
-    }
-  }, [avatarAddress, targetAddress, provider, connected])
-
-  return error
-}
-
 const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const [avatarAddress, setAvatarAddress] = useState(
     localStorage.getItem('avatarAddress') || ''
   )
-  const [targetAddress, setTargetAddress] = useState(
-    localStorage.getItem('targetAddress') || ''
+  const [moduleAddress, setModuleAddress] = useState(
+    localStorage.getItem('moduleAddress') || ''
   )
 
   const [url, setUrl] = useState(initialUrl)
@@ -76,16 +38,11 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
 
   const submit = (appUrl: string) => {
     localStorage.setItem('avatarAddress', avatarAddress)
-    localStorage.setItem('targetAddress', targetAddress)
+    localStorage.setItem('moduleAddress', moduleAddress)
     pushLocation(prependHttp(appUrl))
   }
 
-  const targetOptions = [
-    { value: avatarAddress, label: avatarAddress },
-    ...enabledModules.map((address) => ({ value: address, label: address })),
-  ]
-
-  const error = useSanityCheck({ avatarAddress, targetAddress })
+  const error = useAddressDryRun({ avatarAddress, moduleAddress })
 
   return (
     <div className={classes.container}>
@@ -107,18 +64,24 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   value={avatarAddress}
                   onChange={(ev) => {
                     setAvatarAddress(ev.target.value)
-                    setTargetAddress(ev.target.value)
+                    setModuleAddress(ev.target.value)
                   }}
                 />
               </Field>
 
               <Field label="Zodiac Modifier or Module Address">
                 <Select
-                  options={targetOptions}
+                  options={[
+                    { value: avatarAddress, label: avatarAddress },
+                    ...enabledModules.map((address) => ({
+                      value: address,
+                      label: address,
+                    })),
+                  ]}
                   onChange={(selected: { value: string; label: string }) => {
-                    setTargetAddress(selected.value)
+                    setModuleAddress(selected.value)
                   }}
-                  value={{ value: targetAddress, label: targetAddress }}
+                  value={{ value: moduleAddress, label: moduleAddress }}
                   disabled={loading || !isValidSafe}
                 />
               </Field>
@@ -154,7 +117,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   }}
                   onKeyPress={(ev) => {
                     if (ev.key === 'Enter') {
-                      if (url && avatarAddress && targetAddress) {
+                      if (url && avatarAddress && moduleAddress) {
                         submit(url)
                       }
                     }
@@ -165,7 +128,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
           </Box>
 
           <Button
-            disabled={!url || !avatarAddress || !targetAddress}
+            disabled={!url || !avatarAddress || !moduleAddress}
             onClick={() => {
               submit(url)
             }}

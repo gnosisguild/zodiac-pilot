@@ -5,19 +5,22 @@ import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
 
 export class Eip1193Provider {
+  private pilotAddress: string
+  private moduleAddress: string
   private avatarAddress: string
-  private targetAddress: string
 
   private provider: WalletConnectEthereumProvider
 
   constructor(
     provider: WalletConnectEthereumProvider,
-    avatarAddress: string,
-    targetAddress: string
+    pilotAddress: string,
+    moduleAddress: string,
+    avatarAddress: string
   ) {
     this.provider = provider
+    this.pilotAddress = pilotAddress
+    this.moduleAddress = moduleAddress
     this.avatarAddress = avatarAddress
-    this.targetAddress = targetAddress
   }
 
   async request(request: {
@@ -44,8 +47,8 @@ export class Eip1193Provider {
         const [request, ...rest] = params
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
 
         return await this.provider.request({
@@ -66,8 +69,8 @@ export class Eip1193Provider {
         const request = params[0] as ITxData
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
 
         const safeTxHash = await this.provider.connector.sendTransaction(
@@ -86,8 +89,8 @@ export class Eip1193Provider {
         const request = params[0] as ITxData
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
         return await this.provider.connector.signTransaction(wrappedReq)
       }

@@ -6,15 +6,15 @@ import { Address, Box } from '../components'
 import classNames from './index.module.css'
 
 interface Props {
-  targetAddress: string
   avatarAddress: string
-  connectedAddress: string
+  moduleAddress: string
+  pilotAddress: string
 }
 
 const AddressStack: React.FC<Props> = ({
-  targetAddress,
   avatarAddress,
-  connectedAddress,
+  moduleAddress,
+  pilotAddress,
 }) => {
   return (
     <div className={classNames.addressStack}>
@@ -22,7 +22,7 @@ const AddressStack: React.FC<Props> = ({
         <Address address={avatarAddress} />
       </Box>
       <Box roundedLeft double p={2} className={classNames.address}>
-        <Address address={targetAddress} />
+        <Address address={moduleAddress} />
       </Box>
       <Box
         roundedLeft
@@ -30,7 +30,7 @@ const AddressStack: React.FC<Props> = ({
         p={2}
         className={cn(classNames.address, classNames.lastAddress)}
       >
-        <Address address={connectedAddress} />
+        <Address address={pilotAddress} />
       </Box>
     </div>
   )

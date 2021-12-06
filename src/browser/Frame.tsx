@@ -6,14 +6,16 @@ import BridgeHost from '../bridge/host'
 
 type Props = {
   src: string
+  pilotAddress: string
+  moduleAddress: string
   avatarAddress: string
-  targetAddress: string
 }
 
 const BrowserFrame: React.FC<Props> = ({
   src,
+  pilotAddress,
+  moduleAddress,
   avatarAddress,
-  targetAddress,
 }) => {
   const { provider } = useWalletConnectProvider()
 
@@ -22,8 +24,9 @@ const BrowserFrame: React.FC<Props> = ({
 
     const providerEip1193 = new Eip1193Provider(
       provider,
-      avatarAddress,
-      targetAddress
+      pilotAddress,
+      moduleAddress,
+      avatarAddress
     )
     const bridgeHost = new BridgeHost(providerEip1193)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
@@ -32,7 +35,7 @@ const BrowserFrame: React.FC<Props> = ({
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [avatarAddress, targetAddress, provider])
+  }, [pilotAddress, moduleAddress, avatarAddress, provider])
 
   return (
     <iframe

@@ -14,8 +14,8 @@ const Routes: React.FC = () => {
   const { connected } = useWalletConnectProvider()
 
   const avatarAddress = localStorage.getItem('avatarAddress')
-  const targetAddress = localStorage.getItem('targetAddress')
-  const settingsRequired = !connected || !avatarAddress || !targetAddress
+  const moduleAddress = localStorage.getItem('moduleAddress')
+  const settingsRequired = !connected || !avatarAddress || !moduleAddress
   const settingsRouteMatch = location.startsWith('settings')
 
   // redirect to settings page if more settings are required
