@@ -19,8 +19,6 @@ export function waitForMultisigExecution(
   if (!url) {
     throw new Error(`service not available for chain #${chainId}`)
   }
-
-  // TODO pass different URLs according to chainId
   const safeService = new SafeServiceClient(url)
 
   return new Promise((resolve, reject) => {
