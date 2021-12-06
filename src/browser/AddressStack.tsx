@@ -16,14 +16,18 @@ const AddressStack: React.FC<Props> = ({
   moduleAddress,
   pilotAddress,
 }) => {
+  const redundant = avatarAddress === moduleAddress
+
   return (
     <div className={classNames.addressStack}>
       <Box roundedLeft double p={2} className={classNames.address}>
         <Address address={avatarAddress} />
       </Box>
-      <Box roundedLeft double p={2} className={classNames.address}>
-        <Address address={moduleAddress} />
-      </Box>
+      {!redundant && (
+        <Box roundedLeft double p={2} className={classNames.address}>
+          <Address address={moduleAddress} />
+        </Box>
+      )}
       <Box
         roundedLeft
         double
