@@ -27,7 +27,7 @@ body {
   color: white;
   min-height: 100vh;
   font-size: 16px;
-  background: url(./zodiac-bg.svg) 0% 0% / cover fixed;
+  background: url(./images/zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
 }
 
@@ -99,4 +99,30 @@ option {
 .walletconnect-modal__base a {
   color: black;
   text-decoration: none;
+}
+
+/* Works on Firefox*/
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(217, 212, 173, 0.8) rgba(217, 212, 173, 0.1);
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(217, 212, 173, 0.3);
+  border-radius: 0px;
+  cursor: pointer;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(217, 212, 173, 0.5);
+  border-radius: 0px;
 }

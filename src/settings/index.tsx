@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { wrapRequest } from '../bridge/encoding'
 import { prependHttp } from '../browser/UrlInput'
-import { Box, Button, Flex, Select } from '../components'
+import { AppPicker, Box, Button, Flex, Select } from '../components'
+import walletConnectLogoUrl from '../images/wallet-connect-logo.png'
 import { pushLocation } from '../location'
 
 import classes from './style.module.css'
@@ -74,10 +75,10 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
 
-  const submit = () => {
+  const submit = (appUrl: string) => {
     localStorage.setItem('avatarAddress', avatarAddress)
     localStorage.setItem('targetAddress', targetAddress)
-    pushLocation(prependHttp(url))
+    pushLocation(prependHttp(appUrl))
   }
 
   const targetOptions = [
@@ -185,7 +186,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
           <Box p={3}>
             <Flex direction="column" gap={3}>
               <div>Select or enter a Dapp to use</div>
-
+              <AppPicker onPick={submit} />
               <Field label="Dapp Url">
                 <input
                   type="text"
@@ -197,7 +198,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   onKeyPress={(ev) => {
                     if (ev.key === 'Enter') {
                       if (url && avatarAddress && targetAddress) {
-                        submit()
+                        submit(url)
                       }
                     }
                   }}
@@ -208,7 +209,9 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
 
           <Button
             disabled={!url || !avatarAddress || !targetAddress}
-            onClick={submit}
+            onClick={() => {
+              submit(url)
+            }}
           >
             Takeoff
           </Button>
