@@ -38,7 +38,7 @@ const BrowserFrame: React.FC<Props> = ({
     <iframe
       id="pilot-frame"
       name="pilot-frame"
-      title="Transaction Pilot"
+      title="Zodiac Pilot"
       src={src}
       style={{
         display: 'block',

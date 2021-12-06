@@ -1,4 +1,4 @@
-# Transaction Pilot
+# Zodiac Pilot
 
 Chrome extension to simulate Dapp interactions and record transactions.
 
@@ -18,7 +18,7 @@ To enable the extension in Chrome, follow these steps:
 
 1. Open the Extension Management page by navigating to [chrome://extensions](chrome://extensions).
 2. Enable **Developer Mode** by clicking the toggle switch at the top right of the page.
-3. Click the **Load unpacked** button and select the `transaction-pilot/public` directory.
+3. Click the **Load unpacked** button and select the `zodiac-pilot/public` directory.
 
 ### Package for production
 
@@ -62,7 +62,7 @@ It the forwards the wrapped transaction request to the WalletConnect provider.
 
 ### Syncing iframe location
 
-The problem: When the user navigates the Dapp, the address bar of the Transaction Pilot should update accordingly.
+The problem: When the user navigates the Dapp, the address bar of the Zodiac Pilot should update accordingly.
 The browser back button should function as usual and when reloading the extension page the iframe should continue showing the original page.
 Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 

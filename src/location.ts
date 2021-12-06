@@ -12,11 +12,11 @@ chrome.runtime.onMessage.addListener((message) => {
     const iframeWindow = iframe?.contentWindow
     if (!iframeWindow) return
 
-    iframeWindow.postMessage({ transactionPilotHrefRequest: true }, '*')
+    iframeWindow.postMessage({ zodiacPilotHrefRequest: true }, '*')
 
     const handleMessage = (ev: MessageEvent) => {
-      const { transactionPilotHrefResponse, href } = ev.data
-      if (transactionPilotHrefResponse && href !== lastHref) {
+      const { zodiacPilotHrefResponse, href } = ev.data
+      if (zodiacPilotHrefResponse && href !== lastHref) {
         console.debug('iframe navigated to', href)
         window.removeEventListener('message', handleMessage)
         replaceLocation(href) // don't push as this would mess with the browsing history

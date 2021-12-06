@@ -7,12 +7,12 @@ window.ethereum = new BridgeIframe()
 
 // establish message bridge for location requests
 window.addEventListener('message', (ev: MessageEvent) => {
-  const { transactionPilotHrefRequest } = ev.data
-  if (transactionPilotHrefRequest) {
+  const { zodiacPilotHrefRequest } = ev.data
+  if (zodiacPilotHrefRequest) {
     if (!window.top) throw new Error('Must run inside iframe')
     window.top.postMessage(
       {
-        transactionPilotHrefResponse: true,
+        zodiacPilotHrefResponse: true,
         href: window.location.href,
       },
       '*'

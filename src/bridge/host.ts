@@ -44,7 +44,7 @@ export default class BridgeHost {
 
     this.source.postMessage(
       {
-        transactionPilotBridgeResponse: true,
+        zodiacPilotBridgeResponse: true,
         messageId,
         response,
         error,
@@ -55,19 +55,19 @@ export default class BridgeHost {
 
   handleMessage(ev: MessageEvent<any>) {
     const {
-      transactionPilotBridgeInit,
+      zodiacPilotBridgeInit,
 
-      transactionPilotBridgeRequest,
+      zodiacPilotBridgeRequest,
       messageId,
       request,
     } = ev.data
 
-    if (transactionPilotBridgeInit) {
+    if (zodiacPilotBridgeInit) {
       this.initBridge(ev)
       return
     }
 
-    if (transactionPilotBridgeRequest) {
+    if (zodiacPilotBridgeRequest) {
       this.assertConsistentSource(ev)
       this.handleRequest(request, messageId)
     }

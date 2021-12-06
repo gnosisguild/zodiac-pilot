@@ -20,7 +20,7 @@ export default class BridgeIframe extends EventEmitter {
 
     window.top.postMessage(
       {
-        transactionPilotBridgeInit: true,
+        zodiacPilotBridgeInit: true,
       },
       '*'
     )
@@ -34,7 +34,7 @@ export default class BridgeIframe extends EventEmitter {
       if (!window.top) throw new Error('Must run inside iframe')
       window.top.postMessage(
         {
-          transactionPilotBridgeRequest: true,
+          zodiacPilotBridgeRequest: true,
           request,
           messageId: currentMessageId,
         },
@@ -42,9 +42,9 @@ export default class BridgeIframe extends EventEmitter {
       )
 
       const handleMessage = (ev: MessageEvent) => {
-        const { transactionPilotBridgeResponse, messageId, error, response } =
+        const { zodiacPilotBridgeResponse, messageId, error, response } =
           ev.data
-        if (transactionPilotBridgeResponse && messageId === currentMessageId) {
+        if (zodiacPilotBridgeResponse && messageId === currentMessageId) {
           window.removeEventListener('message', handleMessage)
           console.debug('RES', messageId, response)
           if (error) {

@@ -1,5 +1,5 @@
 {
-  "name": "Transaction Pilot",
+  "name": "Zodiac Pilot",
   "description": "Simulate dApp interactions and record transactions",
   "version": "1.0",
   "manifest_version": 3,
@@ -10,7 +10,7 @@
     "128": "zodiac128.png"
   },
   "action": {
-    "default_title": "Start Transaction Pilot"
+    "default_title": "Start Zodiac Pilot"
   },
   "permissions": ["tabs", "declarativeNetRequest"],
   "background": {
