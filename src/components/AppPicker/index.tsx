@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-
-import { Box } from '../../components'
+import React from 'react'
 
 import aaveLogo from './images/aave.png'
 import alchemixLogo from './images/alchemix.png'
