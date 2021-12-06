@@ -20,14 +20,6 @@ const AddressStack: React.FC<Props> = ({
 
   return (
     <div className={classNames.addressStack}>
-      <Box roundedLeft double p={2} className={classNames.address}>
-        <Address address={avatarAddress} />
-      </Box>
-      {!redundant && (
-        <Box roundedLeft double p={2} className={classNames.address}>
-          <Address address={moduleAddress} />
-        </Box>
-      )}
       <Box
         roundedLeft
         double
@@ -35,6 +27,15 @@ const AddressStack: React.FC<Props> = ({
         className={cn(classNames.address, classNames.lastAddress)}
       >
         <Address address={pilotAddress} />
+      </Box>
+
+      {!redundant && (
+        <Box roundedLeft double p={2} className={classNames.address}>
+          <Address address={moduleAddress} />
+        </Box>
+      )}
+      <Box roundedLeft double p={2} className={classNames.address}>
+        <Address address={avatarAddress} />
       </Box>
     </div>
   )
