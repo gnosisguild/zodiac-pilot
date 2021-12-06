@@ -170,7 +170,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
               submit(url)
             }}
           >
-            Takeoff
+            Launch
           </Button>
         </Flex>
       </Box>
