@@ -6,7 +6,7 @@ import { prependHttp } from '../browser/UrlInput'
 import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
 
-import AppPicker from './AppPicker'
+import AppSearch from './AppSearch'
 import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
@@ -143,7 +143,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
           <Box p={3}>
             <Flex direction="column" gap={3}>
               <div>Select or enter a Dapp to use</div>
-              <AppPicker onPick={submit} />
+              <AppSearch onPick={submit} />
               <Field label="Dapp Url">
                 <input
                   type="text"

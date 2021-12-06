@@ -25,6 +25,15 @@
 .urlInput {
   background-color: rgba(217, 212, 173, 0.1);
   min-width: 300px;
+  position: relative;
+}
+
+.appPickerDropdown {
+  background-color: rgba(0, 0, 0, 0.9);
+  position: absolute;
+  top: 100%;
+  z-index: 1;
+  max-width: 400px;
 }
 
 .appName {

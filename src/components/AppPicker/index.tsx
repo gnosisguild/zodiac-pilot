@@ -15,7 +15,6 @@ import lidoLogo from './images/lido.png'
 import paraswapLogo from './images/paraswap.png'
 import reflexerLogo from './images/reflexer.png'
 import saddleLogo from './images/saddle.png'
-import searchIcon from './images/search-icon.svg'
 import uniswapLogo from './images/uniswap.png'
 import unitLogo from './images/unit.png'
 import yearnLogo from './images/yearn.png'
@@ -64,52 +63,36 @@ const APPS = [
   { name: 'Lido', url: 'https://stake.lido.fi/', logoUrl: lidoLogo },
 ]
 
+export const filterApps = (query: string) =>
+  APPS.filter((app) =>
+    app.name.toLowerCase().includes(query.trim().toLowerCase())
+  )
+
 interface Props {
+  query: string
   onPick: (a: string) => void
 }
 
-const AppPicker: React.FC<Props> = ({ onPick }) => {
-  const [appFilter, setAppFilter] = useState('')
-  const matchingApps = APPS.filter((app) =>
-    app.name.toLowerCase().includes(appFilter.toLowerCase())
-  )
-  return (
-    <Box>
-      <Box bg double>
-        <i className={classes.inputIcon}>
-          <img src={searchIcon} alt="search-icon" />
-        </i>
-        <input
-          type="text"
-          value={appFilter}
-          placeholder="Filter app list"
-          onChange={(ev) => {
-            setAppFilter(ev.target.value)
+const AppPicker: React.FC<Props> = ({ onPick, query }) => (
+  <ul className={classes.appListContainer}>
+    {filterApps(query).map((app) => (
+      <li key={app.name} style={{ display: 'block' }}>
+        <button
+          onClick={() => {
+            onPick(app.url)
           }}
-          className={classes.pickerInput}
-        />
-      </Box>
-      <ul className={classes.appListContainer}>
-        {matchingApps.map((app) => (
-          <li key={app.name}>
-            <button
-              onClick={() => {
-                onPick(app.url)
-              }}
-              className={classes.appButton}
-            >
-              <img
-                className={classes.logo}
-                src={app.logoUrl}
-                alt={app.name + ' logo'}
-              />
-              <div className={classes.name}>{app.name}</div>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </Box>
-  )
-}
+          className={classes.appButton}
+        >
+          <img
+            className={classes.logo}
+            src={app.logoUrl}
+            alt={app.name + ' logo'}
+          />
+          <div className={classes.name}>{app.name}</div>
+        </button>
+      </li>
+    ))}
+  </ul>
+)
 
 export default AppPicker

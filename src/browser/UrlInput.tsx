@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import { AppPicker } from '../components'
+import { filterApps } from '../components/AppPicker'
 import { pushLocation, useLocation } from '../location'
 
 import classes from './index.module.css'
@@ -8,27 +10,74 @@ interface Props {
   onSubmit(location: string): void
 }
 
+const useOnBlur = (callback: () => void) => {
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (ref.current === null) return
+
+    const handleBlur = (event: FocusEvent) => {
+      if (
+        ref.current?.contains(event.target as Node) &&
+        !ref.current?.contains(event.relatedTarget as Node)
+      ) {
+        callback()
+      }
+    }
+    document.addEventListener('focusout', handleBlur)
+
+    return () => {
+      document.removeEventListener('focusout', handleBlur)
+    }
+  }, [callback])
+
+  return ref
+}
+
 const UrlInput: React.FC<Props> = ({ onSubmit }) => {
   const location = useLocation()
+  const [value, setValue] = useState(location)
+  const [hasFocus, setHasFocus] = useState(false)
+  const onBlur = useCallback(() => setHasFocus(false), [])
+  const ref = useOnBlur(onBlur)
+
+  const hasMatchingApps = filterApps(value).length > 0
+
   return (
-    <input
-      className={classes.urlInput}
-      type="text"
-      defaultValue={location}
-      key={location}
-      placeholder="Type a url"
-      onKeyPress={(ev) => {
-        if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
-          if (!ev.target.value.trim()) return
-          const url = prependHttp(ev.target.value)
-          pushLocation(url)
-          onSubmit(url)
-        }
-      }}
-      onFocus={(ev) => {
-        ev.target.select()
-      }}
-    />
+    <div className={classes.urlInput} ref={ref}>
+      <input
+        type="text"
+        defaultValue={location}
+        key={location}
+        placeholder="Type a url"
+        onChange={(ev) => setValue(ev.target.value)}
+        onKeyPress={(ev) => {
+          if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
+            if (!ev.target.value.trim()) return
+            const url = prependHttp(ev.target.value)
+            pushLocation(url)
+            onSubmit(url)
+          }
+        }}
+        onFocus={(ev) => {
+          setHasFocus(true)
+          ev.target.select()
+        }}
+      />
+
+      {hasFocus && hasMatchingApps && (
+        <div className={classes.appPickerDropdown}>
+          <AppPicker
+            query={value}
+            onPick={(url) => {
+              pushLocation(url)
+              onSubmit(url)
+              setHasFocus(false)
+            }}
+          />
+        </div>
+      )}
+    </div>
   )
 }
 
