@@ -29,11 +29,12 @@
 }
 
 .appPickerDropdown {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: #141a2d;
   position: absolute;
-  top: 100%;
-  z-index: 1;
-  max-width: 400px;
+  top: 130%;
+  left: -44%;
+  z-index: 2;
+  max-width: 440px;
 }
 
 .appName {
