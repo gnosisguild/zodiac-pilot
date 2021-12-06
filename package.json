@@ -10,6 +10,7 @@
   "scripts": {
     "prebuild": "rimraf public/build",
     "build": "NODE_ENV=production node esbuild.js",
+    "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
     "dev": "NODE_ENV=development node esbuild.js",
     "check": "yarn check:ts && yarn check:prettier && yarn check:lint && yarn check:spelling",
     "check:ts": "tsc --noEmit",
