@@ -1,5 +1,6 @@
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ITxData } from '@walletconnect/types'
+import ganache, { Provider } from 'ganache'
 
 import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
@@ -9,6 +10,7 @@ export class Eip1193Provider {
   private targetAddress: string
 
   private provider: WalletConnectEthereumProvider
+  private forkProvider: Provider
 
   constructor(
     provider: WalletConnectEthereumProvider,
@@ -16,6 +18,9 @@ export class Eip1193Provider {
     targetAddress: string
   ) {
     this.provider = provider
+    this.forkProvider = ganache.provider({
+      fork: provider,
+    }) //provider
     this.avatarAddress = avatarAddress
     this.targetAddress = targetAddress
   }
