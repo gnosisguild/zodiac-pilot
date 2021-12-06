@@ -8,9 +8,10 @@
   font-family: 'Roboto Mono';
   font-style: normal;
   font-weight: 400;
-  src: url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff)
+  src: url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff)
       format('woff2'),
-    url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2) format('woff');
+    url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2)
+      format('woff');
 }
 
 /* spectral-regular - latin */
@@ -18,8 +19,9 @@
   font-family: 'Spectral';
   font-style: normal;
   font-weight: 400;
-  src: url(./fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
-    url(./fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
+  src: url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff)
+      format('woff2'),
+    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
 }
 
 body {
@@ -27,7 +29,7 @@ body {
   color: white;
   min-height: 100vh;
   font-size: 16px;
-  background: url(./images/zodiac-bg.svg) 0% 0% / cover fixed;
+  background: url(./assets/zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
 }
 

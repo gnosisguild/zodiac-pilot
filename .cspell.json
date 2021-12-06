@@ -3,11 +3,18 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
   "language": "en",
   "words": [
+    "aave",
+    "alchemix",
+    "barnbridge",
     "blockies",
+    "cowswap",
     "esbuild",
     "ethersproject",
     "iframes",
+    "instadapp",
+    "paraswap",
     "prebuild",
+    "reflexer",
     "walletconnect"
   ],
   "flagWords": [],

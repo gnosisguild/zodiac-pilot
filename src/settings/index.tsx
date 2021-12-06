@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { wrapRequest } from '../bridge/encoding'
 import { prependHttp } from '../browser/UrlInput'
-import { AppPicker, Box, Button, Flex, Select } from '../components'
-import walletConnectLogoUrl from '../images/wallet-connect-logo.png'
+import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
 
+import AppPicker from './AppPicker'
+import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
-import walletConnectLogoUrl from './wallet-connect-logo.png'
 
 const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   <Box double bg p={3}>
@@ -70,7 +70,6 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
   )
 
   const [url, setUrl] = useState(initialUrl)
-  const { provider, connected } = useWalletConnectProvider()
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
@@ -85,10 +84,6 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
     { value: avatarAddress, label: avatarAddress },
     ...enabledModules.map((address) => ({ value: address, label: address })),
   ]
-
-  const shortAddress = (address: string) => {
-    return address.substr(0, 7) + '...' + address.substr(-5)
-  }
 
   const error = useSanityCheck({ avatarAddress, targetAddress })
 
@@ -129,45 +124,7 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
               </Field>
 
               <Field>
-                {connected ? (
-                  <div>
-                    <div>Pilot Account</div>
-                    <div className={classes.connectedAccount}>
-                      <div className={classes.walletLogo}>
-                        <img
-                          src={walletConnectLogoUrl}
-                          alt="wallet connect logo"
-                        />
-                      </div>
-                      <div className={classes.connectedAddress}>
-                        {shortAddress(provider.accounts[0])}
-                      </div>
-                      <Button
-                        onClick={() => provider.disconnect()}
-                        className={classes.disconnectButton}
-                      >
-                        Disconnect
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={async () => {
-                      try {
-                        await provider.disconnect()
-                        await provider.enable()
-                      } catch (e) {
-                        // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
-                        // This fixes it:
-                        // @ts-expect-error signer is a private property, but we didn't find another way
-                        provider.signer.disconnect()
-                      }
-                    }}
-                  >
-                    <img src={walletConnectLogoUrl} alt="wallet connect logo" />
-                    Connect Pilot Account
-                  </Button>
-                )}
+                <ConnectButton />
               </Field>
 
               {error && (
