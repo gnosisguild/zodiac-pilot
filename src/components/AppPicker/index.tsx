@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { getAppUsageCount, markAppAsUsed } from '../../settings/localStorage'
+
 import aaveLogo from './images/aave.png'
 import alchemixLogo from './images/alchemix.png'
 import balancerLogo from './images/balancer.png'
@@ -18,7 +20,7 @@ import unitLogo from './images/unit.png'
 import yearnLogo from './images/yearn.png'
 import classes from './style.module.css'
 
-const APPS = [
+const APP_CONFIG = [
   { name: 'Uniswap', url: 'https://app.uniswap.org', logoUrl: uniswapLogo },
   { name: 'Curve', url: 'https://curve.fi/', logoUrl: curveLogo },
   { name: 'Aave', url: 'https://app.aave.com/#/markets', logoUrl: aaveLogo },
@@ -61,36 +63,56 @@ const APPS = [
   { name: 'Lido', url: 'https://stake.lido.fi/', logoUrl: lidoLogo },
 ]
 
-export const filterApps = (query: string) =>
-  APPS.filter((app) =>
-    app.name.toLowerCase().includes(query.trim().toLowerCase())
-  )
-
 interface Props {
   query: string
   onPick: (a: string) => void
 }
 
-const AppPicker: React.FC<Props> = ({ onPick, query }) => (
-  <ul className={classes.appListContainer}>
-    {filterApps(query).map((app) => (
-      <li key={app.name} style={{ display: 'block' }}>
-        <button
-          onClick={() => {
-            onPick(app.url)
-          }}
-          className={classes.appButton}
-        >
-          <img
-            className={classes.logo}
-            src={app.logoUrl}
-            alt={app.name + ' logo'}
-          />
-          <div className={classes.name}>{app.name}</div>
-        </button>
-      </li>
-    ))}
-  </ul>
-)
+const AppPicker: React.FC<Props> = ({ onPick, query }) => {
+  const apps = sortApps().filter((app) =>
+    app.name.toLowerCase().includes(query.trim().toLowerCase())
+  )
+
+  return (
+    <ul className={classes.appListContainer}>
+      {apps.map((app) => (
+        <li key={app.name} style={{ display: 'block' }}>
+          <button
+            onClick={() => {
+              markAppAsUsed(app.url)
+              onPick(app.url)
+            }}
+            className={classes.appButton}
+          >
+            <img
+              className={classes.logo}
+              src={app.logoUrl}
+              alt={app.name + ' logo'}
+            />
+            <div className={classes.name}>{app.name}</div>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function sortApps() {
+  const withCount = APP_CONFIG.map((app) => ({
+    app,
+    usage: getAppUsageCount(app.url),
+  }))
+
+  const usedAppsSorted = withCount
+    .filter(({ usage }) => usage > 0)
+    .sort((a, b) => b.usage - a.usage)
+    .map(({ app }) => app)
+
+  const unusedApps = withCount
+    .filter(({ usage }) => usage === 0)
+    .map(({ app }) => app)
+
+  return [...usedAppsSorted, ...unusedApps]
+}
 
 export default AppPicker
