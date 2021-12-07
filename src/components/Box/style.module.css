@@ -1,6 +1,7 @@
 .box {
   border: 1px solid rgba(217, 212, 173, 0.3);
   position: relative;
+  transition: all 0.2s ease;
 }
 .bg {
   background-color: rgba(217, 212, 173, 0.1);
@@ -17,6 +18,7 @@
   bottom: 3px;
   border: 1px solid rgba(217, 212, 173, 0.3);
   pointer-events: none;
+  transition: all 0.2s ease;
 }
 
 .rounded {

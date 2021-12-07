@@ -47,6 +47,7 @@
   background: black;
   box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
   margin-left: -32px;
+  transition: all 0.2s ease;
 }
 .address:first-child {
   margin-left: 0;
@@ -67,4 +68,22 @@
 }
 .address:first-child > div {
   padding-left: var(--spacing-2);
+}
+
+.helper {
+  position: absolute;
+  top: -22px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.address:first-child .helper {
+  left: 8px;
+}
+.addressStack:hover .helper {
+  opacity: 1;
 }
