@@ -44,7 +44,7 @@ const Address: React.FC<Props> = ({
   const displayAddress = `${start}...${end}`
 
   return (
-    <Box roundedLeft className={cn(className, classes.container)}>
+    <Box rounded className={cn(className, classes.container)}>
       <Box rounded>
         <div className={classes.blockies}>
           <Blockies seed={address} size={8} scale={3} />

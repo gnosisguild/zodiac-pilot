@@ -46,11 +46,17 @@
 .address {
   background: black;
   box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
-  z-index: 1;
   margin-left: -30px;
 }
 .address:first-child {
   margin-left: 0;
+  z-index: 3;
+}
+.address:nth-child(2) {
+  z-index: 2;
+}
+.address:nth-child(3) {
+  z-index: 1;
 }
 .addressStack {
   display: flex;
@@ -59,6 +65,6 @@
 .addressStack:hover .address:before {
   border-color: rgba(217, 212, 173, 0.5);
 }
-.lastAddress > div {
-  padding-right: var(--spacing-3);
+.address:first-child > div {
+  padding-left: var(--spacing-1);
 }

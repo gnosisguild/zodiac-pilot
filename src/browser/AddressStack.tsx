@@ -21,7 +21,7 @@ const AddressStack: React.FC<Props> = ({
   return (
     <div className={classNames.addressStack}>
       <Box
-        roundedLeft
+        rounded
         double
         p={2}
         className={cn(classNames.address, classNames.lastAddress)}
