@@ -46,7 +46,7 @@
 .address {
   background: black;
   box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
-  margin-left: -30px;
+  margin-left: -32px;
 }
 .address:first-child {
   margin-left: 0;
@@ -66,5 +66,5 @@
   border-color: rgba(217, 212, 173, 0.5);
 }
 .address:first-child > div {
-  padding-left: var(--spacing-1);
+  padding-left: var(--spacing-2);
 }

@@ -3,8 +3,8 @@
   align-items: center;
   gap: 8px;
   background-color: rgba(217, 212, 173, 0.2);
-  padding-left: 30px;
-  padding-right: var(--spacing-3);
+  padding-left: 32px;
+  padding-right: var(--spacing-1);
 }
 
 .blockies {
