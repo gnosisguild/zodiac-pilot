@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Box, Button, Flex, Select } from '../components'
 import { AppSearch } from '../components'
 
 import ConnectButton from './ConnectButton'
+import isValidAddress from './isValidAddress'
 import classes from './style.module.css'
 import useAddressDryRun from './useAddressDryRun'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
@@ -45,19 +46,6 @@ const Settings: React.FC<Props> = ({
 
   const canLaunch = !loading && !error && url && moduleAddress && avatarAddress
 
-  /*
-   * whenever when load a new Avatar, we should reset moduleAddress field
-   * if it has became unsuitable given the new safe context
-   *
-   * Also, we should perform the effect when loading of module information is done
-   * hence it being listed as dependency while not being used
-   */
-  useEffect(() => {
-    if (![avatarAddress, ...enabledModules].includes(moduleAddress)) {
-      setModuleAddress(avatarAddress)
-    }
-  }, [loading, moduleAddress, avatarAddress, enabledModules])
-
   return (
     <div className={classes.container}>
       <h1>Zodiac Pilot</h1>
@@ -78,7 +66,9 @@ const Settings: React.FC<Props> = ({
                   value={avatarAddress}
                   onChange={(ev) => {
                     setAvatarAddress(ev.target.value)
-                    setModuleAddress(ev.target.value)
+                    setModuleAddress(
+                      isValidAddress(ev.target.value) ? ev.target.value : ''
+                    )
                   }}
                 />
               </Field>
