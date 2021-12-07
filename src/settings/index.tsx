@@ -36,8 +36,8 @@ const Settings: React.FC<Props> = ({
   onLaunch,
 }) => {
   const [url, setUrl] = useState(initialUrl)
-  const [moduleAddress, setModuleAddress] = useState(initialAvatarAddress)
-  const [avatarAddress, setAvatarAddress] = useState(initialModuleAddress)
+  const [moduleAddress, setModuleAddress] = useState(initialModuleAddress)
+  const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
