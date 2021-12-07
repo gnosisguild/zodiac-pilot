@@ -12,6 +12,7 @@
   align-items: center;
   padding: 8px;
   color: white;
+  transition: all 0.1s ease;
 }
 
 .button:hover:enabled {
