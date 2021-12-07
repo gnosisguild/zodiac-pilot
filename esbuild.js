@@ -9,6 +9,7 @@ esbuild
       './src/background.ts',
       './src/contentScript.ts',
       './src/inject.ts',
+      './src/ganache.ts',
       './src/app.tsx',
     ],
     bundle: true,

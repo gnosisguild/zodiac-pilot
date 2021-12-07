@@ -30,5 +30,8 @@
       "resources": ["build/inject.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "sandbox": {
+    "pages": ["ganache.html"]
+  }
 }
