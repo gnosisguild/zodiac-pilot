@@ -23,15 +23,22 @@
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/contentScript.js"]
+    },
+    {
+      "matches": ["http://*.mpango.berlin/"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": ["build/contentScript.js"]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": ["build/inject.js"],
       "matches": ["<all_urls>"]
+    },
+    {
+      "resources": ["build/ganache.js"],
+      "matches": ["<all_urls>"]
     }
-  ],
-  "sandbox": {
-    "pages": ["ganache.html"]
-  }
+  ]
 }

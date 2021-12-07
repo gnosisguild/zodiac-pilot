@@ -9,4 +9,17 @@ if (window.name === 'pilot-frame') {
   }
 }
 
+if (window.name === 'ganache-frame') {
+  const node = document.createElement('script')
+  node.src = chrome.runtime.getURL('build/ganache.js')
+
+  const parent = document.head || document.documentElement
+  parent.appendChild(node)
+  node.onload = function () {
+    node.remove()
+  }
+}
+
+console.log(window.name)
+
 export {}

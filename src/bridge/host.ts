@@ -24,12 +24,6 @@ export default class BridgeHost {
     this.source = event.source
   }
 
-  private assertConsistentSource(event: MessageEvent<any>) {
-    if (event.source !== this.source) {
-      throw new Error('unexpected message source')
-    }
-  }
-
   private async handleRequest(request: Request, messageId: number) {
     console.debug('REQ', messageId, request)
     if (!this.source) throw new Error('source must be set')
@@ -67,8 +61,7 @@ export default class BridgeHost {
       return
     }
 
-    if (zodiacPilotBridgeRequest) {
-      this.assertConsistentSource(ev)
+    if (zodiacPilotBridgeRequest && ev.source === this.source) {
       this.handleRequest(request, messageId)
     }
   }
