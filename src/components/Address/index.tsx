@@ -44,13 +44,13 @@ const Address: React.FC<Props> = ({
   const displayAddress = `${start}...${end}`
 
   return (
-    <Box roundedLeft className={cn(className, classes.container)}>
+    <Box roundedRight className={cn(className, classes.container)}>
+      <div className={classes.address}>{displayAddress}</div>
       <Box rounded>
         <div className={classes.blockies}>
           <Blockies seed={address} size={8} scale={3} />
         </div>
       </Box>
-      <div className={classes.address}>{displayAddress}</div>
       {copyToClipboard && (
         <button
           className={classes.copy}

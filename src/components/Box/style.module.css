@@ -1,6 +1,7 @@
 .box {
   border: 1px solid rgba(217, 212, 173, 0.3);
   position: relative;
+  transition: all 0.2s ease;
 }
 .bg {
   background-color: rgba(217, 212, 173, 0.1);
@@ -17,10 +18,14 @@
   bottom: 3px;
   border: 1px solid rgba(217, 212, 173, 0.3);
   pointer-events: none;
+  transition: all 0.2s ease;
 }
 
 .rounded {
-  border-radius: 50%;
+  border-radius: 5000px;
+}
+.rounded:before {
+  border-radius: 5000px;
 }
 .roundedLeft {
   border-top-left-radius: 5000px;
@@ -30,6 +35,16 @@
 .roundedLeft:before {
   border-top-left-radius: 5000px;
   border-bottom-left-radius: 5000px;
+}
+
+.roundedRight {
+  border-top-right-radius: 5000px;
+  border-bottom-right-radius: 5000px;
+}
+
+.roundedRight:before {
+  border-top-right-radius: 5000px;
+  border-bottom-right-radius: 5000px;
 }
 
 .p1 {
