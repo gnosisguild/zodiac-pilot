@@ -4,7 +4,7 @@ import React from 'react'
 import Blockies from 'react-blockies'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
-import { useWalletConnectProvider } from '../../WalletConnectProvider'
+import { useWalletConnectProvider } from '../../providers'
 import Box from '../Box'
 
 import classes from './style.module.css'

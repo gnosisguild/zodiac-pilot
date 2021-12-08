@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { wrapRequest } from '../bridge/encoding'
 import { prependHttp } from '../browser/UrlInput'
 import { Box, Button, Flex, Select } from '../components'
 import { pushLocation } from '../location'
+import { useWalletConnectProvider } from '../providers'
+import { wrapRequest } from '../providers/WrappingProvider'
 
 import AppSearch from './AppSearch'
 import ConnectButton from './ConnectButton'

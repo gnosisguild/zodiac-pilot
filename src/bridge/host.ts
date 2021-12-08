@@ -1,4 +1,4 @@
-import { Eip1193Provider } from './Eip1193Provider'
+import { ForkProvider, WrappingProvider } from '../providers'
 
 interface Request {
   method: string
@@ -6,10 +6,11 @@ interface Request {
 }
 
 export default class BridgeHost {
-  private provider: Eip1193Provider
+  private provider: WrappingProvider | ForkProvider
   private source: WindowProxy | undefined
+  private ganache: WindowProxy | undefined
 
-  constructor(provider: Eip1193Provider) {
+  constructor(provider: WrappingProvider | ForkProvider) {
     this.provider = provider
   }
 
@@ -61,8 +62,15 @@ export default class BridgeHost {
       return
     }
 
-    if (zodiacPilotBridgeRequest && ev.source === this.source) {
+    if (zodiacPilotBridgeRequest) {
+      this.assertConsistentSource(ev)
       this.handleRequest(request, messageId)
+    }
+  }
+
+  private assertConsistentSource(event: MessageEvent<any>) {
+    if (event.source !== this.source) {
+      throw new Error('unexpected message source')
     }
   }
 }

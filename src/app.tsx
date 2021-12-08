@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react'
 import ReactDom from 'react-dom'
 
-import WalletConnectProvider, {
-  useWalletConnectProvider,
-} from './WalletConnectProvider'
 import './global.css'
 import Browser from './browser'
 import { pushLocation, useLocation } from './location'
+import { ProvideWalletConnect, useWalletConnectProvider } from './providers'
 import Settings from './settings'
 
 const Routes: React.FC = () => {
@@ -39,9 +37,9 @@ const Routes: React.FC = () => {
 
 ReactDom.render(
   <React.StrictMode>
-    <WalletConnectProvider>
+    <ProvideWalletConnect>
       <Routes />
-    </WalletConnectProvider>
+    </ProvideWalletConnect>
   </React.StrictMode>,
   document.getElementById('root')
 )

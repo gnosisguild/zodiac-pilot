@@ -25,7 +25,7 @@
       "js": ["build/contentScript.js"]
     },
     {
-      "matches": ["http://*.mpango.berlin/"],
+      "matches": ["https://ipfs.io/"],
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/contentScript.js"]

@@ -20,6 +20,4 @@ if (window.name === 'ganache-frame') {
   }
 }
 
-console.log(window.name)
-
 export {}
