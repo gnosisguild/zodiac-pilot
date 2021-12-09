@@ -1,6 +1,6 @@
 // Ganache and @ethereum/vm use eval and wasm-eval so we cannot run it in an extension page or a background script.
-// The only way we can use it is via a Sandbox page (https://developer.chrome.com/docs/extensions/mv3/manifest/sandbox/).
-// So this script is loaded from ganache.html which is embedded as an iframe into the extension page, communication happens via postMessage.
+// We also cannot run in in a Sandbox page (https://developer.chrome.com/docs/extensions/mv3/manifest/sandbox/), because Indexed DB is not available there.
+// So this script is injected via contentScripts.ts into an externally hosted page loaded in an iframe, communication happens via postMessage.
 
 import EventEmitter from 'events'
 
