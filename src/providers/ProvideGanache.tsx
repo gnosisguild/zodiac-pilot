@@ -24,7 +24,6 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
 
   // Once the iframe is mounted we create the GanacheProvider that calls to it.
   const ref = useCallback((frame: HTMLIFrameElement | null) => {
-    console.log('REF', frame?.contentWindow)
     if (frame?.contentWindow) {
       setProvider(new GanacheProvider(frame.contentWindow))
     }
@@ -32,7 +31,6 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
 
   // Establish bridge so the provider powering the Ganache fork can call to the WalletConnect provider
   useEffect(() => {
-    console.log('EFFECT')
     if (!walletConnectProvider) return
 
     const bridgeHost = new GanacheBridgeHost(walletConnectProvider)
