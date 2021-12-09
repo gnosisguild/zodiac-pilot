@@ -76,7 +76,3 @@ Again we communicate via `window.postMessage`. That way we connect Ganache to th
 At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
 
 Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.
-However, this has some limitations:
-
-- EIP-2612 permits (as used by Uniswap for token approval for instance) won't be valid.
-  That is because we cannot produce a real signature so that `ecrecover` will return the original account address.

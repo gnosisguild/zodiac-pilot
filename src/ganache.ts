@@ -81,13 +81,6 @@ window.addEventListener('message', async (ev: MessageEvent) => {
     if (!window.top) throw new Error('Must run inside iframe')
     console.debug('GAN REQ', messageId, request)
 
-    // This is a fix for what seems to be a bug in either Ganache or Uniswap.
-    // Uniswap sends the data param JSON stringified, and most providers can handle that.
-    // Ganache requires the data to be the parsed object, though.
-    if (request.method === 'eth_signTypedData_v4' && request.params) {
-      request.params[1] = JSON.parse(request.params[1])
-    }
-
     const response = await provider.request(request)
 
     window.top.postMessage(
