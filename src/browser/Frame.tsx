@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 
 import BridgeHost from '../bridge/host'
 import {
-  ForkProvider,
+  // ForkProvider,
   useGanacheProvider,
   useWalletConnectProvider,
   WrappingProvider,
@@ -24,18 +24,18 @@ const BrowserFrame: React.FC<Props> = ({
   avatarAddress,
 }) => {
   const { provider: walletConnectProvider } = useWalletConnectProvider()
-  const ganacheProvider = useGanacheProvider()
+  // const ganacheProvider = useGanacheProvider()
 
   useEffect(() => {
     if (!walletConnectProvider) return
 
-    // const provider = new WrappingProvider(
-    //   walletConnectProvider,
-    //   pilotAddress,
-    //   moduleAddress,
-    //   avatarAddress
-    // )
-    const provider = new ForkProvider(ganacheProvider, avatarAddress)
+    const provider = new WrappingProvider(
+      walletConnectProvider,
+      pilotAddress,
+      moduleAddress,
+      avatarAddress
+    )
+    // const provider = new ForkProvider(ganacheProvider, avatarAddress)
     const bridgeHost = new BridgeHost(provider)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
     window.addEventListener('message', handle)
@@ -48,7 +48,7 @@ const BrowserFrame: React.FC<Props> = ({
     moduleAddress,
     avatarAddress,
     walletConnectProvider,
-    ganacheProvider,
+    // ganacheProvider,
   ])
 
   return (
