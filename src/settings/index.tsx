@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import { prependHttp } from '../browser/UrlInput'
-import { Box, Button, Flex, Select } from '../components'
-import { pushLocation } from '../location'
-import { useWalletConnectProvider } from '../providers'
-import { wrapRequest } from '../providers/WrappingProvider'
+import { AppSearch, Box, Button, Flex, Select } from '../components'
 
-import AppSearch from './AppSearch'
 import ConnectButton from './ConnectButton'
+import isValidAddress from './isValidAddress'
 import classes from './style.module.css'
+import useAddressDryRun from './useAddressDryRun'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
+
+type Props = {
+  url: string
+  moduleAddress: string
+  avatarAddress: string
+  onLaunch(url: string, moduleAddress: string, avatarAddress: string): void
+}
 
 const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   <Box double bg p={3}>
@@ -24,68 +28,22 @@ const Field: React.FC<{ label?: string }> = ({ label, children }) => (
   </Box>
 )
 
-const useSanityCheck = ({
-  avatarAddress,
-  targetAddress,
-}: {
-  avatarAddress: string
-  targetAddress: string
+const Settings: React.FC<Props> = ({
+  url: initialUrl,
+  moduleAddress: initialModuleAddress,
+  avatarAddress: initialAvatarAddress,
+  onLaunch,
 }) => {
-  const [error, setError] = useState(null)
-  const { provider, connected } = useWalletConnectProvider()
-
-  useEffect(() => {
-    const testCall = () => {
-      const transactionRequest = wrapRequest(
-        {
-          to: '0x0000000000000000000000000000000000000000',
-          data: '0x00',
-          from: avatarAddress,
-        },
-        provider.accounts[0],
-        targetAddress
-      )
-
-      return provider.request({
-        method: 'eth_call',
-        params: [transactionRequest, 'latest'],
-      })
-    }
-
-    if (connected && avatarAddress && targetAddress) {
-      setError(null)
-      testCall().catch((e) => setError(e))
-    }
-  }, [avatarAddress, targetAddress, provider, connected])
-
-  return error
-}
-
-const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
-  const [avatarAddress, setAvatarAddress] = useState(
-    localStorage.getItem('avatarAddress') || ''
-  )
-  const [targetAddress, setTargetAddress] = useState(
-    localStorage.getItem('targetAddress') || ''
-  )
-
   const [url, setUrl] = useState(initialUrl)
+  const [moduleAddress, setModuleAddress] = useState(initialModuleAddress)
+  const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
 
-  const submit = (appUrl: string) => {
-    localStorage.setItem('avatarAddress', avatarAddress)
-    localStorage.setItem('targetAddress', targetAddress)
-    pushLocation(prependHttp(appUrl))
-  }
+  const error = useAddressDryRun({ avatarAddress, moduleAddress })
 
-  const targetOptions = [
-    { value: avatarAddress, label: avatarAddress },
-    ...enabledModules.map((address) => ({ value: address, label: address })),
-  ]
-
-  const error = useSanityCheck({ avatarAddress, targetAddress })
+  const canLaunch = !loading && !error && url && moduleAddress && avatarAddress
 
   return (
     <div className={classes.container}>
@@ -107,18 +65,26 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                   value={avatarAddress}
                   onChange={(ev) => {
                     setAvatarAddress(ev.target.value)
-                    setTargetAddress(ev.target.value)
+                    setModuleAddress(
+                      isValidAddress(ev.target.value) ? ev.target.value : ''
+                    )
                   }}
                 />
               </Field>
 
               <Field label="Zodiac Modifier or Module Address">
                 <Select
-                  options={targetOptions}
+                  options={[
+                    { value: avatarAddress, label: avatarAddress },
+                    ...enabledModules.map((address) => ({
+                      value: address,
+                      label: address,
+                    })),
+                  ]}
                   onChange={(selected: { value: string; label: string }) => {
-                    setTargetAddress(selected.value)
+                    setModuleAddress(selected.value)
                   }}
-                  value={{ value: targetAddress, label: targetAddress }}
+                  value={{ value: moduleAddress, label: moduleAddress }}
                   disabled={loading || !isValidSafe}
                 />
               </Field>
@@ -143,7 +109,14 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
           <Box p={3}>
             <Flex direction="column" gap={3}>
               <div>Select or enter a Dapp to use</div>
-              <AppSearch onPick={submit} />
+              <AppSearch
+                onPick={(url) => {
+                  setUrl(url)
+                  if (canLaunch) {
+                    onLaunch(url, moduleAddress, avatarAddress)
+                  }
+                }}
+              />
               <Field label="Dapp Url">
                 <input
                   type="text"
@@ -153,10 +126,8 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
                     setUrl(ev.target.value)
                   }}
                   onKeyPress={(ev) => {
-                    if (ev.key === 'Enter') {
-                      if (url && avatarAddress && targetAddress) {
-                        submit(url)
-                      }
+                    if (ev.key === 'Enter' && canLaunch) {
+                      onLaunch(url, moduleAddress, avatarAddress)
                     }
                   }}
                 />
@@ -165,9 +136,9 @@ const Settings: React.FC<{ url: string }> = ({ url: initialUrl }) => {
           </Box>
 
           <Button
-            disabled={!url || !avatarAddress || !targetAddress}
+            disabled={!canLaunch}
             onClick={() => {
-              submit(url)
+              onLaunch(url, moduleAddress, avatarAddress)
             }}
           >
             Launch

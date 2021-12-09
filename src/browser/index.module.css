@@ -29,11 +29,12 @@
 }
 
 .appPickerDropdown {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: #141a2d;
   position: absolute;
-  top: 100%;
-  z-index: 1;
-  max-width: 400px;
+  top: 130%;
+  left: -44%;
+  z-index: 2;
+  max-width: 440px;
 }
 
 .appName {
@@ -45,11 +46,17 @@
 .address {
   background: black;
   box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
-  z-index: 1;
-  margin-left: -30px;
+  margin-left: -32px;
 }
 .address:first-child {
   margin-left: 0;
+  z-index: 3;
+}
+.address:nth-child(2) {
+  z-index: 2;
+}
+.address:nth-child(3) {
+  z-index: 1;
 }
 .addressStack {
   display: flex;
@@ -58,6 +65,24 @@
 .addressStack:hover .address:before {
   border-color: rgba(217, 212, 173, 0.5);
 }
-.lastAddress > div {
-  padding-right: var(--spacing-3);
+.address:first-child > div {
+  padding-left: var(--spacing-2);
+}
+
+.helper {
+  position: absolute;
+  top: -22px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.address:first-child .helper {
+  left: 8px;
+}
+.addressStack:hover .helper {
+  opacity: 1;
 }

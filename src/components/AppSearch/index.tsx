@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { AppPicker, Box } from '../components'
+import { AppPicker, Box } from '../'
 
 import searchIcon from './search-icon.svg'
 import classes from './style.module.css'

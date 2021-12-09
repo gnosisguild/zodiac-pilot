@@ -9,6 +9,7 @@ interface Props {
   bg?: boolean
   rounded?: boolean
   roundedLeft?: boolean
+  roundedRight?: boolean
   p?: 1 | 2 | 3
 }
 
@@ -19,6 +20,7 @@ const Box: React.FC<Props> = ({
   bg,
   rounded,
   roundedLeft,
+  roundedRight,
   p = 1,
 }) => (
   <div
@@ -27,6 +29,7 @@ const Box: React.FC<Props> = ({
       [classNames.rounded]: rounded,
       [classNames.bg]: bg,
       [classNames.roundedLeft]: roundedLeft,
+      [classNames.roundedRight]: roundedRight,
     })}
   >
     {children}

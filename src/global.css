@@ -79,6 +79,7 @@ select {
   line-height: 20px;
   padding: 8px 10px;
   height: 38px;
+  transition: all 0.1s ease;
 }
 
 input:hover:enabled,

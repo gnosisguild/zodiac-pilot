@@ -12,14 +12,16 @@ import {} from '../providers/ProvideWalletConnect'
 
 type Props = {
   src: string
+  pilotAddress: string
+  moduleAddress: string
   avatarAddress: string
-  targetAddress: string
 }
 
 const BrowserFrame: React.FC<Props> = ({
   src,
+  pilotAddress,
+  moduleAddress,
   avatarAddress,
-  targetAddress,
 }) => {
   const { provider: walletConnectProvider } = useWalletConnectProvider()
   const ganacheProvider = useGanacheProvider()
@@ -29,8 +31,9 @@ const BrowserFrame: React.FC<Props> = ({
 
     // const provider = new WrappingProvider(
     //   walletConnectProvider,
-    //   avatarAddress,
-    //   targetAddress
+    //   pilotAddress,
+    //   moduleAddress,
+    //   avatarAddress
     // )
     const provider = new ForkProvider(ganacheProvider, avatarAddress)
     const bridgeHost = new BridgeHost(provider)
@@ -40,7 +43,13 @@ const BrowserFrame: React.FC<Props> = ({
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [avatarAddress, targetAddress, walletConnectProvider, ganacheProvider])
+  }, [
+    pilotAddress,
+    moduleAddress,
+    avatarAddress,
+    walletConnectProvider,
+    ganacheProvider,
+  ])
 
   return (
     <iframe

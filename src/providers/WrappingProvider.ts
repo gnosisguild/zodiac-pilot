@@ -27,20 +27,22 @@ export function wrapRequest(
 }
 
 class WrappingProvider {
+  private pilotAddress: string
+  private moduleAddress: string
   private avatarAddress: string
-  private targetAddress: string
 
   private provider: WalletConnectEthereumProvider
 
   constructor(
     provider: WalletConnectEthereumProvider,
-    avatarAddress: string,
-    targetAddress: string
+    pilotAddress: string,
+    moduleAddress: string,
+    avatarAddress: string
   ) {
     this.provider = provider
-
+    this.pilotAddress = pilotAddress
+    this.moduleAddress = moduleAddress
     this.avatarAddress = avatarAddress
-    this.targetAddress = targetAddress
   }
 
   async request(request: {
@@ -67,8 +69,8 @@ class WrappingProvider {
         const [request, ...rest] = params
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
 
         return await this.provider.request({
@@ -89,8 +91,8 @@ class WrappingProvider {
         const request = params[0] as ITxData
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
 
         const safeTxHash = await this.provider.connector.sendTransaction(
@@ -109,8 +111,8 @@ class WrappingProvider {
         const request = params[0] as ITxData
         const wrappedReq = await wrapRequest(
           request,
-          this.provider.accounts[0],
-          this.targetAddress
+          this.pilotAddress,
+          this.moduleAddress
         )
         return await this.provider.connector.signTransaction(wrappedReq)
       }

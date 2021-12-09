@@ -1,0 +1,20 @@
+.pickerInput {
+  font-family: 'Spectral', serif;
+  font-size: 16px;
+  padding-left: 40px;
+  position: relative;
+  z-index: 2;
+}
+.inputIcon {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  height: 20px;
+  width: 20px;
+}
+.inputIcon img {
+  display: block;
+  height: 100%;
+}

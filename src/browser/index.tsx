@@ -30,9 +30,9 @@ const Browser: React.FC = () => {
 
   const { provider } = useWalletConnectProvider()
   const avatarAddress = localStorage.getItem('avatarAddress')
-  const targetAddress = localStorage.getItem('targetAddress')
+  const moduleAddress = localStorage.getItem('moduleAddress')
 
-  const redirectToSettings = !avatarAddress || !targetAddress
+  const redirectToSettings = !avatarAddress || !moduleAddress
   useEffect(() => {
     if (redirectToSettings) {
       pushLocation('settings')
@@ -60,8 +60,8 @@ const Browser: React.FC = () => {
             </Box>
             <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
               <AddressStack
-                connectedAddress={provider.accounts[0]}
-                targetAddress={targetAddress}
+                pilotAddress={provider.accounts[0]}
+                moduleAddress={moduleAddress}
                 avatarAddress={avatarAddress}
               />
             </BlockLink>
@@ -71,8 +71,9 @@ const Browser: React.FC = () => {
           <Box className={classNames.frame} double p={2}>
             <BrowserFrame
               src={initialLocation}
+              pilotAddress={provider.accounts[0]}
+              moduleAddress={moduleAddress}
               avatarAddress={avatarAddress}
-              targetAddress={targetAddress}
             />
           </Box>
         </div>

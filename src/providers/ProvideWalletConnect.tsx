@@ -5,12 +5,12 @@ interface Context {
   connected: boolean
 }
 
-const WalletConnectContext = React.createContext<Context>({ connected: false })
-
 interface Result {
   provider: WalletConnectEthereumProvider
   connected: boolean
 }
+
+const WalletConnectContext = React.createContext<Context>({ connected: false })
 
 export const useWalletConnectProvider = (): Result => {
   const context = useContext(WalletConnectContext)

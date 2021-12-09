@@ -1,10 +1,11 @@
-import { getAddress } from '@ethersproject/address'
 import Safe, { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../providers'
+
+import isValidAddress from './isValidAddress'
 
 export const useSafeModuleInfo = (
   safeAddress: string
@@ -65,14 +66,5 @@ async function fetchSafeModules(
     return { isValidSafe: true, enabledModules }
   } catch (e) {
     return { isValidSafe: false, enabledModules: [] }
-  }
-}
-
-function isValidAddress(safeAddress: string): boolean {
-  try {
-    const address = getAddress(safeAddress)
-    return !!address
-  } catch (e) {
-    return false
   }
 }

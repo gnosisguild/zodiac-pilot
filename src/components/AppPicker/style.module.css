@@ -19,6 +19,7 @@
   min-width: 65px;
   padding: var(--spacing-3) var(--spacing-2) var(--spacing-2) var(--spacing-2);
   cursor: pointer;
+  transition: all 0.12s ease;
 }
 .appButton:hover {
   border-color: rgba(217, 212, 173, 0.8);
