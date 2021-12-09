@@ -69,3 +69,16 @@ Since browsers block access to foreign origin iframes we need to leverage Chrome
 The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
 This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.runtime.sendMessage`.
 For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.
+
+### Simulating transaction in local mainnet fork
+
+We use Ganache to run a local EVM with a fork of the network the user is connected to.
+Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
+Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
+At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
+
+Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.
+However, this has some limitations:
+
+- EIP-2612 permits (as used by Uniswap for token approval for instance) won't be valid.
+  That is because we cannot produce a real signature so that `ecrecover` will return the original account address.
