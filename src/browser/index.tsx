@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from '../WalletConnectProvider'
 import { BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
+import { useWalletConnectProvider } from '../providers'
+// import { ProvideGanache } from '../providers'
 
 import AddressStack from './AddressStack'
 import BrowserFrame from './Frame'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
+
+const ProvideGanache = React.Fragment // For using Ganache, remove this this and uncomment the import
 
 // This disables elastic scroll behavior on Macs
 const useNoPageScroll = () => {
@@ -43,39 +46,41 @@ const Browser: React.FC = () => {
   }
 
   return (
-    <div className={classNames.browser}>
-      <div className={classNames.topBar}>
-        <Flex gap={3} justifyContent="spaceBetween">
-          <Box>
-            <Flex gap={1}>
-              <Box className={classNames.appName} double>
-                Zodiac Pilot
-              </Box>
-              <Box double>
-                <UrlInput onSubmit={setInitialLocation} />
-              </Box>
-            </Flex>
-          </Box>
-          <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
-            <AddressStack
+    <ProvideGanache>
+      <div className={classNames.browser}>
+        <div className={classNames.topBar}>
+          <Flex gap={3} justifyContent="spaceBetween">
+            <Box>
+              <Flex gap={1}>
+                <Box className={classNames.appName} double>
+                  Zodiac Pilot
+                </Box>
+                <Box double>
+                  <UrlInput onSubmit={setInitialLocation} />
+                </Box>
+              </Flex>
+            </Box>
+            <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
+              <AddressStack
+                pilotAddress={provider.accounts[0]}
+                moduleAddress={moduleAddress}
+                avatarAddress={avatarAddress}
+              />
+            </BlockLink>
+          </Flex>
+        </div>
+        <div className={classNames.main}>
+          <Box className={classNames.frame} double p={2}>
+            <BrowserFrame
+              src={initialLocation}
               pilotAddress={provider.accounts[0]}
               moduleAddress={moduleAddress}
               avatarAddress={avatarAddress}
             />
-          </BlockLink>
-        </Flex>
+          </Box>
+        </div>
       </div>
-      <div className={classNames.main}>
-        <Box className={classNames.frame} double p={2}>
-          <BrowserFrame
-            src={initialLocation}
-            pilotAddress={provider.accounts[0]}
-            moduleAddress={moduleAddress}
-            avatarAddress={avatarAddress}
-          />
-        </Box>
-      </div>
-    </div>
+    </ProvideGanache>
   )
 }
 

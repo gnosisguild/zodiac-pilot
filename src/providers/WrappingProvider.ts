@@ -1,10 +1,32 @@
+import { Interface } from '@ethersproject/abi'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ITxData } from '@walletconnect/types'
 
-import { wrapRequest } from './encoding'
 import { waitForMultisigExecution } from './safe'
 
-export class Eip1193Provider {
+const AvatarInterface = new Interface([
+  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
+])
+
+export function wrapRequest(
+  request: ITxData,
+  from: string,
+  to: string
+): ITxData {
+  const data = AvatarInterface.encodeFunctionData(
+    'execTransactionFromModule(address,uint256,bytes,uint8)',
+    [request.to, request.value || 0, request.data, 0]
+  )
+
+  return {
+    from,
+    to,
+    data: data,
+    value: '0x0',
+  }
+}
+
+class WrappingProvider {
   private pilotAddress: string
   private moduleAddress: string
   private avatarAddress: string
@@ -99,3 +121,5 @@ export class Eip1193Provider {
     return await this.provider.request(request)
   }
 }
+
+export default WrappingProvider

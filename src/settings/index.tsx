@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
-import { Box, Button, Flex, Select } from '../components'
-import { AppSearch } from '../components'
+import { AppSearch, Box, Button, Flex, Select } from '../components'
 
 import ConnectButton from './ConnectButton'
 import isValidAddress from './isValidAddress'

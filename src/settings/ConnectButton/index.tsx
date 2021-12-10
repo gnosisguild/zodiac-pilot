@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { useWalletConnectProvider } from '../../WalletConnectProvider'
 import { Button } from '../../components'
+import { useWalletConnectProvider } from '../../providers'
 
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'

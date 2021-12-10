@@ -45,21 +45,6 @@ For allowing arbitrary pages to be loaded in our iframe we drop `X-Frame-Options
 As we don't want to generally lift cross origin restrictions, we dynamically adjust the condition under which the [declarativeNetRequest](https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/) rule applies.
 In our background script, we track tabs running our extension and will apply the header removal only for requests originating from any of these tabs.
 
-### Inject EIP-1193 provider
-
-When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the Dapp.
-
-The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
-The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are handled with our [Eip1193Provider](src/bridge/Eip1193Provider.ts).
-
-In a similar fashion, events are bridged over the window message interface.
-Whenever a new event listener is attached to the provider in the iframe, the bridge will subscribe to the respective event in the host provider.
-
-### Wrapping of transactions
-
-The [Eip1193Provider](src/bridge/Eip1193Provider.ts) takes any transaction requests received from the iframe and encodes them into `execTransactionFromModule` function calls to the configured target module address.
-It the forwards the wrapped transaction request to the WalletConnect provider.
-
 ### Syncing iframe location
 
 The problem: When the user navigates the Dapp, the address bar of the Zodiac Pilot should update accordingly.
@@ -69,3 +54,25 @@ Since browsers block access to foreign origin iframes we need to leverage Chrome
 The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
 This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.runtime.sendMessage`.
 For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.
+
+### Inject EIP-1193 provider
+
+When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the Dapp.
+
+The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
+The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are handled with on of our providers.
+We currently offer two kinds of providers, the `WrappingProvider` for synchronously dispatching the transaction as a meta transaction of a Zodiac module function call, and `ForkProvider` for simulating the transaction in a local fork of the connected network and recording it for later batch transmission.
+
+### Wrapping of transactions
+
+The [WrappingProvider](src/providers/WrappingProvider.ts) takes any transaction requests received from the iframe and encodes them into `execTransactionFromModule` function calls to the configured target module address.
+It then forwards the wrapped transaction request to the WalletConnect provider.
+
+### Simulating transaction in local fork
+
+We use Ganache to run a local EVM with a fork of the network the user is connected to.
+Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
+Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
+At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
+
+Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.

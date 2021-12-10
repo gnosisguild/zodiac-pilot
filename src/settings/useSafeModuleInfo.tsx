@@ -3,7 +3,7 @@ import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from '../WalletConnectProvider'
+import { useWalletConnectProvider } from '../providers'
 
 import isValidAddress from './isValidAddress'
 

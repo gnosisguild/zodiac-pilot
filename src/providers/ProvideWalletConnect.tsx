@@ -15,12 +15,12 @@ const WalletConnectContext = React.createContext<Context>({ connected: false })
 export const useWalletConnectProvider = (): Result => {
   const context = useContext(WalletConnectContext)
   if (!context.provider) {
-    throw new Error('must be wrapped by <WalletConnectProvider>')
+    throw new Error('must be wrapped by <ProvideWalletConnect>')
   }
   return context as Result
 }
 
-const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
+const ProvideWalletConnect: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [state, setState] = useState<Context>({ connected: false })
@@ -57,4 +57,4 @@ const WalletConnectProvider: React.FC<{ children: React.ReactNode }> = ({
     </WalletConnectContext.Provider>
   )
 }
-export default WalletConnectProvider
+export default ProvideWalletConnect

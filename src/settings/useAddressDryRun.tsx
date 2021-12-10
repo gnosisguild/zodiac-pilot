@@ -1,8 +1,8 @@
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from '../WalletConnectProvider'
-import { wrapRequest } from '../bridge/encoding'
+import { useWalletConnectProvider } from '../providers'
+import { wrapRequest } from '../providers/WrappingProvider'
 
 import isValidAddress from './isValidAddress'
 
