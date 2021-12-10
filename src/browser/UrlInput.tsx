@@ -35,7 +35,6 @@ const useOnBlur = (callback: () => void) => {
 
 const UrlInput: React.FC<Props> = ({ onSubmit }) => {
   const location = useLocation()
-  const [value, setValue] = useState(location)
   const [hasFocus, setHasFocus] = useState(false)
   const onBlur = useCallback(() => setHasFocus(false), [])
   const ref = useOnBlur(onBlur)
@@ -47,7 +46,6 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
         defaultValue={location}
         key={location}
         placeholder="Type a url"
-        onChange={(ev) => setValue(ev.target.value)}
         onKeyPress={(ev) => {
           if (ev.key === 'Enter' && ev.target instanceof HTMLInputElement) {
             if (!ev.target.value.trim()) return

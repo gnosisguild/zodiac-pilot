@@ -76,3 +76,7 @@ Again we communicate via `window.postMessage`. That way we connect Ganache to th
 At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
 
 Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.
+
+### Overview of providers
+
+![Diagram giving an overview of providers](./docs/providers-diagram.svg)
