@@ -1,0 +1,21 @@
+.collapsed {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.wrapper {
+  height: 100%;
+}
+
+.divider {
+  width: 1px;
+  background-color: var(--border-color);
+}
+
+.toggleButton {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  padding: 0;
+  background-color: rgba(217, 212, 173, 0.1);
+  border: 1px solid rgba(217, 212, 173, 0.3);
+}

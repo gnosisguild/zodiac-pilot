@@ -2,6 +2,7 @@
   --spacing-1: 4px;
   --spacing-2: 8px;
   --spacing-3: 16px;
+  --spacing-4: 32px;
 
   --border-color: rgba(217, 212, 173, 0.3);
 }
@@ -61,6 +62,14 @@ h1 {
   font-size: 48px;
   line-height: 73px;
   text-align: center;
+  margin: 0;
+}
+
+h3 {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 36px;
   margin: 0;
 }
 

@@ -4,24 +4,32 @@ import React from 'react'
 import classes from './style.module.css'
 
 interface Props {
-  justifyContent?: 'spaceAround' | 'spaceBetween' | 'center' | 'end' | 'start'
   direction?: 'row' | 'column'
-  gap: 0 | 1 | 2 | 3
+  justifyContent?: 'space-around' | 'space-between' | 'center' | 'end' | 'start'
+  alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start'
+  gap: 0 | 1 | 2 | 3 | 4
+  className?: string
 }
 
 const Flex: React.FC<Props> = ({
   gap,
   direction = 'row',
   justifyContent = 'start',
+  alignItems = 'normal',
   children,
+  className,
 }) => (
   <div
     className={cn(
       classes.flex,
       classes[`gap${gap}`],
       classes[direction],
-      classes[justifyContent]
+      className
     )}
+    style={{
+      justifyContent,
+      alignItems,
+    }}
   >
     {children}
   </div>

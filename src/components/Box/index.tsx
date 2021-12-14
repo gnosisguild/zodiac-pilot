@@ -24,13 +24,18 @@ const Box: React.FC<Props> = ({
   p = 1,
 }) => (
   <div
-    className={cn(className, classNames.box, classNames[`p${p}`], {
-      [classNames.double]: double,
-      [classNames.rounded]: rounded,
-      [classNames.bg]: bg,
-      [classNames.roundedLeft]: roundedLeft,
-      [classNames.roundedRight]: roundedRight,
-    })}
+    className={cn(
+      classNames.box,
+      classNames[`p${p}`],
+      {
+        [classNames.double]: double,
+        [classNames.rounded]: rounded,
+        [classNames.bg]: bg,
+        [classNames.roundedLeft]: roundedLeft,
+        [classNames.roundedRight]: roundedRight,
+      },
+      className
+    )}
   >
     {children}
   </div>

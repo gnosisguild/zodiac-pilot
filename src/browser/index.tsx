@@ -6,6 +6,7 @@ import { useWalletConnectProvider } from '../providers'
 // import { ProvideGanache } from '../providers'
 
 import AddressStack from './AddressStack'
+import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
@@ -49,7 +50,7 @@ const Browser: React.FC = () => {
     <ProvideGanache>
       <div className={classNames.browser}>
         <div className={classNames.topBar}>
-          <Flex gap={3} justifyContent="spaceBetween">
+          <Flex gap={3} justifyContent="space-between">
             <Box>
               <Flex gap={1}>
                 <Box className={classNames.appName} double>
@@ -69,7 +70,7 @@ const Browser: React.FC = () => {
             </BlockLink>
           </Flex>
         </div>
-        <div className={classNames.main}>
+        <Flex gap={4} className={classNames.main}>
           <Box className={classNames.frame} double p={2}>
             <BrowserFrame
               src={initialLocation}
@@ -78,7 +79,8 @@ const Browser: React.FC = () => {
               avatarAddress={avatarAddress}
             />
           </Box>
-        </div>
+          <Drawer />
+        </Flex>
       </div>
     </ProvideGanache>
   )
