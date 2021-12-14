@@ -3,15 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
 import { useWalletConnectProvider } from '../providers'
-// import { ProvideGanache } from '../providers'
+import { ProvideGanache } from '../providers'
 
 import AddressStack from './AddressStack'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
-
-const ProvideGanache = React.Fragment // For using Ganache, remove this this and uncomment the import
 
 // This disables elastic scroll behavior on Macs
 const useNoPageScroll = () => {
