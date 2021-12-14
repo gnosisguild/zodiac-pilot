@@ -10,7 +10,7 @@
     #223265 49.61%,
     rgba(43, 34, 101, 0.09) 119.72%
   );
-  border: 3px double rgba(217, 212, 173, 0.3);
+  border: 3px double var(--border-color);
   display: flex;
   flex-direction: row;
   justify-content: center;
