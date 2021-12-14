@@ -10,7 +10,7 @@
     "128": "zodiac128.png"
   },
   "action": {
-    "default_title": "Start Zodiac Pilot"
+    "default_title": "Zodiac Pilot"
   },
   "permissions": ["tabs", "declarativeNetRequest"],
   "background": {
