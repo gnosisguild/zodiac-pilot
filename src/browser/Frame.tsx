@@ -1,14 +1,8 @@
 import React, { useEffect } from 'react'
 
 import BridgeHost from '../bridge/host'
-import {
-  ForkProvider,
-  useGanacheProvider,
-  useWalletConnectProvider,
-  WrappingProvider,
-} from '../providers'
-import {} from '../providers/ProvideGanache'
-import {} from '../providers/ProvideWalletConnect'
+
+import { useProvider } from './ProvideProvider'
 
 type Props = {
   src: string
@@ -23,19 +17,11 @@ const BrowserFrame: React.FC<Props> = ({
   moduleAddress,
   avatarAddress,
 }) => {
-  const { provider: walletConnectProvider } = useWalletConnectProvider()
-  const ganacheProvider = useGanacheProvider()
+  const provider = useProvider()
 
   useEffect(() => {
-    if (!walletConnectProvider) return
+    if (!provider) return
 
-    // const provider = new WrappingProvider(
-    //   walletConnectProvider,
-    //   pilotAddress,
-    //   moduleAddress,
-    //   avatarAddress
-    // )
-    const provider = new ForkProvider(ganacheProvider, avatarAddress)
     const bridgeHost = new BridgeHost(provider)
     const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
     window.addEventListener('message', handle)
@@ -43,13 +29,7 @@ const BrowserFrame: React.FC<Props> = ({
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [
-    pilotAddress,
-    moduleAddress,
-    avatarAddress,
-    walletConnectProvider,
-    ganacheProvider,
-  ])
+  }, [pilotAddress, moduleAddress, avatarAddress, provider])
 
   return (
     <iframe

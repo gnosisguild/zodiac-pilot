@@ -5,3 +5,7 @@ export {
   default as ProvideWalletConnect,
 } from './ProvideWalletConnect'
 export { useGanacheProvider, default as ProvideGanache } from './ProvideGanache'
+
+export interface Eip1193Provider {
+  request(request: { method: string; params?: Array<any> }): Promise<unknown>
+}

@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
 import { useWalletConnectProvider } from '../providers'
-import { ProvideGanache } from '../providers'
 
 import AddressStack from './AddressStack'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
+import ProvideProvider from './ProvideProvider'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 
@@ -45,7 +45,11 @@ const Browser: React.FC = () => {
   }
 
   return (
-    <ProvideGanache>
+    <ProvideProvider
+      avatarAddress={avatarAddress}
+      moduleAddress={moduleAddress}
+      simulate
+    >
       <div className={classNames.browser}>
         <div className={classNames.topBar}>
           <Flex gap={3} justifyContent="space-between">
@@ -80,7 +84,7 @@ const Browser: React.FC = () => {
           <Drawer />
         </Flex>
       </div>
-    </ProvideGanache>
+    </ProvideProvider>
   )
 }
 
