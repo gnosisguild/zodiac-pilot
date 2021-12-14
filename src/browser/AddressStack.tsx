@@ -1,12 +1,8 @@
-import cn from 'classnames'
 import React from 'react'
 
 import { Address, Box } from '../components'
-import walletConnectLogo from '../settings/ConnectButton/wallet-connect-logo.png'
 
-import safeLogo from './gnosis-safe.png'
 import classNames from './index.module.css'
-import zodiacLogo from './zodiac.png'
 
 interface Props {
   avatarAddress: string
@@ -23,12 +19,7 @@ const AddressStack: React.FC<Props> = ({
 
   return (
     <div className={classNames.addressStack}>
-      <Box
-        roundedRight
-        double
-        p={2}
-        className={cn(classNames.address, classNames.lastAddress)}
-      >
+      <Box roundedRight double p={2} className={classNames.address}>
         <Address address={pilotAddress} />
         <div className={classNames.helper}>
           <p>Pilot Account</p>
