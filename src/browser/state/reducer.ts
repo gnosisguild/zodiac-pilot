@@ -1,5 +1,5 @@
-import { TransactionInput, TransactionType } from 'ethers-multisend'
 import { nanoid } from 'nanoid'
+import { TransactionInput, TransactionType } from 'react-multisend'
 
 import { Action } from './actions'
 

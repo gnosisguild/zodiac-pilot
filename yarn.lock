@@ -397,7 +397,7 @@
     "@ethersproject/logger" "^5.5.0"
     "@ethersproject/properties" "^5.5.0"
 
-"@ethersproject/address@5.5.0", "@ethersproject/address@^5.5.0":
+"@ethersproject/address@5.5.0", "@ethersproject/address@^5.0.0", "@ethersproject/address@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/address/-/address-5.5.0.tgz#bcc6f576a553f21f3dd7ba17248f81b473c9c78f"
   integrity sha512-l4Nj0eWlTUh6ro5IbPTgbpT4wRbdH5l8CQf7icF7sb/SI3Nhd9Y9HzhonTSTi6CefI0necIw7LJqQPopPLZyWw==
@@ -423,7 +423,7 @@
     "@ethersproject/bytes" "^5.5.0"
     "@ethersproject/properties" "^5.5.0"
 
-"@ethersproject/bignumber@5.5.0", "@ethersproject/bignumber@^5.5.0":
+"@ethersproject/bignumber@5.5.0", "@ethersproject/bignumber@^5.0.0", "@ethersproject/bignumber@^5.5.0":
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.5.0.tgz#875b143f04a216f4f8b96245bde942d42d279527"
   integrity sha512-6Xytlwvy6Rn3U3gKEc1vP7nR92frHkv6wtVr95LFR3jREXiCPzdWxKQ1cx4JGQBXxcguAwjA8murlYN2TSiEbg==
@@ -2564,7 +2564,7 @@ ethereumjs-util@^7.1.3:
     ethereum-cryptography "^0.1.3"
     rlp "^2.2.4"
 
-ethers-multisend@^2.0.1:
+ethers-multisend@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/ethers-multisend/-/ethers-multisend-2.0.1.tgz#4ddf3b0c7533d38e32293f37c8b5936268e07498"
   integrity sha512-W34ELxwDodI9stN/PBn/XEhzNDMydE7jC29AZe/P1xFa1w4vF4QN6e/38J1ZLi/iZ14GZeZRcUnggOTWGYpRBQ==
@@ -4186,6 +4186,16 @@ react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
+
+react-multisend@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-multisend/-/react-multisend-1.0.0.tgz#70764fbe1d93ca2c0957f09d6ce5d07cb473db6b"
+  integrity sha512-6mc4ZWtCXk3pMvEy7C3qP3KRiZjZDZbYCxN84IHWStro+2cYX+874nwzXAeO/wnkE7HmKdmLYqXrx+hDCdnqoA==
+  dependencies:
+    "@ethersproject/abi" "^5.0.0"
+    "@ethersproject/address" "^5.0.0"
+    "@ethersproject/bignumber" "^5.0.0"
+    ethers-multisend "^2.0.0"
 
 react-select@^5.2.1:
   version "5.2.1"

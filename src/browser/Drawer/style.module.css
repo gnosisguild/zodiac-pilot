@@ -1,0 +1,28 @@
+.transactionHeader {
+  position: relative;
+}
+.titleWrapper {
+  margin: 0 32px;
+  cursor: pointer;
+}
+.title {
+  font-weight: bold;
+  padding: 4px 12px 4px 4px;
+  display: inline-block;
+}
+.index {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0 4px;
+  margin-right: 8px;
+}
+.removeTransaction {
+  width: 45px;
+  height: 45px;
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  cursor: pointer;
+}
