@@ -1,4 +1,7 @@
+import { providers } from 'ethers'
+import { provider } from 'ganache'
 import React, { createContext, useContext } from 'react'
+import { encodeSingle } from 'react-multisend'
 
 import {
   Eip1193Provider,
@@ -8,7 +11,7 @@ import {
   WrappingProvider,
 } from '../providers'
 
-import { useDispatch } from './state'
+import { useDispatch, useTransactions } from './state'
 
 interface Props {
   avatarAddress: string
@@ -23,6 +26,11 @@ export const useProvider = () => {
   return value
 }
 
+const CommitTransactionsContext = createContext<(() => Promise<void>) | null>(
+  null
+)
+export const useCommitTransactions = () => useContext(CommitTransactionsContext)
+
 const ProvideProvider: React.FC<Props> = ({
   avatarAddress,
   moduleAddress,
@@ -33,6 +41,7 @@ const ProvideProvider: React.FC<Props> = ({
   const ganacheProvider = useGanacheProvider()
   const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
+  const transactions = useTransactions()
 
   const wrappingProvider = new WrappingProvider(
     walletConnectProvider,
@@ -55,11 +64,29 @@ const ProvideProvider: React.FC<Props> = ({
     },
   })
 
+  const web3Provider = new providers.Web3Provider(wrappingProvider)
+  const commitTransactions = async () => {
+    const inputs = transactions.map((txState) => txState.input)
+    if (inputs.length === 1) {
+      const txHash = await wrappingProvider.request({
+        method: 'eth_sendTransaction',
+        params: [encodeSingle(inputs[0])],
+      })
+      console.log({ txHash })
+      const receipt = await web3Provider.waitForTransaction(txHash)
+      console.log({ receipt })
+    }
+  }
+
   return (
     <ProviderContext.Provider
       value={simulate ? forkProvider : wrappingProvider}
     >
-      {children}
+      <CommitTransactionsContext.Provider
+        value={simulate ? commitTransactions : null}
+      >
+        {children}
+      </CommitTransactionsContext.Provider>
     </ProviderContext.Provider>
   )
 }

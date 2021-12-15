@@ -111,22 +111,34 @@ class WrappingProvider {
         return txHash
       }
 
-      case 'eth_signTransaction': {
-        const request = params[0] as ITxData
-        const wrappedReq = await wrapRequest(
-          request,
-          this.pilotAddress,
-          this.moduleAddress
-        )
-        return await this.provider.connector.signTransaction(wrappedReq)
-      }
-
       // Uniswap will try to use this for ERC-20 permits, but this wont fly with a contract wallet
       case 'eth_signTypedData_v4': {
         throw new UnsupportedMethodError(
           'eth_signTypedData_v4 is not supported'
         )
       }
+
+      // not supported by Safe, but we might wanna use this once we go more generic
+      // case 'eth_signTransaction': {
+      //   const request = params[0] as ITxData
+      //   const wrappedReq = await wrapRequest(
+      //     request,
+      //     this.pilotAddress,
+      //     this.moduleAddress
+      //   )
+      //   return await this.provider.connector.signTransaction(wrappedReq)
+      // }
+
+      // case 'eth_sendRawTransaction': {
+      //   const safeTxHash = (await this.provider.request(request)) as string
+
+      //   const txHash = await waitForMultisigExecution(
+      //     this.provider.chainId,
+      //     safeTxHash
+      //   )
+
+      //   return txHash
+      // }
     }
 
     return await this.provider.request(request)
