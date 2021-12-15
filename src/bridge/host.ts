@@ -13,6 +13,10 @@ export default class BridgeHost {
     this.provider = provider
   }
 
+  setProvider(provider: Eip1193Provider) {
+    this.provider = provider
+  }
+
   initBridge(event: MessageEvent<any>) {
     if (!event.source) throw new Error('Unable to get message source')
     if (

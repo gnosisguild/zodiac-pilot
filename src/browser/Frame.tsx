@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import BridgeHost from '../bridge/host'
 
@@ -6,30 +6,30 @@ import { useProvider } from './ProvideProvider'
 
 type Props = {
   src: string
-  pilotAddress: string
-  moduleAddress: string
-  avatarAddress: string
 }
 
-const BrowserFrame: React.FC<Props> = ({
-  src,
-  pilotAddress,
-  moduleAddress,
-  avatarAddress,
-}) => {
+const BrowserFrame: React.FC<Props> = ({ src }) => {
   const provider = useProvider()
+  const bridgeHostRef = useRef<BridgeHost | null>(null)
 
   useEffect(() => {
     if (!provider) return
 
-    const bridgeHost = new BridgeHost(provider)
-    const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
+    if (!bridgeHostRef.current) {
+      bridgeHostRef.current = new BridgeHost(provider)
+    } else {
+      bridgeHostRef.current.setProvider(provider)
+    }
+
+    const handle = (ev: MessageEvent<any>) => {
+      bridgeHostRef.current?.handleMessage(ev)
+    }
     window.addEventListener('message', handle)
 
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [pilotAddress, moduleAddress, avatarAddress, provider])
+  }, [provider])
 
   return (
     <iframe

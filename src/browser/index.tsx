@@ -79,12 +79,7 @@ const Browser: React.FC = () => {
             </div>
             <Flex gap={4} className={classNames.main}>
               <Box className={classNames.frame} double p={2}>
-                <BrowserFrame
-                  src={initialLocation}
-                  pilotAddress={provider.accounts[0]}
-                  moduleAddress={moduleAddress}
-                  avatarAddress={avatarAddress}
-                />
+                <BrowserFrame src={initialLocation} />
               </Box>
               <Drawer />
             </Flex>

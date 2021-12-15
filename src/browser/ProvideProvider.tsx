@@ -1,7 +1,6 @@
 import { providers } from 'ethers'
-import { provider } from 'ganache'
-import React, { createContext, useContext } from 'react'
-import { encodeSingle } from 'react-multisend'
+import React, { createContext, useCallback, useContext, useMemo } from 'react'
+import { encodeMulti, encodeSingle } from 'react-multisend'
 
 import {
   Eip1193Provider,
@@ -43,40 +42,53 @@ const ProvideProvider: React.FC<Props> = ({
   const dispatch = useDispatch()
   const transactions = useTransactions()
 
-  const wrappingProvider = new WrappingProvider(
-    walletConnectProvider,
-    pilotAddress,
-    moduleAddress,
-    avatarAddress
+  const wrappingProvider = useMemo(
+    () =>
+      new WrappingProvider(
+        walletConnectProvider,
+        pilotAddress,
+        moduleAddress,
+        avatarAddress
+      ),
+    [walletConnectProvider, pilotAddress, moduleAddress, avatarAddress]
   )
 
-  const forkProvider = new ForkProvider(ganacheProvider, avatarAddress, {
-    onTransactionReceived(txData, transactionHash) {
-      dispatch({
-        type: 'APPEND_CAPTURED_TX',
-        payload: {
-          to: txData.to || '0x0',
-          data: txData.data || '',
-          value: `${txData.value || 0}`,
-          transactionHash,
+  const forkProvider = useMemo(
+    () =>
+      new ForkProvider(ganacheProvider, avatarAddress, {
+        onTransactionReceived(txData, transactionHash) {
+          dispatch({
+            type: 'APPEND_CAPTURED_TX',
+            payload: {
+              to: txData.to || '0x0',
+              data: txData.data || '',
+              value: `${txData.value || 0}`,
+              transactionHash,
+            },
+          })
         },
-      })
-    },
-  })
+      }),
+    [ganacheProvider, avatarAddress, dispatch]
+  )
 
-  const web3Provider = new providers.Web3Provider(wrappingProvider)
-  const commitTransactions = async () => {
-    const inputs = transactions.map((txState) => txState.input)
-    if (inputs.length === 1) {
-      const txHash = await wrappingProvider.request({
-        method: 'eth_sendTransaction',
-        params: [encodeSingle(inputs[0])],
-      })
-      console.log({ txHash })
-      const receipt = await web3Provider.waitForTransaction(txHash)
-      console.log({ receipt })
-    }
-  }
+  const commitTransactions = useCallback(async () => {
+    console.debug('commit')
+    const web3Provider = new providers.Web3Provider(wrappingProvider)
+    const metaTransactions = transactions.map((txState) =>
+      encodeSingle(txState.input)
+    )
+    const txHash = await wrappingProvider.request({
+      method: 'eth_sendTransaction',
+      params: [
+        metaTransactions.length === 1
+          ? metaTransactions[0]
+          : encodeMulti(metaTransactions),
+      ],
+    })
+    console.log({ txHash })
+    const receipt = await web3Provider.waitForTransaction(txHash)
+    console.log({ receipt })
+  }, [transactions, wrappingProvider])
 
   return (
     <ProviderContext.Provider
