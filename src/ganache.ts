@@ -72,6 +72,9 @@ const provider = ganache.provider({
   wallet: {
     unlockedAccounts: ['0x87eb5f76c3785936406fa93654f39b2087fd8068'],
   },
+  database: {
+    dbPath: 'pilot',
+  },
 })
 
 // establish message bridge for ganache requests
