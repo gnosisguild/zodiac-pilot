@@ -5,7 +5,7 @@ import { Action } from './actions'
 
 export interface TransactionState {
   input: TransactionInput
-  transactionHash?: string
+  transactionHash: string
 }
 
 const rootReducer = (
