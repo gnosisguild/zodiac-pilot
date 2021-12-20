@@ -28,6 +28,9 @@ const ProvideWalletConnect: React.FC<{ children: React.ReactNode }> = ({
     async function init() {
       const provider = new WalletConnectEthereumProvider({
         infuraId: 'b81b456501e34bed8a85a3c2ff8f4577',
+        rpc: {
+          100: 'https://dai.poa.network/',
+        },
       })
 
       // @ts-expect-error signer is a private property, but we didn't find another way
