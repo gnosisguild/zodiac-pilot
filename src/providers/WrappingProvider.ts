@@ -26,6 +26,10 @@ export function wrapRequest(
   }
 }
 
+class UnsupportedMethodError extends Error {
+  code = 4200
+}
+
 class WrappingProvider {
   private pilotAddress: string
   private moduleAddress: string
@@ -115,6 +119,13 @@ class WrappingProvider {
           this.moduleAddress
         )
         return await this.provider.connector.signTransaction(wrappedReq)
+      }
+
+      // Uniswap will try to use this for ERC-20 permits, but this wont fly with a contract wallet
+      case 'eth_signTypedData_v4': {
+        throw new UnsupportedMethodError(
+          'eth_signTypedData_v4 is not supported'
+        )
       }
     }
 

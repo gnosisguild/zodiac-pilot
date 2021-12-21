@@ -82,4 +82,9 @@ export default class BridgeIframe extends EventEmitter {
       callback(error, { method: request.method, error })
     }
   }
+
+  isZodiacPilot = true
+
+  // currently required for curve.fi -> https://github.com/blocknative/onboard/issues/765
+  isBlank = true
 }
