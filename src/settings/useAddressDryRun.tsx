@@ -17,7 +17,7 @@ const useAddressDryRun = ({
   const { provider, connected } = useWalletConnectProvider()
 
   useEffect(() => {
-    if (connected && avatarAddress) {
+    if (connected && avatarAddress && moduleAddress) {
       dryRun(provider, moduleAddress, avatarAddress)
         .then(() => {
           setError(null)

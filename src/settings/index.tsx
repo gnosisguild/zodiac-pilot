@@ -59,38 +59,33 @@ const Settings: React.FC<Props> = ({
           </Box>
           <Box p={3}>
             <Flex direction="column" gap={3}>
+              <Field>
+                <ConnectButton />
+              </Field>
+
               <Field label="DAO Safe">
                 <input
                   type="text"
                   value={avatarAddress}
                   onChange={(ev) => {
                     setAvatarAddress(ev.target.value)
-                    setModuleAddress(
-                      isValidAddress(ev.target.value) ? ev.target.value : ''
-                    )
                   }}
                 />
               </Field>
 
               <Field label="Zodiac Modifier or Module Address">
                 <Select
-                  options={[
-                    { value: avatarAddress, label: avatarAddress },
-                    ...enabledModules.map((address) => ({
-                      value: address,
-                      label: address,
-                    })),
-                  ]}
+                  options={enabledModules.map((address) => ({
+                    value: address,
+                    label: address,
+                  }))}
                   onChange={(selected: { value: string; label: string }) => {
                     setModuleAddress(selected.value)
                   }}
                   value={{ value: moduleAddress, label: moduleAddress }}
-                  disabled={loading || !isValidSafe}
+                  isDisabled={loading || !isValidSafe}
+                  placeholder="Select a module"
                 />
-              </Field>
-
-              <Field>
-                <ConnectButton />
               </Field>
 
               {error && (

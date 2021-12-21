@@ -14,9 +14,11 @@ export const useSafeModuleInfo = (
   const [isValidSafe, setIsValidSafe] = useState(false)
   const [enabledModules, setEnabledModules] = useState<string[]>([])
 
-  const { provider } = useWalletConnectProvider()
+  const { provider, connected } = useWalletConnectProvider()
 
   useEffect(() => {
+    if (!connected) return
+
     setLoading(true)
     fetchSafeModules(provider, safeAddress)
       .then(({ isValidSafe, enabledModules }) => {
@@ -24,7 +26,7 @@ export const useSafeModuleInfo = (
         setEnabledModules(enabledModules)
       })
       .finally(() => setLoading(false))
-  }, [provider, safeAddress])
+  }, [provider, safeAddress, connected])
 
   return { loading, isValidSafe, enabledModules }
 }

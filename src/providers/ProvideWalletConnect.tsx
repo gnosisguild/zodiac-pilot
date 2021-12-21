@@ -36,6 +36,10 @@ const ProvideWalletConnect: React.FC<{ children: React.ReactNode }> = ({
       // @ts-expect-error signer is a private property, but we didn't find another way
       provider.signer.on('connect', () => {
         console.log('WalletConnect connected')
+
+        // brute force fix for bug in useSafeModulesInfo hook
+        window.location.reload()
+
         setState({ provider, connected: true })
       })
 
