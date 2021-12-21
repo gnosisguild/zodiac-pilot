@@ -54,7 +54,7 @@ const Settings: React.FC<Props> = ({
           <Box p={3}>
             <p className="intro-text">
               This app allows you to control a Safe via a Zodiac modifier from
-              an enabled account. <a href="#docs">Read more here.</a>
+              an enabled account.
             </p>
           </Box>
           <Box p={3}>
