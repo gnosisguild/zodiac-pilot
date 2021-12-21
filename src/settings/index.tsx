@@ -79,12 +79,18 @@ const Settings: React.FC<Props> = ({
                     value: address,
                     label: address,
                   }))}
-                  onChange={(selected: { value: string; label: string }) => {
-                    setModuleAddress(selected.value)
+                  onChange={(selected) => {
+                    setModuleAddress(
+                      (selected as { value: string; label: string }).value
+                    )
                   }}
-                  value={{ value: moduleAddress, label: moduleAddress }}
+                  value={
+                    moduleAddress
+                      ? { value: moduleAddress, label: moduleAddress }
+                      : undefined
+                  }
                   isDisabled={loading || !isValidSafe}
-                  placeholder="Select a module"
+                  placeholder={loading || !isValidSafe ? '' : 'Select a module'}
                 />
               </Field>
 
