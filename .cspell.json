@@ -10,11 +10,13 @@
     "cowswap",
     "esbuild",
     "ethersproject",
+    "honeyswap",
     "iframes",
     "instadapp",
     "paraswap",
     "prebuild",
     "reflexer",
+    "Sushiswap",
     "walletconnect"
   ],
   "flagWords": [],
