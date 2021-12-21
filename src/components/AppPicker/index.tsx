@@ -119,7 +119,7 @@ const APP_CONFIG = [
     name: 'Sushiswap',
     url: 'https://app.sushi.com/',
     logoUrl: sushiswapLogo,
-    networks: [1, 4],
+    networks: [1, 4, 100],
   },
   { name: 'Unit', url: 'https://unit.xyz/', logoUrl: unitLogo, networks: [1] },
   {
