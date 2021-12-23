@@ -1,9 +1,9 @@
+import { TransactionInput } from 'react-multisend'
+
 interface AppendCapturedTxAction {
   type: 'APPEND_CAPTURED_TX'
   payload: {
-    to: string
-    value: string
-    data: string
+    input: TransactionInput
     transactionHash: string
   }
 }

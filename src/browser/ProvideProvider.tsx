@@ -1,6 +1,7 @@
 import { providers } from 'ethers'
+import { nanoid } from 'nanoid'
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
-import { encodeMulti, encodeSingle } from 'react-multisend'
+import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
 import {
   Eip1193Provider,
@@ -10,6 +11,7 @@ import {
   WrappingProvider,
 } from '../providers'
 
+import fetchAbi, { NetworkId } from './fetchAbi'
 import { useDispatch, useTransactions } from './state'
 
 interface Props {
@@ -29,6 +31,8 @@ const CommitTransactionsContext = createContext<(() => Promise<void>) | null>(
   null
 )
 export const useCommitTransactions = () => useContext(CommitTransactionsContext)
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const ProvideProvider: React.FC<Props> = ({
   avatarAddress,
@@ -56,19 +60,32 @@ const ProvideProvider: React.FC<Props> = ({
   const forkProvider = useMemo(
     () =>
       new ForkProvider(ganacheProvider, avatarAddress, {
-        onTransactionReceived(txData, transactionHash) {
+        async onTransactionReceived(txData, transactionHash) {
+          const input = await decodeSingle(
+            {
+              to: txData.to || ZERO_ADDRESS,
+              value: `${txData.value || 0}`,
+              data: txData.data || '',
+            },
+            new providers.Web3Provider(walletConnectProvider),
+            (address: string) =>
+              fetchAbi(
+                walletConnectProvider.chainId as NetworkId,
+                address,
+                new providers.Web3Provider(walletConnectProvider)
+              ),
+            nanoid()
+          )
           dispatch({
             type: 'APPEND_CAPTURED_TX',
             payload: {
-              to: txData.to || '0x0',
-              data: txData.data || '',
-              value: `${txData.value || 0}`,
+              input,
               transactionHash,
             },
           })
         },
       }),
-    [ganacheProvider, avatarAddress, dispatch]
+    [ganacheProvider, walletConnectProvider, avatarAddress, dispatch]
   )
 
   const commitTransactions = useCallback(async () => {
