@@ -1,5 +1,4 @@
-import { nanoid } from 'nanoid'
-import { TransactionInput, TransactionType } from 'react-multisend'
+import { TransactionInput } from 'react-multisend'
 
 import { Action } from './actions'
 
@@ -14,15 +13,11 @@ const rootReducer = (
 ): TransactionState[] => {
   switch (action.type) {
     case 'APPEND_CAPTURED_TX': {
-      const { transactionHash, ...input } = action.payload
+      const { transactionHash, input } = action.payload
       return [
         ...state,
         {
-          input: {
-            type: TransactionType.raw,
-            id: nanoid(),
-            ...input,
-          },
+          input,
           transactionHash,
         },
       ]

@@ -15,7 +15,7 @@ const EXPLORER_API_URLS = {
 
 export type NetworkId = keyof typeof EXPLORER_API_URLS
 
-const fetchContractAbi = async (
+const fetchAbi = async (
   network: NetworkId,
   contractAddress: string,
   provider: Provider,
@@ -35,21 +35,12 @@ const fetchContractAbi = async (
   }
 
   const { result, status } = await response.json()
-  // if (status === '0') {
-  //   console.error(`Could not fetch contract ABI: ${result}`)
-  //   return ''
-  // }
 
   if (status === '0' || looksLikeAProxy(result)) {
     // Is this a proxy contract?
     const proxyTarget = await detectProxyTarget(contractAddress, provider)
     return proxyTarget
-      ? await fetchContractAbi(
-          network,
-          proxyTarget,
-          provider,
-          blockExplorerApiKey
-        )
+      ? await fetchAbi(network, proxyTarget, provider, blockExplorerApiKey)
       : ''
   }
 
@@ -58,7 +49,7 @@ const fetchContractAbi = async (
   return new Interface(result).format(FormatTypes.json) as string
 }
 
-export default fetchContractAbi
+export default fetchAbi
 
 const looksLikeAProxy = (abi: string) => {
   const iface = new Interface(abi)

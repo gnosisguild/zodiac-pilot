@@ -4,7 +4,8 @@ import { TransactionType } from 'react-multisend'
 import { Box } from '../../components'
 import { TransactionState } from '../state'
 
-import { RawTransaction } from './RawTransaction'
+import CallContract from './CallContract'
+import RawTransaction from './RawTransaction'
 import classes from './style.module.css'
 
 interface HeaderProps {
@@ -16,10 +17,15 @@ interface HeaderProps {
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
+  value,
   onClick,
   onRemove,
 }) => {
-  const title = 'Raw tx'
+  let title = 'Raw tx'
+  if (value.input.type === TransactionType.callContract) {
+    title = `Contract call: ${value.input.functionSignature}`
+  }
+
   return (
     <div
       className={classes.transactionHeader}
@@ -69,15 +75,8 @@ interface ContentProps {
 const TransactionBody: React.FC<ContentProps> = ({ value }) => {
   // const { network, blockExplorerApiKey } = useMultiSendContext()
   switch (value.input.type) {
-    // case TransactionType.callContract:
-    //   return (
-    //     <CallContract
-    //       value={value}
-    //       onChange={onChange}
-    //       network={network}
-    //       blockExplorerApiKey={blockExplorerApiKey}
-    //     />
-    //   )
+    case TransactionType.callContract:
+      return <CallContract value={value.input} />
     // case TransactionType.transferFunds:
     //   return <TransferFunds value={value} onChange={onChange} />
     // case TransactionType.transferCollectible:

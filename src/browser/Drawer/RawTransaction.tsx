@@ -5,7 +5,7 @@ interface Props {
   value: RawTransactionInput
 }
 
-export const RawTransaction: React.FC<Props> = ({ value }) => (
+const RawTransaction: React.FC<Props> = ({ value }) => (
   <div>
     <label>
       <span>To</span> <i>address</i>
@@ -21,3 +21,5 @@ export const RawTransaction: React.FC<Props> = ({ value }) => (
     </label>
   </div>
 )
+
+export default RawTransaction
