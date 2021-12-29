@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 
 import { BlockLink, Box, Flex } from '../components'
 import { pushLocation, useLocation } from '../location'
-import { useWalletConnectProvider } from '../providers'
-// import { ProvideGanache } from '../providers'
+import { ProvideGanache, useWalletConnectProvider } from '../providers'
 
 import AddressStack from './AddressStack'
+import Drawer from './Drawer'
 import BrowserFrame from './Frame'
+import ProvideProvider from './ProvideProvider'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
-
-const ProvideGanache = React.Fragment // For using Ganache, remove this this and uncomment the import
+import { ProvideState } from './state'
 
 // This disables elastic scroll behavior on Macs
 const useNoPageScroll = () => {
@@ -46,41 +46,47 @@ const Browser: React.FC = () => {
   }
 
   return (
-    <ProvideGanache>
-      <div className={classNames.browser}>
-        <div className={classNames.topBar}>
-          <Flex gap={3} justifyContent="spaceBetween">
-            <Box>
-              <Flex gap={1}>
-                <Box className={classNames.appName} double>
-                  Zodiac Pilot
-                </Box>
-                <Box double>
-                  <UrlInput onSubmit={setInitialLocation} />
-                </Box>
-              </Flex>
+    // <ProvideGanache>
+    <ProvideState>
+      <ProvideProvider
+        avatarAddress={avatarAddress}
+        moduleAddress={moduleAddress}
+        simulate={false}
+      >
+        <div className={classNames.browser}>
+          <div className={classNames.topBar}>
+            <Flex gap={3} justifyContent="space-between">
+              <Box>
+                <Flex gap={1}>
+                  <Box className={classNames.appName} double>
+                    Zodiac Pilot
+                  </Box>
+                  <Box double>
+                    <UrlInput onSubmit={setInitialLocation} />
+                  </Box>
+                </Flex>
+              </Box>
+              <BlockLink
+                href={`#${encodeURIComponent(`settings;${location}`)}`}
+              >
+                <AddressStack
+                  pilotAddress={provider.accounts[0]}
+                  moduleAddress={moduleAddress}
+                  avatarAddress={avatarAddress}
+                />
+              </BlockLink>
+            </Flex>
+          </div>
+          <Flex gap={4} className={classNames.main}>
+            <Box className={classNames.frame} double p={2}>
+              <BrowserFrame src={initialLocation} />
             </Box>
-            <BlockLink href={`#${encodeURIComponent(`settings;${location}`)}`}>
-              <AddressStack
-                pilotAddress={provider.accounts[0]}
-                moduleAddress={moduleAddress}
-                avatarAddress={avatarAddress}
-              />
-            </BlockLink>
+            {/* <Drawer /> */}
           </Flex>
         </div>
-        <div className={classNames.main}>
-          <Box className={classNames.frame} double p={2}>
-            <BrowserFrame
-              src={initialLocation}
-              pilotAddress={provider.accounts[0]}
-              moduleAddress={moduleAddress}
-              avatarAddress={avatarAddress}
-            />
-          </Box>
-        </div>
-      </div>
-    </ProvideGanache>
+      </ProvideProvider>
+    </ProvideState>
+    // </ProvideGanache>
   )
 }
 

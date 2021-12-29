@@ -1,4 +1,4 @@
-import { ForkProvider, WrappingProvider } from '../providers'
+import { Eip1193Provider } from '../providers'
 
 interface Request {
   method: string
@@ -6,11 +6,14 @@ interface Request {
 }
 
 export default class BridgeHost {
-  private provider: WrappingProvider | ForkProvider
+  private provider: Eip1193Provider
   private source: WindowProxy | undefined
-  private ganache: WindowProxy | undefined
 
-  constructor(provider: WrappingProvider | ForkProvider) {
+  constructor(provider: Eip1193Provider) {
+    this.provider = provider
+  }
+
+  setProvider(provider: Eip1193Provider) {
     this.provider = provider
   }
 

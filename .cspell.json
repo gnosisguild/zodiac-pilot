@@ -13,6 +13,7 @@
     "honeyswap",
     "iframes",
     "instadapp",
+    "multisend",
     "paraswap",
     "prebuild",
     "reflexer",
@@ -21,6 +22,7 @@
   ],
   "flagWords": [],
   "ignorePaths": [
+    "package.json",
     "yarn.lock",
     "node_modules/**",
     "tsconfig.json",

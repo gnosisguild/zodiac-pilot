@@ -2,7 +2,7 @@
   list-style: none;
   margin: var(--spacing-2) 0 0 0;
   padding: 4px;
-  border: 1px solid rgba(217, 212, 173, 0.3);
+  border: 1px solid var(--border-color);
   background: rgba(217, 212, 173, 0.1);
   display: flex;
   gap: var(--spacing-1);
@@ -10,7 +10,7 @@
 }
 .appButton {
   background: none;
-  border: 1px solid rgba(217, 212, 173, 0.3);
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   justify-content: center;

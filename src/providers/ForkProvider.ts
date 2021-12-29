@@ -1,23 +1,35 @@
+import { ITxData } from '@walletconnect/types'
+
 import { GanacheProvider } from './ProvideGanache'
 
 class UnsupportedMethodError extends Error {
   code = 4200
 }
 
+interface Handlers {
+  onTransactionReceived(txData: ITxData, hash: string): void
+}
+
 class ForkProvider {
   private avatarAddress: string
   private provider: GanacheProvider
+  private handlers: Handlers
 
-  constructor(provider: GanacheProvider, avatarAddress: string) {
+  constructor(
+    provider: GanacheProvider,
+    avatarAddress: string,
+    handlers: Handlers
+  ) {
     this.provider = provider
     this.avatarAddress = avatarAddress
+    this.handlers = handlers
   }
 
   async request(request: {
     method: string
     params?: Array<any>
   }): Promise<any> {
-    const { method } = request
+    const { method, params = [] } = request
 
     switch (method) {
       case 'eth_requestAccounts': {
@@ -38,6 +50,13 @@ class ForkProvider {
         throw new UnsupportedMethodError(
           'eth_signTypedData_v4 is not supported'
         )
+      }
+
+      case 'eth_sendTransaction': {
+        // record the transaction
+        const result = await this.provider.request(request)
+        this.handlers.onTransactionReceived(params[0] as ITxData, result)
+        return result
       }
     }
 

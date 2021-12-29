@@ -1,55 +1,35 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import BridgeHost from '../bridge/host'
-import {
-  // ForkProvider,
-  useGanacheProvider,
-  useWalletConnectProvider,
-  WrappingProvider,
-} from '../providers'
-import {} from '../providers/ProvideGanache'
-import {} from '../providers/ProvideWalletConnect'
+
+import { useProvider } from './ProvideProvider'
 
 type Props = {
   src: string
-  pilotAddress: string
-  moduleAddress: string
-  avatarAddress: string
 }
 
-const BrowserFrame: React.FC<Props> = ({
-  src,
-  pilotAddress,
-  moduleAddress,
-  avatarAddress,
-}) => {
-  const { provider: walletConnectProvider } = useWalletConnectProvider()
-  // const ganacheProvider = useGanacheProvider()
+const BrowserFrame: React.FC<Props> = ({ src }) => {
+  const provider = useProvider()
+  const bridgeHostRef = useRef<BridgeHost | null>(null)
 
   useEffect(() => {
-    if (!walletConnectProvider) return
+    if (!provider) return
 
-    const provider = new WrappingProvider(
-      walletConnectProvider,
-      pilotAddress,
-      moduleAddress,
-      avatarAddress
-    )
-    // const provider = new ForkProvider(ganacheProvider, avatarAddress)
-    const bridgeHost = new BridgeHost(provider)
-    const handle = (ev: MessageEvent<any>) => bridgeHost.handleMessage(ev)
+    if (!bridgeHostRef.current) {
+      bridgeHostRef.current = new BridgeHost(provider)
+    } else {
+      bridgeHostRef.current.setProvider(provider)
+    }
+
+    const handle = (ev: MessageEvent<any>) => {
+      bridgeHostRef.current?.handleMessage(ev)
+    }
     window.addEventListener('message', handle)
 
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [
-    pilotAddress,
-    moduleAddress,
-    avatarAddress,
-    walletConnectProvider,
-    // ganacheProvider,
-  ])
+  }, [provider])
 
   return (
     <iframe

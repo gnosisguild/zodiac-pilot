@@ -62,42 +62,55 @@ class Eip1193Provider extends EventEmitter {
   }
 }
 
-const provider = ganache.provider({
-  fork: {
-    provider: new Eip1193Provider(),
-  },
-  chain: {
-    chainId: 4,
-  },
-  wallet: {
-    unlockedAccounts: ['0x87eb5f76c3785936406fa93654f39b2087fd8068'],
-  },
-})
+const DB_NAME = 'pilot'
 
-// establish message bridge for ganache requests
-window.addEventListener('message', async (ev: MessageEvent) => {
-  const { zodiacPilotGanacheRequest, messageId, request } = ev.data
-  if (zodiacPilotGanacheRequest) {
-    if (!window.top) throw new Error('Must run inside iframe')
-    console.debug('GAN REQ', messageId, request)
+const setupFork = () => {
+  const provider = ganache.provider({
+    fork: {
+      provider: new Eip1193Provider(),
+    },
+    chain: {
+      chainId: 4,
+    },
+    wallet: {
+      unlockedAccounts: ['0x87eb5f76c3785936406fa93654f39b2087fd8068'],
+    },
+    database: {
+      dbPath: DB_NAME,
+    },
+  })
 
-    const response = await provider.request(request)
+  // establish message bridge for ganache requests
+  window.addEventListener('message', async (ev: MessageEvent) => {
+    const { zodiacPilotGanacheRequest, messageId, request } = ev.data
+    if (zodiacPilotGanacheRequest) {
+      if (!window.top) throw new Error('Must run inside iframe')
+      console.debug('GAN REQ', messageId, request)
 
-    window.top.postMessage(
-      {
-        zodiacPilotGanacheResponse: true,
-        messageId,
-        response,
-      },
-      '*'
-    )
-  }
-})
+      const response = await provider.request(request)
 
-if (!window.top) throw new Error('Must run inside iframe')
-window.top.postMessage(
-  {
-    zodiacPilotGanacheInit: true,
-  },
-  '*'
-)
+      window.top.postMessage(
+        {
+          zodiacPilotGanacheResponse: true,
+          messageId,
+          response,
+        },
+        '*'
+      )
+    }
+  })
+
+  if (!window.top) throw new Error('Must run inside iframe')
+  window.top.postMessage(
+    {
+      zodiacPilotGanacheInit: true,
+    },
+    '*'
+  )
+}
+
+// clear DB when reloading the page
+const req = indexedDB.deleteDatabase(DB_NAME)
+req.onsuccess = function () {
+  setupFork()
+}

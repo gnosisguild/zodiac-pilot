@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { AppSearch, Box, Button, Flex, Select } from '../components'
 
 import ConnectButton from './ConnectButton'
-import isValidAddress from './isValidAddress'
 import classes from './style.module.css'
 import useAddressDryRun from './useAddressDryRun'
 import { useSafeModuleInfo } from './useSafeModuleInfo'
