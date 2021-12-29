@@ -41,7 +41,8 @@ const ProvideProvider: React.FC<Props> = ({
   children,
 }) => {
   const { provider: walletConnectProvider } = useWalletConnectProvider()
-  const ganacheProvider = useGanacheProvider()
+  // const ganacheProvider = useGanacheProvider()
+  const ganacheProvider = null
   const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
   const transactions = useTransactions()
@@ -59,6 +60,7 @@ const ProvideProvider: React.FC<Props> = ({
 
   const forkProvider = useMemo(
     () =>
+      ganacheProvider &&
       new ForkProvider(ganacheProvider, avatarAddress, {
         async onTransactionReceived(txData, transactionHash) {
           const input = await decodeSingle(

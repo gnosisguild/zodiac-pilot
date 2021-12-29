@@ -46,47 +46,47 @@ const Browser: React.FC = () => {
   }
 
   return (
-    <ProvideGanache>
-      <ProvideState>
-        <ProvideProvider
-          avatarAddress={avatarAddress}
-          moduleAddress={moduleAddress}
-          simulate
-        >
-          <div className={classNames.browser}>
-            <div className={classNames.topBar}>
-              <Flex gap={3} justifyContent="space-between">
-                <Box>
-                  <Flex gap={1}>
-                    <Box className={classNames.appName} double>
-                      Zodiac Pilot
-                    </Box>
-                    <Box double>
-                      <UrlInput onSubmit={setInitialLocation} />
-                    </Box>
-                  </Flex>
-                </Box>
-                <BlockLink
-                  href={`#${encodeURIComponent(`settings;${location}`)}`}
-                >
-                  <AddressStack
-                    pilotAddress={provider.accounts[0]}
-                    moduleAddress={moduleAddress}
-                    avatarAddress={avatarAddress}
-                  />
-                </BlockLink>
-              </Flex>
-            </div>
-            <Flex gap={4} className={classNames.main}>
-              <Box className={classNames.frame} double p={2}>
-                <BrowserFrame src={initialLocation} />
+    // <ProvideGanache>
+    <ProvideState>
+      <ProvideProvider
+        avatarAddress={avatarAddress}
+        moduleAddress={moduleAddress}
+        simulate={false}
+      >
+        <div className={classNames.browser}>
+          <div className={classNames.topBar}>
+            <Flex gap={3} justifyContent="space-between">
+              <Box>
+                <Flex gap={1}>
+                  <Box className={classNames.appName} double>
+                    Zodiac Pilot
+                  </Box>
+                  <Box double>
+                    <UrlInput onSubmit={setInitialLocation} />
+                  </Box>
+                </Flex>
               </Box>
-              <Drawer />
+              <BlockLink
+                href={`#${encodeURIComponent(`settings;${location}`)}`}
+              >
+                <AddressStack
+                  pilotAddress={provider.accounts[0]}
+                  moduleAddress={moduleAddress}
+                  avatarAddress={avatarAddress}
+                />
+              </BlockLink>
             </Flex>
           </div>
-        </ProvideProvider>
-      </ProvideState>
-    </ProvideGanache>
+          <Flex gap={4} className={classNames.main}>
+            <Box className={classNames.frame} double p={2}>
+              <BrowserFrame src={initialLocation} />
+            </Box>
+            {/* <Drawer /> */}
+          </Flex>
+        </div>
+      </ProvideProvider>
+    </ProvideState>
+    // </ProvideGanache>
   )
 }
 
