@@ -8,6 +8,10 @@
   background-clip: padding-box;
 }
 
+.borderless {
+  border: 1px solid transparent;
+}
+
 .double:before {
   content: ' ';
   position: absolute;

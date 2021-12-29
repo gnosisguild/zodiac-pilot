@@ -86,3 +86,22 @@
 .addressStack:hover .helper {
   opacity: 1;
 }
+
+.copyButton {
+  background-color: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+  color: white;
+  display: block;
+  padding: 0;
+  border: none;
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  text-align: center;
+  width: 100%;
+}
+.copyButton:hover {
+  color: rgba(252, 248, 217, 0.8);
+}

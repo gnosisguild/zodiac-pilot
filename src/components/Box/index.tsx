@@ -6,6 +6,7 @@ import classNames from './style.module.css'
 interface Props {
   className?: string
   double?: boolean
+  borderless?: boolean
   bg?: boolean
   rounded?: boolean
   roundedLeft?: boolean
@@ -17,6 +18,7 @@ const Box: React.FC<Props> = ({
   children,
   className,
   double,
+  borderless,
   bg,
   rounded,
   roundedLeft,
@@ -29,6 +31,7 @@ const Box: React.FC<Props> = ({
       classNames[`p${p}`],
       {
         [classNames.double]: double,
+        [classNames.borderless]: borderless,
         [classNames.rounded]: rounded,
         [classNames.bg]: bg,
         [classNames.roundedLeft]: roundedLeft,

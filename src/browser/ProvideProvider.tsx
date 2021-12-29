@@ -27,6 +27,13 @@ export const useProvider = () => {
   return value
 }
 
+const WrappingProviderContext = createContext<WrappingProvider | null>(null)
+export const useWrappingProvider = () => {
+  const value = useContext(WrappingProviderContext)
+  if (!value) throw new Error('must be wrapped in <ProvideProvider>')
+  return value
+}
+
 const CommitTransactionsContext = createContext<(() => Promise<void>) | null>(
   null
 )
@@ -113,11 +120,13 @@ const ProvideProvider: React.FC<Props> = ({
     <ProviderContext.Provider
       value={simulate ? forkProvider : wrappingProvider}
     >
-      <CommitTransactionsContext.Provider
-        value={simulate ? commitTransactions : null}
-      >
-        {children}
-      </CommitTransactionsContext.Provider>
+      <WrappingProviderContext.Provider value={wrappingProvider}>
+        <CommitTransactionsContext.Provider
+          value={simulate ? commitTransactions : null}
+        >
+          {children}
+        </CommitTransactionsContext.Provider>
+      </WrappingProviderContext.Provider>
     </ProviderContext.Provider>
   )
 }

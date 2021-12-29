@@ -8,6 +8,7 @@ import AddressStack from './AddressStack'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import ProvideProvider from './ProvideProvider'
+import TransactionStatus from './TransactionStatus'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 import { ProvideState } from './state'
@@ -66,6 +67,7 @@ const Browser: React.FC = () => {
                   </Box>
                 </Flex>
               </Box>
+              <TransactionStatus />
               <BlockLink
                 href={`#${encodeURIComponent(`settings;${location}`)}`}
               >

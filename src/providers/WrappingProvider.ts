@@ -1,6 +1,12 @@
+import EventEmitter from 'events'
+
 import { Interface } from '@ethersproject/abi'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
-import { ITxData } from '@walletconnect/types'
+import {
+  IJsonRpcResponseError,
+  IJsonRpcResponseSuccess,
+  ITxData,
+} from '@walletconnect/types'
 
 import { waitForMultisigExecution } from './safe'
 
@@ -30,7 +36,7 @@ class UnsupportedMethodError extends Error {
   code = 4200
 }
 
-class WrappingProvider {
+class WrappingProvider extends EventEmitter {
   private pilotAddress: string
   private moduleAddress: string
   private avatarAddress: string
@@ -43,6 +49,7 @@ class WrappingProvider {
     moduleAddress: string,
     avatarAddress: string
   ) {
+    super()
     this.provider = provider
     this.pilotAddress = pilotAddress
     this.moduleAddress = moduleAddress
@@ -71,16 +78,25 @@ class WrappingProvider {
 
       case 'eth_estimateGas': {
         const [request, ...rest] = params
-        const wrappedReq = await wrapRequest(
+
+        const wrappedReq = wrapRequest(
           request,
           this.pilotAddress,
           this.moduleAddress
         )
 
-        return await this.provider.request({
+        const result = (await this.provider.request({
           method,
           params: [wrappedReq, ...rest],
-        })
+        })) as IJsonRpcResponseSuccess | IJsonRpcResponseError
+
+        if ('error' in result) {
+          this.emit('estimateGasError', result.error, params)
+        } else {
+          this.emit('estimateGasSuccess')
+        }
+
+        return result
       }
 
       case 'eth_call': {
@@ -93,7 +109,7 @@ class WrappingProvider {
 
       case 'eth_sendTransaction': {
         const request = params[0] as ITxData
-        const wrappedReq = await wrapRequest(
+        const wrappedReq = wrapRequest(
           request,
           this.pilotAddress,
           this.moduleAddress
@@ -121,7 +137,7 @@ class WrappingProvider {
       // not supported by Safe, but we might wanna use this once we go more generic
       // case 'eth_signTransaction': {
       //   const request = params[0] as ITxData
-      //   const wrappedReq = await wrapRequest(
+      //   const wrappedReq = wrapRequest(
       //     request,
       //     this.pilotAddress,
       //     this.moduleAddress
