@@ -5,9 +5,11 @@ chrome.action.onClicked.addListener(() => {
     async function (tabs) {
       let tab = tabs[0]
       if (tab && tab.id && tab.url) {
-        const hash = tab.url.startsWith('chrome:')
-          ? ''
-          : encodeURIComponent(tab.url)
+        const hash =
+          tab.url.startsWith('chrome:') ||
+          tab.url.startsWith('chrome-extension:')
+            ? ''
+            : encodeURIComponent(tab.url)
         chrome.tabs.update(tab.id, {
           url: `index.html#${hash}`,
         })
