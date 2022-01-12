@@ -14,6 +14,9 @@ interface JsonRpcResponse {
 export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
+  // GC OmniBridge relies on this property
+  chainId = 1
+
   constructor() {
     super()
     if (!window.top) throw new Error('Must run inside iframe')
@@ -24,6 +27,14 @@ export default class BridgeIframe extends EventEmitter {
       },
       '*'
     )
+
+    this.request({ method: 'eth_chainId' }).then((chainId) => {
+      this.chainId = chainId
+
+      this.emit('connect', {
+        chainId,
+      })
+    })
   }
 
   request(request: JsonRpcRequest): Promise<any> {
