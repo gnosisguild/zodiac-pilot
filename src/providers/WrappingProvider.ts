@@ -85,17 +85,18 @@ class WrappingProvider extends EventEmitter {
           this.moduleAddress
         )
 
-        try {
-          const result = await this.provider.request({
-            method,
-            params: [wrappedReq, ...rest],
-          })
+        const result = (await this.provider.request({
+          method,
+          params: [wrappedReq, ...rest],
+        })) as any | IJsonRpcResponseError
+
+        if (typeof result === 'object' && 'error' in result) {
+          this.emit('estimateGasError', result.error, params)
+        } else {
           this.emit('estimateGasSuccess')
-          return result
-        } catch (error) {
-          this.emit('estimateGasError', error, params)
-          throw error
         }
+
+        return result
       }
 
       case 'eth_call': {
