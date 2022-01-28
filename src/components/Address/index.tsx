@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import React from 'react'
-import Blockies from 'react-blockies'
+import makeBlockie from 'ethereum-blockies-base64'
+import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { useWalletConnectProvider } from '../../providers'
@@ -39,6 +39,8 @@ const Address: React.FC<Props> = ({
   const { provider } = useWalletConnectProvider()
   const explorerUrl = EXPLORER_URLS[provider.chainId]
 
+  const blockie = useMemo(() => makeBlockie(address), [address])
+
   const start = address.substring(0, VISIBLE_START + 2)
   const end = address.substring(42 - VISIBLE_END, 42)
   const displayAddress = `${start}...${end}`
@@ -48,7 +50,7 @@ const Address: React.FC<Props> = ({
       <div className={classes.address}>{displayAddress}</div>
       <Box rounded>
         <div className={classes.blockies}>
-          <Blockies seed={address} size={8} scale={3} />
+          <img src={blockie} alt={address} />
         </div>
       </Box>
       {copyToClipboard && (
