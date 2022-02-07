@@ -11,7 +11,12 @@ type Props = {
   url: string
   moduleAddress: string
   avatarAddress: string
-  onLaunch(url: string, moduleAddress: string, avatarAddress: string): void
+  onLaunch(
+    url: string,
+    moduleAddress: string,
+    avatarAddress: string,
+    roleId: string
+  ): void
 }
 
 const Field: React.FC<{ label?: string }> = ({ label, children }) => (
@@ -38,6 +43,7 @@ const Settings: React.FC<Props> = ({
     initialModuleAddress
   )
   const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
+  const [roleId, setRoleId] = useState('')
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
@@ -45,9 +51,11 @@ const Settings: React.FC<Props> = ({
   const error = useAddressDryRun({
     avatarAddress,
     moduleAddress: moduleAddress || '',
+    roleId,
   })
 
-  const canLaunch = !loading && !error && url && moduleAddress && avatarAddress
+  const canLaunch =
+    !loading && !error && url && moduleAddress && avatarAddress && roleId
 
   return (
     <div className={classes.container}>
@@ -96,6 +104,17 @@ const Settings: React.FC<Props> = ({
                 />
               </Field>
 
+              <Field label="Role ID">
+                <input
+                  type="text"
+                  value={roleId}
+                  onChange={(ev) => {
+                    setRoleId(ev.target.value)
+                  }}
+                  placeholder="0"
+                />
+              </Field>
+
               <Field>
                 <ConnectButton />
               </Field>
@@ -103,7 +122,7 @@ const Settings: React.FC<Props> = ({
               {error && (
                 <>
                   <div>
-                    There seems to be a problem with the entered addresses:
+                    There seems to be a problem with this configuration:
                   </div>
                   <Box p={3} className={classes.error}>
                     {error}
@@ -120,7 +139,7 @@ const Settings: React.FC<Props> = ({
                 onPick={(url) => {
                   setUrl(url)
                   if (canLaunch) {
-                    onLaunch(url, moduleAddress, avatarAddress)
+                    onLaunch(url, moduleAddress, avatarAddress, roleId)
                   }
                 }}
               />
@@ -134,7 +153,7 @@ const Settings: React.FC<Props> = ({
                   }}
                   onKeyPress={(ev) => {
                     if (ev.key === 'Enter' && canLaunch) {
-                      onLaunch(url, moduleAddress, avatarAddress)
+                      onLaunch(url, moduleAddress, avatarAddress, roleId)
                     }
                   }}
                 />
@@ -145,7 +164,7 @@ const Settings: React.FC<Props> = ({
           <Button
             disabled={!canLaunch}
             onClick={() => {
-              onLaunch(url, moduleAddress || '', avatarAddress)
+              onLaunch(url, moduleAddress || '', avatarAddress, roleId)
             }}
           >
             Launch

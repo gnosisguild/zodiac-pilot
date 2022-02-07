@@ -14,6 +14,7 @@ const Routes: React.FC = () => {
 
   const avatarAddress = localStorage.getItem('avatarAddress') || ''
   const moduleAddress = localStorage.getItem('moduleAddress') || ''
+  const roleId = localStorage.getItem('roleId') || ''
   const settingsRequired = !connected || !avatarAddress || !moduleAddress
   const settingsRouteMatch = location.startsWith('settings')
 
@@ -43,10 +44,12 @@ const Routes: React.FC = () => {
 function launch(
   url: string,
   nextModuleAddress: string,
-  nextAvatarAddress: string
+  nextAvatarAddress: string,
+  nextRoleId: string
 ) {
   localStorage.setItem('moduleAddress', nextModuleAddress)
   localStorage.setItem('avatarAddress', nextAvatarAddress)
+  localStorage.setItem('roleId', nextRoleId)
   pushLocation(prependHttp(url))
 }
 

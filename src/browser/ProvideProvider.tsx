@@ -17,6 +17,7 @@ import { useDispatch, useTransactions } from './state'
 interface Props {
   avatarAddress: string
   moduleAddress: string
+  roleId: string
   simulate: boolean
 }
 
@@ -44,6 +45,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ProvideProvider: React.FC<Props> = ({
   avatarAddress,
   moduleAddress,
+  roleId,
   simulate,
   children,
 }) => {
@@ -60,9 +62,10 @@ const ProvideProvider: React.FC<Props> = ({
         walletConnectProvider,
         pilotAddress,
         moduleAddress,
-        avatarAddress
+        avatarAddress,
+        roleId
       ),
-    [walletConnectProvider, pilotAddress, moduleAddress, avatarAddress]
+    [walletConnectProvider, pilotAddress, moduleAddress, avatarAddress, roleId]
   )
 
   const forkProvider = useMemo(
