@@ -34,13 +34,18 @@ const Settings: React.FC<Props> = ({
   onLaunch,
 }) => {
   const [url, setUrl] = useState(initialUrl)
-  const [moduleAddress, setModuleAddress] = useState(initialModuleAddress)
+  const [moduleAddress, setModuleAddress] = useState<string | undefined>(
+    initialModuleAddress
+  )
   const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
 
-  const error = useAddressDryRun({ avatarAddress, moduleAddress })
+  const error = useAddressDryRun({
+    avatarAddress,
+    moduleAddress: moduleAddress || '',
+  })
 
   const canLaunch = !loading && !error && url && moduleAddress && avatarAddress
 
@@ -58,15 +63,12 @@ const Settings: React.FC<Props> = ({
           </Box>
           <Box p={3}>
             <Flex direction="column" gap={3}>
-              <Field>
-                <ConnectButton />
-              </Field>
-
               <Field label="DAO Safe">
                 <input
                   type="text"
                   value={avatarAddress}
                   onChange={(ev) => {
+                    setModuleAddress(undefined)
                     setAvatarAddress(ev.target.value)
                   }}
                 />
@@ -86,11 +88,16 @@ const Settings: React.FC<Props> = ({
                   value={
                     moduleAddress
                       ? { value: moduleAddress, label: moduleAddress }
-                      : undefined
+                      : ''
                   }
                   isDisabled={loading || !isValidSafe}
                   placeholder={loading || !isValidSafe ? '' : 'Select a module'}
+                  noOptionsMessage={() => 'No modules are enabled on this Safe'}
                 />
+              </Field>
+
+              <Field>
+                <ConnectButton />
               </Field>
 
               {error && (
@@ -138,7 +145,7 @@ const Settings: React.FC<Props> = ({
           <Button
             disabled={!canLaunch}
             onClick={() => {
-              onLaunch(url, moduleAddress, avatarAddress)
+              onLaunch(url, moduleAddress || '', avatarAddress)
             }}
           >
             Launch
