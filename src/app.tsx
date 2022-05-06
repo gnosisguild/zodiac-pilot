@@ -33,6 +33,7 @@ const Routes: React.FC = () => {
         url={location.startsWith('settings;') ? location.substring(9) : ''}
         moduleAddress={moduleAddress}
         avatarAddress={avatarAddress}
+        roleId={roleId}
         onLaunch={launch}
       />
     )

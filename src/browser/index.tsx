@@ -34,8 +34,9 @@ const Browser: React.FC = () => {
   const { provider } = useWalletConnectProvider()
   const avatarAddress = localStorage.getItem('avatarAddress')
   const moduleAddress = localStorage.getItem('moduleAddress')
+  const roleId = localStorage.getItem('roleId')
 
-  const redirectToSettings = !avatarAddress || !moduleAddress
+  const redirectToSettings = !avatarAddress || !moduleAddress || !roleId
   useEffect(() => {
     if (redirectToSettings) {
       pushLocation('settings')
@@ -52,6 +53,7 @@ const Browser: React.FC = () => {
       <ProvideProvider
         avatarAddress={avatarAddress}
         moduleAddress={moduleAddress}
+        roleId={roleId}
         simulate={false}
       >
         <div className={classNames.browser}>

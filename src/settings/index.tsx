@@ -11,6 +11,7 @@ type Props = {
   url: string
   moduleAddress: string
   avatarAddress: string
+  roleId: string
   onLaunch(
     url: string,
     moduleAddress: string,
@@ -36,6 +37,7 @@ const Settings: React.FC<Props> = ({
   url: initialUrl,
   moduleAddress: initialModuleAddress,
   avatarAddress: initialAvatarAddress,
+  roleId: initialRoleId,
   onLaunch,
 }) => {
   const [url, setUrl] = useState(initialUrl)
@@ -43,7 +45,7 @@ const Settings: React.FC<Props> = ({
     initialModuleAddress
   )
   const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
-  const [roleId, setRoleId] = useState('')
+  const [roleId, setRoleId] = useState(initialRoleId)
 
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
@@ -55,7 +57,7 @@ const Settings: React.FC<Props> = ({
   })
 
   const canLaunch =
-    !loading && !error && url && moduleAddress && avatarAddress && roleId
+    !loading && !error && moduleAddress && avatarAddress && roleId
 
   return (
     <div className={classes.container}>
