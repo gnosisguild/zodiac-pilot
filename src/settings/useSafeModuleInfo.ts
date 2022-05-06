@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { useWalletConnectProvider } from '../providers'
 
-import isValidAddress from './isValidAddress'
+import { isValidAddress } from './addressValidation'
 
 export const useSafeModuleInfo = (
   safeAddress: string
@@ -67,6 +67,7 @@ async function fetchSafeModules(
 
     return { isValidSafe: true, enabledModules }
   } catch (e) {
+    console.error('Could not fetch Safe modules', e)
     return { isValidSafe: false, enabledModules: [] }
   }
 }

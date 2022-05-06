@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
@@ -7,7 +8,7 @@ import rolesAbi from '../abi/Roles.json'
 import { useWalletConnectProvider } from '../providers'
 import { wrapRequest } from '../providers/WrappingProvider'
 
-import isValidAddress from './isValidAddress'
+import { isSmartContractAddress, isValidAddress } from './addressValidation'
 
 const permissionsInterface = new Interface(permissionsAbi)
 const rolesInterface = new Interface(rolesAbi)
@@ -23,9 +24,9 @@ const useAddressDryRun = ({
 }) => {
   const [error, setError] = useState<string | null>(null)
   const { provider, connected } = useWalletConnectProvider()
-  console.log({ error })
+
   useEffect(() => {
-    if (connected && avatarAddress && moduleAddress) {
+    if (connected && avatarAddress && moduleAddress && roleId) {
       dryRun(provider, moduleAddress, avatarAddress, roleId)
         .then(() => {
           setError(null)
@@ -86,13 +87,20 @@ async function dryRun(
   if (!isValidAddress(pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }
-
   if (!isValidAddress(moduleAddress)) {
     return Promise.reject('Module Address: Invalid address')
   }
-
   if (!isValidAddress(avatarAddress)) {
     return Promise.reject('DAO Safe: Invalid address')
+  }
+
+  const ethersProvider = new Web3Provider(provider)
+
+  if (!(await isSmartContractAddress(moduleAddress, ethersProvider))) {
+    return Promise.reject('Module Address: Not a smart contract')
+  }
+  if (!(await isSmartContractAddress(avatarAddress, ethersProvider))) {
+    return Promise.reject('DAO Safe: Not a smart contract')
   }
 
   const request = wrapRequest(
@@ -106,9 +114,9 @@ async function dryRun(
     roleId
   )
 
-  return provider.request({
-    method: 'eth_call',
-    params: [request, 'latest'],
+  await ethersProvider.call({
+    to: request.to,
+    data: request.data,
   })
 }
 

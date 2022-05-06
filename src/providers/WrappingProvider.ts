@@ -12,10 +12,6 @@ import rolesAbi from '../abi/Roles.json'
 
 import { waitForMultisigExecution } from './safe'
 
-// const AvatarInterface = new Interface([
-//   'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
-// ])
-
 const RolesInterface = new Interface(rolesAbi)
 
 export function wrapRequest(
@@ -28,7 +24,7 @@ export function wrapRequest(
     'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
     [request.to, request.value || 0, request.data, 0, roleId || 0, true]
   )
-  console.log(data)
+
   return {
     from,
     to,

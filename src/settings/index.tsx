@@ -50,9 +50,12 @@ const Settings: React.FC<Props> = ({
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
 
+  const validatedModuleAddress =
+    moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
+
   const error = useAddressDryRun({
     avatarAddress,
-    moduleAddress: moduleAddress || '',
+    moduleAddress: validatedModuleAddress,
     roleId,
   })
 
@@ -73,6 +76,10 @@ const Settings: React.FC<Props> = ({
           </Box>
           <Box p={3}>
             <Flex direction="column" gap={3}>
+              <Field>
+                <ConnectButton />
+              </Field>
+
               <Field label="DAO Safe">
                 <input
                   type="text"
@@ -96,8 +103,11 @@ const Settings: React.FC<Props> = ({
                     )
                   }}
                   value={
-                    moduleAddress
-                      ? { value: moduleAddress, label: moduleAddress }
+                    validatedModuleAddress
+                      ? {
+                          value: validatedModuleAddress,
+                          label: validatedModuleAddress,
+                        }
                       : ''
                   }
                   isDisabled={loading || !isValidSafe}
@@ -115,10 +125,6 @@ const Settings: React.FC<Props> = ({
                   }}
                   placeholder="0"
                 />
-              </Field>
-
-              <Field>
-                <ConnectButton />
               </Field>
 
               {error && (
