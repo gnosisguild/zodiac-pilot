@@ -1,17 +1,12 @@
 import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
-import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
-import permissionsAbi from '../abi/Permissions.json'
-import rolesAbi from '../abi/Roles.json'
 import { useWalletConnectProvider } from '../providers'
 import { wrapRequest } from '../providers/WrappingProvider'
+import { decodeRolesError } from '../utils'
 
 import { isSmartContractAddress, isValidAddress } from './addressValidation'
-
-const permissionsInterface = new Interface(permissionsAbi)
-const rolesInterface = new Interface(rolesAbi)
 
 const useAddressDryRun = ({
   moduleAddress,
@@ -29,46 +24,43 @@ const useAddressDryRun = ({
     if (connected && avatarAddress && moduleAddress && roleId) {
       dryRun(provider, moduleAddress, avatarAddress, roleId)
         .then(() => {
+          console.log('no error')
           setError(null)
         })
         .catch((e) => {
-          console.log('catch', e)
           console.warn(e)
-          if (e === 'execution reverted: Module not authorized') {
+          const reason = typeof e === 'string' ? decodeRolesError(e) : null
+
+          if (reason === 'execution reverted: Module not authorized') {
             setError(
               "The Pilot Account's address must be enabled as a module of the modifier."
             )
             return
           }
 
-          const knownError =
-            e.data &&
-            (Object.keys(rolesInterface.errors).find(
-              (errSig) => rolesInterface.getSighash(errSig) === e.data
-            ) ||
-              Object.keys(permissionsInterface.errors).find(
-                (errSig) => permissionsInterface.getSighash(errSig) === e.data
-              ))
+          if (reason === 'UnacceptableMultiSendOffset()') {
+            // we're calling to the zero address, so if this error happens it means our call was handled as a multi-send which happens
+            // if the Role mod's multiSend address has not been initialized
+            setError(
+              "The Roles mod is not configured to accept multi-send calls. Use the contract's `setMultiSend` function to set the multi-send address."
+            )
+            return
+          }
 
-          if (knownError === 'TargetAddressNotAllowed()') {
+          if (reason === 'TargetAddressNotAllowed()') {
             // this is the expected error for a working Roles mod setup
             setError(null)
             return
           }
 
-          if (knownError === 'NoMembership()') {
+          if (reason === 'NoMembership()') {
             setError(
-              `The Pilot account is not a member of role #${roleId || 0}`
+              `The Pilot account is not a member of role #${roleId || 0}.`
             )
             return
           }
 
-          if (knownError) {
-            setError(knownError)
-            return
-          }
-
-          setError(typeof e === 'string' ? e : e.message)
+          setError(reason || 'Unexpected error')
         })
     }
   }, [moduleAddress, avatarAddress, roleId, provider, connected])
@@ -106,7 +98,7 @@ async function dryRun(
   const request = wrapRequest(
     {
       to: '0x0000000000000000000000000000000000000000',
-      data: '0xffffffff',
+      data: '0x00',
       from: avatarAddress,
     },
     pilotAddress,
@@ -114,9 +106,9 @@ async function dryRun(
     roleId
   )
 
-  await ethersProvider.call({
-    to: request.to,
-    data: request.data,
+  await provider.request({
+    method: 'eth_estimateGas',
+    params: [request],
   })
 }
 

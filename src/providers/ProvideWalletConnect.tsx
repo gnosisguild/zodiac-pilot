@@ -29,7 +29,7 @@ const ProvideWalletConnect: React.FC<{ children: React.ReactNode }> = ({
       const provider = new WalletConnectEthereumProvider({
         infuraId: 'b81b456501e34bed8a85a3c2ff8f4577',
         rpc: {
-          100: 'https://dai.poa.network/',
+          100: 'https://rpc.gnosischain.com/',
         },
       })
 

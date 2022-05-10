@@ -6,6 +6,7 @@ import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { useWalletConnectProvider } from '../../providers'
 import Box from '../Box'
+import IconButton from '../IconButton'
 
 import classes from './style.module.css'
 
@@ -54,14 +55,13 @@ const Address: React.FC<Props> = ({
         </div>
       </Box>
       {copyToClipboard && (
-        <button
-          className={classes.copy}
+        <IconButton
           onClick={() => {
             copy(address)
           }}
         >
           <RiFileCopyLine />
-        </button>
+        </IconButton>
       )}
       {explorerLink && (
         <a

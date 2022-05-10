@@ -90,18 +90,17 @@ class WrappingProvider extends EventEmitter {
           this.roleId
         )
 
-        const result = (await this.provider.request({
-          method,
-          params: [wrappedReq, ...rest],
-        })) as any | IJsonRpcResponseError
-
-        if (typeof result === 'object' && 'error' in result) {
-          this.emit('estimateGasError', result.error, params)
-        } else {
+        try {
+          const result = await this.provider.request({
+            method,
+            params: [wrappedReq, ...rest],
+          })
           this.emit('estimateGasSuccess')
+          return result
+        } catch (e) {
+          this.emit('estimateGasError', e, params)
+          throw e
         }
-
-        return result
       }
 
       case 'eth_call': {
