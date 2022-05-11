@@ -124,10 +124,7 @@ class WrappingProvider extends EventEmitter {
           wrappedReq
         )
 
-        const txHash = await waitForMultisigExecution(
-          this.provider.chainId,
-          safeTxHash
-        )
+        const txHash = await waitForMultisigExecution(this.provider, safeTxHash)
 
         return txHash
       }
