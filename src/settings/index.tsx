@@ -15,17 +15,6 @@ type Props = {
 }
 
 const Settings: React.FC<Props> = ({ url, onLaunch }) => {
-  const { connection, connected } = useConnection()
-
-  const error = useConnectionDryRun(connection)
-
-  const canLaunch =
-    connected &&
-    !error &&
-    connection.moduleAddress &&
-    connection.avatarAddress &&
-    connection.roleId
-
   return (
     <div className={classes.container}>
       <h1>Zodiac Pilot</h1>
@@ -39,25 +28,11 @@ const Settings: React.FC<Props> = ({ url, onLaunch }) => {
             </p>
           </Box>
 
-          <Connection />
-
-          {error && (
-            <>
-              <div>There seems to be a problem with this connection:</div>
-              <Box p={3} className={classes.error}>
-                {error}
-              </Box>
-            </>
-          )}
-
-          <Button
-            disabled={!canLaunch}
-            onClick={() => {
+          <Connection
+            onLaunch={() => {
               onLaunch(url)
             }}
-          >
-            Launch
-          </Button>
+          />
         </Flex>
       </Box>
     </div>

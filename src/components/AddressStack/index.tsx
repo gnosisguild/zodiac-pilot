@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import React from 'react'
 
 import Address from '../Address'
@@ -9,17 +10,19 @@ interface Props {
   avatarAddress: string
   moduleAddress: string
   pilotAddress: string
+  interactive?: boolean
 }
 
 const AddressStack: React.FC<Props> = ({
   avatarAddress,
   moduleAddress,
   pilotAddress,
+  interactive,
 }) => {
   const redundant = avatarAddress === moduleAddress
 
   return (
-    <div className={classes.addressStack}>
+    <div className={cn(classes.addressStack, { interactive })}>
       <Box roundedRight double p={2} className={classes.address}>
         <Address address={pilotAddress} />
         <div className={classes.helper}>

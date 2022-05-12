@@ -3,13 +3,18 @@ import React from 'react'
 
 import classes from './style.module.css'
 
-const IconButton: React.FC<
-  React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >
-> = ({ className, ...rest }) => (
-  <button className={cn(classes.button, className)} {...rest} />
+type Props = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> & {
+  danger?: boolean
+}
+
+const IconButton: React.FC<Props> = ({ className, danger, ...rest }) => (
+  <button
+    className={cn(classes.button, className, { [classes.danger]: danger })}
+    {...rest}
+  />
 )
 
 export default IconButton

@@ -42,7 +42,7 @@
   font-size: 14px;
 }
 
-.disconnectButton {
+button.disconnectButton {
   background: none;
   width: fit-content;
   padding: 4px 8px;

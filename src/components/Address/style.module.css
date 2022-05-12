@@ -5,6 +5,7 @@
   background-color: rgba(217, 212, 173, 0.2);
   padding-left: 32px;
   padding-right: var(--spacing-1);
+  height: 32px;
 }
 
 .blockies {

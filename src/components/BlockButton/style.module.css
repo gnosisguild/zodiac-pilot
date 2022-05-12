@@ -1,15 +1,17 @@
 .button {
   display: block;
-  background: transparent;
-  border: none;
-  color: inherit;
-  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  background: ;
+  border: 3px double var(--border-color);
+  padding: 0;
+  transition: all 0.1s ease;
+  background-color: rgba(217, 212, 173, 0.1);
+  background-clip: padding-box;
+  color: white;
 }
 
-.button:hover,
-.button:focus {
-  background: rgba(255, 255, 255, 0.25);
-}
-.button:active {
-  background: rgba(255, 255, 255, 0.3);
+.button:hover:enabled {
+  cursor: pointer;
+  border-color: rgba(217, 212, 173, 0.8);
 }

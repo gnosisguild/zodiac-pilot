@@ -8,13 +8,16 @@ import {
   useConnection,
   useConnections,
   useSelectConnection,
+  useSelectedConnectionId,
 } from '../connectionHooks'
+
+import classes from './style.module.css'
 
 const SelectConnection: React.FC = () => {
   const [connections] = useConnections()
 
   return (
-    <Flex direction="column" gap={1}>
+    <Flex direction="column" gap={2}>
       {connections.map((connection) => (
         <ConnectionItem key={connection.id} connection={connection} />
       ))}
@@ -26,22 +29,27 @@ const ConnectionItem: React.FC<{ connection: Connection }> = ({
   connection,
 }) => {
   const { provider, connected } = useWalletConnectProvider(connection.id)
-  const selectConnection = useSelectConnection()
-  const { connection: selectedConnection } = useConnection()
+  const [, setSelectedConnectionId] = useSelectedConnectionId()
 
   return (
-    <BlockButton onClick={() => selectConnection(connection.id)}>
-      <Box double={selectedConnection === connection}>
+    <BlockButton onClick={() => setSelectedConnectionId(connection.id)}>
+      <Flex direction="row" gap={2} alignItems="center">
+        <AddressStack
+          avatarAddress={connection.avatarAddress}
+          moduleAddress={connection.moduleAddress}
+          pilotAddress={provider.accounts[0] || ''}
+        />
         {connection.label}
-        <Flex direction="row" gap={1}>
-          <AddressStack
-            avatarAddress={connection.avatarAddress}
-            moduleAddress={connection.moduleAddress}
-            pilotAddress={provider.accounts[0] || ''}
-          />
-          {!connected && <VscDebugDisconnect size={24} color="crimson" />}
-        </Flex>
-      </Box>
+        {!connected && (
+          <div className={classes.status}>
+            <VscDebugDisconnect
+              size={24}
+              color="crimson"
+              title="WalletConnect is not connected"
+            />
+          </div>
+        )}
+      </Flex>
     </BlockButton>
   )
 }

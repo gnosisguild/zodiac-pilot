@@ -1,0 +1,19 @@
+.form {
+  flex-grow: 1;
+}
+
+.status {
+  margin-left: auto;
+  margin-right: var(--spacing-2);
+  height: 28px;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error {
+  color: crimson;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}

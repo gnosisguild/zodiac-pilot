@@ -2,42 +2,49 @@ import { nanoid } from 'nanoid'
 import React from 'react'
 
 import { Box, Button, Flex } from '../../components'
-import { useConnections, useSelectConnection } from '../connectionHooks'
+import {
+  useConnections,
+  useSelectConnection,
+  useSelectedConnectionId,
+} from '../connectionHooks'
 
 import EditConnection from './Edit'
 import SelectConnection from './Select'
+import classes from './style.module.css'
 
-const Connection: React.FC = () => {
+const Connection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
   const [connections, setConnections] = useConnections()
-  const selectConnection = useSelectConnection()
+  const [selectedConnectionId, setSelectedConnectionId] =
+    useSelectedConnectionId()
 
-  return (
-    <Flex direction="column" gap={3}>
-      <Box p={3}>
-        <SelectConnection />
-        <Button
-          onClick={() => {
-            const id = nanoid()
-            setConnections([
-              ...connections,
-              {
-                id,
-                label: '',
-                avatarAddress: '',
-                moduleAddress: '',
-                roleId: '',
-              },
-            ])
-            selectConnection(id)
-          }}
-        >
-          Add connection
-        </Button>
-      </Box>
-      <Box p={3}>
-        <EditConnection />
-      </Box>
-    </Flex>
+  const hasSelection =
+    selectedConnectionId &&
+    connections.some((c) => c.id === selectedConnectionId)
+
+  return hasSelection ? (
+    <EditConnection onLaunch={onLaunch} />
+  ) : (
+    <>
+      <SelectConnection />
+      <Button
+        onClick={() => {
+          const id = nanoid()
+          setConnections([
+            ...connections,
+            {
+              id,
+              label: '',
+              avatarAddress: '',
+              moduleAddress: '',
+              roleId: '',
+            },
+          ])
+          setSelectedConnectionId(id)
+        }}
+      >
+        Add connection
+      </Button>
+    </>
   )
 }
 

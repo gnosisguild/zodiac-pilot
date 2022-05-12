@@ -75,6 +75,7 @@ const Browser: React.FC = () => {
                 href={`#${encodeURIComponent(`settings;${location}`)}`}
               >
                 <AddressStack
+                  interactive
                   pilotAddress={provider.accounts[0]}
                   moduleAddress={moduleAddress}
                   avatarAddress={avatarAddress}

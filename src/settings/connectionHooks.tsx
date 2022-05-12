@@ -58,7 +58,7 @@ export const useConnections = () => {
   return result
 }
 
-const useSelectedConnectionId = () => {
+export const useSelectedConnectionId = () => {
   const result = useContext(SelectedConnectionContext)
   if (!result) {
     throw new Error(
