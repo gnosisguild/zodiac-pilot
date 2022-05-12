@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { Address, Box } from '../components'
+import Address from '../Address'
+import Box from '../Box'
 
-import classNames from './index.module.css'
+import classes from './style.module.css'
 
 interface Props {
   avatarAddress: string
@@ -18,25 +19,25 @@ const AddressStack: React.FC<Props> = ({
   const redundant = avatarAddress === moduleAddress
 
   return (
-    <div className={classNames.addressStack}>
-      <Box roundedRight double p={2} className={classNames.address}>
+    <div className={classes.addressStack}>
+      <Box roundedRight double p={2} className={classes.address}>
         <Address address={pilotAddress} />
-        <div className={classNames.helper}>
+        <div className={classes.helper}>
           <p>Pilot Account</p>
         </div>
       </Box>
 
       {!redundant && (
-        <Box roundedRight double p={2} className={classNames.address}>
+        <Box roundedRight double p={2} className={classes.address}>
           <Address address={moduleAddress} />
-          <div className={classNames.helper}>
+          <div className={classes.helper}>
             <p>Zodiac Module</p>
           </div>
         </Box>
       )}
-      <Box roundedRight double p={2} className={classNames.address}>
+      <Box roundedRight double p={2} className={classes.address}>
         <Address address={avatarAddress} />
-        <div className={classNames.helper}>
+        <div className={classes.helper}>
           <p>DAO Safe</p>
         </div>
       </Box>

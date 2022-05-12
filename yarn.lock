@@ -1069,6 +1069,14 @@
     "@gnosis.pm/safe-deployments" "^1.12.0"
     web3-core "^1.7.1"
 
+"@gnosis.pm/safe-core-sdk-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-core-sdk-utils/-/safe-core-sdk-utils-1.1.0.tgz#3fb93038cac143523fcfa8200010034cc42166a6"
+  integrity sha512-ZH1Ps3qsreczKHHfBb34dj55LDTiU7WAeKD7jgKnhiloGWRniLv+cbBfwFQNAezoyANvgyI5ky64wgwm1bm1YA==
+  dependencies:
+    "@gnosis.pm/safe-core-sdk-types" "^1.1.0"
+    web3-utils "^1.7.1"
+
 "@gnosis.pm/safe-core-sdk@^1.1.1":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-core-sdk/-/safe-core-sdk-1.3.0.tgz#ba21c6163c6a06e3fc51f5c7dac650e46fe8a779"
@@ -1083,6 +1091,14 @@
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-deployments/-/safe-deployments-1.12.0.tgz#aabad66f5467821b9a965411f9747016811d7554"
   integrity sha512-fNwQqTdBushxlkqp8WpgXVP9HTePa/VFWM9VYPzbSsdqYqSUnXYDDOMyHH3H6eNltwRV8RVp/cxqUZLrvQ3YPg==
+
+"@gnosis.pm/safe-ethers-lib@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-ethers-lib/-/safe-ethers-lib-1.1.0.tgz#06dfe132f3590fbc5406918a193812cd922c641e"
+  integrity sha512-MG01hGu/3q/sl9fXE3sU7CMVpVMJ4k9/ro1JVZaE29jmsar1cHFUOJNws7Do3orxTLQZ2egkARcmyv+l673FoA==
+  dependencies:
+    "@gnosis.pm/safe-core-sdk-types" "^1.1.0"
+    "@gnosis.pm/safe-core-sdk-utils" "^1.1.0"
 
 "@gnosis.pm/safe-service-client@^1.0.1":
   version "1.1.2"
@@ -7553,7 +7569,7 @@ web3-providers-ws@1.7.3:
     web3-core-helpers "1.7.3"
     websocket "^1.0.32"
 
-web3-utils@1.7.3:
+web3-utils@1.7.3, web3-utils@^1.7.1:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.7.3.tgz#b214d05f124530d8694ad364509ac454d05f207c"
   integrity sha512-g6nQgvb/bUpVUIxJE+ezVN+rYwYmlFyMvMIRSuqpi1dk6ApDD00YNArrk7sPcZnjvxOJ76813Xs2vIN2rgh4lg==

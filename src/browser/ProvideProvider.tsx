@@ -7,9 +7,9 @@ import {
   Eip1193Provider,
   ForkProvider,
   useGanacheProvider,
-  useWalletConnectProvider,
   WrappingProvider,
 } from '../providers'
+import { useConnection } from '../settings'
 
 import fetchAbi, { NetworkId } from './fetchAbi'
 import { useDispatch, useTransactions } from './state'
@@ -49,7 +49,7 @@ const ProvideProvider: React.FC<Props> = ({
   simulate,
   children,
 }) => {
-  const { provider: walletConnectProvider } = useWalletConnectProvider()
+  const { provider: walletConnectProvider } = useConnection()
   // const ganacheProvider = useGanacheProvider()
   const ganacheProvider = null
   const pilotAddress = walletConnectProvider.accounts[0]

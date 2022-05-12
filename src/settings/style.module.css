@@ -10,10 +10,6 @@ h1 {
   margin-bottom: 32px;
 }
 
-.fieldLabel {
-  margin-bottom: 0.3em;
-}
-
 .error {
   color: crimson;
   font-family: 'Roboto Mono', monospace;

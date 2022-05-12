@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { useWalletConnectProvider } from '../../providers'
-import { getAppUsageCount, markAppAsUsed } from '../../settings/localStorage'
+import { useConnection } from '../../settings'
 
 import aaveLogo from './images/aave.png'
 import agaveLogo from './images/agave.png'
@@ -22,6 +21,7 @@ import sushiswapLogo from './images/sushiswap.png'
 import uniswapLogo from './images/uniswap.png'
 import unitLogo from './images/unit.png'
 import yearnLogo from './images/yearn.png'
+import { getAppUsageCount, markAppAsUsed } from './localStorage'
 import classes from './style.module.css'
 
 const APP_CONFIG = [
@@ -148,7 +148,7 @@ interface Props {
 }
 
 const AppPicker: React.FC<Props> = ({ onPick, query }) => {
-  const { provider } = useWalletConnectProvider()
+  const { provider } = useConnection()
 
   const apps = sortApps().filter(
     (app) =>

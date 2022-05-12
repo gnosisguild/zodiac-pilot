@@ -1,66 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import { AppSearch, Box, Button, Flex, Select } from '../components'
+import { Box, Button, Flex } from '../components'
 
-import ConnectButton from './ConnectButton'
+import Connection from './Connection'
+import { ProvideConnections, useConnection } from './connectionHooks'
 import classes from './style.module.css'
-import useAddressDryRun from './useAddressDryRun'
-import { useSafeModuleInfo } from './useSafeModuleInfo'
+import useConnectionDryRun from './useConnectionDryRun'
+
+export { useConnection, ProvideConnections }
 
 type Props = {
   url: string
-  moduleAddress: string
-  avatarAddress: string
-  roleId: string
-  onLaunch(
-    url: string,
-    moduleAddress: string,
-    avatarAddress: string,
-    roleId: string
-  ): void
+  onLaunch(url: string): void
 }
 
-const Field: React.FC<{ label?: string }> = ({ label, children }) => (
-  <Box double bg p={3}>
-    {label ? (
-      <label>
-        <div className={classes.fieldLabel}>{label}</div>
-        {children}
-      </label>
-    ) : (
-      children
-    )}
-  </Box>
-)
+const Settings: React.FC<Props> = ({ url, onLaunch }) => {
+  const { connection, connected } = useConnection()
 
-const Settings: React.FC<Props> = ({
-  url: initialUrl,
-  moduleAddress: initialModuleAddress,
-  avatarAddress: initialAvatarAddress,
-  roleId: initialRoleId,
-  onLaunch,
-}) => {
-  const [url, setUrl] = useState(initialUrl)
-  const [moduleAddress, setModuleAddress] = useState<string | undefined>(
-    initialModuleAddress
-  )
-  const [avatarAddress, setAvatarAddress] = useState(initialAvatarAddress)
-  const [roleId, setRoleId] = useState(initialRoleId)
-
-  const { loading, isValidSafe, enabledModules } =
-    useSafeModuleInfo(avatarAddress)
-
-  const validatedModuleAddress =
-    moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
-
-  const error = useAddressDryRun({
-    avatarAddress,
-    moduleAddress: validatedModuleAddress,
-    roleId,
-  })
+  const error = useConnectionDryRun(connection)
 
   const canLaunch =
-    !loading && !error && moduleAddress && avatarAddress && roleId
+    connected &&
+    !error &&
+    connection.moduleAddress &&
+    connection.avatarAddress &&
+    connection.roleId
 
   return (
     <div className={classes.container}>
@@ -69,110 +33,27 @@ const Settings: React.FC<Props> = ({
       <Box double p={3}>
         <Flex direction="column" gap={3}>
           <Box p={3}>
-            <p className="intro-text">
-              This app allows you to control a Safe via a Zodiac modifier from
-              an enabled account.
+            <p>
+              This app allows you to control a Safe via a Zodiac mod from an
+              enabled account.
             </p>
           </Box>
-          <Box p={3}>
-            <Flex direction="column" gap={3}>
-              <Field>
-                <ConnectButton />
-              </Field>
 
-              <Field label="DAO Safe">
-                <input
-                  type="text"
-                  value={avatarAddress}
-                  onChange={(ev) => {
-                    setModuleAddress(undefined)
-                    setAvatarAddress(ev.target.value)
-                  }}
-                />
-              </Field>
+          <Connection />
 
-              <Field label="Zodiac Modifier or Module Address">
-                <Select
-                  options={enabledModules.map((address) => ({
-                    value: address,
-                    label: address,
-                  }))}
-                  onChange={(selected) => {
-                    setModuleAddress(
-                      (selected as { value: string; label: string }).value
-                    )
-                  }}
-                  value={
-                    validatedModuleAddress
-                      ? {
-                          value: validatedModuleAddress,
-                          label: validatedModuleAddress,
-                        }
-                      : ''
-                  }
-                  isDisabled={loading || !isValidSafe}
-                  placeholder={loading || !isValidSafe ? '' : 'Select a module'}
-                  noOptionsMessage={() => 'No modules are enabled on this Safe'}
-                />
-              </Field>
-
-              <Field label="Role ID">
-                <input
-                  type="text"
-                  value={roleId}
-                  onChange={(ev) => {
-                    setRoleId(ev.target.value)
-                  }}
-                  placeholder="0"
-                />
-              </Field>
-
-              {error && (
-                <>
-                  <div>
-                    There seems to be a problem with this configuration:
-                  </div>
-                  <Box p={3} className={classes.error}>
-                    {error}
-                  </Box>
-                </>
-              )}
-            </Flex>
-          </Box>
-
-          <Box p={3}>
-            <Flex direction="column" gap={3}>
-              <div>Select or enter a Dapp to use</div>
-              <AppSearch
-                onPick={(url) => {
-                  setUrl(url)
-                  if (canLaunch) {
-                    onLaunch(url, moduleAddress, avatarAddress, roleId)
-                  }
-                }}
-              />
-              <Field label="Dapp Url">
-                <input
-                  type="text"
-                  value={url}
-                  placeholder="https://any.app"
-                  onChange={(ev) => {
-                    setUrl(ev.target.value)
-                  }}
-                  onKeyPress={(ev) => {
-                    if (ev.key === 'Enter' && canLaunch) {
-                      onLaunch(url, moduleAddress, avatarAddress, roleId)
-                    }
-                  }}
-                />
-              </Field>
-            </Flex>
-          </Box>
+          {error && (
+            <>
+              <div>There seems to be a problem with this connection:</div>
+              <Box p={3} className={classes.error}>
+                {error}
+              </Box>
+            </>
+          )}
 
           <Button
             disabled={!canLaunch}
             onClick={() => {
-              onLaunch(url, moduleAddress || '', avatarAddress, roleId)
+              onLaunch(url)
             }}
           >
             Launch

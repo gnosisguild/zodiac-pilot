@@ -1,4 +1,7 @@
+import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
+import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
+import { ethers, providers } from 'ethers'
 
 const TX_SERVICE_URL: Record<string, string | undefined> = {
   '1': 'https://safe-transaction.gnosis.io',
@@ -12,14 +15,22 @@ const TX_SERVICE_URL: Record<string, string | undefined> = {
 }
 
 export function waitForMultisigExecution(
-  chainId: number,
+  provider: WalletConnectEthereumProvider,
   safeTxHash: string
 ): Promise<string> {
-  const url = TX_SERVICE_URL[`${chainId}`]
-  if (!url) {
-    throw new Error(`service not available for chain #${chainId}`)
+  const txServiceUrl = TX_SERVICE_URL[`${provider.chainId}`]
+  if (!txServiceUrl) {
+    throw new Error(`service not available for chain #${provider.chainId}`)
   }
-  const safeService = new SafeServiceClient(url)
+
+  const web3Provider = new providers.Web3Provider(provider)
+
+  const ethAdapter = new EthersAdapter({
+    ethers,
+    signer: web3Provider.getSigner(0),
+  })
+
+  const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 
   return new Promise((resolve, reject) => {
     function tryAgain() {

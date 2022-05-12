@@ -4,7 +4,7 @@ import makeBlockie from 'ethereum-blockies-base64'
 import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
-import { useWalletConnectProvider } from '../../providers'
+import { useConnection } from '../../settings'
 import Box from '../Box'
 import IconButton from '../IconButton'
 
@@ -37,10 +37,10 @@ const Address: React.FC<Props> = ({
   copyToClipboard,
   className,
 }) => {
-  const { provider } = useWalletConnectProvider()
+  const { provider } = useConnection()
   const explorerUrl = EXPLORER_URLS[provider.chainId]
 
-  const blockie = useMemo(() => makeBlockie(address), [address])
+  const blockie = useMemo(() => address && makeBlockie(address), [address])
 
   const start = address.substring(0, VISIBLE_START + 2)
   const end = address.substring(42 - VISIBLE_END, 42)
@@ -50,9 +50,11 @@ const Address: React.FC<Props> = ({
     <Box roundedRight className={cn(className, classes.container)}>
       <div className={classes.address}>{displayAddress}</div>
       <Box rounded>
-        <div className={classes.blockies}>
-          <img src={blockie} alt={address} />
-        </div>
+        {address && (
+          <div className={classes.blockies}>
+            <img src={blockie} alt={address} />
+          </div>
+        )}
       </Box>
       {copyToClipboard && (
         <IconButton

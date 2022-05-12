@@ -5,17 +5,20 @@ import './global.css'
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation, useLocation } from './location'
-import { ProvideWalletConnect, useWalletConnectProvider } from './providers'
-import Settings from './settings'
+import Settings, { ProvideConnections } from './settings'
+import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
   const location = useLocation()
-  const { connected } = useWalletConnectProvider()
 
-  const avatarAddress = localStorage.getItem('avatarAddress') || ''
-  const moduleAddress = localStorage.getItem('moduleAddress') || ''
-  const roleId = localStorage.getItem('roleId') || ''
-  const settingsRequired = !connected || !avatarAddress || !moduleAddress
+  const { connection, connected } = useConnection()
+
+  const settingsRequired =
+    !connection ||
+    !connection.avatarAddress ||
+    !connection.moduleAddress ||
+    !connected
+
   const settingsRouteMatch = location.startsWith('settings')
 
   // redirect to settings page if more settings are required
@@ -31,9 +34,6 @@ const Routes: React.FC = () => {
     return (
       <Settings
         url={location.startsWith('settings;') ? location.substring(9) : ''}
-        moduleAddress={moduleAddress}
-        avatarAddress={avatarAddress}
-        roleId={roleId}
         onLaunch={launch}
       />
     )
@@ -42,23 +42,15 @@ const Routes: React.FC = () => {
   return <Browser />
 }
 
-function launch(
-  url: string,
-  nextModuleAddress: string,
-  nextAvatarAddress: string,
-  nextRoleId: string
-) {
-  localStorage.setItem('moduleAddress', nextModuleAddress)
-  localStorage.setItem('avatarAddress', nextAvatarAddress)
-  localStorage.setItem('roleId', nextRoleId)
+function launch(url: string) {
   pushLocation(prependHttp(url))
 }
 
 ReactDom.render(
   <React.StrictMode>
-    <ProvideWalletConnect>
+    <ProvideConnections>
       <Routes />
-    </ProvideWalletConnect>
+    </ProvideConnections>
   </React.StrictMode>,
   document.getElementById('root')
 )

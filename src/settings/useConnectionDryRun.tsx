@@ -2,13 +2,16 @@ import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from '../providers'
 import { wrapRequest } from '../providers/WrappingProvider'
 import { decodeRolesError } from '../utils'
 
-import { isSmartContractAddress, isValidAddress } from './addressValidation'
+import {
+  isSmartContractAddress,
+  isValidAddress,
+} from './Connection/addressValidation'
+import { useConnection } from './connectionHooks'
 
-const useAddressDryRun = ({
+const useConnectionDryRun = ({
   moduleAddress,
   avatarAddress,
   roleId,
@@ -18,7 +21,7 @@ const useAddressDryRun = ({
   roleId: string
 }) => {
   const [error, setError] = useState<string | null>(null)
-  const { provider, connected } = useWalletConnectProvider()
+  const { provider, connected } = useConnection()
 
   useEffect(() => {
     if (connected && avatarAddress && moduleAddress && roleId) {
@@ -112,4 +115,4 @@ async function dryRun(
   })
 }
 
-export default useAddressDryRun
+export default useConnectionDryRun

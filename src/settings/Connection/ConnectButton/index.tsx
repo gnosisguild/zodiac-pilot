@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { Button } from '../../components'
-import { useWalletConnectProvider } from '../../providers'
+import { Button } from '../../../components'
+import { useConnection } from '../../connectionHooks'
 
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
@@ -11,7 +11,7 @@ const shortAddress = (address: string) => {
 }
 
 const ConnectButton: React.FC = () => {
-  const { provider, connected } = useWalletConnectProvider()
+  const { provider, connected } = useConnection()
   return (
     <>
       {connected ? (

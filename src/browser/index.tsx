@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 
 import { BlockLink, Box, Flex } from '../components'
+import { AddressStack } from '../components'
 import { pushLocation, useLocation } from '../location'
-import { ProvideGanache, useWalletConnectProvider } from '../providers'
+import { ProvideGanache } from '../providers'
+import { useConnection } from '../settings'
 
-import AddressStack from './AddressStack'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import ProvideProvider from './ProvideProvider'
@@ -31,7 +32,7 @@ const Browser: React.FC = () => {
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
 
-  const { provider } = useWalletConnectProvider()
+  const { provider } = useConnection()
   const avatarAddress = localStorage.getItem('avatarAddress')
   const moduleAddress = localStorage.getItem('moduleAddress')
   const roleId = localStorage.getItem('roleId')
