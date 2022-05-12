@@ -30,7 +30,6 @@ const ConnectButton: React.FC = () => {
         </div>
       ) : (
         <Button
-          className={classes.disconnectButton}
           onClick={async () => {
             try {
               await provider.disconnect()
