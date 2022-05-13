@@ -34,9 +34,9 @@ const useConnectionDryRun = ({
           console.warn(e)
           const reason = typeof e === 'string' ? decodeRolesError(e) : null
 
-          if (reason === 'execution reverted: Module not authorized') {
+          if (reason === 'Module not authorized') {
             setError(
-              "The Pilot Account's address must be enabled as a module of the modifier."
+              'The Pilot Account address must be enabled as a module of the modifier.'
             )
             return
           }
@@ -101,7 +101,7 @@ async function dryRun(
   const request = wrapRequest(
     {
       to: '0x0000000000000000000000000000000000000000',
-      data: '0x00',
+      data: '0x00000000',
       from: avatarAddress,
     },
     pilotAddress,
