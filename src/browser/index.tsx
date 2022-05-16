@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { BlockLink, Box, Flex } from '../components'
 import { AddressStack } from '../components'
-import { pushLocation, useLocation } from '../location'
+import { useLocation } from '../location'
 import { ProvideGanache } from '../providers'
 import { useConnection } from '../settings'
 
@@ -32,31 +32,12 @@ const Browser: React.FC = () => {
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
 
-  const { provider } = useConnection()
-  const avatarAddress = localStorage.getItem('avatarAddress')
-  const moduleAddress = localStorage.getItem('moduleAddress')
-  const roleId = localStorage.getItem('roleId')
-
-  const redirectToSettings = !avatarAddress || !moduleAddress || !roleId
-  useEffect(() => {
-    if (redirectToSettings) {
-      pushLocation('settings')
-    }
-  }, [redirectToSettings])
-
-  if (redirectToSettings) {
-    return null
-  }
+  const { connection, provider } = useConnection()
 
   return (
     // <ProvideGanache>
     <ProvideState>
-      <ProvideProvider
-        avatarAddress={avatarAddress}
-        moduleAddress={moduleAddress}
-        roleId={roleId}
-        simulate={false}
-      >
+      <ProvideProvider simulate={false}>
         <div className={classNames.browser}>
           <div className={classNames.topBar}>
             <Flex gap={3} justifyContent="space-between">
@@ -77,8 +58,8 @@ const Browser: React.FC = () => {
                 <AddressStack
                   interactive
                   pilotAddress={provider.accounts[0]}
-                  moduleAddress={moduleAddress}
-                  avatarAddress={avatarAddress}
+                  moduleAddress={connection.moduleAddress}
+                  avatarAddress={connection.avatarAddress}
                 />
               </BlockLink>
             </Flex>

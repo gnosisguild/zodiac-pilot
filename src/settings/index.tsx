@@ -1,11 +1,10 @@
 import React from 'react'
 
-import { Box, Button, Flex } from '../components'
+import { Box, Flex } from '../components'
 
 import Connection from './Connection'
 import { ProvideConnections, useConnection } from './connectionHooks'
 import classes from './style.module.css'
-import useConnectionDryRun from './useConnectionDryRun'
 
 export { useConnection, ProvideConnections }
 

@@ -1,16 +1,11 @@
 import { nanoid } from 'nanoid'
 import React from 'react'
 
-import { Box, Button, Flex } from '../../components'
-import {
-  useConnections,
-  useSelectConnection,
-  useSelectedConnectionId,
-} from '../connectionHooks'
+import { Button } from '../../components'
+import { useConnections, useSelectedConnectionId } from '../connectionHooks'
 
 import EditConnection from './Edit'
 import SelectConnection from './Select'
-import classes from './style.module.css'
 
 const Connection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
   const [connections, setConnections] = useConnections()

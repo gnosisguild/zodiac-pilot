@@ -4,12 +4,7 @@ import { VscDebugDisconnect } from 'react-icons/vsc'
 import { AddressStack, BlockButton, Box, Flex } from '../../components'
 import { useWalletConnectProvider } from '../../providers'
 import { Connection } from '../../types'
-import {
-  useConnection,
-  useConnections,
-  useSelectConnection,
-  useSelectedConnectionId,
-} from '../connectionHooks'
+import { useConnections, useSelectedConnectionId } from '../connectionHooks'
 
 import classes from './style.module.css'
 
