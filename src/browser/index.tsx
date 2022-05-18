@@ -41,7 +41,7 @@ const Browser: React.FC = () => {
         <div className={classNames.browser}>
           <div className={classNames.topBar}>
             <Flex gap={3} justifyContent="space-between">
-              <Box>
+              <Box className={classNames.navBox}>
                 <Flex gap={1}>
                   <Box className={classNames.appName} double>
                     Zodiac Pilot

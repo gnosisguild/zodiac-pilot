@@ -55,8 +55,8 @@ const EditConnection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
 
   return (
     <Flex direction="column" gap={3}>
-      <Flex direction="row" gap={2}>
-        <Flex direction="column" gap={3}>
+      <Flex direction="column" gap={2}>
+        <Flex direction="row" gap={2} justifyContent="space-between">
           <IconButton onClick={() => setSelectedConnectionId('')}>
             <RiArrowLeftLine size={24} title="Select another connection" />
           </IconButton>
@@ -70,16 +70,18 @@ const EditConnection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
           </IconButton>
         </Flex>
         <Flex direction="column" gap={3} className={classes.form}>
-          <input
-            type="text"
-            value={label}
-            placeholder="Label this connection"
-            onChange={(ev) => {
-              updateConnection({
-                label: ev.target.value,
-              })
-            }}
-          />
+          <Field label="Connection name">
+            <input
+              type="text"
+              value={label}
+              placeholder="Label this connection"
+              onChange={(ev) => {
+                updateConnection({
+                  label: ev.target.value,
+                })
+              }}
+            />
+          </Field>
           <Field>
             <ConnectButton />
           </Field>

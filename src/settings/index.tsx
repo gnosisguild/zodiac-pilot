@@ -16,17 +16,14 @@ type Props = {
 const Settings: React.FC<Props> = ({ url, onLaunch }) => {
   return (
     <div className={classes.container}>
-      <h1>Zodiac Pilot</h1>
-
+      <Box double p={3} className={classes.header}>
+        <h1>Zodiac Pilot</h1>
+        <Box double p={3}>
+          <p>Control a Safe via a Zodiac mod from an enabled account.</p>
+        </Box>
+      </Box>
       <Box double p={3}>
         <Flex direction="column" gap={3}>
-          <Box p={3}>
-            <p>
-              This app allows you to control a Safe via a Zodiac mod from an
-              enabled account.
-            </p>
-          </Box>
-
           <Connection
             onLaunch={() => {
               onLaunch(url)
