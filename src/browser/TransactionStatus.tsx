@@ -57,18 +57,20 @@ const TransactionStatus: React.FC = () => {
   }
 
   return (
-    <Box borderless>
-      <Flex gap={1}>
+    <Box bg p={3} className={classes.statusBox}>
+      <Flex gap={3}>
         <RiAlertLine color="#ffae42" size={24} />{' '}
         <div>
           {KNOWN_ERRORS.includes(decodedError) ? (
             <>
-              This transaction is not permitted:
-              <br />
-              {decodedError}
+              <p>This transaction is not permitted:</p>
+              <p className={classes.decodedError}>{decodedError}</p>
             </>
           ) : (
-            <>Unexpected error: {decodedError})</>
+            <>
+              <p>Unexpected error:</p>
+              <p className={classes.decodedError}>{decodedError}</p>
+            </>
           )}
           {txData && (
             <button onClick={copyToClipboard} className={classes.copyButton}>
@@ -82,6 +84,7 @@ const TransactionStatus: React.FC = () => {
               setError(null)
               setTxData(null)
             }}
+            className={classes.statusClose}
           >
             <RiCloseFill size={24} />
           </IconButton>

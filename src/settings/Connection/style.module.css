@@ -1,19 +1,28 @@
 .form {
   flex-grow: 1;
 }
-
 .status {
-  margin-left: auto;
-  margin-right: var(--spacing-2);
+  margin-left: 0;
+  margin-top: 5px;
   height: 28px;
   width: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-
 .error {
   color: crimson;
   font-family: 'Roboto Mono', monospace;
   font-size: 14px;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 0em 0em 0.5em 0em;
+}
+h3 {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}
+.connectionButton {
+  padding: calc(var(--spacing-3) - 1px);
+}
+.connectionHeader {
+  margin-bottom: var(--spacing-2);
 }

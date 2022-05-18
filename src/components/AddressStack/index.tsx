@@ -22,7 +22,9 @@ const AddressStack: React.FC<Props> = ({
   const redundant = avatarAddress === moduleAddress
 
   return (
-    <div className={cn(classes.addressStack, { interactive })}>
+    <div
+      className={cn(classes.addressStack, interactive && classes.interactive)}
+    >
       <Box roundedRight double p={2} className={classes.address}>
         <Address address={pilotAddress} />
         <div className={classes.helper}>
