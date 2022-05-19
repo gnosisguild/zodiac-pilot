@@ -7,6 +7,7 @@
   height: 28px;
   width: 28px;
 }
+
 .error {
   color: crimson;
   font-family: 'Roboto Mono', monospace;
@@ -20,8 +21,16 @@ h3 {
   font-size: 1.2em;
   margin-bottom: 0.5em;
 }
+.connectionItem {
+  position: relative;
+}
 .connectionButton {
   padding: calc(var(--spacing-3) - 1px);
+}
+.connectionEdit {
+  position: absolute;
+  top: calc(var(--spacing-3) - 1px);
+  right: calc(var(--spacing-3) - 1px);
 }
 .connectionHeader {
   margin-bottom: var(--spacing-2);

@@ -27,7 +27,7 @@ const useConnectionDryRun = ({
     if (connected && avatarAddress && moduleAddress && roleId) {
       dryRun(provider, moduleAddress, avatarAddress, roleId)
         .then(() => {
-          console.log('no error')
+          console.log('dry run success')
           setError(null)
         })
         .catch((e) => {

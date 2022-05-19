@@ -2,11 +2,8 @@ import React from 'react'
 import { RiArrowLeftLine, RiDeleteBinLine } from 'react-icons/ri'
 
 import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
-import {
-  useConnection,
-  useConnections,
-  useSelectedConnectionId,
-} from '../connectionHooks'
+import { usePushSettingsRoute } from '../../routing'
+import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectButton from './ConnectButton'
@@ -20,14 +17,20 @@ type ConnectionPatch = {
   roleId?: string
 }
 
-const EditConnection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
+interface Props {
+  id: string
+  onLaunch(connectionId: string): void
+}
+
+const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
   const [connections, setConnections] = useConnections()
-  const [, setSelectedConnectionId] = useSelectedConnectionId()
-  const { connection, connected } = useConnection()
+  const { connection, connected } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
   const { loading, isValidSafe, enabledModules } =
     useSafeModuleInfo(avatarAddress)
+
+  const pushSettingsRoute = usePushSettingsRoute()
 
   const validatedModuleAddress =
     moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
@@ -57,7 +60,7 @@ const EditConnection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
     <Flex direction="column" gap={3}>
       <Flex direction="column" gap={2}>
         <Flex direction="row" gap={2} justifyContent="space-between">
-          <IconButton onClick={() => setSelectedConnectionId('')}>
+          <IconButton onClick={() => pushSettingsRoute('')}>
             <RiArrowLeftLine size={24} title="Select another connection" />
           </IconButton>
 
@@ -146,7 +149,7 @@ const EditConnection: React.FC<{ onLaunch(): void }> = ({ onLaunch }) => {
       <Button
         disabled={!canLaunch}
         onClick={() => {
-          onLaunch()
+          onLaunch(id)
         }}
       >
         Launch

@@ -27,24 +27,30 @@ const AddressStack: React.FC<Props> = ({
     >
       <Box roundedRight double p={2} className={classes.address}>
         <Address address={pilotAddress} />
-        <div className={classes.helper}>
-          <p>Pilot Account</p>
-        </div>
+        {pilotAddress && (
+          <div className={classes.helper}>
+            <p>Pilot Account</p>
+          </div>
+        )}
       </Box>
 
       {!redundant && (
         <Box roundedRight double p={2} className={classes.address}>
           <Address address={moduleAddress} />
-          <div className={classes.helper}>
-            <p>Zodiac Module</p>
-          </div>
+          {moduleAddress && (
+            <div className={classes.helper}>
+              <p>Zodiac Module</p>
+            </div>
+          )}
         </Box>
       )}
       <Box roundedRight double p={2} className={classes.address}>
         <Address address={avatarAddress} />
-        <div className={classes.helper}>
-          <p>DAO Safe</p>
-        </div>
+        {avatarAddress && (
+          <div className={classes.helper}>
+            <p>DAO Safe</p>
+          </div>
+        )}
       </Box>
     </div>
   )

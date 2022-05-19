@@ -58,7 +58,7 @@ export const useConnections = () => {
   return result
 }
 
-export const useSelectedConnectionId = () => {
+const useSelectedConnectionId = () => {
   const result = useContext(SelectedConnectionContext)
   if (!result) {
     throw new Error(
@@ -78,12 +78,12 @@ export const useSelectConnection = () => {
   )
 }
 
-export const useConnection = () => {
+export const useConnection = (id?: string) => {
   const [connections] = useConnections()
   const [selectedConnectionId] = useSelectedConnectionId()
+  const connectionId = id || selectedConnectionId
   const connection =
-    (selectedConnectionId &&
-      connections.find((c) => c.id === selectedConnectionId)) ||
+    (connectionId && connections.find((c) => c.id === connectionId)) ||
     connections[0]
   if (!connection) {
     throw new Error('connections is empty, which must never happen')

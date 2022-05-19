@@ -4,6 +4,7 @@ import { BlockLink, Box, Flex } from '../components'
 import { AddressStack } from '../components'
 import { useLocation } from '../location'
 import { ProvideGanache } from '../providers'
+import { useSettingsHash } from '../routing'
 import { useConnection } from '../settings'
 
 import Drawer from './Drawer'
@@ -31,7 +32,7 @@ const Browser: React.FC = () => {
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
-
+  const settingsHash = useSettingsHash()
   const { connection, provider } = useConnection()
 
   return (
@@ -41,7 +42,7 @@ const Browser: React.FC = () => {
         <div className={classNames.browser}>
           <div className={classNames.topBar}>
             <Flex gap={3} justifyContent="space-between">
-              <Box className={classNames.navBox}>
+              <Box>
                 <Flex gap={1}>
                   <Box className={classNames.appName} double>
                     Zodiac Pilot
@@ -52,9 +53,7 @@ const Browser: React.FC = () => {
                 </Flex>
               </Box>
               <TransactionStatus />
-              <BlockLink
-                href={`#${encodeURIComponent(`settings;${location}`)}`}
-              >
+              <BlockLink href={settingsHash}>
                 <AddressStack
                   interactive
                   pilotAddress={provider.accounts[0]}

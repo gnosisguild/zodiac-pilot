@@ -3,7 +3,11 @@ import React from 'react'
 import { Box, Flex } from '../components'
 
 import Connection from './Connection'
-import { ProvideConnections, useConnection } from './connectionHooks'
+import {
+  ProvideConnections,
+  useConnection,
+  useSelectConnection,
+} from './connectionHooks'
 import classes from './style.module.css'
 
 export { useConnection, ProvideConnections }
@@ -11,9 +15,11 @@ export { useConnection, ProvideConnections }
 type Props = {
   url: string
   onLaunch(url: string): void
+  editConnectionId?: string
 }
 
-const Settings: React.FC<Props> = ({ url, onLaunch }) => {
+const Settings: React.FC<Props> = ({ url, onLaunch, editConnectionId }) => {
+  const selectConnection = useSelectConnection()
   return (
     <div className={classes.container}>
       <Box double p={3} className={classes.header}>
@@ -25,7 +31,9 @@ const Settings: React.FC<Props> = ({ url, onLaunch }) => {
       <Box double p={3}>
         <Flex direction="column" gap={3}>
           <Connection
-            onLaunch={() => {
+            editConnectionId={editConnectionId}
+            onLaunch={(connectionId) => {
+              selectConnection(connectionId)
               onLaunch(url)
             }}
           />
