@@ -26,19 +26,15 @@ h3 {
   position: relative;
 }
 .connectionButton {
+  width: 100%;
   padding: calc(var(--spacing-3) - 1px);
 }
 .connectionEdit {
   position: absolute;
   top: calc(var(--spacing-3));
   right: calc(var(--spacing-3) - 2px);
-  /* 
-    the following !important modifiers allow
-    this class to override the BlockButton's 
-    .button class. 
-  */
-  display: flex !important;
-  width: auto !important;
+  display: flex;
+  width: auto;
   align-items: center;
   column-gap: 10px;
 }

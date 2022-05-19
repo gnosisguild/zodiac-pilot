@@ -1,6 +1,4 @@
 .button {
-  display: block;
-  width: 100%;
   box-sizing: border-box;
   border: 3px double var(--border-color);
   transition: all 0.1s ease;
