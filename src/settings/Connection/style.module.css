@@ -3,7 +3,7 @@
 }
 .status {
   margin-left: 0;
-  margin-top: 5px;
+  margin-top: -3px;
   height: 28px;
   width: 28px;
 }
@@ -19,18 +19,24 @@ h2 {
 }
 h3 {
   font-size: 1.2em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.8em;
+  line-height: 1.2;
 }
 .connectionItem {
   position: relative;
 }
 .connectionButton {
+  width: 100%;
   padding: calc(var(--spacing-3) - 1px);
 }
 .connectionEdit {
   position: absolute;
-  top: calc(var(--spacing-3) - 1px);
-  right: calc(var(--spacing-3) - 1px);
+  top: calc(var(--spacing-3));
+  right: calc(var(--spacing-3) - 2px);
+  display: flex;
+  width: auto;
+  align-items: center;
+  column-gap: 10px;
 }
 .connectionHeader {
   margin-bottom: var(--spacing-2);

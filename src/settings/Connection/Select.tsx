@@ -77,14 +77,15 @@ const ConnectionItem: React.FC<{
           pilotAddress={provider.accounts[0] || ''}
         />
       </BlockButton>
-      <IconButton
+      <BlockButton
         onClick={() => {
           pushSettingsRoute(connection.id)
         }}
         className={classes.connectionEdit}
       >
         <RiBallPenLine size={16} />
-      </IconButton>
+        <p>Edit</p>
+      </BlockButton>
     </div>
   )
 }

@@ -70,13 +70,16 @@ const Browser: React.FC = () => {
                 <BrowserFrame src={initialLocation} />
               ) : (
                 <div className={classes.launchPage}>
-                  <AppPicker
-                    large
-                    onPick={(url) => {
-                      pushLocation(url)
-                      setInitialLocation(url)
-                    }}
-                  />
+                  <Box p={3} double>
+                    <h2>Choose an app to get started</h2>
+                    <AppPicker
+                      large
+                      onPick={(url) => {
+                        pushLocation(url)
+                        setInitialLocation(url)
+                      }}
+                    />
+                  </Box>
                 </div>
               )}
             </Box>
