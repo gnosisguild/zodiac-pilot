@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-import { BlockLink, Box, Flex } from '../components'
+import { AppPicker, BlockLink, Box, Flex } from '../components'
 import { AddressStack } from '../components'
-import { useLocation } from '../location'
+import { pushLocation, useLocation } from '../location'
 import { ProvideGanache } from '../providers'
 import { useSettingsHash } from '../routing'
 import { useConnection } from '../settings'
@@ -13,6 +13,7 @@ import ProvideProvider from './ProvideProvider'
 import TransactionStatus from './TransactionStatus'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
+import classes from './index.module.css'
 import { ProvideState } from './state'
 
 // This disables elastic scroll behavior on Macs
@@ -65,7 +66,19 @@ const Browser: React.FC = () => {
           </div>
           <Flex gap={4} className={classNames.main}>
             <Box className={classNames.frame} double p={2}>
-              <BrowserFrame src={initialLocation} />
+              {initialLocation ? (
+                <BrowserFrame src={initialLocation} />
+              ) : (
+                <div className={classes.launchPage}>
+                  <AppPicker
+                    large
+                    onPick={(url) => {
+                      pushLocation(url)
+                      setInitialLocation(url)
+                    }}
+                  />
+                </div>
+              )}
             </Box>
             {/* <Drawer /> */}
           </Flex>

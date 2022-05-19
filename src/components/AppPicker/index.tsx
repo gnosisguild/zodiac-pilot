@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import React from 'react'
 
 import { useConnection } from '../../settings'
@@ -143,11 +144,12 @@ const APP_CONFIG = [
 ]
 
 interface Props {
-  query: string
+  query?: string
   onPick: (a: string) => void
+  large?: boolean
 }
 
-const AppPicker: React.FC<Props> = ({ onPick, query }) => {
+const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
   const { provider } = useConnection()
 
   const apps = sortApps().filter(
@@ -157,7 +159,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query }) => {
   )
 
   return (
-    <ul className={classes.appListContainer}>
+    <ul className={cn(classes.container, large && classes.large)}>
       {apps.map((app) => (
         <li key={app.name} style={{ display: 'block' }}>
           <button
@@ -165,7 +167,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query }) => {
               markAppAsUsed(app.url)
               onPick(app.url)
             }}
-            className={classes.appButton}
+            className={classes.item}
           >
             <img
               className={classes.logo}
