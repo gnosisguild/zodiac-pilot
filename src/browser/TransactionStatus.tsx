@@ -57,7 +57,7 @@ const TransactionStatus: React.FC = () => {
   }
 
   return (
-    <Box bg p={3} className={classes.statusBox}>
+    <Box bg p={3} classNames={classes.statusBox}>
       <Flex gap={3}>
         <RiAlertLine color="#ffae42" size={24} />{' '}
         <div>

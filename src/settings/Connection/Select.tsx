@@ -71,10 +71,11 @@ const ConnectionItem: React.FC<{
           </div>
         </Flex>
         <AddressStack
-          interactive
           avatarAddress={connection.avatarAddress}
           moduleAddress={connection.moduleAddress}
           pilotAddress={provider.accounts[0] || ''}
+          helperClass={classes.addressHelper}
+          addressBoxClass={classes.addressBox}
         />
       </BlockButton>
       <BlockButton

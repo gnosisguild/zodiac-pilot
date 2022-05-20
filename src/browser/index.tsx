@@ -45,7 +45,7 @@ const Browser: React.FC = () => {
             <Flex gap={3} justifyContent="space-between">
               <Box>
                 <Flex gap={1}>
-                  <Box className={classNames.appName} double>
+                  <Box classNames={classNames.appName} double>
                     Zodiac Pilot
                   </Box>
                   <Box double>
@@ -65,7 +65,7 @@ const Browser: React.FC = () => {
             </Flex>
           </div>
           <Flex gap={4} className={classNames.main}>
-            <Box className={classNames.frame} double p={2}>
+            <Box classNames={classNames.frame} double p={2}>
               {initialLocation ? (
                 <BrowserFrame src={initialLocation} />
               ) : (
