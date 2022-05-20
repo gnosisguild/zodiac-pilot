@@ -11,6 +11,8 @@ interface Props {
   moduleAddress: string
   pilotAddress: string
   interactive?: boolean
+  helperClass?: string
+  addressBoxClass?: string
 }
 
 const AddressStack: React.FC<Props> = ({
@@ -18,6 +20,8 @@ const AddressStack: React.FC<Props> = ({
   moduleAddress,
   pilotAddress,
   interactive,
+  helperClass,
+  addressBoxClass,
 }) => {
   const redundant = avatarAddress === moduleAddress
 
@@ -25,29 +29,44 @@ const AddressStack: React.FC<Props> = ({
     <div
       className={cn(classes.addressStack, interactive && classes.interactive)}
     >
-      <Box roundedRight double p={2} className={classes.address}>
+      <Box
+        roundedRight
+        double
+        p={2}
+        className={cn([classes.address, addressBoxClass])}
+      >
         <Address address={pilotAddress} />
         {pilotAddress && (
-          <div className={classes.helper}>
+          <div className={cn(classes.helper, helperClass)}>
             <p>Pilot Account</p>
           </div>
         )}
       </Box>
 
       {!redundant && (
-        <Box roundedRight double p={2} className={classes.address}>
+        <Box
+          roundedRight
+          double
+          p={2}
+          className={cn([classes.address, addressBoxClass])}
+        >
           <Address address={moduleAddress} />
           {moduleAddress && (
-            <div className={classes.helper}>
+            <div className={cn(classes.helper, helperClass)}>
               <p>Zodiac Module</p>
             </div>
           )}
         </Box>
       )}
-      <Box roundedRight double p={2} className={classes.address}>
+      <Box
+        roundedRight
+        double
+        p={2}
+        className={cn([classes.address, addressBoxClass])}
+      >
         <Address address={avatarAddress} />
         {avatarAddress && (
-          <div className={classes.helper}>
+          <div className={cn(classes.helper, helperClass)}>
             <p>DAO Safe</p>
           </div>
         )}

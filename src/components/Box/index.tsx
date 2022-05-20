@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import React from 'react'
 
-import classNames from './style.module.css'
+import classes from './style.module.css'
 
 interface Props {
   className?: string
@@ -27,15 +27,15 @@ const Box: React.FC<Props> = ({
 }) => (
   <div
     className={cn(
-      classNames.box,
-      classNames[`p${p}`],
+      classes.box,
+      classes[`p${p}`],
       {
-        [classNames.double]: double,
-        [classNames.borderless]: borderless,
-        [classNames.rounded]: rounded,
-        [classNames.bg]: bg,
-        [classNames.roundedLeft]: roundedLeft,
-        [classNames.roundedRight]: roundedRight,
+        [classes.double]: double,
+        [classes.borderless]: borderless,
+        [classes.rounded]: rounded,
+        [classes.bg]: bg,
+        [classes.roundedLeft]: roundedLeft,
+        [classes.roundedRight]: roundedRight,
       },
       className
     )}
