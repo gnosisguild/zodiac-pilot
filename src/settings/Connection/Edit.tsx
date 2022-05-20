@@ -140,7 +140,7 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
       {error && (
         <>
           <div>There seems to be a problem with this connection:</div>
-          <Box p={3} classNames={classes.error}>
+          <Box p={3} className={classes.error}>
             {error}
           </Box>
         </>

@@ -4,7 +4,7 @@ import React from 'react'
 import classes from './style.module.css'
 
 interface Props {
-  classNames?: string[] | string
+  className?: string
   double?: boolean
   borderless?: boolean
   bg?: boolean
@@ -16,7 +16,7 @@ interface Props {
 
 const Box: React.FC<Props> = ({
   children,
-  classNames,
+  className,
   double,
   borderless,
   bg,
@@ -37,7 +37,7 @@ const Box: React.FC<Props> = ({
         [classes.roundedLeft]: roundedLeft,
         [classes.roundedRight]: roundedRight,
       },
-      classNames
+      className
     )}
   >
     {children}

@@ -33,7 +33,7 @@ const AddressStack: React.FC<Props> = ({
         roundedRight
         double
         p={2}
-        classNames={[classes.address, addressBoxClass]}
+        className={cn([classes.address, addressBoxClass])}
       >
         <Address address={pilotAddress} />
         {pilotAddress && (
@@ -48,7 +48,7 @@ const AddressStack: React.FC<Props> = ({
           roundedRight
           double
           p={2}
-          classNames={[classes.address, addressBoxClass]}
+          className={cn([classes.address, addressBoxClass])}
         >
           <Address address={moduleAddress} />
           {moduleAddress && (
@@ -62,7 +62,7 @@ const AddressStack: React.FC<Props> = ({
         roundedRight
         double
         p={2}
-        classNames={[classes.address, addressBoxClass]}
+        className={cn([classes.address, addressBoxClass])}
       >
         <Address address={avatarAddress} />
         {avatarAddress && (

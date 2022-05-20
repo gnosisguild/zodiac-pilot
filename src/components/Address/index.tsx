@@ -47,7 +47,7 @@ const Address: React.FC<Props> = ({
   const displayAddress = `${start}...${end}`
 
   return (
-    <Box roundedRight classNames={cn(className, classes.container)}>
+    <Box roundedRight className={cn(className, classes.container)}>
       <div className={classes.address}>{displayAddress}</div>
       <Box rounded>
         {address && (
