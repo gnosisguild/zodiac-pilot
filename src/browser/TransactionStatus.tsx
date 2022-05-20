@@ -1,24 +1,30 @@
-import { IJsonRpcErrorMessage, ITxData } from '@walletconnect/types'
+import { ITxData } from '@walletconnect/types'
 import React, { useEffect, useState } from 'react'
-import { RiAlertLine } from 'react-icons/ri'
+import { RiAlertLine, RiCloseFill } from 'react-icons/ri'
 
-import { Box, Flex } from '../components'
+import { Box, Flex, IconButton } from '../components'
+import { Permissions__factory, Roles__factory } from '../types/typechain'
+import { decodeRolesError } from '../utils'
 
 import { useWrappingProvider } from './ProvideProvider'
 import classes from './index.module.css'
 
-// TODO implement this check once we know what Roles modifier errors will look like
-const isPermissionError = (error: IJsonRpcErrorMessage) => false
+const permissionsInterface = Permissions__factory.createInterface()
+const rolesInterface = Roles__factory.createInterface()
+
+const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
+  Object.keys(permissionsInterface.errors)
+)
 
 const TransactionStatus: React.FC = () => {
   const wrappingProvider = useWrappingProvider()
-  const [error, setError] = useState<IJsonRpcErrorMessage | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [txData, setTxData] = useState<ITxData | null>(null)
 
   useEffect(() => {
-    const captureError = (error: IJsonRpcErrorMessage, txData: ITxData) => {
-      setError(error)
-      setTxData(txData)
+    const captureError = (error: string, params: [ITxData, any]) => {
+      setError(decodeRolesError(error))
+      setTxData(params[0])
     }
 
     const clearError = () => {
@@ -35,7 +41,14 @@ const TransactionStatus: React.FC = () => {
     }
   }, [wrappingProvider])
 
-  if (!error || !isPermissionError(error)) {
+  if (!error) {
+    return null
+  }
+
+  console.warn('gas estimation error', error)
+  const decodedError = decodeRolesError(error)
+
+  if (!error) {
     return null
   }
 
@@ -44,14 +57,37 @@ const TransactionStatus: React.FC = () => {
   }
 
   return (
-    <Box borderless>
-      <Flex gap={1}>
-        <RiAlertLine color="#ffae42" size={24} />
+    <Box bg p={3} className={classes.statusBox}>
+      <Flex gap={3}>
+        <RiAlertLine color="#ffae42" size={24} />{' '}
         <div>
-          This transaction is not permitted
-          <button onClick={copyToClipboard} className={classes.copyButton}>
-            Copy transaction data to clipboard
-          </button>
+          {KNOWN_ERRORS.includes(decodedError) ? (
+            <>
+              <p>This transaction is not permitted:</p>
+              <p className={classes.decodedError}>{decodedError}</p>
+            </>
+          ) : (
+            <>
+              <p>Unexpected error:</p>
+              <p className={classes.decodedError}>{decodedError}</p>
+            </>
+          )}
+          {txData && (
+            <button onClick={copyToClipboard} className={classes.copyButton}>
+              Copy transaction data to clipboard
+            </button>
+          )}
+        </div>
+        <div>
+          <IconButton
+            onClick={() => {
+              setError(null)
+              setTxData(null)
+            }}
+            className={classes.statusClose}
+          >
+            <RiCloseFill size={24} />
+          </IconButton>
         </div>
       </Flex>
     </Box>

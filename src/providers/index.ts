@@ -1,9 +1,6 @@
 export { default as ForkProvider } from './ForkProvider'
 export { default as WrappingProvider } from './WrappingProvider'
-export {
-  useWalletConnectProvider,
-  default as ProvideWalletConnect,
-} from './ProvideWalletConnect'
+export { default as useWalletConnectProvider } from './useWalletConnectProvider'
 export { useGanacheProvider, default as ProvideGanache } from './ProvideGanache'
 
 export interface Eip1193Provider {

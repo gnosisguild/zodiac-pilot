@@ -4,34 +4,35 @@ import ReactDom from 'react-dom'
 import './global.css'
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
-import { pushLocation, useLocation } from './location'
-import { ProvideWalletConnect, useWalletConnectProvider } from './providers'
-import Settings from './settings'
+import { pushLocation } from './location'
+import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
+import Settings, { ProvideConnections } from './settings'
+import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
-  const location = useLocation()
-  const { connected } = useWalletConnectProvider()
+  const settingsRouteMatch = useMatchSettingsRoute()
+  const { connection, connected } = useConnection()
+  const pushSettingsRoute = usePushSettingsRoute()
 
-  const avatarAddress = localStorage.getItem('avatarAddress') || ''
-  const moduleAddress = localStorage.getItem('moduleAddress') || ''
-  const settingsRequired = !connected || !avatarAddress || !moduleAddress
-  const settingsRouteMatch = location.startsWith('settings')
+  const settingsRequired =
+    !connection ||
+    !connection.avatarAddress ||
+    !connection.moduleAddress ||
+    !connected
 
   // redirect to settings page if more settings are required
   useEffect(() => {
     if (!settingsRouteMatch && settingsRequired) {
-      pushLocation(`settings;${location}`)
+      pushSettingsRoute()
     }
-  }, [location, settingsRouteMatch, settingsRequired])
-
+  }, [pushSettingsRoute, settingsRouteMatch, settingsRequired])
   if (!settingsRouteMatch && settingsRequired) return null
 
   if (settingsRouteMatch) {
     return (
       <Settings
-        url={location.startsWith('settings;') ? location.substring(9) : ''}
-        moduleAddress={moduleAddress}
-        avatarAddress={avatarAddress}
+        url={settingsRouteMatch.url}
+        editConnectionId={settingsRouteMatch.editConnectionId}
         onLaunch={launch}
       />
     )
@@ -40,21 +41,15 @@ const Routes: React.FC = () => {
   return <Browser />
 }
 
-function launch(
-  url: string,
-  nextModuleAddress: string,
-  nextAvatarAddress: string
-) {
-  localStorage.setItem('moduleAddress', nextModuleAddress)
-  localStorage.setItem('avatarAddress', nextAvatarAddress)
+function launch(url: string) {
   pushLocation(prependHttp(url))
 }
 
 ReactDom.render(
   <React.StrictMode>
-    <ProvideWalletConnect>
+    <ProvideConnections>
       <Routes />
-    </ProvideWalletConnect>
+    </ProvideConnections>
   </React.StrictMode>,
   document.getElementById('root')
 )

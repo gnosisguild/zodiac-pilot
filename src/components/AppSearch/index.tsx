@@ -27,7 +27,9 @@ const AppSearch: React.FC<Props> = ({ onPick }) => {
           className={classes.pickerInput}
         />
       </Box>
-      <AppPicker onPick={onPick} query={query} />
+      <div className={classes.appPicker}>
+        <AppPicker onPick={onPick} query={query} />
+      </div>
     </Box>
   )
 }

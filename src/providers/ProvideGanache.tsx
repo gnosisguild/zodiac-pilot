@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 
-import { useWalletConnectProvider } from './ProvideWalletConnect'
+import { useConnection } from '../settings/connectionHooks'
 
 const GanacheContext = React.createContext<GanacheProvider | null>(null)
 
@@ -18,7 +18,7 @@ export const useGanacheProvider = (): GanacheProvider => {
 const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { provider: walletConnectProvider } = useWalletConnectProvider()
+  const { provider: walletConnectProvider } = useConnection()
   const [provider, setProvider] = useState<GanacheProvider | null>(null)
   const [bridgeReady, setBridgeReady] = useState(false)
 

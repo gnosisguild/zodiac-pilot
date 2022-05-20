@@ -1,7 +1,7 @@
+import cn from 'classnames'
 import React from 'react'
 
-import { useWalletConnectProvider } from '../../providers'
-import { getAppUsageCount, markAppAsUsed } from '../../settings/localStorage'
+import { useConnection } from '../../settings'
 
 import aaveLogo from './images/aave.png'
 import agaveLogo from './images/agave.png'
@@ -22,6 +22,7 @@ import sushiswapLogo from './images/sushiswap.png'
 import uniswapLogo from './images/uniswap.png'
 import unitLogo from './images/unit.png'
 import yearnLogo from './images/yearn.png'
+import { getAppUsageCount, markAppAsUsed } from './localStorage'
 import classes from './style.module.css'
 
 const APP_CONFIG = [
@@ -143,12 +144,13 @@ const APP_CONFIG = [
 ]
 
 interface Props {
-  query: string
+  query?: string
   onPick: (a: string) => void
+  large?: boolean
 }
 
-const AppPicker: React.FC<Props> = ({ onPick, query }) => {
-  const { provider } = useWalletConnectProvider()
+const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
+  const { provider } = useConnection()
 
   const apps = sortApps().filter(
     (app) =>
@@ -157,7 +159,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query }) => {
   )
 
   return (
-    <ul className={classes.appListContainer}>
+    <ul className={cn(classes.container, large && classes.large)}>
       {apps.map((app) => (
         <li key={app.name} style={{ display: 'block' }}>
           <button
@@ -165,7 +167,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query }) => {
               markAppAsUsed(app.url)
               onPick(app.url)
             }}
-            className={classes.appButton}
+            className={classes.item}
           >
             <img
               className={classes.logo}

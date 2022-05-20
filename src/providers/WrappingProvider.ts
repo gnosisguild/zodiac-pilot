@@ -8,20 +8,21 @@ import {
   ITxData,
 } from '@walletconnect/types'
 
+import rolesAbi from '../abi/Roles.json'
+
 import { waitForMultisigExecution } from './safe'
 
-const AvatarInterface = new Interface([
-  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
-])
+const RolesInterface = new Interface(rolesAbi)
 
 export function wrapRequest(
   request: ITxData,
   from: string,
-  to: string
+  to: string,
+  roleId: string
 ): ITxData {
-  const data = AvatarInterface.encodeFunctionData(
-    'execTransactionFromModule(address,uint256,bytes,uint8)',
-    [request.to, request.value || 0, request.data, 0]
+  const data = RolesInterface.encodeFunctionData(
+    'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
+    [request.to, request.value || 0, request.data, 0, roleId || 0, true]
   )
 
   return {
@@ -40,6 +41,7 @@ class WrappingProvider extends EventEmitter {
   private pilotAddress: string
   private moduleAddress: string
   private avatarAddress: string
+  private roleId: string
 
   private provider: WalletConnectEthereumProvider
 
@@ -47,13 +49,15 @@ class WrappingProvider extends EventEmitter {
     provider: WalletConnectEthereumProvider,
     pilotAddress: string,
     moduleAddress: string,
-    avatarAddress: string
+    avatarAddress: string,
+    roleId: string
   ) {
     super()
     this.provider = provider
     this.pilotAddress = pilotAddress
     this.moduleAddress = moduleAddress
     this.avatarAddress = avatarAddress
+    this.roleId = roleId
   }
 
   async request(request: {
@@ -82,21 +86,21 @@ class WrappingProvider extends EventEmitter {
         const wrappedReq = wrapRequest(
           request,
           this.pilotAddress,
-          this.moduleAddress
+          this.moduleAddress,
+          this.roleId
         )
 
-        const result = (await this.provider.request({
-          method,
-          params: [wrappedReq, ...rest],
-        })) as any | IJsonRpcResponseError
-
-        if (typeof result === 'object' && 'error' in result) {
-          this.emit('estimateGasError', result.error, params)
-        } else {
+        try {
+          const result = await this.provider.request({
+            method,
+            params: [wrappedReq, ...rest],
+          })
           this.emit('estimateGasSuccess')
+          return result
+        } catch (e) {
+          this.emit('estimateGasError', e, params)
+          throw e
         }
-
-        return result
       }
 
       case 'eth_call': {
@@ -112,17 +116,15 @@ class WrappingProvider extends EventEmitter {
         const wrappedReq = wrapRequest(
           request,
           this.pilotAddress,
-          this.moduleAddress
+          this.moduleAddress,
+          this.roleId
         )
 
         const safeTxHash = await this.provider.connector.sendTransaction(
           wrappedReq
         )
 
-        const txHash = await waitForMultisigExecution(
-          this.provider.chainId,
-          safeTxHash
-        )
+        const txHash = await waitForMultisigExecution(this.provider, safeTxHash)
 
         return txHash
       }

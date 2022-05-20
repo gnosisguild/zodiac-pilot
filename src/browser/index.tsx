@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react'
 
-import { BlockLink, Box, Flex } from '../components'
+import { AppPicker, BlockLink, Box, Flex } from '../components'
+import { AddressStack } from '../components'
 import { pushLocation, useLocation } from '../location'
-import { ProvideGanache, useWalletConnectProvider } from '../providers'
+import { ProvideGanache } from '../providers'
+import { useSettingsHash } from '../routing'
+import { useConnection } from '../settings'
 
-import AddressStack from './AddressStack'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import ProvideProvider from './ProvideProvider'
 import TransactionStatus from './TransactionStatus'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
+import classes from './index.module.css'
 import { ProvideState } from './state'
 
 // This disables elastic scroll behavior on Macs
@@ -30,30 +33,13 @@ const Browser: React.FC = () => {
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
-
-  const { provider } = useWalletConnectProvider()
-  const avatarAddress = localStorage.getItem('avatarAddress')
-  const moduleAddress = localStorage.getItem('moduleAddress')
-
-  const redirectToSettings = !avatarAddress || !moduleAddress
-  useEffect(() => {
-    if (redirectToSettings) {
-      pushLocation('settings')
-    }
-  }, [redirectToSettings])
-
-  if (redirectToSettings) {
-    return null
-  }
+  const settingsHash = useSettingsHash()
+  const { connection, provider } = useConnection()
 
   return (
     // <ProvideGanache>
     <ProvideState>
-      <ProvideProvider
-        avatarAddress={avatarAddress}
-        moduleAddress={moduleAddress}
-        simulate={false}
-      >
+      <ProvideProvider simulate={false}>
         <div className={classNames.browser}>
           <div className={classNames.topBar}>
             <Flex gap={3} justifyContent="space-between">
@@ -68,20 +54,34 @@ const Browser: React.FC = () => {
                 </Flex>
               </Box>
               <TransactionStatus />
-              <BlockLink
-                href={`#${encodeURIComponent(`settings;${location}`)}`}
-              >
+              <BlockLink href={settingsHash}>
                 <AddressStack
+                  interactive
                   pilotAddress={provider.accounts[0]}
-                  moduleAddress={moduleAddress}
-                  avatarAddress={avatarAddress}
+                  moduleAddress={connection.moduleAddress}
+                  avatarAddress={connection.avatarAddress}
                 />
               </BlockLink>
             </Flex>
           </div>
           <Flex gap={4} className={classNames.main}>
             <Box className={classNames.frame} double p={2}>
-              <BrowserFrame src={initialLocation} />
+              {initialLocation ? (
+                <BrowserFrame src={initialLocation} />
+              ) : (
+                <div className={classes.launchPage}>
+                  <Box p={3} double>
+                    <h2>Choose an app to get started</h2>
+                    <AppPicker
+                      large
+                      onPick={(url) => {
+                        pushLocation(url)
+                        setInitialLocation(url)
+                      }}
+                    />
+                  </Box>
+                </div>
+              )}
             </Box>
             {/* <Drawer /> */}
           </Flex>

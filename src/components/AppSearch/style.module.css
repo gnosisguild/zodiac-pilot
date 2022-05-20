@@ -18,3 +18,11 @@
   display: block;
   height: 100%;
 }
+
+.appPicker {
+  margin: var(--spacing-2) 0 0 0;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  background: rgba(217, 212, 173, 0.1);
+  overflow-x: scroll;
+}

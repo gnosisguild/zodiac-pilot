@@ -1,17 +1,13 @@
 import React from 'react'
 
-import { Button } from '../../components'
-import { useWalletConnectProvider } from '../../providers'
+import { Button } from '../../../components'
+import { useConnection } from '../../connectionHooks'
 
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
-const shortAddress = (address: string) => {
-  return address.substr(0, 7) + '...' + address.substr(-5)
-}
-
 const ConnectButton: React.FC = () => {
-  const { provider, connected } = useWalletConnectProvider()
+  const { provider, connected } = useConnection()
   return (
     <>
       {connected ? (
@@ -22,7 +18,7 @@ const ConnectButton: React.FC = () => {
               <img src={walletConnectLogoUrl} alt="wallet connect logo" />
             </div>
             <div className={classes.connectedAddress}>
-              {shortAddress(provider.accounts[0])}
+              {provider.accounts[0]}
             </div>
             <Button
               onClick={() => provider.disconnect()}

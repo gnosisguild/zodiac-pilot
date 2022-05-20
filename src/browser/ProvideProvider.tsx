@@ -7,16 +7,14 @@ import {
   Eip1193Provider,
   ForkProvider,
   useGanacheProvider,
-  useWalletConnectProvider,
   WrappingProvider,
 } from '../providers'
+import { useConnection } from '../settings'
 
 import fetchAbi, { NetworkId } from './fetchAbi'
 import { useDispatch, useTransactions } from './state'
 
 interface Props {
-  avatarAddress: string
-  moduleAddress: string
   simulate: boolean
 }
 
@@ -41,13 +39,8 @@ export const useCommitTransactions = () => useContext(CommitTransactionsContext)
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-const ProvideProvider: React.FC<Props> = ({
-  avatarAddress,
-  moduleAddress,
-  simulate,
-  children,
-}) => {
-  const { provider: walletConnectProvider } = useWalletConnectProvider()
+const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
+  const { provider: walletConnectProvider, connection } = useConnection()
   // const ganacheProvider = useGanacheProvider()
   const ganacheProvider = null
   const pilotAddress = walletConnectProvider.accounts[0]
@@ -59,16 +52,17 @@ const ProvideProvider: React.FC<Props> = ({
       new WrappingProvider(
         walletConnectProvider,
         pilotAddress,
-        moduleAddress,
-        avatarAddress
+        connection.moduleAddress,
+        connection.avatarAddress,
+        connection.roleId
       ),
-    [walletConnectProvider, pilotAddress, moduleAddress, avatarAddress]
+    [walletConnectProvider, pilotAddress, connection]
   )
 
   const forkProvider = useMemo(
     () =>
       ganacheProvider &&
-      new ForkProvider(ganacheProvider, avatarAddress, {
+      new ForkProvider(ganacheProvider, connection.avatarAddress, {
         async onTransactionReceived(txData, transactionHash) {
           const input = await decodeSingle(
             {
@@ -94,7 +88,7 @@ const ProvideProvider: React.FC<Props> = ({
           })
         },
       }),
-    [ganacheProvider, walletConnectProvider, avatarAddress, dispatch]
+    [ganacheProvider, walletConnectProvider, connection, dispatch]
   )
 
   const commitTransactions = useCallback(async () => {

@@ -43,50 +43,6 @@
   padding: 0 var(--spacing-3) !important;
 }
 
-.address {
-  background: black;
-  box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
-  margin-left: -32px;
-}
-.address:first-child {
-  margin-left: 0;
-  z-index: 3;
-}
-.address:nth-child(2) {
-  z-index: 2;
-}
-.address:nth-child(3) {
-  z-index: 1;
-}
-.addressStack {
-  display: flex;
-}
-.addressStack:hover .address,
-.addressStack:hover .address:before {
-  border-color: rgba(217, 212, 173, 0.5);
-}
-.address:first-child > div {
-  padding-left: var(--spacing-2);
-}
-
-.helper {
-  position: absolute;
-  top: -22px;
-  left: 40px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  font-size: 12px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.address:first-child .helper {
-  left: 8px;
-}
-.addressStack:hover .helper {
-  opacity: 1;
-}
-
 .copyButton {
   background-color: transparent;
   text-decoration: underline;
@@ -99,9 +55,46 @@
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
   width: 100%;
 }
 .copyButton:hover {
   color: rgba(252, 248, 217, 0.8);
+}
+.decodedError {
+  font-family: 'Roboto Mono';
+  font-size: 0.8em;
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-2);
+  margin: var(--spacing-2) 0;
+}
+.navBox {
+  height: fit-content;
+}
+.statusBox {
+  position: absolute;
+  top: 2em;
+  left: 37%;
+  background: #262b33;
+  z-index: 10;
+  padding-right: 32px;
+}
+.statusClose {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.launchPage {
+  overflow-x: auto;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.launchPage h2 {
+  text-align: center;
 }

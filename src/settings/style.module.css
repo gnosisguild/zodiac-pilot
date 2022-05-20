@@ -3,19 +3,17 @@
   display: flex;
   flex-direction: column;
   margin: auto;
-  width: 530px;
+  width: 575px;
+}
+
+.header {
+  margin-bottom: 2em;
+}
+
+.header p {
+  text-align: center;
 }
 
 h1 {
-  margin-bottom: 32px;
-}
-
-.fieldLabel {
-  margin-bottom: 0.3em;
-}
-
-.error {
-  color: crimson;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 14px;
+  margin: 0;
 }

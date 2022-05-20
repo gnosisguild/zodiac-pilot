@@ -81,6 +81,7 @@ export default UrlInput
 // MIT licensed (https://github.com/sindresorhus/prepend-http/blob/main/license)
 export const prependHttp = (url: string) => {
   const trimmed = url.trim()
+  if (!trimmed) return ''
 
   if (/^\.*\/|^(?!localhost)\w+?:/.test(trimmed)) {
     return trimmed
