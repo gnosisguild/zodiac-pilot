@@ -67,6 +67,13 @@ class WrappingProvider extends EventEmitter {
     const { method, params = [] } = request
 
     switch (method) {
+      case 'eth_chainId': {
+        const result = await this.provider.request(request)
+        // WalletConnect seems to return a number even though it must be a string value
+        // (This will make curve.fi throw an error)
+        return typeof result === 'number' ? `0x${result.toString(16)}` : result
+      }
+
       case 'eth_requestAccounts': {
         return [this.avatarAddress]
       }

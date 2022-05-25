@@ -15,7 +15,7 @@ export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
   // GC OmniBridge relies on this property
-  chainId = 1
+  chainId = '0x1'
 
   constructor() {
     super()
@@ -30,7 +30,6 @@ export default class BridgeIframe extends EventEmitter {
 
     this.request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
-
       this.emit('connect', {
         chainId,
       })
@@ -95,7 +94,4 @@ export default class BridgeIframe extends EventEmitter {
   }
 
   isZodiacPilot = true
-
-  // currently required for curve.fi -> https://github.com/blocknative/onboard/issues/765
-  isBlank = true
 }
