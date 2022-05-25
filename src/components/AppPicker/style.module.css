@@ -33,6 +33,8 @@
 
 .container.large {
   gap: var(--spacing-3);
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 .container.large .item {
   height: 140px;
