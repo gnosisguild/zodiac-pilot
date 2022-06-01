@@ -25,12 +25,15 @@ jobs:
       - name: Create Extension Zip file
         run: yarn zip
 
+      - run: mkdir release
+      - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
+
       - name: Pin to IPFS
         id: upload
         uses: anantaramdas/ipfs-pinata-deploy-action@39bbda1ce1fe24c69c6f57861b8038278d53688d
         with:
           pin-name: Zodiac Pilot Chrome Extension ${{ github.event.release.tag_name }}
-          path: './zodiac-pilot.zip'
+          path: './release'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
 
