@@ -7,28 +7,29 @@ const fs = require('fs')
 // node manifest-util.js ./public/manifest.json
 
 const main = () => {
-  const manifestPath = process.argv[2];
-  const releaseTag = process.env.RELEASE_TAG;
+  const manifestPath = process.argv[2]
+  const releaseTag = process.env.RELEASE_TAG
   if (!manifestPath) {
-    return console.log('Please provide a path to the Manifest file.')
+    return console.log('Please provide a path to the manifest file.')
   }
   if (!releaseTag) {
     return console.log('Please provide a RELEASE_TAG env variable.')
   }
 
-  updateManifest(manifestPath, releaseTag);
+  updateManifest(manifestPath, releaseTag)
 }
 
 const updateManifest = (manifestFilename, releaseTag) => {
-  try {
-    const data = fs.readFileSync(manifestFilename);
-    const manifest = JSON.parse(data);
-    manifest["version"] = releaseTag;
-    fs.writeFileSync(manifestFilename, JSON.stringify(manifest))
+  const version = releaseTag.replace('v', '')
 
+  try {
+    const data = fs.readFileSync(manifestFilename)
+    const manifest = JSON.parse(data)
+    manifest['version'] = version
+    fs.writeFileSync(manifestFilename, JSON.stringify(manifest))
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
-main();
+main()
