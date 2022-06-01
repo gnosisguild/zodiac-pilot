@@ -3,6 +3,7 @@ import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
+import { Connection } from '../types'
 import { decodeRolesError } from '../utils'
 
 import {
@@ -12,16 +13,13 @@ import {
 import { useConnection } from './connectionHooks'
 
 const useConnectionDryRun = ({
+  id,
   moduleAddress,
   avatarAddress,
   roleId,
-}: {
-  moduleAddress: string
-  avatarAddress: string
-  roleId: string
-}) => {
+}: Connection) => {
   const [error, setError] = useState<string | null>(null)
-  const { provider, connected } = useConnection()
+  const { provider, connected } = useConnection(id)
 
   useEffect(() => {
     if (connected && avatarAddress && moduleAddress && roleId) {

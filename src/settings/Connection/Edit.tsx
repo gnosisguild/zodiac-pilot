@@ -27,8 +27,10 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
   const { connection, connected } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
-  const { loading, isValidSafe, enabledModules } =
-    useSafeModuleInfo(avatarAddress)
+  const { loading, isValidSafe, enabledModules } = useSafeModuleInfo(
+    avatarAddress,
+    id
+  )
 
   const pushSettingsRoute = usePushSettingsRoute()
 
