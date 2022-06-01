@@ -27,8 +27,10 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
   const { connection, connected } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
-  const { loading, isValidSafe, enabledModules } =
-    useSafeModuleInfo(avatarAddress)
+  const { loading, isValidSafe, enabledModules } = useSafeModuleInfo(
+    avatarAddress,
+    id
+  )
 
   const pushSettingsRoute = usePushSettingsRoute()
 
@@ -86,7 +88,7 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
             />
           </Field>
           <Field>
-            <ConnectButton />
+            <ConnectButton id={id} />
           </Field>
           <Field label="DAO Safe">
             <input

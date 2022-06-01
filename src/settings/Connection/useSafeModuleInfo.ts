@@ -8,14 +8,14 @@ import { useConnection } from '../connectionHooks'
 import { isValidAddress } from './addressValidation'
 
 export const useSafeModuleInfo = (
-  safeAddress: string
+  safeAddress: string,
+  connectionId?: string
 ): { loading: boolean; isValidSafe: boolean; enabledModules: string[] } => {
   const [loading, setLoading] = useState(true)
   const [isValidSafe, setIsValidSafe] = useState(false)
   const [enabledModules, setEnabledModules] = useState<string[]>([])
 
-  const { provider, connected } = useConnection()
-
+  const { provider, connected } = useConnection(connectionId)
   useEffect(() => {
     if (!connected) return
 
