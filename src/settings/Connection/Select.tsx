@@ -2,7 +2,7 @@ import React from 'react'
 import { RiBallPenLine } from 'react-icons/ri'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
-import { AddressStack, BlockButton, Flex, IconButton } from '../../components'
+import { AddressStack, BlockButton, Flex } from '../../components'
 import { useWalletConnectProvider } from '../../providers'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'

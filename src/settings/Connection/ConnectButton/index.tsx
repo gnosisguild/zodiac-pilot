@@ -6,8 +6,8 @@ import { useConnection } from '../../connectionHooks'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
-const ConnectButton: React.FC = () => {
-  const { provider, connected } = useConnection()
+const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
+  const { provider, connected } = useConnection(id)
   return (
     <>
       {connected ? (
