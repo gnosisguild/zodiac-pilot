@@ -25,6 +25,11 @@ jobs:
       - name: Create Extension Zip file
         run: yarn zip
 
+      - name: Add zip to Github release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./zodiac-pilot.zip
+
       - run: mkdir release
       - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
 
@@ -43,7 +48,7 @@ jobs:
         with:
           cidv0: ${{ steps.upload.outputs.hash }}
 
-      - name: update release
+      - name: Update Github release notes
         id: update_release
         uses: tubone24/update_release@v1.3.1
         env:
@@ -62,3 +67,19 @@ jobs:
               - https://gnosis.mypinata.cloud/ipfs/${{ steps.upload.outputs.hash }}
               - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.dweb.link/
               - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.cf-ipfs.com/
+
+      - name: Get Github release asset upload URL
+        id: get_release
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload Github release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./release/zodiac-pilot.zip
+          asset_name: Unpacked Chrome extension
+          asset_content_type: application/zip
