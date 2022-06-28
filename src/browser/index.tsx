@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { AppPicker, BlockLink, Box, Flex } from '../components'
 import { AddressStack } from '../components'
 import { pushLocation, useLocation } from '../location'
-import { ProvideGanache } from '../providers'
+import { ProvideTenderly } from '../providers'
 import { useSettingsHash } from '../routing'
 import { useConnection } from '../settings'
 
@@ -37,58 +37,58 @@ const Browser: React.FC = () => {
   const { connection, provider } = useConnection()
 
   return (
-    // <ProvideGanache>
-    <ProvideState>
-      <ProvideProvider simulate={false}>
-        <div className={classNames.browser}>
-          <div className={classNames.topBar}>
-            <Flex gap={3} justifyContent="space-between">
-              <Box>
-                <Flex gap={1}>
-                  <Box className={classNames.appName} double>
-                    Zodiac Pilot
-                  </Box>
-                  <Box double>
-                    <UrlInput onSubmit={setInitialLocation} />
-                  </Box>
-                </Flex>
+    <ProvideTenderly>
+      <ProvideState>
+        <ProvideProvider simulate>
+          <div className={classNames.browser}>
+            <div className={classNames.topBar}>
+              <Flex gap={3} justifyContent="space-between">
+                <Box>
+                  <Flex gap={1}>
+                    <Box className={classNames.appName} double>
+                      Zodiac Pilot
+                    </Box>
+                    <Box double>
+                      <UrlInput onSubmit={setInitialLocation} />
+                    </Box>
+                  </Flex>
+                </Box>
+                <TransactionStatus />
+                <BlockLink href={settingsHash}>
+                  <AddressStack
+                    interactive
+                    pilotAddress={provider.accounts[0]}
+                    moduleAddress={connection.moduleAddress}
+                    avatarAddress={connection.avatarAddress}
+                  />
+                </BlockLink>
+              </Flex>
+            </div>
+            <Flex gap={4} className={classNames.main}>
+              <Box className={classNames.frame} double p={2}>
+                {initialLocation ? (
+                  <BrowserFrame src={initialLocation} />
+                ) : (
+                  <div className={classes.launchPage}>
+                    <Box p={3} double>
+                      <h2>Choose an app to get started</h2>
+                      <AppPicker
+                        large
+                        onPick={(url) => {
+                          pushLocation(url)
+                          setInitialLocation(url)
+                        }}
+                      />
+                    </Box>
+                  </div>
+                )}
               </Box>
-              <TransactionStatus />
-              <BlockLink href={settingsHash}>
-                <AddressStack
-                  interactive
-                  pilotAddress={provider.accounts[0]}
-                  moduleAddress={connection.moduleAddress}
-                  avatarAddress={connection.avatarAddress}
-                />
-              </BlockLink>
+              <Drawer />
             </Flex>
           </div>
-          <Flex gap={4} className={classNames.main}>
-            <Box className={classNames.frame} double p={2}>
-              {initialLocation ? (
-                <BrowserFrame src={initialLocation} />
-              ) : (
-                <div className={classes.launchPage}>
-                  <Box p={3} double>
-                    <h2>Choose an app to get started</h2>
-                    <AppPicker
-                      large
-                      onPick={(url) => {
-                        pushLocation(url)
-                        setInitialLocation(url)
-                      }}
-                    />
-                  </Box>
-                </div>
-              )}
-            </Box>
-            {/* <Drawer /> */}
-          </Flex>
-        </div>
-      </ProvideProvider>
-    </ProvideState>
-    // </ProvideGanache>
+        </ProvideProvider>
+      </ProvideState>
+    </ProvideTenderly>
   )
 }
 

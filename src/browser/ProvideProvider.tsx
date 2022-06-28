@@ -6,7 +6,7 @@ import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 import {
   Eip1193Provider,
   ForkProvider,
-  useGanacheProvider,
+  useTenderlyProvider,
   WrappingProvider,
 } from '../providers'
 import { useConnection } from '../settings'
@@ -41,8 +41,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const { provider: walletConnectProvider, connection } = useConnection()
-  // const ganacheProvider = useGanacheProvider()
-  const ganacheProvider = null
+  const tenderlyProvider = useTenderlyProvider()
   const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
   const transactions = useTransactions()
@@ -61,8 +60,8 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
 
   const forkProvider = useMemo(
     () =>
-      ganacheProvider &&
-      new ForkProvider(ganacheProvider, connection.avatarAddress, {
+      tenderlyProvider &&
+      new ForkProvider(tenderlyProvider, connection.avatarAddress, {
         async onTransactionReceived(txData, transactionHash) {
           const input = await decodeSingle(
             {
@@ -88,7 +87,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           })
         },
       }),
-    [ganacheProvider, walletConnectProvider, connection, dispatch]
+    [tenderlyProvider, walletConnectProvider, connection, dispatch]
   )
 
   const commitTransactions = useCallback(async () => {

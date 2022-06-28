@@ -1,6 +1,7 @@
 import { ITxData } from '@walletconnect/types'
 
 import { GanacheProvider } from './ProvideGanache'
+import { TenderlyProvider } from './ProvideTenderly'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -12,11 +13,11 @@ interface Handlers {
 
 class ForkProvider {
   private avatarAddress: string
-  private provider: GanacheProvider
+  private provider: TenderlyProvider | GanacheProvider
   private handlers: Handlers
 
   constructor(
-    provider: GanacheProvider,
+    provider: TenderlyProvider | GanacheProvider,
     avatarAddress: string,
     handlers: Handlers
   ) {
