@@ -8,16 +8,13 @@ interface Props {
 const RawTransaction: React.FC<Props> = ({ value }) => (
   <div>
     <label>
-      <span>To</span> <i>address</i>
-      <input type="text" readOnly value={value.to} />
+      <span>Data</span>
+      <textarea readOnly value={value.data} />
     </label>
+
     <label>
       <span>Value (wei)</span>
       <input type="number" readOnly value={value.value} />
-    </label>
-    <label>
-      <span>Data</span>
-      <textarea readOnly value={value.data} />
     </label>
   </div>
 )

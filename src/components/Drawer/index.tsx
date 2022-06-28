@@ -16,17 +16,17 @@ interface Props {
 
 const Drawer: React.FC<Props> = ({ children, header, expanded, onToggle }) => (
   <Box p={1} className={cn({ [classes.collapsed]: !expanded })}>
-    <Flex gap={1} className={classes.wrapper}>
-      <Flex direction="column" gap={1}>
+    <Flex direction="column" gap={1} className={classes.wrapper}>
+      <Flex gap={1} alignItems="center">
         <ToggleButton expanded={expanded} onToggle={onToggle} />
-        {header}
+        {expanded && (
+          <>
+            <div className={classes.divider} />
+            {header}
+          </>
+        )}
       </Flex>
-      {expanded && (
-        <>
-          <div className={classes.divider} />
-          {children}
-        </>
-      )}
+      {expanded && children}
     </Flex>
   </Box>
 )

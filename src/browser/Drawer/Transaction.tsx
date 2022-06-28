@@ -1,69 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { RiDeleteBinLine } from 'react-icons/ri'
 import { TransactionType } from 'react-multisend'
 
-import { Box } from '../../components'
+import { Box, IconButton } from '../../components'
 import { TransactionState } from '../state'
 
 import CallContract from './CallContract'
+import ContractAddress from './ContractAddress'
 import RawTransaction from './RawTransaction'
 import classes from './style.module.css'
 
 interface HeaderProps {
   index: number
   value: TransactionState
-  onClick(): void
   onRemove(): void
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
   value,
-  onClick,
   onRemove,
 }) => {
-  let title = 'Raw tx'
-  if (value.input.type === TransactionType.callContract) {
-    title = `Contract call: ${value.input.functionSignature}`
-  }
-
   return (
-    <div
-      className={classes.transactionHeader}
-      onClick={onClick}
-      role="button"
-      tabIndex={-1}
-      onKeyPress={(ev) => {
-        if (ev.key === 'Enter') {
-          onClick()
-        }
-      }}
-    >
-      <div className={classes.titleWrapper}>
-        <span className={classes.title}>
-          <span className={classes.index}>{index}</span>
-          {title}
-        </span>
-      </div>
-      <button
+    <div className={classes.transactionHeader}>
+      <ContractAddress address={value.input.to} explorerLink />
+      {value.input.type === TransactionType.callContract && (
+        <>
+          <br />
+          {value.input.functionSignature.split('(')[0]}
+        </>
+      )}
+
+      <IconButton
         onClick={onRemove}
         className={classes.removeTransaction}
         title="remove"
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M13.5 13.2128L2.50003 2.21286M2.50003 13.2128L13.5 2.21286"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="square"
-          />
-        </svg>
-      </button>
+        <RiDeleteBinLine />
+      </IconButton>
     </div>
   )
 }
@@ -93,21 +67,14 @@ interface Props {
 }
 
 export const Transaction: React.FC<Props> = ({ index, value }) => {
-  const [collapsed, setCollapsed] = useState(false)
-
   const handleRemove = () => {
     // TODO
   }
 
   return (
-    <Box double p={1}>
-      <TransactionHeader
-        index={index}
-        value={value}
-        onRemove={handleRemove}
-        onClick={() => setCollapsed(!collapsed)}
-      />
-      {!collapsed && <TransactionBody value={value} />}
+    <Box p={2} className={classes.container}>
+      <TransactionHeader index={index} value={value} onRemove={handleRemove} />
+      <TransactionBody value={value} />
     </Box>
   )
 }

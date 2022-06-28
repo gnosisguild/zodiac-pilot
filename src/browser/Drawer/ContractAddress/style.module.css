@@ -1,0 +1,18 @@
+.blockies {
+  overflow: hidden;
+  border-radius: 50%;
+  height: 18px;
+  width: 18px;
+}
+.blockies img {
+  height: 18px;
+  width: 18px;
+}
+
+.address {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.link {
+  text-decoration: none;
+}

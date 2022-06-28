@@ -48,17 +48,10 @@ export class TenderlyProvider extends EventEmitter {
 
   constructor(networkId: number, blockNumber?: number) {
     super()
-    console.log(
-      process.env.TENDERLY_USER,
-      process.env.TENDERLY_PROJECT,
-      process.env.TENDERLY_ACCESS_KEY
-    )
-    console.log('CONST')
     this.providerPromise = this.createFork(networkId, blockNumber)
   }
 
   async fork(networkId: number, blockNumber?: number) {
-    console.log('FORK')
     this.deleteFork()
     this.providerPromise = this.createFork(networkId, blockNumber)
     return await this.providerPromise
@@ -75,7 +68,6 @@ export class TenderlyProvider extends EventEmitter {
     networkId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
-    console.log('CRFRK before')
     const res = await fetch(TENDERLY_FORK_API, {
       headers,
       method: 'POST',
@@ -85,9 +77,7 @@ export class TenderlyProvider extends EventEmitter {
       }),
     })
 
-    console.log('CRFRK res', res.status)
     const json = await res.json()
-    console.log({ json })
     this.forkId = json.simulation_fork.id
     return new JsonRpcProvider(`https://rpc.tenderly.co/fork/${this.forkId}`)
   }

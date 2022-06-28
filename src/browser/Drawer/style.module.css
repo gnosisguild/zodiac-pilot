@@ -1,28 +1,24 @@
-.transactionHeader {
+.container {
   position: relative;
+  font-size: 0.75em;
 }
-.titleWrapper {
-  margin: 0 32px;
-  cursor: pointer;
+.header {
+  padding: 0;
+  margin: 0 var(--spacing-2) 0 0;
 }
-.title {
-  font-weight: bold;
-  padding: 4px 12px 4px 4px;
-  display: inline-block;
+.wrapper {
+  flex-grow: 1;
 }
-.index {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0 4px;
-  margin-right: 8px;
+.body {
+  overflow-y: auto;
+  flex-grow: 1;
 }
-.removeTransaction {
-  width: 45px;
-  height: 45px;
+
+.footer {
+}
+
+.contractCall fieldset {
   border: none;
-  background-color: transparent;
-  position: absolute;
-  top: -6px;
-  right: -12px;
-  cursor: pointer;
+  padding: 0;
+  margin: 0;
 }
