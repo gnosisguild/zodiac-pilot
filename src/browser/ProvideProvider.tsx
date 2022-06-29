@@ -62,7 +62,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     () =>
       tenderlyProvider &&
       new ForkProvider(tenderlyProvider, connection.avatarAddress, {
-        async onTransactionReceived(txData, transactionHash) {
+        async onTransactionSent(txData, transactionHash) {
           const input = await decodeSingle(
             {
               to: txData.to || ZERO_ADDRESS,

@@ -15,7 +15,12 @@ const TransactionsDrawer: React.FC = () => {
   return (
     <Drawer
       expanded={expanded}
-      header={<h4 className={classes.header}>Transactions</h4>}
+      header={
+        <>
+          <h4 className={classes.header}>Recording Transactions</h4>
+          <div className={classes.recordingIcon} />
+        </>
+      }
       onToggle={() => setExpanded(!expanded)}
     >
       <Flex
@@ -28,10 +33,18 @@ const TransactionsDrawer: React.FC = () => {
           {transactions.map((transaction, index) => (
             <Transaction
               key={transaction.transactionHash}
+              hash={transaction.transactionHash}
               index={index}
               value={transaction}
             />
           ))}
+
+          {transactions.length === 0 && (
+            <p className={classes.hint}>
+              As you interact with apps in the browser, transactions will be
+              recorded here. You can then sign and submit them as a batch.
+            </p>
+          )}
         </Flex>
         <Box className={classes.footer}>
           <Button

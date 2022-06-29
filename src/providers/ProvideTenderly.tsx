@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
 
@@ -26,7 +26,12 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
   useEffect(() => {
-    setTenderlyProvider(new TenderlyProvider(walletConnectProvider.chainId))
+    const tenderlyProvider = new TenderlyProvider(walletConnectProvider.chainId)
+    setTenderlyProvider(tenderlyProvider)
+
+    return () => {
+      tenderlyProvider.deleteFork()
+    }
   }, [walletConnectProvider.chainId])
   return (
     <TenderlyContext.Provider value={tenderlyProvider}>
@@ -41,14 +46,68 @@ interface JsonRpcRequest {
   method: string
   params?: Array<any>
 }
+export interface TenderlyTransactionInfo {
+  id: string
+  project_id: string
+  dashboardLink: string
+  fork_id: string
+  hash: string
+  block_number: number
+  gas: number
+  queue_origin: string
+  gas_price: string
+  value: string
+  status: true
+  fork_height: number
+  block_hash: string
+  nonce: number
+  receipt: {
+    transactionHash: string
+    transactionIndex: string
+    blockHash: string
+    blockNumber: string
+    from: string
+    to: string
+    cumulativeGasUsed: string
+    gasUsed: string
+    effectiveGasPrice: string
+    contractAddress: null
+    logsBloom: string
+    status: string
+    type: string
+  }
+  parent_id: string
+  created_at: string
+  timestamp: string
+}
 
 export class TenderlyProvider extends EventEmitter {
   private providerPromise: Promise<JsonRpcProvider> | undefined
   private forkId: string | undefined
 
+  private transactionIds: Map<string, string> = new Map()
+  private transactionInfo: Map<string, Promise<TenderlyTransactionInfo>> =
+    new Map()
+
   constructor(networkId: number, blockNumber?: number) {
     super()
     this.providerPromise = this.createFork(networkId, blockNumber)
+  }
+
+  async getTransactionInfo(
+    transactionHash: string
+  ): Promise<TenderlyTransactionInfo> {
+    if (this.transactionInfo.has(transactionHash)) {
+      this.transactionInfo.set(
+        transactionHash,
+        this.fetchTransactionInfo(transactionHash)
+      )
+    }
+
+    const transactionInfoPromise = this.transactionInfo.get(transactionHash)
+    if (!transactionInfoPromise) throw new Error('invariant violation')
+
+    return await transactionInfoPromise
   }
 
   async fork(networkId: number, blockNumber?: number) {
@@ -61,14 +120,45 @@ export class TenderlyProvider extends EventEmitter {
     const provider = await this.providerPromise
     if (!provider) throw new Error('No Tenderly fork available')
 
-    return await provider.send(request.method, request.params || [])
+    let result
+    try {
+      result = await provider.send(request.method, request.params || [])
+    } catch (e) {
+      if ((e as any).error?.code === -32603) {
+        console.error(
+          'Tenderly fork RPC has an issue (probably due to rate limiting)',
+          e
+        )
+        throw new Error('Error sending request to Tenderly')
+      } else {
+        throw e
+      }
+    }
+
+    const { global_head: transactionId } = await this.fetchForkInfo()
+    this.transactionIds.set(result, transactionId)
+
+    return result
+  }
+
+  async deleteFork() {
+    await this.providerPromise
+    if (!this.forkId) return
+
+    const forkId = this.forkId
+    this.forkId = undefined
+    this.providerPromise = undefined
+    await fetch(`${TENDERLY_FORK_API}/${forkId}`, {
+      headers,
+      method: 'DELETE',
+    })
   }
 
   private async createFork(
     networkId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
-    const res = await fetch(TENDERLY_FORK_API, {
+    const res = await fetch(`${TENDERLY_FORK_API}`, {
       headers,
       method: 'POST',
       body: JSON.stringify({
@@ -79,15 +169,39 @@ export class TenderlyProvider extends EventEmitter {
 
     const json = await res.json()
     this.forkId = json.simulation_fork.id
+    this.transactionIds.clear()
     return new JsonRpcProvider(`https://rpc.tenderly.co/fork/${this.forkId}`)
   }
 
-  private async deleteFork() {
-    if (!this.forkId) return
+  private async fetchForkInfo() {
+    await this.providerPromise
+    if (!this.forkId) throw new Error('No Tenderly fork available')
 
-    const forkId = this.forkId
-    this.forkId = undefined
-    this.providerPromise = undefined
-    await fetch(`${TENDERLY_FORK_API}/${forkId}`, { headers, method: 'DELETE' })
+    const res = await fetch(`${TENDERLY_FORK_API}/${this.forkId}`, {
+      headers,
+    })
+    const json = await res.json()
+    return json.simulation_fork
+  }
+
+  private async fetchTransactionInfo(
+    transactionHash: string
+  ): Promise<TenderlyTransactionInfo> {
+    if (!this.forkId) throw new Error('No Tenderly fork available')
+
+    const transactionId = this.transactionIds.get(transactionHash)
+    if (!transactionId) throw new Error('Transaction not found')
+
+    const res = await fetch(
+      `${TENDERLY_FORK_API}/${this.forkId}/transaction/${transactionId}`,
+      {
+        headers,
+      }
+    )
+    const json = await res.json()
+    return {
+      ...json.fork_transaction,
+      dashboardLink: `https://dashboard.tenderly.co/${process.env.TENDERLY_USER}/${process.env.TENDERLY_PROJECT}/fork/${this.forkId}/simulation/${transactionId}`,
+    }
   }
 }

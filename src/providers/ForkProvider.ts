@@ -8,7 +8,7 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onTransactionReceived(txData: ITxData, hash: string): void
+  onTransactionSent(txData: ITxData, hash: string): void
 }
 
 class ForkProvider {
@@ -56,7 +56,7 @@ class ForkProvider {
       case 'eth_sendTransaction': {
         // record the transaction
         const result = await this.provider.request(request)
-        this.handlers.onTransactionReceived(params[0] as ITxData, result)
+        this.handlers.onTransactionSent(params[0] as ITxData, result)
         return result
       }
     }

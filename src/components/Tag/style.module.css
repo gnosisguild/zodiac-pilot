@@ -1,0 +1,35 @@
+.container {
+  color: white;
+  display: flex;
+}
+.color-danger.container {
+  background-color: #f4433608;
+}
+.color-warning.container {
+  background-color: #ff980008;
+}
+.color-info.container {
+  background-color: #2196f308;
+}
+.color-success.container {
+  background-color: #4caf5008;
+}
+
+.head {
+  border-radius: 50%;
+}
+.color-danger .head {
+  background-color: #f44336;
+}
+.color-warning .head {
+  background-color: #ff9800;
+}
+.color-info .head {
+  background-color: #2196f3;
+}
+.color-success .head {
+  background-color: #4caf50;
+}
+
+.body {
+}
