@@ -90,6 +90,7 @@ export class TenderlyProvider extends EventEmitter {
   private transactionIds: Map<string, string> = new Map()
   private transactionInfo: Map<string, Promise<TenderlyTransactionInfo>> =
     new Map()
+  private blockNumber: number | undefined
 
   constructor(walletConnectProvider: WalletConnectProvider) {
     super()
@@ -102,13 +103,18 @@ export class TenderlyProvider extends EventEmitter {
       return `0x${this.walletConnectProvider.chainId.toString(16)}`
     }
 
+    if (request.method === 'eth_blockNumber' && this.blockNumber) {
+      // Save some polling requests so we don't hit Tenderly's rate limits too quickly
+      return this.blockNumber
+    }
+
     if (!this.forkProviderPromise && request.method === 'eth_sendTransaction') {
       // spawn a fork lazily when sending the first transaction
       this.forkProviderPromise = this.createFork(
         this.walletConnectProvider.chainId
       )
     } else if (!this.forkProviderPromise) {
-      // we have not spawned a fork currently, so we can just use the walletConnectProvider to get the latest on-chain state
+      // We have not spawned a fork currently, so we can just use the walletConnectProvider to get the latest on-chain state
       return await this.walletConnectProvider.request(request)
     }
 
@@ -130,7 +136,9 @@ export class TenderlyProvider extends EventEmitter {
 
     if (request.method === 'eth_sendTransaction') {
       // when sending a transaction, we need retrieve that transaction's ID on Tenderly
-      const { global_head: headTransactionId } = await this.fetchForkInfo()
+      const { global_head: headTransactionId, block_number } =
+        await this.fetchForkInfo()
+      this.blockNumber = block_number
       this.transactionIds.set(result, headTransactionId) // result is the transaction hash
     }
 
@@ -140,7 +148,7 @@ export class TenderlyProvider extends EventEmitter {
   async getTransactionInfo(
     transactionHash: string
   ): Promise<TenderlyTransactionInfo> {
-    if (this.transactionInfo.has(transactionHash)) {
+    if (!this.transactionInfo.has(transactionHash)) {
       this.transactionInfo.set(
         transactionHash,
         this.fetchTransactionInfo(transactionHash)
@@ -166,6 +174,7 @@ export class TenderlyProvider extends EventEmitter {
     const forkId = this.forkId
     this.forkId = undefined
     this.forkProviderPromise = undefined
+    this.blockNumber = undefined
     await fetch(`${TENDERLY_FORK_API}/${forkId}`, {
       headers,
       method: 'DELETE',
@@ -187,6 +196,7 @@ export class TenderlyProvider extends EventEmitter {
 
     const json = await res.json()
     this.forkId = json.simulation_fork.id
+    this.blockNumber = json.simulation_fork.block_number
     this.transactionIds.clear()
     return new JsonRpcProvider(`https://rpc.tenderly.co/fork/${this.forkId}`)
   }

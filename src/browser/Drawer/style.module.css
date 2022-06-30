@@ -6,7 +6,8 @@
   margin: 0 var(--spacing-2) 0 0;
 }
 .wrapper {
-  flex-grow: 1;
+  height: 100%;
+  overflow: hidden; /* required for making the body's overflow-y: auto take effect :/  */
 }
 .body {
   overflow-y: auto;
@@ -70,6 +71,25 @@
 }
 
 .transactionStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 0.75em;
+  margin: var(--spacing-3) 0 0 0;
+  padding: var(--spacing-2) 0 0 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.transactionStatus dt {
+  margin: 0;
+}
+.transactionStatus dd {
+  margin: 0 var(--spacing-3) 0 0;
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
 }
 
 .hint {

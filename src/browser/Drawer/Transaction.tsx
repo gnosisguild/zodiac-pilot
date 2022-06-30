@@ -106,6 +106,7 @@ const TransactionStatus: React.FC<{ hash: string }> = ({ hash }) => {
 
   useEffect(() => {
     let canceled = false
+
     const transactionInfoPromise = tenderlyProvider.getTransactionInfo(hash)
     transactionInfoPromise.then((txInfo) => {
       if (!canceled) setTransactionInfo(txInfo)
@@ -120,41 +121,33 @@ const TransactionStatus: React.FC<{ hash: string }> = ({ hash }) => {
     <dl className={classes.transactionStatus}>
       <dt>Status</dt>
       <dd>
-        <>
-          {!transactionInfo && (
-            <Tag head={<Spinner />} color="info">
-              Pending...
-            </Tag>
-          )}
-        </>
-        <>
-          {transactionInfo?.status ? (
-            <Tag head={<RiCheckboxCircleLine />} color="success">
-              Success
-            </Tag>
-          ) : (
-            <Tag head={<RiErrorWarningLine />} color="danger">
-              Revert
-            </Tag>
-          )}
-        </>
+        {!transactionInfo && (
+          <Tag head={<Spinner />} color="info">
+            Pending...
+          </Tag>
+        )}
+        {transactionInfo?.status && (
+          <Tag head={<RiCheckboxCircleLine />} color="success">
+            Success
+          </Tag>
+        )}
+        {transactionInfo && !transactionInfo.status && (
+          <Tag head={<RiErrorWarningLine />} color="danger">
+            Reverted
+          </Tag>
+        )}
       </dd>
 
       {transactionInfo && (
-        <>
-          <dt>Transaction hash</dt>
-          <dd>
-            {transactionInfo.hash}{' '}
-            <a
-              href={transactionInfo.dashboardLink}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View in Tenderly
-              <RiExternalLinkLine />
-            </a>
-          </dd>
-        </>
+        <a
+          href={transactionInfo.dashboardLink}
+          target="_blank"
+          rel="noreferrer"
+          className={classes.link}
+        >
+          View in Tenderly
+          <RiExternalLinkLine />
+        </a>
       )}
     </dl>
   )

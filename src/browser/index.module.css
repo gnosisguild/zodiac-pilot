@@ -12,8 +12,9 @@
 }
 
 .main {
-  flex-grow: 1;
   padding: 16px 32px 32px 32px;
+  height: calc(100vh - 102px);
+  box-sizing: border-box;
 }
 
 .frame {
