@@ -5,6 +5,7 @@ import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
+import { useBeforeUnload } from '../utils'
 
 const TENDERLY_FORK_API = `https://api.tenderly.co/api/v1/account/${process.env.TENDERLY_USER}/project/${process.env.TENDERLY_PROJECT}/fork`
 const headers: HeadersInit = new Headers()
@@ -26,6 +27,7 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   const { provider: walletConnectProvider } = useConnection()
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
+
   useEffect(() => {
     const tenderlyProvider = new TenderlyProvider(walletConnectProvider)
     setTenderlyProvider(tenderlyProvider)
@@ -34,6 +36,12 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
       tenderlyProvider.deleteFork()
     }
   }, [walletConnectProvider])
+
+  // delete fork when closing browser tab (the effect teardown won't be executed in that case)
+  useBeforeUnload(() => {
+    if (tenderlyProvider) tenderlyProvider.deleteFork()
+  })
+
   return (
     <TenderlyContext.Provider value={tenderlyProvider}>
       {tenderlyProvider && children}
@@ -178,6 +186,7 @@ export class TenderlyProvider extends EventEmitter {
     await fetch(`${TENDERLY_FORK_API}/${forkId}`, {
       headers,
       method: 'DELETE',
+      keepalive: true,
     })
   }
 
