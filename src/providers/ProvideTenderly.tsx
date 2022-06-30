@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
+import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
@@ -26,13 +27,13 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
   useEffect(() => {
-    const tenderlyProvider = new TenderlyProvider(walletConnectProvider.chainId)
+    const tenderlyProvider = new TenderlyProvider(walletConnectProvider)
     setTenderlyProvider(tenderlyProvider)
 
     return () => {
       tenderlyProvider.deleteFork()
     }
-  }, [walletConnectProvider.chainId])
+  }, [walletConnectProvider])
   return (
     <TenderlyContext.Provider value={tenderlyProvider}>
       {tenderlyProvider && children}
@@ -82,16 +83,58 @@ export interface TenderlyTransactionInfo {
 }
 
 export class TenderlyProvider extends EventEmitter {
-  private providerPromise: Promise<JsonRpcProvider> | undefined
-  private forkId: string | undefined
+  private walletConnectProvider: WalletConnectProvider
+  private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
+  private forkId: string | undefined
   private transactionIds: Map<string, string> = new Map()
   private transactionInfo: Map<string, Promise<TenderlyTransactionInfo>> =
     new Map()
 
-  constructor(networkId: number, blockNumber?: number) {
+  constructor(walletConnectProvider: WalletConnectProvider) {
     super()
-    this.providerPromise = this.createFork(networkId, blockNumber)
+    this.walletConnectProvider = walletConnectProvider
+  }
+
+  async request(request: JsonRpcRequest): Promise<any> {
+    if (request.method === 'eth_chainId') {
+      // WalletConnect seems to return a number even though it must be a string value, we patch this bug here
+      return `0x${this.walletConnectProvider.chainId.toString(16)}`
+    }
+
+    if (!this.forkProviderPromise && request.method === 'eth_sendTransaction') {
+      // spawn a fork lazily when sending the first transaction
+      this.forkProviderPromise = this.createFork(
+        this.walletConnectProvider.chainId
+      )
+    } else if (!this.forkProviderPromise) {
+      // we have not spawned a fork currently, so we can just use the walletConnectProvider to get the latest on-chain state
+      return await this.walletConnectProvider.request(request)
+    }
+
+    const provider = await this.forkProviderPromise
+    let result
+    try {
+      result = await provider.send(request.method, request.params || [])
+    } catch (e) {
+      if ((e as any).error?.code === -32603) {
+        console.error(
+          'Tenderly fork RPC has an issue (probably due to rate limiting)',
+          e
+        )
+        throw new Error('Error sending request to Tenderly')
+      } else {
+        throw e
+      }
+    }
+
+    if (request.method === 'eth_sendTransaction') {
+      // when sending a transaction, we need retrieve that transaction's ID on Tenderly
+      const { global_head: headTransactionId } = await this.fetchForkInfo()
+      this.transactionIds.set(result, headTransactionId) // result is the transaction hash
+    }
+
+    return result
   }
 
   async getTransactionInfo(
@@ -112,42 +155,17 @@ export class TenderlyProvider extends EventEmitter {
 
   async fork(networkId: number, blockNumber?: number) {
     this.deleteFork()
-    this.providerPromise = this.createFork(networkId, blockNumber)
-    return await this.providerPromise
-  }
-
-  async request(request: JsonRpcRequest): Promise<any> {
-    const provider = await this.providerPromise
-    if (!provider) throw new Error('No Tenderly fork available')
-
-    let result
-    try {
-      result = await provider.send(request.method, request.params || [])
-    } catch (e) {
-      if ((e as any).error?.code === -32603) {
-        console.error(
-          'Tenderly fork RPC has an issue (probably due to rate limiting)',
-          e
-        )
-        throw new Error('Error sending request to Tenderly')
-      } else {
-        throw e
-      }
-    }
-
-    const { global_head: transactionId } = await this.fetchForkInfo()
-    this.transactionIds.set(result, transactionId)
-
-    return result
+    this.forkProviderPromise = this.createFork(networkId, blockNumber)
+    return await this.forkProviderPromise
   }
 
   async deleteFork() {
-    await this.providerPromise
+    await this.forkProviderPromise
     if (!this.forkId) return
 
     const forkId = this.forkId
     this.forkId = undefined
-    this.providerPromise = undefined
+    this.forkProviderPromise = undefined
     await fetch(`${TENDERLY_FORK_API}/${forkId}`, {
       headers,
       method: 'DELETE',
@@ -174,7 +192,7 @@ export class TenderlyProvider extends EventEmitter {
   }
 
   private async fetchForkInfo() {
-    await this.providerPromise
+    await this.forkProviderPromise
     if (!this.forkId) throw new Error('No Tenderly fork available')
 
     const res = await fetch(`${TENDERLY_FORK_API}/${this.forkId}`, {

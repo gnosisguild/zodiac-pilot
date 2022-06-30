@@ -1,6 +1,7 @@
 .container {
   color: white;
   display: flex;
+  border-radius: 50%;
 }
 .color-danger.container {
   background-color: #f4433608;
@@ -17,6 +18,12 @@
 
 .head {
   border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  padding: 0 0 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .color-danger .head {
   background-color: #f44336;
@@ -32,4 +39,5 @@
 }
 
 .body {
+  padding: 0 var(--spacing-2);
 }
