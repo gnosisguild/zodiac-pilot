@@ -31,6 +31,8 @@
 .transaction label {
   display: block;
   margin-top: var(--spacing-3);
+}
+.transaction label > span:first-child {
   font-size: 0.75em;
 }
 .transaction fieldset {
@@ -43,11 +45,10 @@
   padding: 0;
   height: 24px;
 }
-.transaction textarea {
-  border: none;
-  padding: 0;
-  margin: 0;
-  height: auto;
+.rawTxData {
+  font-size: 1em;
+  font-family: 'Roboto Mono', monospace;
+  word-wrap: break-word;
 }
 
 .inputType {

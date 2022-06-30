@@ -70,10 +70,11 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
               data: txData.data || '',
             },
             new providers.Web3Provider(walletConnectProvider),
-            (address: string) =>
+            (address: string, data: string) =>
               fetchAbi(
                 walletConnectProvider.chainId as NetworkId,
                 address,
+                data,
                 new providers.Web3Provider(walletConnectProvider)
               ),
             nanoid()

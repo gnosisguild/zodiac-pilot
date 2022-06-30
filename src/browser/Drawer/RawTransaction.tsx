@@ -10,8 +10,7 @@ interface Props {
 const RawTransaction: React.FC<Props> = ({ value }) => (
   <div className={classes.transaction}>
     <label>
-      <span>Data</span>
-      <textarea readOnly value={value.data} />
+      <div className={classes.rawTxData}>{value.data}</div>
     </label>
   </div>
 )

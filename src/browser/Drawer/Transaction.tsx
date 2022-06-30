@@ -34,14 +34,11 @@ const TransactionHeader: React.FC<HeaderProps> = ({
   return (
     <div>
       <span className={classes.index}>{index}</span>
-
-      {value.input.type === TransactionType.callContract ? (
-        <h5 className={classes.transactionTitle}>
-          {value.input.functionSignature.split('(')[0]}
-        </h5>
-      ) : (
-        <h5>Raw transaction</h5>
-      )}
+      <h5 className={classes.transactionTitle}>
+        {value.input.type === TransactionType.callContract
+          ? value.input.functionSignature.split('(')[0]
+          : 'Raw transaction'}
+      </h5>
 
       <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
         <EtherValue input={value.input} />

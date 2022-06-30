@@ -64,7 +64,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-icons": "^4.3.1",
-    "react-multisend": "^1.0.0",
+    "react-multisend": "^1.1.0",
     "react-select": "^5.2.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.2",

@@ -18,6 +18,7 @@ export type NetworkId = keyof typeof EXPLORER_API_URLS
 const fetchAbi = async (
   network: NetworkId,
   contractAddress: string,
+  transactionData: string,
   provider: Provider,
   blockExplorerApiKey = ''
 ): Promise<string> => {
@@ -39,9 +40,18 @@ const fetchAbi = async (
   if (status === '0' || looksLikeAProxy(result)) {
     // Is this a proxy contract?
     const proxyTarget = await detectProxyTarget(contractAddress, provider)
-    return proxyTarget
-      ? await fetchAbi(network, proxyTarget, provider, blockExplorerApiKey)
-      : ''
+    if (proxyTarget) {
+      return await fetchAbi(
+        network,
+        proxyTarget,
+        transactionData,
+        provider,
+        blockExplorerApiKey
+      )
+    }
+
+    // Try finding an entry at 4Bytes Directory as a last resort
+    return await fetchFrom4ByteDirectory(transactionData)
   }
 
   // bring the JSON into ethers.js canonical form
@@ -54,5 +64,38 @@ export default fetchAbi
 const looksLikeAProxy = (abi: string) => {
   const iface = new Interface(abi)
   const signatures = Object.keys(iface.functions)
-  return signatures.length === 0
+  return (
+    signatures.length === 0 ||
+    (signatures.length === 1 && signatures[0] === 'implementation()')
+  )
+}
+
+const fetchFrom4ByteDirectory = async (data: string): Promise<string> => {
+  if (data.length < 10) return ''
+  const sighash = data.substring(0, 10)
+  const calldata = `0x${data.substring(10)}`
+
+  const res = await fetch(
+    `https://api.4byte.directory/api/v1/signatures/?hex_signature=${sighash}&ordering=created_at`
+  )
+  if (!res.ok) {
+    return ''
+  }
+
+  const { results = [] } = await res.json()
+  const resultInterfaces = results.map(
+    (result: any) => new Interface([`function ${result.text_signature}`])
+  ) as Interface[]
+  const matchingInterface = resultInterfaces.find((iface) => {
+    try {
+      iface.decodeFunctionData(sighash, calldata)
+      return true
+    } catch (e) {
+      return false
+    }
+  })
+
+  return matchingInterface
+    ? (matchingInterface.format(FormatTypes.json) as string)
+    : ''
 }

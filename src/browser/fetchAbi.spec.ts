@@ -10,6 +10,7 @@ describe('fetchAbi', () => {
       await fetchAbi(
         1,
         '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        '0x',
         provider,
         process.env.ETHERSCAN_API_KEY
       )
@@ -23,6 +24,7 @@ describe('fetchAbi', () => {
       await fetchAbi(
         1,
         '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
+        '0x',
         provider,
         process.env.ETHERSCAN_API_KEY
       )
@@ -35,6 +37,7 @@ describe('fetchAbi', () => {
       await fetchAbi(
         1,
         '0xDd4e2eb37268B047f55fC5cAf22837F9EC08A881',
+        '0x',
         provider,
         process.env.ETHERSCAN_API_KEY
       )
@@ -47,6 +50,7 @@ describe('fetchAbi', () => {
       await fetchAbi(
         1,
         '0x0DA0C3e52C977Ed3cBc641fF02DD271c3ED55aFe',
+        '0x',
         provider,
         process.env.ETHERSCAN_API_KEY
       )
