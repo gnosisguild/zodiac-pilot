@@ -62,7 +62,25 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     () =>
       tenderlyProvider &&
       new ForkProvider(tenderlyProvider, connection.avatarAddress, {
-        async onTransactionSent(txData, transactionHash) {
+        async onBeforeTransactionSend(txId, txData) {
+          // Calling decodeSingle without a fetchAbi will return a raw transaction input object instantly.
+          // We already append to the state so the UI reacts immediately.
+          const inputRaw = await decodeSingle(
+            {
+              to: txData.to || ZERO_ADDRESS,
+              value: `${txData.value || 0}`,
+              data: txData.data || '',
+            },
+            new providers.Web3Provider(walletConnectProvider),
+            undefined,
+            txId
+          )
+          dispatch({
+            type: 'APPEND_RAW_TRANSACTION',
+            payload: inputRaw,
+          })
+
+          // Now we can take some time decoding the transaction for real and we update the state once that's done.
           const input = await decodeSingle(
             {
               to: txData.to || ZERO_ADDRESS,
@@ -77,12 +95,18 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
                 data,
                 new providers.Web3Provider(walletConnectProvider)
               ),
-            nanoid()
+            txId
           )
           dispatch({
-            type: 'APPEND_CAPTURED_TX',
+            type: 'DECODE_TRANSACTION',
+            payload: input,
+          })
+        },
+        async onTransactionSent(txId, transactionHash) {
+          dispatch({
+            type: 'CONFIRM_TRANSACTION',
             payload: {
-              input,
+              id: txId,
               transactionHash,
             },
           })

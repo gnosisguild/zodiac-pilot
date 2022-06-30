@@ -77,7 +77,7 @@ const TransactionBody: React.FC<BodyProps> = ({ value }) => {
 
 interface Props {
   index: number
-  hash: string
+  hash?: string
   value: TransactionState
 }
 
@@ -95,13 +95,15 @@ export const Transaction: React.FC<Props> = ({ index, hash, value }) => {
   )
 }
 
-const TransactionStatus: React.FC<{ hash: string }> = ({ hash }) => {
+const TransactionStatus: React.FC<{ hash?: string }> = ({ hash }) => {
   const tenderlyProvider = useTenderlyProvider()
 
   const [transactionInfo, setTransactionInfo] =
     useState<TenderlyTransactionInfo | null>(null)
 
   useEffect(() => {
+    if (!hash) return
+
     let canceled = false
 
     const transactionInfoPromise = tenderlyProvider.getTransactionInfo(hash)

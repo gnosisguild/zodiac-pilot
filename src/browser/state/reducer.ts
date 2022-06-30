@@ -4,7 +4,7 @@ import { Action } from './actions'
 
 export interface TransactionState {
   input: TransactionInput
-  transactionHash: string
+  transactionHash?: string
 }
 
 const rootReducer = (
@@ -12,15 +12,23 @@ const rootReducer = (
   action: Action
 ): TransactionState[] => {
   switch (action.type) {
-    case 'APPEND_CAPTURED_TX': {
-      const { transactionHash, input } = action.payload
-      return [
-        ...state,
-        {
-          input,
-          transactionHash,
-        },
-      ]
+    case 'APPEND_RAW_TRANSACTION': {
+      const input = action.payload
+      return [...state, { input }]
+    }
+
+    case 'DECODE_TRANSACTION': {
+      const input = action.payload
+      return state.map((item) =>
+        item.input.id === input.id ? { ...item, input } : item
+      )
+    }
+
+    case 'CONFIRM_TRANSACTION': {
+      const { id, transactionHash } = action.payload
+      return state.map((item) =>
+        item.input.id === id ? { ...item, transactionHash } : item
+      )
     }
   }
 }

@@ -1,4 +1,5 @@
 import { ITxData } from '@walletconnect/types'
+import { nanoid } from 'nanoid'
 
 import { GanacheProvider } from './ProvideGanache'
 import { TenderlyProvider } from './ProvideTenderly'
@@ -8,7 +9,8 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onTransactionSent(txData: ITxData, hash: string): void
+  onBeforeTransactionSend(txId: string, txData: ITxData): void
+  onTransactionSent(txId: string, hash: string): void
 }
 
 class ForkProvider {
@@ -55,8 +57,10 @@ class ForkProvider {
 
       case 'eth_sendTransaction': {
         // record the transaction
+        const txId = nanoid()
+        this.handlers.onBeforeTransactionSend(txId, params[0] as ITxData)
         const result = await this.provider.request(request)
-        this.handlers.onTransactionSent(params[0] as ITxData, result)
+        this.handlers.onTransactionSent(txId, result)
         return result
       }
     }

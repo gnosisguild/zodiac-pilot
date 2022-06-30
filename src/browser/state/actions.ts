@@ -1,11 +1,23 @@
 import { TransactionInput } from 'react-multisend'
 
-interface AppendCapturedTxAction {
-  type: 'APPEND_CAPTURED_TX'
+interface AppendRawTransactionAction {
+  type: 'APPEND_RAW_TRANSACTION'
+  payload: TransactionInput
+}
+interface DecodeTransactionAction {
+  type: 'DECODE_TRANSACTION'
+  payload: TransactionInput
+}
+
+interface ConfirmTransactionAction {
+  type: 'CONFIRM_TRANSACTION'
   payload: {
-    input: TransactionInput
+    id: string
     transactionHash: string
   }
 }
 
-export type Action = AppendCapturedTxAction
+export type Action =
+  | AppendRawTransactionAction
+  | DecodeTransactionAction
+  | ConfirmTransactionAction
