@@ -30,7 +30,9 @@ const CallContract: React.FC<Props> = ({ value }) => {
         <fieldset>
           {inputs.map((input) => (
             <label key={input.name}>
-              {input.name} <i className={classes.inputType}>{input.type}</i>
+              <span>
+                {input.name} <i className={classes.inputType}>{input.type}</i>
+              </span>
               <input type="text" value={`${input.value || ''}`} readOnly />
             </label>
           ))}
