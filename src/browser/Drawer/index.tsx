@@ -33,9 +33,8 @@ const TransactionsDrawer: React.FC = () => {
           {transactions.map((transaction, index) => (
             <Transaction
               key={transaction.transactionHash}
-              hash={transaction.transactionHash}
               index={index}
-              value={transaction}
+              {...transaction}
             />
           ))}
 

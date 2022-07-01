@@ -3,18 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { RiAlertLine, RiCloseFill } from 'react-icons/ri'
 
 import { Box, Flex, IconButton } from '../components'
-import { Permissions__factory, Roles__factory } from '../types/typechain'
 import { decodeRolesError } from '../utils'
+import { isRolesError } from '../utils/decodeRolesError'
 
 import { useWrappingProvider } from './ProvideProvider'
 import classes from './index.module.css'
-
-const permissionsInterface = Permissions__factory.createInterface()
-const rolesInterface = Roles__factory.createInterface()
-
-const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
-  Object.keys(permissionsInterface.errors)
-)
 
 const TransactionStatus: React.FC = () => {
   const wrappingProvider = useWrappingProvider()
@@ -61,7 +54,7 @@ const TransactionStatus: React.FC = () => {
       <Flex gap={3}>
         <RiAlertLine color="#ffae42" size={24} />{' '}
         <div>
-          {KNOWN_ERRORS.includes(decodedError) ? (
+          {isRolesError(decodedError) ? (
             <>
               <p>This transaction is not permitted:</p>
               <p className={classes.decodedError}>{decodedError}</p>

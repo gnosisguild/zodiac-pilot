@@ -1,48 +1,42 @@
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-import React, { useEffect, useState } from 'react'
-import {
-  RiArrowDropRightLine,
-  RiCheckboxCircleLine,
-  RiDeleteBinLine,
-  RiErrorWarningLine,
-  RiExternalLinkLine,
-} from 'react-icons/ri'
+import React from 'react'
+import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
 import { TransactionInput, TransactionType } from 'react-multisend'
 
-import { Box, Flex, IconButton, Spinner, Tag } from '../../components'
-import { useTenderlyProvider } from '../../providers'
-import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
+import { Box, Flex, IconButton } from '../../components'
 import { TransactionState } from '../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
 import RawTransaction from './RawTransaction'
+import RolePermissionCheck from './RolePermissionCheck'
+import SimulatedExecutionCheck from './SimulatedExecutionCheck'
 import classes from './style.module.css'
 
 interface HeaderProps {
   index: number
-  value: TransactionState
+  input: TransactionInput
   onRemove(): void
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
-  value,
+  input,
   onRemove,
 }) => {
   return (
     <div>
       <span className={classes.index}>{index}</span>
       <h5 className={classes.transactionTitle}>
-        {value.input.type === TransactionType.callContract
-          ? value.input.functionSignature.split('(')[0]
+        {input.type === TransactionType.callContract
+          ? input.functionSignature.split('(')[0]
           : 'Raw transaction'}
       </h5>
 
       <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
-        <EtherValue input={value.input} />
-        <ContractAddress address={value.input.to} explorerLink />
+        <EtherValue input={input} />
+        <ContractAddress address={input.to} explorerLink />
       </Flex>
 
       <IconButton
@@ -57,100 +51,58 @@ const TransactionHeader: React.FC<HeaderProps> = ({
 }
 
 interface BodyProps {
-  value: TransactionState
+  input: TransactionInput
 }
 
-const TransactionBody: React.FC<BodyProps> = ({ value }) => {
+const TransactionBody: React.FC<BodyProps> = ({ input }) => {
   // const { network, blockExplorerApiKey } = useMultiSendContext()
-  switch (value.input.type) {
+  switch (input.type) {
     case TransactionType.callContract:
-      return <CallContract value={value.input} />
+      return <CallContract value={input} />
     // case TransactionType.transferFunds:
     //   return <TransferFunds value={value} onChange={onChange} />
     // case TransactionType.transferCollectible:
     //   return <TransferCollectible value={value} onChange={onChange} />
     case TransactionType.raw:
-      return <RawTransaction value={value.input} />
+      return <RawTransaction value={input} />
   }
   return null
 }
 
-interface Props {
+type Props = TransactionState & {
   index: number
-  hash?: string
-  value: TransactionState
 }
 
-export const Transaction: React.FC<Props> = ({ index, hash, value }) => {
+export const Transaction: React.FC<Props> = ({
+  index,
+  transactionHash,
+  input,
+}) => {
   const handleRemove = () => {
     // TODO
   }
 
   return (
     <Box p={2} className={classes.container}>
-      <TransactionHeader index={index} value={value} onRemove={handleRemove} />
-      <TransactionBody value={value} />
-      <TransactionStatus hash={hash} />
+      <TransactionHeader index={index} input={input} onRemove={handleRemove} />
+      <TransactionBody input={input} />
+      <TransactionStatus input={input} transactionHash={transactionHash} />
     </Box>
   )
 }
 
-const TransactionStatus: React.FC<{ hash?: string }> = ({ hash }) => {
-  const tenderlyProvider = useTenderlyProvider()
+const TransactionStatus: React.FC<TransactionState> = ({
+  input,
+  transactionHash,
+}) => (
+  <dl className={classes.transactionStatus}>
+    {transactionHash && (
+      <SimulatedExecutionCheck transactionHash={transactionHash} />
+    )}
 
-  const [transactionInfo, setTransactionInfo] =
-    useState<TenderlyTransactionInfo | null>(null)
-
-  useEffect(() => {
-    if (!hash) return
-
-    let canceled = false
-
-    const transactionInfoPromise = tenderlyProvider.getTransactionInfo(hash)
-    transactionInfoPromise.then((txInfo) => {
-      if (!canceled) setTransactionInfo(txInfo)
-    })
-
-    return () => {
-      canceled = true
-    }
-  }, [tenderlyProvider, hash])
-
-  return (
-    <dl className={classes.transactionStatus}>
-      <dt>Status</dt>
-      <dd>
-        {!transactionInfo && (
-          <Tag head={<Spinner />} color="info">
-            Pending...
-          </Tag>
-        )}
-        {transactionInfo?.status && (
-          <Tag head={<RiCheckboxCircleLine />} color="success">
-            Success
-          </Tag>
-        )}
-        {transactionInfo && !transactionInfo.status && (
-          <Tag head={<RiErrorWarningLine />} color="danger">
-            Reverted
-          </Tag>
-        )}
-      </dd>
-
-      {transactionInfo && (
-        <a
-          href={transactionInfo.dashboardLink}
-          target="_blank"
-          rel="noreferrer"
-          className={classes.link}
-        >
-          View in Tenderly
-          <RiExternalLinkLine />
-        </a>
-      )}
-    </dl>
-  )
-}
+    <RolePermissionCheck transaction={input} />
+  </dl>
+)
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
   let value = ''

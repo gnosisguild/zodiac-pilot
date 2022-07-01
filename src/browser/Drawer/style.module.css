@@ -72,9 +72,6 @@
 }
 
 .transactionStatus {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
   font-size: 0.75em;
   margin: var(--spacing-3) 0 0 0;
   padding: var(--spacing-2) 0 0 0;
@@ -91,6 +88,24 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-1);
+}
+button.link {
+  background-color: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+  color: white;
+  display: block;
+  padding: 0;
+  border: none;
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  text-align: left;
+  width: 100%;
+}
+button.link:hover {
+  color: rgba(252, 248, 217, 0.8);
 }
 
 .hint {
