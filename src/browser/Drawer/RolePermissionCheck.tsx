@@ -58,7 +58,7 @@ const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
       <div>
         {error === false ? (
           <Tag head={<RiCheckboxCircleLine />} color="success">
-            Permitted
+            Allowed
           </Tag>
         ) : (
           <Tag head={<RiErrorWarningLine />} color="danger">

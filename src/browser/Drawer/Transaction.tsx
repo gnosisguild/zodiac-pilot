@@ -1,6 +1,6 @@
 import { BigNumber, providers } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
 import {
   encodeSingle,
@@ -87,6 +87,15 @@ export const Transaction: React.FC<Props> = ({
   const provider = useProvider()
   const dispatch = useDispatch()
   const allTransactions = useTransactions()
+  const elementRef = useRef<HTMLDivElement | null>(null)
+
+  const isLast = index === allTransactions.length - 1
+
+  useEffect(() => {
+    if (isLast && elementRef.current) {
+      elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [isLast])
 
   const handleRemove = async () => {
     if (!(provider instanceof ForkProvider)) {
@@ -120,7 +129,7 @@ export const Transaction: React.FC<Props> = ({
   }
 
   return (
-    <Box p={2} className={classes.container}>
+    <Box ref={elementRef} p={2} className={classes.container}>
       <TransactionHeader index={index} input={input} onRemove={handleRemove} />
       <TransactionBody input={input} />
       <TransactionStatus input={input} transactionHash={transactionHash} />
