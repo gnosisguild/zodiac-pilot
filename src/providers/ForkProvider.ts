@@ -72,6 +72,22 @@ class ForkProvider {
 
     return await this.provider.request(request)
   }
+
+  async refork(): Promise<void> {
+    if (this.provider instanceof GanacheProvider) {
+      throw new Error('not currently implemented')
+    }
+
+    await this.provider.refork()
+  }
+
+  async deleteFork(): Promise<void> {
+    if (this.provider instanceof GanacheProvider) {
+      throw new Error('not currently implemented')
+    }
+
+    await this.provider.deleteFork()
+  }
 }
 
 export default ForkProvider

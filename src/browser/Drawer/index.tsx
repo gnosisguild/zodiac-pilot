@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
+import { RiRefreshLine } from 'react-icons/ri'
+import { encodeSingle } from 'react-multisend'
 
-import { Box, Button, Drawer, Flex } from '../../components'
-import { useCommitTransactions } from '../ProvideProvider'
-import { useTransactions } from '../state'
+import { Box, Button, Drawer, Flex, IconButton } from '../../components'
+import { ForkProvider } from '../../providers'
+import { useCommitTransactions, useProvider } from '../ProvideProvider'
+import { useDispatch, useTransactions } from '../state'
 
 import { Transaction } from './Transaction'
 import classes from './style.module.css'
@@ -11,6 +14,32 @@ const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
   const transactions = useTransactions()
   const commitTransactions = useCommitTransactions()
+  const dispatch = useDispatch()
+  const provider = useProvider()
+
+  const reforkAndRerun = async () => {
+    // remove all transactions from the store
+    dispatch({
+      type: 'REMOVE_TRANSACTION',
+      payload: { id: transactions[0].input.id },
+    })
+
+    if (!(provider instanceof ForkProvider)) {
+      throw new Error('This is only supported when using ForkProvider')
+    }
+
+    await provider.refork()
+
+    // re-simulate all transactions
+    for (let i = 0; i < transactions.length; i++) {
+      const transaction = transactions[i]
+      const encoded = encodeSingle(transaction.input)
+      await provider.request({
+        method: 'eth_sendTransaction',
+        params: [{ to: encoded.to, data: encoded.data, value: encoded.value }],
+      })
+    }
+  }
 
   return (
     <Drawer
@@ -18,7 +47,16 @@ const TransactionsDrawer: React.FC = () => {
       header={
         <>
           <h4 className={classes.header}>Recording Transactions</h4>
-          <div className={classes.recordingIcon} />
+          <Flex gap={1} className={classes.headerButtons}>
+            <IconButton
+              title="Re-simulate on current blockchain head"
+              disabled={transactions.length === 0}
+              onClick={reforkAndRerun}
+            >
+              <RiRefreshLine />
+            </IconButton>
+            <div className={classes.recordingIcon} />
+          </Flex>
         </>
       }
       onToggle={() => setExpanded(!expanded)}

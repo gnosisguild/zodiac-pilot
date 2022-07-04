@@ -5,6 +5,9 @@
   padding: 0;
   margin: 0 var(--spacing-2) 0 0;
 }
+.headerButtons {
+  margin: 0 0 0 auto;
+}
 .wrapper {
   height: 100%;
   overflow: hidden; /* required for making the body's overflow-y: auto take effect :/  */
@@ -108,7 +111,7 @@ button.link:hover {
   opacity: 0.7;
 }
 .recordingIcon {
-  margin: 0 14px 0 auto;
+  margin: 13px;
   width: 12px;
   height: 12px;
   box-shadow: 0 0 0 0 rgba(232, 76, 61, 0.7);

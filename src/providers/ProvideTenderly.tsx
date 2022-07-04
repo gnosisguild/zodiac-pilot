@@ -180,9 +180,11 @@ export class TenderlyProvider extends EventEmitter {
     return await transactionInfoPromise
   }
 
-  async fork(networkId: number, blockNumber?: number) {
+  async refork() {
     this.deleteFork()
-    this.forkProviderPromise = this.createFork(networkId, blockNumber)
+    this.forkProviderPromise = this.createFork(
+      this.walletConnectProvider.chainId
+    )
     return await this.forkProviderPromise
   }
 

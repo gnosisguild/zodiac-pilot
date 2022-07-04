@@ -9,6 +9,7 @@ import {
 } from 'react-multisend'
 
 import { Box, Flex, IconButton } from '../../components'
+import { ForkProvider } from '../../providers'
 import { useProvider } from '../ProvideProvider'
 import { TransactionState, useDispatch, useTransactions } from '../state'
 
@@ -86,11 +87,22 @@ export const Transaction: React.FC<Props> = ({
   const provider = useProvider()
   const dispatch = useDispatch()
   const allTransactions = useTransactions()
+
   const handleRemove = async () => {
+    if (!(provider instanceof ForkProvider)) {
+      throw new Error('This is only supported when using ForkProvider')
+    }
+
     const laterTransactions = allTransactions.slice(index + 1)
 
     // remove the transaction and all later ones from the store
     dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
+
+    if (laterTransactions.length === 0) {
+      // nothing to rerun, we can delete the fork and will create a fresh one once we receive the next transaction
+      await provider.deleteFork()
+      return
+    }
 
     // revert to checkpoint before the transaction to remove
     const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
