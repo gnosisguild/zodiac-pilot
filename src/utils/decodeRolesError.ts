@@ -29,8 +29,9 @@ export default function decodeError(message: string) {
   return message
 }
 
-export const isRolesError = (decodedError: string) =>
-  KNOWN_ERRORS.includes(decodedError)
+export const isPermissionsError = (decodedError: string) =>
+  KNOWN_ERRORS.includes(decodedError) &&
+  decodedError !== 'ModuleTransactionFailed()'
 
 function asciiDecode(hex: string) {
   let result = ''

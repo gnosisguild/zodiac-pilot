@@ -9,7 +9,7 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
 import { decodeRolesError } from '../../utils'
-import { isRolesError } from '../../utils/decodeRolesError'
+import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'
 
 import classes from './style.module.css'
@@ -35,7 +35,7 @@ const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
       .catch((e: string) => {
         const decodedError = decodeRolesError(e)
         if (!canceled) {
-          setError(isRolesError(decodedError) ? decodedError : false)
+          setError(isPermissionsError(decodedError) ? decodedError : false)
         }
       })
 

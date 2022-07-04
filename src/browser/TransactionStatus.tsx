@@ -4,7 +4,7 @@ import { RiAlertLine, RiCloseFill } from 'react-icons/ri'
 
 import { Box, Flex, IconButton } from '../components'
 import { decodeRolesError } from '../utils'
-import { isRolesError } from '../utils/decodeRolesError'
+import { isPermissionsError } from '../utils/decodeRolesError'
 
 import { useWrappingProvider } from './ProvideProvider'
 import classes from './index.module.css'
@@ -54,7 +54,7 @@ const TransactionStatus: React.FC = () => {
       <Flex gap={3}>
         <RiAlertLine color="#ffae42" size={24} />{' '}
         <div>
-          {isRolesError(decodedError) ? (
+          {isPermissionsError(decodedError) ? (
             <>
               <p>This transaction is not permitted:</p>
               <p className={classes.decodedError}>{decodedError}</p>

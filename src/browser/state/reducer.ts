@@ -30,6 +30,14 @@ const rootReducer = (
         item.input.id === id ? { ...item, transactionHash } : item
       )
     }
+
+    case 'REMOVE_TRANSACTION': {
+      const { id } = action.payload
+      return state.slice(
+        0,
+        state.findIndex((item) => item.input.id === id)
+      )
+    }
   }
 }
 

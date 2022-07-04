@@ -116,7 +116,12 @@ export class TenderlyProvider extends EventEmitter {
       return this.blockNumber
     }
 
-    if (!this.forkProviderPromise && request.method === 'eth_sendTransaction') {
+    if (
+      !this.forkProviderPromise &&
+      (request.method === 'eth_sendTransaction' ||
+        request.method === 'evm_snapshot' ||
+        request.method === 'evm_revert')
+    ) {
       // spawn a fork lazily when sending the first transaction
       this.forkProviderPromise = this.createFork(
         this.walletConnectProvider.chainId

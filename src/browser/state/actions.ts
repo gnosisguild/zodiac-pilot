@@ -17,7 +17,15 @@ interface ConfirmTransactionAction {
   }
 }
 
+interface RemoveTransactionAction {
+  type: 'REMOVE_TRANSACTION'
+  payload: {
+    id: string
+  }
+}
+
 export type Action =
   | AppendRawTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
+  | RemoveTransactionAction

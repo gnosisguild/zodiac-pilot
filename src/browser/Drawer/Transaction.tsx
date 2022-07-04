@@ -1,11 +1,16 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, providers } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React from 'react'
 import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
-import { TransactionInput, TransactionType } from 'react-multisend'
+import {
+  encodeSingle,
+  TransactionInput,
+  TransactionType,
+} from 'react-multisend'
 
 import { Box, Flex, IconButton } from '../../components'
-import { TransactionState } from '../state'
+import { useProvider } from '../ProvideProvider'
+import { TransactionState, useDispatch, useTransactions } from '../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
@@ -78,8 +83,28 @@ export const Transaction: React.FC<Props> = ({
   transactionHash,
   input,
 }) => {
-  const handleRemove = () => {
-    // TODO
+  const provider = useProvider()
+  const dispatch = useDispatch()
+  const allTransactions = useTransactions()
+  const handleRemove = async () => {
+    const laterTransactions = allTransactions.slice(index + 1)
+
+    // remove the transaction and all later ones from the store
+    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
+
+    // revert to checkpoint before the transaction to remove
+    const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    await provider.request({ method: 'evm_revert', params: [checkpoint] })
+
+    // re-simulate all transactions after the removed one
+    for (let i = 0; i < laterTransactions.length; i++) {
+      const transaction = laterTransactions[i]
+      const encoded = encodeSingle(transaction.input)
+      await provider.request({
+        method: 'eth_sendTransaction',
+        params: [{ to: encoded.to, data: encoded.data, value: encoded.value }],
+      })
+    }
   }
 
   return (

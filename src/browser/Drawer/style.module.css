@@ -78,12 +78,6 @@
   border-top: 1px solid var(--border-color);
 }
 
-.transactionStatus dt {
-  margin: 0;
-}
-.transactionStatus dd {
-  margin: 0 var(--spacing-3) 0 0;
-}
 .link {
   display: inline-flex;
   align-items: center;

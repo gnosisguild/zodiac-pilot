@@ -9,8 +9,8 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(txId: string, txData: ITxData): void
-  onTransactionSent(txId: string, hash: string): void
+  onBeforeTransactionSend(checkpointId: string, txData: ITxData): void
+  onTransactionSent(checkpointId: string, hash: string): void
 }
 
 class ForkProvider {
@@ -56,11 +56,16 @@ class ForkProvider {
       }
 
       case 'eth_sendTransaction': {
-        // record the transaction
-        const txId = nanoid()
-        this.handlers.onBeforeTransactionSend(txId, params[0] as ITxData)
+        // take a snapshot and record the transaction
+        const checkpointId: string = await this.provider.request({
+          method: 'evm_snapshot',
+        })
+        this.handlers.onBeforeTransactionSend(
+          checkpointId,
+          params[0] as ITxData
+        )
         const result = await this.provider.request(request)
-        this.handlers.onTransactionSent(txId, result)
+        this.handlers.onTransactionSent(checkpointId, result)
         return result
       }
     }
