@@ -1,4 +1,4 @@
-import { BigNumber, providers } from 'ethers'
+import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React, { useEffect, useRef } from 'react'
 import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
