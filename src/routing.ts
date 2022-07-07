@@ -5,7 +5,7 @@ import { pushLocation, useLocation } from './location'
 export const useMatchSettingsRoute = () => {
   const location = useLocation()
   const [settingsPart, url = ''] = location.split(';')
-  const settingsRouteMatch = settingsPart.match(/^settings(-\w+)?/)
+  const settingsRouteMatch = settingsPart.match(/^settings(-[A-Za-z0-9_-]+)?/)
   const editConnectionId = settingsRouteMatch?.[1]?.slice(1)
   const isMatch = !!settingsRouteMatch
 
