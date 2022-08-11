@@ -4,6 +4,7 @@ import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
+import { JsonRpcRequest } from '../types'
 
 const GanacheContext = React.createContext<GanacheProvider | null>(null)
 
@@ -62,11 +63,6 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
 }
 
 export default ProvideGanache
-
-interface JsonRpcRequest {
-  method: string
-  params?: Array<any>
-}
 
 // This is like the Dapp bridge host (/src/bridge/host) just for the ganache iframe.
 // So it handles JSON RPC requests that Ganache performs for forking the network.

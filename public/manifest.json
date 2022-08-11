@@ -33,11 +33,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["build/inject.js"],
-      "matches": ["<all_urls>"]
-    },
-    {
-      "resources": ["build/ganache.js"],
+      "resources": [
+        "build/inject/pilot.js",
+        "build/inject/ganache.js",
+        "build/inject/metamask.js"
+      ],
       "matches": ["<all_urls>"]
     }
   ]

@@ -10,8 +10,9 @@ esbuild
     entryPoints: [
       './src/background.ts',
       './src/contentScript.ts',
-      './src/inject.ts',
-      './src/ganache.ts',
+      './src/inject/pilot.ts',
+      './src/inject/ganache.ts',
+      './src/inject/metamask.ts',
       './src/app.tsx',
     ],
     bundle: true,

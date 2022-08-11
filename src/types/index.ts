@@ -5,3 +5,8 @@ export type Connection = {
   avatarAddress: string
   roleId: string
 }
+
+export interface JsonRpcRequest {
+  method: string
+  params?: Array<any>
+}
