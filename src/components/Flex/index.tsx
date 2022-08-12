@@ -9,6 +9,7 @@ interface Props {
   alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start'
   gap: 0 | 1 | 2 | 3 | 4
   className?: string
+  children: React.ReactNode
 }
 
 const Flex: React.FC<Props> = ({

@@ -87,7 +87,7 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
               }}
             />
           </Field>
-          <Field>
+          <Field label="Pilot Account">
             <ConnectButton id={id} />
           </Field>
           <Field label="DAO Safe">

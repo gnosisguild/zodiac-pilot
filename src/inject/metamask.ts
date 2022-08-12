@@ -10,9 +10,23 @@ declare global {
   }
 }
 
-// establish message bridge for location requests
-if (window.ethereum) {
-  addBridgeMessageHandler(window.ethereum.request)
-}
+let tries = 0
+const interval = window.setInterval(() => {
+  if (!window.ethereum) {
+    if (tries > 100) {
+      window.clearInterval(interval)
+      console.warn('Could not detect injected provider after 100ms')
+    }
+    tries++
+    return
+  }
+
+  console.info('Detected injected provider, establishing message bridge')
+  addBridgeMessageHandler({
+    request: window.ethereum.request,
+    on: window.ethereum.on,
+  })
+  window.clearInterval(interval)
+}, 10)
 
 export {}

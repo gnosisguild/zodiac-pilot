@@ -13,6 +13,7 @@ interface Props {
   roundedLeft?: boolean
   roundedRight?: boolean
   p?: 1 | 2 | 3
+  children: React.ReactNode
 }
 
 const Box = forwardRef<HTMLDivElement, Props>(

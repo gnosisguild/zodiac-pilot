@@ -5,12 +5,17 @@ import React, { useCallback, useState } from 'react'
 
 import { JsonRpcRequest } from '../types'
 
+type ContextProvider = React.ComponentType<{
+  value: IframeBridgeProviderInstance | null
+  children: React.ReactNode
+}>
+
 // This renders an invisible iframe that runs outside the sandbox of our extension and handles JSON-RPC request via a window.postMessage bridge.
 // An EIP-1193 provider is exposed via context.
 const ProvideIframeBridge: React.FC<{
   children: React.ReactNode
   name: string
-  contextProvider: React.Provider<IframeBridgeProvider | null>
+  contextProvider: ContextProvider
 }> = ({ children, name, contextProvider: ContextProvider }) => {
   const [provider, setProvider] = useState<IframeBridgeProviderInstance | null>(
     null
@@ -43,6 +48,7 @@ export default ProvideIframeBridge
 
 class IframeBridgeProvider extends EventEmitter {
   private iframeWindow: Window
+  private bridgedEvents: Set<string | symbol> = new Set()
 
   bridgeId = nanoid()
   private messageId = 0
@@ -50,6 +56,21 @@ class IframeBridgeProvider extends EventEmitter {
   constructor(iframeWindow: Window) {
     super()
     this.iframeWindow = iframeWindow
+
+    // If the host provider emits one of the bridged events, this will be posted as a message to the iframe window.
+    // We pick up on these messages here and emit the event to our listeners.
+    window.addEventListener('message', (ev) => {
+      const {
+        zodiacPilotIframeBridgeEventEmit,
+        bridgeId,
+        eventType,
+        eventArgs,
+      } = ev.data
+
+      if (zodiacPilotIframeBridgeEventEmit && bridgeId === this.bridgeId) {
+        this.emit(eventType, ...eventArgs)
+      }
+    })
 
     // TODO wait for zodiacPilotIframeBridgeInit message and delay sending any requests until then
   }
@@ -94,8 +115,26 @@ class IframeBridgeProvider extends EventEmitter {
       window.addEventListener('message', handleMessage)
     })
   }
+
+  // Wrap base implementation to subscribe to this event also from the host provider.
+  on(eventType: string | symbol, listener: Listener): this {
+    if (!this.bridgedEvents.has(eventType)) {
+      this.iframeWindow.postMessage(
+        {
+          zodiacPilotIframeBridgeEventListen: true,
+          eventType,
+        },
+        '*'
+      )
+      this.bridgedEvents.add(eventType)
+    }
+    EventEmitter.prototype.on.call(this, eventType, listener)
+    return this
+  }
 }
 
 export type IframeBridgeProviderInstance = InstanceType<
   typeof IframeBridgeProvider
 >
+
+type Listener = (...args: any[]) => void

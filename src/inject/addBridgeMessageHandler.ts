@@ -5,19 +5,31 @@ import { JsonRpcRequest } from '../types'
 
 type RequestHandler = (request: JsonRpcRequest) => Promise<any>
 
-export default function addBridgeMessageHandler(
-  requestHandler: RequestHandler
-) {
+type Listener = (...args: any[]) => void
+type EventListenHandler = (
+  eventType: string | symbol,
+  listener: Listener
+) => Promise<any>
+interface Props {
+  request: RequestHandler
+  on: EventListenHandler
+}
+
+export default function addBridgeMessageHandlers({ request, on }: Props) {
   // establish message bridge for ganache requests
   window.addEventListener('message', async (ev: MessageEvent) => {
-    const { zodiacPilotIframeBridgeRequest, bridgeId, messageId, request } =
-      ev.data
+    const {
+      zodiacPilotIframeBridgeRequest,
+      bridgeId,
+      messageId,
+      request: requestParams,
+    } = ev.data
 
     if (zodiacPilotIframeBridgeRequest) {
       if (!window.top) throw new Error('Must run inside iframe')
       console.debug('iframe bridge request', bridgeId, messageId, request)
 
-      const response = await requestHandler(request)
+      const response = await request(requestParams)
 
       window.top.postMessage(
         {
@@ -28,6 +40,27 @@ export default function addBridgeMessageHandler(
         },
         '*'
       )
+    }
+
+    const { zodiacPilotIframeBridgeEventListen, eventType } = ev.data
+
+    if (zodiacPilotIframeBridgeEventListen) {
+      console.debug('iframe event listen', bridgeId, eventType)
+
+      on(eventType, (...eventArgs: any[]) => {
+        if (!window.top) throw new Error('Must run inside iframe')
+
+        console.debug('iframe event emit', bridgeId, eventType, eventArgs)
+        window.top.postMessage(
+          {
+            zodiacPilotIframeBridgeEventEmit: true,
+            bridgeId,
+            eventType,
+            eventArgs,
+          },
+          '*'
+        )
+      })
     }
   })
 

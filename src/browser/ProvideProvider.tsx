@@ -16,6 +16,7 @@ import { useDispatch, useTransactions } from './state'
 
 interface Props {
   simulate: boolean
+  children: React.ReactNode
 }
 
 const ProviderContext = createContext<Eip1193Provider | null>(null)

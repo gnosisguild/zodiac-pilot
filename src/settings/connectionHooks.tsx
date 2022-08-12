@@ -1,17 +1,20 @@
 import { nanoid } from 'nanoid'
-import React, { useCallback } from 'react'
+import React, { ReactNode, useCallback } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useWalletConnectProvider } from '../providers'
-import { Connection } from '../types'
+import { useMetamaskProvider, useWalletConnectProvider } from '../providers'
+import { Connection, Eip1193Provider, ProviderType } from '../types'
 import { useStickyState } from '../utils'
 
-const DEFAULT_VALUE = [
+const DEFAULT_VALUE: Connection[] = [
   {
     id: nanoid(),
     label: '',
+    chainId: 1,
     moduleAddress: '',
     avatarAddress: '',
+    pilotAddress: '',
+    providerType: ProviderType.WalletConnect,
     roleId: '',
   },
 ]
@@ -22,7 +25,9 @@ type SelectedConnectionContextT = [string, React.Dispatch<string>]
 const SelectedConnectionContext =
   createContext<SelectedConnectionContextT | null>(null)
 
-export const ProvideConnections: React.FC = ({ children }) => {
+export const ProvideConnections: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [connections, setConnections] = useStickyState<Connection[]>(
     DEFAULT_VALUE,
     'connections'
@@ -85,9 +90,29 @@ export const useConnection = (id?: string) => {
   const connection =
     (connectionId && connections.find((c) => c.id === connectionId)) ||
     connections[0]
+
   if (!connection) {
     throw new Error('connections is empty, which must never happen')
   }
-  const { provider, connected } = useWalletConnectProvider(connection.id)
-  return { connection, provider, connected }
+
+  const metamask = useMetamaskProvider()
+  const walletConnect = useWalletConnectProvider(connection.id)
+
+  const provider: Eip1193Provider =
+    connection.providerType === ProviderType.Metamask
+      ? metamask.provider
+      : walletConnect.provider
+
+  const connected =
+    connection.providerType === ProviderType.Metamask
+      ? !!metamask.chainId &&
+        metamask.accounts.includes(connection.pilotAddress.toLowerCase())
+      : walletConnect.provider.connected
+
+  const chainId =
+    connection.providerType === ProviderType.Metamask
+      ? metamask.chainId
+      : walletConnect.provider.chainId
+
+  return { connection, provider, connected, chainId }
 }

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import ReactDom from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import './global.css'
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
+import { ProvideMetamask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
 import Settings, {
   ProvideConnections,
@@ -48,13 +49,19 @@ function launch(url: string) {
   pushLocation(prependHttp(url))
 }
 
-ReactDom.render(
+const rootEl = document.getElementById('root')
+if (!rootEl) throw new Error('invariant violation')
+const root = createRoot(rootEl)
+
+root.render(
   <React.StrictMode>
-    <ProvideConnections>
-      <ProvideTenderlySettings>
-        <Routes />
-      </ProvideTenderlySettings>
-    </ProvideConnections>
+    <ProvideMetamask>
+      <ProvideConnections>
+        <ProvideTenderlySettings>
+          <Routes />
+        </ProvideTenderlySettings>
+      </ProvideConnections>
+    </ProvideMetamask>
   </React.StrictMode>,
   document.getElementById('root')
 )
