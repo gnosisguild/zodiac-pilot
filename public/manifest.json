@@ -12,7 +12,7 @@
   "action": {
     "default_title": "Zodiac Pilot"
   },
-  "permissions": ["tabs", "declarativeNetRequest"],
+  "permissions": ["tabs", "scripting", "webRequest", "declarativeNetRequest"],
   "background": {
     "service_worker": "build/background.js"
   },
@@ -23,21 +23,11 @@
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/contentScript.js"]
-    },
-    {
-      "matches": ["https://ipfs.io/"],
-      "run_at": "document_start",
-      "all_frames": true,
-      "js": ["build/contentScript.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "build/inject/pilot.js",
-        "build/inject/ganache.js",
-        "build/inject/metamask.js"
-      ],
+      "resources": ["*"],
       "matches": ["<all_urls>"]
     }
   ]

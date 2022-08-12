@@ -28,7 +28,7 @@ const useNoPageScroll = () => {
 }
 
 const Browser: React.FC = () => {
-  const location = useLocation()
+  const location = window.location.href
   useNoPageScroll()
 
   // When the user browses in the iframe the location will update constantly.
@@ -61,7 +61,7 @@ const Browser: React.FC = () => {
                 <BlockLink href={settingsHash}>
                   <AddressStack
                     interactive
-                    pilotAddress={provider.accounts[0]}
+                    pilotAddress={connection.pilotAddress}
                     moduleAddress={connection.moduleAddress}
                     avatarAddress={connection.avatarAddress}
                   />

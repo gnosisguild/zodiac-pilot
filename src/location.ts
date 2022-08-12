@@ -1,31 +1,31 @@
 import { useEffect, useState } from 'react'
 
 // The background script listens to all possible ways of location updates in our iframe and notify us via a message.
-let lastHref = ''
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === 'navigationDetected') {
-    // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).
-    // So not all events actually
-    const iframe = document.getElementById(
-      'pilot-frame'
-    ) as HTMLIFrameElement | null
-    const iframeWindow = iframe?.contentWindow
-    if (!iframeWindow) return
+// let lastHref = ''
+// chrome.runtime.onMessage.addListener((message) => {
+//   if (message.type === 'navigationDetected') {
+//     // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).
+//     // So not all events actually
+//     const iframe = document.getElementById(
+//       'pilot-frame'
+//     ) as HTMLIFrameElement | null
+//     const iframeWindow = iframe?.contentWindow
+//     if (!iframeWindow) return
 
-    iframeWindow.postMessage({ zodiacPilotHrefRequest: true }, '*')
+//     iframeWindow.postMessage({ zodiacPilotHrefRequest: true }, '*')
 
-    const handleMessage = (ev: MessageEvent) => {
-      const { zodiacPilotHrefResponse, href } = ev.data
-      if (zodiacPilotHrefResponse && href !== lastHref) {
-        console.debug('iframe navigated to', href)
-        window.removeEventListener('message', handleMessage)
-        replaceLocation(href) // don't push as this would mess with the browsing history
-        lastHref = href
-      }
-    }
-    window.addEventListener('message', handleMessage)
-  }
-})
+//     const handleMessage = (ev: MessageEvent) => {
+//       const { zodiacPilotHrefResponse, href } = ev.data
+//       if (zodiacPilotHrefResponse && href !== lastHref) {
+//         console.debug('iframe navigated to', href)
+//         window.removeEventListener('message', handleMessage)
+//         replaceLocation(href) // don't push as this would mess with the browsing history
+//         lastHref = href
+//       }
+//     }
+//     window.addEventListener('message', handleMessage)
+//   }
+// })
 
 const locationReplacedEvent = new Event('locationReplaced')
 export const replaceLocation = (url: string) => {
