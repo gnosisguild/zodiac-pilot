@@ -41,4 +41,6 @@ const launch = () => {
   parent.appendChild(node)
 }
 
-export default launch
+launch()
+
+export {}

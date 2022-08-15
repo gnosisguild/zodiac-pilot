@@ -12,9 +12,18 @@
   "action": {
     "default_title": "Zodiac Pilot"
   },
-  "permissions": ["tabs", "scripting", "webRequest", "declarativeNetRequest"],
+  "permissions": ["tabs", "scripting", "declarativeNetRequest"],
   "background": {
     "service_worker": "build/background.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "rules1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
   },
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
@@ -23,6 +32,14 @@
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/contentScript.js"]
+    },
+
+    {
+      "matches": [
+        "https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m"
+      ],
+      "run_at": "document_start",
+      "js": ["build/launch.js"]
     }
   ],
   "web_accessible_resources": [

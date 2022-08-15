@@ -1,106 +1,100 @@
-import launch from './launch'
+// import launch from './launch'
+
+// This is an empty page. In the future we should use a publicly hosted Zodiac Pilot URL, so pilot links become sharable.
+// Users without the extension would then see the public landing page.
+// Attention: The URL must also be updated in manifest.json
+const PILOT_URL =
+  'https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m'
 
 // When clicking the extension button, load the current tab's page in the simulation browser
-chrome.action.onClicked.addListener((tab) => {
-  console.log('ACTION')
+const toggle = async (tab: chrome.tabs.Tab) => {
+  if (!tab.id || !tab.url) return
 
-  if (tab?.id) {
-    toggle(tab)
+  if (!activeExtensionTabs.has(tab.id)) {
+    console.log('activate Zodiac Pilot')
+
+    chrome.tabs.update(tab.id, {
+      url: `${PILOT_URL}#${encodeURIComponent(tab.url)}`,
+    })
+  } else {
+    console.log('deactivate Zodiac Pilot')
+
+    const url = new URL(tab.url)
+    const appUrl = decodeURIComponent(url.hash.slice(1))
+
+    await chrome.tabs.update(tab.id, {
+      url: appUrl,
+    })
   }
-
-  // chrome.tabs.query(
-  //   { currentWindow: true, active: true },
-  //   async function (tabs) {
-  //     const tab = tabs[0]
-
-  //     if (tab && tab.id && tab.url) {
-  //       toggle(tab)
-  //     } /*else {
-  //       tab = await chrome.tabs.create({ url: 'index.html' })
-  //       activeExtensionTabs.add(tab.id)
-  //     }*/
-  //   }
-  // )
-})
+}
+chrome.action.onClicked.addListener(toggle)
 
 // Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 // generally circumvent this security mechanism, so we only apply it to extension tabs.
 const activeExtensionTabs = new Set<number>()
-const tabUrls = new Map<number, string | undefined>()
 
-const updateRule = () => {
-  const RULE_ID = 1
-  chrome.declarativeNetRequest.updateSessionRules({
-    addRules: [
-      {
-        id: RULE_ID,
-        priority: 1,
-        action: {
-          // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-          type: 'modifyHeaders',
-          responseHeaders: [
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'x-frame-options', operation: 'remove' },
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'content-security-policy', operation: 'remove' },
-          ],
-        },
-        condition: {
-          // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-          resourceTypes: ['main_frame', 'sub_frame'],
-          tabIds: Array.from(activeExtensionTabs),
-        },
-      },
-    ],
-    removeRuleIds: [RULE_ID],
-  })
-}
+// const updateRule = () => {
+//   const RULE_ID = 1
+//   chrome.declarativeNetRequest.updateSessionRules({
+//     // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
+//     addRules:
+//       activeExtensionTabs.size > 0
+//         ? [
+//             {
+//               id: RULE_ID,
+//               priority: 1,
+//               action: {
+//                 type: 'modifyHeaders',
+//                 responseHeaders: [
+//                   { header: 'x-frame-options', operation: 'remove' },
+//                   { header: 'content-security-policy', operation: 'remove' },
+//                 ],
+//               },
+//               condition: {
+//                 resourceTypes: ['sub_frame'],
+//                 tabIds: Array.from(activeExtensionTabs),
+//               },
+//             },
+//           ]
+//         : undefined,
+//     removeRuleIds: [RULE_ID],
+//   })
+// }
 
-const executeLaunch = (tabId: number) => {
-  // run launch script
-  chrome.scripting.executeScript({
-    target: { tabId },
-    func: launch,
-    // @ts-expect-error @types/chrome is not up-to-date: available since v102
-    injectImmediately: true,
-  })
-}
+// const executeLaunch = (tabId: number) => {
+//   // run launch script
+//   chrome.scripting.executeScript({
+//     target: { tabId },
+//     func: launch,
+//     // @ts-expect-error @types/chrome is not up-to-date: available since v102
+//     injectImmediately: true,
+//   })
+// }
 
-const toggle = (tab: chrome.tabs.Tab) => {
-  if (!tab.id) return
-
-  if (!activeExtensionTabs.has(tab.id)) {
-    console.log('activate Zodiac Pilot')
-
-    // add to tracked list
-    activeExtensionTabs.add(tab.id)
-    tabUrls.set(tab.id, tab.url)
-
-    executeLaunch(tab.id)
-  } else {
-    console.log('deactivate Zodiac Pilot')
-
-    // remove from tracked list
-    activeExtensionTabs.delete(tab.id)
-
-    // reload tab to restore app page without Pilot wrapping
-    chrome.tabs.reload(tab.id)
-  }
-
-  updateRule()
-}
-
-// keep Pilot open when navigating to other pages
+// launch extension script on matching URLs
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (
     changeInfo.status === 'loading' &&
-    activeExtensionTabs.has(tabId) &&
-    tabUrls.get(tabId) !== tab.url
+    tab.url?.startsWith(PILOT_URL) &&
+    !activeExtensionTabs.has(tabId)
   ) {
-    tabUrls.set(tabId, tab.url)
+    activeExtensionTabs.add(tabId)
+    // updateRule()
+  }
 
-    executeLaunch(tabId)
+  if (
+    changeInfo.status === 'loading' &&
+    !tab.url?.startsWith(PILOT_URL) &&
+    activeExtensionTabs.has(tabId)
+  ) {
+    activeExtensionTabs.delete(tabId)
+    // updateRule()
+  }
+
+  console.log(changeInfo, tab)
+  if (changeInfo.status === 'complete') {
+    chrome.runtime.sendMessage({ type: 'navigationDetected' })
   }
 })
 

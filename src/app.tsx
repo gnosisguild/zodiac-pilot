@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import './global.css'
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
-// import { pushLocation } from './location'
+import { pushLocation } from './location'
 import { ProvideMetamask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
 import Settings, {
@@ -45,9 +45,9 @@ const Routes: React.FC = () => {
   return <Browser />
 }
 
-// function launch(url: string) {
-//   pushLocation(prependHttp(url))
-// }
+function launch(url: string) {
+  pushLocation(prependHttp(url))
+}
 
 const rootEl = document.getElementById('root')
 if (!rootEl) throw new Error('invariant violation')
@@ -58,7 +58,7 @@ root.render(
     <ProvideMetamask>
       <ProvideConnections>
         <ProvideTenderlySettings>
-          <Browser />
+          <Routes />
         </ProvideTenderlySettings>
       </ProvideConnections>
     </ProvideMetamask>

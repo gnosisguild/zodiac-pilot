@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 // The background script listens to all possible ways of location updates in our iframe and notify us via a message.
-// let lastHref = ''
+const lastHref = ''
 // chrome.runtime.onMessage.addListener((message) => {
 //   if (message.type === 'navigationDetected') {
 //     // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).

@@ -28,7 +28,7 @@ const useNoPageScroll = () => {
 }
 
 const Browser: React.FC = () => {
-  const location = window.location.href
+  const location = useLocation()
   useNoPageScroll()
 
   // When the user browses in the iframe the location will update constantly.
