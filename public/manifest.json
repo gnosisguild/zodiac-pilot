@@ -21,7 +21,7 @@
       {
         "id": "rules1",
         "enabled": true,
-        "path": "rules.json"
+        "path": "requestRules.json"
       }
     ]
   },
@@ -33,7 +33,6 @@
       "all_frames": true,
       "js": ["build/contentScript.js"]
     },
-
     {
       "matches": [
         "https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m"
