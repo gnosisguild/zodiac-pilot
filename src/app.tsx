@@ -5,7 +5,7 @@ import './global.css'
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
-import { ProvideMetamask } from './providers'
+import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
 import Settings, {
   ProvideConnections,
@@ -55,13 +55,13 @@ const root = createRoot(rootEl)
 
 root.render(
   <React.StrictMode>
-    <ProvideMetamask>
+    <ProvideMetaMask>
       <ProvideConnections>
         <ProvideTenderlySettings>
           <Routes />
         </ProvideTenderlySettings>
       </ProvideConnections>
-    </ProvideMetamask>
+    </ProvideMetaMask>
   </React.StrictMode>,
   document.getElementById('root')
 )

@@ -7,6 +7,6 @@ export {
   default as ProvideTenderly,
 } from './ProvideTenderly'
 export {
-  ProvideMetamask,
-  default as useMetamaskProvider,
-} from './useMetamaskProvider'
+  ProvideMetaMask,
+  default as useMetaMaskProvider,
+} from './useMetaMaskProvider'

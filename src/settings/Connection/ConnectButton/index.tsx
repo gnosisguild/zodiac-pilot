@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Button } from '../../../components'
 import {
-  useMetamaskProvider,
+  useMetaMaskProvider,
   useWalletConnectProvider,
 } from '../../../providers'
 import { ProviderType } from '../../../types'
@@ -30,7 +30,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const [connections, setConnections] = useConnections()
   const { connected, connection } = useConnection(id)
 
-  const metamask = useMetamaskProvider()
+  const metamask = useMetaMaskProvider()
   const walletConnect = useWalletConnectProvider(connection.id)
 
   const connect = (providerType: ProviderType, account: string) => {

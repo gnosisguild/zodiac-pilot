@@ -1,9 +1,16 @@
+import { EventEmitter } from 'events'
+
 import { nanoid } from 'nanoid'
 import React, { ReactNode, useCallback } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useMetamaskProvider, useWalletConnectProvider } from '../providers'
-import { Connection, Eip1193Provider, ProviderType } from '../types'
+import { useMetaMaskProvider, useWalletConnectProvider } from '../providers'
+import {
+  Connection,
+  Eip1193Provider,
+  JsonRpcRequest,
+  ProviderType,
+} from '../types'
 import { useStickyState } from '../utils'
 
 const DEFAULT_VALUE: Connection[] = [
@@ -95,12 +102,12 @@ export const useConnection = (id?: string) => {
     throw new Error('connections is empty, which must never happen')
   }
 
-  const metamask = useMetamaskProvider()
+  const metamask = useMetaMaskProvider()
   const walletConnect = useWalletConnectProvider(connection.id)
 
   const provider: Eip1193Provider =
     connection.providerType === ProviderType.Metamask
-      ? metamask.provider
+      ? metamask.provider || new DummyProvider() // passing a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
       : walletConnect.provider
 
   const connected =
@@ -115,4 +122,10 @@ export const useConnection = (id?: string) => {
       : walletConnect.provider.chainId
 
   return { connection, provider, connected, chainId }
+}
+
+class DummyProvider extends EventEmitter {
+  async request(): Promise<void> {
+    return
+  }
 }
