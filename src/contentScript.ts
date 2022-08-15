@@ -13,6 +13,5 @@ function inject(windowName: string, scriptPath: string) {
 
 inject('pilot-frame', 'build/inject/pilot.js')
 inject('ganache-frame', 'build/inject/ganache.js')
-inject('metamask-frame', 'build/inject/metamask.js')
 
 export {}

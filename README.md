@@ -35,11 +35,20 @@ TODO: figure out how to package for the Chrome extension store
 
 The extension consists of three different interacting pieces:
 
-- **extension page:** This is the main app rendering the iframe. Entrypoint: [public/index.html](public/index.html) together with [src/app.tsx](src/app.tsx)
+- **extension app:** This is the main app rendering the iframe. The entrypoint to the app is [launch.ts](src/launch.ts) which is injected into pages running under the [Zodiac Pilot host](#zodiac-pilot-host) via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
 - **background script:** A [service worker script](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#service-workers) that allows to hook into different Chrome events and APIs: [src/background.ts](src/background.ts)
-- **injected script:** Whenever we load any page in the iframe, we inject [src/inject.ts](src/inject.ts) into the page so that this script runs in the context of that page. The injection happens via the [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/) at [src/contentScript.ts](src/contentScript.ts).
+- **injected script:** Whenever we load any page in the the extension app iframe, we inject [src/inject.ts](src/inject.ts) into the page so that this script runs in the context of that page. The injection happens via the content script at [src/contentScript.ts](src/contentScript.ts).
 
 The different scripts communicate exclusively via message passing. Extension page and background script use `chrome.runtime.sendMessage` while extension page and injected script talk via `window.postMessage`.
+
+### Zodiac Pilot host
+
+Originally, we started out building the Pilot as an extension page, which are hosted under `chrome-extension://<EXTENSION_ID>`. However extension pages are subject to some restrictions that make implementing certain integrations difficult, most notably:
+
+- All extensions are sandboxed from each other, meaning that the MetaMask injected provider would not be available to an extension page.
+- Extension pages have no access to Indexed DB, which is a dependency of Ganache.
+
+That's why the extension is now running under an external host (currently `https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m`). At the moment this URL serves an empty page, in the future this could become a landing page for users who have not yet installed the extension.
 
 ### Open Dapps in iframe
 
@@ -55,7 +64,7 @@ The browser back button should function as usual and when reloading the extensio
 Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 
 The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
-This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.runtime.sendMessage`.
+This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.tabs.sendMessage`.
 For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.
 
 ### Inject EIP-1193 provider
@@ -74,9 +83,12 @@ It then forwards the wrapped transaction request to the WalletConnect provider.
 ### Simulating transaction in local fork
 
 We use Ganache to run a local EVM with a fork of the network the user is connected to.
-Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
-Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
-At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
+
+TODO: The following is still true, but we should adjust the implementation now that the extension is running under an external host.
+
+> Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
+> Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
+> At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
 
 Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.
 

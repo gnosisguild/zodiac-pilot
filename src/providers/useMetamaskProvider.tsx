@@ -7,26 +7,23 @@ import React, {
   useState,
 } from 'react'
 
-import IframeBridgeProvider, {
-  IframeBridgeProviderInstance,
-} from './IframeBridgeProvider'
+import { Eip1193Provider } from '../types'
 
 interface MetamaskContextT {
-  provider: IframeBridgeProviderInstance
+  provider: Eip1193Provider | undefined
   accounts: string[]
   chainId: number | null
 }
 const MetamaskContext = React.createContext<MetamaskContextT | null>(null)
 
 const ContextProvider: React.FC<{
-  value: IframeBridgeProviderInstance | null
   children: ReactNode
-}> = ({ value: provider, children }) => {
+}> = ({ children }) => {
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
 
   useEffect(() => {
-    if (!provider) return
+    if (!window.ethereum) return
 
     let canceled = true
     const ifNotCanceled =
@@ -53,11 +50,11 @@ const ContextProvider: React.FC<{
       setAccounts([])
     })
 
-    provider.on('accountsChanged', handleAccountsChanged)
-    provider.on('networkChanged', handleNetworkChanged)
-    provider.on('disconnect', handleDisconnect)
+    window.ethereum.on('accountsChanged', handleAccountsChanged)
+    window.ethereum.on('networkChanged', handleNetworkChanged)
+    window.ethereum.on('disconnect', handleDisconnect)
 
-    const web3Provider = new Web3Provider(provider)
+    const web3Provider = new Web3Provider(window.ethereum)
     web3Provider
       .send('eth_requestAccounts', [])
       .then((accounts: string[]) => setAccounts(accounts))
@@ -67,16 +64,15 @@ const ContextProvider: React.FC<{
 
     return () => {
       canceled = true
-      provider.removeListener('accountsChanged', handleAccountsChanged)
-      provider.removeListener('networkChanged', handleNetworkChanged)
-      provider.removeListener('disconnect', handleDisconnect)
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged)
+      window.ethereum.removeListener('networkChanged', handleNetworkChanged)
+      window.ethereum.removeListener('disconnect', handleDisconnect)
     }
-  }, [provider])
+  }, [])
 
-  const packed = useMemo(
-    () => (provider ? { provider, accounts, chainId } : null),
-    [provider, accounts, chainId]
-  )
+  const packed = useMemo(() => {
+    window.ethereum, accounts, chainId
+  }, [accounts, chainId])
 
   return (
     <MetamaskContext.Provider value={packed}>

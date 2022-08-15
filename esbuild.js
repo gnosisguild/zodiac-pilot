@@ -13,7 +13,6 @@ esbuild
       './src/launch.ts',
       './src/inject/pilot.ts',
       './src/inject/ganache.ts',
-      './src/inject/metamask.ts',
       './src/app.tsx',
     ],
     bundle: true,
