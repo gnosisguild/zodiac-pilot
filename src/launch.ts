@@ -12,34 +12,29 @@ docEl.dataset.publicPath = chrome.runtime.getURL('/').slice(0, -1)
 
 // clear everything and initialize Pilot app
 docEl.innerHTML = `
-    <head>
-      <meta charset="utf-8" />
-      <link rel="icon" type="image/png" href="${chrome.runtime.getURL(
-        '/zodiac32.png'
-      )}" sizes="32x32" />
-      <link rel="icon" type="image/png" href="${chrome.runtime.getURL(
-        '/zodiac128.png'
-      )}" sizes="128x128" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <meta name="theme-color" content="#000000" />
-      <meta
-        name="description"
-        content="Simulate dApp interactions and record transactions"
-      />
-      <title>Zodiac Pilot</title>
-      <link rel="stylesheet" href="${chrome.runtime.getURL(
-        '/build/app.css'
-      )}" />
-    </head>
-    <body>
-      <div id="root"></div>
-    </body>
-  `
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="${chrome.runtime.getURL(
+      '/zodiac32.png'
+    )}" sizes="32x32" />
+    <link rel="icon" type="image/png" href="${chrome.runtime.getURL(
+      '/zodiac128.png'
+    )}" sizes="128x128" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Simulate dApp interactions and record transactions"
+    />
+    <title>Zodiac Pilot</title>
+    <link rel="stylesheet" href="${chrome.runtime.getURL('/build/app.css')}" />
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+`
 
-// append Pilot app script
-const node = document.createElement('script')
-node.src = chrome.runtime.getURL('/build/app.js')
-const parent = document.head || docEl
-parent.appendChild(node)
+// now we're ready to launch the app
+import(chrome.runtime.getURL('/build/app.js'))
 
 export {}
