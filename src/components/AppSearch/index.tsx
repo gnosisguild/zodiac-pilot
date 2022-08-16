@@ -15,7 +15,7 @@ const AppSearch: React.FC<Props> = ({ onPick }) => {
     <Box>
       <Box bg double>
         <i className={classes.inputIcon}>
-          <img src={chrome.runtime.getURL(searchIcon)} alt="search-icon" />
+          <img src={searchIcon} alt="search-icon" />
         </i>
         <input
           type="text"

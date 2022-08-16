@@ -13,17 +13,10 @@ import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
 const walletConnectLogo = (
-  <img
-    src={chrome.runtime.getURL(walletConnectLogoUrl)}
-    alt="wallet connect logo"
-  />
+  <img src={walletConnectLogoUrl} alt="wallet connect logo" />
 )
 const metamaskLogo = (
-  <img
-    src={chrome.runtime.getURL(metamaskLogoUrl)}
-    alt="metamask logo"
-    style={{ height: 28 }}
-  />
+  <img src={metamaskLogoUrl} alt="metamask logo" style={{ height: 28 }} />
 )
 
 const ConnectButton: React.FC<{ id: string }> = ({ id }) => {

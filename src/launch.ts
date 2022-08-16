@@ -34,7 +34,21 @@ docEl.innerHTML = `
   </body>
 `
 
-// now we're ready to launch the app
-import(chrome.runtime.getURL('/build/app.js'))
+// now we're ready to launch the app.
+// Adding it as a script node makes it run in the context of the external Zodiac Pilot host
+const node = document.createElement('script')
+node.src = chrome.runtime.getURL('/build/app.js')
+const parent = document.head || document.documentElement
+parent.appendChild(node)
+
+// Background scripts can communicate with content scripts via chrome.runtime.sendMessage.
+// Background script cannot send messages to the foreign origin window, but the content script can.
+// So here we are relaying chrome.runtime to window.
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'navigationDetected') {
+    console.debug('relaying navigation detected message', message.data)
+    window.postMessage(message, '*')
+  }
+})
 
 export {}

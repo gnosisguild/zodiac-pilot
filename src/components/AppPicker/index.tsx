@@ -171,7 +171,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
           >
             <img
               className={classes.logo}
-              src={chrome.runtime.getURL(app.logoUrl)}
+              src={app.logoUrl}
               alt={app.name + ' logo'}
             />
             <div className={classes.name}>{app.name}</div>
