@@ -6,7 +6,10 @@ import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, { ProvideConnections } from './settings'
+import Settings, {
+  ProvideConnections,
+  ProvideTenderlySettings,
+} from './settings'
 import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
@@ -48,7 +51,9 @@ function launch(url: string) {
 ReactDom.render(
   <React.StrictMode>
     <ProvideConnections>
-      <Routes />
+      <ProvideTenderlySettings>
+        <Routes />
+      </ProvideTenderlySettings>
     </ProvideConnections>
   </React.StrictMode>,
   document.getElementById('root')

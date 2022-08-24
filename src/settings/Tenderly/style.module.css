@@ -1,0 +1,10 @@
+.error {
+  color: crimson;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}
+.success {
+  color: green;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}
