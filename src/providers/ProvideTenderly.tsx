@@ -102,6 +102,7 @@ export class TenderlyProvider extends EventEmitter {
     new Map()
   private blockNumber: number | undefined
 
+  private tenderlySettings: TenderlySettings
   private tenderlyForkApi: string
   private tenderlyHeaders: HeadersInit
 
@@ -112,12 +113,10 @@ export class TenderlyProvider extends EventEmitter {
     super()
     this.walletConnectProvider = walletConnectProvider
 
-    this.tenderlyForkApi = `https://api.tenderly.co/api/v1/account/${process.env.TENDERLY_USER}/project/${process.env.TENDERLY_PROJECT}/fork`
+    this.tenderlySettings = tenderlySettings
+    this.tenderlyForkApi = `https://api.tenderly.co/api/v1/account/${tenderlySettings.user}/project/${tenderlySettings.project}/fork`
     this.tenderlyHeaders = new Headers()
-    this.tenderlyHeaders.set(
-      'X-Access-Key',
-      process.env.TENDERLY_ACCESS_KEY || ''
-    )
+    this.tenderlyHeaders.set('X-Access-Key', tenderlySettings.accessKey)
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
@@ -266,7 +265,7 @@ export class TenderlyProvider extends EventEmitter {
     const json = await res.json()
     return {
       ...json.fork_transaction,
-      dashboardLink: `https://dashboard.tenderly.co/${process.env.TENDERLY_USER}/${process.env.TENDERLY_PROJECT}/fork/${this.forkId}/simulation/${transactionId}`,
+      dashboardLink: `https://dashboard.tenderly.co/${this.tenderlySettings.user}/${this.tenderlySettings.project}/fork/${this.forkId}/simulation/${transactionId}`,
     }
   }
 }

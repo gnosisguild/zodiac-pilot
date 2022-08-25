@@ -30,9 +30,6 @@ esbuild
     define: {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
       'process.env.ETHERSCAN_API_KEY': `"${process.env.ETHERSCAN_API_KEY}"`,
-      'process.env.TENDERLY_ACCESS_KEY': `"${process.env.TENDERLY_ACCESS_KEY}"`,
-      'process.env.TENDERLY_PROJECT': `"${process.env.TENDERLY_PROJECT}"`,
-      'process.env.TENDERLY_USER': `"${process.env.TENDERLY_USER}"`,
       global: 'window',
       // process: 'process',
       // Buffer: 'Buffer',
