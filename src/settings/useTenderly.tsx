@@ -18,7 +18,8 @@ export enum TenderlyStatus {
   SETTINGS_INCOMPLETE,
   PENDING,
   SUCCESS,
-  UNKNOWN_ERROR,
+  NOT_FOUND,
+  INVALID_ACCESS_KEY,
 }
 
 const TenderlySettingsContext = createContext<TenderlySettings>(DEFAULT_VALUE)
@@ -89,8 +90,11 @@ const useTenderlyAccessCheck = (settings: TenderlySettings) => {
       if (res.status === 201) {
         // Tenderly uses weird HTTP status codes
         setStatus(TenderlyStatus.SUCCESS)
+      } else if (res.status === 404) {
+        // Tenderly uses weird HTTP status codes
+        setStatus(TenderlyStatus.NOT_FOUND)
       } else {
-        setStatus(TenderlyStatus.UNKNOWN_ERROR)
+        setStatus(TenderlyStatus.INVALID_ACCESS_KEY)
       }
     })
 

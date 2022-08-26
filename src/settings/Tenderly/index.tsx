@@ -76,8 +76,9 @@ export default Tenderly
 
 const STATUS_MESSAGES: Record<TenderlyStatus, string> = {
   [TenderlyStatus.SUCCESS]: 'Successfully connected to Tenderly',
-  [TenderlyStatus.UNKNOWN_ERROR]:
-    'Some unexpected problem occurred connecting to Tenderly',
+  [TenderlyStatus.NOT_FOUND]:
+    'The user or project could not be found in Tenderly',
+  [TenderlyStatus.INVALID_ACCESS_KEY]: 'The Tenderly access key seems invalid',
 
   [TenderlyStatus.PENDING]: 'Trying to connect to Tenderly...',
   [TenderlyStatus.SETTINGS_INCOMPLETE]: 'Incomplete settings',
