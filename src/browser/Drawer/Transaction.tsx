@@ -10,6 +10,7 @@ import {
 
 import { Box, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
+import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
 import { TransactionState, useDispatch, useTransactions } from '../state'
 
@@ -88,6 +89,9 @@ export const Transaction: React.FC<Props> = ({
   const dispatch = useDispatch()
   const allTransactions = useTransactions()
   const elementRef = useRef<HTMLDivElement | null>(null)
+  const {
+    connection: { avatarAddress },
+  } = useConnection()
 
   const isLast = index === allTransactions.length - 1
 
@@ -107,8 +111,8 @@ export const Transaction: React.FC<Props> = ({
     // remove the transaction and all later ones from the store
     dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
 
-    if (laterTransactions.length === 0) {
-      // nothing to rerun, we can delete the fork and will create a fresh one once we receive the next transaction
+    if (allTransactions.length === 1) {
+      // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
       await provider.deleteFork()
       return
     }
@@ -123,7 +127,14 @@ export const Transaction: React.FC<Props> = ({
       const encoded = encodeSingle(transaction.input)
       await provider.request({
         method: 'eth_sendTransaction',
-        params: [{ to: encoded.to, data: encoded.data, value: encoded.value }],
+        params: [
+          {
+            to: encoded.to,
+            data: encoded.data,
+            value: formatValue(encoded.value),
+            from: avatarAddress,
+          },
+        ],
       })
     }
   }
@@ -174,4 +185,11 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
       <span>{formatEther(valueBN)} ETH</span> <RiArrowDropRightLine />
     </>
   )
+}
+
+// Tenderly has particular repquirements for the encoding of value: it must not have any leading zeros
+const formatValue = (value: string): string => {
+  const valueBN = BigNumber.from(value)
+  if (valueBN.isZero()) return '0x0'
+  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
 }
