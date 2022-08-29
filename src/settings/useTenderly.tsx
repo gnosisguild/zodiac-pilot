@@ -32,7 +32,9 @@ const TenderlyStatusContext = createContext<TenderlyStatus>(
   TenderlyStatus.SETTINGS_INCOMPLETE
 )
 
-export const ProvideTenderlySettings: React.FC = ({ children }) => {
+export const ProvideTenderlySettings: React.FC<{
+  children: React.ReactNode
+}> = ({ children }) => {
   const [settings, setSettings] = useStickyState<TenderlySettings>(
     DEFAULT_VALUE,
     'tenderlySettings'

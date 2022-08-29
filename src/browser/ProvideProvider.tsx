@@ -43,7 +43,6 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const { provider: walletConnectProvider, connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
-  const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
   const transactions = useTransactions()
 
@@ -51,12 +50,12 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     () =>
       new WrappingProvider(
         walletConnectProvider,
-        pilotAddress,
+        connection.pilotAddress,
         connection.moduleAddress,
         connection.avatarAddress,
         connection.roleId
       ),
-    [walletConnectProvider, pilotAddress, connection]
+    [walletConnectProvider, connection]
   )
 
   const forkProvider = useMemo(

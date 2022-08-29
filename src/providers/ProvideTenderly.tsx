@@ -168,7 +168,7 @@ export class TenderlyProvider extends EventEmitter {
       this.blockNumber = block_number
       this.transactionIds.set(result, headTransactionId) // result is the transaction hash
 
-      // advance one extra block to account for apps waiting on the transaction's inclusion in the next block
+      // advance two extra blocks to account for apps waiting on the transaction's inclusion in the next block
       window.setTimeout(async () => {
         await provider.send('evm_increaseBlocks', ['0x2'])
         if (this.blockNumber) this.blockNumber += 2

@@ -62,6 +62,5 @@ root.render(
         </ProvideTenderlySettings>
       </ProvideConnections>
     </ProvideMetaMask>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 )
