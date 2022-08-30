@@ -32,8 +32,6 @@ esbuild
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
       'process.env.ETHERSCAN_API_KEY': `"${process.env.ETHERSCAN_API_KEY}"`,
       global: 'window',
-      // process: 'process',
-      // Buffer: 'Buffer',
     },
     plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
     watch: process.env.NODE_ENV === 'development' && {

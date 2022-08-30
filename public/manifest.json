@@ -37,7 +37,7 @@
       "matches": [
         "https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m"
       ],
-      "run_at": "document_start",
+      "run_at": "document_end",
       "js": ["build/launch.js"]
     }
   ],
