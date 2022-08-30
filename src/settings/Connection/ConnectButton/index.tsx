@@ -5,6 +5,7 @@ import {
   useMetaMaskProvider,
   useWalletConnectProvider,
 } from '../../../providers'
+import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
 import { useConnection, useConnections } from '../../connectionHooks'
 
@@ -13,10 +14,14 @@ import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
 const walletConnectLogo = (
-  <img src={walletConnectLogoUrl} alt="wallet connect logo" />
+  <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
 )
 const metamaskLogo = (
-  <img src={metamaskLogoUrl} alt="metamask logo" style={{ height: 28 }} />
+  <img
+    src={PUBLIC_PATH + metamaskLogoUrl}
+    alt="metamask logo"
+    style={{ height: 28 }}
+  />
 )
 
 const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
@@ -26,10 +31,16 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const metamask = useMetaMaskProvider()
   const walletConnect = useWalletConnectProvider(connection.id)
 
-  const connect = (providerType: ProviderType, account: string) => {
+  const connect = (
+    providerType: ProviderType,
+    chainId: number | null,
+    account: string
+  ) => {
     setConnections(
       connections.map((c) =>
-        c.id === id ? { ...connection, providerType, pilotAddress: account } : c
+        c.id === id
+          ? { ...connection, providerType, chainId, pilotAddress: account }
+          : c
       )
     )
   }
@@ -37,24 +48,71 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const disconnect = () => {
     if (connection.providerType === ProviderType.WalletConnect) {
       walletConnect.provider.disconnect()
-    } else {
-      // TODO: disconnect metamask
     }
+
+    setConnections(
+      connections.map((c) =>
+        c.id === id ? { ...connection, pilotAddress: '' } : c
+      )
+    )
   }
 
-  return connected ? (
-    <div className={classes.connectedAccount}>
-      <div className={classes.walletLogo}>
-        {connection.providerType === ProviderType.WalletConnect
-          ? walletConnectLogo
-          : metamaskLogo}
+  if (connected) {
+    return (
+      <div className={classes.connectedAccount}>
+        <div className={classes.walletLogo}>
+          {connection.providerType === ProviderType.WalletConnect
+            ? walletConnectLogo
+            : metamaskLogo}
+        </div>
+        <div className={classes.connectedAddress}>
+          {connection.pilotAddress}
+        </div>
+        <Button onClick={disconnect} className={classes.disconnectButton}>
+          Disconnect
+        </Button>
       </div>
-      <div className={classes.connectedAddress}>{connection.pilotAddress}</div>
-      <Button onClick={disconnect} className={classes.disconnectButton}>
-        Disconnect
+    )
+  }
+
+  if (
+    metamask.provider &&
+    connection.chainId &&
+    metamask.chainId !== connection.chainId
+  ) {
+    return (
+      <Button
+        onClick={() => {
+          metamask.provider?.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${connection.chainId?.toString(16)}` }],
+          })
+        }}
+      >
+        Switch wallet to{' '}
+        {CHAIN_NAME[connection.chainId] || `#${connection.chainId}`}
       </Button>
-    </div>
-  ) : (
+    )
+  }
+
+  if (
+    metamask.provider &&
+    connection.pilotAddress &&
+    !metamask.accounts.includes(connection.pilotAddress)
+  ) {
+    return (
+      <div className={classes.connectedAccount}>
+        <div className={classes.connectedAddress}>
+          Switch wallet to account {connection.pilotAddress}
+        </div>
+        <Button onClick={disconnect} className={classes.disconnectButton}>
+          Disconnect
+        </Button>
+      </div>
+    )
+  }
+
+  return (
     <>
       <Button
         onClick={async () => {
@@ -64,6 +122,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
             connect(
               ProviderType.WalletConnect,
+              walletConnect.provider.chainId,
               walletConnect.provider.accounts[0]
             )
           } catch (e) {
@@ -77,19 +136,28 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         {walletConnectLogo}
         Connect via WalletConnect
       </Button>
-      <Button
-        onClick={async () => {
-          console.log(metamask)
-          connect(ProviderType.Metamask, metamask.accounts[0])
-
-          // TODO: connect metamask
-        }}
-      >
-        {metamaskLogo}
-        Connect via MetaMask
-      </Button>
+      {metamask.provider && (
+        <Button
+          onClick={() => {
+            connect(
+              ProviderType.MetaMask,
+              metamask.chainId,
+              metamask.accounts[0]
+            )
+          }}
+        >
+          {metamaskLogo}
+          Connect via MetaMask
+        </Button>
+      )}
     </>
   )
 }
 
 export default ConnectButton
+
+const CHAIN_NAME: Record<number, string> = {
+  1: 'Ethereum',
+  4: 'Rinkeby',
+  100: 'Gnosis Chain',
+}

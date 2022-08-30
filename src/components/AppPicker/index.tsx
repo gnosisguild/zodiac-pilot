@@ -1,6 +1,7 @@
 import cn from 'classnames'
 import React from 'react'
 
+import PUBLIC_PATH from '../../publicPath'
 import { useConnection } from '../../settings'
 
 import aaveLogo from './images/aave.png'
@@ -171,7 +172,7 @@ const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
           >
             <img
               className={classes.logo}
-              src={app.logoUrl}
+              src={PUBLIC_PATH + app.logoUrl}
               alt={app.name + ' logo'}
             />
             <div className={classes.name}>{app.name}</div>

@@ -1,3 +1,5 @@
+// This is the entrypoint to the extension app. It is injected as a script tag from launch.ts so that it runs in the context of the external host.
+// This means it does not have access to chrome.* APIs, but it can interact with other extensions such as MetaMask.
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 

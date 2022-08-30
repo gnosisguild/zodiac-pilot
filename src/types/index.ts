@@ -1,6 +1,6 @@
 export enum ProviderType {
   WalletConnect,
-  Metamask,
+  MetaMask,
 }
 
 export type Connection = {
@@ -9,7 +9,7 @@ export type Connection = {
   moduleAddress: string
   avatarAddress: string
   pilotAddress: string
-  chainId: number
+  chainId: number | null
   providerType: ProviderType
   roleId: string
 }

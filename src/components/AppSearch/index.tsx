@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
 import { AppPicker, Box } from '../'
+import PUBLIC_PATH from '../../publicPath'
 
 import searchIcon from './search-icon.svg'
 import classes from './style.module.css'
@@ -15,7 +16,7 @@ const AppSearch: React.FC<Props> = ({ onPick }) => {
     <Box>
       <Box bg double>
         <i className={classes.inputIcon}>
-          <img src={searchIcon} alt="search-icon" />
+          <img src={PUBLIC_PATH + searchIcon} alt="search-icon" />
         </i>
         <input
           type="text"

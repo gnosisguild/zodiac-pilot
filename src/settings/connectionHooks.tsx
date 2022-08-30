@@ -17,7 +17,7 @@ const DEFAULT_VALUE: Connection[] = [
   {
     id: nanoid(),
     label: '',
-    chainId: 1,
+    chainId: null,
     moduleAddress: '',
     avatarAddress: '',
     pilotAddress: '',
@@ -106,18 +106,19 @@ export const useConnection = (id?: string) => {
   const walletConnect = useWalletConnectProvider(connection.id)
 
   const provider: Eip1193Provider =
-    connection.providerType === ProviderType.Metamask
+    connection.providerType === ProviderType.MetaMask
       ? metamask.provider || new DummyProvider() // passing a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
       : walletConnect.provider
 
   const connected =
-    connection.providerType === ProviderType.Metamask
-      ? !!metamask.chainId &&
-        metamask.accounts.includes(connection.pilotAddress.toLowerCase())
+    connection.providerType === ProviderType.MetaMask
+      ? metamask.accounts.includes(connection.pilotAddress) &&
+        !!metamask.chainId &&
+        metamask.chainId === connection.chainId
       : walletConnect.provider.connected
 
   const chainId =
-    connection.providerType === ProviderType.Metamask
+    connection.providerType === ProviderType.MetaMask
       ? metamask.chainId
       : walletConnect.provider.chainId
 

@@ -31,10 +31,10 @@ export const ProvideMetaMask: React.FC<{
   useEffect(() => {
     if (!window.ethereum) return
 
-    let canceled = true
+    let canceled = false
     const ifNotCanceled =
-      (callback: (...args: any[]) => void) =>
-      (...args: any[]) => {
+      <Args extends any[]>(callback: (...operationParameters: Args) => void) =>
+      (...args: Args) => {
         if (!canceled) {
           callback(...args)
         }
@@ -45,7 +45,8 @@ export const ProvideMetaMask: React.FC<{
       setAccounts(accounts)
     })
 
-    const handleNetworkChanged = ifNotCanceled((chainId: number) => {
+    const handleChainChanged = ifNotCanceled((chainIdHex: string) => {
+      const chainId = parseInt(chainIdHex.slice(2), 16)
       console.log(`MetaMask network changed to ${chainId}`)
       setChainId(chainId)
     })
@@ -57,13 +58,13 @@ export const ProvideMetaMask: React.FC<{
     })
 
     window.ethereum.on('accountsChanged', handleAccountsChanged)
-    window.ethereum.on('networkChanged', handleNetworkChanged)
+    window.ethereum.on('chainChanged', handleChainChanged)
     window.ethereum.on('disconnect', handleDisconnect)
 
     const web3Provider = new Web3Provider(window.ethereum)
     web3Provider
       .send('eth_requestAccounts', [])
-      .then((accounts: string[]) => setAccounts(accounts))
+      .then(ifNotCanceled((accounts: string[]) => setAccounts(accounts)))
     web3Provider
       .getNetwork()
       .then(ifNotCanceled((network) => setChainId(network.chainId)))
@@ -72,7 +73,7 @@ export const ProvideMetaMask: React.FC<{
       if (!window.ethereum) return
       canceled = true
       window.ethereum.removeListener('accountsChanged', handleAccountsChanged)
-      window.ethereum.removeListener('networkChanged', handleNetworkChanged)
+      window.ethereum.removeListener('chainChanged', handleChainChanged)
       window.ethereum.removeListener('disconnect', handleDisconnect)
     }
   }, [])

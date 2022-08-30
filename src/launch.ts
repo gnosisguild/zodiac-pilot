@@ -1,4 +1,5 @@
 // This script will be injected via contentScripts.ts when loading a page in a tab where the extension is activated.
+// It runs in the context of the extension, meaning it has access to all the chrome.* APIs.
 // It cancels rendering that page and instead renders the extension page.
 
 // make sure we have a <html lang="en"> element
@@ -7,7 +8,7 @@ while (docEl.attributes.length > 0)
   docEl.removeAttribute(docEl.attributes[0].name)
 docEl.setAttribute('lang', 'en')
 
-// Make the extenstion public path available to the app (read via publicPath.ts)
+// Make the extension public path available to the app (read via publicPath.ts)
 docEl.dataset.publicPath = chrome.runtime.getURL('/').slice(0, -1)
 
 // clear everything and initialize Pilot app
@@ -46,7 +47,6 @@ parent.appendChild(node)
 // So here we are relaying chrome.runtime to window.
 chrome.runtime.onMessage.addListener((message) => {
   if (message.type === 'navigationDetected') {
-    console.debug('relaying navigation detected message', message.data)
     window.postMessage(message, '*')
   }
 })
