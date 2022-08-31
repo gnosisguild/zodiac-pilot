@@ -34,7 +34,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
 }) => {
   return (
     <div>
-      <span className={classes.index}>{index}</span>
+      <span className={classes.index}>{index + 1}</span>
       <h5 className={classes.transactionTitle}>
         {input.type === TransactionType.callContract
           ? input.functionSignature.split('(')[0]
@@ -144,6 +144,45 @@ export const Transaction: React.FC<Props> = ({
       <TransactionHeader index={index} input={input} onRemove={handleRemove} />
       <TransactionBody input={input} />
       <TransactionStatus input={input} transactionHash={transactionHash} />
+    </Box>
+  )
+}
+
+export const TransactionBadge: React.FC<Props> = ({
+  index,
+  transactionHash,
+  input,
+}) => {
+  const provider = useProvider()
+  const dispatch = useDispatch()
+  const allTransactions = useTransactions()
+  const elementRef = useRef<HTMLDivElement | null>(null)
+  const {
+    connection: { avatarAddress },
+  } = useConnection()
+
+  const isLast = index === allTransactions.length - 1
+
+  useEffect(() => {
+    if (isLast && elementRef.current) {
+      elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [isLast])
+
+  return (
+    <Box
+      ref={elementRef}
+      p={2}
+      className={classes.badgeContainer}
+      double
+      rounded
+    >
+      <div className={classes.txNumber}>{index + 1}</div>
+      {transactionHash && (
+        <SimulatedExecutionCheck transactionHash={transactionHash} mini />
+      )}
+
+      <RolePermissionCheck transaction={input} mini />
     </Box>
   )
 }

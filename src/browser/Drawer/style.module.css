@@ -12,12 +12,42 @@
   height: 100%;
   overflow: hidden; /* required for making the body's overflow-y: auto take effect :/  */
 }
+.body::-webkit-scrollbar {
+  width: 3px;
+}
 .body {
   overflow-y: auto;
   flex-grow: 1;
   width: 501px;
 }
-.footer {
+
+.badgeContainer {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 6px;
+  padding-top: 10px;
+}
+.checkContainer {
+  position:absolute;
+  bottom: 0;
+  left: 0;
+}
+.txNumber {
+  font-size: 1.3em;
+  line-height: 1;
+}
+.collapsed {
+  position: relative;
+  padding-top: 33px;
+}
+
+.collapsed .body {
+  width: 40px;
 }
 
 .index {
@@ -122,6 +152,13 @@ button.link:hover {
   -ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
   animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
 }
+
+.collapsed .recordingIcon {
+  position:absolute;
+  top: 0;
+  left: 0;
+}
+
 @-webkit-keyframes pulse {
   to {
     box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);

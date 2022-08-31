@@ -3,6 +3,7 @@ import {
   RiCheckboxCircleLine,
   RiErrorWarningLine,
   RiExternalLinkLine,
+  RiGitBranchLine,
 } from 'react-icons/ri'
 
 import { Flex, Spinner, Tag } from '../../components'
@@ -11,9 +12,10 @@ import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
 
 import classes from './style.module.css'
 
-const SimulatedExecutionCheck: React.FC<{ transactionHash: string }> = ({
-  transactionHash,
-}) => {
+const SimulatedExecutionCheck: React.FC<{
+  transactionHash: string
+  mini?: boolean
+}> = ({ transactionHash, mini = false }) => {
   const tenderlyProvider = useTenderlyProvider()
 
   const [transactionInfo, setTransactionInfo] =
@@ -35,6 +37,20 @@ const SimulatedExecutionCheck: React.FC<{ transactionHash: string }> = ({
     }
   }, [tenderlyProvider, transactionHash])
 
+  if (mini) {
+    return (
+      <>
+        {!transactionInfo && <Tag head={<Spinner />} color="info"></Tag>}
+        {transactionInfo?.status && (
+          <Tag head={<RiGitBranchLine />} color="success"></Tag>
+        )}
+        {transactionInfo && !transactionInfo.status && (
+          <Tag head={<RiGitBranchLine />} color="danger"></Tag>
+        )}
+      </>
+    )
+  }
+
   return (
     <Flex gap={2}>
       <div>Simulated execution</div>
@@ -45,12 +61,12 @@ const SimulatedExecutionCheck: React.FC<{ transactionHash: string }> = ({
           </Tag>
         )}
         {transactionInfo?.status && (
-          <Tag head={<RiCheckboxCircleLine />} color="success">
+          <Tag head={<RiGitBranchLine />} color="success">
             Success
           </Tag>
         )}
         {transactionInfo && !transactionInfo.status && (
-          <Tag head={<RiErrorWarningLine />} color="danger">
+          <Tag head={<RiGitBranchLine />} color="danger">
             Reverted
           </Tag>
         )}

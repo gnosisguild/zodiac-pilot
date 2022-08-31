@@ -4,6 +4,7 @@ import {
   RiCheckboxCircleLine,
   RiErrorWarningLine,
   RiFileCopy2Line,
+  RiGroupLine,
 } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
@@ -14,9 +15,10 @@ import { useWrappingProvider } from '../ProvideProvider'
 
 import classes from './style.module.css'
 
-const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
-  transaction,
-}) => {
+const RolePermissionCheck: React.FC<{
+  transaction: TransactionInput
+  mini?: boolean
+}> = ({ transaction, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const wrappingProvider = useWrappingProvider()
 
@@ -52,16 +54,28 @@ const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
 
   if (error === undefined) return null
 
+  if (mini) {
+    return (
+      <>
+        {error === false ? (
+          <Tag head={<RiGroupLine />} color="success"></Tag>
+        ) : (
+          <Tag head={<RiGroupLine />} color="danger"></Tag>
+        )}
+      </>
+    )
+  }
+
   return (
     <Flex gap={2}>
       <div>Role permissions</div>
       <div>
         {error === false ? (
-          <Tag head={<RiCheckboxCircleLine />} color="success">
+          <Tag head={<RiGroupLine />} color="success">
             Allowed
           </Tag>
         ) : (
-          <Tag head={<RiErrorWarningLine />} color="danger">
+          <Tag head={<RiGroupLine />} color="danger">
             {error}
           </Tag>
         )}

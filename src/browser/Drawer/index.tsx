@@ -9,7 +9,7 @@ import { useConnection } from '../../settings'
 import { useCommitTransactions, useProvider } from '../ProvideProvider'
 import { useDispatch, useTransactions } from '../state'
 
-import { Transaction } from './Transaction'
+import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
 
 const TransactionsDrawer: React.FC = () => {
@@ -72,18 +72,25 @@ const TransactionsDrawer: React.FC = () => {
         </>
       }
       collapsedChildren={
-        <>
-        <div className={classes.recordingIcon} />
-        <Flex gap={1} className={classes.body} direction="column">
-          {transactions.map((transaction, index) => (
-            <Transaction
-              key={transaction.transactionHash}
-              index={index}
-              {...transaction}
-            />
-          ))}
+        <div className={classes.collapsed}>
+          <div className={classes.recordingIcon} />
+          <Flex
+            gap={2}
+            direction="column"
+            alignItems="stretch"
+            className={classes.wrapper}
+          >
+            <Flex gap={1} className={classes.body} direction="column">
+              {transactions.map((transaction, index) => (
+                <TransactionBadge
+                  key={transaction.transactionHash}
+                  index={index}
+                  {...transaction}
+                />
+              ))}
+            </Flex>
           </Flex>
-        </>
+        </div>
       }
       onToggle={() => setExpanded(!expanded)}
     >
