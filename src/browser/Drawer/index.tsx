@@ -71,6 +71,20 @@ const TransactionsDrawer: React.FC = () => {
           </Flex>
         </>
       }
+      collapsedChildren={
+        <>
+        <div className={classes.recordingIcon} />
+        <Flex gap={1} className={classes.body} direction="column">
+          {transactions.map((transaction, index) => (
+            <Transaction
+              key={transaction.transactionHash}
+              index={index}
+              {...transaction}
+            />
+          ))}
+          </Flex>
+        </>
+      }
       onToggle={() => setExpanded(!expanded)}
     >
       <Flex
