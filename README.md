@@ -63,9 +63,9 @@ The problem: When the user navigates the Dapp, the address bar of the Zodiac Pil
 The browser back button should function as usual and when reloading the extension page the iframe should continue showing the original page.
 Since browsers block access to foreign origin iframes we need to leverage Chrome extension super powers to detect navigation events in the iframe.
 
-The solution: We listen to `chrome.tabs.onUpdated` from any of our extension tabs events in the background script.
-This fires on location updates within any of our extension pages and we notify our extension page about it using `chrome.tabs.sendMessage`.
-For retrieving the new iframe location, we then post a message to the iframe window, which will send us the response in another message.
+The solution: We listen to `chrome.tabs.onUpdated` in the background script and notify the content script about it via a message, which relays the message to the extension app.
+This relaying is necessary because a background script can not directly talk to an externally hosted app.
+For retrieving the new iframe location, we then post a message to the injected script in the iframe window, which will send us the response in another message.
 
 ### Inject EIP-1193 provider
 
@@ -75,12 +75,19 @@ The injected script then runs in the context of the Dapp and injects an [EIP-119
 The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are handled with on of our providers.
 We currently offer two kinds of providers, the `WrappingProvider` for synchronously dispatching the transaction as a meta transaction of a Zodiac module function call, and `ForkProvider` for simulating the transaction in a local fork of the connected network and recording it for later batch transmission.
 
-### Wrapping of transactions
+### Simulating transaction in a fork
 
-The [WrappingProvider](src/providers/WrappingProvider.ts) takes any transaction requests received from the iframe and encodes them into `execTransactionFromModule` function calls to the configured target module address.
-It then forwards the wrapped transaction request to the WalletConnect provider.
+When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Avatar account.
+That way the app can continue communicating with the fork network, so that a whole session of multiple transactions can be recorded before anything is signed and submitted to the real chain.
 
-### Simulating transaction in local fork
+There are two options available for simulating transactions in a fork, [Tenderly](https://tenderly.co) and a [Ganache](https://trufflesuite.com/ganache/) EVM running locally in the browser.
+
+#### Tenderly
+
+Tenderly provides rich debugging capabilities, which help in understanding the exact effects of each recorded transaction before actually signing anything.
+Fresh forks are created via Tenderly's Simulation API and each fork will have its own JSON RPC URL.
+
+#### Local fork with Ganache (under development)
 
 We use Ganache to run a local EVM with a fork of the network the user is connected to.
 
@@ -90,8 +97,14 @@ TODO: The following is still true, but we should adjust the implementation now t
 > Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
 > At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
 
-Ganache allows impersonating accounts. So we can send transactions from the Avatar address without a signature.
+### Wrapping of transactions
+
+A batch of recorded transaction can finally be submitted as a multi-send transaction.
+Zodiac Pilot is currently geared to submitting transactions via a [Roles mod](https://github.com/gnosis/zodiac-modifier-roles), which means that the multi-send call needs to wrapped in a Roles mod's `execTransactionWithRole` call.
+This is implemented in the [WrappingProvider](src/providers/WrappingProvider.ts).
+
+In the future, we plan to make Zodiac Pilot more generally useful, meaning that users will be able to customize the exact way of transaction wrapping.
 
 ### Overview of providers
 
-![Diagram giving an overview of providers](./docs/providers-diagram.svg)
+![Diagram giving an overview of providers](./docs/providers-diagram.png)
