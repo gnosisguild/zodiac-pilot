@@ -15,10 +15,12 @@ interface Props {
 }
 
 const Drawer: React.FC<Props> = ({ children, header, expanded, onToggle }) => (
-  <Box p={1} className={cn({ [classes.collapsed]: !expanded })}>
+  <Box p={2} className={cn({ [classes.collapsed]: !expanded })}>
+    <div className={cn(classes.toggleContainer, {[classes.collapsedContainer]: !expanded})}>
+      <ToggleButton expanded={expanded} onToggle={onToggle} />
+    </div>
     <Flex direction="column" gap={1} className={classes.wrapper}>
       <Flex gap={2} alignItems="center">
-        <ToggleButton expanded={expanded} onToggle={onToggle} />
         {expanded && header}
       </Flex>
       {expanded && children}

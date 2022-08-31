@@ -140,7 +140,7 @@ export const Transaction: React.FC<Props> = ({
   }
 
   return (
-    <Box ref={elementRef} p={2} className={classes.container}>
+    <Box ref={elementRef} p={2} className={classes.container} double>
       <TransactionHeader index={index} input={input} onRemove={handleRemove} />
       <TransactionBody input={input} />
       <TransactionStatus input={input} transactionHash={transactionHash} />
