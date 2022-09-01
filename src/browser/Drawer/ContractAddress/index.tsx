@@ -68,15 +68,13 @@ const ContractAddress: React.FC<Props> = ({
     const explorerApiUrl = EXPLORER_API_URLS[provider.chainId]
     const apiKey = EXPLORER_API_KEYS[provider.chainId] || ''
 
-    fetch(
+    memoizedFetchJson(
       `${explorerApiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        if (!canceled) {
-          setContractName(json.result[0]?.ContractName || '')
-        }
-      })
+    ).then((json) => {
+      if (!canceled) {
+        setContractName(json.result[0]?.ContractName || '')
+      }
+    })
 
     return () => {
       setContractName('')
@@ -120,3 +118,13 @@ const ContractAddress: React.FC<Props> = ({
 }
 
 export default ContractAddress
+
+const fetchCache = new Map<string, any>()
+const memoizedFetchJson = async (url: string) => {
+  if (fetchCache.has(url)) {
+    return fetchCache.get(url)
+  }
+  const json = await fetch(url).then((res) => res.json())
+  fetchCache.set(url, json)
+  return json
+}
