@@ -1,5 +1,4 @@
 import { providers } from 'ethers'
-import { nanoid } from 'nanoid'
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 

@@ -45,46 +45,8 @@
   white-space: nowrap;
 }
 
-.copyButton {
-  background-color: transparent;
-  text-decoration: underline;
-  cursor: pointer;
-  color: white;
-  display: block;
-  padding: 0;
-  border: none;
-  font-family: 'Spectral';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  text-align: left;
-  width: 100%;
-}
-.copyButton:hover {
-  color: rgba(252, 248, 217, 0.8);
-}
-.decodedError {
-  font-family: 'Roboto Mono';
-  font-size: 0.8em;
-  background: rgba(0, 0, 0, 0.3);
-  padding: var(--spacing-2);
-  margin: var(--spacing-2) 0;
-}
 .navBox {
   height: fit-content;
-}
-.statusBox {
-  position: absolute;
-  top: 2em;
-  left: 37%;
-  background: #262b33;
-  z-index: 10;
-  padding-right: 32px;
-}
-.statusClose {
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 
 .launchPage {
