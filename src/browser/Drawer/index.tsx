@@ -1,9 +1,11 @@
+import { BigNumber } from 'ethers'
 import React, { useState } from 'react'
 import { RiRefreshLine } from 'react-icons/ri'
 import { encodeSingle } from 'react-multisend'
 
 import { Box, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
+import { useConnection } from '../../settings'
 import { useCommitTransactions, useProvider } from '../ProvideProvider'
 import { useDispatch, useTransactions } from '../state'
 
@@ -16,6 +18,9 @@ const TransactionsDrawer: React.FC = () => {
   const commitTransactions = useCommitTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
+  const {
+    connection: { avatarAddress },
+  } = useConnection()
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
@@ -36,7 +41,14 @@ const TransactionsDrawer: React.FC = () => {
       const encoded = encodeSingle(transaction.input)
       await provider.request({
         method: 'eth_sendTransaction',
-        params: [{ to: encoded.to, data: encoded.data, value: encoded.value }],
+        params: [
+          {
+            to: encoded.to,
+            data: encoded.data,
+            value: formatValue(encoded.value),
+            from: avatarAddress,
+          },
+        ],
       })
     }
   }
@@ -97,3 +109,10 @@ const TransactionsDrawer: React.FC = () => {
 }
 
 export default TransactionsDrawer
+
+// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
+const formatValue = (value: string): string => {
+  const valueBN = BigNumber.from(value)
+  if (valueBN.isZero()) return '0x0'
+  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
+}
