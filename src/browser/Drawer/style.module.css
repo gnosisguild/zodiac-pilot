@@ -141,10 +141,12 @@
 }
 
 .transactionStatus {
+  margin-top: 12px;
   font-size: 0.75em;
-  margin: var(--spacing-3) 0 0 0;
-  padding: var(--spacing-2) 0 0 0;
-  border-top: 1px solid var(--border-color);
+}
+
+.statusHeader {
+  flex-grow: 1;
 }
 
 .link {
@@ -165,10 +167,14 @@ button.link {
   font-weight: 400;
   font-size: 12px;
   text-align: left;
-  width: 100%;
+  width: auto;
 }
 button.link:hover {
   color: rgba(252, 248, 217, 0.8);
+}
+
+.tagContainer {
+  padding: 8px;
 }
 
 .modalClose {

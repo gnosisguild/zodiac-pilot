@@ -89,22 +89,7 @@ const TransactionBody: React.FC<BodyProps> = ({ input }) => {
       txInfo = <RawTransaction value={input} />
       break
   }
-  return (
-    <>
-      <Box p={1} className={classes.subtitleContainer}>
-        <Flex
-          gap={2}
-          alignItems="center"
-          justifyContent="space-between"
-          className={classes.transactionSubtitle}
-        >
-          <ContractAddress address={input.to} explorerLink />
-          <EtherValue input={input} />
-        </Flex>
-      </Box>
-      {txInfo}
-    </>
-  )
+  return <>{txInfo}</>
 }
 
 type Props = TransactionState & {
@@ -183,8 +168,19 @@ export const Transaction: React.FC<Props> = ({
       />
       {expanded && (
         <>
-          <TransactionBody input={input} />
+          <Box bg p={2} className={classes.subtitleContainer}>
+            <Flex
+              gap={2}
+              alignItems="center"
+              justifyContent="space-between"
+              className={classes.transactionSubtitle}
+            >
+              <ContractAddress address={input.to} explorerLink />
+              <EtherValue input={input} />
+            </Flex>
+          </Box>
           <TransactionStatus input={input} transactionHash={transactionHash} />
+          <TransactionBody input={input} />
         </>
       )}
     </Box>
@@ -229,13 +225,20 @@ const TransactionStatus: React.FC<TransactionState> = ({
   input,
   transactionHash,
 }) => (
-  <dl className={classes.transactionStatus}>
+  <Flex
+    gap={1}
+    justifyContent="space-between"
+    className={classes.transactionStatus}
+  >
     {transactionHash && (
-      <SimulatedExecutionCheck transactionHash={transactionHash} />
+      <Box bg p={2} className={classes.statusHeader}>
+        <SimulatedExecutionCheck transactionHash={transactionHash} />
+      </Box>
     )}
-
-    <RolePermissionCheck transaction={input} />
-  </dl>
+    <Box bg p={2} className={classes.statusHeader}>
+      <RolePermissionCheck transaction={input} />
+    </Box>
+  </Flex>
 )
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
