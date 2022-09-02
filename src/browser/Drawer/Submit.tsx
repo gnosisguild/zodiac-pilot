@@ -119,7 +119,7 @@ Modal.setAppElement('#root')
 
 const modalStyle = {
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgb(35 34 17 / 52%)',
   },
 
   content: {
@@ -128,11 +128,11 @@ const modalStyle = {
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
+    borderColor: '#d9d4ad',
     width: 300,
     borderRadius: 0,
     paddingTop: 30,
-    background:
-      'linear-gradient(108.86deg, rgba(26, 33, 66, 1) 6.24%, rgba(12, 19, 8, 1) 53.08%, rgba(37, 6, 4, 1) 96.54%)',
+    background: 'rgb(84 83 62 / 71%)',
     transform: 'translate(-50%, -50%)',
     textAlign: 'center',
   },

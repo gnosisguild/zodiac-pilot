@@ -89,7 +89,11 @@ const TransactionBody: React.FC<BodyProps> = ({ input }) => {
       txInfo = <RawTransaction value={input} />
       break
   }
-  return <>{txInfo}</>
+  return (
+    <Box p={2} bg className={classes.transactionContainer}>
+      {txInfo}
+    </Box>
+  )
 }
 
 type Props = TransactionState & {
