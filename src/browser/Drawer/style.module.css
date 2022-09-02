@@ -129,9 +129,15 @@
   align-items: center;
   justify-content: center;
 }
+.subtitleContainer {
+  margin-top: 8px;
+}
 .transactionSubtitle {
   font-size: 0.75em;
-  margin-left: 30px;
+}
+
+.value {
+  font-family: 'Roboto Mono', monospace;
 }
 
 .transactionStatus {

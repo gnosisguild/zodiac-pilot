@@ -91,10 +91,17 @@ const TransactionBody: React.FC<BodyProps> = ({ input }) => {
   }
   return (
     <>
-      <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
-        <EtherValue input={input} />
-        <ContractAddress address={input.to} explorerLink />
-      </Flex>
+      <Box p={1} className={classes.subtitleContainer}>
+        <Flex
+          gap={2}
+          alignItems="center"
+          justifyContent="space-between"
+          className={classes.transactionSubtitle}
+        >
+          <ContractAddress address={input.to} explorerLink />
+          <EtherValue input={input} />
+        </Flex>
+      </Box>
       {txInfo}
     </>
   )
@@ -246,14 +253,15 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
 
   const valueBN = BigNumber.from(value)
 
-  if (valueBN.isZero()) {
-    return null
-  }
-
   return (
-    <>
-      <span>{formatEther(valueBN)} ETH</span> <RiArrowDropRightLine />
-    </>
+    <Box p={2} className={classes.value}>
+      <Flex gap={1} alignItems="center" justifyContent="space-between">
+        <div>Value:</div>
+        <Box p={1} bg>
+          {valueBN.isZero() ? 'n/a' : `${formatEther(valueBN)} ETH`}
+        </Box>
+      </Flex>
+    </Box>
   )
 }
 
