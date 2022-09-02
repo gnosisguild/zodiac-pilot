@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
-import React, { useEffect, useRef } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
 import {
   encodeSingle,
@@ -9,6 +9,7 @@ import {
 } from 'react-multisend'
 
 import { Box, Flex, IconButton } from '../../components'
+import ToggleButton from '../../components/Drawer/ToggleButton'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
@@ -24,35 +25,47 @@ import classes from './style.module.css'
 interface HeaderProps {
   index: number
   input: TransactionInput
+  transactionHash: TransactionState['transactionHash']
   onRemove(): void
+  onExpandToggle(): void
+  expanded: boolean
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
   input,
+  transactionHash,
   onRemove,
+  onExpandToggle,
+  expanded,
 }) => {
   return (
-    <div>
-      <span className={classes.index}>{index}</span>
-      <h5 className={classes.transactionTitle}>
-        {input.type === TransactionType.callContract
-          ? input.functionSignature.split('(')[0]
-          : 'Raw transaction'}
-      </h5>
+    <div className={classes.transactionHeader}>
+      <div className={classes.start} onClick={onExpandToggle}>
+        <div className={classes.index}>{index + 1}</div>
+        <div className={classes.toggle}>
+          <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+        </div>
+        <h5 className={classes.transactionTitle}>
+          {input.type === TransactionType.callContract
+            ? input.functionSignature.split('(')[0]
+            : 'Raw transaction'}
+        </h5>
+      </div>
+      <div className={classes.end}>
+        {transactionHash && (
+          <SimulatedExecutionCheck transactionHash={transactionHash} mini />
+        )}
 
-      <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
-        <EtherValue input={input} />
-        <ContractAddress address={input.to} explorerLink />
-      </Flex>
-
-      <IconButton
-        onClick={onRemove}
-        className={classes.removeTransaction}
-        title="remove"
-      >
-        <RiDeleteBinLine />
-      </IconButton>
+        <RolePermissionCheck transaction={input} mini />
+        <IconButton
+          onClick={onRemove}
+          className={classes.removeTransaction}
+          title="remove"
+        >
+          <RiDeleteBinLine />
+        </IconButton>
+      </div>
     </div>
   )
 }
@@ -63,17 +76,28 @@ interface BodyProps {
 
 const TransactionBody: React.FC<BodyProps> = ({ input }) => {
   // const { network, blockExplorerApiKey } = useMultiSendContext()
+  let txInfo: ReactNode = <></>
   switch (input.type) {
     case TransactionType.callContract:
-      return <CallContract value={input} />
+      txInfo = <CallContract value={input} />
+      break
     // case TransactionType.transferFunds:
     //   return <TransferFunds value={value} onChange={onChange} />
     // case TransactionType.transferCollectible:
     //   return <TransferCollectible value={value} onChange={onChange} />
     case TransactionType.raw:
-      return <RawTransaction value={input} />
+      txInfo = <RawTransaction value={input} />
+      break
   }
-  return null
+  return (
+    <>
+      <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
+        <EtherValue input={input} />
+        <ContractAddress address={input.to} explorerLink />
+      </Flex>
+      {txInfo}
+    </>
+  )
 }
 
 type Props = TransactionState & {
@@ -85,6 +109,7 @@ export const Transaction: React.FC<Props> = ({
   transactionHash,
   input,
 }) => {
+  const [expanded, setExpanded] = useState(true)
   const provider = useProvider()
   const dispatch = useDispatch()
   const allTransactions = useTransactions()
@@ -140,10 +165,60 @@ export const Transaction: React.FC<Props> = ({
   }
 
   return (
-    <Box ref={elementRef} p={2} className={classes.container}>
-      <TransactionHeader index={index} input={input} onRemove={handleRemove} />
-      <TransactionBody input={input} />
-      <TransactionStatus input={input} transactionHash={transactionHash} />
+    <Box ref={elementRef} p={2} className={classes.container} double>
+      <TransactionHeader
+        index={index}
+        input={input}
+        transactionHash={transactionHash}
+        onRemove={handleRemove}
+        expanded={expanded}
+        onExpandToggle={() => setExpanded(!expanded)}
+      />
+      {expanded && (
+        <>
+          <TransactionBody input={input} />
+          <TransactionStatus input={input} transactionHash={transactionHash} />
+        </>
+      )}
+    </Box>
+  )
+}
+
+export const TransactionBadge: React.FC<Props> = ({
+  index,
+  transactionHash,
+  input,
+}) => {
+  const provider = useProvider()
+  const dispatch = useDispatch()
+  const allTransactions = useTransactions()
+  const elementRef = useRef<HTMLDivElement | null>(null)
+  const {
+    connection: { avatarAddress },
+  } = useConnection()
+
+  const isLast = index === allTransactions.length - 1
+
+  useEffect(() => {
+    if (isLast && elementRef.current) {
+      elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [isLast])
+
+  return (
+    <Box
+      ref={elementRef}
+      p={2}
+      className={classes.badgeContainer}
+      double
+      rounded
+    >
+      <div className={classes.txNumber}>{index + 1}</div>
+      {transactionHash && (
+        <SimulatedExecutionCheck transactionHash={transactionHash} mini />
+      )}
+
+      <RolePermissionCheck transaction={input} mini />
     </Box>
   )
 }

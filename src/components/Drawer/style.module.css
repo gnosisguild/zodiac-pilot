@@ -12,10 +12,24 @@
 }
 
 .toggleButton {
-  width: 40px;
-  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  aspect-ratio: 1.5/1;
+  padding: 3px;
   cursor: pointer;
-  padding: 0;
-  background-color: rgba(217, 212, 173, 0.1);
+  background-color: rgb(35 35 23);
   border: 1px solid rgba(217, 212, 173, 0.3);
+  margin: 0 auto;
+}
+
+.toggleContainer {
+  position: absolute;
+  top: -2%;
+  left: -3%;
+}
+
+.toggleContainer.collapsedContainer {
+  width: 100%;
 }
