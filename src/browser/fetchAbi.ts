@@ -2,27 +2,16 @@ import { FormatTypes, Interface } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/abstract-provider'
 import detectProxyTarget from 'ethers-proxies'
 
-const EXPLORER_API_URLS = {
-  1: 'https://api.etherscan.io/api',
-  4: 'https://api-rinkeby.etherscan.io/api',
-  100: 'https://blockscout.com/xdai/mainnet/api',
-  73799: 'https://volta-explorer.energyweb.org/api',
-  246: 'https://explorer.energyweb.org/api',
-  137: 'https://api.polygonscan.com/api',
-  56: 'https://api.bscscan.com/api',
-  42161: 'https://api.arbiscan.io/api',
-}
-
-export type NetworkId = keyof typeof EXPLORER_API_URLS
+import { ChainId, EXPLORER_API_URL } from '../networks'
 
 const fetchAbi = async (
-  network: NetworkId,
+  network: ChainId,
   contractAddress: string,
   transactionData: string,
   provider: Provider,
   blockExplorerApiKey = ''
 ): Promise<string> => {
-  const apiUrl = EXPLORER_API_URLS[network]
+  const apiUrl = EXPLORER_API_URL[network]
   const params = new URLSearchParams({
     module: 'contract',
     action: 'getAbi',

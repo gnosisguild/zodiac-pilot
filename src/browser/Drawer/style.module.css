@@ -33,7 +33,7 @@
   padding-top: 10px;
 }
 .checkContainer {
-  position:absolute;
+  position: absolute;
   bottom: 0;
   left: 0;
 }
@@ -99,7 +99,7 @@
   height: auto;
   padding: 3px;
   cursor: pointer;
-  color: #D9D4AD;
+  color: #d9d4ad;
   background-color: rgb(35 35 23);
   border: 1px solid rgba(217, 212, 173, 0.3);
 }
@@ -165,6 +165,18 @@ button.link:hover {
   color: rgba(252, 248, 217, 0.8);
 }
 
+.modalClose {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.safeAppLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: 0.75em;
+}
+
 .hint {
   margin: auto var(--spacing-3);
   text-align: center;
@@ -184,7 +196,7 @@ button.link:hover {
 }
 
 .collapsed .recordingIcon {
-  position:absolute;
+  position: absolute;
   top: 0;
   left: 0;
 }

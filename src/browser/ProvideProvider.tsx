@@ -2,6 +2,7 @@ import { providers } from 'ethers'
 import React, { createContext, useCallback, useContext, useMemo } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
+import { ChainId } from '../networks'
 import {
   Eip1193Provider,
   ForkProvider,
@@ -10,8 +11,8 @@ import {
 } from '../providers'
 import { useConnection } from '../settings'
 
-import fetchAbi, { NetworkId } from './fetchAbi'
-import { useDispatch, useTransactions } from './state'
+import fetchAbi from './fetchAbi'
+import { useDispatch, useNewTransactions } from './state'
 
 interface Props {
   simulate: boolean
@@ -31,10 +32,10 @@ export const useWrappingProvider = () => {
   return value
 }
 
-const CommitTransactionsContext = createContext<(() => Promise<void>) | null>(
+const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
   null
 )
-export const useCommitTransactions = () => useContext(CommitTransactionsContext)
+export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -43,7 +44,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const tenderlyProvider = useTenderlyProvider()
   const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
-  const transactions = useTransactions()
+  const transactions = useNewTransactions()
 
   const wrappingProvider = useMemo(
     () =>
@@ -89,7 +90,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             new providers.Web3Provider(walletConnectProvider),
             (address: string, data: string) =>
               fetchAbi(
-                walletConnectProvider.chainId as NetworkId,
+                walletConnectProvider.chainId as ChainId,
                 address,
                 data,
                 new providers.Web3Provider(walletConnectProvider)
@@ -114,13 +115,15 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     [tenderlyProvider, walletConnectProvider, connection, dispatch]
   )
 
-  const commitTransactions = useCallback(async () => {
-    console.debug('commit')
-    const web3Provider = new providers.Web3Provider(wrappingProvider)
+  const submitTransactions = useCallback(async () => {
+    console.log(
+      `submitting ${transactions.length} transactions as multi-send batch...`,
+      transactions
+    )
     const metaTransactions = transactions.map((txState) =>
       encodeSingle(txState.input)
     )
-    const txHash = await wrappingProvider.request({
+    const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',
       params: [
         metaTransactions.length === 1
@@ -128,21 +131,26 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           : encodeMulti(metaTransactions),
       ],
     })
-    console.log({ txHash })
-    const receipt = await web3Provider.waitForTransaction(txHash)
-    console.log({ receipt })
-  }, [transactions, wrappingProvider])
+    dispatch({
+      type: 'SUBMIT_TRANSACTIONS',
+      payload: { batchTransactionHash },
+    })
+    console.log(
+      `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
+    )
+    return batchTransactionHash
+  }, [transactions, wrappingProvider, dispatch])
 
   return (
     <ProviderContext.Provider
       value={simulate ? forkProvider : wrappingProvider}
     >
       <WrappingProviderContext.Provider value={wrappingProvider}>
-        <CommitTransactionsContext.Provider
-          value={simulate ? commitTransactions : null}
+        <SubmitTransactionsContext.Provider
+          value={simulate ? submitTransactions : null}
         >
           {children}
-        </CommitTransactionsContext.Provider>
+        </SubmitTransactionsContext.Provider>
       </WrappingProviderContext.Provider>
     </ProviderContext.Provider>
   )

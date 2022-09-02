@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react'
 import ReactDom from 'react-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import './global.css'
+
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
@@ -53,6 +56,7 @@ ReactDom.render(
     <ProvideConnections>
       <ProvideTenderlySettings>
         <Routes />
+        <ToastContainer />
       </ProvideTenderlySettings>
     </ProvideConnections>
   </React.StrictMode>,

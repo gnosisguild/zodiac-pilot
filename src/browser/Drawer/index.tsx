@@ -3,19 +3,20 @@ import React, { useState } from 'react'
 import { RiRefreshLine } from 'react-icons/ri'
 import { encodeSingle } from 'react-multisend'
 
-import { Box, Button, Drawer, Flex, IconButton } from '../../components'
+import { Box, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
-import { useCommitTransactions, useProvider } from '../ProvideProvider'
-import { useDispatch, useTransactions } from '../state'
+import { useProvider } from '../ProvideProvider'
+import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 
+import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
-  const transactions = useTransactions()
-  const commitTransactions = useCommitTransactions()
+  const allTransactions = useAllTransactions()
+  const newTransactions = useNewTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
   const {
@@ -26,7 +27,7 @@ const TransactionsDrawer: React.FC = () => {
     // remove all transactions from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { id: transactions[0].input.id },
+      payload: { id: allTransactions[0].input.id },
     })
 
     if (!(provider instanceof ForkProvider)) {
@@ -36,8 +37,8 @@ const TransactionsDrawer: React.FC = () => {
     await provider.refork()
 
     // re-simulate all transactions
-    for (let i = 0; i < transactions.length; i++) {
-      const transaction = transactions[i]
+    for (let i = 0; i < allTransactions.length; i++) {
+      const transaction = allTransactions[i]
       const encoded = encodeSingle(transaction.input)
       await provider.request({
         method: 'eth_sendTransaction',
@@ -62,7 +63,7 @@ const TransactionsDrawer: React.FC = () => {
           <Flex gap={1} className={classes.headerButtons}>
             <IconButton
               title="Re-simulate on current blockchain head"
-              disabled={transactions.length === 0}
+              disabled={newTransactions.length === 0}
               onClick={reforkAndRerun}
             >
               <RiRefreshLine />
@@ -81,7 +82,7 @@ const TransactionsDrawer: React.FC = () => {
             className={classes.wrapper}
           >
             <Flex gap={1} className={classes.body} direction="column">
-              {transactions.map((transaction, index) => (
+              {newTransactions.map((transaction, index) => (
                 <TransactionBadge
                   key={transaction.transactionHash}
                   index={index}
@@ -101,7 +102,7 @@ const TransactionsDrawer: React.FC = () => {
         className={classes.wrapper}
       >
         <Flex gap={1} className={classes.body} direction="column">
-          {transactions.map((transaction, index) => (
+          {newTransactions.map((transaction, index) => (
             <Transaction
               key={transaction.transactionHash}
               index={index}
@@ -109,7 +110,7 @@ const TransactionsDrawer: React.FC = () => {
             />
           ))}
 
-          {transactions.length === 0 && (
+          {newTransactions.length === 0 && (
             <p className={classes.hint}>
               As you interact with apps in the browser, transactions will be
               recorded here. You can then sign and submit them as a batch.
@@ -117,12 +118,7 @@ const TransactionsDrawer: React.FC = () => {
           )}
         </Flex>
         <Box className={classes.footer}>
-          <Button
-            onClick={commitTransactions || undefined}
-            disabled={!commitTransactions || transactions.length === 0}
-          >
-            Submit
-          </Button>
+          <Submit />
         </Box>
       </Flex>
     </Drawer>

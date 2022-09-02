@@ -13,7 +13,7 @@ import ToggleButton from '../../components/Drawer/ToggleButton'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
-import { TransactionState, useDispatch, useTransactions } from '../state'
+import { TransactionState, useDispatch, useNewTransactions } from '../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
@@ -41,7 +41,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
 }) => {
   return (
     <div className={classes.transactionHeader}>
-      <div className={classes.start} onClick={onExpandToggle}>
+      <label className={classes.start}>
         <div className={classes.index}>{index + 1}</div>
         <div className={classes.toggle}>
           <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
@@ -51,7 +51,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
             ? input.functionSignature.split('(')[0]
             : 'Raw transaction'}
         </h5>
-      </div>
+      </label>
       <div className={classes.end}>
         {transactionHash && (
           <SimulatedExecutionCheck transactionHash={transactionHash} mini />
@@ -112,13 +112,13 @@ export const Transaction: React.FC<Props> = ({
   const [expanded, setExpanded] = useState(true)
   const provider = useProvider()
   const dispatch = useDispatch()
-  const allTransactions = useTransactions()
+  const transactions = useNewTransactions()
   const elementRef = useRef<HTMLDivElement | null>(null)
   const {
     connection: { avatarAddress },
   } = useConnection()
 
-  const isLast = index === allTransactions.length - 1
+  const isLast = index === transactions.length - 1
 
   useEffect(() => {
     if (isLast && elementRef.current) {
@@ -131,12 +131,12 @@ export const Transaction: React.FC<Props> = ({
       throw new Error('This is only supported when using ForkProvider')
     }
 
-    const laterTransactions = allTransactions.slice(index + 1)
+    const laterTransactions = transactions.slice(index + 1)
 
     // remove the transaction and all later ones from the store
     dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
 
-    if (allTransactions.length === 1) {
+    if (transactions.length === 1) {
       // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
       await provider.deleteFork()
       return
@@ -189,15 +189,10 @@ export const TransactionBadge: React.FC<Props> = ({
   transactionHash,
   input,
 }) => {
-  const provider = useProvider()
-  const dispatch = useDispatch()
-  const allTransactions = useTransactions()
+  const transactions = useNewTransactions()
   const elementRef = useRef<HTMLDivElement | null>(null)
-  const {
-    connection: { avatarAddress },
-  } = useConnection()
 
-  const isLast = index === allTransactions.length - 1
+  const isLast = index === transactions.length - 1
 
   useEffect(() => {
     if (isLast && elementRef.current) {

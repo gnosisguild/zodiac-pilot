@@ -24,8 +24,31 @@ interface RemoveTransactionAction {
   }
 }
 
+interface RemoveTransactionAction {
+  type: 'REMOVE_TRANSACTION'
+  payload: {
+    id: string
+  }
+}
+
+interface SubmitTransactionsAction {
+  type: 'SUBMIT_TRANSACTIONS'
+  payload: {
+    batchTransactionHash: string
+  }
+}
+
+interface ClearTransactionsAction {
+  type: 'CLEAR_TRANSACTIONS'
+  payload: {
+    batchTransactionHash: string
+  }
+}
+
 export type Action =
   | AppendRawTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
   | RemoveTransactionAction
+  | SubmitTransactionsAction
+  | ClearTransactionsAction
