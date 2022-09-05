@@ -90,13 +90,9 @@ const TransactionBody: React.FC<BodyProps> = ({ input }) => {
       break
   }
   return (
-    <>
-      <Flex gap={2} alignItems="center" className={classes.transactionSubtitle}>
-        <EtherValue input={input} />
-        <ContractAddress address={input.to} explorerLink />
-      </Flex>
+    <Box p={2} bg className={classes.transactionContainer}>
       {txInfo}
-    </>
+    </Box>
   )
 }
 
@@ -176,8 +172,19 @@ export const Transaction: React.FC<Props> = ({
       />
       {expanded && (
         <>
-          <TransactionBody input={input} />
+          <Box bg p={2} className={classes.subtitleContainer}>
+            <Flex
+              gap={2}
+              alignItems="center"
+              justifyContent="space-between"
+              className={classes.transactionSubtitle}
+            >
+              <ContractAddress address={input.to} explorerLink />
+              <EtherValue input={input} />
+            </Flex>
+          </Box>
           <TransactionStatus input={input} transactionHash={transactionHash} />
+          <TransactionBody input={input} />
         </>
       )}
     </Box>
@@ -222,13 +229,20 @@ const TransactionStatus: React.FC<TransactionState> = ({
   input,
   transactionHash,
 }) => (
-  <dl className={classes.transactionStatus}>
+  <Flex
+    gap={1}
+    justifyContent="space-between"
+    className={classes.transactionStatus}
+  >
     {transactionHash && (
-      <SimulatedExecutionCheck transactionHash={transactionHash} />
+      <Box bg p={2} className={classes.statusHeader}>
+        <SimulatedExecutionCheck transactionHash={transactionHash} />
+      </Box>
     )}
-
-    <RolePermissionCheck transaction={input} />
-  </dl>
+    <Box bg p={2} className={classes.statusHeader}>
+      <RolePermissionCheck transaction={input} />
+    </Box>
+  </Flex>
 )
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
@@ -246,14 +260,15 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
 
   const valueBN = BigNumber.from(value)
 
-  if (valueBN.isZero()) {
-    return null
-  }
-
   return (
-    <>
-      <span>{formatEther(valueBN)} ETH</span> <RiArrowDropRightLine />
-    </>
+    <Box p={2} className={classes.value}>
+      <Flex gap={1} alignItems="center" justifyContent="space-between">
+        <div>Value:</div>
+        <Box p={1} bg>
+          {valueBN.isZero() ? 'n/a' : `${formatEther(valueBN)} ETH`}
+        </Box>
+      </Flex>
+    </Box>
   )
 }
 

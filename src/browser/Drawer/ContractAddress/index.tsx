@@ -83,36 +83,45 @@ const ContractAddress: React.FC<Props> = ({
   }, [provider.chainId, address])
 
   return (
-    <Flex gap={1} className={cn(className, classes.container)}>
-      <div className={classes.blockies}>
+    <Flex
+      gap={3}
+      alignItems="center"
+      justifyContent="space-between"
+      className={cn(className, classes.container)}
+    >
+      <Box p={1} rounded className={classes.blockies}>
         <img src={blockie} alt={address} />
-      </div>
+      </Box>
 
       {contractName && (
         <div className={classes.contractName}>{contractName}</div>
       )}
-      <div className={classes.address}>{displayAddress}</div>
+      <Box p={2} bg className={classes.addressContainer}>
+        <Flex gap={1}>
+          <div className={classes.address}>{displayAddress}</div>
 
-      {copyToClipboard && (
-        <IconButton
-          onClick={() => {
-            copy(address)
-          }}
-        >
-          <RiFileCopyLine />
-        </IconButton>
-      )}
-      {explorerLink && (
-        <a
-          href={`${explorerUrl}/search?q=${address}`}
-          target="_blank"
-          className={classes.link}
-          title={address}
-          rel="noreferrer"
-        >
-          <RiExternalLinkLine />
-        </a>
-      )}
+          {copyToClipboard && (
+            <IconButton
+              onClick={() => {
+                copy(address)
+              }}
+            >
+              <RiFileCopyLine />
+            </IconButton>
+          )}
+          {explorerLink && (
+            <a
+              href={`${explorerUrl}/search?q=${address}`}
+              target="_blank"
+              className={classes.link}
+              title={address}
+              rel="noreferrer"
+            >
+              <RiExternalLinkLine />
+            </a>
+          )}
+        </Flex>
+      </Box>
     </Flex>
   )
 }

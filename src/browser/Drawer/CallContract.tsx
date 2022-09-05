@@ -5,6 +5,7 @@ import {
   useContractCall,
 } from 'react-multisend'
 
+import { Box } from '../../components'
 import { useConnection } from '../../settings'
 
 import classes from './style.module.css'
@@ -33,7 +34,9 @@ const CallContract: React.FC<Props> = ({ value }) => {
               <span>
                 {input.name} <i className={classes.inputType}>{input.type}</i>
               </span>
-              <input type="text" value={`${input.value || ''}`} readOnly />
+              <Box p={1} bg>
+                <input type="text" value={`${input.value || ''}`} readOnly />
+              </Box>
             </label>
           ))}
         </fieldset>

@@ -24,6 +24,10 @@
   margin: 0 auto;
 }
 
+.toggleButton:hover {
+  filter:brightness(1.4)
+}
+
 .toggleContainer {
   position: absolute;
   top: -2%;

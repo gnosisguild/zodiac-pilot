@@ -73,7 +73,11 @@ const TransactionsDrawer: React.FC = () => {
         </>
       }
       collapsedChildren={
-        <div className={classes.collapsed}>
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          className={classes.collapsed}
+          onClick={() => setExpanded(!expanded)}
+        >
           <div className={classes.recordingIcon} />
           <Flex
             gap={2}
@@ -117,7 +121,7 @@ const TransactionsDrawer: React.FC = () => {
             </p>
           )}
         </Flex>
-        <Box className={classes.footer}>
+        <Box p={2} bg>
           <Submit />
         </Box>
       </Flex>

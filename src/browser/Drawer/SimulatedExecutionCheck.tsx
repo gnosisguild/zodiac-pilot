@@ -6,7 +6,7 @@ import {
   RiGitBranchLine,
 } from 'react-icons/ri'
 
-import { Flex, Spinner, Tag } from '../../components'
+import { Box, Flex, Spinner, Tag } from '../../components'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
 
@@ -52,9 +52,28 @@ const SimulatedExecutionCheck: React.FC<{
   }
 
   return (
-    <Flex gap={2}>
-      <div>Simulated execution</div>
-      <div>
+    <Flex
+      gap={2}
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+    >
+      <Flex gap={1} justifyContent="space-between">
+        <div>Simulation</div>
+
+        {transactionInfo && (
+          <a
+            href={transactionInfo.dashboardLink}
+            target="_blank"
+            rel="noreferrer"
+            className={classes.link}
+          >
+            View in Tenderly
+            <RiExternalLinkLine />
+          </a>
+        )}
+      </Flex>
+      <Flex gap={0} justifyContent="center" className={classes.tagContainer}>
         {!transactionInfo && (
           <Tag head={<Spinner />} color="info">
             Pending...
@@ -70,20 +89,7 @@ const SimulatedExecutionCheck: React.FC<{
             Reverted
           </Tag>
         )}
-      </div>
-      {transactionInfo && (
-        <div>
-          <a
-            href={transactionInfo.dashboardLink}
-            target="_blank"
-            rel="noreferrer"
-            className={classes.link}
-          >
-            View in Tenderly
-            <RiExternalLinkLine />
-          </a>
-        </div>
-      )}
+      </Flex>
     </Flex>
   )
 }
