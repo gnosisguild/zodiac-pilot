@@ -48,7 +48,6 @@ const Submit: React.FC = () => {
       payload: { batchTransactionHash },
     })
 
-    // TODO: show Toast message with Blockchain Explorer link
     toast(
       <>
         Transaction batch has been executed
