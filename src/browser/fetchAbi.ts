@@ -65,7 +65,7 @@ const fetchFrom4ByteDirectory = async (data: string): Promise<string> => {
   const calldata = `0x${data.substring(10)}`
 
   const res = await fetch(
-    `https://api.4byte.directory/api/v1/signatures/?hex_signature=${sighash}&ordering=created_at`
+    `https://www.4byte.directory/api/v1/signatures/?hex_signature=${sighash}&ordering=created_at`
   )
   if (!res.ok) {
     return ''
