@@ -161,7 +161,7 @@ export const Transaction: React.FC<Props> = ({
   }
 
   return (
-    <Box ref={elementRef} p={2} className={classes.container} double>
+    <Box ref={elementRef} p={2} className={classes.container}>
       <TransactionHeader
         index={index}
         input={input}
@@ -246,6 +246,7 @@ const TransactionStatus: React.FC<TransactionState> = ({
 )
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
+  const { provider: walletConnectProvider } = useConnection()
   let value = ''
   if (
     input.type === TransactionType.callContract ||
