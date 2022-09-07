@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  border-color: rgba(217, 212, 173, 0.8)
+  border-color: rgba(217, 212, 173, 0.8);
 }
 .header {
   padding: 0;
@@ -11,7 +11,7 @@
 }
 .wrapper {
   height: 100%;
-  overflow: hidden; /* required for making the body's overflow-y: auto take effect :/  */
+  overflow: hidden; /* required for making the .body element's overflow-y: auto take effect :/  */
 }
 .body::-webkit-scrollbar {
   width: 3px;
@@ -19,7 +19,7 @@
 .body {
   overflow-y: auto;
   flex-grow: 1;
-  width: 501px;
+  width: 494px;
 }
 
 .badgeContainer {
@@ -44,8 +44,7 @@
 }
 .collapsed {
   position: relative;
-  padding-top: 33px;
-  cursor: pointer;
+  padding-top: 38px;
 }
 
 .collapsed .body {

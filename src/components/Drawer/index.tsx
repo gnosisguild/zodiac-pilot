@@ -15,19 +15,35 @@ interface Props {
   onToggle(): void
 }
 
-const Drawer: React.FC<Props> = ({ children, header, expanded, onToggle, collapsedChildren }) => (
-  <Box p={2} className={cn({ [classes.collapsed]: !expanded })}>
-    <div className={cn(classes.toggleContainer, {[classes.collapsedContainer]: !expanded})}>
-      <ToggleButton expanded={expanded} onToggle={onToggle} />
-    </div>
-    <Flex direction="column" gap={1} className={classes.wrapper}>
-      <Flex gap={2} alignItems="center">
-        {expanded && header}
-        {!expanded && collapsedChildren}
+const Drawer: React.FC<Props> = ({
+  children,
+  header,
+  expanded,
+  onToggle,
+  collapsedChildren,
+}) => (
+  <button
+    onClick={onToggle}
+    disabled={expanded}
+    className={cn(classes.wrapperButton, { [classes.collapsed]: !expanded })}
+  >
+    <Box p={2} className={classes.box}>
+      <div
+        className={cn(classes.toggleContainer, {
+          [classes.collapsedContainer]: !expanded,
+        })}
+      >
+        <ToggleButton expanded={expanded} onToggle={onToggle} />
+      </div>
+      <Flex direction="column" gap={1} className={classes.wrapper}>
+        <Flex gap={2} alignItems="center">
+          {expanded && header}
+          {!expanded && collapsedChildren}
+        </Flex>
+        {expanded && children}
       </Flex>
-      {expanded && children}
-    </Flex>
-  </Box>
+    </Box>
+  </button>
 )
 
 export default Drawer

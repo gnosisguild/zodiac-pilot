@@ -21,4 +21,10 @@ export const NETWORK_PREFIX = {
   100: 'gno',
 }
 
+export const NETWORK_CURRENCY = {
+  1: 'ETH',
+  4: 'ETH',
+  100: 'xDAI',
+}
+
 export type ChainId = keyof typeof EXPLORER_URL

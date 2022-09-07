@@ -29,9 +29,9 @@
 
 body {
   font-family: 'Spectral';
+  font-size: 16px;
   color: white;
   min-height: 100vh;
-  font-size: 16px;
   background: url(./assets/zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
 }

@@ -10,6 +10,7 @@ import {
 
 import { Box, Flex, IconButton } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
+import { ChainId, NETWORK_CURRENCY } from '../../networks'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
@@ -98,29 +99,23 @@ const TransactionBody: React.FC<BodyProps> = ({ input }) => {
 
 type Props = TransactionState & {
   index: number
+  scrollIntoView: boolean
 }
 
 export const Transaction: React.FC<Props> = ({
   index,
   transactionHash,
   input,
+  scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const elementRef = useRef<HTMLDivElement | null>(null)
   const {
     connection: { avatarAddress },
   } = useConnection()
-
-  const isLast = index === transactions.length - 1
-
-  useEffect(() => {
-    if (isLast && elementRef.current) {
-      elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    }
-  }, [isLast])
+  const elementRef = useScrollIntoView(scrollIntoView)
 
   const handleRemove = async () => {
     if (!(provider instanceof ForkProvider)) {
@@ -195,17 +190,9 @@ export const TransactionBadge: React.FC<Props> = ({
   index,
   transactionHash,
   input,
+  scrollIntoView,
 }) => {
-  const transactions = useNewTransactions()
-  const elementRef = useRef<HTMLDivElement | null>(null)
-
-  const isLast = index === transactions.length - 1
-
-  useEffect(() => {
-    if (isLast && elementRef.current) {
-      elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    }
-  }, [isLast])
+  const elementRef = useScrollIntoView(scrollIntoView)
 
   return (
     <Box
@@ -246,7 +233,7 @@ const TransactionStatus: React.FC<TransactionState> = ({
 )
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
-  const { provider: walletConnectProvider } = useConnection()
+  const { provider } = useConnection()
   let value = ''
   if (
     input.type === TransactionType.callContract ||
@@ -266,7 +253,11 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
       <Flex gap={1} alignItems="center" justifyContent="space-between">
         <div>Value:</div>
         <Box p={1} bg>
-          {valueBN.isZero() ? 'n/a' : `${formatEther(valueBN)} ETH`}
+          {valueBN.isZero()
+            ? 'n/a'
+            : `${formatEther(valueBN)} ${
+                NETWORK_CURRENCY[provider.chainId as ChainId]
+              }`}
         </Box>
       </Flex>
     </Box>
@@ -278,4 +269,19 @@ const formatValue = (value: string): string => {
   const valueBN = BigNumber.from(value)
   if (valueBN.isZero()) return '0x0'
   else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
+}
+
+const useScrollIntoView = (enable: boolean) => {
+  const elementRef = useRef<HTMLDivElement | null>(null)
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (enable && elementRef.current) {
+      elementRef.current.scrollIntoView({
+        behavior: isFirstRender ? 'auto' : 'smooth',
+      })
+    }
+
+    isFirstRender.current = false
+  }, [enable])
+  return elementRef
 }
