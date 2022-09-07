@@ -20,32 +20,31 @@ const fetchAbi = async (
   })
 
   const response = await fetch(`${apiUrl}?${params}`)
-  if (!response.ok) {
-    return ''
-  }
 
-  const { result, status } = await response.json()
+  if (response.ok) {
+    const { result, status } = await response.json()
 
-  if (status === '0' || looksLikeAProxy(result)) {
-    // Is this a proxy contract?
-    const proxyTarget = await detectProxyTarget(contractAddress, provider)
-    if (proxyTarget) {
-      return await fetchAbi(
-        network,
-        proxyTarget,
-        transactionData,
-        provider,
-        blockExplorerApiKey
-      )
+    if (status === '0' || looksLikeAProxy(result)) {
+      // Is this a proxy contract?
+      const proxyTarget = await detectProxyTarget(contractAddress, provider)
+      if (proxyTarget) {
+        return await fetchAbi(
+          network,
+          proxyTarget,
+          transactionData,
+          provider,
+          blockExplorerApiKey
+        )
+      }
     }
 
-    // Try finding an entry at 4Bytes Directory as a last resort
-    return await fetchFrom4ByteDirectory(transactionData)
+    // bring the JSON into ethers.js canonical form
+    // (so we don't trigger unnecessary updates when looking at the same ABI in different forms)
+    return new Interface(result).format(FormatTypes.json) as string
   }
 
-  // bring the JSON into ethers.js canonical form
-  // (so we don't trigger unnecessary updates when looking at the same ABI in different forms)
-  return new Interface(result).format(FormatTypes.json) as string
+  // Try finding an entry at 4Bytes Directory as a last resort
+  return await fetchFrom4ByteDirectory(transactionData)
 }
 
 export default fetchAbi
