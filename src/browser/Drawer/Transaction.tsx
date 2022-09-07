@@ -1,113 +1,323 @@
-import React, { useState } from 'react'
-import { TransactionType } from 'react-multisend'
+import { BigNumber } from 'ethers'
+import { formatEther } from 'ethers/lib/utils'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
+import { RiDeleteBinLine } from 'react-icons/ri'
+import {
+  encodeSingle,
+  TransactionInput,
+  TransactionType,
+} from 'react-multisend'
 
-import { Box } from '../../components'
-import { TransactionState } from '../state'
+import { Box, Flex, IconButton } from '../../components'
+import ToggleButton from '../../components/Drawer/ToggleButton'
+import { ChainId, NETWORK_CURRENCY } from '../../networks'
+import { ForkProvider } from '../../providers'
+import { useConnection } from '../../settings'
+import { useProvider } from '../ProvideProvider'
+import { TransactionState, useDispatch, useNewTransactions } from '../state'
 
 import CallContract from './CallContract'
+import ContractAddress from './ContractAddress'
 import RawTransaction from './RawTransaction'
+import RolePermissionCheck from './RolePermissionCheck'
+import SimulatedExecutionCheck from './SimulatedExecutionCheck'
 import classes from './style.module.css'
 
 interface HeaderProps {
   index: number
-  value: TransactionState
-  onClick(): void
+  input: TransactionInput
+  transactionHash: TransactionState['transactionHash']
   onRemove(): void
+  onExpandToggle(): void
+  expanded: boolean
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
-  value,
-  onClick,
+  input,
+  transactionHash,
   onRemove,
+  onExpandToggle,
+  expanded,
 }) => {
-  let title = 'Raw tx'
-  if (value.input.type === TransactionType.callContract) {
-    title = `Contract call: ${value.input.functionSignature}`
-  }
-
   return (
-    <div
-      className={classes.transactionHeader}
-      onClick={onClick}
-      role="button"
-      tabIndex={-1}
-      onKeyPress={(ev) => {
-        if (ev.key === 'Enter') {
-          onClick()
-        }
-      }}
-    >
-      <div className={classes.titleWrapper}>
-        <span className={classes.title}>
-          <span className={classes.index}>{index}</span>
-          {title}
-        </span>
-      </div>
-      <button
-        onClick={onRemove}
-        className={classes.removeTransaction}
-        title="remove"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+    <div className={classes.transactionHeader}>
+      <label className={classes.start}>
+        <div className={classes.index}>{index + 1}</div>
+        <div className={classes.toggle}>
+          <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+        </div>
+        <h5 className={classes.transactionTitle}>
+          {input.type === TransactionType.callContract
+            ? input.functionSignature.split('(')[0]
+            : 'Raw transaction'}
+        </h5>
+      </label>
+      <div className={classes.end}>
+        {transactionHash && (
+          <SimulatedExecutionCheck transactionHash={transactionHash} mini />
+        )}
+
+        <RolePermissionCheck transaction={input} mini />
+        <IconButton
+          onClick={onRemove}
+          className={classes.removeTransaction}
+          title="remove"
         >
-          <path
-            d="M13.5 13.2128L2.50003 2.21286M2.50003 13.2128L13.5 2.21286"
-            stroke="white"
-            strokeWidth="3"
-            strokeLinecap="square"
-          />
-        </svg>
-      </button>
+          <RiDeleteBinLine />
+        </IconButton>
+      </div>
     </div>
   )
 }
 
-interface ContentProps {
-  value: TransactionState
+interface BodyProps {
+  input: TransactionInput
 }
 
-const TransactionBody: React.FC<ContentProps> = ({ value }) => {
+const TransactionBody: React.FC<BodyProps> = ({ input }) => {
   // const { network, blockExplorerApiKey } = useMultiSendContext()
-  switch (value.input.type) {
+  let txInfo: ReactNode = <></>
+  switch (input.type) {
     case TransactionType.callContract:
-      return <CallContract value={value.input} />
+      txInfo = <CallContract value={input} />
+      break
     // case TransactionType.transferFunds:
     //   return <TransferFunds value={value} onChange={onChange} />
     // case TransactionType.transferCollectible:
     //   return <TransferCollectible value={value} onChange={onChange} />
     case TransactionType.raw:
-      return <RawTransaction value={value.input} />
+      txInfo = <RawTransaction value={input} />
+      break
   }
-  return null
+  return (
+    <Box p={2} bg className={classes.transactionContainer}>
+      {txInfo}
+    </Box>
+  )
 }
 
-interface Props {
+type Props = TransactionState & {
   index: number
-  value: TransactionState
+  scrollIntoView: boolean
 }
 
-export const Transaction: React.FC<Props> = ({ index, value }) => {
-  const [collapsed, setCollapsed] = useState(false)
+export const Transaction: React.FC<Props> = ({
+  index,
+  transactionHash,
+  input,
+  scrollIntoView,
+}) => {
+  const [expanded, setExpanded] = useState(true)
+  const provider = useProvider()
+  const dispatch = useDispatch()
+  const transactions = useNewTransactions()
+  const {
+    connection: { avatarAddress },
+  } = useConnection()
+  const elementRef = useScrollIntoView(scrollIntoView)
 
-  const handleRemove = () => {
-    // TODO
+  const handleRemove = async () => {
+    if (!(provider instanceof ForkProvider)) {
+      throw new Error('This is only supported when using ForkProvider')
+    }
+
+    const laterTransactions = transactions.slice(index + 1)
+
+    // remove the transaction and all later ones from the store
+    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
+
+    if (transactions.length === 1) {
+      // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
+      await provider.deleteFork()
+      return
+    }
+
+    // revert to checkpoint before the transaction to remove
+    const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    await provider.request({ method: 'evm_revert', params: [checkpoint] })
+
+    // re-simulate all transactions after the removed one
+    for (let i = 0; i < laterTransactions.length; i++) {
+      const transaction = laterTransactions[i]
+      const encoded = encodeSingle(transaction.input)
+      await provider.request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: encoded.to,
+            data: encoded.data,
+            value: formatValue(encoded.value),
+            from: avatarAddress,
+          },
+        ],
+      })
+    }
   }
 
   return (
-    <Box double p={1}>
+    <Box ref={elementRef} p={2} className={classes.container}>
       <TransactionHeader
         index={index}
-        value={value}
+        input={input}
+        transactionHash={transactionHash}
         onRemove={handleRemove}
-        onClick={() => setCollapsed(!collapsed)}
+        expanded={expanded}
+        onExpandToggle={() => setExpanded(!expanded)}
       />
-      {!collapsed && <TransactionBody value={value} />}
+      {expanded && (
+        <>
+          <Box bg p={2} className={classes.subtitleContainer}>
+            <Flex
+              gap={2}
+              alignItems="center"
+              justifyContent="space-between"
+              className={classes.transactionSubtitle}
+            >
+              <ContractAddress address={input.to} explorerLink />
+              <EtherValue input={input} />
+            </Flex>
+          </Box>
+          <TransactionStatus input={input} transactionHash={transactionHash} />
+          <TransactionBody input={input} />
+        </>
+      )}
     </Box>
   )
+}
+
+export const TransactionBadge: React.FC<Props> = ({
+  index,
+  transactionHash,
+  input,
+  scrollIntoView,
+}) => {
+  const elementRef = useScrollIntoView(scrollIntoView)
+
+  return (
+    <Box
+      ref={elementRef}
+      p={2}
+      className={classes.badgeContainer}
+      double
+      rounded
+    >
+      <div className={classes.txNumber}>{index + 1}</div>
+      {transactionHash && (
+        <SimulatedExecutionCheck transactionHash={transactionHash} mini />
+      )}
+
+      <RolePermissionCheck transaction={input} mini />
+    </Box>
+  )
+}
+
+const TransactionStatus: React.FC<TransactionState> = ({
+  input,
+  transactionHash,
+}) => (
+  <Flex
+    gap={1}
+    justifyContent="space-between"
+    className={classes.transactionStatus}
+  >
+    {transactionHash && (
+      <Box bg p={2} className={classes.statusHeader}>
+        <SimulatedExecutionCheck transactionHash={transactionHash} />
+      </Box>
+    )}
+    <Box bg p={2} className={classes.statusHeader}>
+      <RolePermissionCheck transaction={input} />
+    </Box>
+  </Flex>
+)
+
+const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
+  const { provider } = useConnection()
+  let value = ''
+  if (
+    input.type === TransactionType.callContract ||
+    input.type === TransactionType.raw
+  ) {
+    value = input.value
+  }
+
+  if (!value) {
+    return null
+  }
+
+  const valueBN = BigNumber.from(value)
+
+  return (
+    <Box p={2} className={classes.value}>
+      <Flex gap={1} alignItems="center" justifyContent="space-between">
+        <div>Value:</div>
+        <Box p={1} bg>
+          {valueBN.isZero()
+            ? 'n/a'
+            : `${formatEther(valueBN)} ${
+                NETWORK_CURRENCY[provider.chainId as ChainId]
+              }`}
+        </Box>
+      </Flex>
+    </Box>
+  )
+}
+
+// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
+const formatValue = (value: string): string => {
+  const valueBN = BigNumber.from(value)
+  if (valueBN.isZero()) return '0x0'
+  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
+}
+
+const useScrollIntoView = (enable: boolean) => {
+  const elementRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (!enable || !elementRef.current) return
+
+    const scrollParent = getScrollParent(elementRef.current)
+    if (!scrollParent) return
+
+    // scroll to it right away
+    elementRef.current.scrollIntoView({
+      behavior: 'smooth',
+    })
+
+    // keep it in view while it grows
+    const resizeObserver = new ResizeObserver(() => {
+      elementRef.current?.scrollIntoView({
+        behavior: 'smooth',
+      })
+
+      // this delay must be greater than the browser's native scrollIntoView animation duration
+      window.setTimeout(() => {
+        scrollParent.addEventListener('scroll', stopObserving)
+      }, 1000)
+    })
+    resizeObserver.observe(elementRef.current)
+
+    // stop keeping it in view once the user scrolls
+    const stopObserving = () => {
+      resizeObserver.disconnect()
+      scrollParent.removeEventListener('scroll', stopObserving)
+    }
+
+    return () => {
+      stopObserving()
+    }
+  }, [enable])
+  return elementRef
+}
+
+function getScrollParent(node: Element | null): Element | null {
+  if (node === null) {
+    return null
+  }
+
+  if (node.scrollHeight > node.clientHeight) {
+    return node
+  } else {
+    return getScrollParent(node.parentElement)
+  }
 }

@@ -3,6 +3,8 @@ const cssModulesPlugin = require('esbuild-css-modules-plugin')
 const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
 const stdLibBrowser = require('node-stdlib-browser')
 
+require('dotenv').config()
+
 esbuild
   .build({
     entryPoints: [

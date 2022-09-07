@@ -3,6 +3,10 @@ import { Permissions__factory, Roles__factory } from '../types/typechain'
 const permissionsInterface = Permissions__factory.createInterface()
 const rolesInterface = Roles__factory.createInterface()
 
+const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
+  Object.keys(permissionsInterface.errors)
+)
+
 // Error messages from smart contract calls look like this: "Reverted <HEX_CODE>"
 // where <HEX_CODE> is either an ASCII string or an error sighash.
 export default function decodeError(message: string) {
@@ -24,6 +28,10 @@ export default function decodeError(message: string) {
 
   return message
 }
+
+export const isPermissionsError = (decodedError: string) =>
+  KNOWN_ERRORS.includes(decodedError) &&
+  decodedError !== 'ModuleTransactionFailed()'
 
 function asciiDecode(hex: string) {
   let result = ''

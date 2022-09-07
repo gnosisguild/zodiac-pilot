@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react'
 import ReactDom from 'react-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import './global.css'
+
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, { ProvideConnections } from './settings'
+import Settings, {
+  ProvideConnections,
+  ProvideTenderlySettings,
+} from './settings'
 import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
@@ -48,7 +54,10 @@ function launch(url: string) {
 ReactDom.render(
   <React.StrictMode>
     <ProvideConnections>
-      <Routes />
+      <ProvideTenderlySettings>
+        <Routes />
+        <ToastContainer />
+      </ProvideTenderlySettings>
     </ProvideConnections>
   </React.StrictMode>,
   document.getElementById('root')

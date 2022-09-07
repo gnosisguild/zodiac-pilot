@@ -1,22 +1,25 @@
 import { ITxData } from '@walletconnect/types'
+import { nanoid } from 'nanoid'
 
 import { GanacheProvider } from './ProvideGanache'
+import { TenderlyProvider } from './ProvideTenderly'
 
 class UnsupportedMethodError extends Error {
   code = 4200
 }
 
 interface Handlers {
-  onTransactionReceived(txData: ITxData, hash: string): void
+  onBeforeTransactionSend(checkpointId: string, txData: ITxData): void
+  onTransactionSent(checkpointId: string, hash: string): void
 }
 
 class ForkProvider {
   private avatarAddress: string
-  private provider: GanacheProvider
+  private provider: TenderlyProvider | GanacheProvider
   private handlers: Handlers
 
   constructor(
-    provider: GanacheProvider,
+    provider: TenderlyProvider | GanacheProvider,
     avatarAddress: string,
     handlers: Handlers
   ) {
@@ -53,14 +56,37 @@ class ForkProvider {
       }
 
       case 'eth_sendTransaction': {
-        // record the transaction
+        // take a snapshot and record the transaction
+        const checkpointId: string = await this.provider.request({
+          method: 'evm_snapshot',
+        })
+        this.handlers.onBeforeTransactionSend(
+          checkpointId,
+          params[0] as ITxData
+        )
         const result = await this.provider.request(request)
-        this.handlers.onTransactionReceived(params[0] as ITxData, result)
+        this.handlers.onTransactionSent(checkpointId, result)
         return result
       }
     }
 
     return await this.provider.request(request)
+  }
+
+  async refork(): Promise<void> {
+    if (this.provider instanceof GanacheProvider) {
+      throw new Error('not currently implemented')
+    }
+
+    await this.provider.refork()
+  }
+
+  async deleteFork(): Promise<void> {
+    if (this.provider instanceof GanacheProvider) {
+      throw new Error('not currently implemented')
+    }
+
+    await this.provider.deleteFork()
   }
 }
 

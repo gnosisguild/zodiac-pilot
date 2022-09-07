@@ -3,22 +3,24 @@ import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers, providers } from 'ethers'
 
-const TX_SERVICE_URL: Record<string, string | undefined> = {
-  '1': 'https://safe-transaction.gnosis.io',
-  '4': 'https://safe-transaction.rinkeby.gnosis.io',
-  '100': 'https://safe-transaction.xdai.gnosis.io',
-  '73799': 'https://safe-transaction.volta.gnosis.io',
-  '246': 'https://safe-transaction.ewc.gnosis.io',
-  '137': 'https://safe-transaction.polygon.gnosis.io',
-  '56': 'https://safe-transaction.bsc.gnosis.io',
-  '42161': 'https://safe-transaction.arbitrum.gnosis.io',
+import { ChainId } from '../networks'
+
+const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
+  [1]: 'https://safe-transaction.gnosis.io',
+  [4]: 'https://safe-transaction.rinkeby.gnosis.io',
+  [100]: 'https://safe-transaction.xdai.gnosis.io',
+  // '73799': 'https://safe-transaction.volta.gnosis.io',
+  // '246': 'https://safe-transaction.ewc.gnosis.io',
+  // '137': 'https://safe-transaction.polygon.gnosis.io',
+  // '56': 'https://safe-transaction.bsc.gnosis.io',
+  // '42161': 'https://safe-transaction.arbitrum.gnosis.io',
 }
 
 export function waitForMultisigExecution(
   provider: WalletConnectEthereumProvider,
   safeTxHash: string
 ): Promise<string> {
-  const txServiceUrl = TX_SERVICE_URL[`${provider.chainId}`]
+  const txServiceUrl = TX_SERVICE_URL[provider.chainId as ChainId]
   if (!txServiceUrl) {
     throw new Error(`service not available for chain #${provider.chainId}`)
   }

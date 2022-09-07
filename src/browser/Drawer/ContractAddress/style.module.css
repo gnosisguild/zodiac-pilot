@@ -1,0 +1,21 @@
+.blockies {
+  overflow: hidden;
+  width: 25px;
+  aspect-ratio: 1;
+}
+.blockies img {
+  border-radius: 50%;
+  width: 100%;
+}
+
+.address {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.addressContainer {
+  padding: 10px;
+}
+
+.link {
+  text-decoration: none;
+}

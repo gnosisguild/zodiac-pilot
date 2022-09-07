@@ -1,28 +1,243 @@
-.transactionHeader {
+.container {
   position: relative;
+  border-color: rgba(217, 212, 173, 0.8);
 }
-.titleWrapper {
-  margin: 0 32px;
-  cursor: pointer;
+.header {
+  padding: 0;
+  margin: 0 var(--spacing-2) 0 0;
 }
-.title {
-  font-weight: bold;
-  padding: 4px 12px 4px 4px;
-  display: inline-block;
+.headerButtons {
+  margin: 0 0 0 auto;
 }
-.index {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0 4px;
-  margin-right: 8px;
+.wrapper {
+  height: 100%;
+  overflow: hidden; /* required for making the .body element's overflow-y: auto take effect :/  */
 }
-.removeTransaction {
-  width: 45px;
-  height: 45px;
-  border: none;
-  background-color: transparent;
+.body::-webkit-scrollbar {
+  width: 3px;
+}
+.body {
+  overflow-y: auto;
+  flex-grow: 1;
+  width: 494px;
+}
+
+.badgeContainer {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 6px;
+  padding-top: 10px;
+}
+.checkContainer {
   position: absolute;
-  top: -6px;
-  right: -12px;
+  bottom: 0;
+  left: 0;
+}
+.txNumber {
+  font-size: 1.3em;
+  line-height: 1;
+}
+.collapsed {
+  position: relative;
+  padding-top: 38px;
+}
+
+.collapsed .body {
+  width: 40px;
+}
+
+.index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 30px;
+  aspect-ratio: 1;
+}
+
+.transactionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactionContainer {
+  margin-top: 12px;
+}
+
+.transaction label {
+  display: block;
+  margin-top: var(--spacing-3);
+}
+.transaction label:first-child {
+  margin-top: 0;
+}
+.transaction label > span:first-child {
+  font-size: 0.75em;
+}
+.transaction fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.transaction input {
+  border: none;
+  padding: 0;
+  height: 24px;
+}
+.rawTxData {
+  font-size: 0.75em;
+  font-family: 'Roboto Mono', monospace;
+  word-wrap: break-word;
+}
+
+.inputType {
+  padding-left: var(--spacing-1);
+  opacity: 0.7;
+}
+
+.removeTransaction {
+  width: 30px;
+  height: auto;
+  padding: 3px;
   cursor: pointer;
+  color: #d9d4ad;
+  background-color: rgb(35 35 23);
+  border: 1px solid rgba(217, 212, 173, 0.3);
+}
+
+.transactionHeader .start {
+  display: flex;
+  justify-content: start;
+  column-gap: 8px;
+  width: 60%;
+  cursor: pointer;
+}
+.transactionHeader .toggle {
+  display: flex;
+  align-items: center;
+}
+.transactionHeader .end {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  column-gap: 8px;
+  margin-right: 4px;
+}
+
+.transactionTitle {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.subtitleContainer {
+  margin-top: 8px;
+}
+.transactionSubtitle {
+  font-size: 0.75em;
+}
+
+.value {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.transactionStatus {
+  margin-top: 12px;
+  font-size: 0.75em;
+}
+
+.statusHeader {
+  flex-grow: 1;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+button.link {
+  background-color: transparent;
+  text-decoration: underline;
+  cursor: pointer;
+  color: white;
+  display: block;
+  padding: 0;
+  border: none;
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  text-align: left;
+  width: auto;
+}
+button.link:hover {
+  color: rgba(252, 248, 217, 0.8);
+}
+
+.tagContainer {
+  padding: 8px;
+}
+
+.modalClose {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.safeAppLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: 0.75em;
+}
+
+.hint {
+  margin: auto var(--spacing-3);
+  text-align: center;
+  opacity: 0.7;
+}
+.recordingIcon {
+  margin: 13px;
+  width: 12px;
+  height: 12px;
+  box-shadow: 0 0 0 0 #d9d4adb8;
+  border-radius: 50%;
+  background-color: #d9d4add9;
+  -webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  -ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+  animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.collapsed .recordingIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+@-webkit-keyframes pulse {
+  to {
+    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
+  }
+}
+@-moz-keyframes pulse {
+  to {
+    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
+  }
+}
+@-ms-keyframes pulse {
+  to {
+    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
+  }
+}
+@keyframes pulse {
+  to {
+    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
+  }
 }

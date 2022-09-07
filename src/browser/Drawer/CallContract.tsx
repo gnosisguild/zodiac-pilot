@@ -1,51 +1,42 @@
 import React from 'react'
-import { CallContractTransactionInput, useContractCall } from 'react-multisend'
+import {
+  CallContractTransactionInput,
+  NetworkId,
+  useContractCall,
+} from 'react-multisend'
+
+import { Box } from '../../components'
+import { useConnection } from '../../settings'
+
+import classes from './style.module.css'
 
 interface Props {
   value: CallContractTransactionInput
 }
 
 const CallContract: React.FC<Props> = ({ value }) => {
-  const { functions, payable, inputs, loading } = useContractCall({
+  const { provider } = useConnection()
+  const { inputs } = useContractCall({
     value,
     onChange: () => {
-      /*TODO*/
+      /*nothing here*/
     },
-    network: '4',
+    network: provider.chainId.toString() as NetworkId,
     blockExplorerApiKey: process.env.ETHERSCAN_API_KEY,
   })
 
   return (
-    <div>
-      <label>
-        <span>To</span> <i>address</i>
-        <input type="text" readOnly value={value.to} />
-      </label>
-      <label>
-        <span>Method</span>
-        <select
-          disabled={loading || !value.abi}
-          value={value.functionSignature}
-        >
-          {functions.map((func) => (
-            <option key={func.signature} value={func.signature}>
-              {func.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      {payable && (
-        <label>
-          <span>Value (wei)</span>
-          <input type="number" value={value.value} readOnly />
-        </label>
-      )}
+    <div className={classes.transaction}>
       {inputs.length > 0 && (
         <fieldset>
           {inputs.map((input) => (
             <label key={input.name}>
-              {input.name} <i>{input.type}</i>
-              <input type="text" value={`${input.value || ''}`} readOnly />
+              <span>
+                {input.name} <i className={classes.inputType}>{input.type}</i>
+              </span>
+              <Box p={1} bg>
+                <input type="text" value={`${input.value || ''}`} readOnly />
+              </Box>
             </label>
           ))}
         </fieldset>

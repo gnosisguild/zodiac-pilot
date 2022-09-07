@@ -1,23 +1,26 @@
 import React from 'react'
 import { RawTransactionInput } from 'react-multisend'
 
+import { Box } from '../../components'
+
+import classes from './style.module.css'
+
 interface Props {
   value: RawTransactionInput
 }
 
 const RawTransaction: React.FC<Props> = ({ value }) => (
-  <div>
-    <label>
-      <span>To</span> <i>address</i>
-      <input type="text" readOnly value={value.to} />
-    </label>
-    <label>
-      <span>Value (wei)</span>
-      <input type="number" readOnly value={value.value} />
-    </label>
+  <div className={classes.transaction}>
     <label>
       <span>Data</span>
-      <textarea readOnly value={value.data} />
+      <Box p={1} bg>
+        <input
+          className={classes.rawTxData}
+          type="text"
+          value={`${value.data || ''}`}
+          readOnly
+        />
+      </Box>
     </label>
   </div>
 )
