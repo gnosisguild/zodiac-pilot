@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
-import { RiArrowDropRightLine, RiDeleteBinLine } from 'react-icons/ri'
+import { RiDeleteBinLine } from 'react-icons/ri'
 import {
   encodeSingle,
   TransactionInput,
@@ -274,11 +274,50 @@ const formatValue = (value: string): string => {
 const useScrollIntoView = (enable: boolean) => {
   const elementRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    if (enable && elementRef.current) {
-      elementRef.current.scrollIntoView({
+    if (!enable || !elementRef.current) return
+
+    const scrollParent = getScrollParent(elementRef.current)
+    if (!scrollParent) return
+
+    // scroll to it right away
+    elementRef.current.scrollIntoView({
+      behavior: 'smooth',
+    })
+
+    // keep it in view while it grows
+    const resizeObserver = new ResizeObserver(() => {
+      elementRef.current?.scrollIntoView({
         behavior: 'smooth',
       })
+
+      // this delay must be greater than the browser's native scrollIntoView animation duration
+      window.setTimeout(() => {
+        scrollParent.addEventListener('scroll', stopObserving)
+      }, 1000)
+    })
+    resizeObserver.observe(elementRef.current)
+
+    // stop keeping it in view once the user scrolls
+    const stopObserving = () => {
+      resizeObserver.disconnect()
+      scrollParent.removeEventListener('scroll', stopObserving)
+    }
+
+    return () => {
+      stopObserving()
     }
   }, [enable])
   return elementRef
+}
+
+function getScrollParent(node: Element | null): Element | null {
+  if (node === null) {
+    return null
+  }
+
+  if (node.scrollHeight > node.clientHeight) {
+    return node
+  } else {
+    return getScrollParent(node.parentElement)
+  }
 }

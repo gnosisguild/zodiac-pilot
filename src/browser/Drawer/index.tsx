@@ -29,14 +29,14 @@ const TransactionsDrawer: React.FC = () => {
     number | undefined
   >(undefined)
 
-  // const lengthRef = useRef(0)
-  // useEffect(() => {
-  //   if (newTransactions.length > lengthRef.current) {
-  //     setScrollItemIntoView(newTransactions.length)
-  //   }
+  const lengthRef = useRef(0)
+  useEffect(() => {
+    if (newTransactions.length > lengthRef.current) {
+      setScrollItemIntoView(newTransactions.length - 1)
+    }
 
-  //   lengthRef.current = newTransactions.length
-  // }, [newTransactions])
+    lengthRef.current = newTransactions.length
+  }, [newTransactions])
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
@@ -94,7 +94,7 @@ const TransactionsDrawer: React.FC = () => {
             >
               {newTransactions.map((transaction, index) => (
                 <BlockButton
-                  key={transaction.transactionHash}
+                  key={transaction.input.id}
                   onClick={(ev) => {
                     ev.stopPropagation()
                     setScrollItemIntoView(index)
@@ -140,7 +140,7 @@ const TransactionsDrawer: React.FC = () => {
         >
           {newTransactions.map((transaction, index) => (
             <Transaction
-              key={transaction.transactionHash}
+              key={transaction.input.id}
               index={index}
               scrollIntoView={scrollItemIntoView === index}
               {...transaction}
