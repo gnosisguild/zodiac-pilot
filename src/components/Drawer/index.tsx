@@ -22,10 +22,10 @@ const Drawer: React.FC<Props> = ({
   onToggle,
   collapsedChildren,
 }) => (
-  <button
-    onClick={onToggle}
-    disabled={expanded}
-    className={cn(classes.wrapperButton, { [classes.collapsed]: !expanded })}
+  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+  <div
+    onClick={expanded ? undefined : onToggle}
+    className={cn(classes.container, { [classes.collapsed]: !expanded })}
   >
     <Box p={2} className={classes.box}>
       <div
@@ -43,7 +43,7 @@ const Drawer: React.FC<Props> = ({
         {expanded && children}
       </Flex>
     </Box>
-  </button>
+  </div>
 )
 
 export default Drawer

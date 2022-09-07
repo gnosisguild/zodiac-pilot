@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { RiRefreshLine } from 'react-icons/ri'
 import { encodeSingle } from 'react-multisend'
 
-import { Box, Drawer, Flex, IconButton } from '../../components'
+import { BlockButton, Box, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
@@ -22,6 +22,48 @@ const TransactionsDrawer: React.FC = () => {
   const {
     connection: { avatarAddress },
   } = useConnection()
+
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const scrollTopExpanded = useRef<number | undefined>(undefined)
+  const scrollTopCollapsed = useRef<number | undefined>(undefined)
+
+  const toggle = () => {
+    // remember scroll position on unmount of scroll container
+    if (expanded) {
+      scrollTopExpanded.current = scrollContainerRef.current?.scrollTop
+    } else {
+      scrollTopCollapsed.current = scrollContainerRef.current?.scrollTop
+    }
+
+    setExpanded(!expanded)
+  }
+
+  // We run 2 concurrent effects: This one must run first and restores the previous scroll position.
+  // The other one lives in the Transaction component and is responsible for scrolling one particular item into view.
+  // We must ensure that the effects will always run in the correct order, which is why we use window.setTimeout in the Transaction component's effect.
+  useEffect(() => {
+    // restore previous scroll position on mount of scroll container
+    const scrollContainerElement = scrollContainerRef.current
+    const scrollTop = expanded
+      ? scrollTopExpanded.current
+      : scrollTopCollapsed.current
+    if (scrollContainerElement && scrollTop) {
+      scrollContainerElement.scrollTop = scrollTop
+    }
+  }, [expanded])
+
+  const [scrollItemIntoView, setScrollItemIntoView] = useState<
+    number | undefined
+  >(undefined)
+
+  const lengthRef = useRef(0)
+  useEffect(() => {
+    if (newTransactions.length > lengthRef.current) {
+      setScrollItemIntoView(newTransactions.length)
+    }
+
+    lengthRef.current = newTransactions.length
+  }, [newTransactions])
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
@@ -57,6 +99,10 @@ const TransactionsDrawer: React.FC = () => {
   return (
     <Drawer
       expanded={expanded}
+      onToggle={() => {
+        setScrollItemIntoView(undefined) // clear scrollItemIntoView so that the original scroll position is restored
+        toggle()
+      }}
       header={
         <>
           <h4 className={classes.header}>Recording Transactions</h4>
@@ -73,11 +119,7 @@ const TransactionsDrawer: React.FC = () => {
         </>
       }
       collapsedChildren={
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div
-          className={classes.collapsed}
-          onClick={() => setExpanded(!expanded)}
-        >
+        <div className={classes.collapsed}>
           <div className={classes.recordingIcon} />
           <Flex
             gap={2}
@@ -85,19 +127,33 @@ const TransactionsDrawer: React.FC = () => {
             alignItems="stretch"
             className={classes.wrapper}
           >
-            <Flex gap={1} className={classes.body} direction="column">
+            <Flex
+              gap={1}
+              data-collapsed={true}
+              ref={scrollContainerRef}
+              className={classes.body + ' coll'}
+              direction="column"
+            >
               {newTransactions.map((transaction, index) => (
-                <TransactionBadge
+                <BlockButton
                   key={transaction.transactionHash}
-                  index={index}
-                  {...transaction}
-                />
+                  onClick={(ev) => {
+                    ev.stopPropagation()
+                    setScrollItemIntoView(index)
+                    toggle()
+                  }}
+                >
+                  <TransactionBadge
+                    index={index}
+                    scrollIntoView={scrollItemIntoView === index}
+                    {...transaction}
+                  />
+                </BlockButton>
               ))}
             </Flex>
           </Flex>
         </div>
       }
-      onToggle={() => setExpanded(!expanded)}
     >
       <Flex
         gap={2}
@@ -105,11 +161,17 @@ const TransactionsDrawer: React.FC = () => {
         alignItems="stretch"
         className={classes.wrapper}
       >
-        <Flex gap={4} className={classes.body} direction="column">
+        <Flex
+          gap={4}
+          ref={scrollContainerRef}
+          className={classes.body + ' exp'}
+          direction="column"
+        >
           {newTransactions.map((transaction, index) => (
             <Transaction
               key={transaction.transactionHash}
               index={index}
+              scrollIntoView={scrollItemIntoView === index}
               {...transaction}
             />
           ))}

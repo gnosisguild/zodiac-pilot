@@ -2,7 +2,7 @@ import React from 'react'
 import { RiBallPenLine } from 'react-icons/ri'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
-import { AddressStack, BlockButton, Flex } from '../../components'
+import { AddressStack, BoxButton, Flex } from '../../components'
 import { useWalletConnectProvider } from '../../providers'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'
@@ -41,7 +41,7 @@ const ConnectionItem: React.FC<{
 
   return (
     <div className={classes.connectionItem}>
-      <BlockButton
+      <BoxButton
         onClick={() => {
           if (connected && !error) {
             onLaunch(connection.id)
@@ -77,8 +77,8 @@ const ConnectionItem: React.FC<{
           helperClass={classes.addressHelper}
           addressBoxClass={classes.addressBox}
         />
-      </BlockButton>
-      <BlockButton
+      </BoxButton>
+      <BoxButton
         onClick={() => {
           pushSettingsRoute(connection.id)
         }}
@@ -86,7 +86,7 @@ const ConnectionItem: React.FC<{
       >
         <RiBallPenLine size={16} />
         <p>Edit</p>
-      </BlockButton>
+      </BoxButton>
     </div>
   )
 }

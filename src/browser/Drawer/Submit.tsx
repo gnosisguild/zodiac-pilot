@@ -1,7 +1,7 @@
 import { providers } from 'ethers'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
-import Modal from 'react-modal'
+import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
@@ -116,7 +116,7 @@ export default Submit
 
 Modal.setAppElement('#root')
 
-const modalStyle = {
+const modalStyle: Styles = {
   overlay: {
     backgroundColor: 'rgb(35 34 17 / 52%)',
   },

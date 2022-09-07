@@ -273,15 +273,15 @@ const formatValue = (value: string): string => {
 
 const useScrollIntoView = (enable: boolean) => {
   const elementRef = useRef<HTMLDivElement | null>(null)
-  const isFirstRender = useRef(true)
   useEffect(() => {
-    if (enable && elementRef.current) {
-      elementRef.current.scrollIntoView({
-        behavior: isFirstRender ? 'auto' : 'smooth',
-      })
-    }
-
-    isFirstRender.current = false
+    // This setTimeout is crucial to make sure the scrollIntoView runs AFTER the effect setting scrollTop in ./index.tsx
+    window.setTimeout(() => {
+      if (enable && elementRef.current) {
+        elementRef.current.scrollIntoView({
+          behavior: 'smooth',
+        })
+      }
+    }, 1)
   }, [enable])
   return elementRef
 }

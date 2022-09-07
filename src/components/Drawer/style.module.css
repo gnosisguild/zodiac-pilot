@@ -1,16 +1,4 @@
-.wrapperButton {
-  display: block;
-  background: none;
-  border: none;
-  color: white;
-  padding: 0;
-  margin: 0;
-  font-family: 'Spectral';
-  font-size: 16px;
-  text-align: inherit;
-  align-items: normal;
-}
-.wrapperButton.collapsed {
+.container.collapsed {
   background-color: rgba(255, 255, 255, 0.1);
   cursor: pointer;
 }
