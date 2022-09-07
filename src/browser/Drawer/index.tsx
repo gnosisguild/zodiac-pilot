@@ -105,7 +105,7 @@ const TransactionsDrawer: React.FC = () => {
         alignItems="stretch"
         className={classes.wrapper}
       >
-        <Flex gap={1} className={classes.body} direction="column">
+        <Flex gap={4} className={classes.body} direction="column">
           {newTransactions.map((transaction, index) => (
             <Transaction
               key={transaction.transactionHash}

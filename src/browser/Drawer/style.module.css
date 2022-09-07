@@ -1,5 +1,6 @@
 .container {
   position: relative;
+  border-color: rgba(217, 212, 173, 0.8)
 }
 .header {
   padding: 0;
