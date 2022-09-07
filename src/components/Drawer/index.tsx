@@ -9,7 +9,6 @@ import classes from './style.module.css'
 
 interface Props {
   children: ReactNode
-  header?: ReactNode
   collapsedChildren?: ReactNode
   expanded: boolean
   onToggle(): void
@@ -17,7 +16,6 @@ interface Props {
 
 const Drawer: React.FC<Props> = ({
   children,
-  header,
   expanded,
   onToggle,
   collapsedChildren,
@@ -35,12 +33,23 @@ const Drawer: React.FC<Props> = ({
       >
         <ToggleButton expanded={expanded} onToggle={onToggle} />
       </div>
-      <Flex direction="column" gap={1} className={classes.wrapper}>
-        <Flex gap={2} alignItems="center">
-          {expanded && header}
-          {!expanded && collapsedChildren}
-        </Flex>
-        {expanded && children}
+
+      <Flex
+        direction="column"
+        gap={1}
+        className={classes.wrapper}
+        style={{ display: expanded ? 'none' : 'flex' }}
+      >
+        {collapsedChildren}
+      </Flex>
+
+      <Flex
+        direction="column"
+        gap={1}
+        className={classes.wrapper}
+        style={{ display: expanded ? 'flex' : 'none' }}
+      >
+        {children}
       </Flex>
     </Box>
   </div>

@@ -264,7 +264,7 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
   )
 }
 
-// Tenderly has particular repquirements for the encoding of value: it must not have any leading zeros
+// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
 const formatValue = (value: string): string => {
   const valueBN = BigNumber.from(value)
   if (valueBN.isZero()) return '0x0'
@@ -274,14 +274,11 @@ const formatValue = (value: string): string => {
 const useScrollIntoView = (enable: boolean) => {
   const elementRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    // This setTimeout is crucial to make sure the scrollIntoView runs AFTER the effect setting scrollTop in ./index.tsx
-    window.setTimeout(() => {
-      if (enable && elementRef.current) {
-        elementRef.current.scrollIntoView({
-          behavior: 'smooth',
-        })
-      }
-    }, 1)
+    if (enable && elementRef.current) {
+      elementRef.current.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
   }, [enable])
   return elementRef
 }

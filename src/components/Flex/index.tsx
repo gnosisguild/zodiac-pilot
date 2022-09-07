@@ -10,6 +10,7 @@ interface Props {
   gap: 0 | 1 | 2 | 3 | 4
   className?: string
   children?: React.ReactNode
+  style?: React.CSSProperties
 }
 
 const Flex = forwardRef<HTMLDivElement | null, Props>(
@@ -21,6 +22,7 @@ const Flex = forwardRef<HTMLDivElement | null, Props>(
       alignItems = 'normal',
       children,
       className,
+      style,
     },
     ref
   ) => (
@@ -35,6 +37,7 @@ const Flex = forwardRef<HTMLDivElement | null, Props>(
       style={{
         justifyContent,
         alignItems,
+        ...style,
       }}
     >
       {children}

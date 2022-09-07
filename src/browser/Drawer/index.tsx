@@ -24,46 +24,19 @@ const TransactionsDrawer: React.FC = () => {
   } = useConnection()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const scrollTopExpanded = useRef<number | undefined>(undefined)
-  const scrollTopCollapsed = useRef<number | undefined>(undefined)
-
-  const toggle = () => {
-    // remember scroll position on unmount of scroll container
-    if (expanded) {
-      scrollTopExpanded.current = scrollContainerRef.current?.scrollTop
-    } else {
-      scrollTopCollapsed.current = scrollContainerRef.current?.scrollTop
-    }
-
-    setExpanded(!expanded)
-  }
-
-  // We run 2 concurrent effects: This one must run first and restores the previous scroll position.
-  // The other one lives in the Transaction component and is responsible for scrolling one particular item into view.
-  // We must ensure that the effects will always run in the correct order, which is why we use window.setTimeout in the Transaction component's effect.
-  useEffect(() => {
-    // restore previous scroll position on mount of scroll container
-    const scrollContainerElement = scrollContainerRef.current
-    const scrollTop = expanded
-      ? scrollTopExpanded.current
-      : scrollTopCollapsed.current
-    if (scrollContainerElement && scrollTop) {
-      scrollContainerElement.scrollTop = scrollTop
-    }
-  }, [expanded])
 
   const [scrollItemIntoView, setScrollItemIntoView] = useState<
     number | undefined
   >(undefined)
 
-  const lengthRef = useRef(0)
-  useEffect(() => {
-    if (newTransactions.length > lengthRef.current) {
-      setScrollItemIntoView(newTransactions.length)
-    }
+  // const lengthRef = useRef(0)
+  // useEffect(() => {
+  //   if (newTransactions.length > lengthRef.current) {
+  //     setScrollItemIntoView(newTransactions.length)
+  //   }
 
-    lengthRef.current = newTransactions.length
-  }, [newTransactions])
+  //   lengthRef.current = newTransactions.length
+  // }, [newTransactions])
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
@@ -101,23 +74,8 @@ const TransactionsDrawer: React.FC = () => {
       expanded={expanded}
       onToggle={() => {
         setScrollItemIntoView(undefined) // clear scrollItemIntoView so that the original scroll position is restored
-        toggle()
+        setExpanded(!expanded)
       }}
-      header={
-        <>
-          <h4 className={classes.header}>Recording Transactions</h4>
-          <Flex gap={1} className={classes.headerButtons}>
-            <IconButton
-              title="Re-simulate on current blockchain head"
-              disabled={newTransactions.length === 0}
-              onClick={reforkAndRerun}
-            >
-              <RiRefreshLine />
-            </IconButton>
-            <div className={classes.recordingIcon} />
-          </Flex>
-        </>
-      }
       collapsedChildren={
         <div className={classes.collapsed}>
           <div className={classes.recordingIcon} />
@@ -140,7 +98,7 @@ const TransactionsDrawer: React.FC = () => {
                   onClick={(ev) => {
                     ev.stopPropagation()
                     setScrollItemIntoView(index)
-                    toggle()
+                    setExpanded(true)
                   }}
                 >
                   <TransactionBadge
@@ -155,6 +113,19 @@ const TransactionsDrawer: React.FC = () => {
         </div>
       }
     >
+      <Flex gap={2} alignItems="center">
+        <h4 className={classes.header}>Recording Transactions</h4>
+        <Flex gap={1} className={classes.headerButtons}>
+          <IconButton
+            title="Re-simulate on current blockchain head"
+            disabled={newTransactions.length === 0}
+            onClick={reforkAndRerun}
+          >
+            <RiRefreshLine />
+          </IconButton>
+          <div className={classes.recordingIcon} />
+        </Flex>
+      </Flex>
       <Flex
         gap={2}
         direction="column"
