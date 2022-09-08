@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React from 'react'
+import React, { forwardRef } from 'react'
 
 import classes from './style.module.css'
 
@@ -9,31 +9,41 @@ interface Props {
   alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start'
   gap: 0 | 1 | 2 | 3 | 4
   className?: string
-  children: React.ReactNode
+  children?: React.ReactNode
+  style?: React.CSSProperties
 }
 
-const Flex: React.FC<Props> = ({
-  gap,
-  direction = 'row',
-  justifyContent = 'start',
-  alignItems = 'normal',
-  children,
-  className,
-}) => (
-  <div
-    className={cn(
-      classes.flex,
-      classes[`gap${gap}`],
-      classes[direction],
-      className
-    )}
-    style={{
-      justifyContent,
-      alignItems,
-    }}
-  >
-    {children}
-  </div>
+const Flex = forwardRef<HTMLDivElement | null, Props>(
+  (
+    {
+      gap,
+      direction = 'row',
+      justifyContent = 'start',
+      alignItems = 'normal',
+      children,
+      className,
+      style,
+    },
+    ref
+  ) => (
+    <div
+      ref={ref}
+      className={cn(
+        classes.flex,
+        classes[`gap${gap}`],
+        classes[direction],
+        className
+      )}
+      style={{
+        justifyContent,
+        alignItems,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  )
 )
+Flex.displayName = 'Flex'
 
 export default Flex

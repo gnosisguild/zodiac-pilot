@@ -4,19 +4,21 @@ import {
   RiCheckboxCircleLine,
   RiErrorWarningLine,
   RiFileCopy2Line,
+  RiGroupLine,
 } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
-import { Flex, Tag } from '../../components'
+import { Box, Flex, Tag } from '../../components'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'
 
 import classes from './style.module.css'
 
-const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
-  transaction,
-}) => {
+const RolePermissionCheck: React.FC<{
+  transaction: TransactionInput
+  mini?: boolean
+}> = ({ transaction, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const wrappingProvider = useWrappingProvider()
 
@@ -52,28 +54,45 @@ const RolePermissionCheck: React.FC<{ transaction: TransactionInput }> = ({
 
   if (error === undefined) return null
 
-  return (
-    <Flex gap={2}>
-      <div>Role permissions</div>
-      <div>
+  if (mini) {
+    return (
+      <>
         {error === false ? (
-          <Tag head={<RiCheckboxCircleLine />} color="success">
+          <Tag head={<RiGroupLine />} color="success"></Tag>
+        ) : (
+          <Tag head={<RiGroupLine />} color="danger"></Tag>
+        )}
+      </>
+    )
+  }
+
+  return (
+    <Flex
+      gap={2}
+      direction="column"
+      justifyContent="space-between"
+      alignItems="stretch"
+    >
+      <Flex gap={2} justifyContent="space-between">
+        <div>Role permissions</div>
+        {error && (
+          <button onClick={copyToClipboard} className={classes.link}>
+            Copy data
+            <RiFileCopy2Line />
+          </button>
+        )}
+      </Flex>
+      <Flex gap={0} justifyContent="center" className={classes.tagContainer}>
+        {error === false ? (
+          <Tag head={<RiGroupLine />} color="success">
             Allowed
           </Tag>
         ) : (
-          <Tag head={<RiErrorWarningLine />} color="danger">
+          <Tag head={<RiGroupLine />} color="danger">
             {error}
           </Tag>
         )}
-      </div>
-      {error && (
-        <div>
-          <button onClick={copyToClipboard} className={classes.link}>
-            Copy transaction data to clipboard
-            <RiFileCopy2Line />
-          </button>
-        </div>
-      )}
+      </Flex>
     </Flex>
   )
 }

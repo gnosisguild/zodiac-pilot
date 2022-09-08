@@ -2,6 +2,7 @@
   border: 1px solid var(--border-color);
   position: relative;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 .bg {
   background-color: rgba(217, 212, 173, 0.1);

@@ -11,7 +11,6 @@ import { TenderlyStatus } from '../settings/useTenderly'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import ProvideProvider from './ProvideProvider'
-import TransactionStatus from './TransactionStatus'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 import classes from './index.module.css'
@@ -57,7 +56,6 @@ const Browser: React.FC = () => {
                     </Box>
                   </Flex>
                 </Box>
-                <TransactionStatus />
                 <BlockLink href={settingsHash}>
                   <AddressStack
                     interactive

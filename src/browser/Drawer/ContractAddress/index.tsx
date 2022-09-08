@@ -68,15 +68,13 @@ const ContractAddress: React.FC<Props> = ({
     const explorerApiUrl = EXPLORER_API_URLS[provider.chainId]
     const apiKey = EXPLORER_API_KEYS[provider.chainId] || ''
 
-    fetch(
+    memoizedFetchJson(
       `${explorerApiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        if (!canceled) {
-          setContractName(json.result[0]?.ContractName || '')
-        }
-      })
+    ).then((json) => {
+      if (!canceled) {
+        setContractName(json.result[0]?.ContractName || '')
+      }
+    })
 
     return () => {
       setContractName('')
@@ -85,38 +83,57 @@ const ContractAddress: React.FC<Props> = ({
   }, [provider.chainId, address])
 
   return (
-    <Flex gap={1} className={cn(className, classes.container)}>
-      <div className={classes.blockies}>
+    <Flex
+      gap={3}
+      alignItems="center"
+      justifyContent="space-between"
+      className={cn(className, classes.container)}
+    >
+      <Box p={1} rounded className={classes.blockies}>
         <img src={blockie} alt={address} />
-      </div>
+      </Box>
 
       {contractName && (
         <div className={classes.contractName}>{contractName}</div>
       )}
-      <div className={classes.address}>{displayAddress}</div>
+      <Box p={2} bg className={classes.addressContainer}>
+        <Flex gap={1}>
+          <div className={classes.address}>{displayAddress}</div>
 
-      {copyToClipboard && (
-        <IconButton
-          onClick={() => {
-            copy(address)
-          }}
-        >
-          <RiFileCopyLine />
-        </IconButton>
-      )}
-      {explorerLink && (
-        <a
-          href={`${explorerUrl}/search?q=${address}`}
-          target="_blank"
-          className={classes.link}
-          title={address}
-          rel="noreferrer"
-        >
-          <RiExternalLinkLine />
-        </a>
-      )}
+          {copyToClipboard && (
+            <IconButton
+              onClick={() => {
+                copy(address)
+              }}
+            >
+              <RiFileCopyLine />
+            </IconButton>
+          )}
+          {explorerLink && (
+            <a
+              href={`${explorerUrl}/search?q=${address}`}
+              target="_blank"
+              className={classes.link}
+              title={address}
+              rel="noreferrer"
+            >
+              <RiExternalLinkLine />
+            </a>
+          )}
+        </Flex>
+      </Box>
     </Flex>
   )
 }
 
 export default ContractAddress
+
+const fetchCache = new Map<string, any>()
+const memoizedFetchJson = async (url: string) => {
+  if (fetchCache.has(url)) {
+    return fetchCache.get(url)
+  }
+  const json = await fetch(url).then((res) => res.json())
+  fetchCache.set(url, json)
+  return json
+}

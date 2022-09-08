@@ -8,8 +8,8 @@ type Props = React.DetailedHTMLProps<
   HTMLButtonElement
 >
 
-const BoxButton: React.FC<Props> = ({ className, ...rest }) => (
+const BlockButton: React.FC<Props> = ({ className, ...rest }) => (
   <button className={cn(className, classes.button)} {...rest} />
 )
 
-export default BoxButton
+export default BlockButton

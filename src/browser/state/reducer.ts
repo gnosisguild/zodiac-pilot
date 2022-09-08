@@ -5,6 +5,7 @@ import { Action } from './actions'
 export interface TransactionState {
   input: TransactionInput
   transactionHash?: string
+  batchTransactionHash?: string
 }
 
 const rootReducer = (
@@ -36,6 +37,20 @@ const rootReducer = (
       return state.slice(
         0,
         state.findIndex((item) => item.input.id === id)
+      )
+    }
+
+    case 'SUBMIT_TRANSACTIONS': {
+      const { batchTransactionHash } = action.payload
+      return state.map((item) =>
+        !item.batchTransactionHash ? { ...item, batchTransactionHash } : item
+      )
+    }
+
+    case 'CLEAR_TRANSACTIONS': {
+      const { batchTransactionHash } = action.payload
+      return state.filter(
+        (item) => item.batchTransactionHash === batchTransactionHash
       )
     }
   }
