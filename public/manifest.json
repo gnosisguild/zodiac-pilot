@@ -1,7 +1,7 @@
 {
   "name": "Zodiac Pilot",
   "description": "Simulate dApp interactions and record transactions",
-  "version": "0.0.0",
+  "version": "1.1.5",
   "manifest_version": 3,
   "icons": {
     "16": "zodiac16.png",
