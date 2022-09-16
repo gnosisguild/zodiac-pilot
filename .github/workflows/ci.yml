@@ -11,7 +11,9 @@ jobs:
           node-version: 16
       - uses: actions/cache@v2
         with:
-          path: '**/node_modules'
+          path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn
+        working-directory: ./packages/extension
       - run: yarn build
+        working-directory: ./packages/extension

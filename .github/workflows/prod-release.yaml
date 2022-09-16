@@ -14,31 +14,36 @@ jobs:
         with:
           node-version: 16
       - run: npm install -g yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
+      - name: Install deps and build
+        working-directory: ./packages/extension
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
 
       - name: Update manifest.json with release tag
+        working-directory: ./packages/extension
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: node ./manifest-util.js ./public/manifest.json
 
       - name: Create Extension Zip file
+        working-directory: ./packages/extension
         run: yarn zip
 
       - name: Add zip to Github release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./zodiac-pilot.zip
+          files: ./packages/extension/zodiac-pilot.zip
 
-      - run: mkdir release
-      - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
+      - run: mkdir ./packages/extension/release
+      - run: mv ./packages/extension/zodiac-pilot.zip ./packages/extension/release/zodiac-pilot.zip
 
       - name: Pin to IPFS
         id: upload
         uses: anantaramdas/ipfs-pinata-deploy-action@39bbda1ce1fe24c69c6f57861b8038278d53688d
         with:
           pin-name: Zodiac Pilot Chrome Extension ${{ github.event.release.tag_name }}
-          path: './release'
+          path: "./packages/extension/release"
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
 
@@ -80,6 +85,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./release/zodiac-pilot.zip
+          asset_path: ./packages/extension/release/zodiac-pilot.zip
           asset_name: zodiac-pilot.zip
           asset_content_type: application/zip
