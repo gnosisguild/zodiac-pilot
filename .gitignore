@@ -1,7 +1,6 @@
-node_modules
-public/build
-.env
-
-*.log
-.DS_Store
-zodiac-pilot.zip
+**/node_modules
+**/public/build
+**/.env
+**/*.log
+**/.DS_Store
+**/zodiac-pilot.zip
