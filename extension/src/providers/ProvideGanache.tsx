@@ -53,9 +53,8 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
         title="Ganache"
         name="ganache-frame"
         ref={ref}
-        // This is just a basically empty page we use to inject our ganache script.
-        // We need a real host, though, for Chrome to give us permission to use Indexed DB.
-        src="https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m"
+        // We need to run the iframe window under an external host for Chrome to give us permission to use Indexed DB.
+        src="https://pilot.gnosisguild.org"
         style={{ display: 'none' }}
       />
     </GanacheContext.Provider>

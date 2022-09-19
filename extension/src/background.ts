@@ -1,8 +1,5 @@
-// This is an empty page. In the future we should use a publicly hosted Zodiac Pilot URL, so pilot links become sharable.
-// Users without the extension would then see the public landing page.
 // Attention: The URL must also be updated in manifest.json
-const PILOT_URL =
-  'https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m'
+const PILOT_URL = 'https://pilot.gnosisguild.org'
 
 // When clicking the extension button, load the current tab's page in the simulation browser
 const toggle = async (tab: chrome.tabs.Tab) => {
