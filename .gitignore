@@ -1,8 +1,1 @@
-node_modules
-public/build
-public/_metadata
-.env
-
-*.log
-.DS_Store
-zodiac-pilot.zip
+**/.DS_Store
