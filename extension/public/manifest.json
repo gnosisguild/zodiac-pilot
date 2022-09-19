@@ -34,12 +34,12 @@
       "js": ["build/contentScript.js"]
     },
     {
-      "matches": ["https://pilot.gnosisguild.org"],
+      "matches": ["https://pilot.gnosisguild.org/"],
       "run_at": "document_start",
       "js": ["build/introduce.js"]
     },
     {
-      "matches": ["https://pilot.gnosisguild.org"],
+      "matches": ["https://pilot.gnosisguild.org/"],
       "run_at": "document_end",
       "js": ["build/launch.js"]
     }
