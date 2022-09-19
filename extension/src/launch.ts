@@ -1,4 +1,4 @@
-// This script will be injected via contentScripts.ts when loading a page in a tab where the extension is activated.
+// This script will be added as a content script at document_end to pages of the extension host https://pilot.gnosisguild.org.
 // It runs in the context of the extension, meaning it has access to all the chrome.* APIs.
 // It cancels rendering that page and instead renders the extension page.
 
