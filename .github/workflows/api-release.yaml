@@ -5,6 +5,10 @@ on:
       - main
       - tenderly-wrapper # TODO temporarily, remove before merge
 
+defaults:
+  run:
+    working-directory: ./fork-api
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
