@@ -30,7 +30,9 @@ const useConnectionDryRun = ({
         })
         .catch((e) => {
           console.warn(e)
-          const reason = typeof e === 'string' ? decodeRolesError(e) : null
+          const message: string | undefined =
+            typeof e === 'string' ? e : e.data?.message
+          const reason = message && decodeRolesError(message)
 
           if (reason === 'Module not authorized') {
             setError(
