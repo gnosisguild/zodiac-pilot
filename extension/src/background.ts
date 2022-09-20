@@ -8,8 +8,12 @@ const toggle = async (tab: chrome.tabs.Tab) => {
   if (!tab.url.startsWith(PILOT_URL)) {
     console.log('activate Zodiac Pilot')
 
+    const url =
+      tab.url.startsWith('chrome://') || tab.url.startsWith('about:')
+        ? ''
+        : tab.url
     chrome.tabs.update(tab.id, {
-      url: `${PILOT_URL}#${encodeURIComponent(tab.url)}`,
+      url: `${PILOT_URL}#${encodeURIComponent(url)}`,
     })
   } else {
     console.log('deactivate Zodiac Pilot')
