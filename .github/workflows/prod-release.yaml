@@ -10,9 +10,11 @@ jobs:
     name: Build Extension
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: "npm"
+          cache-dependency-path: "extension/yarn.lock"
       - run: npm install -g yarn
       - name: Install deps and build
         working-directory: ./extension
