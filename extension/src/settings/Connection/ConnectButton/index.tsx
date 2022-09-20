@@ -81,17 +81,33 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     metamask.chainId !== connection.chainId
   ) {
     return (
-      <Button
-        onClick={() => {
-          metamask.provider?.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: `0x${connection.chainId?.toString(16)}` }],
-          })
-        }}
-      >
-        Switch wallet to{' '}
-        {CHAIN_NAME[connection.chainId] || `#${connection.chainId}`}
-      </Button>
+      <>
+        <Button
+          onClick={() => {
+            metamask.provider?.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: `0x${connection.chainId?.toString(16)}` }],
+            })
+          }}
+        >
+          Switch wallet to{' '}
+          {CHAIN_NAME[connection.chainId] || `#${connection.chainId}`}
+        </Button>
+
+        {metamask.chainId && (
+          <Button
+            onClick={() => {
+              connect(
+                ProviderType.MetaMask,
+                metamask.chainId,
+                connection.pilotAddress
+              )
+            }}
+          >
+            Connect to {CHAIN_NAME[metamask.chainId] || `#${metamask.chainId}`}
+          </Button>
+        )}
+      </>
     )
   }
 
