@@ -1,5 +1,5 @@
 // Attention: The URL must also be updated in manifest.json
-const PILOT_URL = 'https://pilot.gnosisguild.org'
+const PILOT_URL = 'https://pilot.gnosisguild.org/'
 
 // When clicking the extension button, load the current tab's page in the simulation browser
 const toggle = async (tab: chrome.tabs.Tab) => {

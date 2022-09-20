@@ -54,7 +54,7 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
         name="ganache-frame"
         ref={ref}
         // We need to run the iframe window under an external host for Chrome to give us permission to use Indexed DB.
-        src="https://pilot.gnosisguild.org"
+        src="https://pilot.gnosisguild.org/"
         style={{ display: 'none' }}
       />
     </GanacheContext.Provider>
