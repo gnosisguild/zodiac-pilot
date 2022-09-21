@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
+    "env-cmd": "^10.1.0",
     "prettier": "^2.7.1",
     "typescript": "^4.8.3",
     "wrangler": "2.1.5"
   },
   "private": true,
   "scripts": {
-    "start": "wrangler dev",
+    "start": "env-cmd wrangler dev",
     "deploy": "wrangler publish",
     "format": "prettier --write  '*.{json,js}' 'src/**/*.ts'"
   }

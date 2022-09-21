@@ -1,7 +1,7 @@
-name = "fork-api"
+name = "pilot-fork-api"
 main = "src/index.ts"
 compatibility_date = "2022-09-20"
-account_id = "61bb5267181d512d653b0b4546bcc554"
+zone_id = "848badbf23da7050dc4de04c9525cc3e"
 
 [vars]
 TENDERLY_USER = "gnosisguild"
