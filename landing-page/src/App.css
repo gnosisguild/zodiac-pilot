@@ -62,9 +62,6 @@ li:nth-child(2) {
   list-style-type: '⚗️';
 }
 li:nth-child(3) {
-  list-style-type: '🧩';
-}
-li:nth-child(4) {
   list-style-type: '🛰';
 }
 li::marker {

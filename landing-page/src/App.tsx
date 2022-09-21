@@ -9,15 +9,11 @@ function App() {
           <ZodiacPaper>
             <div className="description">
               <h1>Zodiac Pilot</h1>
-              <p>
-                A Chrome extension for building transactions for your Gnosis
-                Safe.
-              </p>
+              <p>A Chrome extension for building transactions for your Safe.</p>
               <ul>
-                <li>Batch several transactions together to save on gas</li>
-                <li>Simulate every transaction with Tenderly</li>
+                <li>Batch multiple transactions together to save on gas</li>
                 <li>
-                  Compatible with Zodiac mods for any kind of Safe architecture
+                  Simulate every transaction with Tenderly to ensure accuracy
                 </li>
                 <li>
                   Submit transactions directly to the Safe for easy signing
