@@ -5,8 +5,7 @@ import { AddressStack } from '../components'
 import { pushLocation, useLocation } from '../location'
 import { ProvideTenderly } from '../providers'
 import { useSettingsHash } from '../routing'
-import { useConnection, useTenderly } from '../settings'
-import { TenderlyStatus } from '../settings/useTenderly'
+import { useConnection } from '../settings'
 
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
@@ -35,14 +34,11 @@ const Browser: React.FC = () => {
   const [initialLocation, setInitialLocation] = useState(location)
   const settingsHash = useSettingsHash()
   const { connection, provider } = useConnection()
-  const [, tenderlyStatus] = useTenderly()
-
-  const simulate = tenderlyStatus === TenderlyStatus.SUCCESS
 
   return (
     <ProvideTenderly>
       <ProvideState>
-        <ProvideProvider simulate={simulate}>
+        <ProvideProvider simulate>
           <div className={classNames.browser}>
             <div className={classNames.topBar}>
               <Flex gap={3} justifyContent="space-between">
@@ -85,7 +81,7 @@ const Browser: React.FC = () => {
                   </div>
                 )}
               </Box>
-              {simulate && <Drawer />}
+              <Drawer />
             </Flex>
           </div>
         </ProvideProvider>

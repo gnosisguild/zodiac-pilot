@@ -9,10 +9,7 @@ import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, {
-  ProvideConnections,
-  ProvideTenderlySettings,
-} from './settings'
+import Settings, { ProvideConnections } from './settings'
 import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
@@ -54,10 +51,8 @@ function launch(url: string) {
 ReactDom.render(
   <React.StrictMode>
     <ProvideConnections>
-      <ProvideTenderlySettings>
-        <Routes />
-        <ToastContainer />
-      </ProvideTenderlySettings>
+      <Routes />
+      <ToastContainer />
     </ProvideConnections>
   </React.StrictMode>,
   document.getElementById('root')

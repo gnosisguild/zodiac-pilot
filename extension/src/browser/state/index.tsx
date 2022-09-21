@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react'
+import React, { createContext, ReactNode, useContext, useReducer } from 'react'
 
 import { Action } from './actions'
 import reducer, { TransactionState } from './reducer'
@@ -19,7 +19,9 @@ export const useDispatch = () => {
   return value
 }
 
-export const ProvideState: React.FC = ({ children }) => {
+export const ProvideState: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(reducer, [])
 
   return (
