@@ -2,3 +2,7 @@ name = "fork-api"
 main = "src/index.ts"
 compatibility_date = "2022-09-20"
 account_id = "61bb5267181d512d653b0b4546bcc554"
+
+[vars]
+TENDERLY_USER = "gnosisguild"
+TENDERLY_PROJECT = "zodiac-pilot"
