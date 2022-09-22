@@ -34,7 +34,6 @@
     url(./fonts/Spectral/Spectral-ExtraLightItalic.woff2) format('woff');
 }
 
-html,
 body {
   font-family: 'Spectral';
   font-weight: 200;
@@ -44,9 +43,16 @@ body {
   letter-spacing: -0.03em;
   margin: 0;
   padding: 0;
-  background: black;
+  background: url(../public/launch-page-bg.jpg) 0% 0% / cover fixed !important;
 }
 
+html {
+  background: rgb(14 14 10);
+}
+#root {
+  background: rgba(22, 19, 11, 0.5);
+  backdrop-filter: blur(2px);
+}
 a {
   color: white;
   cursor: pointer;
