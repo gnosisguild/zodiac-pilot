@@ -1,4 +1,4 @@
-name: Fork API release
+name: Deploy Fork API
 on:
   push:
     branches:
