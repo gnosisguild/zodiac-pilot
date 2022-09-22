@@ -47,7 +47,7 @@ export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
-  const { provider: walletConnectProvider, connection } = useConnection()
+  const { provider, connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
@@ -55,13 +55,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const wrappingProvider = useMemo(
     () =>
       new WrappingProvider(
-        walletConnectProvider,
+        provider,
         connection.pilotAddress,
         connection.moduleAddress,
         connection.avatarAddress,
         connection.roleId
       ),
-    [walletConnectProvider, connection]
+    [provider, connection]
   )
 
   const forkProvider = useMemo(
@@ -77,7 +77,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
               value: `${txData.value || 0}`,
               data: txData.data || '',
             },
-            new providers.Web3Provider(walletConnectProvider),
+            new providers.Web3Provider(provider),
             undefined,
             txId
           )
@@ -93,13 +93,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
               value: `${txData.value || 0}`,
               data: txData.data || '',
             },
-            new providers.Web3Provider(walletConnectProvider),
+            new providers.Web3Provider(provider),
             (address: string, data: string) =>
               fetchAbi(
-                walletConnectProvider.chainId as ChainId,
+                provider.chainId as ChainId,
                 address,
                 data,
-                new providers.Web3Provider(walletConnectProvider)
+                new providers.Web3Provider(provider)
               ),
             txId
           )
@@ -118,7 +118,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           })
         },
       }),
-    [tenderlyProvider, walletConnectProvider, connection, dispatch]
+    [tenderlyProvider, provider, connection, dispatch]
   )
 
   const submitTransactions = useCallback(async () => {
