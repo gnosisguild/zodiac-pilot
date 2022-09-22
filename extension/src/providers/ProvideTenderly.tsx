@@ -102,7 +102,7 @@ export class TenderlyProvider extends EventEmitter {
   constructor(walletConnectProvider: WalletConnectProvider) {
     super()
     this.walletConnectProvider = walletConnectProvider
-    this.tenderlyForkApi = 'https://fork-api.zodiac-pilot.workers.dev'
+    this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
