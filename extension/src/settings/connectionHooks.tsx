@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import React, { useCallback } from 'react'
+import React, { ReactNode, useCallback } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useWalletConnectProvider } from '../providers'
@@ -22,7 +22,9 @@ type SelectedConnectionContextT = [string, React.Dispatch<string>]
 const SelectedConnectionContext =
   createContext<SelectedConnectionContextT | null>(null)
 
-export const ProvideConnections: React.FC = ({ children }) => {
+export const ProvideConnections: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [connections, setConnections] = useStickyState<Connection[]>(
     DEFAULT_VALUE,
     'connections'

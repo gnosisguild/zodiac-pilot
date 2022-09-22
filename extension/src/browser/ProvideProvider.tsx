@@ -1,5 +1,11 @@
 import { providers } from 'ethers'
-import React, { createContext, useCallback, useContext, useMemo } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+} from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
 import { ChainId } from '../networks'
@@ -16,6 +22,7 @@ import { useDispatch, useNewTransactions } from './state'
 
 interface Props {
   simulate: boolean
+  children: ReactNode
 }
 
 const ProviderContext = createContext<Eip1193Provider | null>(null)

@@ -4,7 +4,6 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useContext, useEffect, useState } from 'react'
 
-import { TenderlySettings, useTenderly } from '../settings'
 import { useConnection } from '../settings/connectionHooks'
 import { useBeforeUnload } from '../utils'
 
@@ -22,22 +21,18 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { provider: walletConnectProvider } = useConnection()
-  const [tenderlySettings] = useTenderly()
 
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
 
   useEffect(() => {
-    const tenderlyProvider = new TenderlyProvider(
-      walletConnectProvider,
-      tenderlySettings
-    )
+    const tenderlyProvider = new TenderlyProvider(walletConnectProvider)
     setTenderlyProvider(tenderlyProvider)
 
     return () => {
       tenderlyProvider.deleteFork()
     }
-  }, [walletConnectProvider, tenderlySettings])
+  }, [walletConnectProvider])
 
   // delete fork when closing browser tab (the effect teardown won't be executed in that case)
   useBeforeUnload(() => {
@@ -102,21 +97,12 @@ export class TenderlyProvider extends EventEmitter {
     new Map()
   private blockNumber: number | undefined
 
-  private tenderlySettings: TenderlySettings
   private tenderlyForkApi: string
-  private tenderlyHeaders: HeadersInit
 
-  constructor(
-    walletConnectProvider: WalletConnectProvider,
-    tenderlySettings: TenderlySettings
-  ) {
+  constructor(walletConnectProvider: WalletConnectProvider) {
     super()
     this.walletConnectProvider = walletConnectProvider
-
-    this.tenderlySettings = tenderlySettings
-    this.tenderlyForkApi = `https://api.tenderly.co/api/v1/account/${tenderlySettings.user}/project/${tenderlySettings.project}/fork`
-    this.tenderlyHeaders = new Headers()
-    this.tenderlyHeaders.set('X-Access-Key', tenderlySettings.accessKey)
+    this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
@@ -211,9 +197,7 @@ export class TenderlyProvider extends EventEmitter {
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
     await fetch(`${this.tenderlyForkApi}/${forkId}`, {
-      headers: this.tenderlyHeaders,
       method: 'DELETE',
-      keepalive: true,
     })
   }
 
@@ -222,7 +206,6 @@ export class TenderlyProvider extends EventEmitter {
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
     const res = await fetch(this.tenderlyForkApi, {
-      headers: this.tenderlyHeaders,
       method: 'POST',
       body: JSON.stringify({
         network_id: networkId.toString(),
@@ -241,9 +224,7 @@ export class TenderlyProvider extends EventEmitter {
     await this.forkProviderPromise
     if (!this.forkId) throw new Error('No Tenderly fork available')
 
-    const res = await fetch(`${this.tenderlyForkApi}/${this.forkId}`, {
-      headers: this.tenderlyHeaders,
-    })
+    const res = await fetch(`${this.tenderlyForkApi}/${this.forkId}`)
     const json = await res.json()
     return json.simulation_fork
   }
@@ -257,15 +238,12 @@ export class TenderlyProvider extends EventEmitter {
     if (!transactionId) throw new Error('Transaction not found')
 
     const res = await fetch(
-      `${this.tenderlyForkApi}/${this.forkId}/transaction/${transactionId}`,
-      {
-        headers: this.tenderlyHeaders,
-      }
+      `${this.tenderlyForkApi}/${this.forkId}/transaction/${transactionId}`
     )
     const json = await res.json()
     return {
       ...json.fork_transaction,
-      dashboardLink: `https://dashboard.tenderly.co/${this.tenderlySettings.user}/${this.tenderlySettings.project}/fork/${this.forkId}/simulation/${transactionId}`,
+      dashboardLink: `https://dashboard.tenderly.co/gnosisguild/zodiac-pilot/fork/${this.forkId}/simulation/${transactionId}`,
     }
   }
 }
