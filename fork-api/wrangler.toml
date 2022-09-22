@@ -1,7 +1,9 @@
 name = "pilot-fork-api"
 main = "src/index.ts"
 compatibility_date = "2022-09-20"
-zone_id = "848badbf23da7050dc4de04c9525cc3e"
+account_id = "32ad23c951551530b7ec3ecd422861a2"
+route = { pattern = "https://pilot-fork-api.gnosisguild.org/*", zone_id = "848badbf23da7050dc4de04c9525cc3e" }
+workers_dev = true
 
 [vars]
 TENDERLY_USER = "gnosisguild"
