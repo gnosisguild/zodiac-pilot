@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - tenderly-wrapper # TODO temporarily, remove before merge
 
 defaults:
   run:
