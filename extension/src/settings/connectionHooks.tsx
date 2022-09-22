@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 
 import { nanoid } from 'nanoid'
-import React, { ReactNode, useCallback } from 'react'
+import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useMetaMaskProvider, useWalletConnectProvider } from '../providers'
@@ -121,6 +121,17 @@ export const useConnection = (id?: string) => {
     connection.providerType === ProviderType.MetaMask
       ? metamask.chainId
       : walletConnect.provider.chainId
+
+  const mustConnectMetaMask =
+    connection.providerType === ProviderType.MetaMask &&
+    !metamask.chainId &&
+    connection.pilotAddress
+  const connectMetaMask = metamask.connect
+  useEffect(() => {
+    if (mustConnectMetaMask) {
+      connectMetaMask()
+    }
+  }, [mustConnectMetaMask, connectMetaMask])
 
   return { connection, provider, connected, chainId }
 }

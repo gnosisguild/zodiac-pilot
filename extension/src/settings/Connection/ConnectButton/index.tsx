@@ -76,6 +76,8 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   }
 
   if (
+    connection.providerType === ProviderType.MetaMask &&
+    connected &&
     metamask.provider &&
     connection.chainId &&
     metamask.chainId !== connection.chainId
@@ -112,6 +114,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   }
 
   if (
+    connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
     connection.pilotAddress &&
     !metamask.accounts.includes(connection.pilotAddress)
@@ -154,12 +157,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       </Button>
       {metamask.provider && (
         <Button
-          onClick={() => {
-            connect(
-              ProviderType.MetaMask,
-              metamask.chainId,
-              metamask.accounts[0]
-            )
+          onClick={async () => {
+            const { chainId, accounts } = await metamask.connect()
+            connect(ProviderType.MetaMask, chainId, accounts[0])
           }}
         >
           {metamaskLogo}
@@ -175,5 +175,6 @@ export default ConnectButton
 const CHAIN_NAME: Record<number, string> = {
   1: 'Ethereum',
   4: 'Rinkeby',
+  5: 'Goerli',
   100: 'Gnosis Chain',
 }

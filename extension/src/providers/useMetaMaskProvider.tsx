@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers'
 import React, {
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -11,6 +12,7 @@ import { Eip1193Provider } from '../types'
 
 interface MetaMaskContextT {
   provider: Eip1193Provider | undefined
+  connect: () => Promise<{ chainId: number; accounts: string[] }>
   accounts: string[]
   chainId: number | null
 }
@@ -61,14 +63,6 @@ export const ProvideMetaMask: React.FC<{
     window.ethereum.on('chainChanged', handleChainChanged)
     window.ethereum.on('disconnect', handleDisconnect)
 
-    const web3Provider = new Web3Provider(window.ethereum)
-    web3Provider
-      .send('eth_requestAccounts', [])
-      .then(ifNotCanceled((accounts: string[]) => setAccounts(accounts)))
-    web3Provider
-      .getNetwork()
-      .then(ifNotCanceled((network) => setChainId(network.chainId)))
-
     return () => {
       if (!window.ethereum) return
       canceled = true
@@ -78,13 +72,33 @@ export const ProvideMetaMask: React.FC<{
     }
   }, [])
 
+  const connect = useCallback(async () => {
+    if (!window.ethereum) throw new Error('MetaMask not found')
+
+    const web3Provider = new Web3Provider(window.ethereum)
+    const [accounts, chainId] = await Promise.all([
+      web3Provider
+        .send('eth_requestAccounts', [])
+        .then((accounts: string[]) => {
+          return accounts
+        }),
+      web3Provider.getNetwork().then((network) => network.chainId),
+    ])
+
+    setAccounts(accounts)
+    setChainId(chainId)
+
+    return { accounts, chainId }
+  }, [])
+
   const packed = useMemo(
     () => ({
       provider: window.ethereum,
+      connect,
       accounts,
       chainId,
     }),
-    [accounts, chainId]
+    [accounts, connect, chainId]
   )
 
   return (
