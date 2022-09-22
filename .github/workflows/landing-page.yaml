@@ -3,8 +3,7 @@ name: Deploy Landing Page
 on:
   push:
     branches: main
-  paths:
-    - "landing-page/**"
+    paths: "landing-page/**"
 
 jobs:
   deploy:
