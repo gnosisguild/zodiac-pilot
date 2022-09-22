@@ -12,10 +12,7 @@ import { prependHttp } from './browser/UrlInput'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, {
-  ProvideConnections,
-  ProvideTenderlySettings,
-} from './settings'
+import Settings, { ProvideConnections } from './settings'
 import { useConnection } from './settings'
 
 const Routes: React.FC = () => {
@@ -62,10 +59,8 @@ root.render(
   <React.StrictMode>
     <ProvideMetaMask>
       <ProvideConnections>
-        <ProvideTenderlySettings>
-          <Routes />
-          <ToastContainer />
-        </ProvideTenderlySettings>
+        <Routes />
+        <ToastContainer />
       </ProvideConnections>
     </ProvideMetaMask>
   </React.StrictMode>

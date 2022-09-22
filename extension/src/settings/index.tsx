@@ -3,19 +3,12 @@ import React from 'react'
 import { Box, Flex } from '../components'
 
 import Connection from './Connection'
-import Tenderly from './Tenderly'
 import {
   ProvideConnections,
   useConnection,
   useSelectConnection,
 } from './connectionHooks'
 import classes from './style.module.css'
-
-export {
-  default as useTenderly,
-  ProvideTenderlySettings,
-  type TenderlySettings,
-} from './useTenderly'
 
 export { useConnection, ProvideConnections }
 
@@ -45,10 +38,6 @@ const Settings: React.FC<Props> = ({ url, onLaunch, editConnectionId }) => {
             }}
           />
         </Flex>
-      </Box>
-
-      <Box double p={3}>
-        <Tenderly />
       </Box>
     </div>
   )
