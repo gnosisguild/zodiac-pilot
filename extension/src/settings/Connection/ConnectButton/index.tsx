@@ -60,6 +60,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
+  // good to go
   if (connected) {
     return (
       <div className={classes.connectedAccount}>
@@ -78,9 +79,12 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
+  // right account, wrong network
   if (
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
+    connection.pilotAddress &&
+    metamask.accounts.includes(connection.pilotAddress) &&
     connection.chainId &&
     metamask.chainId !== connection.chainId
   ) {
@@ -115,6 +119,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
+  // wrong account
   if (
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
@@ -133,6 +138,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
+  // not connected
   return (
     <>
       <Button
