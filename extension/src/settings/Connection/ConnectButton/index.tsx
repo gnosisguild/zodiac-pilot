@@ -12,6 +12,7 @@ import { useConnection, useConnections } from '../../connectionHooks'
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
+import classNames from 'classnames'
 
 const walletConnectLogo = (
   <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
@@ -91,7 +92,12 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     metamask.chainId !== connection.chainId
   ) {
     return (
-      <div className={classes.connectedAccount}>
+      <div
+        className={classNames(
+          classes.connectedAccount,
+          classes.connectedAddress
+        )}
+      >
         <Tag head={<RiAlertLine />} color="warning">
           Network mismatch
         </Tag>
