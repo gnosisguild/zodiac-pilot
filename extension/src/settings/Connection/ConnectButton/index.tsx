@@ -1,10 +1,11 @@
+import classNames from 'classnames'
 import React from 'react'
 import { RiAlertLine } from 'react-icons/ri'
 
-import { ChainId } from '../../../networks'
-import { useMetaMask, useWalletConnect } from '../../../providers'
 import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
+import { ChainId } from '../../../networks'
+import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
 import { useConnection, useConnections } from '../../connectionHooks'
@@ -12,7 +13,6 @@ import { useConnection, useConnections } from '../../connectionHooks'
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
-import classNames from 'classnames'
 
 const walletConnectLogo = (
   <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
