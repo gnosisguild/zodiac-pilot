@@ -11,7 +11,7 @@
     },
     "condition": {
       "resourceTypes": ["sub_frame"],
-      "initiatorDomains": ["ipfs.io"]
+      "initiatorDomains": ["pilot.gnosisguild.org"]
     }
   }
 ]
