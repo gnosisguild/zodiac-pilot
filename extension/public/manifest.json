@@ -12,9 +12,18 @@
   "action": {
     "default_title": "Zodiac Pilot"
   },
-  "permissions": ["tabs", "declarativeNetRequest"],
+  "permissions": ["tabs", "scripting", "declarativeNetRequest"],
   "background": {
     "service_worker": "build/background.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "rules1",
+        "enabled": true,
+        "path": "requestRules.json"
+      }
+    ]
   },
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
@@ -25,19 +34,19 @@
       "js": ["build/contentScript.js"]
     },
     {
-      "matches": ["https://ipfs.io/"],
+      "matches": ["https://pilot.gnosisguild.org/"],
       "run_at": "document_start",
-      "all_frames": true,
-      "js": ["build/contentScript.js"]
+      "js": ["build/introduce.js"]
+    },
+    {
+      "matches": ["https://pilot.gnosisguild.org/"],
+      "run_at": "document_end",
+      "js": ["build/launch.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["build/inject.js"],
-      "matches": ["<all_urls>"]
-    },
-    {
-      "resources": ["build/ganache.js"],
+      "resources": ["*"],
       "matches": ["<all_urls>"]
     }
   ]

@@ -233,7 +233,9 @@ const TransactionStatus: React.FC<TransactionState> = ({
 )
 
 const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
-  const { provider } = useConnection()
+  const {
+    connection: { chainId },
+  } = useConnection()
   let value = ''
   if (
     input.type === TransactionType.callContract ||
@@ -255,9 +257,7 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
         <Box p={1} bg>
           {valueBN.isZero()
             ? 'n/a'
-            : `${formatEther(valueBN)} ${
-                NETWORK_CURRENCY[provider.chainId as ChainId]
-              }`}
+            : `${formatEther(valueBN)} ${NETWORK_CURRENCY[chainId as ChainId]}`}
         </Box>
       </Flex>
     </Box>

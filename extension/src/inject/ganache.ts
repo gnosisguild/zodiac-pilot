@@ -67,6 +67,8 @@ const DB_NAME = 'pilot'
 const setupFork = () => {
   const provider = ganache.provider({
     fork: {
+      /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+      // @ts-ignore wrong typing in the ganache package
       provider: new Eip1193Provider(),
     },
     chain: {

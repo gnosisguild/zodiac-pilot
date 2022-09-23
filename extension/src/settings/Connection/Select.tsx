@@ -3,10 +3,9 @@ import { RiBallPenLine } from 'react-icons/ri'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { AddressStack, BoxButton, Flex } from '../../components'
-import { useWalletConnectProvider } from '../../providers'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'
-import { useConnections } from '../connectionHooks'
+import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectIcon from './ConnectIcon'
@@ -35,7 +34,7 @@ const ConnectionItem: React.FC<{
   connection: Connection
   onLaunch(connectionId: string): void
 }> = ({ connection, onLaunch }) => {
-  const { provider, connected } = useWalletConnectProvider(connection.id)
+  const { connected } = useConnection(connection.id)
   const pushSettingsRoute = usePushSettingsRoute()
   const error = useConnectionDryRun(connection)
 
@@ -73,7 +72,7 @@ const ConnectionItem: React.FC<{
         <AddressStack
           avatarAddress={connection.avatarAddress}
           moduleAddress={connection.moduleAddress}
-          pilotAddress={provider.accounts[0] || ''}
+          pilotAddress={connection.pilotAddress}
           helperClass={classes.addressHelper}
           addressBoxClass={classes.addressBox}
         />

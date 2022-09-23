@@ -5,16 +5,20 @@ import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
-import { ChainId, EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
+import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
+import { ProviderType } from '../../types'
 import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
 import classes from './style.module.css'
 
 const Submit: React.FC = () => {
-  const { provider: walletConnectProvider } = useConnection()
+  const {
+    provider,
+    connection: { chainId, pilotAddress, providerType },
+  } = useConnection()
   const dispatch = useDispatch()
 
   const transactions = useNewTransactions()
@@ -29,14 +33,15 @@ const Submit: React.FC = () => {
 
     // wait for transaction to be mined
     const realBatchTransactionHash = await waitForMultisigExecution(
-      walletConnectProvider,
+      provider,
+      chainId,
       batchTransactionHash
     )
     console.log(
       `Transaction batch ${batchTransactionHash} has been executed with transaction hash ${realBatchTransactionHash}`
     )
     const receipt = await new providers.Web3Provider(
-      walletConnectProvider
+      provider
     ).waitForTransaction(realBatchTransactionHash)
     console.log(
       `Transaction ${realBatchTransactionHash} has been mined`,
@@ -53,9 +58,7 @@ const Submit: React.FC = () => {
         Transaction batch has been executed
         <br />
         <a
-          href={`${
-            EXPLORER_URL[walletConnectProvider.chainId as ChainId]
-          }/tx/${realBatchTransactionHash}`}
+          href={`${EXPLORER_URL[chainId]}/tx/${realBatchTransactionHash}`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -90,22 +93,22 @@ const Submit: React.FC = () => {
             <RiCloseLine />
           </IconButton>
           <p>Awaiting your signature ...</p>
-          <br />
-          <p>
-            <a
-              className={classes.safeAppLink}
-              href={`https://gnosis-safe.io/app/${
-                NETWORK_PREFIX[walletConnectProvider.chainId as ChainId]
-              }:${
-                walletConnectProvider.accounts[0]
-              }/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <RiExternalLinkLine />
-              WalletConnect Safe app
-            </a>
-          </p>
+          {providerType === ProviderType.WalletConnect && (
+            <>
+              <br />
+              <p>
+                <a
+                  className={classes.safeAppLink}
+                  href={`https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${pilotAddress}/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <RiExternalLinkLine />
+                  WalletConnect Safe app
+                </a>
+              </p>
+            </>
+          )}
         </Modal>
       )}
     </>

@@ -87,7 +87,7 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
               }}
             />
           </Field>
-          <Field>
+          <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
           <Field label="DAO Safe">
@@ -95,8 +95,9 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
               type="text"
               value={avatarAddress}
               onChange={(ev) => {
+                const avatarAddress = ev.target.value.replace(/^[a-z]{3}:/g, '')
                 updateConnection({
-                  avatarAddress: ev.target.value,
+                  avatarAddress,
                   moduleAddress: '',
                 })
               }}

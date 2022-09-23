@@ -1,84 +1,37 @@
+// Attention: The URL must also be updated in manifest.json
+const PILOT_URL = 'https://pilot.gnosisguild.org/'
+
 // When clicking the extension button, load the current tab's page in the simulation browser
-chrome.action.onClicked.addListener(() => {
-  chrome.tabs.query(
-    { currentWindow: true, active: true },
-    async function (tabs) {
-      let tab = tabs[0]
-      if (tab && tab.id && tab.url) {
-        const hash =
-          tab.url.startsWith('chrome:') ||
-          tab.url.startsWith('chrome-extension:')
-            ? ''
-            : encodeURIComponent(tab.url)
-        chrome.tabs.update(tab.id, {
-          url: `index.html#${hash}`,
-        })
-      } else {
-        tab = await chrome.tabs.create({ url: 'index.html' })
-      }
-    }
-  )
-})
+const toggle = async (tab: chrome.tabs.Tab) => {
+  if (!tab.id || !tab.url) return
 
-// Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
-// This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
-// generally circumvent this security mechanism, so we only apply it to extension tabs.
-const activeExtensionTabs = new Set<number>()
-const trackTab = (tab: chrome.tabs.Tab) => {
-  if (!tab.id) return
-  const isExtensionTab = tab.url?.startsWith(
-    `chrome-extension://${chrome.runtime.id}`
-  )
+  if (!tab.url.startsWith(PILOT_URL)) {
+    console.log('activate Zodiac Pilot')
 
-  const updateRule = () => {
-    const RULE_ID = 1
-    chrome.declarativeNetRequest.updateSessionRules({
-      addRules: [
-        {
-          id: RULE_ID,
-          priority: 1,
-          action: {
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            type: 'modifyHeaders',
-            responseHeaders: [
-              // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-              { header: 'x-frame-options', operation: 'remove' },
-              // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-              { header: 'content-security-policy', operation: 'remove' },
-            ],
-          },
-          condition: {
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            resourceTypes: ['main_frame', 'sub_frame'],
-            tabIds: Array.from(activeExtensionTabs),
-          },
-        },
-      ],
-      removeRuleIds: [RULE_ID],
+    const url =
+      tab.url.startsWith('chrome://') || tab.url.startsWith('about:')
+        ? ''
+        : tab.url
+    chrome.tabs.update(tab.id, {
+      url: `${PILOT_URL}#${encodeURIComponent(url)}`,
+    })
+  } else {
+    console.log('deactivate Zodiac Pilot')
+
+    const url = new URL(tab.url)
+    const appUrl = decodeURIComponent(url.hash.slice(1))
+
+    await chrome.tabs.update(tab.id, {
+      url: appUrl,
     })
   }
-
-  if (isExtensionTab && !activeExtensionTabs.has(tab.id)) {
-    // add to allow list
-    activeExtensionTabs.add(tab.id)
-    updateRule()
-  }
-
-  if (!isExtensionTab && activeExtensionTabs.has(tab.id)) {
-    // remove from allow list
-    activeExtensionTabs.delete(tab.id)
-    updateRule()
-  }
 }
+chrome.action.onClicked.addListener(toggle)
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  trackTab(tab)
-
-  if (
-    changeInfo.status === 'complete' &&
-    tab.url?.startsWith(`chrome-extension://${chrome.runtime.id}`)
-  ) {
-    chrome.runtime.sendMessage({ type: 'navigationDetected' })
+// launch extension script on matching URLs
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+  if (changeInfo.status === 'complete') {
+    chrome.tabs.sendMessage(tabId, { type: 'navigationDetected' })
   }
 })
 

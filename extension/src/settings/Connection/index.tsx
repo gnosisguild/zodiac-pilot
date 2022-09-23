@@ -3,6 +3,7 @@ import React from 'react'
 
 import { Button } from '../../components'
 import { usePushSettingsRoute } from '../../routing'
+import { ProviderType } from '../../types'
 import { useConnections } from '../connectionHooks'
 
 import EditConnection from './Edit'
@@ -31,8 +32,11 @@ const Connection: React.FC<Props> = ({ editConnectionId, onLaunch }) => {
             {
               id,
               label: '',
-              avatarAddress: '',
+              chainId: 1,
               moduleAddress: '',
+              avatarAddress: '',
+              pilotAddress: '',
+              providerType: ProviderType.WalletConnect,
               roleId: '',
             },
           ])

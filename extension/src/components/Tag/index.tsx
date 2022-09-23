@@ -7,6 +7,7 @@ interface Props {
   head?: ReactNode
   color: 'success' | 'danger' | 'warning' | 'info'
   className?: string
+  children?: ReactNode
 }
 
 const Tag: React.FC<Props> = ({ head, children, color, className }) => (

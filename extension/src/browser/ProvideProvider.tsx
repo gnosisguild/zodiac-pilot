@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
 import React, {
   createContext,
   ReactNode,
@@ -10,12 +10,12 @@ import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
 import { ChainId } from '../networks'
 import {
-  Eip1193Provider,
   ForkProvider,
   useTenderlyProvider,
   WrappingProvider,
 } from '../providers'
 import { useConnection } from '../settings'
+import { Eip1193Provider } from '../types'
 
 import fetchAbi from './fetchAbi'
 import { useDispatch, useNewTransactions } from './state'
@@ -47,22 +47,21 @@ export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
-  const { provider: walletConnectProvider, connection } = useConnection()
+  const { provider, connection, chainId } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
-  const pilotAddress = walletConnectProvider.accounts[0]
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
 
   const wrappingProvider = useMemo(
     () =>
       new WrappingProvider(
-        walletConnectProvider,
-        pilotAddress,
+        provider,
+        connection.pilotAddress,
         connection.moduleAddress,
         connection.avatarAddress,
         connection.roleId
       ),
-    [walletConnectProvider, pilotAddress, connection]
+    [provider, connection]
   )
 
   const forkProvider = useMemo(
@@ -78,7 +77,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
               value: `${txData.value || 0}`,
               data: txData.data || '',
             },
-            new providers.Web3Provider(walletConnectProvider),
+            new Web3Provider(provider),
             undefined,
             txId
           )
@@ -87,6 +86,10 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             payload: inputRaw,
           })
 
+          if (!chainId) {
+            throw new Error('chainId is undefined')
+          }
+
           // Now we can take some time decoding the transaction for real and we update the state once that's done.
           const input = await decodeSingle(
             {
@@ -94,13 +97,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
               value: `${txData.value || 0}`,
               data: txData.data || '',
             },
-            new providers.Web3Provider(walletConnectProvider),
+            new Web3Provider(provider),
             (address: string, data: string) =>
               fetchAbi(
-                walletConnectProvider.chainId as ChainId,
+                chainId as ChainId,
                 address,
                 data,
-                new providers.Web3Provider(walletConnectProvider)
+                new Web3Provider(provider)
               ),
             txId
           )
@@ -119,7 +122,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           })
         },
       }),
-    [tenderlyProvider, walletConnectProvider, connection, dispatch]
+    [tenderlyProvider, provider, chainId, connection, dispatch]
   )
 
   const submitTransactions = useCallback(async () => {

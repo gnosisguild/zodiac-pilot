@@ -33,7 +33,7 @@ const Browser: React.FC = () => {
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
   const settingsHash = useSettingsHash()
-  const { connection, provider } = useConnection()
+  const { connection } = useConnection()
 
   return (
     <ProvideTenderly>
@@ -55,7 +55,7 @@ const Browser: React.FC = () => {
                 <BlockLink href={settingsHash}>
                   <AddressStack
                     interactive
-                    pilotAddress={provider.accounts[0]}
+                    pilotAddress={connection.pilotAddress}
                     moduleAddress={connection.moduleAddress}
                     avatarAddress={connection.avatarAddress}
                   />

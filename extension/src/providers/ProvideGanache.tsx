@@ -1,9 +1,9 @@
 import EventEmitter from 'events'
 
-import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
+import { Eip1193Provider, JsonRpcRequest } from '../types'
 
 const GanacheContext = React.createContext<GanacheProvider | null>(null)
 
@@ -52,9 +52,8 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
         title="Ganache"
         name="ganache-frame"
         ref={ref}
-        // This is just a basically empty page we use to inject our ganache script.
-        // We need a real host, though, for Chrome to give us permission to use Indexed DB.
-        src="https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m"
+        // We need to run the iframe window under an external host for Chrome to give us permission to use Indexed DB.
+        src="https://pilot.gnosisguild.org/"
         style={{ display: 'none' }}
       />
     </GanacheContext.Provider>
@@ -63,18 +62,13 @@ const ProvideGanache: React.FC<{ children: React.ReactNode }> = ({
 
 export default ProvideGanache
 
-interface JsonRpcRequest {
-  method: string
-  params?: Array<any>
-}
-
 // This is like the Dapp bridge host (/src/bridge/host) just for the ganache iframe.
 // So it handles JSON RPC requests that Ganache performs for forking the network.
 class GanacheBridgeHost extends EventEmitter {
   private source: WindowProxy | undefined
-  private provider: WalletConnectProvider
+  private provider: Eip1193Provider
 
-  constructor(provider: WalletConnectProvider) {
+  constructor(provider: Eip1193Provider) {
     super()
     this.provider = provider
   }

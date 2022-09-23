@@ -1,14 +1,9 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import {
-  RiCheckboxCircleLine,
-  RiErrorWarningLine,
-  RiFileCopy2Line,
-  RiGroupLine,
-} from 'react-icons/ri'
+import { RiFileCopy2Line, RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
-import { Box, Flex, Tag } from '../../components'
+import { Flex, Tag } from '../../components'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'

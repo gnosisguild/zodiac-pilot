@@ -1,9 +1,8 @@
 import { Web3Provider } from '@ethersproject/providers'
-import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
-import { Connection } from '../types'
+import { Connection, Eip1193Provider } from '../types'
 import { decodeRolesError } from '../utils'
 
 import {
@@ -14,6 +13,7 @@ import { useConnection } from './connectionHooks'
 
 const useConnectionDryRun = ({
   id,
+  pilotAddress,
   moduleAddress,
   avatarAddress,
   roleId,
@@ -22,15 +22,16 @@ const useConnectionDryRun = ({
   const { provider, connected } = useConnection(id)
 
   useEffect(() => {
-    if (connected && avatarAddress && moduleAddress && roleId) {
-      dryRun(provider, moduleAddress, avatarAddress, roleId)
+    if (connected && pilotAddress && avatarAddress && moduleAddress && roleId) {
+      dryRun(provider, pilotAddress, moduleAddress, avatarAddress, roleId)
         .then(() => {
           console.log('dry run success')
           setError(null)
         })
         .catch((e) => {
-          console.warn(e)
-          const reason = typeof e === 'string' ? decodeRolesError(e) : null
+          const message: string | undefined =
+            typeof e === 'string' ? e : e.data?.message
+          const reason = message && decodeRolesError(message)
 
           if (reason === 'Module not authorized') {
             setError(
@@ -61,22 +62,22 @@ const useConnectionDryRun = ({
             return
           }
 
+          console.warn('Unexpected dry run error', e)
           setError(reason || 'Unexpected error')
         })
     }
-  }, [moduleAddress, avatarAddress, roleId, provider, connected])
+  }, [pilotAddress, moduleAddress, avatarAddress, roleId, provider, connected])
 
   return error
 }
 
 async function dryRun(
-  provider: WalletConnectEthereumProvider,
+  provider: Eip1193Provider,
+  pilotAddress: string,
   moduleAddress: string,
   avatarAddress: string,
   roleId: string
 ) {
-  const pilotAddress = provider.accounts[0]
-
   if (!isValidAddress(pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }

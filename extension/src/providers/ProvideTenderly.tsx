@@ -1,10 +1,10 @@
 import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
-import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
+import { Eip1193Provider, JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
@@ -20,19 +20,21 @@ export const useTenderlyProvider = (): TenderlyProvider => {
 const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { provider: walletConnectProvider } = useConnection()
+  const { provider, chainId } = useConnection()
 
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
 
   useEffect(() => {
-    const tenderlyProvider = new TenderlyProvider(walletConnectProvider)
+    if (!chainId) return
+
+    const tenderlyProvider = new TenderlyProvider(provider, chainId)
     setTenderlyProvider(tenderlyProvider)
 
     return () => {
       tenderlyProvider.deleteFork()
     }
-  }, [walletConnectProvider])
+  }, [provider, chainId])
 
   // delete fork when closing browser tab (the effect teardown won't be executed in that case)
   useBeforeUnload(() => {
@@ -48,10 +50,6 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
 
 export default ProvideTenderly
 
-interface JsonRpcRequest {
-  method: string
-  params?: Array<any>
-}
 export interface TenderlyTransactionInfo {
   id: string
   project_id: string
@@ -88,7 +86,8 @@ export interface TenderlyTransactionInfo {
 }
 
 export class TenderlyProvider extends EventEmitter {
-  private walletConnectProvider: WalletConnectProvider
+  private provider: Eip1193Provider
+  private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
   private forkId: string | undefined
@@ -99,16 +98,17 @@ export class TenderlyProvider extends EventEmitter {
 
   private tenderlyForkApi: string
 
-  constructor(walletConnectProvider: WalletConnectProvider) {
+  constructor(provider: Eip1193Provider, chainId: number) {
     super()
-    this.walletConnectProvider = walletConnectProvider
+    this.provider = provider
+    this.chainId = chainId
     this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
     if (request.method === 'eth_chainId') {
       // WalletConnect seems to return a number even though it must be a string value, we patch this bug here
-      return `0x${this.walletConnectProvider.chainId.toString(16)}`
+      return `0x${this.chainId.toString(16)}`
     }
 
     if (request.method === 'eth_blockNumber' && this.blockNumber) {
@@ -123,12 +123,10 @@ export class TenderlyProvider extends EventEmitter {
         request.method === 'evm_revert')
     ) {
       // spawn a fork lazily when sending the first transaction
-      this.forkProviderPromise = this.createFork(
-        this.walletConnectProvider.chainId
-      )
+      this.forkProviderPromise = this.createFork(this.chainId)
     } else if (!this.forkProviderPromise) {
-      // We have not spawned a fork currently, so we can just use the walletConnectProvider to get the latest on-chain state
-      return await this.walletConnectProvider.request(request)
+      // We have not spawned a fork currently, so we can just use the provider to get the latest on-chain state
+      return await this.provider.request(request)
     }
 
     const provider = await this.forkProviderPromise
@@ -154,7 +152,7 @@ export class TenderlyProvider extends EventEmitter {
       this.blockNumber = block_number
       this.transactionIds.set(result, headTransactionId) // result is the transaction hash
 
-      // advance one extra block to account for apps waiting on the transaction's inclusion in the next block
+      // advance two extra blocks to account for apps waiting on the transaction's inclusion in the next block
       window.setTimeout(async () => {
         await provider.send('evm_increaseBlocks', ['0x2'])
         if (this.blockNumber) this.blockNumber += 2
@@ -182,9 +180,7 @@ export class TenderlyProvider extends EventEmitter {
 
   async refork() {
     this.deleteFork()
-    this.forkProviderPromise = this.createFork(
-      this.walletConnectProvider.chainId
-    )
+    this.forkProviderPromise = this.createFork(this.chainId)
     return await this.forkProviderPromise
   }
 

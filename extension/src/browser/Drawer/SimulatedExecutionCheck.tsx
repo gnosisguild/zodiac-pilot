@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {
-  RiCheckboxCircleLine,
-  RiErrorWarningLine,
-  RiExternalLinkLine,
-  RiGitBranchLine,
-} from 'react-icons/ri'
+import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 
-import { Box, Flex, Spinner, Tag } from '../../components'
+import { Flex, Spinner, Tag } from '../../components'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
 

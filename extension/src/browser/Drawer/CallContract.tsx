@@ -15,13 +15,15 @@ interface Props {
 }
 
 const CallContract: React.FC<Props> = ({ value }) => {
-  const { provider } = useConnection()
+  const {
+    connection: { chainId },
+  } = useConnection()
   const { inputs } = useContractCall({
     value,
     onChange: () => {
       /*nothing here*/
     },
-    network: provider.chainId.toString() as NetworkId,
+    network: chainId ? (chainId.toString() as NetworkId) : '1',
     blockExplorerApiKey: process.env.ETHERSCAN_API_KEY,
   })
 

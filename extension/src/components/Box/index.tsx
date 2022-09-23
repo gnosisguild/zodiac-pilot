@@ -4,7 +4,6 @@ import React, { forwardRef, ReactNode } from 'react'
 import classes from './style.module.css'
 
 interface Props {
-  children?: ReactNode
   className?: string
   double?: boolean
   borderless?: boolean
@@ -13,6 +12,7 @@ interface Props {
   roundedLeft?: boolean
   roundedRight?: boolean
   p?: 1 | 2 | 3
+  children?: ReactNode
 }
 
 const Box = forwardRef<HTMLDivElement, Props>(

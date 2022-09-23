@@ -1,4 +1,6 @@
-import BridgeIframe from './bridge/iframe'
+// This script will be injected via contentScripts.ts into the browser iframe running the Dapp.
+
+import BridgeIframe from '../bridge/iframe'
 declare let window: Window & { ethereum: BridgeIframe }
 
 // inject bridged ethereum provider

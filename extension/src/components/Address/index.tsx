@@ -31,20 +31,25 @@ const EXPLORER_URLS: Record<string, string | undefined> = {
   '42161': 'https://arbiscan.io',
 }
 
+export const shortenAddress = (address: string): string => {
+  const start = address.substring(0, VISIBLE_START + 2)
+  const end = address.substring(42 - VISIBLE_END, 42)
+  return `${start}...${end}`
+}
+
 const Address: React.FC<Props> = ({
   address,
   explorerLink,
   copyToClipboard,
   className,
 }) => {
-  const { provider } = useConnection()
-  const explorerUrl = EXPLORER_URLS[provider.chainId]
+  const {
+    connection: { chainId },
+  } = useConnection()
+  const explorerUrl = chainId && EXPLORER_URLS[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
-
-  const start = address.substring(0, VISIBLE_START + 2)
-  const end = address.substring(42 - VISIBLE_END, 42)
-  const displayAddress = `${start}...${end}`
+  const displayAddress = shortenAddress(address)
 
   return (
     <Box roundedRight className={cn(className, classes.container)}>

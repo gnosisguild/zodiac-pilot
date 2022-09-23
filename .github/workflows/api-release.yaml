@@ -1,10 +1,9 @@
-name: Fork API release
+name: Deploy Fork API
+
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "fork-api/**"
+    branches: main
+    paths: "fork-api/**"
 
 defaults:
   run:

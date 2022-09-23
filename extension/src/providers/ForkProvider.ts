@@ -1,5 +1,6 @@
-import { ITxData } from '@walletconnect/types'
-import { nanoid } from 'nanoid'
+import EventEmitter from 'events'
+
+import { TransactionData } from '../types'
 
 import { GanacheProvider } from './ProvideGanache'
 import { TenderlyProvider } from './ProvideTenderly'
@@ -9,11 +10,11 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(checkpointId: string, txData: ITxData): void
+  onBeforeTransactionSend(checkpointId: string, txData: TransactionData): void
   onTransactionSent(checkpointId: string, hash: string): void
 }
 
-class ForkProvider {
+class ForkProvider extends EventEmitter {
   private avatarAddress: string
   private provider: TenderlyProvider | GanacheProvider
   private handlers: Handlers
@@ -23,6 +24,7 @@ class ForkProvider {
     avatarAddress: string,
     handlers: Handlers
   ) {
+    super()
     this.provider = provider
     this.avatarAddress = avatarAddress
     this.handlers = handlers
@@ -62,7 +64,7 @@ class ForkProvider {
         })
         this.handlers.onBeforeTransactionSend(
           checkpointId,
-          params[0] as ITxData
+          params[0] as TransactionData
         )
         const result = await this.provider.request(request)
         this.handlers.onTransactionSent(checkpointId, result)

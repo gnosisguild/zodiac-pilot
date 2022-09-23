@@ -1,5 +1,6 @@
 node_modules
 public/build
+public/_metadata
 .env
 *.log
 zodiac-pilot.zip

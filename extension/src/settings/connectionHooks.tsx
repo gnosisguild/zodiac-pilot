@@ -1,17 +1,22 @@
+import { EventEmitter } from 'events'
+
 import { nanoid } from 'nanoid'
-import React, { ReactNode, useCallback } from 'react'
+import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useWalletConnectProvider } from '../providers'
-import { Connection } from '../types'
+import { useMetaMask, useWalletConnect } from '../providers'
+import { Connection, Eip1193Provider, ProviderType } from '../types'
 import { useStickyState } from '../utils'
 
-const DEFAULT_VALUE = [
+const DEFAULT_VALUE: Connection[] = [
   {
     id: nanoid(),
     label: '',
+    chainId: 1,
     moduleAddress: '',
     avatarAddress: '',
+    pilotAddress: '',
+    providerType: ProviderType.WalletConnect,
     roleId: '',
   },
 ]
@@ -87,9 +92,47 @@ export const useConnection = (id?: string) => {
   const connection =
     (connectionId && connections.find((c) => c.id === connectionId)) ||
     connections[0]
+
   if (!connection) {
     throw new Error('connections is empty, which must never happen')
   }
-  const { provider, connected } = useWalletConnectProvider(connection.id)
-  return { connection, provider, connected }
+
+  const metamask = useMetaMask()
+  const walletConnect = useWalletConnect(connection.id)
+
+  const provider: Eip1193Provider =
+    connection.providerType === ProviderType.MetaMask
+      ? metamask.provider || new DummyProvider() // passing a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
+      : walletConnect.provider
+
+  const connected =
+    connection.providerType === ProviderType.MetaMask
+      ? metamask.accounts.includes(connection.pilotAddress) &&
+        !!metamask.chainId &&
+        metamask.chainId === connection.chainId
+      : walletConnect.connected
+
+  const chainId =
+    connection.providerType === ProviderType.MetaMask
+      ? metamask.chainId
+      : walletConnect.chainId
+
+  const mustConnectMetaMask =
+    connection.providerType === ProviderType.MetaMask &&
+    !metamask.chainId &&
+    connection.pilotAddress
+  const connectMetaMask = metamask.connect
+  useEffect(() => {
+    if (mustConnectMetaMask) {
+      connectMetaMask()
+    }
+  }, [mustConnectMetaMask, connectMetaMask])
+
+  return { connection, provider, connected, chainId }
+}
+
+class DummyProvider extends EventEmitter {
+  async request(): Promise<void> {
+    return
+  }
 }

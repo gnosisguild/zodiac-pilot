@@ -1,4 +1,4 @@
-name: Prod Release
+name: Release Extension
 
 on:
   release:
