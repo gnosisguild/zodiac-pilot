@@ -37,8 +37,10 @@ const Address: React.FC<Props> = ({
   copyToClipboard,
   className,
 }) => {
-  const { provider } = useConnection()
-  const explorerUrl = EXPLORER_URLS[provider.chainId]
+  const {
+    connection: { chainId },
+  } = useConnection()
+  const explorerUrl = chainId && EXPLORER_URLS[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
 

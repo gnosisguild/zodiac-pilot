@@ -1,3 +1,5 @@
+import { ChainId } from '../networks'
+
 export enum ProviderType {
   WalletConnect,
   MetaMask,
@@ -9,7 +11,7 @@ export type Connection = {
   moduleAddress: string
   avatarAddress: string
   pilotAddress: string
-  chainId: number | null
+  chainId: ChainId
   providerType: ProviderType
   roleId: string
 }

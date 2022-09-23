@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button } from '../../../components'
+import { ChainId } from '../../../networks'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
@@ -30,13 +31,18 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   const connect = (
     providerType: ProviderType,
-    chainId: number | null,
+    chainId: ChainId,
     account: string
   ) => {
     setConnections(
       connections.map((c) =>
         c.id === id
-          ? { ...connection, providerType, chainId, pilotAddress: account }
+          ? {
+              ...connection,
+              providerType,
+              chainId,
+              pilotAddress: account,
+            }
           : c
       )
     )
@@ -97,7 +103,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
             onClick={() => {
               connect(
                 ProviderType.MetaMask,
-                metamask.chainId,
+                metamask.chainId as ChainId,
                 connection.pilotAddress
               )
             }}
@@ -132,7 +138,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       <Button
         onClick={async () => {
           const { chainId, accounts } = await walletConnect.connect()
-          connect(ProviderType.WalletConnect, chainId, accounts[0])
+          connect(ProviderType.WalletConnect, chainId as ChainId, accounts[0])
         }}
       >
         {walletConnectLogo}
@@ -142,7 +148,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         <Button
           onClick={async () => {
             const { chainId, accounts } = await metamask.connect()
-            connect(ProviderType.MetaMask, chainId, accounts[0])
+            connect(ProviderType.MetaMask, chainId as ChainId, accounts[0])
           }}
         >
           {metamaskLogo}

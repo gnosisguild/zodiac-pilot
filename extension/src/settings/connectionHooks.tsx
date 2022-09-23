@@ -12,7 +12,7 @@ const DEFAULT_VALUE: Connection[] = [
   {
     id: nanoid(),
     label: '',
-    chainId: null,
+    chainId: 1,
     moduleAddress: '',
     avatarAddress: '',
     pilotAddress: '',

@@ -53,9 +53,11 @@ const ContractAddress: React.FC<Props> = ({
   copyToClipboard,
   className,
 }) => {
-  const { provider } = useConnection()
+  const {
+    connection: { chainId },
+  } = useConnection()
   const [contractName, setContractName] = useState('')
-  const explorerUrl = EXPLORER_URLS[provider.chainId]
+  const explorerUrl = EXPLORER_URLS[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
 
@@ -65,8 +67,8 @@ const ContractAddress: React.FC<Props> = ({
 
   useEffect(() => {
     let canceled = false
-    const explorerApiUrl = EXPLORER_API_URLS[provider.chainId]
-    const apiKey = EXPLORER_API_KEYS[provider.chainId] || ''
+    const explorerApiUrl = EXPLORER_API_URLS[chainId]
+    const apiKey = EXPLORER_API_KEYS[chainId] || ''
 
     memoizedFetchJson(
       `${explorerApiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`
@@ -80,7 +82,7 @@ const ContractAddress: React.FC<Props> = ({
       setContractName('')
       canceled = true
     }
-  }, [provider.chainId, address])
+  }, [chainId, address])
 
   return (
     <Flex

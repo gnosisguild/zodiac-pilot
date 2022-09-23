@@ -151,11 +151,14 @@ interface Props {
 }
 
 const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
-  const { provider } = useConnection()
+  const {
+    connection: { chainId },
+  } = useConnection()
 
   const apps = sortApps().filter(
     (app) =>
-      app.networks.includes(provider.chainId) &&
+      chainId &&
+      app.networks.includes(chainId) &&
       app.name.toLowerCase().includes(query.trim().toLowerCase())
   )
 
