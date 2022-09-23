@@ -1,4 +1,4 @@
-import { Eip1193Provider } from '../providers'
+import { Eip1193Provider } from '../types'
 
 interface Request {
   method: string

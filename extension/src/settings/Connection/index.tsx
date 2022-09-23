@@ -32,7 +32,7 @@ const Connection: React.FC<Props> = ({ editConnectionId, onLaunch }) => {
             {
               id,
               label: '',
-              chainId: null,
+              chainId: 1,
               moduleAddress: '',
               avatarAddress: '',
               pilotAddress: '',
