@@ -3,7 +3,6 @@ import { RiBallPenLine } from 'react-icons/ri'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { AddressStack, BoxButton, Flex } from '../../components'
-import { useWalletConnect } from '../../providers'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'
 import { useConnection, useConnections } from '../connectionHooks'
@@ -35,7 +34,7 @@ const ConnectionItem: React.FC<{
   connection: Connection
   onLaunch(connectionId: string): void
 }> = ({ connection, onLaunch }) => {
-  const { provider, connected } = useConnection(connection.id)
+  const { connected } = useConnection(connection.id)
   const pushSettingsRoute = usePushSettingsRoute()
   const error = useConnectionDryRun(connection)
 
