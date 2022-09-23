@@ -7,12 +7,24 @@ import { RPC } from '../networks'
 
 import { waitForMultisigExecution } from './safe'
 
+class WalletConnectJsonRpcError extends Error {
+  data: { message: string; code: number }
+  constructor(code: number, message: string) {
+    super('WalletConnect - RPC Error: Internal JSON-RPC error.')
+    this.data = {
+      code,
+      message,
+    }
+  }
+}
+
 // Wrap WalletConnectEthereumProvider to make it conform to EIP-1193.
 
 // This resolves some incompatibilities in WalletConnectEthereumProvider:
 //  - does not emit 'connect' events
 //  - request 'eth_chainId' returns a number instead of a hex string
 //  - registering too many event listeners causes MaxListenersExceededWarning error
+//  - make errors conform to EIP-1193
 //
 // It also handles an idiosyncrasy of how the WalletConnect Safe app which return invalid transaction hashes before the transaction is signed by all owners.
 class WalletConnectEip1193Provider extends EventEmitter {
@@ -45,14 +57,27 @@ class WalletConnectEip1193Provider extends EventEmitter {
   }): Promise<any> {
     const { method } = request
 
+    // make errors conform to EIP-1193
+    const requestWithCorrectErrors = async (request: {
+      method: string
+      params?: Array<any>
+    }) => {
+      try {
+        return await this.wcProvider.request(request)
+      } catch (err) {
+        const { message, code } = err as { code: number; message: string }
+        throw new WalletConnectJsonRpcError(code, message)
+      }
+    }
+
     if (method === 'eth_chainId') {
-      const result = await this.wcProvider.request(request)
+      const result = await requestWithCorrectErrors(request)
       // WalletConnect seems to return a number even though it must be a string value
       return typeof result === 'number' ? `0x${result.toString(16)}` : result
     }
 
     if (method === 'eth_sendTransaction') {
-      const safeTxHash: string = await this.wcProvider.request(request)
+      const safeTxHash = (await requestWithCorrectErrors(request)) as string
       const txHash = await waitForMultisigExecution(
         this.wcProvider,
         this.wcProvider.chainId,
@@ -61,7 +86,7 @@ class WalletConnectEip1193Provider extends EventEmitter {
       return txHash
     }
 
-    return this.wcProvider.request(request)
+    return await requestWithCorrectErrors(request)
   }
 }
 

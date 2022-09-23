@@ -6,8 +6,6 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import rolesAbi from '../abi/Roles.json'
 import { Eip1193Provider, TransactionData } from '../types'
 
-import { waitForMultisigExecution } from './safe'
-
 const RolesInterface = new Interface(rolesAbi)
 
 export function wrapRequest(
