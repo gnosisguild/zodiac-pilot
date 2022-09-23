@@ -1,6 +1,9 @@
+import classNames from 'classnames'
 import React from 'react'
+import { RiAlertLine } from 'react-icons/ri'
 
-import { Button } from '../../../components'
+import { Button, Flex, Tag } from '../../../components'
+import { shortenAddress } from '../../../components/Address'
 import { ChainId } from '../../../networks'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
@@ -89,8 +92,17 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     metamask.chainId !== connection.chainId
   ) {
     return (
-      <>
+      <div
+        className={classNames(
+          classes.connectedAccount,
+          classes.connectedAddress
+        )}
+      >
+        <Tag head={<RiAlertLine />} color="warning">
+          Network mismatch
+        </Tag>
         <Button
+          className={classes.disconnectButton}
           onClick={() => {
             metamask.provider?.request({
               method: 'wallet_switchEthereumChain',
@@ -104,6 +116,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
         {metamask.chainId && (
           <Button
+            className={classes.disconnectButton}
             onClick={() => {
               connect(
                 ProviderType.MetaMask,
@@ -115,7 +128,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
             Connect to {CHAIN_NAME[metamask.chainId] || `#${metamask.chainId}`}
           </Button>
         )}
-      </>
+      </div>
     )
   }
 
@@ -129,7 +142,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     return (
       <div className={classes.connectedAccount}>
         <div className={classes.connectedAddress}>
-          Switch wallet to account {connection.pilotAddress}
+          <Tag head={<RiAlertLine />} color="warning">
+            Switch wallet to account {shortenAddress(connection.pilotAddress)}
+          </Tag>
         </div>
         <Button onClick={disconnect} className={classes.disconnectButton}>
           Disconnect
@@ -140,8 +155,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   // not connected
   return (
-    <>
+    <Flex gap={2}>
       <Button
+        className={classes.walletButton}
         onClick={async () => {
           const { chainId, accounts } = await walletConnect.connect()
           connect(ProviderType.WalletConnect, chainId as ChainId, accounts[0])
@@ -152,6 +168,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       </Button>
       {metamask.provider && (
         <Button
+          className={classes.walletButton}
           onClick={async () => {
             const { chainId, accounts } = await metamask.connect()
             connect(ProviderType.MetaMask, chainId as ChainId, accounts[0])
@@ -161,7 +178,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           Connect via MetaMask
         </Button>
       )}
-    </>
+    </Flex>
   )
 }
 
