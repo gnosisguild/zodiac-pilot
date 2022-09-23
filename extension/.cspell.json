@@ -14,15 +14,23 @@
     "esbuild",
     "ethersproject",
     "getsourcecode",
+    "gnosisguild",
     "honeyswap",
     "iframes",
     "instadapp",
     "multisend",
+    "Omni",
     "outdir",
     "paraswap",
     "prebuild",
     "reflexer",
+    "refork",
+    "sighash",
+    "Sindre",
+    "Sorhus",
     "Sushiswap",
+    "toastify",
+    "typechain",
     "walletconnect"
   ],
   "flagWords": [],
@@ -31,6 +39,9 @@
     "yarn.lock",
     "node_modules/**",
     "tsconfig.json",
-    "public/build/**"
+    "public/build/**",
+    "public/_metadata/**",
+    "src/types/typechain/**",
+    "**/*.svg"
   ]
 }

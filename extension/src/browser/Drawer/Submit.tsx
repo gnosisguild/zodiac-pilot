@@ -5,7 +5,7 @@ import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
-import { ChainId, EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
+import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
 import { ProviderType } from '../../types'
