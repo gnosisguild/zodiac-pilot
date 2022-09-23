@@ -74,7 +74,6 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   if (
     connection.providerType === ProviderType.MetaMask &&
-    connected &&
     metamask.provider &&
     connection.chainId &&
     metamask.chainId !== connection.chainId
