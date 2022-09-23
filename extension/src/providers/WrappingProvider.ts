@@ -1,25 +1,21 @@
 import EventEmitter from 'events'
 
 import { Interface } from '@ethersproject/abi'
-import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
-import {
-  IJsonRpcResponseError,
-  IJsonRpcResponseSuccess,
-  ITxData,
-} from '@walletconnect/types'
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 import rolesAbi from '../abi/Roles.json'
+import { Eip1193Provider, TransactionData } from '../types'
 
 import { waitForMultisigExecution } from './safe'
 
 const RolesInterface = new Interface(rolesAbi)
 
 export function wrapRequest(
-  request: ITxData,
+  request: TransactionData,
   from: string,
   to: string,
   roleId: string
-): ITxData {
+): TransactionData {
   const data = RolesInterface.encodeFunctionData(
     'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
     [request.to, request.value || 0, request.data, 0, roleId || 0, true]
@@ -43,10 +39,11 @@ class WrappingProvider extends EventEmitter {
   private avatarAddress: string
   private roleId: string
 
-  private provider: WalletConnectEthereumProvider
+  private provider: Eip1193Provider
+  private signer: JsonRpcSigner
 
   constructor(
-    provider: WalletConnectEthereumProvider,
+    provider: Eip1193Provider,
     pilotAddress: string,
     moduleAddress: string,
     avatarAddress: string,
@@ -54,6 +51,7 @@ class WrappingProvider extends EventEmitter {
   ) {
     super()
     this.provider = provider
+    this.signer = new Web3Provider(provider).getSigner()
     this.pilotAddress = pilotAddress
     this.moduleAddress = moduleAddress
     this.avatarAddress = avatarAddress
@@ -70,7 +68,6 @@ class WrappingProvider extends EventEmitter {
       case 'eth_chainId': {
         const result = await this.provider.request(request)
         // WalletConnect seems to return a number even though it must be a string value
-        // (This will make curve.fi throw an error)
         return typeof result === 'number' ? `0x${result.toString(16)}` : result
       }
 
@@ -119,21 +116,14 @@ class WrappingProvider extends EventEmitter {
       }
 
       case 'eth_sendTransaction': {
-        const request = params[0] as ITxData
         const wrappedReq = wrapRequest(
-          request,
+          params[0] as TransactionData,
           this.pilotAddress,
           this.moduleAddress,
           this.roleId
         )
 
-        const safeTxHash = await this.provider.connector.sendTransaction(
-          wrappedReq
-        )
-
-        const txHash = await waitForMultisigExecution(this.provider, safeTxHash)
-
-        return txHash
+        return await this.signer.sendUncheckedTransaction(wrappedReq)
       }
 
       // Uniswap will try to use this for ERC-20 permits, but this wont fly with a contract wallet

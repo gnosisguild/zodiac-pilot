@@ -1,3 +1,7 @@
+export const RPC = {
+  100: 'https://rpc.gnosischain.com/',
+}
+
 export const EXPLORER_URL = {
   1: 'https://etherscan.io',
   4: 'https://rinkeby.etherscan.io',

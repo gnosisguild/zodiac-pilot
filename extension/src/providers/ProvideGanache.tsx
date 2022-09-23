@@ -1,10 +1,9 @@
 import EventEmitter from 'events'
 
-import WalletConnectProvider from '@walletconnect/ethereum-provider'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
-import { JsonRpcRequest } from '../types'
+import { Eip1193Provider, JsonRpcRequest } from '../types'
 
 const GanacheContext = React.createContext<GanacheProvider | null>(null)
 
@@ -67,9 +66,9 @@ export default ProvideGanache
 // So it handles JSON RPC requests that Ganache performs for forking the network.
 class GanacheBridgeHost extends EventEmitter {
   private source: WindowProxy | undefined
-  private provider: WalletConnectProvider
+  private provider: Eip1193Provider
 
-  constructor(provider: WalletConnectProvider) {
+  constructor(provider: Eip1193Provider) {
     super()
     this.provider = provider
   }

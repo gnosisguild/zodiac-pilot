@@ -33,7 +33,7 @@ const Browser: React.FC = () => {
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
   const settingsHash = useSettingsHash()
-  const { connection, provider } = useConnection()
+  const { connection } = useConnection()
 
   return (
     <ProvideTenderly>

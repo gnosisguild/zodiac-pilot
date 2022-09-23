@@ -4,13 +4,8 @@ import { nanoid } from 'nanoid'
 import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useMetaMaskProvider, useWalletConnectProvider } from '../providers'
-import {
-  Connection,
-  Eip1193Provider,
-  JsonRpcRequest,
-  ProviderType,
-} from '../types'
+import { useMetaMask, useWalletConnect } from '../providers'
+import { Connection, Eip1193Provider, ProviderType } from '../types'
 import { useStickyState } from '../utils'
 
 const DEFAULT_VALUE: Connection[] = [
@@ -102,8 +97,8 @@ export const useConnection = (id?: string) => {
     throw new Error('connections is empty, which must never happen')
   }
 
-  const metamask = useMetaMaskProvider()
-  const walletConnect = useWalletConnectProvider(connection.id)
+  const metamask = useMetaMask()
+  const walletConnect = useWalletConnect(connection.id)
 
   const provider: Eip1193Provider =
     connection.providerType === ProviderType.MetaMask
@@ -115,12 +110,12 @@ export const useConnection = (id?: string) => {
       ? metamask.accounts.includes(connection.pilotAddress) &&
         !!metamask.chainId &&
         metamask.chainId === connection.chainId
-      : walletConnect.provider.connected
+      : walletConnect.connected
 
   const chainId =
     connection.providerType === ProviderType.MetaMask
       ? metamask.chainId
-      : walletConnect.provider.chainId
+      : walletConnect.chainId
 
   const mustConnectMetaMask =
     connection.providerType === ProviderType.MetaMask &&

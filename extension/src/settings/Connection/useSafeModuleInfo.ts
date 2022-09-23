@@ -1,8 +1,10 @@
+import { Web3Provider } from '@ethersproject/providers'
 import Safe, { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 
+import { Eip1193Provider } from '../../types'
 import { useConnection } from '../connectionHooks'
 
 import { isValidAddress } from './addressValidation'
@@ -32,17 +34,16 @@ export const useSafeModuleInfo = (
 }
 
 async function fetchSafeModules(
-  wc: WalletConnectEthereumProvider,
+  provider: Eip1193Provider,
   safeAddress: string
 ) {
   if (!isValidAddress(safeAddress)) {
     return { isValidSafe: false, enabledModules: [] }
   }
 
-  const provider = new ethers.providers.Web3Provider(wc)
   const adapter = new EthersAdapter({
     ethers,
-    signer: provider.getSigner(0),
+    signer: new Web3Provider(provider).getSigner(0),
   })
 
   try {

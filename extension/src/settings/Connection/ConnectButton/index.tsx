@@ -1,10 +1,7 @@
 import React from 'react'
 
 import { Button } from '../../../components'
-import {
-  useMetaMaskProvider,
-  useWalletConnectProvider,
-} from '../../../providers'
+import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
 import { useConnection, useConnections } from '../../connectionHooks'
@@ -28,8 +25,8 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const [connections, setConnections] = useConnections()
   const { connected, connection } = useConnection(id)
 
-  const metamask = useMetaMaskProvider()
-  const walletConnect = useWalletConnectProvider(connection.id)
+  const metamask = useMetaMask()
+  const walletConnect = useWalletConnect(connection.id)
 
   const connect = (
     providerType: ProviderType,
@@ -47,7 +44,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   const disconnect = () => {
     if (connection.providerType === ProviderType.WalletConnect) {
-      walletConnect.provider.disconnect()
+      walletConnect.disconnect()
     }
 
     setConnections(
@@ -135,21 +132,8 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     <>
       <Button
         onClick={async () => {
-          try {
-            await walletConnect.provider.disconnect()
-            await walletConnect.provider.enable()
-
-            connect(
-              ProviderType.WalletConnect,
-              walletConnect.provider.chainId,
-              walletConnect.provider.accounts[0]
-            )
-          } catch (e) {
-            // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
-            // This fixes it:
-            // @ts-expect-error signer is a private property, but we didn't find another way
-            walletConnect.provider.signer.disconnect()
-          }
+          const { chainId, accounts } = await walletConnect.connect()
+          connect(ProviderType.WalletConnect, chainId, accounts[0])
         }}
       >
         {walletConnectLogo}

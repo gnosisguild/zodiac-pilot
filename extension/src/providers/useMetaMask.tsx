@@ -108,7 +108,7 @@ export const ProvideMetaMask: React.FC<{
   )
 }
 
-const useMetaMaskProvider = () => {
+const useMetaMask = () => {
   const context = useContext(MetaMaskContext)
   if (!context) {
     throw new Error(
@@ -118,4 +118,4 @@ const useMetaMaskProvider = () => {
   return context
 }
 
-export default useMetaMaskProvider
+export default useMetaMask
