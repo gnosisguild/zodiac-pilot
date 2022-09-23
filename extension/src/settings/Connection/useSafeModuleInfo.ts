@@ -1,6 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
 import Safe, { EthersAdapter } from '@gnosis.pm/safe-core-sdk'
-import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
 

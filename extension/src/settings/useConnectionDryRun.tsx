@@ -29,7 +29,6 @@ const useConnectionDryRun = ({
           setError(null)
         })
         .catch((e) => {
-          console.warn(e)
           const message: string | undefined =
             typeof e === 'string' ? e : e.data?.message
           const reason = message && decodeRolesError(message)
@@ -63,6 +62,7 @@ const useConnectionDryRun = ({
             return
           }
 
+          console.warn('Unexpected dry run error', e)
           setError(reason || 'Unexpected error')
         })
     }
