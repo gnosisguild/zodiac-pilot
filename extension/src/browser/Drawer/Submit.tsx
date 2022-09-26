@@ -8,7 +8,8 @@ import { Button, IconButton } from '../../components'
 import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
-import { ProviderType } from '../../types'
+import { JsonRpcError, ProviderType } from '../../types'
+import { decodeRolesError } from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -28,7 +29,21 @@ const Submit: React.FC = () => {
   const submit = async () => {
     if (!submitTransactions) throw new Error('invariant violation')
     setSignaturePending(true)
-    const batchTransactionHash = await submitTransactions()
+    let batchTransactionHash: string
+    try {
+      batchTransactionHash = await submitTransactions()
+    } catch (e) {
+      setSignaturePending(false)
+      const err = e as JsonRpcError
+      toast.error(
+        <>
+          <p>Transaction batch is failing with the following error:</p>
+          <br />
+          <code>{decodeRolesError(err.data.message || err.message)}</code>
+        </>
+      )
+      return
+    }
     setSignaturePending(false)
 
     // wait for transaction to be mined
