@@ -21,6 +21,13 @@ export interface JsonRpcRequest {
   params?: Array<any>
 }
 
+export interface JsonRpcError extends Error {
+  data: {
+    code: number
+    message?: string
+  }
+}
+
 export interface Eip1193Provider {
   request(request: JsonRpcRequest): Promise<unknown>
   on(event: string, listener: (...args: any[]) => void): void

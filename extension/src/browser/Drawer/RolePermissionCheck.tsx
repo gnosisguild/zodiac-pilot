@@ -4,6 +4,7 @@ import { RiFileCopy2Line, RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
+import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'
@@ -29,8 +30,8 @@ const RolePermissionCheck: React.FC<{
       .then(() => {
         if (!canceled) setError(false)
       })
-      .catch((e: string) => {
-        const decodedError = decodeRolesError(e)
+      .catch((e: JsonRpcError) => {
+        const decodedError = decodeRolesError(e.data.message || e.message)
         if (!canceled) {
           setError(isPermissionsError(decodedError) ? decodedError : false)
         }
