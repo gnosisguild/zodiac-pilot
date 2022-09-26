@@ -2,6 +2,7 @@ import EventEmitter from 'events'
 
 import { Interface } from '@ethersproject/abi'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { MetaTransaction } from 'react-multisend'
 
 import rolesAbi from '../abi/Roles.json'
 import { Eip1193Provider, TransactionData } from '../types'
@@ -9,14 +10,21 @@ import { Eip1193Provider, TransactionData } from '../types'
 const RolesInterface = new Interface(rolesAbi)
 
 export function wrapRequest(
-  request: TransactionData,
+  request: MetaTransaction | TransactionData,
   from: string,
   to: string,
   roleId: string
 ): TransactionData {
   const data = RolesInterface.encodeFunctionData(
     'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
-    [request.to, request.value || 0, request.data, 0, roleId || 0, true]
+    [
+      request.to,
+      request.value || 0,
+      request.data,
+      ('operation' in request && request.operation) || 0,
+      roleId || 0,
+      true,
+    ]
   )
 
   return {
