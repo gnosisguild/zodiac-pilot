@@ -37,7 +37,7 @@ const Submit: React.FC = () => {
       const err = e as JsonRpcError
       toast.error(
         <>
-          <p>Transaction batch is failing with the following error:</p>
+          <p>Submitting the transaction batch failed:</p>
           <br />
           <code>{decodeRolesError(err.data.message || err.message)}</code>
         </>
