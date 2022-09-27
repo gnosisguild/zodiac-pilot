@@ -47,7 +47,7 @@ const RolePermissionCheck: React.FC<{
     navigator.clipboard.writeText(
       JSON.stringify(transactionEncoded, undefined, 2)
     )
-    toast(<>Transaction data has been copied to clipboard.</>)
+    toast(<>Role permission data has been copied to clipboard.</>)
   }
 
   if (error === undefined) return null
