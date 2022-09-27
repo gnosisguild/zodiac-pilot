@@ -22,7 +22,7 @@ const TransactionsDrawer: React.FC = () => {
   const dispatch = useDispatch()
   const provider = useProvider()
   const {
-    connection: { avatarAddress, moduleAddress, pilotAddress, roleId, chainId },
+    connection: { avatarAddress, moduleAddress, pilotAddress, roleId },
   } = useConnection()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
