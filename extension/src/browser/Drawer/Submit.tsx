@@ -5,6 +5,7 @@ import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
+import toastClasses from '../../components/Toast/Toast.module.css'
 import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
@@ -40,7 +41,8 @@ const Submit: React.FC = () => {
           <p>Submitting the transaction batch failed:</p>
           <br />
           <code>{decodeRolesError(err.data.message || err.message)}</code>
-        </>
+        </>,
+        { className: toastClasses.toastError }
       )
       return
     }
@@ -71,7 +73,6 @@ const Submit: React.FC = () => {
     toast(
       <>
         Transaction batch has been executed
-        <br />
         <a
           href={`${EXPLORER_URL[chainId]}/tx/${realBatchTransactionHash}`}
           target="_blank"
