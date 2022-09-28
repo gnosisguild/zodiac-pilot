@@ -37,6 +37,16 @@ jobs:
         with:
           files: ./extension/zodiac-pilot.zip
 
+      - name: Upload & release to Chrome Webstore
+        uses: mnao305/chrome-extension-upload@3.0.0
+        with:
+          file-path: ./extension/zodiac-pilot.zip
+          extension-id: jklckajipokenkbbodifahogmidkekcb
+          client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
+          publish: false
+
       - run: mkdir ./extension/release
       - run: mv ./extension/zodiac-pilot.zip ./extension/release/zodiac-pilot.zip
 
