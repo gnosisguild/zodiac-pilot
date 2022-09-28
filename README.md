@@ -46,7 +46,7 @@ Originally, we started out building the Pilot as an extension page, which are ho
 - All extensions are sandboxed from each other, meaning that the MetaMask injected provider would not be available to an extension page.
 - Extension pages have no access to Indexed DB, which is a dependency of Ganache.
 
-That's why the extension is now running under an external host (currently `https://ipfs.io/ipfs/bafybeifx7yeb55armcsxwwitkymga5xf53dxiarykms3ygqic223w5sk3m`). At the moment this URL serves an empty page, in the future this could become a landing page for users who have not yet installed the extension.
+That's why the extension is now running under an external host, https://pilot.gnosisguild.org.
 
 ### Open Dapps in iframe
 
