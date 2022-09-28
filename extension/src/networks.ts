@@ -1,4 +1,6 @@
 export const RPC = {
+  1: 'https://mainnet.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
+  4: 'https://rinkeby.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
   100: 'https://rpc.gnosischain.com/',
 }
 

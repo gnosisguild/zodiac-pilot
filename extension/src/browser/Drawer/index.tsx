@@ -1,10 +1,12 @@
 import { BigNumber } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
-import { RiRefreshLine } from 'react-icons/ri'
-import { encodeSingle } from 'react-multisend'
+import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
+import { encodeMulti, encodeSingle } from 'react-multisend'
+import { toast } from 'react-toastify'
 
 import { BlockButton, Box, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
+import { wrapRequest } from '../../providers/WrappingProvider'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
 import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
@@ -20,7 +22,7 @@ const TransactionsDrawer: React.FC = () => {
   const dispatch = useDispatch()
   const provider = useProvider()
   const {
-    connection: { avatarAddress },
+    connection: { avatarAddress, moduleAddress, pilotAddress, roleId },
   } = useConnection()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
@@ -51,9 +53,9 @@ const TransactionsDrawer: React.FC = () => {
 
     await provider.refork()
 
-    // re-simulate all transactions
-    for (let i = 0; i < allTransactions.length; i++) {
-      const transaction = allTransactions[i]
+    // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
+    for (let i = 0; i < newTransactions.length; i++) {
+      const transaction = newTransactions[i]
       const encoded = encodeSingle(transaction.input)
       await provider.request({
         method: 'eth_sendTransaction',
@@ -67,6 +69,25 @@ const TransactionsDrawer: React.FC = () => {
         ],
       })
     }
+  }
+
+  const copyTransactionData = () => {
+    const metaTransactions = newTransactions.map((tx) => encodeSingle(tx.input))
+    const batchTransaction =
+      metaTransactions.length === 1
+        ? metaTransactions[0]
+        : encodeMulti(
+            metaTransactions,
+            '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
+          )
+    const wrappedReq = wrapRequest(
+      batchTransaction,
+      pilotAddress,
+      moduleAddress,
+      roleId
+    )
+    navigator.clipboard.writeText(JSON.stringify(wrappedReq, undefined, 2))
+    toast(<>Transaction data has been copied to clipboard.</>)
   }
 
   return (
@@ -116,6 +137,14 @@ const TransactionsDrawer: React.FC = () => {
       <Flex gap={2} alignItems="center">
         <h4 className={classes.header}>Recording Transactions</h4>
         <Flex gap={1} className={classes.headerButtons}>
+          <IconButton
+            title="Copy batch transaction data to clipboard"
+            disabled={newTransactions.length === 0}
+            onClick={copyTransactionData}
+          >
+            <RiFileCopy2Line />
+          </IconButton>
+
           <IconButton
             title="Re-simulate on current blockchain head"
             disabled={newTransactions.length === 0}

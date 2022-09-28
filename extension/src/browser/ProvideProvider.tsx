@@ -138,7 +138,10 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       params: [
         metaTransactions.length === 1
           ? metaTransactions[0]
-          : encodeMulti(metaTransactions),
+          : encodeMulti(
+              metaTransactions,
+              '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
+            ),
       ],
     })
     dispatch({

@@ -2,6 +2,7 @@
   overflow: hidden;
   width: 25px;
   aspect-ratio: 1;
+  flex-shrink: 0;
 }
 .blockies img {
   border-radius: 50%;
@@ -14,8 +15,14 @@
 
 .addressContainer {
   padding: 10px;
+  flex-shrink: 0;
 }
 
 .link {
   text-decoration: none;
+}
+
+.contractName {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

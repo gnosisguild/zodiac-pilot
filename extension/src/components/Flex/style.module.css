@@ -1,5 +1,6 @@
 .flex {
   display: flex;
+  min-width: 0;
 }
 .row {
   flex-direction: row;

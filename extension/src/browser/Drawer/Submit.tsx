@@ -5,10 +5,12 @@ import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
+import toastClasses from '../../components/Toast/Toast.module.css'
 import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
-import { ProviderType } from '../../types'
+import { JsonRpcError, ProviderType } from '../../types'
+import { decodeRolesError } from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -28,7 +30,22 @@ const Submit: React.FC = () => {
   const submit = async () => {
     if (!submitTransactions) throw new Error('invariant violation')
     setSignaturePending(true)
-    const batchTransactionHash = await submitTransactions()
+    let batchTransactionHash: string
+    try {
+      batchTransactionHash = await submitTransactions()
+    } catch (e) {
+      setSignaturePending(false)
+      const err = e as JsonRpcError
+      toast.error(
+        <>
+          <p>Submitting the transaction batch failed:</p>
+          <br />
+          <code>{decodeRolesError(err.data.message || err.message)}</code>
+        </>,
+        { className: toastClasses.toastError }
+      )
+      return
+    }
     setSignaturePending(false)
 
     // wait for transaction to be mined
@@ -56,7 +73,6 @@ const Submit: React.FC = () => {
     toast(
       <>
         Transaction batch has been executed
-        <br />
         <a
           href={`${EXPLORER_URL[chainId]}/tx/${realBatchTransactionHash}`}
           target="_blank"

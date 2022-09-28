@@ -2,13 +2,13 @@
 // This means it does not have access to chrome.* APIs, but it can interact with other extensions such as MetaMask.
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import './global.css'
 
 import Browser from './browser'
 import { prependHttp } from './browser/UrlInput'
+import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
@@ -60,7 +60,7 @@ root.render(
     <ProvideMetaMask>
       <ProvideConnections>
         <Routes />
-        <ToastContainer />
+        <ZodiacToastContainer />
       </ProvideConnections>
     </ProvideMetaMask>
   </React.StrictMode>

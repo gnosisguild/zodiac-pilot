@@ -86,7 +86,7 @@ const ContractAddress: React.FC<Props> = ({
 
   return (
     <Flex
-      gap={3}
+      gap={2}
       alignItems="center"
       justifyContent="space-between"
       className={cn(className, classes.container)}

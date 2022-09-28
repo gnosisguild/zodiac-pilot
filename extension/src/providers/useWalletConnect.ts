@@ -32,17 +32,18 @@ class WalletConnectEip1193Provider extends EventEmitter {
 
   constructor(connectionId: string) {
     super()
-
     this.wcProvider = new WalletConnectEthereumProvider({
-      infuraId: 'b81b456501e34bed8a85a3c2ff8f4577',
       storageId: `walletconnect-${connectionId}`,
       rpc: RPC,
     })
 
     // @ts-expect-error signer is a private property, but we didn't find another way
-    this.wcProvider.signer.on('connect', (ev: Event) => {
-      console.log(`WalletConnect connected: ${connectionId}`, ev)
-      this.emit('connect', ev)
+    this.wcProvider.signer.on('connect', () => {
+      const { chainId } = this.wcProvider
+      // @ts-expect-error setHttpProvider is a private method, but we need to call it fix a bug in @walletconnect/ethereum-provider
+      this.wcProvider.http = this.wcProvider.setHttpProvider(chainId)
+      console.log(`WalletConnect connected: ${connectionId}`, chainId)
+      this.emit('connect', { chainId })
     })
 
     this.wcProvider.on('disconnect', (ev: Event) => {

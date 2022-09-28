@@ -2,8 +2,10 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import { RiFileCopy2Line, RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
+import { toast } from 'react-toastify'
 
 import { Flex, Tag } from '../../components'
+import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'
@@ -29,8 +31,8 @@ const RolePermissionCheck: React.FC<{
       .then(() => {
         if (!canceled) setError(false)
       })
-      .catch((e: string) => {
-        const decodedError = decodeRolesError(e)
+      .catch((e: JsonRpcError) => {
+        const decodedError = decodeRolesError(e.data.message || e.message)
         if (!canceled) {
           setError(isPermissionsError(decodedError) ? decodedError : false)
         }
@@ -45,6 +47,7 @@ const RolePermissionCheck: React.FC<{
     navigator.clipboard.writeText(
       JSON.stringify(transactionEncoded, undefined, 2)
     )
+    toast(<>Transaction data has been copied to clipboard.</>)
   }
 
   if (error === undefined) return null

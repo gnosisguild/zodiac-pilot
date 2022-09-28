@@ -10,7 +10,7 @@ import {
 
 import { Box, Flex, IconButton } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
-import { ChainId, NETWORK_CURRENCY } from '../../networks'
+import { NETWORK_CURRENCY } from '../../networks'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
@@ -169,7 +169,7 @@ export const Transaction: React.FC<Props> = ({
         <>
           <Box bg p={2} className={classes.subtitleContainer}>
             <Flex
-              gap={2}
+              gap={3}
               alignItems="center"
               justifyContent="space-between"
               className={classes.transactionSubtitle}
@@ -254,10 +254,10 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
     <Box p={2} className={classes.value}>
       <Flex gap={1} alignItems="center" justifyContent="space-between">
         <div>Value:</div>
-        <Box p={1} bg>
+        <Box p={1} className={classes.valueValue} bg>
           {valueBN.isZero()
             ? 'n/a'
-            : `${formatEther(valueBN)} ${NETWORK_CURRENCY[chainId as ChainId]}`}
+            : `${formatEther(valueBN)} ${NETWORK_CURRENCY[chainId]}`}
         </Box>
       </Flex>
     </Box>

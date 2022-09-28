@@ -103,13 +103,7 @@
 }
 
 .removeTransaction {
-  width: 30px;
-  height: auto;
-  padding: 3px;
-  cursor: pointer;
-  color: #d9d4ad;
-  background-color: rgb(35 35 23);
-  border: 1px solid rgba(217, 212, 173, 0.3);
+  margin: 0 calc(var(--spacing-2) * -1);
 }
 
 .transactionHeader .start {
@@ -142,10 +136,16 @@
 }
 .transactionSubtitle {
   font-size: 0.75em;
+  flex-grow: 1;
 }
 
 .value {
+  max-width: 150px;
+}
+.valueValue {
   font-family: 'Roboto Mono', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .transactionStatus {
