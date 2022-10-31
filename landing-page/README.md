@@ -1,6 +1,4 @@
-# Gnosis Guild Homepage
-
-A small collection of links and information about Gnosis Guild and Zodiac.
+# Zodiac Pilot Landing Page
 
 ### To run locally
 
