@@ -17,7 +17,7 @@ const SelectConnection: React.FC<{ onLaunch(connectionId: string): void }> = ({
   const [connections] = useConnections()
 
   return (
-    <Flex direction="column" gap={2}>
+    <Flex direction="column" gap={3}>
       {connections.map((connection) => (
         <ConnectionItem
           key={connection.id}
@@ -39,59 +39,66 @@ const ConnectionItem: React.FC<{
 
   return (
     <div className={classes.connectionItem}>
-      <BoxButton
-        onClick={() => {
-          if (connected && !error) {
-            onLaunch(connection.id)
-          } else {
-            pushSettingsRoute(connection.id)
-          }
-        }}
-        className={classes.connectionButton}
+      <Flex
+        direction="row"
+        gap={2}
+        justifyContent="space-between"
+        alignItems="center"
       >
-        <Flex
-          direction="row"
-          gap={2}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Flex direction="row" gap={2}>
-            <h3>{connection.label}</h3>
-
-            <div className={classes.status}>
-              {connected ? (
-                <ConnectIcon
-                  size={24}
-                  color="green"
-                  title="WalletConnect is connected"
-                />
-              ) : (
-                <VscDebugDisconnect
-                  size={24}
-                  color="crimson"
-                  title="WalletConnect is not connected"
-                />
-              )}
-            </div>
-          </Flex>
-
-          <AddressStack
-            avatarAddress={connection.avatarAddress}
-            moduleAddress={connection.moduleAddress}
-            pilotAddress={connection.pilotAddress}
-            helperClass={classes.addressHelper}
-            addressBoxClass={classes.addressBox}
-          />
-          <Button
-            onClick={() => {
+        <BoxButton
+          onClick={() => {
+            if (connected && !error) {
+              onLaunch(connection.id)
+            } else {
               pushSettingsRoute(connection.id)
-            }}
-            className={classes.connectionEdit}
+            }
+          }}
+          className={classes.connectionButton}
+        >
+          <Flex
+            direction="row"
+            gap={2}
+            justifyContent="space-between"
+            alignItems="center"
           >
-            Modify
-          </Button>
-        </Flex>
-      </BoxButton>
+            <Flex direction="row" gap={2}>
+              <h3>{connection.label}</h3>
+
+              <div className={classes.status}>
+                {connected ? (
+                  <ConnectIcon
+                    size={24}
+                    color="green"
+                    title="WalletConnect is connected"
+                  />
+                ) : (
+                  <VscDebugDisconnect
+                    size={24}
+                    color="crimson"
+                    title="WalletConnect is not connected"
+                  />
+                )}
+              </div>
+            </Flex>
+
+            <AddressStack
+              avatarAddress={connection.avatarAddress}
+              moduleAddress={connection.moduleAddress}
+              pilotAddress={connection.pilotAddress}
+              helperClass={classes.addressHelper}
+              addressBoxClass={classes.addressBox}
+            />
+          </Flex>
+        </BoxButton>
+        <Button
+          onClick={() => {
+            pushSettingsRoute(connection.id)
+          }}
+          className={classes.connectionEdit}
+        >
+          Modify
+        </Button>
+      </Flex>
     </div>
   )
 }

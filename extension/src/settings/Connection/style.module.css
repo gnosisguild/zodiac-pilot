@@ -27,12 +27,15 @@ h3 {
 }
 .connectionButton {
   width: 100%;
+  height: 8em;
   padding: calc(var(--spacing-3) - 1px);
 }
 button.connectionEdit {
+  position: relative;
+  z-index: 10;
   display: flex;
-  width: 6em;
-  height: 6em;
+  width: 8em;
+  height: 8em;
   align-items: center;
   column-gap: 10px;
   background: none;
