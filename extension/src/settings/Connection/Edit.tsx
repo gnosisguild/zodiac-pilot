@@ -1,8 +1,6 @@
 import React from 'react'
-import { RiArrowLeftLine, RiDeleteBinLine } from 'react-icons/ri'
 
-import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
-import { usePushSettingsRoute } from '../../routing'
+import { Box, Field, Flex, Select } from '../../components'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
@@ -19,20 +17,17 @@ type ConnectionPatch = {
 
 interface Props {
   id: string
-  onLaunch(connectionId: string): void
 }
 
-const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
+const EditConnection: React.FC<Props> = ({ id }) => {
   const [connections, setConnections] = useConnections()
-  const { connection, connected } = useConnection(id)
+  const { connection } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
   const { loading, isValidSafe, enabledModules } = useSafeModuleInfo(
     avatarAddress,
     id
   )
-
-  const pushSettingsRoute = usePushSettingsRoute()
 
   const validatedModuleAddress =
     moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
@@ -44,36 +39,20 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
       )
     )
   }
-  const removeConnection = () => {
-    const newConnections = connections.filter((c) => c.id !== connection.id)
-    setConnections(newConnections)
-  }
 
   const error = useConnectionDryRun(connection)
-
-  const canLaunch =
-    connected &&
-    !error &&
-    connection.moduleAddress &&
-    connection.avatarAddress &&
-    connection.roleId
 
   return (
     <Flex direction="column" gap={3}>
       <Flex direction="column" gap={2}>
-        <Flex direction="row" gap={2} justifyContent="space-between">
-          <IconButton onClick={() => pushSettingsRoute('')}>
-            <RiArrowLeftLine size={24} title="Select another connection" />
-          </IconButton>
-
-          <IconButton
-            onClick={removeConnection}
-            disabled={connections.length === 1}
-            danger
-          >
-            <RiDeleteBinLine size={24} title="Remove this connection" />
-          </IconButton>
-        </Flex>
+        {error && (
+          <>
+            <div>There seems to be a problem with this connection:</div>
+            <Box p={3} className={classes.error}>
+              {error}
+            </Box>
+          </>
+        )}
         <Flex direction="column" gap={3} className={classes.form}>
           <Field label="Connection name">
             <input
@@ -140,23 +119,6 @@ const EditConnection: React.FC<Props> = ({ id, onLaunch }) => {
           </Field>
         </Flex>
       </Flex>
-      {error && (
-        <>
-          <div>There seems to be a problem with this connection:</div>
-          <Box p={3} className={classes.error}>
-            {error}
-          </Box>
-        </>
-      )}
-
-      <Button
-        disabled={!canLaunch}
-        onClick={() => {
-          onLaunch(id)
-        }}
-      >
-        Launch
-      </Button>
     </Flex>
   )
 }

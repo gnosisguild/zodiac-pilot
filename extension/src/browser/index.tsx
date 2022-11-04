@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { AppPicker, BlockLink, Box, Flex } from '../components'
 import { AddressStack } from '../components'
+import Layout from '../components/Layout'
 import { pushLocation, useLocation } from '../location'
 import { ProvideTenderly } from '../providers'
 import { useSettingsHash } from '../routing'
@@ -39,51 +40,39 @@ const Browser: React.FC = () => {
     <ProvideTenderly>
       <ProvideState>
         <ProvideProvider simulate>
-          <div className={classNames.browser}>
-            <div className={classNames.topBar}>
-              <Flex gap={3} justifyContent="space-between">
-                <Box>
-                  <Flex gap={1}>
-                    <Box className={classNames.appName} double>
-                      Zodiac Pilot
-                    </Box>
-                    <Box double>
-                      <UrlInput onSubmit={setInitialLocation} />
-                    </Box>
-                  </Flex>
-                </Box>
-                <BlockLink href={settingsHash}>
-                  <AddressStack
-                    interactive
-                    pilotAddress={connection.pilotAddress}
-                    moduleAddress={connection.moduleAddress}
-                    avatarAddress={connection.avatarAddress}
-                  />
-                </BlockLink>
-              </Flex>
-            </div>
-            <Flex gap={4} className={classNames.main}>
-              <Box className={classNames.frame} double p={2}>
-                {initialLocation ? (
-                  <BrowserFrame src={initialLocation} />
-                ) : (
-                  <div className={classes.launchPage}>
-                    <Box p={3} double>
-                      <h2>Choose an app to get started</h2>
-                      <AppPicker
-                        large
-                        onPick={(url) => {
-                          pushLocation(url)
-                          setInitialLocation(url)
-                        }}
-                      />
-                    </Box>
-                  </div>
-                )}
-              </Box>
-              <Drawer />
-            </Flex>
-          </div>
+          <Layout
+            headerRight={
+              <BlockLink href={settingsHash}>
+                <AddressStack
+                  interactive
+                  pilotAddress={connection.pilotAddress}
+                  moduleAddress={connection.moduleAddress}
+                  avatarAddress={connection.avatarAddress}
+                />
+              </BlockLink>
+            }
+            navBox={<UrlInput onSubmit={setInitialLocation} />}
+          >
+            <Box className={classNames.frame} double p={2}>
+              {initialLocation ? (
+                <BrowserFrame src={initialLocation} />
+              ) : (
+                <div className={classes.launchPage}>
+                  <Box p={3} double>
+                    <h2>Choose an app to get started</h2>
+                    <AppPicker
+                      large
+                      onPick={(url) => {
+                        pushLocation(url)
+                        setInitialLocation(url)
+                      }}
+                    />
+                  </Box>
+                </div>
+              )}
+            </Box>
+            <Drawer />
+          </Layout>
         </ProvideProvider>
       </ProvideState>
     </ProvideTenderly>

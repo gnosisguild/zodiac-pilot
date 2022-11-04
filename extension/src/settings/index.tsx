@@ -1,14 +1,22 @@
+import { nanoid } from 'nanoid'
 import React from 'react'
+import { RiDeleteBinLine } from 'react-icons/ri'
 
-import { Box, Flex } from '../components'
+import { Box, Button, Flex, IconButton } from '../components'
+import Layout from '../components/Layout'
+import { usePushSettingsRoute } from '../routing'
+import { ProviderType } from '../types'
 
-import Connection from './Connection'
+import EditConnection from './Connection/Edit'
+import SelectConnection from './Connection/Select'
 import {
   ProvideConnections,
   useConnection,
+  useConnections,
   useSelectConnection,
 } from './connectionHooks'
 import classes from './style.module.css'
+import useConnectionDryRun from './useConnectionDryRun'
 
 export { useConnection, ProvideConnections }
 
@@ -18,28 +26,117 @@ type Props = {
   editConnectionId?: string
 }
 
-const Settings: React.FC<Props> = ({ url, onLaunch, editConnectionId }) => {
+const Settings: React.FC<Props> = ({
+  url,
+  onLaunch,
+  editConnectionId = '',
+}) => {
   const selectConnection = useSelectConnection()
-  return (
-    <div className={classes.container}>
-      <Box double p={3} className={classes.header}>
-        <h1>Zodiac Pilot</h1>
-        <Box double p={3}>
-          <p>Control a Safe via a Zodiac mod from an enabled account.</p>
+  const [connections, setConnections] = useConnections()
+  const pushSettingsRoute = usePushSettingsRoute()
+  const { connection, connected } = useConnection(editConnectionId)
+
+  const handleLaunch = (connectionId: string) => {
+    selectConnection(connectionId)
+    onLaunch(url)
+  }
+
+  const removeConnection = () => {
+    const newConnections = connections.filter((c) => c.id !== connection.id)
+    setConnections(newConnections)
+  }
+
+  const error = useConnectionDryRun(connection)
+  const canLaunch =
+    connected &&
+    !error &&
+    connection.moduleAddress &&
+    connection.avatarAddress &&
+    connection.roleId
+
+  return connections.some((c) => c.id === editConnectionId) ? (
+    <Layout
+      navBox={
+        <Flex gap={1}>
+          <Button
+            onClick={() => pushSettingsRoute('')}
+            className={classes.navLabel}
+          >
+            Connections
+          </Button>
+          <Box p={2} className={classes.navLabel} bg>
+            {connection.label}
+          </Box>
+        </Flex>
+      }
+      headerRight={
+        <Flex gap={3}>
+          <Button
+            className={classes.headerButton}
+            disabled={!canLaunch}
+            onClick={() => {
+              handleLaunch(editConnectionId)
+            }}
+          >
+            Launch
+          </Button>
+          <IconButton
+            onClick={removeConnection}
+            disabled={connections.length === 1}
+            danger
+            className={classes.removeButton}
+          >
+            <RiDeleteBinLine size={24} title="Remove this connection" />
+          </IconButton>
+        </Flex>
+      }
+    >
+      <Box double p={3} className={classes.body}>
+        <Box p={3} className={classes.edit}>
+          <Flex direction="column" gap={3}>
+            <EditConnection id={editConnectionId} />
+          </Flex>
         </Box>
       </Box>
-      <Box double p={3}>
+    </Layout>
+  ) : (
+    <Layout
+      navBox={
+        <Box p={2} className={classes.navLabel} bg>
+          Connections
+        </Box>
+      }
+      headerRight={
+        <Button
+          className={classes.headerButton}
+          onClick={() => {
+            const id = nanoid()
+            setConnections([
+              ...connections,
+              {
+                id,
+                label: '',
+                chainId: 1,
+                moduleAddress: '',
+                avatarAddress: '',
+                pilotAddress: '',
+                providerType: ProviderType.WalletConnect,
+                roleId: '',
+              },
+            ])
+            pushSettingsRoute(id)
+          }}
+        >
+          Add Connection
+        </Button>
+      }
+    >
+      <Box double p={3} className={classes.body}>
         <Flex direction="column" gap={3}>
-          <Connection
-            editConnectionId={editConnectionId}
-            onLaunch={(connectionId) => {
-              selectConnection(connectionId)
-              onLaunch(url)
-            }}
-          />
+          <SelectConnection onLaunch={handleLaunch} />
         </Flex>
       </Box>
-    </div>
+    </Layout>
   )
 }
 

@@ -67,7 +67,7 @@ const AddressStack: React.FC<Props> = ({
         <Address address={avatarAddress} />
         {avatarAddress && (
           <div className={cn(classes.helper, helperClass)}>
-            <p>DAO Safe</p>
+            <p>Impersonated Safe</p>
           </div>
         )}
       </Box>
