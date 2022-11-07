@@ -128,7 +128,7 @@ const Settings: React.FC<Props> = ({
         </Button>
       }
     >
-      <Box double p={3} className={classes.body}>
+      <Box p={2} className={classes.body}>
         <Flex direction="column" gap={3}>
           <SelectConnection onLaunch={handleLaunch} />
         </Flex>

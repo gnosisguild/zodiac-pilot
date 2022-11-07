@@ -29,6 +29,8 @@ button.removeButton:hover {
 
 .body {
   width: 100%;
+  overflow-y: auto;
+  border: 3px double var(--border-color);
 }
 
 .edit {
