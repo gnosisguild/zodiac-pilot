@@ -29,11 +29,15 @@
   position: relative;
 }
 
+.urlInput .input {
+  height: 100%;
+}
+
 .appPickerDropdown {
   background-color: #141a2d;
   position: absolute;
-  top: 130%;
-  left: -44%;
+  top: 116%;
+  left: 0%;
   z-index: 2;
   max-width: 440px;
 }

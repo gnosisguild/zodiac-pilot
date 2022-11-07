@@ -2,6 +2,7 @@ import React from 'react'
 
 import { usePushSettingsRoute } from '../../routing'
 import Box from '../Box'
+import Button from '../Button'
 import Flex from '../Flex'
 
 import classes from './Layout.module.css'
@@ -13,16 +14,20 @@ interface Props {
 }
 
 const Layout: React.FC<Props> = ({ children, headerRight, navBox }) => {
+  const pushSettingsRoute = usePushSettingsRoute()
   return (
     <div className={classes.page}>
       <div className={classes.topBar}>
-        <Flex gap={3} justifyContent="space-between">
+        <Flex gap={3} justifyContent="space-between" alignItems="center">
           <Box>
             <Flex gap={1}>
-              <Box className={classes.appName} double>
+              <Button
+                className={classes.appName}
+                onClick={() => pushSettingsRoute('')}
+              >
                 Zodiac Pilot
-              </Box>
-              <Box>{navBox}</Box>
+              </Button>
+              {navBox}
             </Flex>
           </Box>
           {headerRight}

@@ -6,12 +6,9 @@
   width: 600px;
 }
 
-.navLabel,
-button.navLabel {
-  font-family: 'Roboto Mono', monospace;
-  background: none;
-  width: auto;
-  border-width: 1px;
+.navLabel {
+  width: max-content;
+  line-height: 1.7;
 }
 
 button.headerButton {

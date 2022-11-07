@@ -58,13 +58,10 @@ const Settings: React.FC<Props> = ({
     <Layout
       navBox={
         <Flex gap={1}>
-          <Button
-            onClick={() => pushSettingsRoute('')}
-            className={classes.navLabel}
-          >
-            Connections
-          </Button>
-          <Box p={2} className={classes.navLabel} bg>
+          <Box p={2} className={classes.navLabel}>
+            Settings
+          </Box>
+          <Box p={2} className={classes.navLabel}>
             {connection.label}
           </Box>
         </Flex>
@@ -102,7 +99,7 @@ const Settings: React.FC<Props> = ({
   ) : (
     <Layout
       navBox={
-        <Box p={2} className={classes.navLabel} bg>
+        <Box p={2} className={classes.navLabel}>
           Connections
         </Box>
       }

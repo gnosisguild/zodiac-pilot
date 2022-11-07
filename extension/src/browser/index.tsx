@@ -33,14 +33,15 @@ const Browser: React.FC = () => {
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
-  const settingsHash = useSettingsHash()
   const { connection } = useConnection()
+  const settingsHash = useSettingsHash(connection.id)
 
   return (
     <ProvideTenderly>
       <ProvideState>
         <ProvideProvider simulate>
           <Layout
+            navBox={<UrlInput onSubmit={setInitialLocation} />}
             headerRight={
               <BlockLink href={settingsHash}>
                 <AddressStack
@@ -51,7 +52,6 @@ const Browser: React.FC = () => {
                 />
               </BlockLink>
             }
-            navBox={<UrlInput onSubmit={setInitialLocation} />}
           >
             <Box className={classNames.frame} double p={2}>
               {initialLocation ? (

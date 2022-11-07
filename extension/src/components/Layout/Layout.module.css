@@ -17,9 +17,13 @@
   box-sizing: border-box;
 }
 
-.appName {
+button.appName {
   display: flex;
   align-items: center;
-  padding: 0 var(--spacing-3) !important;
+  padding: var(--spacing-2);
+  width: 140px;
   white-space: nowrap;
+  background: none;
+  border-width: 1px;
+  background-color: rgba(217, 212, 173, 0.1);
 }
