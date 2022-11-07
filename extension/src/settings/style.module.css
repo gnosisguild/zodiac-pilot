@@ -9,6 +9,8 @@
 .navLabel {
   width: max-content;
   line-height: 1.7;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 button.headerButton {
@@ -17,9 +19,10 @@ button.headerButton {
 }
 
 button.removeButton {
-  height: 100%;
+  height: auto;
   width: auto;
   aspect-ratio: 1/1;
+  padding: 0 8px;
   border: 1px solid crimson;
 }
 

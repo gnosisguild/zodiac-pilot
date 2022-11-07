@@ -62,7 +62,7 @@ const Settings: React.FC<Props> = ({
             Settings
           </Box>
           <Box p={2} className={classes.navLabel}>
-            {connection.label}
+            {connection.label || 'New Connection'}
           </Box>
         </Flex>
       }
