@@ -88,7 +88,7 @@ const Settings: React.FC<Props> = ({
         </Flex>
       }
     >
-      <Box double p={3} className={classes.body}>
+      <Box p={2} className={classes.body}>
         <Box p={3} className={classes.edit}>
           <Flex direction="column" gap={3}>
             <EditConnection id={editConnectionId} />
