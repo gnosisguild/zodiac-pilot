@@ -25,7 +25,7 @@ const Layout: React.FC<Props> = ({
   return (
     <div className={classes.page}>
       <div className={classes.topBar}>
-        <Flex gap={4} justifyContent="space-between" alignItems="center">
+        <Flex gap={4} justifyContent="space-between" alignItems="stretch">
           <Box
             className={classNames({
               [classes.fullWidthNavContainer]: navFullWidth,

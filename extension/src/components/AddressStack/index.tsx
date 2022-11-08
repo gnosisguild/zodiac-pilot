@@ -30,7 +30,7 @@ const AddressStack: React.FC<Props> = ({
       className={cn(classes.addressStack, interactive && classes.interactive)}
     >
       <Box
-        roundedRight
+        rounded
         double
         p={2}
         className={cn([classes.address, addressBoxClass])}

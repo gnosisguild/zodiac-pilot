@@ -9,12 +9,6 @@
 }
 
 .blockies {
-  overflow: hidden;
-  border-radius: 50%;
-  height: 20px;
-  width: 20px;
-}
-.blockies img {
   height: 20px;
   width: 20px;
 }

@@ -1,0 +1,27 @@
+.container {
+  padding-right: var(--spacing-4);
+}
+
+.container:hover {
+  border-color: rgba(217, 212, 173, 0.8);
+}
+
+.blockieBox {
+  margin-left: -1em;
+  background: #292116;
+}
+
+.blockie {
+  height: 100%;
+}
+
+.blockieBox:first-child {
+  margin-left: 0;
+}
+
+.blockieStack {
+  display: flex;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 4px;
+}

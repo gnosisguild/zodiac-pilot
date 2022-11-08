@@ -5,6 +5,7 @@ import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { useConnection } from '../../settings'
+import Blockie from '../Blockie'
 import Box from '../Box'
 import IconButton from '../IconButton'
 
@@ -48,18 +49,13 @@ const Address: React.FC<Props> = ({
   } = useConnection()
   const explorerUrl = chainId && EXPLORER_URLS[chainId]
 
-  const blockie = useMemo(() => address && makeBlockie(address), [address])
   const displayAddress = shortenAddress(address)
 
   return (
-    <Box roundedRight className={cn(className, classes.container)}>
+    <Box rounded className={cn(className, classes.container)}>
       <div className={classes.address}>{displayAddress}</div>
       <Box rounded>
-        {address && (
-          <div className={classes.blockies}>
-            <img src={blockie} alt={address} />
-          </div>
-        )}
+        {address && <Blockie address={address} className={classes.blockies} />}
       </Box>
       {copyToClipboard && (
         <IconButton
