@@ -6,6 +6,41 @@
   width: 600px;
 }
 
+.navLabel {
+  width: max-content;
+  line-height: 1.7;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+button.headerButton {
+  width: fit-content;
+  padding: 8px 6em;
+}
+
+button.removeButton {
+  height: auto;
+  width: auto;
+  aspect-ratio: 1/1;
+  padding: 0 8px;
+  border: 1px solid crimson;
+}
+
+button.removeButton:hover {
+  background-color: rgba(220, 20, 60, 0.2);
+}
+
+.body {
+  width: 100%;
+  overflow-y: auto;
+  border: 3px double var(--border-color);
+}
+
+.edit {
+  margin: 0 auto;
+  max-width: 700px;
+}
+
 .header {
   margin-bottom: 2em;
 }

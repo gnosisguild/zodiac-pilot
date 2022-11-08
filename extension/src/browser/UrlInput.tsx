@@ -58,6 +58,7 @@ const UrlInput: React.FC<Props> = ({ onSubmit }) => {
           setHasFocus(true)
           ev.target.select()
         }}
+        className={classes.input}
       />
 
       {hasFocus && (

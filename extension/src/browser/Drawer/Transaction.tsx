@@ -62,7 +62,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
         <IconButton
           onClick={onRemove}
           className={classes.removeTransaction}
-          title="remove"
+          title="Remove transaction"
         >
           <RiDeleteBinLine />
         </IconButton>

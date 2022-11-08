@@ -18,8 +18,8 @@ h2 {
   margin: 0em 0em 0.5em 0em;
 }
 h3 {
-  font-size: 1.2em;
-  margin-bottom: 0.8em;
+  font-size: 1.4em;
+  margin-bottom: 0;
   line-height: 1.2;
 }
 .connectionItem {
@@ -27,19 +27,18 @@ h3 {
 }
 .connectionButton {
   width: 100%;
+  height: 8em;
   padding: calc(var(--spacing-3) - 1px);
 }
-.connectionEdit {
-  position: absolute;
-  top: calc(var(--spacing-3));
-  right: calc(var(--spacing-3) - 2px);
+button.connectionEdit {
+  position: relative;
+  z-index: 10;
   display: flex;
-  width: auto;
+  width: 8em;
+  height: 8em;
   align-items: center;
   column-gap: 10px;
-}
-.connectionHeader {
-  margin-bottom: var(--spacing-2);
+  background: none;
 }
 .connectionButton:hover .addressHelper {
   opacity: 1;
