@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React from 'react'
 
 import { usePushSettingsRoute } from '../../routing'
@@ -11,16 +12,29 @@ interface Props {
   children: React.ReactNode
   headerRight: React.ReactNode
   navBox: React.ReactNode
+  navFullWidth?: boolean
 }
 
-const Layout: React.FC<Props> = ({ children, headerRight, navBox }) => {
+const Layout: React.FC<Props> = ({
+  children,
+  headerRight,
+  navBox,
+  navFullWidth = false,
+}) => {
   const pushSettingsRoute = usePushSettingsRoute()
   return (
     <div className={classes.page}>
       <div className={classes.topBar}>
-        <Flex gap={3} justifyContent="space-between" alignItems="center">
-          <Box>
-            <Flex gap={1}>
+        <Flex gap={4} justifyContent="space-between" alignItems="center">
+          <Box
+            className={classNames({
+              [classes.fullWidthNavContainer]: navFullWidth,
+            })}
+          >
+            <Flex
+              gap={1}
+              className={classNames({ [classes.fullWidthNav]: navFullWidth })}
+            >
               <Button
                 className={classes.appName}
                 onClick={() => pushSettingsRoute('')}

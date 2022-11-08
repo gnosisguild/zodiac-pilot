@@ -27,3 +27,11 @@ button.appName {
   border-width: 1px;
   background-color: rgba(217, 212, 173, 0.1);
 }
+
+.fullWidthNavContainer {
+  flex: 1;
+}
+
+.fullWidthNav {
+  width: 100%;
+}

@@ -42,6 +42,7 @@ const Browser: React.FC = () => {
         <ProvideProvider simulate>
           <Layout
             navBox={<UrlInput onSubmit={setInitialLocation} />}
+            navFullWidth
             headerRight={
               <BlockLink href={settingsHash}>
                 <AddressStack
