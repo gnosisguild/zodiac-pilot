@@ -36,7 +36,7 @@ const ConnectionBubble: React.FC = () => {
               />
             </Box>
           </div>
-          {connection.label}
+          <p className={classes.label}>{connection.label}</p>
         </Flex>
       </Box>
     </BlockLink>

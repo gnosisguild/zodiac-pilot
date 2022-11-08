@@ -25,3 +25,11 @@
   box-sizing: border-box;
   padding: 4px;
 }
+
+.label {
+  max-width: 380px;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
