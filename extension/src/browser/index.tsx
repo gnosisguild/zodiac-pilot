@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AppPicker, BlockLink, Box, Flex } from '../components'
+import { AppPicker, BlockLink, Box } from '../components'
 import { AddressStack } from '../components'
 import Layout from '../components/Layout'
 import { pushLocation, useLocation } from '../location'

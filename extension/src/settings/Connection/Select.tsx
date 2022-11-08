@@ -1,5 +1,4 @@
 import React from 'react'
-import { RiBallPenLine } from 'react-icons/ri'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { AddressStack, BoxButton, Button, Flex } from '../../components'

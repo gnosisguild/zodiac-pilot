@@ -69,7 +69,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
-          <Field label="DAO Safe">
+          <Field label="Impersonated Safe">
             <input
               type="text"
               value={avatarAddress}
@@ -82,7 +82,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               }}
             />
           </Field>
-          <Field label="Zodiac Modifier or Module Address">
+          <Field label="Zodiac Modifier or Module address">
             <Select
               options={enabledModules.map((address) => ({
                 value: address,
