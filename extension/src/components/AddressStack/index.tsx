@@ -10,8 +10,8 @@ interface Props {
   avatarAddress: string
   moduleAddress: string
   pilotAddress: string
-  interactive?: boolean
   helperClass?: string
+  staticLabels?: boolean
   addressBoxClass?: string
 }
 
@@ -19,15 +19,17 @@ const AddressStack: React.FC<Props> = ({
   avatarAddress,
   moduleAddress,
   pilotAddress,
-  interactive,
   helperClass,
+  staticLabels = false,
   addressBoxClass,
 }) => {
   const redundant = avatarAddress === moduleAddress
 
   return (
     <div
-      className={cn(classes.addressStack, interactive && classes.interactive)}
+      className={cn(classes.addressStack, {
+        [classes.staticLabels]: staticLabels,
+      })}
     >
       <Box
         rounded

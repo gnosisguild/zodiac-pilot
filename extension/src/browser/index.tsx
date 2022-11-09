@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-import { AppPicker, BlockLink, Box } from '../components'
-import { AddressStack } from '../components'
+import { AppPicker, Box } from '../components'
 import ConnectionBubble from '../components/ConnectionBubble'
 import Layout from '../components/Layout'
 import { pushLocation, useLocation } from '../location'
 import { ProvideTenderly } from '../providers'
-import { useSettingsHash } from '../routing'
-import { useConnection } from '../settings'
 
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
