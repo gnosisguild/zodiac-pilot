@@ -1,5 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
-import Safe, { ContractManager } from '@gnosis.pm/safe-core-sdk'
+import Safe from '@gnosis.pm/safe-core-sdk'
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import { ethers } from 'ethers'
 import { useEffect, useState } from 'react'
