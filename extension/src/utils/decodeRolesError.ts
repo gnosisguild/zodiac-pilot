@@ -11,19 +11,21 @@ const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
 // where <HEX_CODE> is either an ASCII string or an error sighash.
 export default function decodeError(message: string) {
   const prefix = 'Reverted 0x'
-  if (message.startsWith(prefix)) {
-    const reason = message.substring(prefix.length - 2)
+  const revertData = message.startsWith(prefix)
+    ? message.substring(prefix.length - 2)
+    : message
 
+  if (revertData.startsWith('0x')) {
     const error =
       Object.keys(rolesInterface.errors).find(
-        (errSig) => rolesInterface.getSighash(errSig) === reason
+        (errSig) => rolesInterface.getSighash(errSig) === revertData
       ) ||
       Object.keys(permissionsInterface.errors).find(
-        (errSig) => permissionsInterface.getSighash(errSig) === reason
+        (errSig) => permissionsInterface.getSighash(errSig) === revertData
       )
     if (error) return error
 
-    return asciiDecode(reason.substring(2))
+    return asciiDecode(revertData.substring(2))
   }
 
   return message
