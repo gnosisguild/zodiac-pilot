@@ -1,0 +1,58 @@
+.container {
+  padding-right: var(--spacing-4);
+}
+
+.container:hover {
+  border-color: rgba(217, 212, 173, 0.8);
+}
+
+.blockieBox {
+  margin-left: -1em;
+  background: #292116;
+}
+
+.blockie {
+  height: 100%;
+}
+
+.blockieBox:first-child {
+  margin-left: 0;
+}
+
+.blockieStack {
+  display: flex;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 4px;
+}
+
+.label {
+  max-width: 380px;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.infoContainer {
+  opacity: 0;
+  position: absolute;
+  z-index: 100;
+  bottom: -112px;
+  right: -5px;
+  padding-top: 30px;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.container:hover .infoContainer {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.info {
+  background-color: rgb(35 34 25 / 64%);
+  border-color: rgba(217, 212, 173, 0.8);
+  padding-top: 35px;
+  border-radius: 33px;
+}

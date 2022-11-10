@@ -16,12 +16,12 @@
 .addressStack {
   display: flex;
 }
-.addressStack.interactive:hover .address,
-.addressStack.interactive:hover .address:before {
+/* .addressStack:hover .address,
+.addressStack:hover .address:before {
   border-color: rgba(217, 212, 173, 0.5);
-}
+} */
 .address:first-child > div {
-  padding-left: var(--spacing-2);
+  padding-left: var(--spacing-3);
 }
 
 .helper {
@@ -39,5 +39,9 @@
   left: 8px;
 }
 .addressStack.interactive:hover .helper {
+  opacity: 1;
+}
+
+.staticLabels .helper {
   opacity: 1;
 }

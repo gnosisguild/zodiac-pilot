@@ -60,7 +60,7 @@ const ConnectionItem: React.FC<{
             justifyContent="space-between"
             alignItems="center"
           >
-            <Flex direction="row" gap={2}>
+            <Flex direction="row" gap={2} className={classes.labelContainer}>
               <h3>{connection.label}</h3>
 
               <div className={classes.status}>

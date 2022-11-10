@@ -5,7 +5,13 @@ import classes from './style.module.css'
 
 interface Props {
   direction?: 'row' | 'column'
-  justifyContent?: 'space-around' | 'space-between' | 'center' | 'end' | 'start'
+  justifyContent?:
+    | 'space-around'
+    | 'space-between'
+    | 'center'
+    | 'end'
+    | 'start'
+    | 'right'
   alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start'
   gap: 0 | 1 | 2 | 3 | 4
   className?: string

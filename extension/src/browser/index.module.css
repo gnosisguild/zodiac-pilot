@@ -27,6 +27,7 @@
   background-color: rgba(217, 212, 173, 0.1);
   min-width: 300px;
   position: relative;
+  flex: 1;
 }
 
 .urlInput .input {

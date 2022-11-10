@@ -57,7 +57,7 @@ const Settings: React.FC<Props> = ({
   return connections.some((c) => c.id === editConnectionId) ? (
     <Layout
       navBox={
-        <Flex gap={1}>
+        <Flex gap={1} className={classes.navStack}>
           <Box p={2} className={classes.navLabel}>
             Settings
           </Box>
@@ -67,7 +67,7 @@ const Settings: React.FC<Props> = ({
         </Flex>
       }
       headerRight={
-        <Flex gap={3}>
+        <Flex gap={3} justifyContent="right">
           <Button
             className={classes.headerButton}
             disabled={!canLaunch}

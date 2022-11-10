@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-import { AppPicker, BlockLink, Box } from '../components'
-import { AddressStack } from '../components'
+import { AppPicker, Box } from '../components'
+import ConnectionBubble from '../components/ConnectionBubble'
 import Layout from '../components/Layout'
 import { pushLocation, useLocation } from '../location'
 import { ProvideTenderly } from '../providers'
-import { useSettingsHash } from '../routing'
-import { useConnection } from '../settings'
 
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
@@ -33,8 +31,6 @@ const Browser: React.FC = () => {
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
   const [initialLocation, setInitialLocation] = useState(location)
-  const { connection } = useConnection()
-  const settingsHash = useSettingsHash(connection.id)
 
   return (
     <ProvideTenderly>
@@ -42,16 +38,8 @@ const Browser: React.FC = () => {
         <ProvideProvider simulate>
           <Layout
             navBox={<UrlInput onSubmit={setInitialLocation} />}
-            headerRight={
-              <BlockLink href={settingsHash}>
-                <AddressStack
-                  interactive
-                  pilotAddress={connection.pilotAddress}
-                  moduleAddress={connection.moduleAddress}
-                  avatarAddress={connection.avatarAddress}
-                />
-              </BlockLink>
-            }
+            navFullWidth
+            headerRight={<ConnectionBubble />}
           >
             <Box className={classNames.frame} double p={2}>
               {initialLocation ? (
