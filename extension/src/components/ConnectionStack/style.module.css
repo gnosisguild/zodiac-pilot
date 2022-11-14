@@ -13,11 +13,11 @@
 .address:nth-child(3) {
   z-index: 1;
 }
-.addressStack {
+.connectionStack {
   display: flex;
 }
-/* .addressStack:hover .address,
-.addressStack:hover .address:before {
+/* .connectionStack:hover .address,
+.connectionStack:hover .address:before {
   border-color: rgba(217, 212, 173, 0.5);
 } */
 .address:first-child > div {
@@ -38,7 +38,7 @@
 .address:first-child .helper {
   left: 8px;
 }
-.addressStack.interactive:hover .helper {
+.connectionStack.interactive:hover .helper {
   opacity: 1;
 }
 

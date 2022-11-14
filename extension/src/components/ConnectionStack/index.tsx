@@ -26,7 +26,7 @@ const ConnectionStack: React.FC<Props> = ({
 
   return (
     <div
-      className={cn(classes.addressStack, {
+      className={cn(classes.connectionStack, {
         [classes.staticLabels]: staticLabels,
       })}
     >
