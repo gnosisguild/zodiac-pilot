@@ -1,3 +1,4 @@
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
@@ -118,6 +119,7 @@ const Settings: React.FC<Props> = ({
                 avatarAddress: '',
                 pilotAddress: '',
                 providerType: ProviderType.WalletConnect,
+                moduleType: KnownContracts.ROLES,
                 roleId: '',
               },
             ])

@@ -1,7 +1,6 @@
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import makeBlockie from 'ethereum-blockies-base64'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { useConnection } from '../../settings'

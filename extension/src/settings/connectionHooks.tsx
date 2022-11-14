@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
 import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
@@ -17,6 +18,7 @@ const DEFAULT_VALUE: Connection[] = [
     avatarAddress: '',
     pilotAddress: '',
     providerType: ProviderType.WalletConnect,
+    moduleType: KnownContracts.ROLES,
     roleId: '',
   },
 ]
