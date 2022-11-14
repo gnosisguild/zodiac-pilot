@@ -78,8 +78,8 @@ async function fetchModules(
 
       const implementationAddress = mastercopyAddress || moduleAddress
       if (!type) {
-        // Not a proxy to one of our mastercopies. It might be a custom deployment.
-        // We try to detect selectors from bytecode and match them against the ABIs of known Zodiac modules.
+        // Not a proxy to one of our master copies. It might be a custom deployment.
+        // We try to detect selectors from byte code and match them against the ABIs of known Zodiac modules.
         const code = await provider.getCode(implementationAddress)
         const selectors = selectorsFromBytecode(code)
 
