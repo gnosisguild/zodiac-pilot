@@ -1,3 +1,4 @@
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
 import { Box, Field, Flex, Select } from '../../components'
@@ -6,12 +7,13 @@ import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
-import { useSafeModuleInfo } from './useSafeModuleInfo'
+import { SupportedModuleType, useZodiacModules } from './useZodiacModules'
 
 type ConnectionPatch = {
   label?: string
   avatarAddress?: string
   moduleAddress?: string
+  moduleType?: SupportedModuleType
   roleId?: string
 }
 
@@ -24,13 +26,13 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   const { connection } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
-  const { loading, isValidSafe, enabledModules } = useSafeModuleInfo(
-    avatarAddress,
-    id
-  )
 
-  const validatedModuleAddress =
-    moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
+  // TODO modules is a nested list, but we currently only render the top-level items
+  const { loading, isValidSafe, modules } = useZodiacModules(avatarAddress, id)
+
+  const selectedModule = moduleAddress
+    ? modules.find((mod) => mod.moduleAddress === moduleAddress)
+    : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
     setConnections(
@@ -78,27 +80,35 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                 updateConnection({
                   avatarAddress,
                   moduleAddress: '',
+                  moduleType: undefined,
                 })
               }}
             />
           </Field>
           <Field label="Zodiac Modifier or Module address">
             <Select
-              options={enabledModules.map((address) => ({
-                value: address,
-                label: address,
+              options={modules.map((mod) => ({
+                value: mod.moduleAddress,
+                label: `${mod.moduleAddress} (${MODULE_NAMES[mod.type]})`,
               }))}
               onChange={(selected) => {
+                const mod = modules.find(
+                  (mod) =>
+                    mod.moduleAddress ===
+                    (selected as { value: string; label: string }).value
+                )
                 updateConnection({
-                  moduleAddress: (selected as { value: string; label: string })
-                    .value,
+                  moduleAddress: mod?.moduleAddress,
+                  moduleType: mod?.type,
                 })
               }}
               value={
-                validatedModuleAddress
+                selectedModule
                   ? {
-                      value: validatedModuleAddress,
-                      label: validatedModuleAddress,
+                      value: selectedModule.moduleAddress,
+                      label: `${selectedModule.moduleAddress} (${
+                        MODULE_NAMES[selectedModule.type]
+                      })`,
                     }
                   : ''
               }
@@ -107,16 +117,18 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               noOptionsMessage={() => 'No modules are enabled on this Safe'}
             />
           </Field>
-          <Field label="Role ID">
-            <input
-              type="text"
-              value={roleId}
-              onChange={(ev) => {
-                updateConnection({ roleId: ev.target.value })
-              }}
-              placeholder="0"
-            />
-          </Field>
+          {selectedModule?.type === KnownContracts.ROLES && (
+            <Field label="Role ID">
+              <input
+                type="text"
+                value={roleId}
+                onChange={(ev) => {
+                  updateConnection({ roleId: ev.target.value })
+                }}
+                placeholder="0"
+              />
+            </Field>
+          )}
         </Flex>
       </Flex>
     </Flex>
@@ -124,3 +136,8 @@ const EditConnection: React.FC<Props> = ({ id }) => {
 }
 
 export default EditConnection
+
+const MODULE_NAMES = {
+  [KnownContracts.DELAY]: 'Delay',
+  [KnownContracts.ROLES]: 'Roles',
+}
