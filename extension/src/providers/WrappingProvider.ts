@@ -2,34 +2,43 @@ import EventEmitter from 'events'
 
 import { Interface } from '@ethersproject/abi'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { CONTRACT_ABIS, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
-import rolesAbi from '../abi/Roles.json'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-const RolesInterface = new Interface(rolesAbi)
+const RolesInterface = new Interface(CONTRACT_ABIS[KnownContracts.ROLES])
+const DelayInterface = new Interface(CONTRACT_ABIS[KnownContracts.DELAY])
 
 export function wrapRequest(
   request: MetaTransaction | TransactionData,
-  from: string,
-  to: string,
-  roleId?: string
+  connection: Connection
 ): TransactionData {
-  const data = RolesInterface.encodeFunctionData(
-    'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
-    [
+  let data: string
+  if (connection.moduleType === KnownContracts.ROLES) {
+    data = RolesInterface.encodeFunctionData(
+      'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
+      [
+        request.to,
+        request.value || 0,
+        request.data,
+        ('operation' in request && request.operation) || 0,
+        connection.roleId || 0,
+        true,
+      ]
+    )
+  } else {
+    data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
       request.to,
       request.value || 0,
       request.data,
       ('operation' in request && request.operation) || 0,
-      roleId || 0,
-      true,
-    ]
-  )
+    ])
+  }
 
   return {
-    from,
-    to,
+    from: connection.pilotAddress,
+    to: connection.moduleAddress,
     data: data,
     value: '0x0',
   }
@@ -81,12 +90,7 @@ class WrappingProvider extends EventEmitter {
       case 'eth_estimateGas': {
         const [request, ...rest] = params
 
-        const wrappedReq = wrapRequest(
-          request,
-          this.connection.pilotAddress,
-          this.connection.moduleAddress,
-          this.connection.roleId
-        )
+        const wrappedReq = wrapRequest(request, this.connection)
 
         try {
           const result = await this.provider.request({
@@ -112,9 +116,7 @@ class WrappingProvider extends EventEmitter {
       case 'eth_sendTransaction': {
         const wrappedReq = wrapRequest(
           params[0] as TransactionData,
-          this.connection.pilotAddress,
-          this.connection.moduleAddress,
-          this.connection.roleId
+          this.connection
         )
 
         return await this.signer.sendUncheckedTransaction(wrappedReq)
