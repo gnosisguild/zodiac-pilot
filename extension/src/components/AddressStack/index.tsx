@@ -1,28 +1,27 @@
 import cn from 'classnames'
 import React from 'react'
 
+import { MODULE_NAMES } from '../../settings/Connection/useZodiacModules'
+import { Connection } from '../../types'
 import Address from '../Address'
 import Box from '../Box'
 
 import classes from './style.module.css'
 
 interface Props {
-  avatarAddress: string
-  moduleAddress: string
-  pilotAddress: string
+  connection: Connection
   helperClass?: string
   staticLabels?: boolean
   addressBoxClass?: string
 }
 
-const AddressStack: React.FC<Props> = ({
-  avatarAddress,
-  moduleAddress,
-  pilotAddress,
+const ConnectionStack: React.FC<Props> = ({
+  connection,
   helperClass,
   staticLabels = false,
   addressBoxClass,
 }) => {
+  const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
   const redundant = avatarAddress === moduleAddress
 
   return (
@@ -55,7 +54,7 @@ const AddressStack: React.FC<Props> = ({
           <Address address={moduleAddress} />
           {moduleAddress && (
             <div className={cn(classes.helper, helperClass)}>
-              <p>Zodiac Module</p>
+              <p>{MODULE_NAMES[moduleType] || 'Zodiac'} Mod</p>
             </div>
           )}
         </Box>
@@ -77,4 +76,4 @@ const AddressStack: React.FC<Props> = ({
   )
 }
 
-export default AddressStack
+export default ConnectionStack

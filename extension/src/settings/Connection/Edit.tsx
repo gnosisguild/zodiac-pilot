@@ -7,7 +7,11 @@ import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
-import { SupportedModuleType, useZodiacModules } from './useZodiacModules'
+import {
+  MODULE_NAMES,
+  SupportedModuleType,
+  useZodiacModules,
+} from './useZodiacModules'
 
 type ConnectionPatch = {
   label?: string
@@ -136,8 +140,3 @@ const EditConnection: React.FC<Props> = ({ id }) => {
 }
 
 export default EditConnection
-
-const MODULE_NAMES = {
-  [KnownContracts.DELAY]: 'Delay',
-  [KnownContracts.ROLES]: 'Roles',
-}

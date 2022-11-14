@@ -5,7 +5,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { MetaTransaction } from 'react-multisend'
 
 import rolesAbi from '../abi/Roles.json'
-import { Eip1193Provider, TransactionData } from '../types'
+import { Connection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesInterface = new Interface(rolesAbi)
 
@@ -13,7 +13,7 @@ export function wrapRequest(
   request: MetaTransaction | TransactionData,
   from: string,
   to: string,
-  roleId: string
+  roleId?: string
 ): TransactionData {
   const data = RolesInterface.encodeFunctionData(
     'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
@@ -40,28 +40,16 @@ class UnsupportedMethodError extends Error {
 }
 
 class WrappingProvider extends EventEmitter {
-  private pilotAddress: string
-  private moduleAddress: string
-  private avatarAddress: string
-  private roleId: string
+  private connection: Connection
 
   private provider: Eip1193Provider
   private signer: JsonRpcSigner
 
-  constructor(
-    provider: Eip1193Provider,
-    pilotAddress: string,
-    moduleAddress: string,
-    avatarAddress: string,
-    roleId: string
-  ) {
+  constructor(provider: Eip1193Provider, connection: Connection) {
     super()
     this.provider = provider
     this.signer = new Web3Provider(provider).getSigner()
-    this.pilotAddress = pilotAddress
-    this.moduleAddress = moduleAddress
-    this.avatarAddress = avatarAddress
-    this.roleId = roleId
+    this.connection = connection
   }
 
   async request(request: {
@@ -78,11 +66,11 @@ class WrappingProvider extends EventEmitter {
       }
 
       case 'eth_requestAccounts': {
-        return [this.avatarAddress]
+        return [this.connection.avatarAddress]
       }
 
       case 'eth_accounts': {
-        return [this.avatarAddress]
+        return [this.connection.avatarAddress]
       }
 
       // curve.fi is unhappy without this
@@ -95,9 +83,9 @@ class WrappingProvider extends EventEmitter {
 
         const wrappedReq = wrapRequest(
           request,
-          this.pilotAddress,
-          this.moduleAddress,
-          this.roleId
+          this.connection.pilotAddress,
+          this.connection.moduleAddress,
+          this.connection.roleId
         )
 
         try {
@@ -117,16 +105,16 @@ class WrappingProvider extends EventEmitter {
         const [call, ...rest] = params
         return this.provider.request({
           method,
-          params: [{ ...call, from: this.avatarAddress }, ...rest],
+          params: [{ ...call, from: this.connection.avatarAddress }, ...rest],
         })
       }
 
       case 'eth_sendTransaction': {
         const wrappedReq = wrapRequest(
           params[0] as TransactionData,
-          this.pilotAddress,
-          this.moduleAddress,
-          this.roleId
+          this.connection.pilotAddress,
+          this.connection.moduleAddress,
+          this.connection.roleId
         )
 
         return await this.signer.sendUncheckedTransaction(wrappedReq)

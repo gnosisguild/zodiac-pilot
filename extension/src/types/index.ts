@@ -1,4 +1,5 @@
 import { ChainId } from '../networks'
+import { SupportedModuleType } from '../settings/Connection/useZodiacModules'
 
 export enum ProviderType {
   WalletConnect,
@@ -13,7 +14,8 @@ export type Connection = {
   pilotAddress: string
   chainId: ChainId
   providerType: ProviderType
-  roleId: string
+  moduleType: SupportedModuleType
+  roleId?: string
 }
 
 export interface JsonRpcRequest {

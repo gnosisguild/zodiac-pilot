@@ -1,7 +1,7 @@
 import React from 'react'
 import { VscDebugDisconnect } from 'react-icons/vsc'
 
-import { AddressStack, BoxButton, Button, Flex } from '../../components'
+import { BoxButton, Button, ConnectionStack, Flex } from '../../components'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'
 import { useConnection, useConnections } from '../connectionHooks'
@@ -80,10 +80,8 @@ const ConnectionItem: React.FC<{
               </div>
             </Flex>
 
-            <AddressStack
-              avatarAddress={connection.avatarAddress}
-              moduleAddress={connection.moduleAddress}
-              pilotAddress={connection.pilotAddress}
+            <ConnectionStack
+              connection={connection}
               helperClass={classes.addressHelper}
               addressBoxClass={classes.addressBox}
             />
