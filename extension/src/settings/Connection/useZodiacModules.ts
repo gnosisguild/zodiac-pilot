@@ -65,8 +65,8 @@ async function fetchModules(
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
   )[0] as string[]
 
-  const enabledAndSupportedModules = moduleAddresses
-    .map(async (moduleAddress) => {
+  const enabledAndSupportedModules = moduleAddresses.map(
+    async (moduleAddress) => {
       const isEnabled = await contract.isModuleEnabled(moduleAddress)
       if (!isEnabled) return
 
@@ -116,10 +116,11 @@ async function fetchModules(
         type,
         modules,
       }
-    })
-    .filter((module) => !!module) as Promise<Module>[]
+    }
+  )
 
-  return Promise.all(enabledAndSupportedModules)
+  const result = await Promise.all(enabledAndSupportedModules)
+  return result.filter((module) => !!module) as Module[]
 }
 
 const functionSelectors = (abi: string[]) => {
