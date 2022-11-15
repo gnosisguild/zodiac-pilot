@@ -2,6 +2,8 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
 import { Box, Field, Flex, Select } from '../../components'
+import Blockie from '../../components/Blockie'
+import ModSelect from '../../components/Select/ModSelect'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
@@ -90,10 +92,10 @@ const EditConnection: React.FC<Props> = ({ id }) => {
             />
           </Field>
           <Field label="Zodiac Modifier or Module address">
-            <Select
+            <ModSelect
               options={modules.map((mod) => ({
                 value: mod.moduleAddress,
-                label: `${mod.moduleAddress} (${MODULE_NAMES[mod.type]})`,
+                label: MODULE_NAMES[mod.type],
               }))}
               onChange={(selected) => {
                 const mod = modules.find(
@@ -110,15 +112,12 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                 selectedModule
                   ? {
                       value: selectedModule.moduleAddress,
-                      label: `${selectedModule.moduleAddress} (${
-                        MODULE_NAMES[selectedModule.type]
-                      })`,
+                      label: MODULE_NAMES[selectedModule.type],
                     }
                   : ''
               }
               isDisabled={loading || !isValidSafe}
               placeholder={loading || !isValidSafe ? '' : 'Select a module'}
-              noOptionsMessage={() => 'No modules are enabled on this Safe'}
             />
           </Field>
           {selectedModule?.type === KnownContracts.ROLES && (
