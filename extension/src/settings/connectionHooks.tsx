@@ -32,10 +32,12 @@ const SelectedConnectionContext =
 export const ProvideConnections: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [connections, setConnections] = useStickyState<Connection[]>(
+  const [storedConnections, setConnections] = useStickyState<Connection[]>(
     DEFAULT_VALUE,
     'connections'
   )
+  const connections = migrateConnections(storedConnections)
+
   const [selectedConnectionId, setSelectedConnectionId] =
     useStickyState<string>(connections[0].id, 'selectedConnection')
 
@@ -137,4 +139,26 @@ class DummyProvider extends EventEmitter {
   async request(): Promise<void> {
     return
   }
+}
+
+type ConnectionStateMigration = (connection: Connection) => Connection
+
+// If the Connection state structure changes we must lazily migrate users' connections states from the old structure to the new one.
+// This is done by adding an idempotent migration function to this array.
+const CONNECTION_STATE_MIGRATIONS: ConnectionStateMigration[] = [
+  function addModuleType(connection) {
+    return {
+      ...connection,
+      moduleType: connection.moduleType || KnownContracts.ROLES,
+    }
+  },
+]
+
+// Apply all migrations to the given connections
+const migrateConnections = (connections: Connection[]): Connection[] => {
+  let migratedConnections = connections
+  CONNECTION_STATE_MIGRATIONS.forEach((migration) => {
+    migratedConnections = migratedConnections.map(migration)
+  })
+  return migratedConnections
 }
