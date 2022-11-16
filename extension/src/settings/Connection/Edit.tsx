@@ -1,7 +1,8 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
+import { RiAlertLine } from 'react-icons/ri'
 
-import { Box, Field, Flex, Select } from '../../components'
+import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
 import Blockie from '../../components/Blockie'
 import ModSelect from '../../components/Select/ModSelect'
 import { useConnection, useConnections } from '../connectionHooks'
@@ -53,15 +54,17 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   return (
     <Flex direction="column" gap={3}>
       <Flex direction="column" gap={2}>
-        {error && (
-          <>
-            <div>There seems to be a problem with this connection:</div>
-            <Box p={3} className={classes.error}>
-              {error}
-            </Box>
-          </>
-        )}
         <Flex direction="column" gap={3} className={classes.form}>
+          {error && (
+            <Box double p={3}>
+              <div className={classes.errorInfo}>
+                <p>There seems to be a problem with this connection:</p>
+                <Box p={3} className={classes.error}>
+                  {error}
+                </Box>
+              </div>
+            </Box>
+          )}
           <Field label="Connection name">
             <input
               type="text"
@@ -77,19 +80,51 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
-          <Field label="Impersonated Safe">
-            <input
-              type="text"
-              value={avatarAddress}
-              onChange={(ev) => {
-                const avatarAddress = ev.target.value.replace(/^[a-z]{3}:/g, '')
-                updateConnection({
-                  avatarAddress,
-                  moduleAddress: '',
-                  moduleType: undefined,
-                })
-              }}
-            />
+          <Field label="Impersonated Safe" labelFor="">
+            {connection.avatarAddress.length > 0 ? (
+              <div className={classes.avatarContainer}>
+                <div className={classes.avatar}>
+                  <Box rounded>
+                    <Blockie
+                      address={connection.avatarAddress}
+                      className={classes.avatarBlockie}
+                    />
+                  </Box>
+                  <div className={classes.avatarAddress}>
+                    {connection.avatarAddress}
+                  </div>
+                </div>
+                <Button
+                  className={classes.removeButton}
+                  onClick={() => {
+                    updateConnection({
+                      avatarAddress: '',
+                      moduleAddress: '',
+                      moduleType: undefined,
+                    })
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            ) : (
+              <input
+                type="text"
+                value={avatarAddress}
+                placeholder="Paste in Safe address"
+                onChange={(ev) => {
+                  const avatarAddress = ev.target.value.replace(
+                    /^[a-z]{3}:/g,
+                    ''
+                  )
+                  updateConnection({
+                    avatarAddress,
+                    moduleAddress: '',
+                    moduleType: undefined,
+                  })
+                }}
+              />
+            )}
           </Field>
           <Field
             label="Zodiac Modifier or Module address"
