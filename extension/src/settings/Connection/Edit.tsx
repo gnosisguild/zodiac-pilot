@@ -91,7 +91,10 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               }}
             />
           </Field>
-          <Field label="Zodiac Modifier or Module address">
+          <Field
+            label="Zodiac Modifier or Module address"
+            disabled={modules.length === 0}
+          >
             <ModSelect
               options={modules.map((mod) => ({
                 value: mod.moduleAddress,

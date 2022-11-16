@@ -92,7 +92,7 @@ async function fetchModules(
           type = match[0]
         }
       }
-      console.log(type)
+
       if (!type || !SUPPORTED_MODULES.includes(type)) {
         return undefined
       }
