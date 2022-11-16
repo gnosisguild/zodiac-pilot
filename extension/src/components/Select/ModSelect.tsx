@@ -12,15 +12,18 @@ interface LabelProps {
   label: string
 }
 
-const ModuleOptionLabel: React.FC<LabelProps> = ({ value, label }) => {
+// react-select can't infer the type of Option here, so it expects unknown,
+// hence the weird typing method below
+const ModuleOptionLabel = (data: unknown) => {
+  const props = data as LabelProps
   return (
     <div className={classes.modOption}>
       <Box rounded>
-        <Blockie address={value} className={classes.modBlockie} />
+        <Blockie address={props.value} className={classes.modBlockie} />
       </Box>
       <div className={classes.modLabel}>
-        <p className={classes.type}>{label}</p>
-        <p className={classes.address}>{value}</p>
+        <p className={classes.type}>{props.label}</p>
+        <p className={classes.address}>{props.value}</p>
       </div>
     </div>
   )

@@ -42,7 +42,12 @@ const customStyles = {
     ...provided,
     zIndex: 10,
     borderRadius: 0,
-    background: 'rgb(29 27 14 / 70%)',
+    background: 'rgb(0 0 0 / 95%)',
+    marginTop: 0,
+  }),
+  menuList: (provided: React.CSSProperties) => ({
+    ...provided,
+    padding: 0,
   }),
   singleValue: (provided: React.CSSProperties) => ({
     ...provided,
