@@ -66,14 +66,16 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   // good to go
   if (connected) {
     return (
-      <div className={classes.connectedAccount}>
-        <div className={classes.walletLogo}>
-          {connection.providerType === ProviderType.WalletConnect
-            ? walletConnectLogo
-            : metamaskLogo}
-        </div>
-        <div className={classes.connectedAddress}>
-          {connection.pilotAddress}
+      <div className={classes.connectedContainer}>
+        <div className={classes.connectedAccount}>
+          <div className={classes.walletLogo}>
+            {connection.providerType === ProviderType.WalletConnect
+              ? walletConnectLogo
+              : metamaskLogo}
+          </div>
+          <div className={classes.connectedAddress}>
+            {connection.pilotAddress}
+          </div>
         </div>
         <Button onClick={disconnect} className={classes.disconnectButton}>
           Disconnect
@@ -94,8 +96,8 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     return (
       <div
         className={classNames(
-          classes.connectedAccount,
-          classes.connectedAddress
+          classes.connectedContainer,
+          classes.connectionWarning
         )}
       >
         <Tag head={<RiAlertLine />} color="warning">
@@ -140,8 +142,8 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     !metamask.accounts.includes(connection.pilotAddress)
   ) {
     return (
-      <div className={classes.connectedAccount}>
-        <div className={classes.connectedAddress}>
+      <div className={classes.connectedContainer}>
+        <div className={classes.connectionWarning}>
           <Tag head={<RiAlertLine />} color="warning">
             Switch wallet to account {shortenAddress(connection.pilotAddress)}
           </Tag>

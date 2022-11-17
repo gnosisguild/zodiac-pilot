@@ -27,20 +27,27 @@ const customStyles = {
   }),
   option: (provided: React.CSSProperties, state: any) => ({
     ...provided,
-    background: state.isSelected ? 'rgba(217, 212, 173, 0.5)' : 'none',
+    background: state.isSelected
+      ? 'rgba(217, 212, 173, 0.2)'
+      : 'rgba(217, 212, 173, 0.2)',
     color: 'white',
     fontFamily: "'Roboto Mono', monospace",
     fontSize: '14px',
     cursor: 'pointer',
     '&:hover': {
-      background: 'rgba(217, 212, 173, 0.2)',
+      background: 'rgba(217, 212, 173, 0.1)',
     },
   }),
   menu: (provided: React.CSSProperties) => ({
     ...provided,
     zIndex: 10,
     borderRadius: 0,
-    background: 'black',
+    background: 'rgb(0 0 0 / 95%)',
+    marginTop: 0,
+  }),
+  menuList: (provided: React.CSSProperties) => ({
+    ...provided,
+    padding: 0,
   }),
   singleValue: (provided: React.CSSProperties) => ({
     ...provided,
