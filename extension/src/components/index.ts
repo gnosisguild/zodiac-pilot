@@ -1,5 +1,5 @@
 export { default as Address } from './Address'
-export { default as AddressStack } from './AddressStack'
+export { default as ConnectionStack } from './ConnectionStack'
 export { default as AppPicker } from './AppPicker'
 export { default as AppSearch } from './AppSearch'
 export { default as BlockLink } from './BlockLink'

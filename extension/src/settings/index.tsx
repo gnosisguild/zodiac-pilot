@@ -1,3 +1,4 @@
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
@@ -89,11 +90,11 @@ const Settings: React.FC<Props> = ({
       }
     >
       <Box p={2} className={classes.body}>
-        <Box p={3} className={classes.edit}>
+        <div className={classes.edit}>
           <Flex direction="column" gap={3}>
             <EditConnection id={editConnectionId} />
           </Flex>
-        </Box>
+        </div>
       </Box>
     </Layout>
   ) : (
@@ -118,6 +119,7 @@ const Settings: React.FC<Props> = ({
                 avatarAddress: '',
                 pilotAddress: '',
                 providerType: ProviderType.WalletConnect,
+                moduleType: KnownContracts.ROLES,
                 roleId: '',
               },
             ])

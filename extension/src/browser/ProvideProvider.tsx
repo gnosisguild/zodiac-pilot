@@ -53,14 +53,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const transactions = useNewTransactions()
 
   const wrappingProvider = useMemo(
-    () =>
-      new WrappingProvider(
-        provider,
-        connection.pilotAddress,
-        connection.moduleAddress,
-        connection.avatarAddress,
-        connection.roleId
-      ),
+    () => new WrappingProvider(provider, connection),
     [provider, connection]
   )
 

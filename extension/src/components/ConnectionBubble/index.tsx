@@ -2,10 +2,10 @@ import React from 'react'
 
 import { useSettingsHash } from '../../routing'
 import { useConnection } from '../../settings'
-import AddressStack from '../AddressStack'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
 import Box from '../Box'
+import ConnectionStack from '../ConnectionStack'
 import Flex from '../Flex'
 
 import classes from './style.module.css'
@@ -41,12 +41,7 @@ const ConnectionBubble: React.FC = () => {
         </Flex>
         <div className={classes.infoContainer}>
           <Box bg rounded p={3} className={classes.info}>
-            <AddressStack
-              staticLabels
-              pilotAddress={connection.pilotAddress}
-              moduleAddress={connection.moduleAddress}
-              avatarAddress={connection.avatarAddress}
-            />
+            <ConnectionStack staticLabels connection={connection} />
           </Box>
         </div>
       </Box>

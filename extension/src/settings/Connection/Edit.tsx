@@ -1,17 +1,26 @@
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
+import { RiAlertLine } from 'react-icons/ri'
 
-import { Box, Field, Flex, Select } from '../../components'
+import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
+import Blockie from '../../components/Blockie'
+import ModSelect from '../../components/Select/ModSelect'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectButton from './ConnectButton'
 import classes from './style.module.css'
-import { useSafeModuleInfo } from './useSafeModuleInfo'
+import {
+  MODULE_NAMES,
+  SupportedModuleType,
+  useZodiacModules,
+} from './useZodiacModules'
 
 type ConnectionPatch = {
   label?: string
   avatarAddress?: string
   moduleAddress?: string
+  moduleType?: SupportedModuleType
   roleId?: string
 }
 
@@ -24,13 +33,13 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   const { connection } = useConnection(id)
 
   const { label, avatarAddress, moduleAddress, roleId } = connection
-  const { loading, isValidSafe, enabledModules } = useSafeModuleInfo(
-    avatarAddress,
-    id
-  )
 
-  const validatedModuleAddress =
-    moduleAddress && enabledModules.includes(moduleAddress) ? moduleAddress : ''
+  // TODO modules is a nested list, but we currently only render the top-level items
+  const { loading, isValidSafe, modules } = useZodiacModules(avatarAddress, id)
+
+  const selectedModule = moduleAddress
+    ? modules.find((mod) => mod.moduleAddress === moduleAddress)
+    : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
     setConnections(
@@ -45,15 +54,17 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   return (
     <Flex direction="column" gap={3}>
       <Flex direction="column" gap={2}>
-        {error && (
-          <>
-            <div>There seems to be a problem with this connection:</div>
-            <Box p={3} className={classes.error}>
-              {error}
-            </Box>
-          </>
-        )}
         <Flex direction="column" gap={3} className={classes.form}>
+          {error && (
+            <Box double p={3}>
+              <div className={classes.errorInfo}>
+                <p>There seems to be a problem with this connection:</p>
+                <Box p={3} className={classes.error}>
+                  {error}
+                </Box>
+              </div>
+            </Box>
+          )}
           <Field label="Connection name">
             <input
               type="text"
@@ -69,54 +80,96 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
-          <Field label="Impersonated Safe">
-            <input
-              type="text"
-              value={avatarAddress}
-              onChange={(ev) => {
-                const avatarAddress = ev.target.value.replace(/^[a-z]{3}:/g, '')
-                updateConnection({
-                  avatarAddress,
-                  moduleAddress: '',
-                })
-              }}
-            />
+          <Field label="Impersonated Safe" labelFor="">
+            {connection.avatarAddress.length > 0 ? (
+              <div className={classes.avatarContainer}>
+                <div className={classes.avatar}>
+                  <Box rounded>
+                    <Blockie
+                      address={connection.avatarAddress}
+                      className={classes.avatarBlockie}
+                    />
+                  </Box>
+                  <div className={classes.avatarAddress}>
+                    {connection.avatarAddress}
+                  </div>
+                </div>
+                <Button
+                  className={classes.removeButton}
+                  onClick={() => {
+                    updateConnection({
+                      avatarAddress: '',
+                      moduleAddress: '',
+                      moduleType: undefined,
+                    })
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            ) : (
+              <input
+                type="text"
+                value={avatarAddress}
+                placeholder="Paste in Safe address"
+                onChange={(ev) => {
+                  const avatarAddress = ev.target.value.replace(
+                    /^[a-z]{3}:/g,
+                    ''
+                  )
+                  updateConnection({
+                    avatarAddress,
+                    moduleAddress: '',
+                    moduleType: undefined,
+                  })
+                }}
+              />
+            )}
           </Field>
-          <Field label="Zodiac Modifier or Module address">
-            <Select
-              options={enabledModules.map((address) => ({
-                value: address,
-                label: address,
+          <Field
+            label="Zodiac Modifier or Module address"
+            disabled={modules.length === 0}
+          >
+            <ModSelect
+              options={modules.map((mod) => ({
+                value: mod.moduleAddress,
+                label: MODULE_NAMES[mod.type],
               }))}
               onChange={(selected) => {
+                const mod = modules.find(
+                  (mod) =>
+                    mod.moduleAddress ===
+                    (selected as { value: string; label: string }).value
+                )
                 updateConnection({
-                  moduleAddress: (selected as { value: string; label: string })
-                    .value,
+                  moduleAddress: mod?.moduleAddress,
+                  moduleType: mod?.type,
                 })
               }}
               value={
-                validatedModuleAddress
+                selectedModule
                   ? {
-                      value: validatedModuleAddress,
-                      label: validatedModuleAddress,
+                      value: selectedModule.moduleAddress,
+                      label: MODULE_NAMES[selectedModule.type],
                     }
                   : ''
               }
               isDisabled={loading || !isValidSafe}
               placeholder={loading || !isValidSafe ? '' : 'Select a module'}
-              noOptionsMessage={() => 'No modules are enabled on this Safe'}
             />
           </Field>
-          <Field label="Role ID">
-            <input
-              type="text"
-              value={roleId}
-              onChange={(ev) => {
-                updateConnection({ roleId: ev.target.value })
-              }}
-              placeholder="0"
-            />
-          </Field>
+          {selectedModule?.type === KnownContracts.ROLES && (
+            <Field label="Role ID">
+              <input
+                type="text"
+                value={roleId}
+                onChange={(ev) => {
+                  updateConnection({ roleId: ev.target.value })
+                }}
+                placeholder="0"
+              />
+            </Field>
+          )}
         </Flex>
       </Flex>
     </Flex>

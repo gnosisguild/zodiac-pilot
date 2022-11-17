@@ -1,4 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
@@ -11,24 +12,33 @@ import {
 } from './Connection/addressValidation'
 import { useConnection } from './connectionHooks'
 
-const useConnectionDryRun = ({
-  id,
-  pilotAddress,
-  moduleAddress,
-  avatarAddress,
-  roleId,
-}: Connection) => {
+const useConnectionDryRun = (connection: Connection) => {
   const [error, setError] = useState<string | null>(null)
-  const { provider, connected } = useConnection(id)
+  const { provider, connected } = useConnection(connection.id)
 
   useEffect(() => {
-    if (connected && pilotAddress && avatarAddress && moduleAddress && roleId) {
-      dryRun(provider, pilotAddress, moduleAddress, avatarAddress, roleId)
+    const { pilotAddress, avatarAddress, moduleAddress, moduleType, roleId } =
+      connection
+
+    const configurationComplete =
+      moduleType === KnownContracts.DELAY || !!roleId
+
+    if (
+      connected &&
+      pilotAddress &&
+      avatarAddress &&
+      moduleAddress &&
+      configurationComplete
+    ) {
+      dryRun(provider, connection)
         .then(() => {
           console.log('dry run success')
           setError(null)
         })
         .catch((e) => {
+          // For the Roles mod, we actually expect the dry run to fail with TargetAddressNotAllowed()
+          // In case we see any other error, we try to help the user identify the problem.
+
           const message: string | undefined =
             typeof e === 'string' ? e : e.data?.message
           const reason = message && decodeRolesError(message)
@@ -66,34 +76,32 @@ const useConnectionDryRun = ({
           setError(reason || 'Unexpected error')
         })
     }
-  }, [pilotAddress, moduleAddress, avatarAddress, roleId, provider, connected])
+  }, [connection, provider, connected])
 
   return error
 }
 
-async function dryRun(
-  provider: Eip1193Provider,
-  pilotAddress: string,
-  moduleAddress: string,
-  avatarAddress: string,
-  roleId: string
-) {
-  if (!isValidAddress(pilotAddress)) {
+async function dryRun(provider: Eip1193Provider, connection: Connection) {
+  if (!isValidAddress(connection.pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }
-  if (!isValidAddress(moduleAddress)) {
+  if (!isValidAddress(connection.moduleAddress)) {
     return Promise.reject('Module Address: Invalid address')
   }
-  if (!isValidAddress(avatarAddress)) {
+  if (!isValidAddress(connection.avatarAddress)) {
     return Promise.reject('DAO Safe: Invalid address')
   }
 
   const ethersProvider = new Web3Provider(provider)
 
-  if (!(await isSmartContractAddress(moduleAddress, ethersProvider))) {
+  if (
+    !(await isSmartContractAddress(connection.moduleAddress, ethersProvider))
+  ) {
     return Promise.reject('Module Address: Not a smart contract')
   }
-  if (!(await isSmartContractAddress(avatarAddress, ethersProvider))) {
+  if (
+    !(await isSmartContractAddress(connection.avatarAddress, ethersProvider))
+  ) {
     return Promise.reject('DAO Safe: Not a smart contract')
   }
 
@@ -101,11 +109,9 @@ async function dryRun(
     {
       to: '0x0000000000000000000000000000000000000000',
       data: '0x00000000',
-      from: avatarAddress,
+      from: connection.avatarAddress,
     },
-    pilotAddress,
-    moduleAddress,
-    roleId
+    connection
   )
 
   await provider.request({

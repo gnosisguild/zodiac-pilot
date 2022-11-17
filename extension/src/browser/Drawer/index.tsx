@@ -21,9 +21,7 @@ const TransactionsDrawer: React.FC = () => {
   const newTransactions = useNewTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const {
-    connection: { avatarAddress, moduleAddress, pilotAddress, roleId },
-  } = useConnection()
+  const { connection } = useConnection()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -64,7 +62,7 @@ const TransactionsDrawer: React.FC = () => {
             to: encoded.to,
             data: encoded.data,
             value: formatValue(encoded.value),
-            from: avatarAddress,
+            from: connection.avatarAddress,
           },
         ],
       })
@@ -80,12 +78,7 @@ const TransactionsDrawer: React.FC = () => {
             metaTransactions,
             '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
           )
-    const wrappedReq = wrapRequest(
-      batchTransaction,
-      pilotAddress,
-      moduleAddress,
-      roleId
-    )
+    const wrappedReq = wrapRequest(batchTransaction, connection)
     navigator.clipboard.writeText(JSON.stringify(wrappedReq, undefined, 2))
     toast(<>Transaction data has been copied to clipboard.</>)
   }

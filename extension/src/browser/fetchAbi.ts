@@ -1,5 +1,6 @@
 import { FormatTypes, Interface } from '@ethersproject/abi'
 import { Provider } from '@ethersproject/abstract-provider'
+import { loaders } from '@shazow/whatsabi'
 import detectProxyTarget from 'ethers-proxies'
 
 import { ChainId, EXPLORER_API_URL } from '../networks'
@@ -11,40 +12,25 @@ const fetchAbi = async (
   provider: Provider,
   blockExplorerApiKey = ''
 ): Promise<string> => {
-  const apiUrl = EXPLORER_API_URL[network]
-  const params = new URLSearchParams({
-    module: 'contract',
-    action: 'getAbi',
-    address: contractAddress,
-    apiKey: blockExplorerApiKey,
-  })
-
-  const response = await fetch(`${apiUrl}?${params}`)
-
-  if (response.ok) {
-    const { result, status } = await response.json()
-
-    if (status === '0' || looksLikeAProxy(result)) {
-      // Is this a proxy contract?
-      const proxyTarget = await detectProxyTarget(contractAddress, provider)
-      if (proxyTarget) {
-        return await fetchAbi(
-          network,
-          proxyTarget,
-          transactionData,
-          provider,
-          blockExplorerApiKey
-        )
-      }
+  const abi = await abiForAddress(contractAddress, network, blockExplorerApiKey)
+  if (!abi || looksLikeAProxy(abi)) {
+    // Is this a proxy contract?
+    const proxyTarget = await detectProxyTarget(contractAddress, provider)
+    if (proxyTarget) {
+      return await fetchAbi(
+        network,
+        proxyTarget,
+        transactionData,
+        provider,
+        blockExplorerApiKey
+      )
     }
-
-    // bring the JSON into ethers.js canonical form
-    // (so we don't trigger unnecessary updates when looking at the same ABI in different forms)
-    return new Interface(result).format(FormatTypes.json) as string
   }
 
-  // Try finding an entry at 4Bytes Directory as a last resort
-  return await fetchFrom4ByteDirectory(transactionData)
+  if (abi) return abi
+
+  // Try to find a matching entry at 4byte.directory or sig.eth.samczsun.com
+  return await abiFromCalldata(transactionData)
 }
 
 export default fetchAbi
@@ -58,32 +44,54 @@ const looksLikeAProxy = (abi: string) => {
   )
 }
 
-const fetchFrom4ByteDirectory = async (data: string): Promise<string> => {
+const abiForAddress = async (
+  address: string,
+  network: ChainId,
+  blockExplorerApiKey = ''
+): Promise<string> => {
+  const abiLoader = new loaders.MultiABILoader([
+    new loaders.SourcifyABILoader(),
+    new loaders.EtherscanABILoader({
+      apiKey: blockExplorerApiKey,
+      baseURL: EXPLORER_API_URL[network],
+    }),
+  ])
+
+  try {
+    const json = await abiLoader.loadABI(address)
+    return new Interface(json).format(FormatTypes.json) as string
+  } catch (e) {
+    return ''
+  }
+}
+
+const signatureLookups: loaders.SignatureLookup[] = [
+  new loaders.SamczunSignatureLookup(),
+  new loaders.Byte4SignatureLookup(),
+]
+
+const abiFromCalldata = async (data: string): Promise<string> => {
   if (data.length < 10) return ''
   const sighash = data.substring(0, 10)
   const calldata = `0x${data.substring(10)}`
 
-  const res = await fetch(
-    `https://www.4byte.directory/api/v1/signatures/?hex_signature=${sighash}&ordering=created_at`
-  )
-  if (!res.ok) {
-    return ''
-  }
+  const result = await Promise.any(
+    signatureLookups.map(async (lookup) => {
+      const signatures = await lookup.loadFunctions(sighash)
+      const matchingInterface = signatures
+        .map((signature) => new Interface([`function ${signature}`]))
+        .find((iface) => {
+          try {
+            iface.decodeFunctionData(sighash, calldata)
+            return true
+          } catch (e) {
+            return false
+          }
+        })
+      if (!matchingInterface) throw new Error('No matching signature found')
+      return matchingInterface
+    })
+  ).catch(() => null)
 
-  const { results = [] } = await res.json()
-  const resultInterfaces = results.map(
-    (result: any) => new Interface([`function ${result.text_signature}`])
-  ) as Interface[]
-  const matchingInterface = resultInterfaces.find((iface) => {
-    try {
-      iface.decodeFunctionData(sighash, calldata)
-      return true
-    } catch (e) {
-      return false
-    }
-  })
-
-  return matchingInterface
-    ? (matchingInterface.format(FormatTypes.json) as string)
-    : ''
+  return result ? (result.format(FormatTypes.json) as string) : ''
 }

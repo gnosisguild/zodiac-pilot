@@ -1,35 +1,40 @@
 import EventEmitter from 'events'
 
-import { Interface } from '@ethersproject/abi'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
-import rolesAbi from '../abi/Roles.json'
-import { Eip1193Provider, TransactionData } from '../types'
+import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-const RolesInterface = new Interface(rolesAbi)
+const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
+const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
   request: MetaTransaction | TransactionData,
-  from: string,
-  to: string,
-  roleId: string
+  connection: Connection
 ): TransactionData {
-  const data = RolesInterface.encodeFunctionData(
-    'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
-    [
-      request.to,
+  let data: string
+  if (connection.moduleType === KnownContracts.ROLES) {
+    data = RolesInterface.encodeFunctionData('execTransactionWithRole', [
+      request.to || '',
       request.value || 0,
-      request.data,
+      request.data || '0x00',
       ('operation' in request && request.operation) || 0,
-      roleId || 0,
+      connection.roleId || 0,
       true,
-    ]
-  )
+    ])
+  } else {
+    data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
+      request.to || '',
+      request.value || 0,
+      request.data || '0x00',
+      ('operation' in request && request.operation) || 0,
+    ])
+  }
 
   return {
-    from,
-    to,
+    from: connection.pilotAddress,
+    to: connection.moduleAddress,
     data: data,
     value: '0x0',
   }
@@ -40,28 +45,16 @@ class UnsupportedMethodError extends Error {
 }
 
 class WrappingProvider extends EventEmitter {
-  private pilotAddress: string
-  private moduleAddress: string
-  private avatarAddress: string
-  private roleId: string
+  private connection: Connection
 
   private provider: Eip1193Provider
   private signer: JsonRpcSigner
 
-  constructor(
-    provider: Eip1193Provider,
-    pilotAddress: string,
-    moduleAddress: string,
-    avatarAddress: string,
-    roleId: string
-  ) {
+  constructor(provider: Eip1193Provider, connection: Connection) {
     super()
     this.provider = provider
     this.signer = new Web3Provider(provider).getSigner()
-    this.pilotAddress = pilotAddress
-    this.moduleAddress = moduleAddress
-    this.avatarAddress = avatarAddress
-    this.roleId = roleId
+    this.connection = connection
   }
 
   async request(request: {
@@ -78,11 +71,11 @@ class WrappingProvider extends EventEmitter {
       }
 
       case 'eth_requestAccounts': {
-        return [this.avatarAddress]
+        return [this.connection.avatarAddress]
       }
 
       case 'eth_accounts': {
-        return [this.avatarAddress]
+        return [this.connection.avatarAddress]
       }
 
       // curve.fi is unhappy without this
@@ -93,12 +86,7 @@ class WrappingProvider extends EventEmitter {
       case 'eth_estimateGas': {
         const [request, ...rest] = params
 
-        const wrappedReq = wrapRequest(
-          request,
-          this.pilotAddress,
-          this.moduleAddress,
-          this.roleId
-        )
+        const wrappedReq = wrapRequest(request, this.connection)
 
         try {
           const result = await this.provider.request({
@@ -117,16 +105,14 @@ class WrappingProvider extends EventEmitter {
         const [call, ...rest] = params
         return this.provider.request({
           method,
-          params: [{ ...call, from: this.avatarAddress }, ...rest],
+          params: [{ ...call, from: this.connection.avatarAddress }, ...rest],
         })
       }
 
       case 'eth_sendTransaction': {
         const wrappedReq = wrapRequest(
           params[0] as TransactionData,
-          this.pilotAddress,
-          this.moduleAddress,
-          this.roleId
+          this.connection
         )
 
         return await this.signer.sendUncheckedTransaction(wrappedReq)

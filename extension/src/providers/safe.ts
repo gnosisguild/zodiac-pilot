@@ -6,14 +6,18 @@ import { ChainId } from '../networks'
 import { Eip1193Provider } from '../types'
 
 const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
-  [1]: 'https://safe-transaction.gnosis.io',
-  [4]: 'https://safe-transaction.rinkeby.gnosis.io',
-  [100]: 'https://safe-transaction.xdai.gnosis.io',
-  // '73799': 'https://safe-transaction.volta.gnosis.io',
-  // '246': 'https://safe-transaction.ewc.gnosis.io',
-  // '137': 'https://safe-transaction.polygon.gnosis.io',
-  // '56': 'https://safe-transaction.bsc.gnosis.io',
-  // '42161': 'https://safe-transaction.arbitrum.gnosis.io',
+  [1]: 'https://safe-transaction-mainnet.safe.global',
+  [4]: 'https://safe-transaction-rinkeby.safe.global',
+  [5]: 'https://safe-transaction-goerli.safe.global',
+  [10]: 'https://safe-transaction-optimism.safe.global',
+  [56]: 'https://safe-transaction-bsc.safe.global',
+  [100]: 'https://safe-transaction-gnosis-chain.safe.global',
+  [137]: 'https://safe-transaction-polygon.safe.global',
+  [246]: 'https://safe-transaction-ewc.safe.global',
+  [42161]: 'https://safe-transaction-arbitrum.safe.global',
+  [42220]: undefined, // not available
+  [73799]: 'https://safe-transaction-volta.safe.global',
+  [80001]: undefined, // not available
 }
 
 export function waitForMultisigExecution(
