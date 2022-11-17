@@ -1,8 +1,9 @@
 import { Web3Provider } from '@ethersproject/providers'
 import {
-  CONTRACT_ABIS,
-  CONTRACT_ADDRESSES,
+  ContractAbis,
+  ContractAddresses,
   KnownContracts,
+  SupportedNetworks,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, providers, utils } from 'ethers'
@@ -58,7 +59,8 @@ async function fetchModules(
   safeOrModifierAddress: string,
   provider: providers.BaseProvider
 ): Promise<Module[]> {
-  const mastercopyAddresses = CONTRACT_ADDRESSES[provider.network.chainId]
+  const mastercopyAddresses =
+    ContractAddresses[provider.network.chainId as SupportedNetworks] || {}
   const contract = new Contract(safeOrModifierAddress, IAvatarAbi, provider)
 
   const moduleAddresses = (
@@ -84,7 +86,7 @@ async function fetchModules(
         const code = await provider.getCode(implementationAddress)
         const selectors = selectorsFromBytecode(code)
 
-        const match = Object.entries(CONTRACT_ABIS).find(([, abi]) =>
+        const match = Object.entries(ContractAbis).find(([, abi]) =>
           functionSelectors(abi).every((sighash) => selectors.includes(sighash))
         ) as [KnownContracts | undefined, string[]]
 

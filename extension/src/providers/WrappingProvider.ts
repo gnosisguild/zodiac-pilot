@@ -1,14 +1,13 @@
 import EventEmitter from 'events'
 
-import { Interface } from '@ethersproject/abi'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
-import { CONTRACT_ABIS, KnownContracts } from '@gnosis.pm/zodiac'
+import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-const RolesInterface = new Interface(CONTRACT_ABIS[KnownContracts.ROLES])
-const DelayInterface = new Interface(CONTRACT_ABIS[KnownContracts.DELAY])
+const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
+const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
   request: MetaTransaction | TransactionData,
@@ -16,22 +15,19 @@ export function wrapRequest(
 ): TransactionData {
   let data: string
   if (connection.moduleType === KnownContracts.ROLES) {
-    data = RolesInterface.encodeFunctionData(
-      'execTransactionWithRole(address,uint256,bytes,uint8,uint16,bool)',
-      [
-        request.to,
-        request.value || 0,
-        request.data,
-        ('operation' in request && request.operation) || 0,
-        connection.roleId || 0,
-        true,
-      ]
-    )
+    data = RolesInterface.encodeFunctionData('execTransactionWithRole', [
+      request.to || '',
+      request.value || 0,
+      request.data || '0x00',
+      ('operation' in request && request.operation) || 0,
+      connection.roleId || 0,
+      true,
+    ])
   } else {
     data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
-      request.to,
+      request.to || '',
       request.value || 0,
-      request.data,
+      request.data || '0x00',
       ('operation' in request && request.operation) || 0,
     ])
   }
