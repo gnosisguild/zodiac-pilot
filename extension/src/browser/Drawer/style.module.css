@@ -182,7 +182,11 @@ button.link:hover {
 }
 
 .tagContainer {
-  padding: 8px;
+  padding: 4px 0;
+}
+
+.checkLabel {
+  width: 100px;
 }
 
 .modalClose {
