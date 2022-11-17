@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React, { ReactNode } from 'react'
 
 import Box from '../Box'
@@ -8,8 +9,9 @@ const Field: React.FC<{
   label?: string
   labelFor?: string
   children: ReactNode
-}> = ({ label, labelFor, children }) => (
-  <Box double bg p={3}>
+  disabled?: boolean
+}> = ({ label, labelFor, children, disabled = false }) => (
+  <Box double bg p={3} className={classNames({ [classes.disabled]: disabled })}>
     {label ? (
       <label htmlFor={labelFor}>
         <div className={classes.fieldLabel}>{label}</div>
