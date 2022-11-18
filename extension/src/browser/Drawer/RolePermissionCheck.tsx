@@ -65,30 +65,32 @@ const RolePermissionCheck: React.FC<{
   }
 
   return (
-    <Flex
-      gap={2}
-      direction="column"
-      justifyContent="space-between"
-      alignItems="stretch"
-    >
-      <Flex gap={2} justifyContent="space-between">
-        <div>Role permissions</div>
+    <Flex gap={2} direction="column" justifyContent="space-between">
+      <Flex gap={2} justifyContent="space-between" alignItems="center">
+        <Flex gap={2} justifyContent="start" alignItems="center">
+          <div className={classes.checkLabel}>Role permissions</div>
+
+          <Flex
+            gap={0}
+            justifyContent="center"
+            className={classes.tagContainer}
+          >
+            {error === false ? (
+              <Tag head={<RiGroupLine />} color="success">
+                Allowed
+              </Tag>
+            ) : (
+              <Tag head={<RiGroupLine />} color="danger">
+                {error}
+              </Tag>
+            )}
+          </Flex>
+        </Flex>
         {error && (
           <button onClick={copyToClipboard} className={classes.link}>
             Copy data
             <RiFileCopy2Line />
           </button>
-        )}
-      </Flex>
-      <Flex gap={0} justifyContent="center" className={classes.tagContainer}>
-        {error === false ? (
-          <Tag head={<RiGroupLine />} color="success">
-            Allowed
-          </Tag>
-        ) : (
-          <Tag head={<RiGroupLine />} color="danger">
-            {error}
-          </Tag>
         )}
       </Flex>
     </Flex>

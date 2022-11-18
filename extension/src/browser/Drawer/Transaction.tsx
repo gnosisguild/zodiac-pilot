@@ -1,3 +1,4 @@
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
@@ -30,6 +31,7 @@ interface HeaderProps {
   onRemove(): void
   onExpandToggle(): void
   expanded: boolean
+  showRoles?: boolean
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
@@ -39,6 +41,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
   onRemove,
   onExpandToggle,
   expanded,
+  showRoles = false,
 }) => {
   return (
     <div className={classes.transactionHeader}>
@@ -58,7 +61,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
           <SimulatedExecutionCheck transactionHash={transactionHash} mini />
         )}
 
-        <RolePermissionCheck transaction={input} mini />
+        {showRoles && <RolePermissionCheck transaction={input} mini />}
         <IconButton
           onClick={onRemove}
           className={classes.removeTransaction}
@@ -112,10 +115,9 @@ export const Transaction: React.FC<Props> = ({
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const {
-    connection: { avatarAddress },
-  } = useConnection()
+  const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
+  const showRoles = connection.moduleType === KnownContracts.ROLES
 
   const handleRemove = async () => {
     if (!(provider instanceof ForkProvider)) {
@@ -148,7 +150,7 @@ export const Transaction: React.FC<Props> = ({
             to: encoded.to,
             data: encoded.data,
             value: formatValue(encoded.value),
-            from: avatarAddress,
+            from: connection.avatarAddress,
           },
         ],
       })
@@ -164,6 +166,7 @@ export const Transaction: React.FC<Props> = ({
         onRemove={handleRemove}
         expanded={expanded}
         onExpandToggle={() => setExpanded(!expanded)}
+        showRoles={showRoles}
       />
       {expanded && (
         <>
@@ -178,7 +181,11 @@ export const Transaction: React.FC<Props> = ({
               <EtherValue input={input} />
             </Flex>
           </Box>
-          <TransactionStatus input={input} transactionHash={transactionHash} />
+          <TransactionStatus
+            input={input}
+            transactionHash={transactionHash}
+            showRoles={showRoles}
+          />
           <TransactionBody input={input} />
         </>
       )}
@@ -212,23 +219,31 @@ export const TransactionBadge: React.FC<Props> = ({
   )
 }
 
-const TransactionStatus: React.FC<TransactionState> = ({
+interface StatusProps extends TransactionState {
+  showRoles?: boolean
+}
+
+const TransactionStatus: React.FC<StatusProps> = ({
   input,
   transactionHash,
+  showRoles = false,
 }) => (
   <Flex
     gap={1}
     justifyContent="space-between"
     className={classes.transactionStatus}
+    direction="column"
   >
     {transactionHash && (
       <Box bg p={2} className={classes.statusHeader}>
         <SimulatedExecutionCheck transactionHash={transactionHash} />
       </Box>
     )}
-    <Box bg p={2} className={classes.statusHeader}>
-      <RolePermissionCheck transaction={input} />
-    </Box>
+    {showRoles && (
+      <Box bg p={2} className={classes.statusHeader}>
+        <RolePermissionCheck transaction={input} />
+      </Box>
+    )}
   </Flex>
 )
 

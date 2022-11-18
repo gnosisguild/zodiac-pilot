@@ -53,9 +53,31 @@ const SimulatedExecutionCheck: React.FC<{
       justifyContent="space-between"
       alignItems="stretch"
     >
-      <Flex gap={1} justifyContent="space-between">
-        <div>Simulation</div>
-
+      <Flex gap={1} justifyContent="space-between" alignItems="center">
+        <Flex gap={2} justifyContent="start" alignItems="center">
+          <div className={classes.checkLabel}>Simulation</div>
+          <Flex
+            gap={0}
+            justifyContent="center"
+            className={classes.tagContainer}
+          >
+            {!transactionInfo && (
+              <Tag head={<Spinner />} color="info">
+                Pending...
+              </Tag>
+            )}
+            {transactionInfo?.status && (
+              <Tag head={<RiGitBranchLine />} color="success">
+                Success
+              </Tag>
+            )}
+            {transactionInfo && !transactionInfo.status && (
+              <Tag head={<RiGitBranchLine />} color="danger">
+                Reverted
+              </Tag>
+            )}
+          </Flex>
+        </Flex>
         {transactionInfo && (
           <a
             href={transactionInfo.dashboardLink}
@@ -66,23 +88,6 @@ const SimulatedExecutionCheck: React.FC<{
             View in Tenderly
             <RiExternalLinkLine />
           </a>
-        )}
-      </Flex>
-      <Flex gap={0} justifyContent="center" className={classes.tagContainer}>
-        {!transactionInfo && (
-          <Tag head={<Spinner />} color="info">
-            Pending...
-          </Tag>
-        )}
-        {transactionInfo?.status && (
-          <Tag head={<RiGitBranchLine />} color="success">
-            Success
-          </Tag>
-        )}
-        {transactionInfo && !transactionInfo.status && (
-          <Tag head={<RiGitBranchLine />} color="danger">
-            Reverted
-          </Tag>
         )}
       </Flex>
     </Flex>
