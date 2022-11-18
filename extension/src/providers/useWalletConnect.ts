@@ -32,6 +32,10 @@ class WalletConnectEip1193Provider extends EventEmitter {
 
   constructor(connectionId: string) {
     super()
+
+    // every instance of useWalletConnect() hook adds a listener, so we can run out of the default limit of 10 listeners before a warning is emitted
+    this.setMaxListeners(100)
+
     this.wcProvider = new WalletConnectEthereumProvider({
       storageId: `walletconnect-${connectionId}`,
       rpc: RPC,

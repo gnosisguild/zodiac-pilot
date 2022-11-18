@@ -266,16 +266,17 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
   const valueBN = BigNumber.from(value)
 
   return (
-    <Box p={2} className={classes.value}>
-      <Flex gap={1} alignItems="center" justifyContent="space-between">
-        <div>Value:</div>
-        <Box p={1} className={classes.valueValue} bg>
-          {valueBN.isZero()
-            ? 'n/a'
-            : `${formatEther(valueBN)} ${NETWORK_CURRENCY[chainId]}`}
-        </Box>
-      </Flex>
-    </Box>
+    <Flex
+      gap={1}
+      alignItems="baseline"
+      justifyContent="space-between"
+      className={classes.value}
+    >
+      <div>{NETWORK_CURRENCY[chainId]}:</div>
+      <code className={classes.valueValue}>
+        {valueBN.isZero() ? 'n/a' : formatEther(valueBN)}
+      </code>
+    </Flex>
   )
 }
 

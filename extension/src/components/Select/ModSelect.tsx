@@ -23,7 +23,7 @@ const ModuleOptionLabel = (data: unknown) => {
       </Box>
       <div className={classes.modLabel}>
         <p className={classes.type}>{props.label}</p>
-        <p className={classes.address}>{props.value}</p>
+        <code className={classes.address}>{props.value}</code>
       </div>
     </div>
   )

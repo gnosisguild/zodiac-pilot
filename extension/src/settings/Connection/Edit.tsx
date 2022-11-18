@@ -1,8 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
-import { RiAlertLine } from 'react-icons/ri'
 
-import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
+import { Box, Button, Field, Flex } from '../../components'
 import Blockie from '../../components/Blockie'
 import ModSelect from '../../components/Select/ModSelect'
 import { useConnection, useConnections } from '../connectionHooks'
@@ -65,7 +64,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               </div>
             </Box>
           )}
-          <Field label="Connection name">
+          <Field label="Connection Label">
             <input
               type="text"
               value={label}
@@ -90,9 +89,9 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                       className={classes.avatarBlockie}
                     />
                   </Box>
-                  <div className={classes.avatarAddress}>
+                  <code className={classes.avatarAddress}>
                     {connection.avatarAddress}
-                  </div>
+                  </code>
                 </div>
                 <Button
                   className={classes.removeButton}
@@ -126,10 +125,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               />
             )}
           </Field>
-          <Field
-            label="Zodiac Modifier or Module address"
-            disabled={modules.length === 0}
-          >
+          <Field label="Zodiac Mod" disabled={modules.length === 0}>
             <ModSelect
               options={modules.map((mod) => ({
                 value: mod.moduleAddress,

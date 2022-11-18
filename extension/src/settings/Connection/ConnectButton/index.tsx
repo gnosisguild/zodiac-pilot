@@ -73,9 +73,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
               ? walletConnectLogo
               : metamaskLogo}
           </div>
-          <div className={classes.connectedAddress}>
+          <code className={classes.pilotAddress}>
             {connection.pilotAddress}
-          </div>
+          </code>
         </div>
         <Button onClick={disconnect} className={classes.disconnectButton}>
           Disconnect

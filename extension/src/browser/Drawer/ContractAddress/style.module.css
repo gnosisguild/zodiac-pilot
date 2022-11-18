@@ -1,25 +1,22 @@
 .blockies {
   overflow: hidden;
-  width: 25px;
   aspect-ratio: 1;
   flex-shrink: 0;
 }
 .blockies img {
   border-radius: 50%;
-  width: 100%;
-}
-
-.address {
-  font-family: 'Roboto Mono', monospace;
+  width: 20px;
 }
 
 .addressContainer {
-  padding: 10px;
   flex-shrink: 0;
 }
 
 .link {
-  text-decoration: none;
+  display: flex;
+  padding: var(--spacing-1);
+  align-items: center;
+  justify-content: center;
 }
 
 .contractName {

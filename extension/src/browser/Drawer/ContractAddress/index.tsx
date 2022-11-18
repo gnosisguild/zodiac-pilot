@@ -1,10 +1,14 @@
-import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
 import React, { useEffect, useMemo, useState } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
-import { Box, Flex, IconButton } from '../../../components'
+import { BlockLink, Box, Flex, IconButton } from '../../../components'
+import {
+  EXPLORER_API_KEY,
+  EXPLORER_API_URL,
+  EXPLORER_URL,
+} from '../../../networks'
 import { useConnection } from '../../../settings'
 
 import classes from './style.module.css'
@@ -19,34 +23,6 @@ interface Props {
 const VISIBLE_START = 4
 const VISIBLE_END = 4
 
-const EXPLORER_URLS: Record<string, string | undefined> = {
-  '1': 'https://etherscan.io',
-  '4': 'https://rinkeby.etherscan.io',
-  '100': 'https://blockscout.com/xdai/mainnet',
-  '73799': 'https://volta-explorer.energyweb.org',
-  '246': 'https://explorer.energyweb.org',
-  '137': 'https://polygonscan.com',
-  '56': 'https://bscscan.com',
-  '42161': 'https://arbiscan.io',
-}
-
-const EXPLORER_API_URLS: Record<string, string | undefined> = {
-  '1': 'https://api.etherscan.io/api',
-  '4': 'https://api.rinkeby.etherscan.io/api',
-  '100': 'https://blockscout.com/xdai/mainnet/api',
-  '73799': 'https://volta-explorer.energyweb.org/api',
-  '246': 'https://explorer.energyweb.org/api',
-  '137': 'https://api.polygonscan.com/api',
-  '56': 'https://api.bscscan.com/api',
-  '42161': 'https://api.arbiscan.io/api',
-}
-
-const EXPLORER_API_KEYS: Record<string, string | undefined> = {
-  '1': process.env.ETHERSCAN_API_KEY,
-  '4': process.env.ETHERSCAN_API_KEY,
-  '100': '',
-}
-
 const ContractAddress: React.FC<Props> = ({
   address,
   explorerLink,
@@ -57,7 +33,7 @@ const ContractAddress: React.FC<Props> = ({
     connection: { chainId },
   } = useConnection()
   const [contractName, setContractName] = useState('')
-  const explorerUrl = EXPLORER_URLS[chainId]
+  const explorerUrl = EXPLORER_URL[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
 
@@ -67,8 +43,8 @@ const ContractAddress: React.FC<Props> = ({
 
   useEffect(() => {
     let canceled = false
-    const explorerApiUrl = EXPLORER_API_URLS[chainId]
-    const apiKey = EXPLORER_API_KEYS[chainId] || ''
+    const explorerApiUrl = EXPLORER_API_URL[chainId]
+    const apiKey = EXPLORER_API_KEY[chainId]
 
     memoizedFetchJson(
       `${explorerApiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`
@@ -89,7 +65,7 @@ const ContractAddress: React.FC<Props> = ({
       gap={2}
       alignItems="center"
       justifyContent="space-between"
-      className={cn(className, classes.container)}
+      className={className}
     >
       <Box p={1} rounded className={classes.blockies}>
         <img src={blockie} alt={address} />
@@ -98,32 +74,32 @@ const ContractAddress: React.FC<Props> = ({
       {contractName && (
         <div className={classes.contractName}>{contractName}</div>
       )}
-      <Box p={2} bg className={classes.addressContainer}>
-        <Flex gap={1}>
-          <div className={classes.address}>{displayAddress}</div>
 
-          {copyToClipboard && (
-            <IconButton
-              onClick={() => {
-                copy(address)
-              }}
-            >
-              <RiFileCopyLine />
-            </IconButton>
-          )}
-          {explorerLink && (
-            <a
-              href={`${explorerUrl}/search?q=${address}`}
-              target="_blank"
-              className={classes.link}
-              title={address}
-              rel="noreferrer"
-            >
-              <RiExternalLinkLine />
-            </a>
-          )}
-        </Flex>
-      </Box>
+      <Flex gap={1} alignItems="center" className={classes.addressContainer}>
+        <code>{displayAddress}</code>
+
+        {copyToClipboard && (
+          <IconButton
+            title="Copy to clipboard"
+            onClick={() => {
+              copy(address)
+            }}
+          >
+            <RiFileCopyLine />
+          </IconButton>
+        )}
+        {explorerLink && (
+          <BlockLink
+            href={`${explorerUrl}/search?q=${address}`}
+            target="_blank"
+            className={classes.link}
+            title="Show in block explorer"
+            rel="noreferrer"
+          >
+            <RiExternalLinkLine />
+          </BlockLink>
+        )}
+      </Flex>
     </Flex>
   )
 }

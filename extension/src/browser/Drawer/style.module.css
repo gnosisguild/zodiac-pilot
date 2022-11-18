@@ -143,7 +143,6 @@
   max-width: 150px;
 }
 .valueValue {
-  font-family: 'Roboto Mono', monospace;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -167,7 +166,7 @@ button.link {
   text-decoration: underline;
   cursor: pointer;
   color: white;
-  display: block;
+  display: inline-flex;
   padding: 0;
   border: none;
   font-family: 'Spectral';
