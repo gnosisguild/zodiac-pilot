@@ -12,7 +12,7 @@ interface Props {
     | 'end'
     | 'start'
     | 'right'
-  alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start'
+  alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start' | 'baseline'
   gap: 0 | 1 | 2 | 3 | 4
   className?: string
   children?: React.ReactNode

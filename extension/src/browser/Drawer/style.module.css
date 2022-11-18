@@ -167,7 +167,7 @@ button.link {
   text-decoration: underline;
   cursor: pointer;
   color: white;
-  display: block;
+  display: inline-flex;
   padding: 0;
   border: none;
   font-family: 'Spectral';

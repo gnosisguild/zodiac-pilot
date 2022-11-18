@@ -267,7 +267,7 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
 
   return (
     <Box p={2} className={classes.value}>
-      <Flex gap={1} alignItems="center" justifyContent="space-between">
+      <Flex gap={1} alignItems="baseline" justifyContent="space-between">
         <div>Value:</div>
         <Box p={1} className={classes.valueValue} bg>
           {valueBN.isZero()
