@@ -47,6 +47,22 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   80001: 'https://api-testnet.polygonscan.com/api',
 }
 
+const { ETHERSCAN_API_KEY = '' } = process.env
+export const EXPLORER_API_KEY: Record<ChainId, string> = {
+  1: ETHERSCAN_API_KEY,
+  4: ETHERSCAN_API_KEY,
+  5: ETHERSCAN_API_KEY,
+  10: '',
+  56: '',
+  100: '',
+  137: '',
+  246: '',
+  42161: '',
+  42220: '',
+  73799: '',
+  80001: '',
+}
+
 export const NETWORK_PREFIX: Record<ChainId, string> = {
   1: 'eth',
   4: 'rin',
