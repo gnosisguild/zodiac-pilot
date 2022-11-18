@@ -64,7 +64,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               </div>
             </Box>
           )}
-          <Field label="Connection name">
+          <Field label="Connection Label">
             <input
               type="text"
               value={label}
@@ -125,10 +125,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               />
             )}
           </Field>
-          <Field
-            label="Zodiac Modifier or Module address"
-            disabled={modules.length === 0}
-          >
+          <Field label="Zodiac Mod" disabled={modules.length === 0}>
             <ModSelect
               options={modules.map((mod) => ({
                 value: mod.moduleAddress,
