@@ -89,9 +89,9 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                       className={classes.avatarBlockie}
                     />
                   </Box>
-                  <div className={classes.avatarAddress}>
+                  <code className={classes.avatarAddress}>
                     {connection.avatarAddress}
-                  </div>
+                  </code>
                 </div>
                 <Button
                   className={classes.removeButton}

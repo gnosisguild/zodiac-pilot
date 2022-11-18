@@ -68,12 +68,7 @@ button.connectionEdit {
 }
 
 .avatarAddress {
-  font-family: 'Roboto Mono', monospace;
   font-size: 14px;
-  background: #3e3d2ad1;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(217, 212, 173, 0.3);
 }
 
 .avatarBlockie {

@@ -41,6 +41,10 @@
   width: 50%;
 }
 
+.pilotAddress {
+  font-size: 14px;
+}
+
 .connectionWarning {
   font-family: 'Roboto Mono', monospace;
   font-size: 14px;
