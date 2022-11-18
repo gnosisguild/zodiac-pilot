@@ -1,8 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
-import { RiAlertLine } from 'react-icons/ri'
 
-import { Box, Button, Field, Flex, IconButton, Select } from '../../components'
+import { Box, Button, Field, Flex } from '../../components'
 import Blockie from '../../components/Blockie'
 import ModSelect from '../../components/Select/ModSelect'
 import { useConnection, useConnections } from '../connectionHooks'
