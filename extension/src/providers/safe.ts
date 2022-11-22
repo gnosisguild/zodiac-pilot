@@ -1,8 +1,10 @@
 import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
 import SafeServiceClient from '@gnosis.pm/safe-service-client'
 import { ethers, providers } from 'ethers'
+import { useEffect, useState } from 'react'
 
 import { ChainId } from '../networks'
+import { useConnection } from '../settings'
 import { Eip1193Provider } from '../types'
 
 const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
@@ -86,4 +88,102 @@ export function waitForMultisigExecution(
 
     poll()
   })
+}
+
+export const useSafesWithOwner = (ownerAddress: string) => {
+  const { provider, connected, chainId } = useConnection()
+
+  const [loading, setLoading] = useState(false)
+  const [safes, setSafes] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!connected || !chainId) return
+
+    const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
+    if (!txServiceUrl) {
+      throw new Error(`service not available for chain #${chainId}`)
+    }
+    const web3Provider = new providers.Web3Provider(provider)
+
+    const ethAdapter = new EthersAdapter({
+      ethers,
+      signer: web3Provider.getSigner(0),
+    })
+
+    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+
+    setLoading(true)
+    setSafes([])
+    let canceled = false
+
+    safeService
+      .getSafesByOwner(ownerAddress)
+      .then((res) => {
+        if (!canceled) {
+          setSafes(res.safes)
+        }
+      })
+      .catch((e) => {
+        console.error(`Error fetching safes for ${ownerAddress}`, e)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+
+    return () => {
+      setLoading(false)
+      canceled = true
+    }
+  }, [provider, ownerAddress, connected, chainId])
+
+  return { loading, safes }
+}
+
+export const useSafeDelegates = (safeAddress: string) => {
+  const { provider, connected, chainId } = useConnection()
+
+  const [loading, setLoading] = useState(false)
+  const [delegates, setDelegates] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!connected || !chainId) return
+
+    const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
+    if (!txServiceUrl) {
+      throw new Error(`service not available for chain #${chainId}`)
+    }
+    const web3Provider = new providers.Web3Provider(provider)
+
+    const ethAdapter = new EthersAdapter({
+      ethers,
+      signer: web3Provider.getSigner(0),
+    })
+
+    const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
+
+    setLoading(true)
+    setDelegates([])
+    let canceled = false
+
+    safeService
+      .getSafeDelegates(safeAddress)
+      .then((res) => {
+        if (!canceled) {
+          setDelegates(res.results.map((delegate) => delegate.delegate))
+        }
+      })
+      .catch((e) => {
+        console.error(`Error fetching delegates for ${safeAddress}`, e)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+
+    return () => {
+      setLoading(false)
+      canceled = true
+    }
+  }, [provider, safeAddress, connected, chainId])
+
+  return { loading, delegates }
 }
