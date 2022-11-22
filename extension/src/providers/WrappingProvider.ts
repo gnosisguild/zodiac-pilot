@@ -4,6 +4,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
+import { AvatarInterface } from '../settings/Connection/useZodiacModules'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
@@ -13,6 +14,21 @@ export function wrapRequest(
   request: MetaTransaction | TransactionData,
   connection: Connection
 ): TransactionData {
+  if (!connection.moduleAddress) {
+    // no wrapping, but direct execution from avatar
+    return {
+      from: connection.pilotAddress,
+      to: connection.avatarAddress,
+      data: AvatarInterface.encodeFunctionData('execTransactionFromModule', [
+        request.to || '',
+        request.value || 0,
+        request.data || '0x00',
+        ('operation' in request && request.operation) || 0,
+      ]),
+      value: '0x0',
+    }
+  }
+
   let data: string
   if (connection.moduleType === KnownContracts.ROLES) {
     data = RolesInterface.encodeFunctionData('execTransactionWithRole', [
@@ -23,13 +39,15 @@ export function wrapRequest(
       connection.roleId || 0,
       true,
     ])
-  } else {
+  } else if (connection.moduleType === KnownContracts.DELAY) {
     data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
       request.to || '',
       request.value || 0,
       request.data || '0x00',
       ('operation' in request && request.operation) || 0,
     ])
+  } else {
+    throw new Error(`Unsupported module type: ${connection.moduleType}`)
   }
 
   return {

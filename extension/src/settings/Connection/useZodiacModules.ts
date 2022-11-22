@@ -61,7 +61,11 @@ async function fetchModules(
 ): Promise<Module[]> {
   const mastercopyAddresses =
     ContractAddresses[provider.network.chainId as SupportedNetworks] || {}
-  const contract = new Contract(safeOrModifierAddress, IAvatarAbi, provider)
+  const contract = new Contract(
+    safeOrModifierAddress,
+    AvatarInterface,
+    provider
+  )
 
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
@@ -135,7 +139,8 @@ const functionSelectors = (abi: string[]) => {
 
 const MODIFIERS = [KnownContracts.ROLES, KnownContracts.DELAY]
 
-const IAvatarAbi = new Interface([
+export const AvatarInterface = new Interface([
+  'function execTransactionFromModule(address to, uint256 value, bytes memory data, Enum.Operation operation) returns (bool success)',
   'function isModuleEnabled(address module) view returns (bool)',
   'function getModulesPaginated(address start, uint256 pageSize) view returns (address[] memory array, address next)',
 ])
