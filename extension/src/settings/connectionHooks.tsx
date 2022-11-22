@@ -18,7 +18,7 @@ const DEFAULT_VALUE: Connection[] = [
     avatarAddress: '',
     pilotAddress: '',
     providerType: ProviderType.WalletConnect,
-    moduleType: KnownContracts.ROLES,
+    moduleType: undefined,
     roleId: '',
   },
 ]
@@ -147,9 +147,15 @@ type ConnectionStateMigration = (connection: Connection) => Connection
 // This is done by adding an idempotent migration function to this array.
 const CONNECTION_STATE_MIGRATIONS: ConnectionStateMigration[] = [
   function addModuleType(connection) {
+    // This migration adds the moduleType property to the connection object.
+    // All existing connections without moduleType are assumed to use the Roles mod, since that was the only supported module type at the time.
+    let moduleType = connection.moduleType
+    if (!moduleType && connection.moduleAddress) {
+      moduleType = KnownContracts.ROLES
+    }
     return {
       ...connection,
-      moduleType: connection.moduleType || KnownContracts.ROLES,
+      moduleType,
     }
   },
 ]

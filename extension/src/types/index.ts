@@ -14,7 +14,7 @@ export type Connection = {
   pilotAddress: string
   chainId: ChainId
   providerType: ProviderType
-  moduleType: SupportedModuleType
+  moduleType?: SupportedModuleType
   roleId?: string
 }
 
