@@ -119,7 +119,7 @@ const Settings: React.FC<Props> = ({
                 avatarAddress: '',
                 pilotAddress: '',
                 providerType: ProviderType.WalletConnect,
-                moduleType: KnownContracts.ROLES,
+                moduleType: undefined,
                 roleId: '',
               },
             ])

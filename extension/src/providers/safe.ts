@@ -97,7 +97,7 @@ export const useSafesWithOwner = (ownerAddress: string) => {
   const [safes, setSafes] = useState<string[]>([])
 
   useEffect(() => {
-    if (!connected || !chainId) return
+    if (!connected || !chainId || !ownerAddress) return
 
     const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
     if (!txServiceUrl) {
@@ -113,7 +113,6 @@ export const useSafesWithOwner = (ownerAddress: string) => {
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 
     setLoading(true)
-    setSafes([])
     let canceled = false
 
     safeService
@@ -132,6 +131,7 @@ export const useSafesWithOwner = (ownerAddress: string) => {
 
     return () => {
       setLoading(false)
+      setSafes([])
       canceled = true
     }
   }, [provider, ownerAddress, connected, chainId])
@@ -146,7 +146,7 @@ export const useSafeDelegates = (safeAddress: string) => {
   const [delegates, setDelegates] = useState<string[]>([])
 
   useEffect(() => {
-    if (!connected || !chainId) return
+    if (!connected || !chainId || !safeAddress) return
 
     const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
     if (!txServiceUrl) {
@@ -162,7 +162,6 @@ export const useSafeDelegates = (safeAddress: string) => {
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
 
     setLoading(true)
-    setDelegates([])
     let canceled = false
 
     safeService
@@ -181,6 +180,7 @@ export const useSafeDelegates = (safeAddress: string) => {
 
     return () => {
       setLoading(false)
+      setDelegates([])
       canceled = true
     }
   }, [provider, safeAddress, connected, chainId])

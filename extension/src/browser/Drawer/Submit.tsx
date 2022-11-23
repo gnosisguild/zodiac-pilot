@@ -115,7 +115,7 @@ const Submit: React.FC = () => {
               <p>
                 <a
                   className={classes.safeAppLink}
-                  href={`https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${pilotAddress}/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
+                  href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${pilotAddress}/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
                   target="_blank"
                   rel="noreferrer"
                 >

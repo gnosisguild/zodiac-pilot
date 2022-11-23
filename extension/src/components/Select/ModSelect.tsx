@@ -7,15 +7,16 @@ import Box from '../Box'
 
 import classes from './style.module.css'
 
-interface LabelProps {
+export const NO_MODULE_OPTION = Symbol('no-module')
+interface Option {
   value: string
   label: string
 }
 
-// react-select can't infer the type of Option here, so it expects unknown,
-// hence the weird typing method below
 const ModuleOptionLabel = (data: unknown) => {
-  const props = data as LabelProps
+  if (data === NO_MODULE_OPTION) return <NoModuleOptionLabel />
+
+  const props = data as Option
   return (
     <div className={classes.modOption}>
       <Box rounded>
@@ -24,6 +25,17 @@ const ModuleOptionLabel = (data: unknown) => {
       <div className={classes.modLabel}>
         <p className={classes.type}>{props.label}</p>
         <code className={classes.address}>{props.value}</code>
+      </div>
+    </div>
+  )
+}
+
+const NoModuleOptionLabel = () => {
+  return (
+    <div className={classes.modOption}>
+      <div className={classes.modLabel}>
+        <p className={classes.type}>&lt;No mod&gt;</p>
+        <code className={classes.address}>Direct execution</code>
       </div>
     </div>
   )
