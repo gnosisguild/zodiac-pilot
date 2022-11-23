@@ -158,6 +158,18 @@ const CONNECTION_STATE_MIGRATIONS: ConnectionStateMigration[] = [
       moduleType,
     }
   },
+
+  function lowercaseAddresses(connection) {
+    // This migration lowercases all addresses in the connection object.
+    return {
+      ...connection,
+      moduleAddress: connection.moduleAddress
+        ? connection.moduleAddress.toLowerCase()
+        : '',
+      avatarAddress: connection.avatarAddress.toLowerCase(),
+      pilotAddress: connection.pilotAddress.toLowerCase(),
+    }
+  },
 ]
 
 // Apply all migrations to the given connections

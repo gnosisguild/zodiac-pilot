@@ -11,9 +11,8 @@ import detectProxyTarget from 'ethers-proxies'
 import { FormatTypes, Interface } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
+import { validateAddress } from '../../utils'
 import { useConnection } from '../connectionHooks'
-
-import { isValidAddress } from './addressValidation'
 
 const SUPPORTED_MODULES = [KnownContracts.DELAY, KnownContracts.ROLES]
 export type SupportedModuleType = KnownContracts.DELAY | KnownContracts.ROLES
@@ -48,7 +47,7 @@ export const useZodiacModules = (
       .finally(() => setLoading(false))
   }, [provider, safeAddress, connected, chainId])
 
-  if (!isValidAddress(safeAddress) || error) {
+  if (!validateAddress(safeAddress) || error) {
     return { isValidSafe: false, loading, modules: [] }
   }
 
@@ -118,8 +117,8 @@ async function fetchModules(
       }
 
       return {
-        moduleAddress,
-        mastercopyAddress,
+        moduleAddress: moduleAddress.toLowerCase(),
+        mastercopyAddress: mastercopyAddress?.toLowerCase(),
         type,
         modules,
       }

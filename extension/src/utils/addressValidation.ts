@@ -1,11 +1,11 @@
 import { Provider } from '@ethersproject/abstract-provider'
-import { getAddress } from '@ethersproject/address'
+import { getAddress } from 'ethers/lib/utils'
 
-export function isValidAddress(address: string): boolean {
+export const validateAddress = (address: string) => {
   try {
-    return !!getAddress(address)
+    return getAddress(address)
   } catch (e) {
-    return false
+    return ''
   }
 }
 

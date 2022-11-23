@@ -5,11 +5,8 @@ import { useEffect, useState } from 'react'
 import { wrapRequest } from '../providers/WrappingProvider'
 import { Connection, Eip1193Provider } from '../types'
 import { decodeRolesError } from '../utils'
+import { isSmartContractAddress, validateAddress } from '../utils'
 
-import {
-  isSmartContractAddress,
-  isValidAddress,
-} from './Connection/addressValidation'
 import { useConnection } from './connectionHooks'
 
 const useConnectionDryRun = (connection: Connection) => {
@@ -82,13 +79,13 @@ const useConnectionDryRun = (connection: Connection) => {
 }
 
 async function dryRun(provider: Eip1193Provider, connection: Connection) {
-  if (!isValidAddress(connection.pilotAddress)) {
+  if (!validateAddress(connection.pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }
-  if (!isValidAddress(connection.moduleAddress)) {
+  if (!validateAddress(connection.moduleAddress)) {
     return Promise.reject('Module Address: Invalid address')
   }
-  if (!isValidAddress(connection.avatarAddress)) {
+  if (!validateAddress(connection.avatarAddress)) {
     return Promise.reject('DAO Safe: Invalid address')
   }
 

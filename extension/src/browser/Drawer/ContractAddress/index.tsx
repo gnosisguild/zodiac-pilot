@@ -1,5 +1,6 @@
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
+import { getAddress } from 'ethers/lib/utils'
 import React, { useEffect, useMemo, useState } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
@@ -37,8 +38,9 @@ const ContractAddress: React.FC<Props> = ({
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
 
-  const start = address.substring(0, VISIBLE_START + 2)
-  const end = address.substring(42 - VISIBLE_END, 42)
+  const checksumAddress = address && getAddress(address)
+  const start = checksumAddress.substring(0, VISIBLE_START + 2)
+  const end = checksumAddress.substring(42 - VISIBLE_END, 42)
   const displayAddress = `${start}...${end}`
 
   useEffect(() => {

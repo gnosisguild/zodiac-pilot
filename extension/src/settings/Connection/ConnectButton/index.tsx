@@ -8,6 +8,7 @@ import { ChainId } from '../../../networks'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
+import { validateAddress } from '../../../utils'
 import { useConnection, useConnections } from '../../connectionHooks'
 
 import metamaskLogoUrl from './metamask-logo.svg'
@@ -44,7 +45,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
               ...connection,
               providerType,
               chainId,
-              pilotAddress: account,
+              pilotAddress: account.toLowerCase(),
             }
           : c
       )
@@ -74,7 +75,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
               : metamaskLogo}
           </div>
           <code className={classes.pilotAddress}>
-            {connection.pilotAddress}
+            {validateAddress(connection.pilotAddress)}
           </code>
         </div>
         <Button onClick={disconnect} className={classes.disconnectButton}>

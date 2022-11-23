@@ -1,3 +1,4 @@
+import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
 import { Props } from 'react-select'
 
@@ -17,6 +18,7 @@ const ModuleOptionLabel = (data: unknown) => {
   if (data === NO_MODULE_OPTION) return <NoModuleOptionLabel />
 
   const props = data as Option
+  const checksumAddress = getAddress(props.value)
   return (
     <div className={classes.modOption}>
       <Box rounded>
@@ -24,7 +26,7 @@ const ModuleOptionLabel = (data: unknown) => {
       </Box>
       <div className={classes.modLabel}>
         <p className={classes.type}>{props.label}</p>
-        <code className={classes.address}>{props.value}</code>
+        <code className={classes.address}>{checksumAddress}</code>
       </div>
     </div>
   )

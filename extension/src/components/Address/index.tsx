@@ -1,9 +1,11 @@
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
+import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { useConnection } from '../../settings'
+import { validateAddress } from '../../utils'
 import Blockie from '../Blockie'
 import Box from '../Box'
 import IconButton from '../IconButton'
@@ -32,8 +34,9 @@ const EXPLORER_URLS: Record<string, string | undefined> = {
 }
 
 export const shortenAddress = (address: string): string => {
-  const start = address.substring(0, VISIBLE_START + 2)
-  const end = address.substring(42 - VISIBLE_END, 42)
+  const checksumAddress = validateAddress(address)
+  const start = checksumAddress.substring(0, VISIBLE_START + 2)
+  const end = checksumAddress.substring(42 - VISIBLE_END, 42)
   return `${start}...${end}`
 }
 
@@ -47,8 +50,8 @@ const Address: React.FC<Props> = ({
     connection: { chainId },
   } = useConnection()
   const explorerUrl = chainId && EXPLORER_URLS[chainId]
-
-  const displayAddress = shortenAddress(address)
+  const checksumAddress = getAddress(address)
+  const displayAddress = shortenAddress(checksumAddress)
 
   return (
     <Box rounded className={cn(className, classes.container)}>
@@ -59,7 +62,7 @@ const Address: React.FC<Props> = ({
       {copyToClipboard && (
         <IconButton
           onClick={() => {
-            copy(address)
+            copy(checksumAddress)
           }}
         >
           <RiFileCopyLine />

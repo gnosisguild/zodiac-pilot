@@ -1,0 +1,29 @@
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid rgba(217, 212, 173, 0.8);
+}
+
+.avatar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.avatarAddress {
+  font-size: 14px;
+}
+
+.avatarBlockie {
+  width: 40px;
+  height: 40px;
+}
+
+button.removeButton {
+  background: none;
+  width: fit-content;
+  padding: 4px 8px;
+  font-size: 14px;
+}
