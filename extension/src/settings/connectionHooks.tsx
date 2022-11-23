@@ -2,12 +2,12 @@ import { EventEmitter } from 'events'
 
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
-import React, { ReactNode, useCallback, useEffect } from 'react'
+import React, { ReactNode, useCallback } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useMetaMask, useWalletConnect } from '../providers'
 import { Connection, Eip1193Provider, ProviderType } from '../types'
-import { useStickyState } from '../utils'
+import { useStickyState, validateAddress } from '../utils'
 
 const DEFAULT_VALUE: Connection[] = [
   {
@@ -69,7 +69,7 @@ export const useConnections = () => {
   return result
 }
 
-const useSelectedConnectionId = () => {
+export const useSelectedConnectionId = () => {
   const result = useContext(SelectedConnectionContext)
   if (!result) {
     throw new Error(
@@ -77,16 +77,6 @@ const useSelectedConnectionId = () => {
     )
   }
   return result
-}
-
-export const useSelectConnection = () => {
-  const [, setSelectedConnectionId] = useSelectedConnectionId()
-  return useCallback(
-    (connectionId: string) => {
-      setSelectedConnectionId(connectionId)
-    },
-    [setSelectedConnectionId]
-  )
 }
 
 export const useConnection = (id?: string) => {
@@ -122,17 +112,58 @@ export const useConnection = (id?: string) => {
       : walletConnect.chainId
 
   const mustConnectMetaMask =
-    connection.providerType === ProviderType.MetaMask &&
-    !metamask.chainId &&
-    connection.pilotAddress
-  const connectMetaMask = metamask.connect
-  useEffect(() => {
-    if (mustConnectMetaMask) {
-      connectMetaMask()
-    }
-  }, [mustConnectMetaMask, connectMetaMask])
+    connection.providerType === ProviderType.MetaMask && !metamask.chainId
 
-  return { connection, provider, connected, chainId }
+  const { pilotAddress } = connection
+
+  const canEstablishConnection =
+    !connected &&
+    !!validateAddress(pilotAddress) &&
+    connection.providerType === ProviderType.MetaMask &&
+    (mustConnectMetaMask ||
+      (metamask.accounts.includes(pilotAddress) &&
+        metamask.chainId !== connection.chainId))
+
+  const connectMetaMask = metamask.connect
+  const switchChain = metamask.switchChain
+  const requiredChainId = connection.chainId
+  const connect = useCallback(async () => {
+    if (mustConnectMetaMask) {
+      const { accounts } = await connectMetaMask()
+      if (!accounts.includes(pilotAddress)) {
+        console.warn('wrong account', accounts)
+        return false
+      }
+    }
+
+    if (chainId !== requiredChainId) {
+      try {
+        await switchChain(requiredChainId)
+      } catch (e) {
+        console.error('Error switching chain', e)
+        return false
+      }
+    }
+
+    return true
+  }, [
+    mustConnectMetaMask,
+    connectMetaMask,
+    switchChain,
+    chainId,
+    requiredChainId,
+    pilotAddress,
+  ])
+
+  return {
+    connection,
+    provider,
+    connected,
+    chainId,
+
+    /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet. */
+    connect: canEstablishConnection ? connect : null,
+  }
 }
 
 class DummyProvider extends EventEmitter {

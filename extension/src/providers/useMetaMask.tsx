@@ -8,11 +8,19 @@ import React, {
   useState,
 } from 'react'
 
+import {
+  ChainId,
+  EXPLORER_URL,
+  NETWORK_CURRENCY,
+  NETWORK_NAME,
+  RPC,
+} from '../networks'
 import { Eip1193Provider } from '../types'
 
 interface MetaMaskContextT {
   provider: Eip1193Provider | undefined
   connect: () => Promise<{ chainId: number; accounts: string[] }>
+  switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
 }
@@ -91,14 +99,48 @@ export const ProvideMetaMask: React.FC<{
     return { accounts, chainId }
   }, [])
 
+  const switchChain = useCallback(async (chainId: ChainId) => {
+    if (!window.ethereum) throw new Error('MetaMask not found')
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${chainId.toString(16)}` }],
+      })
+    } catch (err) {
+      if ((err as MetaMaskError).code === 4902) {
+        // the requested chain has not been added by MetaMask
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: `0x${chainId.toString(16)}`,
+              chainName: NETWORK_NAME[chainId],
+              nativeCurrency: {
+                name: NETWORK_CURRENCY[chainId],
+                symbol: NETWORK_CURRENCY[chainId],
+                decimals: 18,
+              },
+              rpcUrls: [RPC[chainId]],
+              blockExplorerUrls: [EXPLORER_URL[chainId]],
+            },
+          ],
+        })
+      } else {
+        throw err
+      }
+    }
+  }, [])
+
   const packed = useMemo(
     () => ({
       provider: window.ethereum,
       connect,
+      switchChain,
       accounts,
       chainId,
     }),
-    [accounts, connect, chainId]
+    [accounts, connect, chainId, switchChain]
   )
 
   return (
@@ -119,3 +161,7 @@ const useMetaMask = () => {
 }
 
 export default useMetaMask
+
+interface MetaMaskError extends Error {
+  code: number
+}

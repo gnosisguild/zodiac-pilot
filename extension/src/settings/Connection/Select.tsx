@@ -5,7 +5,6 @@ import { BoxButton, Button, ConnectionStack, Flex } from '../../components'
 import { usePushSettingsRoute } from '../../routing'
 import { Connection } from '../../types'
 import { useConnection, useConnections } from '../connectionHooks'
-import useConnectionDryRun from '../useConnectionDryRun'
 
 import ConnectIcon from './ConnectIcon'
 import classes from './style.module.css'
@@ -32,9 +31,8 @@ const ConnectionItem: React.FC<{
   connection: Connection
   onLaunch(connectionId: string): void
 }> = ({ connection, onLaunch }) => {
-  const { connected } = useConnection(connection.id)
+  const { connected, connect } = useConnection(connection.id)
   const pushSettingsRoute = usePushSettingsRoute()
-  const error = useConnectionDryRun(connection)
 
   return (
     <div className={classes.connectionItem}>
@@ -45,12 +43,21 @@ const ConnectionItem: React.FC<{
         alignItems="center"
       >
         <BoxButton
-          onClick={() => {
-            if (connected && !error) {
+          onClick={async () => {
+            if (connected) {
               onLaunch(connection.id)
-            } else {
-              pushSettingsRoute(connection.id)
+              return
             }
+
+            if (!connected && connect) {
+              const success = await connect()
+              if (success) {
+                onLaunch(connection.id)
+                return
+              }
+            }
+
+            pushSettingsRoute(connection.id)
           }}
           className={classes.connectionButton}
         >
@@ -64,17 +71,25 @@ const ConnectionItem: React.FC<{
               <h3>{connection.label}</h3>
 
               <div className={classes.status}>
-                {connected ? (
+                {connected && (
                   <ConnectIcon
                     size={24}
                     color="green"
-                    title="WalletConnect is connected"
+                    title="Pilot wallet is connected"
                   />
-                ) : (
+                )}
+                {!connected && !connect && (
                   <VscDebugDisconnect
                     size={24}
                     color="crimson"
-                    title="WalletConnect is not connected"
+                    title="Pilot wallet is not connected"
+                  />
+                )}
+                {!connected && connect && (
+                  <ConnectIcon
+                    size={24}
+                    color="orange"
+                    title="Will try to auto-connect to Pilot wallet"
                   />
                 )}
               </div>

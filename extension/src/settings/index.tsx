@@ -13,10 +13,9 @@ import {
   ProvideConnections,
   useConnection,
   useConnections,
-  useSelectConnection,
+  useSelectedConnectionId,
 } from './connectionHooks'
 import classes from './style.module.css'
-import useConnectionDryRun from './useConnectionDryRun'
 
 export { useConnection, ProvideConnections }
 
@@ -31,10 +30,10 @@ const Settings: React.FC<Props> = ({
   onLaunch,
   editConnectionId = '',
 }) => {
-  const selectConnection = useSelectConnection()
   const [connections, setConnections] = useConnections()
   const pushSettingsRoute = usePushSettingsRoute()
-  const { connection, connected } = useConnection(editConnectionId)
+  const [, selectConnection] = useSelectedConnectionId()
+  const { connection, connected, connect } = useConnection(editConnectionId)
 
   const handleLaunch = (connectionId: string) => {
     selectConnection(connectionId)
@@ -46,13 +45,7 @@ const Settings: React.FC<Props> = ({
     setConnections(newConnections)
   }
 
-  const error = useConnectionDryRun(connection)
-  const canLaunch =
-    connected &&
-    !error &&
-    connection.moduleAddress &&
-    connection.avatarAddress &&
-    connection.roleId
+  const canLaunch = connected || !!connect
 
   return connections.some((c) => c.id === editConnectionId) ? (
     <Layout
@@ -71,7 +64,14 @@ const Settings: React.FC<Props> = ({
           <Button
             className={classes.headerButton}
             disabled={!canLaunch}
-            onClick={() => {
+            onClick={async () => {
+              if (!connected && connect) {
+                const success = await connect()
+                if (!success) {
+                  return
+                }
+              }
+
               handleLaunch(editConnectionId)
             }}
           >

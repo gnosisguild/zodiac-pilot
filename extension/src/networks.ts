@@ -92,3 +92,18 @@ export const NETWORK_CURRENCY: Record<ChainId, string> = {
   73799: 'VT',
   80001: 'MATIC',
 }
+
+export const NETWORK_NAME: Record<ChainId, string> = {
+  1: 'Ethereum',
+  4: 'Rinkeby',
+  5: 'Görli',
+  56: 'Binance Smart Chain',
+  10: 'Optimism',
+  100: 'Gnosis Chain',
+  137: 'Polygon',
+  246: 'Energy Web',
+  42161: 'Arbitrum One',
+  42220: 'Celo',
+  73799: 'Volta Testnet',
+  80001: 'Polygon Testnet',
+}

@@ -12,29 +12,39 @@ import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, { ProvideConnections } from './settings'
-import { useConnection } from './settings'
+import Settings, { ProvideConnections, useConnection } from './settings'
+import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
   const settingsRouteMatch = useMatchSettingsRoute()
-  const { connection, connected } = useConnection()
   const pushSettingsRoute = usePushSettingsRoute()
+  const { connection, connected, connect } = useConnection()
 
+  const isSettingsRoute = !!settingsRouteMatch
   const settingsRequired =
-    !connection ||
-    !connection.avatarAddress ||
-    !connection.moduleAddress ||
-    !connected
+    !validateAddress(connection.avatarAddress) ||
+    !validateAddress(connection.pilotAddress)
+  const shallAutoConnect = !isSettingsRoute && !settingsRequired && !connected
 
   // redirect to settings page if more settings are required
   useEffect(() => {
-    if (!settingsRouteMatch && settingsRequired) {
+    if (!isSettingsRoute && settingsRequired) {
       pushSettingsRoute()
     }
-  }, [pushSettingsRoute, settingsRouteMatch, settingsRequired])
-  if (!settingsRouteMatch && settingsRequired) return null
+  }, [isSettingsRoute, pushSettingsRoute, settingsRequired])
 
-  if (settingsRouteMatch) {
+  // if the active connection is ready to be launched, invoke the launch callback
+  // (this will make sure the wallet is unlocked and connected to the correct network)
+  useEffect(() => {
+    if (shallAutoConnect && connect) {
+      connect()
+    }
+  }, [shallAutoConnect, connect])
+
+  if (!isSettingsRoute && settingsRequired) return null
+  if (shallAutoConnect && connect) return null
+
+  if (isSettingsRoute) {
     return (
       <Settings
         url={settingsRouteMatch.url}
