@@ -2,30 +2,30 @@ import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
 import { Props } from 'react-select'
 
-import { Select } from '..'
-import Blockie from '../Blockie'
-import Box from '../Box'
+import { Select } from '../../../components'
+import Blockie from '../../../components/Blockie'
+import Box from '../../../components/Box'
 
 import classes from './style.module.css'
 
-export const NO_MODULE_OPTION = Symbol('no-module')
+export const NO_MODULE_OPTION = { value: '', label: '' }
 interface Option {
   value: string
   label: string
 }
 
-const ModuleOptionLabel = (data: unknown) => {
-  if (data === NO_MODULE_OPTION) return <NoModuleOptionLabel />
+const ModuleOptionLabel: React.FC<unknown> = (props) => {
+  const option = props as Option
+  if (!option.value) return <NoModuleOptionLabel />
 
-  const props = data as Option
-  const checksumAddress = getAddress(props.value)
+  const checksumAddress = getAddress(option.value)
   return (
     <div className={classes.modOption}>
       <Box rounded>
-        <Blockie address={props.value} className={classes.modBlockie} />
+        <Blockie address={option.value} className={classes.modBlockie} />
       </Box>
       <div className={classes.modLabel}>
-        <p className={classes.type}>{props.label}</p>
+        <p className={classes.type}>{option.label}</p>
         <code className={classes.address}>{checksumAddress}</code>
       </div>
     </div>

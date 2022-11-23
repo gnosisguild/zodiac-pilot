@@ -1,4 +1,3 @@
-import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'

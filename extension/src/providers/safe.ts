@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { ChainId } from '../networks'
 import { useConnection } from '../settings'
 import { Eip1193Provider } from '../types'
+import { validateAddress } from '../utils'
 
 const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
@@ -96,8 +97,10 @@ export const useSafesWithOwner = (ownerAddress: string) => {
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])
 
+  const checksumOwnerAddress = validateAddress(ownerAddress)
+
   useEffect(() => {
-    if (!connected || !chainId || !ownerAddress) return
+    if (!connected || !chainId || !checksumOwnerAddress) return
 
     const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
     if (!txServiceUrl) {
@@ -116,14 +119,14 @@ export const useSafesWithOwner = (ownerAddress: string) => {
     let canceled = false
 
     safeService
-      .getSafesByOwner(ownerAddress)
+      .getSafesByOwner(checksumOwnerAddress)
       .then((res) => {
         if (!canceled) {
           setSafes(res.safes)
         }
       })
       .catch((e) => {
-        console.error(`Error fetching safes for ${ownerAddress}`, e)
+        console.error(`Error fetching safes for ${checksumOwnerAddress}`, e)
       })
       .finally(() => {
         setLoading(false)
@@ -134,7 +137,7 @@ export const useSafesWithOwner = (ownerAddress: string) => {
       setSafes([])
       canceled = true
     }
-  }, [provider, ownerAddress, connected, chainId])
+  }, [provider, checksumOwnerAddress, connected, chainId])
 
   return { loading, safes }
 }
@@ -145,8 +148,10 @@ export const useSafeDelegates = (safeAddress: string) => {
   const [loading, setLoading] = useState(false)
   const [delegates, setDelegates] = useState<string[]>([])
 
+  const checksumSafeAddress = validateAddress(safeAddress)
+
   useEffect(() => {
-    if (!connected || !chainId || !safeAddress) return
+    if (!connected || !chainId || !checksumSafeAddress) return
 
     const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
     if (!txServiceUrl) {
@@ -165,14 +170,14 @@ export const useSafeDelegates = (safeAddress: string) => {
     let canceled = false
 
     safeService
-      .getSafeDelegates(safeAddress)
+      .getSafeDelegates(checksumSafeAddress)
       .then((res) => {
         if (!canceled) {
           setDelegates(res.results.map((delegate) => delegate.delegate))
         }
       })
       .catch((e) => {
-        console.error(`Error fetching delegates for ${safeAddress}`, e)
+        console.error(`Error fetching delegates for ${checksumSafeAddress}`, e)
       })
       .finally(() => {
         setLoading(false)
@@ -183,7 +188,7 @@ export const useSafeDelegates = (safeAddress: string) => {
       setDelegates([])
       canceled = true
     }
-  }, [provider, safeAddress, connected, chainId])
+  }, [provider, checksumSafeAddress, connected, chainId])
 
   return { loading, delegates }
 }

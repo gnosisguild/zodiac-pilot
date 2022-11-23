@@ -2,13 +2,13 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
 import { Box, Field, Flex } from '../../components'
-import ModSelect, { NO_MODULE_OPTION } from '../../components/Select/ModSelect'
 import { useSafeDelegates, useSafesWithOwner } from '../../providers/safe'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
 import AvatarInput from './AvatarInput'
 import ConnectButton from './ConnectButton'
+import ModSelect, { NO_MODULE_OPTION } from './ModSelect'
 import classes from './style.module.css'
 import {
   MODULE_NAMES,
@@ -112,7 +112,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Zodiac Mod" disabled={modules.length === 0}>
             <ModSelect
               options={[
-                NO_MODULE_OPTION,
+                ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
                 ...modules.map((mod) => ({
                   value: mod.moduleAddress,
                   label: MODULE_NAMES[mod.type],

@@ -1,6 +1,5 @@
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
@@ -50,7 +49,7 @@ const Address: React.FC<Props> = ({
     connection: { chainId },
   } = useConnection()
   const explorerUrl = chainId && EXPLORER_URLS[chainId]
-  const checksumAddress = getAddress(address)
+  const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)
 
   return (
