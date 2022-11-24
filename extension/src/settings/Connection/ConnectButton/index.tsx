@@ -107,10 +107,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         <Button
           className={classes.disconnectButton}
           onClick={() => {
-            metamask.provider?.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: `0x${connection.chainId?.toString(16)}` }],
-            })
+            metamask.switchChain(connection.chainId)
           }}
         >
           Switch wallet to{' '}
