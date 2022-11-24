@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
-import React, { ReactNode, useCallback } from 'react'
+import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useMetaMask, useWalletConnect } from '../providers'
@@ -115,27 +115,24 @@ export const useConnection = (id?: string) => {
     connection.providerType === ProviderType.MetaMask && !metamask.chainId
 
   const { pilotAddress } = connection
-
   const canEstablishConnection =
     !connected &&
     !!validateAddress(pilotAddress) &&
     connection.providerType === ProviderType.MetaMask &&
-    (mustConnectMetaMask ||
-      (metamask.accounts.includes(pilotAddress) &&
-        metamask.chainId !== connection.chainId))
+    metamask.accounts.includes(pilotAddress) &&
+    metamask.chainId !== connection.chainId
 
   const connectMetaMask = metamask.connect
   const switchChain = metamask.switchChain
   const requiredChainId = connection.chainId
-  const connect = useCallback(async () => {
-    if (mustConnectMetaMask) {
-      const { accounts } = await connectMetaMask()
-      if (!accounts.includes(pilotAddress)) {
-        console.warn('wrong account', accounts)
-        return false
-      }
-    }
 
+  useEffect(() => {
+    if (mustConnectMetaMask) {
+      connectMetaMask()
+    }
+  }, [mustConnectMetaMask, connectMetaMask])
+
+  const connect = useCallback(async () => {
     if (chainId !== requiredChainId) {
       try {
         await switchChain(requiredChainId)
@@ -146,14 +143,7 @@ export const useConnection = (id?: string) => {
     }
 
     return true
-  }, [
-    mustConnectMetaMask,
-    connectMetaMask,
-    switchChain,
-    chainId,
-    requiredChainId,
-    pilotAddress,
-  ])
+  }, [switchChain, chainId, requiredChainId])
 
   return {
     connection,
@@ -161,7 +151,7 @@ export const useConnection = (id?: string) => {
     connected,
     chainId,
 
-    /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet. */
+    /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet by asking the user to switch it to the right chain. */
     connect: canEstablishConnection ? connect : null,
   }
 }

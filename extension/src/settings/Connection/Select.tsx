@@ -89,7 +89,7 @@ const ConnectionItem: React.FC<{
                   <ConnectIcon
                     size={24}
                     color="orange"
-                    title="Will try to auto-connect to Pilot wallet"
+                    title="Pilot wallet is connected to a different chain"
                   />
                 )}
               </div>

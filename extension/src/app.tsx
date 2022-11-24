@@ -18,13 +18,14 @@ import { validateAddress } from './utils'
 const Routes: React.FC = () => {
   const settingsRouteMatch = useMatchSettingsRoute()
   const pushSettingsRoute = usePushSettingsRoute()
-  const { connection, connected, connect } = useConnection()
+  const { connection, connected } = useConnection()
 
   const isSettingsRoute = !!settingsRouteMatch
   const settingsRequired =
     !validateAddress(connection.avatarAddress) ||
     !validateAddress(connection.pilotAddress)
-  const shallAutoConnect = !isSettingsRoute && !settingsRequired && !connected
+
+  const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
 
   // redirect to settings page if more settings are required
   useEffect(() => {
@@ -33,16 +34,21 @@ const Routes: React.FC = () => {
     }
   }, [isSettingsRoute, pushSettingsRoute, settingsRequired])
 
-  // if the active connection is ready to be launched, invoke the launch callback
-  // (this will make sure the wallet is unlocked and connected to the correct network)
+  // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
   useEffect(() => {
-    if (shallAutoConnect && connect) {
-      connect()
+    let timeout: number
+    if (waitForWallet) {
+      timeout = window.setTimeout(() => {
+        pushSettingsRoute()
+      }, 100)
     }
-  }, [shallAutoConnect, connect])
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [waitForWallet, connected, pushSettingsRoute])
 
   if (!isSettingsRoute && settingsRequired) return null
-  if (shallAutoConnect && connect) return null
+  if (!isSettingsRoute && waitForWallet) return null
 
   if (isSettingsRoute) {
     return (
