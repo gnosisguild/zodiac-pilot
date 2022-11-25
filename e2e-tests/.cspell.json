@@ -1,0 +1,16 @@
+{
+  "version": "0.2",
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
+  "language": "en",
+  "words": [
+    "chainsafe",
+    "dappeteer"
+  ],
+  "flagWords": [],
+  "ignorePaths": [
+    "package.json",
+    "yarn.lock",
+    "node_modules/**",
+    "tsconfig.json"
+  ]
+}
