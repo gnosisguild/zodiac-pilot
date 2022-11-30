@@ -13,6 +13,7 @@ import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
 import Settings, { ProvideConnections, useConnection } from './settings'
+import { useConnections } from './settings/connectionHooks'
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
@@ -25,14 +26,18 @@ const Routes: React.FC = () => {
     !validateAddress(connection.avatarAddress) ||
     !validateAddress(connection.pilotAddress)
 
+  const [connections] = useConnections()
+  const connectionToEdit =
+    connections.length === 1 ? connections[0].id : undefined
+
   const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
 
   // redirect to settings page if more settings are required
   useEffect(() => {
     if (!isSettingsRoute && settingsRequired) {
-      pushSettingsRoute()
+      pushSettingsRoute(connectionToEdit)
     }
-  }, [isSettingsRoute, pushSettingsRoute, settingsRequired])
+  }, [isSettingsRoute, pushSettingsRoute, connectionToEdit, settingsRequired])
 
   // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
   useEffect(() => {
@@ -45,7 +50,7 @@ const Routes: React.FC = () => {
     return () => {
       window.clearTimeout(timeout)
     }
-  }, [waitForWallet, connected, pushSettingsRoute])
+  }, [waitForWallet, pushSettingsRoute])
 
   if (!isSettingsRoute && settingsRequired) return null
   if (!isSettingsRoute && waitForWallet) return null
