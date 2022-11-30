@@ -1,4 +1,4 @@
-const { readFile } = require('fs').promises
+const { readFile, writeFile } = require('fs').promises
 const os = require('os')
 const path = require('path')
 const puppeteer = require('puppeteer')
@@ -34,15 +34,21 @@ class DappeteerEnvironment extends NodeEnvironment {
 
       const date = new Date()
       const timeFormatted = `${date.getHours()}h${date.getMinutes()}m${date.getSeconds()}s`
+      const filename =
+        state.currentlyRunningTest.name
+          .replaceAll(' ', '-')
+          .replaceAll('"', '') +
+        '-' +
+        timeFormatted
 
       const page = await this.getActivePage()
       page.screenshot({
-        path: `${dir}/${state.currentlyRunningTest.name
-          .replaceAll(' ', '-')
-          .replaceAll('"', '')}-${timeFormatted}.png`,
+        path: `${dir}/${filename}.png`,
         type: 'png',
         fullPage: true,
       })
+
+      await writeFile(`${dir}/${filename}.html`, await page.content())
     }
   }
 

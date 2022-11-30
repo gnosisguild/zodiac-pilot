@@ -21,7 +21,11 @@ const pilotExtensionPath = path.resolve(__dirname, '../../extension/public')
 //   .digest('hex') // TODO to unicode (https://stackoverflow.com/a/61448730)
 //                  // should be: konilcdngphioajoceoofjdcoppankde
 
+let firstRun = true
 module.exports = async function () {
+  if (!firstRun) return // prevent relaunch in watch mode
+  firstRun = false
+
   const metamaskPath = await metamaskDownloader(
     config.dappeteer.metamaskVersion,
     config.dappeteer.metamaskPath
