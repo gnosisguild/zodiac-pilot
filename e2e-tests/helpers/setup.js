@@ -2,15 +2,16 @@ const { writeFile } = require('fs').promises
 const os = require('os')
 const path = require('path')
 
-const { setupMetamask } = require('@chainsafe/dappeteer')
+const {
+  setupMetamask,
+  RECOMMENDED_METAMASK_VERSION,
+} = require('@chainsafe/dappeteer')
 
 const {
   default: metamaskDownloader,
 } = require('@chainsafe/dappeteer/dist/setup/metamaskDownloader')
 const mkdirp = require('mkdirp')
 const puppeteer = require('puppeteer')
-
-const config = require('../dappteer.config')
 
 const DIR = path.join(os.tmpdir(), 'jest_dappeteer_global_setup')
 
@@ -26,10 +27,7 @@ module.exports = async function () {
   if (!firstRun) return // prevent relaunch in watch mode
   firstRun = false
 
-  const metamaskPath = await metamaskDownloader(
-    config.dappeteer.metamaskVersion,
-    config.dappeteer.metamaskPath
-  )
+  const metamaskPath = await metamaskDownloader(RECOMMENDED_METAMASK_VERSION)
   const browser = await puppeteer.launch({
     headless: false,
     args: [
@@ -39,7 +37,10 @@ module.exports = async function () {
   })
 
   try {
-    await setupMetamask(browser, config.metamask)
+    await setupMetamask(browser, {
+      seed: process.env.SEED_PHRASE,
+      password: 'password1234',
+    })
     global.browser = browser
   } catch (error) {
     console.log(error)

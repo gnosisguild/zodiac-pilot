@@ -42,7 +42,7 @@ class DappeteerEnvironment extends NodeEnvironment {
         timeFormatted
 
       const page = await this.getActivePage()
-      page.screenshot({
+      await page.screenshot({
         path: `${dir}/${filename}.png`,
         type: 'png',
         fullPage: true,
