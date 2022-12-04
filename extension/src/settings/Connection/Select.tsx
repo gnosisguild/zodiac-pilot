@@ -73,6 +73,7 @@ const ConnectionItem: React.FC<{
               <div className={classes.status}>
                 {connected && (
                   <ConnectIcon
+                    role="status"
                     size={24}
                     color="green"
                     title="Pilot wallet is connected"
@@ -80,6 +81,7 @@ const ConnectionItem: React.FC<{
                 )}
                 {!connected && !connect && (
                   <VscDebugDisconnect
+                    role="status"
                     size={24}
                     color="crimson"
                     title="Pilot wallet is not connected"
@@ -87,6 +89,7 @@ const ConnectionItem: React.FC<{
                 )}
                 {!connected && connect && (
                   <ConnectIcon
+                    role="status"
                     size={24}
                     color="orange"
                     title="Pilot wallet is connected to a different chain"
