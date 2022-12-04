@@ -1,21 +1,21 @@
-const { writeFile } = require('fs').promises
-const os = require('os')
-const path = require('path')
+import { promises } from 'fs'
+import os from 'os'
+import path from 'path'
 
-const {
+import {
   setupMetamask,
   RECOMMENDED_METAMASK_VERSION,
-} = require('@chainsafe/dappeteer')
+} from '@chainsafe/dappeteer'
 
-const {
-  default: metamaskDownloader,
-} = require('@chainsafe/dappeteer/dist/setup/metamaskDownloader')
-const mkdirp = require('mkdirp')
-const puppeteer = require('puppeteer')
+import metamaskDownloader from '@chainsafe/dappeteer/dist/setup/metamaskDownloader'
+import mkdirp from 'mkdirp'
+import puppeteer from 'puppeteer'
 
 const DIR = path.join(os.tmpdir(), 'jest_dappeteer_global_setup')
 
 const pilotExtensionPath = path.resolve(__dirname, '../../extension/public')
+
+export const metamaskPassword = 'password1234'
 
 // export const EXTENSION_ID = createHash('sha256')
 //   .update(pilotExtensionPath)
@@ -23,7 +23,7 @@ const pilotExtensionPath = path.resolve(__dirname, '../../extension/public')
 //                  // should be: konilcdngphioajoceoofjdcoppankde
 
 let firstRun = true
-module.exports = async function () {
+export default async function setup() {
   if (!firstRun) return // prevent relaunch in watch mode
   firstRun = false
 
@@ -41,12 +41,12 @@ module.exports = async function () {
       seed: process.env.SEED_PHRASE,
       password: 'password1234',
     })
-    global.browser = browser
+    ;(global as any).browser = browser
   } catch (error) {
     console.log(error)
     throw error
   }
 
   mkdirp.sync(DIR)
-  await writeFile(path.join(DIR, 'wsEndpoint'), browser.wsEndpoint())
+  await promises.writeFile(path.join(DIR, 'wsEndpoint'), browser.wsEndpoint())
 }
