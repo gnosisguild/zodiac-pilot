@@ -76,7 +76,7 @@ const TEST_CONNECTIONS = [
     label: 'Jan Test DAO',
     chainId: 100,
     avatarAddress: '0x8bbd876d534e6e00e61414f00576627e4466bbde',
-    pilotAddress: '0x0c531fEc79FdB6F9a4BD2843bfd25ee49F33172d', // account is a Role member
+    pilotAddress: '0xb07520a4494793461cf8762246b7d8695548c22b', // account is a Role member
     providerType: 1,
     roleId: '1',
     moduleAddress: '0x946891e8fd9e1ad0f18dbd1065c2864d1d3f236d',
