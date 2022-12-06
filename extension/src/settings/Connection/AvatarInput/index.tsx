@@ -1,5 +1,6 @@
 import { getAddress } from 'ethers/lib/utils'
 import React, { useEffect, useState } from 'react'
+import { components, InputProps } from 'react-select'
 import CreatableSelect from 'react-select/creatable'
 
 import { Box, Button } from '../../../components'
@@ -58,7 +59,26 @@ const AvatarInput: React.FC<Props> = ({
   }, [value])
 
   const checksumAvatarAddress = validateAddress(pendingValue)
-  console.log('pending', pendingValue, checksumAvatarAddress)
+
+  const Input = (props: InputProps<Option>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
+      setPendingValue(sanitized)
+      if (validateAddress(sanitized)) {
+        onChange(sanitized.toLowerCase())
+      }
+    }
+    console.log(props)
+
+    return (
+      <components.Input
+        {...props}
+        onChange={handleInputChange}
+        value={checksumAvatarAddress ? '' : pendingValue}
+      />
+    )
+  }
+
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
@@ -87,17 +107,10 @@ const AvatarInput: React.FC<Props> = ({
               onChange('')
             }
           }}
-          isValidNewOption={(value) => {
-            console.log('initial value', value)
-            if (value) {
-              const sanitized = value.trim().replace(/^[a-z]{3}:/g, '')
-              if (validateAddress(sanitized)) {
-                console.log('valiudd')
-                onChange(sanitized.toLowerCase())
-              }
-            }
+          isValidNewOption={() => {
             return false
           }}
+          components={{ Input }}
         />
       ) : (
         <input
