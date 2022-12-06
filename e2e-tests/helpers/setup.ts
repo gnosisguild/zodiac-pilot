@@ -10,6 +10,9 @@ import {
 import metamaskDownloader from '@chainsafe/dappeteer/dist/setup/metamaskDownloader'
 import mkdirp from 'mkdirp'
 import puppeteer from 'puppeteer'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 const DIR = path.join(os.tmpdir(), 'jest_dappeteer_global_setup')
 
