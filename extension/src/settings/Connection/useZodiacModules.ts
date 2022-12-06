@@ -139,7 +139,7 @@ const functionSelectors = (abi: string[]) => {
 const MODIFIERS = [KnownContracts.ROLES, KnownContracts.DELAY]
 
 export const AvatarInterface = new Interface([
-  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint256 operation) returns (bool success)',
+  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
   'function isModuleEnabled(address module) view returns (bool)',
   'function getModulesPaginated(address start, uint256 pageSize) view returns (address[] memory array, address next)',
 ])
