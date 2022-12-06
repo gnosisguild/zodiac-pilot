@@ -1,4 +1,4 @@
-name: Tests
+name: CI
 
 on: [push]
 
@@ -23,7 +23,7 @@ jobs:
         run: yarn build
         working-directory: ./extension
       - run: yarn
-        working-directory: ./e2e-test
+        working-directory: ./e2e-tests
       - name: Run end-to-end tests
         run: yarn start
-        working-directory: ./e2e-test
+        working-directory: ./e2e-tests
