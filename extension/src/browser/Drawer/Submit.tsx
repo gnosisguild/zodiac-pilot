@@ -34,6 +34,7 @@ const Submit: React.FC = () => {
     try {
       batchTransactionHash = await submitTransactions()
     } catch (e) {
+      console.warn(e)
       setSignaturePending(false)
       const err = e as JsonRpcError
       toast.error(
