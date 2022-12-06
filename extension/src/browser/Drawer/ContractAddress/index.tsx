@@ -66,7 +66,7 @@ const ContractAddress: React.FC<Props> = ({
     <Flex
       gap={2}
       alignItems="center"
-      justifyContent="space-between"
+      justifyContent="start"
       className={className}
     >
       <Box p={1} rounded className={classes.blockies}>

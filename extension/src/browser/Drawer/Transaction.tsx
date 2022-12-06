@@ -177,7 +177,11 @@ export const Transaction: React.FC<Props> = ({
               justifyContent="space-between"
               className={classes.transactionSubtitle}
             >
-              <ContractAddress address={input.to} explorerLink />
+              <ContractAddress
+                address={input.to}
+                explorerLink
+                className={classes.contractName}
+              />
               <EtherValue input={input} />
             </Flex>
           </Box>

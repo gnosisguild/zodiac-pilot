@@ -97,6 +97,12 @@
   word-wrap: break-word;
 }
 
+.contractName {
+  /** Important to not use auto width, because long contract names would make overflow the container */
+  width: 1px;
+  flex-grow: 1;
+}
+
 .inputType {
   padding-left: var(--spacing-1);
   opacity: 0.7;
