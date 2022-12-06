@@ -1,13 +1,10 @@
-import { getDocument, queries, waitFor, within } from 'pptr-testing-library'
-import { Matcher } from '@testing-library/dom/types'
+import { getDocument, queries } from 'pptr-testing-library'
 import { launch, launchFresh } from '../helpers/launch'
-import { screenshot } from '../helpers/screenshot'
 import * as wallet from '../helpers/metamask'
-import { ElementHandle, Page } from 'puppeteer'
 import { around } from '../helpers/queries'
 
 describe('initial launch', () => {
-  jest.setTimeout(20000)
+  jest.setTimeout(30000)
 
   it('should show the settings of the default connection on first ever launch', async () => {
     const page = await launchFresh()
@@ -29,6 +26,9 @@ describe('initial launch', () => {
   })
 
   it('should ask the user to connect MetaMask and add a new network to MetaMask if necessary', async () => {
+    await wallet.removeNetwork('Gnosis Chain')
+    await wallet.disconnect()
+
     const page = await launch('jan')
     const $doc = await getDocument(page)
 
@@ -41,7 +41,7 @@ describe('initial launch', () => {
 
     // the jan item has a status of "connected to a different chain"
     const $item = await queries.findByText($doc, 'Jan Test DAO')
-    const $status = await around($item).findByRole('status')
+    const $status = await around($item).getByRole('status')
     const status = await $status.evaluate((el) => el.textContent)
     expect(status).toBe('Pilot wallet is connected to a different chain')
 
@@ -63,9 +63,11 @@ describe('initial launch', () => {
   })
 
   it('should show the browser if the selected connection is ready', async () => {
+    await wallet.switchToGnosisChain()
+    await wallet.connectToPilot()
+
     const page = await launch('jan')
-    // await connectMetaMask()
-    // await page.reload()
+
     const $doc = await getDocument(page)
     await queries.findByPlaceholderText($doc, 'Type a url')
     await queries.findByText($doc, 'Jan Test DAO')

@@ -28,12 +28,12 @@ const setLocalStorage = async (values: Record<string, string>) => {
     r.respond({
       status: 200,
       contentType: 'text/plain',
-      body: 'tweak me.',
+      body: '',
     })
   })
   await page.goto('https://pilot.gnosisguild.org')
   await page.evaluate((values) => {
-    for (const key in values) {
+    for (let key in values) {
       localStorage.setItem(key, values[key])
     }
   }, values)
@@ -47,12 +47,12 @@ const removeLocalStorage = async (values: string[]) => {
     r.respond({
       status: 200,
       contentType: 'text/plain',
-      body: 'tweak me.',
+      body: '',
     })
   })
   await page.goto('https://pilot.gnosisguild.org')
   await page.evaluate((values) => {
-    for (const value in values) {
+    for (let value in values) {
       localStorage.removeItem(value)
     }
   }, values)
