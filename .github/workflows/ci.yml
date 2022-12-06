@@ -16,7 +16,14 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn
         working-directory: ./extension
-      - run: yarn run check
+      - name: Run static checks
+        run: yarn run check
         working-directory: ./extension
-      - run: yarn build
+      - name: Build extension
+        run: yarn build
         working-directory: ./extension
+      - run: yarn
+        working-directory: ./e2e-test
+      - name: Run end-to-end tests
+        run: yarn start
+        working-directory: ./e2e-test
