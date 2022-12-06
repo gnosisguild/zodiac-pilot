@@ -8,7 +8,7 @@ import useConnectionDryRun from '../useConnectionDryRun'
 
 import AvatarInput from './AvatarInput'
 import ConnectButton from './ConnectButton'
-import ModSelect, { NO_MODULE_OPTION } from './ModSelect'
+import ModSelect, { NO_MODULE_OPTION, Option } from './ModSelect'
 import classes from './style.module.css'
 import {
   MODULE_NAMES,
@@ -97,8 +97,9 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
-          <Field label="Impersonated Safe" labelFor="">
+          <Field label="Piloted Safe" labelFor="">
             <AvatarInput
+              availableSafes={safes}
               value={avatarAddress}
               onChange={(address) =>
                 updateConnection({
@@ -120,9 +121,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               ]}
               onChange={(selected) => {
                 const mod = modules.find(
-                  (mod) =>
-                    mod.moduleAddress ===
-                    (selected as { value: string; label: string }).value
+                  (mod) => mod.moduleAddress === (selected as Option).value
                 )
                 updateConnection({
                   moduleAddress: mod?.moduleAddress,

@@ -27,3 +27,31 @@ button.removeButton {
   padding: 4px 8px;
   font-size: 14px;
 }
+
+.safeOption {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.safeOption .safeBlockie {
+  width: 40px;
+  height: 40px;
+}
+
+.safeLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.safeLabel .type {
+  font-family: 'Spectra';
+  font-size: 1rem;
+  padding-left: 4px;
+}
+
+.safeLabel .address {
+  font-size: 14px;
+}

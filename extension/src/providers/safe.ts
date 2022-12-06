@@ -152,7 +152,6 @@ export const useSafeDelegates = (safeAddress: string) => {
 
   useEffect(() => {
     if (!connected || !chainId || !checksumSafeAddress) return
-
     const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
     if (!txServiceUrl) {
       throw new Error(`service not available for chain #${chainId}`)

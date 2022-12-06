@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Select, { Props } from 'react-select'
 
-const customStyles = {
+export const selectStyles = {
   control: (provided: React.CSSProperties, state: any) => ({
     ...provided,
     fontFamily: "'Roboto Mono', monospace",
@@ -21,6 +21,7 @@ const customStyles = {
   }),
   input: (provided: React.CSSProperties) => ({
     ...provided,
+    color: 'white',
     margin: 0,
     paddingBottom: 0,
     paddingTop: 0,
@@ -56,7 +57,7 @@ const customStyles = {
 }
 
 const StyledSelect: React.FC<Props> = (props) => {
-  return <Select {...props} styles={customStyles as any} />
+  return <Select {...props} styles={selectStyles as any} />
 }
 
 export default StyledSelect

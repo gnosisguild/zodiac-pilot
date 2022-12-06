@@ -9,7 +9,7 @@ import Box from '../../../components/Box'
 import classes from './style.module.css'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
-interface Option {
+export interface Option {
   value: string
   label: string
 }
@@ -36,8 +36,10 @@ const NoModuleOptionLabel = () => {
   return (
     <div className={classes.modOption}>
       <div className={classes.modLabel}>
-        <p className={classes.type}>&lt;No mod&gt;</p>
-        <code className={classes.address}>Direct execution</code>
+        <p className={classes.type}>Direct execution</p>
+        <code className={classes.address}>
+          Transactions submitted directly to the Safe
+        </code>
       </div>
     </div>
   )
