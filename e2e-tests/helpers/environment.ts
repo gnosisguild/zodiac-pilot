@@ -41,13 +41,14 @@ class DappeteerEnvironment extends NodeEnvironment {
       console.log('Taking screenshot on failing test...')
 
       const page = await this.getActivePilotPage()
-      await screenshot(page, state.currentlyRunningTest.name)
-
-      await page.close()
+      if (page) {
+        await screenshot(page, state.currentlyRunningTest.name)
+        await page.close()
+      }
     }
   }
 
-  async getActivePilotPage() {
+  async getActivePilotPage(): Promise<Page | undefined> {
     const pages = await this.global.browser.pages()
     const pilotPages = pages.filter((page) =>
       page.url().startsWith('https://pilot.gnosisguild.org')
@@ -65,7 +66,7 @@ class DappeteerEnvironment extends NodeEnvironment {
       }
     }
     if (!lastModifiedPilotPage) {
-      throw new Error('No active page found')
+      console.warn('No active Pilot extension page found')
     }
     return lastModifiedPilotPage
   }
