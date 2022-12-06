@@ -29,7 +29,7 @@ export default async function setup() {
 
   const metamaskPath = await metamaskDownloader(RECOMMENDED_METAMASK_VERSION)
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: process.env.CI === 'true',
     args: [
       `--disable-extensions-except=${metamaskPath},${pilotExtensionPath}`,
       `--load-extension=${metamaskPath},${pilotExtensionPath}`,
