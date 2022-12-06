@@ -8,5 +8,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "jest.jestCommandLine": "yarn start"
+  "jest.jestCommandLine": "yarn start",
+  "jest.autoRun": {}
 }
