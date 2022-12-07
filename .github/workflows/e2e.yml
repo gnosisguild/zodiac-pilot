@@ -25,9 +25,8 @@ jobs:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
       - name: Run end-to-end tests
         uses: mujo-code/puppeteer-headful@18.9.0
-        working-directory: ./e2e-tests
         env:
           CI: "true"
           SEED_PHRASE: ${{ secrets.E2E_TESTS_SEED_PHRASE }}
         with:
-          args: yarn start
+          args: cd ./e2e-test && yarn start
