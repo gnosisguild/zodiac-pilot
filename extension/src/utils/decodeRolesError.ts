@@ -1,3 +1,4 @@
+import { JsonRpcError } from '../types'
 import { Permissions__factory, Roles__factory } from '../types/typechain'
 
 const permissionsInterface = Permissions__factory.createInterface()
@@ -9,7 +10,8 @@ const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
 
 // Error messages from smart contract calls look like this: "Reverted <HEX_CODE>"
 // where <HEX_CODE> is either an ASCII string or an error sighash.
-export default function decodeError(message: string) {
+export default function decodeRolesError(error: JsonRpcError) {
+  const message = error.data.data || error.data.message || error.message
   const prefix = 'Reverted 0x'
   const revertData = message.startsWith(prefix)
     ? message.substring(prefix.length - 2)

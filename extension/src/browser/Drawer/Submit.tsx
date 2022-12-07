@@ -47,7 +47,7 @@ const Submit: React.FC = () => {
         <>
           <p>Submitting the transaction batch failed:</p>
           <br />
-          <code>{decodeRolesError(err.data.message || err.message)}</code>
+          <code>{decodeRolesError(err)}</code>
         </>,
         { className: toastClasses.toastError }
       )

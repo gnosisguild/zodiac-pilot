@@ -3,7 +3,7 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
-import { Connection, Eip1193Provider } from '../types'
+import { Connection, Eip1193Provider, JsonRpcError } from '../types'
 import { decodeRolesError } from '../utils'
 import { isSmartContractAddress, validateAddress } from '../utils'
 
@@ -32,13 +32,10 @@ const useConnectionDryRun = (connection: Connection) => {
           console.log('dry run success')
           setError(null)
         })
-        .catch((e) => {
+        .catch((e: JsonRpcError) => {
           // For the Roles mod, we actually expect the dry run to fail with TargetAddressNotAllowed()
           // In case we see any other error, we try to help the user identify the problem.
-
-          const message: string | undefined =
-            typeof e === 'string' ? e : e.data?.message
-          const reason = message && decodeRolesError(message)
+          const reason = decodeRolesError(e)
 
           if (reason === 'Module not authorized') {
             setError(

@@ -5,14 +5,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { RPC } from '../networks'
 import { waitForMultisigExecution } from '../safe'
+import { JsonRpcError } from '../types'
 
-class WalletConnectJsonRpcError extends Error {
-  data: { message: string; code: number }
-  constructor(code: number, message: string) {
+class WalletConnectJsonRpcError extends Error implements JsonRpcError {
+  data: { message: string; code: number; data: string }
+  constructor(code: number, message: string, data: string) {
     super('WalletConnect - RPC Error: Internal JSON-RPC error.')
     this.data = {
       code,
       message,
+      data,
     }
   }
 }
@@ -69,8 +71,12 @@ class WalletConnectEip1193Provider extends EventEmitter {
       try {
         return await this.wcProvider.request(request)
       } catch (err) {
-        const { message, code } = err as { code: number; message: string }
-        throw new WalletConnectJsonRpcError(code, message)
+        const { message, code, data } = err as {
+          code: number
+          message: string
+          data: string
+        }
+        throw new WalletConnectJsonRpcError(code, message, data)
       }
     }
 

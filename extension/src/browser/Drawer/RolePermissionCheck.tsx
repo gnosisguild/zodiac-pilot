@@ -32,7 +32,7 @@ const RolePermissionCheck: React.FC<{
         if (!canceled) setError(false)
       })
       .catch((e: JsonRpcError) => {
-        const decodedError = decodeRolesError(e.data.message || e.message)
+        const decodedError = decodeRolesError(e)
         if (!canceled) {
           setError(isPermissionsError(decodedError) ? decodedError : false)
         }
