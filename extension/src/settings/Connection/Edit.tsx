@@ -2,7 +2,8 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
 import { Box, Field, Flex } from '../../components'
-import { useSafeDelegates, useSafesWithOwner } from '../../providers/safe'
+import { useSafesWithOwner } from '../../safe'
+import { useSafeDelegates } from '../../safe'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 

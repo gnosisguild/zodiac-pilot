@@ -4,8 +4,7 @@ import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { RPC } from '../networks'
-
-import { waitForMultisigExecution } from './safe'
+import { waitForMultisigExecution } from '../safe'
 
 class WalletConnectJsonRpcError extends Error {
   data: { message: string; code: number }
