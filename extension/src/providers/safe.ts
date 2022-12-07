@@ -1,5 +1,5 @@
-import EthersAdapter from '@gnosis.pm/safe-ethers-lib'
-import SafeServiceClient from '@gnosis.pm/safe-service-client'
+import EthersAdapter from '@safe-global/safe-ethers-lib'
+import SafeServiceClient from '@safe-global/safe-service-client'
 import { ethers, providers } from 'ethers'
 import { useEffect, useState } from 'react'
 
@@ -37,7 +37,7 @@ export function waitForMultisigExecution(
 
   const ethAdapter = new EthersAdapter({
     ethers,
-    signer: web3Provider.getSigner(0),
+    signerOrProvider: web3Provider,
   })
 
   const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
@@ -110,7 +110,7 @@ export const useSafesWithOwner = (ownerAddress: string) => {
 
     const ethAdapter = new EthersAdapter({
       ethers,
-      signer: web3Provider.getSigner(0),
+      signerOrProvider: web3Provider,
     })
 
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
@@ -160,7 +160,7 @@ export const useSafeDelegates = (safeAddress: string) => {
 
     const ethAdapter = new EthersAdapter({
       ethers,
-      signer: web3Provider.getSigner(0),
+      signerOrProvider: web3Provider,
     })
 
     const safeService = new SafeServiceClient({ txServiceUrl, ethAdapter })
