@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Extension
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
         with:
           node-version: 16
           cache: "npm"
