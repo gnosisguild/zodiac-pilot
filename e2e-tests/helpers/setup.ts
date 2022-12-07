@@ -32,7 +32,7 @@ export default async function setup() {
 
   const metamaskPath = await metamaskDownloader(RECOMMENDED_METAMASK_VERSION)
   const browser = await puppeteer.launch({
-    headless: process.env.CI === 'true',
+    headless: false, // Dappeteer only works in headful mode
     args: [
       `--disable-extensions-except=${metamaskPath},${pilotExtensionPath}`,
       `--load-extension=${metamaskPath},${pilotExtensionPath}`,
