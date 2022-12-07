@@ -1,4 +1,4 @@
-name: CI
+name: End-to-end tests
 
 on: [push]
 
@@ -16,14 +16,18 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - run: yarn
         working-directory: ./extension
-      - name: Run static checks
-        run: yarn run check
-        working-directory: ./extension
       - name: Build extension
         run: yarn build
         working-directory: ./extension
       - run: yarn
         working-directory: ./e2e-tests
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
       - name: Run end-to-end tests
-        run: yarn start
+        uses: mujo-code/puppeteer-headful@18.9.0
         working-directory: ./e2e-tests
+        env:
+          CI: "true"
+          SEED_PHRASE: ${{ secrets.E2E_TESTS_SEED_PHRASE }}
+        with:
+          args: yarn start
