@@ -28,7 +28,7 @@ const setLocalStorage = async (values: Record<string, string>) => {
     r.respond({
       status: 200,
       contentType: 'text/plain',
-      body: '',
+      body: 'empty.',
     })
   })
   await page.goto('https://pilot.gnosisguild.org')
@@ -47,7 +47,7 @@ const removeLocalStorage = async (values: string[]) => {
     r.respond({
       status: 200,
       contentType: 'text/plain',
-      body: '',
+      body: 'empty.',
     })
   })
   await page.goto('https://pilot.gnosisguild.org')
