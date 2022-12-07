@@ -1,6 +1,6 @@
 import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
-import { Props } from 'react-select'
+import { Props as SelectProps } from 'react-select'
 
 import { Select } from '../../../components'
 import Blockie from '../../../components/Blockie'
@@ -14,38 +14,47 @@ export interface Option {
   label: string
 }
 
-const ModuleOptionLabel: React.FC<unknown> = (props) => {
-  const option = props as Option
-  if (!option.value) return <NoModuleOptionLabel />
-
-  const checksumAddress = getAddress(option.value)
-  return (
-    <div className={classes.modOption}>
-      <Box rounded>
-        <Blockie address={option.value} className={classes.modBlockie} />
-      </Box>
-      <div className={classes.modLabel}>
-        <p className={classes.type}>{option.label}</p>
-        <code className={classes.address}>{checksumAddress}</code>
-      </div>
-    </div>
-  )
-}
-
-const NoModuleOptionLabel = () => {
-  return (
-    <div className={classes.modOption}>
-      <div className={classes.modLabel}>
-        <p className={classes.type}>Direct execution</p>
-        <code className={classes.address}>
-          Transactions submitted directly to the Safe
-        </code>
-      </div>
-    </div>
-  )
+interface Props extends SelectProps {
+  avatarAddress: string
 }
 
 const ModSelect: React.FC<Props> = (props) => {
+  const ModuleOptionLabel: React.FC<unknown> = (props) => {
+    const option = props as Option
+    if (!option.value) return <NoModuleOptionLabel />
+
+    const checksumAddress = getAddress(option.value)
+    return (
+      <div className={classes.modOption}>
+        <Box rounded>
+          <Blockie address={option.value} className={classes.modBlockie} />
+        </Box>
+        <div className={classes.modLabel}>
+          <p className={classes.type}>{option.label}</p>
+          <code className={classes.address}>{checksumAddress}</code>
+        </div>
+      </div>
+    )
+  }
+
+  const NoModuleOptionLabel = () => {
+    return (
+      <div className={classes.modOption}>
+        <Box rounded>
+          <Blockie
+            address={props.avatarAddress}
+            className={classes.modBlockie}
+          />
+        </Box>
+        <div className={classes.modLabel}>
+          <p className={classes.type}>Direct execution</p>
+          <code className={classes.address}>
+            Transactions submitted directly to the Safe
+          </code>
+        </div>
+      </div>
+    )
+  }
   return (
     <Select
       {...props}
