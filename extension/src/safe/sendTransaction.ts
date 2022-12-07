@@ -25,12 +25,17 @@ export const sendTransaction = async (
     safeAddress: connection.avatarAddress,
   })
 
+  const nonce = await safeServiceClient.getNextNonce(
+    getAddress(connection.avatarAddress)
+  )
+
   const safeTransaction = await safeSdk.createTransaction({
     safeTransactionData: {
       to: getAddress(request.to || ZERO_ADDRESS),
       value: BigNumber.from(request.value || 0).toString(),
       data: request.data || '0x00',
       operation: ('operation' in request && request.operation) || 0,
+      nonce,
     },
   })
   const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
