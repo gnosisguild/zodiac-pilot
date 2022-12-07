@@ -24,12 +24,14 @@ const ConnectionBubble: React.FC = () => {
                 className={classes.blockie}
               />
             </Box>
-            <Box rounded className={classes.blockieBox}>
-              <Blockie
-                address={connection.moduleAddress}
-                className={classes.blockie}
-              />
-            </Box>
+            {connection.moduleAddress && (
+              <Box rounded className={classes.blockieBox}>
+                <Blockie
+                  address={connection.moduleAddress}
+                  className={classes.blockie}
+                />
+              </Box>
+            )}
             <Box rounded className={classes.blockieBox}>
               <Blockie
                 address={connection.avatarAddress}
