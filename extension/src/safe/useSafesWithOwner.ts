@@ -1,4 +1,3 @@
-import { providers } from 'ethers'
 import { useEffect, useState } from 'react'
 
 import { ChainId } from '../networks'
@@ -18,10 +17,7 @@ export const useSafesWithOwner = (ownerAddress: string) => {
   useEffect(() => {
     if (!connected || !chainId || !checksumOwnerAddress) return
 
-    const safeService = initSafeServiceClient(
-      new providers.Web3Provider(provider),
-      chainId as ChainId
-    )
+    const safeService = initSafeServiceClient(provider, chainId as ChainId)
 
     setLoading(true)
     let canceled = false

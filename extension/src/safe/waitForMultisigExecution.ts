@@ -1,5 +1,3 @@
-import { providers } from 'ethers'
-
 import { ChainId } from '../networks'
 import { Eip1193Provider } from '../types'
 
@@ -10,10 +8,7 @@ export function waitForMultisigExecution(
   chainId: number,
   safeTxHash: string
 ): Promise<string> {
-  const safeService = initSafeServiceClient(
-    new providers.Web3Provider(provider),
-    chainId as ChainId
-  )
+  const safeService = initSafeServiceClient(provider, chainId as ChainId)
 
   return new Promise((resolve, reject) => {
     function tryAgain() {

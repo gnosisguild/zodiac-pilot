@@ -1,3 +1,5 @@
+export { initSafeServiceClient } from './initSafeServiceClient'
+export { sendTransaction } from './sendTransaction'
 export { useSafesWithOwner } from './useSafesWithOwner'
 export { useSafeDelegates } from './useSafeDelegates'
 export { waitForMultisigExecution } from './waitForMultisigExecution'

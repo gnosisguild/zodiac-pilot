@@ -4,7 +4,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
-import { AvatarInterface } from '../settings/Connection/useZodiacModules'
+import { initSafeServiceClient, sendTransaction } from '../safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
@@ -15,18 +15,7 @@ export function wrapRequest(
   connection: Connection
 ): TransactionData {
   if (!connection.moduleAddress) {
-    // no wrapping, but direct execution from avatar
-    return {
-      from: connection.pilotAddress,
-      to: connection.avatarAddress,
-      data: AvatarInterface.encodeFunctionData('execTransactionFromModule', [
-        request.to || '',
-        request.value || 0,
-        request.data || '0x00',
-        ('operation' in request && request.operation) || 0,
-      ]),
-      value: '0x0',
-    }
+    throw new Error('No wrapping should be applied for direct execution')
   }
 
   let data: string
@@ -104,8 +93,20 @@ class WrappingProvider extends EventEmitter {
       case 'eth_estimateGas': {
         const [request, ...rest] = params
 
-        const wrappedReq = wrapRequest(request, this.connection)
+        if (!this.connection.moduleAddress) {
+          // use safeTxGas estimation for direct execution
+          const safeServiceClient = initSafeServiceClient(
+            this.provider,
+            this.connection.chainId
+          )
+          const result = await safeServiceClient.estimateSafeTransaction(
+            this.connection.avatarAddress,
+            request
+          )
+          return result.safeTxGas
+        }
 
+        const wrappedReq = wrapRequest(request, this.connection)
         try {
           const result = await this.provider.request({
             method,
@@ -128,8 +129,15 @@ class WrappingProvider extends EventEmitter {
       }
 
       case 'eth_sendTransaction': {
+        const [request] = params
+
+        if (!this.connection.moduleAddress) {
+          // direct execution via Safe Transaction Service
+          return await sendTransaction(this.provider, this.connection, request)
+        }
+
         const wrappedReq = wrapRequest(
-          params[0] as TransactionData,
+          request as TransactionData,
           this.connection
         )
 

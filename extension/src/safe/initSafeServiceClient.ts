@@ -3,6 +3,7 @@ import SafeServiceClient from '@safe-global/safe-service-client'
 import ethers, { providers } from 'ethers'
 
 import { ChainId } from '../networks'
+import { Eip1193Provider } from '../types'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
@@ -20,9 +21,11 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
 }
 
 export const initSafeServiceClient = (
-  provider: providers.Provider,
+  provider: Eip1193Provider,
   chainId: ChainId
 ) => {
+  const web3Provider = new providers.Web3Provider(provider)
+
   const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
   if (!txServiceUrl) {
     throw new Error(`service not available for chain #${chainId}`)
@@ -30,7 +33,7 @@ export const initSafeServiceClient = (
 
   const ethAdapter = new EthersAdapter({
     ethers,
-    signerOrProvider: provider,
+    signerOrProvider: web3Provider.getSigner(),
   })
 
   return new SafeServiceClient({ txServiceUrl, ethAdapter })
