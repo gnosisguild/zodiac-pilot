@@ -1,9 +1,9 @@
 import { getAddress } from 'ethers/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { components, InputProps } from 'react-select'
 import CreatableSelect from 'react-select/creatable'
 
-import { Box, Button } from '../../../components'
+import { Box } from '../../../components'
 import Blockie from '../../../components/Blockie'
 import { selectStyles } from '../../../components/Select'
 import { validateAddress } from '../../../utils'
@@ -60,24 +60,27 @@ const AvatarInput: React.FC<Props> = ({
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 
-  const Input = (props: InputProps<Option>) => {
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
-      setPendingValue(sanitized)
-      if (validateAddress(sanitized)) {
-        onChange(sanitized.toLowerCase())
+  const Input: React.FC<InputProps<Option | ''>> = useCallback(
+    (props) => {
+      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
+        setPendingValue(sanitized)
+        if (validateAddress(sanitized)) {
+          onChange(sanitized.toLowerCase())
+        }
       }
-    }
-    console.log(props)
+      console.log(props)
 
-    return (
-      <components.Input
-        {...props}
-        onChange={handleInputChange}
-        value={checksumAvatarAddress ? '' : pendingValue}
-      />
-    )
-  }
+      return (
+        <components.Input
+          {...props}
+          onChange={handleInputChange}
+          value={checksumAvatarAddress ? '' : pendingValue}
+        />
+      )
+    },
+    [checksumAvatarAddress, onChange, pendingValue]
+  )
 
   return (
     <>
@@ -96,10 +99,11 @@ const AvatarInput: React.FC<Props> = ({
           options={availableSafes.map((address) => {
             return { value: address, label: address }
           })}
-          onChange={(opt) => {
-            const option = opt as Option
+          onChange={(option) => {
             if (option) {
-              const sanitized = option.value.trim().replace(/^[a-z]{3}:/g, '')
+              const sanitized = (option as Option).value
+                .trim()
+                .replace(/^[a-z]{3}:/g, '')
               if (validateAddress(sanitized)) {
                 onChange(sanitized.toLowerCase())
               }
@@ -107,10 +111,10 @@ const AvatarInput: React.FC<Props> = ({
               onChange('')
             }
           }}
-          isValidNewOption={() => {
-            return false
+          isValidNewOption={(option) => {
+            return !!validateAddress(option)
           }}
-          components={{ Input }}
+          // components={{ Input }}
         />
       ) : (
         <input
