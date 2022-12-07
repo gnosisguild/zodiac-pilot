@@ -66,10 +66,13 @@ const AvatarInput: React.FC<Props> = ({
         const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
         setPendingValue(sanitized)
         if (validateAddress(sanitized)) {
+          props.selectOption({
+            value: sanitized.toLowerCase(),
+            label: sanitized.toLowerCase(),
+          })
           onChange(sanitized.toLowerCase())
         }
       }
-      console.log(props)
 
       return (
         <components.Input
@@ -86,6 +89,7 @@ const AvatarInput: React.FC<Props> = ({
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
         <CreatableSelect
+          blurInputOnSelect={true}
           isClearable
           formatOptionLabel={SafeOptionLabel}
           placeholder="Paste in Safe address or select from owned Safes"
@@ -112,9 +116,10 @@ const AvatarInput: React.FC<Props> = ({
             }
           }}
           isValidNewOption={(option) => {
+            return false
             return !!validateAddress(option)
           }}
-          // components={{ Input }}
+          components={{ Input }}
         />
       ) : (
         <input

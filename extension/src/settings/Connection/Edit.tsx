@@ -111,7 +111,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               }
             />
           </Field>
-          <Field label="Pilot Method" disabled={modules.length === 0}>
+          <Field label="Zodiac Mod" disabled={modules.length === 0}>
             <ModSelect
               options={[
                 ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),

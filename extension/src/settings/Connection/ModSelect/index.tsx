@@ -47,7 +47,7 @@ const ModSelect: React.FC<Props> = (props) => {
           />
         </Box>
         <div className={classes.modLabel}>
-          <p className={classes.type}>Direct execution</p>
+          <p className={classes.type}>No Mod — Direct execution</p>
           <code className={classes.address}>
             Transactions submitted directly to the Safe
           </code>
