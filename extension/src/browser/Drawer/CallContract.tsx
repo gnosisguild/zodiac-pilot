@@ -23,7 +23,7 @@ const CallContract: React.FC<Props> = ({ value }) => {
     onChange: () => {
       /*nothing here*/
     },
-    network: chainId ? (chainId.toString() as NetworkId) : '1',
+    network: chainId.toString() as NetworkId,
     blockExplorerApiKey: process.env.ETHERSCAN_API_KEY,
   })
 

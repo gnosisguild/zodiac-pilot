@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
-import { ChainId } from '../networks'
+import { ChainId, EXPLORER_API_KEY } from '../networks'
 import {
   ForkProvider,
   useTenderlyProvider,
@@ -96,7 +96,8 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
                 chainId as ChainId,
                 address,
                 data,
-                new Web3Provider(provider)
+                new Web3Provider(provider),
+                EXPLORER_API_KEY[chainId as ChainId] || undefined
               ),
             txId
           )

@@ -28,6 +28,7 @@ export interface JsonRpcError extends Error {
     code: number
     message?: string
     data?: string
+    originalError?: JsonRpcError['data']
   }
 }
 

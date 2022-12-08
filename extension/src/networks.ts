@@ -47,7 +47,9 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   80001: 'https://api-testnet.polygonscan.com/api',
 }
 
-const { ETHERSCAN_API_KEY = '' } = process.env
+// attention: this relies on esbuild define, so destructing won't work here
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ''
+
 export const EXPLORER_API_KEY: Record<ChainId, string> = {
   1: ETHERSCAN_API_KEY,
   4: ETHERSCAN_API_KEY,
