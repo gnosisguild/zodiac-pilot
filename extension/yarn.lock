@@ -6641,10 +6641,10 @@ react-modal@^3.15.1:
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
 
-react-multisend@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-multisend/-/react-multisend-1.1.0.tgz#ac452ab832248ca2efafa1d9c67a4557bbdf743b"
-  integrity sha512-sNoAXOUv6Tu7GvcigpbeN7fWSUQ4nKOs3vqhlgr9vV/11iXKxLFoJmyf9UWrTTeVDg97LTTx5DaZUWyhy/So3Q==
+react-multisend@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-multisend/-/react-multisend-1.2.0.tgz#cdb44e8998ec177d226876ae1803ad8bc737a642"
+  integrity sha512-jkE2LBDQldwbDYVmVg5+Y9JM8b7zkNHXmvTpSsEPUzElBdumtcSIMwhhK2MxGsLOjo/6Ha3F3PRhm5n28hDkNA==
   dependencies:
     "@ethersproject/abi" "^5.0.0"
     "@ethersproject/abstract-provider" "^5.5.1"

@@ -68,7 +68,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.3.1",
     "react-modal": "^3.15.1",
-    "react-multisend": "^1.1.0",
+    "react-multisend": "^1.2.0",
     "react-select": "^5.2.1",
     "react-toastify": "^9.0.8",
     "rimraf": "^3.0.2",
