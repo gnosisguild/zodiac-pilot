@@ -1,4 +1,4 @@
-import { account } from './account'
+import { disconnect } from './metamask'
 
 export const launchFresh = async () => {
   await removeLocalStorage(['connections', 'selectedConnection'])
@@ -52,7 +52,7 @@ const removeLocalStorage = async (values: string[]) => {
   })
   await page.goto('https://pilot.gnosisguild.org')
   await page.evaluate((values) => {
-    for (let value in values) {
+    for (let value of values) {
       localStorage.removeItem(value)
     }
   }, values)

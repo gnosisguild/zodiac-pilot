@@ -50,6 +50,7 @@ describe('initial launch', () => {
 
     // we will see the MetaMask popup now, need to approve adding the network and then again switching to it
     await wallet.confirm('Allow this site to add a network?', 'Approve')
+    await page.bringToFront() // important to let Pilot trigger the network switch
     await wallet.confirm(
       'Allow this site to switch the network?',
       'Switch network'
@@ -74,15 +75,3 @@ describe('initial launch', () => {
     await page.close()
   })
 })
-
-const getActivePage = async () => {
-  const pages = await browser.pages()
-  for (let i = 0; i < pages.length; i++) {
-    const isHidden = await pages[i].evaluate(() => document.hidden)
-    if (!isHidden) {
-      return pages[i]
-    }
-  }
-
-  throw new Error('No active page found')
-}

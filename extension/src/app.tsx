@@ -45,7 +45,7 @@ const Routes: React.FC = () => {
     if (waitForWallet) {
       timeout = window.setTimeout(() => {
         pushSettingsRoute()
-      }, 100)
+      }, 200)
     }
     return () => {
       window.clearTimeout(timeout)

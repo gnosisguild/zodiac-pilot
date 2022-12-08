@@ -36,8 +36,9 @@ export const ProvideConnections: React.FC<{ children: ReactNode }> = ({
     DEFAULT_VALUE,
     'connections'
   )
+  console.log({ storedConnections })
   const connections = migrateConnections(storedConnections)
-
+  console.log({ connections })
   const [selectedConnectionId, setSelectedConnectionId] =
     useStickyState<string>(connections[0].id, 'selectedConnection')
 
