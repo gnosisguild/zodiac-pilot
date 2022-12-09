@@ -48,6 +48,7 @@ describe('initial launch', () => {
 
     // click the connection item to establish the connection
     await $item.click()
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // we will see the MetaMask popup now, need to approve adding the network and then again switching to it
     await wallet.confirm('Allow this site to add a network?', 'Approve')
