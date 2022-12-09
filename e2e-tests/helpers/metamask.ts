@@ -10,7 +10,7 @@ export const confirm = async (
   const $doc = await getDocument(metamask.page)
 
   if (prompt) {
-    await queries.findByText($doc, prompt)
+    await queries.findByText($doc, prompt, undefined, { timeout: 2000 })
   }
 
   const $$primaryButtons = await $doc.$$('button.btn-primary')
