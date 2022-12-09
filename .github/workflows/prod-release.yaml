@@ -13,9 +13,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: "npm"
-          cache-dependency-path: "extension/yarn.lock"
-      - run: npm install -g yarn
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
+
       - name: Install deps and build
         working-directory: ./extension
         run: |

@@ -10,16 +10,14 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: actions/cache@v3
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - run: yarn
-        working-directory: ./extension
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
       - name: Build extension
-        run: yarn build
         working-directory: ./extension
-      - run: yarn
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+      - run: yarn install --frozen-lockfile
         working-directory: ./e2e-tests
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"

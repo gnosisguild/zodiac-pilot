@@ -14,12 +14,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm install -g yarn
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
       - run: yarn install --frozen-lockfile
         working-directory: ./landing-page
       - run: yarn build
         working-directory: ./landing-page
-
       - name: Deploy to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
