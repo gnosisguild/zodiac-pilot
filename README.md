@@ -70,12 +70,11 @@ For retrieving the new iframe location, we then post a message to the injected s
 When the simulator iframe opens any page, we inject the build/inject.js script as a node into the DOM of the Dapp.
 
 The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
-The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are handled with on of our providers.
-We currently offer two kinds of providers, the `WrappingProvider` for synchronously dispatching the transaction as a meta transaction of a Zodiac module function call, and `ForkProvider` for simulating the transaction in a local fork of the connected network and recording it for later batch transmission.
+The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are recorded and executed in a fork of the connected network.
 
 ### Simulating transaction in a fork
 
-When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Avatar account.
+When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Safe.
 That way the app can continue communicating with the fork network, so that a whole session of multiple transactions can be recorded before anything is signed and submitted to the real chain.
 
 There are two options available for simulating transactions in a fork, [Tenderly](https://tenderly.co) and a [Ganache](https://trufflesuite.com/ganache/) EVM running locally in the browser.
@@ -95,13 +94,12 @@ TODO: The following is still true, but we should adjust the implementation now t
 > Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
 > At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
 
-### Wrapping of transactions
+### Submitting transactions
 
 A batch of recorded transaction can finally be submitted as a multi-send transaction.
-Zodiac Pilot is currently geared to submitting transactions via a [Roles mod](https://github.com/gnosis/zodiac-modifier-roles), which means that the multi-send call needs to wrapped in a Roles mod's `execTransactionWithRole` call.
-This is implemented in the [WrappingProvider](src/providers/WrappingProvider.ts).
-
-In the future, we plan to make Zodiac Pilot more generally useful, meaning that users will be able to customize the exact way of transaction wrapping.
+Zodiac Pilot can be configured to submit transactions directly to the Safe if the Pilot account is an owner of delegate, or to route the transaction through Zodiac mods.
+This is implemented in [WrappingProvider](src/providers/WrappingProvider.ts).
+It currently supports the [Roles](https://github.com/gnosis/zodiac-modifier-roles) and [Delay](https://github.com/gnosis/zodiac-modifier-delay) mods.
 
 ### Overview of providers
 
