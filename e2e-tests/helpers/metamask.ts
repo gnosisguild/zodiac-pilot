@@ -24,6 +24,15 @@ export const confirm = async (
   await $lastPrimaryButton.click()
 }
 
+export const cancel = async () => {
+  await metamask.page.bringToFront()
+  await metamask.page.reload()
+  const $doc = await getDocument(metamask.page)
+
+  const $cancelButton = await queries.findByText($doc, 'Cancel')
+  $cancelButton.click()
+}
+
 export const switchToGnosisChain = async () => {
   await navigateTo('settings/networks')
 

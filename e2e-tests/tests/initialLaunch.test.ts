@@ -23,6 +23,7 @@ describe('initial launch', () => {
     await queries.findByText($doc, 'Gnosis DAO on GC')
 
     await page.close()
+    await wallet.cancel() // cancel the pending connection request
   })
 
   it('should ask the user to connect MetaMask and add a new network to MetaMask if necessary', async () => {
