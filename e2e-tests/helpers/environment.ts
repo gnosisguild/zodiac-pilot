@@ -45,6 +45,10 @@ class DappeteerEnvironment extends NodeEnvironment {
         await screenshot(page, state.currentlyRunningTest.name)
         await page.close()
       }
+      await screenshot(
+        this.global.metamask.page,
+        `${state.currentlyRunningTest.name}-metamask`
+      )
     }
   }
 

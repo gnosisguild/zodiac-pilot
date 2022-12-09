@@ -28,3 +28,10 @@ jobs:
           SEED_PHRASE: ${{ secrets.E2E_TESTS_SEED_PHRASE }}
         with:
           args: yarn --cwd ./e2e-tests start
+      - name: Upload failing test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: failing-test-screenshots
+          path: e2e-tests/output/screenshots
+          retention-days: 7
