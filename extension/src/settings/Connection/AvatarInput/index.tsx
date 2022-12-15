@@ -1,6 +1,5 @@
 import { getAddress } from 'ethers/lib/utils'
-import React, { useCallback, useEffect, useState } from 'react'
-import { components, InputProps } from 'react-select'
+import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 
 import { Box } from '../../../components'
