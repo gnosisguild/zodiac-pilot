@@ -36,8 +36,8 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
     connection
 
-  const { safes } = useSafesWithOwner(pilotAddress)
-  const { delegates } = useSafeDelegates(avatarAddress)
+  const { safes } = useSafesWithOwner(pilotAddress, id)
+  const { delegates } = useSafeDelegates(avatarAddress, id)
 
   // TODO modules is a nested list, but we currently only render the top-level items
   const {

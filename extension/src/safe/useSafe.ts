@@ -1,3 +1,4 @@
+import { SafeInfoResponse } from '@safe-global/safe-service-client'
 import { useEffect, useState } from 'react'
 
 import { ChainId } from '../networks'
@@ -6,19 +7,16 @@ import { validateAddress } from '../utils'
 
 import { initSafeServiceClient } from './initSafeServiceClient'
 
-export const useSafeDelegates = (
-  safeAddress: string,
-  connectionId?: string
-) => {
+export const useSafe = (address: string, connectionId?: string) => {
   const { provider, connected, chainId } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
-  const [delegates, setDelegates] = useState<string[]>([])
+  const [safe, setSafe] = useState<SafeInfoResponse | null>(null)
 
-  const checksumSafeAddress = validateAddress(safeAddress)
+  const checksumAddress = validateAddress(address)
 
   useEffect(() => {
-    if (!connected || !chainId || !checksumSafeAddress) return
+    if (!connected || !chainId || !checksumAddress) return
 
     const safeService = initSafeServiceClient(provider, chainId as ChainId)
 
@@ -26,14 +24,14 @@ export const useSafeDelegates = (
     let canceled = false
 
     safeService
-      .getSafeDelegates(checksumSafeAddress)
+      .getSafeInfo(checksumAddress)
       .then((res) => {
         if (!canceled) {
-          setDelegates(res.results.map((delegate) => delegate.delegate))
+          setSafe(res)
         }
       })
       .catch((e) => {
-        console.error(`Error fetching delegates for ${checksumSafeAddress}`, e)
+        console.error(`Error fetching info for safe ${checksumAddress}`, e)
       })
       .finally(() => {
         setLoading(false)
@@ -41,10 +39,10 @@ export const useSafeDelegates = (
 
     return () => {
       setLoading(false)
-      setDelegates([])
+      setSafe(null)
       canceled = true
     }
-  }, [provider, checksumSafeAddress, connected, chainId])
+  }, [provider, checksumAddress, connected, chainId])
 
-  return { loading, delegates }
+  return { loading, safe }
 }

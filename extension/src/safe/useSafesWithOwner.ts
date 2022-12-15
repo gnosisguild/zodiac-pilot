@@ -6,8 +6,11 @@ import { validateAddress } from '../utils'
 
 import { initSafeServiceClient } from './initSafeServiceClient'
 
-export const useSafesWithOwner = (ownerAddress: string) => {
-  const { provider, connected, chainId } = useConnection()
+export const useSafesWithOwner = (
+  ownerAddress: string,
+  connectionId?: string
+) => {
+  const { provider, connected, chainId } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])
