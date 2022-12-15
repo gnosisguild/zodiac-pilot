@@ -60,31 +60,6 @@ const AvatarInput: React.FC<Props> = ({
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 
-  const Input: React.FC<InputProps<Option | ''>> = useCallback(
-    (props) => {
-      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
-        setPendingValue(sanitized)
-        if (validateAddress(sanitized)) {
-          props.selectOption({
-            value: sanitized.toLowerCase(),
-            label: sanitized.toLowerCase(),
-          })
-          onChange(sanitized.toLowerCase())
-        }
-      }
-
-      return (
-        <components.Input
-          {...props}
-          onChange={handleInputChange}
-          value={checksumAvatarAddress ? '' : pendingValue}
-        />
-      )
-    },
-    [checksumAvatarAddress, onChange, pendingValue]
-  )
-
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
@@ -116,10 +91,8 @@ const AvatarInput: React.FC<Props> = ({
             }
           }}
           isValidNewOption={(option) => {
-            return false
             return !!validateAddress(option)
           }}
-          components={{ Input }}
         />
       ) : (
         <input
