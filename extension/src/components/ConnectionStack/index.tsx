@@ -22,7 +22,6 @@ const ConnectionStack: React.FC<Props> = ({
   addressBoxClass,
 }) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
-  const redundant = avatarAddress === moduleAddress
 
   return (
     <div
@@ -44,7 +43,7 @@ const ConnectionStack: React.FC<Props> = ({
         )}
       </Box>
 
-      {!redundant && (
+      {moduleAddress && (
         <Box
           roundedRight
           double
@@ -52,11 +51,9 @@ const ConnectionStack: React.FC<Props> = ({
           className={cn([classes.address, addressBoxClass])}
         >
           <Address address={moduleAddress} />
-          {moduleAddress && (
-            <div className={cn(classes.helper, helperClass)}>
-              <p>{MODULE_NAMES[moduleType] || 'Zodiac'} Mod</p>
-            </div>
-          )}
+          <div className={cn(classes.helper, helperClass)}>
+            <p>{(moduleType && MODULE_NAMES[moduleType]) || 'Zodiac'} Mod</p>
+          </div>
         </Box>
       )}
       <Box
@@ -68,7 +65,7 @@ const ConnectionStack: React.FC<Props> = ({
         <Address address={avatarAddress} />
         {avatarAddress && (
           <div className={cn(classes.helper, helperClass)}>
-            <p>Impersonated Safe</p>
+            <p>Piloted Safe</p>
           </div>
         )}
       </Box>

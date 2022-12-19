@@ -14,7 +14,7 @@ export type Connection = {
   pilotAddress: string
   chainId: ChainId
   providerType: ProviderType
-  moduleType: SupportedModuleType
+  moduleType?: SupportedModuleType
   roleId?: string
 }
 
@@ -27,6 +27,8 @@ export interface JsonRpcError extends Error {
   data: {
     code: number
     message?: string
+    data?: string
+    originalError?: JsonRpcError['data']
   }
 }
 

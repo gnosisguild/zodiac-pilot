@@ -3,13 +3,10 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
-import { Connection, Eip1193Provider } from '../types'
+import { Connection, Eip1193Provider, JsonRpcError } from '../types'
 import { decodeRolesError } from '../utils'
+import { isSmartContractAddress, validateAddress } from '../utils'
 
-import {
-  isSmartContractAddress,
-  isValidAddress,
-} from './Connection/addressValidation'
 import { useConnection } from './connectionHooks'
 
 const useConnectionDryRun = (connection: Connection) => {
@@ -35,13 +32,10 @@ const useConnectionDryRun = (connection: Connection) => {
           console.log('dry run success')
           setError(null)
         })
-        .catch((e) => {
+        .catch((e: JsonRpcError) => {
           // For the Roles mod, we actually expect the dry run to fail with TargetAddressNotAllowed()
           // In case we see any other error, we try to help the user identify the problem.
-
-          const message: string | undefined =
-            typeof e === 'string' ? e : e.data?.message
-          const reason = message && decodeRolesError(message)
+          const reason = decodeRolesError(e)
 
           if (reason === 'Module not authorized') {
             setError(
@@ -82,13 +76,13 @@ const useConnectionDryRun = (connection: Connection) => {
 }
 
 async function dryRun(provider: Eip1193Provider, connection: Connection) {
-  if (!isValidAddress(connection.pilotAddress)) {
+  if (!validateAddress(connection.pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }
-  if (!isValidAddress(connection.moduleAddress)) {
+  if (!validateAddress(connection.moduleAddress)) {
     return Promise.reject('Module Address: Invalid address')
   }
-  if (!isValidAddress(connection.avatarAddress)) {
+  if (!validateAddress(connection.avatarAddress)) {
     return Promise.reject('DAO Safe: Invalid address')
   }
 

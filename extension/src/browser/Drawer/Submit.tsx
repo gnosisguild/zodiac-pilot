@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
+import { ChainId, EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
 import { waitForMultisigExecution } from '../../providers'
 import { useConnection } from '../../settings'
 import { JsonRpcError, ProviderType } from '../../types'
@@ -19,7 +19,13 @@ import classes from './style.module.css'
 const Submit: React.FC = () => {
   const {
     provider,
-    connection: { chainId, pilotAddress, providerType },
+    connection: {
+      chainId,
+      avatarAddress,
+      pilotAddress,
+      moduleAddress,
+      providerType,
+    },
   } = useConnection()
   const dispatch = useDispatch()
 
@@ -34,13 +40,14 @@ const Submit: React.FC = () => {
     try {
       batchTransactionHash = await submitTransactions()
     } catch (e) {
+      console.warn(e)
       setSignaturePending(false)
       const err = e as JsonRpcError
       toast.error(
         <>
           <p>Submitting the transaction batch failed:</p>
           <br />
-          <code>{decodeRolesError(err.data.message || err.message)}</code>
+          <code>{decodeRolesError(err)}</code>
         </>,
         { className: toastClasses.toastError }
       )
@@ -93,45 +100,95 @@ const Submit: React.FC = () => {
       >
         Submit
       </Button>
-      {signaturePending && (
-        <Modal
+      {signaturePending && moduleAddress && (
+        <AwaitingSignatureModal
           isOpen={signaturePending}
-          style={modalStyle}
-          contentLabel="Sign the batch transaction"
-        >
-          <IconButton
-            className={classes.modalClose}
-            title="Cancel"
-            onClick={() => {
-              setSignaturePending(false)
-            }}
-          >
-            <RiCloseLine />
-          </IconButton>
-          <p>Awaiting your signature ...</p>
-          {providerType === ProviderType.WalletConnect && (
-            <>
-              <br />
-              <p>
-                <a
-                  className={classes.safeAppLink}
-                  href={`https://gnosis-safe.io/app/${NETWORK_PREFIX[chainId]}:${pilotAddress}/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <RiExternalLinkLine />
-                  WalletConnect Safe app
-                </a>
-              </p>
-            </>
-          )}
-        </Modal>
+          onClose={() => setSignaturePending(false)}
+          usesWalletConnectApp={providerType === ProviderType.WalletConnect}
+          chainId={chainId}
+          pilotAddress={pilotAddress}
+        />
+      )}
+
+      {signaturePending && !moduleAddress && (
+        <AwaitingMultisigExecutionModal
+          isOpen={signaturePending}
+          onClose={() => setSignaturePending(false)}
+          chainId={chainId}
+          avatarAddress={avatarAddress}
+        />
       )}
     </>
   )
 }
 
 export default Submit
+
+const AwaitingSignatureModal: React.FC<{
+  isOpen: boolean
+  onClose(): void
+  usesWalletConnectApp: boolean
+  chainId: ChainId
+  pilotAddress: string
+}> = ({ isOpen, onClose, usesWalletConnectApp, chainId, pilotAddress }) => (
+  <Modal
+    isOpen={isOpen}
+    style={modalStyle}
+    contentLabel="Sign the batch transaction"
+  >
+    <IconButton className={classes.modalClose} title="Cancel" onClick={onClose}>
+      <RiCloseLine />
+    </IconButton>
+    <p>Awaiting your signature ...</p>
+    {usesWalletConnectApp && (
+      <>
+        <br />
+        <p>
+          <a
+            className={classes.safeAppLink}
+            href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${pilotAddress}/apps?appUrl=https://apps.gnosis-safe.io/wallet-connect`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <RiExternalLinkLine />
+            WalletConnect Safe app
+          </a>
+        </p>
+      </>
+    )}
+  </Modal>
+)
+
+const AwaitingMultisigExecutionModal: React.FC<{
+  isOpen: boolean
+  onClose(): void
+  chainId: ChainId
+  avatarAddress: string
+}> = ({ isOpen, onClose, chainId, avatarAddress }) => (
+  <Modal
+    isOpen={isOpen}
+    style={modalStyle}
+    contentLabel="Sign the batch transaction"
+  >
+    <IconButton className={classes.modalClose} title="Cancel" onClick={onClose}>
+      <RiCloseLine />
+    </IconButton>
+    <p>Awaiting execution of Safe transaction ...</p>
+
+    <br />
+    <p>
+      <a
+        className={classes.safeAppLink}
+        href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${avatarAddress}/transactions/queue`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <RiExternalLinkLine />
+        Collect signatures and trigger execution
+      </a>
+    </p>
+  </Modal>
+)
 
 Modal.setAppElement('#root')
 

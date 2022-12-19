@@ -50,7 +50,7 @@ const abiForAddress = async (
   blockExplorerApiKey = ''
 ): Promise<string> => {
   const abiLoader = new loaders.MultiABILoader([
-    new loaders.SourcifyABILoader(),
+    // new loaders.SourcifyABILoader(), // doesn't work in the current version (v0.2.1)
     new loaders.EtherscanABILoader({
       apiKey: blockExplorerApiKey,
       baseURL: EXPLORER_API_URL[network],

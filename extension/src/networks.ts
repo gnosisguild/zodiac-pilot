@@ -47,7 +47,9 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   80001: 'https://api-testnet.polygonscan.com/api',
 }
 
-const { ETHERSCAN_API_KEY = '' } = process.env
+// attention: this relies on esbuild define, so destructing won't work here
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ''
+
 export const EXPLORER_API_KEY: Record<ChainId, string> = {
   1: ETHERSCAN_API_KEY,
   4: ETHERSCAN_API_KEY,
@@ -91,4 +93,19 @@ export const NETWORK_CURRENCY: Record<ChainId, string> = {
   42220: 'CELO',
   73799: 'VT',
   80001: 'MATIC',
+}
+
+export const NETWORK_NAME: Record<ChainId, string> = {
+  1: 'Ethereum',
+  4: 'Rinkeby',
+  5: 'Görli',
+  56: 'Binance Smart Chain',
+  10: 'Optimism',
+  100: 'Gnosis Chain',
+  137: 'Polygon',
+  246: 'Energy Web',
+  42161: 'Arbitrum One',
+  42220: 'Celo',
+  73799: 'Volta Testnet',
+  80001: 'Polygon Testnet',
 }

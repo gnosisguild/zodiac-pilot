@@ -177,7 +177,11 @@ export const Transaction: React.FC<Props> = ({
               justifyContent="space-between"
               className={classes.transactionSubtitle}
             >
-              <ContractAddress address={input.to} explorerLink />
+              <ContractAddress
+                address={input.to}
+                explorerLink
+                className={classes.contractName}
+              />
               <EtherValue input={input} />
             </Flex>
           </Box>
@@ -199,6 +203,9 @@ export const TransactionBadge: React.FC<Props> = ({
   input,
   scrollIntoView,
 }) => {
+  const { connection } = useConnection()
+  const showRoles = connection.moduleType === KnownContracts.ROLES
+
   const elementRef = useScrollIntoView(scrollIntoView)
 
   return (
@@ -214,7 +221,7 @@ export const TransactionBadge: React.FC<Props> = ({
         <SimulatedExecutionCheck transactionHash={transactionHash} mini />
       )}
 
-      <RolePermissionCheck transaction={input} mini />
+      {showRoles && <RolePermissionCheck transaction={input} mini />}
     </Box>
   )
 }

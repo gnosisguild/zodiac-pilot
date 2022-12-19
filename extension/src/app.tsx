@@ -12,29 +12,45 @@ import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
 import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, { ProvideConnections } from './settings'
-import { useConnection } from './settings'
+import Settings, { ProvideConnections, useConnection } from './settings'
+import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
   const settingsRouteMatch = useMatchSettingsRoute()
-  const { connection, connected } = useConnection()
   const pushSettingsRoute = usePushSettingsRoute()
+  const { connection, connected } = useConnection()
 
+  const isSettingsRoute = !!settingsRouteMatch
   const settingsRequired =
-    !connection ||
-    !connection.avatarAddress ||
-    !connection.moduleAddress ||
-    !connected
+    !validateAddress(connection.avatarAddress) ||
+    !validateAddress(connection.pilotAddress)
+
+  const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
 
   // redirect to settings page if more settings are required
   useEffect(() => {
-    if (!settingsRouteMatch && settingsRequired) {
+    if (!isSettingsRoute && settingsRequired) {
       pushSettingsRoute()
     }
-  }, [pushSettingsRoute, settingsRouteMatch, settingsRequired])
-  if (!settingsRouteMatch && settingsRequired) return null
+  }, [isSettingsRoute, pushSettingsRoute, settingsRequired])
 
-  if (settingsRouteMatch) {
+  // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
+  useEffect(() => {
+    let timeout: number
+    if (waitForWallet) {
+      timeout = window.setTimeout(() => {
+        pushSettingsRoute()
+      }, 100)
+    }
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [waitForWallet, connected, pushSettingsRoute])
+
+  if (!isSettingsRoute && settingsRequired) return null
+  if (!isSettingsRoute && waitForWallet) return null
+
+  if (isSettingsRoute) {
     return (
       <Settings
         url={settingsRouteMatch.url}

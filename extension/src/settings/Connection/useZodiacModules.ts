@@ -11,9 +11,8 @@ import detectProxyTarget from 'ethers-proxies'
 import { FormatTypes, Interface } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
+import { validateAddress } from '../../utils'
 import { useConnection } from '../connectionHooks'
-
-import { isValidAddress } from './addressValidation'
 
 const SUPPORTED_MODULES = [KnownContracts.DELAY, KnownContracts.ROLES]
 export type SupportedModuleType = KnownContracts.DELAY | KnownContracts.ROLES
@@ -48,7 +47,7 @@ export const useZodiacModules = (
       .finally(() => setLoading(false))
   }, [provider, safeAddress, connected, chainId])
 
-  if (!isValidAddress(safeAddress) || error) {
+  if (!validateAddress(safeAddress) || error) {
     return { isValidSafe: false, loading, modules: [] }
   }
 
@@ -61,7 +60,11 @@ async function fetchModules(
 ): Promise<Module[]> {
   const mastercopyAddresses =
     ContractAddresses[provider.network.chainId as SupportedNetworks] || {}
-  const contract = new Contract(safeOrModifierAddress, IAvatarAbi, provider)
+  const contract = new Contract(
+    safeOrModifierAddress,
+    AvatarInterface,
+    provider
+  )
 
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
@@ -114,8 +117,8 @@ async function fetchModules(
       }
 
       return {
-        moduleAddress,
-        mastercopyAddress,
+        moduleAddress: moduleAddress.toLowerCase(),
+        mastercopyAddress: mastercopyAddress?.toLowerCase(),
         type,
         modules,
       }
@@ -135,7 +138,8 @@ const functionSelectors = (abi: string[]) => {
 
 const MODIFIERS = [KnownContracts.ROLES, KnownContracts.DELAY]
 
-const IAvatarAbi = new Interface([
+export const AvatarInterface = new Interface([
+  'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',
   'function isModuleEnabled(address module) view returns (bool)',
   'function getModulesPaginated(address start, uint256 pageSize) view returns (address[] memory array, address next)',
 ])

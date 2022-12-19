@@ -1,13 +1,15 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
-import { Box, Button, Field, Flex } from '../../components'
-import Blockie from '../../components/Blockie'
-import ModSelect from '../../components/Select/ModSelect'
+import { Box, Field, Flex } from '../../components'
+import { useSafesWithOwner } from '../../safe'
+import { useSafeDelegates } from '../../safe'
 import { useConnection, useConnections } from '../connectionHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 
+import AvatarInput from './AvatarInput'
 import ConnectButton from './ConnectButton'
+import ModSelect, { NO_MODULE_OPTION, Option } from './ModSelect'
 import classes from './style.module.css'
 import {
   MODULE_NAMES,
@@ -31,10 +33,18 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   const [connections, setConnections] = useConnections()
   const { connection } = useConnection(id)
 
-  const { label, avatarAddress, moduleAddress, roleId } = connection
+  const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
+    connection
+
+  const { safes } = useSafesWithOwner(pilotAddress, id)
+  const { delegates } = useSafeDelegates(avatarAddress, id)
 
   // TODO modules is a nested list, but we currently only render the top-level items
-  const { loading, isValidSafe, modules } = useZodiacModules(avatarAddress, id)
+  const {
+    loading: loadingMods,
+    isValidSafe,
+    modules,
+  } = useZodiacModules(avatarAddress, id)
 
   const selectedModule = moduleAddress
     ? modules.find((mod) => mod.moduleAddress === moduleAddress)
@@ -49,6 +59,15 @@ const EditConnection: React.FC<Props> = ({ id }) => {
   }
 
   const error = useConnectionDryRun(connection)
+
+  const pilotIsOwner = safes.some(
+    (safe) => safe.toLowerCase() === avatarAddress.toLowerCase()
+  )
+  const pilotIsDelegate = delegates.some(
+    (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase()
+  )
+  const defaultModOption =
+    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
   return (
     <Flex direction="column" gap={3}>
@@ -79,63 +98,31 @@ const EditConnection: React.FC<Props> = ({ id }) => {
           <Field label="Pilot Account" labelFor="">
             <ConnectButton id={id} />
           </Field>
-          <Field label="Impersonated Safe" labelFor="">
-            {connection.avatarAddress.length > 0 ? (
-              <div className={classes.avatarContainer}>
-                <div className={classes.avatar}>
-                  <Box rounded>
-                    <Blockie
-                      address={connection.avatarAddress}
-                      className={classes.avatarBlockie}
-                    />
-                  </Box>
-                  <code className={classes.avatarAddress}>
-                    {connection.avatarAddress}
-                  </code>
-                </div>
-                <Button
-                  className={classes.removeButton}
-                  onClick={() => {
-                    updateConnection({
-                      avatarAddress: '',
-                      moduleAddress: '',
-                      moduleType: undefined,
-                    })
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            ) : (
-              <input
-                type="text"
-                value={avatarAddress}
-                placeholder="Paste in Safe address"
-                onChange={(ev) => {
-                  const avatarAddress = ev.target.value.replace(
-                    /^[a-z]{3}:/g,
-                    ''
-                  )
-                  updateConnection({
-                    avatarAddress,
-                    moduleAddress: '',
-                    moduleType: undefined,
-                  })
-                }}
-              />
-            )}
+          <Field label="Piloted Safe" labelFor="">
+            <AvatarInput
+              availableSafes={safes}
+              value={avatarAddress}
+              onChange={(address) =>
+                updateConnection({
+                  avatarAddress: address,
+                  moduleAddress: '',
+                  moduleType: undefined,
+                })
+              }
+            />
           </Field>
           <Field label="Zodiac Mod" disabled={modules.length === 0}>
             <ModSelect
-              options={modules.map((mod) => ({
-                value: mod.moduleAddress,
-                label: MODULE_NAMES[mod.type],
-              }))}
+              options={[
+                ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
+                ...modules.map((mod) => ({
+                  value: mod.moduleAddress,
+                  label: `${MODULE_NAMES[mod.type]} Mod`,
+                })),
+              ]}
               onChange={(selected) => {
                 const mod = modules.find(
-                  (mod) =>
-                    mod.moduleAddress ===
-                    (selected as { value: string; label: string }).value
+                  (mod) => mod.moduleAddress === (selected as Option).value
                 )
                 updateConnection({
                   moduleAddress: mod?.moduleAddress,
@@ -148,10 +135,11 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                       value: selectedModule.moduleAddress,
                       label: MODULE_NAMES[selectedModule.type],
                     }
-                  : ''
+                  : defaultModOption
               }
-              isDisabled={loading || !isValidSafe}
-              placeholder={loading || !isValidSafe ? '' : 'Select a module'}
+              isDisabled={loadingMods || !isValidSafe}
+              placeholder={loadingMods || !isValidSafe ? '' : 'Select a module'}
+              avatarAddress={avatarAddress}
             />
           </Field>
           {selectedModule?.type === KnownContracts.ROLES && (
