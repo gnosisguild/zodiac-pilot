@@ -1,6 +1,5 @@
 import { getAddress } from 'ethers/lib/utils'
-import React, { useCallback, useEffect, useState } from 'react'
-import { components, InputProps } from 'react-select'
+import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 
 import { Box } from '../../../components'
@@ -60,32 +59,11 @@ const AvatarInput: React.FC<Props> = ({
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 
-  const Input: React.FC<InputProps<Option | ''>> = useCallback(
-    (props) => {
-      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const sanitized = e.target.value.trim().replace(/^[a-z]{3}:/g, '')
-        setPendingValue(sanitized)
-        if (validateAddress(sanitized)) {
-          onChange(sanitized.toLowerCase())
-        }
-      }
-      console.log(props)
-
-      return (
-        <components.Input
-          {...props}
-          onChange={handleInputChange}
-          value={checksumAvatarAddress ? '' : pendingValue}
-        />
-      )
-    },
-    [checksumAvatarAddress, onChange, pendingValue]
-  )
-
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
         <CreatableSelect
+          blurInputOnSelect={true}
           isClearable
           formatOptionLabel={SafeOptionLabel}
           placeholder="Paste in Safe address or select from owned Safes"
@@ -114,7 +92,6 @@ const AvatarInput: React.FC<Props> = ({
           isValidNewOption={(option) => {
             return !!validateAddress(option)
           }}
-          // components={{ Input }}
         />
       ) : (
         <input

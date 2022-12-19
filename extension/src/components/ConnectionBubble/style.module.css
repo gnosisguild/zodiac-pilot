@@ -7,7 +7,7 @@
 }
 
 .blockieBox {
-  margin-left: -1em;
+  margin-left: -0.8em;
   background: #292116;
 }
 
@@ -38,7 +38,7 @@
   opacity: 0;
   position: absolute;
   z-index: 100;
-  bottom: -112px;
+  bottom: -130px;
   right: -5px;
   padding-top: 30px;
   transition: all 0.2s;

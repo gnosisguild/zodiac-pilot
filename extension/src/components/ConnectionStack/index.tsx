@@ -65,7 +65,7 @@ const ConnectionStack: React.FC<Props> = ({
         <Address address={avatarAddress} />
         {avatarAddress && (
           <div className={cn(classes.helper, helperClass)}>
-            <p>Impersonated Safe</p>
+            <p>Piloted Safe</p>
           </div>
         )}
       </Box>

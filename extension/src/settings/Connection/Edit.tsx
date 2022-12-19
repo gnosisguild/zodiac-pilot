@@ -117,7 +117,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                 ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
                 ...modules.map((mod) => ({
                   value: mod.moduleAddress,
-                  label: MODULE_NAMES[mod.type],
+                  label: `${MODULE_NAMES[mod.type]} Mod`,
                 })),
               ]}
               onChange={(selected) => {
@@ -139,6 +139,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               }
               isDisabled={loadingMods || !isValidSafe}
               placeholder={loadingMods || !isValidSafe ? '' : 'Select a module'}
+              avatarAddress={avatarAddress}
             />
           </Field>
           {selectedModule?.type === KnownContracts.ROLES && (

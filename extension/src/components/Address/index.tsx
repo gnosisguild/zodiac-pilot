@@ -55,7 +55,7 @@ const Address: React.FC<Props> = ({
   return (
     <Box rounded className={cn(className, classes.container)}>
       <div className={classes.address}>{displayAddress}</div>
-      <Box rounded>
+      <Box rounded className={classes.blockieContainer}>
         {address && <Blockie address={address} className={classes.blockies} />}
       </Box>
       {copyToClipboard && (
