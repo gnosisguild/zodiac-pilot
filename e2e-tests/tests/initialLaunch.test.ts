@@ -47,7 +47,7 @@ describe('initial launch', () => {
     expect(status).toBe('Pilot wallet is connected to a different chain')
 
     // click the connection item to establish the connection
-    await $item.click()
+    await $item.evaluate((el) => (el as HTMLElement).click())
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // we will see the MetaMask popup now, need to approve adding the network and then again switching to it

@@ -10,7 +10,7 @@ export default async function teardown(config) {
   if (config.watch || config.watchAll) return
 
   if (!process.env.CI || process.env.CI === 'false') {
-    await new Promise((res) => setTimeout(res, 20000)) // wait for the browser to close to let time for a screenshot to be taken
+    await new Promise((res) => setTimeout(res, 1000)) // wait for the browser to close to let time for a screenshot to be taken
   }
 
   // close the browser instance
