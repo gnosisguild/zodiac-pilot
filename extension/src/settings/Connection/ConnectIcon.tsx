@@ -1,13 +1,14 @@
 import React from 'react'
 import { IconType } from 'react-icons/lib'
 
-const VscConnect: IconType = ({ size, color, title }) => (
+const VscConnect: IconType = ({ size, color, title, role }) => (
   <svg
     width={size}
     height={size}
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    role={role}
   >
     {title && <title>{title}</title>}
     <path
