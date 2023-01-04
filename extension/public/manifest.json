@@ -16,15 +16,6 @@
   "background": {
     "service_worker": "build/background.js"
   },
-  "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "rules1",
-        "enabled": true,
-        "path": "requestRules.json"
-      }
-    ]
-  },
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
