@@ -94,4 +94,12 @@ export default class BridgeIframe extends EventEmitter {
   }
 
   isZodiacPilot = true
+
+  // This is required for connecting to Etherscan
+  enable() {
+    return Promise.resolve()
+  }
+
+  // Stakewise only supports MetaMask and Tally as injected providers, so we pretend to be MetaMask
+  isMetaMask = window.location.hostname === 'app.stakewise.io'
 }
