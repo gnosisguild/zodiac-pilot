@@ -239,7 +239,7 @@ export class TenderlyProvider extends EventEmitter {
     const json = await res.json()
     return {
       ...json.fork_transaction,
-      dashboardLink: `https://dashboard.tenderly.co/gnosisguild/zodiac-pilot/fork/${this.forkId}/simulation/${transactionId}`,
+      dashboardLink: `https://dashboard.tenderly.co/public/gnosisguild/zodiac-pilot/fork-simulation/${transactionId}`,
     }
   }
 }

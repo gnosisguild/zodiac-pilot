@@ -97,7 +97,7 @@ TODO: The following is still true, but we should adjust the implementation now t
 ### Submitting transactions
 
 A batch of recorded transaction can finally be submitted as a multi-send transaction.
-Zodiac Pilot can be configured to submit transactions directly to the Safe if the Pilot account is an owner of delegate, or to route the transaction through Zodiac mods.
+Zodiac Pilot can be configured to submit transactions directly to the Safe if the Pilot account is an owner or delegate, or to route the transaction through Zodiac mods.
 This is implemented in [WrappingProvider](src/providers/WrappingProvider.ts).
 It currently supports the [Roles](https://github.com/gnosis/zodiac-modifier-roles) and [Delay](https://github.com/gnosis/zodiac-modifier-delay) mods.
 
