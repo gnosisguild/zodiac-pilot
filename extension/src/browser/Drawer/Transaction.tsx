@@ -2,8 +2,9 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import { RiDeleteBinLine, RiTranslate } from 'react-icons/ri'
 import {
+  CallContractTransactionInput,
   encodeSingle,
   TransactionInput,
   TransactionType,
@@ -14,6 +15,9 @@ import ToggleButton from '../../components/Drawer/ToggleButton'
 import { NETWORK_CURRENCY } from '../../networks'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
+import translateTransactionInput, {
+  canTranslateTransactionInput,
+} from '../../utils/translateTransaction'
 import { useProvider } from '../ProvideProvider'
 import { TransactionState, useDispatch, useNewTransactions } from '../state'
 
@@ -29,9 +33,11 @@ interface HeaderProps {
   input: TransactionInput
   transactionHash: TransactionState['transactionHash']
   onRemove(): void
+  onTranslate(): void
   onExpandToggle(): void
   expanded: boolean
   showRoles?: boolean
+  showTranslate?: boolean
 }
 
 const TransactionHeader: React.FC<HeaderProps> = ({
@@ -39,9 +45,11 @@ const TransactionHeader: React.FC<HeaderProps> = ({
   input,
   transactionHash,
   onRemove,
+  onTranslate,
   onExpandToggle,
   expanded,
   showRoles = false,
+  showTranslate = false,
 }) => {
   return (
     <div className={classes.transactionHeader}>
@@ -62,6 +70,15 @@ const TransactionHeader: React.FC<HeaderProps> = ({
         )}
 
         {showRoles && <RolePermissionCheck transaction={input} mini />}
+        {showTranslate && (
+          <IconButton
+            onClick={onTranslate}
+            className={classes.removeTransaction}
+            title="Translate transaction"
+          >
+            <RiTranslate />
+          </IconButton>
+        )}
         <IconButton
           onClick={onRemove}
           className={classes.removeTransaction}
@@ -118,6 +135,54 @@ export const Transaction: React.FC<Props> = ({
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
   const showRoles = connection.moduleType === KnownContracts.ROLES
+  const showTranslate = canTranslateTransactionInput(input)
+
+  const handleTranslate = async () => {
+    if (!(provider instanceof ForkProvider)) {
+      throw new Error('This is only supported when using ForkProvider')
+    }
+
+    const originalTransaction = transactions[index]
+    const laterTransactions = transactions.slice(index + 1)
+
+    if (!(originalTransaction.input.type === TransactionType.callContract)) {
+      throw new Error('This is only supported for contract calls')
+    }
+
+    // remove the transaction and all later ones from the store
+    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
+
+    // revert to checkpoint before the transaction to remove
+    const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    await provider.request({ method: 'evm_revert', params: [checkpoint] })
+
+    // combine translated transactions and later transactions
+    const translatedTransactionInputs = translateTransactionInput(
+      originalTransaction.input
+    )
+    const laterTransactionInputs = laterTransactions.map((t) => t.input)
+    const transactionInputs = [
+      ...translatedTransactionInputs,
+      ...laterTransactionInputs,
+    ]
+
+    // re-simulate all transactions starting with the translated one
+    for (let i = 0; i < transactionInputs.length; i++) {
+      const input = transactionInputs[i]
+      const encoded = encodeSingle(input)
+      await provider.request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: encoded.to,
+            data: encoded.data,
+            value: formatValue(encoded.value),
+            from: connection.avatarAddress,
+          },
+        ],
+      })
+    }
+  }
 
   const handleRemove = async () => {
     if (!(provider instanceof ForkProvider)) {
@@ -164,9 +229,11 @@ export const Transaction: React.FC<Props> = ({
         input={input}
         transactionHash={transactionHash}
         onRemove={handleRemove}
+        onTranslate={handleTranslate}
         expanded={expanded}
         onExpandToggle={() => setExpanded(!expanded)}
         showRoles={showRoles}
+        showTranslate={showTranslate}
       />
       {expanded && (
         <>
