@@ -15,6 +15,7 @@ import {
   WrappingProvider,
 } from '../providers'
 import { useConnection } from '../settings'
+import * as transactionTranslations from '../transactionTranslations'
 import { Eip1193Provider } from '../types'
 
 import fetchAbi from './fetchAbi'
@@ -124,9 +125,10 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `submitting ${transactions.length} transactions as multi-send batch...`,
       transactions
     )
-    const metaTransactions = transactions.map((txState) =>
-      encodeSingle(txState.input)
-    )
+    const metaTransactions = transactions
+      .map((txState) => encodeSingle(txState.input))
+      .flatMap((tx) => transactionTranslations.uniswapMulticall.translation(tx))
+
     const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',
       params: [
