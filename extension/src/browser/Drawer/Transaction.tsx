@@ -4,7 +4,6 @@ import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { RiDeleteBinLine, RiTranslate } from 'react-icons/ri'
 import {
-  CallContractTransactionInput,
   encodeSingle,
   TransactionInput,
   TransactionType,
