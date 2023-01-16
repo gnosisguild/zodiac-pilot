@@ -2,25 +2,19 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
-import { RiDeleteBinLine } from 'react-icons/ri'
-import {
-  encodeSingle,
-  TransactionInput,
-  TransactionType,
-} from 'react-multisend'
+import { TransactionInput, TransactionType } from 'react-multisend'
 
-import { Box, Flex, IconButton } from '../../components'
+import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
 import { NETWORK_CURRENCY } from '../../networks'
-import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
-import { useProvider } from '../ProvideProvider'
-import { TransactionState, useDispatch, useNewTransactions } from '../state'
+import { TransactionState } from '../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
 import CopyToClipboard from './CopyToClipboard'
 import RawTransaction from './RawTransaction'
+import { Remove } from './Remove'
 import RolePermissionCheck from './RolePermissionCheck'
 import SimulatedExecutionCheck from './SimulatedExecutionCheck'
 import { Translate } from './Translate'
@@ -30,7 +24,6 @@ interface HeaderProps {
   index: number
   input: TransactionInput
   transactionHash: TransactionState['transactionHash']
-  onRemove(): void
   onExpandToggle(): void
   expanded: boolean
   showRoles?: boolean
@@ -40,7 +33,6 @@ const TransactionHeader: React.FC<HeaderProps> = ({
   index,
   input,
   transactionHash,
-  onRemove,
   onExpandToggle,
   expanded,
   showRoles = false,
@@ -70,13 +62,7 @@ const TransactionHeader: React.FC<HeaderProps> = ({
         <Flex gap={0}>
           <Translate transaction={input} index={index} />
           <CopyToClipboard transaction={input} />
-          <IconButton
-            onClick={onRemove}
-            className={classes.removeTransaction}
-            title="Remove transaction"
-          >
-            <RiDeleteBinLine />
-          </IconButton>
+          <Remove transaction={input} index={index} />
         </Flex>
       </div>
     </div>
@@ -121,50 +107,9 @@ export const Transaction: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
-  const provider = useProvider()
-  const dispatch = useDispatch()
-  const transactions = useNewTransactions()
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
   const showRoles = connection.moduleType === KnownContracts.ROLES
-
-  const handleRemove = async () => {
-    if (!(provider instanceof ForkProvider)) {
-      throw new Error('This is only supported when using ForkProvider')
-    }
-
-    const laterTransactions = transactions.slice(index + 1)
-
-    // remove the transaction and all later ones from the store
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
-
-    if (transactions.length === 1) {
-      // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
-      await provider.deleteFork()
-      return
-    }
-
-    // revert to checkpoint before the transaction to remove
-    const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
-    await provider.request({ method: 'evm_revert', params: [checkpoint] })
-
-    // re-simulate all transactions after the removed one
-    for (let i = 0; i < laterTransactions.length; i++) {
-      const transaction = laterTransactions[i]
-      const encoded = encodeSingle(transaction.input)
-      await provider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: encoded.to,
-            data: encoded.data,
-            value: formatValue(encoded.value),
-            from: connection.avatarAddress,
-          },
-        ],
-      })
-    }
-  }
 
   return (
     <Box ref={elementRef} p={2} className={classes.container}>
@@ -172,7 +117,6 @@ export const Transaction: React.FC<Props> = ({
         index={index}
         input={input}
         transactionHash={transactionHash}
-        onRemove={handleRemove}
         expanded={expanded}
         onExpandToggle={() => setExpanded(!expanded)}
         showRoles={showRoles}
@@ -299,13 +243,6 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
       </code>
     </Flex>
   )
-}
-
-// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatValue = (value: string): string => {
-  const valueBN = BigNumber.from(value)
-  if (valueBN.isZero()) return '0x0'
-  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
 }
 
 const useScrollIntoView = (enable: boolean) => {

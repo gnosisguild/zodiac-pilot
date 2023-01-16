@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { encodeMulti, encodeSingle } from 'react-multisend'
@@ -13,6 +12,7 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
+import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 const TransactionsDrawer: React.FC = () => {
@@ -185,10 +185,3 @@ const TransactionsDrawer: React.FC = () => {
 }
 
 export default TransactionsDrawer
-
-// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatValue = (value: string): string => {
-  const valueBN = BigNumber.from(value)
-  if (valueBN.isZero()) return '0x0'
-  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
-}
