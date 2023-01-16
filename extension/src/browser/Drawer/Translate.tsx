@@ -1,20 +1,24 @@
 import { BigNumber } from 'ethers'
 import React from 'react'
 import { BiWrench } from 'react-icons/bi'
-import { encodeSingle } from 'react-multisend'
+import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { findApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
-import { TransactionState, useDispatch, useNewTransactions } from '../state'
+import { useDispatch, useNewTransactions } from '../state'
 
-type Props = TransactionState & {
+import classes from './style.module.css'
+
+type Props = {
+  transaction: TransactionInput
   index: number
+  labeled?: true
 }
 
-export const Translate: React.FC<Props> = ({ index, input }) => {
+export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
@@ -25,7 +29,7 @@ export const Translate: React.FC<Props> = ({ index, input }) => {
     return null
   }
 
-  const encodedTransaction = encodeSingle(input)
+  const encodedTransaction = encodeSingle(transaction)
   const translation = findApplicableTranslation(encodedTransaction)
   if (!translation) {
     return null
@@ -42,10 +46,10 @@ export const Translate: React.FC<Props> = ({ index, input }) => {
       .map((t) => encodeSingle(t.input))
 
     // remove the transaction and all later ones from the store
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: input.id } })
+    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: transaction.id } })
 
     // revert to checkpoint before the transaction to remove
-    const checkpoint = input.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    const checkpoint = transaction.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones
@@ -65,11 +69,20 @@ export const Translate: React.FC<Props> = ({ index, input }) => {
     }
   }
 
-  return (
-    <IconButton onClick={handleTranslate} title={translation.title}>
-      <BiWrench />
-    </IconButton>
-  )
+  if (labeled) {
+    return (
+      <button onClick={handleTranslate} className={classes.link}>
+        {translation.title}
+        <BiWrench />
+      </button>
+    )
+  } else {
+    return (
+      <IconButton onClick={handleTranslate} title={translation.title}>
+        <BiWrench />
+      </IconButton>
+    )
+  }
 }
 
 // Tenderly has particular requirements for the encoding of value: it must not have any leading zeros

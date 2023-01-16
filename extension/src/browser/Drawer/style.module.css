@@ -167,6 +167,9 @@
   align-items: center;
   gap: var(--spacing-1);
 }
+.link svg {
+  flex-shrink: 0;
+}
 button.link {
   background-color: transparent;
   text-decoration: underline;
@@ -179,7 +182,7 @@ button.link {
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  text-align: left;
+  text-align: right;
   width: auto;
 }
 button.link:hover {

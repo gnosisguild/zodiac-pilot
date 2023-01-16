@@ -1,32 +1,37 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import { RiFileCopy2Line, RiGroupLine } from 'react-icons/ri'
+import { RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
-import { toast } from 'react-toastify'
 
 import { Flex, Tag } from '../../components'
+import { findApplicableTranslation } from '../../transactionTranslations'
 import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
 import { useWrappingProvider } from '../ProvideProvider'
 
+import CopyToClipboard from './CopyToClipboard'
+import { Translate } from './Translate'
 import classes from './style.module.css'
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput
+  index: number
   mini?: boolean
-}> = ({ transaction, mini = false }) => {
+}> = ({ transaction, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const wrappingProvider = useWrappingProvider()
 
-  const transactionEncoded = encodeSingle(transaction)
+  const encodedTransaction = encodeSingle(transaction)
+
+  const translationAvailable = !!findApplicableTranslation(encodedTransaction)
 
   useEffect(() => {
     let canceled = false
     wrappingProvider
       .request({
         method: 'eth_estimateGas',
-        params: [transactionEncoded],
+        params: [encodedTransaction],
       })
       .then(() => {
         if (!canceled) setError(false)
@@ -41,14 +46,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [wrappingProvider, transactionEncoded])
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(
-      JSON.stringify(transactionEncoded, undefined, 2)
-    )
-    toast(<>Transaction data has been copied to clipboard.</>)
-  }
+  }, [wrappingProvider, encodedTransaction])
 
   if (error === undefined) return null
 
@@ -86,11 +84,11 @@ const RolePermissionCheck: React.FC<{
             )}
           </Flex>
         </Flex>
-        {error && (
-          <button onClick={copyToClipboard} className={classes.link}>
-            Copy data
-            <RiFileCopy2Line />
-          </button>
+        {error && translationAvailable && (
+          <Translate transaction={transaction} index={index} labeled />
+        )}
+        {error && !translationAvailable && (
+          <CopyToClipboard transaction={transaction} labeled />
         )}
       </Flex>
     </Flex>

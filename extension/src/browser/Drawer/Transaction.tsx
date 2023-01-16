@@ -19,6 +19,7 @@ import { TransactionState, useDispatch, useNewTransactions } from '../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
+import CopyToClipboard from './CopyToClipboard'
 import RawTransaction from './RawTransaction'
 import RolePermissionCheck from './RolePermissionCheck'
 import SimulatedExecutionCheck from './SimulatedExecutionCheck'
@@ -62,15 +63,21 @@ const TransactionHeader: React.FC<HeaderProps> = ({
           <SimulatedExecutionCheck transactionHash={transactionHash} mini />
         )}
 
-        {showRoles && <RolePermissionCheck transaction={input} mini />}
-        <Translate input={input} index={index} />
-        <IconButton
-          onClick={onRemove}
-          className={classes.removeTransaction}
-          title="Remove transaction"
-        >
-          <RiDeleteBinLine />
-        </IconButton>
+        {showRoles && (
+          <RolePermissionCheck transaction={input} index={index} mini />
+        )}
+
+        <Flex gap={0}>
+          <Translate transaction={input} index={index} />
+          <CopyToClipboard transaction={input} />
+          <IconButton
+            onClick={onRemove}
+            className={classes.removeTransaction}
+            title="Remove transaction"
+          >
+            <RiDeleteBinLine />
+          </IconButton>
+        </Flex>
       </div>
     </div>
   )
@@ -189,6 +196,7 @@ export const Transaction: React.FC<Props> = ({
           </Box>
           <TransactionStatus
             input={input}
+            index={index}
             transactionHash={transactionHash}
             showRoles={showRoles}
           />
@@ -223,18 +231,22 @@ export const TransactionBadge: React.FC<Props> = ({
         <SimulatedExecutionCheck transactionHash={transactionHash} mini />
       )}
 
-      {showRoles && <RolePermissionCheck transaction={input} mini />}
+      {showRoles && (
+        <RolePermissionCheck transaction={input} index={index} mini />
+      )}
     </Box>
   )
 }
 
 interface StatusProps extends TransactionState {
   showRoles?: boolean
+  index: number
 }
 
 const TransactionStatus: React.FC<StatusProps> = ({
   input,
   transactionHash,
+  index,
   showRoles = false,
 }) => (
   <Flex
@@ -250,7 +262,7 @@ const TransactionStatus: React.FC<StatusProps> = ({
     )}
     {showRoles && (
       <Box bg p={2} className={classes.statusHeader}>
-        <RolePermissionCheck transaction={input} />
+        <RolePermissionCheck transaction={input} index={index} />
       </Box>
     )}
   </Flex>
