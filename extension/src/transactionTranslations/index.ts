@@ -9,11 +9,7 @@ export const findApplicableTranslation = (
   transaction: MetaTransaction
 ): TransactionTranslation | undefined => {
   for (const translation of translations) {
-    try {
-      if (translation.translate(transaction)) return translation
-    } catch (e) {
-      continue
-    }
+    if (translation.translate(transaction)) return translation
   }
   return undefined
 }

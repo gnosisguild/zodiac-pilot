@@ -16,7 +16,7 @@ export default {
 
   translate: (transaction) => {
     if (!transaction.data) {
-      throw Error("Invalid translation: transaction doesn't have data")
+      return undefined
     }
 
     let functionCalls: string[] = []
@@ -34,7 +34,7 @@ export default {
     }
 
     if (functionCalls.length === 0) {
-      throw Error("Invalid translation: couldn't decode function data")
+      return undefined
     }
 
     return functionCalls.map((data) => ({ ...transaction, data }))
