@@ -127,6 +127,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     const metaTransactions = transactions.map((txState) =>
       encodeSingle(txState.input)
     )
+
     const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',
       params: [

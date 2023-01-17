@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { encodeMulti, encodeSingle } from 'react-multisend'
@@ -13,6 +12,7 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
+import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 const TransactionsDrawer: React.FC = () => {
@@ -130,21 +130,22 @@ const TransactionsDrawer: React.FC = () => {
       <Flex gap={2} alignItems="center">
         <h4 className={classes.header}>Recording Transactions</h4>
         <Flex gap={1} className={classes.headerButtons}>
-          <IconButton
-            title="Copy batch transaction data to clipboard"
-            disabled={newTransactions.length === 0}
-            onClick={copyTransactionData}
-          >
-            <RiFileCopy2Line />
-          </IconButton>
-
-          <IconButton
-            title="Re-simulate on current blockchain head"
-            disabled={newTransactions.length === 0}
-            onClick={reforkAndRerun}
-          >
-            <RiRefreshLine />
-          </IconButton>
+          <Flex gap={0}>
+            <IconButton
+              title="Copy batch transaction data to clipboard"
+              disabled={newTransactions.length === 0}
+              onClick={copyTransactionData}
+            >
+              <RiFileCopy2Line />
+            </IconButton>
+            <IconButton
+              title="Re-simulate on current blockchain head"
+              disabled={newTransactions.length === 0}
+              onClick={reforkAndRerun}
+            >
+              <RiRefreshLine />
+            </IconButton>
+          </Flex>
           <div className={classes.recordingIcon} />
         </Flex>
       </Flex>
@@ -185,10 +186,3 @@ const TransactionsDrawer: React.FC = () => {
 }
 
 export default TransactionsDrawer
-
-// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatValue = (value: string): string => {
-  const valueBN = BigNumber.from(value)
-  if (valueBN.isZero()) return '0x0'
-  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
-}

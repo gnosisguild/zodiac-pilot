@@ -7,8 +7,8 @@ import {
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, providers, utils } from 'ethers'
-import detectProxyTarget from 'ethers-proxies'
 import { FormatTypes, Interface } from 'ethers/lib/utils'
+import detectProxyTarget from 'ethers-proxies'
 import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
