@@ -1,6 +1,6 @@
 import EthersAdapter from '@safe-global/safe-ethers-lib'
 import SafeServiceClient from '@safe-global/safe-service-client'
-import ethers, { providers } from 'ethers'
+import * as ethers from 'ethers'
 
 import { ChainId } from '../networks'
 import { Eip1193Provider } from '../types'
@@ -24,7 +24,7 @@ export const initSafeServiceClient = (
   provider: Eip1193Provider,
   chainId: ChainId
 ) => {
-  const web3Provider = new providers.Web3Provider(provider)
+  const web3Provider = new ethers.providers.Web3Provider(provider)
 
   const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
   if (!txServiceUrl) {

@@ -1,6 +1,6 @@
 import Safe from '@safe-global/safe-core-sdk'
 import EthersAdapter from '@safe-global/safe-ethers-lib'
-import ethers, { BigNumber, providers } from 'ethers'
+import * as ethers from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import { MetaTransaction } from 'react-multisend'
 
@@ -14,7 +14,7 @@ export const sendTransaction = async (
   connection: Connection,
   request: MetaTransaction | TransactionData
 ) => {
-  const web3Provider = new providers.Web3Provider(provider)
+  const web3Provider = new ethers.providers.Web3Provider(provider)
   const safeServiceClient = initSafeServiceClient(provider, connection.chainId)
   const ethAdapter = new EthersAdapter({
     ethers,
@@ -32,7 +32,7 @@ export const sendTransaction = async (
   const safeTransaction = await safeSdk.createTransaction({
     safeTransactionData: {
       to: getAddress(request.to || ZERO_ADDRESS),
-      value: BigNumber.from(request.value || 0).toString(),
+      value: ethers.BigNumber.from(request.value || 0).toString(),
       data: request.data || '0x00',
       operation: ('operation' in request && request.operation) || 0,
       nonce,
