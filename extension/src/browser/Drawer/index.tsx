@@ -130,21 +130,22 @@ const TransactionsDrawer: React.FC = () => {
       <Flex gap={2} alignItems="center">
         <h4 className={classes.header}>Recording Transactions</h4>
         <Flex gap={1} className={classes.headerButtons}>
-          <IconButton
-            title="Copy batch transaction data to clipboard"
-            disabled={newTransactions.length === 0}
-            onClick={copyTransactionData}
-          >
-            <RiFileCopy2Line />
-          </IconButton>
-
-          <IconButton
-            title="Re-simulate on current blockchain head"
-            disabled={newTransactions.length === 0}
-            onClick={reforkAndRerun}
-          >
-            <RiRefreshLine />
-          </IconButton>
+          <Flex gap={0}>
+            <IconButton
+              title="Copy batch transaction data to clipboard"
+              disabled={newTransactions.length === 0}
+              onClick={copyTransactionData}
+            >
+              <RiFileCopy2Line />
+            </IconButton>
+            <IconButton
+              title="Re-simulate on current blockchain head"
+              disabled={newTransactions.length === 0}
+              onClick={reforkAndRerun}
+            >
+              <RiRefreshLine />
+            </IconButton>
+          </Flex>
           <div className={classes.recordingIcon} />
         </Flex>
       </Flex>

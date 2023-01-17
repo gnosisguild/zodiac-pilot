@@ -109,7 +109,7 @@
 }
 
 .removeTransaction {
-  margin: 0 calc(var(--spacing-2) * -1);
+  margin-right: calc(var(--spacing-2) * -1);
 }
 
 .transactionHeader .start {
