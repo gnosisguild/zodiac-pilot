@@ -15,7 +15,9 @@ export default {
   recommendedFor: [KnownContracts.ROLES],
 
   translate: (transaction) => {
-    if (!transaction.data) return [transaction]
+    if (!transaction.data) {
+      throw Error("Invalid translation: transaction doesn't have data")
+    }
 
     let functionCalls: string[] = []
     for (const fragment of uniswapMulticallInterface.fragments) {
@@ -31,10 +33,10 @@ export default {
       }
     }
 
-    if (functionCalls.length > 0) {
-      return functionCalls.map((data) => ({ ...transaction, data }))
+    if (functionCalls.length === 0) {
+      throw Error("Invalid translation: couldn't decode function data")
     }
 
-    return [transaction]
+    return functionCalls.map((data) => ({ ...transaction, data }))
   },
 } satisfies TransactionTranslation
