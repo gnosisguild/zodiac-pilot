@@ -15,7 +15,9 @@ export default {
   recommendedFor: [KnownContracts.ROLES],
 
   translate: (transaction) => {
-    if (!transaction.data) return [transaction]
+    if (!transaction.data) {
+      return undefined
+    }
 
     let functionCalls: string[] = []
     for (const fragment of uniswapMulticallInterface.fragments) {
@@ -31,10 +33,10 @@ export default {
       }
     }
 
-    if (functionCalls.length > 0) {
-      return functionCalls.map((data) => ({ ...transaction, data }))
+    if (functionCalls.length === 0) {
+      return undefined
     }
 
-    return [transaction]
+    return functionCalls.map((data) => ({ ...transaction, data }))
   },
 } satisfies TransactionTranslation
