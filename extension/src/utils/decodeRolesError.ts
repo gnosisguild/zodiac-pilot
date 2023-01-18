@@ -1,3 +1,6 @@
+import { ethers } from 'ethers'
+import { toUtf8String } from 'ethers/lib/utils'
+
 import { JsonRpcError } from '../types'
 import { Permissions__factory, Roles__factory } from '../types/typechain'
 
@@ -37,7 +40,7 @@ export default function decodeRolesError(error: JsonRpcError) {
       )
     if (error) return error
 
-    return asciiDecode(revertData.substring(2))
+    return decodeRevertReason(revertData)
   }
 
   return message
@@ -47,10 +50,9 @@ export const isPermissionsError = (decodedError: string) =>
   KNOWN_ERRORS.includes(decodedError) &&
   decodedError !== 'ModuleTransactionFailed()'
 
-function asciiDecode(hex: string) {
-  let result = ''
-  for (let i = 0; i < hex.length; i += 2) {
-    result += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16))
-  }
-  return result
+function decodeRevertReason(hex: string) {
+  // Take the revert reason from the error code
+  // See https://ethereum.stackexchange.com/a/66173
+  const codeString = `0x${hex.substring(138)}`
+  return toUtf8String(codeString)
 }
