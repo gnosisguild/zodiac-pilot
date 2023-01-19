@@ -11,8 +11,8 @@ import Flex from '../Flex'
 import classes from './style.module.css'
 
 interface ConnectionsIconProps {
-  width: string
-  height: string
+  width?: string
+  height?: string
 }
 
 const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
@@ -86,7 +86,7 @@ const ConnectionBubble: React.FC = () => {
         </BlockLink>
         <BlockLink href={connectionsHash}>
           <Box bg roundedRight className={classes.connectionsContainer}>
-            <ConnectionsIcon width="48" height="48" />
+            <ConnectionsIcon width="42" height="42" />
           </Box>
         </BlockLink>
       </Flex>
