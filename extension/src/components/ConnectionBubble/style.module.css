@@ -1,8 +1,14 @@
-.container {
+.currentConnectionContainer {
   padding-right: var(--spacing-4);
 }
 
-.container:hover {
+.connectionsContainer {
+  overflow: hidden;
+  padding: 0;
+  height: 50px;
+}
+
+.currentConnectionContainer:hover,.connectionsContainer:hover {
   border-color: rgba(217, 212, 173, 0.8);
 }
 
@@ -45,7 +51,7 @@
   pointer-events: none;
 }
 
-.container:hover .infoContainer {
+.currentConnectionContainer:hover .infoContainer {
   pointer-events: all;
   opacity: 1;
 }
