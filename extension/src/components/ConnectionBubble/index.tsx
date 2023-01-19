@@ -43,10 +43,15 @@ const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
   </svg>
 )
 
-const ConnectionBubble: React.FC = () => {
+interface ConnectionBubbleProps {
+  onConnectionsClick: () => void
+}
+
+const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
+  onConnectionsClick,
+}) => {
   const { connection } = useConnection()
   const currentConnectionHash = useSettingsHash(connection.id)
-  const connectionsHash = useSettingsHash()
   return (
     <Box rounded>
       <Flex gap={1}>
@@ -84,7 +89,7 @@ const ConnectionBubble: React.FC = () => {
             </div>
           </Box>
         </BlockLink>
-        <BlockLink href={connectionsHash}>
+        <BlockLink onClick={onConnectionsClick}>
           <Box bg roundedRight className={classes.connectionsContainer}>
             <ConnectionsIcon width="42" height="42" />
           </Box>

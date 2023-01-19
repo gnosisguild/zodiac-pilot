@@ -6,6 +6,7 @@ import Layout from '../components/Layout'
 import { pushLocation, useLocation } from '../location'
 import { ProvideTenderly } from '../providers'
 
+import ConnectionsDrawer from './ConnectionsDrawer'
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
 import ProvideProvider from './ProvideProvider'
@@ -25,8 +26,12 @@ const useNoPageScroll = () => {
 }
 
 const Browser: React.FC = () => {
+  const [isConnectionsDrawerOpen, setIsConnectionsDrawerOpen] = useState(false)
   const location = useLocation()
   useNoPageScroll()
+
+  const handleOpenConnectionsDrawer = () => setIsConnectionsDrawerOpen(true)
+  const handleCloseConnectionsDrawer = () => setIsConnectionsDrawerOpen(false)
 
   // When the user browses in the iframe the location will update constantly.
   // This must not trigger an update of the iframe's src prop, though, since that would rerender the iframe.
@@ -39,7 +44,11 @@ const Browser: React.FC = () => {
           <Layout
             navBox={<UrlInput onSubmit={setInitialLocation} />}
             navFullWidth
-            headerRight={<ConnectionBubble />}
+            headerRight={
+              <ConnectionBubble
+                onConnectionsClick={handleOpenConnectionsDrawer}
+              />
+            }
           >
             <Box className={classNames.frame} double p={2}>
               {initialLocation ? (
@@ -61,6 +70,10 @@ const Browser: React.FC = () => {
             </Box>
             <Drawer />
           </Layout>
+          <ConnectionsDrawer
+            isOpen={isConnectionsDrawerOpen}
+            onClose={handleCloseConnectionsDrawer}
+          />
         </ProvideProvider>
       </ProvideState>
     </ProvideTenderly>
