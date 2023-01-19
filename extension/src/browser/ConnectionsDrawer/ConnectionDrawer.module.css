@@ -1,0 +1,32 @@
+.drawer {
+  padding: 22px 50px;
+}
+
+.toggleContainer {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  transform : translateX(-84%);
+  z-index: 9000;
+}
+
+.toggle {
+  width: 50px;
+  height: 42px;
+  overflow: hidden;
+  padding: 0;
+  background-color: rgba(211, 224, 173, 0.3);
+}
+
+.toggle:hover {
+  border-color: rgba(217, 212, 173, 0.8);
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0;
+}
+
+hr {
+  border: 1px solid rgba(217, 212, 173, 0.4)
+}

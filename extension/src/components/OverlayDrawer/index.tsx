@@ -93,17 +93,13 @@ const OverlayDrawer: React.FC<Props> = ({
   return createPortal(
     <div
       aria-hidden={isOpen ? 'false' : 'true'}
-      className={classNames(
-        classes.drawerContainer,
-        {
-          [classes.open]: isOpen,
-          [classes.in]: isTransitioning,
-        },
-        className
-      )}
+      className={classNames(classes.drawerContainer, {
+        [classes.open]: isOpen,
+        [classes.in]: isTransitioning,
+      })}
     >
       <div
-        className={classNames(classes.drawer, classes[position])}
+        className={classNames(classes.drawer, classes[position], className)}
         role="dialog"
       >
         {children}
