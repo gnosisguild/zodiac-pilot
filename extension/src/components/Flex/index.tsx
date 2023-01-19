@@ -13,7 +13,7 @@ interface Props {
     | 'start'
     | 'right'
   alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start' | 'baseline'
-  gap: 0 | 1 | 2 | 3 | 4
+  gap: 0 | 1 | 2 | 3 | 4 | 5
   className?: string
   children?: React.ReactNode
   style?: React.CSSProperties

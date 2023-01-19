@@ -84,7 +84,7 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
             </Flex>
             <div className={classes.infoContainer}>
               <Box bg rounded p={3} className={classes.info}>
-                <ConnectionStack staticLabels connection={connection} />
+                <ConnectionStack connection={connection} />
               </Box>
             </div>
           </Box>
