@@ -5,14 +5,14 @@ import { Box, Button, Flex, IconButton } from '../../components'
 import ConnectionsIcon from '../../components/ConnectionBubble/ConnectionsIcon'
 import OverlayDrawer from '../../components/OverlayDrawer'
 import { usePushSettingsRoute } from '../../routing'
-import SelectConnection from '../../settings/Connection/Select'
 import {
   useConnections,
   useSelectedConnectionId,
 } from '../../settings/connectionHooks'
 import { ProviderType } from '../../types'
 
-import classes from './ConnectionDrawer.module.css'
+import ConnectionsList from './ConnectionsList'
+import classes from './style.module.css'
 
 interface Props {
   isOpen: boolean
@@ -40,6 +40,10 @@ const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const handleLaunch = (connectionId: string) => {
     selectConnection(connectionId)
+    onClose()
+  }
+  const handleModify = (connectionId: string) => {
+    pushSettingsRoute(connectionId)
   }
 
   const handleAddConnection = () => {
@@ -70,15 +74,17 @@ const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
     >
       <CloseDrawerButton onClick={onClose} />
       <Flex gap={1} justifyContent="space-between" alignItems="center">
-        <div>
-          <h1>Pilot Connections</h1>
-        </div>
-        <div>
+        <Box borderless>
+          <h2>Pilot Connections</h2>
+        </Box>
+        <Box borderless>
           <Button onClick={handleAddConnection}>Add Connection</Button>
-        </div>
+        </Box>
       </Flex>
       <hr />
-      <SelectConnection onLaunch={handleLaunch} />
+      <Box borderless className={classes.connectionsList}>
+        <ConnectionsList onLaunch={handleLaunch} onModify={handleModify} />
+      </Box>
     </OverlayDrawer>
   )
 }
