@@ -5,7 +5,6 @@ const PILOT_URL = 'https://pilot.gnosisguild.org/'
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 // generally circumvent this security mechanism, so we only apply it to extension tabs.
 const activeExtensionTabs = new Set<number>()
-
 const updateRule = () => {
   const RULE_ID = 1
   chrome.declarativeNetRequest.updateSessionRules({
@@ -71,6 +70,57 @@ const toggle = async (tab: chrome.tabs.Tab) => {
 }
 chrome.action.onClicked.addListener(toggle)
 
+interface Fork {
+  networkId: number
+  rpcUrl: string
+}
+
+// Track extension tabs that are actively simulating, meaning that RPC requests are being sent to
+// a fork network.
+// Map<tabId, Fork>
+const simulatingExtensionTabs = new Map<number, Fork>()
+
+chrome.runtime.onMessage.addListener((message, sender) => {
+  if (!sender.tab?.id) return
+
+  if (message.type === 'startSimulating') {
+    const { networkId, rpcUrl } = message
+    simulatingExtensionTabs.set(sender.tab.id, {
+      networkId,
+      rpcUrl,
+    })
+    console.debug(
+      `start intercepting JSON RPC requests for network #${networkId} in tab #${sender.tab.id}`,
+      rpcUrl
+    )
+  }
+  if (message.type === 'stopSimulating') {
+    simulatingExtensionTabs.delete(sender.tab.id)
+    console.debug(
+      `stop intercepting JSON RPC requests in tab #${sender.tab.id}`
+    )
+  }
+})
+
+// Keep track of the networks that RPCs are serving
+const networkIdOfRpcUrl = new Map<string, number | undefined>()
+const networkIdOfRpcUrlPromises = new Map<string, Promise<number | undefined>>()
+
+const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
+  if (!networkIdOfRpcUrlPromises.has(url)) {
+    const promise = new Promise((resolve) => {
+      // fetch from the injected script, so the request has the apps origin (otherwise the request may be blocked by the RPC provider)
+      chrome.tabs.sendMessage(tabId, { type: 'requestChainId', url }, resolve)
+    })
+
+    networkIdOfRpcUrlPromises.set(url, promise as Promise<number | undefined>)
+  }
+
+  const result = await networkIdOfRpcUrlPromises.get(url)
+  networkIdOfRpcUrl.set(url, result)
+  console.debug(`detected network of JSON RPC endpoint ${url}: ${result}`)
+}
+
 const handleBeforeRequest = (
   details: chrome.webRequest.WebRequestBodyDetails
 ) => {
@@ -78,21 +128,52 @@ const handleBeforeRequest = (
   if (!activeExtensionTabs.has(details.tabId)) return
   // don't intercept requests from the extension itself
   if (details.parentFrameId === -1) return
-  // only intercept POST requests with a JSON RPC body
+  // only intercept POST requests
   if (details.method !== 'POST') return
+  // only intercept requests with a JSON RPC body
+  const jsonRpc = getJsonRpcBody(details)
+  if (!jsonRpc) return
 
+  // track the network IDs for all JSON RPC endpoints used from apps in the Pilot frame
+  detectNetworkOfRpcUrl(details.url, details.tabId)
+
+  // check if this RPC request should be redirected to a fork
+  const fork = simulatingExtensionTabs.get(details.tabId)
+  const networkId = networkIdOfRpcUrl.get(details.url)
+  if (fork && networkId && fork.networkId === networkId) {
+    console.debug(
+      `Redirecting JSON RPC request from ${details.url} to fork ${fork.rpcUrl}`
+    )
+    return {
+      redirectUrl: fork.rpcUrl,
+    } satisfies chrome.webRequest.BlockingResponse
+  }
+}
+
+const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   const bytes = details.requestBody?.raw?.[0]?.bytes
+  if (!bytes) return undefined
 
-  const postedString =
-    bytes &&
-    decodeURIComponent(String.fromCharCode.apply(null, [...new Uint8Array()]))
+  const bodyString = decodeURIComponent(
+    String.fromCharCode.apply(null, [...new Uint8Array(bytes)])
+  )
 
-  console.log('handleBeforeRequest', {
-    details,
-    bytes,
-    postedString,
-  })
-  // details.frameId > 0 && details.type === 'xmlhttprequest' && details.method === 'POST' && details.requestBody?.raw && details.requestBody.raw.length > 0
+  let json
+  try {
+    json = JSON.parse(bodyString)
+  } catch (e) {
+    return undefined
+  }
+
+  if (!Array.isArray(json) || json.length === 0) {
+    return undefined
+  }
+
+  if (json[0].jsonrpc !== '2.0') {
+    return undefined
+  }
+
+  return json
 }
 
 chrome.webRequest.onBeforeRequest.addListener(
@@ -101,7 +182,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     urls: ['<all_urls>'],
     types: ['xmlhttprequest'],
   },
-  ['requestBody']
+  ['requestBody', 'blocking']
 )
 
 const startTrackingTab = (tabId: number) => {
@@ -111,6 +192,7 @@ const startTrackingTab = (tabId: number) => {
 
 const stopTrackingTab = (tabId: number) => {
   activeExtensionTabs.delete(tabId)
+  simulatingExtensionTabs.delete(tabId)
   updateRule()
 }
 

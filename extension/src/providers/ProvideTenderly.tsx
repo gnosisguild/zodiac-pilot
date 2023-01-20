@@ -183,6 +183,9 @@ export class TenderlyProvider extends EventEmitter {
     await this.forkProviderPromise
     if (!this.forkId) return
 
+    // notify the background script to stop intercepting JSON RPC requests
+    window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
+
     const forkId = this.forkId
     this.forkId = undefined
     this.forkProviderPromise = undefined
@@ -208,7 +211,16 @@ export class TenderlyProvider extends EventEmitter {
     this.forkId = json.simulation_fork.id
     this.blockNumber = json.simulation_fork.block_number
     this.transactionIds.clear()
-    return new JsonRpcProvider(`https://rpc.tenderly.co/fork/${this.forkId}`)
+
+    const rpcUrl = `https://rpc.tenderly.co/fork/${this.forkId}`
+
+    // notify the background script to start intercepting JSON RPC requests
+    window.postMessage(
+      { type: 'startSimulating', toBackground: true, networkId, rpcUrl },
+      '*'
+    )
+
+    return new JsonRpcProvider(rpcUrl)
   }
 
   private async fetchForkInfo() {
