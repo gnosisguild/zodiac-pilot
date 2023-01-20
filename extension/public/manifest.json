@@ -12,7 +12,12 @@
   "action": {
     "default_title": "Zodiac Pilot"
   },
-  "permissions": ["tabs", "declarativeNetRequest"],
+  "permissions": [
+    "tabs",
+    "declarativeNetRequest",
+    "webRequest",
+    "webRequestBlocking"
+  ],
   "background": {
     "service_worker": "build/background.js"
   },

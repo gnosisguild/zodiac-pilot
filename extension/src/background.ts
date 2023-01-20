@@ -71,17 +71,58 @@ const toggle = async (tab: chrome.tabs.Tab) => {
 }
 chrome.action.onClicked.addListener(toggle)
 
+const handleBeforeRequest = (
+  details: chrome.webRequest.WebRequestBodyDetails
+) => {
+  // only intercept requests from extension tabs
+  if (!activeExtensionTabs.has(details.tabId)) return
+  // don't intercept requests from the extension itself
+  if (details.parentFrameId === -1) return
+  // only intercept POST requests with a JSON RPC body
+  if (details.method !== 'POST') return
+
+  const bytes = details.requestBody?.raw?.[0]?.bytes
+
+  const postedString =
+    bytes &&
+    decodeURIComponent(String.fromCharCode.apply(null, [...new Uint8Array()]))
+
+  console.log('handleBeforeRequest', {
+    details,
+    bytes,
+    postedString,
+  })
+  // details.frameId > 0 && details.type === 'xmlhttprequest' && details.method === 'POST' && details.requestBody?.raw && details.requestBody.raw.length > 0
+}
+
+chrome.webRequest.onBeforeRequest.addListener(
+  handleBeforeRequest,
+  {
+    urls: ['<all_urls>'],
+    types: ['xmlhttprequest'],
+  },
+  ['requestBody']
+)
+
+const startTrackingTab = (tabId: number) => {
+  activeExtensionTabs.add(tabId)
+  updateRule()
+}
+
+const stopTrackingTab = (tabId: number) => {
+  activeExtensionTabs.delete(tabId)
+  updateRule()
+}
+
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   const isExtensionTab = !!tab.url?.startsWith(PILOT_URL)
   const wasExtensionTab = activeExtensionTabs.has(tabId)
 
   if (isExtensionTab && !wasExtensionTab) {
-    activeExtensionTabs.add(tabId)
-    updateRule()
+    startTrackingTab(tabId)
   }
   if (!isExtensionTab && wasExtensionTab) {
-    activeExtensionTabs.delete(tabId)
-    updateRule()
+    stopTrackingTab(tabId)
   }
 
   if (changeInfo.status === 'complete' && isExtensionTab) {
