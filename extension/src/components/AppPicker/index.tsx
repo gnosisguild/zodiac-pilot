@@ -16,6 +16,7 @@ import curveLogo from './images/curve.png'
 import honeyswapLogo from './images/honeyswap.png'
 import instadappLogo from './images/instadapp.png'
 import lidoLogo from './images/lido.png'
+import notionalLogo from './images/notional.png'
 import paraswapLogo from './images/paraswap.png'
 import reflexerLogo from './images/reflexer.png'
 import saddleLogo from './images/saddle.png'
@@ -140,6 +141,12 @@ const APP_CONFIG = [
     name: 'Lido',
     url: 'https://stake.lido.fi/',
     logoUrl: lidoLogo,
+    networks: [1],
+  },
+  {
+    name: 'Notional',
+    url: 'https://www.notional.finance/portfolio',
+    logoUrl: notionalLogo,
     networks: [1],
   },
 ]

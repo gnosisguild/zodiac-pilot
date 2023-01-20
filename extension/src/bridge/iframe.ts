@@ -93,7 +93,7 @@ export default class BridgeIframe extends EventEmitter {
     }
   }
 
-  isZodiacPilot = true
+  'isZodiac Pilot' = true
 
   // This is required for connecting to Etherscan
   enable() {
