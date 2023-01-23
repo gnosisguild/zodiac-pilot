@@ -5,10 +5,12 @@
 .connectionsContainer {
   overflow: hidden;
   padding: 0;
+  width: 60px;
   height: 44px;
 }
 
-.currentConnectionContainer:hover,.connectionsContainer:hover {
+.currentConnectionContainer:hover,
+.connectionsContainer:hover {
   border-color: rgba(217, 212, 173, 0.8);
 }
 

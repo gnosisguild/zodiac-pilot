@@ -25,7 +25,7 @@ const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
       <div>
         <Box rounded className={classes.toggleBackground}>
           <Box rounded className={classes.toggle}>
-            <ConnectionsIcon />
+            <ConnectionsIcon width="auto" height="100%" />
           </Box>
         </Box>
       </div>

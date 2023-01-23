@@ -24,7 +24,7 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
     <Box rounded>
       <Flex gap={1}>
         <BlockLink href={currentConnectionHash}>
-          <Box bg roundedLeft className={classes.currentConnectionContainer}>
+          <Box bg rounded className={classes.currentConnectionContainer}>
             <Flex justifyContent="space-between" alignItems="center" gap={3}>
               <div className={classes.blockieStack}>
                 <Box rounded className={classes.blockieBox}>
@@ -58,8 +58,8 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
           </Box>
         </BlockLink>
         <BlockLink onClick={onConnectionsClick}>
-          <Box bg roundedRight className={classes.connectionsContainer}>
-            <ConnectionsIcon width="42" height="42" />
+          <Box bg rounded className={classes.connectionsContainer}>
+            <ConnectionsIcon height="100%" width="auto" />
           </Box>
         </BlockLink>
       </Flex>
