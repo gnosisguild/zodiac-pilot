@@ -11,30 +11,19 @@ import classes from './style.module.css'
 interface Props {
   connection: Connection
   helperClass?: string
-  staticLabels?: boolean
   addressBoxClass?: string
 }
 
 const ConnectionStack: React.FC<Props> = ({
   connection,
   helperClass,
-  staticLabels = false,
   addressBoxClass,
 }) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
 
   return (
-    <div
-      className={cn(classes.connectionStack, {
-        [classes.staticLabels]: staticLabels,
-      })}
-    >
-      <Box
-        rounded
-        double
-        p={2}
-        className={cn([classes.address, addressBoxClass])}
-      >
+    <div className={classes.connectionStack}>
+      <Box rounded className={cn([classes.address, addressBoxClass])}>
         <Address address={pilotAddress} />
         {pilotAddress && (
           <div className={cn(classes.helper, helperClass)}>
@@ -44,24 +33,14 @@ const ConnectionStack: React.FC<Props> = ({
       </Box>
 
       {moduleAddress && (
-        <Box
-          roundedRight
-          double
-          p={2}
-          className={cn([classes.address, addressBoxClass])}
-        >
+        <Box roundedRight className={cn([classes.address, addressBoxClass])}>
           <Address address={moduleAddress} />
           <div className={cn(classes.helper, helperClass)}>
             <p>{(moduleType && MODULE_NAMES[moduleType]) || 'Zodiac'} Mod</p>
           </div>
         </Box>
       )}
-      <Box
-        roundedRight
-        double
-        p={2}
-        className={cn([classes.address, addressBoxClass])}
-      >
+      <Box roundedRight className={cn([classes.address, addressBoxClass])}>
         <Address address={avatarAddress} />
         {avatarAddress && (
           <div className={cn(classes.helper, helperClass)}>
