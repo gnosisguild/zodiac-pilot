@@ -88,6 +88,7 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
           <ConnectionStack
             connection={connection}
             addressBoxClass={classes.addressBox}
+            className={classes.connectionStack}
           />
           <Flex
             direction="column"

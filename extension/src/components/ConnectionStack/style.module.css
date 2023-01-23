@@ -16,7 +16,6 @@
 .connectionStack {
   display: flex;
   padding: 0 0 20px 0;
-  min-width: 505px;
 }
 /* .connectionStack:hover .address,
 .connectionStack:hover .address:before {

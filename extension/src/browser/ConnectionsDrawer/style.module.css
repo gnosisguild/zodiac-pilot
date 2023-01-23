@@ -20,7 +20,7 @@
 }
 
 .toggle {
-  width: 50px;
+  width: 60px;
   height: 42px;
   overflow: hidden;
   padding: 0;
@@ -60,6 +60,10 @@
 
 .connectionInfoContainer {
   padding-top: 34px;
+}
+
+.connectionStack {
+  min-width: 505px;
 }
 
 .modifyButton {
