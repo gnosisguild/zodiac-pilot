@@ -1,4 +1,4 @@
-import { Eip1193Provider } from '../types'
+import { Connection, Eip1193Provider } from '../types'
 
 interface Request {
   method: string
@@ -7,14 +7,31 @@ interface Request {
 
 export default class BridgeHost {
   private provider: Eip1193Provider
+  private connection: Connection
   private source: WindowProxy | undefined
 
-  constructor(provider: Eip1193Provider) {
+  constructor(provider: Eip1193Provider, connection: Connection) {
     this.provider = provider
+    this.connection = connection
   }
 
   setProvider(provider: Eip1193Provider) {
     this.provider = provider
+  }
+
+  setConnection(connection: Connection) {
+    if (connection?.avatarAddress !== this.connection?.avatarAddress) {
+      this.source?.postMessage(
+        {
+          zodiacPilotBridgeConnectionChange: true,
+          account: connection.avatarAddress,
+          chainId: connection.chainId,
+        },
+        '*'
+      )
+    }
+
+    this.connection = connection
   }
 
   initBridge(event: MessageEvent<any>) {
@@ -54,7 +71,6 @@ export default class BridgeHost {
   handleMessage(ev: MessageEvent<any>) {
     const {
       zodiacPilotBridgeInit,
-
       zodiacPilotBridgeRequest,
       messageId,
       request,

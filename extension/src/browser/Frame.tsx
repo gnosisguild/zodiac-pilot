@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 import BridgeHost from '../bridge/host'
+import { useConnection } from '../settings'
 
 import { useProvider } from './ProvideProvider'
 
@@ -10,15 +11,17 @@ type Props = {
 
 const BrowserFrame: React.FC<Props> = ({ src }) => {
   const provider = useProvider()
+  const { connection } = useConnection()
   const bridgeHostRef = useRef<BridgeHost | null>(null)
 
   useEffect(() => {
     if (!provider) return
 
     if (!bridgeHostRef.current) {
-      bridgeHostRef.current = new BridgeHost(provider)
+      bridgeHostRef.current = new BridgeHost(provider, connection)
     } else {
       bridgeHostRef.current.setProvider(provider)
+      bridgeHostRef.current.setConnection(connection)
     }
 
     const handle = (ev: MessageEvent<any>) => {
@@ -29,7 +32,7 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [provider])
+  }, [provider, connection])
 
   return (
     <iframe
