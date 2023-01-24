@@ -113,7 +113,7 @@ const updateRpcRedirectRules = (tabId: number) => {
             redirect: { url: fork.rpcUrl },
           },
           condition: {
-            resourceTypes: ['sub_frame'],
+            resourceTypes: ['xmlhttprequest'],
             urlFilter: rpcUrl,
             tabIds: [tabId],
           },
@@ -123,6 +123,10 @@ const updateRpcRedirectRules = (tabId: number) => {
   const ruleIds = [...networkIdOfRpcUrl.entries()].map(([rpcUrl]) =>
     hashCode(`${tabId}:${rpcUrl}`)
   )
+  console.log({
+    addRules,
+    removeRuleIds: ruleIds,
+  })
   chrome.declarativeNetRequest.updateSessionRules({
     addRules,
     removeRuleIds: ruleIds,
