@@ -23,9 +23,9 @@ const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <div className={classes.toggleContainer}>
     <IconButton onClick={onClick}>
       <div>
-        <Box rounded>
+        <Box rounded className={classes.toggleBackground}>
           <Box rounded className={classes.toggle}>
-            <ConnectionsIcon />
+            <ConnectionsIcon width="auto" height="100%" />
           </Box>
         </Box>
       </div>
@@ -73,18 +73,21 @@ const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
       className={classes.drawer}
     >
       <CloseDrawerButton onClick={onClose} />
-      <Flex gap={1} justifyContent="space-between" alignItems="center">
-        <Box borderless>
-          <h2>Pilot Connections</h2>
-        </Box>
-        <Box borderless>
-          <Button onClick={handleAddConnection}>Add Connection</Button>
-        </Box>
-      </Flex>
-      <hr />
-      <Box borderless className={classes.connectionsList}>
+      <Flex gap={4} direction="column">
+        <Flex gap={2} direction="column">
+          <Flex gap={1} justifyContent="space-between" alignItems="baseline">
+            <h2>Pilot Connections</h2>
+            <Button
+              onClick={handleAddConnection}
+              className={classes.addConnection}
+            >
+              Add Connection
+            </Button>
+          </Flex>
+          <hr />
+        </Flex>
         <ConnectionsList onLaunch={handleLaunch} onModify={handleModify} />
-      </Box>
+      </Flex>
     </OverlayDrawer>
   )
 }

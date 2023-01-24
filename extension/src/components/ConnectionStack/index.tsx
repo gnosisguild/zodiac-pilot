@@ -12,17 +12,19 @@ interface Props {
   connection: Connection
   helperClass?: string
   addressBoxClass?: string
+  className?: string
 }
 
 const ConnectionStack: React.FC<Props> = ({
   connection,
   helperClass,
   addressBoxClass,
+  className,
 }) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
 
   return (
-    <div className={classes.connectionStack}>
+    <div className={cn(classes.connectionStack, className)}>
       <Box rounded className={cn([classes.address, addressBoxClass])}>
         <Address address={pilotAddress} />
         {pilotAddress && (

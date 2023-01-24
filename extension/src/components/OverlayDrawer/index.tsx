@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import classes from './OverlayDrawer.module.css'
@@ -85,6 +85,20 @@ const OverlayDrawer: React.FC<Props> = ({
 
     updatePageScroll()
   }, [isOpen])
+
+  const keyCloser = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      onClose()
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', keyCloser, false)
+
+    return () => {
+      document.removeEventListener('keydown', keyCloser, false)
+    }
+  }, [])
 
   if (!isTransitioning && removeWhenClosed && !isOpen) {
     return null
