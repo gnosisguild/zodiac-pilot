@@ -35,16 +35,15 @@ export default class BridgeIframe extends EventEmitter {
       })
     })
 
-    const handleAccountChange = (ev: MessageEvent) => {
-      const { zodiacPilotBridgeConnectionChange, account, chainId } = ev.data
-      if (!zodiacPilotBridgeConnectionChange) {
+    const handleBridgeEvent = (ev: MessageEvent) => {
+      const { zodiacPilotBridgeEvent, event, args } = ev.data
+      if (!zodiacPilotBridgeEvent) {
         return
       }
-      this.emit('accountsChanged', [account])
-      this.emit('chainChanged', chainId.toString(16))
+      this.emit(event, ...args)
     }
 
-    window.addEventListener('message', handleAccountChange)
+    window.addEventListener('message', handleBridgeEvent)
   }
 
   request(request: JsonRpcRequest): Promise<any> {

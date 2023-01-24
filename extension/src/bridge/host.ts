@@ -20,15 +20,12 @@ export default class BridgeHost {
   }
 
   setConnection(connection: Connection) {
-    if (connection?.avatarAddress !== this.connection?.avatarAddress) {
-      this.source?.postMessage(
-        {
-          zodiacPilotBridgeConnectionChange: true,
-          account: connection.avatarAddress,
-          chainId: connection.chainId,
-        },
-        '*'
-      )
+    if (connection.avatarAddress !== this.connection.avatarAddress) {
+      this.emitBridgeEvent('accountsChanged', [[connection.avatarAddress]])
+    }
+
+    if (connection.chainId !== this.connection.chainId) {
+      this.emitBridgeEvent('chainChanged', [connection.chainId])
     }
 
     this.connection = connection
@@ -43,6 +40,19 @@ export default class BridgeHost {
       throw new Error('Expected message to originate from window')
     }
     this.source = event.source
+  }
+
+  private emitBridgeEvent(event: string, args: any[]) {
+    if (!this.source) throw new Error('source must be set')
+
+    this.source.postMessage(
+      {
+        zodiacPilotBridgeEvent: true,
+        event,
+        args,
+      },
+      '*'
+    )
   }
 
   private async handleRequest(request: Request, messageId: number) {
