@@ -123,10 +123,7 @@ const updateRpcRedirectRules = (tabId: number) => {
   const ruleIds = [...networkIdOfRpcUrl.entries()].map(([rpcUrl]) =>
     hashCode(`${tabId}:${rpcUrl}`)
   )
-  console.log({
-    addRules,
-    removeRuleIds: ruleIds,
-  })
+
   chrome.declarativeNetRequest.updateSessionRules({
     addRules,
     removeRuleIds: ruleIds,
@@ -181,13 +178,16 @@ const networkIdOfRpcUrlPromisePerTab = new Map<
 >()
 chrome.webRequest.onBeforeRequest.addListener(
   (details: chrome.webRequest.WebRequestBodyDetails) => {
-    // only intercept requests from extension tabs
+    // only consider requests from extension tabs
     if (!activeExtensionTabs.has(details.tabId)) return
-    // don't intercept requests from the extension itself
+    // don't consider requests from the extension itself
     if (details.parentFrameId === -1) return
-    // only intercept POST requests
+    // only consider POST requests
     if (details.method !== 'POST') return
-    // only intercept requests with a JSON RPC body
+    // don't consider requests that are already redirected to the fork RPC
+    if (details.url === simulatingExtensionTabs.get(details.tabId)?.rpcUrl)
+      return
+    // only consider requests with a JSON RPC body
     const jsonRpc = getJsonRpcBody(details)
     if (!jsonRpc) return
 
