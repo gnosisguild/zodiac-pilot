@@ -7,20 +7,27 @@ import 'react-toastify/dist/ReactToastify.css'
 import './global.css'
 
 import Browser from './browser'
+import ConnectionsDrawer from './browser/ConnectionsDrawer'
 import { prependHttp } from './browser/UrlInput'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
-import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
+import {
+  useMatchConnectionsRoute,
+  useMatchSettingsRoute,
+  usePushSettingsRoute,
+} from './routing'
 import Settings, { ProvideConnections, useConnection } from './settings'
 import { useConnections } from './settings/connectionHooks'
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
   const settingsRouteMatch = useMatchSettingsRoute()
+  const connectionsRouteMatch = useMatchConnectionsRoute()
   const pushSettingsRoute = usePushSettingsRoute()
   const { connection, connected } = useConnection()
 
+  const isConnectionsRoute = !!connectionsRouteMatch
   const isSettingsRoute = !!settingsRouteMatch
   const settingsRequired =
     !validateAddress(connection.avatarAddress) ||
@@ -65,7 +72,17 @@ const Routes: React.FC = () => {
     )
   }
 
-  return <Browser />
+  return (
+    <>
+      <ConnectionsDrawer
+        isOpen={isConnectionsRoute}
+        onClose={() =>
+          isConnectionsRoute && pushLocation(connectionsRouteMatch.url)
+        }
+      />
+      <Browser />
+    </>
+  )
 }
 
 function launch(url: string) {
