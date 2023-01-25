@@ -13,7 +13,7 @@ esbuild
       './src/introduce.ts',
       './src/launch.ts',
       './src/inject/pilot.ts',
-      './src/inject/ganache.ts',
+      // './src/inject/ganache.ts',
       './src/app.tsx',
     ],
     bundle: true,

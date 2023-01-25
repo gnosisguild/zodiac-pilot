@@ -12,7 +12,7 @@ function inject(windowName: string, scriptPath: string) {
 }
 
 inject('pilot-frame', 'build/inject/pilot.js')
-inject('ganache-frame', 'build/inject/ganache.js')
+// inject('ganache-frame', 'build/inject/ganache.js')
 
 // Provide the background script with the chainId of a given RPC endpoint on request
 if (window.name === 'pilot-frame') {
