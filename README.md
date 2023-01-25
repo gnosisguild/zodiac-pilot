@@ -94,6 +94,18 @@ TODO: The following is still true, but we should adjust the implementation now t
 > Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
 > At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe. -->
 
+### Reroute JSON-RPC fetch requests
+
+Apps commonly make read-only JSON-RPC requests to providers such as Infura or Alchemy rather than going through the EIP-1193 provider injected by the wallet.
+Once the network has been forked for simulating recorded transaction such requests should reflect the state of the fork as well.
+
+This first requires detecting which of the JSON-RPC endpoints used by an app actually serve the forked network.
+The `webRequest` extension API allows inspecting the body of each outgoing request.
+If a requests looks like a JSON-RPC request we probe the target endpoint for `requestChainId`.
+
+Once the network is forked we update `declarativeNetRequest` xhr redirection rules for endpoints identified as serving the forked network.
+All of this is implemented as part of the [background service worker](src/background.ts).
+
 ### Submitting transactions
 
 A batch of recorded transaction can finally be submitted as a multi-send transaction.
