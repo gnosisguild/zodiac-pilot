@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react'
 
+const decodeLocationHash = () => {
+  const { hash } = window.location
+  if (hash[0] === '#' && hash.length > 1) {
+    return decodeURIComponent(hash.substring(1))
+  }
+  return ''
+}
+
 // The background script listens to all possible ways of location updates in our iframe and notify us via a message.
-let lastHref = ''
+let lastHref = decodeLocationHash()
 window.addEventListener('message', (event) => {
   if (event.data.type === 'navigationDetected') {
     // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).
@@ -37,14 +45,6 @@ const locationPushedEvent = new Event('locationPushed')
 export const pushLocation = (url: string) => {
   window.history.pushState({}, '', '#' + encodeURIComponent(url))
   window.dispatchEvent(locationPushedEvent)
-}
-
-const decodeLocationHash = () => {
-  const { hash } = window.location
-  if (hash[0] === '#' && hash.length > 1) {
-    return decodeURIComponent(hash.substring(1))
-  }
-  return ''
 }
 
 export const useLocation = () => {
