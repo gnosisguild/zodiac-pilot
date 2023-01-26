@@ -46,15 +46,15 @@ export const usePushSettingsRoute = () => {
 
 export const useMatchConnectionsRoute = () => {
   const location = useLocation()
-  const [settingsPart, url = ''] = location.split(';')
-  const settingsRouteMatch = settingsPart.match(
+  const [connectionsPart, url = ''] = location.split(';')
+  const connectionsRouteMatch = connectionsPart.match(
     /^connections(-[A-Za-z0-9_-]+)?/
   )
-  const editConnectionId = settingsRouteMatch?.[1]?.slice(1)
-  const isMatch = !!settingsRouteMatch
+  const editConnectionId = connectionsRouteMatch?.[1]?.slice(1)
+  const isMatch = !!connectionsRouteMatch
 
   return useMemo(
-    () => isMatch && { editConnectionId, url },
+    () => ({ isMatch, editConnectionId, url }),
     [isMatch, editConnectionId, url]
   )
 }

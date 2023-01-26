@@ -27,7 +27,6 @@ const Routes: React.FC = () => {
   const pushSettingsRoute = usePushSettingsRoute()
   const { connection, connected } = useConnection()
 
-  const isConnectionsRoute = !!connectionsRouteMatch
   const isSettingsRoute = !!settingsRouteMatch
   const settingsRequired =
     !validateAddress(connection.avatarAddress) ||
@@ -75,11 +74,9 @@ const Routes: React.FC = () => {
   return (
     <>
       <ConnectionsDrawer
-        isOpen={isConnectionsRoute}
-        editConnectionId={connectionsRouteMatch?.editConnectionId}
-        onClose={() =>
-          isConnectionsRoute && pushLocation(connectionsRouteMatch.url)
-        }
+        isOpen={connectionsRouteMatch.isMatch}
+        editConnectionId={connectionsRouteMatch.editConnectionId}
+        onClose={() => pushLocation(connectionsRouteMatch.url)}
       />
       <Browser />
     </>
