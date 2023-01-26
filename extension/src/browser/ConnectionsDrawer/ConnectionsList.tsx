@@ -1,5 +1,4 @@
 import React from 'react'
-import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { Box, BoxButton, ConnectionStack, Flex } from '../../components'
 import {
@@ -9,7 +8,6 @@ import {
 import { useConnection, useConnections } from '../../settings/connectionHooks'
 import { Connection } from '../../types'
 
-import ConnectIcon from './ConnectIcon'
 import classes from './style.module.css'
 
 interface ConnectionsListProps {
@@ -34,10 +32,7 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
   const handleModify = () => onModify(connection.id)
 
   return (
-    <BoxButton
-      className={classes.connectionItemContainer}
-      onClick={handleLaunch}
-    >
+    <Box className={classes.connectionItemContainer}>
       <Flex direction="column" gap={4}>
         <Flex
           direction="row"
@@ -74,10 +69,20 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
             </Box>
             <h2>{connection.label}</h2>
           </Flex>
-
-          <BoxButton onClick={handleModify} className={classes.modifyButton}>
-            Modify
-          </BoxButton>
+          <Flex gap={3}>
+            <BoxButton
+              onClick={handleLaunch}
+              className={classes.connectionButton}
+            >
+              Connect
+            </BoxButton>
+            <BoxButton
+              onClick={handleModify}
+              className={classes.connectionButton}
+            >
+              Modify
+            </BoxButton>
+          </Flex>
         </Flex>
         <Flex
           direction="row"
@@ -101,7 +106,7 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
           </Flex>
         </Flex>
       </Flex>
-    </BoxButton>
+    </Box>
   )
 }
 

@@ -4,7 +4,7 @@ import React from 'react'
 import { Box, Button, Flex, IconButton } from '../../components'
 import ConnectionsIcon from '../../components/ConnectionBubble/ConnectionsIcon'
 import OverlayDrawer from '../../components/OverlayDrawer'
-import { usePushSettingsRoute } from '../../routing'
+import { usePushConnectionsRoute, usePushSettingsRoute } from '../../routing'
 import {
   useConnections,
   useSelectedConnectionId,
@@ -37,13 +37,14 @@ const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
   const [, selectConnection] = useSelectedConnectionId()
   const [connections, setConnections] = useConnections()
   const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
 
   const handleLaunch = (connectionId: string) => {
     selectConnection(connectionId)
     onClose()
   }
   const handleModify = (connectionId: string) => {
-    pushSettingsRoute(connectionId)
+    pushConnectionsRoute(connectionId)
   }
 
   const handleAddConnection = () => {

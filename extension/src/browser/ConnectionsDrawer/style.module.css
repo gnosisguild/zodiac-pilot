@@ -66,12 +66,12 @@
   min-width: 505px;
 }
 
-.modifyButton {
+.connectionButton {
   background: none;
   padding: var(--spacing-1) var(--spacing-3);
 }
 
-.modifyButton:before {
+.connectionButton:before {
   content: none;
 }
 
