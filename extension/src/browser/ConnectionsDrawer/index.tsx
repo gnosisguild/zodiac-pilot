@@ -1,22 +1,17 @@
-import { nanoid } from 'nanoid'
 import React from 'react'
 
-import { Box, Button, Flex, IconButton } from '../../components'
+import { Box, IconButton } from '../../components'
 import ConnectionsIcon from '../../components/ConnectionBubble/ConnectionsIcon'
 import OverlayDrawer from '../../components/OverlayDrawer'
-import { usePushConnectionsRoute, usePushSettingsRoute } from '../../routing'
-import {
-  useConnections,
-  useSelectedConnectionId,
-} from '../../settings/connectionHooks'
-import { ProviderType } from '../../types'
 
-import ConnectionsList from './ConnectionsList'
+import EditConnection from './Edit'
+import ConnectionsList from './List'
 import classes from './style.module.css'
 
 interface Props {
   isOpen: boolean
   onClose: () => void
+  editConnectionId?: string
 }
 
 const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
@@ -33,39 +28,11 @@ const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </div>
 )
 
-const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
-  const [, selectConnection] = useSelectedConnectionId()
-  const [connections, setConnections] = useConnections()
-  const pushSettingsRoute = usePushSettingsRoute()
-  const pushConnectionsRoute = usePushConnectionsRoute()
-
-  const handleLaunch = (connectionId: string) => {
-    selectConnection(connectionId)
-    onClose()
-  }
-  const handleModify = (connectionId: string) => {
-    pushConnectionsRoute(connectionId)
-  }
-
-  const handleAddConnection = () => {
-    const id = nanoid()
-    setConnections([
-      ...connections,
-      {
-        id,
-        label: '',
-        chainId: 1,
-        moduleAddress: '',
-        avatarAddress: '',
-        pilotAddress: '',
-        providerType: ProviderType.WalletConnect,
-        moduleType: undefined,
-        roleId: '',
-      },
-    ])
-    pushSettingsRoute(id)
-  }
-
+const ConnectionsDrawer: React.FC<Props> = ({
+  editConnectionId,
+  isOpen,
+  onClose,
+}) => {
   return (
     <OverlayDrawer
       isOpen={isOpen}
@@ -74,21 +41,11 @@ const ConnectionsDrawer: React.FC<Props> = ({ isOpen, onClose }) => {
       className={classes.drawer}
     >
       <CloseDrawerButton onClick={onClose} />
-      <Flex gap={4} direction="column">
-        <Flex gap={2} direction="column">
-          <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-            <h2>Pilot Connections</h2>
-            <Button
-              onClick={handleAddConnection}
-              className={classes.addConnection}
-            >
-              Add Connection
-            </Button>
-          </Flex>
-          <hr />
-        </Flex>
-        <ConnectionsList onLaunch={handleLaunch} onModify={handleModify} />
-      </Flex>
+      {editConnectionId ? (
+        <EditConnection id={editConnectionId} />
+      ) : (
+        <ConnectionsList onClose={onClose} />
+      )}
     </OverlayDrawer>
   )
 }

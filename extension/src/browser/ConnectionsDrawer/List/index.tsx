@@ -1,18 +1,29 @@
+import { nanoid } from 'nanoid'
 import React from 'react'
 
-import { Box, BoxButton, ConnectionStack, Flex } from '../../components'
+import {
+  Box,
+  BoxButton,
+  Button,
+  ConnectionStack,
+  Flex,
+} from '../../../components'
+import { usePushConnectionsRoute } from '../../../routing'
 import {
   ConnectedIcon,
   DisconnectedIcon,
-} from '../../settings/Connection/ConnectIcon'
-import { useConnection, useConnections } from '../../settings/connectionHooks'
-import { Connection } from '../../types'
+} from '../../../settings/Connection/ConnectIcon'
+import {
+  useConnection,
+  useConnections,
+  useSelectedConnectionId,
+} from '../../../settings/connectionHooks'
+import { Connection, ProviderType } from '../../../types'
 
 import classes from './style.module.css'
 
 interface ConnectionsListProps {
-  onLaunch: (connectionId: string) => void
-  onModify: (connectionId: string) => void
+  onClose: () => void
 }
 
 interface ConnectionItem {
@@ -110,23 +121,61 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
   )
 }
 
-const ConnectionsList: React.FC<ConnectionsListProps> = ({
-  onLaunch,
-  onModify,
-}) => {
-  const [connections] = useConnections()
+const ConnectionsList: React.FC<ConnectionsListProps> = ({ onClose }) => {
+  const [, selectConnection] = useSelectedConnectionId()
+  const [connections, setConnections] = useConnections()
+  const pushConnectionsRoute = usePushConnectionsRoute()
+
+  const handleLaunch = (connectionId: string) => {
+    selectConnection(connectionId)
+    onClose()
+  }
+  const handleModify = (connectionId: string) => {
+    pushConnectionsRoute(connectionId)
+  }
+
+  const handleAddConnection = () => {
+    const id = nanoid()
+    setConnections([
+      ...connections,
+      {
+        id,
+        label: '',
+        chainId: 1,
+        moduleAddress: '',
+        avatarAddress: '',
+        pilotAddress: '',
+        providerType: ProviderType.WalletConnect,
+        moduleType: undefined,
+        roleId: '',
+      },
+    ])
+    pushConnectionsRoute(id)
+  }
 
   return (
-    <>
+    <Flex gap={4} direction="column">
+      <Flex gap={2} direction="column">
+        <Flex gap={1} justifyContent="space-between" alignItems="baseline">
+          <h2>Pilot Connections</h2>
+          <Button
+            onClick={handleAddConnection}
+            className={classes.addConnection}
+          >
+            Add Connection
+          </Button>
+        </Flex>
+        <hr />
+      </Flex>
       {connections.map((connection) => (
         <ConnectionItem
           key={connection.id}
           connection={connection}
-          onLaunch={onLaunch}
-          onModify={onModify}
+          onLaunch={handleLaunch}
+          onModify={handleModify}
         />
       ))}
-    </>
+    </Flex>
   )
 }
 

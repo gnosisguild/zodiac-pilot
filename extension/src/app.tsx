@@ -76,6 +76,7 @@ const Routes: React.FC = () => {
     <>
       <ConnectionsDrawer
         isOpen={isConnectionsRoute}
+        editConnectionId={connectionsRouteMatch?.editConnectionId}
         onClose={() =>
           isConnectionsRoute && pushLocation(connectionsRouteMatch.url)
         }
