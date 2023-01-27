@@ -1,3 +1,19 @@
+h2 {
+  font-size: 1.5em;
+  margin: 0em;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: rgba(217, 212, 173, 0.4);
+  margin: 0.5em 0 0 0;
+}
+
+.subtitle {
+  font-size: 0.8em;
+}
+
 .form {
   flex-grow: 1;
 }
@@ -29,10 +45,6 @@
   border-radius: 50px;
 }
 
-h2 {
-  font-size: 1.5em;
-  margin: 0em 0em 0.5em 0em;
-}
 .labelContainer {
   overflow: hidden;
 }

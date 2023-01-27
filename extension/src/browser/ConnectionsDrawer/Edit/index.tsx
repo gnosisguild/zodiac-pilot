@@ -1,7 +1,8 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React from 'react'
 
-import { Box, Field, Flex } from '../../../components'
+import { Box, Button, Field, Flex } from '../../../components'
+import { useConnectionsHash } from '../../../routing'
 import { useSafesWithOwner } from '../../../safe'
 import { useSafeDelegates } from '../../../safe'
 import AvatarInput from '../../../settings/Connection/AvatarInput'
@@ -38,6 +39,7 @@ interface Props {
 const EditConnection: React.FC<Props> = ({ id }) => {
   const [connections, setConnections] = useConnections()
   const { connection } = useConnection(id)
+  const connectionsHash = useConnectionsHash()
 
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
     connection
@@ -76,7 +78,22 @@ const EditConnection: React.FC<Props> = ({ id }) => {
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
   return (
-    <Flex direction="column" gap={3}>
+    <Flex direction="column" gap={4}>
+      <Flex gap={2} direction="column">
+        <Flex gap={1} justifyContent="space-between" alignItems="baseline">
+          <Flex gap={1} direction="column" alignItems="baseline">
+            <h2>{connection.label}</h2>
+            <a className={classes.subtitle} href={connectionsHash}>
+              &#8592; All Connections
+            </a>
+          </Flex>
+          <Flex gap={1} alignItems="baseline">
+            <Button>Launch</Button>
+            <Button>Delete</Button>
+          </Flex>
+        </Flex>
+        <hr />
+      </Flex>
       <Flex direction="column" gap={2}>
         <Flex direction="column" gap={3} className={classes.form}>
           {error && (

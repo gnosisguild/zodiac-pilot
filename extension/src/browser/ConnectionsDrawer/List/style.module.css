@@ -1,34 +1,8 @@
-.drawer {
-  padding: 40px 50px;
-  min-width: 900px;
-  width: 50%;
-  max-width: 1200px;
-  box-sizing: border-box;
-  border-left: 1px solid rgba(217, 212, 173, 0.8);
-}
-
-.toggleContainer {
-  position: absolute;
-  top: 38px;
-  left: 0;
-  transform: translate(-50%);
-  z-index: 9000;
-}
-
-.toggleBackground {
-  background-color: rgb(30 30 18);
-}
-
-.toggle {
-  width: 60px;
-  height: 42px;
-  overflow: hidden;
-  padding: 0;
-  background-color: rgba(211, 224, 173, 0.3);
-}
-
-.toggle:hover {
-  border-color: rgba(217, 212, 173, 0.8);
+hr {
+  border: none;
+  height: 1px;
+  background-color: rgba(217, 212, 173, 0.4);
+  margin: 0.5em 0 0 0;
 }
 
 .addConnection {
@@ -73,13 +47,6 @@
 
 .connectionButton:before {
   content: none;
-}
-
-hr {
-  border: none;
-  height: 1px;
-  background-color: rgba(217, 212, 173, 0.4);
-  margin: 0;
 }
 
 .connectionIcon {
