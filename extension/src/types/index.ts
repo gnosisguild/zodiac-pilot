@@ -16,6 +16,7 @@ export type Connection = {
   providerType: ProviderType
   moduleType?: SupportedModuleType
   roleId?: string
+  lastUsed?: number
 }
 
 export interface JsonRpcRequest {

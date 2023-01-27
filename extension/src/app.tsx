@@ -18,7 +18,10 @@ import {
   usePushSettingsRoute,
 } from './routing'
 import Settings, { ProvideConnections, useConnection } from './settings'
-import { useConnections } from './settings/connectionHooks'
+import {
+  useConnections,
+  useUpdateLastUsedConnection,
+} from './settings/connectionHooks'
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
@@ -37,6 +40,8 @@ const Routes: React.FC = () => {
     connections.length === 1 ? connections[0].id : undefined
 
   const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
+
+  useUpdateLastUsedConnection()
 
   // redirect to settings page if more settings are required
   useEffect(() => {

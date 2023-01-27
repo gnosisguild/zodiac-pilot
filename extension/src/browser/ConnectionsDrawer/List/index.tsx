@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid'
 import React from 'react'
+import Moment from 'react-moment'
 
 import {
   Box,
@@ -112,7 +113,15 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
             gap={2}
             className={classes.info}
           >
-            <div className={classes.infoDatum}>STUB DAYS AGO</div>
+            <div className={classes.infoDatum}>
+              {connection.lastUsed ? (
+                <Moment unix fromNow>
+                  {connection.lastUsed}
+                </Moment>
+              ) : (
+                <>N/A</>
+              )}
+            </div>
             <div className={classes.infoLabel}>Last Used</div>
           </Flex>
         </Flex>

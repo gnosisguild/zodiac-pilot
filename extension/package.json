@@ -76,5 +76,9 @@
     "typechain": "^8.0.0",
     "typescript": "^4.9.4",
     "typescript-plugin-css-modules": "^3.4.0"
+  },
+  "dependencies": {
+    "moment": "^2.29.4",
+    "react-moment": "^1.1.3"
   }
 }
