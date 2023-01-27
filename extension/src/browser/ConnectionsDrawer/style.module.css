@@ -34,4 +34,9 @@
   padding: 40px 50px;
   overflow: auto;
   height: 100%;
+  scrollbar-width: none;
+}
+
+.drawerContent::-webkit-scrollbar {
+  display: none;
 }
