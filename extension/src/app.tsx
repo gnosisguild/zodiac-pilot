@@ -8,16 +8,11 @@ import './global.css'
 
 import Browser from './browser'
 import ConnectionsDrawer from './browser/ConnectionsDrawer'
-import { prependHttp } from './browser/UrlInput'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask } from './providers'
-import {
-  useMatchConnectionsRoute,
-  useMatchSettingsRoute,
-  usePushSettingsRoute,
-} from './routing'
-import Settings, { ProvideConnections, useConnection } from './settings'
+import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
+import { ProvideConnections, useConnection } from './settings'
 import {
   useConnections,
   useUpdateLastUsedConnection,
@@ -25,13 +20,12 @@ import {
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
-  const settingsRouteMatch = useMatchSettingsRoute()
   const connectionsRouteMatch = useMatchConnectionsRoute()
-  const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
   const { connection, connected } = useConnection()
 
-  const isSettingsRoute = !!settingsRouteMatch
-  const settingsRequired =
+  const isConnectionsRoute = connectionsRouteMatch.isMatch
+  const connectionChangeRequired =
     !validateAddress(connection.avatarAddress) ||
     !validateAddress(connection.pilotAddress)
 
@@ -39,57 +33,49 @@ const Routes: React.FC = () => {
   const connectionToEdit =
     connections.length === 1 ? connections[0].id : undefined
 
-  const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
+  const waitForWallet =
+    !isConnectionsRoute && !connectionChangeRequired && !connected
 
   useUpdateLastUsedConnection()
 
   // redirect to settings page if more settings are required
   useEffect(() => {
-    if (!isSettingsRoute && settingsRequired) {
-      pushSettingsRoute(connectionToEdit)
+    if (!isConnectionsRoute && connectionChangeRequired) {
+      pushConnectionsRoute(connectionToEdit)
     }
-  }, [isSettingsRoute, pushSettingsRoute, connectionToEdit, settingsRequired])
+  }, [
+    isConnectionsRoute,
+    pushConnectionsRoute,
+    connectionToEdit,
+    connectionChangeRequired,
+  ])
 
   // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
   useEffect(() => {
     let timeout: number
     if (waitForWallet) {
       timeout = window.setTimeout(() => {
-        pushSettingsRoute()
+        pushConnectionsRoute()
       }, 200)
     }
     return () => {
       window.clearTimeout(timeout)
     }
-  }, [waitForWallet, pushSettingsRoute])
+  }, [waitForWallet, pushConnectionsRoute])
 
-  if (!isSettingsRoute && settingsRequired) return null
-  if (!isSettingsRoute && waitForWallet) return null
-
-  if (isSettingsRoute) {
-    return (
-      <Settings
-        url={settingsRouteMatch.url}
-        editConnectionId={settingsRouteMatch.editConnectionId}
-        onLaunch={launch}
-      />
-    )
-  }
+  if (!isConnectionsRoute && connectionChangeRequired) return null
+  if (!isConnectionsRoute && waitForWallet) return null
 
   return (
     <>
       <ConnectionsDrawer
-        isOpen={connectionsRouteMatch.isMatch}
+        isOpen={connectionChangeRequired || connectionsRouteMatch.isMatch}
         editConnectionId={connectionsRouteMatch.editConnectionId}
         onClose={() => pushLocation(connectionsRouteMatch.url)}
       />
       <Browser />
     </>
   )
-}
-
-function launch(url: string) {
-  pushLocation(prependHttp(url))
 }
 
 const rootEl = document.getElementById('root')
