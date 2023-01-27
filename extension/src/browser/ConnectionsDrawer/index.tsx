@@ -8,13 +8,17 @@ import EditConnection from './Edit'
 import ConnectionsList from './List'
 import classes from './style.module.css'
 
-interface Props {
+interface ConnectionsDrawerProps {
   isOpen: boolean
   onClose: () => void
   editConnectionId?: string
 }
 
-const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+interface CloseDrawerButtonProps {
+  onClick: () => void
+}
+
+const CloseDrawerButton: React.FC<CloseDrawerButtonProps> = ({ onClick }) => (
   <div className={classes.toggleContainer}>
     <IconButton onClick={onClick}>
       <div>
@@ -28,7 +32,7 @@ const CloseDrawerButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </div>
 )
 
-const ConnectionsDrawer: React.FC<Props> = ({
+const ConnectionsDrawer: React.FC<ConnectionsDrawerProps> = ({
   editConnectionId,
   isOpen,
   onClose,
@@ -43,9 +47,12 @@ const ConnectionsDrawer: React.FC<Props> = ({
       <CloseDrawerButton onClick={onClose} />
       <div className={classes.drawerContent}>
         {editConnectionId ? (
-          <EditConnection id={editConnectionId} />
+          <EditConnection
+            connectionId={editConnectionId}
+            onLaunched={onClose}
+          />
         ) : (
-          <ConnectionsList onClose={onClose} />
+          <ConnectionsList onLaunched={onClose} />
         )}
       </div>
     </OverlayDrawer>

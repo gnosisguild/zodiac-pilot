@@ -10,6 +10,18 @@ h2 {
   margin: 0em;
 }
 
+button.removeButton {
+  height: auto;
+  width: auto;
+  aspect-ratio: 1/1;
+  padding: 0 8px;
+  border: 1px solid crimson;
+}
+
+button.removeButton:hover {
+  background-color: rgba(220, 20, 60, 0.2);
+}
+
 .addConnection {
   width: auto;
   padding: 4px 24px;

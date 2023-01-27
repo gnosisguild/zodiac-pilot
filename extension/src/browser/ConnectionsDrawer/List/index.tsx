@@ -23,16 +23,16 @@ import { Connection, ProviderType } from '../../../types'
 import classes from './style.module.css'
 
 interface ConnectionsListProps {
-  onClose: () => void
+  onLaunched: () => void
 }
 
-interface ConnectionItem {
+interface ConnectionItemProps {
   connection: Connection
   onLaunch: (connectionId: string) => void
   onModify: (connectionId: string) => void
 }
 
-const ConnectionItem: React.FC<ConnectionItem> = ({
+const ConnectionItem: React.FC<ConnectionItemProps> = ({
   onLaunch,
   onModify,
   connection,
@@ -121,20 +121,20 @@ const ConnectionItem: React.FC<ConnectionItem> = ({
   )
 }
 
-const ConnectionsList: React.FC<ConnectionsListProps> = ({ onClose }) => {
+const ConnectionsList: React.FC<ConnectionsListProps> = ({ onLaunched }) => {
   const [, selectConnection] = useSelectedConnectionId()
   const [connections, setConnections] = useConnections()
   const pushConnectionsRoute = usePushConnectionsRoute()
 
   const handleLaunch = (connectionId: string) => {
     selectConnection(connectionId)
-    onClose()
+    onLaunched()
   }
   const handleModify = (connectionId: string) => {
     pushConnectionsRoute(connectionId)
   }
 
-  const handleAddConnection = () => {
+  const handleCreate = () => {
     const id = nanoid()
     setConnections([
       ...connections,
@@ -158,10 +158,7 @@ const ConnectionsList: React.FC<ConnectionsListProps> = ({ onClose }) => {
       <Flex gap={2} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
           <h2>Pilot Connections</h2>
-          <Button
-            onClick={handleAddConnection}
-            className={classes.addConnection}
-          >
+          <Button onClick={handleCreate} className={classes.addConnection}>
             Add Connection
           </Button>
         </Flex>

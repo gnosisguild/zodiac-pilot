@@ -10,6 +10,18 @@ hr {
   margin: 0.5em 0 0 0;
 }
 
+button.removeButton {
+  height: auto;
+  width: auto;
+  aspect-ratio: 1/1;
+  padding: 8px;
+  border: 3px double crimson;
+}
+
+button.removeButton:hover {
+  background-color: rgba(220, 20, 60, 0.2);
+}
+
 .subtitle {
   font-size: 0.8em;
 }

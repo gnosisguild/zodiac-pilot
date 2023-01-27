@@ -1,8 +1,9 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { RiDeleteBinLine } from 'react-icons/ri'
 
-import { Box, Button, Field, Flex } from '../../../components'
-import { useConnectionsHash } from '../../../routing'
+import { Box, Button, Field, Flex, IconButton } from '../../../components'
+import { useConnectionsHash, usePushConnectionsRoute } from '../../../routing'
 import { useSafesWithOwner } from '../../../safe'
 import { useSafeDelegates } from '../../../safe'
 import AvatarInput from '../../../settings/Connection/AvatarInput'
@@ -19,10 +20,16 @@ import {
 import {
   useConnection,
   useConnections,
+  useSelectedConnectionId,
 } from '../../../settings/connectionHooks'
 import useConnectionDryRun from '../../../settings/useConnectionDryRun'
 
 import classes from './style.module.css'
+
+interface Props {
+  connectionId: string
+  onLaunched: () => void
+}
 
 type ConnectionPatch = {
   label?: string
@@ -32,38 +39,55 @@ type ConnectionPatch = {
   roleId?: string
 }
 
-interface Props {
-  id: string
-}
-
-const EditConnection: React.FC<Props> = ({ id }) => {
+const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [connections, setConnections] = useConnections()
-  const { connection } = useConnection(id)
+  const { connection } = useConnection(connectionId)
   const connectionsHash = useConnectionsHash()
+  const [, selectConnection] = useSelectedConnectionId()
+  const pushConnectionsRoute = usePushConnectionsRoute()
+
+  useEffect(() => {
+    const exists = connections.some((c) => c.id === connectionId)
+
+    if (!exists) {
+      pushConnectionsRoute()
+    }
+  }, [connectionId, connections, pushConnectionsRoute])
 
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
     connection
 
-  const { safes } = useSafesWithOwner(pilotAddress, id)
-  const { delegates } = useSafeDelegates(avatarAddress, id)
+  const { safes } = useSafesWithOwner(pilotAddress, connectionId)
+  const { delegates } = useSafeDelegates(avatarAddress, connectionId)
 
   // TODO modules is a nested list, but we currently only render the top-level items
   const {
     loading: loadingMods,
     isValidSafe,
     modules,
-  } = useZodiacModules(avatarAddress, id)
+  } = useZodiacModules(avatarAddress, connectionId)
 
   const selectedModule = moduleAddress
     ? modules.find((mod) => mod.moduleAddress === moduleAddress)
     : undefined
 
-  const updateConnection = (patch: ConnectionPatch) => {
+  const handleUpdateConnection = (patch: ConnectionPatch) => {
     setConnections(
       connections.map((c) =>
         c.id === connection.id ? { ...connection, ...patch } : c
       )
     )
+  }
+
+  const handleRemoveConnection = () => {
+    const newConnections = connections.filter((c) => c.id !== connection.id)
+    setConnections(newConnections)
+    pushConnectionsRoute()
+  }
+
+  const handleLaunchConnection = () => {
+    selectConnection(connectionId)
+    onLaunched()
   }
 
   const error = useConnectionDryRun(connection)
@@ -87,9 +111,15 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               &#8592; All Connections
             </a>
           </Flex>
-          <Flex gap={1} alignItems="baseline">
-            <Button>Launch</Button>
-            <Button>Delete</Button>
+          <Flex gap={1} alignItems="center">
+            <Button onClick={handleLaunchConnection}>Launch</Button>
+            <IconButton
+              onClick={handleRemoveConnection}
+              danger
+              className={classes.removeButton}
+            >
+              <RiDeleteBinLine size={24} title="Remove this connection" />
+            </IconButton>
           </Flex>
         </Flex>
         <hr />
@@ -112,21 +142,21 @@ const EditConnection: React.FC<Props> = ({ id }) => {
               value={label}
               placeholder="Label this connection"
               onChange={(ev) => {
-                updateConnection({
+                handleUpdateConnection({
                   label: ev.target.value,
                 })
               }}
             />
           </Field>
           <Field label="Pilot Account" labelFor="">
-            <ConnectButton id={id} />
+            <ConnectButton id={connectionId} />
           </Field>
           <Field label="Piloted Safe" labelFor="">
             <AvatarInput
               availableSafes={safes}
               value={avatarAddress}
               onChange={(address) =>
-                updateConnection({
+                handleUpdateConnection({
                   avatarAddress: address,
                   moduleAddress: '',
                   moduleType: undefined,
@@ -147,7 +177,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                 const mod = modules.find(
                   (mod) => mod.moduleAddress === (selected as Option).value
                 )
-                updateConnection({
+                handleUpdateConnection({
                   moduleAddress: mod?.moduleAddress,
                   moduleType: mod?.type,
                 })
@@ -171,7 +201,7 @@ const EditConnection: React.FC<Props> = ({ id }) => {
                 type="text"
                 value={roleId}
                 onChange={(ev) => {
-                  updateConnection({ roleId: ev.target.value })
+                  handleUpdateConnection({ roleId: ev.target.value })
                 }}
                 placeholder="0"
               />
