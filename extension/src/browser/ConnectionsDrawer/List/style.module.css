@@ -5,14 +5,14 @@ hr {
   margin: 0.5em 0 0 0;
 }
 
+h2 {
+  font-size: 1.5em;
+  margin: 0em;
+}
+
 .addConnection {
   width: auto;
   padding: 4px 24px;
-}
-
-.connectionsList {
-  overflow: auto;
-  height: 100%;
 }
 
 .connectionItemContainer {
@@ -20,6 +20,7 @@ hr {
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
   padding: var(--spacing-4);
+
 }
 
 .connectionItemContainer:hover,

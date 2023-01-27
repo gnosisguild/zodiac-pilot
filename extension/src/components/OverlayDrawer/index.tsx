@@ -86,11 +86,14 @@ const OverlayDrawer: React.FC<Props> = ({
     updatePageScroll()
   }, [isOpen])
 
-  const keyCloser = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      onClose()
-    }
-  }, [])
+  const keyCloser = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    },
+    [onClose]
+  )
 
   useEffect(() => {
     document.addEventListener('keydown', keyCloser, false)
@@ -98,7 +101,7 @@ const OverlayDrawer: React.FC<Props> = ({
     return () => {
       document.removeEventListener('keydown', keyCloser, false)
     }
-  }, [])
+  }, [keyCloser])
 
   if (!isTransitioning && removeWhenClosed && !isOpen) {
     return null

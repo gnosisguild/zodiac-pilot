@@ -41,11 +41,13 @@ const ConnectionsDrawer: React.FC<Props> = ({
       className={classes.drawer}
     >
       <CloseDrawerButton onClick={onClose} />
-      {editConnectionId ? (
-        <EditConnection id={editConnectionId} />
-      ) : (
-        <ConnectionsList onClose={onClose} />
-      )}
+      <div className={classes.drawerContent}>
+        {editConnectionId ? (
+          <EditConnection id={editConnectionId} />
+        ) : (
+          <ConnectionsList onClose={onClose} />
+        )}
+      </div>
     </OverlayDrawer>
   )
 }

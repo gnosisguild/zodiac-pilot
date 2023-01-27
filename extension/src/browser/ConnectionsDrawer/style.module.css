@@ -1,5 +1,4 @@
 .drawer {
-  padding: 40px 50px;
   min-width: 900px;
   width: 50%;
   max-width: 1200px;
@@ -29,4 +28,10 @@
 
 .toggle:hover {
   border-color: rgba(217, 212, 173, 0.8);
+}
+
+.drawerContent {
+  padding: 40px 50px;
+  overflow: auto;
+  height: 100%;
 }
