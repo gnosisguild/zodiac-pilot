@@ -27,7 +27,9 @@ export const useUrl = () => {
 
 export const useSettingsHash = (connectionId?: string) => {
   const url = useUrl()
-  const settingsPart = connectionId ? `settings-${connectionId}` : 'settings'
+  const settingsPart = connectionId
+    ? `connections-${connectionId}`
+    : 'connections'
   return '#' + encodeURIComponent(`${settingsPart};${url}`)
 }
 
