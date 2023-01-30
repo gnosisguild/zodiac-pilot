@@ -102,17 +102,22 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
   return (
-    <Flex direction="column" gap={4}>
+    <Flex direction="column" gap={4} className={classes.editContainer}>
       <Flex gap={2} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
           <Flex gap={1} direction="column" alignItems="baseline">
             <h2>{connection.label}</h2>
-            <a className={classes.subtitle} href={connectionsHash}>
+            <a className={classes.backLink} href={connectionsHash}>
               &#8592; All Connections
             </a>
           </Flex>
-          <Flex gap={1} alignItems="center">
-            <Button onClick={handleLaunchConnection}>Launch</Button>
+          <Flex gap={4} alignItems="center">
+            <Button
+              className={classes.launchButton}
+              onClick={handleLaunchConnection}
+            >
+              Launch
+            </Button>
             <IconButton
               onClick={handleRemoveConnection}
               danger
