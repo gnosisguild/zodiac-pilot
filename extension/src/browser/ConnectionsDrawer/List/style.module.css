@@ -27,12 +27,16 @@ button.removeButton:hover {
   padding: 4px 24px;
 }
 
+.connection {
+  position: relative;
+}
+
 .connectionItemContainer {
+  width: 100%;
   background-color: rgba(39, 38, 30, 0.7);
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
   padding: var(--spacing-4);
-
 }
 
 .connectionItemContainer:hover,
@@ -53,12 +57,15 @@ button.removeButton:hover {
   min-width: 505px;
 }
 
-.connectionButton {
+.modifyButton {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-4);
   background: none;
   padding: var(--spacing-1) var(--spacing-3);
 }
 
-.connectionButton:before {
+.modifyButton:before {
   content: none;
 }
 
