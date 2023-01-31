@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useSettingsHash } from '../../routing'
+import { useConnectionsHash } from '../../routing'
 import { useConnection } from '../../settings'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
@@ -19,7 +19,7 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
   onConnectionsClick,
 }) => {
   const { connection } = useConnection()
-  const currentConnectionHash = useSettingsHash(connection.id)
+  const currentConnectionHash = useConnectionsHash(connection.id)
   return (
     <BlockLink onClick={onConnectionsClick}>
       <Box roundedLeft className={classes.connectionBubble}>
