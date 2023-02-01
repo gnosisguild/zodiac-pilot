@@ -8,7 +8,7 @@
 
 .toggleContainer {
   position: absolute;
-  top: 38px;
+  top: 48px;
   left: 0;
   transform: translate(-50%);
   z-index: 9000;
@@ -31,7 +31,7 @@
 }
 
 .drawerContent {
-  padding: 40px 50px;
+  padding: 50px;
   overflow: auto;
   height: 100%;
   scrollbar-width: none;

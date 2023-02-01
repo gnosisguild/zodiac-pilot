@@ -1,3 +1,6 @@
+.editContainer {
+  position: relative;
+}
 h2 {
   font-size: 1.5em;
   margin: 0em;
@@ -10,11 +13,16 @@ hr {
   margin: 0.5em 0 0 0;
 }
 
+.launchButton {
+  width: auto;
+  padding: 4px 24px;
+}
+
 button.removeButton {
   height: auto;
   width: auto;
   aspect-ratio: 1/1;
-  padding: 8px;
+  padding: 4px;
   border: 3px double crimson;
 }
 
@@ -22,8 +30,12 @@ button.removeButton:hover {
   background-color: rgba(220, 20, 60, 0.2);
 }
 
-.subtitle {
+.backLink {
+  position: absolute;
+  top: -30px;
+  left: 0;
   font-size: 0.8em;
+  text-decoration: none;
 }
 
 .form {

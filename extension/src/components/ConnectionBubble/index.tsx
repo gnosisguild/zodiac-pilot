@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useSettingsHash } from '../../routing'
+import { useConnectionsHash } from '../../routing'
 import { useConnection } from '../../settings'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
@@ -19,12 +19,12 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
   onConnectionsClick,
 }) => {
   const { connection } = useConnection()
-  const currentConnectionHash = useSettingsHash(connection.id)
+  const currentConnectionHash = useConnectionsHash(connection.id)
   return (
-    <Box rounded>
-      <Flex gap={1}>
-        <BlockLink href={currentConnectionHash}>
-          <Box bg rounded className={classes.currentConnectionContainer}>
+    <BlockLink onClick={onConnectionsClick}>
+      <Box roundedLeft className={classes.connectionBubble}>
+        <Flex gap={1}>
+          <Box bg roundedLeft className={classes.currentConnectionContainer}>
             <Flex justifyContent="space-between" alignItems="center" gap={3}>
               <div className={classes.blockieStack}>
                 <Box rounded className={classes.blockieBox}>
@@ -50,20 +50,23 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
               </div>
               <p className={classes.label}>{connection.label}</p>
             </Flex>
-            <div className={classes.infoContainer}>
-              <Box bg rounded p={3} className={classes.info}>
-                <ConnectionStack connection={connection} />
-              </Box>
-            </div>
           </Box>
-        </BlockLink>
-        <BlockLink onClick={onConnectionsClick}>
-          <Box bg rounded className={classes.connectionsContainer}>
+          <Box bg className={classes.connectionsContainer}>
             <ConnectionsIcon height="100%" width="auto" />
           </Box>
-        </BlockLink>
-      </Flex>
-    </Box>
+        </Flex>
+        <div className={classes.infoContainer}>
+          <Box bg p={3} className={classes.info}>
+            <BlockLink href={currentConnectionHash}>
+              <ConnectionStack
+                connection={connection}
+                className={classes.stack}
+              />
+            </BlockLink>
+          </Box>
+        </div>
+      </Box>
+    </BlockLink>
   )
 }
 
