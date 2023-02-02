@@ -38,7 +38,7 @@ const Routes: React.FC = () => {
 
   useUpdateLastUsedConnection()
 
-  // redirect to settings page if more settings are required
+  // open connections drawer if a valid connection is not available
   useEffect(() => {
     if (!isConnectionsRoute && connectionChangeRequired) {
       pushConnectionsRoute(connectionToEdit)
@@ -50,7 +50,7 @@ const Routes: React.FC = () => {
     connectionChangeRequired,
   ])
 
-  // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
+  // open connections drawer if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
   useEffect(() => {
     let timeout: number
     if (waitForWallet) {

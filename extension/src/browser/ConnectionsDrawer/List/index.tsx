@@ -40,8 +40,23 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
 }) => {
   const { connected, connect } = useConnection(connection.id)
 
-  const handleLaunch = () => onLaunch(connection.id)
   const handleModify = () => onModify(connection.id)
+  const handleLaunch = async () => {
+    if (connected) {
+      onLaunch(connection.id)
+      return
+    }
+
+    if (!connected && connect) {
+      const success = await connect()
+      if (success) {
+        onLaunch(connection.id)
+        return
+      }
+    }
+
+    handleModify()
+  }
 
   return (
     <div className={classes.connection}>
