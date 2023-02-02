@@ -41,7 +41,7 @@ type ConnectionPatch = {
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [connections, setConnections] = useConnections()
-  const { connection } = useConnection(connectionId)
+  const { connection, connected, connect } = useConnection(connectionId)
   const connectionsHash = useConnectionsHash()
   const [, selectConnection] = useSelectedConnectionId()
   const pushConnectionsRoute = usePushConnectionsRoute()
@@ -101,6 +101,8 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
+  const canLaunch = connected || !!connect
+
   return (
     <Flex direction="column" gap={4} className={classes.editContainer}>
       <Flex gap={2} direction="column">
@@ -114,6 +116,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
           <Flex gap={4} alignItems="center">
             <Button
               className={classes.launchButton}
+              disabled={!canLaunch}
               onClick={handleLaunchConnection}
             >
               Launch
