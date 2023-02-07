@@ -85,9 +85,21 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     pushConnectionsRoute()
   }
 
-  const handleLaunchConnection = () => {
-    selectConnection(connectionId)
-    onLaunched()
+  const handleLaunchConnection = async () => {
+    if (connected) {
+      selectConnection(connection.id)
+      onLaunched()
+      return
+    }
+
+    if (!connected && connect) {
+      const success = await connect()
+      if (success) {
+        selectConnection(connection.id)
+        onLaunched()
+        return
+      }
+    }
   }
 
   const error = useConnectionDryRun(connection)

@@ -9,6 +9,7 @@ import {
   ConnectionStack,
   Flex,
 } from '../../../components'
+import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { usePushConnectionsRoute } from '../../../routing'
 import {
   ConnectedIcon,
@@ -39,9 +40,18 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   connection,
 }) => {
   const { connected, connect } = useConnection(connection.id)
+  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
 
   const handleModify = () => onModify(connection.id)
   const handleLaunch = async () => {
+    const confirmation = await getConfirmation(
+      'Switching connections will empty your current transaction bundle.'
+    )
+
+    if (!confirmation) {
+      return
+    }
+
     if (connected) {
       onLaunch(connection.id)
       return
@@ -54,88 +64,90 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
         return
       }
     }
-
     handleModify()
   }
 
   return (
-    <div className={classes.connection}>
-      <BoxButton
-        className={classes.connectionItemContainer}
-        onClick={handleLaunch}
-      >
-        <Flex direction="column" gap={4}>
-          <Flex
-            direction="row"
-            gap={2}
-            justifyContent="space-between"
-            className={classes.labelContainer}
-          >
-            <Flex direction="row" alignItems="center" gap={3}>
-              <Box className={classes.connectionIcon}>
-                {connected && (
-                  <ConnectedIcon
-                    role="status"
-                    size={24}
-                    color="green"
-                    title="Pilot wallet is connected"
-                  />
-                )}
-                {!connected && !connect && (
-                  <DisconnectedIcon
-                    role="status"
-                    size={24}
-                    color="crimson"
-                    title="Pilot wallet is not connected"
-                  />
-                )}
-                {!connected && connect && (
-                  <ConnectedIcon
-                    role="status"
-                    size={24}
-                    color="orange"
-                    title="Pilot wallet is connected to a different chain"
-                  />
-                )}
-              </Box>
-              <h2>{connection.label}</h2>
-            </Flex>
-          </Flex>
-          <Flex
-            direction="row"
-            gap={4}
-            alignItems="baseline"
-            className={classes.infoContainer}
-          >
-            <ConnectionStack
-              connection={connection}
-              addressBoxClass={classes.addressBox}
-              className={classes.connectionStack}
-            />
+    <>
+      <div className={classes.connection}>
+        <BoxButton
+          className={classes.connectionItemContainer}
+          onClick={handleLaunch}
+        >
+          <Flex direction="column" gap={4}>
             <Flex
-              direction="column"
-              alignItems="start"
+              direction="row"
               gap={2}
-              className={classes.info}
+              justifyContent="space-between"
+              className={classes.labelContainer}
             >
-              <div className={classes.infoDatum}>
-                {connection.lastUsed ? (
-                  <Moment unix fromNow>
-                    {connection.lastUsed}
-                  </Moment>
-                ) : (
-                  <>N/A</>
-                )}
-              </div>
-              <div className={classes.infoLabel}>Last Used</div>
+              <Flex direction="row" alignItems="center" gap={3}>
+                <Box className={classes.connectionIcon}>
+                  {connected && (
+                    <ConnectedIcon
+                      role="status"
+                      size={24}
+                      color="green"
+                      title="Pilot wallet is connected"
+                    />
+                  )}
+                  {!connected && !connect && (
+                    <DisconnectedIcon
+                      role="status"
+                      size={24}
+                      color="crimson"
+                      title="Pilot wallet is not connected"
+                    />
+                  )}
+                  {!connected && connect && (
+                    <ConnectedIcon
+                      role="status"
+                      size={24}
+                      color="orange"
+                      title="Pilot wallet is connected to a different chain"
+                    />
+                  )}
+                </Box>
+                <h2>{connection.label}</h2>
+              </Flex>
+            </Flex>
+            <Flex
+              direction="row"
+              gap={4}
+              alignItems="baseline"
+              className={classes.infoContainer}
+            >
+              <ConnectionStack
+                connection={connection}
+                addressBoxClass={classes.addressBox}
+                className={classes.connectionStack}
+              />
+              <Flex
+                direction="column"
+                alignItems="start"
+                gap={2}
+                className={classes.info}
+              >
+                <div className={classes.infoDatum}>
+                  {connection.lastUsed ? (
+                    <Moment unix fromNow>
+                      {connection.lastUsed}
+                    </Moment>
+                  ) : (
+                    <>N/A</>
+                  )}
+                </div>
+                <div className={classes.infoLabel}>Last Used</div>
+              </Flex>
             </Flex>
           </Flex>
-        </Flex>
-      </BoxButton>
-      <BoxButton onClick={handleModify} className={classes.modifyButton}>
-        Modify
-      </BoxButton>
-    </div>
+        </BoxButton>
+        <BoxButton onClick={handleModify} className={classes.modifyButton}>
+          Modify
+        </BoxButton>
+      </div>
+      <ConfirmationModal />
+    </>
   )
 }
 
