@@ -188,8 +188,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     if (details.url === simulatingExtensionTabs.get(details.tabId)?.rpcUrl)
       return
     // only consider requests with a JSON RPC body
-    const jsonRpc = getJsonRpcBody(details)
-    if (!jsonRpc) return
+    if (!getJsonRpcBody(details)) return
 
     detectNetworkOfRpcUrl(details.url, details.tabId)
   },
@@ -231,26 +230,20 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   }
 }
 
+const decoder = new TextDecoder('utf-8')
 const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   const bytes = details.requestBody?.raw?.[0]?.bytes
   if (!bytes) return undefined
 
-  const bodyString = decodeURIComponent(
-    String.fromCharCode.apply(null, [...new Uint8Array(bytes)])
-  )
-
   let json
   try {
-    json = JSON.parse(bodyString)
+    json = JSON.parse(decodeURIComponent(decoder.decode(bytes)))
   } catch (e) {
     return undefined
   }
 
-  if (!Array.isArray(json) || json.length === 0) {
-    return undefined
-  }
-
-  if (json[0].jsonrpc !== '2.0') {
+  const probeRpc = Array.isArray(json) ? json[0] : json
+  if (probeRpc && probeRpc.jsonrpc !== '2.0') {
     return undefined
   }
 

@@ -20,14 +20,16 @@ if (window.name === 'pilot-frame') {
     if (message.type === 'requestChainId') {
       fetch(message.url, {
         method: 'POST',
-        body: JSON.stringify([
-          { method: 'eth_chainId', params: [], jsonrpc: '2.0' },
-        ]),
+        body: JSON.stringify({
+          method: 'eth_chainId',
+          params: [],
+          jsonrpc: '2.0',
+          id: 1,
+        }),
       })
         .then((res) => res.json())
         .then((json) => {
-          const networkId =
-            Array.isArray(json) && json.length > 0 && parseInt(json[0].result)
+          const networkId = parseInt(json.result)
           respond(networkId && !isNaN(networkId) ? networkId : undefined)
         })
 
