@@ -23,6 +23,8 @@ const updateRule = () => {
             { header: 'X-Frame-Options', operation: 'remove' },
             // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
             { header: 'content-security-policy', operation: 'remove' },
+            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
+            { header: 'Content-Security-Policy', operation: 'remove' },
           ],
         },
         condition: {
