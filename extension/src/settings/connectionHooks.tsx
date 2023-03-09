@@ -99,27 +99,6 @@ export const useConnections = () => {
   return result
 }
 
-export const useConnectionSwitchWarning = () => {
-  const transactions = useAllTransactions()
-  const provider = useProvider()
-  const dispatch = useDispatch()
-
-  const isConnectionSwitchReady = transactions.length > 0
-  const clearTransactions = useCallback(async () => {
-    if (transactions.length === 0) {
-      return
-    }
-
-    const firstTransaction = transactions[0]
-    const checkpoint = firstTransaction.input.id
-
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: checkpoint } })
-    await provider.request({ method: 'evm_revert', params: [checkpoint] })
-  }, [provider, transactions, dispatch])
-
-  return { isConnectionSwitchReady, clearTransactions }
-}
-
 export const useSelectedConnectionId = () => {
   const result = useContext(SelectedConnectionContext)
   if (!result) {

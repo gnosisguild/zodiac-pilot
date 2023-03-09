@@ -21,8 +21,13 @@ import {
   useSelectedConnectionId,
 } from '../../../settings/connectionHooks'
 import { Connection, ProviderType } from '../../../types'
+import { useProvider } from '../../ProvideProvider'
+import { useAllTransactions, useDispatch } from '../../state'
+
+import { ForkProvider } from '../../../providers'
 
 import classes from './style.module.css'
+import { useClearTransactions } from '../../state/transactionHooks'
 
 interface ConnectionsListProps {
   onLaunched: () => void
@@ -41,14 +46,31 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
 }) => {
   const { connected, connect } = useConnection(connection.id)
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
+  const {hasTransactions, clearTransactions} = useClearTransactions()
 
-  const handleModify = () => onModify(connection.id)
-  const handleLaunch = async () => {
+  const handleCanLaunch = async () => {
+    if (!hasTransactions) {
+      return true
+    }
+
     const confirmation = await getConfirmation(
       'Switching connections will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
+      return false
+    }
+
+    clearTransactions()
+
+    return true
+  }
+
+  const handleModify = () => onModify(connection.id)
+  const handleLaunch = async () => {
+    const canLaunch = await handleCanLaunch()
+
+    if (!canLaunch) {
       return
     }
 
