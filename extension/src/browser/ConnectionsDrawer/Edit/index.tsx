@@ -151,7 +151,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
         <Flex gap={2} direction="column">
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">
-              <h2>{connection.label}</h2>
+              <h2>{connection.label || 'New connection'}</h2>
               <a className={classes.backLink} href={connectionsHash}>
                 &#8592; All Connections
               </a>
