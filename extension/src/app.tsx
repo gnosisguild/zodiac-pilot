@@ -8,6 +8,8 @@ import './global.css'
 
 import Browser from './browser'
 import ConnectionsDrawer from './browser/ConnectionsDrawer'
+import { ProvideState } from './browser/state'
+import ProvideProvider from './browser/ProvideProvider'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask, ProvideTenderly } from './providers'
@@ -18,8 +20,6 @@ import {
   useUpdateLastUsedConnection,
 } from './settings/connectionHooks'
 import { validateAddress } from './utils'
-import { ProvideState } from './browser/state'
-import ProvideProvider from './browser/ProvideProvider'
 
 const Routes: React.FC = () => {
   const connectionsRouteMatch = useMatchConnectionsRoute()

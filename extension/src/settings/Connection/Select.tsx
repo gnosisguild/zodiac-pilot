@@ -1,5 +1,4 @@
 import React from 'react'
-import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { BoxButton, Button, ConnectionStack, Flex } from '../../components'
 import { usePushSettingsRoute } from '../../routing'

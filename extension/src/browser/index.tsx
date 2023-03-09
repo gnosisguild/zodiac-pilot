@@ -4,16 +4,13 @@ import { AppPicker, Box } from '../components'
 import ConnectionBubble from '../components/ConnectionBubble'
 import Layout from '../components/Layout'
 import { pushLocation } from '../location'
-import { ProvideTenderly } from '../providers'
 import { usePushConnectionsRoute, useUrl } from '../routing'
 
 import Drawer from './Drawer'
 import BrowserFrame from './Frame'
-import ProvideProvider from './ProvideProvider'
 import UrlInput from './UrlInput'
 import classNames from './index.module.css'
 import classes from './index.module.css'
-import { ProvideState } from './state'
 
 // This disables elastic scroll behavior on Macs
 const useNoPageScroll = () => {
