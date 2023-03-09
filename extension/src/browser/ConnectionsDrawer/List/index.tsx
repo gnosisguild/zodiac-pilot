@@ -21,13 +21,9 @@ import {
   useSelectedConnectionId,
 } from '../../../settings/connectionHooks'
 import { Connection, ProviderType } from '../../../types'
-import { useProvider } from '../../ProvideProvider'
-import { useAllTransactions, useDispatch } from '../../state'
-
-import { ForkProvider } from '../../../providers'
+import { useClearTransactions } from '../../state/transactionHooks'
 
 import classes from './style.module.css'
-import { useClearTransactions } from '../../state/transactionHooks'
 
 interface ConnectionsListProps {
   onLaunched: () => void
@@ -46,7 +42,7 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
 }) => {
   const { connected, connect } = useConnection(connection.id)
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
-  const {hasTransactions, clearTransactions} = useClearTransactions()
+  const { hasTransactions, clearTransactions } = useClearTransactions()
 
   const handleCanLaunch = async () => {
     if (!hasTransactions) {
@@ -86,6 +82,7 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
         return
       }
     }
+
     handleModify()
   }
 
