@@ -10,7 +10,7 @@ import Browser from './browser'
 import ConnectionsDrawer from './browser/ConnectionsDrawer'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
-import { ProvideMetaMask } from './providers'
+import { ProvideMetaMask, ProvideTenderly } from './providers'
 import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
 import { ProvideConnections, useConnection } from './settings'
 import {
@@ -18,6 +18,8 @@ import {
   useUpdateLastUsedConnection,
 } from './settings/connectionHooks'
 import { validateAddress } from './utils'
+import { ProvideState } from './browser/state'
+import ProvideProvider from './browser/ProvideProvider'
 
 const Routes: React.FC = () => {
   const connectionsRouteMatch = useMatchConnectionsRoute()
@@ -84,11 +86,17 @@ const root = createRoot(rootEl)
 
 root.render(
   <React.StrictMode>
-    <ProvideMetaMask>
+    <ProvideState>
       <ProvideConnections>
-        <Routes />
-        <ZodiacToastContainer />
+        <ProvideMetaMask>
+          <ProvideTenderly>
+            <ProvideProvider simulate>
+              <Routes />
+              <ZodiacToastContainer />
+            </ProvideProvider>
+          </ProvideTenderly>
+        </ProvideMetaMask>
       </ProvideConnections>
-    </ProvideMetaMask>
+    </ProvideState>
   </React.StrictMode>
 )

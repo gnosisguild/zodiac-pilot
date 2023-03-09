@@ -40,41 +40,33 @@ const Browser: React.FC = () => {
   const [initialLocation, setInitialLocation] = useState(location)
 
   return (
-    <ProvideTenderly>
-      <ProvideState>
-        <ProvideProvider simulate>
-          <Layout
-            navBox={<UrlInput onSubmit={setInitialLocation} />}
-            navFullWidth
-            headerRight={
-              <ConnectionBubble
-                onConnectionsClick={handleOpenConnectionsDrawer}
+    <Layout
+      navBox={<UrlInput onSubmit={setInitialLocation} />}
+      navFullWidth
+      headerRight={
+        <ConnectionBubble onConnectionsClick={handleOpenConnectionsDrawer} />
+      }
+    >
+      <Box className={classNames.frame} double p={2}>
+        {initialLocation ? (
+          <BrowserFrame src={initialLocation} />
+        ) : (
+          <div className={classes.launchPage}>
+            <Box p={3} double>
+              <h2>Choose an app to get started</h2>
+              <AppPicker
+                large
+                onPick={(url) => {
+                  pushLocation(url)
+                  setInitialLocation(url)
+                }}
               />
-            }
-          >
-            <Box className={classNames.frame} double p={2}>
-              {initialLocation ? (
-                <BrowserFrame src={initialLocation} />
-              ) : (
-                <div className={classes.launchPage}>
-                  <Box p={3} double>
-                    <h2>Choose an app to get started</h2>
-                    <AppPicker
-                      large
-                      onPick={(url) => {
-                        pushLocation(url)
-                        setInitialLocation(url)
-                      }}
-                    />
-                  </Box>
-                </div>
-              )}
             </Box>
-            <Drawer />
-          </Layout>
-        </ProvideProvider>
-      </ProvideState>
-    </ProvideTenderly>
+          </div>
+        )}
+      </Box>
+      <Drawer />
+    </Layout>
   )
 }
 
