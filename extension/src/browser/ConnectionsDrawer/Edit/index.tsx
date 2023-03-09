@@ -143,6 +143,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
   const canLaunch = connected || !!connect
+  const canRemove = connections.length > 1
 
   return (
     <>
@@ -165,6 +166,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
               </Button>
               <IconButton
                 onClick={handleRemoveConnection}
+                disabled={!canRemove}
                 danger
                 className={classes.removeButton}
               >
