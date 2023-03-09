@@ -26,11 +26,7 @@ interface Props {
 }
 
 const ProviderContext = createContext<Eip1193Provider | null>(null)
-export const useProvider = () => {
-  const value = useContext(ProviderContext)
-  if (!value) throw new Error('must be wrapped in <ProvideProvider>')
-  return value
-}
+export const useProvider = () => useContext(ProviderContext)
 
 const WrappingProviderContext = createContext<WrappingProvider | null>(null)
 export const useWrappingProvider = () => {
