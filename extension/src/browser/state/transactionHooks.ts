@@ -16,16 +16,14 @@ export const useClearTransactions = () => {
       return
     }
 
-    const firstTransaction = transactions[0]
-    const checkpoint = firstTransaction.input.id
+    dispatch({
+      type: 'REMOVE_TRANSACTION',
+      payload: { id: transactions[0].input.id },
+    })
 
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: checkpoint } })
-
-    if (!(provider instanceof ForkProvider)) {
-      throw new Error('This is only supported when using ForkProvider')
+    if (provider instanceof ForkProvider) {
+      await provider.deleteFork()
     }
-
-    await provider.request({ method: 'evm_revert', params: [checkpoint] })
   }, [provider, transactions, dispatch])
 
   return { hasTransactions, clearTransactions }
