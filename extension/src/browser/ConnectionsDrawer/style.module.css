@@ -33,6 +33,7 @@
 .drawerContent {
   padding: 50px;
   overflow: auto;
+  box-sizing: border-box;
   height: 100%;
   scrollbar-width: none;
 }
