@@ -1,6 +1,6 @@
 .address {
-  background: black;
-  box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.5);
+  background: #23221c;
+  box-shadow: -3px 0px 14px rgba(0, 0, 0, 0.1);
   margin-left: -32px;
 }
 .address:first-child {
@@ -15,6 +15,7 @@
 }
 .connectionStack {
   display: flex;
+  padding: 0 0 20px 0;
 }
 /* .connectionStack:hover .address,
 .connectionStack:hover .address:before {
@@ -26,22 +27,14 @@
 
 .helper {
   position: absolute;
-  top: -22px;
-  left: 40px;
+  bottom: -28px;
+  left: 36px;
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  font-size: 12px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  font-size: 14px;
+  color: #d9d4ad;
 }
 .address:first-child .helper {
-  left: 8px;
-}
-.connectionStack.interactive:hover .helper {
-  opacity: 1;
-}
-
-.staticLabels .helper {
-  opacity: 1;
+  left: 4px;
 }

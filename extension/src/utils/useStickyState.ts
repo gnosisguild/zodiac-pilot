@@ -11,7 +11,7 @@ type JSONValue =
 const useStickyState = <T extends JSONValue>(
   initialValue: T,
   storageKey: string
-): [T, React.Dispatch<T>] => {
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
   const [value, setValue] = useState(() => {
     const stringValue = localStorage.getItem(storageKey)
     return stringValue !== null ? JSON.parse(stringValue) : initialValue

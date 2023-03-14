@@ -23,3 +23,6 @@
 .gap4 {
   gap: var(--spacing-4);
 }
+.gap5 {
+  gap: var(--spacing-5);
+}

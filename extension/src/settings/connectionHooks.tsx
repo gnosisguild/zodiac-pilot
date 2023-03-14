@@ -23,7 +23,10 @@ const DEFAULT_VALUE: Connection[] = [
   },
 ]
 
-type ConnectionContextT = [Connection[], React.Dispatch<Connection[]>]
+type ConnectionContextT = [
+  Connection[],
+  React.Dispatch<React.SetStateAction<Connection[]>>
+]
 const ConnectionsContext = createContext<ConnectionContextT | null>(null)
 type SelectedConnectionContextT = [string, React.Dispatch<string>]
 const SelectedConnectionContext =
@@ -60,6 +63,32 @@ export const ProvideConnections: React.FC<{ children: ReactNode }> = ({
       </SelectedConnectionContext.Provider>
     </ConnectionsContext.Provider>
   )
+}
+
+export const useUpdateLastUsedConnection = () => {
+  const [selectedConnectionId] = useSelectedConnectionId()
+  const [, setConnections] = useConnections()
+
+  const updateLastUsedConnection = useCallback(
+    (connectionId: string) => {
+      setConnections((connections: Connection[]) =>
+        connections.map((connection) =>
+          connection.id === connectionId
+            ? { ...connection, lastUsed: Math.floor(Date.now() / 1000) }
+            : connection
+        )
+      )
+    },
+    [setConnections]
+  )
+
+  useEffect(() => {
+    console.debug(
+      'update last used timestamp for connection',
+      selectedConnectionId
+    )
+    updateLastUsedConnection(selectedConnectionId)
+  }, [selectedConnectionId, updateLastUsedConnection])
 }
 
 export const useConnections = () => {

@@ -1,6 +1,7 @@
 .button {
+  position: relative;
   box-sizing: border-box;
-  border: 3px double var(--border-color);
+  border: 1px solid var(--border-color);
   transition: all 0.1s ease;
   background-color: rgba(217, 212, 173, 0.1);
   background-clip: padding-box;
@@ -12,4 +13,17 @@
 .button:hover:enabled {
   cursor: pointer;
   border-color: rgba(217, 212, 173, 0.8);
+}
+
+.button:before {
+  content: ' ';
+  position: absolute;
+  z-index: 1;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px solid var(--border-color);
+  pointer-events: none;
+  transition: all 0.2s ease;
 }

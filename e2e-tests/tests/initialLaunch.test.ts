@@ -17,10 +17,12 @@ describe('initial launch', () => {
 
   it('should show the connections list if multiple connections are stored but the selected one is not ready', async () => {
     const page = await launch('gnosis')
-    const $doc = await getDocument(page)
 
-    await queries.findByText($doc, 'Connections')
-    await queries.findByText($doc, 'Gnosis DAO on GC')
+    await page.waitForSelector('#drawer-root')
+    const $drawer = await page.$('#drawer-root')
+
+    await queries.findByText($drawer, 'Pilot Connections')
+    await queries.findByText($drawer, 'Gnosis DAO on GC')
 
     await page.close()
     await wallet.cancel() // cancel the pending connection request
@@ -31,17 +33,20 @@ describe('initial launch', () => {
     await wallet.disconnect()
 
     const page = await launch('jan')
-    const $doc = await getDocument(page)
+
+    await page.waitForSelector('#drawer-root')
+    const $drawer = await page.$('#drawer-root')
+    const $app = await page.$('#root')
 
     // approve the connection request triggered on page load and go back to Pilot page
     await metamask.approve()
     await page.bringToFront()
 
     // we will see the Connections page now
-    await queries.findByText($doc, 'Connections')
+    await queries.findByText($drawer, 'Pilot Connections')
 
     // the jan item has a status of "connected to a different chain"
-    const $item = await queries.findByText($doc, 'Jan Test DAO')
+    const $item = await queries.findByText($drawer, 'Jan Test DAO')
     const $status = await around($item).getByRole('status')
     const status = await $status.evaluate((el) => el.textContent)
     expect(status).toBe('Pilot wallet is connected to a different chain')
@@ -59,8 +64,8 @@ describe('initial launch', () => {
     )
     await page.bringToFront()
 
-    await queries.findByPlaceholderText($doc, 'Type a url')
-    await queries.findByText($doc, 'Jan Test DAO')
+    await queries.findByPlaceholderText($app, 'Type a url')
+    await queries.findByText($app, 'Jan Test DAO')
 
     await page.close()
   })
@@ -70,10 +75,10 @@ describe('initial launch', () => {
     await wallet.connectToPilot()
 
     const page = await launch('jan')
+    const $app = await page.$('#root')
 
-    const $doc = await getDocument(page)
-    await queries.findByPlaceholderText($doc, 'Type a url')
-    await queries.findByText($doc, 'Jan Test DAO')
+    await queries.findByPlaceholderText($app, 'Type a url')
+    await queries.findByText($app, 'Jan Test DAO')
     await page.close()
   })
 })

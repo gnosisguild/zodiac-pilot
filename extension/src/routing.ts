@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { pushLocation, useLocation } from './location'
+import { replaceLocation, useLocation } from './location'
 
 export const useMatchSettingsRoute = () => {
   const location = useLocation()
@@ -17,7 +17,7 @@ export const useMatchSettingsRoute = () => {
 
 export const useUrl = () => {
   const location = useLocation()
-  if (location.startsWith('settings')) {
+  if (location.startsWith('settings') || location.startsWith('connections')) {
     const semiIndex = location.indexOf(';')
     return semiIndex >= 0 ? location.substring(semiIndex + 1) : ''
   } else {
@@ -25,20 +25,37 @@ export const useUrl = () => {
   }
 }
 
-export const useSettingsHash = (connectionId?: string) => {
-  const url = useUrl()
-  const settingsPart = connectionId ? `settings-${connectionId}` : 'settings'
-  return '#' + encodeURIComponent(`${settingsPart};${url}`)
+export const useMatchConnectionsRoute = () => {
+  const location = useLocation()
+  const [connectionsPart, url = ''] = location.split(';')
+  const connectionsRouteMatch = connectionsPart.match(
+    /^connections(-[A-Za-z0-9_-]+)?/
+  )
+  const editConnectionId = connectionsRouteMatch?.[1]?.slice(1)
+  const isMatch = !!connectionsRouteMatch
+
+  return useMemo(
+    () => ({ isMatch, editConnectionId, url }),
+    [isMatch, editConnectionId, url]
+  )
 }
 
-export const usePushSettingsRoute = () => {
+export const useConnectionsHash = (connectionId?: string) => {
+  const url = useUrl()
+  const connectionsPart = connectionId
+    ? `connections-${connectionId}`
+    : 'connections'
+  return '#' + encodeURIComponent(`${connectionsPart};${url}`)
+}
+
+export const usePushConnectionsRoute = () => {
   const url = useUrl()
   return useCallback(
     (connectionId?: string) => {
-      const settingsPart = connectionId
-        ? `settings-${connectionId}`
-        : 'settings'
-      pushLocation(`${settingsPart};${url}`)
+      const connectionsPart = connectionId
+        ? `connections-${connectionId}`
+        : 'connections'
+      replaceLocation(`${connectionsPart};${url}`)
     },
     [url]
   )

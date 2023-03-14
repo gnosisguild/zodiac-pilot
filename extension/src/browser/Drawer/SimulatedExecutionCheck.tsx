@@ -17,6 +17,7 @@ const SimulatedExecutionCheck: React.FC<{
     useState<TenderlyTransactionInfo | null>(null)
 
   useEffect(() => {
+    if (!tenderlyProvider) return
     if (!transactionHash) return
 
     let canceled = false

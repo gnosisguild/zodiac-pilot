@@ -9,13 +9,8 @@ import { useBeforeUnload } from '../utils'
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
 
-export const useTenderlyProvider = (): TenderlyProvider => {
-  const context = useContext(TenderlyContext)
-  if (!context) {
-    throw new Error('must be wrapped by <ProvideTenderly>')
-  }
-  return context
-}
+export const useTenderlyProvider = (): TenderlyProvider | null =>
+  useContext(TenderlyContext)
 
 const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -43,7 +38,7 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <TenderlyContext.Provider value={tenderlyProvider}>
-      {tenderlyProvider && children}
+      {children}
     </TenderlyContext.Provider>
   )
 }

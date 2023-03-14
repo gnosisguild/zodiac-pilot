@@ -1,0 +1,9 @@
+.modalClose {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.message {
+  font-size: 16px;
+}

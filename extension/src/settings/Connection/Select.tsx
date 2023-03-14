@@ -1,12 +1,11 @@
 import React from 'react'
-import { VscDebugDisconnect } from 'react-icons/vsc'
 
 import { BoxButton, Button, ConnectionStack, Flex } from '../../components'
-import { usePushSettingsRoute } from '../../routing'
+import { usePushConnectionsRoute } from '../../routing'
 import { Connection } from '../../types'
 import { useConnection, useConnections } from '../connectionHooks'
 
-import ConnectIcon from './ConnectIcon'
+import { ConnectedIcon, DisconnectedIcon } from './ConnectIcon'
 import classes from './style.module.css'
 
 const SelectConnection: React.FC<{ onLaunch(connectionId: string): void }> = ({
@@ -32,7 +31,7 @@ const ConnectionItem: React.FC<{
   onLaunch(connectionId: string): void
 }> = ({ connection, onLaunch }) => {
   const { connected, connect } = useConnection(connection.id)
-  const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
 
   return (
     <div className={classes.connectionItem}>
@@ -57,62 +56,79 @@ const ConnectionItem: React.FC<{
               }
             }
 
-            pushSettingsRoute(connection.id)
+            pushConnectionsRoute(connection.id)
           }}
           className={classes.connectionButton}
         >
-          <Flex
-            direction="row"
-            gap={2}
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Flex direction="row" gap={2} className={classes.labelContainer}>
-              <h3>{connection.label}</h3>
+          <Flex direction="column" gap={4}>
+            <Flex
+              direction="row"
+              gap={2}
+              justifyContent="space-between"
+              className={classes.labelContainer}
+            >
+              <Flex direction="row" alignItems="center" gap={3}>
+                <div className={classes.status}>
+                  {connected && (
+                    <ConnectedIcon
+                      role="status"
+                      size={24}
+                      color="green"
+                      title="Pilot wallet is connected"
+                    />
+                  )}
+                  {!connected && !connect && (
+                    <DisconnectedIcon
+                      role="status"
+                      size={24}
+                      color="crimson"
+                      title="Pilot wallet is not connected"
+                    />
+                  )}
+                  {!connected && connect && (
+                    <ConnectedIcon
+                      role="status"
+                      size={24}
+                      color="orange"
+                      title="Pilot wallet is connected to a different chain"
+                    />
+                  )}
+                </div>
+                <h3>{connection.label}</h3>
+              </Flex>
 
-              <div className={classes.status}>
-                {connected && (
-                  <ConnectIcon
-                    role="status"
-                    size={24}
-                    color="green"
-                    title="Pilot wallet is connected"
-                  />
-                )}
-                {!connected && !connect && (
-                  <VscDebugDisconnect
-                    role="status"
-                    size={24}
-                    color="crimson"
-                    title="Pilot wallet is not connected"
-                  />
-                )}
-                {!connected && connect && (
-                  <ConnectIcon
-                    role="status"
-                    size={24}
-                    color="orange"
-                    title="Pilot wallet is connected to a different chain"
-                  />
-                )}
-              </div>
+              <Button
+                onClick={() => {
+                  pushConnectionsRoute(connection.id)
+                }}
+                className={classes.connectionEdit}
+              >
+                Modify
+              </Button>
             </Flex>
-
-            <ConnectionStack
-              connection={connection}
-              helperClass={classes.addressHelper}
-              addressBoxClass={classes.addressBox}
-            />
+            <Flex
+              direction="row"
+              gap={5}
+              alignItems="baseline"
+              className={classes.infoContainer}
+            >
+              <ConnectionStack
+                connection={connection}
+                helperClass={classes.addressHelper}
+                addressBoxClass={classes.addressBox}
+              />
+              <Flex
+                direction="column"
+                alignItems="start"
+                gap={2}
+                className={classes.info}
+              >
+                <div className={classes.infoDatum}>STUB DAYS AGO</div>
+                <div className={classes.infoLabel}>Last Used</div>
+              </Flex>
+            </Flex>
           </Flex>
         </BoxButton>
-        <Button
-          onClick={() => {
-            pushSettingsRoute(connection.id)
-          }}
-          className={classes.connectionEdit}
-        >
-          Modify
-        </Button>
       </Flex>
     </div>
   )

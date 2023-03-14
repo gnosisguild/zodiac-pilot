@@ -1,8 +1,17 @@
-.container {
-  padding-right: var(--spacing-4);
+.currentConnectionContainer {
+  padding: 0 var(--spacing-4) 0 0;
 }
 
-.container:hover {
+.connectionsContainer {
+  overflow: hidden;
+  padding: 0;
+  width: 60px;
+  height: 44px;
+}
+
+.connectionBubble:hover,
+.connectionBubble:hover .currentConnectionContainer,
+.connectionBubble:hover .connectionsContainer {
   border-color: rgba(217, 212, 173, 0.8);
 }
 
@@ -38,21 +47,23 @@
   opacity: 0;
   position: absolute;
   z-index: 100;
-  bottom: -130px;
-  right: -5px;
-  padding-top: 30px;
-  transition: all 0.2s;
+  bottom: -120px;
+  right: -1px;
+  padding-top: 20px;
   pointer-events: none;
-}
-
-.container:hover .infoContainer {
-  pointer-events: all;
-  opacity: 1;
+  transition: opacity 0.2s;
 }
 
 .info {
   background-color: rgb(35 34 25 / 64%);
+  backdrop-filter: blur(3px);
+  border-radius: 40px;
+}
+.connectionBubble:hover .infoContainer {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.stack:hover * {
   border-color: rgba(217, 212, 173, 0.8);
-  padding-top: 35px;
-  border-radius: 33px;
 }

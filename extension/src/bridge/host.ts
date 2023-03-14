@@ -1,4 +1,4 @@
-import { Eip1193Provider } from '../types'
+import { Connection, Eip1193Provider } from '../types'
 
 interface Request {
   method: string
@@ -7,14 +7,28 @@ interface Request {
 
 export default class BridgeHost {
   private provider: Eip1193Provider
+  private connection: Connection
   private source: WindowProxy | undefined
 
-  constructor(provider: Eip1193Provider) {
+  constructor(provider: Eip1193Provider, connection: Connection) {
     this.provider = provider
+    this.connection = connection
   }
 
   setProvider(provider: Eip1193Provider) {
     this.provider = provider
+  }
+
+  setConnection(connection: Connection) {
+    if (connection.avatarAddress !== this.connection.avatarAddress) {
+      this.emitBridgeEvent('accountsChanged', [[connection.avatarAddress]])
+    }
+
+    if (connection.chainId !== this.connection.chainId) {
+      this.emitBridgeEvent('chainChanged', [connection.chainId])
+    }
+
+    this.connection = connection
   }
 
   initBridge(event: MessageEvent<any>) {
@@ -26,6 +40,19 @@ export default class BridgeHost {
       throw new Error('Expected message to originate from window')
     }
     this.source = event.source
+  }
+
+  private emitBridgeEvent(event: string, args: any[]) {
+    if (!this.source) throw new Error('source must be set')
+
+    this.source.postMessage(
+      {
+        zodiacPilotBridgeEvent: true,
+        event,
+        args,
+      },
+      '*'
+    )
   }
 
   private async handleRequest(request: Request, messageId: number) {
@@ -54,7 +81,6 @@ export default class BridgeHost {
   handleMessage(ev: MessageEvent<any>) {
     const {
       zodiacPilotBridgeInit,
-
       zodiacPilotBridgeRequest,
       messageId,
       request,

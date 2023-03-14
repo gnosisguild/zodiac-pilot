@@ -7,22 +7,27 @@ import 'react-toastify/dist/ReactToastify.css'
 import './global.css'
 
 import Browser from './browser'
-import { prependHttp } from './browser/UrlInput'
+import ConnectionsDrawer from './browser/ConnectionsDrawer'
+import ProvideProvider from './browser/ProvideProvider'
+import { ProvideState } from './browser/state'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
-import { ProvideMetaMask } from './providers'
-import { useMatchSettingsRoute, usePushSettingsRoute } from './routing'
-import Settings, { ProvideConnections, useConnection } from './settings'
-import { useConnections } from './settings/connectionHooks'
+import { ProvideMetaMask, ProvideTenderly } from './providers'
+import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
+import { ProvideConnections, useConnection } from './settings'
+import {
+  useConnections,
+  useUpdateLastUsedConnection,
+} from './settings/connectionHooks'
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {
-  const settingsRouteMatch = useMatchSettingsRoute()
-  const pushSettingsRoute = usePushSettingsRoute()
+  const connectionsRouteMatch = useMatchConnectionsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
   const { connection, connected } = useConnection()
 
-  const isSettingsRoute = !!settingsRouteMatch
-  const settingsRequired =
+  const isConnectionsRoute = connectionsRouteMatch.isMatch
+  const connectionChangeRequired =
     !validateAddress(connection.avatarAddress) ||
     !validateAddress(connection.pilotAddress)
 
@@ -30,46 +35,49 @@ const Routes: React.FC = () => {
   const connectionToEdit =
     connections.length === 1 ? connections[0].id : undefined
 
-  const waitForWallet = !isSettingsRoute && !settingsRequired && !connected
+  const waitForWallet =
+    !isConnectionsRoute && !connectionChangeRequired && !connected
 
-  // redirect to settings page if more settings are required
+  useUpdateLastUsedConnection()
+
+  // open connections drawer if a valid connection is not available
   useEffect(() => {
-    if (!isSettingsRoute && settingsRequired) {
-      pushSettingsRoute(connectionToEdit)
+    if (!isConnectionsRoute && connectionChangeRequired) {
+      pushConnectionsRoute(connectionToEdit)
     }
-  }, [isSettingsRoute, pushSettingsRoute, connectionToEdit, settingsRequired])
+  }, [
+    isConnectionsRoute,
+    pushConnectionsRoute,
+    connectionToEdit,
+    connectionChangeRequired,
+  ])
 
-  // redirect to settings page if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
+  // open connections drawer if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
   useEffect(() => {
     let timeout: number
     if (waitForWallet) {
       timeout = window.setTimeout(() => {
-        pushSettingsRoute()
+        pushConnectionsRoute()
       }, 200)
     }
     return () => {
       window.clearTimeout(timeout)
     }
-  }, [waitForWallet, pushSettingsRoute])
+  }, [waitForWallet, pushConnectionsRoute])
 
-  if (!isSettingsRoute && settingsRequired) return null
-  if (!isSettingsRoute && waitForWallet) return null
+  if (!isConnectionsRoute && connectionChangeRequired) return null
+  if (!isConnectionsRoute && waitForWallet) return null
 
-  if (isSettingsRoute) {
-    return (
-      <Settings
-        url={settingsRouteMatch.url}
-        editConnectionId={settingsRouteMatch.editConnectionId}
-        onLaunch={launch}
+  return (
+    <>
+      <ConnectionsDrawer
+        isOpen={connectionChangeRequired || isConnectionsRoute}
+        editConnectionId={connectionsRouteMatch.editConnectionId}
+        onClose={() => pushLocation(connectionsRouteMatch.url)}
       />
-    )
-  }
-
-  return <Browser />
-}
-
-function launch(url: string) {
-  pushLocation(prependHttp(url))
+      <Browser />
+    </>
+  )
 }
 
 const rootEl = document.getElementById('root')
@@ -78,11 +86,17 @@ const root = createRoot(rootEl)
 
 root.render(
   <React.StrictMode>
-    <ProvideMetaMask>
+    <ProvideState>
       <ProvideConnections>
-        <Routes />
-        <ZodiacToastContainer />
+        <ProvideMetaMask>
+          <ProvideTenderly>
+            <ProvideProvider simulate>
+              <Routes />
+              <ZodiacToastContainer />
+            </ProvideProvider>
+          </ProvideTenderly>
+        </ProvideMetaMask>
       </ProvideConnections>
-    </ProvideMetaMask>
+    </ProvideState>
   </React.StrictMode>
 )

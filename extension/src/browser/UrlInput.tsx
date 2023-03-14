@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AppSearch } from '../components'
-import { pushLocation, useLocation } from '../location'
+import { pushLocation } from '../location'
+import { useUrl } from '../routing'
 
 import classes from './index.module.css'
 
@@ -34,7 +35,7 @@ const useOnBlur = (callback: () => void) => {
 }
 
 const UrlInput: React.FC<Props> = ({ onSubmit }) => {
-  const location = useLocation()
+  const location = useUrl()
   const [hasFocus, setHasFocus] = useState(false)
   const onBlur = useCallback(() => setHasFocus(false), [])
   const ref = useOnBlur(onBlur)
