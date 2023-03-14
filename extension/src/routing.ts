@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { pushLocation, replaceLocation, useLocation } from './location'
+import { replaceLocation, useLocation } from './location'
 
 export const useMatchSettingsRoute = () => {
   const location = useLocation()
@@ -23,25 +23,6 @@ export const useUrl = () => {
   } else {
     return location
   }
-}
-
-export const useSettingsHash = (connectionId?: string) => {
-  const url = useUrl()
-  const settingsPart = connectionId ? `settings-${connectionId}` : 'settings'
-  return '#' + encodeURIComponent(`${settingsPart};${url}`)
-}
-
-export const usePushSettingsRoute = () => {
-  const url = useUrl()
-  return useCallback(
-    (connectionId?: string) => {
-      const settingsPart = connectionId
-        ? `settings-${connectionId}`
-        : 'settings'
-      pushLocation(`${settingsPart};${url}`)
-    },
-    [url]
-  )
 }
 
 export const useMatchConnectionsRoute = () => {

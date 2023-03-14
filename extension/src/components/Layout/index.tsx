@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
 
-import { usePushSettingsRoute } from '../../routing'
+import { usePushConnectionsRoute } from '../../routing'
 import Box from '../Box'
 import Button from '../Button'
 import Flex from '../Flex'
@@ -21,7 +21,7 @@ const Layout: React.FC<Props> = ({
   navBox,
   navFullWidth = false,
 }) => {
-  const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnections = usePushConnectionsRoute()
   return (
     <div className={classes.page}>
       <div className={classes.topBar}>
@@ -37,7 +37,7 @@ const Layout: React.FC<Props> = ({
             >
               <Button
                 className={classes.appName}
-                onClick={() => pushSettingsRoute('')}
+                onClick={() => pushConnections('')}
               >
                 Zodiac Pilot
               </Button>

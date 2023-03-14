@@ -4,7 +4,7 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 
 import { Box, Button, Flex, IconButton } from '../components'
 import Layout from '../components/Layout'
-import { usePushSettingsRoute } from '../routing'
+import { usePushConnectionsRoute } from '../routing'
 import { ProviderType } from '../types'
 
 import EditConnection from './Connection/Edit'
@@ -31,7 +31,7 @@ const Settings: React.FC<Props> = ({
   editConnectionId = '',
 }) => {
   const [connections, setConnections] = useConnections()
-  const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
   const [, selectConnection] = useSelectedConnectionId()
   const { connection, connected, connect } = useConnection(editConnectionId)
 
@@ -122,7 +122,7 @@ const Settings: React.FC<Props> = ({
                 roleId: '',
               },
             ])
-            pushSettingsRoute(id)
+            pushConnectionsRoute(id)
           }}
         >
           Add Connection

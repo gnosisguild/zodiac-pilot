@@ -27,7 +27,14 @@ window.addEventListener('message', (event) => {
       if (zodiacPilotHrefResponse && href !== lastHref) {
         console.debug('iframe navigated to', href)
         window.removeEventListener('message', handleMessage)
-        replaceLocation(href) // don't push as this would mess with the browsing history
+
+        // preserve the connections part of the location hash to keep the connection drawer open
+        const [connectionsPart] = decodeLocationHash().split(';')
+        const prefix = connectionsPart.startsWith('connections')
+          ? connectionsPart + ';'
+          : ''
+
+        replaceLocation(prefix + href) // don't push as this would mess with the browsing history
         lastHref = href
       }
     }

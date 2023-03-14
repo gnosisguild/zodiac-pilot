@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { BoxButton, Button, ConnectionStack, Flex } from '../../components'
-import { usePushSettingsRoute } from '../../routing'
+import { usePushConnectionsRoute } from '../../routing'
 import { Connection } from '../../types'
 import { useConnection, useConnections } from '../connectionHooks'
 
@@ -31,7 +31,7 @@ const ConnectionItem: React.FC<{
   onLaunch(connectionId: string): void
 }> = ({ connection, onLaunch }) => {
   const { connected, connect } = useConnection(connection.id)
-  const pushSettingsRoute = usePushSettingsRoute()
+  const pushConnectionsRoute = usePushConnectionsRoute()
 
   return (
     <div className={classes.connectionItem}>
@@ -56,7 +56,7 @@ const ConnectionItem: React.FC<{
               }
             }
 
-            pushSettingsRoute(connection.id)
+            pushConnectionsRoute(connection.id)
           }}
           className={classes.connectionButton}
         >
@@ -99,7 +99,7 @@ const ConnectionItem: React.FC<{
 
               <Button
                 onClick={() => {
-                  pushSettingsRoute(connection.id)
+                  pushConnectionsRoute(connection.id)
                 }}
                 className={classes.connectionEdit}
               >
