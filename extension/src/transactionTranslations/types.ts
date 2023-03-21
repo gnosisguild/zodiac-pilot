@@ -8,5 +8,7 @@ export interface TransactionTranslation {
   /** A list of zodiac modules for which using this translation is recommended */
   recommendedFor: SupportedModuleType[]
   /** The translation function. For transactions that shall not be translated it must return undefined */
-  translate: (transaction: MetaTransaction) => MetaTransaction[] | undefined
+  translate: (
+    transaction: MetaTransaction
+  ) => Promise<MetaTransaction[] | undefined>
 }

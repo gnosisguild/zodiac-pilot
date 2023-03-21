@@ -14,7 +14,7 @@ export default {
 
   recommendedFor: [KnownContracts.ROLES],
 
-  translate: (transaction) => {
+  translate: async (transaction) => {
     if (!transaction.data) {
       return undefined
     }

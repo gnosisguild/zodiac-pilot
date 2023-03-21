@@ -20,11 +20,19 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transaction, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
+  const [translationAvailable, setTranslationAvailable] = useState<boolean>()
   const wrappingProvider = useWrappingProvider()
 
   const encodedTransaction = encodeSingle(transaction)
 
-  const translationAvailable = !!findApplicableTranslation(encodedTransaction)
+  useEffect(() => {
+    const isFindApplicableTranslation = async () => {
+      setTranslationAvailable(
+        !!(await findApplicableTranslation(encodedTransaction))
+      )
+    }
+    isFindApplicableTranslation().catch(console.error)
+  }, [encodedTransaction])
 
   useEffect(() => {
     let canceled = false
