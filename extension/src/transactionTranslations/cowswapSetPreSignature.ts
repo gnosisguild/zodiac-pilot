@@ -31,7 +31,7 @@ const cowSwapEncodeFunctionSignature = ethers.utils
   .substring(0, 10)
 
 export default {
-  title: 'setPreSignature call',
+  title: 'Route through CowswapOrderSigner',
 
   recommendedFor: [KnownContracts.ROLES],
 
