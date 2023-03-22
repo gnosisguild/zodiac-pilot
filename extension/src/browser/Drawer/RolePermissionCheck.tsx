@@ -4,6 +4,7 @@ import { RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
+import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
 import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
@@ -12,7 +13,6 @@ import { useWrappingProvider } from '../ProvideProvider'
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
-import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput

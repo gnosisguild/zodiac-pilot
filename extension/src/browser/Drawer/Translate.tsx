@@ -23,12 +23,13 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
   const { connection } = useConnection()
+  const encodedTransaction = encodeSingle(transaction)
+  const { translation } = useApplicableTranslation(encodedTransaction)
+
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
     return null
   }
-  const encodedTransaction = encodeSingle(transaction)
-  const { translation } = useApplicableTranslation(encodedTransaction)
 
   if (!translation) {
     return null

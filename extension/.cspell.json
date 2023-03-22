@@ -41,7 +41,11 @@
     "toastify",
     "typechain",
     "walletconnect",
-    "whatsabi"
+    "whatsabi",
+    "xdai",
+    "Uids",
+    "Delegatecall",
+    "presignature"
   ],
   "flagWords": [],
   "ignorePaths": [
