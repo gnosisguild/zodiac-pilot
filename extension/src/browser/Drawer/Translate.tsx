@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { BiWrench } from 'react-icons/bi'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
-import { findApplicableTranslation } from '../../transactionTranslations'
-import { TransactionTranslation } from '../../transactionTranslations/types'
+import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -24,21 +23,12 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
   const { connection } = useConnection()
-  const [translation, setTranslation] = useState<
-    TransactionTranslation | undefined
-  >(undefined)
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
     return null
   }
   const encodedTransaction = encodeSingle(transaction)
-
-  useEffect(() => {
-    const translationAction = async () => {
-      setTranslation(await findApplicableTranslation(encodedTransaction))
-    }
-    translationAction().catch(console.error)
-  }, [encodedTransaction])
+  const { translation } = useApplicableTranslation(encodedTransaction)
 
   if (!translation) {
     return null

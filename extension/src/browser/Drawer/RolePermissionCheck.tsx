@@ -4,7 +4,6 @@ import { RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
-import { findApplicableTranslation } from '../../transactionTranslations'
 import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
@@ -13,6 +12,7 @@ import { useWrappingProvider } from '../ProvideProvider'
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
+import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput
@@ -20,19 +20,10 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transaction, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const [translationAvailable, setTranslationAvailable] = useState<boolean>()
   const wrappingProvider = useWrappingProvider()
 
   const encodedTransaction = encodeSingle(transaction)
-
-  useEffect(() => {
-    const isFindApplicableTranslation = async () => {
-      setTranslationAvailable(
-        !!(await findApplicableTranslation(encodedTransaction))
-      )
-    }
-    isFindApplicableTranslation().catch(console.error)
-  }, [encodedTransaction])
+  const { translationAvailable } = useApplicableTranslation(encodedTransaction)
 
   useEffect(() => {
     let canceled = false

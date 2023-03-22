@@ -1,8 +1,8 @@
 import { MetaTransaction } from 'react-multisend'
 
+import cowswapSetPreSignature from './cowswapSetPreSignature'
 import { TransactionTranslation } from './types'
 import uniswapMulticall from './uniswapMulticall'
-import cowswapSetPreSignature from './cowswapSetPreSignature'
 
 const translations = [uniswapMulticall, cowswapSetPreSignature]
 
