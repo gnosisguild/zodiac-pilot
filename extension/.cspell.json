@@ -45,7 +45,8 @@
     "xdai",
     "Uids",
     "Delegatecall",
-    "presignature"
+    "presignature",
+    "IERC20"
   ],
   "flagWords": [],
   "ignorePaths": [
