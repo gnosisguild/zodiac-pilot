@@ -46,29 +46,30 @@ const findApplicableTranslation = async (
   // we cache the result of the translation to avoid test-running translation functions over and over again
   const key = cacheKey(transaction, chainId)
   if (applicableTranslationsCache.has(key)) {
-    return applicableTranslationsCache.get(key)
+    return await applicableTranslationsCache.get(key)
   }
 
-  let applicableTranslation: ApplicableTranslation | undefined = undefined
-  for (const translation of translations) {
-    const result = await translation.translate(transaction, chainId)
-    if (result) {
-      applicableTranslation = {
-        title: translation.title,
-        result,
+  const tryApplyingTranslations = async () => {
+    for (const translation of translations) {
+      const result = await translation.translate(transaction, chainId)
+      if (result) {
+        return {
+          title: translation.title,
+          result,
+        }
+        break
       }
-      break
     }
   }
+  const resultPromise = tryApplyingTranslations()
+  applicableTranslationsCache.set(key, resultPromise)
 
-  applicableTranslationsCache.set(key, applicableTranslation)
-
-  return applicableTranslation
+  return await resultPromise
 }
 
 const applicableTranslationsCache = new Map<
   string,
-  ApplicableTranslation | undefined
+  Promise<ApplicableTranslation | undefined>
 >()
 const cacheKey = (transaction: MetaTransaction, chainId: ChainId) =>
   `${chainId}:${transaction.to}:${transaction.value}:${transaction.data}:${
