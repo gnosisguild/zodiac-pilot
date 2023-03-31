@@ -3,7 +3,7 @@ import { Interface } from 'ethers/lib/utils'
 
 import { TransactionTranslation } from './types'
 
-const GP_V2_SETTLEMENT_ADDRESS = '0x00cD4A00784E85b6a1558777D9F62c29Dca75eAa'
+const GP_V2_SETTLEMENT_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
 const GPv2SettlementInterface = new Interface([
   {
     type: 'function',
@@ -95,6 +95,7 @@ export default {
       )
       orderUid = result[0]
     } catch (e) {
+      console.error('uhoh', e)
       // not a call to setPreSignature()
       return undefined
     }
@@ -104,6 +105,8 @@ export default {
     const order: CowswapOrder = await fetch(`${COW_SWAP_URL}/${orderUid}`).then(
       (response) => response.json()
     )
+
+    console.log({ order, orderUid })
 
     const validDuration = 60 * 30 // 30 minutes
     const feeAmountBP = Math.ceil(

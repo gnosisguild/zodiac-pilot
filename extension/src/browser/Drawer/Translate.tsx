@@ -35,14 +35,6 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   }
 
   const handleTranslate = async () => {
-    const translatedTransactions = await translation.translate(
-      encodedTransaction,
-      connection.chainId
-    )
-    if (!translatedTransactions) {
-      throw new Error('Translation failed')
-    }
-
     const laterTransactions = transactions
       .slice(index + 1)
       .map((t) => encodeSingle(t.input))
@@ -55,7 +47,7 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones
-    const replayTransaction = [...translatedTransactions, ...laterTransactions]
+    const replayTransaction = [...translation.result, ...laterTransactions]
     for (const tx of replayTransaction) {
       provider.sendMetaTransaction(tx, connection)
     }
