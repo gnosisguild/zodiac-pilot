@@ -1,4 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 
 import { TransactionTranslation } from './types'
@@ -122,10 +123,10 @@ export default {
       validDuration,
       order.feeAmount,
       feeAmountBP,
-      order.kind,
+      ethers.utils.id(order.kind),
       order.partiallyFillable,
-      order.sellTokenBalance,
-      order.buyTokenBalance,
+      ethers.utils.id(order.sellTokenBalance),
+      ethers.utils.id(order.buyTokenBalance),
     ])
 
     return [
