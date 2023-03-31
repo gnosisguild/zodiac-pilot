@@ -14,11 +14,7 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(
-    checkpointId: string,
-    txData: TransactionData,
-    isDelegateCall: boolean
-  ): void
+  onBeforeTransactionSend(checkpointId: string, metaTx: MetaTransaction): void
   onTransactionSent(checkpointId: string, hash: string): void
 }
 
@@ -70,11 +66,15 @@ class ForkProvider extends EventEmitter {
         const checkpointId: string = await this.provider.request({
           method: 'evm_snapshot',
         })
-        this.handlers.onBeforeTransactionSend(
-          checkpointId,
-          params[0] as TransactionData,
-          false
-        )
+
+        const txData = params[0] as TransactionData
+        const metaTx: MetaTransaction = {
+          to: txData.to || ZERO_ADDRESS,
+          value: `${txData.value || 0}`,
+          data: txData.data || '',
+          operation: 0,
+        }
+        this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
         const result = await this.provider.request(request)
         this.handlers.onTransactionSent(checkpointId, result)
         return result
@@ -100,9 +100,13 @@ class ForkProvider extends EventEmitter {
       throw new Error('delegatecall requires a connection through a module')
     }
 
+    // take a snapshot and record the meta transaction
     const checkpointId: string = await this.provider.request({
       method: 'evm_snapshot',
     })
+    this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
+
+    // execute transaction in fork
     let tx: TransactionData
     if (isDelegateCall) {
       // delegatecalls need to go through the avatar, sent by the enabled module
@@ -121,9 +125,6 @@ class ForkProvider extends EventEmitter {
         from: connection.avatarAddress,
       }
     }
-
-    // take a snapshot and record the transaction
-    this.handlers.onBeforeTransactionSend(checkpointId, tx, isDelegateCall)
     const result = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [tx],
@@ -170,3 +171,5 @@ const execTransactionFromModule = (metaTx: MetaTransaction) => {
     metaTx.operation || 0,
   ])
 }
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
