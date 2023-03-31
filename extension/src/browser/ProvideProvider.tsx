@@ -95,7 +95,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           )
           dispatch({
             type: 'DECODE_TRANSACTION',
-            payload: { input, isDelegateCall },
+            payload: input,
           })
         },
         async onTransactionSent(txId, transactionHash) {
