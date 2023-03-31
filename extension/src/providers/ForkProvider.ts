@@ -4,7 +4,7 @@ import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
 import { MetaTransaction } from 'react-multisend'
 
-import { TransactionData } from '../types'
+import { Connection, TransactionData } from '../types'
 
 import { GanacheProvider } from './ProvideGanache'
 import { TenderlyProvider } from './ProvideTenderly'
@@ -89,17 +89,15 @@ class ForkProvider extends EventEmitter {
    * While transactions recorded from apps will generally be regular calls, the transaction translation feature allows for delegatecalls.
    * Such delegatecalls cannot be simulated directly, but only by going through the avatar.
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
-   * @param avatarAddress The address of the avatar
-   * @param enabledModule The address of a module enabled on the avatar that can be used to trigger a delegatecall
+   * @param connection The current connection object
    */
   async sendMetaTransaction(
     metaTx: MetaTransaction,
-    avatarAddress: string,
-    enabledModule: string
+    connection: Connection
   ): Promise<string> {
     const isDelegateCall = metaTx.operation === 1
-    if (isDelegateCall && !enabledModule) {
-      throw new Error('delegatecall requires an enabled module')
+    if (isDelegateCall && !connection.moduleAddress) {
+      throw new Error('delegatecall requires a connection through a module')
     }
 
     const checkpointId: string = await this.provider.request({
@@ -109,10 +107,10 @@ class ForkProvider extends EventEmitter {
     if (isDelegateCall) {
       // delegatecalls need to go through the avatar, sent by the enabled module
       tx = {
-        to: avatarAddress,
+        to: connection.avatarAddress,
         data: execTransactionFromModule(metaTx),
         value: '0x0',
-        from: enabledModule,
+        from: connection.moduleAddress,
       }
     } else {
       // regular calls can be sent directly from the avatar
@@ -120,7 +118,7 @@ class ForkProvider extends EventEmitter {
         to: metaTx.to,
         data: metaTx.data,
         value: formatValue(metaTx.value),
-        from: avatarAddress,
+        from: connection.avatarAddress,
       }
     }
 

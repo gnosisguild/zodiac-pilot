@@ -12,7 +12,6 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
-import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 const TransactionsDrawer: React.FC = () => {
@@ -52,20 +51,9 @@ const TransactionsDrawer: React.FC = () => {
     await provider.refork()
 
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
-    for (let i = 0; i < newTransactions.length; i++) {
-      const transaction = newTransactions[i]
+    for (const transaction of newTransactions) {
       const encoded = encodeSingle(transaction.input)
-      await provider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: encoded.to,
-            data: encoded.data,
-            value: formatValue(encoded.value),
-            from: connection.avatarAddress,
-          },
-        ],
-      })
+      await provider.sendMetaTransaction(encoded, connection)
     }
   }
 

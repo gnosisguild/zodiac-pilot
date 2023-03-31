@@ -8,7 +8,6 @@ import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
-import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 type Props = {
@@ -44,20 +43,9 @@ export const Remove: React.FC<Props> = ({ transaction, index }) => {
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions after the removed one
-    for (let i = 0; i < laterTransactions.length; i++) {
-      const transaction = laterTransactions[i]
+    for (const transaction of laterTransactions) {
       const encoded = encodeSingle(transaction.input)
-      await provider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: encoded.to,
-            data: encoded.data,
-            value: formatValue(encoded.value),
-            from: connection.avatarAddress,
-          },
-        ],
-      })
+      await provider.sendMetaTransaction(encoded, connection)
     }
   }
 

@@ -1,15 +1,19 @@
 import React from 'react'
 import { BiWrench } from 'react-icons/bi'
-import { encodeSingle, TransactionInput } from 'react-multisend'
+import {
+  encodeSingle,
+  MetaTransaction,
+  TransactionInput,
+} from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
 import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
+import { Connection } from '../../types'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
-import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 type Props = {
@@ -57,17 +61,7 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
     // re-simulate all transactions starting with the translated ones
     const replayTransaction = [...translatedTransactions, ...laterTransactions]
     for (const tx of replayTransaction) {
-      await provider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: tx.to,
-            data: tx.data,
-            value: formatValue(tx.value),
-            from: connection.avatarAddress,
-          },
-        ],
-      })
+      provider.sendMetaTransaction(tx, connection)
     }
   }
 
@@ -84,5 +78,19 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
         <BiWrench />
       </IconButton>
     )
+  }
+}
+
+const simulateDelegateCall = async (
+  tx: MetaTransaction,
+  connection: Connection
+) => {
+  if (tx.operation !== 1) throw new Error('not a delegatecall')
+
+  if (!connection.moduleAddress) {
+    console.warn(
+      'Cannot simulate delegatecall since the connection does not use a module'
+    )
+    return tx
   }
 }
