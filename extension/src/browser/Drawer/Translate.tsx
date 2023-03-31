@@ -80,17 +80,3 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
     )
   }
 }
-
-const simulateDelegateCall = async (
-  tx: MetaTransaction,
-  connection: Connection
-) => {
-  if (tx.operation !== 1) throw new Error('not a delegatecall')
-
-  if (!connection.moduleAddress) {
-    console.warn(
-      'Cannot simulate delegatecall since the connection does not use a module'
-    )
-    return tx
-  }
-}

@@ -1,5 +1,6 @@
 import { MetaTransaction } from 'react-multisend'
 
+import { ChainId } from '../networks'
 import { SupportedModuleType } from '../settings/Connection/useZodiacModules'
 
 export interface TransactionTranslation {
@@ -9,6 +10,7 @@ export interface TransactionTranslation {
   recommendedFor: SupportedModuleType[]
   /** The translation function. For transactions that shall not be translated it must return undefined */
   translate: (
-    transaction: MetaTransaction
+    transaction: MetaTransaction,
+    chainId: ChainId
   ) => Promise<MetaTransaction[] | undefined>
 }

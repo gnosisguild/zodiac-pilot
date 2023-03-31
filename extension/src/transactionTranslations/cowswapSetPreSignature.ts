@@ -1,50 +1,10 @@
-import { Web3Provider } from '@ethersproject/providers'
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { BigNumber, ethers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
 
 import { TransactionTranslation } from './types'
 
-const CowswapOrderSignerContract = '0x00cD4A00784E85b6a1558777D9F62c29Dca75eAa'
-
-interface CowswapOrder {
-  creationDate: Date
-  owner: string
-  uid: string
-  availableBalance?: unknown
-  executedBuyAmount: string
-  executedSellAmount: string
-  executedSellAmountBeforeFees: string
-  executedFeeAmount: string
-  invalidated: boolean
-  status: string
-  class: string
-  settlementContract: string
-  fullFeeAmount: string
-  solverFee: string
-  isLiquidityOrder: boolean
-  sellToken: string
-  buyToken: string
-  receiver: string
-  sellAmount: string
-  buyAmount: string
-  validTo: number
-  appData: string
-  feeAmount: string
-  kind: string
-  partiallyFillable: boolean
-  sellTokenBalance: string
-  buyTokenBalance: string
-  signingScheme: string
-  signature: string
-}
-
-export const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
-  1: 'mainnet',
-  5: 'goerli',
-  100: 'xdai',
-}
-
-const abi = [
+const GP_V2_SETTLEMENT_ADDRESS = '0x00cD4A00784E85b6a1558777D9F62c29Dca75eAa'
+const GPv2SettlementInterface = new Interface([
   {
     type: 'function',
     name: 'setPreSignature',
@@ -56,9 +16,11 @@ const abi = [
     ],
     outputs: [],
   },
-]
+])
 
-const cowswapOrderSignerABI = [
+const COWSWAP_ORDER_SIGNER_ADDRESS =
+  '0x00cD4A00784E85b6a1558777D9F62c29Dca75eAa'
+const CowswapOrderSignerInterface = new Interface([
   {
     inputs: [
       {
@@ -99,111 +61,109 @@ const cowswapOrderSignerABI = [
     stateMutability: 'view',
     type: 'function',
   },
-]
+])
 
-const provider = window.ethereum && new Web3Provider(window.ethereum)
-const cowSwapFunctionSignature = 'setPreSignature(bytes,bool)'
-const cowSwapEncodeFunctionSignature = ethers.utils
-  .id(cowSwapFunctionSignature)
-  .substring(0, 10)
+const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
+  1: 'mainnet',
+  5: 'goerli',
+  100: 'xdai',
+}
 
 export default {
   title: 'Route through CowswapOrderSigner',
 
   recommendedFor: [KnownContracts.ROLES],
 
-  translate: async (transaction) => {
-    let preSignature = undefined
-
-    if (!transaction.data) {
+  translate: async (transaction, chainId) => {
+    if (!COWSWAP_SUPPORTED_NETWORK[chainId]) {
+      // not on a network where CowSwap is deployed
       return undefined
     }
 
-    if (provider) {
-      const chainId = provider.network.chainId
-      const iface = new ethers.utils.Interface(abi)
-      const transactionDecoded = iface.parseTransaction({
-        data: transaction.data,
-        value: transaction.value,
-      })
-      if (transactionDecoded.sighash === cowSwapEncodeFunctionSignature) {
-        const cowSwapInputValues = iface.decodeFunctionData(
-          cowSwapFunctionSignature,
-          transaction.data
-        )
-        if (cowSwapInputValues.length) {
-          const orderUid = cowSwapInputValues[0]
-          if (orderUid && chainId) {
-            try {
-              const COW_SWAP_URL = `https://api.cow.fi/${COWSWAP_SUPPORTED_NETWORK[chainId]}/api/v1/orders`
-              await fetch(`${COW_SWAP_URL}/${orderUid}`) //api for the get request
-                .then((response) => response.json())
-                .then(async (data: CowswapOrder) => {
-                  let encodedFunctionData
-                  const cowswapOrder = {
-                    sellToken: data.sellToken,
-                    buyToken: data.buyToken,
-                    sellAmount: BigNumber.from(data.sellAmount),
-                    buyAmount: BigNumber.from(data.buyAmount),
-                    validTo: Math.floor(Date.now() / 1000),
-                    validDuration: 60 * 30, // 30 minutes
-                    feeAmount: BigNumber.from(data.feeAmount),
-                    feeAmountBP: Math.ceil(
-                      (parseInt(data.feeAmount) / parseInt(data.sellAmount)) *
-                        10000
-                    ),
-                    kind: ethers.utils.id(data.kind),
-                    partiallyFillable: data.partiallyFillable,
-                    sellTokenBalance: ethers.utils.id(data.sellTokenBalance),
-                    buyTokenBalance: ethers.utils.id(data.buyTokenBalance),
-                  }
-
-                  const contract = new ethers.Contract(
-                    CowswapOrderSignerContract,
-                    cowswapOrderSignerABI,
-                    provider
-                  )
-
-                  try {
-                    encodedFunctionData = contract.interface.encodeFunctionData(
-                      'signOrder',
-                      [
-                        cowswapOrder.sellToken,
-                        cowswapOrder.buyToken,
-                        cowswapOrder.sellAmount,
-                        cowswapOrder.buyAmount,
-                        cowswapOrder.validTo,
-                        cowswapOrder.validDuration,
-                        cowswapOrder.feeAmount,
-                        cowswapOrder.feeAmountBP,
-                        cowswapOrder.kind,
-                        cowswapOrder.partiallyFillable,
-                        cowswapOrder.sellTokenBalance,
-                        cowswapOrder.buyTokenBalance,
-                      ]
-                    )
-                  } catch (e) {
-                    throw new Error(`Error: (${e})`)
-                  }
-                  if (encodedFunctionData) {
-                    preSignature = [
-                      {
-                        to: CowswapOrderSignerContract,
-                        value: 0,
-                        data: encodedFunctionData,
-                        operation: 1,
-                      },
-                    ]
-                  }
-                })
-            } catch (e) {
-              throw new Error(`Error fetching the ${orderUid} from cowswap API`)
-            }
-          }
-        }
-      }
+    if (
+      transaction.to.toLowerCase() !== GP_V2_SETTLEMENT_ADDRESS.toLowerCase()
+    ) {
+      // not a call to CowSwap
+      return undefined
     }
 
-    return preSignature
+    let orderUid: string
+    try {
+      const result = GPv2SettlementInterface.decodeFunctionData(
+        'setPreSignature',
+        transaction.data
+      )
+      orderUid = result[0]
+    } catch (e) {
+      // not a call to setPreSignature()
+      return undefined
+    }
+
+    // fetch order info from CowSwap API
+    const COW_SWAP_URL = `https://api.cow.fi/${COWSWAP_SUPPORTED_NETWORK[chainId]}/api/v1/orders`
+    const order: CowswapOrder = await fetch(`${COW_SWAP_URL}/${orderUid}`).then(
+      (response) => response.json()
+    )
+
+    const validDuration = 60 * 30 // 30 minutes
+    const feeAmountBP = Math.ceil(
+      (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000
+    )
+
+    const data = CowswapOrderSignerInterface.encodeFunctionData('signOrder', [
+      order.sellToken,
+      order.buyToken,
+      order.sellAmount,
+      order.buyAmount,
+      order.validTo,
+      validDuration,
+      order.feeAmount,
+      feeAmountBP,
+      order.kind,
+      order.partiallyFillable,
+      order.sellTokenBalance,
+      order.buyTokenBalance,
+    ])
+
+    return [
+      {
+        to: COWSWAP_ORDER_SIGNER_ADDRESS,
+        value: '0',
+        data,
+        operation: 1,
+      },
+    ]
   },
 } satisfies TransactionTranslation
+
+interface CowswapOrder {
+  creationDate: Date
+  owner: string
+  uid: string
+  availableBalance?: unknown
+  executedBuyAmount: string
+  executedSellAmount: string
+  executedSellAmountBeforeFees: string
+  executedFeeAmount: string
+  invalidated: boolean
+  status: string
+  class: string
+  settlementContract: string
+  fullFeeAmount: string
+  solverFee: string
+  isLiquidityOrder: boolean
+  sellToken: string
+  buyToken: string
+  receiver: string
+  sellAmount: string
+  buyAmount: string
+  validTo: number
+  appData: string
+  feeAmount: string
+  kind: string
+  partiallyFillable: boolean
+  sellTokenBalance: string
+  buyTokenBalance: string
+  signingScheme: string
+  signature: string
+}
