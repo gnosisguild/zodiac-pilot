@@ -96,7 +96,6 @@ export default {
       )
       orderUid = result[0]
     } catch (e) {
-      console.error('uhoh', e)
       // not a call to setPreSignature()
       return undefined
     }
@@ -106,8 +105,6 @@ export default {
     const order: CowswapOrder = await fetch(`${COW_SWAP_URL}/${orderUid}`).then(
       (response) => response.json()
     )
-
-    console.log({ order, orderUid })
 
     const validDuration = 60 * 30 // 30 minutes
     const feeAmountBP = Math.ceil(
