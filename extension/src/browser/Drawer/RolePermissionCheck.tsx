@@ -4,7 +4,7 @@ import { RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
-import { useApplicableTranslation } from '../../transactionTranslations/useApplicableTranslation'
+import { useApplicableTranslation } from '../../transactionTranslations'
 import { JsonRpcError } from '../../types'
 import { decodeRolesError } from '../../utils'
 import { isPermissionsError } from '../../utils/decodeRolesError'
@@ -23,7 +23,7 @@ const RolePermissionCheck: React.FC<{
   const wrappingProvider = useWrappingProvider()
 
   const encodedTransaction = encodeSingle(transaction)
-  const { translationAvailable } = useApplicableTranslation(encodedTransaction)
+  const translationAvailable = !!useApplicableTranslation(encodedTransaction)
 
   useEffect(() => {
     let canceled = false
@@ -83,7 +83,7 @@ const RolePermissionCheck: React.FC<{
             )}
           </Flex>
         </Flex>
-        {error && translationAvailable && (
+        {error && !!translationAvailable && (
           <Translate transaction={transaction} index={index} labeled />
         )}
         {error && !translationAvailable && (
