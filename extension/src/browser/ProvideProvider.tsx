@@ -60,6 +60,8 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       tenderlyProvider &&
       new ForkProvider(tenderlyProvider, connection.avatarAddress, {
         async onBeforeTransactionSend(txId, metaTx) {
+          const isDelegateCall = metaTx.operation === 1
+
           // Calling decodeSingle without a fetchAbi will return a raw transaction input object instantly.
           // We already append to the state so the UI reacts immediately.
           const inputRaw = await decodeSingle(
@@ -70,7 +72,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           )
           dispatch({
             type: 'APPEND_RAW_TRANSACTION',
-            payload: inputRaw,
+            payload: { input: inputRaw, isDelegateCall },
           })
 
           if (!chainId) {
@@ -93,7 +95,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           )
           dispatch({
             type: 'DECODE_TRANSACTION',
-            payload: input,
+            payload: { input, isDelegateCall },
           })
         },
         async onTransactionSent(txId, transactionHash) {
