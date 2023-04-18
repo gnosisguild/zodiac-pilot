@@ -2,15 +2,13 @@ import { promises } from 'fs'
 import os from 'os'
 import path from 'path'
 
-import {
-  setupMetamask,
-  RECOMMENDED_METAMASK_VERSION,
-} from '@chainsafe/dappeteer'
+import { setupMetamask } from '@chainsafe/dappeteer'
 
 import metamaskDownloader from '@chainsafe/dappeteer/dist/setup/metamaskDownloader'
 import mkdirp from 'mkdirp'
 import puppeteer from 'puppeteer'
 import * as dotenv from 'dotenv'
+import config from '../dappeteer.config'
 
 dotenv.config()
 
@@ -30,7 +28,9 @@ export default async function setup() {
   if (!firstRun) return // prevent relaunch in watch mode
   firstRun = false
 
-  const metamaskPath = await metamaskDownloader(RECOMMENDED_METAMASK_VERSION)
+  const metamaskPath = await metamaskDownloader(
+    config.dappeteer.metamaskVersion
+  )
   const browser = await puppeteer.launch({
     headless: false, // Dappeteer only works in headful mode
     executablePath: process.env.PUPPETEER_EXEC_PATH, // required for running in CI (env var is set in mujo-code/puppeteer-headful's container)
@@ -42,10 +42,7 @@ export default async function setup() {
   })
 
   try {
-    await setupMetamask(browser, {
-      seed: process.env.SEED_PHRASE,
-      password: 'password1234',
-    })
+    await setupMetamask(browser, config.metamask)
     ;(global as any).browser = browser
   } catch (error) {
     console.log(error)
