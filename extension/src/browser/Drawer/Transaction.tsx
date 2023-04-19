@@ -23,6 +23,7 @@ import classes from './style.module.css'
 interface HeaderProps {
   index: number
   input: TransactionInput
+  isDelegateCall: boolean
   transactionHash: TransactionState['transactionHash']
   onExpandToggle(): void
   expanded: boolean
@@ -32,6 +33,7 @@ interface HeaderProps {
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
   input,
+  isDelegateCall,
   transactionHash,
   onExpandToggle,
   expanded,
@@ -48,6 +50,9 @@ const TransactionHeader: React.FC<HeaderProps> = ({
           {input.type === TransactionType.callContract
             ? input.functionSignature.split('(')[0]
             : 'Raw transaction'}
+          {isDelegateCall && (
+            <code className={classes.delegateCall}>delegatecall</code>
+          )}
         </h5>
       </label>
       <div className={classes.end}>
@@ -104,6 +109,7 @@ export const Transaction: React.FC<Props> = ({
   index,
   transactionHash,
   input,
+  isDelegateCall,
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
@@ -116,6 +122,7 @@ export const Transaction: React.FC<Props> = ({
       <TransactionHeader
         index={index}
         input={input}
+        isDelegateCall={isDelegateCall}
         transactionHash={transactionHash}
         expanded={expanded}
         onExpandToggle={() => setExpanded(!expanded)}
@@ -140,6 +147,7 @@ export const Transaction: React.FC<Props> = ({
           </Box>
           <TransactionStatus
             input={input}
+            isDelegateCall={isDelegateCall}
             index={index}
             transactionHash={transactionHash}
             showRoles={showRoles}

@@ -5,11 +5,10 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useConnection } from '../../settings'
-import { findApplicableTranslation } from '../../transactionTranslations'
+import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
-import { formatValue } from './formatValue'
 import classes from './style.module.css'
 
 type Props = {
@@ -23,24 +22,19 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
   const { connection } = useConnection()
+  const encodedTransaction = encodeSingle(transaction)
+  const translation = useApplicableTranslation(encodedTransaction)
 
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
     return null
   }
 
-  const encodedTransaction = encodeSingle(transaction)
-  const translation = findApplicableTranslation(encodedTransaction)
   if (!translation) {
     return null
   }
 
   const handleTranslate = async () => {
-    const translatedTransactions = translation.translate(encodedTransaction)
-    if (!translatedTransactions) {
-      throw new Error('Translation failed')
-    }
-
     const laterTransactions = transactions
       .slice(index + 1)
       .map((t) => encodeSingle(t.input))
@@ -53,19 +47,9 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones
-    const replayTransaction = [...translatedTransactions, ...laterTransactions]
+    const replayTransaction = [...translation.result, ...laterTransactions]
     for (const tx of replayTransaction) {
-      await provider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: tx.to,
-            data: tx.data,
-            value: formatValue(tx.value),
-            from: connection.avatarAddress,
-          },
-        ],
-      })
+      provider.sendMetaTransaction(tx, connection)
     }
   }
 

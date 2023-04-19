@@ -2,7 +2,7 @@ import { TransactionInput } from 'react-multisend'
 
 interface AppendRawTransactionAction {
   type: 'APPEND_RAW_TRANSACTION'
-  payload: TransactionInput
+  payload: { input: TransactionInput; isDelegateCall: boolean }
 }
 interface DecodeTransactionAction {
   type: 'DECODE_TRANSACTION'

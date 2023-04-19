@@ -4,6 +4,7 @@ import { Action } from './actions'
 
 export interface TransactionState {
   input: TransactionInput
+  isDelegateCall: boolean
   transactionHash?: string
   batchTransactionHash?: string
 }
@@ -14,8 +15,8 @@ const rootReducer = (
 ): TransactionState[] => {
   switch (action.type) {
     case 'APPEND_RAW_TRANSACTION': {
-      const input = action.payload
-      return [...state, { input }]
+      const { input, isDelegateCall } = action.payload
+      return [...state, { input, isDelegateCall }]
     }
 
     case 'DECODE_TRANSACTION': {

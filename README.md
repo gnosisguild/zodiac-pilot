@@ -33,9 +33,9 @@ yarn build
 
 The extension consists of three different interacting pieces:
 
-- **extension app:** This is the main app rendering the iframe. The entrypoint to the app is [launch.ts](src/launch.ts) which is injected into pages running under the [Zodiac Pilot host](#zodiac-pilot-host) via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
-- **background script:** A [service worker script](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#service-workers) that allows to hook into different Chrome events and APIs: [src/background.ts](src/background.ts)
-- **injected script:** Whenever we load any page in the the extension app iframe, we inject [src/inject.ts](src/inject.ts) into the page so that this script runs in the context of that page. The injection happens via the content script at [src/contentScript.ts](src/contentScript.ts).
+- **extension app:** This is the main app rendering the iframe. The entrypoint to the app is [launch.ts](extension/src/launch.ts) which is injected into pages running under the [Zodiac Pilot host](#zodiac-pilot-host) via a [content script](https://developer.chrome.com/docs/extensions/mv3/content_scripts/).
+- **background script:** A [service worker script](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-overview/#service-workers) that allows to hook into different Chrome events and APIs: [src/background.ts](extension/src/background.ts)
+- **injected script:** Whenever we load any page in the the extension app iframe, we inject [src/inject.ts](extension/src/inject.ts) into the page so that this script runs in the context of that page. The injection happens via the content script at [src/contentScript.ts](extension/src/contentScript.ts).
 
 The different scripts communicate exclusively via message passing. Extension page and background script use `chrome.runtime.sendMessage` while extension page and injected script talk via `window.postMessage`.
 
