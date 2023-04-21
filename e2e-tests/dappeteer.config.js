@@ -2,7 +2,7 @@
 
 const config = {
   dappeteer: {
-    metamaskVersion: 'v10.28.3',
+    metamaskVersion: 'v10.18.4',
   },
   metamask: {
     seed: process.env.SEED_PHRASE,
