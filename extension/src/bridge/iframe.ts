@@ -110,6 +110,8 @@ export default class BridgeIframe extends EventEmitter {
     return Promise.resolve()
   }
 
-  // Stakewise only supports MetaMask and Tally as injected providers, so we pretend to be MetaMask
-  isMetaMask = window.location.hostname === 'app.stakewise.io'
+  // Some apps don't support generic injected providers, so we pretend to be MetaMask
+  isMetaMask =
+    window.location.hostname === 'app.stakewise.io' ||
+    window.location.hostname === 'app.aura.finance'
 }
