@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface RolesInterface extends utils.Interface {
@@ -104,64 +105,82 @@ export interface RolesInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "allowTarget",
-    values: [BigNumberish, string, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "assignRoles",
-    values: [string, BigNumberish[], boolean[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<boolean>[]
+    ]
   ): string;
   encodeFunctionData(functionFragment: "avatar", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "defaultRoles",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "disableModule",
-    values: [string, string]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "enableModule",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "execTransactionFromModule",
-    values: [string, BigNumberish, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "execTransactionFromModuleReturnData",
-    values: [string, BigNumberish, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "execTransactionWithRole",
     values: [
-      string,
-      BigNumberish,
-      BytesLike,
-      BigNumberish,
-      BigNumberish,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "execTransactionWithRoleReturnData",
     values: [
-      string,
-      BigNumberish,
-      BytesLike,
-      BigNumberish,
-      BigNumberish,
-      boolean
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(functionFragment: "getGuard", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getModulesPaginated",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "guard", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isModuleEnabled",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "multisend", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -171,80 +190,111 @@ export interface RolesInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "revokeTarget",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeAllowFunction",
-    values: [BigNumberish, string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeFunction",
     values: [
-      BigNumberish,
-      string,
-      BytesLike,
-      boolean[],
-      BigNumberish[],
-      BigNumberish[],
-      BytesLike[],
-      BigNumberish
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<boolean>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeFunctionExecutionOptions",
-    values: [BigNumberish, string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeParameter",
     values: [
-      BigNumberish,
-      string,
-      BytesLike,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeParameterAsOneOf",
     values: [
-      BigNumberish,
-      string,
-      BytesLike,
-      BigNumberish,
-      BigNumberish,
-      BytesLike[]
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>[]
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeRevokeFunction",
-    values: [BigNumberish, string, BytesLike]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "scopeTarget",
-    values: [BigNumberish, string]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "setAvatar", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setAvatar",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setDefaultRole",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "setGuard", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setGuard",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "setMultisend",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "setTarget", values: [string]): string;
-  encodeFunctionData(functionFragment: "setUp", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "setTarget",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setUp",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "target", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "unscopeParameter",
-    values: [BigNumberish, string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -506,82 +556,85 @@ export interface Roles extends BaseContract {
 
   functions: {
     allowTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     assignRoles(
-      module: string,
-      _roles: BigNumberish[],
-      memberOf: boolean[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      _roles: PromiseOrValue<BigNumberish>[],
+      memberOf: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     avatar(overrides?: CallOverrides): Promise<[string]>;
 
-    defaultRoles(arg0: string, overrides?: CallOverrides): Promise<[number]>;
+    defaultRoles(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     disableModule(
-      prevModule: string,
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      prevModule: PromiseOrValue<string>,
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     enableModule(
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     execTransactionFromModule(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     execTransactionFromModuleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     execTransactionWithRole(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     execTransactionWithRoleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getGuard(overrides?: CallOverrides): Promise<[string] & { _guard: string }>;
 
     getModulesPaginated(
-      start: string,
-      pageSize: BigNumberish,
+      start: PromiseOrValue<string>,
+      pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string[], string] & { array: string[]; next: string }>;
 
     guard(overrides?: CallOverrides): Promise<[string]>;
 
     isModuleEnabled(
-      _module: string,
+      _module: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -590,398 +643,410 @@ export interface Roles extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     revokeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeAllowFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      isParamScoped: boolean[],
-      paramType: BigNumberish[],
-      paramComp: BigNumberish[],
-      compValue: BytesLike[],
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      isParamScoped: PromiseOrValue<boolean>[],
+      paramType: PromiseOrValue<BigNumberish>[],
+      paramComp: PromiseOrValue<BigNumberish>[],
+      compValue: PromiseOrValue<BytesLike>[],
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeFunctionExecutionOptions(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      paramComp: BigNumberish,
-      compValue: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      paramComp: PromiseOrValue<BigNumberish>,
+      compValue: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeParameterAsOneOf(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      compValues: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      compValues: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeRevokeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     scopeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setAvatar(
-      _avatar: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _avatar: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setDefaultRole(
-      module: string,
-      role: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setGuard(
-      _guard: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _guard: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setMultisend(
-      _multisend: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _multisend: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setTarget(
-      _target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setUp(
-      initParams: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      initParams: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     target(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unscopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   allowTarget(
-    role: BigNumberish,
-    targetAddress: string,
-    options: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    options: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   assignRoles(
-    module: string,
-    _roles: BigNumberish[],
-    memberOf: boolean[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    module: PromiseOrValue<string>,
+    _roles: PromiseOrValue<BigNumberish>[],
+    memberOf: PromiseOrValue<boolean>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   avatar(overrides?: CallOverrides): Promise<string>;
 
-  defaultRoles(arg0: string, overrides?: CallOverrides): Promise<number>;
+  defaultRoles(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   disableModule(
-    prevModule: string,
-    module: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    prevModule: PromiseOrValue<string>,
+    module: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   enableModule(
-    module: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    module: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   execTransactionFromModule(
-    to: string,
-    value: BigNumberish,
-    data: BytesLike,
-    operation: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    operation: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   execTransactionFromModuleReturnData(
-    to: string,
-    value: BigNumberish,
-    data: BytesLike,
-    operation: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    operation: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   execTransactionWithRole(
-    to: string,
-    value: BigNumberish,
-    data: BytesLike,
-    operation: BigNumberish,
-    role: BigNumberish,
-    shouldRevert: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    operation: PromiseOrValue<BigNumberish>,
+    role: PromiseOrValue<BigNumberish>,
+    shouldRevert: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   execTransactionWithRoleReturnData(
-    to: string,
-    value: BigNumberish,
-    data: BytesLike,
-    operation: BigNumberish,
-    role: BigNumberish,
-    shouldRevert: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    to: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    operation: PromiseOrValue<BigNumberish>,
+    role: PromiseOrValue<BigNumberish>,
+    shouldRevert: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getGuard(overrides?: CallOverrides): Promise<string>;
 
   getModulesPaginated(
-    start: string,
-    pageSize: BigNumberish,
+    start: PromiseOrValue<string>,
+    pageSize: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[string[], string] & { array: string[]; next: string }>;
 
   guard(overrides?: CallOverrides): Promise<string>;
 
-  isModuleEnabled(_module: string, overrides?: CallOverrides): Promise<boolean>;
+  isModuleEnabled(
+    _module: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   multisend(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   revokeTarget(
-    role: BigNumberish,
-    targetAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeAllowFunction(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    options: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    options: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeFunction(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    isParamScoped: boolean[],
-    paramType: BigNumberish[],
-    paramComp: BigNumberish[],
-    compValue: BytesLike[],
-    options: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    isParamScoped: PromiseOrValue<boolean>[],
+    paramType: PromiseOrValue<BigNumberish>[],
+    paramComp: PromiseOrValue<BigNumberish>[],
+    compValue: PromiseOrValue<BytesLike>[],
+    options: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeFunctionExecutionOptions(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    options: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    options: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeParameter(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    paramIndex: BigNumberish,
-    paramType: BigNumberish,
-    paramComp: BigNumberish,
-    compValue: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    paramIndex: PromiseOrValue<BigNumberish>,
+    paramType: PromiseOrValue<BigNumberish>,
+    paramComp: PromiseOrValue<BigNumberish>,
+    compValue: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeParameterAsOneOf(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    paramIndex: BigNumberish,
-    paramType: BigNumberish,
-    compValues: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    paramIndex: PromiseOrValue<BigNumberish>,
+    paramType: PromiseOrValue<BigNumberish>,
+    compValues: PromiseOrValue<BytesLike>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeRevokeFunction(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   scopeTarget(
-    role: BigNumberish,
-    targetAddress: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setAvatar(
-    _avatar: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _avatar: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setDefaultRole(
-    module: string,
-    role: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    module: PromiseOrValue<string>,
+    role: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setGuard(
-    _guard: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _guard: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setMultisend(
-    _multisend: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _multisend: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setTarget(
-    _target: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    _target: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setUp(
-    initParams: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    initParams: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   target(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unscopeParameter(
-    role: BigNumberish,
-    targetAddress: string,
-    functionSig: BytesLike,
-    paramIndex: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    role: PromiseOrValue<BigNumberish>,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    paramIndex: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     allowTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      options: BigNumberish,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      options: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     assignRoles(
-      module: string,
-      _roles: BigNumberish[],
-      memberOf: boolean[],
+      module: PromiseOrValue<string>,
+      _roles: PromiseOrValue<BigNumberish>[],
+      memberOf: PromiseOrValue<boolean>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     avatar(overrides?: CallOverrides): Promise<string>;
 
-    defaultRoles(arg0: string, overrides?: CallOverrides): Promise<number>;
+    defaultRoles(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     disableModule(
-      prevModule: string,
-      module: string,
+      prevModule: PromiseOrValue<string>,
+      module: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    enableModule(module: string, overrides?: CallOverrides): Promise<void>;
+    enableModule(
+      module: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     execTransactionFromModule(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     execTransactionFromModuleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, string]>;
 
     execTransactionWithRole(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     execTransactionWithRoleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
     getGuard(overrides?: CallOverrides): Promise<string>;
 
     getModulesPaginated(
-      start: string,
-      pageSize: BigNumberish,
+      start: PromiseOrValue<string>,
+      pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string[], string] & { array: string[]; next: string }>;
 
     guard(overrides?: CallOverrides): Promise<string>;
 
     isModuleEnabled(
-      _module: string,
+      _module: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -992,101 +1057,116 @@ export interface Roles extends BaseContract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     revokeTarget(
-      role: BigNumberish,
-      targetAddress: string,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeAllowFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      isParamScoped: boolean[],
-      paramType: BigNumberish[],
-      paramComp: BigNumberish[],
-      compValue: BytesLike[],
-      options: BigNumberish,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      isParamScoped: PromiseOrValue<boolean>[],
+      paramType: PromiseOrValue<BigNumberish>[],
+      paramComp: PromiseOrValue<BigNumberish>[],
+      compValue: PromiseOrValue<BytesLike>[],
+      options: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeFunctionExecutionOptions(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      paramComp: BigNumberish,
-      compValue: BytesLike,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      paramComp: PromiseOrValue<BigNumberish>,
+      compValue: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeParameterAsOneOf(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      compValues: BytesLike[],
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      compValues: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeRevokeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     scopeTarget(
-      role: BigNumberish,
-      targetAddress: string,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setAvatar(_avatar: string, overrides?: CallOverrides): Promise<void>;
+    setAvatar(
+      _avatar: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setDefaultRole(
-      module: string,
-      role: BigNumberish,
+      module: PromiseOrValue<string>,
+      role: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setGuard(_guard: string, overrides?: CallOverrides): Promise<void>;
+    setGuard(
+      _guard: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    setMultisend(_multisend: string, overrides?: CallOverrides): Promise<void>;
+    setMultisend(
+      _multisend: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    setTarget(_target: string, overrides?: CallOverrides): Promise<void>;
+    setTarget(
+      _target: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    setUp(initParams: BytesLike, overrides?: CallOverrides): Promise<void>;
+    setUp(
+      initParams: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     target(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
-      newOwner: string,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     unscopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1104,12 +1184,12 @@ export interface Roles extends BaseContract {
     ): AssignRolesEventFilter;
 
     "AvatarSet(address,address)"(
-      previousAvatar?: string | null,
-      newAvatar?: string | null
+      previousAvatar?: PromiseOrValue<string> | null,
+      newAvatar?: PromiseOrValue<string> | null
     ): AvatarSetEventFilter;
     AvatarSet(
-      previousAvatar?: string | null,
-      newAvatar?: string | null
+      previousAvatar?: PromiseOrValue<string> | null,
+      newAvatar?: PromiseOrValue<string> | null
     ): AvatarSetEventFilter;
 
     "ChangedGuard(address)"(guard?: null): ChangedGuardEventFilter;
@@ -1122,24 +1202,24 @@ export interface Roles extends BaseContract {
     EnabledModule(module?: null): EnabledModuleEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      previousOwner?: string | null,
-      newOwner?: string | null
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
     "RolesModSetup(address,address,address,address)"(
-      initiator?: string | null,
-      owner?: string | null,
-      avatar?: string | null,
+      initiator?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      avatar?: PromiseOrValue<string> | null,
       target?: null
     ): RolesModSetupEventFilter;
     RolesModSetup(
-      initiator?: string | null,
-      owner?: string | null,
-      avatar?: string | null,
+      initiator?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null,
+      avatar?: PromiseOrValue<string> | null,
       target?: null
     ): RolesModSetupEventFilter;
 
@@ -1160,93 +1240,96 @@ export interface Roles extends BaseContract {
     ): SetMultisendAddressEventFilter;
 
     "TargetSet(address,address)"(
-      previousTarget?: string | null,
-      newTarget?: string | null
+      previousTarget?: PromiseOrValue<string> | null,
+      newTarget?: PromiseOrValue<string> | null
     ): TargetSetEventFilter;
     TargetSet(
-      previousTarget?: string | null,
-      newTarget?: string | null
+      previousTarget?: PromiseOrValue<string> | null,
+      newTarget?: PromiseOrValue<string> | null
     ): TargetSetEventFilter;
   };
 
   estimateGas: {
     allowTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     assignRoles(
-      module: string,
-      _roles: BigNumberish[],
-      memberOf: boolean[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      _roles: PromiseOrValue<BigNumberish>[],
+      memberOf: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     avatar(overrides?: CallOverrides): Promise<BigNumber>;
 
-    defaultRoles(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+    defaultRoles(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     disableModule(
-      prevModule: string,
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      prevModule: PromiseOrValue<string>,
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     enableModule(
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     execTransactionFromModule(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     execTransactionFromModuleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     execTransactionWithRole(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     execTransactionWithRoleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getGuard(overrides?: CallOverrides): Promise<BigNumber>;
 
     getModulesPaginated(
-      start: string,
-      pageSize: BigNumberish,
+      start: PromiseOrValue<string>,
+      pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     guard(overrides?: CallOverrides): Promise<BigNumber>;
 
     isModuleEnabled(
-      _module: string,
+      _module: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1255,205 +1338,205 @@ export interface Roles extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     revokeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeAllowFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      isParamScoped: boolean[],
-      paramType: BigNumberish[],
-      paramComp: BigNumberish[],
-      compValue: BytesLike[],
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      isParamScoped: PromiseOrValue<boolean>[],
+      paramType: PromiseOrValue<BigNumberish>[],
+      paramComp: PromiseOrValue<BigNumberish>[],
+      compValue: PromiseOrValue<BytesLike>[],
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeFunctionExecutionOptions(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      paramComp: BigNumberish,
-      compValue: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      paramComp: PromiseOrValue<BigNumberish>,
+      compValue: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeParameterAsOneOf(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      compValues: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      compValues: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeRevokeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     scopeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setAvatar(
-      _avatar: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _avatar: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setDefaultRole(
-      module: string,
-      role: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setGuard(
-      _guard: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _guard: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setMultisend(
-      _multisend: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _multisend: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setTarget(
-      _target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setUp(
-      initParams: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      initParams: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     target(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unscopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     allowTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     assignRoles(
-      module: string,
-      _roles: BigNumberish[],
-      memberOf: boolean[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      _roles: PromiseOrValue<BigNumberish>[],
+      memberOf: PromiseOrValue<boolean>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     avatar(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     defaultRoles(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     disableModule(
-      prevModule: string,
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      prevModule: PromiseOrValue<string>,
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     enableModule(
-      module: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     execTransactionFromModule(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     execTransactionFromModuleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     execTransactionWithRole(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     execTransactionWithRoleReturnData(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      role: BigNumberish,
-      shouldRevert: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      role: PromiseOrValue<BigNumberish>,
+      shouldRevert: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getGuard(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getModulesPaginated(
-      start: string,
-      pageSize: BigNumberish,
+      start: PromiseOrValue<string>,
+      pageSize: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     guard(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isModuleEnabled(
-      _module: string,
+      _module: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1462,121 +1545,121 @@ export interface Roles extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     revokeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeAllowFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      isParamScoped: boolean[],
-      paramType: BigNumberish[],
-      paramComp: BigNumberish[],
-      compValue: BytesLike[],
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      isParamScoped: PromiseOrValue<boolean>[],
+      paramType: PromiseOrValue<BigNumberish>[],
+      paramComp: PromiseOrValue<BigNumberish>[],
+      compValue: PromiseOrValue<BytesLike>[],
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeFunctionExecutionOptions(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      options: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      options: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      paramComp: BigNumberish,
-      compValue: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      paramComp: PromiseOrValue<BigNumberish>,
+      compValue: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeParameterAsOneOf(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      paramType: BigNumberish,
-      compValues: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      paramType: PromiseOrValue<BigNumberish>,
+      compValues: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeRevokeFunction(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     scopeTarget(
-      role: BigNumberish,
-      targetAddress: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setAvatar(
-      _avatar: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _avatar: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setDefaultRole(
-      module: string,
-      role: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      module: PromiseOrValue<string>,
+      role: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setGuard(
-      _guard: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _guard: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setMultisend(
-      _multisend: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _multisend: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setTarget(
-      _target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      _target: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setUp(
-      initParams: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      initParams: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     target(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unscopeParameter(
-      role: BigNumberish,
-      targetAddress: string,
-      functionSig: BytesLike,
-      paramIndex: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      role: PromiseOrValue<BigNumberish>,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      paramIndex: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -22,6 +22,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface PermissionsInterface extends utils.Interface {
@@ -36,11 +37,15 @@ export interface PermissionsInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "keyForCompValues",
-    values: [string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "keyForFunctions",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
 
   decodeFunctionResult(
@@ -262,43 +267,43 @@ export interface Permissions extends BaseContract {
 
   functions: {
     keyForCompValues(
-      targetAddress: string,
-      functionSig: BytesLike,
-      index: BigNumberish,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     keyForFunctions(
-      targetAddress: string,
-      functionSig: BytesLike,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
 
   keyForCompValues(
-    targetAddress: string,
-    functionSig: BytesLike,
-    index: BigNumberish,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   keyForFunctions(
-    targetAddress: string,
-    functionSig: BytesLike,
+    targetAddress: PromiseOrValue<string>,
+    functionSig: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   callStatic: {
     keyForCompValues(
-      targetAddress: string,
-      functionSig: BytesLike,
-      index: BigNumberish,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     keyForFunctions(
-      targetAddress: string,
-      functionSig: BytesLike,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -451,30 +456,30 @@ export interface Permissions extends BaseContract {
 
   estimateGas: {
     keyForCompValues(
-      targetAddress: string,
-      functionSig: BytesLike,
-      index: BigNumberish,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     keyForFunctions(
-      targetAddress: string,
-      functionSig: BytesLike,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     keyForCompValues(
-      targetAddress: string,
-      functionSig: BytesLike,
-      index: BigNumberish,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     keyForFunctions(
-      targetAddress: string,
-      functionSig: BytesLike,
+      targetAddress: PromiseOrValue<string>,
+      functionSig: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
