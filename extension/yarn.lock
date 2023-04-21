@@ -506,6 +506,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cspell/cspell-types@npm:*":
+  version: 6.31.1
+  resolution: "@cspell/cspell-types@npm:6.31.1"
+  checksum: 8df9209b7f613bbd245f6304febaca2e49bf81f52d960e7bca8f33b25e84ff3f7e38eb833841f6cac72e0b85c56ddd83e3d2721685638730a0a7a75eb86dae42
+  languageName: node
+  linkType: hard
+
 "@cspell/cspell-types@npm:^5.21.2":
   version: 5.21.2
   resolution: "@cspell/cspell-types@npm:5.21.2"

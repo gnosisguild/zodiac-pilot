@@ -979,6 +979,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@cspell/cspell-types", "npm:5.21.2"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:6.31.1", {\
+          "packageLocation": "./.yarn/cache/@cspell-cspell-types-npm-6.31.1-01eb88fe4b-8df9209b7f.zip/node_modules/@cspell/cspell-types/",\
+          "packageDependencies": [\
+            ["@cspell/cspell-types", "npm:6.31.1"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@cspell/dict-ada", [\
@@ -5395,6 +5402,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["cspell", "npm:5.21.2"],\
             ["@cspell/cspell-pipe", "npm:5.21.2"],\
+            ["@cspell/cspell-types", "npm:6.31.1"],\
             ["chalk", "npm:4.1.2"],\
             ["commander", "npm:9.4.0"],\
             ["cspell-gitignore", "npm:5.21.2"],\
