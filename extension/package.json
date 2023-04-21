@@ -8,8 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "prebuild": "rimraf public/build",
-    "build": "NODE_ENV=production node esbuild.js",
+    "build": "NODE_ENV=production rimraf public/build && node esbuild.js",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
     "dev": "NODE_ENV=development node esbuild.js",
     "generate:types": "rimraf ./src/types/typechain && typechain --target=ethers-v5 --out-dir ./src/types/typechain ./src/abi/*.json",
@@ -24,7 +23,10 @@
     "fix:lint": "eslint src --ext .ts --fix"
   },
   "devDependencies": {
-    "@gnosis.pm/zodiac": "^2.0.1",
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/abstract-provider": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@gnosis.pm/zodiac": "^2.1.2",
     "@safe-global/safe-core-sdk": "^3.2.0",
     "@safe-global/safe-core-sdk-types": "^1.7.0",
     "@safe-global/safe-ethers-lib": "^1.7.0",
@@ -47,12 +49,12 @@
     "dotenv": "^16.0.1",
     "esbuild": "^0.16.17",
     "esbuild-css-modules-plugin": "^2.7.0",
-    "eslint": "^8.31.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-import": "^2.27.4",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.7.2",
@@ -61,6 +63,7 @@
     "ganache": "^7.0.0-beta.2",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.4.5",
+    "moment": "^2.29.4",
     "nanoid": "^3.1.30",
     "node-stdlib-browser": "^1.2.0",
     "prettier": "^2.8.2",
@@ -68,6 +71,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.3.1",
     "react-modal": "^3.15.1",
+    "react-moment": "^1.1.3",
     "react-multisend": "^1.2.0",
     "react-select": "^5.2.1",
     "react-toastify": "^9.0.8",
@@ -77,8 +81,5 @@
     "typescript": "^4.9.4",
     "typescript-plugin-css-modules": "^3.4.0"
   },
-  "dependencies": {
-    "moment": "^2.29.4",
-    "react-moment": "^1.1.3"
-  }
+  "packageManager": "yarn@3.5.0"
 }
