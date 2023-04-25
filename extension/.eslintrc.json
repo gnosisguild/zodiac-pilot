@@ -16,14 +16,6 @@
     "prettier"
   ],
   "rules": {
-    "import/order": [
-      "error",
-      { "newlines-between": "always", "alphabetize": { "order": "asc" } }
-    ],
-    "sort-imports": [
-      "error",
-      { "ignoreDeclarationSort": true, "ignoreCase": true }
-    ],
     "@typescript-eslint/no-explicit-any": "off",
     "react/prop-types": "off", // we are not exporting any components so this rule is not super relevant, in tests we don't want to be forced to define prop types
     "jsx-a11y/no-onchange": "off", // this rule is deprecated, but somehow still part of jsx-a11y/recommended
