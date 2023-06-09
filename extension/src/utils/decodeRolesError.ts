@@ -16,10 +16,10 @@ export default function decodeRolesError(error: JsonRpcError) {
 
   // Here we try to fix the revert reason in any of the possible formats
   const message =
-    error.data.originalError?.data ||
-    error.data.data ||
-    error.data.originalError?.message ||
-    error.data.message ||
+    error.data?.originalError?.data ||
+    error.data?.data ||
+    error.data?.originalError?.message ||
+    error.data?.message ||
     error.message
 
   const prefix = 'Reverted 0x'
@@ -28,14 +28,15 @@ export default function decodeRolesError(error: JsonRpcError) {
     : message
 
   if (revertData.startsWith('0x')) {
-    const error =
+    const rolesError =
       Object.keys(rolesInterface.errors).find(
         (errSig) => rolesInterface.getSighash(errSig) === revertData
       ) ||
       Object.keys(permissionsInterface.errors).find(
         (errSig) => permissionsInterface.getSighash(errSig) === revertData
       )
-    if (error) return error
+
+    if (rolesError) return rolesError
 
     return asciiDecode(revertData.substring(2))
   }
