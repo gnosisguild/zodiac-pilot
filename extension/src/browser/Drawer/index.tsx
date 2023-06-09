@@ -66,8 +66,10 @@ const TransactionsDrawer: React.FC = () => {
             metaTransactions,
             '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
           )
-    const wrappedReq = wrapRequest(batchTransaction, connection)
-    navigator.clipboard.writeText(JSON.stringify(wrappedReq, undefined, 2))
+    const finalRequest = connection.moduleAddress
+      ? wrapRequest(batchTransaction, connection)
+      : batchTransaction
+    navigator.clipboard.writeText(JSON.stringify(finalRequest, undefined, 2))
     toast(<>Transaction data has been copied to clipboard.</>)
   }
 
