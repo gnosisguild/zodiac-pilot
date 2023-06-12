@@ -41,7 +41,7 @@ const RolePermissionCheck: React.FC<{
         if (!canceled) {
           setError(isPermissionsError(decodedError) ? decodedError : false)
         }
-        if(!isPermissionsError(decodedError)) {
+        if (!isPermissionsError(decodedError)) {
           throw e
         }
       })
