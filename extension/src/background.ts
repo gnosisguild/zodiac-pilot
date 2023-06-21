@@ -79,17 +79,25 @@ chrome.action.onClicked.addListener(toggle)
 // a fork network.
 const simulatingExtensionTabs = new Map<number, Fork>()
 
-const hashCode = (str: string) => {
-  let hash = 0,
-    i,
-    chr
-  if (str.length === 0) return hash
-  for (i = 0; i < str.length; i++) {
-    chr = str.charCodeAt(i)
-    hash = (hash << 5) - hash + chr
-    hash |= 0 // Convert to 32bit integer
+// Hash the RPC URL+ tab ID to a number, so we can use it as a declarativeNetRequest rule ID.
+// Implementation taken from https://github.com/darkskyapp/string-hash (CC0 Public Domain)
+function hash(rpcUrl: string, tabId: number) {
+  const urlComponents = rpcUrl.split('/')
+  const forkId = urlComponents[urlComponents.length - 1]
+  const str = `${tabId}:${forkId}`
+  const MAX_RULE_ID = 0xffffff // chrome throws an error if the rule ID is too large ("expected integer, got number")
+
+  let hash = 5381,
+    i = str.length
+
+  while (i) {
+    hash = (hash * 33) ^ str.charCodeAt(--i)
   }
-  return hash
+
+  /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
+   * integers. Since we want the results to be always positive, convert the
+   * signed int to an unsigned by doing an unsigned bitshift. */
+  return (hash >>> 0) % MAX_RULE_ID
 }
 
 const updateRpcRedirectRules = (tabId: number) => {
@@ -106,7 +114,7 @@ const updateRpcRedirectRules = (tabId: number) => {
     .map(
       ([rpcUrl]) =>
         ({
-          id: hashCode(`${tabId}:${rpcUrl}`),
+          id: hash(rpcUrl, tabId),
           priority: 1,
           action: {
             type: 'redirect',
@@ -121,7 +129,7 @@ const updateRpcRedirectRules = (tabId: number) => {
     )
 
   const ruleIds = [...networkIdOfRpcUrl.entries()].map(([rpcUrl]) =>
-    hashCode(`${tabId}:${rpcUrl}`)
+    hash(rpcUrl, tabId)
   )
 
   chrome.declarativeNetRequest.updateSessionRules({
@@ -134,7 +142,7 @@ const removeRpcRedirectRules = (tabId: number) => {
   const networkIdOfRpcUrl = networkIdOfRpcUrlPerTab.get(tabId)
   if (!networkIdOfRpcUrl) return
   const ruleIds = [...networkIdOfRpcUrl.entries()].map(([rpcUrl]) =>
-    hashCode(`${tabId}:${rpcUrl}`)
+    hash(rpcUrl, tabId)
   )
   chrome.declarativeNetRequest.updateSessionRules({
     removeRuleIds: ruleIds,
