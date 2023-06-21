@@ -77,22 +77,8 @@ The injected provider forwards all `request` calls to the parent extension page 
 When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Safe.
 That way the app can continue communicating with the fork network, so that a whole session of multiple transactions can be recorded before anything is signed and submitted to the real chain.
 
-<!-- There are two options available for simulating transactions in a fork, [Tenderly](https://tenderly.co) and a [Ganache](https://trufflesuite.com/ganache/) EVM running locally in the browser.
-
-#### Tenderly -->
-
 Tenderly provides rich debugging capabilities, which help in understanding the exact effects of each recorded transaction before actually signing anything.
 Fresh forks are created via Tenderly's Simulation API and each fork will have its own JSON RPC URL.
-
-<!-- #### Local fork with Ganache (under development)
-
-We use Ganache to run a local EVM with a fork of the network the user is connected to.
-
-TODO: The following is still true, but we should adjust the implementation now that the extension is running under an external host.
-
-> Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
-> Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
-> At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe. -->
 
 ### Reroute JSON-RPC fetch requests
 

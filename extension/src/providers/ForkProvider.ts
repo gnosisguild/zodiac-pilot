@@ -6,7 +6,6 @@ import { MetaTransaction } from 'react-multisend'
 
 import { Connection, TransactionData } from '../types'
 
-import { GanacheProvider } from './ProvideGanache'
 import { TenderlyProvider } from './ProvideTenderly'
 
 class UnsupportedMethodError extends Error {
@@ -20,11 +19,11 @@ interface Handlers {
 
 class ForkProvider extends EventEmitter {
   private avatarAddress: string
-  private provider: TenderlyProvider | GanacheProvider
+  private provider: TenderlyProvider
   private handlers: Handlers
 
   constructor(
-    provider: TenderlyProvider | GanacheProvider,
+    provider: TenderlyProvider,
     avatarAddress: string,
     handlers: Handlers
   ) {
@@ -60,7 +59,7 @@ class ForkProvider extends EventEmitter {
         return true
       }
 
-      // Uniswap will try to use this for ERC-20 permits, but this wont fly with a contract wallet
+      // Uniswap will try to use this for ERC-20 permits, but we prefer to do a regular approval as part of the batch
       case 'eth_signTypedData_v4': {
         throw new UnsupportedMethodError(
           'eth_signTypedData_v4 is not supported'
@@ -140,18 +139,10 @@ class ForkProvider extends EventEmitter {
   }
 
   async refork(): Promise<void> {
-    if (this.provider instanceof GanacheProvider) {
-      throw new Error('not currently implemented')
-    }
-
     await this.provider.refork()
   }
 
   async deleteFork(): Promise<void> {
-    if (this.provider instanceof GanacheProvider) {
-      throw new Error('not currently implemented')
-    }
-
     await this.provider.deleteFork()
   }
 }
