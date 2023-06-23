@@ -7,6 +7,7 @@
     "alchemix",
     "apikey",
     "barnbridge",
+    "bitshift",
     "Blockhash",
     "blockie",
     "blockies",
@@ -47,7 +48,8 @@
     "Uids",
     "walletconnect",
     "whatsabi",
-    "xdai"
+    "xdai",
+    "xmlhttprequest"
   ],
   "flagWords": [],
   "ignorePaths": [
