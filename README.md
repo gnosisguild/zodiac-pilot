@@ -44,7 +44,7 @@ The different scripts communicate exclusively via message passing. Extension pag
 Originally, we started out building the Pilot as an extension page, which are hosted under `chrome-extension://<EXTENSION_ID>`. However extension pages are subject to some restrictions that make implementing certain integrations difficult, most notably:
 
 - All extensions are sandboxed from each other, meaning that the MetaMask injected provider would not be available to an extension page.
-- Extension pages have no access to Indexed DB, which is a dependency of Ganache.
+- Extension pages have no access to Indexed DB, which is a dependency of Ganache. We might consider implementing a local forking mechanism using Ganache as an alternative to the existing Tenderly integration.
 
 That's why the extension is now running under an external host, https://pilot.gnosisguild.org.
 
@@ -77,22 +77,20 @@ The injected provider forwards all `request` calls to the parent extension page 
 When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Safe.
 That way the app can continue communicating with the fork network, so that a whole session of multiple transactions can be recorded before anything is signed and submitted to the real chain.
 
-There are two options available for simulating transactions in a fork, [Tenderly](https://tenderly.co) and a [Ganache](https://trufflesuite.com/ganache/) EVM running locally in the browser.
-
-#### Tenderly
-
 Tenderly provides rich debugging capabilities, which help in understanding the exact effects of each recorded transaction before actually signing anything.
 Fresh forks are created via Tenderly's Simulation API and each fork will have its own JSON RPC URL.
 
-#### Local fork with Ganache (under development)
+### Reroute JSON-RPC fetch requests
 
-We use Ganache to run a local EVM with a fork of the network the user is connected to.
+Apps commonly make read-only JSON-RPC requests to providers such as Infura or Alchemy rather than going through the EIP-1193 provider injected by the wallet.
+Once the network has been forked for simulating recorded transaction such requests should reflect the state of the fork as well.
 
-TODO: The following is still true, but we should adjust the implementation now that the extension is running under an external host.
+This first requires detecting which of the JSON-RPC endpoints used by an app actually serve the forked network.
+The `webRequest` extension API allows inspecting the body of each outgoing request.
+If a requests looks like a JSON-RPC request we probe the target endpoint for `requestChainId`.
 
-> Ganache depends on Indexed DB, which is not available to extension pages. For this reason we run it via an injected script on an externally hosted page in an iframe.
-> Again we communicate via `window.postMessage`. That way we connect Ganache to the WalletConnect provider in the extension page so it can fork the active network.
-> At the same time, we connect the Dapp injected provider to [`ForkProvider`](src/providers/ForkProvider.ts) in the host page, which forwards requests to the Ganache provider running in the ganache iframe.
+Once the network is forked we update `declarativeNetRequest` xhr redirection rules for endpoints identified as serving the forked network.
+All of this is implemented as part of the [background service worker](src/background.ts).
 
 ### Submitting transactions
 

@@ -51,4 +51,11 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 })
 
+// Relay messages from the extension page to the background script
+window.addEventListener('message', (event) => {
+  if (event.data.toBackground) {
+    chrome.runtime.sendMessage(event.data)
+  }
+})
+
 export {}

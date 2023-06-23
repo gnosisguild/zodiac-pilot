@@ -60,7 +60,6 @@
     "ethers": "^5.7.2",
     "ethers-proxies": "^1.0.0",
     "events": "^3.3.0",
-    "ganache": "^7.0.0-beta.2",
     "isomorphic-fetch": "^3.0.0",
     "jest": "^27.4.5",
     "moment": "^2.29.4",
