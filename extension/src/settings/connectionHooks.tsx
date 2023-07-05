@@ -125,21 +125,21 @@ export const useConnection = (id?: string) => {
   const walletConnect = useWalletConnect(connection.id)
 
   const provider: Eip1193Provider =
-    connection.providerType === ProviderType.MetaMask
-      ? metamask.provider || new DummyProvider() // passing a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
-      : walletConnect.provider
+    (connection.providerType === ProviderType.MetaMask
+      ? metamask.provider
+      : walletConnect?.provider) || new DummyProvider() // defaulting to a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
 
   const connected =
     connection.providerType === ProviderType.MetaMask
       ? metamask.accounts.includes(connection.pilotAddress) &&
         !!metamask.chainId &&
         metamask.chainId === connection.chainId
-      : walletConnect.connected
+      : walletConnect?.connected
 
   const chainId =
     connection.providerType === ProviderType.MetaMask
       ? metamask.chainId
-      : walletConnect.chainId
+      : walletConnect?.chainId || null
 
   const mustConnectMetaMask =
     connection.providerType === ProviderType.MetaMask && !metamask.chainId

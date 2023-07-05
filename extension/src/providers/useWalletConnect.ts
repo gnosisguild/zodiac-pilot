@@ -1,11 +1,18 @@
 import EventEmitter from 'events'
 
-import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
+import WalletConnectEip1193ProviderBase from '@walletconnect/ethereum-provider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { RPC } from '../networks'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
+import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
+
+// Global states for providers and event targets
+const providers: Record<
+  string,
+  Promise<WalletConnectEip1193Provider> | undefined
+> = {}
 
 class WalletConnectJsonRpcError extends Error implements JsonRpcError {
   data: { message: string; code: number; data: string }
@@ -19,40 +26,26 @@ class WalletConnectJsonRpcError extends Error implements JsonRpcError {
   }
 }
 
-// Wrap WalletConnectEthereumProvider to make it conform to EIP-1193.
-
-// This resolves some incompatibilities in WalletConnectEthereumProvider:
-//  - does not emit 'connect' events
-//  - request 'eth_chainId' returns a number instead of a hex string
-//  - registering too many event listeners causes MaxListenersExceededWarning error
-//  - make errors conform to EIP-1193
-//
-// It also handles an idiosyncrasy of how the WalletConnect Safe app which return invalid transaction hashes before the transaction is signed by all owners.
 class WalletConnectEip1193Provider extends EventEmitter {
-  wcProvider: WalletConnectEthereumProvider
+  providerBase: WalletConnectEip1193ProviderBase
 
-  constructor(connectionId: string) {
+  constructor(providerBase: WalletConnectEip1193ProviderBase) {
     super()
 
     // every instance of useWalletConnect() hook adds a listener, so we can run out of the default limit of 10 listeners before a warning is emitted
     this.setMaxListeners(100)
 
-    this.wcProvider = new WalletConnectEthereumProvider({
-      storageId: `walletconnect-${connectionId}`,
-      rpc: RPC,
-    })
+    this.providerBase = providerBase
 
-    // @ts-expect-error signer is a private property, but we didn't find another way
-    this.wcProvider.signer.on('connect', () => {
-      const { chainId } = this.wcProvider
-      // @ts-expect-error setHttpProvider is a private method, but we need to call it fix a bug in @walletconnect/ethereum-provider
-      this.wcProvider.http = this.wcProvider.setHttpProvider(chainId)
-      console.log(`WalletConnect connected: ${connectionId}`, chainId)
+    // TODO check if this works, otherwise try `this.providerBase.signer.on('connect'`
+    this.providerBase.on('connect', () => {
+      const { chainId, accounts } = this.providerBase
+      console.log('WalletConnect connected', chainId, accounts)
       this.emit('connect', { chainId })
     })
 
-    this.wcProvider.on('disconnect', (ev: Event) => {
-      console.log(`WalletConnect disconnected: ${connectionId}`, ev)
+    this.providerBase.on('disconnect', (ev) => {
+      console.log('WalletConnect disconnected', ev)
       this.emit('disconnect', ev)
     })
   }
@@ -69,7 +62,7 @@ class WalletConnectEip1193Provider extends EventEmitter {
       params?: Array<any>
     }) => {
       try {
-        return await this.wcProvider.request(request)
+        return await this.providerBase.request(request)
       } catch (err) {
         const { message, code, data } = err as {
           code: number
@@ -89,8 +82,8 @@ class WalletConnectEip1193Provider extends EventEmitter {
     if (method === 'eth_sendTransaction') {
       const safeTxHash = (await requestWithCorrectErrors(request)) as string
       const txHash = await waitForMultisigExecution(
-        this.wcProvider,
-        this.wcProvider.chainId,
+        this.providerBase,
+        this.providerBase.chainId,
         safeTxHash
       )
       return txHash
@@ -99,9 +92,6 @@ class WalletConnectEip1193Provider extends EventEmitter {
     return await requestWithCorrectErrors(request)
   }
 }
-
-// Global states for providers and event targets
-const providers: Record<string, WalletConnectEip1193Provider> = {}
 
 interface WalletConnectResult {
   provider: WalletConnectEip1193Provider
@@ -112,15 +102,39 @@ interface WalletConnectResult {
   chainId: number | null
 }
 
-const useWalletConnect = (connectionId: string): WalletConnectResult => {
-  if (!providers[connectionId]) {
-    providers[connectionId] = new WalletConnectEip1193Provider(connectionId)
-  }
+const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
+  const [provider, setProvider] = useState<WalletConnectEip1193Provider | null>(
+    null
+  )
+  const [connected, setConnected] = useState(
+    provider ? provider.providerBase.connected : false
+  )
 
-  const provider = providers[connectionId]
-
-  const [connected, setConnected] = useState(provider.wcProvider.connected)
+  // effect to initialize the provider
   useEffect(() => {
+    if (!providers[connectionId]) {
+      providers[connectionId] = WalletConnectEip1193ProviderBase.init({
+        projectId: '0f8a5e2cf60430a26274b421418e8a27',
+        showQrModal: true,
+        chains: [1],
+        optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
+        rpcMap: RPC,
+        qrModalOptions: {
+          themeVariables: {
+            '--wcm-z-index': '9999',
+          },
+        },
+        // storageOptions: {},
+      }).then((providerBase) => new WalletConnectEip1193Provider(providerBase))
+    }
+
+    providers[connectionId]!.then((provider) => setProvider(provider))
+  }, [connectionId])
+
+  // effect to subscribe to provider events
+  useEffect(() => {
+    if (!provider) return
+
     const handleConnection = () => {
       setConnected(true)
     }
@@ -138,35 +152,44 @@ const useWalletConnect = (connectionId: string): WalletConnectResult => {
   }, [provider])
 
   const connect = useCallback(async () => {
-    try {
-      await provider.wcProvider.disconnect()
-      await provider.wcProvider.enable()
-    } catch (e) {
-      // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
-      // This fixes it:
-      // @ts-expect-error signer is a private property, but we didn't find another way
-      provider.wcProvider.signer.disconnect()
+    if (!provider) {
+      throw new Error('provider not initialized')
     }
+    // try {
+    await provider.providerBase.disconnect()
+    await provider.providerBase.enable()
+    // } catch (e) {
+    // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
+    // This fixes it:
+    // provider.signer.disconnect()
+    // }
 
     return {
-      chainId: provider.wcProvider.chainId,
-      accounts: provider.wcProvider.accounts,
+      chainId: provider.providerBase.chainId,
+      accounts: provider.providerBase.accounts,
     }
-  }, [provider.wcProvider])
+  }, [provider])
 
   const disconnect = useCallback(() => {
-    provider.wcProvider.disconnect()
-  }, [provider.wcProvider])
+    if (!provider) {
+      throw new Error('provider not initialized')
+    }
+
+    provider.providerBase.disconnect()
+  }, [provider])
 
   const packed = useMemo(
-    () => ({
-      provider,
-      connected,
-      connect,
-      disconnect,
-      accounts: connected ? provider.wcProvider.accounts : [],
-      chainId: connected ? provider.wcProvider.chainId : null,
-    }),
+    () =>
+      provider
+        ? {
+            provider,
+            connected,
+            connect,
+            disconnect,
+            accounts: connected ? provider.providerBase.accounts : [],
+            chainId: connected ? provider.providerBase.chainId : null,
+          }
+        : null,
     [provider, connected, connect, disconnect]
   )
 
