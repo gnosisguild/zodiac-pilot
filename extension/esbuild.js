@@ -16,8 +16,8 @@ esbuild
       './src/app.tsx',
     ],
     bundle: true,
-    minify: process.env.NODE_ENV !== 'production',
-    sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : false,
+    minify: process.env.NODE_ENV === 'production',
+    sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
     loader: {
       '.svg': 'file',
       '.woff': 'file',

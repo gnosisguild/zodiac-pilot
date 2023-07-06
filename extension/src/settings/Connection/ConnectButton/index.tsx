@@ -54,6 +54,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   const disconnect = () => {
     if (connection.providerType === ProviderType.WalletConnect) {
+      if (!walletConnect) {
+        throw new Error('walletConnect provider is not available')
+      }
       walletConnect.disconnect()
     }
 
@@ -159,6 +162,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       <Button
         className={classes.walletButton}
         onClick={async () => {
+          if (!walletConnect) {
+            throw new Error('walletConnect provider is not available')
+          }
           const { chainId, accounts } = await walletConnect.connect()
           connect(ProviderType.WalletConnect, chainId as ChainId, accounts[0])
         }}
