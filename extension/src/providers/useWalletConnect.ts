@@ -18,13 +18,15 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
     this.STORAGE_KEY = `wc@2:ethereum_multi_provider:${connectionId}`
   }
 
-  static async init(opts: EthereumProviderOptions & { connectionId: string }) {
+  static override async init(
+    opts: EthereumProviderOptions & { connectionId: string }
+  ) {
     const provider = new WalletConnectEthereumMultiProvider(opts.connectionId)
     await provider.initialize(opts)
     return provider
   }
 
-  async request(request: RequestArguments): Promise<any> {
+  override async request(request: RequestArguments): Promise<any> {
     const { method } = request
 
     // make errors conform to EIP-1193
@@ -161,6 +163,8 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
   const [connected, setConnected] = useState(
     provider ? provider.connected : false
   )
+  const [accounts, setAccounts] = useState(provider ? provider.accounts : [])
+  const [chainId, setChainId] = useState(provider ? provider.chainId : 1)
 
   // effect to initialize the provider
   useEffect(() => {
@@ -180,26 +184,39 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
       })
     }
 
-    providers[connectionId]!.then((provider) => setProvider(provider))
+    providers[connectionId]!.then((provider) => {
+      setProvider(provider)
+      setConnected(provider.connected)
+      setAccounts(provider.accounts)
+      setChainId(provider.chainId)
+    })
   }, [connectionId])
 
   // effect to subscribe to provider events
   useEffect(() => {
     if (!provider) return
 
-    const handleConnection = () => {
-      setConnected(true)
+    const handleConnectionUpdate = () => {
+      setConnected(provider.connected)
     }
-    provider.on('connect', handleConnection)
+    provider.events.on('connect', handleConnectionUpdate)
+    provider.events.on('disconnect', handleConnectionUpdate)
 
-    const handleDisconnection = () => {
-      setConnected(false)
+    const handleAccountsChanged = () => {
+      setAccounts(provider.accounts)
     }
-    provider.on('disconnect', handleDisconnection)
+    provider.events.on('accountsChanged', handleAccountsChanged)
+
+    const handleChainChanged = () => {
+      setChainId(provider.chainId)
+    }
+    provider.events.on('chainChanged', handleChainChanged)
 
     return () => {
-      provider.removeListener('connect', handleConnection)
-      provider.removeListener('disconnect', handleDisconnection)
+      provider.events.removeListener('connect', handleConnectionUpdate)
+      provider.events.removeListener('disconnect', handleConnectionUpdate)
+      provider.events.removeListener('accountsChanged', handleAccountsChanged)
+      provider.events.removeListener('chainChanged', handleChainChanged)
     }
   }, [provider])
 
@@ -238,11 +255,11 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
             connected,
             connect,
             disconnect,
-            accounts: connected ? provider.accounts : [],
-            chainId: connected ? provider.chainId : null,
+            accounts,
+            chainId,
           }
         : null,
-    [provider, connected, connect, disconnect]
+    [provider, connected, accounts, chainId, connect, disconnect]
   )
 
   return packed
