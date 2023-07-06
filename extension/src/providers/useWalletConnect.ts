@@ -1,3 +1,5 @@
+import { safeJsonParse, safeJsonStringify } from '@walletconnect/safe-json'
+import { Core } from '@walletconnect/core'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -5,17 +7,25 @@ import { RPC } from '../networks'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
 import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
-import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
+import {
+  Metadata,
+  Namespace,
+  UniversalProvider,
+} from '@walletconnect/universal-provider'
+import { SignClient } from '@walletconnect/sign-client'
+import { IKeyValueStorage, parseEntry } from '@walletconnect/keyvaluestorage'
 
 /**
  * Extends WalletConnectEthereumProvider to add support for keeping multiple WalletConnect connections active in parallel
  **/
 class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
   override readonly STORAGE_KEY: string
+  readonly connectionId: string
 
   constructor(connectionId: string) {
     super()
-    this.STORAGE_KEY = `wc@2:ethereum_multi_provider:${connectionId}`
+    this.connectionId = connectionId
+    this.STORAGE_KEY = `${connectionId}:wc@2:ethereum_multi_provider`
   }
 
   static override async init(
@@ -61,6 +71,58 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
 
     return await requestWithCorrectErrors(request)
   }
+
+  protected override async initialize(opts) {
+    this.rpc = this.getRpcConfig(opts)
+    this.chainId = this.rpc.chains.length
+      ? getEthereumChainId(this.rpc.chains)
+      : getEthereumChainId(this.rpc.optionalChains)
+    this.signer = await UniversalProvider.init({
+      projectId: this.rpc.projectId,
+      metadata: this.rpc.metadata,
+      disableProviderPing: opts.disableProviderPing,
+      relayUrl: opts.relayUrl,
+      storageOptions: opts.storageOptions,
+      client: await SignClient.init({
+        logger: 'error',
+        relayUrl: opts.relayUrl || 'wss://relay.walletconnect.com',
+        projectId: this.rpc.projectId,
+        metadata: this.rpc.metadata,
+        storageOptions: opts.storageOptions,
+        name: this.connectionId,
+        core: new Core({
+          ...opts,
+          storage: new PrefixedLocalStorage(`${this.connectionId}:`),
+        }),
+      }),
+    })
+    this.registerEventListeners()
+    await this.loadPersistedSession()
+    if (this.rpc.showQrModal) {
+      let WalletConnectModalClass
+      try {
+        const { WalletConnectModal } = await import('@walletconnect/modal')
+        WalletConnectModalClass = WalletConnectModal
+      } catch {
+        throw new Error(
+          'To use QR modal, please install @walletconnect/modal package'
+        )
+      }
+      if (WalletConnectModalClass) {
+        try {
+          this.modal = new WalletConnectModalClass({
+            walletConnectVersion: 2,
+            projectId: this.rpc.projectId,
+            standaloneChains: this.rpc.chains,
+            ...this.rpc.qrModalOptions,
+          })
+        } catch (e) {
+          this.signer.logger.error(e)
+          throw new Error('Could not generate WalletConnectModal Instance')
+        }
+      }
+    }
+  }
 }
 
 // Global states for providers and event targets
@@ -80,73 +142,6 @@ class WalletConnectJsonRpcError extends Error implements JsonRpcError {
     }
   }
 }
-
-// class WalletConnectEip1193Provider extends EventEmitter {
-//   providerBase: WalletConnectEthereumMultiProvider
-
-//   constructor(providerBase: WalletConnectEthereumMultiProvider) {
-//     super()
-
-//     // every instance of useWalletConnect() hook adds a listener, so we can run out of the default limit of 10 listeners before a warning is emitted
-//     this.setMaxListeners(100)
-
-//     this.providerBase = providerBase
-
-//     // TODO check if this works, otherwise try `this.providerBase.signer.on('connect'`
-//     this.providerBase.on('connect', () => {
-//       const { chainId, accounts } = this.providerBase
-//       console.log('WalletConnect connected', chainId, accounts)
-//       this.emit('connect', { chainId })
-//     })
-
-//     this.providerBase.on('disconnect', (ev) => {
-//       console.log('WalletConnect disconnected', ev)
-//       this.emit('disconnect', ev)
-//     })
-//   }
-
-//   async request(request: {
-//     method: string
-//     params?: Array<any>
-//   }): Promise<any> {
-//     const { method } = request
-
-//     // make errors conform to EIP-1193
-//     const requestWithCorrectErrors = async (request: {
-//       method: string
-//       params?: Array<any>
-//     }) => {
-//       try {
-//         return await this.providerBase.request(request)
-//       } catch (err) {
-//         const { message, code, data } = err as {
-//           code: number
-//           message: string
-//           data: string
-//         }
-//         throw new WalletConnectJsonRpcError(code, message, data)
-//       }
-//     }
-
-//     if (method === 'eth_chainId') {
-//       const result = await requestWithCorrectErrors(request)
-//       // WalletConnect seems to return a number even though it must be a string value
-//       return typeof result === 'number' ? `0x${result.toString(16)}` : result
-//     }
-
-//     if (method === 'eth_sendTransaction') {
-//       const safeTxHash = (await requestWithCorrectErrors(request)) as string
-//       const txHash = await waitForMultisigExecution(
-//         this.providerBase,
-//         this.providerBase.chainId,
-//         safeTxHash
-//       )
-//       return txHash
-//     }
-
-//     return await requestWithCorrectErrors(request)
-//   }
-// }
 
 interface WalletConnectResult {
   provider: WalletConnectEthereumMultiProvider
@@ -225,14 +220,9 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
     if (!provider) {
       throw new Error('provider not initialized')
     }
-    // try {
+
     await provider.disconnect()
     await provider.enable()
-    // } catch (e) {
-    // When the user dismisses the modal, the connectors stays in a pending state and the modal won't open again.
-    // This fixes it:
-    // provider.signer.disconnect()
-    // }
 
     return {
       chainId: provider.chainId,
@@ -267,3 +257,41 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
 }
 
 export default useWalletConnect
+
+class PrefixedLocalStorage implements IKeyValueStorage {
+  private readonly localStorage: Storage = localStorage
+  private readonly prefix: string
+
+  constructor(prefix: string) {
+    this.prefix = prefix
+  }
+
+  public async getKeys(): Promise<string[]> {
+    return Object.keys(this.localStorage)
+  }
+
+  public async getEntries<T = any>(): Promise<[string, T][]> {
+    return Object.entries(this.localStorage).map(parseEntry)
+  }
+
+  public async getItem<T = any>(key: string): Promise<T | undefined> {
+    const item = this.localStorage.getItem(this.prefix + key)
+    if (item === null) {
+      return undefined
+    }
+    // TODO: fix this annoying type casting
+    return safeJsonParse(item) as T
+  }
+
+  public async setItem<T = any>(key: string, value: T): Promise<void> {
+    this.localStorage.setItem(this.prefix + key, safeJsonStringify(value))
+  }
+
+  public async removeItem(key: string): Promise<void> {
+    this.localStorage.removeItem(this.prefix + key)
+  }
+}
+
+function getEthereumChainId(chains: string[]): number {
+  return Number(chains[0].split(':')[1])
+}
