@@ -2,18 +2,15 @@ import { safeJsonParse, safeJsonStringify } from '@walletconnect/safe-json'
 import { Core } from '@walletconnect/core'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
+import { UniversalProvider } from '@walletconnect/universal-provider'
+import { SignClient } from '@walletconnect/sign-client'
+import { IKeyValueStorage, parseEntry } from '@walletconnect/keyvaluestorage'
+import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
 
 import { RPC } from '../networks'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
-import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
-import {
-  Metadata,
-  Namespace,
-  UniversalProvider,
-} from '@walletconnect/universal-provider'
-import { SignClient } from '@walletconnect/sign-client'
-import { IKeyValueStorage, parseEntry } from '@walletconnect/keyvaluestorage'
 
 /**
  * Extends WalletConnectEthereumProvider to add support for keeping multiple WalletConnect connections active in parallel
@@ -72,11 +69,11 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
     return await requestWithCorrectErrors(request)
   }
 
-  protected override async initialize(opts) {
+  protected override async initialize(opts: EthereumProviderOptions) {
     this.rpc = this.getRpcConfig(opts)
     this.chainId = this.rpc.chains.length
       ? getEthereumChainId(this.rpc.chains)
-      : getEthereumChainId(this.rpc.optionalChains)
+      : getEthereumChainId(this.rpc.optionalChains || [])
     this.signer = await UniversalProvider.init({
       projectId: this.rpc.projectId,
       metadata: this.rpc.metadata,
@@ -111,9 +108,8 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
       if (WalletConnectModalClass) {
         try {
           this.modal = new WalletConnectModalClass({
-            walletConnectVersion: 2,
             projectId: this.rpc.projectId,
-            standaloneChains: this.rpc.chains,
+            chains: this.rpc.chains,
             ...this.rpc.qrModalOptions,
           })
         } catch (e) {
