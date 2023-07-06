@@ -24,6 +24,7 @@
     "IERC20",
     "iframes",
     "instadapp",
+    "keyvaluestorage",
     "mastercopy",
     "multicall",
     "multisend",
