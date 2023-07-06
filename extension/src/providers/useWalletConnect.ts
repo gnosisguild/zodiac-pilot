@@ -204,6 +204,7 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
 
     const handleAccountsChanged = () => {
       setAccounts(provider.accounts)
+      setConnected(provider.connected && provider.accounts.length > 0)
     }
     provider.events.on('accountsChanged', handleAccountsChanged)
 
