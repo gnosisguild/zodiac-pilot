@@ -52,7 +52,7 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
             </Flex>
           </Box>
           <Box bg className={classes.connectionsContainer}>
-            <ConnectionsIcon height="100%" width="auto" />
+            <ConnectionsIcon height="100%" width="100%" />
           </Box>
         </Flex>
       </BlockLink>
