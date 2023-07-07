@@ -24,7 +24,7 @@ const CloseDrawerButton: React.FC<CloseDrawerButtonProps> = ({ onClick }) => (
       <div>
         <Box className={classes.toggleBackground}>
           <Box className={classes.toggle}>
-            <ConnectionsIcon width="auto" height="100%" />
+            <ConnectionsIcon width="100%" height="100%" />
           </Box>
         </Box>
       </div>

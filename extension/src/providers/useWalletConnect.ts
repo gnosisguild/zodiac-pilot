@@ -1,6 +1,7 @@
 import { safeJsonParse, safeJsonStringify } from '@walletconnect/safe-json'
 import { Core } from '@walletconnect/core'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
+import { WalletConnectModal } from '@walletconnect/modal'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
 import { UniversalProvider } from '@walletconnect/universal-provider'
@@ -11,6 +12,16 @@ import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/t
 import { RPC } from '../networks'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
+
+const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
+
+const modal = new WalletConnectModal({
+  projectId: WALLETCONNECT_PROJECT_ID,
+  // chains: this.rpc.chains,
+  themeVariables: {
+    '--wcm-z-index': '9999',
+  },
+})
 
 /**
  * Extends WalletConnectEthereumProvider to add support for keeping multiple WalletConnect connections active in parallel
@@ -95,29 +106,7 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
     })
     this.registerEventListeners()
     await this.loadPersistedSession()
-    if (this.rpc.showQrModal) {
-      let WalletConnectModalClass
-      try {
-        const { WalletConnectModal } = await import('@walletconnect/modal')
-        WalletConnectModalClass = WalletConnectModal
-      } catch {
-        throw new Error(
-          'To use QR modal, please install @walletconnect/modal package'
-        )
-      }
-      if (WalletConnectModalClass) {
-        try {
-          this.modal = new WalletConnectModalClass({
-            projectId: this.rpc.projectId,
-            chains: this.rpc.chains,
-            ...this.rpc.qrModalOptions,
-          })
-        } catch (e) {
-          this.signer.logger.error(e)
-          throw new Error('Could not generate WalletConnectModal Instance')
-        }
-      }
-    }
+    this.modal = modal
   }
 }
 
@@ -162,16 +151,11 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
     if (!providers[connectionId]) {
       providers[connectionId] = WalletConnectEthereumMultiProvider.init({
         connectionId,
-        projectId: '0f8a5e2cf60430a26274b421418e8a27',
+        projectId: WALLETCONNECT_PROJECT_ID,
         showQrModal: true,
         chains: [1],
         optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
         rpcMap: RPC,
-        qrModalOptions: {
-          themeVariables: {
-            '--wcm-z-index': '9999',
-          },
-        },
       })
     }
 
@@ -186,6 +170,9 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
   // effect to subscribe to provider events
   useEffect(() => {
     if (!provider) return
+
+    // disable warning about too many listeners
+    provider.events.setMaxListeners(0)
 
     const handleConnectionUpdate = () => {
       setConnected(provider.connected)
@@ -254,6 +241,7 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
 
 export default useWalletConnect
 
+/** Adjusted from https://github.com/WalletConnect/walletconnect-utils/blob/master/misc/keyvaluestorage/src/browser/index.ts */
 class PrefixedLocalStorage implements IKeyValueStorage {
   private readonly localStorage: Storage = localStorage
   private readonly prefix: string
@@ -275,7 +263,6 @@ class PrefixedLocalStorage implements IKeyValueStorage {
     if (item === null) {
       return undefined
     }
-    // TODO: fix this annoying type casting
     return safeJsonParse(item) as T
   }
 

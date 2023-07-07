@@ -21,8 +21,8 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
   const { connection } = useConnection()
   const currentConnectionHash = useConnectionsHash(connection.id)
   return (
-    <BlockLink onClick={onConnectionsClick}>
-      <Box roundedLeft className={classes.connectionBubble}>
+    <Box roundedLeft className={classes.connectionBubble}>
+      <BlockLink onClick={onConnectionsClick}>
         <Flex gap={1}>
           <Box bg roundedLeft className={classes.currentConnectionContainer}>
             <Flex justifyContent="space-between" alignItems="center" gap={3}>
@@ -52,21 +52,21 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
             </Flex>
           </Box>
           <Box bg className={classes.connectionsContainer}>
-            <ConnectionsIcon height="100%" width="auto" />
+            <ConnectionsIcon height="100%" width="100%" />
           </Box>
         </Flex>
-        <div className={classes.infoContainer}>
-          <Box bg p={3} className={classes.info}>
-            <BlockLink href={currentConnectionHash}>
-              <ConnectionStack
-                connection={connection}
-                className={classes.stack}
-              />
-            </BlockLink>
-          </Box>
-        </div>
-      </Box>
-    </BlockLink>
+      </BlockLink>
+      <div className={classes.infoContainer}>
+        <Box bg p={3} className={classes.info}>
+          <BlockLink href={currentConnectionHash}>
+            <ConnectionStack
+              connection={connection}
+              className={classes.stack}
+            />
+          </BlockLink>
+        </Box>
+      </div>
+    </Box>
   )
 }
 
