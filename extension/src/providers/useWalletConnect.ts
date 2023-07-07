@@ -172,6 +172,9 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
   useEffect(() => {
     if (!provider) return
 
+    // disable warning about too many listeners
+    provider.events.setMaxListeners(0)
+
     const handleConnectionUpdate = () => {
       setConnected(provider.connected)
     }
