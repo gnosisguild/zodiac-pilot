@@ -52,7 +52,6 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
       try {
         return await super.request(request)
       } catch (err) {
-        console.error({ wcerr: err })
         const { message, code, data } = err as {
           code: number
           message: string
