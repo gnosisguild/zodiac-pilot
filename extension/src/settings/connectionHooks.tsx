@@ -122,7 +122,7 @@ export const useConnection = (id?: string) => {
   }
 
   const metamask = useMetaMask()
-  const walletConnect = useWalletConnect(connection.id)
+  const walletConnect = useWalletConnect(connection.id, connection.chainId || 1)
 
   const provider: Eip1193Provider =
     (connection.providerType === ProviderType.MetaMask
