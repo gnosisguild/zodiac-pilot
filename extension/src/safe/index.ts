@@ -1,6 +1,5 @@
-export { initSafeServiceClient } from './initSafeServiceClient'
+export { initSafeApiKit } from './initSafeApiKit'
 export { sendTransaction } from './sendTransaction'
-export { useSafe } from './useSafe'
 export { useSafesWithOwner } from './useSafesWithOwner'
 export { useSafeDelegates } from './useSafeDelegates'
 export { waitForMultisigExecution } from './waitForMultisigExecution'

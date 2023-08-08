@@ -66,13 +66,25 @@ async function fetchModules(
     provider
   )
 
+  console.log(
+    'FEEETCH',
+    await contract.populateTransaction.getModulesPaginated(ADDRESS_ONE, 100)
+  )
+
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
   )[0] as string[]
-
+  console.log({ moduleAddresses })
   const enabledAndSupportedModules = moduleAddresses.map(
     async (moduleAddress) => {
-      const isEnabled = await contract.isModuleEnabled(moduleAddress)
+      let isEnabled = false
+      try {
+        isEnabled = await contract.isModuleEnabled(moduleAddress)
+      } catch (e) {
+        console.error(e)
+      }
+      // const isEnabled = await contract.isModuleEnabled(moduleAddress)
+      console.log({ moduleAddress, isEnabled })
       if (!isEnabled) return
 
       const mastercopyAddress = await detectProxyTarget(moduleAddress, provider)

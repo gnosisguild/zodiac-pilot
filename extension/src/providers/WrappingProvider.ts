@@ -4,7 +4,7 @@ import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'react-multisend'
 
-import { initSafeServiceClient, sendTransaction } from '../safe'
+import { initSafeApiKit, sendTransaction } from '../safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
@@ -95,11 +95,11 @@ class WrappingProvider extends EventEmitter {
 
         if (!this.connection.moduleAddress) {
           // use safeTxGas estimation for direct execution
-          const safeServiceClient = initSafeServiceClient(
+          const safeApiKit = initSafeApiKit(
             this.provider,
             this.connection.chainId
           )
-          const result = await safeServiceClient.estimateSafeTransaction(
+          const result = await safeApiKit.estimateSafeTransaction(
             this.connection.avatarAddress,
             request
           )
