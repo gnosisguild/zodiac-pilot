@@ -137,14 +137,19 @@ interface WalletConnectResult {
   chainId: number | null
 }
 
-const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
+const useWalletConnect = (
+  connectionId: string,
+  connectionChainId: number
+): WalletConnectResult | null => {
   const [provider, setProvider] =
     useState<WalletConnectEthereumMultiProvider | null>(null)
   const [connected, setConnected] = useState(
     provider ? provider.connected : false
   )
   const [accounts, setAccounts] = useState(provider ? provider.accounts : [])
-  const [chainId, setChainId] = useState(provider ? provider.chainId : 1)
+  const [chainId, setChainId] = useState(
+    provider ? provider.chainId : connectionChainId
+  )
 
   // effect to initialize the provider
   useEffect(() => {
@@ -153,7 +158,7 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
         connectionId,
         projectId: WALLETCONNECT_PROJECT_ID,
         showQrModal: true,
-        chains: [1],
+        chains: [connectionChainId],
         optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
         rpcMap: RPC,
       })
@@ -165,7 +170,7 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
       setAccounts(provider.accounts)
       setChainId(provider.chainId)
     })
-  }, [connectionId])
+  }, [connectionId, connectionChainId])
 
   // effect to subscribe to provider events
   useEffect(() => {

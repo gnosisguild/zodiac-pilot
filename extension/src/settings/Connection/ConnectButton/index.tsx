@@ -31,7 +31,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const { connected, connection } = useConnection(id)
 
   const metamask = useMetaMask()
-  const walletConnect = useWalletConnect(connection.id)
+  const walletConnect = useWalletConnect(connection.id, connection.chainId || 1)
 
   const connect = (
     providerType: ProviderType,
