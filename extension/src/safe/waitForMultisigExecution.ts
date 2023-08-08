@@ -1,14 +1,14 @@
 import { ChainId } from '../networks'
 import { Eip1193Provider } from '../types'
 
-import { initSafeServiceClient } from './initSafeServiceClient'
+import { initSafeApiKit } from './initSafeApiKit'
 
 export function waitForMultisigExecution(
   provider: Eip1193Provider,
   chainId: number,
   safeTxHash: string
 ): Promise<string> {
-  const safeService = initSafeServiceClient(provider, chainId as ChainId)
+  const safeService = initSafeApiKit(provider, chainId as ChainId)
 
   return new Promise((resolve, reject) => {
     function tryAgain() {

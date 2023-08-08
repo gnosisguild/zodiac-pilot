@@ -4,7 +4,7 @@ import { ChainId } from '../networks'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 
-import { initSafeServiceClient } from './initSafeServiceClient'
+import { initSafeApiKit } from './initSafeApiKit'
 
 export const useSafesWithOwner = (
   ownerAddress: string,
@@ -20,7 +20,7 @@ export const useSafesWithOwner = (
   useEffect(() => {
     if (!connected || !chainId || !checksumOwnerAddress) return
 
-    const safeService = initSafeServiceClient(provider, chainId as ChainId)
+    const safeService = initSafeApiKit(provider, chainId as ChainId)
 
     setLoading(true)
     let canceled = false

@@ -1,4 +1,4 @@
-import { Web3Provider } from '@ethersproject/providers'
+import { JsonRpcBatchProvider, Web3Provider } from '@ethersproject/providers'
 import {
   ContractAbis,
   ContractAddresses,
@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
 import { useConnection } from '../connectionHooks'
+import { ChainId, RPC } from '../../networks'
 
 const SUPPORTED_MODULES = [KnownContracts.DELAY, KnownContracts.ROLES]
 export type SupportedModuleType = KnownContracts.DELAY | KnownContracts.ROLES
@@ -32,20 +33,22 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { provider, connected, chainId } = useConnection(connectionId)
+  const { chainId } = useConnection(connectionId)
+
   useEffect(() => {
-    if (!connected) return
+    if (!chainId) return
+    const provider = new JsonRpcBatchProvider(RPC[chainId as ChainId], chainId)
 
     setLoading(true)
     setError(false)
-    fetchModules(safeAddress, new Web3Provider(provider, chainId || undefined))
+    fetchModules(safeAddress, provider)
       .then((modules) => setModules(modules))
       .catch((e) => {
         console.error(`Could not fetch modules of Safe ${safeAddress}`, e)
         setError(true)
       })
       .finally(() => setLoading(false))
-  }, [provider, safeAddress, connected, chainId])
+  }, [chainId, safeAddress])
 
   if (!validateAddress(safeAddress) || error) {
     return { isValidSafe: false, loading, modules: [] }

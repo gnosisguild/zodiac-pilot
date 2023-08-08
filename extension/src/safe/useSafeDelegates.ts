@@ -4,7 +4,7 @@ import { ChainId } from '../networks'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 
-import { initSafeServiceClient } from './initSafeServiceClient'
+import { initSafeApiKit } from './initSafeApiKit'
 
 export const useSafeDelegates = (
   safeAddress: string,
@@ -20,13 +20,13 @@ export const useSafeDelegates = (
   useEffect(() => {
     if (!connected || !chainId || !checksumSafeAddress) return
 
-    const safeService = initSafeServiceClient(provider, chainId as ChainId)
+    const safeApiKit = initSafeApiKit(provider, chainId as ChainId)
 
     setLoading(true)
     let canceled = false
 
-    safeService
-      .getSafeDelegates(checksumSafeAddress)
+    safeApiKit
+      .getSafeDelegates({ safeAddress: checksumSafeAddress })
       .then((res) => {
         if (!canceled) {
           setDelegates(res.results.map((delegate) => delegate.delegate))

@@ -1,12 +1,11 @@
-import Safe from '@safe-global/safe-core-sdk'
-import EthersAdapter from '@safe-global/safe-ethers-lib'
+import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import * as ethers from 'ethers'
 import { getAddress } from 'ethers/lib/utils'
 import { MetaTransaction } from 'react-multisend'
 
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-import { initSafeServiceClient } from './initSafeServiceClient'
+import { initSafeApiKit } from './initSafeApiKit'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
 
 export const sendTransaction = async (
@@ -15,7 +14,7 @@ export const sendTransaction = async (
   request: MetaTransaction | TransactionData
 ) => {
   const web3Provider = new ethers.providers.Web3Provider(provider)
-  const safeServiceClient = initSafeServiceClient(provider, connection.chainId)
+  const safeApiKit = initSafeApiKit(provider, connection.chainId)
   const ethAdapter = new EthersAdapter({
     ethers,
     signerOrProvider: web3Provider.getSigner(),
@@ -25,7 +24,7 @@ export const sendTransaction = async (
     safeAddress: connection.avatarAddress,
   })
 
-  const nonce = await safeServiceClient.getNextNonce(
+  const nonce = await safeApiKit.getNextNonce(
     getAddress(connection.avatarAddress)
   )
 
@@ -41,7 +40,7 @@ export const sendTransaction = async (
   const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
   const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
 
-  await safeServiceClient.proposeTransaction({
+  await safeApiKit.proposeTransaction({
     safeAddress: getAddress(connection.avatarAddress),
     safeTransactionData: safeTransaction.data,
     safeTxHash,
