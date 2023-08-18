@@ -13,7 +13,7 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { ChainId, multiSendAddress } from '../../networks'
+import { ChainId, MULTI_SEND_ADDRESS } from '../../networks'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -64,7 +64,7 @@ const TransactionsDrawer: React.FC = () => {
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
-        : encodeMulti(metaTransactions, multiSendAddress(chainId as ChainId))
+        : encodeMulti(metaTransactions, MULTI_SEND_ADDRESS[chainId as ChainId])
     const finalRequest = connection.moduleAddress
       ? wrapRequest(batchTransaction, connection)
       : batchTransaction
