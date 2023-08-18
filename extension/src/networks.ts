@@ -109,3 +109,12 @@ export const NETWORK_NAME: Record<ChainId, string> = {
   73799: 'Volta Testnet',
   80001: 'Polygon Testnet',
 }
+
+export const multiSendAddress = (chainId: ChainId) => {
+  switch (chainId) {
+    case 10:
+      return '0x998739BFdAAdde7C933B942a68053933098f9EDa'
+    default:
+      return '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
+  }
+}

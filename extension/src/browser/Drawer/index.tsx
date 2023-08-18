@@ -13,6 +13,7 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
+import { ChainId, multiSendAddress } from '../../networks'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -20,7 +21,7 @@ const TransactionsDrawer: React.FC = () => {
   const newTransactions = useNewTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { connection } = useConnection()
+  const { connection, chainId } = useConnection()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -58,14 +59,12 @@ const TransactionsDrawer: React.FC = () => {
   }
 
   const copyTransactionData = () => {
+    if (!chainId) throw new Error('chainId is undefined')
     const metaTransactions = newTransactions.map((tx) => encodeSingle(tx.input))
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
-        : encodeMulti(
-            metaTransactions,
-            '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
-          )
+        : encodeMulti(metaTransactions, multiSendAddress(chainId as ChainId))
     const finalRequest = connection.moduleAddress
       ? wrapRequest(batchTransaction, connection)
       : batchTransaction
