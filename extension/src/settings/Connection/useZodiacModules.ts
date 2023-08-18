@@ -1,4 +1,4 @@
-import { JsonRpcBatchProvider, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcBatchProvider } from '@ethersproject/providers'
 import {
   ContractAbis,
   ContractAddresses,

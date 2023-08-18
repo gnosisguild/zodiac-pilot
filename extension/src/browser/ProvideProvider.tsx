@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
-import { ChainId, EXPLORER_API_KEY } from '../networks'
+import { ChainId, EXPLORER_API_KEY, MULTI_SEND_ADDRESS } from '../networks'
 import {
   ForkProvider,
   useTenderlyProvider,
@@ -116,6 +116,10 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       encodeSingle(txState.input)
     )
 
+    if (!chainId) {
+      throw new Error('chainId is undefined')
+    }
+
     const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',
       params: [
@@ -123,7 +127,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           ? metaTransactions[0]
           : encodeMulti(
               metaTransactions,
-              '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761'
+              MULTI_SEND_ADDRESS[chainId as ChainId]
             ),
       ],
     })
@@ -135,7 +139,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch])
+  }, [transactions, wrappingProvider, dispatch, chainId])
 
   return (
     <ProviderContext.Provider
