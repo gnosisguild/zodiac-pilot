@@ -113,5 +113,6 @@ export default class BridgeIframe extends EventEmitter {
   // Some apps don't support generic injected providers, so we pretend to be MetaMask
   isMetaMask =
     window.location.hostname === 'app.stakewise.io' ||
-    window.location.hostname === 'app.aura.finance'
+    window.location.hostname === 'app.aura.finance' ||
+    window.location.hostname === 'www.ankr.com'
 }
