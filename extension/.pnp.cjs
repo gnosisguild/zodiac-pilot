@@ -81,7 +81,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-icons", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:4.10.1"],\
             ["react-modal", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.16.1"],\
             ["react-moment", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.1.3"],\
-            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.2.0"],\
+            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:2.0.0"],\
             ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.7.3"],\
             ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
             ["rimraf", "npm:3.0.2"],\
@@ -7648,10 +7648,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["ethers-multisend", [\
-        ["npm:2.4.0", {\
-          "packageLocation": "./.yarn/cache/ethers-multisend-npm-2.4.0-aa10368d59-3fce7cfa5c.zip/node_modules/ethers-multisend/",\
+        ["npm:3.0.0", {\
+          "packageLocation": "./.yarn/cache/ethers-multisend-npm-3.0.0-8b4186348a-1a31890241.zip/node_modules/ethers-multisend/",\
           "packageDependencies": [\
-            ["ethers-multisend", "npm:2.4.0"],\
+            ["ethers-multisend", "npm:3.0.0"],\
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
             ["@ethersproject/address", "npm:5.7.0"],\
@@ -12870,23 +12870,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["react-multisend", [\
-        ["npm:1.2.0", {\
-          "packageLocation": "./.yarn/cache/react-multisend-npm-1.2.0-03588da5f9-6179db6da4.zip/node_modules/react-multisend/",\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/react-multisend-npm-2.0.0-691bec8ca9-52db52a8d3.zip/node_modules/react-multisend/",\
           "packageDependencies": [\
-            ["react-multisend", "npm:1.2.0"]\
+            ["react-multisend", "npm:2.0.0"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/react-multisend-virtual-7d1c238fea/0/cache/react-multisend-npm-1.2.0-03588da5f9-6179db6da4.zip/node_modules/react-multisend/",\
+        ["virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:2.0.0", {\
+          "packageLocation": "./.yarn/__virtual__/react-multisend-virtual-3b3f1cd8d9/0/cache/react-multisend-npm-2.0.0-691bec8ca9-52db52a8d3.zip/node_modules/react-multisend/",\
           "packageDependencies": [\
-            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.2.0"],\
+            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:2.0.0"],\
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
             ["@ethersproject/address", "npm:5.7.0"],\
             ["@ethersproject/bignumber", "npm:5.7.0"],\
             ["@types/react", "npm:18.2.14"],\
-            ["ethers-multisend", "npm:2.4.0"],\
+            ["ethers-multisend", "npm:3.0.0"],\
             ["ethers-proxies", "npm:1.0.0"],\
             ["react", "npm:18.2.0"]\
           ],\
@@ -16133,7 +16133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-icons", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:4.10.1"],\
             ["react-modal", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.16.1"],\
             ["react-moment", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.1.3"],\
-            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:1.2.0"],\
+            ["react-multisend", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:2.0.0"],\
             ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.7.3"],\
             ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
             ["rimraf", "npm:3.0.2"],\

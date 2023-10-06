@@ -6087,9 +6087,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers-multisend@npm:^2.0.0":
-  version: 2.4.0
-  resolution: "ethers-multisend@npm:2.4.0"
+"ethers-multisend@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "ethers-multisend@npm:3.0.0"
   dependencies:
     "@ethersproject/abi": ^5.0.0
     "@ethersproject/abstract-provider": ^5.5.1
@@ -6099,7 +6099,7 @@ __metadata:
     "@ethersproject/contracts": ^5.5.0
     "@ethersproject/solidity": ^5.0.0
     "@ethersproject/units": ^5.0.0
-  checksum: 3fce7cfa5c597b16615474555e8305c8a16f9b846a3ef9c4b8f59a8c584870393e89c7f91bf924b836b155c0d54aac4818118d845e0cad0fd29704b9774d5f07
+  checksum: 1a31890241295d4c3b42aad4a653c457be98657a31c3d00b6baebc974591329c575d7626b1536aa21a9e5e852767c7262a3c1cb231488c25acb12f986d7b96f8
   languageName: node
   linkType: hard
 
@@ -10713,19 +10713,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-multisend@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "react-multisend@npm:1.2.0"
+"react-multisend@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-multisend@npm:2.0.0"
   dependencies:
     "@ethersproject/abi": ^5.0.0
     "@ethersproject/abstract-provider": ^5.5.1
     "@ethersproject/address": ^5.0.0
     "@ethersproject/bignumber": ^5.0.0
-    ethers-multisend: ^2.0.0
+    ethers-multisend: ^3.0.0
     ethers-proxies: ^1.0.0
   peerDependencies:
     react: ">= 16.8"
-  checksum: 6179db6da4d1f10f14e27dd0af148c6ad25750ebb2bbf515c60f3c855e2ed476b597e77d432c64b2fcbe1410ac1f3ce27b9b3e3652898153dabff79ec838225d
+  checksum: 52db52a8d303f238567b076c002d61fd455f0e2209a369956cfde203ad18f6d667cd5083dd3864fad7246a35bb796ce4605c89ca8007d26b69b7f373d08cd4ea
   languageName: node
   linkType: hard
 
@@ -13564,7 +13564,7 @@ __metadata:
     react-icons: ^4.3.1
     react-modal: ^3.15.1
     react-moment: ^1.1.3
-    react-multisend: ^1.2.0
+    react-multisend: ^2.0.0
     react-select: ^5.2.1
     react-toastify: ^9.0.8
     rimraf: ^3.0.2
