@@ -34,7 +34,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@gnosis.pm/zodiac", "npm:3.3.10"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\
             ["@safe-global/protocol-kit", "npm:1.3.0"],\
-            ["@safe-global/safe-core-sdk", "npm:3.3.5"],\
             ["@safe-global/safe-core-sdk-types", "npm:2.3.0"],\
             ["@shazow/whatsabi", "npm:0.2.1"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\
@@ -2904,36 +2903,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@safe-global/safe-core-sdk", [\
-        ["npm:3.3.5", {\
-          "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-npm-3.3.5-daa1980bf9-5a2cb9b61c.zip/node_modules/@safe-global/safe-core-sdk/",\
-          "packageDependencies": [\
-            ["@safe-global/safe-core-sdk", "npm:3.3.5"],\
-            ["@ethersproject/solidity", "npm:5.7.0"],\
-            ["@safe-global/safe-core-sdk-types", "npm:1.10.1"],\
-            ["@safe-global/safe-core-sdk-utils", "npm:1.7.4"],\
-            ["@safe-global/safe-deployments", "npm:1.28.0"],\
-            ["ethereumjs-util", "npm:7.1.5"],\
-            ["semver", "npm:7.5.4"],\
-            ["web3-utils", "npm:1.10.0"],\
-            ["zksync-web3", "virtual:22e924ecf19cb6390397c7cde6309253182838c5ded72e25af1e7640c34a186e62cbfe56dbedff4ef4e1874476d1100f65b0c1093ab23ff92b836300f9dcc018#npm:0.14.4"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@safe-global/safe-core-sdk-types", [\
-        ["npm:1.10.1", {\
-          "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-types-npm-1.10.1-011cba5541-f4f2329820.zip/node_modules/@safe-global/safe-core-sdk-types/",\
-          "packageDependencies": [\
-            ["@safe-global/safe-core-sdk-types", "npm:1.10.1"],\
-            ["@ethersproject/bignumber", "npm:5.7.0"],\
-            ["@ethersproject/contracts", "npm:5.7.0"],\
-            ["@safe-global/safe-deployments", "npm:1.28.0"],\
-            ["web3-core", "npm:1.10.0"],\
-            ["web3-utils", "npm:1.10.0"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:2.3.0", {\
           "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-types-npm-2.3.0-97f472e8ad-d0d1564ad8.zip/node_modules/@safe-global/safe-core-sdk-types/",\
           "packageDependencies": [\
@@ -2947,31 +2917,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@safe-global/safe-core-sdk-utils", [\
-        ["npm:1.7.4", {\
-          "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-utils-npm-1.7.4-9193837c33-09426d4cfa.zip/node_modules/@safe-global/safe-core-sdk-utils/",\
-          "packageDependencies": [\
-            ["@safe-global/safe-core-sdk-utils", "npm:1.7.4"],\
-            ["@safe-global/safe-core-sdk-types", "npm:1.10.1"],\
-            ["semver", "npm:7.5.4"],\
-            ["web3-utils", "npm:1.10.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@safe-global/safe-deployments", [\
         ["npm:1.26.0", {\
           "packageLocation": "./.yarn/cache/@safe-global-safe-deployments-npm-1.26.0-92de8dd7b6-ea36c04c42.zip/node_modules/@safe-global/safe-deployments/",\
           "packageDependencies": [\
             ["@safe-global/safe-deployments", "npm:1.26.0"],\
-            ["semver", "npm:7.5.3"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:1.28.0", {\
-          "packageLocation": "./.yarn/cache/@safe-global-safe-deployments-npm-1.28.0-7ffc20582c-d026839d62.zip/node_modules/@safe-global/safe-deployments/",\
-          "packageDependencies": [\
-            ["@safe-global/safe-deployments", "npm:1.28.0"],\
             ["semver", "npm:7.5.3"]\
           ],\
           "linkType": "HARD"\
@@ -16159,7 +16109,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@gnosis.pm/zodiac", "npm:3.3.10"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\
             ["@safe-global/protocol-kit", "npm:1.3.0"],\
-            ["@safe-global/safe-core-sdk", "npm:3.3.5"],\
             ["@safe-global/safe-core-sdk-types", "npm:2.3.0"],\
             ["@shazow/whatsabi", "npm:0.2.1"],\
             ["@testing-library/jest-dom", "npm:5.16.5"],\

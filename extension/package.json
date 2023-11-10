@@ -85,8 +85,5 @@
     "typescript": "^4.9.4",
     "typescript-plugin-css-modules": "^3.4.0"
   },
-  "packageManager": "yarn@3.5.0",
-  "dependencies": {
-    "@safe-global/safe-core-sdk": "^3.3.5"
-  }
+  "packageManager": "yarn@3.5.0"
 }
