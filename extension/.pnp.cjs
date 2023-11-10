@@ -31,7 +31,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
             ["@ethersproject/providers", "npm:5.7.2"],\
-            ["@gnosis.pm/zodiac", "npm:3.3.10"],\
+            ["@gnosis.pm/zodiac", "npm:3.4.2"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\
             ["@safe-global/protocol-kit", "npm:1.3.0"],\
             ["@safe-global/safe-core-sdk-types", "npm:2.3.0"],\
@@ -86,7 +86,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
             ["rimraf", "npm:3.0.2"],\
             ["ts-jest", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:27.1.5"],\
-            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.2.0"],\
+            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.3.2"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"],\
             ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"]\
           ],\
@@ -2235,10 +2235,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:a46c2e72f8794f4ad3647c8ff90551a17dcae7ade81340ab6e782fb2e2a23680ba20bc8fd7407874476bbd75bf65446b83f28e712e40c28e86e22114f0e6070a#npm:1.3.0", {\
-          "packageLocation": "./.yarn/__virtual__/@gnosis.pm-safe-contracts-virtual-95c8215160/0/cache/@gnosis.pm-safe-contracts-npm-1.3.0-13344cc969-fea331745e.zip/node_modules/@gnosis.pm/safe-contracts/",\
+        ["virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:1.3.0", {\
+          "packageLocation": "./.yarn/__virtual__/@gnosis.pm-safe-contracts-virtual-b71cb16cd5/0/cache/@gnosis.pm-safe-contracts-npm-1.3.0-13344cc969-fea331745e.zip/node_modules/@gnosis.pm/safe-contracts/",\
           "packageDependencies": [\
-            ["@gnosis.pm/safe-contracts", "virtual:a46c2e72f8794f4ad3647c8ff90551a17dcae7ade81340ab6e782fb2e2a23680ba20bc8fd7407874476bbd75bf65446b83f28e712e40c28e86e22114f0e6070a#npm:1.3.0"],\
+            ["@gnosis.pm/safe-contracts", "virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:1.3.0"],\
             ["@types/ethers", null],\
             ["ethers", "npm:5.7.2"]\
           ],\
@@ -2250,14 +2250,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@gnosis.pm/zodiac", [\
-        ["npm:3.3.10", {\
-          "packageLocation": "./.yarn/cache/@gnosis.pm-zodiac-npm-3.3.10-a46c2e72f8-0869dc6539.zip/node_modules/@gnosis.pm/zodiac/",\
+        ["npm:3.4.2", {\
+          "packageLocation": "./.yarn/cache/@gnosis.pm-zodiac-npm-3.4.2-9f2dfbf76b-f261c9f118.zip/node_modules/@gnosis.pm/zodiac/",\
           "packageDependencies": [\
-            ["@gnosis.pm/zodiac", "npm:3.3.10"],\
+            ["@gnosis.pm/zodiac", "npm:3.4.2"],\
             ["@gnosis.pm/mock-contract", "npm:4.0.0"],\
-            ["@gnosis.pm/safe-contracts", "virtual:a46c2e72f8794f4ad3647c8ff90551a17dcae7ade81340ab6e782fb2e2a23680ba20bc8fd7407874476bbd75bf65446b83f28e712e40c28e86e22114f0e6070a#npm:1.3.0"],\
-            ["@openzeppelin/contracts", "npm:4.9.2"],\
-            ["@openzeppelin/contracts-upgradeable", "npm:4.9.2"],\
+            ["@gnosis.pm/safe-contracts", "virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:1.3.0"],\
+            ["@openzeppelin/contracts", "npm:5.0.0"],\
+            ["@openzeppelin/contracts-upgradeable", "virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:5.0.0"],\
             ["ethers", "npm:5.7.2"]\
           ],\
           "linkType": "HARD"\
@@ -2841,19 +2841,32 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@openzeppelin/contracts", [\
-        ["npm:4.9.2", {\
-          "packageLocation": "./.yarn/cache/@openzeppelin-contracts-npm-4.9.2-babe0162a9-0538b18fe2.zip/node_modules/@openzeppelin/contracts/",\
+        ["npm:5.0.0", {\
+          "packageLocation": "./.yarn/cache/@openzeppelin-contracts-npm-5.0.0-41b782ac34-b182288466.zip/node_modules/@openzeppelin/contracts/",\
           "packageDependencies": [\
-            ["@openzeppelin/contracts", "npm:4.9.2"]\
+            ["@openzeppelin/contracts", "npm:5.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@openzeppelin/contracts-upgradeable", [\
-        ["npm:4.9.2", {\
-          "packageLocation": "./.yarn/cache/@openzeppelin-contracts-upgradeable-npm-4.9.2-1afd0c3d40-88df083e88.zip/node_modules/@openzeppelin/contracts-upgradeable/",\
+        ["npm:5.0.0", {\
+          "packageLocation": "./.yarn/cache/@openzeppelin-contracts-upgradeable-npm-5.0.0-9e12bc97b0-4e8a44db15.zip/node_modules/@openzeppelin/contracts-upgradeable/",\
           "packageDependencies": [\
-            ["@openzeppelin/contracts-upgradeable", "npm:4.9.2"]\
+            ["@openzeppelin/contracts-upgradeable", "npm:5.0.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:5.0.0", {\
+          "packageLocation": "./.yarn/__virtual__/@openzeppelin-contracts-upgradeable-virtual-549e43224d/0/cache/@openzeppelin-contracts-upgradeable-npm-5.0.0-9e12bc97b0-4e8a44db15.zip/node_modules/@openzeppelin/contracts-upgradeable/",\
+          "packageDependencies": [\
+            ["@openzeppelin/contracts-upgradeable", "virtual:9f2dfbf76be462e436796c804a012907fecb59557423e27097ddf887274e60e7415c8cbe8abec2292f79d1c0fb8a3e2590d34e6fdac013d71299d349547b2546#npm:5.0.0"],\
+            ["@openzeppelin/contracts", "npm:5.0.0"],\
+            ["@types/openzeppelin__contracts", null]\
+          ],\
+          "packagePeers": [\
+            "@openzeppelin/contracts",\
+            "@types/openzeppelin__contracts"\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3276,7 +3289,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ethers", "npm:5.7.2"],\
             ["lodash", "npm:4.17.21"],\
             ["ts-essentials", "virtual:7f926d65ccbe4c6a060d1b52ce9c043fd148aee6189d63a0be9171e216b11723684cc8ac267c2b98fdcee2cd6f2e2bb32aee2892d05066e55f58a704e6ab76d2#npm:7.0.3"],\
-            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.2.0"],\
+            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.3.2"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"]\
           ],\
           "packagePeers": [\
@@ -14574,17 +14587,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["typechain", [\
-        ["npm:8.2.0", {\
-          "packageLocation": "./.yarn/cache/typechain-npm-8.2.0-ce7e580ddb-8591d333fd.zip/node_modules/typechain/",\
+        ["npm:8.3.2", {\
+          "packageLocation": "./.yarn/cache/typechain-npm-8.3.2-b02e27439e-146a1896fa.zip/node_modules/typechain/",\
           "packageDependencies": [\
-            ["typechain", "npm:8.2.0"]\
+            ["typechain", "npm:8.3.2"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/typechain-virtual-c0022ceea3/0/cache/typechain-npm-8.2.0-ce7e580ddb-8591d333fd.zip/node_modules/typechain/",\
+        ["virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.3.2", {\
+          "packageLocation": "./.yarn/__virtual__/typechain-virtual-89bfca3f67/0/cache/typechain-npm-8.3.2-b02e27439e-146a1896fa.zip/node_modules/typechain/",\
           "packageDependencies": [\
-            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.2.0"],\
+            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.3.2"],\
             ["@types/prettier", "npm:2.7.3"],\
             ["@types/typescript", null],\
             ["debug", "virtual:ac3d8e680759ce54399273724d44e041d6c9b73454d191d411a8c44bb27e22f02aaf6ed9d3ad0ac1c298eac4833cff369c9c7b84c573016112c4f84be2cd8543#npm:4.3.4"],\
@@ -16106,7 +16119,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
             ["@ethersproject/providers", "npm:5.7.2"],\
-            ["@gnosis.pm/zodiac", "npm:3.3.10"],\
+            ["@gnosis.pm/zodiac", "npm:3.4.2"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\
             ["@safe-global/protocol-kit", "npm:1.3.0"],\
             ["@safe-global/safe-core-sdk-types", "npm:2.3.0"],\
@@ -16161,7 +16174,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
             ["rimraf", "npm:3.0.2"],\
             ["ts-jest", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:27.1.5"],\
-            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.2.0"],\
+            ["typechain", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:8.3.2"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"],\
             ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"]\
           ],\
