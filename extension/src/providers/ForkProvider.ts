@@ -9,6 +9,7 @@ import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/sr
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
 import { safeInterface } from '../safe'
+import { hexlify } from 'ethers/lib/utils'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -235,7 +236,7 @@ const execTransactionFromModule = (
     value: '0x0',
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: `0x${blockGasLimit.toString(16)}`,
+    gasLimit: hexlify(blockGasLimit),
     // With gas price 0 account don't need token for gas
     gasPrice: '0x0',
   }
@@ -251,6 +252,7 @@ export function execTransaction(
   ownerAddress: string,
   blockGasLimit: number
 ): TransactionData & TransactionOptions {
+  const signature = generatePreValidatedSignature(ownerAddress)
   const data = safeInterface.encodeFunctionData('execTransaction', [
     tx.to,
     tx.value,
@@ -261,7 +263,7 @@ export function execTransaction(
     tx.gasPrice || 0,
     ZERO_ADDRESS,
     ZERO_ADDRESS,
-    generatePreValidatedSignature(ownerAddress),
+    signature.staticPart() + signature.dynamicPart(),
   ])
 
   return {
@@ -270,7 +272,7 @@ export function execTransaction(
     value: '0x0',
     from: ownerAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: `0x${blockGasLimit.toString(16)}`,
+    gasLimit: hexlify(blockGasLimit),
     // With gas price 0 account don't need token for gas
     gasPrice: '0x0',
   }

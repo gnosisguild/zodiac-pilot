@@ -98,12 +98,6 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
 
 export default ProvideTenderly
 
-interface StorageOverride {
-  address: string
-  slot: string
-  value: string
-}
-
 export interface TenderlyTransactionInfo {
   id: string
   project_id: string
@@ -151,18 +145,12 @@ export class TenderlyProvider extends EventEmitter {
   private blockNumber: number | undefined
 
   private tenderlyForkApi: string
-  private storageOverrides: StorageOverride[]
 
-  constructor(
-    provider: Eip1193Provider,
-    chainId: number,
-    storageOverrides?: StorageOverride[]
-  ) {
+  constructor(provider: Eip1193Provider, chainId: number) {
     super()
     this.provider = provider
     this.chainId = chainId
     this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
-    this.storageOverrides = storageOverrides || []
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
@@ -279,14 +267,6 @@ export class TenderlyProvider extends EventEmitter {
     this.transactionIds.clear()
 
     const rpcUrl = `https://rpc.tenderly.co/fork/${this.forkId}`
-
-    // apply storage overrides
-    const provider = new JsonRpcProvider(rpcUrl)
-    await Promise.all(
-      this.storageOverrides.map((s) =>
-        provider.send('tenderly_setStorageAt', [s.address, s.slot, s.value])
-      )
-    )
 
     // notify the background script to start intercepting JSON RPC requests
     window.postMessage(
