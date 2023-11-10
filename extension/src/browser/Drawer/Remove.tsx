@@ -4,7 +4,6 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
-import { useConnection } from '../../settings'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -19,7 +18,6 @@ export const Remove: React.FC<Props> = ({ transaction, index }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const { connection } = useConnection()
 
   if (!(provider instanceof ForkProvider)) {
     // Removing transactions is only supported when using ForkProvider
@@ -45,7 +43,7 @@ export const Remove: React.FC<Props> = ({ transaction, index }) => {
     // re-simulate all transactions after the removed one
     for (const transaction of laterTransactions) {
       const encoded = encodeSingle(transaction.input)
-      await provider.sendMetaTransaction(encoded, connection)
+      await provider.sendMetaTransaction(encoded)
     }
   }
 

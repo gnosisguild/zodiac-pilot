@@ -5,7 +5,7 @@ import { MetaTransaction } from 'react-multisend'
 
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-import { initSafeApiKit } from './initSafeApiKit'
+import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
 
 export const sendTransaction = async (

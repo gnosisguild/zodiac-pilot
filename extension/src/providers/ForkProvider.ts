@@ -1,12 +1,14 @@
 import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { MetaTransaction } from 'react-multisend'
+import { TransactionOptions } from '@safe-global/safe-core-sdk-types'
+import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
 
-import { Connection, TransactionData } from '../types'
-
+import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
+import { safeInterface } from '../safe'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -18,19 +20,39 @@ interface Handlers {
 }
 
 class ForkProvider extends EventEmitter {
-  private avatarAddress: string
   private provider: TenderlyProvider
   private handlers: Handlers
+  private avatarAddress: string
+
+  private moduleAddress: string | undefined
+  private ownerAddress: string | undefined
+
+  private blockGasLimitPromise: Promise<number>
 
   constructor(
     provider: TenderlyProvider,
-    avatarAddress: string,
-    handlers: Handlers
+    {
+      avatarAddress,
+      moduleAddress,
+      ownerAddress,
+
+      ...handlers
+    }: {
+      avatarAddress: string
+      /** If set, will simulate the transaction though an `execTransactionFromModule` call */
+      moduleAddress?: string
+      /** If set, will simulate the transaction though an `execTransaction` call */
+      ownerAddress?: string
+    } & Handlers
   ) {
     super()
     this.provider = provider
     this.avatarAddress = avatarAddress
+    this.moduleAddress = moduleAddress
+    this.ownerAddress = ownerAddress
     this.handlers = handlers
+
+    this.blockGasLimitPromise = readBlockGasLimit(this.provider)
   }
 
   async request(request: {
@@ -80,7 +102,37 @@ class ForkProvider extends EventEmitter {
           operation: 0,
         }
         this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
-        const result = await this.provider.request(request)
+
+        // Instead of simulating with the avatar as sender, we simulate going through the Safe contract with the module or owner as sender (if set).
+        // This is necessary to make sure the simulation succeeds for some edge cases: If a contract calls `.transfer()` on the sender's address this comes only with a 2300 gas stipend, not enough to run a cold Safe's `fallback` function.
+        let finalRequest = request
+        if (this.moduleAddress) {
+          finalRequest = {
+            method,
+            params: [
+              execTransactionFromModule(
+                metaTx,
+                this.avatarAddress,
+                this.moduleAddress,
+                await this.blockGasLimitPromise
+              ),
+            ],
+          }
+        } else if (this.ownerAddress) {
+          finalRequest = {
+            method,
+            params: [
+              execTransaction(
+                metaTx,
+                this.avatarAddress,
+                this.ownerAddress,
+                await this.blockGasLimitPromise
+              ),
+            ],
+          }
+        }
+        const result = await this.provider.request(finalRequest)
+
         this.handlers.onTransactionSent(checkpointId, result)
         return result
       }
@@ -94,15 +146,11 @@ class ForkProvider extends EventEmitter {
    * While transactions recorded from apps will generally be regular calls, the transaction translation feature allows for delegatecalls.
    * Such delegatecalls cannot be simulated directly, but only by going through the avatar.
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
-   * @param connection The current connection object
    */
-  async sendMetaTransaction(
-    metaTx: MetaTransaction,
-    connection: Connection
-  ): Promise<string> {
+  async sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
     const isDelegateCall = metaTx.operation === 1
-    if (isDelegateCall && !connection.moduleAddress) {
-      throw new Error('delegatecall requires a connection through a module')
+    if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
+      throw new Error('delegatecall requires moduleAddress or ownerAddress')
     }
 
     // take a snapshot and record the meta transaction
@@ -111,25 +159,33 @@ class ForkProvider extends EventEmitter {
     })
     this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
 
-    // execute transaction in fork
+    // correctly route the meta tx through the avatar
     let tx: TransactionData
-    if (isDelegateCall) {
-      // delegatecalls need to go through the avatar, sent by the enabled module
-      tx = {
-        to: connection.avatarAddress,
-        data: execTransactionFromModule(metaTx),
-        value: '0x0',
-        from: connection.moduleAddress,
-      }
+    if (this.moduleAddress) {
+      tx = execTransactionFromModule(
+        metaTx,
+        this.avatarAddress,
+        this.moduleAddress,
+        await this.blockGasLimitPromise
+      )
+    } else if (this.ownerAddress) {
+      tx = execTransactionFromModule(
+        metaTx,
+        this.avatarAddress,
+        this.ownerAddress,
+        await this.blockGasLimitPromise
+      )
     } else {
       // regular calls can be sent directly from the avatar
       tx = {
         to: metaTx.to,
         data: metaTx.data,
         value: formatValue(metaTx.value),
-        from: connection.avatarAddress,
+        from: this.avatarAddress,
       }
     }
+
+    // execute transaction in fork
     const result = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [tx],
@@ -156,17 +212,74 @@ const formatValue = (value: string): string => {
   else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
 }
 
-// Encode an execTransactionFromModule call with the given meta transaction data
-const execTransactionFromModule = (metaTx: MetaTransaction) => {
-  // we use the DelayInterface, but any IAvatar interface would do
-  const DelayInterface =
+/** Encode an execTransactionFromModule call with the given meta transaction data */
+const execTransactionFromModule = (
+  metaTx: MetaTransaction,
+  avatarAddress: string,
+  moduleAddress: string,
+  blockGasLimit: number
+): TransactionData & TransactionOptions => {
+  // we use the Delay mod interface, but any IAvatar interface would do
+  const delayInterface =
     ContractFactories[KnownContracts.DELAY].createInterface()
-  return DelayInterface.encodeFunctionData('execTransactionFromModule', [
+  const data = delayInterface.encodeFunctionData('execTransactionFromModule', [
     metaTx.to || '',
     metaTx.value || 0,
     metaTx.data || '0x00',
     metaTx.operation || 0,
   ])
+
+  return {
+    to: avatarAddress,
+    data,
+    value: '0x0',
+    from: moduleAddress,
+    // We simulate setting the entire block gas limit as the gas limit for the transaction
+    gas: `0x${blockGasLimit.toString(16)}`,
+    // With gas price 0 account don't need token for gas
+    gasPrice: '0x0',
+  }
 }
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+/** Encode an execTransaction call by the given owner (address must be an actual owner of the Safe) */
+// for reference: https://github.com/safe-global/safe-wallet-web/blob/dev/src/components/tx/security/tenderly/utils.ts#L213
+export function execTransaction(
+  tx: MetaTransaction & TransactionOptions,
+  avatarAddress: string,
+  ownerAddress: string,
+  blockGasLimit: number
+): TransactionData & TransactionOptions {
+  const data = safeInterface.encodeFunctionData('execTransaction', [
+    tx.to,
+    tx.value,
+    tx.data,
+    tx.operation,
+    tx.gasLimit || tx.gas || 0,
+    0,
+    tx.gasPrice || 0,
+    ZERO_ADDRESS,
+    ZERO_ADDRESS,
+    generatePreValidatedSignature(ownerAddress),
+  ])
+
+  return {
+    to: avatarAddress,
+    data,
+    value: '0x0',
+    from: ownerAddress,
+    // We simulate setting the entire block gas limit as the gas limit for the transaction
+    gas: `0x${blockGasLimit.toString(16)}`,
+    // With gas price 0 account don't need token for gas
+    gasPrice: '0x0',
+  }
+}
+
+const readBlockGasLimit = async (
+  provider: Eip1193Provider
+): Promise<number> => {
+  const web3Provider = new ethers.providers.Web3Provider(provider)
+  const block = await web3Provider.getBlock('latest')
+  return block.gasLimit.toNumber()
+}

@@ -1,7 +1,7 @@
 import { ChainId } from '../networks'
 import { Eip1193Provider } from '../types'
 
-import { initSafeApiKit } from './initSafeApiKit'
+import { initSafeApiKit } from './kits'
 
 export function waitForMultisigExecution(
   provider: Eip1193Provider,

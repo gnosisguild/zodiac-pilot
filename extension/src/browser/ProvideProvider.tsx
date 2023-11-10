@@ -54,7 +54,11 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const forkProvider = useMemo(
     () =>
       tenderlyProvider &&
-      new ForkProvider(tenderlyProvider, connection.avatarAddress, {
+      new ForkProvider(tenderlyProvider, {
+        avatarAddress: connection.avatarAddress,
+        moduleAddress: connection.moduleAddress,
+        ownerAddress: connection.pilotAddress,
+
         async onBeforeTransactionSend(txId, metaTx) {
           const isDelegateCall = metaTx.operation === 1
 
@@ -94,6 +98,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             payload: input,
           })
         },
+
         async onTransactionSent(txId, transactionHash) {
           dispatch({
             type: 'CONFIRM_TRANSACTION',

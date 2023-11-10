@@ -4,7 +4,6 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
-import { useConnection } from '../../settings'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
@@ -21,7 +20,6 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const { connection } = useConnection()
   const encodedTransaction = encodeSingle(transaction)
   const translation = useApplicableTranslation(encodedTransaction)
 
@@ -49,7 +47,7 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
     // re-simulate all transactions starting with the translated ones
     const replayTransaction = [...translation.result, ...laterTransactions]
     for (const tx of replayTransaction) {
-      provider.sendMetaTransaction(tx, connection)
+      provider.sendMetaTransaction(tx)
     }
   }
 
