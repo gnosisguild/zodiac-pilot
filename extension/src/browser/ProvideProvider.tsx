@@ -113,10 +113,6 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   )
 
   const submitTransactions = useCallback(async () => {
-    console.log(
-      `submitting ${transactions.length} transactions as multi-send batch...`,
-      transactions
-    )
     const metaTransactions = transactions.map((txState) =>
       encodeSingle(txState.input)
     )
@@ -124,6 +120,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     if (!chainId) {
       throw new Error('chainId is undefined')
     }
+
+    console.log(
+      transactions.length === 1
+        ? 'submitting transaction...'
+        : `submitting ${transactions.length} transactions as multi-send batch...`,
+      transactions
+    )
 
     const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',

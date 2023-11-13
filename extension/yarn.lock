@@ -10714,9 +10714,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-multisend@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "react-multisend@npm:2.0.0"
+"react-multisend@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "react-multisend@npm:2.1.0"
   dependencies:
     "@ethersproject/abi": ^5.0.0
     "@ethersproject/abstract-provider": ^5.5.1
@@ -10726,7 +10726,7 @@ __metadata:
     ethers-proxies: ^1.0.0
   peerDependencies:
     react: ">= 16.8"
-  checksum: 52db52a8d303f238567b076c002d61fd455f0e2209a369956cfde203ad18f6d667cd5083dd3864fad7246a35bb796ce4605c89ca8007d26b69b7f373d08cd4ea
+  checksum: 0603640ffe7b8830542ada124a13277008e5c06ed3e68dba2ca3e5a8f13859da6c468aad5eac0cc2286ca1af64984051c08677ba15b5971bcb48d0bc32394665
   languageName: node
   linkType: hard
 
@@ -13577,7 +13577,7 @@ __metadata:
     react-icons: ^4.3.1
     react-modal: ^3.15.1
     react-moment: ^1.1.3
-    react-multisend: ^2.0.0
+    react-multisend: ^2.1.0
     react-select: ^5.2.1
     react-toastify: ^9.0.8
     rimraf: ^3.0.2

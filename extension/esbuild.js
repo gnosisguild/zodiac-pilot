@@ -30,7 +30,6 @@ esbuild
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     define: {
       'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
-      'process.env.ETHERSCAN_API_KEY': `"${process.env.ETHERSCAN_API_KEY}"`,
       global: 'window',
     },
     plugins: [plugin(stdLibBrowser), cssModulesPlugin()],

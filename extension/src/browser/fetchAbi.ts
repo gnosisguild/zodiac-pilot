@@ -10,9 +10,8 @@ const fetchAbi = async (
   contractAddress: string,
   transactionData: string,
   provider: Provider,
-  blockExplorerApiKey = ''
 ): Promise<string> => {
-  const abi = await abiForAddress(contractAddress, network, blockExplorerApiKey)
+  const abi = await abiForAddress(contractAddress, network, EXPLORER_API_URL[network])
   if (!abi || looksLikeAProxy(abi)) {
     // Is this a proxy contract?
     const proxyTarget = await detectProxyTarget(contractAddress, provider)
@@ -21,8 +20,7 @@ const fetchAbi = async (
         network,
         proxyTarget,
         transactionData,
-        provider,
-        blockExplorerApiKey
+        provider
       )
     }
   }

@@ -161,7 +161,7 @@ class ForkProvider extends EventEmitter {
     this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
 
     // correctly route the meta tx through the avatar
-    let tx: TransactionData
+    let tx: TransactionData & TransactionOptions
     if (this.moduleAddress) {
       tx = execTransactionFromModule(
         metaTx,
@@ -170,14 +170,15 @@ class ForkProvider extends EventEmitter {
         await this.blockGasLimitPromise
       )
     } else if (this.ownerAddress) {
-      tx = execTransactionFromModule(
+      tx = execTransaction(
         metaTx,
         this.avatarAddress,
         this.ownerAddress,
         await this.blockGasLimitPromise
       )
     } else {
-      // regular calls can be sent directly from the avatar
+      // no module or owner address, simulate with avatar as sender
+      // note: this is a theoretical case only atm
       tx = {
         to: metaTx.to,
         data: metaTx.data,
