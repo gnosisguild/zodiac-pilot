@@ -19,7 +19,7 @@ jobs:
       - name: Install deps and build
         working-directory: ./extension
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
           yarn build
 
       - name: Update manifest.json with release tag
