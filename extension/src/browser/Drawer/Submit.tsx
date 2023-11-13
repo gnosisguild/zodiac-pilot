@@ -131,7 +131,7 @@ export default Submit
 const AwaitingSignatureModal: React.FC<{
   isOpen: boolean
   onClose(): void
-  usesWalletConnect: boolean // for now we assume that a walletconnected wallet is a Safe
+  usesWalletConnect: boolean // for now we assume that a walletconnect'ed wallet is generally a Safe
   chainId: ChainId
   pilotAddress: string
 }> = ({ isOpen, onClose, usesWalletConnect, chainId, pilotAddress }) => (

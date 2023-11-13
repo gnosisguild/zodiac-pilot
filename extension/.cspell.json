@@ -21,6 +21,7 @@
     "ethersproject",
     "getsourcecode",
     "gnosisguild",
+    "hexlify",
     "honeyswap",
     "IERC20",
     "iframes",
