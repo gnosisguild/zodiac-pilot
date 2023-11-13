@@ -1,5 +1,6 @@
-export { initSafeApiKit } from './initSafeApiKit'
+export { initSafeApiKit, initSafeProtocolKit } from './kits'
 export { sendTransaction } from './sendTransaction'
 export { useSafesWithOwner } from './useSafesWithOwner'
 export { useSafeDelegates } from './useSafeDelegates'
 export { waitForMultisigExecution } from './waitForMultisigExecution'
+export { safeInterface } from './interface'

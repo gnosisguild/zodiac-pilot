@@ -38,7 +38,7 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   5: 'https://api-goerli.etherscan.io/api',
   10: 'https://api-optimistic.etherscan.io/api',
   56: 'https://api.bscscan.com/api',
-  100: 'https://blockscout.com/xdai/mainnet/api',
+  100: 'https://api.gnosisscan.io/api',
   137: 'https://api.polygonscan.com/api',
   246: 'https://explorer.energyweb.org/api',
   42161: 'https://api.arbiscan.io/api',
@@ -47,16 +47,13 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   80001: 'https://api-testnet.polygonscan.com/api',
 }
 
-// attention: this relies on esbuild define, so destructing won't work here
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ''
-
 export const EXPLORER_API_KEY: Record<ChainId, string> = {
-  1: ETHERSCAN_API_KEY,
-  4: ETHERSCAN_API_KEY,
-  5: ETHERSCAN_API_KEY,
+  1: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
+  4: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
+  5: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
   10: '',
   56: '',
-  100: '',
+  100: 'W575K6DTMSTVB7UFUSNW7GWQ4UWUARTJ7Z',
   137: '',
   246: '',
   42161: '',

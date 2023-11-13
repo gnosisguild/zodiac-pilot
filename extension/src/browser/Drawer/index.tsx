@@ -54,7 +54,7 @@ const TransactionsDrawer: React.FC = () => {
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
     for (const transaction of newTransactions) {
       const encoded = encodeSingle(transaction.input)
-      await provider.sendMetaTransaction(encoded, connection)
+      await provider.sendMetaTransaction(encoded)
     }
   }
 

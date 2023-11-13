@@ -12,7 +12,7 @@ jobs:
           node-version: 16
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
         working-directory: ./extension
       - name: Run static checks
         run: yarn run check

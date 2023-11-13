@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
-import { ChainId, EXPLORER_API_KEY, MULTI_SEND_ADDRESS } from '../networks'
+import { ChainId, MULTI_SEND_ADDRESS } from '../networks'
 import {
   ForkProvider,
   useTenderlyProvider,
@@ -54,7 +54,11 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   const forkProvider = useMemo(
     () =>
       tenderlyProvider &&
-      new ForkProvider(tenderlyProvider, connection.avatarAddress, {
+      new ForkProvider(tenderlyProvider, {
+        avatarAddress: connection.avatarAddress,
+        moduleAddress: connection.moduleAddress,
+        ownerAddress: connection.pilotAddress,
+
         async onBeforeTransactionSend(txId, metaTx) {
           const isDelegateCall = metaTx.operation === 1
 
@@ -84,8 +88,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
                 chainId as ChainId,
                 address,
                 data,
-                new Web3Provider(provider),
-                EXPLORER_API_KEY[chainId as ChainId] || undefined
+                new Web3Provider(provider)
               ),
             txId
           )
@@ -94,6 +97,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             payload: input,
           })
         },
+
         async onTransactionSent(txId, transactionHash) {
           dispatch({
             type: 'CONFIRM_TRANSACTION',
@@ -108,10 +112,6 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   )
 
   const submitTransactions = useCallback(async () => {
-    console.log(
-      `submitting ${transactions.length} transactions as multi-send batch...`,
-      transactions
-    )
     const metaTransactions = transactions.map((txState) =>
       encodeSingle(txState.input)
     )
@@ -119,6 +119,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     if (!chainId) {
       throw new Error('chainId is undefined')
     }
+
+    console.log(
+      transactions.length === 1
+        ? 'submitting transaction...'
+        : `submitting ${transactions.length} transactions as multi-send batch...`,
+      transactions
+    )
 
     const batchTransactionHash = await wrappingProvider.request({
       method: 'eth_sendTransaction',

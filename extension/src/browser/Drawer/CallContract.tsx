@@ -9,6 +9,7 @@ import { Box } from '../../components'
 import { useConnection } from '../../settings'
 
 import classes from './style.module.css'
+import { EXPLORER_API_KEY } from '../../networks'
 
 interface Props {
   value: CallContractTransactionInput
@@ -24,7 +25,7 @@ const CallContract: React.FC<Props> = ({ value }) => {
       /*nothing here*/
     },
     network: chainId.toString() as NetworkId,
-    blockExplorerApiKey: process.env.ETHERSCAN_API_KEY,
+    blockExplorerApiKey: EXPLORER_API_KEY[chainId],
   })
 
   return (

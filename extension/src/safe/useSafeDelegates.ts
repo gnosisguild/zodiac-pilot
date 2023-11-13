@@ -4,7 +4,7 @@ import { ChainId } from '../networks'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 
-import { initSafeApiKit } from './initSafeApiKit'
+import { initSafeApiKit } from './kits'
 
 export const useSafeDelegates = (
   safeAddress: string,

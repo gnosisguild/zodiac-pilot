@@ -24,7 +24,7 @@ const VISIBLE_END = 4
 const EXPLORER_URLS: Record<string, string | undefined> = {
   '1': 'https://etherscan.io',
   '4': 'https://rinkeby.etherscan.io',
-  '100': 'https://blockscout.com/xdai/mainnet',
+  '100': 'https://gnosisscan.io',
   '73799': 'https://volta-explorer.energyweb.org',
   '246': 'https://explorer.energyweb.org',
   '137': 'https://polygonscan.com',

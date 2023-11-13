@@ -6,6 +6,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useConnection } from '../settings/connectionHooks'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
+import { initSafeProtocolKit } from '../safe/kits'
+import { safeInterface } from '../safe'
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
 
@@ -15,7 +17,7 @@ export const useTenderlyProvider = (): TenderlyProvider | null =>
 const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { provider, chainId } = useConnection()
+  const { provider, chainId, connection } = useConnection()
 
   const [tenderlyProvider, setTenderlyProvider] =
     useState<TenderlyProvider | null>(null)
@@ -26,10 +28,61 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
     const tenderlyProvider = new TenderlyProvider(provider, chainId)
     setTenderlyProvider(tenderlyProvider)
 
+    const canceled = false
+    async function prepareSafeForSimulation() {
+      const { avatarAddress, moduleAddress, pilotAddress } = connection
+      const safe = await initSafeProtocolKit(provider, avatarAddress)
+
+      // If we simulate as a Safe owner, we might have to override the owners & threshold of the Safe to allow single signature transactions
+      if (!moduleAddress) {
+        const [owners, threshold] = await Promise.all([
+          safe.getOwners(),
+          safe.getThreshold(),
+        ])
+
+        const pilotIsOwner = owners.some(
+          (owner) => owner.toLowerCase() === pilotAddress.toLowerCase()
+        )
+
+        if (!pilotIsOwner) {
+          // the pilot account is not an owner, so we need to make it one and set the threshold to 1 at the same time
+          await tenderlyProvider.request({
+            method: 'eth_sendTransaction',
+            params: [
+              {
+                to: avatarAddress,
+                data: safeInterface.encodeFunctionData(
+                  'addOwnerWithThreshold',
+                  [pilotAddress, 1]
+                ),
+                from: avatarAddress,
+              },
+            ],
+          })
+        } else if (threshold > 1) {
+          // doesn't allow to execute with single signature, so we need to override the threshold
+          await tenderlyProvider.request({
+            method: 'eth_sendTransaction',
+            params: [
+              {
+                to: avatarAddress,
+                data: safeInterface.encodeFunctionData('changeThreshold', [1]),
+                from: avatarAddress,
+              },
+            ],
+          })
+        }
+      }
+
+      if (!canceled) return
+    }
+
+    prepareSafeForSimulation()
+
     return () => {
       tenderlyProvider.deleteFork()
     }
-  }, [provider, chainId])
+  }, [provider, chainId, connection])
 
   // delete fork when closing browser tab (the effect teardown won't be executed in that case)
   useBeforeUnload(() => {
@@ -175,6 +228,7 @@ export class TenderlyProvider extends EventEmitter {
 
   async refork() {
     this.deleteFork()
+    this.transactionInfo.clear()
     this.forkProviderPromise = this.createFork(this.chainId)
     return await this.forkProviderPromise
   }
