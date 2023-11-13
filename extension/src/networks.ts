@@ -38,7 +38,7 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   5: 'https://api-goerli.etherscan.io/api',
   10: 'https://api-optimistic.etherscan.io/api',
   56: 'https://api.bscscan.com/api',
-  100: 'https://blockscout.com/xdai/mainnet/api',
+  100: 'https://api.gnosisscan.io/api',
   137: 'https://api.polygonscan.com/api',
   246: 'https://explorer.energyweb.org/api',
   42161: 'https://api.arbiscan.io/api',
