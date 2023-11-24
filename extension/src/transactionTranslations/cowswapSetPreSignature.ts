@@ -21,47 +21,9 @@ const GPv2SettlementInterface = new Interface([
 
 const COWSWAP_ORDER_SIGNER_ADDRESS =
   '0x23dA9AdE38E4477b23770DeD512fD37b12381FAB'
+
 const CowswapOrderSignerInterface = new Interface([
-  {
-    inputs: [
-      {
-        internalType: 'contract GPv2Signing',
-        name: '_signing',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-  },
-  {
-    inputs: [
-      { internalType: 'contract IERC20', name: 'sellToken', type: 'address' },
-      { internalType: 'contract IERC20', name: 'buyToken', type: 'address' },
-      { internalType: 'uint256', name: 'sellAmount', type: 'uint256' },
-      { internalType: 'uint256', name: 'buyAmount', type: 'uint256' },
-      { internalType: 'uint32', name: 'validTo', type: 'uint32' },
-      { internalType: 'uint32', name: 'validDuration', type: 'uint32' },
-      { internalType: 'uint256', name: 'feeAmount', type: 'uint256' },
-      { internalType: 'uint256', name: 'feeAmountBP', type: 'uint256' },
-      { internalType: 'bytes32', name: 'kind', type: 'bytes32' },
-      { internalType: 'bool', name: 'partiallyFillable', type: 'bool' },
-      { internalType: 'bytes32', name: 'sellTokenBalance', type: 'bytes32' },
-      { internalType: 'bytes32', name: 'buyTokenBalance', type: 'bytes32' },
-    ],
-    name: 'signOrder',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'signing',
-    outputs: [
-      { internalType: 'contract GPv2Signing', name: '', type: 'address' },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
+  'function signOrder(tuple(address sellToken, address buyToken, address receiver, uint256 sellAmount, uint256 buyAmount, uint32 validTo, bytes32 appData, uint256 feeAmount, bytes32 kind, bool partiallyFillable, bytes32 sellTokenBalance, bytes32 buyTokenBalance) order, uint32 validDuration, uint256 feeAmountBP)',
 ])
 
 const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
@@ -111,20 +73,22 @@ export default {
       (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000
     )
 
-    const data = CowswapOrderSignerInterface.encodeFunctionData('signOrder', [
-      order.sellToken,
-      order.buyToken,
-      order.sellAmount,
-      order.buyAmount,
-      order.validTo,
-      validDuration,
-      order.feeAmount,
-      feeAmountBP,
-      ethers.utils.id(order.kind),
-      order.partiallyFillable,
-      ethers.utils.id(order.sellTokenBalance),
-      ethers.utils.id(order.buyTokenBalance),
-    ])
+    let data = ''
+    try {
+      data = CowswapOrderSignerInterface.encodeFunctionData('signOrder', [
+        {
+          ...order,
+          kind: ethers.utils.id(order.kind),
+          sellTokenBalance: ethers.utils.id(order.sellTokenBalance),
+          buyTokenBalance: ethers.utils.id(order.buyTokenBalance),
+        },
+        validDuration,
+        feeAmountBP,
+      ])
+    } catch (e) {
+      console.error('CowSwap setPreSignature translation error', e)
+      return undefined
+    }
 
     return [
       {
