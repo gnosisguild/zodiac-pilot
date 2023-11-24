@@ -109,7 +109,7 @@ export interface TenderlyTransactionInfo {
   queue_origin: string
   gas_price: string
   value: string
-  status: true
+  status: boolean
   fork_height: number
   block_hash: string
   nonce: number
@@ -124,6 +124,17 @@ export interface TenderlyTransactionInfo {
     gasUsed: string
     effectiveGasPrice: string
     contractAddress: null
+    logs: {
+      logIndex: string
+      address: string
+      topics: string[]
+      data: string
+      blockHash: string
+      blockNumber: string
+      removed: boolean
+      transactionHash: string
+      transactionIndex: string
+    }[]
     logsBloom: string
     status: string
     type: string

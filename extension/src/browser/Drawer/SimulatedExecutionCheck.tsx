@@ -1,17 +1,28 @@
+import { defaultAbiCoder } from 'ethers/lib/utils'
 import React, { useEffect, useState } from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 
 import { Flex, Spinner, Tag } from '../../components'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
+import { useConnection } from '../../settings'
+import { Connection } from '../../types'
 
 import classes from './style.module.css'
+
+enum ExecutionStatus {
+  PENDING,
+  SUCCESS,
+  REVERTED,
+  MODULE_TRANSACTION_REVERTED,
+}
 
 const SimulatedExecutionCheck: React.FC<{
   transactionHash: string
   mini?: boolean
 }> = ({ transactionHash, mini = false }) => {
   const tenderlyProvider = useTenderlyProvider()
+  const { connection } = useConnection()
 
   const [transactionInfo, setTransactionInfo] =
     useState<TenderlyTransactionInfo | null>(null)
@@ -32,6 +43,20 @@ const SimulatedExecutionCheck: React.FC<{
       canceled = true
     }
   }, [tenderlyProvider, transactionHash])
+
+  let executionStatus = ExecutionStatus.PENDING
+  if (transactionInfo?.status === false) {
+    executionStatus = ExecutionStatus.REVERTED
+  } else if (transactionInfo?.status === true) {
+    if (
+      transactionInfo.receipt.logs.length === 1 &&
+      isExecutionFromModuleFailure(transactionInfo.receipt.logs[0], connection)
+    ) {
+      executionStatus = ExecutionStatus.MODULE_TRANSACTION_REVERTED
+    } else {
+      executionStatus = ExecutionStatus.SUCCESS
+    }
+  }
 
   if (mini) {
     return (
@@ -62,19 +87,25 @@ const SimulatedExecutionCheck: React.FC<{
             justifyContent="center"
             className={classes.tagContainer}
           >
-            {!transactionInfo && (
+            {executionStatus === ExecutionStatus.PENDING && (
               <Tag head={<Spinner />} color="info">
                 Pending...
               </Tag>
             )}
-            {transactionInfo?.status && (
+            {executionStatus === ExecutionStatus.SUCCESS && (
               <Tag head={<RiGitBranchLine />} color="success">
                 Success
               </Tag>
             )}
-            {transactionInfo && !transactionInfo.status && (
+            {executionStatus === ExecutionStatus.REVERTED && (
               <Tag head={<RiGitBranchLine />} color="danger">
                 Reverted
+              </Tag>
+            )}
+            {executionStatus ===
+              ExecutionStatus.MODULE_TRANSACTION_REVERTED && (
+              <Tag head={<RiGitBranchLine />} color="danger">
+                Module transaction reverted
               </Tag>
             )}
           </Flex>
@@ -96,3 +127,16 @@ const SimulatedExecutionCheck: React.FC<{
 }
 
 export default SimulatedExecutionCheck
+
+const isExecutionFromModuleFailure = (
+  log: TenderlyTransactionInfo['receipt']['logs'][0],
+  connection: Connection
+) => {
+  return (
+    log.address.toLowerCase() === connection.avatarAddress.toLowerCase() &&
+    log.topics[0] ===
+      '0xacd2c8702804128fdb0db2bb49f6d127dd0181c13fd45dbfe16de0930e2bd375' && // ExecutionFromModuleFailure(address)
+    log.topics[1] ===
+      defaultAbiCoder.encode(['address'], [connection.moduleAddress])
+  )
+}
