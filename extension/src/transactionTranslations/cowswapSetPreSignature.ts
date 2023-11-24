@@ -20,7 +20,7 @@ const GPv2SettlementInterface = new Interface([
 ])
 
 const COWSWAP_ORDER_SIGNER_ADDRESS =
-  '0xdEb83d81d4a9758A7bAec5749DA863C409ea6C6B'
+  '0x23dA9AdE38E4477b23770DeD512fD37b12381FAB'
 const CowswapOrderSignerInterface = new Interface([
   {
     inputs: [

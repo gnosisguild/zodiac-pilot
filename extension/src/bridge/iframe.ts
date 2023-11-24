@@ -14,8 +14,10 @@ interface JsonRpcResponse {
 export default class BridgeIframe extends EventEmitter {
   private messageId = 0
 
-  // GC OmniBridge relies on this property
   chainId = '0x1'
+
+  // https://app.shinedao.finance/deals relies on this property
+  selectedAddress: string | undefined = undefined
 
   constructor() {
     super()
@@ -44,6 +46,21 @@ export default class BridgeIframe extends EventEmitter {
     }
 
     window.addEventListener('message', handleBridgeEvent)
+
+    this.request({ method: 'eth_chainId' }).then((chainId) => {
+      this.chainId = chainId
+      this.emit('connect', {
+        chainId,
+      })
+    })
+
+    // keep window.ethereum.selectedAddress in sync
+    this.request({ method: 'eth_accounts' }).then((accounts) => {
+      this.selectedAddress = accounts[0]
+    })
+    this.on('accountsChanged', (accounts) => {
+      this.selectedAddress = accounts[0]
+    })
   }
 
   request(request: JsonRpcRequest): Promise<any> {
