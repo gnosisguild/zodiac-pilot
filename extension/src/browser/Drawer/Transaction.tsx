@@ -65,8 +65,15 @@ const TransactionHeader: React.FC<HeaderProps> = ({
         )}
 
         <Flex gap={0}>
-          <Translate transaction={input} index={index} />
-          <CopyToClipboard transaction={input} />
+          <Translate
+            transaction={input}
+            isDelegateCall={isDelegateCall}
+            index={index}
+          />
+          <CopyToClipboard
+            transaction={input}
+            isDelegateCall={isDelegateCall}
+          />
           <Remove transaction={input} index={index} />
         </Flex>
       </div>
