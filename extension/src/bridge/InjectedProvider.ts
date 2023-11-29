@@ -11,7 +11,7 @@ interface JsonRpcResponse {
   error?: Error
 }
 
-export default class BridgeIframe extends EventEmitter {
+export default class InjectedProvider extends EventEmitter {
   private messageId = 0
 
   chainId = '0x1'

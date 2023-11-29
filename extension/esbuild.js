@@ -12,7 +12,7 @@ esbuild
       './src/contentScript.ts',
       './src/introduce.ts',
       './src/launch.ts',
-      './src/inject/pilot.ts',
+      './src/injection.ts',
       './src/app.tsx',
     ],
     bundle: true,
