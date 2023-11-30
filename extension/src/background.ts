@@ -27,7 +27,6 @@ const stopTrackingTab = (tabId: number) => {
 
 const updateHeadersRule = () => {
   const RULE_ID = 1
-  console.log(activeExtensionTabs)
   chrome.declarativeNetRequest.updateSessionRules(
     {
       addRules: [
@@ -54,28 +53,15 @@ const updateHeadersRule = () => {
             tabIds: Array.from(activeExtensionTabs),
           },
         },
-        // {
-        //   id: 2,
-        //   priority: 1,
-        //   action: {
-        //     // @ts-expect-error @types/chrome uses enums which we can't access
-        //     type: 'redirect',
-        //     redirect: {
-        //       url: 'chrome-extension://konilcdngphioajoceoofjdcoppankde/build/contentScript.js',
-        //     },
-        //   },
-        //   condition: {
-        //     // resourceTypes: ['xmlhttprequest'],
-        //     urlFilter:
-        //       'chrome-extension://acmacodkjbdgmoleebolmdjonilkdbch/content-script.js',
-        //     tabIds: Array.from(activeExtensionTabs),
-        //   },
-        // },
       ],
       removeRuleIds: [RULE_ID],
     },
-    (test: any) => {
-      console.log('update', activeExtensionTabs, test, chrome.runtime.lastError)
+    () => {
+      if (chrome.runtime.lastError) {
+        console.error('Rule update failed', chrome.runtime.lastError)
+      } else {
+        console.debug('Rule update successful', activeExtensionTabs)
+      }
     }
   )
 }

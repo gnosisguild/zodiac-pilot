@@ -3,6 +3,17 @@
 import InjectedProvider from './bridge/InjectedProvider'
 declare let window: Window & { ethereum: InjectedProvider }
 
+if (window.ethereum) {
+  // There is already a provider injected
+  const descriptor = Object.getOwnPropertyDescriptor(window, 'ethereum')
+  if (descriptor?.configurable === false) {
+    // We got a problem: The provider is not configurable (most probably Rabby)
+    alert(
+      'Zodiac Pilot is unable to connect. In Rabby, flip the setting so it is banned and reload the page.'
+    )
+  }
+}
+
 // inject bridged ethereum provider
 const injectedProvider = new InjectedProvider()
 window.ethereum = injectedProvider
