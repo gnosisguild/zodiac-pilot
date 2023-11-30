@@ -4,14 +4,14 @@ function inject(windowName: string, scriptPath: string) {
     node.src = chrome.runtime.getURL(scriptPath)
 
     const parent = document.head || document.documentElement
-    parent.appendChild(node)
+    parent.insertBefore(node, parent.children[0])
     node.onload = function () {
       node.remove()
     }
   }
 }
 
-inject('pilot-frame', 'build/inject/pilot.js')
+inject('pilot-frame', 'build/injection.js')
 
 // Provide the background script with the chainId of a given RPC endpoint on request
 if (window.name === 'pilot-frame') {

@@ -12,15 +12,24 @@ import classes from './style.module.css'
 
 type Props = {
   transaction: TransactionInput
+  isDelegateCall: boolean
   index: number
   labeled?: true
 }
 
-export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
+export const Translate: React.FC<Props> = ({
+  transaction,
+  isDelegateCall,
+  index,
+  labeled,
+}) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const encodedTransaction = encodeSingle(transaction)
+  const encodedTransaction = {
+    ...encodeSingle(transaction),
+    operation: isDelegateCall ? 1 : 0,
+  }
   const translation = useApplicableTranslation(encodedTransaction)
 
   if (!(provider instanceof ForkProvider)) {

@@ -10,36 +10,60 @@ interface Fork {
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 // generally circumvent this security mechanism, so we only apply it to extension tabs.
 const activeExtensionTabs = new Set<number>()
+
+const startTrackingTab = (tabId: number) => {
+  activeExtensionTabs.add(tabId)
+  updateHeadersRule()
+  console.log('Pilot: started tracking tab', tabId)
+}
+
+const stopTrackingTab = (tabId: number) => {
+  removeRpcRedirectRules(tabId)
+  activeExtensionTabs.delete(tabId)
+  simulatingExtensionTabs.delete(tabId)
+  updateHeadersRule()
+  console.log('Pilot: stopped tracking tab', tabId)
+}
+
 const updateHeadersRule = () => {
   const RULE_ID = 1
-  chrome.declarativeNetRequest.updateSessionRules({
-    addRules: [
-      {
-        id: RULE_ID,
-        priority: 1,
-        action: {
-          // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-          type: 'modifyHeaders',
-          responseHeaders: [
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'x-frame-options', operation: 'remove' },
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'X-Frame-Options', operation: 'remove' },
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'content-security-policy', operation: 'remove' },
-            // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-            { header: 'Content-Security-Policy', operation: 'remove' },
-          ],
+  chrome.declarativeNetRequest.updateSessionRules(
+    {
+      addRules: [
+        {
+          id: RULE_ID,
+          priority: 1,
+          action: {
+            // @ts-expect-error @types/chrome uses enums which we can't access
+            type: 'modifyHeaders',
+            responseHeaders: [
+              // @ts-expect-error @types/chrome uses enums which we can't access
+              { header: 'x-frame-options', operation: 'remove' },
+              // @ts-expect-error @types/chrome uses enums which we can't access
+              { header: 'X-Frame-Options', operation: 'remove' },
+              // @ts-expect-error @types/chrome uses enums which we can't access
+              { header: 'content-security-policy', operation: 'remove' },
+              // @ts-expect-error @types/chrome uses enums which we can't access
+              { header: 'Content-Security-Policy', operation: 'remove' },
+            ],
+          },
+          condition: {
+            // @ts-expect-error @types/chrome uses enums which we can't access
+            resourceTypes: ['sub_frame'],
+            tabIds: Array.from(activeExtensionTabs),
+          },
         },
-        condition: {
-          // @ts-expect-error @types/chrome has not been updated for Chrome Extensions Manifest V3
-          resourceTypes: ['sub_frame'],
-          tabIds: Array.from(activeExtensionTabs),
-        },
-      },
-    ],
-    removeRuleIds: [RULE_ID],
-  })
+      ],
+      removeRuleIds: [RULE_ID],
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        console.error('Rule update failed', chrome.runtime.lastError)
+      } else {
+        console.debug('Rule update successful', activeExtensionTabs)
+      }
+    }
+  )
 }
 
 // When clicking the extension button, load the current tab's page in the simulation browser
@@ -47,10 +71,8 @@ const toggle = async (tab: chrome.tabs.Tab) => {
   if (!tab.id || !tab.url) return
 
   if (!tab.url.startsWith(PILOT_URL)) {
-    console.log('activate Zodiac Pilot')
-
     // add to tracked list
-    activeExtensionTabs.add(tab.id)
+    startTrackingTab(tab.id)
 
     const url =
       tab.url.startsWith('chrome://') || tab.url.startsWith('about:')
@@ -60,10 +82,8 @@ const toggle = async (tab: chrome.tabs.Tab) => {
       url: `${PILOT_URL}#${encodeURIComponent(url)}`,
     })
   } else {
-    console.log('deactivate Zodiac Pilot')
-
     // remove from tracked list
-    activeExtensionTabs.delete(tab.id)
+    stopTrackingTab(tab.id)
 
     const url = new URL(tab.url)
     const appUrl = decodeURIComponent(url.hash.slice(1))
@@ -256,18 +276,6 @@ const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   }
 
   return json
-}
-
-const startTrackingTab = (tabId: number) => {
-  activeExtensionTabs.add(tabId)
-  updateHeadersRule()
-}
-
-const stopTrackingTab = (tabId: number) => {
-  removeRpcRedirectRules(tabId)
-  activeExtensionTabs.delete(tabId)
-  simulatingExtensionTabs.delete(tabId)
-  updateHeadersRule()
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {

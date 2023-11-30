@@ -9,11 +9,19 @@ import classes from './style.module.css'
 
 interface Props {
   transaction: TransactionInput
+  isDelegateCall: boolean
   labeled?: boolean
 }
 
-const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
-  const encodedTransaction = encodeSingle(transaction)
+const CopyToClipboard: React.FC<Props> = ({
+  transaction,
+  isDelegateCall,
+  labeled,
+}) => {
+  const encodedTransaction = {
+    ...encodeSingle(transaction),
+    operation: isDelegateCall ? 1 : 0,
+  }
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(

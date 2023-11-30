@@ -61,12 +61,24 @@ const TransactionHeader: React.FC<HeaderProps> = ({
         )}
 
         {showRoles && (
-          <RolePermissionCheck transaction={input} index={index} mini />
+          <RolePermissionCheck
+            transaction={input}
+            isDelegateCall={isDelegateCall}
+            index={index}
+            mini
+          />
         )}
 
         <Flex gap={0}>
-          <Translate transaction={input} index={index} />
-          <CopyToClipboard transaction={input} />
+          <Translate
+            transaction={input}
+            isDelegateCall={isDelegateCall}
+            index={index}
+          />
+          <CopyToClipboard
+            transaction={input}
+            isDelegateCall={isDelegateCall}
+          />
           <Remove transaction={input} index={index} />
         </Flex>
       </div>
@@ -163,6 +175,7 @@ export const TransactionBadge: React.FC<Props> = ({
   index,
   transactionHash,
   input,
+  isDelegateCall,
   scrollIntoView,
 }) => {
   const { connection } = useConnection()
@@ -184,7 +197,12 @@ export const TransactionBadge: React.FC<Props> = ({
       )}
 
       {showRoles && (
-        <RolePermissionCheck transaction={input} index={index} mini />
+        <RolePermissionCheck
+          transaction={input}
+          isDelegateCall={isDelegateCall}
+          index={index}
+          mini
+        />
       )}
     </Box>
   )
@@ -197,6 +215,7 @@ interface StatusProps extends TransactionState {
 
 const TransactionStatus: React.FC<StatusProps> = ({
   input,
+  isDelegateCall,
   transactionHash,
   index,
   showRoles = false,
@@ -214,7 +233,11 @@ const TransactionStatus: React.FC<StatusProps> = ({
     )}
     {showRoles && (
       <Box bg p={2} className={classes.statusHeader}>
-        <RolePermissionCheck transaction={input} index={index} />
+        <RolePermissionCheck
+          transaction={input}
+          isDelegateCall={isDelegateCall}
+          index={index}
+        />
       </Box>
     )}
   </Flex>
