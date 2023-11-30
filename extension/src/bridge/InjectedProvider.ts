@@ -63,7 +63,7 @@ export default class InjectedProvider extends EventEmitter {
     })
   }
 
-  request(request: JsonRpcRequest): Promise<any> {
+  request = (request: JsonRpcRequest): Promise<any> => {
     const currentMessageId = this.messageId
     this.messageId++
 
@@ -97,7 +97,10 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   // Legacy API (still used by some Dapps)
-  async send(method: string, params?: Array<any>): Promise<JsonRpcResponse> {
+  send = async (
+    method: string,
+    params?: Array<any>
+  ): Promise<JsonRpcResponse> => {
     try {
       const result = await this.request({ method, params })
       return { method, result }
@@ -107,10 +110,10 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   // Legacy API (still used by some Dapps)
-  async sendAsync(
+  sendAsync = async (
     request: JsonRpcRequest,
     callback: (error: Error | undefined, response: JsonRpcResponse) => unknown
-  ) {
+  ) => {
     try {
       const result = await this.request(request)
       callback(undefined, { method: request.method, result })
@@ -123,7 +126,7 @@ export default class InjectedProvider extends EventEmitter {
   'isZodiac Pilot' = true
 
   // This is required for connecting to Etherscan
-  enable() {
+  enable = () => {
     return Promise.resolve()
   }
 
