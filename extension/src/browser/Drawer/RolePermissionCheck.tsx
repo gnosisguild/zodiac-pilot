@@ -16,9 +16,10 @@ import classes from './style.module.css'
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput
+  isDelegateCall: boolean
   index: number
   mini?: boolean
-}> = ({ transaction, index, mini = false }) => {
+}> = ({ transaction, isDelegateCall, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const wrappingProvider = useWrappingProvider()
 
@@ -87,10 +88,19 @@ const RolePermissionCheck: React.FC<{
           </Flex>
         </Flex>
         {error && !!translationAvailable && (
-          <Translate transaction={transaction} index={index} labeled />
+          <Translate
+            transaction={transaction}
+            isDelegateCall={isDelegateCall}
+            index={index}
+            labeled
+          />
         )}
         {error && !translationAvailable && (
-          <CopyToClipboard transaction={transaction} labeled />
+          <CopyToClipboard
+            transaction={transaction}
+            isDelegateCall={isDelegateCall}
+            labeled
+          />
         )}
       </Flex>
     </Flex>
