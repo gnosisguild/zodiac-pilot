@@ -139,4 +139,6 @@ const HOSTNAMES_REQUIRING_METAMASK = [
   'app.aura.finance',
   'www.ankr.com',
   'www.staderlabs.com',
+  'metavault.trade',
+  'quickswap.exchange',
 ]
