@@ -1,4 +1,3 @@
-import { safeJsonParse, safeJsonStringify } from '@walletconnect/safe-json'
 import { Core } from '@walletconnect/core'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
 import { WalletConnectModal } from '@walletconnect/modal'
@@ -6,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
 import { UniversalProvider } from '@walletconnect/universal-provider'
 import { SignClient } from '@walletconnect/sign-client'
-import { IKeyValueStorage, parseEntry } from '@walletconnect/keyvaluestorage'
+import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
 
 import { RPC } from '../networks'
@@ -100,7 +99,7 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
         name: this.connectionId,
         core: new Core({
           ...opts,
-          storage: new PrefixedLocalStorage(`${this.connectionId}:`),
+          storage: new PrefixedKeyValueStorage(`${this.connectionId}:`),
         }),
       }),
     })
@@ -247,36 +246,24 @@ const useWalletConnect = (
 export default useWalletConnect
 
 /** Adjusted from https://github.com/WalletConnect/walletconnect-utils/blob/master/misc/keyvaluestorage/src/browser/index.ts */
-class PrefixedLocalStorage implements IKeyValueStorage {
-  private readonly localStorage: Storage = localStorage
+class PrefixedKeyValueStorage extends KeyValueStorage {
   private readonly prefix: string
 
   constructor(prefix: string) {
+    super()
     this.prefix = prefix
   }
 
-  public async getKeys(): Promise<string[]> {
-    return Object.keys(this.localStorage)
-  }
-
-  public async getEntries<T = any>(): Promise<[string, T][]> {
-    return Object.entries(this.localStorage).map(parseEntry)
-  }
-
   public async getItem<T = any>(key: string): Promise<T | undefined> {
-    const item = this.localStorage.getItem(this.prefix + key)
-    if (item === null) {
-      return undefined
-    }
-    return safeJsonParse(item) as T
+    return super.getItem(this.prefix + key)
   }
 
   public async setItem<T = any>(key: string, value: T): Promise<void> {
-    this.localStorage.setItem(this.prefix + key, safeJsonStringify(value))
+    super.setItem(this.prefix + key, value)
   }
 
   public async removeItem(key: string): Promise<void> {
-    this.localStorage.removeItem(this.prefix + key)
+    super.removeItem(this.prefix + key)
   }
 }
 
