@@ -46,13 +46,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-modal", "npm:3.16.3"],\
             ["@typescript-eslint/eslint-plugin", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.62.0"],\
             ["@typescript-eslint/parser", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.62.0"],\
-            ["@walletconnect/core", "npm:2.10.5"],\
-            ["@walletconnect/ethereum-provider", "npm:2.10.5"],\
-            ["@walletconnect/keyvaluestorage", "virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1"],\
+            ["@walletconnect/core", "npm:2.10.6"],\
+            ["@walletconnect/ethereum-provider", "npm:2.10.6"],\
+            ["@walletconnect/keyvaluestorage", "virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1"],\
             ["@walletconnect/modal", "npm:2.6.2"],\
-            ["@walletconnect/safe-json", "npm:1.0.2"],\
-            ["@walletconnect/sign-client", "npm:2.10.5"],\
-            ["@walletconnect/universal-provider", "npm:2.10.5"],\
+            ["@walletconnect/sign-client", "npm:2.10.6"],\
+            ["@walletconnect/universal-provider", "npm:2.10.6"],\
             ["classnames", "npm:2.3.2"],\
             ["copy-to-clipboard", "npm:3.3.3"],\
             ["cspell", "npm:5.21.2"],\
@@ -4103,23 +4102,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@walletconnect/core", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-core-npm-2.10.5-4d44757abb-9a6ddcc596.zip/node_modules/@walletconnect/core/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-core-npm-2.10.6-9f8c5789b6-7ed74d0fea.zip/node_modules/@walletconnect/core/",\
           "packageDependencies": [\
-            ["@walletconnect/core", "npm:2.10.5"],\
+            ["@walletconnect/core", "npm:2.10.6"],\
             ["@walletconnect/heartbeat", "npm:1.2.1"],\
             ["@walletconnect/jsonrpc-provider", "npm:1.0.13"],\
             ["@walletconnect/jsonrpc-types", "npm:1.0.3"],\
             ["@walletconnect/jsonrpc-utils", "npm:1.0.8"],\
             ["@walletconnect/jsonrpc-ws-connection", "npm:1.0.14"],\
-            ["@walletconnect/keyvaluestorage", "virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1"],\
+            ["@walletconnect/keyvaluestorage", "virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1"],\
             ["@walletconnect/logger", "npm:2.0.1"],\
             ["@walletconnect/relay-api", "npm:1.0.9"],\
             ["@walletconnect/relay-auth", "npm:1.0.4"],\
             ["@walletconnect/safe-json", "npm:1.0.2"],\
             ["@walletconnect/time", "npm:1.0.2"],\
-            ["@walletconnect/types", "npm:2.10.5"],\
-            ["@walletconnect/utils", "npm:2.10.5"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
+            ["@walletconnect/utils", "npm:2.10.6"],\
             ["events", "npm:3.3.0"],\
             ["lodash.isequal", "npm:4.5.0"],\
             ["uint8arrays", "npm:3.1.1"]\
@@ -4138,19 +4137,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@walletconnect/ethereum-provider", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-ethereum-provider-npm-2.10.5-7192382bb4-e2d687195c.zip/node_modules/@walletconnect/ethereum-provider/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-ethereum-provider-npm-2.10.6-9a95169c81-0245204440.zip/node_modules/@walletconnect/ethereum-provider/",\
           "packageDependencies": [\
-            ["@walletconnect/ethereum-provider", "npm:2.10.5"],\
+            ["@walletconnect/ethereum-provider", "npm:2.10.6"],\
             ["@walletconnect/jsonrpc-http-connection", "npm:1.0.7"],\
             ["@walletconnect/jsonrpc-provider", "npm:1.0.13"],\
             ["@walletconnect/jsonrpc-types", "npm:1.0.3"],\
             ["@walletconnect/jsonrpc-utils", "npm:1.0.8"],\
             ["@walletconnect/modal", "npm:2.6.2"],\
-            ["@walletconnect/sign-client", "npm:2.10.5"],\
-            ["@walletconnect/types", "npm:2.10.5"],\
-            ["@walletconnect/universal-provider", "npm:2.10.5"],\
-            ["@walletconnect/utils", "npm:2.10.5"],\
+            ["@walletconnect/sign-client", "npm:2.10.6"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
+            ["@walletconnect/universal-provider", "npm:2.10.6"],\
+            ["@walletconnect/utils", "npm:2.10.6"],\
             ["events", "npm:3.3.0"]\
           ],\
           "linkType": "HARD"\
@@ -4248,15 +4247,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1", {\
-          "packageLocation": "./.yarn/__virtual__/@walletconnect-keyvaluestorage-virtual-f24e09d559/0/cache/@walletconnect-keyvaluestorage-npm-1.1.1-4cdf80afee-7f85cb8396.zip/node_modules/@walletconnect/keyvaluestorage/",\
+        ["virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1", {\
+          "packageLocation": "./.yarn/__virtual__/@walletconnect-keyvaluestorage-virtual-f300c814e6/0/cache/@walletconnect-keyvaluestorage-npm-1.1.1-4cdf80afee-7f85cb8396.zip/node_modules/@walletconnect/keyvaluestorage/",\
           "packageDependencies": [\
-            ["@walletconnect/keyvaluestorage", "virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1"],\
+            ["@walletconnect/keyvaluestorage", "virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1"],\
             ["@react-native-async-storage/async-storage", null],\
             ["@types/react-native-async-storage__async-storage", null],\
             ["@walletconnect/safe-json", "npm:1.0.2"],\
             ["idb-keyval", "npm:6.2.1"],\
-            ["unstorage", "virtual:f24e09d55903749015bd5e1867b8f256c75b11f038eb8a4511d9944e08e1d6b8401963fa8991f97f8bb67b92a7cd1bc6e817d3a22d9797bac0a08317ea7c46cb#npm:1.10.1"]\
+            ["unstorage", "virtual:f300c814e6f31196bcae0f2a913daff6165b4766c9070ea8ba4e4c2dab696f44970d76883b9c4a880cda97a32e23a1a5a179e9a4c0ed32eaf938e68bfd5fefc3#npm:1.10.1"]\
           ],\
           "packagePeers": [\
             "@react-native-async-storage/async-storage",\
@@ -4348,18 +4347,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@walletconnect/sign-client", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-sign-client-npm-2.10.5-cdafb1c4f2-40035f6a06.zip/node_modules/@walletconnect/sign-client/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-sign-client-npm-2.10.6-c76724f5c8-610dd354d5.zip/node_modules/@walletconnect/sign-client/",\
           "packageDependencies": [\
-            ["@walletconnect/sign-client", "npm:2.10.5"],\
-            ["@walletconnect/core", "npm:2.10.5"],\
+            ["@walletconnect/sign-client", "npm:2.10.6"],\
+            ["@walletconnect/core", "npm:2.10.6"],\
             ["@walletconnect/events", "npm:1.0.1"],\
             ["@walletconnect/heartbeat", "npm:1.2.1"],\
             ["@walletconnect/jsonrpc-utils", "npm:1.0.8"],\
             ["@walletconnect/logger", "npm:2.0.1"],\
             ["@walletconnect/time", "npm:1.0.2"],\
-            ["@walletconnect/types", "npm:2.10.5"],\
-            ["@walletconnect/utils", "npm:2.10.5"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
+            ["@walletconnect/utils", "npm:2.10.6"],\
             ["events", "npm:3.3.0"]\
           ],\
           "linkType": "HARD"\
@@ -4376,14 +4375,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@walletconnect/types", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-types-npm-2.10.5-4f0e732b12-2e88af16d0.zip/node_modules/@walletconnect/types/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-types-npm-2.10.6-2da07b0718-84f411fd41.zip/node_modules/@walletconnect/types/",\
           "packageDependencies": [\
-            ["@walletconnect/types", "npm:2.10.5"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
             ["@walletconnect/events", "npm:1.0.1"],\
             ["@walletconnect/heartbeat", "npm:1.2.1"],\
             ["@walletconnect/jsonrpc-types", "npm:1.0.3"],\
-            ["@walletconnect/keyvaluestorage", "virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1"],\
+            ["@walletconnect/keyvaluestorage", "virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1"],\
             ["@walletconnect/logger", "npm:2.0.1"],\
             ["events", "npm:3.3.0"]\
           ],\
@@ -4391,28 +4390,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@walletconnect/universal-provider", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-universal-provider-npm-2.10.5-a1a06a92b5-9c9466dc41.zip/node_modules/@walletconnect/universal-provider/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-universal-provider-npm-2.10.6-7405cc705b-c09fd28819.zip/node_modules/@walletconnect/universal-provider/",\
           "packageDependencies": [\
-            ["@walletconnect/universal-provider", "npm:2.10.5"],\
+            ["@walletconnect/universal-provider", "npm:2.10.6"],\
             ["@walletconnect/jsonrpc-http-connection", "npm:1.0.7"],\
             ["@walletconnect/jsonrpc-provider", "npm:1.0.13"],\
             ["@walletconnect/jsonrpc-types", "npm:1.0.3"],\
             ["@walletconnect/jsonrpc-utils", "npm:1.0.8"],\
             ["@walletconnect/logger", "npm:2.0.1"],\
-            ["@walletconnect/sign-client", "npm:2.10.5"],\
-            ["@walletconnect/types", "npm:2.10.5"],\
-            ["@walletconnect/utils", "npm:2.10.5"],\
+            ["@walletconnect/sign-client", "npm:2.10.6"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
+            ["@walletconnect/utils", "npm:2.10.6"],\
             ["events", "npm:3.3.0"]\
           ],\
           "linkType": "HARD"\
         }]\
       ]],\
       ["@walletconnect/utils", [\
-        ["npm:2.10.5", {\
-          "packageLocation": "./.yarn/cache/@walletconnect-utils-npm-2.10.5-fa4597e0fe-555e917de3.zip/node_modules/@walletconnect/utils/",\
+        ["npm:2.10.6", {\
+          "packageLocation": "./.yarn/cache/@walletconnect-utils-npm-2.10.6-8b450c90cd-f654360189.zip/node_modules/@walletconnect/utils/",\
           "packageDependencies": [\
-            ["@walletconnect/utils", "npm:2.10.5"],\
+            ["@walletconnect/utils", "npm:2.10.6"],\
             ["@stablelib/chacha20poly1305", "npm:1.0.1"],\
             ["@stablelib/hkdf", "npm:1.0.1"],\
             ["@stablelib/random", "npm:1.0.2"],\
@@ -4421,7 +4420,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@walletconnect/relay-api", "npm:1.0.9"],\
             ["@walletconnect/safe-json", "npm:1.0.2"],\
             ["@walletconnect/time", "npm:1.0.2"],\
-            ["@walletconnect/types", "npm:2.10.5"],\
+            ["@walletconnect/types", "npm:2.10.6"],\
             ["@walletconnect/window-getters", "npm:1.0.1"],\
             ["@walletconnect/window-metadata", "npm:1.0.1"],\
             ["detect-browser", "npm:5.3.0"],\
@@ -15550,10 +15549,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f24e09d55903749015bd5e1867b8f256c75b11f038eb8a4511d9944e08e1d6b8401963fa8991f97f8bb67b92a7cd1bc6e817d3a22d9797bac0a08317ea7c46cb#npm:1.10.1", {\
-          "packageLocation": "./.yarn/__virtual__/unstorage-virtual-71fea2f410/0/cache/unstorage-npm-1.10.1-4240df4e8a-59dc9f21d2.zip/node_modules/unstorage/",\
+        ["virtual:f300c814e6f31196bcae0f2a913daff6165b4766c9070ea8ba4e4c2dab696f44970d76883b9c4a880cda97a32e23a1a5a179e9a4c0ed32eaf938e68bfd5fefc3#npm:1.10.1", {\
+          "packageLocation": "./.yarn/__virtual__/unstorage-virtual-896311ee71/0/cache/unstorage-npm-1.10.1-4240df4e8a-59dc9f21d2.zip/node_modules/unstorage/",\
           "packageDependencies": [\
-            ["unstorage", "virtual:f24e09d55903749015bd5e1867b8f256c75b11f038eb8a4511d9944e08e1d6b8401963fa8991f97f8bb67b92a7cd1bc6e817d3a22d9797bac0a08317ea7c46cb#npm:1.10.1"],\
+            ["unstorage", "virtual:f300c814e6f31196bcae0f2a913daff6165b4766c9070ea8ba4e4c2dab696f44970d76883b9c4a880cda97a32e23a1a5a179e9a4c0ed32eaf938e68bfd5fefc3#npm:1.10.1"],\
             ["@azure/app-configuration", null],\
             ["@azure/cosmos", null],\
             ["@azure/data-tables", null],\
@@ -17021,13 +17020,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-modal", "npm:3.16.3"],\
             ["@typescript-eslint/eslint-plugin", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.62.0"],\
             ["@typescript-eslint/parser", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.62.0"],\
-            ["@walletconnect/core", "npm:2.10.5"],\
-            ["@walletconnect/ethereum-provider", "npm:2.10.5"],\
-            ["@walletconnect/keyvaluestorage", "virtual:4f0e732b1264896457f634cd42206cfadc1508bd68fe90be12aecc883313507a78e5b76fc40b20e6cc6aed68171d9731224c9b50763acdd7d2c143091d2640f2#npm:1.1.1"],\
+            ["@walletconnect/core", "npm:2.10.6"],\
+            ["@walletconnect/ethereum-provider", "npm:2.10.6"],\
+            ["@walletconnect/keyvaluestorage", "virtual:2da07b07180b3538cbcd4ee26adb60c087c16499ee67157b3e6894b418036016be91b3705596e385e0252c5ba125e59e4081f7d4051498dec344e519a95469be#npm:1.1.1"],\
             ["@walletconnect/modal", "npm:2.6.2"],\
-            ["@walletconnect/safe-json", "npm:1.0.2"],\
-            ["@walletconnect/sign-client", "npm:2.10.5"],\
-            ["@walletconnect/universal-provider", "npm:2.10.5"],\
+            ["@walletconnect/sign-client", "npm:2.10.6"],\
+            ["@walletconnect/universal-provider", "npm:2.10.6"],\
             ["classnames", "npm:2.3.2"],\
             ["copy-to-clipboard", "npm:3.3.3"],\
             ["cspell", "npm:5.21.2"],\
