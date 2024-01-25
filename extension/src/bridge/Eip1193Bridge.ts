@@ -5,7 +5,7 @@ interface Request {
   params?: Array<any>
 }
 
-export default class BridgeHost {
+export default class Eip1193Bridge {
   private provider: Eip1193Provider
   private connection: Connection
   private source: WindowProxy | undefined
@@ -15,11 +15,11 @@ export default class BridgeHost {
     this.connection = connection
   }
 
-  setProvider(provider: Eip1193Provider) {
+  setProvider = (provider: Eip1193Provider) => {
     this.provider = provider
   }
 
-  setConnection(connection: Connection) {
+  setConnection = (connection: Connection) => {
     if (connection.avatarAddress !== this.connection.avatarAddress) {
       this.emitBridgeEvent('accountsChanged', [[connection.avatarAddress]])
     }

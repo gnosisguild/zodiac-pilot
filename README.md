@@ -72,6 +72,9 @@ When the simulator iframe opens any page, we inject the build/inject.js script a
 The injected script then runs in the context of the Dapp and injects an [EIP-1193](https://eips.ethereum.org/EIPS/eip-1193) compatible API at `window.ethereum`.
 The injected provider forwards all `request` calls to the parent extension page via `window.postMessage` where they are recorded and executed in a fork of the connected network.
 
+We also subscribe to messages sent via the [safe-apps-sdk](https://github.com/safe-global/safe-apps-sdk).
+This enables instant and smart-account optimized connections to Safe-compatible apps.
+
 ### Simulating transaction in a fork
 
 When the provider we inject into the Dapp iframe receives a transaction request, we record it and simulate the transaction in a fork of the target network, impersonating the Safe.

@@ -8,37 +8,55 @@ const decodeLocationHash = () => {
   return ''
 }
 
-// The background script listens to all possible ways of location updates in our iframe and notify us via a message.
-let lastHref = decodeLocationHash()
-window.addEventListener('message', (event) => {
-  if (event.data.type === 'navigationDetected') {
-    // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).
-    // So not all events actually
-    const iframe = document.getElementById(
-      'pilot-frame'
-    ) as HTMLIFrameElement | null
-    const iframeWindow = iframe?.contentWindow
-    if (!iframeWindow) return
+export const requestIframeHref = async () => {
+  const iframe = document.getElementById(
+    'pilot-frame'
+  ) as HTMLIFrameElement | null
+  const iframeWindow = iframe?.contentWindow
+  if (!iframeWindow) return
 
-    iframeWindow.postMessage({ zodiacPilotHrefRequest: true }, '*')
+  iframeWindow.postMessage({ zodiacPilotHrefRequest: true }, '*')
 
+  return new Promise<string>((resolve) => {
     const handleMessage = (ev: MessageEvent) => {
       const { zodiacPilotHrefResponse, href } = ev.data
-      if (zodiacPilotHrefResponse && href !== lastHref) {
-        console.debug('iframe navigated to', href)
+
+      if (zodiacPilotHrefResponse) {
         window.removeEventListener('message', handleMessage)
-
-        // preserve the connections part of the location hash to keep the connection drawer open
-        const [connectionsPart] = decodeLocationHash().split(';')
-        const prefix = connectionsPart.startsWith('connections')
-          ? connectionsPart + ';'
-          : ''
-
-        replaceLocation(prefix + href) // don't push as this would mess with the browsing history
-        lastHref = href
+        resolve(href)
       }
     }
     window.addEventListener('message', handleMessage)
+  })
+}
+
+export const reloadIframe = () => {
+  const iframe = document.getElementById(
+    'pilot-frame'
+  ) as HTMLIFrameElement | null
+  const iframeWindow = iframe?.contentWindow
+  if (!iframeWindow) return
+  iframeWindow.location.reload()
+}
+
+// The background script listens to all possible ways of location updates in our iframe and notify us via a message.
+let lastHref = decodeLocationHash()
+window.addEventListener('message', async (event) => {
+  if (event.data.type === 'navigationDetected') {
+    // This actually means that a navigation happened anywhere in our extension tab (tab itself or any contained iframe).
+    const href = await requestIframeHref()
+    if (href && href !== lastHref) {
+      console.debug('iframe navigated to', href)
+
+      // preserve the connections part of the location hash to keep the connection drawer open
+      const [connectionsPart] = decodeLocationHash().split(';')
+      const prefix = connectionsPart.startsWith('connections')
+        ? connectionsPart + ';'
+        : ''
+
+      replaceLocation(prefix + href) // don't push as this would mess with the browsing history
+      lastHref = href
+    }
   }
 })
 
