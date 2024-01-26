@@ -37,6 +37,7 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
 
     const handle = (ev: MessageEvent<any>) => {
       eip1193BridgeRef.current?.handleMessage(ev)
+      safeAppBridgeRef.current?.handleMessage(ev)
     }
     window.addEventListener('message', handle)
 

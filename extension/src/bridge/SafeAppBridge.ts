@@ -47,8 +47,6 @@ export default class SafeAppBridge {
   constructor(provider: Eip1193Provider, connection: Connection) {
     this.provider = provider
     this.connection = connection
-
-    window.addEventListener('message', this.handleIncomingMessage)
   }
 
   setProvider = (provider: Eip1193Provider) => {
@@ -76,26 +74,15 @@ export default class SafeAppBridge {
     }
   }
 
-  postResponse = (
-    destination: Window,
-    data: unknown,
-    requestId: RequestId,
-    error = false
-  ): void => {
-    const sdkVersion = getSDKVersion()
-    const msg = error
-      ? MessageFormatter.makeErrorResponse(
-          requestId,
-          data as string,
-          sdkVersion
-        )
-      : MessageFormatter.makeResponse(requestId, data, sdkVersion)
-
-    destination.postMessage(msg, '*')
-  }
-
-  handleIncomingMessage = async (msg: MessageEvent): Promise<void> => {
-    if (!msg.source || !(msg.source instanceof Window)) return
+  handleMessage = async (msg: MessageEvent): Promise<void> => {
+    if (
+      !msg.source ||
+      msg.source instanceof MessagePort ||
+      msg.source instanceof ServiceWorker
+    ) {
+      // ignore messages from ports and workers
+      return
+    }
 
     if (msg.data.method === Methods.getSafeInfo) {
       // If we get here, it means the Safe App is connected
@@ -113,7 +100,7 @@ export default class SafeAppBridge {
     console.debug('SAFE_APP_MESSAGE', msg.data)
     try {
       const response = await handler(msg.data.params, msg.data.id, msg.data.env)
-
+      console.log({ response })
       // TODO can this happen? (If response is not returned, it means the response will be sent somewhere else)
       if (typeof response !== 'undefined') {
         this.postResponse(msg.source, response, msg.data.id)
@@ -122,6 +109,24 @@ export default class SafeAppBridge {
       console.error('Error handling message via SafeAppCommunicator', e)
       this.postResponse(msg.source, getErrorMessage(e), msg.data.id, true)
     }
+  }
+
+  postResponse = (
+    destination: Window,
+    data: unknown,
+    requestId: RequestId,
+    error = false
+  ): void => {
+    const sdkVersion = getSDKVersion()
+    const msg = error
+      ? MessageFormatter.makeErrorResponse(
+          requestId,
+          data as string,
+          sdkVersion
+        )
+      : MessageFormatter.makeResponse(requestId, data, sdkVersion)
+
+    destination.postMessage(msg, '*')
   }
 
   handlers: { [method in Methods]: MessageHandler } = {
