@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events'
 
+import { JsonRpcBatchProvider, JsonRpcProvider } from '@ethersproject/providers'
+import { Eip1193Bridge } from '@ethersproject/experimental'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { nanoid } from 'nanoid'
 import React, { ReactNode, useCallback, useEffect } from 'react'
@@ -8,6 +10,8 @@ import { createContext, useContext, useMemo } from 'react'
 import { useMetaMask, useWalletConnect } from '../providers'
 import { Connection, Eip1193Provider, ProviderType } from '../types'
 import { useStickyState, validateAddress } from '../utils'
+import { ChainId, RPC } from '../chains'
+import { Signer, VoidSigner } from 'ethers'
 
 const DEFAULT_VALUE: Connection[] = [
   {
@@ -127,7 +131,14 @@ export const useConnection = (id?: string) => {
   const provider: Eip1193Provider =
     (connection.providerType === ProviderType.MetaMask
       ? metamask.provider
-      : walletConnect?.provider) || new DummyProvider() // defaulting to a dummy here makes typing when using this hook a bit easier. (we won't request anything when not connected anyways)
+      : walletConnect?.provider) ||
+    new Eip1193Bridge(
+      // we won't be able to actually sign anything with this provider, so we have to make sure prompt the user to connect their wallet once we need a signature
+      new VoidSigner(
+        connection.pilotAddress,
+        new JsonRpcBatchProvider(RPC[connection.chainId])
+      )
+    )
 
   const isConnectedTo = (
     connectionContext: typeof metamask | typeof walletConnect,
@@ -203,12 +214,6 @@ export const useConnection = (id?: string) => {
   }
 }
 
-class DummyProvider extends EventEmitter {
-  async request(): Promise<void> {
-    return
-  }
-}
-
 type ConnectionStateMigration = (connection: Connection) => Connection
 
 // If the Connection state structure changes we must lazily migrate users' connections states from the old structure to the new one.
@@ -248,3 +253,29 @@ const migrateConnections = (connections: Connection[]): Connection[] => {
   })
   return migratedConnections
 }
+
+// export class DummySigner extends Signer {
+//   public readonly address: string
+//   public readonly provider: JsonRpcProvider
+
+//   constructor(address: `0x${string}`, chainId: ChainId) {
+//     super()
+//     this.address = address
+//     this.provider = new JsonRpcBatchProvider(RPC[chainId], chainId)
+//   }
+
+//   async getAddress() {
+//     return this.address
+//   }
+
+//   // public getNonce(blockTag?: BlockTag | undefined): Promise<number> {
+//   //   return this.provider.getTransactionCount(this.address, blockTag);
+//   // }
+
+//   async signMessage(): Promise<string> {
+//     throw new Error('Method not implemented')
+//   }
+//   async signTransaction(): Promise<string> {
+//     throw new Error('Method not implemented')
+//   }
+// }

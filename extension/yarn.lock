@@ -1253,6 +1253,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ethersproject/experimental@npm:^5.7.0":
+  version: 5.7.0
+  resolution: "@ethersproject/experimental@npm:5.7.0"
+  dependencies:
+    "@ethersproject/web": ^5.7.0
+    ethers: ^5.7.0
+    scrypt-js: 3.0.1
+  checksum: a4973371be9b984d5834df5d6fe3d4d1641204ec859a6d4e11e4a972a3a4a2dd7c0eae6a9a86b90f30faa3633a86ab153197bff6e853fb3ff8f847e0340a3c24
+  languageName: node
+  linkType: hard
+
 "@ethersproject/hash@npm:*, @ethersproject/hash@npm:5.7.0, @ethersproject/hash@npm:^5.7.0":
   version: 5.7.0
   resolution: "@ethersproject/hash@npm:5.7.0"
@@ -6471,7 +6482,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.7, ethers@npm:^5.7.1, ethers@npm:^5.7.2":
+"ethers@npm:^5.7, ethers@npm:^5.7.0, ethers@npm:^5.7.1, ethers@npm:^5.7.2":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -14439,6 +14450,7 @@ __metadata:
   dependencies:
     "@ethersproject/abi": ^5.7.0
     "@ethersproject/abstract-provider": ^5.7.0
+    "@ethersproject/experimental": ^5.7.0
     "@ethersproject/providers": ^5.7.2
     "@gnosis.pm/zodiac": ^3.4.2
     "@safe-global/api-kit": ^1.3.1

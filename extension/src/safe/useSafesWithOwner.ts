@@ -10,7 +10,7 @@ export const useSafesWithOwner = (
   ownerAddress: string,
   connectionId?: string
 ) => {
-  const { provider, connected, chainId } = useConnection(connectionId)
+  const { provider, chainId } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])
@@ -18,7 +18,7 @@ export const useSafesWithOwner = (
   const checksumOwnerAddress = validateAddress(ownerAddress)
 
   useEffect(() => {
-    if (!connected || !chainId || !checksumOwnerAddress) return
+    if (!chainId || !checksumOwnerAddress) return
 
     const safeService = initSafeApiKit(provider, chainId as ChainId)
 
@@ -44,7 +44,7 @@ export const useSafesWithOwner = (
       setSafes([])
       canceled = true
     }
-  }, [provider, checksumOwnerAddress, connected, chainId])
+  }, [provider, checksumOwnerAddress, chainId])
 
   return { loading, safes }
 }

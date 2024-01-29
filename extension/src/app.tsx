@@ -24,7 +24,7 @@ import { validateAddress } from './utils'
 const Routes: React.FC = () => {
   const connectionsRouteMatch = useMatchConnectionsRoute()
   const pushConnectionsRoute = usePushConnectionsRoute()
-  const { connection, connected } = useConnection()
+  const { connection } = useConnection()
 
   const isConnectionsRoute = connectionsRouteMatch.isMatch
   const connectionChangeRequired =
@@ -34,9 +34,6 @@ const Routes: React.FC = () => {
   const [connections] = useConnections()
   const connectionToEdit =
     connections.length === 1 ? connections[0].id : undefined
-
-  const waitForWallet =
-    !isConnectionsRoute && !connectionChangeRequired && !connected
 
   useUpdateLastUsedConnection()
 
@@ -52,21 +49,7 @@ const Routes: React.FC = () => {
     connectionChangeRequired,
   ])
 
-  // open connections drawer if wallet is not connected, but only after a small delay to give the wallet time to connect when initially loading the page
-  useEffect(() => {
-    let timeout: number
-    if (waitForWallet) {
-      timeout = window.setTimeout(() => {
-        pushConnectionsRoute()
-      }, 200)
-    }
-    return () => {
-      window.clearTimeout(timeout)
-    }
-  }, [waitForWallet, pushConnectionsRoute])
-
   if (!isConnectionsRoute && connectionChangeRequired) return null
-  if (!isConnectionsRoute && waitForWallet) return null
 
   return (
     <>
