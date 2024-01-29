@@ -179,7 +179,7 @@ export default class SafeAppBridge {
       )
     },
 
-    [Methods.signMessage]: ({ message }: SignMessageParams, id, env) => {
+    [Methods.signMessage]: ({ message }: SignMessageParams) => {
       return this.provider.request({
         method: 'eth_sign',
         params: [message],
