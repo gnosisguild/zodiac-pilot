@@ -8,7 +8,7 @@ import { SignClient } from '@walletconnect/sign-client'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
 
-import { RPC } from '../networks'
+import { RPC } from '../chains'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
 

@@ -4,7 +4,7 @@ import { RiAlertLine } from 'react-icons/ri'
 
 import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
-import { ChainId } from '../../../networks'
+import { ChainId } from '../../../chains'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'

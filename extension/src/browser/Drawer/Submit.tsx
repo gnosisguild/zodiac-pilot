@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { ChainId, EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
+import { ChainId, EXPLORER_URL, CHAIN_PREFIX } from '../../chains'
 import { waitForMultisigExecution } from '../../providers'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useConnection } from '../../settings'
@@ -150,7 +150,7 @@ const AwaitingSignatureModal: React.FC<{
         <p>
           <a
             className={classes.safeAppLink}
-            href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${pilotAddress}`}
+            href={`https://app.safe.global/${CHAIN_PREFIX[chainId]}:${pilotAddress}`}
             target="_blank"
             rel="noreferrer"
           >

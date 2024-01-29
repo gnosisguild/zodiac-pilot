@@ -2,7 +2,7 @@ import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import * as ethers from 'ethers'
 
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { Eip1193Provider } from '../types'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {

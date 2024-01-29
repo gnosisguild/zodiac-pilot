@@ -13,7 +13,7 @@ import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { ChainId, MULTI_SEND_ADDRESS } from '../../networks'
+import { ChainId, MULTI_SEND_ADDRESS } from '../../chains'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)

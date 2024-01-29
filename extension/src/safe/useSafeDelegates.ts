@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 

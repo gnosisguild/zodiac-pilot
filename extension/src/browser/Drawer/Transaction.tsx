@@ -6,7 +6,7 @@ import { TransactionInput, TransactionType } from 'react-multisend'
 
 import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
-import { NETWORK_CURRENCY } from '../../networks'
+import { CHAIN_CURRENCY } from '../../chains'
 import { useConnection } from '../../settings'
 import { TransactionState } from '../state'
 
@@ -268,7 +268,7 @@ const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
       justifyContent="space-between"
       className={classes.value}
     >
-      <div>{NETWORK_CURRENCY[chainId]}:</div>
+      <div>{CHAIN_CURRENCY[chainId]}:</div>
       <code className={classes.valueValue}>
         {valueBN.isZero() ? 'n/a' : formatEther(valueBN)}
       </code>

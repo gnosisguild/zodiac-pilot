@@ -3,7 +3,7 @@ import { Provider } from '@ethersproject/abstract-provider'
 import { loaders } from '@shazow/whatsabi'
 import detectProxyTarget from 'ethers-proxies'
 
-import { ChainId, EXPLORER_API_URL } from '../networks'
+import { ChainId, EXPLORER_API_URL } from '../chains'
 
 const fetchAbi = async (
   network: ChainId,

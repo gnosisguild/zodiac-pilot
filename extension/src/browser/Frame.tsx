@@ -40,6 +40,7 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
       safeAppBridgeRef.current?.handleMessage(ev)
     }
     window.addEventListener('message', handle)
+    console.log('messages will be handled')
 
     return () => {
       window.removeEventListener('message', handle)

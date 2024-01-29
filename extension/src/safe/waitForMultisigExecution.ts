@@ -1,4 +1,4 @@
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { Eip1193Provider } from '../types'
 
 import { initSafeApiKit } from './kits'

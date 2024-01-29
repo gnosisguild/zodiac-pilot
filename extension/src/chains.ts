@@ -62,7 +62,7 @@ export const EXPLORER_API_KEY: Record<ChainId, string> = {
   80001: '',
 }
 
-export const NETWORK_PREFIX: Record<ChainId, string> = {
+export const CHAIN_PREFIX: Record<ChainId, string> = {
   1: 'eth',
   4: 'rin',
   5: 'gor',
@@ -77,7 +77,7 @@ export const NETWORK_PREFIX: Record<ChainId, string> = {
   80001: 'maticmum',
 }
 
-export const NETWORK_CURRENCY: Record<ChainId, string> = {
+export const CHAIN_CURRENCY: Record<ChainId, string> = {
   1: 'ETH',
   4: 'ETH',
   5: 'ETH',

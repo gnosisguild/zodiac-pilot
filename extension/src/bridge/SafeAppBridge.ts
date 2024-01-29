@@ -20,12 +20,7 @@ import {
   getBalances,
   getTransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
-import {
-  ChainId,
-  NETWORK_CURRENCY,
-  NETWORK_NAME,
-  NETWORK_PREFIX,
-} from '../networks'
+import { ChainId, CHAIN_CURRENCY, NETWORK_NAME, CHAIN_PREFIX } from '../chains'
 import { Connection, Eip1193Provider } from '../types'
 import { reloadIframe, requestIframeHref } from '../location'
 
@@ -132,7 +127,7 @@ export default class SafeAppBridge {
   handlers: { [method in Methods]: MessageHandler } = {
     [Methods.getTxBySafeTxHash]: ({ safeTxHash }: GetTxBySafeTxHashParams) => {
       return getTransactionDetails(
-        NETWORK_PREFIX[this.connection.chainId],
+        CHAIN_PREFIX[this.connection.chainId],
         safeTxHash
       )
     },
@@ -154,7 +149,7 @@ export default class SafeAppBridge {
 
     [Methods.getSafeBalances]: ({ currency = 'usd' }: GetBalanceParams) => {
       return getBalances(
-        NETWORK_PREFIX[this.connection.chainId],
+        CHAIN_PREFIX[this.connection.chainId],
         this.connection.avatarAddress,
         currency,
         {
@@ -198,8 +193,8 @@ export default class SafeAppBridge {
       return {
         chainName: NETWORK_NAME[chainId],
         chainId,
-        shortName: NETWORK_PREFIX[chainId],
-        nativeCurrency: NETWORK_CURRENCY[chainId],
+        shortName: CHAIN_PREFIX[chainId],
+        nativeCurrency: CHAIN_CURRENCY[chainId],
         blockExplorerUriTemplate: {}, // TODO
       }
     },
