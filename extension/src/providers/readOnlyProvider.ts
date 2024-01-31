@@ -1,22 +1,24 @@
 import EventEmitter from 'events'
 import { hexValue } from 'ethers/lib/utils'
 import {
-  JsonRpcBatchProvider,
+  StaticJsonRpcProvider,
   TransactionRequest,
 } from '@ethersproject/providers'
 import { ChainId, RPC } from '../chains'
 
-const readOnlyProviderCache = new Map<ChainId, JsonRpcBatchProvider>()
+const readOnlyProviderCache = new Map<ChainId, StaticJsonRpcProvider>()
 const eip1193ProviderCache = new Map<string, Eip1193JsonRpcProvider>()
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-export const getReadOnlyProvider = (chainId: ChainId): JsonRpcBatchProvider => {
+export const getReadOnlyProvider = (
+  chainId: ChainId
+): StaticJsonRpcProvider => {
   if (readOnlyProviderCache.has(chainId)) {
     return readOnlyProviderCache.get(chainId)!
   }
 
-  const provider = new JsonRpcBatchProvider(RPC[chainId], chainId)
+  const provider = new StaticJsonRpcProvider(RPC[chainId], chainId)
   readOnlyProviderCache.set(chainId, provider)
   return provider
 }
@@ -41,7 +43,7 @@ export const getEip1193ReadOnlyProvider = (
 }
 
 const hexlifyTransaction = (transaction: TransactionRequest) =>
-  JsonRpcBatchProvider.hexlifyTransaction(transaction, {
+  StaticJsonRpcProvider.hexlifyTransaction(transaction, {
     from: true,
     customData: true,
     ccipReadEnabled: true,
@@ -52,7 +54,7 @@ const hexlifyTransaction = (transaction: TransactionRequest) =>
  * Copyright (c) 2019 Richard Moore, released under MIT license.
  */
 export class Eip1193JsonRpcProvider extends EventEmitter {
-  readonly provider: JsonRpcBatchProvider
+  readonly provider: StaticJsonRpcProvider
   readonly chainId: ChainId
   readonly address: string
 

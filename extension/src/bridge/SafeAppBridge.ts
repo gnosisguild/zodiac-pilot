@@ -95,10 +95,10 @@ export default class SafeAppBridge {
     console.debug('SAFE_APP_MESSAGE', msg.data)
     try {
       const response = await handler(msg.data.params, msg.data.id, msg.data.env)
-      console.log({ response })
-      // TODO can this happen? (If response is not returned, it means the response will be sent somewhere else)
       if (typeof response !== 'undefined') {
         this.postResponse(msg.source, response, msg.data.id)
+      } else {
+        throw new Error('No response returned from handler')
       }
     } catch (e) {
       console.error('Error handling message via SafeAppCommunicator', e)
