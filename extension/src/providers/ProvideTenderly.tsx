@@ -1,93 +1,55 @@
 import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 
 import { useConnection } from '../settings/connectionHooks'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
 import { initSafeProtocolKit } from '../safe/kits'
 import { safeInterface } from '../safe'
+import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
+import { ChainId } from '../chains'
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
 
-export const useTenderlyProvider = (): TenderlyProvider | null =>
-  useContext(TenderlyContext)
+export const useTenderlyProvider = (): TenderlyProvider => {
+  const value = useContext(TenderlyContext)
+  if (!value) throw new Error('must be wrapped in <ProvideTenderly>')
+  return value
+}
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { provider, chainId, connection } = useConnection()
+  const {
+    connection: { chainId, avatarAddress, moduleAddress, pilotAddress },
+  } = useConnection()
 
-  const [tenderlyProvider, setTenderlyProvider] =
-    useState<TenderlyProvider | null>(null)
+  const tenderlyProvider = useMemo(() => {
+    return new TenderlyProvider(chainId)
+  }, [chainId])
 
+  // whenever anything changes in the connection settings, we delete the current fork and start afresh
   useEffect(() => {
-    if (!chainId) return
-
-    const tenderlyProvider = new TenderlyProvider(provider, chainId)
-    setTenderlyProvider(tenderlyProvider)
-
-    const canceled = false
-    async function prepareSafeForSimulation() {
-      const { avatarAddress, moduleAddress, pilotAddress } = connection
-      const safe = await initSafeProtocolKit(provider, avatarAddress)
-
-      // If we simulate as a Safe owner, we might have to override the owners & threshold of the Safe to allow single signature transactions
-      if (!moduleAddress) {
-        const [owners, threshold] = await Promise.all([
-          safe.getOwners(),
-          safe.getThreshold(),
-        ])
-
-        const pilotIsOwner = owners.some(
-          (owner) => owner.toLowerCase() === pilotAddress.toLowerCase()
-        )
-
-        if (!pilotIsOwner) {
-          // the pilot account is not an owner, so we need to make it one and set the threshold to 1 at the same time
-          await tenderlyProvider.request({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                to: avatarAddress,
-                data: safeInterface.encodeFunctionData(
-                  'addOwnerWithThreshold',
-                  [pilotAddress, 1]
-                ),
-                from: avatarAddress,
-              },
-            ],
-          })
-        } else if (threshold > 1) {
-          // doesn't allow to execute with single signature, so we need to override the threshold
-          await tenderlyProvider.request({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                to: avatarAddress,
-                data: safeInterface.encodeFunctionData('changeThreshold', [1]),
-                from: avatarAddress,
-              },
-            ],
-          })
-        }
-      }
-
-      if (!canceled) return
-    }
-
-    prepareSafeForSimulation()
+    prepareSafeForSimulation(
+      { chainId, avatarAddress, moduleAddress, pilotAddress },
+      tenderlyProvider
+    )
 
     return () => {
       tenderlyProvider.deleteFork()
     }
-  }, [provider, chainId, connection])
+  }, [tenderlyProvider, chainId, avatarAddress, moduleAddress, pilotAddress])
 
   // delete fork when closing browser tab (the effect teardown won't be executed in that case)
   useBeforeUnload(() => {
     if (tenderlyProvider) tenderlyProvider.deleteFork()
   })
+
+  if (!tenderlyProvider) return null
 
   return (
     <TenderlyContext.Provider value={tenderlyProvider}>
@@ -97,6 +59,64 @@ const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
 }
 
 export default ProvideTenderly
+
+async function prepareSafeForSimulation(
+  {
+    chainId,
+    avatarAddress,
+    moduleAddress,
+    pilotAddress,
+  }: {
+    chainId: ChainId
+    avatarAddress: string
+    moduleAddress: string
+    pilotAddress: string
+  },
+  tenderlyProvider: TenderlyProvider
+) {
+  const safe = await initSafeProtocolKit(chainId, avatarAddress)
+
+  // If we simulate as a Safe owner, we might have to override the owners & threshold of the Safe to allow single signature transactions
+  if (!moduleAddress) {
+    const [owners, threshold] = await Promise.all([
+      safe.getOwners(),
+      safe.getThreshold(),
+    ])
+
+    const pilotIsOwner = owners.some(
+      (owner) => owner.toLowerCase() === pilotAddress.toLowerCase()
+    )
+
+    if (!pilotIsOwner) {
+      // the pilot account is not an owner, so we need to make it one and set the threshold to 1 at the same time
+      await tenderlyProvider.request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: avatarAddress,
+            data: safeInterface.encodeFunctionData('addOwnerWithThreshold', [
+              pilotAddress,
+              1,
+            ]),
+            from: avatarAddress,
+          },
+        ],
+      })
+    } else if (threshold > 1) {
+      // doesn't allow to execute with single signature, so we need to override the threshold
+      await tenderlyProvider.request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: avatarAddress,
+            data: safeInterface.encodeFunctionData('changeThreshold', [1]),
+            from: avatarAddress,
+          },
+        ],
+      })
+    }
+  }
+}
 
 export interface TenderlyTransactionInfo {
   id: string
@@ -157,9 +177,9 @@ export class TenderlyProvider extends EventEmitter {
 
   private tenderlyForkApi: string
 
-  constructor(provider: Eip1193Provider, chainId: number) {
+  constructor(chainId: ChainId) {
     super()
-    this.provider = provider
+    this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
     this.chainId = chainId
     this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
   }

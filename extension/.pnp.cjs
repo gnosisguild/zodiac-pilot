@@ -30,7 +30,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-            ["@ethersproject/experimental", "npm:5.7.0"],\
             ["@ethersproject/providers", "npm:5.7.2"],\
             ["@gnosis.pm/zodiac", "npm:3.4.2"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\
@@ -1908,18 +1907,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ethersproject/logger", "npm:5.7.0"],\
             ["@ethersproject/properties", "npm:5.7.0"],\
             ["@ethersproject/transactions", "npm:5.7.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@ethersproject/experimental", [\
-        ["npm:5.7.0", {\
-          "packageLocation": "./.yarn/cache/@ethersproject-experimental-npm-5.7.0-692be0d4ae-a4973371be.zip/node_modules/@ethersproject/experimental/",\
-          "packageDependencies": [\
-            ["@ethersproject/experimental", "npm:5.7.0"],\
-            ["@ethersproject/web", "npm:5.7.1"],\
-            ["ethers", "npm:5.7.2"],\
-            ["scrypt-js", "npm:3.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17180,7 +17167,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["zodiac-pilot", "workspace:."],\
             ["@ethersproject/abi", "npm:5.7.0"],\
             ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-            ["@ethersproject/experimental", "npm:5.7.0"],\
             ["@ethersproject/providers", "npm:5.7.2"],\
             ["@gnosis.pm/zodiac", "npm:3.4.2"],\
             ["@safe-global/api-kit", "npm:1.3.1"],\

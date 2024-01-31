@@ -18,7 +18,7 @@ import {
 } from '../chains'
 import { Eip1193Provider } from '../types'
 
-interface MetaMaskContextT {
+export interface MetaMaskContextT {
   provider: Eip1193Provider | undefined
   connect: () => Promise<{ chainId: number; accounts: string[] }>
   switchChain: (chainId: ChainId) => Promise<void>

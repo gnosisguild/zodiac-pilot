@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 
 import Eip1193Bridge from '../bridge/Eip1193Bridge'
 import SafeAppBridge from '../bridge/SafeAppBridge'
@@ -16,7 +16,10 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
   const eip1193BridgeRef = useRef<Eip1193Bridge | null>(null)
   const safeAppBridgeRef = useRef<SafeAppBridge | null>(null)
 
-  useEffect(() => {
+  // We need the message listener to be set up before the iframe content window is loaded.
+  // Otherwise we might miss the initial handshake message from the Safe SDK.
+  // Using a layout effect ensures that the listeners are set synchronously after DOM flush.
+  useLayoutEffect(() => {
     if (!provider) return
 
     // establish EIP-1193 bridge
@@ -40,7 +43,6 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
       safeAppBridgeRef.current?.handleMessage(ev)
     }
     window.addEventListener('message', handle)
-    console.log('messages will be handled')
 
     return () => {
       window.removeEventListener('message', handle)

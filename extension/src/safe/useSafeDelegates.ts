@@ -20,7 +20,7 @@ export const useSafeDelegates = (
   useEffect(() => {
     if (!chainId || !checksumSafeAddress) return
 
-    const safeApiKit = initSafeApiKit(provider, chainId as ChainId)
+    const safeApiKit = initSafeApiKit(chainId as ChainId)
 
     setLoading(true)
     let canceled = false

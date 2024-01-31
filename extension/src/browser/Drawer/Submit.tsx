@@ -1,4 +1,3 @@
-import { providers } from 'ethers'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
@@ -16,9 +15,10 @@ import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
 import classes from './style.module.css'
+import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 
 const Submit: React.FC = () => {
-  const { provider, connection } = useConnection()
+  const { connection } = useConnection()
   const { chainId, pilotAddress, providerType } = connection
   const dispatch = useDispatch()
 
@@ -61,16 +61,15 @@ const Submit: React.FC = () => {
 
     // wait for transaction to be mined
     const realBatchTransactionHash = await waitForMultisigExecution(
-      provider,
       chainId,
       batchTransactionHash
     )
     console.log(
       `Transaction batch ${batchTransactionHash} has been executed with transaction hash ${realBatchTransactionHash}`
     )
-    const receipt = await new providers.Web3Provider(
-      provider
-    ).waitForTransaction(realBatchTransactionHash)
+    const receipt = await getReadOnlyProvider(chainId).waitForTransaction(
+      realBatchTransactionHash
+    )
     console.log(
       `Transaction ${realBatchTransactionHash} has been mined`,
       receipt
