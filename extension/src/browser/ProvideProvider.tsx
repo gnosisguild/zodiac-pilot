@@ -14,7 +14,7 @@ import {
   useTenderlyProvider,
   WrappingProvider,
 } from '../providers'
-import { useConnection } from '../settings'
+import { useConnection } from '../connections'
 import { Eip1193Provider } from '../types'
 
 import fetchAbi from './fetchAbi'

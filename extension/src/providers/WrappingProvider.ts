@@ -7,7 +7,8 @@ import { MetaTransaction } from 'react-multisend'
 import { initSafeApiKit, sendTransaction } from '../safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
+const RolesInterface =
+  ContractFactories[KnownContracts.ROLES_V1].createInterface()
 const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
@@ -19,7 +20,7 @@ export function wrapRequest(
   }
 
   let data: string
-  if (connection.moduleType === KnownContracts.ROLES) {
+  if (connection.moduleType === KnownContracts.ROLES_V1) {
     data = RolesInterface.encodeFunctionData('execTransactionWithRole', [
       request.to || '',
       request.value || 0,

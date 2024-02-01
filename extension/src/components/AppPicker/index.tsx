@@ -2,7 +2,7 @@ import cn from 'classnames'
 import React from 'react'
 
 import PUBLIC_PATH from '../../publicPath'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 
 import aaveLogo from './images/aave.png'
 import agaveLogo from './images/agave.png'

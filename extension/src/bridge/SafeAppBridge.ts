@@ -20,7 +20,7 @@ import {
   getBalances,
   getTransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
-import { ChainId, CHAIN_CURRENCY, NETWORK_NAME, CHAIN_PREFIX } from '../chains'
+import { ChainId, CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
 import { Connection, Eip1193Provider } from '../types'
 import { reloadIframe, requestIframeHref } from '../location'
 
@@ -144,7 +144,7 @@ export default class SafeAppBridge {
       isReadOnly: false,
       network:
         LEGACY_CHAIN_NAME[this.connection.chainId] ||
-        NETWORK_NAME[this.connection.chainId].toUpperCase(),
+        CHAIN_NAME[this.connection.chainId].toUpperCase(),
     }),
 
     [Methods.getSafeBalances]: ({ currency = 'usd' }: GetBalanceParams) => {
@@ -197,7 +197,7 @@ export default class SafeAppBridge {
     [Methods.getChainInfo]: () => {
       const { chainId } = this.connection
       return {
-        chainName: NETWORK_NAME[chainId],
+        chainName: CHAIN_NAME[chainId],
         chainId,
         shortName: CHAIN_PREFIX[chainId],
         nativeCurrency: CHAIN_CURRENCY[chainId],

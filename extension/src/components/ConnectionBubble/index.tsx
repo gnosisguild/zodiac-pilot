@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useConnectionsHash } from '../../routing'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
 import Box from '../Box'

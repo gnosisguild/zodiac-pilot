@@ -98,7 +98,7 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   11155111: 'ETH',
 }
 
-export const NETWORK_NAME: Record<ChainId, string> = {
+export const CHAIN_NAME: Record<ChainId, string> = {
   1: 'Ethereum',
   4: 'Rinkeby',
   5: 'Görli',

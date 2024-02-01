@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 import Eip1193Bridge from '../bridge/Eip1193Bridge'
 import SafeAppBridge from '../bridge/SafeAppBridge'
-import { useConnection } from '../settings'
+import { useConnection } from '../connections'
 
 import { useProvider } from './ProvideProvider'
 

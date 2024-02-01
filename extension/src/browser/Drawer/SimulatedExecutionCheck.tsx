@@ -5,7 +5,7 @@ import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 import { Flex, Spinner, Tag } from '../../components'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 import { Connection } from '../../types'
 
 import classes from './style.module.css'
