@@ -32,7 +32,7 @@ const APP_CONFIG = [
     name: 'Uniswap',
     url: 'https://app.uniswap.org',
     logoUrl: uniswapLogo,
-    networks: [1, 5],
+    networks: [1, 5, 11155111],
   },
   {
     name: 'Honeyswap',
@@ -44,7 +44,7 @@ const APP_CONFIG = [
     name: 'Curve',
     url: 'https://curve.fi/',
     logoUrl: curveLogo,
-    networks: [1],
+    networks: [1, 100],
   },
   {
     name: 'Curve',
@@ -56,7 +56,7 @@ const APP_CONFIG = [
     name: 'Aave',
     url: 'https://app.aave.com/#/markets',
     logoUrl: aaveLogo,
-    networks: [1],
+    networks: [1, 100],
   },
   {
     name: 'Agave',
@@ -98,7 +98,7 @@ const APP_CONFIG = [
     name: 'Cowswap',
     url: 'https://swap.cow.fi/',
     logoUrl: cowswapLogo,
-    networks: [1, 5, 100],
+    networks: [1, 5, 100, 11155111],
   },
   {
     name: 'Saddle',
@@ -122,7 +122,7 @@ const APP_CONFIG = [
     name: 'Sushiswap',
     url: 'https://app.sushi.com/',
     logoUrl: sushiswapLogo,
-    networks: [1, 5, 100],
+    networks: [1, 5, 100, 11155111],
   },
   { name: 'Unit', url: 'https://unit.xyz/', logoUrl: unitLogo, networks: [1] },
   {
