@@ -95,7 +95,7 @@ class ForkProvider extends EventEmitter {
         // special handling for Snapshot vote signatures
         const tx = translateSignSnapshotVote(params[0] || {})
         if (tx) {
-          const txHash = await this.sendMetaTransaction(tx)
+          const safeTxHash = await this.sendMetaTransaction(tx)
 
           // TODO we probably won't even need this, but for now we keep it for debugging purposes
           const safeMessageHash = await safeInterface.encodeFunctionData(
@@ -103,13 +103,14 @@ class ForkProvider extends EventEmitter {
             [this.avatarAddress, typedDataHash(params[0])]
           )
           console.log('Snapshot vote signed', {
-            txHash,
+            safeTxHash,
             safeMessageHash,
             typedDataHash: typedDataHash(params[0]),
           })
 
-          // return empty signature, supposing that the receiver implements EIP-1271
-          return '0x'
+          // The Safe App SDK expects a response in the format of `{ safeTxHash }` for on-chain signatures.
+          // So we make the safeTxHash available by returning it as the signature.
+          return safeTxHash
         }
 
         // TODO support this via Safe's SignMessageLib

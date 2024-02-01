@@ -7,8 +7,8 @@ import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
-  [4]: 'https://safe-transaction-rinkeby.safe.global',
-  [5]: 'https://safe-transaction-goerli.safe.global',
+  [4]: undefined, // not available
+  [5]: undefined, // not available
   [10]: 'https://safe-transaction-optimism.safe.global',
   [56]: 'https://safe-transaction-bsc.safe.global',
   [100]: 'https://safe-transaction-gnosis-chain.safe.global',
@@ -18,6 +18,7 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [42220]: undefined, // not available
   [73799]: 'https://safe-transaction-volta.safe.global',
   [80001]: undefined, // not available
+  [11155111]: 'https://safe-transaction-sepolia.safe.global',
 }
 
 export const initSafeApiKit = (chainId: ChainId) => {

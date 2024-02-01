@@ -174,18 +174,24 @@ export default class SafeAppBridge {
       )
     },
 
-    [Methods.signMessage]: ({ message }: SignMessageParams) => {
-      return this.provider.request({
+    [Methods.signMessage]: async ({ message }: SignMessageParams) => {
+      // assume on-chain signature
+      const safeTxHash = await this.provider.request({
         method: 'eth_sign',
         params: [message],
       })
+      return { safeTxHash }
     },
 
-    [Methods.signTypedMessage]: ({ typedData }: SignTypedMessageParams) => {
-      return this.provider.request({
+    [Methods.signTypedMessage]: async ({
+      typedData,
+    }: SignTypedMessageParams) => {
+      // assume on-chain signature
+      const safeTxHash = await this.provider.request({
         method: 'eth_signTypedData_v4',
         params: [typedData],
       })
+      return { safeTxHash }
     },
 
     [Methods.getChainInfo]: () => {
