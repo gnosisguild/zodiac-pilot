@@ -9,7 +9,9 @@ import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/sr
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
 import { safeInterface } from '../safe'
-import { hexlify } from 'ethers/lib/utils'
+import { hexlify, _TypedDataEncoder } from 'ethers/lib/utils'
+import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
+import { typedDataHash } from '../safe/signing'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -88,6 +90,28 @@ class ForkProvider extends EventEmitter {
       }
 
       case 'eth_signTypedData_v4': {
+        console.log('eth_signTypedData_v4', params)
+
+        // special handling for Snapshot vote signatures
+        const tx = translateSignSnapshotVote(params[0] || {})
+        if (tx) {
+          const txHash = await this.sendMetaTransaction(tx)
+
+          // TODO we probably won't even need this, but for now we keep it for debugging purposes
+          const safeMessageHash = await safeInterface.encodeFunctionData(
+            'getMessageHashForSafe',
+            [this.avatarAddress, typedDataHash(params[0])]
+          )
+          console.log('Snapshot vote signed', {
+            txHash,
+            safeMessageHash,
+            typedDataHash: typedDataHash(params[0]),
+          })
+
+          // return empty signature, supposing that the receiver implements EIP-1271
+          return '0x'
+        }
+
         // TODO support this via Safe's SignMessageLib
         throw new UnsupportedMethodError(
           'eth_signTypedData_v4 is not supported'
@@ -95,52 +119,13 @@ class ForkProvider extends EventEmitter {
       }
 
       case 'eth_sendTransaction': {
-        // take a snapshot and record the transaction
-        const checkpointId: string = await this.provider.request({
-          method: 'evm_snapshot',
-        })
-
         const txData = params[0] as TransactionData
-        const metaTx: MetaTransaction = {
+        return await this.sendMetaTransaction({
           to: txData.to || ZERO_ADDRESS,
           value: `${txData.value || 0}`,
           data: txData.data || '',
           operation: 0,
-        }
-        this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
-
-        // Instead of simulating with the avatar as sender, we simulate going through the Safe contract with the module or owner as sender (if set).
-        // This is necessary to make sure the simulation succeeds for some edge cases: If a contract calls `.transfer()` on the sender's address this comes only with a 2300 gas stipend, not enough to run a cold Safe's `fallback` function.
-        let finalRequest = request
-        if (this.moduleAddress) {
-          finalRequest = {
-            method,
-            params: [
-              execTransactionFromModule(
-                metaTx,
-                this.avatarAddress,
-                this.moduleAddress,
-                await this.blockGasLimitPromise
-              ),
-            ],
-          }
-        } else if (this.ownerAddress) {
-          finalRequest = {
-            method,
-            params: [
-              execTransaction(
-                metaTx,
-                this.avatarAddress,
-                this.ownerAddress,
-                await this.blockGasLimitPromise
-              ),
-            ],
-          }
-        }
-        const result = await this.provider.request(finalRequest)
-
-        this.handlers.onTransactionSent(checkpointId, result)
-        return result
+        })
       }
     }
 
@@ -148,9 +133,12 @@ class ForkProvider extends EventEmitter {
   }
 
   /**
-   * This is a special method that is used for replaying already recorded transactions.
-   * While transactions recorded from apps will generally be regular calls, the transaction translation feature allows for delegatecalls.
-   * Such delegatecalls cannot be simulated directly, but only by going through the avatar.
+   * While transactions recorded from EIP-1193 providers will generally be regular calls, transactions submitted through the Safe Apps SDK or resulting from transaction translations can be delegatecalls.
+   * Such delegatecalls cannot be simulated directly from the avatar address, but only by going through the avatar's execution API.
+   *
+   * Even for regular calls (operation: 0) this method is useful to simulate the transaction through the Safe contract with the module or owner as sender (if set).
+   * This is necessary to make sure the simulation succeeds for some edge cases: If a contract calls `.transfer()` on the sender's address this comes only with a 2300 gas stipend, not enough to run a cold Safe's `fallback` function.
+   *
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
   async sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
