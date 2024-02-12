@@ -1,12 +1,16 @@
+import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { JsonRpcError } from '../types'
-import { Permissions__factory, Roles__factory } from '../types/typechain'
 
-const permissionsInterface = Permissions__factory.createInterface()
-const rolesInterface = Roles__factory.createInterface()
+const RolesV1Interface =
+  ContractFactories[KnownContracts.ROLES_V1].createInterface()
+const RolesV1PermissionsInterface =
+  ContractFactories[KnownContracts.PERMISSIONS].createInterface()
+const RolesV2Interface =
+  ContractFactories[KnownContracts.ROLES_V2].createInterface()
 
-const KNOWN_ERRORS = Object.keys(rolesInterface.errors).concat(
-  Object.keys(permissionsInterface.errors)
-)
+const KNOWN_ERRORS = Object.keys(RolesV1Interface.errors)
+  .concat(Object.keys(RolesV1PermissionsInterface.errors))
+  .concat(Object.keys(RolesV2Interface.errors))
 
 export default function decodeRolesError(error: JsonRpcError) {
   // The errors thrown when a transaction is reverted use different formats, depending on:
@@ -29,11 +33,15 @@ export default function decodeRolesError(error: JsonRpcError) {
 
   if (revertData.startsWith('0x')) {
     const rolesError =
-      Object.keys(rolesInterface.errors).find(
-        (errSig) => rolesInterface.getSighash(errSig) === revertData
+      Object.keys(RolesV1Interface.errors).find(
+        (errSig) => RolesV1Interface.getSighash(errSig) === revertData
       ) ||
-      Object.keys(permissionsInterface.errors).find(
-        (errSig) => permissionsInterface.getSighash(errSig) === revertData
+      Object.keys(RolesV1PermissionsInterface.errors).find(
+        (errSig) =>
+          RolesV1PermissionsInterface.getSighash(errSig) === revertData
+      ) ||
+      Object.keys(RolesV2Interface.errors).find(
+        (errSig) => RolesV2Interface.getSighash(errSig) === revertData
       )
 
     if (rolesError) return rolesError

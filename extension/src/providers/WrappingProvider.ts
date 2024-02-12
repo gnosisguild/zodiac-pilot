@@ -9,8 +9,6 @@ import { Connection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
-const RolesV2Interface =
-  ContractFactories[KnownContracts.ROLES_V2].createInterface()
 const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
@@ -24,6 +22,7 @@ export function wrapRequest(
   let data: string
   switch (connection.moduleType) {
     case KnownContracts.ROLES_V1:
+    case KnownContracts.ROLES_V2:
       data = RolesV1Interface.encodeFunctionData('execTransactionWithRole', [
         request.to || '',
         request.value || 0,
@@ -32,9 +31,6 @@ export function wrapRequest(
         connection.roleId || 0,
         true,
       ])
-      break
-    case KnownContracts.ROLES_V2:
-      // TODO
       break
     case KnownContracts.DELAY:
       data = DelayInterface.encodeFunctionData('execTransactionFromModule', [

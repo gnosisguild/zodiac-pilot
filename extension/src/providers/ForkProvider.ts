@@ -97,7 +97,7 @@ class ForkProvider extends EventEmitter {
         if (tx) {
           const safeTxHash = await this.sendMetaTransaction(tx)
 
-          // TODO we probably won't even need this, but for now we keep it for debugging purposes
+          // TODO we don't even need this, but for now we keep it for debugging purposes
           const safeMessageHash = await safeInterface.encodeFunctionData(
             'getMessageHashForSafe',
             [this.avatarAddress, typedDataHash(params[0])]
