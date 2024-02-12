@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
 
-import { ChainId, MULTI_SEND_ADDRESS } from '../networks'
+import { ChainId, MULTI_SEND_ADDRESS } from '../chains'
 import {
   ForkProvider,
   useTenderlyProvider,

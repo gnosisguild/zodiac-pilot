@@ -8,7 +8,7 @@ import { SignClient } from '@walletconnect/sign-client'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
 
-import { RPC } from '../networks'
+import { RPC } from '../chains'
 import { waitForMultisigExecution } from '../safe'
 import { JsonRpcError } from '../types'
 
@@ -68,11 +68,7 @@ class WalletConnectEthereumMultiProvider extends WalletConnectEthereumProvider {
 
     if (method === 'eth_sendTransaction') {
       const safeTxHash = (await requestWithCorrectErrors(request)) as string
-      const txHash = await waitForMultisigExecution(
-        this.signer,
-        this.chainId,
-        safeTxHash
-      )
+      const txHash = await waitForMultisigExecution(this.chainId, safeTxHash)
       return txHash
     }
 
@@ -127,7 +123,7 @@ class WalletConnectJsonRpcError extends Error implements JsonRpcError {
   }
 }
 
-interface WalletConnectResult {
+export interface WalletConnectResult {
   provider: WalletConnectEthereumMultiProvider
   connected: boolean
   connect(): Promise<{ chainId: number; accounts: string[] }>

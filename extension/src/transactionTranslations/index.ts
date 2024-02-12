@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MetaTransaction } from 'react-multisend'
 
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { useConnection } from '../settings'
 
 import cowswapSetPreSignature from './cowswapSetPreSignature'

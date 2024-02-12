@@ -9,7 +9,7 @@ import { Box } from '../../components'
 import { useConnection } from '../../settings'
 
 import classes from './style.module.css'
-import { EXPLORER_API_KEY } from '../../networks'
+import { EXPLORER_API_KEY } from '../../chains'
 
 interface Props {
   value: CallContractTransactionInput

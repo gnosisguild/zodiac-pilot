@@ -1,4 +1,3 @@
-import { providers } from 'ethers'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
@@ -6,7 +5,7 @@ import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { ChainId, EXPLORER_URL, NETWORK_PREFIX } from '../../networks'
+import { ChainId, EXPLORER_URL, CHAIN_PREFIX } from '../../chains'
 import { waitForMultisigExecution } from '../../providers'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useConnection } from '../../settings'
@@ -16,9 +15,10 @@ import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
 import classes from './style.module.css'
+import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 
 const Submit: React.FC = () => {
-  const { provider, connection } = useConnection()
+  const { connection } = useConnection()
   const { chainId, pilotAddress, providerType } = connection
   const dispatch = useDispatch()
 
@@ -61,16 +61,15 @@ const Submit: React.FC = () => {
 
     // wait for transaction to be mined
     const realBatchTransactionHash = await waitForMultisigExecution(
-      provider,
       chainId,
       batchTransactionHash
     )
     console.log(
       `Transaction batch ${batchTransactionHash} has been executed with transaction hash ${realBatchTransactionHash}`
     )
-    const receipt = await new providers.Web3Provider(
-      provider
-    ).waitForTransaction(realBatchTransactionHash)
+    const receipt = await getReadOnlyProvider(chainId).waitForTransaction(
+      realBatchTransactionHash
+    )
     console.log(
       `Transaction ${realBatchTransactionHash} has been mined`,
       receipt
@@ -150,7 +149,7 @@ const AwaitingSignatureModal: React.FC<{
         <p>
           <a
             className={classes.safeAppLink}
-            href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${pilotAddress}`}
+            href={`https://app.safe.global/${CHAIN_PREFIX[chainId]}:${pilotAddress}`}
             target="_blank"
             rel="noreferrer"
           >

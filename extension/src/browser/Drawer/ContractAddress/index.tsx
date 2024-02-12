@@ -9,7 +9,7 @@ import {
   EXPLORER_API_KEY,
   EXPLORER_API_URL,
   EXPLORER_URL,
-} from '../../../networks'
+} from '../../../chains'
 import { useConnection } from '../../../settings'
 
 import classes from './style.module.css'

@@ -82,8 +82,13 @@ class ForkProvider extends EventEmitter {
         return true
       }
 
-      // Uniswap will try to use this for ERC-20 permits, but we prefer to do a regular approval as part of the batch
+      case 'eth_sign': {
+        // TODO support this via Safe's SignMessageLib
+        throw new UnsupportedMethodError('eth_sign is not supported')
+      }
+
       case 'eth_signTypedData_v4': {
+        // TODO support this via Safe's SignMessageLib
         throw new UnsupportedMethodError(
           'eth_signTypedData_v4 is not supported'
         )

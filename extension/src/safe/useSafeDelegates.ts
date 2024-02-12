@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 
@@ -10,7 +10,7 @@ export const useSafeDelegates = (
   safeAddress: string,
   connectionId?: string
 ) => {
-  const { provider, connected, chainId } = useConnection(connectionId)
+  const { provider, chainId } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [delegates, setDelegates] = useState<string[]>([])
@@ -18,9 +18,9 @@ export const useSafeDelegates = (
   const checksumSafeAddress = validateAddress(safeAddress)
 
   useEffect(() => {
-    if (!connected || !chainId || !checksumSafeAddress) return
+    if (!chainId || !checksumSafeAddress) return
 
-    const safeApiKit = initSafeApiKit(provider, chainId as ChainId)
+    const safeApiKit = initSafeApiKit(chainId as ChainId)
 
     setLoading(true)
     let canceled = false
@@ -44,7 +44,7 @@ export const useSafeDelegates = (
       setDelegates([])
       canceled = true
     }
-  }, [provider, checksumSafeAddress, connected, chainId])
+  }, [provider, checksumSafeAddress, chainId])
 
   return { loading, delegates }
 }

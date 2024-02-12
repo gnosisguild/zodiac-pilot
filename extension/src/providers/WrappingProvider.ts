@@ -95,10 +95,7 @@ class WrappingProvider extends EventEmitter {
 
         if (!this.connection.moduleAddress) {
           // use safeTxGas estimation for direct execution
-          const safeApiKit = initSafeApiKit(
-            this.provider,
-            this.connection.chainId
-          )
+          const safeApiKit = initSafeApiKit(this.connection.chainId)
           const result = await safeApiKit.estimateSafeTransaction(
             this.connection.avatarAddress,
             request

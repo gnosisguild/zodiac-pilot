@@ -1,4 +1,4 @@
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { SupportedModuleType } from '../settings/Connection/useZodiacModules'
 
 export enum ProviderType {

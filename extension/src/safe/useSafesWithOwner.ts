@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { ChainId } from '../networks'
+import { ChainId } from '../chains'
 import { useConnection } from '../settings'
 import { validateAddress } from '../utils'
 
@@ -10,7 +10,7 @@ export const useSafesWithOwner = (
   ownerAddress: string,
   connectionId?: string
 ) => {
-  const { provider, connected, chainId } = useConnection(connectionId)
+  const { chainId } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])
@@ -18,9 +18,9 @@ export const useSafesWithOwner = (
   const checksumOwnerAddress = validateAddress(ownerAddress)
 
   useEffect(() => {
-    if (!connected || !chainId || !checksumOwnerAddress) return
+    if (!chainId || !checksumOwnerAddress) return
 
-    const safeService = initSafeApiKit(provider, chainId as ChainId)
+    const safeService = initSafeApiKit(chainId as ChainId)
 
     setLoading(true)
     let canceled = false
@@ -44,7 +44,7 @@ export const useSafesWithOwner = (
       setSafes([])
       canceled = true
     }
-  }, [provider, checksumOwnerAddress, connected, chainId])
+  }, [checksumOwnerAddress, chainId])
 
   return { loading, safes }
 }

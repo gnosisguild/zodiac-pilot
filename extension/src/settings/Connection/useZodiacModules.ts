@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
 import { useConnection } from '../connectionHooks'
-import { ChainId, RPC } from '../../networks'
+import { ChainId, RPC } from '../../chains'
 
 const SUPPORTED_MODULES = [KnownContracts.DELAY, KnownContracts.ROLES]
 export type SupportedModuleType = KnownContracts.DELAY | KnownContracts.ROLES

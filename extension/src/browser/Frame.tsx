@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 
-import BridgeHost from '../bridge/host'
+import Eip1193Bridge from '../bridge/Eip1193Bridge'
+import SafeAppBridge from '../bridge/SafeAppBridge'
 import { useConnection } from '../settings'
 
 import { useProvider } from './ProvideProvider'
@@ -12,20 +13,34 @@ type Props = {
 const BrowserFrame: React.FC<Props> = ({ src }) => {
   const provider = useProvider()
   const { connection } = useConnection()
-  const bridgeHostRef = useRef<BridgeHost | null>(null)
+  const eip1193BridgeRef = useRef<Eip1193Bridge | null>(null)
+  const safeAppBridgeRef = useRef<SafeAppBridge | null>(null)
 
-  useEffect(() => {
+  // We need the message listener to be set up before the iframe content window is loaded.
+  // Otherwise we might miss the initial handshake message from the Safe SDK.
+  // Using a layout effect ensures that the listeners are set synchronously after DOM flush.
+  useLayoutEffect(() => {
     if (!provider) return
 
-    if (!bridgeHostRef.current) {
-      bridgeHostRef.current = new BridgeHost(provider, connection)
+    // establish EIP-1193 bridge
+    if (!eip1193BridgeRef.current) {
+      eip1193BridgeRef.current = new Eip1193Bridge(provider, connection)
     } else {
-      bridgeHostRef.current.setProvider(provider)
-      bridgeHostRef.current.setConnection(connection)
+      eip1193BridgeRef.current.setProvider(provider)
+      eip1193BridgeRef.current.setConnection(connection)
+    }
+
+    // establish Safe App bridge
+    if (!safeAppBridgeRef.current) {
+      safeAppBridgeRef.current = new SafeAppBridge(provider, connection)
+    } else {
+      safeAppBridgeRef.current.setProvider(provider)
+      safeAppBridgeRef.current.setConnection(connection)
     }
 
     const handle = (ev: MessageEvent<any>) => {
-      bridgeHostRef.current?.handleMessage(ev)
+      eip1193BridgeRef.current?.handleMessage(ev)
+      safeAppBridgeRef.current?.handleMessage(ev)
     }
     window.addEventListener('message', handle)
 

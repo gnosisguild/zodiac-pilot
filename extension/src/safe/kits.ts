@@ -2,8 +2,8 @@ import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import * as ethers from 'ethers'
 
-import { ChainId } from '../networks'
-import { Eip1193Provider } from '../types'
+import { ChainId } from '../chains'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
@@ -20,9 +20,7 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [80001]: undefined, // not available
 }
 
-export const initSafeApiKit = (provider: Eip1193Provider, chainId: ChainId) => {
-  const web3Provider = new ethers.providers.Web3Provider(provider)
-
+export const initSafeApiKit = (chainId: ChainId) => {
   const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
   if (!txServiceUrl) {
     throw new Error(`service not available for chain #${chainId}`)
@@ -30,21 +28,19 @@ export const initSafeApiKit = (provider: Eip1193Provider, chainId: ChainId) => {
 
   const ethAdapter = new EthersAdapter({
     ethers,
-    signerOrProvider: web3Provider.getSigner(),
+    signerOrProvider: getReadOnlyProvider(chainId),
   })
 
   return new SafeApiKit({ txServiceUrl, ethAdapter })
 }
 
 export const initSafeProtocolKit = async (
-  provider: Eip1193Provider,
+  chainId: ChainId,
   safeAddress: string
 ) => {
-  const web3Provider = new ethers.providers.Web3Provider(provider)
-
   const ethAdapter = new EthersAdapter({
     ethers,
-    signerOrProvider: web3Provider.getSigner(),
+    signerOrProvider: getReadOnlyProvider(chainId),
   })
 
   return await Safe.create({ ethAdapter, safeAddress })

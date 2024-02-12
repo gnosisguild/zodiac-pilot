@@ -12,13 +12,13 @@ import { toast } from 'react-toastify'
 import {
   ChainId,
   EXPLORER_URL,
-  NETWORK_CURRENCY,
+  CHAIN_CURRENCY,
   NETWORK_NAME,
   RPC,
-} from '../networks'
+} from '../chains'
 import { Eip1193Provider } from '../types'
 
-interface MetaMaskContextT {
+export interface MetaMaskContextT {
   provider: Eip1193Provider | undefined
   connect: () => Promise<{ chainId: number; accounts: string[] }>
   switchChain: (chainId: ChainId) => Promise<void>
@@ -207,8 +207,8 @@ const switchChain = async (chainId: ChainId) => {
             chainId: `0x${chainId.toString(16)}`,
             chainName: NETWORK_NAME[chainId],
             nativeCurrency: {
-              name: NETWORK_CURRENCY[chainId],
-              symbol: NETWORK_CURRENCY[chainId],
+              name: CHAIN_CURRENCY[chainId],
+              symbol: CHAIN_CURRENCY[chainId],
               decimals: 18,
             },
             rpcUrls: [RPC[chainId]],
