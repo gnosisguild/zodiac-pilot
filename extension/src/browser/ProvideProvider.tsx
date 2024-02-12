@@ -112,10 +112,6 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       encodeSingle(txState.input)
     )
 
-    if (!chainId) {
-      throw new Error('chainId is undefined')
-    }
-
     console.log(
       transactions.length === 1
         ? 'submitting transaction...'
@@ -130,7 +126,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           ? metaTransactions[0]
           : encodeMulti(
               metaTransactions,
-              MULTI_SEND_ADDRESS[chainId as ChainId]
+              MULTI_SEND_ADDRESS[connection.chainId]
             ),
       ],
     })
@@ -142,7 +138,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch, chainId])
+  }, [transactions, wrappingProvider, dispatch, connection.chainId])
 
   return (
     <ProviderContext.Provider
