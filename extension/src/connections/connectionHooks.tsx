@@ -238,6 +238,17 @@ const CONNECTION_STATE_MIGRATIONS: ConnectionStateMigration[] = [
       pilotAddress: connection.pilotAddress.toLowerCase(),
     }
   },
+
+  function renameRolesV1ModuleType(connection) {
+    // moduleType: 'roles' -> 'roles_v1' rename
+    return {
+      ...connection,
+      moduleType:
+        connection.moduleType === ('roles' as unknown)
+          ? KnownContracts.ROLES_V1
+          : connection.moduleType,
+    }
+  },
 ]
 
 // Apply all migrations to the given connections
