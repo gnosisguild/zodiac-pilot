@@ -13,7 +13,7 @@ import {
   ChainId,
   EXPLORER_URL,
   CHAIN_CURRENCY,
-  NETWORK_NAME,
+  CHAIN_NAME,
   RPC,
 } from '../chains'
 import { Eip1193Provider } from '../types'
@@ -205,7 +205,7 @@ const switchChain = async (chainId: ChainId) => {
         params: [
           {
             chainId: `0x${chainId.toString(16)}`,
-            chainName: NETWORK_NAME[chainId],
+            chainName: CHAIN_NAME[chainId],
             nativeCurrency: {
               name: CHAIN_CURRENCY[chainId],
               symbol: CHAIN_CURRENCY[chainId],

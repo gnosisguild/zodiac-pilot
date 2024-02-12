@@ -13,6 +13,7 @@ export const RPC = {
   42220: 'https://forno.celo.org',
   73799: 'https://volta-rpc.energyweb.org',
   80001: 'https://rpc-mumbai.maticvigil.com',
+  11155111: 'https://sepolia.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
 }
 
 export type ChainId = keyof typeof RPC
@@ -30,6 +31,7 @@ export const EXPLORER_URL: Record<ChainId, string> = {
   42220: 'https://explorer.celo.org',
   73799: 'https://volta-explorer.energyweb.org',
   80001: 'https:/testnet.polygonscan.com',
+  11155111: 'https://sepolia.etherscan.io',
 }
 
 export const EXPLORER_API_URL: Record<ChainId, string> = {
@@ -45,6 +47,7 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
   42220: 'https://explorer.celo.org/api',
   73799: 'https://volta-explorer.energyweb.org/api',
   80001: 'https://api-testnet.polygonscan.com/api',
+  11155111: 'https://api-sepolia.etherscan.io/api',
 }
 
 export const EXPLORER_API_KEY: Record<ChainId, string> = {
@@ -60,6 +63,7 @@ export const EXPLORER_API_KEY: Record<ChainId, string> = {
   42220: '',
   73799: '',
   80001: '',
+  11155111: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
 }
 
 export const CHAIN_PREFIX: Record<ChainId, string> = {
@@ -75,6 +79,7 @@ export const CHAIN_PREFIX: Record<ChainId, string> = {
   42220: 'celo',
   73799: 'vt',
   80001: 'maticmum',
+  11155111: 'sep',
 }
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
@@ -90,9 +95,10 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   42220: 'CELO',
   73799: 'VT',
   80001: 'MATIC',
+  11155111: 'ETH',
 }
 
-export const NETWORK_NAME: Record<ChainId, string> = {
+export const CHAIN_NAME: Record<ChainId, string> = {
   1: 'Ethereum',
   4: 'Rinkeby',
   5: 'Görli',
@@ -105,6 +111,7 @@ export const NETWORK_NAME: Record<ChainId, string> = {
   42220: 'Celo',
   73799: 'Volta Testnet',
   80001: 'Polygon Testnet',
+  11155111: 'Sepolia',
 }
 
 export const MULTI_SEND_ADDRESS: Record<ChainId, string> = {
@@ -189,7 +196,7 @@ export const MULTI_SEND_ADDRESS: Record<ChainId, string> = {
   // 333999: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
   // 421611: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
   // 421613: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
-  // 11155111: '0x998739BFdAAdde7C933B942a68053933098f9EDa',
+  11155111: '0x998739BFdAAdde7C933B942a68053933098f9EDa',
   // 1313161554: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
   // 1313161555: '0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761',
   // 1666600000: '0x998739BFdAAdde7C933B942a68053933098f9EDa',

@@ -7,18 +7,18 @@ import 'react-toastify/dist/ReactToastify.css'
 import './global.css'
 
 import Browser from './browser'
-import ConnectionsDrawer from './browser/ConnectionsDrawer'
+import ConnectionsDrawer from './connections/ConnectionsDrawer'
 import ProvideProvider from './browser/ProvideProvider'
 import { ProvideState } from './browser/state'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask, ProvideTenderly } from './providers'
 import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
-import { ProvideConnections, useConnection } from './settings'
+import { ProvideConnections, useConnection } from './connections'
 import {
   useConnections,
   useUpdateLastUsedConnection,
-} from './settings/connectionHooks'
+} from './connections/connectionHooks'
 import { validateAddress } from './utils'
 
 const Routes: React.FC = () => {

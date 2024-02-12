@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import React, { useContext, useEffect, useMemo } from 'react'
 
-import { useConnection } from '../settings/connectionHooks'
+import { useConnection } from '../connections'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
 import { initSafeProtocolKit } from '../safe/kits'

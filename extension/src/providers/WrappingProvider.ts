@@ -7,7 +7,8 @@ import { MetaTransaction } from 'react-multisend'
 import { initSafeApiKit, sendTransaction } from '../safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
 
-const RolesInterface = ContractFactories[KnownContracts.ROLES].createInterface()
+const RolesV1Interface =
+  ContractFactories[KnownContracts.ROLES_V1].createInterface()
 const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
@@ -19,24 +20,28 @@ export function wrapRequest(
   }
 
   let data: string
-  if (connection.moduleType === KnownContracts.ROLES) {
-    data = RolesInterface.encodeFunctionData('execTransactionWithRole', [
-      request.to || '',
-      request.value || 0,
-      request.data || '0x00',
-      ('operation' in request && request.operation) || 0,
-      connection.roleId || 0,
-      true,
-    ])
-  } else if (connection.moduleType === KnownContracts.DELAY) {
-    data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
-      request.to || '',
-      request.value || 0,
-      request.data || '0x00',
-      ('operation' in request && request.operation) || 0,
-    ])
-  } else {
-    throw new Error(`Unsupported module type: ${connection.moduleType}`)
+  switch (connection.moduleType) {
+    case KnownContracts.ROLES_V1:
+    case KnownContracts.ROLES_V2:
+      data = RolesV1Interface.encodeFunctionData('execTransactionWithRole', [
+        request.to || '',
+        request.value || 0,
+        request.data || '0x00',
+        ('operation' in request && request.operation) || 0,
+        connection.roleId || 0,
+        true,
+      ])
+      break
+    case KnownContracts.DELAY:
+      data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
+        request.to || '',
+        request.value || 0,
+        request.data || '0x00',
+        ('operation' in request && request.operation) || 0,
+      ])
+      break
+    default:
+      throw new Error(`Unsupported module type: ${connection.moduleType}`)
   }
 
   return {

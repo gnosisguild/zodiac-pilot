@@ -1,5 +1,5 @@
 import { ChainId } from '../chains'
-import { SupportedModuleType } from '../settings/Connection/useZodiacModules'
+import { SupportedModuleType } from '../connections/useZodiacModules'
 
 export enum ProviderType {
   WalletConnect,
@@ -9,13 +9,18 @@ export enum ProviderType {
 export type Connection = {
   id: string
   label: string
+
   moduleAddress: string
   avatarAddress: string
   pilotAddress: string
+
   chainId: ChainId
   providerType: ProviderType
   moduleType?: SupportedModuleType
+
+  /** A number for Roles v1, a bytes32 hex string for Roles v2  */
   roleId?: string
+
   lastUsed?: number
 }
 

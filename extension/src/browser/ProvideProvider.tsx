@@ -14,7 +14,7 @@ import {
   useTenderlyProvider,
   WrappingProvider,
 } from '../providers'
-import { useConnection } from '../settings'
+import { useConnection } from '../connections'
 import { Eip1193Provider } from '../types'
 
 import fetchAbi from './fetchAbi'
@@ -41,7 +41,7 @@ const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
-  const { provider, connection, chainId } = useConnection()
+  const { provider, connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
@@ -75,17 +75,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             payload: { input: inputRaw, isDelegateCall },
           })
 
-          if (!chainId) {
-            throw new Error('chainId is undefined')
-          }
-
           // Now we can take some time decoding the transaction for real and we update the state once that's done.
           const input = await decodeSingle(
             metaTx,
             new Web3Provider(provider),
             (address: string, data: string) =>
               fetchAbi(
-                chainId as ChainId,
+                connection.chainId,
                 address,
                 data,
                 new Web3Provider(provider)
@@ -108,17 +104,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           })
         },
       }),
-    [tenderlyProvider, provider, chainId, connection, dispatch]
+    [tenderlyProvider, provider, connection, dispatch]
   )
 
   const submitTransactions = useCallback(async () => {
     const metaTransactions = transactions.map((txState) =>
       encodeSingle(txState.input)
     )
-
-    if (!chainId) {
-      throw new Error('chainId is undefined')
-    }
 
     console.log(
       transactions.length === 1
@@ -134,7 +126,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           ? metaTransactions[0]
           : encodeMulti(
               metaTransactions,
-              MULTI_SEND_ADDRESS[chainId as ChainId]
+              MULTI_SEND_ADDRESS[connection.chainId]
             ),
       ],
     })
@@ -146,7 +138,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch, chainId])
+  }, [transactions, wrappingProvider, dispatch, connection.chainId])
 
   return (
     <ProviderContext.Provider

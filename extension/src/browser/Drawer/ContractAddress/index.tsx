@@ -10,7 +10,7 @@ import {
   EXPLORER_API_URL,
   EXPLORER_URL,
 } from '../../../chains'
-import { useConnection } from '../../../settings'
+import { useConnection } from '../../../connections'
 
 import classes from './style.module.css'
 

@@ -6,7 +6,7 @@ import {
 } from 'react-multisend'
 
 import { Box } from '../../components'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 
 import classes from './style.module.css'
 import { EXPLORER_API_KEY } from '../../chains'

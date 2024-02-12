@@ -23,14 +23,18 @@ export const signMessage = (message: string): MetaTransaction => ({
   operation: 1,
 })
 
-export const signTypedData = (data: EIP712TypedData) => {
+export const typedDataHash = (data: EIP712TypedData): string => {
   // We need to remove EIP712Domain from the types object since ethers does not like it
   const { EIP712Domain: _, ...types } = data.types
 
+  return _TypedDataEncoder.hash(data.domain as any, types, data.message)
+}
+
+export const signTypedData = (data: EIP712TypedData) => {
   return {
     to: SIGN_MESSAGE_LIB_ADDRESS,
     data: signMessageLib.interface.encodeFunctionData('signMessage', [
-      _TypedDataEncoder.hash(data.domain as any, types, data.message),
+      typedDataHash(data),
     ]),
     value: '0',
     operation: 1,

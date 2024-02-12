@@ -35,7 +35,7 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
 export default {
   title: 'Route through CowswapOrderSigner',
 
-  recommendedFor: [KnownContracts.ROLES],
+  recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
 
   translate: async (transaction, chainId) => {
     if (!COWSWAP_SUPPORTED_NETWORK[chainId]) {

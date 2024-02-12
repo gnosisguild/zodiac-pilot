@@ -3,7 +3,7 @@ import copy from 'copy-to-clipboard'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 import { validateAddress } from '../../utils'
 import Blockie from '../Blockie'
 import Box from '../Box'

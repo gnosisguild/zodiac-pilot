@@ -7,7 +7,7 @@ import { TransactionInput, TransactionType } from 'react-multisend'
 import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
 import { CHAIN_CURRENCY } from '../../chains'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 import { TransactionState } from '../state'
 
 import CallContract from './CallContract'
@@ -127,7 +127,7 @@ export const Transaction: React.FC<Props> = ({
   const [expanded, setExpanded] = useState(true)
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
-  const showRoles = connection.moduleType === KnownContracts.ROLES
+  const showRoles = connection.moduleType === KnownContracts.ROLES_V1
 
   return (
     <Box ref={elementRef} p={2} className={classes.container}>
@@ -179,7 +179,7 @@ export const TransactionBadge: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const { connection } = useConnection()
-  const showRoles = connection.moduleType === KnownContracts.ROLES
+  const showRoles = connection.moduleType === KnownContracts.ROLES_V1
 
   const elementRef = useScrollIntoView(scrollIntoView)
 

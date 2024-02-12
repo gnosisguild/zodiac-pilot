@@ -1,0 +1,123 @@
+.editContainer {
+  position: relative;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 0em;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: rgba(217, 212, 173, 0.4);
+  margin: 0.5em 0 0 0;
+}
+
+.launchButton {
+  width: auto;
+  padding: 4px 24px;
+}
+
+button.removeButton {
+  height: auto;
+  width: auto;
+  aspect-ratio: 1/1;
+  padding: 4px;
+  border: 3px double crimson;
+}
+
+button.removeButton:hover {
+  background-color: rgba(220, 20, 60, 0.2);
+}
+
+.backLink {
+  position: absolute;
+  top: -25px;
+  left: 0;
+  font-size: 0.8em;
+  text-decoration: none;
+}
+
+.form {
+  flex-grow: 1;
+}
+.status {
+  position: relative;
+  border: 1px solid;
+  border-color: var(--border-color);
+  border-radius: 50px;
+  background: rgb(0 0 0 / 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+}
+.status:before {
+  content: ' ';
+  position: absolute;
+  z-index: 1;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--border-color);
+  pointer-events: none;
+  border-radius: 50px;
+}
+
+.status svg {
+  border-radius: 50px;
+}
+
+.labelContainer {
+  overflow: hidden;
+}
+
+.labelContainer h3 {
+  font-size: 1.4em;
+  margin-bottom: 0;
+  line-height: 1.2;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.infoContainer {
+  padding: 0 0 0 45px;
+}
+
+.connectionItem {
+  position: relative;
+}
+button.connectionButton {
+  width: 100%;
+  padding: calc(var(--spacing-4));
+  background-color: rgba(39, 38, 30, 0.7);
+}
+button.connectionEdit {
+  position: relative;
+  z-index: 10;
+  width: auto;
+  background: none;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.errorIcon {
+  color: crimson;
+  font-size: 1.7em;
+}
+
+.errorInfo {
+  flex-grow: 1;
+}
+
+.error {
+  margin-top: 12px;
+  color: crimson;
+  background: #f4433640;
+  border: none;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+}

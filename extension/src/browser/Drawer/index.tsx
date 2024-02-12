@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { BlockButton, Box, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { wrapRequest } from '../../providers/WrappingProvider'
-import { useConnection } from '../../settings'
+import { useConnection } from '../../connections'
 import { useProvider } from '../ProvideProvider'
 import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
 

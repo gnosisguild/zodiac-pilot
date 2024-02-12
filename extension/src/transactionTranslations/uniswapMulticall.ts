@@ -12,7 +12,7 @@ const uniswapMulticallInterface = new Interface([
 export default {
   title: 'Unfold individual calls',
 
-  recommendedFor: [KnownContracts.ROLES],
+  recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
 
   translate: async (transaction) => {
     if (!transaction.data) {
