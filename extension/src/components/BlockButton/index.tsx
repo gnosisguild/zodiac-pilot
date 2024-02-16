@@ -9,7 +9,7 @@ type Props = React.DetailedHTMLProps<
 >
 
 const BoxButton: React.FC<Props> = ({ className, ...rest }) => (
-  <button className={cn(className, classes.button)} {...rest} />
+  <button className={cn(classes.button, className)} {...rest} />
 )
 
 export default BoxButton

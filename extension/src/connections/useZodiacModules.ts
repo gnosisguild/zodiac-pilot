@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { validateAddress } from '../utils'
 import { useConnection } from './connectionHooks'
 import { ChainId, RPC } from '../chains'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
@@ -44,7 +45,7 @@ export const useZodiacModules = (
 
   useEffect(() => {
     if (!chainId) return
-    const provider = new JsonRpcBatchProvider(RPC[chainId as ChainId], chainId)
+    const provider = getReadOnlyProvider(chainId as ChainId)
 
     setLoading(true)
     setError(false)
@@ -92,6 +93,9 @@ async function fetchModules(
       ) || []) as [KnownContracts | undefined, string]
 
       const implementationAddress = mastercopyAddress || moduleAddress
+
+      // 'roles' is the old name for roles_v1 is still configured as an alias in the zodiac package for backwards compatibility
+      if (type === KnownContracts.ROLES) type = KnownContracts.ROLES_V1
 
       if (!type) {
         // Not a proxy to one of our master copies. It might be a custom deployment.
