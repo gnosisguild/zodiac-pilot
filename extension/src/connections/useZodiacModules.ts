@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { validateAddress } from '../utils'
 import { useConnection } from './connectionHooks'
 import { ChainId, RPC } from '../chains'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
@@ -44,7 +45,7 @@ export const useZodiacModules = (
 
   useEffect(() => {
     if (!chainId) return
-    const provider = new JsonRpcBatchProvider(RPC[chainId as ChainId], chainId)
+    const provider = getReadOnlyProvider(chainId as ChainId)
 
     setLoading(true)
     setError(false)
