@@ -94,6 +94,9 @@ async function fetchModules(
 
       const implementationAddress = mastercopyAddress || moduleAddress
 
+      // 'roles' is the old name for roles_v1 is still configured as an alias in the zodiac package for backwards compatibility
+      if (type === KnownContracts.ROLES) type = KnownContracts.ROLES_V1
+
       if (!type) {
         // Not a proxy to one of our master copies. It might be a custom deployment.
         // We try to detect selectors from byte code and match them against the ABIs of known Zodiac modules.
