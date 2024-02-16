@@ -58,7 +58,7 @@ button.removeButton:hover {
 }
 
 .modifyButton {
-  position: absolute;
+  position: absolute !important;
   top: var(--spacing-4);
   right: var(--spacing-4);
   background: none;

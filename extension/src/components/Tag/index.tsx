@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Tag: React.FC<Props> = ({ head, children, color, className }) => (
-  <div className={cn(className, classes.container, classes[color])}>
+  <div className={cn(classes.container, classes[color], className)}>
     {head && <div className={classes.head}>{head}</div>}
     {children && <div className={classes.body}>{children}</div>}
   </div>

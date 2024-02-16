@@ -12,7 +12,7 @@ type Props = React.DetailedHTMLProps<
 
 const IconButton: React.FC<Props> = ({ className, danger, ...rest }) => (
   <button
-    className={cn(classes.button, className, { [classes.danger]: danger })}
+    className={cn(classes.button, { [classes.danger]: danger }, className)}
     {...rest}
   />
 )

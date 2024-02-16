@@ -53,7 +53,7 @@ const Address: React.FC<Props> = ({
   const displayAddress = shortenAddress(checksumAddress)
 
   return (
-    <Box rounded className={cn(className, classes.container)}>
+    <Box rounded className={cn(classes.container, className)}>
       <div className={classes.address}>{displayAddress}</div>
       <Box rounded className={classes.blockieContainer}>
         {address && <Blockie address={address} className={classes.blockies} />}
