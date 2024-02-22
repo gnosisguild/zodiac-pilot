@@ -129,22 +129,17 @@ export interface WalletConnectResult {
   connect(): Promise<{ chainId: number; accounts: string[] }>
   disconnect(): void
   accounts: string[]
-  chainId: number | null
+  chainId?: number
 }
 
-const useWalletConnect = (
-  connectionId: string,
-  connectionChainId: number
-): WalletConnectResult | null => {
+const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
   const [provider, setProvider] =
     useState<WalletConnectEthereumMultiProvider | null>(null)
   const [connected, setConnected] = useState(
     provider ? provider.connected : false
   )
   const [accounts, setAccounts] = useState(provider ? provider.accounts : [])
-  const [chainId, setChainId] = useState(
-    provider ? provider.chainId : connectionChainId
-  )
+  const [chainId, setChainId] = useState(provider?.chainId)
 
   // effect to initialize the provider
   useEffect(() => {
@@ -153,7 +148,7 @@ const useWalletConnect = (
         connectionId,
         projectId: WALLETCONNECT_PROJECT_ID,
         showQrModal: true,
-        chains: [connectionChainId],
+        chains: [] as any, // recommended by WalletConnect for multi-chain apps (but somehow their typings don't allow it)
         optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
         rpcMap: RPC,
       })
@@ -165,7 +160,7 @@ const useWalletConnect = (
       setAccounts(provider.accounts)
       setChainId(provider.chainId)
     })
-  }, [connectionId, connectionChainId])
+  }, [connectionId])
 
   // effect to subscribe to provider events
   useEffect(() => {
@@ -206,6 +201,11 @@ const useWalletConnect = (
 
     await provider.disconnect()
     await provider.enable()
+
+    // at this point provider.chainId is generally 1, we gotta wait for the chainChanged event which will be emitted even if the final chainId continues to be 1
+    await new Promise((resolve) =>
+      provider.events.once('chainChanged', () => resolve(provider.chainId))
+    )
 
     return {
       chainId: provider.chainId,

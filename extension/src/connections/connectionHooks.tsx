@@ -123,7 +123,7 @@ export const useConnection = (id?: string) => {
   }
 
   const metamask = useMetaMask()
-  const walletConnect = useWalletConnect(connection.id, connection.chainId || 1)
+  const walletConnect = useWalletConnect(connection.id)
   const defaultProvider = getEip1193ReadOnlyProvider(
     connection.chainId,
     connection.pilotAddress
@@ -138,8 +138,8 @@ export const useConnection = (id?: string) => {
     connection.providerType === ProviderType.MetaMask
       ? metamask
       : walletConnect,
-    connection.chainId,
-    connection.pilotAddress
+    connection.pilotAddress,
+    connection.chainId
   )
 
   const chainId =
@@ -155,7 +155,7 @@ export const useConnection = (id?: string) => {
     !connected &&
     !!validateAddress(pilotAddress) &&
     connection.providerType === ProviderType.MetaMask &&
-    metamask.accounts.includes(pilotAddress) &&
+    metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     metamask.chainId !== connection.chainId
 
   const connectMetaMask = metamask.connect
@@ -169,7 +169,7 @@ export const useConnection = (id?: string) => {
   }, [mustConnectMetaMask, connectMetaMask])
 
   const connect = useCallback(async () => {
-    if (chainId !== requiredChainId) {
+    if (requiredChainId && chainId !== requiredChainId) {
       try {
         await switchChain(requiredChainId)
       } catch (e) {
@@ -194,14 +194,15 @@ export const useConnection = (id?: string) => {
 
 const isConnectedTo = (
   providerContext: MetaMaskContextT | WalletConnectResult | null,
-  chainId: number,
-  account: string
+  account: string,
+  chainId?: number
 ) => {
   if (!providerContext) return false
   const accountLower = account.toLowerCase()
+
   return (
     providerContext &&
-    providerContext.chainId === chainId &&
+    (!chainId || chainId === providerContext.chainId) &&
     providerContext.accounts?.some(
       (acc) => acc.toLowerCase() === accountLower
     ) &&

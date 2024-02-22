@@ -31,7 +31,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const { connected, connection } = useConnection(id)
 
   const metamask = useMetaMask()
-  const walletConnect = useWalletConnect(connection.id, connection.chainId || 1)
+  const walletConnect = useWalletConnect(connection.id)
 
   const connect = (
     providerType: ProviderType,
@@ -88,12 +88,58 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
-  // right account, wrong network
+  // WalletConnect: wrong chain
+  if (
+    connection.providerType === ProviderType.WalletConnect &&
+    walletConnect &&
+    connection.pilotAddress &&
+    walletConnect.accounts.some(
+      (acc) => acc.toLowerCase() === connection.pilotAddress
+    ) &&
+    connection.chainId &&
+    walletConnect.chainId !== connection.chainId
+  ) {
+    return (
+      <div
+        className={classNames(
+          classes.connectedContainer,
+          classes.connectionWarning
+        )}
+      >
+        <code className={classes.pilotAddress}>
+          {validateAddress(connection.pilotAddress)}
+        </code>
+        <Tag head={<RiAlertLine />} color="warning">
+          Chain mismatch
+        </Tag>
+        {walletConnect.chainId && (
+          <Button
+            className={classes.disconnectButton}
+            onClick={() => {
+              connect(
+                ProviderType.WalletConnect,
+                walletConnect.chainId as ChainId,
+                connection.pilotAddress
+              )
+            }}
+          >
+            Connect to{' '}
+            {CHAIN_NAME[walletConnect.chainId as ChainId] ||
+              `#${walletConnect.chainId}`}
+          </Button>
+        )}
+      </div>
+    )
+  }
+
+  // Metamask: right account, wrong chain
   if (
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
     connection.pilotAddress &&
-    metamask.accounts.includes(connection.pilotAddress) &&
+    metamask.accounts.some(
+      (acc) => acc.toLowerCase() === connection.pilotAddress
+    ) &&
     connection.chainId &&
     metamask.chainId !== connection.chainId
   ) {
@@ -104,18 +150,25 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           classes.connectionWarning
         )}
       >
+        <code className={classes.pilotAddress}>
+          {validateAddress(connection.pilotAddress)}
+        </code>
         <Tag head={<RiAlertLine />} color="warning">
-          Network mismatch
+          Chain mismatch
         </Tag>
-        <Button
-          className={classes.disconnectButton}
-          onClick={() => {
-            metamask.switchChain(connection.chainId)
-          }}
-        >
-          Switch wallet to{' '}
-          {CHAIN_NAME[connection.chainId] || `#${connection.chainId}`}
-        </Button>
+        {connection.chainId && (
+          <Button
+            className={classes.disconnectButton}
+            onClick={() => {
+              if (connection.chainId) {
+                metamask.switchChain(connection.chainId)
+              }
+            }}
+          >
+            Switch wallet to{' '}
+            {CHAIN_NAME[connection.chainId] || `#${connection.chainId}`}
+          </Button>
+        )}
 
         {metamask.chainId && (
           <Button
@@ -136,12 +189,14 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     )
   }
 
-  // wrong account
+  // MetaMask: wrong account
   if (
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
     connection.pilotAddress &&
-    !metamask.accounts.includes(connection.pilotAddress)
+    !metamask.accounts.some(
+      (acc) => acc.toLowerCase() === connection.pilotAddress
+    )
   ) {
     return (
       <div className={classes.connectedContainer}>
