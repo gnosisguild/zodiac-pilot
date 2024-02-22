@@ -202,6 +202,11 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
     await provider.disconnect()
     await provider.enable()
 
+    // at this point provider.chainId is generally 1, we gotta wait for the chainChanged event which will be emitted even if the final chainId continues to be 1
+    await new Promise((resolve) =>
+      provider.events.once('chainChanged', () => resolve(provider.chainId))
+    )
+
     return {
       chainId: provider.chainId,
       accounts: provider.accounts,
