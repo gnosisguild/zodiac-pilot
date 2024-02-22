@@ -83,7 +83,7 @@ async function dryRun(provider: Eip1193Provider, connection: Connection) {
     return Promise.reject('Module Address: Invalid address')
   }
   if (!validateAddress(connection.avatarAddress)) {
-    return Promise.reject('DAO Safe: Invalid address')
+    return Promise.reject('Avatar: Invalid address')
   }
 
   const ethersProvider = new Web3Provider(provider)
@@ -96,7 +96,7 @@ async function dryRun(provider: Eip1193Provider, connection: Connection) {
   if (
     !(await isSmartContractAddress(connection.avatarAddress, ethersProvider))
   ) {
-    return Promise.reject('DAO Safe: Not a smart contract')
+    return Promise.reject('Avatar: Not a smart contract')
   }
 
   const request = wrapRequest(

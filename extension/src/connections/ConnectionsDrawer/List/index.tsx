@@ -187,7 +187,7 @@ const ConnectionsList: React.FC<ConnectionsListProps> = ({ onLaunched }) => {
       {
         id,
         label: '',
-        chainId: undefined,
+        chainId: 1,
         moduleAddress: '',
         avatarAddress: '',
         pilotAddress: '',

@@ -14,7 +14,7 @@ export type Connection = {
   avatarAddress: string
   pilotAddress: string
 
-  chainId?: ChainId
+  chainId: ChainId
   providerType: ProviderType
   moduleType?: SupportedModuleType
 

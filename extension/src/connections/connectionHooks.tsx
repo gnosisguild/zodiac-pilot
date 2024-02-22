@@ -125,7 +125,7 @@ export const useConnection = (id?: string) => {
   const metamask = useMetaMask()
   const walletConnect = useWalletConnect(connection.id)
   const defaultProvider = getEip1193ReadOnlyProvider(
-    connection.chainId || 1,
+    connection.chainId,
     connection.pilotAddress
   )
 
