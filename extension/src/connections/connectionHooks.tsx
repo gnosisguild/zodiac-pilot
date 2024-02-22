@@ -155,7 +155,7 @@ export const useConnection = (id?: string) => {
     !connected &&
     !!validateAddress(pilotAddress) &&
     connection.providerType === ProviderType.MetaMask &&
-    metamask.accounts.includes(pilotAddress) &&
+    metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     metamask.chainId !== connection.chainId
 
   const connectMetaMask = metamask.connect

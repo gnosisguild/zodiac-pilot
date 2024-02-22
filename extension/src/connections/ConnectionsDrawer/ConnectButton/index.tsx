@@ -137,7 +137,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
     connection.pilotAddress &&
-    metamask.accounts.includes(connection.pilotAddress) &&
+    metamask.accounts.some(
+      (acc) => acc.toLowerCase() === connection.pilotAddress
+    ) &&
     connection.chainId &&
     metamask.chainId !== connection.chainId
   ) {
@@ -192,7 +194,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     connection.providerType === ProviderType.MetaMask &&
     metamask.provider &&
     connection.pilotAddress &&
-    !metamask.accounts.includes(connection.pilotAddress)
+    !metamask.accounts.some(
+      (acc) => acc.toLowerCase() === connection.pilotAddress
+    )
   ) {
     return (
       <div className={classes.connectedContainer}>
