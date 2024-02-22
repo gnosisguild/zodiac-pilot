@@ -38,9 +38,9 @@ export function getRevertData(error: JsonRpcError) {
 export function decodeGenericError(error: JsonRpcError) {
   const revertData = getRevertData(error)
   if (revertData.startsWith('0x')) {
-    return { message: asciiDecode(revertData.substring(2)) }
+    return asciiDecode(revertData.substring(2))
   }
-  return { message: revertData }
+  return revertData
 }
 
 export function decodeRolesV1Error(error: JsonRpcError) {

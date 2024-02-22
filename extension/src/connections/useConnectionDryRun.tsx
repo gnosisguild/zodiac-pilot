@@ -63,48 +63,53 @@ const useConnectionDryRun = (connection: Connection) => {
 }
 
 const handleRolesV1Error = (e: JsonRpcError, roleId: string) => {
-  const reason = decodeRolesV1Error(e)
-  switch (reason) {
-    case 'Module not authorized':
-      return 'The Pilot account must be enabled as a module of the modifier.'
+  const rolesError = decodeRolesV1Error(e)
+  if (rolesError) {
+    switch (rolesError.signature) {
+      case 'UnacceptableMultiSendOffset()':
+        // we're calling to the zero address, so if this error happens it means our call was handled as a multi-send which happens
+        // if the Role mod's multiSend address has not been initialized
+        return "The Roles mod is not configured to accept multi-send calls. Use the contract's `setMultiSend` function to set the multi-send address."
 
-    case 'UnacceptableMultiSendOffset()':
-      // we're calling to the zero address, so if this error happens it means our call was handled as a multi-send which happens
-      // if the Role mod's multiSend address has not been initialized
-      return "The Roles mod is not configured to accept multi-send calls. Use the contract's `setMultiSend` function to set the multi-send address."
+      case 'TargetAddressNotAllowed()':
+        // this is the expected error for a working Roles mod setup
+        return null
 
-    case 'TargetAddressNotAllowed()':
-      // this is the expected error for a working Roles mod setup
-      return null
+      case 'NoMembership()':
+        return `The Pilot account is not a member of role #${roleId}.`
 
-    case 'NoMembership()':
-      return `The Pilot account is not a member of role #${roleId}.`
-
-    default:
-      console.warn('Unexpected Roles v1 error', e)
-      return reason || 'Unexpected error'
+      default:
+    }
   }
+
+  const decoded = decodeGenericError(e)
+  console.warn('Unexpected Roles v1 error', e, decoded)
+  return decoded || 'Unexpected error'
 }
 
 const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
-  const reason = decodeRolesV2Error(e)
-  switch (reason) {
-    case 'NotAuthorized(address)':
-      return 'The Pilot account must be enabled as a module of the modifier.'
+  const rolesError = decodeRolesV2Error(e)
+  if (rolesError) {
+    switch (rolesError.signature) {
+      case 'NotAuthorized(address)':
+        return 'The Pilot account must be enabled as a module of the modifier.'
 
-    case 'ConditionViolation(uint8,bytes32)':
-      // this is the expected error for a working Roles mod setup
-      return null
+      case 'ConditionViolation(uint8,bytes32)':
+        // this is the expected error for a working Roles mod setup
+        return null
 
-    case 'NoMembership()':
-      return `The Pilot account is not a member of role ${decodeRoleKey(
-        roleKey
-      )}.`
+      case 'NoMembership()':
+        return `The Pilot account is not a member of role ${decodeRoleKey(
+          roleKey
+        )}.`
 
-    default:
-      console.warn('Unexpected Roles v2 error', e)
-      return reason || 'Unexpected error'
+      default:
+    }
   }
+
+  const decoded = decodeGenericError(e)
+  console.warn('Unexpected Roles v2 error', e, decoded)
+  return decoded || 'Unexpected error'
 }
 
 async function dryRun(provider: Eip1193Provider, connection: Connection) {

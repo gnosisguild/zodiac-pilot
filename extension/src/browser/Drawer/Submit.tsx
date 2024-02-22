@@ -52,10 +52,8 @@ const Submit: React.FC = () => {
       setSignaturePending(false)
       const err = e as JsonRpcError
 
-      const { message } =
-        decodeRolesV1Error(err) ||
-        decodeRolesV2Error(err) ||
-        decodeGenericError(err)
+      const { message } = decodeRolesV1Error(err) ||
+        decodeRolesV2Error(err) || { message: decodeGenericError(err) }
       toast.error(
         <>
           <p>Submitting the transaction batch failed:</p>
