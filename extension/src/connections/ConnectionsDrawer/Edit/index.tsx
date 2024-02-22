@@ -1,7 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React, { useEffect } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
-import { formatBytes32String } from 'ethers/lib/utils'
+import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils'
 
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
@@ -59,6 +59,8 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
 
   const { safes } = useSafesWithOwner(pilotAddress, connectionId)
   const { delegates } = useSafeDelegates(avatarAddress, connectionId)
+
+  const decodedRoleKey = roleId && decodeRoleKey(roleId)
 
   // TODO modules is a nested list, but we currently only render the top-level items
   const {
@@ -267,7 +269,8 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
               <Field label="Role Key">
                 <input
                   type="text"
-                  value={roleId}
+                  key={connection.id} // makes sure the defaultValue is reset when switching connections
+                  defaultValue={decodedRoleKey || roleId}
                   onChange={(ev) => {
                     try {
                       const roleId = parseRoleKey(ev.target.value)
@@ -280,6 +283,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                   }}
                   placeholder="Enter key as bytes32 hex string or in human-readable decoding"
                 />
+
                 {roleIdError && (
                   <Box p={3} className={classes.error}>
                     {roleIdError}
@@ -308,4 +312,14 @@ const parseRoleKey = (key: string) => {
   }
 
   return formatBytes32String(key)
+}
+
+const decodeRoleKey = (key: string) => {
+  if (key.length === 66 && key.startsWith('0x')) {
+    try {
+      return parseBytes32String(key)
+    } catch (e) {
+      return
+    }
+  }
 }
