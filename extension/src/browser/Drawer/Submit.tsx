@@ -10,7 +10,11 @@ import { waitForMultisigExecution } from '../../providers'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useConnection } from '../../connections'
 import { JsonRpcError, ProviderType } from '../../types'
-import { decodeRolesV1Error } from '../../utils'
+import {
+  decodeGenericError,
+  decodeRolesV1Error,
+  decodeRolesV2Error,
+} from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -47,11 +51,16 @@ const Submit: React.FC = () => {
       console.warn(e)
       setSignaturePending(false)
       const err = e as JsonRpcError
+
+      const { message } =
+        decodeRolesV1Error(err) ||
+        decodeRolesV2Error(err) ||
+        decodeGenericError(err)
       toast.error(
         <>
           <p>Submitting the transaction batch failed:</p>
           <br />
-          <code>{decodeRolesV1Error(err)}</code>
+          <code>{message}</code>
         </>,
         { className: toastClasses.toastError }
       )

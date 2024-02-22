@@ -7,12 +7,14 @@ import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { JsonRpcError } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
-import { isPermissionsError } from '../../utils/decodeError'
+import { decodeRolesV2Error, isPermissionsError } from '../../utils/decodeError'
 import { useWrappingProvider } from '../ProvideProvider'
 
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
+import { useConnection } from '../../connections'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput
@@ -22,6 +24,9 @@ const RolePermissionCheck: React.FC<{
 }> = ({ transaction, isDelegateCall, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const wrappingProvider = useWrappingProvider()
+  const {
+    connection: { moduleType },
+  } = useConnection()
 
   const encodedTransaction = encodeSingle(transaction)
   const translationAvailable = !!useApplicableTranslation(encodedTransaction)
@@ -37,11 +42,18 @@ const RolePermissionCheck: React.FC<{
         if (!canceled) setError(false)
       })
       .catch((e: JsonRpcError) => {
-        const decodedError = decodeRolesV1Error(e)
-        if (!canceled) {
-          setError(isPermissionsError(decodedError) ? decodedError : false)
+        const decodedError =
+          moduleType === KnownContracts.ROLES_V1
+            ? decodeRolesV1Error(e)
+            : decodeRolesV2Error(e)
+        if (!canceled && decodedError) {
+          setError(
+            isPermissionsError(decodedError.signature)
+              ? decodedError.signature
+              : false
+          )
         }
-        if (!isPermissionsError(decodedError)) {
+        if (!decodedError || !isPermissionsError(decodedError.signature)) {
           throw e
         }
       })
@@ -49,7 +61,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [wrappingProvider, encodedTransaction])
+  }, [wrappingProvider, moduleType, encodedTransaction])
 
   if (error === undefined) return null
 

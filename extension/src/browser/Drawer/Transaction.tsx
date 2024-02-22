@@ -127,7 +127,9 @@ export const Transaction: React.FC<Props> = ({
   const [expanded, setExpanded] = useState(true)
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
-  const showRoles = connection.moduleType === KnownContracts.ROLES_V1
+  const showRoles =
+    connection.moduleType === KnownContracts.ROLES_V1 ||
+    connection.moduleType === KnownContracts.ROLES_V2
 
   return (
     <Box ref={elementRef} p={2} className={classes.container}>
@@ -179,7 +181,9 @@ export const TransactionBadge: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const { connection } = useConnection()
-  const showRoles = connection.moduleType === KnownContracts.ROLES_V1
+  const showRoles =
+    connection.moduleType === KnownContracts.ROLES_V1 ||
+    connection.moduleType === KnownContracts.ROLES_V2
 
   const elementRef = useScrollIntoView(scrollIntoView)
 
