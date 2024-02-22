@@ -7,12 +7,18 @@ const RolesV1PermissionsInterface =
   ContractFactories[KnownContracts.PERMISSIONS].createInterface()
 const RolesV2Interface =
   ContractFactories[KnownContracts.ROLES_V2].createInterface()
-
+console.log(
+  Object.keys(RolesV2Interface.errors).map((errSig) => ({
+    errSig,
+    sigHash: RolesV2Interface.getSighash(errSig),
+    error: RolesV2Interface.errors[errSig],
+  }))
+)
 const KNOWN_ERRORS = Object.keys(RolesV1Interface.errors)
   .concat(Object.keys(RolesV1PermissionsInterface.errors))
   .concat(Object.keys(RolesV2Interface.errors))
 
-export default function decodeRolesError(error: JsonRpcError) {
+export function getRevertData(error: JsonRpcError) {
   // The errors thrown when a transaction is reverted use different formats, depending on:
   //  - wallet (MetaMask vs. WalletConnect)
   //  - RPC provider (Infura vs. Alchemy)
@@ -27,21 +33,28 @@ export default function decodeRolesError(error: JsonRpcError) {
     error.message
 
   const prefix = 'Reverted 0x'
-  const revertData = message.startsWith(prefix)
+  return message.startsWith(prefix)
     ? message.substring(prefix.length - 2)
     : message
+}
 
+export function decodeGenericError(error: JsonRpcError) {
+  const revertData = getRevertData(error)
+  if (revertData.startsWith('0x')) {
+    return asciiDecode(revertData.substring(2))
+  }
+  return revertData
+}
+
+export function decodeRolesV1Error(error: JsonRpcError) {
+  const revertData = getRevertData(error)
   if (revertData.startsWith('0x')) {
     const rolesError =
-      Object.keys(RolesV1Interface.errors).find(
-        (errSig) => RolesV1Interface.getSighash(errSig) === revertData
+      Object.keys(RolesV1Interface.errors).find((errSig) =>
+        revertData.startsWith(RolesV1Interface.getSighash(errSig))
       ) ||
-      Object.keys(RolesV1PermissionsInterface.errors).find(
-        (errSig) =>
-          RolesV1PermissionsInterface.getSighash(errSig) === revertData
-      ) ||
-      Object.keys(RolesV2Interface.errors).find(
-        (errSig) => RolesV2Interface.getSighash(errSig) === revertData
+      Object.keys(RolesV1PermissionsInterface.errors).find((errSig) =>
+        revertData.startsWith(RolesV1PermissionsInterface.getSighash(errSig))
       )
 
     if (rolesError) return rolesError
@@ -49,7 +62,23 @@ export default function decodeRolesError(error: JsonRpcError) {
     return asciiDecode(revertData.substring(2))
   }
 
-  return message
+  return revertData
+}
+
+export function decodeRolesV2Error(error: JsonRpcError) {
+  const revertData = getRevertData(error)
+
+  if (revertData.startsWith('0x')) {
+    const rolesError = Object.keys(RolesV2Interface.errors).find((errSig) =>
+      revertData.startsWith(RolesV2Interface.getSighash(errSig))
+    )
+
+    if (rolesError) return rolesError
+
+    return asciiDecode(revertData.substring(2))
+  }
+
+  return revertData
 }
 
 export const isPermissionsError = (decodedError: string) =>

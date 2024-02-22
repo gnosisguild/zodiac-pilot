@@ -1,7 +1,6 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React, { useEffect } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
-import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils'
 
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
@@ -25,6 +24,7 @@ import useConnectionDryRun from '../../useConnectionDryRun'
 import { useClearTransactions } from '../../../browser/state/transactionHooks'
 
 import classes from './style.module.css'
+import { decodeRoleKey, encodeRoleKey } from '../../../utils'
 
 interface Props {
   connectionId: string
@@ -273,7 +273,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                   defaultValue={decodedRoleKey || roleId}
                   onChange={(ev) => {
                     try {
-                      const roleId = parseRoleKey(ev.target.value)
+                      const roleId = encodeRoleKey(ev.target.value)
                       setRoleIdError(null)
                       updateConnection({ roleId })
                     } catch (e) {
@@ -300,26 +300,3 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
 }
 
 export default EditConnection
-
-const parseRoleKey = (key: string) => {
-  if (key.length === 66 && key.startsWith('0x')) {
-    const keyLower = key.toLowerCase()
-    // validate bytes32 hex string
-    if (!keyLower.match(/^0x[0-9a-f]{64}$/)) {
-      throw new Error('Invalid hex string')
-    }
-    return key.toLowerCase()
-  }
-
-  return formatBytes32String(key)
-}
-
-const decodeRoleKey = (key: string) => {
-  if (key.length === 66 && key.startsWith('0x')) {
-    try {
-      return parseBytes32String(key)
-    } catch (e) {
-      return
-    }
-  }
-}

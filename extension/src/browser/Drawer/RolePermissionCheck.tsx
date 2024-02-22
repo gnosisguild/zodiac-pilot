@@ -6,8 +6,8 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { JsonRpcError } from '../../types'
-import { decodeRolesError } from '../../utils'
-import { isPermissionsError } from '../../utils/decodeRolesError'
+import { decodeRolesV1Error } from '../../utils'
+import { isPermissionsError } from '../../utils/decodeError'
 import { useWrappingProvider } from '../ProvideProvider'
 
 import CopyToClipboard from './CopyToClipboard'
@@ -37,7 +37,7 @@ const RolePermissionCheck: React.FC<{
         if (!canceled) setError(false)
       })
       .catch((e: JsonRpcError) => {
-        const decodedError = decodeRolesError(e)
+        const decodedError = decodeRolesV1Error(e)
         if (!canceled) {
           setError(isPermissionsError(decodedError) ? decodedError : false)
         }

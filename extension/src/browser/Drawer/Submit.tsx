@@ -10,7 +10,7 @@ import { waitForMultisigExecution } from '../../providers'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useConnection } from '../../connections'
 import { JsonRpcError, ProviderType } from '../../types'
-import { decodeRolesError } from '../../utils'
+import { decodeRolesV1Error } from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
 import { useDispatch, useNewTransactions } from '../state'
 
@@ -51,7 +51,7 @@ const Submit: React.FC = () => {
         <>
           <p>Submitting the transaction batch failed:</p>
           <br />
-          <code>{decodeRolesError(err)}</code>
+          <code>{decodeRolesV1Error(err)}</code>
         </>,
         { className: toastClasses.toastError }
       )

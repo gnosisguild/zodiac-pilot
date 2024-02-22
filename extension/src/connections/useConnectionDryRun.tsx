@@ -4,7 +4,12 @@ import { useEffect, useState } from 'react'
 
 import { wrapRequest } from '../providers/WrappingProvider'
 import { Connection, Eip1193Provider, JsonRpcError } from '../types'
-import { decodeRolesError } from '../utils'
+import {
+  decodeGenericError,
+  decodeRoleKey,
+  decodeRolesV1Error,
+  decodeRolesV2Error,
+} from '../utils'
 import { isSmartContractAddress, validateAddress } from '../utils'
 
 import { useConnection } from './connectionHooks'
@@ -35,44 +40,71 @@ const useConnectionDryRun = (connection: Connection) => {
         .catch((e: JsonRpcError) => {
           // For the Roles mod, we actually expect the dry run to fail with TargetAddressNotAllowed()
           // In case we see any other error, we try to help the user identify the problem.
-          const reason = decodeRolesError(e)
 
-          if (reason === 'Module not authorized') {
-            setError(
-              'The Pilot Account address must be enabled as a module of the modifier.'
-            )
-            return
+          switch (moduleType) {
+            case KnownContracts.ROLES_V1: {
+              setError(handleRolesV1Error(e, roleId || '0'))
+              return
+            }
+            case KnownContracts.ROLES_V2: {
+              setError(handleRolesV2Error(e, roleId || '0'))
+              return
+            }
+            default: {
+              setError(decodeGenericError(e))
+              console.warn('Unexpected dry run error', e)
+            }
           }
-
-          if (reason === 'UnacceptableMultiSendOffset()') {
-            // we're calling to the zero address, so if this error happens it means our call was handled as a multi-send which happens
-            // if the Role mod's multiSend address has not been initialized
-            setError(
-              "The Roles mod is not configured to accept multi-send calls. Use the contract's `setMultiSend` function to set the multi-send address."
-            )
-            return
-          }
-
-          if (reason === 'TargetAddressNotAllowed()') {
-            // this is the expected error for a working Roles mod setup
-            setError(null)
-            return
-          }
-
-          if (reason === 'NoMembership()') {
-            setError(
-              `The Pilot account is not a member of role #${roleId || 0}.`
-            )
-            return
-          }
-
-          console.warn('Unexpected dry run error', e)
-          setError(reason || 'Unexpected error')
         })
     }
   }, [connection, provider, connected])
 
   return error
+}
+
+const handleRolesV1Error = (e: JsonRpcError, roleId: string) => {
+  const reason = decodeRolesV1Error(e)
+  switch (reason) {
+    case 'Module not authorized':
+      return 'The Pilot account must be enabled as a module of the modifier.'
+
+    case 'UnacceptableMultiSendOffset()':
+      // we're calling to the zero address, so if this error happens it means our call was handled as a multi-send which happens
+      // if the Role mod's multiSend address has not been initialized
+      return "The Roles mod is not configured to accept multi-send calls. Use the contract's `setMultiSend` function to set the multi-send address."
+
+    case 'TargetAddressNotAllowed()':
+      // this is the expected error for a working Roles mod setup
+      return null
+
+    case 'NoMembership()':
+      return `The Pilot account is not a member of role #${roleId}.`
+
+    default:
+      console.warn('Unexpected Roles v1 error', e)
+      return reason || 'Unexpected error'
+  }
+}
+
+const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
+  const reason = decodeRolesV2Error(e)
+  switch (reason) {
+    case 'NotAuthorized(address)':
+      return 'The Pilot account must be enabled as a module of the modifier.'
+
+    case 'ConditionViolation(uint8,bytes32)':
+      // this is the expected error for a working Roles mod setup
+      return null
+
+    case 'NoMembership()':
+      return `The Pilot account is not a member of role ${decodeRoleKey(
+        roleKey
+      )}.`
+
+    default:
+      console.warn('Unexpected Roles v2 error', e)
+      return reason || 'Unexpected error'
+  }
 }
 
 async function dryRun(provider: Eip1193Provider, connection: Connection) {
