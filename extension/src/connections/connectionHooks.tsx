@@ -142,7 +142,7 @@ export const useConnection = (id?: string) => {
     connection.chainId
   )
 
-  const chainId =
+  const providerChainId =
     connection.providerType === ProviderType.MetaMask
       ? metamask.chainId
       : walletConnect?.chainId || null
@@ -169,7 +169,7 @@ export const useConnection = (id?: string) => {
   }, [mustConnectMetaMask, connectMetaMask])
 
   const connect = useCallback(async () => {
-    if (requiredChainId && chainId !== requiredChainId) {
+    if (requiredChainId && providerChainId !== requiredChainId) {
       try {
         await switchChain(requiredChainId)
       } catch (e) {
@@ -179,13 +179,15 @@ export const useConnection = (id?: string) => {
     }
 
     return true
-  }, [switchChain, chainId, requiredChainId])
+  }, [switchChain, providerChainId, requiredChainId])
 
   return {
     connection,
     provider,
+    /** Indicates if `provider` is connected to the chain set in `connection`. */
     connected,
-    chainId,
+    /** The chain ID the `provider` is currently connected to. Might be different the the chainId configured for `connection` */
+    providerChainId,
 
     /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet by asking the user to switch it to the right chain. */
     connect: canEstablishConnection ? connect : null,

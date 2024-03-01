@@ -1,4 +1,3 @@
-import { JsonRpcBatchProvider } from '@ethersproject/providers'
 import {
   ContractAbis,
   ContractAddresses,
@@ -13,7 +12,6 @@ import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../utils'
 import { useConnection } from './connectionHooks'
-import { ChainId, RPC } from '../chains'
 import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 const SUPPORTED_MODULES = [
@@ -41,12 +39,11 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { chainId } = useConnection(connectionId)
+  const { connection } = useConnection(connectionId)
+  const chainId = connection.chainId
 
   useEffect(() => {
-    if (!chainId) return
-    const provider = getReadOnlyProvider(chainId as ChainId)
-
+    const provider = getReadOnlyProvider(chainId)
     setLoading(true)
     setError(false)
     fetchModules(safeAddress, provider)
