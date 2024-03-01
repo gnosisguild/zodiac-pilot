@@ -69,8 +69,8 @@ async function prepareSafeForSimulation(
   }: {
     chainId: ChainId
     avatarAddress: string
-    moduleAddress: string
-    pilotAddress: string
+    moduleAddress?: string
+    pilotAddress?: string
   },
   tenderlyProvider: TenderlyProvider
 ) {
@@ -83,8 +83,11 @@ async function prepareSafeForSimulation(
       safe.getThreshold(),
     ])
 
+    // default to first owner if no pilot address is provided
+    if (!pilotAddress) pilotAddress = owners[0]
+
     const pilotIsOwner = owners.some(
-      (owner) => owner.toLowerCase() === pilotAddress.toLowerCase()
+      (owner) => owner.toLowerCase() === pilotAddress!.toLowerCase()
     )
 
     if (!pilotIsOwner) {
