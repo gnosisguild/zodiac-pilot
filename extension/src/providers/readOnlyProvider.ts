@@ -5,6 +5,7 @@ import {
   TransactionRequest,
 } from '@ethersproject/providers'
 import { ChainId, RPC } from '../chains'
+import { BigNumberish } from 'ethers'
 
 const readOnlyProviderCache = new Map<ChainId, StaticJsonRpcProvider>()
 const eip1193ProviderCache = new Map<string, Eip1193JsonRpcProvider>()
@@ -42,12 +43,21 @@ export const getEip1193ReadOnlyProvider = (
   return provider
 }
 
-const hexlifyTransaction = (transaction: TransactionRequest) =>
-  StaticJsonRpcProvider.hexlifyTransaction(transaction, {
+const hexlifyTransaction = ({
+  gas,
+  gasLimit,
+  ...rest
+}: TransactionRequest & { gas?: BigNumberish }) => {
+  const tx = {
+    ...rest,
+    gasLimit: gasLimit || gas,
+  }
+  return StaticJsonRpcProvider.hexlifyTransaction(tx, {
     from: true,
     customData: true,
     ccipReadEnabled: true,
   })
+}
 
 /**
  * Based on the ethers v5 Eip1193Bridge (https://github.com/ethers-io/ethers.js/blob/v5.7/packages/experimental/src.ts/eip1193-bridge.ts)
