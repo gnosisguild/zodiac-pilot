@@ -139,7 +139,7 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
     provider ? provider.connected : false
   )
   const [accounts, setAccounts] = useState(provider ? provider.accounts : [])
-  const [chainId, setChainId] = useState(provider?.chainId)
+  const [chainId, setChainId] = useState<number | undefined>()
 
   // effect to initialize the provider
   useEffect(() => {
