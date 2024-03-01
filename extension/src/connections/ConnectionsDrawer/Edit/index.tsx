@@ -25,6 +25,8 @@ import { useClearTransactions } from '../../../browser/state/transactionHooks'
 
 import classes from './style.module.css'
 import { decodeRoleKey, encodeRoleKey } from '../../../utils'
+import { ChainId } from '../../../chains'
+import ChainSelect from '../ChainSelect'
 
 interface Props {
   connectionId: string
@@ -37,6 +39,7 @@ type ConnectionPatch = {
   moduleAddress?: string
   moduleType?: SupportedModuleType
   roleId?: string
+  chainId?: ChainId
 }
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
@@ -200,6 +203,12 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                     label: ev.target.value,
                   })
                 }}
+              />
+            </Field>
+            <Field label="Chain">
+              <ChainSelect
+                value={connection.chainId}
+                onChange={(chainId) => updateConnection({ chainId })}
               />
             </Field>
             <Field label="Pilot Account" labelFor="">

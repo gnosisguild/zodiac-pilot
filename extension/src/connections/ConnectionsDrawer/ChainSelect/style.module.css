@@ -1,0 +1,12 @@
+.chainOption {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.chainLabel {
+  font-family: 'Spectra';
+  font-size: 1rem;
+  padding-left: 4px;
+}

@@ -112,22 +112,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         <Tag head={<RiAlertLine />} color="warning">
           Chain mismatch
         </Tag>
-        {walletConnect.chainId && (
-          <Button
-            className={classes.disconnectButton}
-            onClick={() => {
-              connect(
-                ProviderType.WalletConnect,
-                walletConnect.chainId as ChainId,
-                connection.pilotAddress
-              )
-            }}
-          >
-            Connect to{' '}
-            {CHAIN_NAME[walletConnect.chainId as ChainId] ||
-              `#${walletConnect.chainId}`}
-          </Button>
-        )}
+        <Button onClick={disconnect} className={classes.disconnectButton}>
+          Disconnect
+        </Button>
       </div>
     )
   }
@@ -170,7 +157,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           </Button>
         )}
 
-        {metamask.chainId && (
+        {/* {metamask.chainId && (
           <Button
             className={classes.disconnectButton}
             onClick={() => {
@@ -184,7 +171,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
             Connect to{' '}
             {CHAIN_NAME[metamask.chainId as ChainId] || `#${metamask.chainId}`}
           </Button>
-        )}
+        )} */}
       </div>
     )
   }
