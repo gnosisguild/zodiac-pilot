@@ -128,8 +128,10 @@ export const Transaction: React.FC<Props> = ({
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
   const showRoles =
-    connection.moduleType === KnownContracts.ROLES_V1 ||
-    connection.moduleType === KnownContracts.ROLES_V2
+    (connection.moduleType === KnownContracts.ROLES_V1 ||
+      connection.moduleType === KnownContracts.ROLES_V2) &&
+    !!connection.roleId &&
+    !!connection.pilotAddress // TODO remove this check once we can query role members via ser to get a fallback
 
   return (
     <Box ref={elementRef} p={2} className={classes.container}>

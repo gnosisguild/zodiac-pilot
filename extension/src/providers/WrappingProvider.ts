@@ -15,7 +15,8 @@ const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
   request: MetaTransaction | TransactionData,
-  connection: Connection
+  connection: Connection,
+  revertOnError = true
 ): TransactionData {
   if (!connection.moduleAddress) {
     throw new Error('No wrapping should be applied for direct execution')
@@ -30,7 +31,7 @@ export function wrapRequest(
         request.data || '0x00',
         ('operation' in request && request.operation) || 0,
         connection.roleId || 0,
-        true,
+        revertOnError,
       ])
       break
     case KnownContracts.ROLES_V2:
@@ -41,7 +42,7 @@ export function wrapRequest(
         ('operation' in request && request.operation) || 0,
         connection.roleId ||
           '0x0000000000000000000000000000000000000000000000000000000000000000',
-        true,
+        revertOnError,
       ])
       break
     case KnownContracts.DELAY:

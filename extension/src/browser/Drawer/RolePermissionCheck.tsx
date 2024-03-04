@@ -5,16 +5,54 @@ import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { JsonRpcError } from '../../types'
+import { Connection, JsonRpcError, TransactionData } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
 import { decodeRolesV2Error, isPermissionsError } from '../../utils/decodeError'
-import { useWrappingProvider } from '../ProvideProvider'
 
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
 import { useConnection } from '../../connections'
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { wrapRequest } from '../../providers/WrappingProvider'
+import { useTenderlyProvider } from '../../providers'
+import { TenderlyProvider } from '../../providers/ProvideTenderly'
+
+const simulateRolesTransaction = async (
+  encodedTransaction: TransactionData,
+  connection: Connection,
+  tenderlyProvider: TenderlyProvider
+) => {
+  const wrappedTransaction = wrapRequest(encodedTransaction, connection, false)
+
+  // TODO enable this once we can query role members from ser
+  // if (!wrappedTransaction.from && connection.roleId) {
+  //   // If pilotAddress is not yet determined, we will use a random member of the specified role
+  //   wrappedTransaction.from = await getRoleMember(connection)
+  // }
+
+  try {
+    await tenderlyProvider.request({
+      method: 'eth_estimateGas',
+      params: [wrappedTransaction],
+    })
+  } catch (e) {
+    const decodedError =
+      connection.moduleType === KnownContracts.ROLES_V1
+        ? decodeRolesV1Error(e as JsonRpcError)
+        : decodeRolesV2Error(e as JsonRpcError)
+
+    if (!decodedError) {
+      console.error('Unexpected error', e)
+    }
+
+    return decodedError && isPermissionsError(decodedError.signature)
+      ? decodedError.signature
+      : false
+  }
+
+  return false
+}
 
 const RolePermissionCheck: React.FC<{
   transaction: TransactionInput
@@ -23,45 +61,28 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transaction, isDelegateCall, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const wrappingProvider = useWrappingProvider()
-  const {
-    connection: { moduleType },
-  } = useConnection()
+  const { connection } = useConnection()
+  const tenderlyProvider = useTenderlyProvider()
 
   const encodedTransaction = encodeSingle(transaction)
+
   const translationAvailable = !!useApplicableTranslation(encodedTransaction)
 
   useEffect(() => {
     let canceled = false
-    wrappingProvider
-      .request({
-        method: 'eth_estimateGas',
-        params: [encodedTransaction],
-      })
-      .then(() => {
-        if (!canceled) setError(false)
-      })
-      .catch((e: JsonRpcError) => {
-        const decodedError =
-          moduleType === KnownContracts.ROLES_V1
-            ? decodeRolesV1Error(e)
-            : decodeRolesV2Error(e)
-        if (!canceled && decodedError) {
-          setError(
-            isPermissionsError(decodedError.signature)
-              ? decodedError.signature
-              : false
-          )
-        }
-        if (!decodedError || !isPermissionsError(decodedError.signature)) {
-          throw e
-        }
-      })
+
+    simulateRolesTransaction(
+      encodedTransaction,
+      connection,
+      tenderlyProvider
+    ).then((error) => {
+      if (!canceled) setError(error)
+    })
 
     return () => {
       canceled = true
     }
-  }, [wrappingProvider, moduleType, encodedTransaction])
+  }, [encodedTransaction, connection, tenderlyProvider])
 
   if (error === undefined) return null
 

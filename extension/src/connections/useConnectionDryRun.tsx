@@ -113,7 +113,7 @@ const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
 }
 
 async function dryRun(provider: Eip1193Provider, connection: Connection) {
-  if (!validateAddress(connection.pilotAddress)) {
+  if (connection.pilotAddress && !validateAddress(connection.pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
   }
   if (!validateAddress(connection.moduleAddress)) {
@@ -142,8 +142,15 @@ async function dryRun(provider: Eip1193Provider, connection: Connection) {
       data: '0x00000000',
       from: connection.avatarAddress,
     },
-    connection
+    connection,
+    false
   )
+
+  // TODO enable this once we can query role members from ser
+  // if (!request.from && connection.roleId) {
+  //   // If pilotAddress is not yet determined, we will use a random member of the specified role
+  //   request.from = await getRoleMember(connection)
+  // }
 
   await provider.request({
     method: 'eth_estimateGas',

@@ -28,13 +28,6 @@ interface Props {
 const ProviderContext = createContext<Eip1193Provider | null>(null)
 export const useProvider = () => useContext(ProviderContext)
 
-const WrappingProviderContext = createContext<WrappingProvider | null>(null)
-export const useWrappingProvider = () => {
-  const value = useContext(WrappingProviderContext)
-  if (!value) throw new Error('must be wrapped in <ProvideProvider>')
-  return value
-}
-
 const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
   null
 )
@@ -144,13 +137,11 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
     <ProviderContext.Provider
       value={simulate ? forkProvider : wrappingProvider}
     >
-      <WrappingProviderContext.Provider value={wrappingProvider}>
-        <SubmitTransactionsContext.Provider
-          value={simulate ? submitTransactions : null}
-        >
-          {children}
-        </SubmitTransactionsContext.Provider>
-      </WrappingProviderContext.Provider>
+      <SubmitTransactionsContext.Provider
+        value={simulate ? submitTransactions : null}
+      >
+        {children}
+      </SubmitTransactionsContext.Provider>
     </ProviderContext.Provider>
   )
 }
