@@ -21,7 +21,6 @@ import { Connection, ProviderType } from '../../../types'
 import { useClearTransactions } from '../../../browser/state/transactionHooks'
 
 import classes from './style.module.css'
-import { validateAddress } from '../../../utils'
 
 interface ConnectionsListProps {
   onLaunched: () => void
@@ -39,16 +38,17 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   connection,
 }) => {
   const { connected, connect } = useConnection(connection.id)
+  const { connection: currentlySelectedConnection } = useConnection()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
 
-  const confirmLaunch = async () => {
+  const confirmClearTransactions = async () => {
     if (!hasTransactions) {
       return true
     }
 
     const confirmation = await getConfirmation(
-      'Switching connections will empty your current transaction bundle.'
+      'Switching the piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
@@ -63,17 +63,33 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   const handleModify = () => onModify(connection.id)
 
   const handleLaunch = async () => {
-    const confirmed = await confirmLaunch()
+    // we continue working with the same avatar, so don't have to clear the recorded transaction
+    const keepTransactionBundle =
+      currentlySelectedConnection &&
+      currentlySelectedConnection.avatarAddress.toLowerCase() ===
+        connection.avatarAddress.toLowerCase()
+
+    const confirmed =
+      keepTransactionBundle || (await confirmClearTransactions())
 
     if (!confirmed) {
       return
     }
 
-    if (validateAddress(connection.avatarAddress)) {
+    if (connected) {
       onLaunch(connection.id)
-    } else {
-      handleModify()
+      return
     }
+
+    if (!connected && connect) {
+      const success = await connect()
+      if (success) {
+        onLaunch(connection.id)
+        return
+      }
+    }
+
+    handleModify()
   }
 
   return (

@@ -46,8 +46,13 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [connections, setConnections] = useConnections()
   const { connection } = useConnection(connectionId)
   const connectionsHash = useConnectionsHash()
-  const [, selectConnection] = useSelectedConnectionId()
+  const [currentlySelectedConnectionId, selectConnection] =
+    useSelectedConnectionId()
   const pushConnectionsRoute = usePushConnectionsRoute()
+
+  const currentlySelectedConnection = connections.find(
+    (c) => c.id === currentlySelectedConnectionId
+  )
 
   useEffect(() => {
     const exists = connections.some((c) => c.id === connectionId)
@@ -75,13 +80,13 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const { hasTransactions, clearTransactions } = useClearTransactions()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
 
-  const confirmCanLaunch = async () => {
+  const confirmClearTransactions = async () => {
     if (!hasTransactions) {
       return true
     }
 
     const confirmation = await getConfirmation(
-      'Switching connections will empty your current transaction bundle.'
+      'Switching the piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
@@ -112,7 +117,14 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   }
 
   const launchConnection = async () => {
-    const confirmed = await confirmCanLaunch()
+    // we continue working with the same avatar, so don't have to clear the recorded transaction
+    const keepTransactionBundle =
+      currentlySelectedConnection &&
+      currentlySelectedConnection.avatarAddress.toLowerCase() ===
+        connection.avatarAddress.toLowerCase()
+
+    const confirmed =
+      keepTransactionBundle || (await confirmClearTransactions())
 
     if (!confirmed) {
       return
