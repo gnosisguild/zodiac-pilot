@@ -7,13 +7,6 @@ const RolesV1PermissionsInterface =
   ContractFactories[KnownContracts.PERMISSIONS].createInterface()
 const RolesV2Interface =
   ContractFactories[KnownContracts.ROLES_V2].createInterface()
-console.log(
-  Object.keys(RolesV2Interface.errors).map((errSig) => ({
-    errSig,
-    sigHash: RolesV2Interface.getSighash(errSig),
-    error: RolesV2Interface.errors[errSig],
-  }))
-)
 
 export function getRevertData(error: JsonRpcError) {
   // The errors thrown when a transaction is reverted use different formats, depending on:

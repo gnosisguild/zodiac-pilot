@@ -10,7 +10,9 @@ export const useSafesWithOwner = (
   ownerAddress: string,
   connectionId?: string
 ) => {
-  const { chainId } = useConnection(connectionId)
+  const {
+    connection: { chainId },
+  } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])

@@ -10,7 +10,10 @@ export const useSafeDelegates = (
   safeAddress: string,
   connectionId?: string
 ) => {
-  const { provider, chainId } = useConnection(connectionId)
+  const {
+    provider,
+    connection: { chainId },
+  } = useConnection(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [delegates, setDelegates] = useState<string[]>([])
