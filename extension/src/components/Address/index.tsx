@@ -54,9 +54,12 @@ const Address: React.FC<Props> = ({
 
   return (
     <Box rounded className={cn(classes.container, className)}>
-      <div className={classes.address}>{displayAddress}</div>
+      <div className={classes.address}>
+        {checksumAddress ? displayAddress : 'No connection'}
+      </div>
       <Box rounded className={classes.blockieContainer}>
         {address && <Blockie address={address} className={classes.blockies} />}
+        {!address && <div className={classes.noAddress} />}
       </Box>
       {copyToClipboard && (
         <IconButton
