@@ -44,7 +44,7 @@ type ConnectionPatch = {
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [connections, setConnections] = useConnections()
-  const { connection, connected, connect } = useConnection(connectionId)
+  const { connection } = useConnection(connectionId)
   const connectionsHash = useConnectionsHash()
   const [, selectConnection] = useSelectedConnectionId()
   const pushConnectionsRoute = usePushConnectionsRoute()
@@ -112,26 +112,14 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   }
 
   const launchConnection = async () => {
-    const canLaunch = await confirmCanLaunch()
+    const confirmed = await confirmCanLaunch()
 
-    if (!canLaunch) {
+    if (!confirmed) {
       return
     }
 
-    if (connected) {
-      selectConnection(connection.id)
-      onLaunched()
-      return
-    }
-
-    if (!connected && connect) {
-      const success = await connect()
-      if (success) {
-        selectConnection(connection.id)
-        onLaunched()
-        return
-      }
-    }
+    selectConnection(connection.id)
+    onLaunched()
   }
 
   const error = useConnectionDryRun(connection)
@@ -147,7 +135,6 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
-  const canLaunch = connected || !!connect
   const canRemove = connections.length > 1
 
   return (
@@ -164,7 +151,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
             <Flex gap={4} alignItems="center">
               <Button
                 className={classes.launchButton}
-                disabled={!canLaunch}
+                disabled={!connection.avatarAddress}
                 onClick={launchConnection}
               >
                 Launch

@@ -27,9 +27,7 @@ const Routes: React.FC = () => {
   const { connection } = useConnection()
 
   const isConnectionsRoute = connectionsRouteMatch.isMatch
-  const connectionChangeRequired =
-    !validateAddress(connection.avatarAddress) ||
-    !validateAddress(connection.pilotAddress)
+  const connectionChangeRequired = !validateAddress(connection.avatarAddress)
 
   const [connections] = useConnections()
   const connectionToEdit =

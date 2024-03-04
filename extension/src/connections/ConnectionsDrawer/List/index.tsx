@@ -21,6 +21,7 @@ import { Connection, ProviderType } from '../../../types'
 import { useClearTransactions } from '../../../browser/state/transactionHooks'
 
 import classes from './style.module.css'
+import { validateAddress } from '../../../utils'
 
 interface ConnectionsListProps {
   onLaunched: () => void
@@ -41,7 +42,7 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
 
-  const handleCanLaunch = async () => {
+  const confirmLaunch = async () => {
     if (!hasTransactions) {
       return true
     }
@@ -60,27 +61,19 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   }
 
   const handleModify = () => onModify(connection.id)
+
   const handleLaunch = async () => {
-    const canLaunch = await handleCanLaunch()
+    const confirmed = await confirmLaunch()
 
-    if (!canLaunch) {
+    if (!confirmed) {
       return
     }
 
-    if (connected) {
+    if (validateAddress(connection.avatarAddress)) {
       onLaunch(connection.id)
-      return
+    } else {
+      handleModify()
     }
-
-    if (!connected && connect) {
-      const success = await connect()
-      if (success) {
-        onLaunch(connection.id)
-        return
-      }
-    }
-
-    handleModify()
   }
 
   return (
