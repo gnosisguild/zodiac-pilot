@@ -86,7 +86,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     }
 
     const confirmation = await getConfirmation(
-      'Switching the piloted Safe will empty your current transaction bundle.'
+      'Switching the Piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
@@ -217,13 +217,20 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
               <AvatarInput
                 availableSafes={safes}
                 value={avatarAddress}
-                onChange={(address) =>
-                  updateConnection({
-                    avatarAddress: address,
-                    moduleAddress: '',
-                    moduleType: undefined,
-                  })
-                }
+                onChange={async (address) => {
+                  const keepTransactionBundle =
+                    address.toLowerCase() ===
+                    connection.avatarAddress.toLowerCase()
+                  const confirmed =
+                    keepTransactionBundle || (await confirmClearTransactions())
+                  if (confirmed) {
+                    updateConnection({
+                      avatarAddress: address,
+                      moduleAddress: '',
+                      moduleType: undefined,
+                    })
+                  }
+                }}
               />
             </Field>
             <Field label="Zodiac Mod" disabled={modules.length === 0}>

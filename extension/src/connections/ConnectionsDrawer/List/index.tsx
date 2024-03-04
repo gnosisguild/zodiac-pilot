@@ -48,7 +48,7 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
     }
 
     const confirmation = await getConfirmation(
-      'Switching the piloted Safe will empty your current transaction bundle.'
+      'Switching the Piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
