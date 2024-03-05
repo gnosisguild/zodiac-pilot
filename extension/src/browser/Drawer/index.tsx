@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
-import { encodeMulti, encodeSingle } from 'react-multisend'
+import { encodeMulti } from 'react-multisend'
 import { toast } from 'react-toastify'
 
 import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
@@ -8,12 +8,17 @@ import { ForkProvider } from '../../providers'
 import { wrapRequest } from '../../providers/WrappingProvider'
 import { useConnection } from '../../connections'
 import { useProvider } from '../ProvideProvider'
-import { useAllTransactions, useDispatch, useNewTransactions } from '../state'
+import {
+  useAllTransactions,
+  useDispatch,
+  useNewTransactions,
+} from '../../state'
 
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
 import { MULTI_SEND_ADDRESS } from '../../chains'
+import { encodeTransaction } from '../../encodeTransaction'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -53,14 +58,14 @@ const TransactionsDrawer: React.FC = () => {
 
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
     for (const transaction of newTransactions) {
-      const encoded = encodeSingle(transaction.input)
+      const encoded = encodeTransaction(transaction)
       await provider.sendMetaTransaction(encoded)
     }
   }
 
   const copyTransactionData = () => {
     if (!connection.chainId) throw new Error('chainId is undefined')
-    const metaTransactions = newTransactions.map((tx) => encodeSingle(tx.input))
+    const metaTransactions = newTransactions.map(encodeTransaction)
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]

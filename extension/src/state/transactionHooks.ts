@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
-import { ForkProvider } from '../../providers'
-import { useProvider } from '../ProvideProvider'
+import { ForkProvider } from '../providers'
+import { useProvider } from '../browser/ProvideProvider'
 
 import { useAllTransactions, useDispatch } from '.'
 

@@ -1,13 +1,14 @@
 import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
-import { encodeSingle, TransactionInput } from 'react-multisend'
+import { TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useProvider } from '../ProvideProvider'
-import { useDispatch, useNewTransactions } from '../state'
+import { useDispatch, useNewTransactions } from '../../state'
 
 import classes from './style.module.css'
+import { encodeTransaction } from '../../encodeTransaction'
 
 type Props = {
   transaction: TransactionInput
@@ -42,7 +43,7 @@ export const Remove: React.FC<Props> = ({ transaction, index }) => {
 
     // re-simulate all transactions after the removed one
     for (const transaction of laterTransactions) {
-      const encoded = encodeSingle(transaction.input)
+      const encoded = encodeTransaction(transaction)
       await provider.sendMetaTransaction(encoded)
     }
   }

@@ -78,7 +78,9 @@ class WrappingProvider extends EventEmitter {
   constructor(provider: Eip1193Provider, connection: Connection) {
     super()
     this.provider = provider
-    this.signer = new Web3Provider(provider).getSigner()
+    this.signer = new Web3Provider(this.provider).getUncheckedSigner(
+      connection.pilotAddress
+    )
     this.connection = connection
   }
 
