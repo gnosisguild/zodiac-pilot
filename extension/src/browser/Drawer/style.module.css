@@ -238,6 +238,10 @@ button.link:hover {
   left: 0;
 }
 
+.secondaryButton {
+  background: none;
+}
+
 @-webkit-keyframes pulse {
   to {
     box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);

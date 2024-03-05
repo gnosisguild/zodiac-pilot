@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { ChainId, EXPLORER_URL, CHAIN_PREFIX } from '../../chains'
+import { ChainId, EXPLORER_URL, CHAIN_PREFIX, CHAIN_NAME } from '../../chains'
 import { waitForMultisigExecution } from '../../providers'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useConnection } from '../../connections'
@@ -20,11 +20,13 @@ import { useDispatch, useNewTransactions } from '../state'
 
 import classes from './style.module.css'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
+import { usePushConnectionsRoute } from '../../routing'
 
 const Submit: React.FC = () => {
-  const { connection } = useConnection()
+  const { connection, connect, connected } = useConnection()
   const { chainId, pilotAddress, providerType } = connection
   const dispatch = useDispatch()
+  const pushConnectionsRoute = usePushConnectionsRoute()
 
   const transactions = useNewTransactions()
   const submitTransactions = useSubmitTransactions()
@@ -41,7 +43,24 @@ const Submit: React.FC = () => {
   //   }
   // }, [provider, connection])
 
+  const connectWallet = () => {
+    pushConnectionsRoute(connection.id)
+  }
+
   const submit = async () => {
+    if (!connected) {
+      if (!connect) throw new Error('invariant violation')
+
+      const success = await connect()
+      if (!success) {
+        const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+        toast.error(
+          `Switch your wallet to ${chainName} to submit the transactions`
+        )
+        return
+      }
+    }
+
     if (!submitTransactions) throw new Error('invariant violation')
     setSignaturePending(true)
     let batchTransactionHash: string
@@ -104,12 +123,25 @@ const Submit: React.FC = () => {
 
   return (
     <>
-      <Button
-        onClick={submit}
-        disabled={!submitTransactions || transactions.length === 0}
-      >
-        Submit
-      </Button>
+      {(connected || !!connect) && (
+        <Button
+          onClick={submit}
+          disabled={!submitTransactions || transactions.length === 0}
+        >
+          Submit
+        </Button>
+      )}
+
+      {!connected && !connect && (
+        <Button
+          onClick={connectWallet}
+          disabled={!submitTransactions || transactions.length === 0}
+          secondary
+        >
+          Connect wallet to submit
+        </Button>
+      )}
+
       {signaturePending && (
         <AwaitingSignatureModal
           isOpen={signaturePending}

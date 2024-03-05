@@ -44,10 +44,15 @@ type ConnectionPatch = {
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [connections, setConnections] = useConnections()
-  const { connection, connected, connect } = useConnection(connectionId)
+  const { connection } = useConnection(connectionId)
   const connectionsHash = useConnectionsHash()
-  const [, selectConnection] = useSelectedConnectionId()
+  const [currentlySelectedConnectionId, selectConnection] =
+    useSelectedConnectionId()
   const pushConnectionsRoute = usePushConnectionsRoute()
+
+  const currentlySelectedConnection = connections.find(
+    (c) => c.id === currentlySelectedConnectionId
+  )
 
   useEffect(() => {
     const exists = connections.some((c) => c.id === connectionId)
@@ -75,13 +80,13 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const { hasTransactions, clearTransactions } = useClearTransactions()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
 
-  const confirmCanLaunch = async () => {
+  const confirmClearTransactions = async () => {
     if (!hasTransactions) {
       return true
     }
 
     const confirmation = await getConfirmation(
-      'Switching connections will empty your current transaction bundle.'
+      'Switching the Piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
@@ -112,26 +117,22 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   }
 
   const launchConnection = async () => {
-    const canLaunch = await confirmCanLaunch()
+    // we continue working with the same avatar, so don't have to clear the recorded transaction
+    const keepTransactionBundle =
+      currentlySelectedConnection &&
+      currentlySelectedConnection.avatarAddress.toLowerCase() ===
+        connection.avatarAddress.toLowerCase() &&
+      currentlySelectedConnection.chainId == connection.chainId
 
-    if (!canLaunch) {
+    const confirmed =
+      keepTransactionBundle || (await confirmClearTransactions())
+
+    if (!confirmed) {
       return
     }
 
-    if (connected) {
-      selectConnection(connection.id)
-      onLaunched()
-      return
-    }
-
-    if (!connected && connect) {
-      const success = await connect()
-      if (success) {
-        selectConnection(connection.id)
-        onLaunched()
-        return
-      }
-    }
+    selectConnection(connection.id)
+    onLaunched()
   }
 
   const error = useConnectionDryRun(connection)
@@ -147,7 +148,6 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
-  const canLaunch = connected || !!connect
   const canRemove = connections.length > 1
 
   return (
@@ -164,7 +164,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
             <Flex gap={4} alignItems="center">
               <Button
                 className={classes.launchButton}
-                disabled={!canLaunch}
+                disabled={!connection.avatarAddress}
                 onClick={launchConnection}
               >
                 Launch
@@ -218,13 +218,20 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
               <AvatarInput
                 availableSafes={safes}
                 value={avatarAddress}
-                onChange={(address) =>
-                  updateConnection({
-                    avatarAddress: address,
-                    moduleAddress: '',
-                    moduleType: undefined,
-                  })
-                }
+                onChange={async (address) => {
+                  const keepTransactionBundle =
+                    address.toLowerCase() ===
+                    connection.avatarAddress.toLowerCase()
+                  const confirmed =
+                    keepTransactionBundle || (await confirmClearTransactions())
+                  if (confirmed) {
+                    updateConnection({
+                      avatarAddress: address,
+                      moduleAddress: '',
+                      moduleType: undefined,
+                    })
+                  }
+                }}
               />
             </Field>
             <Field label="Zodiac Mod" disabled={modules.length === 0}>

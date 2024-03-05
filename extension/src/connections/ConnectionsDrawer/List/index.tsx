@@ -38,16 +38,17 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   connection,
 }) => {
   const { connected, connect } = useConnection(connection.id)
+  const { connection: currentlySelectedConnection } = useConnection()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
 
-  const handleCanLaunch = async () => {
+  const confirmClearTransactions = async () => {
     if (!hasTransactions) {
       return true
     }
 
     const confirmation = await getConfirmation(
-      'Switching connections will empty your current transaction bundle.'
+      'Switching the Piloted Safe will empty your current transaction bundle.'
     )
 
     if (!confirmation) {
@@ -60,10 +61,19 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
   }
 
   const handleModify = () => onModify(connection.id)
-  const handleLaunch = async () => {
-    const canLaunch = await handleCanLaunch()
 
-    if (!canLaunch) {
+  const handleLaunch = async () => {
+    // we continue working with the same avatar, so don't have to clear the recorded transaction
+    const keepTransactionBundle =
+      currentlySelectedConnection &&
+      currentlySelectedConnection.avatarAddress.toLowerCase() ===
+        connection.avatarAddress.toLowerCase() &&
+      currentlySelectedConnection.chainId === connection.chainId
+
+    const confirmed =
+      keepTransactionBundle || (await confirmClearTransactions())
+
+    if (!confirmed) {
       return
     }
 

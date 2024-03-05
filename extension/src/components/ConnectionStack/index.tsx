@@ -22,18 +22,15 @@ const ConnectionStack: React.FC<Props> = ({
   className,
 }) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
-
   return (
     <div className={cn(classes.connectionStack, className)}>
       <Box rounded className={cn([classes.address, addressBoxClass])}>
         <Address address={pilotAddress} />
-        {pilotAddress && (
-          <div className={cn(classes.helper, helperClass)}>
-            <p>Pilot Account</p>
-          </div>
-        )}
-      </Box>
 
+        <div className={cn(classes.helper, helperClass)}>
+          <p>Pilot Account</p>
+        </div>
+      </Box>
       {moduleAddress && (
         <Box roundedRight className={cn([classes.address, addressBoxClass])}>
           <Address address={moduleAddress} />
