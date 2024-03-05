@@ -3,14 +3,7 @@ import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { encodeMulti, encodeSingle } from 'react-multisend'
 import { toast } from 'react-toastify'
 
-import {
-  BlockButton,
-  Box,
-  Button,
-  Drawer,
-  Flex,
-  IconButton,
-} from '../../components'
+import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { wrapRequest } from '../../providers/WrappingProvider'
 import { useConnection } from '../../connections'
