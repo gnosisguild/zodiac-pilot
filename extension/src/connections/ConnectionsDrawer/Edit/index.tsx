@@ -121,7 +121,8 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     const keepTransactionBundle =
       currentlySelectedConnection &&
       currentlySelectedConnection.avatarAddress.toLowerCase() ===
-        connection.avatarAddress.toLowerCase()
+        connection.avatarAddress.toLowerCase() &&
+      currentlySelectedConnection.chainId == connection.chainId
 
     const confirmed =
       keepTransactionBundle || (await confirmClearTransactions())
