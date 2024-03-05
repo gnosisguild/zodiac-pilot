@@ -55,7 +55,7 @@ export default class SafeAppBridge {
 
     this.connection = connection
     const href = await requestIframeHref()
-    const currentOrigin = href ? new URL(href).host : undefined
+    const currentOrigin = href && new URL(href).origin
 
     const isConnected =
       this.connectedOrigin && currentOrigin === this.connectedOrigin

@@ -21,7 +21,7 @@ console.log('injected into', document.title)
 
 // establish message bridge for location requests
 window.addEventListener('message', (ev: MessageEvent) => {
-  const { zodiacPilotHrefRequest } = ev.data
+  const { zodiacPilotHrefRequest, zodiacPilotReloadRequest } = ev.data
   if (zodiacPilotHrefRequest) {
     if (!window.top) throw new Error('Must run inside iframe')
     window.top.postMessage(
@@ -31,6 +31,10 @@ window.addEventListener('message', (ev: MessageEvent) => {
       },
       '*'
     )
+  }
+
+  if (zodiacPilotReloadRequest) {
+    window.location.reload()
   }
 })
 

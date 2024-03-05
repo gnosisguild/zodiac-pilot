@@ -36,7 +36,8 @@ export const reloadIframe = () => {
   ) as HTMLIFrameElement | null
   const iframeWindow = iframe?.contentWindow
   if (!iframeWindow) return
-  iframeWindow.location.reload()
+
+  iframeWindow.postMessage({ zodiacPilotReloadRequest: true }, '*')
 }
 
 // The background script listens to all possible ways of location updates in our iframe and notify us via a message.
