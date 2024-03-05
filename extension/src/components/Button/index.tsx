@@ -3,13 +3,22 @@ import React from 'react'
 
 import classes from './style.module.css'
 
-const Button: React.FC<
-  React.DetailedHTMLProps<
+interface ButtonProps
+  extends React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
-  >
-> = ({ className, ...rest }) => (
-  <button className={cn(classes.button, className)} {...rest} />
+  > {
+  secondary?: boolean
+}
+const Button: React.FC<ButtonProps> = ({
+  className,
+  secondary = false,
+  ...rest
+}) => (
+  <button
+    className={cn(classes.button, className, secondary && classes.secondary)}
+    {...rest}
+  />
 )
 
 export default Button

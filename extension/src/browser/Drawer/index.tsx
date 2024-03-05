@@ -3,7 +3,14 @@ import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { encodeMulti, encodeSingle } from 'react-multisend'
 import { toast } from 'react-toastify'
 
-import { BlockButton, Box, Drawer, Flex, IconButton } from '../../components'
+import {
+  BlockButton,
+  Box,
+  Button,
+  Drawer,
+  Flex,
+  IconButton,
+} from '../../components'
 import { ForkProvider } from '../../providers'
 import { wrapRequest } from '../../providers/WrappingProvider'
 import { useConnection } from '../../connections'
@@ -166,9 +173,18 @@ const TransactionsDrawer: React.FC = () => {
             </p>
           )}
         </Flex>
-        <Box p={2} bg>
+        <Flex justifyContent="space-between" gap={2}>
+          {!connection.pilotAddress && (
+            <Button
+              secondary
+              onClick={copyTransactionData}
+              disabled={newTransactions.length === 0}
+            >
+              Copy transaction data
+            </Button>
+          )}
           <Submit />
-        </Box>
+        </Flex>
       </Flex>
     </Drawer>
   )

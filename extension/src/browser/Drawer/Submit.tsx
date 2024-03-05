@@ -136,6 +136,7 @@ const Submit: React.FC = () => {
         <Button
           onClick={connectWallet}
           disabled={!submitTransactions || transactions.length === 0}
+          secondary
         >
           Connect wallet to submit
         </Button>
