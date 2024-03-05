@@ -27,12 +27,14 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
           <Box bg roundedLeft className={classes.currentConnectionContainer}>
             <Flex justifyContent="space-between" alignItems="center" gap={3}>
               <div className={classes.blockieStack}>
-                <Box rounded className={classes.blockieBox}>
-                  <Blockie
-                    address={connection.pilotAddress}
-                    className={classes.blockie}
-                  />
-                </Box>
+                {connection.pilotAddress && (
+                  <Box rounded className={classes.blockieBox}>
+                    <Blockie
+                      address={connection.pilotAddress}
+                      className={classes.blockie}
+                    />
+                  </Box>
+                )}
                 {connection.moduleAddress && (
                   <Box rounded className={classes.blockieBox}>
                     <Blockie
