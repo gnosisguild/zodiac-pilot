@@ -1,8 +1,8 @@
 import { Interface } from '@ethersproject/abi'
 import { MetaTransaction } from 'react-multisend'
 
-// so far has been only deployed on goerli
-const SNAPSHOT_SIGNER_ADDRESS = '0xe8dc35d8d42025A0135bE818A04F42Aa9ba146BF'
+// https://github.com/gnosisguild/snapshot-signer
+const SNAPSHOT_SIGNER_ADDRESS = '0xb0382209806345d27dfdab5bbc17b2ab553165ac'
 
 const SnapshotSignerInterface = new Interface([
   'function signSnapshotArrayVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, uint32[] choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
