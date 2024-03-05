@@ -6,7 +6,7 @@ import React, {
   useContext,
   useMemo,
 } from 'react'
-import { decodeSingle, encodeMulti, encodeSingle } from 'react-multisend'
+import { decodeSingle, encodeMulti } from 'react-multisend'
 
 import { MULTI_SEND_ADDRESS } from '../chains'
 import {
@@ -18,7 +18,8 @@ import { useConnection } from '../connections'
 import { Eip1193Provider } from '../types'
 
 import fetchAbi from './fetchAbi'
-import { useDispatch, useNewTransactions } from './state'
+import { useDispatch, useNewTransactions } from '../state'
+import { encodeTransaction } from '../encodeTransaction'
 
 interface Props {
   simulate: boolean
@@ -101,9 +102,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
   )
 
   const submitTransactions = useCallback(async () => {
-    const metaTransactions = transactions.map((txState) =>
-      encodeSingle(txState.input)
-    )
+    const metaTransactions = transactions.map(encodeTransaction)
 
     console.log(
       transactions.length === 1

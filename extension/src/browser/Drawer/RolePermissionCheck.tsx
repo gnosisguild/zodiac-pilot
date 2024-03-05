@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
 import { encodeSingle, TransactionInput } from 'react-multisend'
@@ -64,7 +64,13 @@ const RolePermissionCheck: React.FC<{
   const { connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
 
-  const encodedTransaction = encodeSingle(transaction)
+  const encodedTransaction = useMemo(
+    () => ({
+      ...encodeSingle(transaction),
+      operation: isDelegateCall ? 1 : 0,
+    }),
+    [transaction, isDelegateCall]
+  )
 
   const translationAvailable = !!useApplicableTranslation(encodedTransaction)
 

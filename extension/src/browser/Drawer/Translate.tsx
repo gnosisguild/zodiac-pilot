@@ -6,9 +6,10 @@ import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
-import { useDispatch, useNewTransactions } from '../state'
+import { useDispatch, useNewTransactions } from '../../state'
 
 import classes from './style.module.css'
+import { encodeTransaction } from '../../encodeTransaction'
 
 type Props = {
   transaction: TransactionInput
@@ -44,7 +45,7 @@ export const Translate: React.FC<Props> = ({
   const handleTranslate = async () => {
     const laterTransactions = transactions
       .slice(index + 1)
-      .map((t) => encodeSingle(t.input))
+      .map(encodeTransaction)
 
     // remove the transaction and all later ones from the store
     dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: transaction.id } })

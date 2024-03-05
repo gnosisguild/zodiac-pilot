@@ -16,7 +16,7 @@ import {
   decodeRolesV2Error,
 } from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
-import { useDispatch, useNewTransactions } from '../state'
+import { useDispatch, useNewTransactions } from '../../state'
 
 import classes from './style.module.css'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'

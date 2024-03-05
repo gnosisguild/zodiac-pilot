@@ -21,7 +21,7 @@ import {
   useSelectedConnectionId,
 } from '../../connectionHooks'
 import useConnectionDryRun from '../../useConnectionDryRun'
-import { useClearTransactions } from '../../../browser/state/transactionHooks'
+import { useClearTransactions } from '../../../state/transactionHooks'
 
 import classes from './style.module.css'
 import { decodeRoleKey, encodeRoleKey } from '../../../utils'

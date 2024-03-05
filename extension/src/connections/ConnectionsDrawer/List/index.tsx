@@ -18,7 +18,7 @@ import {
   useSelectedConnectionId,
 } from '../../connectionHooks'
 import { Connection, ProviderType } from '../../../types'
-import { useClearTransactions } from '../../../browser/state/transactionHooks'
+import { useClearTransactions } from '../../../state/transactionHooks'
 
 import classes from './style.module.css'
 

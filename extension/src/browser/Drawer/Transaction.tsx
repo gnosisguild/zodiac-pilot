@@ -8,7 +8,7 @@ import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
 import { CHAIN_CURRENCY } from '../../chains'
 import { useConnection } from '../../connections'
-import { TransactionState } from '../state'
+import { TransactionState } from '../../state'
 
 import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
