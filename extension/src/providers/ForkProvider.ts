@@ -32,6 +32,8 @@ class ForkProvider extends EventEmitter {
 
   private blockGasLimitPromise: Promise<number>
 
+  private pendingMetaTransaction: Promise<any> | undefined
+
   constructor(
     provider: TenderlyProvider,
     {
@@ -143,6 +145,22 @@ class ForkProvider extends EventEmitter {
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
   async sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
+    // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
+
+    // If there's a pending request, wait for it to finish before sending the next one
+    const send = this.pendingMetaTransaction
+      ? async () => {
+          await this.pendingMetaTransaction
+          return await this._sendMetaTransaction(metaTx)
+        }
+      : async () => await this._sendMetaTransaction(metaTx)
+
+    // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
+    this.pendingMetaTransaction = send()
+    return await this.pendingMetaTransaction
+  }
+
+  private async _sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
     const isDelegateCall = metaTx.operation === 1
     if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
       throw new Error('delegatecall requires moduleAddress or ownerAddress')

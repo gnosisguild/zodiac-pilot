@@ -7,7 +7,11 @@ import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { Connection, JsonRpcError, TransactionData } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
-import { decodeRolesV2Error, isPermissionsError } from '../../utils/decodeError'
+import {
+  decodeGenericError,
+  decodeRolesV2Error,
+  isPermissionsError,
+} from '../../utils/decodeError'
 
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
@@ -42,13 +46,16 @@ const simulateRolesTransaction = async (
         ? decodeRolesV1Error(e as JsonRpcError)
         : decodeRolesV2Error(e as JsonRpcError)
 
-    if (!decodedError) {
-      console.error('Unexpected error', e)
+    if (decodedError) {
+      return isPermissionsError(decodedError.signature)
+        ? decodedError.signature
+        : false
+    } else {
+      const genericError = decodeGenericError(e as JsonRpcError)
+      if (genericError === 'Module not authorized') {
+        return 'Not a member of any role'
+      }
     }
-
-    return decodedError && isPermissionsError(decodedError.signature)
-      ? decodedError.signature
-      : false
   }
 
   return false

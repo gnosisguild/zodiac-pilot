@@ -1,3 +1,4 @@
+import { defaultAbiCoder } from '@ethersproject/abi'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { JsonRpcError } from '../types'
 
@@ -14,7 +15,12 @@ export function getRevertData(error: JsonRpcError) {
   //  - RPC provider (Infura vs. Alchemy)
   //  - client library (ethers vs. directly using the EIP-1193 provider)
 
-  // Here we try to fix the revert reason in any of the possible formats
+  // first, drill through potential error wrappings down to the original error
+  while (typeof error === 'object' && (error as any).error) {
+    error = (error as any).error
+  }
+
+  // Here we try to extract the revert reason in any of the possible formats
   const message =
     error.data?.originalError?.data ||
     error.data?.data ||
@@ -30,9 +36,20 @@ export function getRevertData(error: JsonRpcError) {
 
 export function decodeGenericError(error: JsonRpcError) {
   const revertData = getRevertData(error)
-  if (revertData.startsWith('0x')) {
-    return asciiDecode(revertData.substring(2))
+
+  // Solidity `revert "reason string"` will revert with the data encoded as selector of `Error(string)` followed by the ABI encoded string param
+  if (revertData.startsWith('0x08c379a0')) {
+    try {
+      const [reason] = defaultAbiCoder.decode(
+        ['string'],
+        '0x' + revertData.slice(10) // skip over selector
+      )
+      return reason as string
+    } catch (e) {
+      return revertData
+    }
   }
+
   return revertData
 }
 
@@ -92,11 +109,3 @@ const PERMISSION_ERRORS = Object.keys(RolesV1Interface.errors)
 export const isPermissionsError = (errorSignature: string) =>
   PERMISSION_ERRORS.includes(errorSignature) &&
   errorSignature !== 'ModuleTransactionFailed()'
-
-function asciiDecode(hex: string) {
-  let result = ''
-  for (let i = 0; i < hex.length; i += 2) {
-    result += String.fromCharCode(parseInt(hex.substring(i, i + 2), 16))
-  }
-  return result
-}
