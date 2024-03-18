@@ -4,7 +4,14 @@ function inject(windowName: string, scriptPath: string) {
     node.src = chrome.runtime.getURL(scriptPath)
 
     const parent = document.head || document.documentElement
+    if (parent.dataset.__zodiacPilotInjected) {
+      // another installation of the extension has already injected itself
+      // (this can happen when when loading unpacked extensions)
+      return
+    }
+    parent.dataset.zodiacPilotInjected = 'true'
     parent.insertBefore(node, parent.children[0])
+    console.log('parent', parent)
     node.onload = function () {
       node.remove()
     }

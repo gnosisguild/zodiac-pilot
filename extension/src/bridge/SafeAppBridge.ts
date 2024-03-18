@@ -18,11 +18,13 @@ import {
 } from '@safe-global/safe-apps-sdk'
 import {
   getBalances,
+  getSafeInfo,
   getTransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { ChainId, CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
 import { Connection, Eip1193Provider } from '../types'
 import { reloadIframe, requestIframeHref } from '../location'
+import { getAddress } from 'ethers/lib/utils'
 
 type MessageHandler = (
   params: any,
@@ -33,6 +35,12 @@ type MessageHandler = (
   | MethodToResponse[Methods]
   | ErrorResponse
   | Promise<MethodToResponse[Methods] | ErrorResponse | void>
+
+export const SAFE_APP_WHITELIST = [
+  'https://app.stakewise.io',
+  'https://snapshot.org',
+  'https://testnet.snapshot.org',
+]
 
 export default class SafeAppBridge {
   private provider: Eip1193Provider
@@ -136,21 +144,27 @@ export default class SafeAppBridge {
       origin: document.location.origin,
     }),
 
-    [Methods.getSafeInfo]: () => ({
-      safeAddress: this.connection.avatarAddress,
-      chainId: this.connection.chainId,
-      owners: [],
-      threshold: 1,
-      isReadOnly: false,
-      network:
-        LEGACY_CHAIN_NAME[this.connection.chainId] ||
-        CHAIN_NAME[this.connection.chainId].toUpperCase(),
-    }),
+    [Methods.getSafeInfo]: async () => {
+      const info = await getSafeInfo(
+        CHAIN_PREFIX[this.connection.chainId],
+        getAddress(this.connection.avatarAddress)
+      )
+      return {
+        safeAddress: getAddress(this.connection.avatarAddress),
+        chainId: this.connection.chainId,
+        threshold: info.threshold,
+        owners: info.owners.map((owner) => owner.value),
+        isReadOnly: false,
+        network:
+          LEGACY_CHAIN_NAME[this.connection.chainId] ||
+          CHAIN_NAME[this.connection.chainId].toUpperCase(),
+      }
+    },
 
     [Methods.getSafeBalances]: ({ currency = 'usd' }: GetBalanceParams) => {
       return getBalances(
         CHAIN_PREFIX[this.connection.chainId],
-        this.connection.avatarAddress,
+        getAddress(this.connection.avatarAddress),
         currency,
         {
           exclude_spam: true,
@@ -166,12 +180,16 @@ export default class SafeAppBridge {
       })
     },
 
-    [Methods.sendTransactions]: ({ txs }: SendTransactionsParams) => {
-      return Promise.all(
+    [Methods.sendTransactions]: async ({ txs }: SendTransactionsParams) => {
+      // hash would wrap in a multicall, but we want to record it unfolded
+      const hashes = (await Promise.all(
         txs.map((tx) =>
           this.provider.request({ method: 'eth_sendTransaction', params: [tx] })
         )
-      )
+      )) as string[]
+
+      // return last transaction's hash
+      return { safeTxHash: hashes[hashes.length - 1] }
     },
 
     [Methods.signMessage]: async ({ message }: SignMessageParams) => {

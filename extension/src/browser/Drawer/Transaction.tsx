@@ -183,9 +183,12 @@ export const TransactionBadge: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const { connection } = useConnection()
+
   const showRoles =
-    connection.moduleType === KnownContracts.ROLES_V1 ||
-    connection.moduleType === KnownContracts.ROLES_V2
+    (connection.moduleType === KnownContracts.ROLES_V1 ||
+      connection.moduleType === KnownContracts.ROLES_V2) &&
+    !!connection.roleId &&
+    !!connection.pilotAddress // TODO remove this check once we can query role members via ser to get a fallback
 
   const elementRef = useScrollIntoView(scrollIntoView)
 

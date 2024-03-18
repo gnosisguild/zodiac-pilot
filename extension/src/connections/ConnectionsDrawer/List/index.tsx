@@ -134,7 +134,13 @@ const ConnectionItem: React.FC<ConnectionItemProps> = ({
                     />
                   )}
                 </Box>
-                <h2>{connection.label}</h2>
+                <h2>
+                  {connection.label || (
+                    <>
+                      <em>Unnamed connection</em>
+                    </>
+                  )}
+                </h2>
               </Flex>
             </Flex>
             <Flex
