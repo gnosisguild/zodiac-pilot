@@ -167,8 +167,8 @@ export default class SafeAppBridge {
       )
     },
 
-    [Methods.rpcCall]: (params: RPCPayload) => {
-      return this.provider.request({
+    [Methods.rpcCall]: async (params: RPCPayload) => {
+      return await this.provider.request({
         method: params.call,
         params: params.params,
       })

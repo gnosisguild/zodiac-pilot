@@ -1,5 +1,5 @@
 import EventEmitter from 'events'
-import { hexValue } from 'ethers/lib/utils'
+import { hexValue, poll } from 'ethers/lib/utils'
 import {
   StaticJsonRpcProvider,
   TransactionRequest,
@@ -87,6 +87,34 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
       }
       case 'eth_chainId': {
         return hexValue(this.chainId)
+      }
+      case 'eth_getCode': {
+        const result = await this.provider.getCode(params[0], params[1])
+        return result
+      }
+      case 'eth_getBlockByHash': {
+        return poll(
+          () =>
+            this.provider.perform('eth_getBlock', {
+              blockHash: params[0],
+              includeTransactions: params[1],
+            }),
+          {
+            oncePoll: this.provider,
+          }
+        )
+      }
+      case 'eth_getBlockByNumber': {
+        return poll(
+          () =>
+            this.provider.perform('getBlock', {
+              blockTag: params[0],
+              includeTransactions: params[1],
+            }),
+          {
+            oncePoll: this.provider,
+          }
+        )
       }
 
       case 'eth_call': {
