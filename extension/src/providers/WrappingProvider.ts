@@ -69,6 +69,8 @@ class UnsupportedMethodError extends Error {
   code = 4200
 }
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
 class WrappingProvider extends EventEmitter {
   private connection: Connection
 
@@ -79,7 +81,7 @@ class WrappingProvider extends EventEmitter {
     super()
     this.provider = provider
     this.signer = new Web3Provider(this.provider).getUncheckedSigner(
-      connection.pilotAddress
+      connection.pilotAddress || ZERO_ADDRESS
     )
     this.connection = connection
   }
