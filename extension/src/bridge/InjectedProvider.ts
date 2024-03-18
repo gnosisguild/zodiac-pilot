@@ -135,7 +135,7 @@ export default class InjectedProvider extends EventEmitter {
 }
 
 const HOSTNAMES_REQUIRING_METAMASK = [
-  'app.stakewise.io',
+  'v2.stakewise.io',
   'app.aura.finance',
   'www.ankr.com',
   'www.staderlabs.com',

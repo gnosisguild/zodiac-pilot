@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from 'react'
 
 import Eip1193Bridge from '../bridge/Eip1193Bridge'
-import SafeAppBridge from '../bridge/SafeAppBridge'
+import SafeAppBridge, { SAFE_APP_WHITELIST } from '../bridge/SafeAppBridge'
 import { useConnection } from '../connections'
 
 import { useProvider } from './ProvideProvider'
@@ -40,7 +40,9 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
 
     const handle = (ev: MessageEvent<any>) => {
       eip1193BridgeRef.current?.handleMessage(ev)
-      safeAppBridgeRef.current?.handleMessage(ev)
+      if (SAFE_APP_WHITELIST.includes(ev.origin)) {
+        safeAppBridgeRef.current?.handleMessage(ev)
+      }
     }
     window.addEventListener('message', handle)
 

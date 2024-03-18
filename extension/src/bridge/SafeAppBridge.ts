@@ -36,6 +36,12 @@ type MessageHandler = (
   | ErrorResponse
   | Promise<MethodToResponse[Methods] | ErrorResponse | void>
 
+export const SAFE_APP_WHITELIST = [
+  'https://app.stakewise.io',
+  'https://snapshot.org',
+  'https://testnet.snapshot.org',
+]
+
 export default class SafeAppBridge {
   private provider: Eip1193Provider
   private connection: Connection
