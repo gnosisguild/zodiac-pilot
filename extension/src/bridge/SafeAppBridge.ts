@@ -40,6 +40,7 @@ export const SAFE_APP_WHITELIST = [
   'https://app.stakewise.io',
   'https://snapshot.org',
   'https://testnet.snapshot.org',
+  'https://swap.cow.fi',
 ]
 
 export default class SafeAppBridge {
