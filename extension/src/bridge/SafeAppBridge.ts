@@ -38,6 +38,7 @@ type MessageHandler = (
 
 export const SAFE_APP_WHITELIST = [
   'https://app.stakewise.io',
+  'https://app.uniswap.org',
   'https://snapshot.org',
   'https://testnet.snapshot.org',
   'https://swap.cow.fi',
