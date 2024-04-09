@@ -42,6 +42,7 @@ export const SAFE_APP_WHITELIST = [
   'https://snapshot.org',
   'https://testnet.snapshot.org',
   'https://swap.cow.fi',
+  'https://www.drips.network',
 ]
 
 export default class SafeAppBridge {
