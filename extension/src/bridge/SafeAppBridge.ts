@@ -20,6 +20,7 @@ import {
   getBalances,
   getSafeInfo,
   getTransactionDetails,
+  TransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { ChainId, CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
 import { Connection, Eip1193Provider } from '../types'
@@ -43,6 +44,7 @@ export const SAFE_APP_WHITELIST = [
   'https://testnet.snapshot.org',
   'https://swap.cow.fi',
   'https://www.drips.network',
+  'https://app.balancer.fi',
 ]
 
 export default class SafeAppBridge {
@@ -112,7 +114,11 @@ export default class SafeAppBridge {
         throw new Error('No response returned from handler')
       }
     } catch (e) {
-      console.error('Error handling message via SafeAppCommunicator', e)
+      console.error(
+        'Error handling message via SafeAppCommunicator',
+        msg.data,
+        e
+      )
       this.postResponse(msg.source, getErrorMessage(e), msg.data.id, true)
     }
   }
@@ -137,10 +143,25 @@ export default class SafeAppBridge {
 
   handlers: { [method in Methods]: MessageHandler } = {
     [Methods.getTxBySafeTxHash]: ({ safeTxHash }: GetTxBySafeTxHashParams) => {
-      return getTransactionDetails(
-        CHAIN_PREFIX[this.connection.chainId],
-        safeTxHash
-      )
+      // mock Safe Gateway's getTransactionDetails() response
+      const safeAddress = getAddress(this.connection.avatarAddress)
+      return {
+        txHash: safeTxHash,
+        safeAddress,
+        txId: `multisig_${safeAddress}_${safeTxHash}`,
+        executedAt: new Date().getTime(),
+        txStatus: 'SUCCESS',
+        // TODO we might have to retrieve the actual transaction details from reducer state
+        txInfo: {
+          type: 'Custom',
+          to: {
+            value: '0x0000000000000000000000000000000000000000',
+          },
+          dataSize: '0',
+          value: '0',
+          isCancellation: false,
+        },
+      } as TransactionDetails
     },
 
     [Methods.getEnvironmentInfo]: () => ({
