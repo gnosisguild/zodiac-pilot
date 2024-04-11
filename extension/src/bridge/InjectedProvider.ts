@@ -123,7 +123,7 @@ export default class InjectedProvider extends EventEmitter {
     }
   }
 
-  'isZodiac Pilot' = true
+  isZodiacPilot = true
 
   // This is required for connecting to Etherscan
   enable = () => {
