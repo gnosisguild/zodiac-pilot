@@ -19,7 +19,6 @@ import {
 import {
   getBalances,
   getSafeInfo,
-  getTransactionDetails,
   TransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { ChainId, CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
@@ -45,6 +44,7 @@ export const SAFE_APP_WHITELIST = [
   'https://swap.cow.fi',
   'https://www.drips.network',
   'https://app.balancer.fi',
+  'https://stake.lido.fi',
 ]
 
 export default class SafeAppBridge {
