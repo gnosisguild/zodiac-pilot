@@ -1,11 +1,15 @@
 import React, { useMemo } from 'react'
 import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
-import { encodeSingle, TransactionInput } from 'react-multisend'
+import {
+  encodeSingle,
+  MetaTransaction,
+  TransactionInput,
+} from 'react-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { Connection, JsonRpcError, TransactionData } from '../../types'
+import { Connection, JsonRpcError } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
 import {
   decodeGenericError,
@@ -23,7 +27,7 @@ import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
 
 const simulateRolesTransaction = async (
-  encodedTransaction: TransactionData,
+  encodedTransaction: MetaTransaction,
   connection: Connection,
   tenderlyProvider: TenderlyProvider
 ) => {
