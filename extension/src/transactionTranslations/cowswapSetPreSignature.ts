@@ -68,7 +68,7 @@ export default {
       (response) => response.json()
     )
 
-    const validDuration = 60 * 30 // 30 minutes
+    const validDuration = order.validTo - Math.floor(Date.now() / 1000)
     const feeAmountBP = Math.ceil(
       (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000
     )
