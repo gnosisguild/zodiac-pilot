@@ -179,12 +179,14 @@ export class TenderlyProvider extends EventEmitter {
   private blockNumber: number | undefined
 
   private tenderlyForkApi: string
+  private throttledIncreaseBlock: () => void
 
   constructor(chainId: ChainId) {
     super()
     this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
     this.chainId = chainId
     this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
+    this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
@@ -194,7 +196,10 @@ export class TenderlyProvider extends EventEmitter {
     }
 
     if (request.method === 'eth_blockNumber' && this.blockNumber) {
-      // Save some polling requests so we don't hit Tenderly's rate limits too quickly
+      // Some apps (such as Curve) only let the user continue in a transaction flow after a certain number of blocks have been mined.
+      // To simulate progress of time/blocks, we increase the block number when polled, throttled in intervals of 1 second.
+      // We cache the block number to save some polling requests so we don't hit Tenderly's rate limits too quickly.
+      this.throttledIncreaseBlock()
       return this.blockNumber
     }
 
@@ -228,17 +233,11 @@ export class TenderlyProvider extends EventEmitter {
     }
 
     if (request.method === 'eth_sendTransaction') {
-      // when sending a transaction, we need retrieve that transaction's ID on Tenderly
+      // when sending a transaction, we need to retrieve that transaction's ID on Tenderly
       const { global_head: headTransactionId, block_number } =
         await this.fetchForkInfo()
       this.blockNumber = block_number
       this.transactionIds.set(result, headTransactionId) // result is the transaction hash
-
-      // advance two extra blocks to account for apps waiting on the transaction's inclusion in the next block
-      window.setTimeout(async () => {
-        await provider.send('evm_increaseBlocks', ['0x2'])
-        if (this.blockNumber) this.blockNumber += 2
-      }, 1)
     }
 
     return result
@@ -336,5 +335,27 @@ export class TenderlyProvider extends EventEmitter {
       ...json.fork_transaction,
       dashboardLink: `https://dashboard.tenderly.co/public/gnosisguild/zodiac-pilot/fork-simulation/${transactionId}`,
     }
+  }
+
+  private increaseBlock = async () => {
+    if (!this.forkProviderPromise || !this.blockNumber) return
+    const provider = await this.forkProviderPromise
+    await provider.send('evm_increaseBlocks', ['0x1'])
+    this.blockNumber++
+  }
+}
+
+function throttle(func: (...args: any[]) => void, timeout: number) {
+  let ready = true
+  return (...args: any[]) => {
+    if (!ready) {
+      return
+    }
+
+    ready = false
+    func(...args)
+    setTimeout(() => {
+      ready = true
+    }, timeout)
   }
 }
