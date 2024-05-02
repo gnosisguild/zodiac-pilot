@@ -14,6 +14,7 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [100]: 'https://safe-transaction-gnosis-chain.safe.global',
   [137]: 'https://safe-transaction-polygon.safe.global',
   [246]: 'https://safe-transaction-ewc.safe.global',
+  [8453]: 'https://safe-transaction-base.safe.global',
   [42161]: 'https://safe-transaction-arbitrum.safe.global',
   [42220]: undefined, // not available
   [73799]: 'https://safe-transaction-volta.safe.global',
