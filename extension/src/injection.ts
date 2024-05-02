@@ -63,6 +63,23 @@ window.addEventListener('eip6963:requestProvider', () => {
 
 announceEip6963Provider(injectedProvider)
 
+// override EIP-6963 provider announcement for MetaMask
+window.addEventListener('eip6963:announceProvider', (event) => {
+  const ev = event as CustomEvent
+  if (ev.detail.info.rdns === 'io.metamask' && !ev.detail.metamaskOverride) {
+    window.dispatchEvent(
+      new CustomEvent('eip6963:announceProvider', {
+        detail: Object.freeze({
+          info: ev.detail.info,
+          provider: injectedProvider,
+          metamaskOverride: true,
+        }),
+      })
+    )
+    event.stopImmediatePropagation()
+  }
+})
+
 window.dispatchEvent(new Event('ethereum#initialized'))
 
 export {}
