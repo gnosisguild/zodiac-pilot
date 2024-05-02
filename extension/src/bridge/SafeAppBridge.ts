@@ -46,6 +46,7 @@ export const SAFE_APP_WHITELIST = [
   'https://app.balancer.fi',
   'https://stake.lido.fi',
   'https://curve.fi',
+  'https://app.spark.fi',
 ]
 
 export default class SafeAppBridge {
