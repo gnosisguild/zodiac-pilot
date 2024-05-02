@@ -46,7 +46,7 @@ const announceEip6963Provider = (provider: InjectedProvider) => {
   const info = {
     uuid: '2a0c727b-4359-49a0-920c-b411d32b1d1e', // random uuid
     name: 'Zodiac Pilot',
-    // icon: 'TODO',
+    icon: '//pilot.gnosisguild.org/zodiac48.png',
     rdns: 'org.gnosisguild.pilot',
   }
 
@@ -66,13 +66,19 @@ announceEip6963Provider(injectedProvider)
 // override EIP-6963 provider announcement for MetaMask
 window.addEventListener('eip6963:announceProvider', (event) => {
   const ev = event as CustomEvent
-  if (ev.detail.info.rdns === 'io.metamask' && !ev.detail.metamaskOverride) {
+  if (
+    ev.detail.info.rdns === 'io.metamask' &&
+    ev.detail.info.name !== 'Zodiac Pilot'
+  ) {
     window.dispatchEvent(
       new CustomEvent('eip6963:announceProvider', {
         detail: Object.freeze({
-          info: ev.detail.info,
+          info: {
+            ...ev.detail.info,
+            name: 'Zodiac Pilot',
+            icon: '//pilot.gnosisguild.org/zodiac48.png',
+          },
           provider: injectedProvider,
-          metamaskOverride: true,
         }),
       })
     )
