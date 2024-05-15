@@ -3,11 +3,11 @@ name: Deploy Vnet API
 on:
   push:
     branches: main
-    paths: "vnet-api/**"
+    paths: "fork-api/**"
 
 defaults:
   run:
-    working-directory: ./vnet-api
+    working-directory: ./fork-api
 
 jobs:
   deploy:
@@ -19,12 +19,12 @@ jobs:
         with:
           node-version: 16
           cache: "npm"
-          cache-dependency-path: "vnet-api/package-lock.json"
+          cache-dependency-path: "fork-api/package-lock.json"
       - run: npm install
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
         with:
-          workingDirectory: vnet-api
+          workingDirectory: fork-api
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
             TENDERLY_ACCESS_KEY
