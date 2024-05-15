@@ -1,8 +1,8 @@
-name: Deploy Fork API
+name: Deploy Vnet API
 
 on:
   push:
-    branches: v-testnets
+    branches: main
     paths: "vnet-api/**"
 
 defaults:

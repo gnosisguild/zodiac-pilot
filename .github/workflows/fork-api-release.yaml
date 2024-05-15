@@ -1,4 +1,4 @@
-name: Deploy Vnet API
+name: Deploy Fork API
 
 on:
   push:
