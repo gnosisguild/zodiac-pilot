@@ -2,7 +2,7 @@ name: Deploy Fork API
 
 on:
   push:
-    branches: main
+    branches: v-testnets
     paths: "fork-api/**"
 
 defaults:
