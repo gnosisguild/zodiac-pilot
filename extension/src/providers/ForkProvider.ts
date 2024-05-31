@@ -249,9 +249,9 @@ const execTransactionFromModule = (
     value: '0x0',
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gasLimit: hexlify(blockGasLimit),
+    gas: hexlify(blockGasLimit / 2), // for some reason tenderly errors when passing the full block gas limit
     // With gas price 0 account don't need token for gas
-    gasPrice: '0x0',
+    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 
@@ -285,9 +285,9 @@ export function execTransaction(
     value: '0x0',
     from: ownerAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gasLimit: hexlify(blockGasLimit),
+    gas: hexlify(blockGasLimit / 2), // for some reason tenderly errors when passing the full block gas limit
     // With gas price 0 account don't need token for gas
-    gasPrice: '0x0',
+    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 

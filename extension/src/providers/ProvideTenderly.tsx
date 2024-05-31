@@ -10,6 +10,10 @@ import { initSafeProtocolKit } from '../integrations/safe/kits'
 import { safeInterface } from '../integrations/safe'
 import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from '../chains'
+import { customAlphabet } from 'nanoid'
+import { hexlify } from 'ethers/lib/utils'
+
+const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
 
@@ -172,7 +176,7 @@ export class TenderlyProvider extends EventEmitter {
   private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
-  private forkId: string | undefined
+  private vnetId: string | undefined
   private transactionIds: Map<string, string> = new Map()
   private transactionInfo: Map<string, Promise<TenderlyTransactionInfo>> =
     new Map()
@@ -185,7 +189,7 @@ export class TenderlyProvider extends EventEmitter {
     super()
     this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
     this.chainId = chainId
-    this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
+    this.tenderlyForkApi = 'https://vnet-api.pilot.gnosisguild.org'
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
   }
 
@@ -267,17 +271,19 @@ export class TenderlyProvider extends EventEmitter {
   }
 
   async deleteFork() {
+    console.log('DELETE FORK')
     await this.forkProviderPromise
-    if (!this.forkId) return
+    if (!this.vnetId) return
 
     // notify the background script to stop intercepting JSON RPC requests
     window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
 
-    const forkId = this.forkId
-    this.forkId = undefined
+    const vnetId = this.vnetId
+    this.vnetId = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
-    await fetch(`${this.tenderlyForkApi}/${forkId}`, {
+
+    await fetch(`${this.tenderlyForkApi}/${vnetId}`, {
       method: 'DELETE',
     })
   }
@@ -286,21 +292,40 @@ export class TenderlyProvider extends EventEmitter {
     networkId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
+    console.log({ block_number })
     const res = await fetch(this.tenderlyForkApi, {
       method: 'POST',
       body: JSON.stringify({
-        network_id: networkId.toString(),
-        block_number: blockNumber,
+        slug: slug(),
+        display_name: 'Zodiac Pilot Test Flight',
+        fork_config: {
+          network_id: networkId,
+          block_number:
+            blockNumber ||
+            (await this.provider.request({
+              method: 'eth_blockNumber',
+            })),
+        },
+        virtual_network_config: {
+          base_fee_per_gas: 0,
+          chain_config: {
+            chain_id: networkId,
+          },
+        },
+        sync_state_config: {
+          enabled: true,
+        },
       }),
     })
 
     const json = await res.json()
-    this.forkId = json.simulation_fork.id
-    this.blockNumber = json.simulation_fork.block_number
+
+    this.vnetId = json.id
+    this.blockNumber = json.fork_config.block_number
     this.transactionIds.clear()
 
-    const rpcUrl = `https://rpc.tenderly.co/fork/${this.forkId}`
-
+    const rpcUrl = json.rpcs[0].url // `https://rpc.tenderly.co/fork/${this.vnetId}`
+    console.log({ rpcUrl })
     // notify the background script to start intercepting JSON RPC requests
     window.postMessage(
       { type: 'startSimulating', toBackground: true, networkId, rpcUrl },
@@ -312,9 +337,9 @@ export class TenderlyProvider extends EventEmitter {
 
   private async fetchForkInfo() {
     await this.forkProviderPromise
-    if (!this.forkId) throw new Error('No Tenderly fork available')
+    if (!this.vnetId) throw new Error('No Tenderly fork available')
 
-    const res = await fetch(`${this.tenderlyForkApi}/${this.forkId}`)
+    const res = await fetch(`${this.tenderlyForkApi}/${this.vnetId}`)
     const json = await res.json()
     return json.simulation_fork
   }
@@ -322,13 +347,13 @@ export class TenderlyProvider extends EventEmitter {
   private async fetchTransactionInfo(
     transactionHash: string
   ): Promise<TenderlyTransactionInfo> {
-    if (!this.forkId) throw new Error('No Tenderly fork available')
+    if (!this.vnetId) throw new Error('No Tenderly fork available')
 
     const transactionId = this.transactionIds.get(transactionHash)
     if (!transactionId) throw new Error('Transaction not found')
 
     const res = await fetch(
-      `${this.tenderlyForkApi}/${this.forkId}/transaction/${transactionId}`
+      `${this.tenderlyForkApi}/${this.vnetId}/transaction/${transactionId}`
     )
     const json = await res.json()
     return {
