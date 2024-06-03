@@ -87,7 +87,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],\
             ["ts-jest", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:27.1.5"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"],\
-            ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"]\
+            ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"],\
+            ["zodiac-roles-deployments", "npm:2.2.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -17240,9 +17241,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],\
             ["ts-jest", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:27.1.5"],\
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"],\
-            ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"]\
+            ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:3.4.0"],\
+            ["zodiac-roles-deployments", "npm:2.2.2"]\
           ],\
           "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["zodiac-roles-deployments", [\
+        ["npm:2.2.2", {\
+          "packageLocation": "./.yarn/cache/zodiac-roles-deployments-npm-2.2.2-dcf1e62349-fb6ef09fc9.zip/node_modules/zodiac-roles-deployments/",\
+          "packageDependencies": [\
+            ["zodiac-roles-deployments", "npm:2.2.2"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]]\
     ]\

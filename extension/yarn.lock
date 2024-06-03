@@ -14567,5 +14567,13 @@ __metadata:
     ts-jest: ^27.1.2
     typescript: ^4.9.4
     typescript-plugin-css-modules: ^3.4.0
+    zodiac-roles-deployments: ^2.2.2
   languageName: unknown
   linkType: soft
+
+"zodiac-roles-deployments@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "zodiac-roles-deployments@npm:2.2.2"
+  checksum: fb6ef09fc99350f38bb2e4a485d05ded0d7109e99d77f7020a1e81ede1be5c73f22ba2879e00276862070005a8c8d5f3770731ced192dee2b2219b5d44a73fe9
+  languageName: node
+  linkType: hard

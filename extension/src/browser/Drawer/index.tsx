@@ -69,7 +69,7 @@ const TransactionsDrawer: React.FC = () => {
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
-        : encodeMulti(metaTransactions, MULTI_SEND_ADDRESS[connection.chainId])
+        : encodeMulti(metaTransactions, connection.multiSendAddress)
     const finalRequest = connection.moduleAddress
       ? wrapRequest(batchTransaction, connection)
       : batchTransaction

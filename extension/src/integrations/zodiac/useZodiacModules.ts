@@ -10,20 +10,16 @@ import { FormatTypes, Interface } from 'ethers/lib/utils'
 import detectProxyTarget from 'ethers-proxies'
 import { useEffect, useState } from 'react'
 
-import { validateAddress } from '../utils'
-import { useConnection } from './connectionHooks'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
+import { validateAddress } from '../../utils'
+import { useConnection } from '../../connections/connectionHooks'
+import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
+import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
   KnownContracts.ROLES_V1,
   KnownContracts.ROLES_V2,
 ]
-export type SupportedModuleType =
-  | KnownContracts.DELAY
-  | KnownContracts.ROLES_V1
-  | KnownContracts.ROLES_V2
-
 interface Module {
   moduleAddress: string
   mastercopyAddress?: string // if empty, it's a custom non-proxied deployment

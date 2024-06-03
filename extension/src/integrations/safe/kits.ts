@@ -2,8 +2,8 @@ import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import * as ethers from 'ethers'
 
-import { ChainId } from '../chains'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
+import { ChainId } from '../../chains'
+import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',

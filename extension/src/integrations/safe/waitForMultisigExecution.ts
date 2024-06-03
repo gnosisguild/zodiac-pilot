@@ -1,4 +1,4 @@
-import { ChainId } from '../chains'
+import { ChainId } from '../../chains'
 
 import { initSafeApiKit } from './kits'
 

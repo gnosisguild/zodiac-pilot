@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { ChainId } from '../chains'
-import { useConnection } from '../connections'
-import { validateAddress } from '../utils'
+import { ChainId } from '../../chains'
+import { useConnection } from '../../connections'
+import { validateAddress } from '../../utils'
 
 import { initSafeApiKit } from './kits'
 
