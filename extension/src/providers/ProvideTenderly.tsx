@@ -11,7 +11,6 @@ import { safeInterface } from '../integrations/safe'
 import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from '../chains'
 import { customAlphabet } from 'nanoid'
-import { hexlify } from 'ethers/lib/utils'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
@@ -182,14 +181,14 @@ export class TenderlyProvider extends EventEmitter {
     new Map()
   private blockNumber: number | undefined
 
-  private tenderlyForkApi: string
+  private tenderlyVnetApi: string
   private throttledIncreaseBlock: () => void
 
   constructor(chainId: ChainId) {
     super()
     this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
     this.chainId = chainId
-    this.tenderlyForkApi = 'https://vnet-api.pilot.gnosisguild.org'
+    this.tenderlyVnetApi = 'https://vnet-api.pilot.gnosisguild.org'
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
   }
 
@@ -227,7 +226,7 @@ export class TenderlyProvider extends EventEmitter {
     } catch (e) {
       if ((e as any).error?.code === -32603) {
         console.error(
-          'Tenderly fork RPC has an issue (probably due to rate limiting)',
+          'Tenderly vnet RPC has an issue (probably due to rate limiting)',
           e
         )
         throw new Error('Error sending request to Tenderly')
@@ -271,29 +270,29 @@ export class TenderlyProvider extends EventEmitter {
   }
 
   async deleteFork() {
-    console.log('DELETE FORK')
-    await this.forkProviderPromise
-    if (!this.vnetId) return
-
     // notify the background script to stop intercepting JSON RPC requests
     window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
 
-    const vnetId = this.vnetId
+    await this.forkProviderPromise
+    if (!this.vnetId) return
+
     this.vnetId = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
 
-    await fetch(`${this.tenderlyForkApi}/${vnetId}`, {
-      method: 'DELETE',
-    })
+    // We no longer delete forks/vnets on Tenderly. That way we will be able to persist and share Pilot sessions in the future.
+    // (Also Tenderly doesn't seem to offer a DELETE endpoint for virtual networks.)
+    // await fetch(`${this.tenderlyVnetApi}/${vnetId}`, {
+    //   method: 'DELETE',
+    // })
   }
 
   private async createFork(
     networkId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
-    console.log({ block_number })
-    const res = await fetch(this.tenderlyForkApi, {
+    console.log({ blockNumber })
+    const res = await fetch(this.tenderlyVnetApi, {
       method: 'POST',
       body: JSON.stringify({
         slug: slug(),
@@ -314,6 +313,10 @@ export class TenderlyProvider extends EventEmitter {
         },
         sync_state_config: {
           enabled: true,
+        },
+        explorer_page_config: {
+          enabled: true, // enable public explorer page
+          verification_visibility: 'bytecode',
         },
       }),
     })
@@ -337,9 +340,9 @@ export class TenderlyProvider extends EventEmitter {
 
   private async fetchForkInfo() {
     await this.forkProviderPromise
-    if (!this.vnetId) throw new Error('No Tenderly fork available')
+    if (!this.vnetId) throw new Error('No Tenderly vnet available')
 
-    const res = await fetch(`${this.tenderlyForkApi}/${this.vnetId}`)
+    const res = await fetch(`${this.tenderlyVnetApi}/${this.vnetId}`)
     const json = await res.json()
     return json.simulation_fork
   }
@@ -347,13 +350,13 @@ export class TenderlyProvider extends EventEmitter {
   private async fetchTransactionInfo(
     transactionHash: string
   ): Promise<TenderlyTransactionInfo> {
-    if (!this.vnetId) throw new Error('No Tenderly fork available')
+    if (!this.vnetId) throw new Error('No Tenderly vnet available')
 
     const transactionId = this.transactionIds.get(transactionHash)
     if (!transactionId) throw new Error('Transaction not found')
 
     const res = await fetch(
-      `${this.tenderlyForkApi}/${this.vnetId}/transaction/${transactionId}`
+      `${this.tenderlyVnetApi}/${this.vnetId}/transaction/${transactionId}`
     )
     const json = await res.json()
     return {

@@ -167,6 +167,18 @@ const removeRpcRedirectRules = (tabId: number) => {
   chrome.declarativeNetRequest.updateSessionRules({
     removeRuleIds: ruleIds,
   })
+  console.log(
+    'removeRpcRedirectRules',
+    tabId,
+    ruleIds,
+    hash(
+      'https://virtual.mainnet.rpc.tenderly.co/880388c4-9707-46ce-97a5-1095090a6768',
+      735219801
+    )
+  )
+  chrome.declarativeNetRequest.getSessionRules((rules) =>
+    console.log('removeRpcRedirectRules getSessionRules', rules)
+  )
 }
 
 chrome.runtime.onMessage.addListener((message, sender) => {
@@ -174,6 +186,11 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 
   if (message.type === 'startSimulating') {
     const { networkId, rpcUrl } = message
+    console.log('startSimulating', networkId, rpcUrl, {
+      simulatingExtensionTabs,
+    })
+    simulatingExtensionTabs.delete(sender.tab.id)
+    removeRpcRedirectRules(sender.tab.id)
     simulatingExtensionTabs.set(sender.tab.id, {
       networkId,
       rpcUrl,
@@ -186,6 +203,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     )
   }
   if (message.type === 'stopSimulating') {
+    console.log('stopSimulating', sender.tab.id, { simulatingExtensionTabs })
     simulatingExtensionTabs.delete(sender.tab.id)
     removeRpcRedirectRules(sender.tab.id)
 
@@ -252,6 +270,7 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   const result = await networkIdOfRpcUrlPromise.get(url)
   if (!networkIdOfRpcUrl.has(url)) {
     networkIdOfRpcUrl.set(url, result)
+    console.log('lalala', { simulatingExtensionTabs })
     console.debug(
       `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
     )
