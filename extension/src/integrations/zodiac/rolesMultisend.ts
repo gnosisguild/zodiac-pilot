@@ -16,7 +16,7 @@ export async function queryRolesV1MultiSend(
     .connect(modAddress, getReadOnlyProvider(chainId))
     .multisend()
 
-  return address === ZERO_ADDRESS ? undefined : address
+  return address === ZERO_ADDRESS ? undefined : address.toLowerCase()
 }
 
 const MULTISEND_SELECTOR = '0x8d80ff0a' // multiSend(bytes)
@@ -42,7 +42,7 @@ export async function queryRolesV2MultiSend(
           targetAddress
         }
       }`,
-      variables: { id: modAddress.toLowerCase() },
+      variables: { rolesMod: modAddress.toLowerCase() },
       operationName: 'MultiSendAdapters',
     }),
   })
@@ -56,8 +56,8 @@ export async function queryRolesV2MultiSend(
     return {}
   }
 
-  const addresses = data.unwrapAdapters.map(
-    (a: any) => a.targetAddress
+  const addresses = data.unwrapAdapters.map((a: any) =>
+    a.targetAddress.toLowerCase()
   ) as `0x${string}`[]
 
   return {

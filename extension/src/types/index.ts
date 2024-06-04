@@ -18,7 +18,8 @@ export type Connection = {
   providerType: ProviderType
   moduleType?: SupportedModuleType
 
-  multiSendAddress?: string
+  multisend?: string | undefined
+  multisendCallOnly?: string | undefined
 
   /** A number for Roles v1, a bytes32 hex string for Roles v2  */
   roleId?: string

@@ -1,4 +1,4 @@
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import React, { useEffect } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
@@ -27,8 +27,6 @@ import classes from './style.module.css'
 import { decodeRoleKey, encodeRoleKey } from '../../../utils'
 import { ChainId } from '../../../chains'
 import ChainSelect from '../ChainSelect'
-import { RolesV1__factory } from '@gnosis.pm/zodiac/dist/cjs/types'
-import { getReadOnlyProvider } from '../../../providers'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,

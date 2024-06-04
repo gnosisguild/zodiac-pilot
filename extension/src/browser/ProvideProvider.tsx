@@ -8,7 +8,6 @@ import React, {
 } from 'react'
 import { decodeSingle, encodeMulti } from 'react-multisend'
 
-import { MULTI_SEND_ADDRESS } from '../chains'
 import {
   ForkProvider,
   useTenderlyProvider,
@@ -116,7 +115,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       params: [
         metaTransactions.length === 1
           ? metaTransactions[0]
-          : encodeMulti(metaTransactions, connection.multiSendAddress),
+          : encodeMulti(metaTransactions, connection.multisend),
       ],
     })
     dispatch({

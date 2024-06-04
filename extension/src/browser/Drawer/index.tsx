@@ -17,7 +17,6 @@ import {
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { MULTI_SEND_ADDRESS } from '../../chains'
 import { encodeTransaction } from '../../encodeTransaction'
 
 const TransactionsDrawer: React.FC = () => {
@@ -69,7 +68,7 @@ const TransactionsDrawer: React.FC = () => {
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
-        : encodeMulti(metaTransactions, connection.multiSendAddress)
+        : encodeMulti(metaTransactions, connection.multisend)
     const finalRequest = connection.moduleAddress
       ? wrapRequest(batchTransaction, connection)
       : batchTransaction
