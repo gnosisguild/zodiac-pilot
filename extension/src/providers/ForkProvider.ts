@@ -8,10 +8,10 @@ import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/sr
 
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
-import { safeInterface } from '../safe'
+import { safeInterface } from '../integrations/safe'
 import { hexlify, _TypedDataEncoder } from 'ethers/lib/utils'
 import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
-import { typedDataHash } from '../safe/signing'
+import { typedDataHash } from '../integrations/safe/signing'
 
 class UnsupportedMethodError extends Error {
   code = 4200

@@ -9,7 +9,7 @@ import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
 
 import { RPC } from '../chains'
-import { waitForMultisigExecution } from '../safe'
+import { waitForMultisigExecution } from '../integrations/safe'
 import { JsonRpcError } from '../types'
 
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
@@ -151,6 +151,12 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
         chains: [] as any, // recommended by WalletConnect for multi-chain apps (but somehow their typings don't allow it)
         optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
         rpcMap: RPC,
+        metadata: {
+          name: 'Zodiac Pilot',
+          description: 'Simulate dApp interactions and record transactions',
+          url: 'https://pilot.gnosisguild.org',
+          icons: ['//pilot.gnosisguild.org/zodiac48.png'],
+        },
       })
     }
 

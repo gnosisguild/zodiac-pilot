@@ -5,16 +5,16 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { useConnectionsHash, usePushConnectionsRoute } from '../../../routing'
-import { useSafesWithOwner } from '../../../safe'
-import { useSafeDelegates } from '../../../safe'
+import { useSafesWithOwner } from '../../../integrations/safe'
+import { useSafeDelegates } from '../../../integrations/safe'
 import AvatarInput from '../AvatarInput'
 import ConnectButton from '../ConnectButton'
 import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
 import {
   MODULE_NAMES,
-  SupportedModuleType,
   useZodiacModules,
-} from '../../useZodiacModules'
+} from '../../../integrations/zodiac/useZodiacModules'
+import { SupportedModuleType } from '../../../integrations/zodiac/types'
 import {
   useConnection,
   useConnections,
@@ -27,6 +27,10 @@ import classes from './style.module.css'
 import { decodeRoleKey, encodeRoleKey } from '../../../utils'
 import { ChainId } from '../../../chains'
 import ChainSelect from '../ChainSelect'
+import {
+  queryRolesV1MultiSend,
+  queryRolesV2MultiSend,
+} from '../../../integrations/zodiac/rolesMultisend'
 
 interface Props {
   connectionId: string
@@ -40,6 +44,8 @@ type ConnectionPatch = {
   moduleType?: SupportedModuleType
   roleId?: string
   chainId?: ChainId
+  multisend?: string
+  multisendCallOnly?: string
 }
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
@@ -245,7 +251,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                     label: `${MODULE_NAMES[mod.type]} Mod`,
                   })),
                 ]}
-                onChange={(selected) => {
+                onChange={async (selected) => {
                   const mod = modules.find(
                     (mod) => mod.moduleAddress === (selected as Option).value
                   )
@@ -253,6 +259,23 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                     moduleAddress: mod?.moduleAddress,
                     moduleType: mod?.type,
                   })
+
+                  if (mod?.type === KnownContracts.ROLES_V1) {
+                    updateConnection({
+                      multisend: await queryRolesV1MultiSend(
+                        connection.chainId,
+                        mod.moduleAddress
+                      ),
+                    })
+                  }
+                  if (mod?.type === KnownContracts.ROLES_V2) {
+                    updateConnection(
+                      await queryRolesV2MultiSend(
+                        connection.chainId,
+                        mod.moduleAddress
+                      )
+                    )
+                  }
                 }}
                 value={
                   selectedModule
@@ -274,7 +297,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                 <input
                   type="text"
                   value={roleId}
-                  onChange={(ev) => {
+                  onChange={async (ev) => {
                     updateConnection({ roleId: ev.target.value })
                   }}
                   placeholder="0"

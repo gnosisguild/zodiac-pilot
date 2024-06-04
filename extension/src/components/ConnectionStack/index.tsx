@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import React from 'react'
 
-import { MODULE_NAMES } from '../../connections/useZodiacModules'
+import { MODULE_NAMES } from '../../integrations/zodiac/useZodiacModules'
 import { Connection } from '../../types'
 import Address from '../Address'
 import Box from '../Box'

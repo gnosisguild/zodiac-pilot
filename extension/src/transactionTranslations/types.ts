@@ -1,7 +1,7 @@
 import { MetaTransaction } from 'react-multisend'
 
 import { ChainId } from '../chains'
-import { SupportedModuleType } from '../connections/useZodiacModules'
+import { SupportedModuleType } from '../integrations/zodiac/types'
 
 export interface TransactionTranslation {
   /** A descriptive title of the translation, will be displayed as a tooltip of the translate button */
