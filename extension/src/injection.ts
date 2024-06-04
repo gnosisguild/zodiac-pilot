@@ -16,7 +16,18 @@ if (window.ethereum) {
 
 // inject bridged ethereum provider
 const injectedProvider = new InjectedProvider()
-window.ethereum = injectedProvider
+Object.defineProperties(window, {
+  ethereum: {
+    get() {
+      return injectedProvider
+    },
+    set() {
+      // do nothing
+    },
+    configurable: false,
+  },
+})
+
 console.log('injected into', document.title)
 
 // establish message bridge for location requests
