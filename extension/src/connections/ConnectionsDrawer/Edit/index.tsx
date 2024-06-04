@@ -109,10 +109,8 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
-    setConnections(
-      connections.map((c) =>
-        c.id === connection.id ? { ...connection, ...patch } : c
-      )
+    setConnections((connections) =>
+      connections.map((c) => (c.id === connection.id ? { ...c, ...patch } : c))
     )
   }
 
