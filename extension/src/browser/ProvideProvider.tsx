@@ -126,7 +126,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch, connection.chainId])
+  }, [transactions, wrappingProvider, dispatch, connection.multisend])
 
   return (
     <ProviderContext.Provider
