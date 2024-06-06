@@ -30,6 +30,7 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
   1: 'mainnet',
   5: 'goerli',
   100: 'xdai',
+  42161: 'arbitrum_one',
 }
 
 export default {
