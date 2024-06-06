@@ -2,6 +2,7 @@ import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
+import { EXPLORER_URL } from '../../chains'
 
 import { useConnection } from '../../connections'
 import { validateAddress } from '../../utils'
@@ -21,17 +22,6 @@ interface Props {
 const VISIBLE_START = 4
 const VISIBLE_END = 4
 
-const EXPLORER_URLS: Record<string, string | undefined> = {
-  '1': 'https://etherscan.io',
-  '4': 'https://rinkeby.etherscan.io',
-  '100': 'https://gnosisscan.io',
-  '73799': 'https://volta-explorer.energyweb.org',
-  '246': 'https://explorer.energyweb.org',
-  '137': 'https://polygonscan.com',
-  '56': 'https://bscscan.com',
-  '42161': 'https://arbiscan.io',
-}
-
 export const shortenAddress = (address: string): string => {
   const checksumAddress = validateAddress(address)
   const start = checksumAddress.substring(0, VISIBLE_START + 2)
@@ -48,7 +38,7 @@ const Address: React.FC<Props> = ({
   const {
     connection: { chainId },
   } = useConnection()
-  const explorerUrl = chainId && EXPLORER_URLS[chainId]
+  const explorerUrl = chainId && EXPLORER_URL[chainId]
   const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)
 
