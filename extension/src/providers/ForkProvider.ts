@@ -194,7 +194,7 @@ class ForkProvider extends EventEmitter {
       tx = {
         to: metaTx.to,
         data: metaTx.data,
-        value: formatValue(metaTx.value),
+        value: formatHexValue(metaTx.value),
         from: this.avatarAddress,
       }
     }
@@ -220,7 +220,7 @@ class ForkProvider extends EventEmitter {
 export default ForkProvider
 
 // Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatValue = (value: string): string => {
+const formatHexValue = (value: string): string => {
   const valueBN = BigNumber.from(value)
   if (valueBN.isZero()) return '0x0'
   else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
@@ -249,7 +249,7 @@ const execTransactionFromModule = (
     value: '0x0',
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: hexlify(blockGasLimit / 2), // for some reason tenderly errors when passing the full block gas limit
+    gas: formatHexValue(hexlify(blockGasLimit)), // Tenderly errors if the hex value has leading zeros
     // With gas price 0 account don't need token for gas
     // gasPrice: '0x0', // doesn't seem to be required
   }

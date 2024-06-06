@@ -2,6 +2,7 @@ import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
 import React, { useContext, useEffect, useMemo } from 'react'
+import { customAlphabet } from 'nanoid'
 
 import { useConnection } from '../connections'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
@@ -10,7 +11,6 @@ import { initSafeProtocolKit } from '../integrations/safe/kits'
 import { safeInterface } from '../integrations/safe'
 import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from '../chains'
-import { customAlphabet } from 'nanoid'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
@@ -327,7 +327,7 @@ export class TenderlyProvider extends EventEmitter {
     this.blockNumber = json.fork_config.block_number
     this.transactionIds.clear()
 
-    const rpcUrl = json.rpcs[0].url // `https://rpc.tenderly.co/fork/${this.vnetId}`
+    const rpcUrl = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url // `https://rpc.tenderly.co/fork/${this.vnetId}`
     console.log({ rpcUrl })
     // notify the background script to start intercepting JSON RPC requests
     window.postMessage(
