@@ -55,7 +55,7 @@ export const EXPLORER_API_KEY: Record<ChainId, string> = {
   137: '',
   246: '',
   8453: 'KCC7EQHE17IAQZA9TICUS6BQTJGZUDRNIY',
-  42161: '',
+  42161: 'SJ5BEYBBC3DNSKTH5BAEPFJXUZDAJ133UI',
   42220: '',
   73799: '',
   80001: '',
