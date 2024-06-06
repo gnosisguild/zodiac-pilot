@@ -2,8 +2,6 @@
 
 export const RPC = {
   1: 'https://mainnet.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
-  4: 'https://rinkeby.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
-  5: 'https://goerli.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
   10: 'https://mainnet.optimism.io',
   56: 'https://bsc-dataseed.binance.org',
   100: 'https://rpc.gnosischain.com',
@@ -21,8 +19,6 @@ export type ChainId = keyof typeof RPC
 
 export const EXPLORER_URL: Record<ChainId, string> = {
   1: 'https://etherscan.io',
-  4: 'https://rinkeby.etherscan.io',
-  5: 'https://goerli.etherscan.io',
   10: 'https://optimistic.etherscan.io',
   56: 'https://bscscan.com',
   100: 'https://gnosisscan.io',
@@ -38,8 +34,6 @@ export const EXPLORER_URL: Record<ChainId, string> = {
 
 export const EXPLORER_API_URL: Record<ChainId, string> = {
   1: 'https://api.etherscan.io/api',
-  4: 'https://api-rinkeby.etherscan.io/api',
-  5: 'https://api-goerli.etherscan.io/api',
   10: 'https://api-optimistic.etherscan.io/api',
   56: 'https://api.bscscan.com/api',
   100: 'https://api.gnosisscan.io/api',
@@ -55,15 +49,13 @@ export const EXPLORER_API_URL: Record<ChainId, string> = {
 
 export const EXPLORER_API_KEY: Record<ChainId, string> = {
   1: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
-  4: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
-  5: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
   10: '',
   56: '',
   100: 'W575K6DTMSTVB7UFUSNW7GWQ4UWUARTJ7Z',
   137: '',
   246: '',
   8453: 'KCC7EQHE17IAQZA9TICUS6BQTJGZUDRNIY',
-  42161: '',
+  42161: 'SJ5BEYBBC3DNSKTH5BAEPFJXUZDAJ133UI',
   42220: '',
   73799: '',
   80001: '',
@@ -72,8 +64,6 @@ export const EXPLORER_API_KEY: Record<ChainId, string> = {
 
 export const CHAIN_PREFIX: Record<ChainId, string> = {
   1: 'eth',
-  4: 'rin',
-  5: 'gor',
   10: 'oeth',
   56: 'bsc',
   100: 'gno',
@@ -89,8 +79,6 @@ export const CHAIN_PREFIX: Record<ChainId, string> = {
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
   1: 'ETH',
-  4: 'ETH',
-  5: 'ETH',
   56: 'BNB',
   10: 'ETH',
   100: 'xDAI',
@@ -106,8 +94,6 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
 
 export const CHAIN_NAME: Record<ChainId, string> = {
   1: 'Ethereum',
-  4: 'Rinkeby',
-  5: 'Görli',
   56: 'Binance Smart Chain',
   10: 'Optimism',
   100: 'Gnosis Chain',

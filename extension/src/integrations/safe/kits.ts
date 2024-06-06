@@ -7,8 +7,6 @@ import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
-  [4]: undefined, // not available
-  [5]: undefined, // not available
   [10]: 'https://safe-transaction-optimism.safe.global',
   [56]: 'https://safe-transaction-bsc.safe.global',
   [100]: 'https://safe-transaction-gnosis-chain.safe.global',
@@ -16,7 +14,7 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [246]: 'https://safe-transaction-ewc.safe.global',
   [8453]: 'https://safe-transaction-base.safe.global',
   [42161]: 'https://safe-transaction-arbitrum.safe.global',
-  [42220]: undefined, // not available
+  [42220]: 'https://safe-transaction-celo.safe.global',
   [73799]: 'https://safe-transaction-volta.safe.global',
   [80001]: undefined, // not available
   [11155111]: 'https://safe-transaction-sepolia.safe.global',

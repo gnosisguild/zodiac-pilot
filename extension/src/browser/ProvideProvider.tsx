@@ -16,7 +16,7 @@ import {
 import { useConnection } from '../connections'
 import { Eip1193Provider } from '../types'
 
-import fetchAbi from './fetchAbi'
+import { fetchContractInfo } from './fetchContractInfo'
 import { useDispatch, useNewTransactions } from '../state'
 import { encodeTransaction } from '../encodeTransaction'
 
@@ -72,13 +72,13 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           const input = await decodeSingle(
             metaTx,
             new Web3Provider(provider),
-            (address: string, data: string) =>
-              fetchAbi(
-                connection.chainId,
-                address,
-                data,
-                new Web3Provider(provider)
-              ),
+            async (address: string) => {
+              const info = await fetchContractInfo(
+                address as `0x${string}`,
+                connection.chainId
+              )
+              return JSON.stringify(info.abi)
+            },
             txId
           )
           dispatch({
@@ -126,7 +126,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch, connection.chainId])
+  }, [transactions, wrappingProvider, dispatch, connection.multisend])
 
   return (
     <ProviderContext.Provider

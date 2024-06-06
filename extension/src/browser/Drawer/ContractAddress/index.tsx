@@ -5,14 +5,11 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { BlockLink, Box, Flex, IconButton } from '../../../components'
-import {
-  EXPLORER_API_KEY,
-  EXPLORER_API_URL,
-  EXPLORER_URL,
-} from '../../../chains'
+import { EXPLORER_URL } from '../../../chains'
 import { useConnection } from '../../../connections'
 
 import classes from './style.module.css'
+import { fetchContractInfo } from '../../fetchContractInfo'
 
 interface Props {
   address: string
@@ -45,14 +42,9 @@ const ContractAddress: React.FC<Props> = ({
 
   useEffect(() => {
     let canceled = false
-    const explorerApiUrl = EXPLORER_API_URL[chainId]
-    const apiKey = EXPLORER_API_KEY[chainId]
-
-    memoizedFetchJson(
-      `${explorerApiUrl}?module=contract&action=getsourcecode&address=${address}&apikey=${apiKey}`
-    ).then((json) => {
+    fetchContractInfo(address as `0x${string}`, chainId).then((info) => {
       if (!canceled) {
-        setContractName(json.result[0]?.ContractName || '')
+        setContractName(info.name || '')
       }
     })
 
@@ -107,13 +99,3 @@ const ContractAddress: React.FC<Props> = ({
 }
 
 export default ContractAddress
-
-const fetchCache = new Map<string, any>()
-const memoizedFetchJson = async (url: string) => {
-  if (fetchCache.has(url)) {
-    return fetchCache.get(url)
-  }
-  const json = await fetch(url).then((res) => res.json())
-  fetchCache.set(url, json)
-  return json
-}
