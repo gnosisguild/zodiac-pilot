@@ -4,11 +4,11 @@ import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 
 import { Flex, Spinner, Tag } from '../../components'
 import { useTenderlyProvider } from '../../providers'
-import { TenderlyTransactionInfo } from '../../providers/ProvideTenderly'
 import { useConnection } from '../../connections'
 import { Connection } from '../../types'
 
 import classes from './style.module.css'
+import { TransactionReceipt, Web3Provider } from '@ethersproject/providers'
 
 enum ExecutionStatus {
   PENDING,
@@ -24,8 +24,9 @@ const SimulatedExecutionCheck: React.FC<{
   const tenderlyProvider = useTenderlyProvider()
   const { connection } = useConnection()
 
-  const [transactionInfo, setTransactionInfo] =
-    useState<TenderlyTransactionInfo | null>(null)
+  const [executionStatus, setExecutionStatus] = useState<ExecutionStatus>(
+    ExecutionStatus.PENDING
+  )
 
   useEffect(() => {
     if (!tenderlyProvider) return
@@ -33,41 +34,43 @@ const SimulatedExecutionCheck: React.FC<{
 
     let canceled = false
 
-    const transactionInfoPromise =
-      tenderlyProvider.getTransactionInfo(transactionHash)
-    transactionInfoPromise.then((txInfo) => {
-      if (!canceled) setTransactionInfo(txInfo)
+    const provider = new Web3Provider(tenderlyProvider)
+    provider.getTransactionReceipt(transactionHash).then((receipt) => {
+      if (canceled) return
+
+      if (!receipt.status) {
+        setExecutionStatus(ExecutionStatus.REVERTED)
+        return
+      }
+
+      if (
+        receipt.logs.length === 1 &&
+        isExecutionFromModuleFailure(receipt.logs[0], connection)
+      ) {
+        setExecutionStatus(ExecutionStatus.MODULE_TRANSACTION_REVERTED)
+      } else {
+        setExecutionStatus(ExecutionStatus.SUCCESS)
+      }
     })
 
     return () => {
       canceled = true
     }
-  }, [tenderlyProvider, transactionHash])
-
-  let executionStatus = ExecutionStatus.PENDING
-  if (transactionInfo?.status === false) {
-    executionStatus = ExecutionStatus.REVERTED
-  } else if (transactionInfo?.status === true) {
-    if (
-      transactionInfo.receipt.logs.length === 1 &&
-      isExecutionFromModuleFailure(transactionInfo.receipt.logs[0], connection)
-    ) {
-      executionStatus = ExecutionStatus.MODULE_TRANSACTION_REVERTED
-    } else {
-      executionStatus = ExecutionStatus.SUCCESS
-    }
-  }
+  }, [tenderlyProvider, transactionHash, connection])
 
   if (mini) {
     return (
       <>
-        {!transactionInfo && <Tag head={<Spinner />} color="info"></Tag>}
-        {transactionInfo?.status && (
+        {executionStatus === ExecutionStatus.PENDING && (
+          <Tag head={<Spinner />} color="info"></Tag>
+        )}
+        {executionStatus === ExecutionStatus.SUCCESS && (
           <Tag head={<RiGitBranchLine />} color="success"></Tag>
         )}
-        {transactionInfo && !transactionInfo.status && (
-          <Tag head={<RiGitBranchLine />} color="danger"></Tag>
-        )}
+        {executionStatus === ExecutionStatus.REVERTED ||
+          (executionStatus === ExecutionStatus.MODULE_TRANSACTION_REVERTED && (
+            <Tag head={<RiGitBranchLine />} color="danger"></Tag>
+          ))}
       </>
     )
   }
@@ -110,17 +113,16 @@ const SimulatedExecutionCheck: React.FC<{
             )}
           </Flex>
         </Flex>
-        {transactionInfo && (
-          <a
-            href={transactionInfo.dashboardLink}
-            target="_blank"
-            rel="noreferrer"
-            className={classes.link}
-          >
-            View in Tenderly
-            <RiExternalLinkLine />
-          </a>
-        )}
+
+        <a
+          href={tenderlyProvider?.getTransactionLink(transactionHash)}
+          target="_blank"
+          rel="noreferrer"
+          className={classes.link}
+        >
+          View in Tenderly
+          <RiExternalLinkLine />
+        </a>
       </Flex>
     </Flex>
   )
@@ -129,7 +131,7 @@ const SimulatedExecutionCheck: React.FC<{
 export default SimulatedExecutionCheck
 
 const isExecutionFromModuleFailure = (
-  log: TenderlyTransactionInfo['receipt']['logs'][0],
+  log: TransactionReceipt['logs'][0],
   connection: Connection
 ) => {
   return (
