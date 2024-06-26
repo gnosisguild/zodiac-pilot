@@ -12,7 +12,7 @@ const RolesV2Interface =
 export function getRevertData(error: JsonRpcError) {
   // The errors thrown when a transaction is reverted use different formats, depending on:
   //  - wallet (MetaMask vs. WalletConnect)
-  //  - RPC provider (Infura vs. Alchemy)
+  //  - RPC provider (Infura vs. Alchemy vs. Tenderly)
   //  - client library (ethers vs. directly using the EIP-1193 provider)
 
   // first, drill through potential error wrappings down to the original error
@@ -22,11 +22,13 @@ export function getRevertData(error: JsonRpcError) {
 
   // Here we try to extract the revert reason in any of the possible formats
   const message =
-    error.data?.originalError?.data ||
-    error.data?.data ||
-    error.data?.originalError?.message ||
-    error.data?.message ||
-    error.message
+    typeof error.data === 'string'
+      ? error.data
+      : error.data?.originalError?.data ||
+        error.data?.data ||
+        error.data?.originalError?.message ||
+        error.data?.message ||
+        error.message
 
   const prefix = 'Reverted 0x'
   return message.startsWith(prefix)
@@ -55,6 +57,7 @@ export function decodeGenericError(error: JsonRpcError) {
 
 export function decodeRolesV1Error(error: JsonRpcError) {
   const revertData = getRevertData(error)
+
   if (revertData.startsWith('0x')) {
     const rolesError = Object.values(RolesV1Interface.errors).find((err) =>
       revertData.startsWith(RolesV1Interface.getSighash(err))
