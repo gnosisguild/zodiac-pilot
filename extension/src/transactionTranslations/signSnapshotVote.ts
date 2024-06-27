@@ -2,7 +2,7 @@ import { Interface } from '@ethersproject/abi'
 import { MetaTransaction } from 'react-multisend'
 
 // https://github.com/gnosisguild/snapshot-signer
-const SNAPSHOT_SIGNER_ADDRESS = '0xb0382209806345d27dfdab5bbc17b2ab553165ac'
+const SNAPSHOT_SIGNER_ADDRESS = '0xa58Cf66d0f14AEFb2389c6998f6ad219dd4885c1'
 
 const SnapshotSignerInterface = new Interface([
   'function signSnapshotArrayVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, uint32[] choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
@@ -41,6 +41,7 @@ export const translateSignSnapshotVote = (params: {
       )
       break
     case 'string':
+      typedDataHash
       // string vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotStringVote',
