@@ -1,4 +1,4 @@
-import { MetaTransaction } from 'react-multisend'
+import { MetaTransaction } from '../types'
 
 import { ChainId } from '../chains'
 import { SupportedModuleType } from '../integrations/zodiac/types'

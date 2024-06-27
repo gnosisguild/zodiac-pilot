@@ -29,7 +29,10 @@ export const Remove: React.FC<Props> = ({ transaction, index }) => {
     const laterTransactions = transactions.slice(index + 1)
 
     // remove the transaction and all later ones from the store
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: transaction.id } })
+    dispatch({
+      type: 'REMOVE_TRANSACTION',
+      payload: { snapshotId: transaction.snapshotId },
+    })
 
     if (transactions.length === 1) {
       // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction

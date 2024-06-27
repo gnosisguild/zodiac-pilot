@@ -16,9 +16,9 @@ import {
 import { useConnection } from '../connections'
 import { Eip1193Provider } from '../types'
 
-import { fetchContractInfo } from './fetchContractInfo'
 import { useDispatch, useNewTransactions } from '../state'
 import { encodeTransaction } from '../encodeTransaction'
+import { fetchContractInfo } from '../utils/abi'
 
 interface Props {
   simulate: boolean
@@ -52,52 +52,37 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
         moduleAddress: connection.moduleAddress,
         ownerAddress: connection.pilotAddress,
 
-        async onBeforeTransactionSend(txId, metaTx) {
-          const isDelegateCall = metaTx.operation === 1
-
-          // Calling decodeSingle without a fetchAbi will return a raw transaction input object instantly.
-          // We already append to the state so the UI reacts immediately.
-          const inputRaw = await decodeSingle(
-            metaTx,
-            new Web3Provider(provider),
-            undefined,
-            txId
-          )
+        async onBeforeTransactionSend(snapshotId, transaction) {
           dispatch({
-            type: 'APPEND_RAW_TRANSACTION',
-            payload: { input: inputRaw, isDelegateCall },
+            type: 'APPEND_TRANSACTION',
+            payload: { transaction, snapshotId },
           })
 
           // Now we can take some time decoding the transaction for real and we update the state once that's done.
-          const input = await decodeSingle(
-            metaTx,
-            new Web3Provider(provider),
-            async (address: string) => {
-              const info = await fetchContractInfo(
-                address as `0x${string}`,
-                connection.chainId
-              )
-              return JSON.stringify(info.abi)
-            },
-            txId
+          const contractInfo = await fetchContractInfo(
+            transaction.to as `0x${string}`,
+            connection.chainId
           )
           dispatch({
             type: 'DECODE_TRANSACTION',
-            payload: input,
+            payload: {
+              snapshotId,
+              contractInfo,
+            },
           })
         },
 
-        async onTransactionSent(txId, transactionHash) {
+        async onTransactionSent(snapshotId, transactionHash) {
           dispatch({
             type: 'CONFIRM_TRANSACTION',
             payload: {
-              id: txId,
+              snapshotId,
               transactionHash,
             },
           })
         },
       }),
-    [tenderlyProvider, provider, connection, dispatch]
+    [tenderlyProvider, connection, dispatch]
   )
 
   const submitTransactions = useCallback(async () => {

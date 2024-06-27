@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { MetaTransaction } from 'react-multisend'
+import { MetaTransaction } from '../types'
 
 import { initSafeApiKit, sendTransaction } from '../integrations/safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'

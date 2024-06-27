@@ -1,37 +1,27 @@
 import React from 'react'
 import { BiWrench } from 'react-icons/bi'
-import { encodeSingle, TransactionInput } from 'react-multisend'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
-import { useDispatch, useNewTransactions } from '../../state'
+import { TransactionState, useDispatch, useNewTransactions } from '../../state'
 
 import classes from './style.module.css'
 import { encodeTransaction } from '../../encodeTransaction'
+import { MetaTransaction } from '../../types'
 
 type Props = {
-  transaction: TransactionInput
-  isDelegateCall: boolean
+  transaction: TransactionState
   index: number
   labeled?: true
 }
 
-export const Translate: React.FC<Props> = ({
-  transaction,
-  isDelegateCall,
-  index,
-  labeled,
-}) => {
+export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
-  const encodedTransaction = {
-    ...encodeSingle(transaction),
-    operation: isDelegateCall ? 1 : 0,
-  }
-  const translation = useApplicableTranslation(encodedTransaction)
+  const translation = useApplicableTranslation(transactionState.transaction)
 
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
@@ -48,10 +38,13 @@ export const Translate: React.FC<Props> = ({
       .map(encodeTransaction)
 
     // remove the transaction and all later ones from the store
-    dispatch({ type: 'REMOVE_TRANSACTION', payload: { id: transaction.id } })
+    dispatch({
+      type: 'REMOVE_TRANSACTION',
+      payload: { snapshotId: transaction.snapshotId },
+    })
 
     // revert to checkpoint before the transaction to remove
-    const checkpoint = transaction.id // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    const checkpoint = transaction.transactionHash // the ForkProvider uses checkpoints as IDs for the recorded transactions
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones

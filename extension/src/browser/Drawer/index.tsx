@@ -46,7 +46,7 @@ const TransactionsDrawer: React.FC = () => {
     // remove all transactions from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { id: allTransactions[0].input.id },
+      payload: { snapshotId: allTransactions[0].snapshotId },
     })
 
     if (!(provider instanceof ForkProvider)) {

@@ -38,7 +38,7 @@ const CallContract: React.FC<Props> = ({ value }) => {
                 {input.name} <i className={classes.inputType}>{input.type}</i>
               </span>
               <Box p={1} bg>
-                <input type="text" value={`${input.value || ''}`} readOnly />
+                <input type="text" value={input.value} readOnly />
               </Box>
             </label>
           ))}

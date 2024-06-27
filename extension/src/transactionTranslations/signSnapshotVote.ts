@@ -1,5 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { MetaTransaction } from 'react-multisend'
+import { MetaTransaction } from '../types'
 
 // https://github.com/gnosisguild/snapshot-signer
 const SNAPSHOT_SIGNER_ADDRESS = '0xb0382209806345d27dfdab5bbc17b2ab553165ac'

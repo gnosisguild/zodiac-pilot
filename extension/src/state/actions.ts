@@ -1,18 +1,25 @@
-import { TransactionInput } from 'react-multisend'
+import { MetaTransaction } from '../types'
 
-interface AppendRawTransactionAction {
-  type: 'APPEND_RAW_TRANSACTION'
-  payload: { input: TransactionInput; isDelegateCall: boolean }
+interface AppendTransactionAction {
+  type: 'APPEND_TRANSACTION'
+  payload: {
+    snapshotId: string
+    transaction: MetaTransaction
+  }
 }
+
 interface DecodeTransactionAction {
   type: 'DECODE_TRANSACTION'
-  payload: TransactionInput
+  payload: {
+    snapshotId: string
+    contractInfo: MetaTransaction
+  }
 }
 
 interface ConfirmTransactionAction {
   type: 'CONFIRM_TRANSACTION'
   payload: {
-    id: string
+    snapshotId: string
     transactionHash: string
   }
 }
@@ -20,14 +27,14 @@ interface ConfirmTransactionAction {
 interface RemoveTransactionAction {
   type: 'REMOVE_TRANSACTION'
   payload: {
-    id: string
+    snapshotId: string
   }
 }
 
 interface RemoveTransactionAction {
   type: 'REMOVE_TRANSACTION'
   payload: {
-    id: string
+    snapshotId: string
   }
 }
 
@@ -46,7 +53,7 @@ interface ClearTransactionsAction {
 }
 
 export type Action =
-  | AppendRawTransactionAction
+  | AppendTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
   | RemoveTransactionAction
