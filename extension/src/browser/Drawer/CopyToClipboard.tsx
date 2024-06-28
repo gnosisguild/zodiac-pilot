@@ -1,6 +1,6 @@
+import { MetaTransaction } from 'ethers-multisend'
 import React from 'react'
 import { RiFileCopy2Line } from 'react-icons/ri'
-import { encodeSingle, TransactionInput } from 'react-multisend'
 import { toast } from 'react-toastify'
 
 import { IconButton } from '../../components'
@@ -8,25 +8,13 @@ import { IconButton } from '../../components'
 import classes from './style.module.css'
 
 interface Props {
-  transaction: TransactionInput
-  isDelegateCall: boolean
+  transaction: MetaTransaction
   labeled?: boolean
 }
 
-const CopyToClipboard: React.FC<Props> = ({
-  transaction,
-  isDelegateCall,
-  labeled,
-}) => {
-  const encodedTransaction = {
-    ...encodeSingle(transaction),
-    operation: isDelegateCall ? 1 : 0,
-  }
-
+const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(
-      JSON.stringify(encodedTransaction, undefined, 2)
-    )
+    navigator.clipboard.writeText(JSON.stringify(transaction, undefined, 2))
     toast(<>Transaction data has been copied to clipboard.</>)
   }
 

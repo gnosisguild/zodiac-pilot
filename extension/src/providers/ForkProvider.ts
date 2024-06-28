@@ -2,9 +2,9 @@ import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber, ethers } from 'ethers'
-import { MetaTransaction } from '../../types'
 import { TransactionOptions } from '@safe-global/safe-core-sdk-types'
 import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
+import { MetaTransaction } from 'ethers-multisend'
 
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'

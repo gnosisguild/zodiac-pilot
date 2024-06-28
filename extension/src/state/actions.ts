@@ -1,4 +1,6 @@
-import { MetaTransaction } from '../types'
+import { MetaTransaction } from 'ethers-multisend'
+import { ContractInfo } from '../utils/abi'
+import { ExecutionStatus } from './reducer'
 
 interface AppendTransactionAction {
   type: 'APPEND_TRANSACTION'
@@ -12,7 +14,7 @@ interface DecodeTransactionAction {
   type: 'DECODE_TRANSACTION'
   payload: {
     snapshotId: string
-    contractInfo: MetaTransaction
+    contractInfo: ContractInfo
   }
 }
 
@@ -21,6 +23,14 @@ interface ConfirmTransactionAction {
   payload: {
     snapshotId: string
     transactionHash: string
+  }
+}
+
+interface UpdateTransactionStatusAction {
+  type: 'UPDATE_TRANSACTION_STATUS'
+  payload: {
+    snapshotId: string
+    status: ExecutionStatus
   }
 }
 
@@ -56,6 +66,7 @@ export type Action =
   | AppendTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
+  | UpdateTransactionStatusAction
   | RemoveTransactionAction
   | SubmitTransactionsAction
   | ClearTransactionsAction

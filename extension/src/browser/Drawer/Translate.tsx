@@ -8,16 +8,18 @@ import { useProvider } from '../ProvideProvider'
 import { TransactionState, useDispatch, useNewTransactions } from '../../state'
 
 import classes from './style.module.css'
-import { encodeTransaction } from '../../encodeTransaction'
-import { MetaTransaction } from '../../types'
 
 type Props = {
-  transaction: TransactionState
+  transactionState: TransactionState
   index: number
   labeled?: true
 }
 
-export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
+export const Translate: React.FC<Props> = ({
+  transactionState,
+  index,
+  labeled,
+}) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
@@ -35,16 +37,16 @@ export const Translate: React.FC<Props> = ({ transaction, index, labeled }) => {
   const handleTranslate = async () => {
     const laterTransactions = transactions
       .slice(index + 1)
-      .map(encodeTransaction)
+      .map((txState) => txState.transaction)
 
     // remove the transaction and all later ones from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: transaction.snapshotId },
+      payload: { snapshotId: transactionState.snapshotId },
     })
 
     // revert to checkpoint before the transaction to remove
-    const checkpoint = transaction.transactionHash // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    const checkpoint = transactionState.transactionHash // the ForkProvider uses checkpoints as IDs for the recorded transactions
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones

@@ -1,10 +1,19 @@
-import { MetaTransaction } from '../types'
-
+import { MetaTransaction } from 'ethers-multisend'
+import { ContractInfo } from '../utils/abi'
 import { Action } from './actions'
+
+export enum ExecutionStatus {
+  PENDING,
+  SUCCESS,
+  REVERTED,
+  MODULE_TRANSACTION_REVERTED,
+}
 
 export interface TransactionState {
   snapshotId: string
   transaction: MetaTransaction
+  status: ExecutionStatus
+  contractInfo?: ContractInfo
   transactionHash?: string
   batchTransactionHash?: string
 }
@@ -14,9 +23,12 @@ const rootReducer = (
   action: Action
 ): TransactionState[] => {
   switch (action.type) {
-    case 'APPEND_RANSACTION': {
+    case 'APPEND_TRANSACTION': {
       const { snapshotId, transaction } = action.payload
-      return [...state, { snapshotId, transaction }]
+      return [
+        ...state,
+        { snapshotId, transaction, status: ExecutionStatus.PENDING },
+      ]
     }
 
     case 'DECODE_TRANSACTION': {
@@ -30,6 +42,13 @@ const rootReducer = (
       const { snapshotId, transactionHash } = action.payload
       return state.map((item) =>
         item.snapshotId === snapshotId ? { ...item, transactionHash } : item
+      )
+    }
+
+    case 'UPDATE_TRANSACTION_STATUS': {
+      const { snapshotId, status } = action.payload
+      return state.map((item) =>
+        item.snapshotId === snapshotId ? { ...item, status } : item
       )
     }
 

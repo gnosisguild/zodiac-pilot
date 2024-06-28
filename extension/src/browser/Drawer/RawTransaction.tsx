@@ -1,15 +1,14 @@
 import React from 'react'
-import { RawTransactionInput } from 'react-multisend'
 
 import { Box } from '../../components'
 
 import classes from './style.module.css'
 
 interface Props {
-  value: RawTransactionInput
+  data: string
 }
 
-const RawTransaction: React.FC<Props> = ({ value }) => (
+const RawTransaction: React.FC<Props> = ({ data }) => (
   <div className={classes.transaction}>
     <label>
       <span>Data</span>
@@ -17,7 +16,7 @@ const RawTransaction: React.FC<Props> = ({ value }) => (
         <input
           className={classes.rawTxData}
           type="text"
-          value={`${value.data || ''}`}
+          value={data || ''}
           readOnly
         />
       </Box>

@@ -1,11 +1,7 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
-import {
-  encodeSingle,
-  MetaTransaction,
-  TransactionInput,
-} from 'react-multisend'
+import { MetaTransaction } from 'ethers-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
@@ -25,6 +21,7 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { wrapRequest } from '../../providers/WrappingProvider'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
+import { TransactionState } from '../../state'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransaction,
@@ -66,30 +63,21 @@ const simulateRolesTransaction = async (
 }
 
 const RolePermissionCheck: React.FC<{
-  transaction: TransactionInput
-  isDelegateCall: boolean
+  transactionState: TransactionState
   index: number
   mini?: boolean
-}> = ({ transaction, isDelegateCall, index, mini = false }) => {
+}> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const { connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
 
-  const encodedTransaction = useMemo(
-    () => ({
-      ...encodeSingle(transaction),
-      operation: isDelegateCall ? 1 : 0,
-    }),
-    [transaction, isDelegateCall]
-  )
-
-  const translationAvailable = !!useApplicableTranslation(encodedTransaction)
+  const translationAvailable = !!useApplicableTranslation(transactionState)
 
   useEffect(() => {
     let canceled = false
 
     simulateRolesTransaction(
-      encodedTransaction,
+      transactionState.transaction,
       connection,
       tenderlyProvider
     ).then((error) => {
@@ -99,7 +87,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [encodedTransaction, connection, tenderlyProvider])
+  }, [transactionState, connection, tenderlyProvider])
 
   if (error === undefined) return null
 
@@ -139,18 +127,13 @@ const RolePermissionCheck: React.FC<{
         </Flex>
         {error && !!translationAvailable && (
           <Translate
-            transaction={transaction}
-            isDelegateCall={isDelegateCall}
+            transactionState={transactionState}
             index={index}
             labeled
           />
         )}
         {error && !translationAvailable && (
-          <CopyToClipboard
-            transaction={transaction}
-            isDelegateCall={isDelegateCall}
-            labeled
-          />
+          <CopyToClipboard transaction={transactionState.transaction} labeled />
         )}
       </Flex>
     </Flex>
