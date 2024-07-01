@@ -41,7 +41,6 @@ export const translateSignSnapshotVote = (params: {
       )
       break
     case 'string':
-      typedDataHash
       // string vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotStringVote',
