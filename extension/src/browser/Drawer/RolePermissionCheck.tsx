@@ -71,7 +71,9 @@ const RolePermissionCheck: React.FC<{
   const { connection } = useConnection()
   const tenderlyProvider = useTenderlyProvider()
 
-  const translationAvailable = !!useApplicableTranslation(transactionState)
+  const translationAvailable = !!useApplicableTranslation(
+    transactionState.transaction
+  )
 
   useEffect(() => {
     let canceled = false
