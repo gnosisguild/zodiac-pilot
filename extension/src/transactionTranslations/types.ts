@@ -1,5 +1,4 @@
-import { MetaTransaction } from '../types'
-
+import { MetaTransaction } from 'ethers-multisend'
 import { ChainId } from '../chains'
 import { SupportedModuleType } from '../integrations/zodiac/types'
 
