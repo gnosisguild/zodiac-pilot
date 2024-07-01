@@ -270,7 +270,6 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   const result = await networkIdOfRpcUrlPromise.get(url)
   if (!networkIdOfRpcUrl.has(url)) {
     networkIdOfRpcUrl.set(url, result)
-    console.log('lalala', { simulatingExtensionTabs })
     console.debug(
       `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
     )
