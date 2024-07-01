@@ -212,7 +212,7 @@ export class TenderlyProvider extends EventEmitter {
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
 
-    // We no longer delete forks/vnets on Tenderly. That way we will be able to persist and share Pilot sessions in the future.
+    // We no longer delete forks/virtual testnets on Tenderly. That way we will be able to persist and share Pilot sessions in the future.
     // (Also Tenderly doesn't seem to offer a DELETE endpoint for virtual networks.)
     // await fetch(`${this.tenderlyVnetApi}/${vnetId}`, {
     //   method: 'DELETE',
