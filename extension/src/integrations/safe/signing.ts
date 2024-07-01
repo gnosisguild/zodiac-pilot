@@ -1,7 +1,7 @@
 import { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
 import { Contract } from 'ethers'
+import { MetaTransaction } from 'ethers-multisend'
 import { hashMessage, _TypedDataEncoder, toUtf8String } from 'ethers/lib/utils'
-import { MetaTransaction } from 'react-multisend'
 
 const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0aB83D845Ac265BE939c57F53AD838012c9'
 const SIGN_MESSAGE_LIB_ABI = [

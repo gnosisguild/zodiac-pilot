@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
-import { encodeMulti } from 'react-multisend'
+import { encodeMulti } from 'ethers-multisend'
 import { toast } from 'react-toastify'
 
 import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
@@ -17,7 +17,6 @@ import {
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { encodeTransaction } from '../../encodeTransaction'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -46,7 +45,7 @@ const TransactionsDrawer: React.FC = () => {
     // remove all transactions from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { id: allTransactions[0].input.id },
+      payload: { snapshotId: allTransactions[0].snapshotId },
     })
 
     if (!(provider instanceof ForkProvider)) {
@@ -57,14 +56,15 @@ const TransactionsDrawer: React.FC = () => {
 
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
     for (const transaction of newTransactions) {
-      const encoded = encodeTransaction(transaction)
-      await provider.sendMetaTransaction(encoded)
+      await provider.sendMetaTransaction(transaction.transaction)
     }
   }
 
   const copyTransactionData = () => {
     if (!connection.chainId) throw new Error('chainId is undefined')
-    const metaTransactions = newTransactions.map(encodeTransaction)
+    const metaTransactions = newTransactions.map(
+      (txState) => txState.transaction
+    )
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
@@ -99,9 +99,9 @@ const TransactionsDrawer: React.FC = () => {
               className={classes.body + ' coll'}
               direction="column"
             >
-              {newTransactions.map((transaction, index) => (
+              {newTransactions.map((transactionState, index) => (
                 <BlockButton
-                  key={transaction.input.id}
+                  key={transactionState.snapshotId}
                   onClick={(ev) => {
                     ev.stopPropagation()
                     setScrollItemIntoView(index)
@@ -110,8 +110,8 @@ const TransactionsDrawer: React.FC = () => {
                 >
                   <TransactionBadge
                     index={index}
+                    transactionState={transactionState}
                     scrollIntoView={scrollItemIntoView === index}
-                    {...transaction}
                   />
                 </BlockButton>
               ))}
@@ -154,12 +154,12 @@ const TransactionsDrawer: React.FC = () => {
           className={classes.body + ' exp'}
           direction="column"
         >
-          {newTransactions.map((transaction, index) => (
+          {newTransactions.map((transactionState, index) => (
             <Transaction
-              key={transaction.input.id}
+              key={transactionState.snapshotId}
+              transactionState={transactionState}
               index={index}
               scrollIntoView={scrollItemIntoView === index}
-              {...transaction}
             />
           ))}
 

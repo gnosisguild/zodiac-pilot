@@ -1,18 +1,18 @@
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers/lib/utils'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { BlockLink, Box, Flex, IconButton } from '../../../components'
 import { EXPLORER_URL } from '../../../chains'
 import { useConnection } from '../../../connections'
-
 import classes from './style.module.css'
-import { fetchContractInfo } from '../../fetchContractInfo'
+import { ContractInfo } from '../../../utils/abi'
 
 interface Props {
   address: string
+  contractInfo?: ContractInfo
   explorerLink?: boolean
   copyToClipboard?: boolean
   className?: string
@@ -23,6 +23,7 @@ const VISIBLE_END = 4
 
 const ContractAddress: React.FC<Props> = ({
   address,
+  contractInfo,
   explorerLink,
   copyToClipboard,
   className,
@@ -30,7 +31,7 @@ const ContractAddress: React.FC<Props> = ({
   const {
     connection: { chainId },
   } = useConnection()
-  const [contractName, setContractName] = useState('')
+
   const explorerUrl = EXPLORER_URL[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
@@ -39,20 +40,6 @@ const ContractAddress: React.FC<Props> = ({
   const start = checksumAddress.substring(0, VISIBLE_START + 2)
   const end = checksumAddress.substring(42 - VISIBLE_END, 42)
   const displayAddress = `${start}...${end}`
-
-  useEffect(() => {
-    let canceled = false
-    fetchContractInfo(address as `0x${string}`, chainId).then((info) => {
-      if (!canceled) {
-        setContractName(info.name || '')
-      }
-    })
-
-    return () => {
-      setContractName('')
-      canceled = true
-    }
-  }, [chainId, address])
 
   return (
     <Flex
@@ -65,8 +52,8 @@ const ContractAddress: React.FC<Props> = ({
         <img src={blockie} alt={address} />
       </Box>
 
-      {contractName && (
-        <div className={classes.contractName}>{contractName}</div>
+      {contractInfo?.name && (
+        <div className={classes.contractName}>{contractInfo?.name}</div>
       )}
 
       <Flex gap={1} alignItems="center" className={classes.addressContainer}>

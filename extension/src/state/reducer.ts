@@ -1,10 +1,19 @@
-import { TransactionInput } from 'react-multisend'
-
+import { MetaTransaction } from 'ethers-multisend'
+import { ContractInfo } from '../utils/abi'
 import { Action } from './actions'
 
+export enum ExecutionStatus {
+  PENDING,
+  SUCCESS,
+  REVERTED,
+  MODULE_TRANSACTION_REVERTED,
+}
+
 export interface TransactionState {
-  input: TransactionInput
-  isDelegateCall: boolean
+  snapshotId: string
+  transaction: MetaTransaction
+  status: ExecutionStatus
+  contractInfo?: ContractInfo
   transactionHash?: string
   batchTransactionHash?: string
 }
@@ -14,30 +23,40 @@ const rootReducer = (
   action: Action
 ): TransactionState[] => {
   switch (action.type) {
-    case 'APPEND_RAW_TRANSACTION': {
-      const { input, isDelegateCall } = action.payload
-      return [...state, { input, isDelegateCall }]
+    case 'APPEND_TRANSACTION': {
+      const { snapshotId, transaction } = action.payload
+      return [
+        ...state,
+        { snapshotId, transaction, status: ExecutionStatus.PENDING },
+      ]
     }
 
     case 'DECODE_TRANSACTION': {
-      const input = action.payload
+      const { snapshotId, contractInfo } = action.payload
       return state.map((item) =>
-        item.input.id === input.id ? { ...item, input } : item
+        item.snapshotId === snapshotId ? { ...item, contractInfo } : item
       )
     }
 
     case 'CONFIRM_TRANSACTION': {
-      const { id, transactionHash } = action.payload
+      const { snapshotId, transactionHash } = action.payload
       return state.map((item) =>
-        item.input.id === id ? { ...item, transactionHash } : item
+        item.snapshotId === snapshotId ? { ...item, transactionHash } : item
+      )
+    }
+
+    case 'UPDATE_TRANSACTION_STATUS': {
+      const { snapshotId, status } = action.payload
+      return state.map((item) =>
+        item.snapshotId === snapshotId ? { ...item, status } : item
       )
     }
 
     case 'REMOVE_TRANSACTION': {
-      const { id } = action.payload
+      const { snapshotId } = action.payload
       return state.slice(
         0,
-        state.findIndex((item) => item.input.id === id)
+        state.findIndex((item) => item.snapshotId === snapshotId)
       )
     }
 

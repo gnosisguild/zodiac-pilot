@@ -1,8 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
-import { formatEther } from 'ethers/lib/utils'
-import React, { ReactNode, useEffect, useRef, useState } from 'react'
-import { TransactionInput, TransactionType } from 'react-multisend'
+import { formatEther, FunctionFragment } from 'ethers/lib/utils'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
@@ -10,21 +9,21 @@ import { CHAIN_CURRENCY } from '../../chains'
 import { useConnection } from '../../connections'
 import { TransactionState } from '../../state'
 
-import CallContract from './CallContract'
 import ContractAddress from './ContractAddress'
 import CopyToClipboard from './CopyToClipboard'
 import RawTransaction from './RawTransaction'
 import { Remove } from './Remove'
 import RolePermissionCheck from './RolePermissionCheck'
-import SimulatedExecutionCheck from './SimulatedExecutionCheck'
+import SimulationStatus from './SimulationStatus'
 import { Translate } from './Translate'
 import classes from './style.module.css'
+import DecodedTransaction from './DecodedTransaction'
+import { useDecodedFunctionData } from './useDecodedFunctionData'
 
 interface HeaderProps {
   index: number
-  input: TransactionInput
-  isDelegateCall: boolean
-  transactionHash: TransactionState['transactionHash']
+  transactionState: TransactionState
+  functionFragment?: FunctionFragment
   onExpandToggle(): void
   expanded: boolean
   showRoles?: boolean
@@ -32,9 +31,8 @@ interface HeaderProps {
 
 const TransactionHeader: React.FC<HeaderProps> = ({
   index,
-  input,
-  isDelegateCall,
-  transactionHash,
+  transactionState,
+  functionFragment,
   onExpandToggle,
   expanded,
   showRoles = false,
@@ -47,86 +45,50 @@ const TransactionHeader: React.FC<HeaderProps> = ({
           <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
         </div>
         <h5 className={classes.transactionTitle}>
-          {input.type === TransactionType.callContract
-            ? input.functionSignature.split('(')[0]
+          {functionFragment
+            ? functionFragment.format('sighash').split('(')[0]
             : 'Raw transaction'}
-          {isDelegateCall && (
+          {transactionState.transaction.operation === 1 && (
             <code className={classes.delegateCall}>delegatecall</code>
           )}
         </h5>
       </label>
       <div className={classes.end}>
-        {transactionHash && (
-          <SimulatedExecutionCheck transactionHash={transactionHash} mini />
-        )}
-
+        <SimulationStatus transactionState={transactionState} mini />
         {showRoles && (
           <RolePermissionCheck
-            transaction={input}
-            isDelegateCall={isDelegateCall}
+            transactionState={transactionState}
             index={index}
             mini
           />
         )}
-
         <Flex gap={0}>
-          <Translate
-            transaction={input}
-            isDelegateCall={isDelegateCall}
-            index={index}
-          />
-          <CopyToClipboard
-            transaction={input}
-            isDelegateCall={isDelegateCall}
-          />
-          <Remove transaction={input} index={index} />
+          <Translate transactionState={transactionState} index={index} />
+          <CopyToClipboard transaction={transactionState.transaction} />
+          <Remove transactionState={transactionState} index={index} />
         </Flex>
       </div>
     </div>
   )
 }
 
-interface BodyProps {
-  input: TransactionInput
-}
-
-const TransactionBody: React.FC<BodyProps> = ({ input }) => {
-  // const { network, blockExplorerApiKey } = useMultiSendContext()
-  let txInfo: ReactNode = <></>
-  switch (input.type) {
-    case TransactionType.callContract:
-      txInfo = <CallContract value={input} />
-      break
-    // case TransactionType.transferFunds:
-    //   return <TransferFunds value={value} onChange={onChange} />
-    // case TransactionType.transferCollectible:
-    //   return <TransferCollectible value={value} onChange={onChange} />
-    case TransactionType.raw:
-      txInfo = <RawTransaction value={input} />
-      break
-  }
-  return (
-    <Box p={2} bg className={classes.transactionContainer}>
-      {txInfo}
-    </Box>
-  )
-}
-
-type Props = TransactionState & {
+interface Props {
+  transactionState: TransactionState
   index: number
   scrollIntoView: boolean
 }
 
 export const Transaction: React.FC<Props> = ({
   index,
-  transactionHash,
-  input,
-  isDelegateCall,
+  transactionState,
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
   const { connection } = useConnection()
   const elementRef = useScrollIntoView(scrollIntoView)
+
+  const decoded = useDecodedFunctionData(transactionState)
+
   const showRoles =
     (connection.moduleType === KnownContracts.ROLES_V1 ||
       connection.moduleType === KnownContracts.ROLES_V2) &&
@@ -137,9 +99,8 @@ export const Transaction: React.FC<Props> = ({
     <Box ref={elementRef} p={2} className={classes.container}>
       <TransactionHeader
         index={index}
-        input={input}
-        isDelegateCall={isDelegateCall}
-        transactionHash={transactionHash}
+        transactionState={transactionState}
+        functionFragment={decoded?.functionFragment}
         expanded={expanded}
         onExpandToggle={() => setExpanded(!expanded)}
         showRoles={showRoles}
@@ -154,21 +115,27 @@ export const Transaction: React.FC<Props> = ({
               className={classes.transactionSubtitle}
             >
               <ContractAddress
-                address={input.to}
+                address={transactionState.transaction.to}
+                contractInfo={transactionState.contractInfo}
                 explorerLink
                 className={classes.contractName}
               />
-              <EtherValue input={input} />
+              <EtherValue value={transactionState.transaction.value} />
             </Flex>
           </Box>
           <TransactionStatus
-            input={input}
-            isDelegateCall={isDelegateCall}
+            transactionState={transactionState}
             index={index}
-            transactionHash={transactionHash}
             showRoles={showRoles}
           />
-          <TransactionBody input={input} />
+
+          <Box p={2} bg className={classes.transactionContainer}>
+            {decoded ? (
+              <DecodedTransaction {...decoded} />
+            ) : (
+              <RawTransaction data={transactionState.transaction.data} />
+            )}
+          </Box>
         </>
       )}
     </Box>
@@ -177,9 +144,7 @@ export const Transaction: React.FC<Props> = ({
 
 export const TransactionBadge: React.FC<Props> = ({
   index,
-  transactionHash,
-  input,
-  isDelegateCall,
+  transactionState,
   scrollIntoView,
 }) => {
   const { connection } = useConnection()
@@ -201,14 +166,12 @@ export const TransactionBadge: React.FC<Props> = ({
       rounded
     >
       <div className={classes.txNumber}>{index + 1}</div>
-      {transactionHash && (
-        <SimulatedExecutionCheck transactionHash={transactionHash} mini />
-      )}
+
+      <SimulationStatus transactionState={transactionState} mini />
 
       {showRoles && (
         <RolePermissionCheck
-          transaction={input}
-          isDelegateCall={isDelegateCall}
+          transactionState={transactionState}
           index={index}
           mini
         />
@@ -217,15 +180,14 @@ export const TransactionBadge: React.FC<Props> = ({
   )
 }
 
-interface StatusProps extends TransactionState {
+interface StatusProps {
+  transactionState: TransactionState
   showRoles?: boolean
   index: number
 }
 
 const TransactionStatus: React.FC<StatusProps> = ({
-  input,
-  isDelegateCall,
-  transactionHash,
+  transactionState,
   index,
   showRoles = false,
 }) => (
@@ -235,16 +197,14 @@ const TransactionStatus: React.FC<StatusProps> = ({
     className={classes.transactionStatus}
     direction="column"
   >
-    {transactionHash && (
-      <Box bg p={2} className={classes.statusHeader}>
-        <SimulatedExecutionCheck transactionHash={transactionHash} />
-      </Box>
-    )}
+    <Box bg p={2} className={classes.statusHeader}>
+      <SimulationStatus transactionState={transactionState} />
+    </Box>
+
     {showRoles && (
       <Box bg p={2} className={classes.statusHeader}>
         <RolePermissionCheck
-          transaction={input}
-          isDelegateCall={isDelegateCall}
+          transactionState={transactionState}
           index={index}
         />
       </Box>
@@ -252,23 +212,12 @@ const TransactionStatus: React.FC<StatusProps> = ({
   </Flex>
 )
 
-const EtherValue: React.FC<{ input: TransactionInput }> = ({ input }) => {
+const EtherValue: React.FC<{ value: string }> = ({ value }) => {
   const {
     connection: { chainId },
   } = useConnection()
-  let value = ''
-  if (
-    input.type === TransactionType.callContract ||
-    input.type === TransactionType.raw
-  ) {
-    value = input.value
-  }
 
-  if (!value) {
-    return null
-  }
-
-  const valueBN = BigNumber.from(value)
+  const valueBN = BigNumber.from(value || 0)
 
   return (
     <Flex

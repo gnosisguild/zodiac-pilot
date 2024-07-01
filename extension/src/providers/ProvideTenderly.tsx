@@ -2,6 +2,7 @@ import EventEmitter from 'events'
 
 import { JsonRpcProvider } from '@ethersproject/providers'
 import React, { useContext, useEffect, useMemo } from 'react'
+import { customAlphabet } from 'nanoid'
 
 import { useConnection } from '../connections'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
@@ -10,6 +11,8 @@ import { initSafeProtocolKit } from '../integrations/safe/kits'
 import { safeInterface } from '../integrations/safe'
 import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from '../chains'
+
+const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
 const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
 
@@ -121,71 +124,23 @@ async function prepareSafeForSimulation(
   }
 }
 
-export interface TenderlyTransactionInfo {
-  id: string
-  project_id: string
-  dashboardLink: string
-  fork_id: string
-  hash: string
-  block_number: number
-  gas: number
-  queue_origin: string
-  gas_price: string
-  value: string
-  status: boolean
-  fork_height: number
-  block_hash: string
-  nonce: number
-  receipt: {
-    transactionHash: string
-    transactionIndex: string
-    blockHash: string
-    blockNumber: string
-    from: string
-    to: string
-    cumulativeGasUsed: string
-    gasUsed: string
-    effectiveGasPrice: string
-    contractAddress: null
-    logs: {
-      logIndex: string
-      address: string
-      topics: string[]
-      data: string
-      blockHash: string
-      blockNumber: string
-      removed: boolean
-      transactionHash: string
-      transactionIndex: string
-    }[]
-    logsBloom: string
-    status: string
-    type: string
-  }
-  parent_id: string
-  created_at: string
-  timestamp: string
-}
-
 export class TenderlyProvider extends EventEmitter {
   private provider: Eip1193Provider
   private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
-  private forkId: string | undefined
-  private transactionIds: Map<string, string> = new Map()
-  private transactionInfo: Map<string, Promise<TenderlyTransactionInfo>> =
-    new Map()
+  private vnetId: string | undefined
+  private publicRpcSlug: string | undefined
   private blockNumber: number | undefined
 
-  private tenderlyForkApi: string
+  private tenderlyVnetApi: string
   private throttledIncreaseBlock: () => void
 
   constructor(chainId: ChainId) {
     super()
     this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
     this.chainId = chainId
-    this.tenderlyForkApi = 'https://fork-api.pilot.gnosisguild.org'
+    this.tenderlyVnetApi = 'https://vnet-api.pilot.gnosisguild.org'
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
   }
 
@@ -223,7 +178,7 @@ export class TenderlyProvider extends EventEmitter {
     } catch (e) {
       if ((e as any).error?.code === -32603) {
         console.error(
-          'Tenderly fork RPC has an issue (probably due to rate limiting)',
+          'Tenderly vnet RPC has an issue (probably due to rate limiting)',
           e
         )
         throw new Error('Error sending request to Tenderly')
@@ -233,108 +188,99 @@ export class TenderlyProvider extends EventEmitter {
     }
 
     if (request.method === 'eth_sendTransaction') {
-      // when sending a transaction, we need to retrieve that transaction's ID on Tenderly
-      const { global_head: headTransactionId, block_number } =
-        await this.fetchForkInfo()
-      this.blockNumber = block_number
-      this.transactionIds.set(result, headTransactionId) // result is the transaction hash
+      if (this.blockNumber) this.blockNumber++
     }
 
     return result
   }
 
-  async getTransactionInfo(
-    transactionHash: string
-  ): Promise<TenderlyTransactionInfo> {
-    if (!this.transactionInfo.has(transactionHash)) {
-      this.transactionInfo.set(
-        transactionHash,
-        this.fetchTransactionInfo(transactionHash)
-      )
-    }
-
-    const transactionInfoPromise = this.transactionInfo.get(transactionHash)
-    if (!transactionInfoPromise) throw new Error('invariant violation')
-
-    return await transactionInfoPromise
-  }
-
   async refork() {
     this.deleteFork()
-    this.transactionInfo.clear()
     this.forkProviderPromise = this.createFork(this.chainId)
     return await this.forkProviderPromise
   }
 
   async deleteFork() {
-    await this.forkProviderPromise
-    if (!this.forkId) return
-
     // notify the background script to stop intercepting JSON RPC requests
     window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
 
-    const forkId = this.forkId
-    this.forkId = undefined
+    await this.forkProviderPromise
+    if (!this.vnetId) return
+
+    this.vnetId = undefined
+    this.publicRpcSlug = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
-    await fetch(`${this.tenderlyForkApi}/${forkId}`, {
-      method: 'DELETE',
-    })
+
+    // We no longer delete forks/virtual testnets on Tenderly. That way we will be able to persist and share Pilot sessions in the future.
+    // (Also Tenderly doesn't seem to offer a DELETE endpoint for virtual networks.)
+    // await fetch(`${this.tenderlyVnetApi}/${vnetId}`, {
+    //   method: 'DELETE',
+    // })
+  }
+
+  getTransactionLink(txHash: string) {
+    return `https://dashboard.tenderly.co/explorer/vnet/${this.publicRpcSlug}/tx/${txHash}`
   }
 
   private async createFork(
     networkId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
-    const res = await fetch(this.tenderlyForkApi, {
+    const res = await fetch(this.tenderlyVnetApi, {
       method: 'POST',
       body: JSON.stringify({
-        network_id: networkId.toString(),
-        block_number: blockNumber,
+        slug: slug(),
+        display_name: 'Zodiac Pilot Test Flight',
+        fork_config: {
+          network_id: networkId,
+          block_number:
+            blockNumber ||
+            (await this.provider.request({
+              method: 'eth_blockNumber',
+            })),
+        },
+        virtual_network_config: {
+          base_fee_per_gas: 0,
+          chain_config: {
+            chain_id: networkId,
+          },
+        },
+        sync_state_config: {
+          enabled: true,
+        },
+        explorer_page_config: {
+          enabled: true, // enable public explorer page
+          verification_visibility: 'bytecode',
+        },
       }),
     })
 
     const json = await res.json()
-    this.forkId = json.simulation_fork.id
-    this.blockNumber = json.simulation_fork.block_number
-    this.transactionIds.clear()
 
-    const rpcUrl = `https://rpc.tenderly.co/fork/${this.forkId}`
+    this.vnetId = json.id
+    this.blockNumber = json.fork_config.block_number
+
+    const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url
+    const publicRpc = json.rpcs.find(
+      (rpc: any) => rpc.name === 'Public RPC'
+    ).url
+    this.publicRpcSlug = publicRpc.split('/').pop()
 
     // notify the background script to start intercepting JSON RPC requests
+    // we use the public RPC for requests originating from apps
     window.postMessage(
-      { type: 'startSimulating', toBackground: true, networkId, rpcUrl },
+      {
+        type: 'startSimulating',
+        toBackground: true,
+        networkId,
+        rpcUrl: publicRpc,
+      },
       '*'
     )
 
-    return new JsonRpcProvider(rpcUrl)
-  }
-
-  private async fetchForkInfo() {
-    await this.forkProviderPromise
-    if (!this.forkId) throw new Error('No Tenderly fork available')
-
-    const res = await fetch(`${this.tenderlyForkApi}/${this.forkId}`)
-    const json = await res.json()
-    return json.simulation_fork
-  }
-
-  private async fetchTransactionInfo(
-    transactionHash: string
-  ): Promise<TenderlyTransactionInfo> {
-    if (!this.forkId) throw new Error('No Tenderly fork available')
-
-    const transactionId = this.transactionIds.get(transactionHash)
-    if (!transactionId) throw new Error('Transaction not found')
-
-    const res = await fetch(
-      `${this.tenderlyForkApi}/${this.forkId}/transaction/${transactionId}`
-    )
-    const json = await res.json()
-    return {
-      ...json.fork_transaction,
-      dashboardLink: `https://dashboard.tenderly.co/public/gnosisguild/zodiac-pilot/fork-simulation/${transactionId}`,
-    }
+    // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
+    return new JsonRpcProvider(adminRpc)
   }
 
   private increaseBlock = async () => {

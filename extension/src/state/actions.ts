@@ -1,33 +1,50 @@
-import { TransactionInput } from 'react-multisend'
+import { MetaTransaction } from 'ethers-multisend'
+import { ContractInfo } from '../utils/abi'
+import { ExecutionStatus } from './reducer'
 
-interface AppendRawTransactionAction {
-  type: 'APPEND_RAW_TRANSACTION'
-  payload: { input: TransactionInput; isDelegateCall: boolean }
+interface AppendTransactionAction {
+  type: 'APPEND_TRANSACTION'
+  payload: {
+    snapshotId: string
+    transaction: MetaTransaction
+  }
 }
+
 interface DecodeTransactionAction {
   type: 'DECODE_TRANSACTION'
-  payload: TransactionInput
+  payload: {
+    snapshotId: string
+    contractInfo: ContractInfo
+  }
 }
 
 interface ConfirmTransactionAction {
   type: 'CONFIRM_TRANSACTION'
   payload: {
-    id: string
+    snapshotId: string
     transactionHash: string
   }
 }
 
-interface RemoveTransactionAction {
-  type: 'REMOVE_TRANSACTION'
+interface UpdateTransactionStatusAction {
+  type: 'UPDATE_TRANSACTION_STATUS'
   payload: {
-    id: string
+    snapshotId: string
+    status: ExecutionStatus
   }
 }
 
 interface RemoveTransactionAction {
   type: 'REMOVE_TRANSACTION'
   payload: {
-    id: string
+    snapshotId: string
+  }
+}
+
+interface RemoveTransactionAction {
+  type: 'REMOVE_TRANSACTION'
+  payload: {
+    snapshotId: string
   }
 }
 
@@ -46,9 +63,10 @@ interface ClearTransactionsAction {
 }
 
 export type Action =
-  | AppendRawTransactionAction
+  | AppendTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
+  | UpdateTransactionStatusAction
   | RemoveTransactionAction
   | SubmitTransactionsAction
   | ClearTransactionsAction

@@ -2,9 +2,9 @@ import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber, ethers } from 'ethers'
-import { MetaTransaction } from 'react-multisend'
 import { TransactionOptions } from '@safe-global/safe-core-sdk-types'
 import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
+import { MetaTransaction } from 'ethers-multisend'
 
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
@@ -194,7 +194,7 @@ class ForkProvider extends EventEmitter {
       tx = {
         to: metaTx.to,
         data: metaTx.data,
-        value: formatValue(metaTx.value),
+        value: formatHexValue(metaTx.value),
         from: this.avatarAddress,
       }
     }
@@ -220,7 +220,7 @@ class ForkProvider extends EventEmitter {
 export default ForkProvider
 
 // Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatValue = (value: string): string => {
+const formatHexValue = (value: string): string => {
   const valueBN = BigNumber.from(value)
   if (valueBN.isZero()) return '0x0'
   else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
@@ -249,9 +249,9 @@ const execTransactionFromModule = (
     value: '0x0',
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gasLimit: hexlify(blockGasLimit),
+    gas: formatHexValue(hexlify(blockGasLimit)), // Tenderly errors if the hex value has leading zeros
     // With gas price 0 account don't need token for gas
-    gasPrice: '0x0',
+    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 
@@ -285,9 +285,9 @@ export function execTransaction(
     value: '0x0',
     from: ownerAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gasLimit: hexlify(blockGasLimit),
+    gas: hexlify(blockGasLimit / 2), // for some reason tenderly errors when passing the full block gas limit
     // With gas price 0 account don't need token for gas
-    gasPrice: '0x0',
+    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 

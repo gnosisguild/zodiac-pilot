@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { MetaTransaction } from 'react-multisend'
+import { MetaTransaction } from 'ethers-multisend'
 
 import { initSafeApiKit, sendTransaction } from '../integrations/safe'
 import { Connection, Eip1193Provider, TransactionData } from '../types'
@@ -28,7 +28,7 @@ export function wrapRequest(
       data = RolesV1Interface.encodeFunctionData('execTransactionWithRole', [
         request.to || '',
         request.value || 0,
-        request.data || '0x00',
+        request.data || '0x',
         ('operation' in request && request.operation) || 0,
         connection.roleId || 0,
         revertOnError,
@@ -38,7 +38,7 @@ export function wrapRequest(
       data = RolesV2Interface.encodeFunctionData('execTransactionWithRole', [
         request.to || '',
         request.value || 0,
-        request.data || '0x00',
+        request.data || '0x',
         ('operation' in request && request.operation) || 0,
         connection.roleId ||
           '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -49,7 +49,7 @@ export function wrapRequest(
       data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
         request.to || '',
         request.value || 0,
-        request.data || '0x00',
+        request.data || '0x',
         ('operation' in request && request.operation) || 0,
       ])
       break

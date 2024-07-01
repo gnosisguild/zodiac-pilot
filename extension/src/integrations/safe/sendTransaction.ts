@@ -1,11 +1,10 @@
 import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import * as ethers from 'ethers'
+import { MetaTransaction } from 'ethers-multisend'
 import { getAddress } from 'ethers/lib/utils'
-import { MetaTransaction } from 'react-multisend'
+
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
-
 import { Connection, Eip1193Provider, TransactionData } from '../../types'
-
 import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
 
