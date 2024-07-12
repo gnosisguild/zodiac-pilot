@@ -12,42 +12,82 @@ import { useStickyState } from '../utils'
 import { MetaMaskContextT } from '../providers/useMetaMask'
 import { WalletConnectResult } from '../providers/useWalletConnect'
 import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
-import { migrateLegacyConnections } from './legacyConnectionMigrations'
+import {
+  fromLegacyConnection,
+  migrateLegacyConnections,
+} from './legacyConnectionMigrations'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { nanoid } from 'nanoid'
 
 type RouteContextT = [Route[], React.Dispatch<React.SetStateAction<Route[]>>]
 const RouteContext = createContext<RouteContextT | null>(null)
 type SelectedRouteContextT = [string, React.Dispatch<string>]
 const SelectedRouteContext = createContext<SelectedRouteContextT | null>(null)
 
+const CONNECTIONS_DEFAULT_VALUE: LegacyConnection[] = [
+  {
+    id: nanoid(),
+    label: '',
+    chainId: 1,
+    moduleAddress: '',
+    avatarAddress: '',
+    pilotAddress: '',
+    providerType: ProviderType.WalletConnect,
+    moduleType: undefined,
+    roleId: '',
+  },
+]
+
+const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
+const ROUTES_DEFAULT_VALUE: Route[] = [
+  {
+    id: nanoid(),
+    label: '',
+    providerType: ProviderType.MetaMask,
+    avatar: ETH_ZERO_ADDRESS,
+    initiator: undefined,
+    waypoints: undefined,
+  },
+]
+
 export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [legacyConnections] = useStickyState<LegacyConnection[]>(
-    [],
+    CONNECTIONS_DEFAULT_VALUE,
     'connections'
   )
 
-  const [routes, setRoutes] = useStickyState<Route[]>([], 'routes')
+  const [routes, setRoutes] = useStickyState<Route[]>(
+    ROUTES_DEFAULT_VALUE,
+    'routes'
+  )
 
   const [isMigrated, setIsMigrated] = useState(
-    routes.length > 0 || legacyConnections.length === 0
+    routes.some(
+      (r) => r.avatar !== ETH_ZERO_ADDRESS || r._migratedFromLegacyConnection
+    ) || !legacyConnections.some((c) => c.avatarAddress)
   )
-  useEffect(() => {
-    if (!isMigrated) {
-      migrateLegacyConnections(legacyConnections).then(
-        (migratedConnections) => {
-          // setRoutes(migratedConnections.map(fromLegacyConnection))
-          // setIsMigrated(true)
-        }
-      )
-    }
-  }, [isMigrated, legacyConnections, setRoutes])
 
   const [selectedRouteId, setSelectedRouteId] = useStickyState<string>(
     routes[0].id,
     'selectedRoute'
   )
+
+  useEffect(() => {
+    if (!isMigrated) {
+      migrateLegacyConnections(legacyConnections).then(
+        (migratedConnections) => {
+          const routes = migratedConnections
+            .map(fromLegacyConnection)
+            .filter(Boolean) as Route[]
+          setRoutes(routes)
+          setIsMigrated(true)
+          setSelectedRouteId(routes[0].id)
+        }
+      )
+    }
+  }, [isMigrated, legacyConnections, setRoutes, setSelectedRouteId])
 
   const packedRoutesContext: RouteContextT = useMemo(
     () => [routes, setRoutes],
