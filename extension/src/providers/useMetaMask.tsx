@@ -8,14 +8,9 @@ import React, {
   useState,
 } from 'react'
 import { toast } from 'react-toastify'
+import { ChainId } from 'ser-kit'
 
-import {
-  ChainId,
-  EXPLORER_URL,
-  CHAIN_CURRENCY,
-  CHAIN_NAME,
-  RPC,
-} from '../chains'
+import { EXPLORER_URL, CHAIN_CURRENCY, CHAIN_NAME, RPC } from '../chains'
 import { Eip1193Provider } from '../types'
 
 export interface MetaMaskContextT {

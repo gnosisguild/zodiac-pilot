@@ -5,7 +5,7 @@ import { MetaTransaction } from 'ethers-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { Connection, JsonRpcError } from '../../types'
+import { LegacyConnection, JsonRpcError } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
 import {
   decodeGenericError,
@@ -16,16 +16,17 @@ import {
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { wrapRequest } from '../../providers/WrappingProvider'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
 import { TransactionState } from '../../state'
+import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransaction,
-  connection: Connection,
+  connection: LegacyConnection,
   tenderlyProvider: TenderlyProvider
 ) => {
   const wrappedTransaction = wrapRequest(encodedTransaction, connection, false)
@@ -68,7 +69,7 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const { connection } = useConnection()
+  const { route } = useRoute()
   const tenderlyProvider = useTenderlyProvider()
 
   const translationAvailable = !!useApplicableTranslation(
@@ -80,7 +81,7 @@ const RolePermissionCheck: React.FC<{
 
     simulateRolesTransaction(
       transactionState.transaction,
-      connection,
+      asLegacyConnection(route),
       tenderlyProvider
     ).then((error) => {
       if (!canceled) setError(error)
@@ -89,7 +90,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [transactionState, connection, tenderlyProvider])
+  }, [transactionState, route, tenderlyProvider])
 
   if (error === undefined) return null
 

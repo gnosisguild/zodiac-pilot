@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
+import { ChainId } from 'ser-kit'
 
-import { ChainId } from '../../chains'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { validateAddress } from '../../utils'
 
 import { initSafeApiKit } from './kits'
@@ -10,10 +10,7 @@ export const useSafeDelegates = (
   safeAddress: string,
   connectionId?: string
 ) => {
-  const {
-    provider,
-    connection: { chainId },
-  } = useConnection(connectionId)
+  const { provider, chainId } = useRoute(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [delegates, setDelegates] = useState<string[]>([])

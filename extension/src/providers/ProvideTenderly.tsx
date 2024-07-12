@@ -4,13 +4,14 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { customAlphabet } from 'nanoid'
 
-import { useConnection } from '../connections'
+import { useRoute } from '../routes'
 import { Eip1193Provider, JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
 import { initSafeProtocolKit } from '../integrations/safe/kits'
 import { safeInterface } from '../integrations/safe'
 import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
-import { ChainId } from '../chains'
+import { ChainId } from 'ser-kit'
+import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
@@ -22,14 +23,12 @@ export const useTenderlyProvider = (): TenderlyProvider => {
   return value
 }
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
 const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const {
-    connection: { chainId, avatarAddress, moduleAddress, pilotAddress },
-  } = useConnection()
+  const { chainId, route } = useRoute()
+  const { avatarAddress, moduleAddress, pilotAddress } =
+    asLegacyConnection(route)
 
   const tenderlyProvider = useMemo(() => {
     return new TenderlyProvider(chainId)
@@ -138,7 +137,7 @@ export class TenderlyProvider extends EventEmitter {
 
   constructor(chainId: ChainId) {
     super()
-    this.provider = getEip1193ReadOnlyProvider(chainId, ZERO_ADDRESS)
+    this.provider = getEip1193ReadOnlyProvider(chainId)
     this.chainId = chainId
     this.tenderlyVnetApi = 'https://vnet-api.pilot.gnosisguild.org'
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)

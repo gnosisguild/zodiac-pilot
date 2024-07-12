@@ -5,7 +5,7 @@ import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransaction } from 'ethers-multisend'
 
 import { initSafeApiKit, sendTransaction } from '../integrations/safe'
-import { Connection, Eip1193Provider, TransactionData } from '../types'
+import { LegacyConnection, Eip1193Provider, TransactionData } from '../types'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -15,7 +15,7 @@ const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
   request: MetaTransaction | TransactionData,
-  connection: Connection,
+  connection: LegacyConnection,
   revertOnError = true
 ): TransactionData {
   if (!connection.moduleAddress) {
@@ -72,12 +72,12 @@ class UnsupportedMethodError extends Error {
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 class WrappingProvider extends EventEmitter {
-  private connection: Connection
+  private connection: LegacyConnection
 
   private provider: Eip1193Provider
   private signer: JsonRpcSigner
 
-  constructor(provider: Eip1193Provider, connection: Connection) {
+  constructor(provider: Eip1193Provider, connection: LegacyConnection) {
     super()
     this.provider = provider
     this.signer = new Web3Provider(this.provider).getUncheckedSigner(

@@ -5,10 +5,10 @@ import { toast } from 'react-toastify'
 
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { ChainId, EXPLORER_URL, CHAIN_PREFIX, CHAIN_NAME } from '../../chains'
+import { EXPLORER_URL, CHAIN_NAME } from '../../chains'
 import { waitForMultisigExecution } from '../../integrations/safe'
 // import { shallExecuteDirectly } from '../../safe/sendTransaction'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { JsonRpcError, ProviderType } from '../../types'
 import {
   decodeGenericError,
@@ -21,10 +21,11 @@ import { useDispatch, useNewTransactions } from '../../state'
 import classes from './style.module.css'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { usePushConnectionsRoute } from '../../routing'
+import { PrefixedAddress } from 'ser-kit'
 
 const Submit: React.FC = () => {
-  const { connection, connect, connected } = useConnection()
-  const { chainId, pilotAddress, providerType } = connection
+  const { route, chainId, connect, connected } = useRoute()
+  const { initiator, providerType } = route
   const dispatch = useDispatch()
   const pushConnectionsRoute = usePushConnectionsRoute()
 
@@ -44,7 +45,7 @@ const Submit: React.FC = () => {
   // }, [provider, connection])
 
   const connectWallet = () => {
-    pushConnectionsRoute(connection.id)
+    pushConnectionsRoute(route.id)
   }
 
   const submit = async () => {
@@ -142,13 +143,12 @@ const Submit: React.FC = () => {
         </Button>
       )}
 
-      {signaturePending && (
+      {signaturePending && initiator && (
         <AwaitingSignatureModal
           isOpen={signaturePending}
           onClose={() => setSignaturePending(false)}
           usesWalletConnect={providerType === ProviderType.WalletConnect}
-          chainId={chainId}
-          pilotAddress={pilotAddress}
+          account={initiator}
         />
       )}
 
@@ -170,9 +170,8 @@ const AwaitingSignatureModal: React.FC<{
   isOpen: boolean
   onClose(): void
   usesWalletConnect: boolean // for now we assume that a walletconnect'ed wallet is generally a Safe
-  chainId: ChainId
-  pilotAddress: string
-}> = ({ isOpen, onClose, usesWalletConnect, chainId, pilotAddress }) => (
+  account: PrefixedAddress
+}> = ({ isOpen, onClose, usesWalletConnect, account }) => (
   <Modal
     isOpen={isOpen}
     style={modalStyle}
@@ -188,7 +187,7 @@ const AwaitingSignatureModal: React.FC<{
         <p>
           <a
             className={classes.safeAppLink}
-            href={`https://app.safe.global/${CHAIN_PREFIX[chainId]}:${pilotAddress}`}
+            href={`https://app.safe.global/${account}`}
             target="_blank"
             rel="noreferrer"
           >

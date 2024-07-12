@@ -1,12 +1,12 @@
-import { KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber } from 'ethers'
 import { formatEther, FunctionFragment } from 'ethers/lib/utils'
 import React, { useEffect, useRef, useState } from 'react'
+import { AccountType } from 'ser-kit'
 
 import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/Drawer/ToggleButton'
 import { CHAIN_CURRENCY } from '../../chains'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { TransactionState } from '../../state'
 
 import ContractAddress from './ContractAddress'
@@ -19,6 +19,7 @@ import { Translate } from './Translate'
 import classes from './style.module.css'
 import DecodedTransaction from './DecodedTransaction'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
+import { Route } from '../../types'
 
 interface HeaderProps {
   index: number
@@ -84,16 +85,12 @@ export const Transaction: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
-  const { connection } = useConnection()
+  const { route, chainId } = useRoute()
   const elementRef = useScrollIntoView(scrollIntoView)
 
   const decoded = useDecodedFunctionData(transactionState)
 
-  const showRoles =
-    (connection.moduleType === KnownContracts.ROLES_V1 ||
-      connection.moduleType === KnownContracts.ROLES_V2) &&
-    !!connection.roleId &&
-    !!connection.pilotAddress // TODO remove this check once we can query role members via ser to get a fallback
+  const showRoles = routeGoesThroughRoles(route)
 
   return (
     <Box ref={elementRef} p={2} className={classes.container}>
@@ -115,6 +112,7 @@ export const Transaction: React.FC<Props> = ({
               className={classes.transactionSubtitle}
             >
               <ContractAddress
+                chainId={chainId}
                 address={transactionState.transaction.to}
                 contractInfo={transactionState.contractInfo}
                 explorerLink
@@ -147,13 +145,9 @@ export const TransactionBadge: React.FC<Props> = ({
   transactionState,
   scrollIntoView,
 }) => {
-  const { connection } = useConnection()
+  const { route } = useRoute()
 
-  const showRoles =
-    (connection.moduleType === KnownContracts.ROLES_V1 ||
-      connection.moduleType === KnownContracts.ROLES_V2) &&
-    !!connection.roleId &&
-    !!connection.pilotAddress // TODO remove this check once we can query role members via ser to get a fallback
+  const showRoles = routeGoesThroughRoles(route)
 
   const elementRef = useScrollIntoView(scrollIntoView)
 
@@ -213,9 +207,7 @@ const TransactionStatus: React.FC<StatusProps> = ({
 )
 
 const EtherValue: React.FC<{ value: string }> = ({ value }) => {
-  const {
-    connection: { chainId },
-  } = useConnection()
+  const { chainId } = useRoute()
 
   const valueBN = BigNumber.from(value || 0)
 
@@ -284,3 +276,8 @@ function getScrollParent(node: Element | null): Element | null {
     return getScrollParent(node.parentElement)
   }
 }
+
+const routeGoesThroughRoles = (route: Route) =>
+  route.waypoints?.some(
+    (waypoint) => waypoint.account.type === AccountType.ROLES
+  )

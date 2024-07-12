@@ -16,15 +16,16 @@ import {
   Methods,
   MessageFormatter,
 } from '@safe-global/safe-apps-sdk'
+import { getAddress } from 'ethers/lib/utils'
+import { ChainId } from 'ser-kit'
 import {
   getBalances,
   getSafeInfo,
   TransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
-import { ChainId, CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
-import { Connection, Eip1193Provider } from '../types'
+import { CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
+import { LegacyConnection, Eip1193Provider } from '../types'
 import { reloadIframe, requestIframeHref } from '../location'
-import { getAddress } from 'ethers/lib/utils'
 
 type MessageHandler = (
   params: any,
@@ -52,10 +53,10 @@ export const SAFE_APP_WHITELIST = [
 
 export default class SafeAppBridge {
   private provider: Eip1193Provider
-  private connection: Connection
+  private connection: LegacyConnection
   private connectedOrigin: string | undefined
 
-  constructor(provider: Eip1193Provider, connection: Connection) {
+  constructor(provider: Eip1193Provider, connection: LegacyConnection) {
     this.provider = provider
     this.connection = connection
   }
@@ -64,7 +65,7 @@ export default class SafeAppBridge {
     this.provider = provider
   }
 
-  setConnection = async (connection: Connection) => {
+  setConnection = async (connection: LegacyConnection) => {
     const accountOrChainSwitched =
       connection.avatarAddress !== this.connection.avatarAddress ||
       connection.chainId !== this.connection.chainId

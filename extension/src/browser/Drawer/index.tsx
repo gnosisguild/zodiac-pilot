@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { wrapRequest } from '../../providers/WrappingProvider'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { useProvider } from '../ProvideProvider'
 import {
   useAllTransactions,
@@ -17,6 +17,7 @@ import {
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
+import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -24,7 +25,7 @@ const TransactionsDrawer: React.FC = () => {
   const newTransactions = useNewTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { connection } = useConnection()
+  const { route } = useRoute()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -61,10 +62,10 @@ const TransactionsDrawer: React.FC = () => {
   }
 
   const copyTransactionData = () => {
-    if (!connection.chainId) throw new Error('chainId is undefined')
     const metaTransactions = newTransactions.map(
       (txState) => txState.transaction
     )
+    const connection = asLegacyConnection(route)
     const batchTransaction =
       metaTransactions.length === 1
         ? metaTransactions[0]
@@ -171,7 +172,7 @@ const TransactionsDrawer: React.FC = () => {
           )}
         </Flex>
         <Flex justifyContent="space-between" gap={2}>
-          {!connection.pilotAddress && (
+          {!route.initiator && (
             <Button
               secondary
               onClick={copyTransactionData}

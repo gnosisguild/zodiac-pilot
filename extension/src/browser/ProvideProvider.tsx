@@ -12,13 +12,14 @@ import {
   useTenderlyProvider,
   WrappingProvider,
 } from '../providers'
-import { useConnection } from '../connections'
-import { Connection, Eip1193Provider } from '../types'
+import { useRoute } from '../routes'
+import { LegacyConnection, Eip1193Provider } from '../types'
 import { useDispatch, useNewTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { TransactionReceipt, Web3Provider } from '@ethersproject/providers'
 import { ExecutionStatus } from '../state/reducer'
 import { defaultAbiCoder } from '@ethersproject/abi'
+import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 
 interface Props {
   simulate: boolean
@@ -34,10 +35,12 @@ const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
-  const { provider, connection } = useConnection()
+  const { provider, route, chainId } = useRoute()
   const tenderlyProvider = useTenderlyProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
+
+  const connection = asLegacyConnection(route)
 
   const wrappingProvider = useMemo(
     () => new WrappingProvider(provider, connection),
@@ -62,7 +65,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           // Now we can take some time decoding the transaction and we update the state once that's done.
           const contractInfo = await fetchContractInfo(
             transaction.to as `0x${string}`,
-            connection.chainId
+            chainId
           )
           dispatch({
             type: 'DECODE_TRANSACTION',
@@ -118,7 +121,7 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
           }
         },
       }),
-    [tenderlyProvider, connection, dispatch]
+    [tenderlyProvider, connection, chainId, dispatch]
   )
 
   const submitTransactions = useCallback(async () => {
@@ -166,7 +169,7 @@ export default ProvideProvider
 
 const isExecutionFromModuleFailure = (
   log: TransactionReceipt['logs'][0],
-  connection: Connection
+  connection: LegacyConnection
 ) => {
   return (
     log.address.toLowerCase() === connection.avatarAddress.toLowerCase() &&

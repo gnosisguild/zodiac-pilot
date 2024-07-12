@@ -4,7 +4,7 @@ import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { EXPLORER_URL } from '../../chains'
 
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import { validateAddress } from '../../utils'
 import Blockie from '../Blockie'
 import Box from '../Box'
@@ -35,9 +35,7 @@ const Address: React.FC<Props> = ({
   copyToClipboard,
   className,
 }) => {
-  const {
-    connection: { chainId },
-  } = useConnection()
+  const { chainId } = useRoute()
   const explorerUrl = chainId && EXPLORER_URL[chainId]
   const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)

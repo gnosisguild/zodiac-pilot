@@ -11,7 +11,7 @@ import detectProxyTarget from 'ethers-proxies'
 import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
-import { useConnection } from '../../connections/connectionHooks'
+import { useRoute } from '../../routes/routeHooks'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { SupportedModuleType } from './types'
 
@@ -35,8 +35,7 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { connection } = useConnection(connectionId)
-  const chainId = connection.chainId
+  const { chainId } = useRoute(connectionId)
 
   useEffect(() => {
     const provider = getReadOnlyProvider(chainId)

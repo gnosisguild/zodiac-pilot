@@ -2,7 +2,8 @@ import React, { useLayoutEffect, useRef } from 'react'
 
 import Eip1193Bridge from '../bridge/Eip1193Bridge'
 import SafeAppBridge, { SAFE_APP_WHITELIST } from '../bridge/SafeAppBridge'
-import { useConnection } from '../connections'
+import { useRoute } from '../routes'
+import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 
 import { useProvider } from './ProvideProvider'
 
@@ -12,7 +13,7 @@ type Props = {
 
 const BrowserFrame: React.FC<Props> = ({ src }) => {
   const provider = useProvider()
-  const { connection } = useConnection()
+  const { route } = useRoute()
   const eip1193BridgeRef = useRef<Eip1193Bridge | null>(null)
   const safeAppBridgeRef = useRef<SafeAppBridge | null>(null)
 
@@ -21,6 +22,8 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
   // Using a layout effect ensures that the listeners are set synchronously after DOM flush.
   useLayoutEffect(() => {
     if (!provider) return
+
+    const connection = asLegacyConnection(route)
 
     // establish EIP-1193 bridge
     if (!eip1193BridgeRef.current) {
@@ -49,7 +52,7 @@ const BrowserFrame: React.FC<Props> = ({ src }) => {
     return () => {
       window.removeEventListener('message', handle)
     }
-  }, [provider, connection])
+  }, [provider, route])
 
   return (
     <iframe

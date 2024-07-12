@@ -1,8 +1,8 @@
 import { MetaTransaction } from 'ethers-multisend'
 import { useEffect, useState } from 'react'
+import { ChainId } from 'ser-kit'
 
-import { ChainId } from '../chains'
-import { useConnection } from '../connections'
+import { useRoute } from '../routes'
 
 import cowswapSetPreSignature from './cowswapSetPreSignature'
 import { TransactionTranslation } from './types'
@@ -28,9 +28,7 @@ export const useApplicableTranslation = (
     ApplicableTranslation | undefined
   >(undefined)
 
-  const {
-    connection: { chainId },
-  } = useConnection()
+  const { chainId } = useRoute()
 
   useEffect(() => {
     findApplicableTranslation(encodedTransaction, chainId).then(setTranslation)

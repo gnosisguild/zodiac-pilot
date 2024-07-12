@@ -6,11 +6,12 @@ import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 
 import { BlockLink, Box, Flex, IconButton } from '../../../components'
 import { EXPLORER_URL } from '../../../chains'
-import { useConnection } from '../../../connections'
 import classes from './style.module.css'
 import { ContractInfo } from '../../../utils/abi'
+import { ChainId } from 'ser-kit'
 
 interface Props {
+  chainId: ChainId
   address: string
   contractInfo?: ContractInfo
   explorerLink?: boolean
@@ -22,16 +23,13 @@ const VISIBLE_START = 4
 const VISIBLE_END = 4
 
 const ContractAddress: React.FC<Props> = ({
+  chainId,
   address,
   contractInfo,
   explorerLink,
   copyToClipboard,
   className,
 }) => {
-  const {
-    connection: { chainId },
-  } = useConnection()
-
   const explorerUrl = EXPLORER_URL[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])

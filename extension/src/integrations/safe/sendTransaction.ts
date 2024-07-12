@@ -4,11 +4,11 @@ import { MetaTransaction } from 'ethers-multisend'
 import { getAddress } from 'ethers/lib/utils'
 
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
-import { Connection, Eip1193Provider, TransactionData } from '../../types'
+import { LegacyConnection, Eip1193Provider, TransactionData } from '../../types'
 import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
 
-export const shallExecuteDirectly = async (connection: Connection) => {
+export const shallExecuteDirectly = async (connection: LegacyConnection) => {
   const provider = getReadOnlyProvider(connection.chainId)
   const ethAdapter = new EthersAdapter({
     ethers,
@@ -28,7 +28,7 @@ export const shallExecuteDirectly = async (connection: Connection) => {
 
 export const sendTransaction = async (
   provider: Eip1193Provider,
-  connection: Connection,
+  connection: LegacyConnection,
   request: MetaTransaction | TransactionData
 ) => {
   if (connection.moduleAddress) {

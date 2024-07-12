@@ -4,8 +4,9 @@ import {
   StaticJsonRpcProvider,
   TransactionRequest,
 } from '@ethersproject/providers'
-import { ChainId, RPC } from '../chains'
+import { RPC } from '../chains'
 import { BigNumberish } from 'ethers'
+import { ChainId } from 'ser-kit'
 
 const readOnlyProviderCache = new Map<ChainId, StaticJsonRpcProvider>()
 const eip1193ProviderCache = new Map<string, Eip1193JsonRpcProvider>()
@@ -30,10 +31,9 @@ export const getReadOnlyProvider = (
  * @throws if used for wallet RPC calls
  **/
 export const getEip1193ReadOnlyProvider = (
-  chainId: ChainId,
-  address: string
+  chainId: ChainId
 ): Eip1193JsonRpcProvider => {
-  const cacheKey = `${chainId}:${address.toLowerCase()}`
+  const cacheKey = `${chainId}`
   if (eip1193ProviderCache.has(cacheKey)) {
     return eip1193ProviderCache.get(cacheKey)!
   }

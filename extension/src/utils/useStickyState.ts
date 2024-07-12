@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JSONValue[]
-  | { [key: string]: JSONValue }
+type JsonValue = string | number | boolean | null | JsonValue[] | object
 
-const useStickyState = <T extends JSONValue>(
+const useStickyState = <T extends JsonValue>(
   initialValue: T,
   storageKey: string
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
