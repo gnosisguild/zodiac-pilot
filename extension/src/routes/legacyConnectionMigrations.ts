@@ -224,7 +224,8 @@ export function asLegacyConnection(route: Route): LegacyConnection {
     throw new Error('Not representable as legacy connection')
   }
 
-  const [chainId, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const [chainId, avatarAddressChecksummed] = parsePrefixedAddress(route.avatar)
+  const avatarAddress = avatarAddressChecksummed.toLowerCase()
   if (!chainId) {
     throw new Error('chainId is empty')
   }
