@@ -2,10 +2,10 @@ import EventEmitter from 'events'
 
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { MetaTransaction } from 'ethers-multisend'
 
 import { initSafeApiKit, sendTransaction } from '../integrations/safe'
 import { LegacyConnection, Eip1193Provider, TransactionData } from '../types'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -14,7 +14,7 @@ const RolesV2Interface =
 const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
-  request: MetaTransaction | TransactionData,
+  request: MetaTransactionData | TransactionData,
   connection: LegacyConnection,
   revertOnError = true
 ): TransactionData {

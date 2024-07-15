@@ -1,7 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
-import { MetaTransaction } from 'ethers-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
@@ -23,9 +22,10 @@ import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
 import { TransactionState } from '../../state'
 import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 const simulateRolesTransaction = async (
-  encodedTransaction: MetaTransaction,
+  encodedTransaction: MetaTransactionData,
   connection: LegacyConnection,
   tenderlyProvider: TenderlyProvider
 ) => {

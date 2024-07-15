@@ -2,9 +2,8 @@ import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber, ethers } from 'ethers'
-import { TransactionOptions } from '@safe-global/safe-core-sdk-types'
+import { MetaTransactionData, TransactionOptions } from '@safe-global/safe-core-sdk-types'
 import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
-import { MetaTransaction } from 'ethers-multisend'
 
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
@@ -18,7 +17,7 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(checkpointId: string, metaTx: MetaTransaction): void
+  onBeforeTransactionSend(checkpointId: string, metaTx: MetaTransactionData): void
   onTransactionSent(checkpointId: string, hash: string): void
 }
 
@@ -144,7 +143,7 @@ class ForkProvider extends EventEmitter {
    *
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
-  async sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
+  async sendMetaTransaction(metaTx: MetaTransactionData): Promise<string> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
     // If there's a pending request, wait for it to finish before sending the next one
@@ -160,7 +159,7 @@ class ForkProvider extends EventEmitter {
     return await this.pendingMetaTransaction
   }
 
-  private async _sendMetaTransaction(metaTx: MetaTransaction): Promise<string> {
+  private async _sendMetaTransaction(metaTx: MetaTransactionData): Promise<string> {
     const isDelegateCall = metaTx.operation === 1
     if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
       throw new Error('delegatecall requires moduleAddress or ownerAddress')
@@ -228,7 +227,7 @@ const formatHexValue = (value: string): string => {
 
 /** Encode an execTransactionFromModule call with the given meta transaction data */
 const execTransactionFromModule = (
-  metaTx: MetaTransaction,
+  metaTx: MetaTransactionData,
   avatarAddress: string,
   moduleAddress: string,
   blockGasLimit: number
@@ -260,7 +259,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 /** Encode an execTransaction call by the given owner (address must be an actual owner of the Safe) */
 // for reference: https://github.com/safe-global/safe-wallet-web/blob/dev/src/components/tx/security/tenderly/utils.ts#L213
 export function execTransaction(
-  tx: MetaTransaction & TransactionOptions,
+  tx: MetaTransactionData & TransactionOptions,
   avatarAddress: string,
   ownerAddress: string,
   blockGasLimit: number

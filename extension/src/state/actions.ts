@@ -1,4 +1,5 @@
-import { MetaTransaction } from 'ethers-multisend'
+
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { ContractInfo } from '../utils/abi'
 import { ExecutionStatus } from './reducer'
 
@@ -6,7 +7,7 @@ interface AppendTransactionAction {
   type: 'APPEND_TRANSACTION'
   payload: {
     snapshotId: string
-    transaction: MetaTransaction
+    transaction: MetaTransactionData
   }
 }
 

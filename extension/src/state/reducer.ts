@@ -1,4 +1,4 @@
-import { MetaTransaction } from 'ethers-multisend'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { ContractInfo } from '../utils/abi'
 import { Action } from './actions'
 
@@ -11,7 +11,7 @@ export enum ExecutionStatus {
 
 export interface TransactionState {
   snapshotId: string
-  transaction: MetaTransaction
+  transaction: MetaTransactionData
   status: ExecutionStatus
   contractInfo?: ContractInfo
   transactionHash?: string

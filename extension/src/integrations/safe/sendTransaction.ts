@@ -1,12 +1,12 @@
 import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
 import * as ethers from 'ethers'
-import { MetaTransaction } from 'ethers-multisend'
 import { getAddress } from 'ethers/lib/utils'
 
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { LegacyConnection, Eip1193Provider, TransactionData } from '../../types'
 import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 export const shallExecuteDirectly = async (connection: LegacyConnection) => {
   const provider = getReadOnlyProvider(connection.chainId)
@@ -29,7 +29,7 @@ export const shallExecuteDirectly = async (connection: LegacyConnection) => {
 export const sendTransaction = async (
   provider: Eip1193Provider,
   connection: LegacyConnection,
-  request: MetaTransaction | TransactionData
+  request: MetaTransactionData | TransactionData
 ) => {
   if (connection.moduleAddress) {
     throw new Error(

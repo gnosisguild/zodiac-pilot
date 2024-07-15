@@ -1,4 +1,3 @@
-import { MetaTransaction } from 'ethers-multisend'
 import React from 'react'
 import { RiFileCopy2Line } from 'react-icons/ri'
 import { toast } from 'react-toastify'
@@ -6,9 +5,10 @@ import { toast } from 'react-toastify'
 import { IconButton } from '../../components'
 
 import classes from './style.module.css'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 interface Props {
-  transaction: MetaTransaction
+  transaction: MetaTransactionData
   labeled?: boolean
 }
 
