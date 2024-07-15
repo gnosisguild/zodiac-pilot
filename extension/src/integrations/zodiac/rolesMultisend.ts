@@ -13,7 +13,7 @@ export async function queryRolesV1MultiSend(
   modAddress: string
 ) {
   const address = await ContractFactories[KnownContracts.ROLES_V1]
-    .connect(modAddress, getReadOnlyProvider(chainId))
+    .connect(modAddress /*, getReadOnlyProvider(chainId)*/)
     .multisend()
 
   return address === ZERO_ADDRESS ? undefined : address.toLowerCase()

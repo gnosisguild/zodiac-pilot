@@ -2,18 +2,18 @@ import {
   ContractAbis,
   ContractAddresses,
   KnownContracts,
-  SupportedNetworks,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
-import { Contract, providers, utils } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { FormatTypes, Interface } from 'ethers/lib/utils'
-import detectProxyTarget from 'ethers-proxies'
+import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
 import { useRoute } from '../../routes/routeHooks'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { SupportedModuleType } from './types'
+import { ChainId } from 'ser-kit'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
@@ -38,10 +38,9 @@ export const useZodiacModules = (
   const { chainId } = useRoute(connectionId)
 
   useEffect(() => {
-    const provider = getReadOnlyProvider(chainId)
     setLoading(true)
     setError(false)
-    fetchModules(safeAddress, provider)
+    fetchModules(safeAddress, chainId)
       .then((modules) => setModules(modules))
       .catch((e) => {
         console.error(`Could not fetch modules of Safe ${safeAddress}`, e)
@@ -59,10 +58,11 @@ export const useZodiacModules = (
 
 async function fetchModules(
   safeOrModifierAddress: string,
-  provider: providers.BaseProvider
+  chainId: ChainId
 ): Promise<Module[]> {
-  const mastercopyAddresses =
-    ContractAddresses[provider.network.chainId as SupportedNetworks] || {}
+  const provider = getReadOnlyProvider(chainId)
+
+  const mastercopyAddresses = ContractAddresses[chainId] || {}
   const contract = new Contract(
     safeOrModifierAddress,
     AvatarInterface,
@@ -78,7 +78,11 @@ async function fetchModules(
       const isEnabled = await contract.isModuleEnabled(moduleAddress)
       if (!isEnabled) return
 
-      const mastercopyAddress = await detectProxyTarget(moduleAddress, provider)
+      const result = await detectProxyTarget(
+        moduleAddress as `0x${string}`,
+        ({ method, params }) => provider.send(method, params)
+      )
+      const mastercopyAddress = result?.target.toLowerCase()
 
       let [type] = (Object.entries(mastercopyAddresses).find(
         ([, address]) => address === mastercopyAddress
@@ -112,7 +116,7 @@ async function fetchModules(
       if (MODIFIERS.includes(type)) {
         // recursively fetch modules from modifier
         try {
-          modules = await fetchModules(moduleAddress, provider)
+          modules = await fetchModules(moduleAddress, chainId)
         } catch (e) {
           console.error(
             `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,

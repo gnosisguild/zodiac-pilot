@@ -1,4 +1,3 @@
-
 import { ChainId } from 'ser-kit'
 import { SupportedModuleType } from '../integrations/zodiac/types'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'

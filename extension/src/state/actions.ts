@@ -1,4 +1,3 @@
-
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { ContractInfo } from '../utils/abi'
 import { ExecutionStatus } from './reducer'

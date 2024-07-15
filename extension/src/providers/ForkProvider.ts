@@ -2,7 +2,10 @@ import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { BigNumber, ethers } from 'ethers'
-import { MetaTransactionData, TransactionOptions } from '@safe-global/safe-core-sdk-types'
+import {
+  MetaTransactionData,
+  TransactionOptions,
+} from '@safe-global/safe-core-sdk-types'
 import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
 
 import { Eip1193Provider, TransactionData } from '../types'
@@ -17,7 +20,10 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(checkpointId: string, metaTx: MetaTransactionData): void
+  onBeforeTransactionSend(
+    checkpointId: string,
+    metaTx: MetaTransactionData
+  ): void
   onTransactionSent(checkpointId: string, hash: string): void
 }
 
@@ -159,7 +165,9 @@ class ForkProvider extends EventEmitter {
     return await this.pendingMetaTransaction
   }
 
-  private async _sendMetaTransaction(metaTx: MetaTransactionData): Promise<string> {
+  private async _sendMetaTransaction(
+    metaTx: MetaTransactionData
+  ): Promise<string> {
     const isDelegateCall = metaTx.operation === 1
     if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
       throw new Error('delegatecall requires moduleAddress or ownerAddress')

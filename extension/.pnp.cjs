@@ -33,7 +33,7 @@ const RAW_RUNTIME_STATE =
           ["@ethersproject/abi", "npm:5.7.0"],\
           ["@ethersproject/abstract-provider", "npm:5.7.0"],\
           ["@ethersproject/providers", "npm:5.7.2"],\
-          ["@gnosis.pm/zodiac", "npm:3.5.2"],\
+          ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@safe-global/api-kit", "npm:1.3.1"],\
           ["@safe-global/protocol-kit", "npm:1.3.0"],\
           ["@safe-global/safe-apps-sdk", "npm:9.0.0"],\
@@ -73,6 +73,7 @@ const RAW_RUNTIME_STATE =
           ["ethers-multisend", "npm:3.1.0"],\
           ["ethers-proxies", "npm:1.0.0"],\
           ["events", "npm:3.3.0"],\
+          ["evm-proxy-detection", "npm:2.0.1"],\
           ["globals", "npm:15.8.0"],\
           ["isomorphic-fetch", "npm:3.0.0"],\
           ["jsdom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:24.1.0"],\
@@ -1803,12 +1804,12 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:1.3.0", {\
-        "packageLocation": "./.yarn/__virtual__/@gnosis.pm-safe-contracts-virtual-8de7b85288/0/cache/@gnosis.pm-safe-contracts-npm-1.3.0-13344cc969-0a99495d16.zip/node_modules/@gnosis.pm/safe-contracts/",\
+      ["virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:1.3.0", {\
+        "packageLocation": "./.yarn/__virtual__/@gnosis.pm-safe-contracts-virtual-8f48ea32c5/0/cache/@gnosis.pm-safe-contracts-npm-1.3.0-13344cc969-0a99495d16.zip/node_modules/@gnosis.pm/safe-contracts/",\
         "packageDependencies": [\
-          ["@gnosis.pm/safe-contracts", "virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:1.3.0"],\
+          ["@gnosis.pm/safe-contracts", "virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:1.3.0"],\
           ["@types/ethers", null],\
-          ["ethers", "npm:5.7.2"]\
+          ["ethers", "npm:6.13.1"]\
         ],\
         "packagePeers": [\
           "@types/ethers",\
@@ -1818,15 +1819,15 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@gnosis.pm/zodiac", [\
-      ["npm:3.5.2", {\
-        "packageLocation": "./.yarn/cache/@gnosis.pm-zodiac-npm-3.5.2-383ab49fbf-a950b488ce.zip/node_modules/@gnosis.pm/zodiac/",\
+      ["npm:4.0.3", {\
+        "packageLocation": "./.yarn/cache/@gnosis.pm-zodiac-npm-4.0.3-88ad6a739e-7225015e5f.zip/node_modules/@gnosis.pm/zodiac/",\
         "packageDependencies": [\
-          ["@gnosis.pm/zodiac", "npm:3.5.2"],\
+          ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@gnosis.pm/mock-contract", "npm:4.0.0"],\
-          ["@gnosis.pm/safe-contracts", "virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:1.3.0"],\
+          ["@gnosis.pm/safe-contracts", "virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:1.3.0"],\
           ["@openzeppelin/contracts", "npm:5.0.2"],\
-          ["@openzeppelin/contracts-upgradeable", "virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:5.0.2"],\
-          ["ethers", "npm:5.7.2"]\
+          ["@openzeppelin/contracts-upgradeable", "virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:5.0.2"],\
+          ["ethers", "npm:6.13.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2172,10 +2173,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:5.0.2", {\
-        "packageLocation": "./.yarn/__virtual__/@openzeppelin-contracts-upgradeable-virtual-bc8c83a7d9/0/cache/@openzeppelin-contracts-upgradeable-npm-5.0.2-00a2b93f3a-71847c6bbd.zip/node_modules/@openzeppelin/contracts-upgradeable/",\
+      ["virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:5.0.2", {\
+        "packageLocation": "./.yarn/__virtual__/@openzeppelin-contracts-upgradeable-virtual-bbed113aba/0/cache/@openzeppelin-contracts-upgradeable-npm-5.0.2-00a2b93f3a-71847c6bbd.zip/node_modules/@openzeppelin/contracts-upgradeable/",\
         "packageDependencies": [\
-          ["@openzeppelin/contracts-upgradeable", "virtual:383ab49fbfe46cc830920147a8064dc00a0aa733966de1c328faa2f9d41bb32c6f33f8adffd83a5cc490fc82e8b68c3dec4c15c2fc0c6466db4fbe7d37334a39#npm:5.0.2"],\
+          ["@openzeppelin/contracts-upgradeable", "virtual:88ad6a739e88bb7d25e34f180e7fab8d3f332961ddfeea67c7d5418eaae9fb0d5307fe88926180159bca763f70662511320d668b1d3e2beeb75a9bf5bd8249bf#npm:5.0.2"],\
           ["@openzeppelin/contracts", "npm:5.0.2"],\
           ["@types/openzeppelin__contracts", null]\
         ],\
@@ -7096,6 +7097,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/events-npm-3.3.0-c280bc7e48-a3d47e285e.zip/node_modules/events/",\
         "packageDependencies": [\
           ["events", "npm:3.3.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["evm-proxy-detection", [\
+      ["npm:2.0.1", {\
+        "packageLocation": "./.yarn/cache/evm-proxy-detection-npm-2.0.1-f1ec978ccb-bffbb645c5.zip/node_modules/evm-proxy-detection/",\
+        "packageDependencies": [\
+          ["evm-proxy-detection", "npm:2.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -15227,7 +15237,7 @@ const RAW_RUNTIME_STATE =
           ["@ethersproject/abi", "npm:5.7.0"],\
           ["@ethersproject/abstract-provider", "npm:5.7.0"],\
           ["@ethersproject/providers", "npm:5.7.2"],\
-          ["@gnosis.pm/zodiac", "npm:3.5.2"],\
+          ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@safe-global/api-kit", "npm:1.3.1"],\
           ["@safe-global/protocol-kit", "npm:1.3.0"],\
           ["@safe-global/safe-apps-sdk", "npm:9.0.0"],\
@@ -15267,6 +15277,7 @@ const RAW_RUNTIME_STATE =
           ["ethers-multisend", "npm:3.1.0"],\
           ["ethers-proxies", "npm:1.0.0"],\
           ["events", "npm:3.3.0"],\
+          ["evm-proxy-detection", "npm:2.0.1"],\
           ["globals", "npm:15.8.0"],\
           ["isomorphic-fetch", "npm:3.0.0"],\
           ["jsdom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:24.1.0"],\
