@@ -15,7 +15,7 @@ const isPnpLoaderEnabled = existsSync(absPnpLoaderPath);
 
 if (existsSync(absPnpApiPath)) {
   if (!process.versions.pnp) {
-    // Setup the environment to be able to require typescript
+    // Setup the environment to be able to require eslint/use-at-your-own-risk
     require(absPnpApiPath).setup();
     if (isPnpLoaderEnabled && register) {
       register(pathToFileURL(absPnpLoaderPath));
@@ -23,5 +23,5 @@ if (existsSync(absPnpApiPath)) {
   }
 }
 
-// Defer to the real typescript your application uses
-module.exports = absRequire(`typescript`);
+// Defer to the real eslint/use-at-your-own-risk your application uses
+module.exports = absRequire(`eslint/use-at-your-own-risk`);

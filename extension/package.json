@@ -13,7 +13,7 @@
     "dev": "NODE_ENV=development node esbuild.js",
     "test": "vitest",
     "check": "yarn check:ts && yarn check:prettier && yarn check:lint && yarn check:spelling",
-    "check:ts": "tsc --noEmit",
+    "check:ts": "yarn tsc --noEmit",
     "check:lint": "eslint src --ext .ts,.tsx",
     "check:prettier": "prettier \"src/**/*.(ts|tsx)\" --list-different",
     "check:spelling": "cspell \"**\"",
@@ -40,8 +40,8 @@
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",
     "@types/react-modal": "^3.16.3",
-    "@typescript-eslint/eslint-plugin": "^5.48.1",
-    "@typescript-eslint/parser": "^5.48.1",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
     "@walletconnect/core": "^2.12.0",
     "@walletconnect/ethereum-provider": "^2.12.0",
     "@walletconnect/keyvaluestorage": "^1.1.1",
@@ -81,10 +81,10 @@
     "react-toastify": "^9.0.8",
     "rimraf": "^3.0.2",
     "ser-kit": "^0.3.7",
-    "typescript": "^4.9.4",
-    "typescript-plugin-css-modules": "^3.4.0",
+    "typescript": "^5.5.3",
+    "typescript-plugin-css-modules": "^5.1.0",
     "vitest": "^2.0.2",
     "zodiac-roles-deployments": "^2.2.2"
   },
-  "packageManager": "yarn@3.7.0"
+  "packageManager": "yarn@4.3.1"
 }
