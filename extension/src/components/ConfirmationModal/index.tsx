@@ -47,7 +47,7 @@ export const ConfirmationModal: React.FC<PropTypes> = ({
 
 export const useConfirmationModal = (): [
   (text: string) => Promise<boolean>,
-  () => JSX.Element
+  () => JSX.Element,
 ] => {
   const [open, setOpen] = useState(false)
   const [resolver, setResolver] = useState<{

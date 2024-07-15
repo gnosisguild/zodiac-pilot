@@ -20,7 +20,7 @@ const Drawer: React.FC<Props> = ({
   onToggle,
   collapsedChildren,
 }) => (
-  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+  // eslint-disable-next-line jsx-a11y/click-events-have-key-events
   <div
     onClick={expanded ? undefined : onToggle}
     className={cn(classes.container, { [classes.collapsed]: !expanded })}

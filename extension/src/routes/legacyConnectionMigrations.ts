@@ -259,10 +259,10 @@ export function asLegacyConnection(route: Route): LegacyConnection {
       moduleType === AccountType.DELAY
         ? KnownContracts.DELAY
         : moduleType === AccountType.ROLES
-        ? moduleWaypoint?.account.version === 1
-          ? KnownContracts.ROLES_V1
-          : KnownContracts.ROLES_V2
-        : undefined,
+          ? moduleWaypoint?.account.version === 1
+            ? KnownContracts.ROLES_V1
+            : KnownContracts.ROLES_V2
+          : undefined,
     multisend: multisend.find((a) => MULTISEND.includes(a)),
     multisendCallOnly: multisend.find((a) => MULTISEND_CALL_ONLY.includes(a)),
     roleId:
