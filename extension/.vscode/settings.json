@@ -12,7 +12,7 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
-  "eslint.nodePath": ".yarn/sdks",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
-  "mdx-preview.preview.useVscodeMarkdownStyles": false
+  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  "mdx-preview.preview.useVscodeMarkdownStyles": false,
+  "eslint.nodePath": ".yarn/sdks"
 }
