@@ -36,7 +36,7 @@ const RAW_RUNTIME_STATE =
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
           ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
           ["@safe-global/safe-gateway-typescript-sdk", "npm:3.21.10"],\
-          ["@shazow/whatsabi", "npm:0.2.1"],\
+          ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@testing-library/dom", "npm:10.3.1"],\
           ["@testing-library/jest-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:6.4.6"],\
           ["@testing-library/react", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:16.0.0"],\
@@ -67,7 +67,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:4.6.2"],\
           ["ethereum-blockies-base64", "npm:1.0.2"],\
           ["ethers", "npm:6.13.1"],\
-          ["ethers-multisend", "npm:3.1.0"],\
           ["events", "npm:3.3.0"],\
           ["evm-proxy-detection", "npm:2.0.1"],\
           ["globals", "npm:15.8.0"],\
@@ -1286,24 +1285,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@ethersproject/abi", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-abi-npm-5.7.0-fdd80304df-6ed002cbc6.zip/node_modules/@ethersproject/abi/",\
-        "packageDependencies": [\
-          ["@ethersproject/abi", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/constants", "npm:5.7.0"],\
-          ["@ethersproject/hash", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@ethersproject/abstract-provider", [\
       ["npm:5.7.0", {\
         "packageLocation": "./.yarn/cache/@ethersproject-abstract-provider-npm-5.7.0-f94be4e0b0-c03e413a81.zip/node_modules/@ethersproject/abstract-provider/",\
@@ -1358,17 +1339,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@ethersproject/basex", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-basex-npm-5.7.0-78ae312582-840e333e10.zip/node_modules/@ethersproject/basex/",\
-        "packageDependencies": [\
-          ["@ethersproject/basex", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@ethersproject/bignumber", [\
       ["npm:5.7.0", {\
         "packageLocation": "./.yarn/cache/@ethersproject-bignumber-npm-5.7.0-cd761880ac-09cffa18a9.zip/node_modules/@ethersproject/bignumber/",\
@@ -1397,86 +1367,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@ethersproject/constants", "npm:5.7.0"],\
           ["@ethersproject/bignumber", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/contracts", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-contracts-npm-5.7.0-4d3730222f-5df66179af.zip/node_modules/@ethersproject/contracts/",\
-        "packageDependencies": [\
-          ["@ethersproject/contracts", "npm:5.7.0"],\
-          ["@ethersproject/abi", "npm:5.7.0"],\
-          ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/constants", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/hash", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-hash-npm-5.7.0-7c00366b4e-d83de3f3a1.zip/node_modules/@ethersproject/hash/",\
-        "packageDependencies": [\
-          ["@ethersproject/hash", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/base64", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/hdnode", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-hdnode-npm-5.7.0-c6d5c6aa1c-2fbe6278c3.zip/node_modules/@ethersproject/hdnode/",\
-        "packageDependencies": [\
-          ["@ethersproject/hdnode", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/basex", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/pbkdf2", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/sha2", "npm:5.7.0"],\
-          ["@ethersproject/signing-key", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"],\
-          ["@ethersproject/wordlists", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/json-wallets", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-json-wallets-npm-5.7.0-f73c4734e5-4a1ef0912f.zip/node_modules/@ethersproject/json-wallets/",\
-        "packageDependencies": [\
-          ["@ethersproject/json-wallets", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/hdnode", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/pbkdf2", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/random", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"],\
-          ["aes-js", "npm:3.0.0"],\
-          ["scrypt-js", "npm:3.0.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -1511,62 +1401,11 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@ethersproject/pbkdf2", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-pbkdf2-npm-5.7.0-5b8e51d4b9-dea7ba7478.zip/node_modules/@ethersproject/pbkdf2/",\
-        "packageDependencies": [\
-          ["@ethersproject/pbkdf2", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/sha2", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@ethersproject/properties", [\
       ["npm:5.7.0", {\
         "packageLocation": "./.yarn/cache/@ethersproject-properties-npm-5.7.0-00a99c747b-f8401a1619.zip/node_modules/@ethersproject/properties/",\
         "packageDependencies": [\
           ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/providers", [\
-      ["npm:5.7.2", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-providers-npm-5.7.2-88293ff29f-8534a1896e.zip/node_modules/@ethersproject/providers/",\
-        "packageDependencies": [\
-          ["@ethersproject/providers", "npm:5.7.2"],\
-          ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/base64", "npm:5.7.0"],\
-          ["@ethersproject/basex", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/constants", "npm:5.7.0"],\
-          ["@ethersproject/hash", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/networks", "npm:5.7.1"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/random", "npm:5.7.0"],\
-          ["@ethersproject/rlp", "npm:5.7.0"],\
-          ["@ethersproject/sha2", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"],\
-          ["@ethersproject/web", "npm:5.7.1"],\
-          ["bech32", "npm:1.1.4"],\
-          ["ws", "virtual:88293ff29fa54efecc98d655f7a7551b282025b3465bc23ca5bb7a89a31c17930a7319e98225cf138bf4e6ccead5b30ae3c800738697b87af3441226d65f7ee3#npm:7.4.6"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/random", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-random-npm-5.7.0-a0466f53f9-c23ec44799.zip/node_modules/@ethersproject/random/",\
-        "packageDependencies": [\
-          ["@ethersproject/random", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
           ["@ethersproject/logger", "npm:5.7.0"]\
         ],\
         "linkType": "HARD"\
@@ -1583,18 +1422,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@ethersproject/sha2", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-sha2-npm-5.7.0-569c8bdff0-09321057c0.zip/node_modules/@ethersproject/sha2/",\
-        "packageDependencies": [\
-          ["@ethersproject/sha2", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["hash.js", "npm:1.1.7"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@ethersproject/signing-key", [\
       ["npm:5.7.0", {\
         "packageLocation": "./.yarn/cache/@ethersproject-signing-key-npm-5.7.0-51cfa7708e-ff2f79ded8.zip/node_modules/@ethersproject/signing-key/",\
@@ -1606,21 +1433,6 @@ const RAW_RUNTIME_STATE =
           ["bn.js", "npm:5.2.1"],\
           ["elliptic", "npm:6.5.4"],\
           ["hash.js", "npm:1.1.7"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/solidity", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-solidity-npm-5.7.0-75baa4e133-9a02f37f80.zip/node_modules/@ethersproject/solidity/",\
-        "packageDependencies": [\
-          ["@ethersproject/solidity", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/sha2", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -1655,42 +1467,6 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
-    ["@ethersproject/units", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-units-npm-5.7.0-1c1f5ec7ca-304714f848.zip/node_modules/@ethersproject/units/",\
-        "packageDependencies": [\
-          ["@ethersproject/units", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/constants", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/wallet", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-wallet-npm-5.7.0-f553c726b7-340f8e5c77.zip/node_modules/@ethersproject/wallet/",\
-        "packageDependencies": [\
-          ["@ethersproject/wallet", "npm:5.7.0"],\
-          ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/hash", "npm:5.7.0"],\
-          ["@ethersproject/hdnode", "npm:5.7.0"],\
-          ["@ethersproject/json-wallets", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/random", "npm:5.7.0"],\
-          ["@ethersproject/signing-key", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"],\
-          ["@ethersproject/wordlists", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
     ["@ethersproject/web", [\
       ["npm:5.7.1", {\
         "packageLocation": "./.yarn/cache/@ethersproject-web-npm-5.7.1-dabb653410-c83b6b3ac4.zip/node_modules/@ethersproject/web/",\
@@ -1698,20 +1474,6 @@ const RAW_RUNTIME_STATE =
           ["@ethersproject/web", "npm:5.7.1"],\
           ["@ethersproject/base64", "npm:5.7.0"],\
           ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["@ethersproject/wordlists", [\
-      ["npm:5.7.0", {\
-        "packageLocation": "./.yarn/cache/@ethersproject-wordlists-npm-5.7.0-00d314bfdb-737fca67ad.zip/node_modules/@ethersproject/wordlists/",\
-        "packageDependencies": [\
-          ["@ethersproject/wordlists", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/hash", "npm:5.7.0"],\
           ["@ethersproject/logger", "npm:5.7.0"],\
           ["@ethersproject/properties", "npm:5.7.0"],\
           ["@ethersproject/strings", "npm:5.7.0"]\
@@ -2589,12 +2351,25 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@shazow/whatsabi", [\
-      ["npm:0.2.1", {\
-        "packageLocation": "./.yarn/cache/@shazow-whatsabi-npm-0.2.1-2a433d5062-f8bb1d9596.zip/node_modules/@shazow/whatsabi/",\
+      ["npm:0.13.2", {\
+        "packageLocation": "./.yarn/cache/@shazow-whatsabi-npm-0.13.2-f396cb7b83-18764d20ff.zip/node_modules/@shazow/whatsabi/",\
         "packageDependencies": [\
-          ["@shazow/whatsabi", "npm:0.2.1"],\
+          ["@shazow/whatsabi", "npm:0.13.2"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2", {\
+        "packageLocation": "./.yarn/__virtual__/@shazow-whatsabi-virtual-3fed6403d9/0/cache/@shazow-whatsabi-npm-0.13.2-f396cb7b83-18764d20ff.zip/node_modules/@shazow/whatsabi/",\
+        "packageDependencies": [\
+          ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@ethersproject/web", "npm:5.7.1"],\
-          ["ethers", "npm:5.7.2"]\
+          ["@noble/hashes", null],\
+          ["@types/noble__hashes", null],\
+          ["ethers", "npm:6.13.1"]\
+        ],\
+        "packagePeers": [\
+          "@noble/hashes",\
+          "@types/noble__hashes"\
         ],\
         "linkType": "HARD"\
       }]\
@@ -3847,13 +3622,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["aes-js", [\
-      ["npm:3.0.0", {\
-        "packageLocation": "./.yarn/cache/aes-js-npm-3.0.0-fdf135c6be-1b3772e5ba.zip/node_modules/aes-js/",\
-        "packageDependencies": [\
-          ["aes-js", "npm:3.0.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:4.0.0-beta.5", {\
         "packageLocation": "./.yarn/cache/aes-js-npm-4.0.0-beta.5-c70da65547-8f745da2e8.zip/node_modules/aes-js/",\
         "packageDependencies": [\
@@ -4238,15 +4006,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/base64-js-npm-1.5.1-b2f7275641-669632eb37.zip/node_modules/base64-js/",\
         "packageDependencies": [\
           ["base64-js", "npm:1.5.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["bech32", [\
-      ["npm:1.1.4", {\
-        "packageLocation": "./.yarn/cache/bech32-npm-1.1.4-87b69922f7-63ff37c0ce.zip/node_modules/bech32/",\
-        "packageDependencies": [\
-          ["bech32", "npm:1.1.4"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6213,43 +5972,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["ethers", [\
-      ["npm:5.7.2", {\
-        "packageLocation": "./.yarn/cache/ethers-npm-5.7.2-eba7d781ee-227dfa88a2.zip/node_modules/ethers/",\
-        "packageDependencies": [\
-          ["ethers", "npm:5.7.2"],\
-          ["@ethersproject/abi", "npm:5.7.0"],\
-          ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/base64", "npm:5.7.0"],\
-          ["@ethersproject/basex", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/constants", "npm:5.7.0"],\
-          ["@ethersproject/contracts", "npm:5.7.0"],\
-          ["@ethersproject/hash", "npm:5.7.0"],\
-          ["@ethersproject/hdnode", "npm:5.7.0"],\
-          ["@ethersproject/json-wallets", "npm:5.7.0"],\
-          ["@ethersproject/keccak256", "npm:5.7.0"],\
-          ["@ethersproject/logger", "npm:5.7.0"],\
-          ["@ethersproject/networks", "npm:5.7.1"],\
-          ["@ethersproject/pbkdf2", "npm:5.7.0"],\
-          ["@ethersproject/properties", "npm:5.7.0"],\
-          ["@ethersproject/providers", "npm:5.7.2"],\
-          ["@ethersproject/random", "npm:5.7.0"],\
-          ["@ethersproject/rlp", "npm:5.7.0"],\
-          ["@ethersproject/sha2", "npm:5.7.0"],\
-          ["@ethersproject/signing-key", "npm:5.7.0"],\
-          ["@ethersproject/solidity", "npm:5.7.0"],\
-          ["@ethersproject/strings", "npm:5.7.0"],\
-          ["@ethersproject/transactions", "npm:5.7.0"],\
-          ["@ethersproject/units", "npm:5.7.0"],\
-          ["@ethersproject/wallet", "npm:5.7.0"],\
-          ["@ethersproject/web", "npm:5.7.1"],\
-          ["@ethersproject/wordlists", "npm:5.7.0"]\
-        ],\
-        "linkType": "HARD"\
-      }],\
       ["npm:6.13.1", {\
         "packageLocation": "./.yarn/cache/ethers-npm-6.13.1-62b44a89af-efc3e8d4d1.zip/node_modules/ethers/",\
         "packageDependencies": [\
@@ -6261,23 +5983,6 @@ const RAW_RUNTIME_STATE =
           ["aes-js", "npm:4.0.0-beta.5"],\
           ["tslib", "npm:2.4.0"],\
           ["ws", "virtual:62b44a89afe3cf71f91d9a15c255905a0c879fa652d6a4d04977b9668d35332e3616a0f5da5dd26eb85d97f16c77eb71e5fb44ecae23967192e31ea4ad11af7c#npm:8.17.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["ethers-multisend", [\
-      ["npm:3.1.0", {\
-        "packageLocation": "./.yarn/cache/ethers-multisend-npm-3.1.0-fa63b79f8b-1c0760fb4e.zip/node_modules/ethers-multisend/",\
-        "packageDependencies": [\
-          ["ethers-multisend", "npm:3.1.0"],\
-          ["@ethersproject/abi", "npm:5.7.0"],\
-          ["@ethersproject/abstract-provider", "npm:5.7.0"],\
-          ["@ethersproject/address", "npm:5.7.0"],\
-          ["@ethersproject/bignumber", "npm:5.7.0"],\
-          ["@ethersproject/bytes", "npm:5.7.0"],\
-          ["@ethersproject/contracts", "npm:5.7.0"],\
-          ["@ethersproject/solidity", "npm:5.7.0"],\
-          ["@ethersproject/units", "npm:5.7.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12565,13 +12270,6 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["ws", [\
-      ["npm:7.4.6", {\
-        "packageLocation": "./.yarn/cache/ws-npm-7.4.6-9c9a725604-150e3f917b.zip/node_modules/ws/",\
-        "packageDependencies": [\
-          ["ws", "npm:7.4.6"]\
-        ],\
-        "linkType": "SOFT"\
-      }],\
       ["npm:7.5.9", {\
         "packageLocation": "./.yarn/cache/ws-npm-7.5.9-26f12a5ed6-171e350129.zip/node_modules/ws/",\
         "packageDependencies": [\
@@ -12621,23 +12319,6 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/__virtual__/ws-virtual-996c24c26b/0/cache/ws-npm-8.17.1-f57fb24a2c-4264ae92c0.zip/node_modules/ws/",\
         "packageDependencies": [\
           ["ws", "virtual:62b44a89afe3cf71f91d9a15c255905a0c879fa652d6a4d04977b9668d35332e3616a0f5da5dd26eb85d97f16c77eb71e5fb44ecae23967192e31ea4ad11af7c#npm:8.17.1"],\
-          ["@types/bufferutil", null],\
-          ["@types/utf-8-validate", null],\
-          ["bufferutil", null],\
-          ["utf-8-validate", null]\
-        ],\
-        "packagePeers": [\
-          "@types/bufferutil",\
-          "@types/utf-8-validate",\
-          "bufferutil",\
-          "utf-8-validate"\
-        ],\
-        "linkType": "HARD"\
-      }],\
-      ["virtual:88293ff29fa54efecc98d655f7a7551b282025b3465bc23ca5bb7a89a31c17930a7319e98225cf138bf4e6ccead5b30ae3c800738697b87af3441226d65f7ee3#npm:7.4.6", {\
-        "packageLocation": "./.yarn/__virtual__/ws-virtual-e1e964a4e5/0/cache/ws-npm-7.4.6-9c9a725604-150e3f917b.zip/node_modules/ws/",\
-        "packageDependencies": [\
-          ["ws", "virtual:88293ff29fa54efecc98d655f7a7551b282025b3465bc23ca5bb7a89a31c17930a7319e98225cf138bf4e6ccead5b30ae3c800738697b87af3441226d65f7ee3#npm:7.4.6"],\
           ["@types/bufferutil", null],\
           ["@types/utf-8-validate", null],\
           ["bufferutil", null],\
@@ -12812,7 +12493,7 @@ const RAW_RUNTIME_STATE =
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
           ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
           ["@safe-global/safe-gateway-typescript-sdk", "npm:3.21.10"],\
-          ["@shazow/whatsabi", "npm:0.2.1"],\
+          ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@testing-library/dom", "npm:10.3.1"],\
           ["@testing-library/jest-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:6.4.6"],\
           ["@testing-library/react", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:16.0.0"],\
@@ -12843,7 +12524,6 @@ const RAW_RUNTIME_STATE =
           ["eslint-plugin-react-hooks", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:4.6.2"],\
           ["ethereum-blockies-base64", "npm:1.0.2"],\
           ["ethers", "npm:6.13.1"],\
-          ["ethers-multisend", "npm:3.1.0"],\
           ["events", "npm:3.3.0"],\
           ["evm-proxy-detection", "npm:2.0.1"],\
           ["globals", "npm:15.8.0"],\
