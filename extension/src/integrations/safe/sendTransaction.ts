@@ -1,6 +1,9 @@
 import Safe, { buildSignatureBytes } from '@safe-global/protocol-kit'
 
-import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
+import {
+  getEip1193ReadOnlyProvider,
+  getReadOnlyProvider,
+} from '../../providers/readOnlyProvider'
 import { LegacyConnection, Eip1193Provider, TransactionData } from '../../types'
 import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
@@ -10,7 +13,7 @@ import { RPC } from '../../chains'
 
 export const shallExecuteDirectly = async (connection: LegacyConnection) => {
   const protocolKit = await Safe.init({
-    provider: RPC[connection.chainId],
+    provider: getEip1193ReadOnlyProvider(connection.chainId),
     safeAddress: connection.avatarAddress,
   })
 

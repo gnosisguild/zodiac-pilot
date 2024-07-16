@@ -1,7 +1,7 @@
 import Safe from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import { ChainId } from 'ser-kit'
-import { RPC } from '../../chains'
+import { getEip1193ReadOnlyProvider } from '../../providers/readOnlyProvider'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
@@ -31,5 +31,8 @@ export const initSafeProtocolKit = async (
   chainId: ChainId,
   safeAddress: string
 ) => {
-  return await Safe.init({ provider: RPC[chainId], safeAddress })
+  return await Safe.init({
+    provider: getEip1193ReadOnlyProvider(chainId),
+    safeAddress,
+  })
 }

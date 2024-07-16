@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 import { RPC } from '../chains'
 import { JsonRpcProvider, toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
+import { JsonRpcRequest } from '../types'
 
 const readOnlyProviderCache = new Map<ChainId, JsonRpcProvider>()
 const eip1193ProviderCache = new Map<string, Eip1193JsonRpcProvider>()
@@ -51,8 +52,13 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
     this.provider = getReadOnlyProvider(chainId)
   }
 
-  request(request: { method: string; params?: Array<any> }): Promise<any> {
-    return this.send(request.method, request.params || [])
+  request(request: JsonRpcRequest): Promise<any> {
+    return this.send(
+      request.method,
+      !request.params || Array.isArray(request.params)
+        ? request.params
+        : [request.params]
+    )
   }
 
   async send(method: string, params: any[] = []): Promise<any> {
