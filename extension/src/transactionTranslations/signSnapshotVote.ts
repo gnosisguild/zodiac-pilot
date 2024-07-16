@@ -1,5 +1,5 @@
-import { Interface } from '@ethersproject/abi'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { Interface } from 'ethers'
 
 // https://github.com/gnosisguild/snapshot-signer
 const SNAPSHOT_SIGNER_ADDRESS = '0xb0382209806345d27dfdab5bbc17b2ab553165ac'

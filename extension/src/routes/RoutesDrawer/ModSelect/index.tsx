@@ -1,4 +1,3 @@
-import { getAddress } from 'ethers/lib/utils'
 import React from 'react'
 import { Props as SelectProps } from 'react-select'
 
@@ -7,6 +6,7 @@ import Blockie from '../../../components/Blockie'
 import Box from '../../../components/Box'
 
 import classes from './style.module.css'
+import { getAddress } from 'ethers'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
 export interface Option {

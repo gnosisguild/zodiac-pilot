@@ -1,5 +1,5 @@
-import { Provider } from '@ethersproject/abstract-provider'
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress, Provider } from "ethers"
+
 
 export const validateAddress = (address: string) => {
   try {

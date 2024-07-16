@@ -1,9 +1,7 @@
-import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
+import Safe from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
-import * as ethers from 'ethers'
-
-import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { ChainId } from 'ser-kit'
+import { RPC } from '../../chains'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global',
@@ -26,22 +24,12 @@ export const initSafeApiKit = (chainId: ChainId) => {
     throw new Error(`service not available for chain #${chainId}`)
   }
 
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signerOrProvider: getReadOnlyProvider(chainId),
-  })
-
-  return new SafeApiKit({ txServiceUrl, ethAdapter })
+  return new SafeApiKit({ txServiceUrl, chainId: BigInt(chainId) })
 }
 
 export const initSafeProtocolKit = async (
   chainId: ChainId,
   safeAddress: string
 ) => {
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signerOrProvider: getReadOnlyProvider(chainId),
-  })
-
-  return await Safe.create({ ethAdapter, safeAddress })
+  return await Safe.init({ provider: RPC[chainId], safeAddress })
 }

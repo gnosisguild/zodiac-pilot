@@ -1,7 +1,6 @@
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
-import { Contract } from 'ethers'
-import { hashMessage, _TypedDataEncoder, toUtf8String } from 'ethers/lib/utils'
+import { Contract, hashMessage, toUtf8String, TypedDataEncoder } from 'ethers'
 
 const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0aB83D845Ac265BE939c57F53AD838012c9'
 const SIGN_MESSAGE_LIB_ABI = [
@@ -27,7 +26,7 @@ export const typedDataHash = (data: EIP712TypedData): string => {
   // We need to remove EIP712Domain from the types object since ethers does not like it
   const { EIP712Domain: _, ...types } = data.types
 
-  return _TypedDataEncoder.hash(data.domain as any, types, data.message)
+  return TypedDataEncoder.hash(data.domain as any, types, data.message)
 }
 
 export const signTypedData = (data: EIP712TypedData) => {

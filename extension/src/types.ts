@@ -43,7 +43,7 @@ export type Route = PartialRoute & {
 
 export interface JsonRpcRequest {
   method: string
-  params?: Array<any>
+  params?: readonly unknown[] | object
 }
 
 export interface JsonRpcError extends Error {

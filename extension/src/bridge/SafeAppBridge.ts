@@ -16,7 +16,6 @@ import {
   Methods,
   MessageFormatter,
 } from '@safe-global/safe-apps-sdk'
-import { getAddress } from 'ethers/lib/utils'
 import { ChainId } from 'ser-kit'
 import {
   getBalances,
@@ -26,6 +25,7 @@ import {
 import { CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
 import { LegacyConnection, Eip1193Provider } from '../types'
 import { reloadIframe, requestIframeHref } from '../location'
+import { getAddress } from 'ethers'
 
 type MessageHandler = (
   params: any,

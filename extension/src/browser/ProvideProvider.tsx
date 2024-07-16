@@ -16,10 +16,9 @@ import { useRoute } from '../routes'
 import { LegacyConnection, Eip1193Provider } from '../types'
 import { useDispatch, useNewTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
-import { TransactionReceipt, Web3Provider } from '@ethersproject/providers'
 import { ExecutionStatus } from '../state/reducer'
-import { defaultAbiCoder } from '@ethersproject/abi'
 import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
+import { AbiCoder, BrowserProvider, TransactionReceipt } from 'ethers'
 
 interface Props {
   simulate: boolean
@@ -85,10 +84,10 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
             },
           })
 
-          const receipt = await new Web3Provider(
+          const receipt = await new BrowserProvider(
             tenderlyProvider
           ).getTransactionReceipt(transactionHash)
-          if (!receipt.status) {
+          if (!receipt?.status) {
             dispatch({
               type: 'UPDATE_TRANSACTION_STATUS',
               payload: {
@@ -176,6 +175,6 @@ const isExecutionFromModuleFailure = (
     log.topics[0] ===
       '0xacd2c8702804128fdb0db2bb49f6d127dd0181c13fd45dbfe16de0930e2bd375' && // ExecutionFromModuleFailure(address)
     log.topics[1] ===
-      defaultAbiCoder.encode(['address'], [connection.moduleAddress])
+      AbiCoder.defaultAbiCoder().encode(['address'], [connection.moduleAddress])
   )
 }

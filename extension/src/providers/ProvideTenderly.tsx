@@ -1,17 +1,16 @@
 import EventEmitter from 'events'
 
-import { JsonRpcProvider } from '@ethersproject/providers'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { customAlphabet } from 'nanoid'
 
 import { useRoute } from '../routes'
-import { Eip1193Provider, JsonRpcRequest } from '../types'
+import { JsonRpcRequest } from '../types'
 import { useBeforeUnload } from '../utils'
-import { initSafeProtocolKit } from '../integrations/safe/kits'
-import { safeInterface } from '../integrations/safe'
-import { getEip1193ReadOnlyProvider } from './readOnlyProvider'
+import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
+import { getReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from 'ser-kit'
 import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
+import { JsonRpcProvider } from 'ethers'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
@@ -124,7 +123,6 @@ async function prepareSafeForSimulation(
 }
 
 export class TenderlyProvider extends EventEmitter {
-  private provider: Eip1193Provider
   private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
@@ -137,7 +135,6 @@ export class TenderlyProvider extends EventEmitter {
 
   constructor(chainId: ChainId) {
     super()
-    this.provider = getEip1193ReadOnlyProvider(chainId)
     this.chainId = chainId
     this.tenderlyVnetApi = 'https://vnet-api.pilot.gnosisguild.org'
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
@@ -167,7 +164,10 @@ export class TenderlyProvider extends EventEmitter {
       this.forkProviderPromise = this.createFork(this.chainId)
     } else if (!this.forkProviderPromise) {
       // We have not spawned a fork currently, so we can just use the provider to get the latest on-chain state
-      return await this.provider.request(request)
+      return await getReadOnlyProvider(this.chainId as ChainId).send(
+        request.method,
+        request.params || []
+      )
     }
 
     const provider = await this.forkProviderPromise
@@ -235,9 +235,10 @@ export class TenderlyProvider extends EventEmitter {
           network_id: networkId,
           block_number:
             blockNumber ||
-            (await this.provider.request({
-              method: 'eth_blockNumber',
-            })),
+            (await getReadOnlyProvider(this.chainId as ChainId).send(
+              'eth_blockNumber',
+              []
+            )),
         },
         virtual_network_config: {
           base_fee_per_gas: 0,

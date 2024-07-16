@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { BigNumber, ethers } from 'ethers'
+import { BrowserProvider, toQuantity } from 'ethers'
 import {
   MetaTransactionData,
   TransactionOptions,
@@ -11,7 +11,6 @@ import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/sr
 import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
 import { safeInterface } from '../integrations/safe'
-import { hexlify, _TypedDataEncoder } from 'ethers/lib/utils'
 import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
 import { typedDataHash } from '../integrations/safe/signing'
 
@@ -35,7 +34,7 @@ class ForkProvider extends EventEmitter {
   private moduleAddress: string | undefined
   private ownerAddress: string | undefined
 
-  private blockGasLimitPromise: Promise<number>
+  private blockGasLimitPromise: Promise<bigint>
 
   private pendingMetaTransaction: Promise<any> | undefined
 
@@ -201,7 +200,7 @@ class ForkProvider extends EventEmitter {
       tx = {
         to: metaTx.to,
         data: metaTx.data,
-        value: formatHexValue(metaTx.value),
+        value: toQuantity(BigInt(metaTx.value)),
         from: this.avatarAddress,
       }
     }
@@ -226,20 +225,13 @@ class ForkProvider extends EventEmitter {
 
 export default ForkProvider
 
-// Tenderly has particular requirements for the encoding of value: it must not have any leading zeros
-const formatHexValue = (value: string): string => {
-  const valueBN = BigNumber.from(value)
-  if (valueBN.isZero()) return '0x0'
-  else return valueBN.toHexString().replace(/^0x(0+)/, '0x')
-}
-
 /** Encode an execTransactionFromModule call with the given meta transaction data */
 const execTransactionFromModule = (
   metaTx: MetaTransactionData,
   avatarAddress: string,
   moduleAddress: string,
-  blockGasLimit: number
-): TransactionData & TransactionOptions => {
+  blockGasLimit: bigint
+): TransactionData & { gas?: string } => {
   // we use the Delay mod interface, but any IAvatar interface would do
   const delayInterface =
     ContractFactories[KnownContracts.DELAY].createInterface()
@@ -256,7 +248,7 @@ const execTransactionFromModule = (
     value: '0x0',
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: formatHexValue(hexlify(blockGasLimit)), // Tenderly errors if the hex value has leading zeros
+    gas: toQuantity(blockGasLimit), // Tenderly errors if the hex value has leading zeros
     // With gas price 0 account don't need token for gas
     // gasPrice: '0x0', // doesn't seem to be required
   }
@@ -267,11 +259,11 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 /** Encode an execTransaction call by the given owner (address must be an actual owner of the Safe) */
 // for reference: https://github.com/safe-global/safe-wallet-web/blob/dev/src/components/tx/security/tenderly/utils.ts#L213
 export function execTransaction(
-  tx: MetaTransactionData & TransactionOptions,
+  tx: MetaTransactionData & TransactionOptions & { gas?: string | number },
   avatarAddress: string,
   ownerAddress: string,
-  blockGasLimit: number
-): TransactionData & TransactionOptions {
+  blockGasLimit: bigint
+): TransactionData & { gas?: string } {
   const signature = generatePreValidatedSignature(ownerAddress)
   const data = safeInterface.encodeFunctionData('execTransaction', [
     tx.to,
@@ -292,16 +284,14 @@ export function execTransaction(
     value: '0x0',
     from: ownerAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: hexlify(blockGasLimit / 2), // for some reason tenderly errors when passing the full block gas limit
+    gas: toQuantity(blockGasLimit / 2n), // for some reason tenderly errors when passing the full block gas limit
     // With gas price 0 account don't need token for gas
     // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 
-const readBlockGasLimit = async (
-  provider: Eip1193Provider
-): Promise<number> => {
-  const web3Provider = new ethers.providers.Web3Provider(provider)
-  const block = await web3Provider.getBlock('latest')
-  return block.gasLimit.toNumber()
+const readBlockGasLimit = async (provider: Eip1193Provider) => {
+  const browserProvider = new BrowserProvider(provider)
+  const block = await browserProvider.getBlock('latest')
+  return block?.gasLimit || 30_000_000n
 }

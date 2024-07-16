@@ -1,7 +1,6 @@
-import { Web3Provider } from '@ethersproject/providers'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
-import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
 import { wrapRequest } from '../providers/WrappingProvider'
 import { LegacyConnection, JsonRpcError } from '../types'
@@ -114,7 +113,7 @@ const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
 }
 
 async function dryRun(connection: LegacyConnection) {
-  const provider = getEip1193ReadOnlyProvider(connection.chainId)
+  const provider = getReadOnlyProvider(connection.chainId)
 
   if (connection.pilotAddress && !validateAddress(connection.pilotAddress)) {
     return Promise.reject('Pilot Account: Invalid address')
@@ -126,18 +125,10 @@ async function dryRun(connection: LegacyConnection) {
     return Promise.reject('Avatar: Invalid address')
   }
 
-  const ethersProvider = new Web3Provider((method: string, params?: any[]) =>
-    provider.request({ method, params })
-  )
-
-  if (
-    !(await isSmartContractAddress(connection.moduleAddress, ethersProvider))
-  ) {
+  if (!(await isSmartContractAddress(connection.moduleAddress, provider))) {
     return Promise.reject('Module Address: Not a smart contract')
   }
-  if (
-    !(await isSmartContractAddress(connection.avatarAddress, ethersProvider))
-  ) {
+  if (!(await isSmartContractAddress(connection.avatarAddress, provider))) {
     return Promise.reject('Avatar: Not a smart contract')
   }
 
@@ -157,10 +148,7 @@ async function dryRun(connection: LegacyConnection) {
   //   request.from = await getRoleMember(connection)
   // }
 
-  await provider.request({
-    method: 'eth_estimateGas',
-    params: [request],
-  })
+  await provider.estimateGas(request)
 }
 
 export default useConnectionDryRun

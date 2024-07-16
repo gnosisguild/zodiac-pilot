@@ -1,6 +1,7 @@
-import { Interface } from '@ethersproject/abi'
+
 import { useMemo } from 'react'
 import { TransactionState } from '../../state'
+import { Interface } from 'ethers'
 
 export const useDecodedFunctionData = (transactionState: TransactionState) => {
   const { contractInfo, transaction } = transactionState
@@ -18,6 +19,9 @@ export const useDecodedFunctionData = (transactionState: TransactionState) => {
     try {
       contractInterface = new Interface(abi)
       const functionFragment = contractInterface.getFunction(selector)
+      if(!functionFragment) {
+        throw new Error('Function fragment not found')
+      }
       return {
         functionFragment,
         data: contractInterface.decodeFunctionData(

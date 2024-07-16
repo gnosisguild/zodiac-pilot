@@ -1,6 +1,6 @@
-import { defaultAbiCoder } from '@ethersproject/abi'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { JsonRpcError } from '../types'
+import { AbiCoder } from 'ethers'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -42,7 +42,7 @@ export function decodeGenericError(error: JsonRpcError) {
   // Solidity `revert "reason string"` will revert with the data encoded as selector of `Error(string)` followed by the ABI encoded string param
   if (revertData.startsWith('0x08c379a0')) {
     try {
-      const [reason] = defaultAbiCoder.decode(
+      const [reason] = AbiCoder.defaultAbiCoder().decode(
         ['string'],
         '0x' + revertData.slice(10) // skip over selector
       )
@@ -79,7 +79,7 @@ export function decodeRolesV2Error(error: JsonRpcError) {
 
   if (revertData.startsWith('0x')) {
     try {
-      RolesV2Interface.parseError(revertData)
+      return RolesV2Interface.parseError(revertData)
     } catch (e) {
       // ignore
     }

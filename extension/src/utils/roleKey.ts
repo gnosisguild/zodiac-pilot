@@ -1,4 +1,4 @@
-import { formatBytes32String, parseBytes32String } from 'ethers/lib/utils'
+import { decodeBytes32String, encodeBytes32String,  } from 'ethers'
 
 export const encodeRoleKey = (key: string) => {
   if (key.length === 66 && key.startsWith('0x')) {
@@ -10,13 +10,13 @@ export const encodeRoleKey = (key: string) => {
     return key.toLowerCase()
   }
 
-  return formatBytes32String(key)
+  return encodeBytes32String(key)
 }
 
 export const decodeRoleKey = (key: string) => {
   if (key.length === 66 && key.startsWith('0x')) {
     try {
-      return parseBytes32String(key)
+      return decodeBytes32String(key)
     } catch (e) {
       return
     }

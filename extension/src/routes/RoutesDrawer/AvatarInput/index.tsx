@@ -1,4 +1,3 @@
-import { getAddress } from 'ethers/lib/utils'
 import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 
@@ -9,6 +8,7 @@ import { validateAddress } from '../../../utils'
 import { Option } from '../ModSelect'
 
 import classes from './style.module.css'
+import { getAddress } from 'ethers'
 
 interface Props {
   value: string

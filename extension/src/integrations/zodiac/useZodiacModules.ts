@@ -4,8 +4,7 @@ import {
   KnownContracts,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
-import { Contract, utils } from 'ethers'
-import { FormatTypes, Interface } from 'ethers/lib/utils'
+import { Contract, id, Interface } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 
@@ -141,9 +140,9 @@ async function fetchModules(
 
 const functionSelectors = (abi: string[]) => {
   const iface = new Interface(abi)
-  return Object.values(iface.functions).map((f) =>
-    utils.id(f.format(FormatTypes.sighash)).substring(0, 10)
-  )
+  return iface.fragments
+    .filter((f) => f.type === 'function')
+    .map((f) => id(f.format('sighash')).substring(0, 10))
 }
 
 const MODIFIERS = [

@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-import { formatEther, FunctionFragment } from 'ethers/lib/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
 
@@ -20,11 +18,12 @@ import classes from './style.module.css'
 import DecodedTransaction from './DecodedTransaction'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
 import { Route } from '../../types'
+import { formatEther, Fragment } from 'ethers'
 
 interface HeaderProps {
   index: number
   transactionState: TransactionState
-  functionFragment?: FunctionFragment
+  functionFragment?: Fragment
   onExpandToggle(): void
   expanded: boolean
   showRoles?: boolean
@@ -208,9 +207,6 @@ const TransactionStatus: React.FC<StatusProps> = ({
 
 const EtherValue: React.FC<{ value: string }> = ({ value }) => {
   const { chainId } = useRoute()
-
-  const valueBN = BigNumber.from(value || 0)
-
   return (
     <Flex
       gap={1}
@@ -219,9 +215,7 @@ const EtherValue: React.FC<{ value: string }> = ({ value }) => {
       className={classes.value}
     >
       <div>{CHAIN_CURRENCY[chainId]}:</div>
-      <code className={classes.valueValue}>
-        {valueBN.isZero() ? 'n/a' : formatEther(valueBN)}
-      </code>
+      <code className={classes.valueValue}>{formatEther(value || 0)}</code>
     </Flex>
   )
 }

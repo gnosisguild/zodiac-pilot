@@ -1,11 +1,11 @@
 import EventEmitter from 'events'
 
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 
 import { initSafeApiKit, sendTransaction } from '../integrations/safe'
 import { LegacyConnection, Eip1193Provider, TransactionData } from '../types'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { BrowserProvider, JsonRpcSigner } from 'ethers'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -80,7 +80,8 @@ class WrappingProvider extends EventEmitter {
   constructor(provider: Eip1193Provider, connection: LegacyConnection) {
     super()
     this.provider = provider
-    this.signer = new Web3Provider(this.provider).getUncheckedSigner(
+    this.signer = new JsonRpcSigner(
+      new BrowserProvider(this.provider),
       connection.pilotAddress || ZERO_ADDRESS
     )
     this.connection = connection
@@ -160,7 +161,7 @@ class WrappingProvider extends EventEmitter {
           this.connection
         )
 
-        return await this.signer.sendUncheckedTransaction(wrappedReq)
+        return this.signer.sendUncheckedTransaction(wrappedReq)
       }
 
       // Uniswap will try to use this for ERC-20 permits, but this wont fly with a contract wallet
