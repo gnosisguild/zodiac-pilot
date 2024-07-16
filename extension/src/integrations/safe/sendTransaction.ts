@@ -9,7 +9,6 @@ import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { getAddress } from 'ethers'
-import { RPC } from '../../chains'
 
 export const shallExecuteDirectly = async (connection: LegacyConnection) => {
   const protocolKit = await Safe.init({

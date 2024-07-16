@@ -3,13 +3,13 @@
 import { ChainId } from 'ser-kit'
 
 export const RPC: Record<ChainId, string> = {
-  1: 'https://mainnet.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
-  10: 'https://mainnet.optimism.io',
-  100: 'https://rpc.gnosischain.com',
-  137: 'https://polygon-rpc.com',
-  8453: 'https://mainnet.base.org',
-  42161: 'https://arb1.arbitrum.io/rpc',
-  43114: 'https://rpc.ankr.com/avalanche',
+  1: 'https://airlock.gnosisguild.org/api/v1/1/rpc',
+  10: 'https://airlock.gnosisguild.org/api/v1/10/rpc',
+  100: 'https://airlock.gnosisguild.org/api/v1/100/rpc',
+  137: 'https://airlock.gnosisguild.org/api/v1/137/rpc',
+  8453: 'https://airlock.gnosisguild.org/api/v1/8453/rpc',
+  42161: 'https://airlock.gnosisguild.org/api/v1/42161/rpc',
+  43114: 'https://airlock.gnosisguild.org/api/v1/43114/rpc',
   11155111: 'https://sepolia.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
 }
 
