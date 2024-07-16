@@ -85,7 +85,7 @@ const RAW_RUNTIME_STATE =
           ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.8.0"],\
           ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ser-kit", "npm:0.3.8"],\
+          ["ser-kit", "npm:0.3.9"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
           ["typescript-eslint", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:7.16.0"],\
           ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.1.0"],\
@@ -10605,14 +10605,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["ser-kit", [\
-      ["npm:0.3.8", {\
-        "packageLocation": "./.yarn/cache/ser-kit-npm-0.3.8-22dca4c95f-3a06c84a54.zip/node_modules/ser-kit/",\
+      ["npm:0.3.9", {\
+        "packageLocation": "./.yarn/cache/ser-kit-npm-0.3.9-d875db81cc-2dbbf79d74.zip/node_modules/ser-kit/",\
         "packageDependencies": [\
-          ["ser-kit", "npm:0.3.8"],\
+          ["ser-kit", "npm:0.3.9"],\
           ["@safe-global/api-kit", "npm:2.4.2"],\
           ["@safe-global/protocol-kit", "npm:4.0.2"],\
           ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
-          ["viem", "virtual:22dca4c95f5424996a7b058ba8eb62fff72e45cb1038d3f74045a4bb8b005dcd1a383570c3199c67fd308b27843903a0629052a2329e3ce5db76b5dac5c680e4#npm:2.17.3"]\
+          ["viem", "virtual:d875db81ccd1ab3dd71e93216c426643ffe88c19e5be35c28e05da34f5b2fbcbd5b6a42d1efe982056b4cd263ee6982550ef3cb2fee79adfef823c99d09fa16d#npm:2.17.3"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11917,10 +11917,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
-      ["virtual:22dca4c95f5424996a7b058ba8eb62fff72e45cb1038d3f74045a4bb8b005dcd1a383570c3199c67fd308b27843903a0629052a2329e3ce5db76b5dac5c680e4#npm:2.17.3", {\
-        "packageLocation": "./.yarn/__virtual__/viem-virtual-95cba67fda/0/cache/viem-npm-2.17.3-e88baaa01f-803b49f793.zip/node_modules/viem/",\
+      ["virtual:a2bcc550e4d5802f678fa6d1e27abcc996a71a1ab2fe3a437c1030dc4da4b9057d3b8af7003de16109440a98c44997cd8511fc59222d359bac8968ec19ade518#npm:2.17.4", {\
+        "packageLocation": "./.yarn/__virtual__/viem-virtual-cc0d0158cc/0/cache/viem-npm-2.17.4-2e783c28b4-29e2b7d903.zip/node_modules/viem/",\
         "packageDependencies": [\
-          ["viem", "virtual:22dca4c95f5424996a7b058ba8eb62fff72e45cb1038d3f74045a4bb8b005dcd1a383570c3199c67fd308b27843903a0629052a2329e3ce5db76b5dac5c680e4#npm:2.17.3"],\
+          ["viem", "virtual:a2bcc550e4d5802f678fa6d1e27abcc996a71a1ab2fe3a437c1030dc4da4b9057d3b8af7003de16109440a98c44997cd8511fc59222d359bac8968ec19ade518#npm:2.17.4"],\
           ["@adraffy/ens-normalize", "npm:1.10.0"],\
           ["@noble/curves", "npm:1.4.0"],\
           ["@noble/hashes", "npm:1.4.0"],\
@@ -11938,10 +11938,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:a2bcc550e4d5802f678fa6d1e27abcc996a71a1ab2fe3a437c1030dc4da4b9057d3b8af7003de16109440a98c44997cd8511fc59222d359bac8968ec19ade518#npm:2.17.4", {\
-        "packageLocation": "./.yarn/__virtual__/viem-virtual-cc0d0158cc/0/cache/viem-npm-2.17.4-2e783c28b4-29e2b7d903.zip/node_modules/viem/",\
+      ["virtual:d875db81ccd1ab3dd71e93216c426643ffe88c19e5be35c28e05da34f5b2fbcbd5b6a42d1efe982056b4cd263ee6982550ef3cb2fee79adfef823c99d09fa16d#npm:2.17.3", {\
+        "packageLocation": "./.yarn/__virtual__/viem-virtual-beb1a85c96/0/cache/viem-npm-2.17.3-e88baaa01f-803b49f793.zip/node_modules/viem/",\
         "packageDependencies": [\
-          ["viem", "virtual:a2bcc550e4d5802f678fa6d1e27abcc996a71a1ab2fe3a437c1030dc4da4b9057d3b8af7003de16109440a98c44997cd8511fc59222d359bac8968ec19ade518#npm:2.17.4"],\
+          ["viem", "virtual:d875db81ccd1ab3dd71e93216c426643ffe88c19e5be35c28e05da34f5b2fbcbd5b6a42d1efe982056b4cd263ee6982550ef3cb2fee79adfef823c99d09fa16d#npm:2.17.3"],\
           ["@adraffy/ens-normalize", "npm:1.10.0"],\
           ["@noble/curves", "npm:1.4.0"],\
           ["@noble/hashes", "npm:1.4.0"],\
@@ -12861,7 +12861,7 @@ const RAW_RUNTIME_STATE =
           ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.8.0"],\
           ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ser-kit", "npm:0.3.8"],\
+          ["ser-kit", "npm:0.3.9"],\
           ["typescript", "patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=379a07"],\
           ["typescript-eslint", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:7.16.0"],\
           ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.1.0"],\

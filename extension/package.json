@@ -80,7 +80,7 @@
     "react-select": "^5.2.1",
     "react-toastify": "^9.0.8",
     "rimraf": "^3.0.2",
-    "ser-kit": "^0.3.8",
+    "ser-kit": "^0.3.9",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.0",
     "typescript-plugin-css-modules": "^5.1.0",

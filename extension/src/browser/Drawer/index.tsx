@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
-import { encodeMulti } from 'ethers-multisend'
 import { toast } from 'react-toastify'
 
 import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
-import { wrapRequest } from '../../providers/wrapRequest'
 import { useRoute } from '../../routes'
 import { useProvider } from '../ProvideProvider'
 import {
@@ -17,7 +15,8 @@ import {
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
+import { planExecution, Route as SerRoute, ExecutionActionType } from 'ser-kit'
+import { ZeroAddress } from 'ethers'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -61,19 +60,27 @@ const TransactionsDrawer: React.FC = () => {
     }
   }
 
-  const copyTransactionData = () => {
+  const copyTransactionData = async () => {
     const metaTransactions = newTransactions.map(
       (txState) => txState.transaction
     )
-    const connection = asLegacyConnection(route)
-    const batchTransaction =
-      metaTransactions.length === 1
-        ? metaTransactions[0]
-        : encodeMulti(metaTransactions, connection.multisend)
-    const finalRequest = connection.moduleAddress
-      ? wrapRequest(batchTransaction, connection)
-      : batchTransaction
-    navigator.clipboard.writeText(JSON.stringify(finalRequest, undefined, 2))
+
+    const routeWithInitiator = (
+      route.initiator ? route : { ...route, initiator: ZeroAddress }
+    ) as SerRoute
+    const plan = await planExecution(metaTransactions, routeWithInitiator)
+
+    if (plan.length > 1) {
+      throw new Error('Multi-step execution not yet supported')
+    }
+
+    if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
+      throw new Error('Only transaction execution is currently supported')
+    }
+
+    navigator.clipboard.writeText(
+      JSON.stringify(plan[0].transaction, undefined, 2)
+    )
     toast(<>Transaction data has been copied to clipboard.</>)
   }
 
