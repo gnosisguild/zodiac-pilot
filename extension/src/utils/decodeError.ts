@@ -59,18 +59,14 @@ export function decodeRolesV1Error(error: JsonRpcError) {
   const revertData = getRevertData(error)
   if (revertData.startsWith('0x')) {
     try {
-      return RolesV1Interface.parseError(revertData)
-    } catch (e) {
-      // ignore
-    }
-
-    try {
-      return RolesV1PermissionsInterface.parseError(revertData)
+      return (
+        RolesV1Interface.parseError(revertData) ||
+        RolesV1PermissionsInterface.parseError(revertData)
+      )
     } catch (e) {
       // ignore
     }
   }
-
   return null
 }
 
