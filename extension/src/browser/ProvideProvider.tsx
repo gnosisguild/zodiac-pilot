@@ -5,17 +5,23 @@ import React, {
   useContext,
   useMemo,
 } from 'react'
-import { encodeMulti } from 'ethers-multisend'
 
 import { ForkProvider, useTenderlyProvider } from '../providers'
 import { useRoute } from '../routes'
-import { LegacyConnection, Eip1193Provider } from '../types'
+import { Eip1193Provider } from '../types'
 import { useDispatch, useNewTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ExecutionStatus } from '../state/reducer'
-import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 import { AbiCoder, BrowserProvider, TransactionReceipt } from 'ethers'
-import { wrapRequest } from '../providers/wrapRequest'
+import {
+  ConnectionType,
+  execute,
+  ExecutionActionType,
+  ExecutionState,
+  parsePrefixedAddress,
+  planExecution,
+  Route as SerRoute,
+} from 'ser-kit'
 
 interface Props {
   children: ReactNode
@@ -35,15 +41,29 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
 
-  const connection = asLegacyConnection(route)
+  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
+  const connectionType =
+    avatarWaypoint &&
+    'connection' in avatarWaypoint &&
+    avatarWaypoint.connection.type
+  const [, connectedFrom] =
+    (avatarWaypoint &&
+      'connection' in avatarWaypoint &&
+      parsePrefixedAddress(avatarWaypoint.connection.from)) ||
+    []
 
   const forkProvider = useMemo(
     () =>
       tenderlyProvider &&
       new ForkProvider(tenderlyProvider, {
-        avatarAddress: connection.avatarAddress,
-        moduleAddress: connection.moduleAddress,
-        ownerAddress: connection.pilotAddress,
+        avatarAddress,
+        moduleAddress:
+          connectionType === ConnectionType.IS_ENABLED
+            ? connectedFrom
+            : undefined,
+        ownerAddress:
+          connectionType === ConnectionType.OWNS ? connectedFrom : undefined,
 
         async onBeforeTransactionSend(snapshotId, transaction) {
           // Immediately update the state with the transaction so that the UI can show it as pending.
@@ -91,7 +111,12 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
 
           if (
             receipt.logs.length === 1 &&
-            isExecutionFromModuleFailure(receipt.logs[0], connection)
+            connectionType === ConnectionType.IS_ENABLED &&
+            isExecutionFromModuleFailure(
+              receipt.logs[0],
+              avatarAddress,
+              connectedFrom
+            )
           ) {
             dispatch({
               type: 'UPDATE_TRANSACTION_STATUS',
@@ -111,7 +136,14 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
           }
         },
       }),
-    [tenderlyProvider, connection, chainId, dispatch]
+    [
+      tenderlyProvider,
+      avatarAddress,
+      connectionType,
+      connectedFrom,
+      chainId,
+      dispatch,
+    ]
   )
 
   const submitTransactions = useCallback(async () => {
@@ -124,17 +156,27 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       transactions
     )
 
-    const batchTransactionHash = (await provider.request({
-      method: 'eth_sendTransaction',
-      params: [
-        wrapRequest(
-          metaTransactions.length === 1
-            ? metaTransactions[0]
-            : encodeMulti(metaTransactions, connection.multisend),
-          connection
-        ),
-      ],
-    })) as string
+    if (!route.initiator) {
+      throw new Error('Cannot execute without a connected Pilot wallet')
+    }
+
+    const plan = await planExecution(metaTransactions, route as SerRoute)
+
+    if (plan.length > 1) {
+      throw new Error('Multi-step execution not yet supported')
+    }
+
+    if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
+      throw new Error('Only transaction execution is currently supported')
+    }
+
+    const state = [] as ExecutionState
+    await execute(plan, state, provider)
+
+    const [batchTransactionHash] = state
+    if (!batchTransactionHash) {
+      throw new Error('Execution failed')
+    }
 
     dispatch({
       type: 'SUBMIT_TRANSACTIONS',
@@ -144,7 +186,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, provider, dispatch, connection])
+  }, [transactions, provider, dispatch, route])
 
   return (
     <ProviderContext.Provider value={forkProvider}>
@@ -159,13 +201,15 @@ export default ProvideProvider
 
 const isExecutionFromModuleFailure = (
   log: TransactionReceipt['logs'][0],
-  connection: LegacyConnection
+  avatarAddress: string,
+  moduleAddress?: string
 ) => {
   return (
-    log.address.toLowerCase() === connection.avatarAddress.toLowerCase() &&
+    log.address.toLowerCase() === avatarAddress.toLowerCase() &&
     log.topics[0] ===
       '0xacd2c8702804128fdb0db2bb49f6d127dd0181c13fd45dbfe16de0930e2bd375' && // ExecutionFromModuleFailure(address)
-    log.topics[1] ===
-      AbiCoder.defaultAbiCoder().encode(['address'], [connection.moduleAddress])
+    (!moduleAddress ||
+      log.topics[1] ===
+        AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress]))
   )
 }

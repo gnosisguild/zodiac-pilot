@@ -10,7 +10,7 @@ export const RPC: Record<ChainId, string> = {
   8453: 'https://airlock.gnosisguild.org/api/v1/8453/rpc',
   42161: 'https://airlock.gnosisguild.org/api/v1/42161/rpc',
   43114: 'https://airlock.gnosisguild.org/api/v1/43114/rpc',
-  11155111: 'https://sepolia.infura.io/v3/b81b456501e34bed8a85a3c2ff8f4577',
+  11155111: 'https://airlock.gnosisguild.org/api/v1/11155111/rpc',
 }
 
 export const EXPLORER_URL: Record<ChainId, string> = {

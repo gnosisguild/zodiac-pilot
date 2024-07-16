@@ -177,7 +177,11 @@ class ForkProvider extends EventEmitter {
       method: 'evm_snapshot',
     })
     this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
-
+    console.log({
+      mod: this.moduleAddress,
+      ava: this.avatarAddress,
+      own: this.ownerAddress,
+    })
     // correctly route the meta tx through the avatar
     let tx: TransactionData & TransactionOptions
     if (this.moduleAddress) {
