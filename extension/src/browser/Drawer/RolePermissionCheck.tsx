@@ -4,7 +4,7 @@ import { RiGroupLine } from 'react-icons/ri'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { LegacyConnection, JsonRpcError } from '../../types'
+import { JsonRpcError, Route } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
 import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
 
@@ -12,40 +12,51 @@ import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
 import { useRoute } from '../../routes'
-import { KnownContracts } from '@gnosis.pm/zodiac'
-import { wrapRequest } from '../../routes/wrapRequest'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
 import { TransactionState } from '../../state'
-import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { ZeroAddress } from 'ethers'
+import {
+  ExecutionActionType,
+  parsePrefixedAddress,
+  planExecution,
+  Route as SerRoute,
+} from 'ser-kit'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
-  connection: LegacyConnection,
+  route: Route,
   tenderlyProvider: TenderlyProvider
 ) => {
-  const wrappedTransaction = wrapRequest(encodedTransaction, connection, false)
+  const routeWithInitiator = (
+    route.initiator ? route : { ...route, initiator: ZeroAddress }
+  ) as SerRoute
+  const plan = await planExecution([encodedTransaction], routeWithInitiator)
 
-  // TODO enable this once we can query role members from ser
-  // if (!wrappedTransaction.from && connection.roleId) {
-  //   // If pilotAddress is not yet determined, we will use a random member of the specified role
-  //   wrappedTransaction.from = await getRoleMember(connection)
-  // }
+  if (plan.length > 1) {
+    throw new Error('Multi-step execution not yet supported')
+  }
+
+  if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
+    throw new Error('Only transaction execution is currently supported')
+  }
+
+  const [, from] = parsePrefixedAddress(plan[0].from)
+  const tx = { ...plan[0].transaction, from }
 
   try {
     await tenderlyProvider.request({
       method: 'eth_estimateGas',
-      params: [wrappedTransaction],
+      params: [tx],
     })
   } catch (e) {
     const decodedError =
-      connection.moduleType === KnownContracts.ROLES_V1
-        ? decodeRolesV1Error(e as JsonRpcError)
-        : decodeRolesV2Error(e as JsonRpcError)
+      decodeRolesV1Error(e as JsonRpcError) ||
+      decodeRolesV2Error(e as JsonRpcError)
 
     if (decodedError) {
-      return decodedError.signature
+      return decodedError.name
     } else {
       const genericError = decodeGenericError(e as JsonRpcError)
       if (genericError === 'Module not authorized') {
@@ -75,7 +86,7 @@ const RolePermissionCheck: React.FC<{
 
     simulateRolesTransaction(
       transactionState.transaction,
-      asLegacyConnection(route),
+      route,
       tenderlyProvider
     ).then((error) => {
       if (!canceled) setError(error)
