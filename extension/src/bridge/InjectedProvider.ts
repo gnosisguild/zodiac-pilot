@@ -141,4 +141,5 @@ const HOSTNAMES_REQUIRING_METAMASK = [
   'www.staderlabs.com',
   'metavault.trade',
   'quickswap.exchange',
+  'app.foundance.org',
 ]

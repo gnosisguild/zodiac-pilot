@@ -21,6 +21,7 @@
     "delegatecalls",
     "esbuild",
     "ethersproject",
+    "foundance",
     "getsourcecode",
     "gnosisguild",
     "hexlify",
