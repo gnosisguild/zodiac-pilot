@@ -7,11 +7,7 @@ import React, {
 } from 'react'
 import { encodeMulti } from 'ethers-multisend'
 
-import {
-  ForkProvider,
-  useTenderlyProvider,
-  WrappingProvider,
-} from '../providers'
+import { ForkProvider, useTenderlyProvider } from '../providers'
 import { useRoute } from '../routes'
 import { LegacyConnection, Eip1193Provider } from '../types'
 import { useDispatch, useNewTransactions } from '../state'
@@ -19,9 +15,9 @@ import { fetchContractInfo } from '../utils/abi'
 import { ExecutionStatus } from '../state/reducer'
 import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 import { AbiCoder, BrowserProvider, TransactionReceipt } from 'ethers'
+import { wrapRequest } from '../providers/wrapRequest'
 
 interface Props {
-  simulate: boolean
   children: ReactNode
 }
 
@@ -33,18 +29,13 @@ const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
 )
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
-const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
+const ProvideProvider: React.FC<Props> = ({ children }) => {
   const { provider, route, chainId } = useRoute()
   const tenderlyProvider = useTenderlyProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
 
   const connection = asLegacyConnection(route)
-
-  const wrappingProvider = useMemo(
-    () => new WrappingProvider(provider, connection),
-    [provider, connection]
-  )
 
   const forkProvider = useMemo(
     () =>
@@ -133,14 +124,18 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       transactions
     )
 
-    const batchTransactionHash = await wrappingProvider.request({
+    const batchTransactionHash = (await provider.request({
       method: 'eth_sendTransaction',
       params: [
-        metaTransactions.length === 1
-          ? metaTransactions[0]
-          : encodeMulti(metaTransactions, connection.multisend),
+        wrapRequest(
+          metaTransactions.length === 1
+            ? metaTransactions[0]
+            : encodeMulti(metaTransactions, connection.multisend),
+          connection
+        ),
       ],
-    })
+    })) as string
+
     dispatch({
       type: 'SUBMIT_TRANSACTIONS',
       payload: { batchTransactionHash },
@@ -149,15 +144,11 @@ const ProvideProvider: React.FC<Props> = ({ simulate, children }) => {
       `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
     )
     return batchTransactionHash
-  }, [transactions, wrappingProvider, dispatch, connection.multisend])
+  }, [transactions, provider, dispatch, connection])
 
   return (
-    <ProviderContext.Provider
-      value={simulate ? forkProvider : wrappingProvider}
-    >
-      <SubmitTransactionsContext.Provider
-        value={simulate ? submitTransactions : null}
-      >
+    <ProviderContext.Provider value={forkProvider}>
+      <SubmitTransactionsContext.Provider value={submitTransactions}>
         {children}
       </SubmitTransactionsContext.Provider>
     </ProviderContext.Provider>

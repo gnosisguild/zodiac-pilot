@@ -56,7 +56,7 @@ root.render(
       <ProvideRoutes>
         <ProvideMetaMask>
           <ProvideTenderly>
-            <ProvideProvider simulate>
+            <ProvideProvider>
               <Routes />
               <ZodiacToastContainer />
             </ProvideProvider>

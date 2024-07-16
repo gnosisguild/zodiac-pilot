@@ -2,7 +2,7 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
-import { wrapRequest } from '../providers/WrappingProvider'
+import { wrapRequest } from '../providers/wrapRequest'
 import { LegacyConnection, JsonRpcError } from '../types'
 import {
   decodeGenericError,

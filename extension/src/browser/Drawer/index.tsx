@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 
 import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
-import { wrapRequest } from '../../providers/WrappingProvider'
+import { wrapRequest } from '../../providers/wrapRequest'
 import { useRoute } from '../../routes'
 import { useProvider } from '../ProvideProvider'
 import {
