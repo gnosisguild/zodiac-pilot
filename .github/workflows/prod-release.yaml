@@ -50,37 +50,37 @@ jobs:
       - run: mkdir ./extension/release
       - run: mv ./extension/zodiac-pilot.zip ./extension/release/zodiac-pilot.zip
 
-      - name: Pin to IPFS
-        id: upload
-        uses: anantaramdas/ipfs-pinata-deploy-action@39bbda1ce1fe24c69c6f57861b8038278d53688d
-        with:
-          pin-name: Zodiac Pilot Chrome Extension ${{ github.event.release.tag_name }}
-          path: "./extension/release"
-          pinata-api-key: ${{ secrets.PINATA_API_KEY }}
-          pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
+      # - name: Pin to IPFS
+      #   id: upload
+      #   uses: anantaramdas/ipfs-pinata-deploy-action@39bbda1ce1fe24c69c6f57861b8038278d53688d
+      #   with:
+      #     pin-name: Zodiac Pilot Chrome Extension ${{ github.event.release.tag_name }}
+      #     path: "./extension/release"
+      #     pinata-api-key: ${{ secrets.PINATA_API_KEY }}
+      #     pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
 
-      - name: Convert CIDv0 to CIDv1
-        id: convert_cidv0
-        uses: uniswap/convert-cidv0-cidv1@v1.0.0
-        with:
-          cidv0: ${{ steps.upload.outputs.hash }}
+      # - name: Convert CIDv0 to CIDv1
+      #   id: convert_cidv0
+      #   uses: uniswap/convert-cidv0-cidv1@v1.0.0
+      #   with:
+      #     cidv0: ${{ steps.upload.outputs.hash }}
 
-      - name: Add IPFS links to Github release notes
-        id: update_release
-        uses: tubone24/update_release@v1.3.1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          is_append_body: true
-          body: |
-            <br />
-            This extension will be available in the Chrome Extension store, or you can download it from IPFS, extract it and run it as an unpacked extension.
+      # - name: Add IPFS links to Github release notes
+      #   id: update_release
+      #   uses: tubone24/update_release@v1.3.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     is_append_body: true
+      #     body: |
+      #       <br />
+      #       This extension will be available in the Chrome Extension store, or you can download it from IPFS, extract it and run it as an unpacked extension.
 
-            IPFS hash of the extension zip file:
-            - CIDv0: `${{ steps.upload.outputs.hash }}`
-            - CIDv1: `${{ steps.convert_cidv0.outputs.cidv1 }}`
+      #       IPFS hash of the extension zip file:
+      #       - CIDv0: `${{ steps.upload.outputs.hash }}`
+      #       - CIDv1: `${{ steps.convert_cidv0.outputs.cidv1 }}`
 
-            IPFS gateways:
-              - https://gnosis.mypinata.cloud/ipfs/${{ steps.upload.outputs.hash }}
-              - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.dweb.link/
-              - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.cf-ipfs.com/
+      #       IPFS gateways:
+      #         - https://gnosis.mypinata.cloud/ipfs/${{ steps.upload.outputs.hash }}
+      #         - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.dweb.link/
+      #         - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.cf-ipfs.com/
