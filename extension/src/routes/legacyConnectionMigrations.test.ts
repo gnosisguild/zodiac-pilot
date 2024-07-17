@@ -9,7 +9,7 @@ import {
 describe('legacy connection migrations', () => {
   it('returns x for asLegacyConnection(fromLegacyConnection(x))', () => {
     const standard: LegacyConnection = {
-      id: 'PnNZf8JmJTUCzeuS0kAwV',
+      id: 'PnNZf8JmJTUCzEuS0kAwV',
       label: 'KPK Mainnet',
       chainId: 1,
       moduleAddress: '0xb89e3f01ead1906806597488ee5e089a0037f50c',
@@ -27,7 +27,7 @@ describe('legacy connection migrations', () => {
       {
         "_migratedFromLegacyConnection": true,
         "avatar": "eth:0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c",
-        "id": "PnNZf8JmJTUCzeuS0kAwV",
+        "id": "PnNZf8JmJTUCzEuS0kAwV",
         "initiator": "eth:0xe697903dc6ca014d3e17ba61f4daf657afd51561",
         "label": "KPK Mainnet",
         "lastUsed": 1717492134,
@@ -117,7 +117,7 @@ describe('legacy connection migrations', () => {
     })
 
     const noModule: LegacyConnection = {
-      id: 'PnNZf8JmJTUCzeuS0kAwV',
+      id: 'PnNZf8JmJTUCzEuS0kAwV',
       label: 'KPK Mainnet',
       chainId: 1,
       moduleAddress: '',
@@ -131,7 +131,7 @@ describe('legacy connection migrations', () => {
       {
         "_migratedFromLegacyConnection": true,
         "avatar": "eth:0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c",
-        "id": "PnNZf8JmJTUCzeuS0kAwV",
+        "id": "PnNZf8JmJTUCzEuS0kAwV",
         "initiator": "eth:0xe697903dc6ca014d3e17ba61f4daf657afd51561",
         "label": "KPK Mainnet",
         "lastUsed": 1717492134,

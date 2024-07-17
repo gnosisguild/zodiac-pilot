@@ -1,15 +1,15 @@
 import globals from 'globals'
 import { fixupPluginRules } from '@eslint/compat'
 import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
+import tsEslint from 'typescript-eslint'
 import prettierConfig from 'eslint-config-prettier'
 import eslintPluginReact from 'eslint-plugin-react'
 import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 
-export default tseslint.config(
+export default tsEslint.config(
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tsEslint.configs.recommended,
   prettierConfig,
   jsxA11y.flatConfigs.recommended,
   { files: ['**/*.{ts,tsx}'] },
