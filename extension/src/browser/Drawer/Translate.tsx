@@ -46,7 +46,7 @@ export const Translate: React.FC<Props> = ({
     })
 
     // revert to checkpoint before the transaction to remove
-    const checkpoint = transactionState.transactionHash // the ForkProvider uses checkpoints as IDs for the recorded transactions
+    const checkpoint = transactionState.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
     await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
     // re-simulate all transactions starting with the translated ones
