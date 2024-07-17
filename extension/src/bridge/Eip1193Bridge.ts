@@ -1,4 +1,4 @@
-import { Connection, Eip1193Provider } from '../types'
+import { LegacyConnection, Eip1193Provider } from '../types'
 
 interface Request {
   method: string
@@ -7,10 +7,10 @@ interface Request {
 
 export default class Eip1193Bridge {
   private provider: Eip1193Provider
-  private connection: Connection
+  private connection: LegacyConnection
   private source: WindowProxy | undefined
 
-  constructor(provider: Eip1193Provider, connection: Connection) {
+  constructor(provider: Eip1193Provider, connection: LegacyConnection) {
     this.provider = provider
     this.connection = connection
   }
@@ -19,7 +19,7 @@ export default class Eip1193Bridge {
     this.provider = provider
   }
 
-  setConnection = (connection: Connection) => {
+  setConnection = (connection: LegacyConnection) => {
     if (connection.avatarAddress !== this.connection.avatarAddress) {
       this.emitBridgeEvent('accountsChanged', [[connection.avatarAddress]])
     }

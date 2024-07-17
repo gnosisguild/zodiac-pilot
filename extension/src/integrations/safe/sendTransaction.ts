@@ -1,25 +1,24 @@
-import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
-import * as ethers from 'ethers'
-import { MetaTransaction } from 'ethers-multisend'
-import { getAddress } from 'ethers/lib/utils'
+import Safe, { buildSignatureBytes } from '@safe-global/protocol-kit'
 
-import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
-import { Connection, Eip1193Provider, TransactionData } from '../../types'
+import {
+  getEip1193ReadOnlyProvider,
+  getReadOnlyProvider,
+} from '../../providers/readOnlyProvider'
+import { LegacyConnection, Eip1193Provider, TransactionData } from '../../types'
 import { initSafeApiKit } from './kits'
 import { waitForMultisigExecution } from './waitForMultisigExecution'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { getAddress } from 'ethers'
 
-export const shallExecuteDirectly = async (connection: Connection) => {
-  const provider = getReadOnlyProvider(connection.chainId)
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signerOrProvider: provider,
-  })
-  const safeSdk = await Safe.create({
-    ethAdapter,
+export const shallExecuteDirectly = async (connection: LegacyConnection) => {
+  const protocolKit = await Safe.init({
+    provider: getEip1193ReadOnlyProvider(connection.chainId),
     safeAddress: connection.avatarAddress,
   })
 
-  const threshold = await safeSdk.getThreshold()
+  const threshold = await protocolKit.getThreshold()
+
+  const provider = getReadOnlyProvider(connection.chainId)
   const pilotIsSmartAccount =
     (await provider.getCode(connection.pilotAddress)) !== '0x'
 
@@ -28,8 +27,8 @@ export const shallExecuteDirectly = async (connection: Connection) => {
 
 export const sendTransaction = async (
   provider: Eip1193Provider,
-  connection: Connection,
-  request: MetaTransaction | TransactionData
+  connection: LegacyConnection,
+  request: MetaTransactionData | TransactionData
 ) => {
   if (connection.moduleAddress) {
     throw new Error(
@@ -37,45 +36,40 @@ export const sendTransaction = async (
     )
   }
 
-  const web3Provider = new ethers.providers.Web3Provider(provider)
   const safeApiKit = initSafeApiKit(connection.chainId)
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signerOrProvider: web3Provider.getSigner(),
-  })
-  const safeSdk = await Safe.create({
-    ethAdapter,
+  const protocolKit = await Safe.init({
+    provider: provider,
+    signer: connection.pilotAddress,
     safeAddress: connection.avatarAddress,
   })
 
-  const nonce = await safeApiKit.getNextNonce(
-    getAddress(connection.avatarAddress)
-  )
-
-  const safeTransaction = await safeSdk.createTransaction({
-    safeTransactionData: {
-      to: getAddress(request.to || ZERO_ADDRESS),
-      value: ethers.BigNumber.from(request.value || 0).toString(),
-      data: request.data || '0x00',
-      operation: ('operation' in request && request.operation) || 0,
-      nonce,
-    },
+  const safeTransaction = await protocolKit.createTransaction({
+    transactions: [
+      {
+        to: getAddress(request.to || ZERO_ADDRESS),
+        value: BigInt(request.value || 0).toString(),
+        data: request.data || '0x00',
+        operation: ('operation' in request && request.operation) || 0,
+      },
+    ],
   })
-  const safeTxHash = await safeSdk.getTransactionHash(safeTransaction)
+  const safeTxHash = await protocolKit.getTransactionHash(safeTransaction)
 
   if (await shallExecuteDirectly(connection)) {
     // we execute the transaction directly. this way the pilot safe can collect signatures for the exec transaction (giving more context to co-signers) rather than for signing a meta transaction
-    await safeSdk.executeTransaction(safeTransaction)
+    await protocolKit.executeTransaction(safeTransaction)
   } else {
     // more signatures are required, we only store our signature in the tx service
-    const senderSignature = await safeSdk.signTransactionHash(safeTxHash)
+    await protocolKit.signTransaction(safeTransaction)
+    const signature = safeTransaction.getSignature(connection.pilotAddress)
+    if (!signature) throw new Error('Signature not found')
 
     await safeApiKit.proposeTransaction({
       safeAddress: getAddress(connection.avatarAddress),
       safeTransactionData: safeTransaction.data,
       safeTxHash,
       senderAddress: getAddress(connection.pilotAddress),
-      senderSignature: senderSignature.data,
+      senderSignature: buildSignatureBytes([signature]),
       origin: 'Zodiac Pilot',
     })
   }

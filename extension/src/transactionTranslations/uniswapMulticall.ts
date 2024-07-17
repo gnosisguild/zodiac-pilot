@@ -1,7 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { FunctionFragment, Interface } from 'ethers/lib/utils'
 
 import { TransactionTranslation } from './types'
+import { FunctionFragment, Interface } from 'ethers'
 
 const uniswapMulticallInterface = new Interface([
   'function multicall(bytes[] calldata data) external returns (bytes[] memory results)',
@@ -21,10 +21,10 @@ export default {
 
     let functionCalls: string[] = []
     for (const fragment of uniswapMulticallInterface.fragments) {
-      if (!(fragment instanceof FunctionFragment)) continue
+      if (fragment.type !== 'function') continue
       try {
         functionCalls = uniswapMulticallInterface.decodeFunctionData(
-          fragment,
+          fragment as FunctionFragment,
           transaction.data
         ).data as string[]
         break

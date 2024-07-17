@@ -145,7 +145,7 @@ const updateRpcRedirectRules = (tabId: number) => {
             urlFilter: rpcUrl,
             tabIds: [tabId],
           },
-        } as chrome.declarativeNetRequest.Rule)
+        }) as chrome.declarativeNetRequest.Rule
     )
 
   const ruleIds = [...networkIdOfRpcUrl.entries()].map(([rpcUrl]) =>

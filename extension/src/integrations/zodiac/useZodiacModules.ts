@@ -2,18 +2,17 @@ import {
   ContractAbis,
   ContractAddresses,
   KnownContracts,
-  SupportedNetworks,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
-import { Contract, providers, utils } from 'ethers'
-import { FormatTypes, Interface } from 'ethers/lib/utils'
-import detectProxyTarget from 'ethers-proxies'
+import { Contract, id, Interface } from 'ethers'
+import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 
 import { validateAddress } from '../../utils'
-import { useConnection } from '../../connections/connectionHooks'
+import { useRoute } from '../../routes/routeHooks'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { SupportedModuleType } from './types'
+import { ChainId } from 'ser-kit'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
@@ -35,14 +34,12 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { connection } = useConnection(connectionId)
-  const chainId = connection.chainId
+  const { chainId } = useRoute(connectionId)
 
   useEffect(() => {
-    const provider = getReadOnlyProvider(chainId)
     setLoading(true)
     setError(false)
-    fetchModules(safeAddress, provider)
+    fetchModules(safeAddress, chainId)
       .then((modules) => setModules(modules))
       .catch((e) => {
         console.error(`Could not fetch modules of Safe ${safeAddress}`, e)
@@ -60,10 +57,11 @@ export const useZodiacModules = (
 
 async function fetchModules(
   safeOrModifierAddress: string,
-  provider: providers.BaseProvider
+  chainId: ChainId
 ): Promise<Module[]> {
-  const mastercopyAddresses =
-    ContractAddresses[provider.network.chainId as SupportedNetworks] || {}
+  const provider = getReadOnlyProvider(chainId)
+
+  const mastercopyAddresses = ContractAddresses[chainId] || {}
   const contract = new Contract(
     safeOrModifierAddress,
     AvatarInterface,
@@ -79,7 +77,11 @@ async function fetchModules(
       const isEnabled = await contract.isModuleEnabled(moduleAddress)
       if (!isEnabled) return
 
-      const mastercopyAddress = await detectProxyTarget(moduleAddress, provider)
+      const result = await detectProxyTarget(
+        moduleAddress as `0x${string}`,
+        ({ method, params }) => provider.send(method, params)
+      )
+      const mastercopyAddress = result?.target.toLowerCase()
 
       let [type] = (Object.entries(mastercopyAddresses).find(
         ([, address]) => address === mastercopyAddress
@@ -113,7 +115,7 @@ async function fetchModules(
       if (MODIFIERS.includes(type)) {
         // recursively fetch modules from modifier
         try {
-          modules = await fetchModules(moduleAddress, provider)
+          modules = await fetchModules(moduleAddress, chainId)
         } catch (e) {
           console.error(
             `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
@@ -138,9 +140,9 @@ async function fetchModules(
 
 const functionSelectors = (abi: string[]) => {
   const iface = new Interface(abi)
-  return Object.values(iface.functions).map((f) =>
-    utils.id(f.format(FormatTypes.sighash)).substring(0, 10)
-  )
+  return iface.fragments
+    .filter((f) => f.type === 'function')
+    .map((f) => id(f.format('sighash')).substring(0, 10))
 }
 
 const MODIFIERS = [

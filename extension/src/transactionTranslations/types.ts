@@ -1,6 +1,6 @@
-import { MetaTransaction } from 'ethers-multisend'
-import { ChainId } from '../chains'
+import { ChainId } from 'ser-kit'
 import { SupportedModuleType } from '../integrations/zodiac/types'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 export interface TransactionTranslation {
   /** A descriptive title of the translation, will be displayed as a tooltip of the translate button */
@@ -9,7 +9,7 @@ export interface TransactionTranslation {
   recommendedFor: SupportedModuleType[]
   /** The translation function. For transactions that shall not be translated it must return undefined */
   translate: (
-    transaction: MetaTransaction,
+    transaction: MetaTransactionData,
     chainId: ChainId
-  ) => Promise<MetaTransaction[] | undefined>
+  ) => Promise<MetaTransactionData[] | undefined>
 }

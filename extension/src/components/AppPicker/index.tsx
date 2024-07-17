@@ -2,7 +2,7 @@ import cn from 'classnames'
 import React from 'react'
 
 import PUBLIC_PATH from '../../publicPath'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 
 import aaveLogo from './images/aave.png'
 import agaveLogo from './images/agave.png'
@@ -158,9 +158,7 @@ interface Props {
 }
 
 const AppPicker: React.FC<Props> = ({ onPick, query = '', large }) => {
-  const {
-    connection: { chainId },
-  } = useConnection()
+  const { chainId } = useRoute()
 
   const apps = sortApps().filter(
     (app) =>

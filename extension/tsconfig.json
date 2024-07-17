@@ -18,5 +18,5 @@
     "downlevelIteration": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["src", "./jest-setup.ts"]
+  "include": ["src"]
 }

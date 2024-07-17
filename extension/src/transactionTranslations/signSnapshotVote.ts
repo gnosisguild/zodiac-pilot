@@ -1,5 +1,5 @@
-import { Interface } from '@ethersproject/abi'
-import { MetaTransaction } from 'ethers-multisend'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { Interface } from 'ethers'
 
 // https://github.com/gnosisguild/snapshot-signer
 const SNAPSHOT_SIGNER_ADDRESS = '0xb0382209806345d27dfdab5bbc17b2ab553165ac'
@@ -17,7 +17,7 @@ export const translateSignSnapshotVote = (params: {
   message?: any
   types?: Record<string, Type[]>
   primaryType?: string
-}): MetaTransaction | undefined => {
+}): MetaTransactionData | undefined => {
   const { domain, message, types, primaryType } = params
   if (domain?.name !== 'snapshot') return undefined
   if (primaryType !== 'Vote' || !types?.Vote) return undefined

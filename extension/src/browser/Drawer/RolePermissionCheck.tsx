@@ -1,56 +1,62 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
-import { MetaTransaction } from 'ethers-multisend'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { Connection, JsonRpcError } from '../../types'
+import { JsonRpcError, Route } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
-import {
-  decodeGenericError,
-  decodeRolesV2Error,
-  isPermissionsError,
-} from '../../utils/decodeError'
+import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
 
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
-import { useConnection } from '../../connections'
-import { KnownContracts } from '@gnosis.pm/zodiac'
-import { wrapRequest } from '../../providers/WrappingProvider'
+import { useRoute } from '../../routes'
 import { useTenderlyProvider } from '../../providers'
 import { TenderlyProvider } from '../../providers/ProvideTenderly'
 import { TransactionState } from '../../state'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { ZeroAddress } from 'ethers'
+import {
+  ExecutionActionType,
+  parsePrefixedAddress,
+  planExecution,
+  Route as SerRoute,
+} from 'ser-kit'
 
 const simulateRolesTransaction = async (
-  encodedTransaction: MetaTransaction,
-  connection: Connection,
+  encodedTransaction: MetaTransactionData,
+  route: Route,
   tenderlyProvider: TenderlyProvider
 ) => {
-  const wrappedTransaction = wrapRequest(encodedTransaction, connection, false)
+  const routeWithInitiator = (
+    route.initiator ? route : { ...route, initiator: ZeroAddress }
+  ) as SerRoute
+  const plan = await planExecution([encodedTransaction], routeWithInitiator)
 
-  // TODO enable this once we can query role members from ser
-  // if (!wrappedTransaction.from && connection.roleId) {
-  //   // If pilotAddress is not yet determined, we will use a random member of the specified role
-  //   wrappedTransaction.from = await getRoleMember(connection)
-  // }
+  if (plan.length > 1) {
+    throw new Error('Multi-step execution not yet supported')
+  }
+
+  if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
+    throw new Error('Only transaction execution is currently supported')
+  }
+
+  const [, from] = parsePrefixedAddress(plan[0].from)
+  const tx = { ...plan[0].transaction, from }
 
   try {
     await tenderlyProvider.request({
       method: 'eth_estimateGas',
-      params: [wrappedTransaction],
+      params: [tx],
     })
   } catch (e) {
     const decodedError =
-      connection.moduleType === KnownContracts.ROLES_V1
-        ? decodeRolesV1Error(e as JsonRpcError)
-        : decodeRolesV2Error(e as JsonRpcError)
+      decodeRolesV1Error(e as JsonRpcError) ||
+      decodeRolesV2Error(e as JsonRpcError)
 
     if (decodedError) {
-      return isPermissionsError(decodedError.signature)
-        ? decodedError.signature
-        : false
+      return decodedError.name
     } else {
       const genericError = decodeGenericError(e as JsonRpcError)
       if (genericError === 'Module not authorized') {
@@ -68,7 +74,7 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const { connection } = useConnection()
+  const { route } = useRoute()
   const tenderlyProvider = useTenderlyProvider()
 
   const translationAvailable = !!useApplicableTranslation(
@@ -80,7 +86,7 @@ const RolePermissionCheck: React.FC<{
 
     simulateRolesTransaction(
       transactionState.transaction,
-      connection,
+      route,
       tenderlyProvider
     ).then((error) => {
       if (!canceled) setError(error)
@@ -89,7 +95,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [transactionState, connection, tenderlyProvider])
+  }, [transactionState, route, tenderlyProvider])
 
   if (error === undefined) return null
 

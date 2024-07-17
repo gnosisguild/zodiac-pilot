@@ -1,4 +1,3 @@
-import { Web3Provider } from '@ethersproject/providers'
 import React, {
   ReactNode,
   useCallback,
@@ -8,15 +7,11 @@ import React, {
   useState,
 } from 'react'
 import { toast } from 'react-toastify'
+import { ChainId } from 'ser-kit'
 
-import {
-  ChainId,
-  EXPLORER_URL,
-  CHAIN_CURRENCY,
-  CHAIN_NAME,
-  RPC,
-} from '../chains'
+import { EXPLORER_URL, CHAIN_CURRENCY, CHAIN_NAME, RPC } from '../chains'
 import { Eip1193Provider } from '../types'
+import { BrowserProvider } from 'ethers'
 
 export interface MetaMaskContextT {
   provider: Eip1193Provider | undefined
@@ -82,7 +77,8 @@ export const ProvideMetaMask: React.FC<{
   }, [])
 
   const connect = useCallback(async () => {
-    const { accounts, chainId } = await connectMetaMask()
+    const { accounts, chainId: chainIdBigInt } = await connectMetaMask()
+    const chainId = Number(chainIdBigInt)
     setAccounts(accounts)
     setChainId(chainId)
     return { accounts, chainId }
@@ -138,11 +134,11 @@ const memoWhilePending = <T extends (...args: any) => Promise<any>>(
 const connectMetaMask = memoWhilePending(async () => {
   if (!window.ethereum) throw new Error('MetaMask not found')
 
-  const web3Provider = new Web3Provider(window.ethereum)
+  const browserProvider = new BrowserProvider(window.ethereum)
 
-  const accountsPromise = web3Provider
+  const accountsPromise = browserProvider
     .send('eth_requestAccounts', [])
-    .catch((err) => {
+    .catch((err: any) => {
       if ((err as MetaMaskError).code === -32002) {
         return new Promise((resolve: (value: string[]) => void) => {
           const toastId = toast.warn(
@@ -166,7 +162,7 @@ const connectMetaMask = memoWhilePending(async () => {
 
   const [accounts, chainId] = await Promise.all([
     accountsPromise,
-    web3Provider.getNetwork().then((network) => network.chainId),
+    browserProvider.getNetwork().then((network) => network.chainId),
   ])
 
   return { accounts, chainId }

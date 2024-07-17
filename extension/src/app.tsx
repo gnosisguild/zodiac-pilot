@@ -7,56 +7,41 @@ import 'react-toastify/dist/ReactToastify.css'
 import './global.css'
 
 import Browser from './browser'
-import ConnectionsDrawer from './connections/ConnectionsDrawer'
+import RoutesDrawer from './routes/RoutesDrawer'
 import ProvideProvider from './browser/ProvideProvider'
 import { ProvideState } from './state'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
 import { ProvideMetaMask, ProvideTenderly } from './providers'
 import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
-import { ProvideConnections, useConnection } from './connections'
-import {
-  useConnections,
-  useUpdateLastUsedConnection,
-} from './connections/connectionHooks'
-import { validateAddress } from './utils'
+import { ProvideRoutes } from './routes'
+import { useRoutes, useUpdateLastUsedRoute } from './routes/routeHooks'
 
 const Routes: React.FC = () => {
   const connectionsRouteMatch = useMatchConnectionsRoute()
   const pushConnectionsRoute = usePushConnectionsRoute()
-  const { connection } = useConnection()
+  const [routes] = useRoutes()
 
   const isConnectionsRoute = connectionsRouteMatch.isMatch
-  const connectionChangeRequired = !validateAddress(connection.avatarAddress)
+  const routeSetupRequired = routes.length === 0
 
-  const [connections] = useConnections()
-  const connectionToEdit =
-    connections.length === 1 ? connections[0].id : undefined
-
-  useUpdateLastUsedConnection()
+  useUpdateLastUsedRoute()
 
   // open connections drawer if a valid connection is not available
   useEffect(() => {
-    if (!isConnectionsRoute && connectionChangeRequired) {
-      pushConnectionsRoute(connectionToEdit)
+    if (!isConnectionsRoute && routeSetupRequired) {
+      pushConnectionsRoute()
     }
-  }, [
-    isConnectionsRoute,
-    pushConnectionsRoute,
-    connectionToEdit,
-    connectionChangeRequired,
-  ])
-
-  if (!isConnectionsRoute && connectionChangeRequired) return null
+  }, [isConnectionsRoute, routeSetupRequired, pushConnectionsRoute])
 
   return (
     <>
-      <ConnectionsDrawer
-        isOpen={connectionChangeRequired || isConnectionsRoute}
+      <RoutesDrawer
+        isOpen={routeSetupRequired || isConnectionsRoute}
         editConnectionId={connectionsRouteMatch.editConnectionId}
         onClose={() => pushLocation(connectionsRouteMatch.url)}
       />
-      <Browser />
+      {!routeSetupRequired && <Browser />}
     </>
   )
 }
@@ -68,16 +53,16 @@ const root = createRoot(rootEl)
 root.render(
   <React.StrictMode>
     <ProvideState>
-      <ProvideConnections>
+      <ProvideRoutes>
         <ProvideMetaMask>
           <ProvideTenderly>
-            <ProvideProvider simulate>
+            <ProvideProvider>
               <Routes />
               <ZodiacToastContainer />
             </ProvideProvider>
           </ProvideTenderly>
         </ProvideMetaMask>
-      </ProvideConnections>
+      </ProvideRoutes>
     </ProvideState>
   </React.StrictMode>
 )

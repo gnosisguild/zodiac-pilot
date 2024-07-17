@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useConnectionsHash } from '../../routing'
-import { useConnection } from '../../connections'
+import { useRoute } from '../../routes'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
 import Box from '../Box'
@@ -10,6 +10,7 @@ import Flex from '../Flex'
 
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
+import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
 
 interface ConnectionBubbleProps {
   onConnectionsClick: () => void
@@ -18,8 +19,9 @@ interface ConnectionBubbleProps {
 const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
   onConnectionsClick,
 }) => {
-  const { connection } = useConnection()
-  const currentConnectionHash = useConnectionsHash(connection.id)
+  const { route } = useRoute()
+  const connection = asLegacyConnection(route)
+  const currentConnectionHash = useConnectionsHash(route.id)
   return (
     <Box roundedLeft className={classes.connectionBubble}>
       <BlockLink onClick={onConnectionsClick}>

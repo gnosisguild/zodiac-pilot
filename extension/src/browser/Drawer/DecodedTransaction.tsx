@@ -2,7 +2,7 @@ import React from 'react'
 
 import classes from './style.module.css'
 import { Box } from '../../components'
-import { FunctionFragment, Result } from '@ethersproject/abi'
+import { FunctionFragment, Result } from 'ethers'
 
 interface Props {
   functionFragment: FunctionFragment

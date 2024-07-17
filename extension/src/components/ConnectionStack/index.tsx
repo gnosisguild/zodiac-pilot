@@ -2,14 +2,14 @@ import cn from 'classnames'
 import React from 'react'
 
 import { MODULE_NAMES } from '../../integrations/zodiac/useZodiacModules'
-import { Connection } from '../../types'
+import { LegacyConnection } from '../../types'
 import Address from '../Address'
 import Box from '../Box'
 
 import classes from './style.module.css'
 
 interface Props {
-  connection: Connection
+  connection: LegacyConnection
   helperClass?: string
   addressBoxClass?: string
   className?: string

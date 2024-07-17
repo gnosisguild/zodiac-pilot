@@ -1,8 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { ethers } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
 
 import { TransactionTranslation } from './types'
+import { id, Interface } from 'ethers'
 
 const GP_V2_SETTLEMENT_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
 const GPv2SettlementInterface = new Interface([
@@ -79,9 +78,9 @@ export default {
       data = CowswapOrderSignerInterface.encodeFunctionData('signOrder', [
         {
           ...order,
-          kind: ethers.utils.id(order.kind),
-          sellTokenBalance: ethers.utils.id(order.sellTokenBalance),
-          buyTokenBalance: ethers.utils.id(order.buyTokenBalance),
+          kind: id(order.kind),
+          sellTokenBalance: id(order.sellTokenBalance),
+          buyTokenBalance: id(order.buyTokenBalance),
         },
         validDuration,
         feeAmountBP,

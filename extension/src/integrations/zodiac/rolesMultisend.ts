@@ -1,9 +1,9 @@
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { ChainId } from 'ser-kit'
 import {
   chains as rolesV2Chains,
   ChainId as RolesV2ChainId,
 } from 'zodiac-roles-deployments'
-import { ChainId } from '../../chains'
 import { getReadOnlyProvider } from '../../providers'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -66,7 +66,7 @@ export async function queryRolesV2MultiSend(
   }
 }
 
-const MULTISEND = [
+export const MULTISEND = [
   '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526',
   '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761',
   '0x998739bfdaadde7c933b942a68053933098f9eda',
@@ -74,7 +74,7 @@ const MULTISEND = [
   '0x8d29be29923b68abfdd21e541b9374737b49cdad',
 ]
 
-const MULTISEND_CALL_ONLY = [
+export const MULTISEND_CALL_ONLY = [
   '0x9641d764fc13c8b624c04430c7356c1c7c8102e2',
   '0x40a2accbd92bca938b02010e17a5b8929b49130d',
   '0xa1dabef33b3b82c7814b6d82a79e50f4ac44102b',

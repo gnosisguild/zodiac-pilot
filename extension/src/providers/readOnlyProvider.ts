@@ -1,25 +1,23 @@
 import EventEmitter from 'events'
-import { hexValue, poll } from 'ethers/lib/utils'
-import {
-  StaticJsonRpcProvider,
-  TransactionRequest,
-} from '@ethersproject/providers'
-import { ChainId, RPC } from '../chains'
-import { BigNumberish } from 'ethers'
 
-const readOnlyProviderCache = new Map<ChainId, StaticJsonRpcProvider>()
+import { RPC } from '../chains'
+import { JsonRpcProvider, toQuantity } from 'ethers'
+import { ChainId } from 'ser-kit'
+import { JsonRpcRequest } from '../types'
+
+const readOnlyProviderCache = new Map<ChainId, JsonRpcProvider>()
 const eip1193ProviderCache = new Map<string, Eip1193JsonRpcProvider>()
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-export const getReadOnlyProvider = (
-  chainId: ChainId
-): StaticJsonRpcProvider => {
+export const getReadOnlyProvider = (chainId: ChainId): JsonRpcProvider => {
   if (readOnlyProviderCache.has(chainId)) {
     return readOnlyProviderCache.get(chainId)!
   }
 
-  const provider = new StaticJsonRpcProvider(RPC[chainId], chainId)
+  const provider = new JsonRpcProvider(RPC[chainId], chainId, {
+    staticNetwork: true,
+  })
   readOnlyProviderCache.set(chainId, provider)
   return provider
 }
@@ -30,10 +28,9 @@ export const getReadOnlyProvider = (
  * @throws if used for wallet RPC calls
  **/
 export const getEip1193ReadOnlyProvider = (
-  chainId: ChainId,
-  address: string
+  chainId: ChainId
 ): Eip1193JsonRpcProvider => {
-  const cacheKey = `${chainId}:${address.toLowerCase()}`
+  const cacheKey = `${chainId}`
   if (eip1193ProviderCache.has(cacheKey)) {
     return eip1193ProviderCache.get(cacheKey)!
   }
@@ -43,24 +40,8 @@ export const getEip1193ReadOnlyProvider = (
   return provider
 }
 
-const hexlifyTransaction = ({
-  gas,
-  gasLimit,
-  ...rest
-}: TransactionRequest & { gas?: BigNumberish }) => {
-  const tx = {
-    ...rest,
-    gasLimit: gasLimit || gas,
-  }
-  return StaticJsonRpcProvider.hexlifyTransaction(tx, {
-    from: true,
-    customData: true,
-    ccipReadEnabled: true,
-  })
-}
-
 export class Eip1193JsonRpcProvider extends EventEmitter {
-  readonly provider: StaticJsonRpcProvider
+  readonly provider: JsonRpcProvider
   readonly chainId: ChainId
   readonly address: string
 
@@ -71,8 +52,13 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
     this.provider = getReadOnlyProvider(chainId)
   }
 
-  request(request: { method: string; params?: Array<any> }): Promise<any> {
-    return this.send(request.method, request.params || [])
+  request(request: JsonRpcRequest): Promise<any> {
+    return this.send(
+      request.method,
+      !request.params || Array.isArray(request.params)
+        ? request.params
+        : [request.params]
+    )
   }
 
   async send(method: string, params: any[] = []): Promise<any> {
@@ -86,49 +72,35 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
         return await this.provider.getBlockNumber()
       }
       case 'eth_chainId': {
-        return hexValue(this.chainId)
+        return toQuantity(this.chainId)
       }
       case 'eth_getCode': {
         const result = await this.provider.getCode(params[0], params[1])
         return result
       }
       case 'eth_getBlockByHash': {
-        return poll(
-          () =>
-            this.provider.perform('eth_getBlock', {
-              blockHash: params[0],
-              includeTransactions: params[1],
-            }),
-          {
-            oncePoll: this.provider,
-          }
-        )
+        return this.provider.send('eth_getBlock', {
+          blockHash: params[0],
+          includeTransactions: params[1],
+        })
       }
       case 'eth_getBlockByNumber': {
-        return poll(
-          () =>
-            this.provider.perform('getBlock', {
-              blockTag: params[0],
-              includeTransactions: params[1],
-            }),
-          {
-            oncePoll: this.provider,
-          }
-        )
+        return this.provider.send('getBlock', {
+          blockTag: params[0],
+          includeTransactions: params[1],
+        })
       }
 
       case 'eth_call': {
-        const req = hexlifyTransaction(params[0])
-        return await this.provider.call(req, params[1])
+        return await this.provider.call(params[0])
       }
 
       case 'estimateGas': {
         if (params[1] && params[1] !== 'latest') {
           throw new Error('estimateGas does not support blockTag')
         }
-        const req = hexlifyTransaction(params[0])
-        const result = await this.provider.estimateGas(req)
-        return result.toHexString()
+        const result = await this.provider.estimateGas(params[0])
+        return toQuantity(result)
       }
 
       case 'eth_sendTransaction':
