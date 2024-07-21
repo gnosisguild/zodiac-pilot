@@ -43,7 +43,11 @@ const simulateRolesTransaction = async (
   }
 
   const [, from] = parsePrefixedAddress(plan[0].from)
-  const tx = { ...plan[0].transaction, from, value: toQuantity(BigInt(plan[0].transaction.value || 0)) }
+  const tx = {
+    ...plan[0].transaction,
+    from,
+    value: toQuantity(BigInt(plan[0].transaction.value || 0)),
+  }
 
   try {
     await tenderlyProvider.request({
@@ -56,7 +60,7 @@ const simulateRolesTransaction = async (
       decodeRolesV2Error(e as JsonRpcError)
 
     if (decodedError) {
-      if(decodedError.name === 'ConditionViolation') {
+      if (decodedError.name === 'ConditionViolation') {
         return RolesV2Status[decodedError.args.status]
       }
       return decodedError.name
