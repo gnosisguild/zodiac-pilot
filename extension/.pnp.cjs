@@ -31,6 +31,7 @@ const RAW_RUNTIME_STATE =
           ["@eslint/eslintrc", "npm:3.1.0"],\
           ["@eslint/js", "npm:9.7.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
+          ["@noble/hashes", "npm:1.4.0"],\
           ["@safe-global/api-kit", "npm:2.4.2"],\
           ["@safe-global/protocol-kit", "npm:4.0.2"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
@@ -2363,7 +2364,7 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@ethersproject/web", "npm:5.7.1"],\
-          ["@noble/hashes", null],\
+          ["@noble/hashes", "npm:1.4.0"],\
           ["@types/noble__hashes", null],\
           ["ethers", "npm:6.13.1"]\
         ],\
@@ -12488,6 +12489,7 @@ const RAW_RUNTIME_STATE =
           ["@eslint/eslintrc", "npm:3.1.0"],\
           ["@eslint/js", "npm:9.7.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
+          ["@noble/hashes", "npm:1.4.0"],\
           ["@safe-global/api-kit", "npm:2.4.2"],\
           ["@safe-global/protocol-kit", "npm:4.0.2"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
