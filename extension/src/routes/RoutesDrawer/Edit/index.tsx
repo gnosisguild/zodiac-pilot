@@ -49,8 +49,6 @@ type ConnectionPatch = {
   multisendCallOnly?: string
 }
 
-const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
-
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [routes, setRoutes] = useRoutes()
   const { route } = useRoute(connectionId)

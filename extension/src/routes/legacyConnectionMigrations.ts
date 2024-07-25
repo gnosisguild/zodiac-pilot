@@ -15,7 +15,6 @@ import {
   queryRolesV2MultiSend,
 } from '../integrations/zodiac/rolesMultisend'
 import { Route, LegacyConnection, ProviderType } from '../types'
-import { validateAddress } from '../utils'
 import { ZeroAddress } from 'ethers'
 
 type LegacyConnectionStateMigration = (

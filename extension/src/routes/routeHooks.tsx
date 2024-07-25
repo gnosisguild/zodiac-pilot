@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useMetaMask, useWalletConnect } from '../providers'
@@ -85,7 +85,13 @@ export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
         }
       )
     }
-  }, [routesRevision, legacyConnections, setRoutes, setSelectedRouteId])
+  }, [
+    routesRevision,
+    legacyConnections,
+    setRoutes,
+    setRoutesRevision,
+    setSelectedRouteId,
+  ])
 
   const packedRoutesContext: RouteContextT = useMemo(
     () => [routes, setRoutes],

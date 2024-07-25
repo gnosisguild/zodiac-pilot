@@ -7,14 +7,14 @@ import { shortenAddress } from '../../../components/Address'
 import { CHAIN_NAME } from '../../../chains'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
-import { ProviderType, Route } from '../../../types'
+import { ProviderType } from '../../../types'
 import { validateAddress } from '../../../utils'
 import { useRoute, useRoutes } from '../../routeHooks'
 
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
-import { ChainId, formatPrefixedAddress, parsePrefixedAddress } from 'ser-kit'
+import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import {
   asLegacyConnection,
   fromLegacyConnection,
