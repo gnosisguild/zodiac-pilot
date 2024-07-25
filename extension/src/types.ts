@@ -1,4 +1,9 @@
-import { ChainId, PrefixedAddress, Route as CompleteRoute } from 'ser-kit'
+import {
+  ChainId,
+  PrefixedAddress,
+  Route as CompleteRoute,
+  StartingPoint,
+} from 'ser-kit'
 import { SupportedModuleType } from './integrations/zodiac/types'
 
 export enum ProviderType {

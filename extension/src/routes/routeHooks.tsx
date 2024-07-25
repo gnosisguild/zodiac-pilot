@@ -63,10 +63,10 @@ export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
     'routes'
   )
 
-  const [isMigrated, setIsMigrated] = useState(
-    routes.some(
-      (r) => r.avatar !== ETH_ZERO_ADDRESS || r._migratedFromLegacyConnection
-    ) || !legacyConnections.some((c) => c.avatarAddress)
+  // In the future we can use this to keep track of the migration state
+  const [routesRevision, setRoutesRevision] = useStickyState<number>(
+    0,
+    'routesRevision'
   )
 
   const [selectedRouteId, setSelectedRouteId] = useStickyState<string>(
@@ -75,19 +75,17 @@ export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
   )
 
   useEffect(() => {
-    if (!isMigrated) {
+    if (routesRevision === 0) {
       migrateLegacyConnections(legacyConnections).then(
         (migratedConnections) => {
-          const routes = migratedConnections
-            .map(fromLegacyConnection)
-            .filter(Boolean) as Route[]
+          const routes = migratedConnections.map(fromLegacyConnection)
           setRoutes(routes)
-          setIsMigrated(true)
+          setRoutesRevision(1)
           setSelectedRouteId(routes[0].id)
         }
       )
     }
-  }, [isMigrated, legacyConnections, setRoutes, setSelectedRouteId])
+  }, [routesRevision, legacyConnections, setRoutes, setSelectedRouteId])
 
   const packedRoutesContext: RouteContextT = useMemo(
     () => [routes, setRoutes],
@@ -98,7 +96,7 @@ export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
     [selectedRouteId, setSelectedRouteId]
   )
 
-  if (!isMigrated) {
+  if (routesRevision === 0) {
     return null
   }
 

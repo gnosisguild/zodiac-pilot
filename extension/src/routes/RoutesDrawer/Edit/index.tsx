@@ -31,6 +31,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
+import { ZeroAddress } from 'ethers'
 
 interface Props {
   connectionId: string
@@ -47,6 +48,8 @@ type ConnectionPatch = {
   multisend?: string
   multisendCallOnly?: string
 }
+
+const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
 
 const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
   const [routes, setRoutes] = useRoutes()
@@ -107,11 +110,10 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
 
   const updateConnection = (patch: ConnectionPatch) => {
     setRoutes((routes) =>
-      routes.map((r) =>
-        r.id === route.id
-          ? fromLegacyConnection({ ...asLegacyConnection(r), ...patch })!
-          : r
-      )
+      routes.map((r) => {
+        if (r.id !== route.id) return r
+        return fromLegacyConnection({ ...asLegacyConnection(r), ...patch })
+      })
     )
   }
 
@@ -219,16 +221,17 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
             <Field label="Piloted Safe" labelFor="">
               <AvatarInput
                 availableSafes={safes}
-                value={avatarAddress}
+                value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
                 onChange={async (address) => {
                   const keepTransactionBundle =
                     address.toLowerCase() ===
                     connection.avatarAddress.toLowerCase()
                   const confirmed =
                     keepTransactionBundle || (await confirmClearTransactions())
+
                   if (confirmed) {
                     updateConnection({
-                      avatarAddress: address,
+                      avatarAddress: address || undefined,
                       moduleAddress: '',
                       moduleType: undefined,
                     })
