@@ -35,7 +35,6 @@ export const useZodiacModules = (
   const [modules, setModules] = useState<Module[]>([])
 
   const { chainId } = useRoute(connectionId)
-
   useEffect(() => {
     setLoading(true)
     setError(false)
@@ -57,8 +56,15 @@ export const useZodiacModules = (
 
 async function fetchModules(
   safeOrModifierAddress: string,
-  chainId: ChainId
+  chainId: ChainId,
+  previous: Set<string> = new Set()
 ): Promise<Module[]> {
+  if (previous.has(safeOrModifierAddress.toLowerCase())) {
+    // circuit breaker in case of circular module references
+    return []
+  }
+  previous.add(safeOrModifierAddress.toLowerCase())
+
   const provider = getReadOnlyProvider(chainId)
 
   const mastercopyAddresses = ContractAddresses[chainId] || {}
@@ -67,7 +73,6 @@ async function fetchModules(
     AvatarInterface,
     provider
   )
-
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
   )[0] as string[]
@@ -115,7 +120,7 @@ async function fetchModules(
       if (MODIFIERS.includes(type)) {
         // recursively fetch modules from modifier
         try {
-          modules = await fetchModules(moduleAddress, chainId)
+          modules = await fetchModules(moduleAddress, chainId, previous)
         } catch (e) {
           console.error(
             `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
