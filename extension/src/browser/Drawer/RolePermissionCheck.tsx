@@ -60,6 +60,10 @@ const simulateRolesTransaction = async (
       decodeRolesV2Error(e as JsonRpcError)
 
     if (decodedError) {
+      if (decodedError.name === 'ModuleTransactionFailed') {
+        return false
+      }
+
       if (decodedError.name === 'ConditionViolation') {
         return RolesV2Status[decodedError.args.status]
       }
