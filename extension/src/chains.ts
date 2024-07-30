@@ -9,7 +9,6 @@ import avalancheIconUrl from './assets/icons/networks/avalanche.svg'
 import arbitrumIconUrl from './assets/icons/networks/arbitrum.svg'
 import polygonIconUrl from './assets/icons/networks/polygon.svg'
 
-
 export const RPC: Record<ChainId, string> = {
   1: 'https://airlock.gnosisguild.org/api/v1/1/rpc',
   10: 'https://airlock.gnosisguild.org/api/v1/10/rpc',
