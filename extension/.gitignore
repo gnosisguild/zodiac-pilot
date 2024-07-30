@@ -5,7 +5,6 @@ public/_metadata
 *.log
 zodiac-pilot.zip
 
-.yarn
 .yarn/*
 !.yarn/cache
 !.yarn/patches
