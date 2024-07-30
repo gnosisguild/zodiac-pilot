@@ -57,6 +57,7 @@ const RAW_RUNTIME_STATE =
           ["@walletconnect/universal-provider", "npm:2.13.3"],\
           ["classnames", "npm:2.5.1"],\
           ["copy-to-clipboard", "npm:3.3.3"],\
+          ["crx-hotreload", "npm:1.0.6"],\
           ["cspell", "npm:5.21.2"],\
           ["dotenv", "npm:16.4.5"],\
           ["esbuild", "npm:0.16.17"],\
@@ -70,12 +71,14 @@ const RAW_RUNTIME_STATE =
           ["ethers", "npm:6.13.1"],\
           ["events", "npm:3.3.0"],\
           ["evm-proxy-detection", "npm:2.0.1"],\
+          ["fs", "npm:0.0.1-security"],\
           ["globals", "npm:15.8.0"],\
           ["isomorphic-fetch", "npm:3.0.0"],\
           ["jsdom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:24.1.0"],\
           ["moment", "npm:2.30.1"],\
           ["nanoid", "npm:3.3.7"],\
           ["node-stdlib-browser", "npm:1.2.0"],\
+          ["path", "npm:0.12.7"],\
           ["prettier", "npm:3.3.3"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:18.3.1"],\
@@ -4746,6 +4749,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["crx-hotreload", [\
+      ["npm:1.0.6", {\
+        "packageLocation": "./.yarn/cache/crx-hotreload-npm-1.0.6-01ef35270e-265ea10238.zip/node_modules/crx-hotreload/",\
+        "packageDependencies": [\
+          ["crx-hotreload", "npm:1.0.6"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["crypto-browserify", [\
       ["npm:3.12.0", {\
         "packageLocation": "./.yarn/cache/crypto-browserify-npm-3.12.0-bed454fef0-5ab534474e.zip/node_modules/crypto-browserify/",\
@@ -6261,6 +6273,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["fs", [\
+      ["npm:0.0.1-security", {\
+        "packageLocation": "./.yarn/cache/fs-npm-0.0.1-security-5060b47e87-53c6230e1f.zip/node_modules/fs/",\
+        "packageDependencies": [\
+          ["fs", "npm:0.0.1-security"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["fs-extra", [\
       ["npm:10.1.0", {\
         "packageLocation": "./.yarn/cache/fs-extra-npm-10.1.0-86573680ed-05ce2c3b59.zip/node_modules/fs-extra/",\
@@ -6940,6 +6961,13 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["inherits", [\
+      ["npm:2.0.3", {\
+        "packageLocation": "./.yarn/cache/inherits-npm-2.0.3-401e64b080-8771303d66.zip/node_modules/inherits/",\
+        "packageDependencies": [\
+          ["inherits", "npm:2.0.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:2.0.4", {\
         "packageLocation": "./.yarn/cache/inherits-npm-2.0.4-c66b3957a0-cd45e923be.zip/node_modules/inherits/",\
         "packageDependencies": [\
@@ -8920,6 +8948,17 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["parse5", "npm:7.1.2"],\
           ["entities", "npm:4.5.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["path", [\
+      ["npm:0.12.7", {\
+        "packageLocation": "./.yarn/cache/path-npm-0.12.7-bddabe2e86-d49d101f95.zip/node_modules/path/",\
+        "packageDependencies": [\
+          ["path", "npm:0.12.7"],\
+          ["process", "npm:0.11.10"],\
+          ["util", "npm:0.10.4"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -11562,6 +11601,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["util", [\
+      ["npm:0.10.4", {\
+        "packageLocation": "./.yarn/cache/util-npm-0.10.4-7c577db41a-1200a1ca2b.zip/node_modules/util/",\
+        "packageDependencies": [\
+          ["util", "npm:0.10.4"],\
+          ["inherits", "npm:2.0.3"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["npm:0.12.5", {\
         "packageLocation": "./.yarn/cache/util-npm-0.12.5-3668276f26-61a10de775.zip/node_modules/util/",\
         "packageDependencies": [\
@@ -12515,6 +12562,7 @@ const RAW_RUNTIME_STATE =
           ["@walletconnect/universal-provider", "npm:2.13.3"],\
           ["classnames", "npm:2.5.1"],\
           ["copy-to-clipboard", "npm:3.3.3"],\
+          ["crx-hotreload", "npm:1.0.6"],\
           ["cspell", "npm:5.21.2"],\
           ["dotenv", "npm:16.4.5"],\
           ["esbuild", "npm:0.16.17"],\
@@ -12528,12 +12576,14 @@ const RAW_RUNTIME_STATE =
           ["ethers", "npm:6.13.1"],\
           ["events", "npm:3.3.0"],\
           ["evm-proxy-detection", "npm:2.0.1"],\
+          ["fs", "npm:0.0.1-security"],\
           ["globals", "npm:15.8.0"],\
           ["isomorphic-fetch", "npm:3.0.0"],\
           ["jsdom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:24.1.0"],\
           ["moment", "npm:2.30.1"],\
           ["nanoid", "npm:3.3.7"],\
           ["node-stdlib-browser", "npm:1.2.0"],\
+          ["path", "npm:0.12.7"],\
           ["prettier", "npm:3.3.3"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:18.3.1"],\

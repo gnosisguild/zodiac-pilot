@@ -1,0 +1,28 @@
+/* style.module.css */
+
+.container {
+    width: 24px;
+    height: 24px;
+}
+
+.stackContainer {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+}
+
+.blockieWrapper {
+    height: 24px;
+    width: 24px;
+    margin-left: -8px; 
+}
+
+.blockieWrapper:first-child {
+    margin-left: 0;
+}
+
+.blockies {
+    height: 100%;
+    width: 100%;
+}

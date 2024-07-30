@@ -27,6 +27,7 @@ const Box = forwardRef<HTMLDivElement, Props>(
       roundedLeft,
       roundedRight,
       p = 1,
+      ...props
     },
     ref
   ) => (
@@ -45,6 +46,7 @@ const Box = forwardRef<HTMLDivElement, Props>(
         },
         className
       )}
+      {...props}
     >
       {children}
     </div>

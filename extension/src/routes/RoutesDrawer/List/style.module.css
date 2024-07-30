@@ -23,13 +23,13 @@ button.removeButton:hover {
 }
 
 .addConnection {
-  width: auto;
-  padding: 4px 24px;
+  text-decoration: underline !important;
 }
 
 .connection {
   position: relative;
 }
+
 
 .connectionItemContainer {
   width: 100%;
@@ -37,6 +37,11 @@ button.removeButton:hover {
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
   padding: var(--spacing-4);
+  padding: 16px;
+}
+
+.connectionItemContainer::before {
+  border: none !important;
 }
 
 .connectionItemContainer:hover,
@@ -46,6 +51,7 @@ button.removeButton:hover {
 }
 
 .connectionItemContainer:hover {
+  background: #1F1D0F;
   box-shadow: 0px 2px 10px 0px rgba(217, 212, 173, 0.2);
 }
 
@@ -70,40 +76,39 @@ button.removeButton:hover {
 }
 
 .connectionIcon {
-  position: relative;
-  border: 1px solid;
-  padding: 0;
-  border-color: var(--border-color);
-  border-radius: 50px;
-  background: rgb(0 0 0 / 0.3);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 4px;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid;
+  border-color: var(--border-color);
+  background: rgba(217, 212, 173, 0.1);
+  backdrop-filter: blur(6px);
 }
-.connectionIcon:before {
-  content: ' ';
-  position: absolute;
-  z-index: 1;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid var(--border-color);
-  pointer-events: none;
-  border-radius: 50px;
-}
-
-.connectionIcon svg {
-  border-radius: 50px;
-}
-
-.infoContainer {
-  padding: 0 0 0 45px;
+.editIcon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid;
+  border-color: var(--border-color);
+  background: rgba(217, 212, 173, 0.1);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
 }
 
 .labelContainer {
   overflow: hidden;
+  width: 100%;
 }
 
 .labelContainer h2 {
@@ -125,6 +130,12 @@ button.removeButton:hover {
 }
 
 .info {
-  font-size: 14px;
-  gap: 20px;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.routeContainer {
+  padding:16px;
+  border: 1px solid #D9D4AD;
+  background: rgba(208, 205, 165, 0.10);
 }

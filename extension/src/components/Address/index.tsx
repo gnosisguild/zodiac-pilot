@@ -41,14 +41,15 @@ const Address: React.FC<Props> = ({
   const displayAddress = shortenAddress(checksumAddress)
 
   return (
-    <Box rounded className={cn(classes.container, className)}>
+    <Box className={cn(classes.container, className)}>
+      <div>
+        {address && <Blockie address={address} className={classes.blockies} />}
+        {!address && <div className={classes.noAddress} />}
+      </div>
       <div className={classes.address}>
         {checksumAddress ? displayAddress : 'No connection'}
       </div>
-      <Box rounded className={classes.blockieContainer}>
-        {address && <Blockie address={address} className={classes.blockies} />}
-        {!address && <div className={classes.noAddress} />}
-      </Box>
+
       {copyToClipboard && (
         <IconButton
           onClick={() => {

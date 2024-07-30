@@ -3,6 +3,7 @@ import React from 'react'
 import Moment from 'react-moment'
 
 import {
+  BlockLink,
   Box,
   BoxButton,
   Button,
@@ -11,13 +12,14 @@ import {
 } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { usePushConnectionsRoute } from '../../../routing'
-import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
+import { EditIcon, RouteIcon } from '../ConnectIcon'
 import { useRoute, useRoutes, useSelectedRouteId } from '../../routeHooks'
 import { ProviderType, Route } from '../../../types'
 import { useClearTransactions } from '../../../state/transactionHooks'
 
 import classes from './style.module.css'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
+import NetworkIcon from '../../../components/NetworkIcon'
 
 interface RoutesListProps {
   onLaunched: () => void
@@ -30,7 +32,7 @@ interface RouteItemProps {
 }
 
 const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
-  const { connected, connect } = useRoute(route.id)
+  const { connected, connect, chainId } = useRoute(route.id)
   const { route: currentlySelectedRoute } = useRoute()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
@@ -53,7 +55,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
     return true
   }
 
-  const handleModify = () => onModify(route.id)
+  const handleModify = () => {onModify(route.id)}
 
   const handleLaunch = async () => {
     // we continue working with the same avatar, so don't have to clear the recorded transaction
@@ -62,6 +64,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
     const confirmed =
       keepTransactionBundle || (await confirmClearTransactions())
+
 
     if (!confirmed) {
       return
@@ -83,6 +86,11 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
     handleModify()
   }
 
+  const onEditIconClick = (event: MouseEvent) => {
+    event.stopPropagation(); // Detener la propagación del evento click
+    handleModify();
+  };
+
   return (
     <>
       <div className={classes.connection}>
@@ -90,82 +98,68 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
           className={classes.connectionItemContainer}
           onClick={handleLaunch}
         >
-          <Flex direction="column" gap={4}>
+          <Flex direction="column" gap={2}>
             <Flex
               direction="row"
               gap={2}
+              alignItems="center"
               justifyContent="space-between"
               className={classes.labelContainer}
             >
-              <Flex direction="row" alignItems="center" gap={3}>
-                <Box className={classes.connectionIcon}>
-                  {connected && (
-                    <ConnectedIcon
-                      role="status"
-                      size={24}
-                      color="green"
-                      title="Pilot wallet is connected"
-                    />
-                  )}
-                  {!connected && !connect && (
-                    <DisconnectedIcon
-                      role="status"
-                      size={24}
-                      color="crimson"
-                      title="Pilot wallet is not connected"
-                    />
-                  )}
-                  {!connected && connect && (
-                    <ConnectedIcon
-                      role="status"
-                      size={24}
-                      color="orange"
-                      title="Pilot wallet is connected to a different chain"
-                    />
-                  )}
-                </Box>
-                <h2>
-                  {route.label || (
-                    <>
-                      <em>Unnamed route</em>
-                    </>
-                  )}
-                </h2>
+              <Flex direction="row" alignItems="center" justifyContent="space-between" style={{ width: "100%" }}>
+                <Flex alignItems="center" justifyContent="space-between" gap={3}>
+                  <Box className={classes.connectionIcon}>
+                    <RouteIcon size={16} color="white" title="Pilot Route" />
+                  </Box>
+                  {chainId && <NetworkIcon size={24} chainId={chainId} />}
+                  <h2>
+                    {route.label || (
+                      <>
+                        <em>Unnamed route</em>
+                      </>
+                    )}
+                  </h2>
+                </Flex>
+
+                <Flex alignItems="start" gap={3}>
+                  <Flex
+                    direction="column"
+                    alignItems="start"
+                    gap={2}
+                    className={classes.info}
+                  >
+                    <div className={classes.infoLabel}>Last Used</div>
+                    <div className={classes.infoDatum}>
+                      {route.lastUsed ? (
+                        <Moment unix fromNow>
+                          {route.lastUsed}
+                        </Moment>
+                      ) : (
+                        <>N/A</>
+                      )}
+                    </div>
+                  </Flex>
+                  <Box className={classes.editIcon} onClick={onEditIconClick}>
+                    <EditIcon size={24} color="#B4B08F" />
+                  </Box>
+                </Flex>
+
+
               </Flex>
             </Flex>
+            <hr />
             <Flex
               direction="row"
               gap={4}
               alignItems="baseline"
-              className={classes.infoContainer}
             >
               <ConnectionStack
                 connection={asLegacyConnection(route)}
                 addressBoxClass={classes.addressBox}
                 className={classes.connectionStack}
               />
-              <Flex
-                direction="column"
-                alignItems="start"
-                gap={2}
-                className={classes.info}
-              >
-                <div className={classes.infoDatum}>
-                  {route.lastUsed ? (
-                    <Moment unix fromNow>
-                      {route.lastUsed}
-                    </Moment>
-                  ) : (
-                    <>N/A</>
-                  )}
-                </div>
-                <div className={classes.infoLabel}>Last Used</div>
-              </Flex>
             </Flex>
           </Flex>
-        </BoxButton>
-        <BoxButton onClick={handleModify} className={classes.modifyButton}>
-          Modify
         </BoxButton>
       </div>
       <ConfirmationModal />
@@ -205,24 +199,25 @@ const RoutesList: React.FC<RoutesListProps> = ({ onLaunched }) => {
   }
 
   return (
-    <Flex gap={4} direction="column">
-      <Flex gap={2} direction="column">
+    <Flex gap={1} direction="column">
+      <Flex gap={1} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-          <h2>Pilot Routes</h2>
-          <Button onClick={handleCreate} className={classes.addConnection}>
-            Add Route
-          </Button>
+          <h2>Choose a route:</h2>
+          <BlockLink className={classes.addConnection} onClick={handleCreate}>
+            Create route manually
+          </BlockLink>
         </Flex>
-        <hr />
       </Flex>
-      {routes.map((route) => (
-        <RouteItem
-          key={route.id}
-          route={route}
-          onLaunch={handleLaunch}
-          onModify={handleModify}
-        />
-      ))}
+      <Flex gap={3} direction="column" className={classes.routeContainer}>
+        {routes.map((route) => (
+          <RouteItem
+            key={route.id}
+            route={route}
+            onLaunch={handleLaunch}
+            onModify={handleModify}
+          />
+        ))}
+      </Flex>
     </Flex>
   )
 }

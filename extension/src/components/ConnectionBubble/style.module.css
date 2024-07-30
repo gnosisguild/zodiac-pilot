@@ -46,7 +46,9 @@
 .infoContainer {
   opacity: 0;
   position: absolute;
+  min-width: 550px;
   z-index: 100;
+  top: 40px;
   bottom: -120px;
   right: -1px;
   padding-top: 20px;
@@ -57,7 +59,7 @@
 .info {
   background-color: rgb(35 34 25 / 64%);
   backdrop-filter: blur(3px);
-  border-radius: 40px;
+  border-radius: 16px;
 }
 .connectionBubble:hover .infoContainer {
   pointer-events: all;
