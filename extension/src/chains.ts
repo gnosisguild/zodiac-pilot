@@ -1,6 +1,13 @@
 /* spell-checker: disable */
 
 import { ChainId } from 'ser-kit'
+import ethereumIconUrl from './assets/icons/networks/ethereum.svg'
+import optimismIconUrl from './assets/icons/networks/optimism.svg'
+import gnosisIconUrl from './assets/icons/networks/gnosis.svg'
+import baseIconUrl from './assets/icons/networks/base.svg'
+import avalancheIconUrl from './assets/icons/networks/avalanche.svg'
+import arbitrumIconUrl from './assets/icons/networks/arbitrum.svg'
+import polygonIconUrl from './assets/icons/networks/polygon.svg'
 
 export const RPC: Record<ChainId, string> = {
   1: 'https://airlock.gnosisguild.org/api/v1/1/rpc',
@@ -77,4 +84,15 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   42161: 'Arbitrum One',
   43114: 'Avalanche C-Chain',
   11155111: 'Sepolia',
+}
+
+export const CHAIN_ICON: Record<ChainId, string> = {
+  1: ethereumIconUrl,
+  10: optimismIconUrl,
+  100: gnosisIconUrl,
+  137: polygonIconUrl,
+  8453: baseIconUrl,
+  42161: arbitrumIconUrl,
+  43114: avalancheIconUrl,
+  11155111: ethereumIconUrl,
 }

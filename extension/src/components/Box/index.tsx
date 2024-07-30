@@ -1,5 +1,9 @@
 import cn from 'classnames'
-import React, { forwardRef, ReactNode } from 'react'
+import React, {
+  forwardRef,
+  ReactNode,
+  MouseEvent as ReactMouseEvent,
+} from 'react'
 
 import classes from './style.module.css'
 
@@ -13,6 +17,7 @@ interface Props {
   roundedRight?: boolean
   p?: 1 | 2 | 3
   children?: ReactNode
+  onClick?: (event: ReactMouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 const Box = forwardRef<HTMLDivElement, Props>(
@@ -27,6 +32,7 @@ const Box = forwardRef<HTMLDivElement, Props>(
       roundedLeft,
       roundedRight,
       p = 1,
+      ...props
     },
     ref
   ) => (
@@ -45,6 +51,7 @@ const Box = forwardRef<HTMLDivElement, Props>(
         },
         className
       )}
+      {...props}
     >
       {children}
     </div>
