@@ -22,14 +22,13 @@ button.removeButton:hover {
   background-color: rgba(220, 20, 60, 0.2);
 }
 
-.addConnection {
-  text-decoration: underline !important;
+.addRoute {
+  max-width: 160px;
 }
 
 .connection {
   position: relative;
 }
-
 
 .connectionItemContainer {
   width: 100%;
@@ -51,7 +50,7 @@ button.removeButton:hover {
 }
 
 .connectionItemContainer:hover {
-  background: #1F1D0F;
+  background: #1f1d0f;
   box-shadow: 0px 2px 10px 0px rgba(217, 212, 173, 0.2);
 }
 
@@ -135,7 +134,7 @@ button.removeButton:hover {
 }
 
 .routeContainer {
-  padding:16px;
-  border: 1px solid #D9D4AD;
-  background: rgba(208, 205, 165, 0.10);
+  padding: 16px;
+  border: 1px solid #d9d4ad;
+  background: rgba(208, 205, 165, 0.1);
 }
