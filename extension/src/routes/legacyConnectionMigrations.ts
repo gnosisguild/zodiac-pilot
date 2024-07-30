@@ -15,7 +15,7 @@ import {
   queryRolesV2MultiSend,
 } from '../integrations/zodiac/rolesMultisend'
 import { Route, LegacyConnection, ProviderType } from '../types'
-import { validateAddress } from '../utils'
+import { ZeroAddress } from 'ethers'
 
 type LegacyConnectionStateMigration = (
   connection: LegacyConnection
@@ -103,29 +103,23 @@ export const migrateLegacyConnections = async (
   return migratedConnections
 }
 
-export function fromLegacyConnection(
-  connection: LegacyConnection
-): Route | undefined {
+export function fromLegacyConnection(connection: LegacyConnection): Route {
   const { chainId, providerType, moduleType } = connection
 
   // We assume an EOA if the providerType is MetaMask, a Safe otherwise
   const isEoa = providerType === ProviderType.MetaMask
 
-  if (!validateAddress(connection.avatarAddress)) {
-    // we don't migrate connections without a valid avatar address
-    return undefined
-  }
-  const avatarPrefixedAddress = formatPrefixedAddress(
-    chainId,
-    connection.avatarAddress as `0x${string}`
+  const avatarAddress = (connection.avatarAddress ||
+    ZeroAddress) as `0x${string}`
+  const pilotAddress = (connection.pilotAddress || ZeroAddress) as `0x${string}`
+
+  const avatarPrefixedAddress = formatPrefixedAddress(chainId, avatarAddress)
+
+  const pilotPrefixedAddress = formatPrefixedAddress(
+    isEoa ? undefined : chainId,
+    pilotAddress
   )
 
-  const pilotPrefixedAddress = connection.pilotAddress
-    ? formatPrefixedAddress(
-        isEoa ? undefined : chainId,
-        connection.pilotAddress as `0x${string}`
-      )
-    : undefined
   const modulePrefixedAddress =
     moduleType && connection.moduleAddress
       ? formatPrefixedAddress(
@@ -160,59 +154,62 @@ export function fromLegacyConnection(
         Boolean
       ) as `0x${string}`[],
     } as Roles,
-    connection: {
-      type: ConnectionType.IS_MEMBER,
-      from: pilotPrefixedAddress,
-      roles: [connection.roleId].filter(Boolean) as string[],
-    },
+    connection: pilotPrefixedAddress
+      ? {
+          type: ConnectionType.IS_MEMBER,
+          from: pilotPrefixedAddress,
+          roles: [connection.roleId].filter(Boolean) as string[],
+        }
+      : undefined,
   }
 
   const moduleWaypoint = delayModuleWaypoint || rolesModuleWaypoint
 
-  const waypoints: Route['waypoints'] = pilotPrefixedAddress
-    ? [
-        {
-          account: isEoa
-            ? {
-                type: AccountType.EOA,
-                prefixedAddress: pilotPrefixedAddress,
-                address: connection.pilotAddress as `0x${string}`,
-              }
-            : {
-                type: AccountType.SAFE,
-                prefixedAddress: pilotPrefixedAddress,
-                address: connection.pilotAddress as `0x${string}`,
-                chain: chainId,
-                threshold: NaN, // we don't know the threshold
-              },
-        },
-
-        ...((moduleWaypoint ? [moduleWaypoint] : []) as Waypoint[]),
-
-        {
-          account: {
+  const waypoints = [
+    {
+      account: isEoa
+        ? ({
+            type: AccountType.EOA,
+            prefixedAddress: pilotPrefixedAddress,
+            address: pilotAddress,
+          } as const)
+        : ({
             type: AccountType.SAFE,
-            prefixedAddress: avatarPrefixedAddress,
-            address: connection.avatarAddress as `0x${string}`,
+            prefixedAddress: pilotPrefixedAddress,
+            address: pilotAddress,
             chain: chainId,
             threshold: NaN, // we don't know the threshold
+          } as const),
+    },
+
+    ...((moduleWaypoint ? [moduleWaypoint] : []) as Waypoint[]),
+
+    {
+      account: {
+        type: AccountType.SAFE,
+        prefixedAddress: avatarPrefixedAddress,
+        address: avatarAddress,
+        chain: chainId,
+        threshold: NaN, // we don't know the threshold
+      },
+      connection: modulePrefixedAddress
+        ? {
+            type: ConnectionType.IS_ENABLED,
+            from: modulePrefixedAddress,
+          }
+        : {
+            type: ConnectionType.OWNS,
+            from: pilotPrefixedAddress,
           },
-          connection: {
-            type: modulePrefixedAddress
-              ? ConnectionType.IS_ENABLED
-              : ConnectionType.OWNS,
-            from: modulePrefixedAddress || pilotPrefixedAddress,
-          },
-        },
-      ]
-    : undefined
+    } as Waypoint,
+  ]
 
   return {
     id: connection.id,
     label: connection.label,
     lastUsed: connection.lastUsed,
     providerType,
-    waypoints,
+    waypoints: waypoints as Route['waypoints'],
     initiator: pilotPrefixedAddress,
     avatar: avatarPrefixedAddress,
     _migratedFromLegacyConnection: true,
@@ -235,11 +232,11 @@ export function asLegacyConnection(route: Route): LegacyConnection {
       parsePrefixedAddress(route.initiator)[1].toLowerCase()) ||
     ''
 
-  const moduleWaypoint =
-    route.waypoints && route.waypoints.length === 3
-      ? route.waypoints[1]
-      : undefined
-
+  const moduleWaypoint = route.waypoints?.find(
+    (w) =>
+      w.account.type === AccountType.ROLES ||
+      w.account.type === AccountType.DELAY
+  )
   const moduleType = moduleWaypoint?.account.type
 
   const multisend =
@@ -266,7 +263,9 @@ export function asLegacyConnection(route: Route): LegacyConnection {
     multisend: multisend.find((a) => MULTISEND.includes(a)),
     multisendCallOnly: multisend.find((a) => MULTISEND_CALL_ONLY.includes(a)),
     roleId:
-      moduleWaypoint?.connection.type === ConnectionType.IS_MEMBER
+      moduleWaypoint &&
+      'connection' in moduleWaypoint &&
+      moduleWaypoint.connection?.type === ConnectionType.IS_MEMBER
         ? moduleWaypoint?.connection.roles[0]
         : undefined,
     lastUsed: route.lastUsed,

@@ -15,6 +15,10 @@ import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import {
+  asLegacyConnection,
+  fromLegacyConnection,
+} from '../../legacyConnectionMigrations'
 
 const walletConnectLogo = (
   <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
@@ -28,7 +32,7 @@ const metamaskLogo = (
 )
 
 const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
-  const [connections, setConnections] = useRoutes()
+  const [routes, setRoutes] = useRoutes()
   const { connected, route, chainId } = useRoute(id)
   const pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
@@ -41,16 +45,16 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     chainId: ChainId,
     account: string
   ) => {
-    setConnections(
-      connections.map((c) =>
-        c.id === id
-          ? {
-              ...route,
+    setRoutes(
+      routes.map((r) =>
+        r.id === id
+          ? fromLegacyConnection({
+              ...asLegacyConnection(r),
               providerType,
               chainId,
-              pilotAddress: account.toLowerCase(),
-            }
-          : c
+              pilotAddress: account,
+            })
+          : r
       )
     )
   }
@@ -63,8 +67,15 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       walletConnect.disconnect()
     }
 
-    setConnections(
-      connections.map((c) => (c.id === id ? { ...route, pilotAddress: '' } : c))
+    setRoutes(
+      routes.map((r) =>
+        r.id === id
+          ? fromLegacyConnection({
+              ...asLegacyConnection(route),
+              pilotAddress: '',
+            })
+          : r
+      )
     )
   }
 
