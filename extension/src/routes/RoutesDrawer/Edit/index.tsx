@@ -160,7 +160,7 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
             <Flex gap={1} direction="column" alignItems="baseline">
               <h2>{route.label || 'New connection'}</h2>
               <a className={classes.backLink} href={connectionsHash}>
-                &#8592; All Connections
+                &#8592; All Routes
               </a>
             </Flex>
             <Flex gap={4} alignItems="center">
