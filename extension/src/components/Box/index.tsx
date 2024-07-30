@@ -1,18 +1,19 @@
-import cn from 'classnames'
-import React, { forwardRef, ReactNode } from 'react'
+import cn from 'classnames';
+import React, { forwardRef, ReactNode, MouseEvent as ReactMouseEvent } from 'react';
 
-import classes from './style.module.css'
+import classes from './style.module.css';
 
-interface Props {
-  className?: string
-  double?: boolean
-  borderless?: boolean
-  bg?: boolean
-  rounded?: boolean
-  roundedLeft?: boolean
-  roundedRight?: boolean
-  p?: 1 | 2 | 3
-  children?: ReactNode
+interface Props  {
+  className?: string;
+  double?: boolean;
+  borderless?: boolean;
+  bg?: boolean;
+  rounded?: boolean;
+  roundedLeft?: boolean;
+  roundedRight?: boolean;
+  p?: 1 | 2 | 3;
+  children?: ReactNode;
+  onClick?: (event: ReactMouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 const Box = forwardRef<HTMLDivElement, Props>(
@@ -51,7 +52,7 @@ const Box = forwardRef<HTMLDivElement, Props>(
       {children}
     </div>
   )
-)
-Box.displayName = 'Box'
+);
+Box.displayName = 'Box';
 
-export default Box
+export default Box;

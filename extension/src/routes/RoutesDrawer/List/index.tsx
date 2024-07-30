@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid'
-import React from 'react'
+import React, { MouseEvent as ReactMouseEvent } from 'react'
 import Moment from 'react-moment'
 
 import {
@@ -55,7 +55,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
     return true
   }
 
-  const handleModify = () => {onModify(route.id)}
+  const handleModify = () => { onModify(route.id) }
 
   const handleLaunch = async () => {
     // we continue working with the same avatar, so don't have to clear the recorded transaction
@@ -86,8 +86,8 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
     handleModify()
   }
 
-  const onEditIconClick = (event: MouseEvent) => {
-    event.stopPropagation(); // Detener la propagación del evento click
+  const onEditIconClick = (event: ReactMouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation();
     handleModify();
   };
 
@@ -106,7 +106,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
               justifyContent="space-between"
               className={classes.labelContainer}
             >
-              <Flex direction="row" alignItems="center" justifyContent="space-between" style={{ width: "100%" }}>
+              <Flex direction="row" alignItems="center" justifyContent="space-between" style={{ width: "100%" }} gap={0}>
                 <Flex alignItems="center" justifyContent="space-between" gap={3}>
                   <Box className={classes.connectionIcon}>
                     <RouteIcon size={16} color="white" title="Pilot Route" />
