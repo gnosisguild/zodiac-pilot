@@ -51,7 +51,7 @@ type ConnectionPatch = {
   multisendCallOnly?: string
 }
 
-const EditConnection: React.FC<Props> = ({ connectionId, _onLaunched }) => {
+const EditConnection: React.FC<Props> = ({ connectionId }) => {
   const [routes, setRoutes] = useRoutes()
   const { route } = useRoute(connectionId)
   // const [, setSelectedRouteId] = useSelectedRouteId()
