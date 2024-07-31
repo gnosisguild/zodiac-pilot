@@ -2,8 +2,9 @@ import classNames from 'classnames'
 import React from 'react'
 import { RiAlertLine } from 'react-icons/ri'
 
-import { Button, Flex, Tag } from '../../../components'
-import { shortenAddress } from '../../../components/Address'
+import { Button, Flex, Tag, IconButton } from '../../../components'
+import Address, { shortenAddress } from '../../../components/Address'
+
 import { CHAIN_NAME } from '../../../chains'
 import { useMetaMask, useWalletConnect } from '../../../providers'
 import PUBLIC_PATH from '../../../publicPath'
@@ -19,6 +20,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
+import { VscDebugDisconnect } from 'react-icons/vsc'
 
 const walletConnectLogo = (
   <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
@@ -31,7 +33,10 @@ const metamaskLogo = (
   />
 )
 
-const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
+const ConnectButton: React.FC<{ id: string; children: React.ReactNode }> = ({
+  id,
+  children,
+}) => {
   const [routes, setRoutes] = useRoutes()
   const { connected, route, chainId } = useRoute(id)
   const pilotAddress =
@@ -78,24 +83,23 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       )
     )
   }
+  const Disconnect = () => (
+    <Flex gap={2} alignItems={'center'}>
+      {children}
+      <IconButton className={classes.disconnectButton} onClick={disconnect}>
+        <VscDebugDisconnect size={16} />
+      </IconButton>
+    </Flex>
+  )
 
   // good to go
   if (connected && pilotAddress) {
     return (
       <div className={classes.connectedContainer}>
         <div className={classes.connectedAccount}>
-          <div className={classes.walletLogo}>
-            {route.providerType === ProviderType.WalletConnect
-              ? walletConnectLogo
-              : metamaskLogo}
-          </div>
-          <code className={classes.pilotAddress}>
-            {validateAddress(pilotAddress)}
-          </code>
+          {validateAddress(pilotAddress) && <Address address={pilotAddress} />}
         </div>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
+        <Disconnect />
       </div>
     )
   }
@@ -121,9 +125,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         <Tag head={<RiAlertLine />} color="warning">
           Chain mismatch
         </Tag>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
+        <Disconnect />
       </div>
     )
   }
@@ -149,32 +151,19 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         <Tag head={<RiAlertLine />} color="warning">
           Chain mismatch
         </Tag>
-        {chainId && (
-          <Button
-            className={classes.disconnectButton}
-            onClick={() => {
-              metamask.switchChain(chainId)
-            }}
-          >
-            Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
-          </Button>
-        )}
-
-        {/* {metamask.chainId && (
-          <Button
-            className={classes.disconnectButton}
-            onClick={() => {
-              connect(
-                ProviderType.MetaMask,
-                metamask.chainId as ChainId,
-                connection.pilotAddress
-              )
-            }}
-          >
-            Connect to{' '}
-            {CHAIN_NAME[metamask.chainId as ChainId] || `#${metamask.chainId}`}
-          </Button>
-        )} */}
+        <Flex gap={2} alignItems={'center'}>
+          {children}
+          {chainId && (
+            <Button
+              className={classes.disconnectButton}
+              onClick={() => {
+                metamask.switchChain(chainId)
+              }}
+            >
+              Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
+            </Button>
+          )}
+        </Flex>
       </div>
     )
   }
@@ -193,16 +182,14 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
             Switch wallet to account {shortenAddress(pilotAddress)}
           </Tag>
         </div>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
+        <Disconnect />
       </div>
     )
   }
 
   // not connected
   return (
-    <Flex gap={2}>
+    <Flex gap={2} className={classes.connectButtonContainer}>
       <Button
         className={classes.walletButton}
         onClick={async () => {

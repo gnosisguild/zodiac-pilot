@@ -11,7 +11,13 @@ const Field: React.FC<{
   children: ReactNode
   disabled?: boolean
 }> = ({ label, labelFor, children, disabled = false }) => (
-  <Box double bg p={3} className={classNames({ [classes.disabled]: disabled })}>
+  <Box
+    borderless
+    p={3}
+    className={classNames(classes.fieldContainer, {
+      [classes.disabled]: disabled,
+    })}
+  >
     {label ? (
       <label htmlFor={labelFor}>
         <div className={classes.fieldLabel}>{label}</div>

@@ -6,8 +6,28 @@
   justify-content: space-between;
   padding: 8px 10px;
   border: 1px solid rgba(217, 212, 173, 0.8);
+  background: rgba(208, 205, 165, 0.1);
   box-sizing: border-box;
   min-height: 66px;
+}
+
+.disconnectButton {
+  display: flex;
+  height: 42px;
+  width: 42px !important;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid #b4b08f;
+}
+
+.blockie {
+  height: 16px;
+  width: 16px;
+}
+
+.connectButtonContainer {
+  border: 1px solid rgba(217, 212, 173, 0.3);
+  padding: var(--spacing-2);
 }
 
 .connectedAccount {

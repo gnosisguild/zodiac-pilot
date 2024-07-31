@@ -2,29 +2,8 @@
   padding: 0px !important;
 }
 
-.routeContainer {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  align-self: stretch;
-}
-
-.routeIconContainer {
-  display: flex;
-  padding: var(--spacing-1);
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border-radius: 4px;
-  border: 1px solid #B4B08F;
-  background: rgba(217, 212, 173, 0.10);
-  backdrop-filter: blur(6px);
-  width: 20px;
-  height: 20px;
-}
-
-.routesLink{
-  color: #B4B08F;
+.routesLink {
+  color: #b4b08f;
   font-family: Spectral;
   font-size: 12px;
   font-style: normal;
@@ -50,8 +29,8 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  border-right: 1px solid rgba(180, 176, 143, 0.30);
-  border-left: 1px solid rgba(180, 176, 143, 0.30);
+  border-right: 1px solid rgba(180, 176, 143, 0.3);
+  border-left: 1px solid rgba(180, 176, 143, 0.3);
 }
 
 .routeArrowContainer {

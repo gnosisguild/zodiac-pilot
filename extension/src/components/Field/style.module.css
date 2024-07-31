@@ -6,3 +6,8 @@
   opacity: 0.8;
   pointer-events: none;
 }
+
+.fieldContainer {
+  border: 1px solid #d0cda5;
+  background: rgba(208, 205, 165, 0.1);
+}

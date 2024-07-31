@@ -1,0 +1,20 @@
+.routeContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.routeIconContainer {
+  display: flex;
+  padding: var(--spacing-1);
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+  border: 1px solid #b4b08f;
+  background: rgba(217, 212, 173, 0.1);
+  backdrop-filter: blur(6px);
+  width: 20px;
+  height: 20px;
+}

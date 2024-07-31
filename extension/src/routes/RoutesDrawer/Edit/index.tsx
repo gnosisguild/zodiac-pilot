@@ -1,8 +1,8 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import React, { useEffect } from 'react'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import TrashIcon from '../../../assets/icons/trash.svg'
 
-import { Box, Button, Field, Flex, IconButton } from '../../../components'
+import { Box, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { useConnectionsHash, usePushConnectionsRoute } from '../../../routing'
 import { useSafesWithOwner } from '../../../integrations/safe'
@@ -32,6 +32,8 @@ import {
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
 import { ZeroAddress } from 'ethers'
+import PUBLIC_PATH from '../../../publicPath'
+import RouteBadgeIcon from '../../../components/RouteBadgeIcon'
 
 interface Props {
   connectionId: string
@@ -154,16 +156,37 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
 
   return (
     <>
-      <Flex direction="column" gap={4} className={classes.editContainer}>
-        <Flex gap={2} direction="column">
-          <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-            <Flex gap={1} direction="column" alignItems="baseline">
-              <h2>{route.label || 'New connection'}</h2>
-              <a className={classes.backLink} href={connectionsHash}>
-                &#8592; All Routes
-              </a>
-            </Flex>
-            <Flex gap={4} alignItems="center">
+      <Flex direction="column" gap={3} className={classes.editContainer}>
+        <Flex gap={4} justifyContent="space-between" alignItems="center">
+          <Flex
+            gap={1}
+            direction="column"
+            alignItems="baseline"
+            style={{ width: '100%' }}
+          >
+            <input
+              type="text"
+              value={label}
+              placeholder="New Route"
+              onChange={(ev) => {
+                updateConnection({
+                  label: ev.target.value,
+                })
+              }}
+            />
+            <a className={classes.backLink} href={connectionsHash}>
+              &#8592; All Routes
+            </a>
+          </Flex>
+          <IconButton
+            onClick={removeRoute}
+            disabled={!canRemove}
+            danger
+            className={classes.removeButton}
+          >
+            <img src={PUBLIC_PATH + TrashIcon} alt="delete-icon" />
+          </IconButton>
+          {/* <Flex gap={4} alignItems="center">
               <Button
                 className={classes.launchButton}
                 disabled={!connection.avatarAddress}
@@ -179,10 +202,9 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
               >
                 <RiDeleteBinLine size={24} title="Remove this connection" />
               </IconButton>
-            </Flex>
-          </Flex>
-          <hr />
+            </Flex> */}
         </Flex>
+        <hr style={{ marginTop: 0 }} />
         <Flex direction="column" gap={2}>
           <Flex direction="column" gap={3} className={classes.form}>
             {error && (
@@ -195,48 +217,46 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
                 </div>
               </Box>
             )}
-            <Field label="Connection Label">
-              <input
-                type="text"
-                value={label}
-                placeholder="Label this connection"
-                onChange={(ev) => {
-                  updateConnection({
-                    label: ev.target.value,
-                  })
-                }}
-              />
-            </Field>
-            <Field label="Chain">
-              <ChainSelect
-                value={connection.chainId}
-                onChange={(chainId) => updateConnection({ chainId })}
-              />
-            </Field>
-            <Field label="Pilot Account" labelFor="">
-              <ConnectButton id={connectionId} />
-            </Field>
-            <Field label="Piloted Safe" labelFor="">
-              <AvatarInput
-                availableSafes={safes}
-                value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
-                onChange={async (address) => {
-                  const keepTransactionBundle =
-                    address.toLowerCase() ===
-                    connection.avatarAddress.toLowerCase()
-                  const confirmed =
-                    keepTransactionBundle || (await confirmClearTransactions())
+            <Flex direction="column" gap={2}>
+              <Flex direction="row" gap={2}>
+                <RouteBadgeIcon badgeType="pilot" label="Set Pilot" />
+              </Flex>
+              <ConnectButton id={connectionId}>
+                <ChainSelect
+                  value={connection.chainId}
+                  onChange={(chainId) => updateConnection({ chainId })}
+                />
+              </ConnectButton>
+            </Flex>
+            <Flex direction="column" gap={2}>
+              <Flex direction="column" gap={2}>
+                <RouteBadgeIcon badgeType="target" label="Set Target Safe" />
+                <Field>
+                  <AvatarInput
+                    availableSafes={safes}
+                    value={
+                      avatarAddress === ZeroAddress ? '' : avatarAddress || ''
+                    }
+                    onChange={async (address) => {
+                      const keepTransactionBundle =
+                        address.toLowerCase() ===
+                        connection.avatarAddress.toLowerCase()
+                      const confirmed =
+                        keepTransactionBundle ||
+                        (await confirmClearTransactions())
 
-                  if (confirmed) {
-                    updateConnection({
-                      avatarAddress: address || undefined,
-                      moduleAddress: '',
-                      moduleType: undefined,
-                    })
-                  }
-                }}
-              />
-            </Field>
+                      if (confirmed) {
+                        updateConnection({
+                          avatarAddress: address || undefined,
+                          moduleAddress: '',
+                          moduleType: undefined,
+                        })
+                      }
+                    }}
+                  />
+                </Field>
+              </Flex>
+            </Flex>
             <Field label="Zodiac Mod" disabled={modules.length === 0}>
               <ModSelect
                 options={[

@@ -22,8 +22,11 @@ button.removeButton {
   height: auto;
   width: auto;
   aspect-ratio: 1/1;
-  padding: 4px;
-  border: 3px double crimson;
+  padding: 8px;
+  border: 1px solid crimson;
+  border-radius: 4px;
+  background: rgba(217, 212, 173, 0.1);
+  backdrop-filter: blur(6px);
 }
 
 button.removeButton:hover {

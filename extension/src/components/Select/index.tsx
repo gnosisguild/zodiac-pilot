@@ -41,6 +41,7 @@ export const selectStyles = {
   }),
   menu: (provided: React.CSSProperties) => ({
     ...provided,
+    minWidth: '180px',
     zIndex: 10,
     borderRadius: 0,
     background: 'rgb(0 0 0 / 95%)',
@@ -48,6 +49,7 @@ export const selectStyles = {
   }),
   menuList: (provided: React.CSSProperties) => ({
     ...provided,
+    minWidth: '180px',
     padding: 0,
   }),
   singleValue: (provided: React.CSSProperties) => ({
@@ -57,7 +59,7 @@ export const selectStyles = {
 }
 
 const StyledSelect: React.FC<Props> = (props) => {
-  return <Select {...props} styles={selectStyles as any} />
+  return <Select styles={selectStyles as any} {...props} />
 }
 
 export default StyledSelect
