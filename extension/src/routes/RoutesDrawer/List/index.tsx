@@ -3,7 +3,6 @@ import React, { MouseEvent as ReactMouseEvent } from 'react'
 import Moment from 'react-moment'
 
 import {
-  BlockLink,
   Box,
   Button,
   BoxButton,

@@ -58,7 +58,7 @@ const ChainSelect: React.FC<Props> = ({ value, onChange }) => {
         label: <NetworkIcon size={18} chainId={val.value} />,
       }
     }
-  }, [options, value])
+  }, [value])
 
   return (
     <Select

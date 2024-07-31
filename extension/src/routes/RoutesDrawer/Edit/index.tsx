@@ -15,7 +15,7 @@ import {
   useZodiacModules,
 } from '../../../integrations/zodiac/useZodiacModules'
 import { SupportedModuleType } from '../../../integrations/zodiac/types'
-import { useRoute, useRoutes, useSelectedRouteId } from '../../routeHooks'
+import { useRoute, useRoutes } from '../../routeHooks'
 import useConnectionDryRun from '../../useConnectionDryRun'
 import { useClearTransactions } from '../../../state/transactionHooks'
 
@@ -51,11 +51,11 @@ type ConnectionPatch = {
   multisendCallOnly?: string
 }
 
-const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
+const EditConnection: React.FC<Props> = ({ connectionId, _onLaunched }) => {
   const [routes, setRoutes] = useRoutes()
   const { route } = useRoute(connectionId)
-  const [, setSelectedRouteId] = useSelectedRouteId()
-  const currentlySelected = useRoute()
+  // const [, setSelectedRouteId] = useSelectedRouteId()
+  // const currentlySelected = useRoute()
   const connectionsHash = useConnectionsHash()
   const pushConnectionsRoute = usePushConnectionsRoute()
 
@@ -123,21 +123,22 @@ const EditConnection: React.FC<Props> = ({ connectionId, onLaunched }) => {
     pushConnectionsRoute()
   }
 
-  const launchRoute = async () => {
-    // we continue working with the same avatar, so don't have to clear the recorded transaction
-    const keepTransactionBundle =
-      currentlySelected.route.avatar === route.avatar
+  // TODO: uncomment this code once the launch button is added
+  // const launchRoute = async () => {
+  //   // we continue working with the same avatar, so don't have to clear the recorded transaction
+  //   const keepTransactionBundle =
+  //     currentlySelected.route.avatar === route.avatar
 
-    const confirmed =
-      keepTransactionBundle || (await confirmClearTransactions())
+  //   const confirmed =
+  //     keepTransactionBundle || (await confirmClearTransactions())
 
-    if (!confirmed) {
-      return
-    }
+  //   if (!confirmed) {
+  //     return
+  //   }
 
-    setSelectedRouteId(route.id)
-    onLaunched()
-  }
+  //   setSelectedRouteId(route.id)
+  //   onLaunched()
+  // }
 
   const error = useConnectionDryRun(asLegacyConnection(route))
 
