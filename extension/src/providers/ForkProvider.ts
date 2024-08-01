@@ -176,12 +176,13 @@ class ForkProvider extends EventEmitter {
     const checkpointId: string = await this.provider.request({
       method: 'evm_snapshot',
     })
-    this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
-    console.log({
-      mod: this.moduleAddress,
-      ava: this.avatarAddress,
-      own: this.ownerAddress,
+    await this.provider.request({
+      method: 'evm_setNextBlockTimestamp',
+      params: [Math.ceil(Date.now() / 1000).toString()],
     })
+
+    this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
+
     // correctly route the meta tx through the avatar
     let tx: TransactionData & TransactionOptions
     if (this.moduleAddress) {
