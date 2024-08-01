@@ -19,6 +19,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
+import { ZeroAddress } from 'ethers'
 
 const walletConnectLogo = (
   <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
@@ -34,8 +35,9 @@ const metamaskLogo = (
 const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   const [routes, setRoutes] = useRoutes()
   const { connected, route, chainId } = useRoute(id)
-  const pilotAddress =
+  let pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
+  if (pilotAddress === ZeroAddress) pilotAddress = ''
 
   const metamask = useMetaMask()
   const walletConnect = useWalletConnect(route.id)
