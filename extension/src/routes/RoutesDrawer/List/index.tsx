@@ -3,8 +3,8 @@ import React, { MouseEvent as ReactMouseEvent } from 'react'
 import Moment from 'react-moment'
 
 import {
-  BlockLink,
   Box,
+  Button,
   BoxButton,
   ConnectionStack,
   Flex,
@@ -118,7 +118,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
                 <Flex
                   alignItems="center"
                   justifyContent="space-between"
-                  gap={3}
+                  gap={2}
                 >
                   <Box className={classes.connectionIcon}>
                     <RouteIcon size={16} color="white" title="Pilot Route" />
@@ -205,15 +205,14 @@ const RoutesList: React.FC<RoutesListProps> = ({ onLaunched }) => {
   }
 
   return (
-    <Flex gap={1} direction="column">
-      <Flex gap={1} direction="column">
-        <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-          <h2>Choose a route:</h2>
-          <BlockLink className={classes.addConnection} onClick={handleCreate}>
-            Create route manually
-          </BlockLink>
-        </Flex>
+    <Flex gap={3} direction="column">
+      <Flex gap={1} justifyContent="space-between" alignItems="center">
+        <h2>Pilot Routes</h2>
+        <Button className={classes.addRoute} onClick={handleCreate}>
+          Add Route
+        </Button>
       </Flex>
+      <hr style={{ marginTop: 0, marginBottom: 8 }} />
       <Flex gap={3} direction="column" className={classes.routeContainer}>
         {routes.map((route) => (
           <RouteItem

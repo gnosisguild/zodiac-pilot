@@ -7,11 +7,10 @@ import Box from '../Box'
 
 import classes from './style.module.css'
 
-import PUBLIC_PATH from '../../publicPath'
-import pilotIcon from './pilot-icon.svg'
-import targetSafeIcon from './target-safe-icon.svg'
 import circleIcon from '../../assets/icons/circle.svg'
 import BlockieStack from '../BlockieStack'
+import RouteBadgeIcon from '../RouteBadgeIcon'
+import PUBLIC_PATH from '../../publicPath'
 
 interface Props {
   connection: LegacyConnection
@@ -29,12 +28,8 @@ const ConnectionStack: React.FC<Props> = ({
   return (
     <div className={cn(classes.routeStack, className)}>
       <Box className={cn([classes.routeStackContainer, addressBoxClass])}>
-        <div className={cn([classes.routeContainer])}>
-          <div className={cn([classes.routeIconContainer])}>
-            <img src={PUBLIC_PATH + pilotIcon} alt="Pilot Icon" />
-          </div>
-          <p style={{ textAlign: 'start' }}>Pilot</p>
-        </div>
+        <RouteBadgeIcon badgeType="pilot" label="Pilot" />
+
         <Address address={pilotAddress} />
 
         <div className={classes.routeArrowContainer}>
@@ -60,12 +55,7 @@ const ConnectionStack: React.FC<Props> = ({
         </div>
       )}
       <Box className={cn([classes.routeStackContainer, addressBoxClass])}>
-        <div className={cn([classes.routeContainer])}>
-          <div className={cn([classes.routeIconContainer])}>
-            <img src={PUBLIC_PATH + targetSafeIcon} alt="Target Safe Icon" />
-          </div>
-          <p style={{ textAlign: 'start' }}>Target Safe</p>
-        </div>
+        <RouteBadgeIcon badgeType="target" label="Target Safe" />
         <Address address={avatarAddress} />
       </Box>
     </div>
