@@ -1,0 +1,15 @@
+.container > ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.item {
+  padding: 0;
+  margin: 0;
+}
+
+.item > div {
+  padding-left: 16px;
+  padding-right: 16px;
+}

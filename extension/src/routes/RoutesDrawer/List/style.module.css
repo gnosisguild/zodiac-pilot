@@ -101,8 +101,12 @@ button.removeButton:hover {
   border: 1px solid;
   border-color: var(--border-color);
   background: rgba(217, 212, 173, 0.1);
+  transition: background 0.2s ease-inout;
   backdrop-filter: blur(6px);
   z-index: 9999;
+  &:hover {
+    background: rgba(217,212, 173, 0.3);
+  }
 }
 
 .labelContainer {

@@ -6,6 +6,7 @@
   --spacing-5: 48px;
 
   --border-color: rgba(217, 212, 173, 0.3);
+  --border-color-2: rgba(217, 212, 173, 0.5);
 }
 
 @font-face {

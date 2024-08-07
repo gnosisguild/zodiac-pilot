@@ -2,7 +2,7 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import React, { useEffect } from 'react'
 import TrashIcon from '../../../assets/icons/trash.svg'
 
-import { Box, Field, Flex, IconButton } from '../../../components'
+import { Box, Button, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { useConnectionsHash, usePushConnectionsRoute } from '../../../routing'
 import { useSafesWithOwner } from '../../../integrations/safe'
@@ -34,6 +34,12 @@ import {
 import { ZeroAddress } from 'ethers'
 import PUBLIC_PATH from '../../../publicPath'
 import RouteBadgeIcon from '../../../components/RouteBadgeIcon'
+import {PiPlus, PiChevronLeft, PiChevronRight, PiArrowLeft, PiArrowRight} from 'react-icons/pi'
+import {RxChevronLeft, RxChevronRight} from 'react-icons/rx'
+import Checkbox from '../../../components/Checkbox'
+import Blockie from '../../../components/Blockie'
+import classNames from 'classnames'
+import { Carousel } from '../../../components/Carousel'
 
 interface Props {
   connectionId: string
@@ -207,7 +213,7 @@ const EditConnection: React.FC<Props> = ({ connectionId }) => {
         </Flex>
         <hr style={{ marginTop: 0 }} />
         <Flex direction="column" gap={2}>
-          <Flex direction="column" gap={3} className={classes.form}>
+          <Flex direction="column" gap={0} className={classes.form}>
             {error && (
               <Box double p={3}>
                 <div className={classes.errorInfo}>
@@ -229,6 +235,231 @@ const EditConnection: React.FC<Props> = ({ connectionId }) => {
                 />
               </ConnectButton>
             </Flex>
+
+            <Flex direction="row" gap={2}>
+              <Box className={classes.connectionsLeft}>
+                <Box className={classes.connectionsLeftArrow}/>
+                <Box className={classes.connectionsLeftButton}>
+                  <PiPlus size={20} />
+                </Box>
+              </Box>
+              <Flex direction='column' gap={2} className={classes.connectionsRight}>
+                {true ? (
+                  <>
+                    <Flex direction='row' alignItems='center' justifyContent='space-between' gap={1}>
+                      <h4 style={{margin: 0}}>Select Connection Route</h4>
+                      <Flex direction='row' alignItems='center' gap={4}>
+                        <Flex direction='row' alignItems='center' gap={2}>
+                          <div className={classNames(classes.dot, true && classes.dotSelected)}/>
+                          <div className={classNames(classes.dot, false && classes.dotSelected)}/>
+                          <div className={classNames(classes.dot, false && classes.dotSelected)}/>
+                        </Flex>
+                        <Flex direction='row' alignItems='center' gap={2}>
+                          <IconButton className={classes.arrowButton} disabled>
+                            <RxChevronLeft size={24} />
+                          </IconButton>
+                          <IconButton className={classes.arrowButton}>
+                            <RxChevronRight size={24} />
+                          </IconButton>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                    <Carousel>
+                      {[{manual: false, selected: true}, {manual: false, selected: false}, {manual: false, selected: false}].map(({manual, selected}, i) => {
+                        return (
+                          <Box key={i} className={classNames(classes.connections, selected && classes.isSelected)}>
+                            <Flex direction='column' gap={2}>
+                                {!manual && (
+                                  <Flex direction='row' justifyContent='space-between' gap={2}>
+                                    <div>Option {i+1} / <span style={{opacity: 0.5}}>{3}</span></div>
+                                    <Checkbox checked={selected}/>
+                                  </Flex>
+                                )}
+                                {/* Fake Route Connection #1 */}
+                                <Flex direction="column" gap={2}>
+                                  <Box bg p={2}>
+                                    <Flex direction='column' gap={1}>
+                                      <div>Roles Modifier</div>
+                                      <Flex direction='row' gap={1} alignItems='center'>
+                                        <Blockie className={classes.addressBlockie} address={'0x36469af4c82852f676c57d036bd163B82e63CF69'}/>
+                                        <div className={classes.addressText}>
+                                          {'0x485E...F0eb'}
+                                        </div>
+                                      </Flex>
+                                    </Flex>
+                                  </Box>
+                                </Flex>
+                                {/* Fake Route Connection #2 */}
+                                <Flex direction="column" gap={2}>
+                                  <Box bg p={2}>
+                                    <Flex direction='column' gap={1}>
+                                      <div>Contract</div>
+                                      <Flex direction='row' gap={1} alignItems='center'>
+                                        <Blockie className={classes.addressBlockie} address={'0x31ABEc2D5727FCf21eA55B6aD773e273180c65CD'}/>
+                                        <div className={classes.addressText}>
+                                          {'0x485E...F0eb'}
+                                        </div>
+                                      </Flex>
+                                    </Flex>
+                                  </Box>
+                                </Flex>
+                              </Flex>
+                          </Box>
+                        )
+                      })}
+                    </Carousel>
+                    <Flex direction='row' gap={1} alignItems='center' justifyContent='space-between' style={{marginTop: 8}}>
+                      <div style={{fontSize: 14}}>Can't find what you're looking for?</div>
+                      <Flex direction='row' gap={1} alignItems='center' className={classes.manualLink}>
+                        Create route manually
+                        <PiArrowRight size={14} style={{marginLeft: 2}} />
+                      </Flex>
+                    </Flex>
+                  </>
+                ) : (
+                  <>
+                    <h4>Configure connections</h4>
+                    <Box className={classes.connections}>
+                      {true ? (
+                        <Flex direction='column' gap={2}>
+                          {/* Fake Route Connection #1 */}
+                          <Flex direction="column" gap={2}>
+                            <Box bg p={2}>
+                              <Flex direction='column' gap={1}>
+                                <div>Roles Modifier</div>
+                                <Flex direction='row' gap={1} alignItems='center'>
+                                  <Blockie className={classes.addressBlockie} address={'0x36469af4c82852f676c57d036bd163B82e63CF69'}/>
+                                  <div className={classes.addressText}>
+                                    {'0x485E...F0eb'}
+                                  </div>
+                                </Flex>
+                              </Flex>
+                            </Box>
+                          </Flex>
+                          {/* Fake Route Connection #2 */}
+                          <Flex direction="column" gap={2}>
+                            <Box bg p={2}>
+                              <Flex direction='column' gap={1}>
+                                <div>Contract</div>
+                                <Flex direction='row' gap={1} alignItems='center'>
+                                  <Blockie className={classes.addressBlockie} address={'0x31ABEc2D5727FCf21eA55B6aD773e273180c65CD'}/>
+                                  <div className={classes.addressText}>
+                                    {'0x485E...F0eb'}
+                                  </div>
+                                </Flex>
+                              </Flex>
+                            </Box>
+                          </Flex>
+                          <Button secondary>
+                            Add Connection
+                            <PiPlus style={{marginLeft: 8}}/>
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex direction='column' gap={2} alignItems='center'>
+                          <p style={{width: "100%", textAlign: "center"}}>No route options available</p>
+                          <Button secondary style={{maxWidth: 500}}>
+                            Add Connection
+                            <PiPlus style={{marginLeft: 8}}/>
+                          </Button>
+                        </Flex>
+                      )}
+                      {/* <Field label="Zodiac Mod" disabled={modules.length === 0}>
+                        <ModSelect
+                          options={[
+                            ...(pilotIsOwner || pilotIsDelegate
+                              ? [NO_MODULE_OPTION]
+                              : []),
+                            ...modules.map((mod) => ({
+                              value: mod.moduleAddress,
+                              label: `${MODULE_NAMES[mod.type]} Mod`,
+                            })),
+                          ]}
+                          onChange={async (selected) => {
+                            const mod = modules.find(
+                              (mod) => mod.moduleAddress === (selected as Option).value
+                            )
+                            updateConnection({
+                              moduleAddress: mod?.moduleAddress,
+                              moduleType: mod?.type,
+                            })
+
+                            if (mod?.type === KnownContracts.ROLES_V1) {
+                              updateConnection({
+                                multisend: await queryRolesV1MultiSend(
+                                  connection.chainId,
+                                  mod.moduleAddress
+                                ),
+                              })
+                            }
+                            if (mod?.type === KnownContracts.ROLES_V2) {
+                              updateConnection(
+                                await queryRolesV2MultiSend(
+                                  connection.chainId,
+                                  mod.moduleAddress
+                                )
+                              )
+                            }
+                          }}
+                          value={
+                            selectedModule
+                              ? {
+                                  value: selectedModule.moduleAddress,
+                                  label: MODULE_NAMES[selectedModule.type],
+                                }
+                              : defaultModOption
+                          }
+                          isDisabled={loadingMods || !isValidSafe}
+                          placeholder={
+                            loadingMods || !isValidSafe ? '' : 'Select a module'
+                          }
+                          avatarAddress={avatarAddress}
+                        />
+                      </Field>
+                      {selectedModule?.type === KnownContracts.ROLES_V1 && (
+                        <Field label="Role ID">
+                          <input
+                            type="text"
+                            value={roleId}
+                            onChange={async (ev) => {
+                              updateConnection({ roleId: ev.target.value })
+                            }}
+                            placeholder="0"
+                          />
+                        </Field>
+                      )}
+                      {selectedModule?.type === KnownContracts.ROLES_V2 && (
+                        <Field label="Role Key">
+                          <input
+                            type="text"
+                            key={route.id} // makes sure the defaultValue is reset when switching connections
+                            defaultValue={decodedRoleKey || roleId}
+                            onChange={(ev) => {
+                              try {
+                                const roleId = encodeRoleKey(ev.target.value)
+                                setRoleIdError(null)
+                                updateConnection({ roleId })
+                              } catch (e) {
+                                updateConnection({ roleId: '' })
+                                setRoleIdError((e as Error).message)
+                              }
+                            }}
+                            placeholder="Enter key as bytes32 hex string or in human-readable decoding"
+                          />
+
+                          {roleIdError && (
+                            <Box p={3} className={classes.error}>
+                              {roleIdError}
+                            </Box>
+                          )}
+                        </Field>
+                      )} */}
+                    </Box>
+                  </>
+                )}
+              </Flex>
+            </Flex>
+
             <Flex direction="column" gap={2}>
               <Flex direction="column" gap={2}>
                 <RouteBadgeIcon badgeType="target" label="Set Target Safe" />
@@ -258,96 +489,18 @@ const EditConnection: React.FC<Props> = ({ connectionId }) => {
                 </Field>
               </Flex>
             </Flex>
-            <Field label="Zodiac Mod" disabled={modules.length === 0}>
-              <ModSelect
-                options={[
-                  ...(pilotIsOwner || pilotIsDelegate
-                    ? [NO_MODULE_OPTION]
-                    : []),
-                  ...modules.map((mod) => ({
-                    value: mod.moduleAddress,
-                    label: `${MODULE_NAMES[mod.type]} Mod`,
-                  })),
-                ]}
-                onChange={async (selected) => {
-                  const mod = modules.find(
-                    (mod) => mod.moduleAddress === (selected as Option).value
-                  )
-                  updateConnection({
-                    moduleAddress: mod?.moduleAddress,
-                    moduleType: mod?.type,
-                  })
 
-                  if (mod?.type === KnownContracts.ROLES_V1) {
-                    updateConnection({
-                      multisend: await queryRolesV1MultiSend(
-                        connection.chainId,
-                        mod.moduleAddress
-                      ),
-                    })
-                  }
-                  if (mod?.type === KnownContracts.ROLES_V2) {
-                    updateConnection(
-                      await queryRolesV2MultiSend(
-                        connection.chainId,
-                        mod.moduleAddress
-                      )
-                    )
-                  }
-                }}
-                value={
-                  selectedModule
-                    ? {
-                        value: selectedModule.moduleAddress,
-                        label: MODULE_NAMES[selectedModule.type],
-                      }
-                    : defaultModOption
-                }
-                isDisabled={loadingMods || !isValidSafe}
-                placeholder={
-                  loadingMods || !isValidSafe ? '' : 'Select a module'
-                }
-                avatarAddress={avatarAddress}
-              />
-            </Field>
-            {selectedModule?.type === KnownContracts.ROLES_V1 && (
-              <Field label="Role ID">
-                <input
-                  type="text"
-                  value={roleId}
-                  onChange={async (ev) => {
-                    updateConnection({ roleId: ev.target.value })
-                  }}
-                  placeholder="0"
-                />
-              </Field>
-            )}
-            {selectedModule?.type === KnownContracts.ROLES_V2 && (
-              <Field label="Role Key">
-                <input
-                  type="text"
-                  key={route.id} // makes sure the defaultValue is reset when switching connections
-                  defaultValue={decodedRoleKey || roleId}
-                  onChange={(ev) => {
-                    try {
-                      const roleId = encodeRoleKey(ev.target.value)
-                      setRoleIdError(null)
-                      updateConnection({ roleId })
-                    } catch (e) {
-                      updateConnection({ roleId: '' })
-                      setRoleIdError((e as Error).message)
-                    }
-                  }}
-                  placeholder="Enter key as bytes32 hex string or in human-readable decoding"
-                />
-
-                {roleIdError && (
-                  <Box p={3} className={classes.error}>
-                    {roleIdError}
-                  </Box>
-                )}
-              </Field>
-            )}
+            <hr style={{ marginTop: 16, marginBottom: 16 }} />
+            <Flex direction="row" gap={2}>
+              <Button secondary>
+                <PiArrowLeft style={{marginRight: 8}}/>
+                Back
+              </Button>
+              <Button>
+                Create Route
+                <PiArrowRight style={{marginLeft: 8}}/>
+              </Button>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>

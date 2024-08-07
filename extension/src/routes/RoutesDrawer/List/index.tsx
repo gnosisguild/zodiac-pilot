@@ -118,7 +118,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
                 <Flex
                   alignItems="center"
                   justifyContent="space-between"
-                  gap={3}
+                  gap={2}
                 >
                   <Box className={classes.connectionIcon}>
                     <RouteIcon size={16} color="white" title="Pilot Route" />

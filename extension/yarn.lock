@@ -8227,6 +8227,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-multi-carousel@npm:^2.8.5":
+  version: 2.8.5
+  resolution: "react-multi-carousel@npm:2.8.5"
+  checksum: 10/d0db687a2f9687fb6712ae536458ac36f17e965d93e8e7a8f56619dfc57db7bd8350e74174c10d7e2a82e17c7d40acdab84e20d0d3267c1c775e76eae94cd866
+  languageName: node
+  linkType: hard
+
 "react-select@npm:^5.2.1":
   version: 5.8.0
   resolution: "react-select@npm:5.8.0"
@@ -10624,6 +10631,7 @@ __metadata:
     react-icons: "npm:^4.3.1"
     react-modal: "npm:^3.16.1"
     react-moment: "npm:^1.1.3"
+    react-multi-carousel: "npm:^2.8.5"
     react-select: "npm:^5.2.1"
     react-toastify: "npm:^9.0.8"
     rimraf: "npm:^3.0.2"

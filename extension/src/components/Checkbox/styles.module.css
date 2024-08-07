@@ -1,0 +1,17 @@
+.checkbox {
+  height: 24px;
+  width: 24px;
+  border: 1px solid var(--border-color);
+  background-color: rgba(217, 212, 173, 0.1);
+  border-radius: 4px;
+  appearance: unset;
+  background-repeat: no-repeat;
+  background-position: center;
+  }
+.checkbox:hover {
+  border-color: var(--border-color-2);
+}
+.checkboxChecked {
+  border-color: var(--border-color-2);
+  background-image: url("data:image/svg+xml;base64,PHN2ZyBzdHJva2U9ImN1cnJlbnRDb2xvciIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2Utd2lkdGg9IjAiIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiBoZWlnaHQ9IjFlbSIgd2lkdGg9IjFlbSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjMyLjQ5LDgwLjQ5bC0xMjgsMTI4YTEyLDEyLDAsMCwxLTE3LDBsLTU2LTU2YTEyLDEyLDAsMSwxLDE3LTE3TDk2LDE4MywyMTUuNTEsNjMuNTFhMTIsMTIsMCwwLDEsMTcsMTdaIj48L3BhdGg+PC9zdmc+");
+}
