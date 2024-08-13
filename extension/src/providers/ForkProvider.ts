@@ -12,7 +12,12 @@ import { Eip1193Provider, TransactionData } from '../types'
 import { TenderlyProvider } from './ProvideTenderly'
 import { safeInterface } from '../integrations/safe'
 import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
-import { typedDataHash } from '../integrations/safe/signing'
+import {
+  hashMessage,
+  signMessage,
+  signTypedData,
+  typedDataHash,
+} from '../integrations/safe/signing'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -91,38 +96,63 @@ class ForkProvider extends EventEmitter {
       }
 
       case 'eth_sign': {
-        // TODO support this via Safe's SignMessageLib
         throw new UnsupportedMethodError('eth_sign is not supported')
       }
 
+      case 'personal_sign': {
+        if (params[1].toLowerCase() !== this.avatarAddress.toLowerCase()) {
+          throw new Error('personal_sign only supported for the avatar address')
+        }
+        const signTx = signMessage(params[0])
+        const safeTxHash = await this.sendMetaTransaction(signTx)
+
+        console.log('message signed', {
+          safeTxHash,
+          messageHash: hashMessage(params[0]),
+        })
+
+        return '0x'
+      }
+      case 'eth_signTypedData':
       case 'eth_signTypedData_v4': {
         console.log('eth_signTypedData_v4', params)
+        const [account, dataString] = params
+        if (account.toLowerCase() !== this.avatarAddress.toLowerCase()) {
+          throw new Error(
+            'eth_signTypedData_v4 only supported for the avatar address'
+          )
+        }
+        const data = JSON.parse(dataString)
+
+        const dataHash = typedDataHash(data)
+        const safeMessageHash = await safeInterface.encodeFunctionData(
+          'getMessageHashForSafe',
+          [this.avatarAddress, dataHash]
+        )
 
         // special handling for Snapshot vote signatures
-        const tx = translateSignSnapshotVote(params[0] || {})
-        if (tx) {
-          const safeTxHash = await this.sendMetaTransaction(tx)
+        const snapshotVoteTx = translateSignSnapshotVote(data || {})
+        if (snapshotVoteTx) {
+          const safeTxHash = await this.sendMetaTransaction(snapshotVoteTx)
 
-          // TODO we don't even need this, but for now we keep it for debugging purposes
-          const safeMessageHash = await safeInterface.encodeFunctionData(
-            'getMessageHashForSafe',
-            [this.avatarAddress, typedDataHash(params[0])]
-          )
-          console.log('Snapshot vote signed', {
+          console.log('Snapshot vote EIP-712 message signed', {
             safeTxHash,
             safeMessageHash,
-            typedDataHash: typedDataHash(params[0]),
+            typedDataHash: dataHash,
           })
+        } else {
+          // default EIP-712 signature handling
+          const signTx = signTypedData(data)
+          const safeTxHash = await this.sendMetaTransaction(signTx)
 
-          // The Safe App SDK expects a response in the format of `{ safeTxHash }` for on-chain signatures.
-          // So we make the safeTxHash available by returning it as the signature.
-          return safeTxHash
+          console.log('EIP-712 message signed', {
+            safeTxHash,
+            safeMessageHash,
+            typedDataHash: dataHash,
+          })
         }
 
-        // TODO support this via Safe's SignMessageLib
-        throw new UnsupportedMethodError(
-          'eth_signTypedData_v4 is not supported'
-        )
+        return '0x'
       }
 
       case 'eth_sendTransaction': {

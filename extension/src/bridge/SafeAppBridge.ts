@@ -235,7 +235,7 @@ export default class SafeAppBridge {
       // assume on-chain signature
       const safeTxHash = await this.provider.request({
         method: 'eth_signTypedData_v4',
-        params: [typedData],
+        params: [this.connection.avatarAddress, JSON.stringify(typedData)],
       })
       return { safeTxHash }
     },
