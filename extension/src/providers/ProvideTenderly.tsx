@@ -233,12 +233,7 @@ export class TenderlyProvider extends EventEmitter {
         display_name: 'Zodiac Pilot Test Flight',
         fork_config: {
           network_id: networkId,
-          block_number:
-            blockNumber ||
-            (await getReadOnlyProvider(this.chainId as ChainId).send(
-              'eth_blockNumber',
-              []
-            )),
+          block_number: blockNumber,
         },
         virtual_network_config: {
           base_fee_per_gas: 0,
