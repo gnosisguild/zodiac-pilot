@@ -32,11 +32,11 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.7.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@noble/hashes", "npm:1.4.0"],\
-          ["@safe-global/api-kit", "npm:2.4.2"],\
-          ["@safe-global/protocol-kit", "npm:4.0.2"],\
+          ["@safe-global/api-kit", "npm:2.4.4"],\
+          ["@safe-global/protocol-kit", "npm:4.0.4"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
-          ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
-          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.21.10"],\
+          ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
+          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.22.2"],\
           ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@testing-library/dom", "npm:10.3.1"],\
           ["@testing-library/jest-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:6.4.6"],\
@@ -2222,6 +2222,17 @@ const RAW_RUNTIME_STATE =
           ["node-fetch", "virtual:9c67668db478e95ba4d6a763bc55027eeff0d22eaf59478017ea07386fc33a3c7b7b625af78aa86a33991a9a500a7aa216e28632de568f02adefd662ef53a42d#npm:2.7.0"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:2.4.4", {\
+        "packageLocation": "./.yarn/cache/@safe-global-api-kit-npm-2.4.4-246439c931-578d1632bf.zip/node_modules/@safe-global/api-kit/",\
+        "packageDependencies": [\
+          ["@safe-global/api-kit", "npm:2.4.4"],\
+          ["@safe-global/protocol-kit", "npm:4.0.4"],\
+          ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
+          ["ethers", "npm:6.13.1"],\
+          ["node-fetch", "virtual:9c67668db478e95ba4d6a763bc55027eeff0d22eaf59478017ea07386fc33a3c7b7b625af78aa86a33991a9a500a7aa216e28632de568f02adefd662ef53a42d#npm:2.7.0"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["@safe-global/protocol-kit", [\
@@ -2236,7 +2247,27 @@ const RAW_RUNTIME_STATE =
           ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
           ["@safe-global/safe-deployments", "npm:1.37.1"],\
           ["@types/bn.js", "npm:5.1.5"],\
-          ["abitype", "virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"],\
+          ["bn.js", "npm:5.2.1"],\
+          ["ethereumjs-util", "npm:7.1.5"],\
+          ["ethers", "npm:6.13.1"],\
+          ["semver", "npm:7.6.2"],\
+          ["web3-eth-contract", "npm:4.5.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:4.0.4", {\
+        "packageLocation": "./.yarn/cache/@safe-global-protocol-kit-npm-4.0.4-35473a7fe1-4acdfa6d2c.zip/node_modules/@safe-global/protocol-kit/",\
+        "packageDependencies": [\
+          ["@safe-global/protocol-kit", "npm:4.0.4"],\
+          ["@ethersproject/abstract-signer", "npm:5.7.0"],\
+          ["@ethersproject/bignumber", "npm:5.7.0"],\
+          ["@ethersproject/bytes", "npm:5.7.0"],\
+          ["@noble/hashes", "npm:1.4.0"],\
+          ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
+          ["@safe-global/safe-deployments", "npm:1.37.3"],\
+          ["@types/bn.js", "npm:5.1.5"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"],\
           ["bn.js", "npm:5.2.1"],\
           ["ethereumjs-util", "npm:7.1.5"],\
           ["ethers", "npm:6.13.1"],\
@@ -2262,7 +2293,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-types-npm-5.0.2-e1ac12735a-53f0221e1c.zip/node_modules/@safe-global/safe-core-sdk-types/",\
         "packageDependencies": [\
           ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
-          ["abitype", "virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5"]\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:5.0.3", {\
+        "packageLocation": "./.yarn/cache/@safe-global-safe-core-sdk-types-npm-5.0.3-50c0bb6169-e0646c319a.zip/node_modules/@safe-global/safe-core-sdk-types/",\
+        "packageDependencies": [\
+          ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -2272,6 +2311,14 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@safe-global-safe-deployments-npm-1.37.1-64ab51f6d0-2cb05ad0d1.zip/node_modules/@safe-global/safe-deployments/",\
         "packageDependencies": [\
           ["@safe-global/safe-deployments", "npm:1.37.1"],\
+          ["semver", "npm:7.6.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:1.37.3", {\
+        "packageLocation": "./.yarn/cache/@safe-global-safe-deployments-npm-1.37.3-ecc590bd3e-3d1fcaac85.zip/node_modules/@safe-global/safe-deployments/",\
+        "packageDependencies": [\
+          ["@safe-global/safe-deployments", "npm:1.37.3"],\
           ["semver", "npm:7.6.2"]\
         ],\
         "linkType": "HARD"\
@@ -2285,10 +2332,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["npm:3.21.10", {\
-        "packageLocation": "./.yarn/cache/@safe-global-safe-gateway-typescript-sdk-npm-3.21.10-f9fd01348a-602963f3bb.zip/node_modules/@safe-global/safe-gateway-typescript-sdk/",\
+      ["npm:3.22.2", {\
+        "packageLocation": "./.yarn/cache/@safe-global-safe-gateway-typescript-sdk-npm-3.22.2-cd930c5fbf-7f2b3cab4a.zip/node_modules/@safe-global/safe-gateway-typescript-sdk/",\
         "packageDependencies": [\
-          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.21.10"]\
+          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.22.2"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -3566,10 +3613,10 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "HARD"\
       }],\
-      ["virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5", {\
-        "packageLocation": "./.yarn/__virtual__/abitype-virtual-6c2d7df432/0/cache/abitype-npm-1.0.5-39432a282a-1acd0d9687.zip/node_modules/abitype/",\
+      ["virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5", {\
+        "packageLocation": "./.yarn/__virtual__/abitype-virtual-fd7a3c3552/0/cache/abitype-npm-1.0.5-39432a282a-1acd0d9687.zip/node_modules/abitype/",\
         "packageDependencies": [\
-          ["abitype", "virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"],\
           ["@types/typescript", null],\
           ["@types/zod", null],\
           ["typescript", null],\
@@ -11633,7 +11680,7 @@ const RAW_RUNTIME_STATE =
           ["@scure/bip32", "npm:1.4.0"],\
           ["@scure/bip39", "npm:1.3.0"],\
           ["@types/typescript", null],\
-          ["abitype", "virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"],\
           ["isows", "virtual:cc0d0158cc0b97a21158c5fc1575782b4742a1f2abe990dbee708d53dcd39b6be8ba50d533095079ec278b06e4ad47fb33aead80adcfb9282338640bfd92086a#npm:1.0.4"],\
           ["typescript", null],\
           ["ws", "virtual:62b44a89afe3cf71f91d9a15c255905a0c879fa652d6a4d04977b9668d35332e3616a0f5da5dd26eb85d97f16c77eb71e5fb44ecae23967192e31ea4ad11af7c#npm:8.17.1"]\
@@ -11654,7 +11701,7 @@ const RAW_RUNTIME_STATE =
           ["@scure/bip32", "npm:1.4.0"],\
           ["@scure/bip39", "npm:1.3.0"],\
           ["@types/typescript", null],\
-          ["abitype", "virtual:e1ac12735a1a6142b16b0c18f4d069abadf688d06e8edb9c4971f939fb65c057d55015e07cf7a945ed65665e1980beae2649ffe7b99d5d39226d5b65db5bc1b2#npm:1.0.5"],\
+          ["abitype", "virtual:50c0bb616918b71f9b7ad70bc29d6254b0be2a953e234cac59060d581c642cd881294af5c8ec28e7221aa8e14bc421b0626c2976b086cfd2795d2503310b14da#npm:1.0.5"],\
           ["isows", "virtual:cc0d0158cc0b97a21158c5fc1575782b4742a1f2abe990dbee708d53dcd39b6be8ba50d533095079ec278b06e4ad47fb33aead80adcfb9282338640bfd92086a#npm:1.0.4"],\
           ["typescript", null],\
           ["ws", "virtual:62b44a89afe3cf71f91d9a15c255905a0c879fa652d6a4d04977b9668d35332e3616a0f5da5dd26eb85d97f16c77eb71e5fb44ecae23967192e31ea4ad11af7c#npm:8.17.1"]\
@@ -12490,11 +12537,11 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.7.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@noble/hashes", "npm:1.4.0"],\
-          ["@safe-global/api-kit", "npm:2.4.2"],\
-          ["@safe-global/protocol-kit", "npm:4.0.2"],\
+          ["@safe-global/api-kit", "npm:2.4.4"],\
+          ["@safe-global/protocol-kit", "npm:4.0.4"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
-          ["@safe-global/safe-core-sdk-types", "npm:5.0.2"],\
-          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.21.10"],\
+          ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
+          ["@safe-global/safe-gateway-typescript-sdk", "npm:3.22.2"],\
           ["@shazow/whatsabi", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:0.13.2"],\
           ["@testing-library/dom", "npm:10.3.1"],\
           ["@testing-library/jest-dom", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:6.4.6"],\
