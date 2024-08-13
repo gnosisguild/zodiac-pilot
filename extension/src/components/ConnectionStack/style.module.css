@@ -22,12 +22,13 @@
   min-width: 165px;
 }
 .routeModContainer {
-  padding: 10px;
+  padding-left: 10px;
   display: flex;
   position: relative;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
+  overflow-x: auto;
   gap: 8px;
   border-right: 1px solid rgba(180, 176, 143, 0.3);
   border-left: 1px solid rgba(180, 176, 143, 0.3);
@@ -46,8 +47,8 @@
   gap: 1px;
   position: absolute;
   top: 50%;
-  right: -10px;
-  transform: translateY(-50%);
+  right: -15px;
+  transform: translateY(calc(-50% - 10px));
 }
 
 .grow {
@@ -58,4 +59,14 @@
   display: flex;
   width: 100%;
   gap: 8px;
+}
+
+.connectionsLabel {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 1;
+  font-size: 12px;
 }
