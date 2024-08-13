@@ -46,7 +46,7 @@
 .infoContainer {
   opacity: 0;
   position: absolute;
-  min-width: 550px;
+  width: 550px;
   z-index: 100;
   top: 40px;
   bottom: -120px;

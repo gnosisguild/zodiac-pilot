@@ -2,29 +2,8 @@
   padding: 0px !important;
 }
 
-.routeContainer {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  align-self: stretch;
-}
-
-.routeIconContainer {
-  display: flex;
-  padding: var(--spacing-1);
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  border-radius: 4px;
-  border: 1px solid #B4B08F;
-  background: rgba(217, 212, 173, 0.10);
-  backdrop-filter: blur(6px);
-  width: 20px;
-  height: 20px;
-}
-
-.routesLink{
-  color: #B4B08F;
+.routesLink {
+  color: #b4b08f;
   font-family: Spectral;
   font-size: 12px;
   font-style: normal;
@@ -43,15 +22,16 @@
   min-width: 165px;
 }
 .routeModContainer {
-  padding: 10px;
+  padding-left: 10px;
   display: flex;
   position: relative;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
+  overflow-x: auto;
   gap: 8px;
-  border-right: 1px solid rgba(180, 176, 143, 0.30);
-  border-left: 1px solid rgba(180, 176, 143, 0.30);
+  border-right: 1px solid rgba(180, 176, 143, 0.3);
+  border-left: 1px solid rgba(180, 176, 143, 0.3);
 }
 
 .routeArrowContainer {
@@ -67,8 +47,8 @@
   gap: 1px;
   position: absolute;
   top: 50%;
-  right: -10px;
-  transform: translateY(-50%);
+  right: -15px;
+  transform: translateY(calc(-50% - 10px));
 }
 
 .grow {
@@ -79,4 +59,14 @@
   display: flex;
   width: 100%;
   gap: 8px;
+}
+
+.connectionsLabel {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  line-height: 1;
+  font-size: 12px;
 }
