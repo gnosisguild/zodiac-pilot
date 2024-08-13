@@ -9,6 +9,7 @@ interface Props {
   data: Result
 }
 const DecodedTransaction: React.FC<Props> = ({ functionFragment, data }) => {
+  console.log(data, functionFragment.inputs)
   return (
     <div className={classes.transaction}>
       {functionFragment.inputs.length > 0 && (
@@ -19,7 +20,7 @@ const DecodedTransaction: React.FC<Props> = ({ functionFragment, data }) => {
                 {input.name} <i className={classes.inputType}>{input.type}</i>
               </span>
               <Box p={1} bg>
-                <input type="text" value={data[i]} readOnly />
+                <input type="text" value={data[i].toString()} readOnly />
               </Box>
             </label>
           ))}
