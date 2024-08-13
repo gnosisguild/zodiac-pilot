@@ -100,24 +100,24 @@ class ForkProvider extends EventEmitter {
       }
 
       case 'personal_sign': {
-        if (params[1].toLowerCase() !== this.avatarAddress.toLowerCase()) {
+        const [message, from] = params
+        if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
           throw new Error('personal_sign only supported for the avatar address')
         }
-        const signTx = signMessage(params[0])
+        const signTx = signMessage(message)
         const safeTxHash = await this.sendMetaTransaction(signTx)
 
         console.log('message signed', {
           safeTxHash,
-          messageHash: hashMessage(params[0]),
+          messageHash: hashMessage(message),
         })
 
         return '0x'
       }
       case 'eth_signTypedData':
       case 'eth_signTypedData_v4': {
-        console.log('eth_signTypedData_v4', params)
-        const [account, dataString] = params
-        if (account.toLowerCase() !== this.avatarAddress.toLowerCase()) {
+        const [from, dataString] = params
+        if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
           throw new Error(
             'eth_signTypedData_v4 only supported for the avatar address'
           )
