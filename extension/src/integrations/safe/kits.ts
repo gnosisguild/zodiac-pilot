@@ -1,7 +1,7 @@
 import Safe from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
 import { ChainId } from 'ser-kit'
-import { getEip1193ReadOnlyProvider } from '../../providers/readOnlyProvider'
+import { RPC } from '../../chains'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global/api',
@@ -32,7 +32,8 @@ export const initSafeProtocolKit = async (
   safeAddress: string
 ) => {
   return await Safe.init({
-    provider: getEip1193ReadOnlyProvider(chainId),
+    // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
+    provider: RPC[chainId],
     safeAddress,
   })
 }
