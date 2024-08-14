@@ -3,16 +3,17 @@ import React, {
   ReactNode,
   useCallback,
   useContext,
-  useMemo,
+  useEffect,
+  useRef,
 } from 'react'
 
-import { ForkProvider, useTenderlyProvider } from '../providers'
+import { ForkProvider } from '../providers'
 import { useRoute } from '../routes'
 import { Eip1193Provider } from '../types'
 import { useDispatch, useNewTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ExecutionStatus } from '../state/reducer'
-import { AbiCoder, BrowserProvider, TransactionReceipt } from 'ethers'
+import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   ConnectionType,
   execute,
@@ -22,12 +23,16 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
+import { useBeforeUnload } from '../utils'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 interface Props {
   children: ReactNode
 }
 
-const ProviderContext = createContext<Eip1193Provider | null>(null)
+const ProviderContext = createContext<
+  (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
+>(null)
 export const useProvider = () => useContext(ProviderContext)
 
 const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
@@ -37,7 +42,6 @@ export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 const ProvideProvider: React.FC<Props> = ({ children }) => {
   const { provider, route, chainId } = useRoute()
-  const tenderlyProvider = useTenderlyProvider()
   const dispatch = useDispatch()
   const transactions = useNewTransactions()
 
@@ -53,98 +57,115 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       parsePrefixedAddress(avatarWaypoint.connection.from)) ||
     []
 
-  const forkProvider = useMemo(
-    () =>
-      tenderlyProvider &&
-      new ForkProvider(tenderlyProvider, {
-        avatarAddress,
-        moduleAddress:
-          connectionType === ConnectionType.IS_ENABLED
-            ? connectedFrom
-            : undefined,
-        ownerAddress:
-          connectionType === ConnectionType.OWNS ? connectedFrom : undefined,
+  const moduleAddress =
+    connectionType === ConnectionType.IS_ENABLED ? connectedFrom : undefined
+  const ownerAddress =
+    connectionType === ConnectionType.OWNS ? connectedFrom : undefined
 
-        async onBeforeTransactionSend(snapshotId, transaction) {
-          // Immediately update the state with the transaction so that the UI can show it as pending.
-          dispatch({
-            type: 'APPEND_TRANSACTION',
-            payload: { transaction, snapshotId },
-          })
+  const onBeforeTransactionSend = useCallback(
+    async (snapshotId: string, transaction: MetaTransactionData) => {
+      // Immediately update the state with the transaction so that the UI can show it as pending.
+      dispatch({
+        type: 'APPEND_TRANSACTION',
+        payload: { transaction, snapshotId },
+      })
 
-          // Now we can take some time decoding the transaction and we update the state once that's done.
-          const contractInfo = await fetchContractInfo(
-            transaction.to as `0x${string}`,
-            chainId
-          )
-          dispatch({
-            type: 'DECODE_TRANSACTION',
-            payload: {
-              snapshotId,
-              contractInfo,
-            },
-          })
+      // Now we can take some time decoding the transaction and we update the state once that's done.
+      const contractInfo = await fetchContractInfo(
+        transaction.to as `0x${string}`,
+        chainId
+      )
+      dispatch({
+        type: 'DECODE_TRANSACTION',
+        payload: {
+          snapshotId,
+          contractInfo,
         },
-
-        async onTransactionSent(snapshotId, transactionHash) {
-          dispatch({
-            type: 'CONFIRM_TRANSACTION',
-            payload: {
-              snapshotId,
-              transactionHash,
-            },
-          })
-
-          const receipt = await new BrowserProvider(
-            tenderlyProvider
-          ).getTransactionReceipt(transactionHash)
-          if (!receipt?.status) {
-            dispatch({
-              type: 'UPDATE_TRANSACTION_STATUS',
-              payload: {
-                snapshotId,
-                status: ExecutionStatus.REVERTED,
-              },
-            })
-            return
-          }
-
-          if (
-            receipt.logs.length === 1 &&
-            connectionType === ConnectionType.IS_ENABLED &&
-            isExecutionFromModuleFailure(
-              receipt.logs[0],
-              avatarAddress,
-              connectedFrom
-            )
-          ) {
-            dispatch({
-              type: 'UPDATE_TRANSACTION_STATUS',
-              payload: {
-                snapshotId,
-                status: ExecutionStatus.MODULE_TRANSACTION_REVERTED,
-              },
-            })
-          } else {
-            dispatch({
-              type: 'UPDATE_TRANSACTION_STATUS',
-              payload: {
-                snapshotId,
-                status: ExecutionStatus.SUCCESS,
-              },
-            })
-          }
-        },
-      }),
-    [
-      tenderlyProvider,
-      avatarAddress,
-      connectionType,
-      connectedFrom,
-      chainId,
-      dispatch,
-    ]
+      })
+    },
+    [chainId, dispatch]
   )
+
+  const onTransactionSent = useCallback(
+    async (
+      snapshotId: string,
+      transactionHash: string,
+      provider: Eip1193Provider
+    ) => {
+      dispatch({
+        type: 'CONFIRM_TRANSACTION',
+        payload: {
+          snapshotId,
+          transactionHash,
+        },
+      })
+
+      const receipt = await new BrowserProvider(provider).getTransactionReceipt(
+        transactionHash
+      )
+      if (!receipt?.status) {
+        dispatch({
+          type: 'UPDATE_TRANSACTION_STATUS',
+          payload: {
+            snapshotId,
+            status: ExecutionStatus.FAILED,
+          },
+        })
+        return
+      }
+
+      if (
+        receipt.logs.length === 1 &&
+        isExecutionFailure(receipt.logs[0], avatarAddress, moduleAddress)
+      ) {
+        dispatch({
+          type: 'UPDATE_TRANSACTION_STATUS',
+          payload: {
+            snapshotId,
+            status: ExecutionStatus.META_TRANSACTION_REVERTED,
+          },
+        })
+      } else {
+        dispatch({
+          type: 'UPDATE_TRANSACTION_STATUS',
+          payload: {
+            snapshotId,
+            status: ExecutionStatus.SUCCESS,
+          },
+        })
+      }
+    },
+    [dispatch, avatarAddress, moduleAddress]
+  )
+
+  const forkProviderRef = useRef<ForkProvider | null>(null)
+
+  // whenever anything changes in the connection settings, we delete the current fork and start afresh
+  useEffect(() => {
+    forkProviderRef.current = new ForkProvider({
+      chainId,
+      avatarAddress,
+      moduleAddress,
+      ownerAddress,
+      onBeforeTransactionSend,
+      onTransactionSent,
+    })
+    return () => {
+      forkProviderRef.current?.deleteFork()
+    }
+  }, [
+    chainId,
+    avatarAddress,
+    moduleAddress,
+    ownerAddress,
+    onBeforeTransactionSend,
+    onTransactionSent,
+  ])
+
+  // delete fork when closing browser tab (the effect teardown won't be executed in that case)
+  useBeforeUnload(() => {
+    forkProviderRef.current?.deleteFork()
+  })
 
   const submitTransactions = useCallback(async () => {
     const metaTransactions = transactions.map((txState) => txState.transaction)
@@ -188,8 +209,12 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     return batchTransactionHash
   }, [transactions, provider, dispatch, route])
 
+  if (!forkProviderRef.current) {
+    return null
+  }
+
   return (
-    <ProviderContext.Provider value={forkProvider}>
+    <ProviderContext.Provider value={forkProviderRef.current}>
       <SubmitTransactionsContext.Provider value={submitTransactions}>
         {children}
       </SubmitTransactionsContext.Provider>
@@ -199,17 +224,20 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
 
 export default ProvideProvider
 
-const isExecutionFromModuleFailure = (
+const isExecutionFailure = (
   log: TransactionReceipt['logs'][0],
   avatarAddress: string,
   moduleAddress?: string
 ) => {
-  return (
-    log.address.toLowerCase() === avatarAddress.toLowerCase() &&
-    log.topics[0] ===
-      '0xacd2c8702804128fdb0db2bb49f6d127dd0181c13fd45dbfe16de0930e2bd375' && // ExecutionFromModuleFailure(address)
-    (!moduleAddress ||
+  if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) return false
+
+  if (moduleAddress) {
+    return (
+      log.topics[0] === id('ExecutionFromModuleFailure(address)') &&
       log.topics[1] ===
-        AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress]))
-  )
+        AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress])
+    )
+  } else {
+    return log.topics[0] === id('ExecutionFailure(bytes32, uint256)')
+  }
 }

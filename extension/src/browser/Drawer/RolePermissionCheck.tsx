@@ -4,7 +4,7 @@ import { RiGroupLine } from 'react-icons/ri'
 
 import { Flex, Tag } from '../../components'
 import { useApplicableTranslation } from '../../transactionTranslations'
-import { JsonRpcError, Route } from '../../types'
+import { Eip1193Provider, JsonRpcError, Route } from '../../types'
 import { decodeRolesV1Error } from '../../utils'
 import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
 
@@ -12,8 +12,6 @@ import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
 import { useRoute } from '../../routes'
-import { useTenderlyProvider } from '../../providers'
-import { TenderlyProvider } from '../../providers/ProvideTenderly'
 import { TransactionState } from '../../state'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
@@ -23,11 +21,12 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
+import { useProvider } from '../ProvideProvider'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
   route: Route,
-  tenderlyProvider: TenderlyProvider
+  provider: Eip1193Provider
 ) => {
   const routeWithInitiator = (
     route.initiator ? route : { ...route, initiator: ZeroAddress }
@@ -50,7 +49,7 @@ const simulateRolesTransaction = async (
   }
 
   try {
-    await tenderlyProvider.request({
+    await provider.request({
       method: 'eth_estimateGas',
       params: [tx],
     })
@@ -86,7 +85,7 @@ const RolePermissionCheck: React.FC<{
 }> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const { route } = useRoute()
-  const tenderlyProvider = useTenderlyProvider()
+  const provider = useProvider()
 
   const translationAvailable = !!useApplicableTranslation(
     transactionState.transaction
@@ -94,11 +93,12 @@ const RolePermissionCheck: React.FC<{
 
   useEffect(() => {
     let canceled = false
+    if (!provider) return
 
     simulateRolesTransaction(
       transactionState.transaction,
       route,
-      tenderlyProvider
+      provider
     ).then((error) => {
       if (!canceled) setError(error)
     })
@@ -106,7 +106,7 @@ const RolePermissionCheck: React.FC<{
     return () => {
       canceled = true
     }
-  }, [transactionState, route, tenderlyProvider])
+  }, [transactionState, route, provider])
 
   if (error === undefined) return null
 

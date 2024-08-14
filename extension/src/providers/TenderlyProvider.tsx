@@ -1,137 +1,25 @@
 import EventEmitter from 'events'
 
-import React, { useContext, useEffect, useMemo } from 'react'
 import { customAlphabet } from 'nanoid'
 
-import { useRoute } from '../routes'
 import { JsonRpcRequest } from '../types'
-import { useBeforeUnload } from '../utils'
-import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
 import { getReadOnlyProvider } from './readOnlyProvider'
 import { ChainId } from 'ser-kit'
-import { asLegacyConnection } from '../routes/legacyConnectionMigrations'
 import { JsonRpcProvider } from 'ethers'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
-const TenderlyContext = React.createContext<TenderlyProvider | null>(null)
-
-export const useTenderlyProvider = (): TenderlyProvider => {
-  const value = useContext(TenderlyContext)
-  if (!value) throw new Error('must be wrapped in <ProvideTenderly>')
-  return value
-}
-
-const ProvideTenderly: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { chainId, route } = useRoute()
-  const { avatarAddress, moduleAddress, pilotAddress } =
-    asLegacyConnection(route)
-
-  const tenderlyProvider = useMemo(() => {
-    return new TenderlyProvider(chainId)
-  }, [chainId])
-
-  // whenever anything changes in the connection settings, we delete the current fork and start afresh
-  useEffect(() => {
-    prepareSafeForSimulation(
-      { chainId, avatarAddress, moduleAddress, pilotAddress },
-      tenderlyProvider
-    )
-
-    return () => {
-      tenderlyProvider.deleteFork()
-    }
-  }, [tenderlyProvider, chainId, avatarAddress, moduleAddress, pilotAddress])
-
-  // delete fork when closing browser tab (the effect teardown won't be executed in that case)
-  useBeforeUnload(() => {
-    if (tenderlyProvider) tenderlyProvider.deleteFork()
-  })
-
-  if (!tenderlyProvider) return null
-
-  return (
-    <TenderlyContext.Provider value={tenderlyProvider}>
-      {children}
-    </TenderlyContext.Provider>
-  )
-}
-
-export default ProvideTenderly
-
-async function prepareSafeForSimulation(
-  {
-    chainId,
-    avatarAddress,
-    moduleAddress,
-    pilotAddress,
-  }: {
-    chainId: ChainId
-    avatarAddress: string
-    moduleAddress?: string
-    pilotAddress?: string
-  },
-  tenderlyProvider: TenderlyProvider
-) {
-  const safe = await initSafeProtocolKit(chainId, avatarAddress)
-
-  // If we simulate as a Safe owner, we might have to override the owners & threshold of the Safe to allow single signature transactions
-  if (!moduleAddress) {
-    const [owners, threshold] = await Promise.all([
-      safe.getOwners(),
-      safe.getThreshold(),
-    ])
-
-    // default to first owner if no pilot address is provided
-    if (!pilotAddress) pilotAddress = owners[0]
-
-    const pilotIsOwner = owners.some(
-      (owner) => owner.toLowerCase() === pilotAddress!.toLowerCase()
-    )
-
-    if (!pilotIsOwner) {
-      // the pilot account is not an owner, so we need to make it one and set the threshold to 1 at the same time
-      await tenderlyProvider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: avatarAddress,
-            data: safeInterface.encodeFunctionData('addOwnerWithThreshold', [
-              pilotAddress,
-              1,
-            ]),
-            from: avatarAddress,
-          },
-        ],
-      })
-    } else if (threshold > 1) {
-      // doesn't allow to execute with single signature, so we need to override the threshold
-      await tenderlyProvider.request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: avatarAddress,
-            data: safeInterface.encodeFunctionData('changeThreshold', [1]),
-            from: avatarAddress,
-          },
-        ],
-      })
-    }
-  }
-}
-
-export class TenderlyProvider extends EventEmitter {
+export default class TenderlyProvider extends EventEmitter {
   private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 
   private vnetId: string | undefined
-  private publicRpcSlug: string | undefined
   private blockNumber: number | undefined
 
   private tenderlyVnetApi: string
   private throttledIncreaseBlock: () => void
+
+  publicRpc: string | undefined
 
   constructor(chainId: ChainId) {
     super()
@@ -193,21 +81,12 @@ export class TenderlyProvider extends EventEmitter {
     return result
   }
 
-  async refork() {
-    this.deleteFork()
-    this.forkProviderPromise = this.createFork(this.chainId)
-    return await this.forkProviderPromise
-  }
-
   async deleteFork() {
-    // notify the background script to stop intercepting JSON RPC requests
-    window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
-
     await this.forkProviderPromise
     if (!this.vnetId) return
 
     this.vnetId = undefined
-    this.publicRpcSlug = undefined
+    this.publicRpc = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
 
@@ -219,7 +98,9 @@ export class TenderlyProvider extends EventEmitter {
   }
 
   getTransactionLink(txHash: string) {
-    return `https://dashboard.tenderly.co/explorer/vnet/${this.publicRpcSlug}/tx/${txHash}`
+    if (!this.publicRpc) throw new Error('Public RPC not available')
+    const publicRpcSlug = this.publicRpc.split('/').pop()
+    return `https://dashboard.tenderly.co/explorer/vnet/${publicRpcSlug}/tx/${txHash}`
   }
 
   private async createFork(
@@ -257,25 +138,12 @@ export class TenderlyProvider extends EventEmitter {
     this.blockNumber = json.fork_config.block_number
 
     const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url
-    const publicRpc = json.rpcs.find(
-      (rpc: any) => rpc.name === 'Public RPC'
-    ).url
-    this.publicRpcSlug = publicRpc.split('/').pop()
-
-    // notify the background script to start intercepting JSON RPC requests
-    // we use the public RPC for requests originating from apps
-    window.postMessage(
-      {
-        type: 'startSimulating',
-        toBackground: true,
-        networkId,
-        rpcUrl: publicRpc,
-      },
-      '*'
-    )
+    this.publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC').url
 
     // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
-    return new JsonRpcProvider(adminRpc)
+    const provider = new JsonRpcProvider(adminRpc, this.chainId)
+
+    return provider
   }
 
   private increaseBlock = async () => {
