@@ -98,7 +98,7 @@ export default class TenderlyProvider extends EventEmitter {
   }
 
   getTransactionLink(txHash: string) {
-    if (!this.publicRpc) throw new Error('Public RPC not available')
+    if (!this.publicRpc) return ''
     const publicRpcSlug = this.publicRpc.split('/').pop()
     return `https://dashboard.tenderly.co/explorer/vnet/${publicRpcSlug}/tx/${txHash}`
   }
