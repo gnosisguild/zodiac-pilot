@@ -12,7 +12,7 @@ import ProvideProvider from './browser/ProvideProvider'
 import { ProvideState } from './state'
 import ZodiacToastContainer from './components/Toast'
 import { pushLocation } from './location'
-import { ProvideMetaMask, ProvideTenderly } from './providers'
+import { ProvideMetaMask } from './providers'
 import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
 import { ProvideRoutes } from './routes'
 import { useRoutes, useUpdateLastUsedRoute } from './routes/routeHooks'
@@ -55,12 +55,10 @@ root.render(
     <ProvideState>
       <ProvideRoutes>
         <ProvideMetaMask>
-          <ProvideTenderly>
-            <ProvideProvider>
-              <Routes />
-              <ZodiacToastContainer />
-            </ProvideProvider>
-          </ProvideTenderly>
+          <ProvideProvider>
+            <Routes />
+            <ZodiacToastContainer />
+          </ProvideProvider>
         </ProvideMetaMask>
       </ProvideRoutes>
     </ProvideState>

@@ -13,6 +13,7 @@ const activeExtensionTabs = new Set<number>()
 
 const startTrackingTab = (tabId: number) => {
   activeExtensionTabs.add(tabId)
+  clearStaleRules()
   updateHeadersRule()
   console.log('Pilot: started tracking tab', tabId)
 }
@@ -21,6 +22,7 @@ const stopTrackingTab = (tabId: number) => {
   removeRpcRedirectRules(tabId)
   activeExtensionTabs.delete(tabId)
   simulatingExtensionTabs.delete(tabId)
+  clearStaleRules()
   updateHeadersRule()
   console.log('Pilot: stopped tracking tab', tabId)
 }
@@ -99,12 +101,10 @@ chrome.action.onClicked.addListener(toggle)
 // a fork network.
 const simulatingExtensionTabs = new Map<number, Fork>()
 
-// Hash the RPC URL+ tab ID to a number, so we can use it as a declarativeNetRequest rule ID.
+// Hash the RPC URL + tab ID to a number, so we can use it as a declarativeNetRequest rule ID.
 // Implementation taken from https://github.com/darkskyapp/string-hash (CC0 Public Domain)
 function hash(rpcUrl: string, tabId: number) {
-  const urlComponents = rpcUrl.split('/')
-  const forkId = urlComponents[urlComponents.length - 1]
-  const str = `${tabId}:${forkId}`
+  const str = `${tabId}:${rpcUrl}`
   const MAX_RULE_ID = 0xffffff // chrome throws an error if the rule ID is too large ("expected integer, got number")
 
   let hash = 5381,
@@ -118,6 +118,46 @@ function hash(rpcUrl: string, tabId: number) {
    * integers. Since we want the results to be always positive, convert the
    * signed int to an unsigned by doing an unsigned bitshift. */
   return (hash >>> 0) % MAX_RULE_ID
+}
+
+async function clearStaleRules() {
+  const openTabIds = await new Promise<Set<number>>((resolve) => {
+    chrome.tabs.query({}, (tabs) => {
+      resolve(new Set(tabs.map((tab) => tab.id).filter(Boolean) as number[]))
+    })
+  })
+
+  // clear activeExtensionTabs that are not open anymore
+  activeExtensionTabs.difference(openTabIds).forEach((tabId) => {
+    activeExtensionTabs.delete(tabId)
+  })
+  console.log({ activeExtensionTabs, openTabIds })
+
+  // clear simulatingExtensionTabs that are not active (= extension is activated) anymore
+  const simulatingTabIds = new Set(simulatingExtensionTabs.keys())
+  simulatingTabIds.difference(activeExtensionTabs).forEach((tabId) => {
+    simulatingExtensionTabs.delete(tabId)
+  })
+
+  // remove rules for tabs that are not simulating anymore
+  const staleRules = await new Promise<chrome.declarativeNetRequest.Rule[]>(
+    (resolve) => {
+      chrome.declarativeNetRequest.getSessionRules((rules) => {
+        resolve(
+          rules.filter(
+            (rule) =>
+              rule.condition.tabIds?.length === 1 &&
+              !simulatingExtensionTabs.has(rule.condition.tabIds[0])
+          )
+        )
+      })
+    }
+  )
+  chrome.declarativeNetRequest.updateSessionRules({
+    removeRuleIds: staleRules.map((r) => r.id),
+  })
+
+  console.debug('Cleared stale rules', staleRules)
 }
 
 const updateRpcRedirectRules = (tabId: number) => {
@@ -156,6 +196,10 @@ const updateRpcRedirectRules = (tabId: number) => {
     addRules,
     removeRuleIds: ruleIds,
   })
+
+  chrome.declarativeNetRequest.getSessionRules((rules) => {
+    console.debug('RPC redirect rules updated', tabId, rules)
+  })
 }
 
 const removeRpcRedirectRules = (tabId: number) => {
@@ -175,9 +219,6 @@ const removeRpcRedirectRules = (tabId: number) => {
       'https://virtual.mainnet.rpc.tenderly.co/880388c4-9707-46ce-97a5-1095090a6768',
       735219801
     )
-  )
-  chrome.declarativeNetRequest.getSessionRules((rules) =>
-    console.log('removeRpcRedirectRules getSessionRules', rules)
   )
 }
 
@@ -202,6 +243,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
       rpcUrl
     )
   }
+
   if (message.type === 'stopSimulating') {
     console.log('stopSimulating', sender.tab.id, { simulatingExtensionTabs })
     simulatingExtensionTabs.delete(sender.tab.id)
@@ -232,6 +274,9 @@ chrome.webRequest.onBeforeRequest.addListener(
     if (details.method !== 'POST') return
     // don't consider requests that are already redirected to the fork RPC
     if (details.url === simulatingExtensionTabs.get(details.tabId)?.rpcUrl)
+      return
+    // ignore requests to fork RPCs
+    if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/'))
       return
     // only consider requests with a JSON RPC body
     if (!getJsonRpcBody(details)) return

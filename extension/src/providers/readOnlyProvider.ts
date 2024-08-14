@@ -103,13 +103,14 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
         return toQuantity(result)
       }
 
+      case 'eth_requestAccounts':
       case 'eth_sendTransaction':
       case 'eth_signTypedData':
       case 'eth_signTypedData_v3':
       case 'eth_signTypedData_v4':
       case 'personal_sign':
       case 'eth_sign': {
-        throw new Error(`${method} requires signing`)
+        throw new Error(`${method} not supported by read-only provider`)
       }
 
       default: {

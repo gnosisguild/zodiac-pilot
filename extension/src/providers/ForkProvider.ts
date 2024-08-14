@@ -1,18 +1,21 @@
 import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { BrowserProvider, toQuantity } from 'ethers'
-import {
-  MetaTransactionData,
-  TransactionOptions,
-} from '@safe-global/safe-core-sdk-types'
-import { generatePreValidatedSignature } from '@safe-global/protocol-kit/dist/src/utils'
+import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 import { Eip1193Provider, TransactionData } from '../types'
-import { TenderlyProvider } from './ProvideTenderly'
-import { safeInterface } from '../integrations/safe'
+import TenderlyProvider from './TenderlyProvider'
+import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
 import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
-import { typedDataHash } from '../integrations/safe/signing'
+import {
+  hashMessage,
+  signMessage,
+  signTypedData,
+  typedDataHash,
+} from '../integrations/safe/signing'
+import { ChainId } from 'ser-kit'
+import { decodeGenericError } from '../utils'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -23,39 +26,47 @@ interface Handlers {
     checkpointId: string,
     metaTx: MetaTransactionData
   ): void
-  onTransactionSent(checkpointId: string, hash: string): void
+  onTransactionSent(
+    checkpointId: string,
+    hash: string,
+    provider: Eip1193Provider
+  ): void
 }
 
+/** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
 class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
-  private handlers: Handlers
-  private avatarAddress: string
 
+  private chainId: ChainId
+  private avatarAddress: string
   private moduleAddress: string | undefined
   private ownerAddress: string | undefined
+
+  private handlers: Handlers
 
   private blockGasLimitPromise: Promise<bigint>
 
   private pendingMetaTransaction: Promise<any> | undefined
+  private isInitialized = false
 
-  constructor(
-    provider: TenderlyProvider,
-    {
-      avatarAddress,
-      moduleAddress,
-      ownerAddress,
+  constructor({
+    chainId,
+    avatarAddress,
+    moduleAddress,
+    ownerAddress,
 
-      ...handlers
-    }: {
-      avatarAddress: string
-      /** If set, will simulate the transaction though an `execTransactionFromModule` call */
-      moduleAddress?: string
-      /** If set, will simulate the transaction though an `execTransaction` call */
-      ownerAddress?: string
-    } & Handlers
-  ) {
+    ...handlers
+  }: {
+    chainId: ChainId
+    avatarAddress: string
+    /** If set, will simulate transactions using respective `execTransactionFromModule` calls */
+    moduleAddress?: string
+    /** If set, will enable the the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
+    ownerAddress?: string
+  } & Handlers) {
     super()
-    this.provider = provider
+    this.chainId = chainId
+    this.provider = new TenderlyProvider(chainId)
     this.avatarAddress = avatarAddress
     this.moduleAddress = moduleAddress
     this.ownerAddress = ownerAddress
@@ -91,38 +102,63 @@ class ForkProvider extends EventEmitter {
       }
 
       case 'eth_sign': {
-        // TODO support this via Safe's SignMessageLib
         throw new UnsupportedMethodError('eth_sign is not supported')
       }
 
+      case 'personal_sign': {
+        const [message, from] = params
+        if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
+          throw new Error('personal_sign only supported for the avatar address')
+        }
+        const signTx = signMessage(message)
+        const safeTxHash = await this.sendMetaTransaction(signTx)
+
+        console.log('message signed', {
+          safeTxHash,
+          messageHash: hashMessage(message),
+        })
+
+        return '0x'
+      }
+      case 'eth_signTypedData':
       case 'eth_signTypedData_v4': {
-        console.log('eth_signTypedData_v4', params)
+        const [from, dataString] = params
+        if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
+          throw new Error(
+            'eth_signTypedData_v4 only supported for the avatar address'
+          )
+        }
+        const data = JSON.parse(dataString)
+
+        const dataHash = typedDataHash(data)
+        const safeMessageHash = await safeInterface.encodeFunctionData(
+          'getMessageHashForSafe',
+          [this.avatarAddress, dataHash]
+        )
 
         // special handling for Snapshot vote signatures
-        const tx = translateSignSnapshotVote(params[0] || {})
-        if (tx) {
-          const safeTxHash = await this.sendMetaTransaction(tx)
+        const snapshotVoteTx = translateSignSnapshotVote(data || {})
+        if (snapshotVoteTx) {
+          const safeTxHash = await this.sendMetaTransaction(snapshotVoteTx)
 
-          // TODO we don't even need this, but for now we keep it for debugging purposes
-          const safeMessageHash = await safeInterface.encodeFunctionData(
-            'getMessageHashForSafe',
-            [this.avatarAddress, typedDataHash(params[0])]
-          )
-          console.log('Snapshot vote signed', {
+          console.log('Snapshot vote EIP-712 message signed', {
             safeTxHash,
             safeMessageHash,
-            typedDataHash: typedDataHash(params[0]),
+            typedDataHash: dataHash,
           })
+        } else {
+          // default EIP-712 signature handling
+          const signTx = signTypedData(data)
+          const safeTxHash = await this.sendMetaTransaction(signTx)
 
-          // The Safe App SDK expects a response in the format of `{ safeTxHash }` for on-chain signatures.
-          // So we make the safeTxHash available by returning it as the signature.
-          return safeTxHash
+          console.log('EIP-712 message signed', {
+            safeTxHash,
+            safeMessageHash,
+            typedDataHash: dataHash,
+          })
         }
 
-        // TODO support this via Safe's SignMessageLib
-        throw new UnsupportedMethodError(
-          'eth_signTypedData_v4 is not supported'
-        )
+        return '0x'
       }
 
       case 'eth_sendTransaction': {
@@ -155,18 +191,23 @@ class ForkProvider extends EventEmitter {
     const send = this.pendingMetaTransaction
       ? async () => {
           await this.pendingMetaTransaction
-          return await this._sendMetaTransaction(metaTx)
+          return await this.sendMetaTransactionIsSeries(metaTx)
         }
-      : async () => await this._sendMetaTransaction(metaTx)
+      : async () => await this.sendMetaTransactionIsSeries(metaTx)
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
     return await this.pendingMetaTransaction
   }
 
-  private async _sendMetaTransaction(
+  private async sendMetaTransactionIsSeries(
     metaTx: MetaTransactionData
   ): Promise<string> {
+    if (!this.isInitialized) {
+      // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
+      await this.initFork()
+    }
+
     const isDelegateCall = metaTx.operation === 1
     if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
       throw new Error('delegatecall requires moduleAddress or ownerAddress')
@@ -183,48 +224,63 @@ class ForkProvider extends EventEmitter {
 
     this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
 
+    let from = this.moduleAddress || this.ownerAddress || DUMMY_MODULE_ADDRESS
+    if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
+
     // correctly route the meta tx through the avatar
-    let tx: TransactionData & TransactionOptions
-    if (this.moduleAddress) {
-      tx = execTransactionFromModule(
-        metaTx,
-        this.avatarAddress,
-        this.moduleAddress,
-        await this.blockGasLimitPromise
-      )
-    } else if (this.ownerAddress) {
-      tx = execTransaction(
-        metaTx,
-        this.avatarAddress,
-        this.ownerAddress,
-        await this.blockGasLimitPromise
-      )
-    } else {
-      // no module or owner address, simulate with avatar as sender
-      // note: this is a theoretical case only atm
-      tx = {
-        to: metaTx.to,
-        data: metaTx.data,
-        value: toQuantity(BigInt(metaTx.value)),
-        from: this.avatarAddress,
-      }
-    }
+    const tx = execTransactionFromModule(
+      metaTx,
+      this.avatarAddress,
+      from,
+      await this.blockGasLimitPromise
+    )
 
     // execute transaction in fork
     const result = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [tx],
     })
-    this.handlers.onTransactionSent(checkpointId, result)
+    this.handlers.onTransactionSent(checkpointId, result, this.provider)
     return result
   }
 
-  async refork(): Promise<void> {
-    await this.provider.refork()
+  async initFork(): Promise<void> {
+    console.log('Initializing fork for simulation...')
+
+    await prepareSafeForSimulation(
+      {
+        chainId: this.chainId,
+        avatarAddress: this.avatarAddress,
+        moduleAddress: this.moduleAddress,
+        ownerAddress: this.ownerAddress,
+      },
+      this.provider
+    )
+
+    // notify the background script to start intercepting JSON RPC requests
+    // we use the public RPC for requests originating from apps
+    window.postMessage(
+      {
+        type: 'startSimulating',
+        toBackground: true,
+        networkId: this.chainId,
+        rpcUrl: this.provider.publicRpc,
+      },
+      '*'
+    )
+
+    this.isInitialized = true
   }
 
   async deleteFork(): Promise<void> {
+    // notify the background script to stop intercepting JSON RPC requests
+    window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
     await this.provider.deleteFork()
+    this.isInitialized = false
+  }
+
+  getTransactionLink(txHash: string) {
+    return this.provider.getTransactionLink(txHash)
   }
 }
 
@@ -260,43 +316,56 @@ const execTransactionFromModule = (
 }
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-/** Encode an execTransaction call by the given owner (address must be an actual owner of the Safe) */
-// for reference: https://github.com/safe-global/safe-wallet-web/blob/dev/src/components/tx/security/tenderly/utils.ts#L213
-export function execTransaction(
-  tx: MetaTransactionData & TransactionOptions & { gas?: string | number },
-  avatarAddress: string,
-  ownerAddress: string,
-  blockGasLimit: bigint
-): TransactionData & { gas?: string } {
-  const signature = generatePreValidatedSignature(ownerAddress)
-  const data = safeInterface.encodeFunctionData('execTransaction', [
-    tx.to,
-    tx.value,
-    tx.data,
-    tx.operation,
-    tx.gasLimit || tx.gas || 0,
-    0,
-    tx.gasPrice || 0,
-    ZERO_ADDRESS,
-    ZERO_ADDRESS,
-    signature.staticPart() + signature.dynamicPart(),
-  ])
-
-  return {
-    to: avatarAddress,
-    data,
-    value: '0x0',
-    from: ownerAddress,
-    // We simulate setting the entire block gas limit as the gas limit for the transaction
-    gas: toQuantity(blockGasLimit / 2n), // for some reason tenderly errors when passing the full block gas limit
-    // With gas price 0 account don't need token for gas
-    // gasPrice: '0x0', // doesn't seem to be required
-  }
-}
+const DUMMY_MODULE_ADDRESS = '0xfacade0000000000000000000000000000000000'
 
 const readBlockGasLimit = async (provider: Eip1193Provider) => {
   const browserProvider = new BrowserProvider(provider)
   const block = await browserProvider.getBlock('latest')
   return block?.gasLimit || 30_000_000n
+}
+
+async function prepareSafeForSimulation(
+  {
+    chainId,
+    avatarAddress,
+    moduleAddress,
+    ownerAddress,
+  }: {
+    chainId: ChainId
+    avatarAddress: string
+    moduleAddress?: string
+    ownerAddress?: string
+  },
+  provider: TenderlyProvider
+) {
+  const safe = await initSafeProtocolKit(chainId, avatarAddress)
+
+  // If we simulate as a Safe owner, we could either use execTransaction and override the threshold to 1.
+  // However, enabling the owner as a module seems like a more simple approach.
+
+  let from = moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
+  if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
+
+  const iface = safe.getContractManager().safeContract?.contract.interface
+  if (!iface) {
+    throw new Error('Safe contract not found')
+  }
+
+  try {
+    await provider.request({
+      method: 'eth_sendTransaction',
+      params: [
+        {
+          to: avatarAddress,
+          data: iface.encodeFunctionData('enableModule', [from]),
+          from: avatarAddress,
+        },
+      ],
+    })
+  } catch (e) {
+    // ignore revert indicating that the module is already enabled
+    if (decodeGenericError(e as any) !== 'GS102') {
+      throw e
+    }
+  }
 }

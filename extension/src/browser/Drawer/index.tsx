@@ -52,7 +52,7 @@ const TransactionsDrawer: React.FC = () => {
       throw new Error('This is only supported when using ForkProvider')
     }
 
-    await provider.refork()
+    await provider.deleteFork()
 
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
     for (const transaction of newTransactions) {

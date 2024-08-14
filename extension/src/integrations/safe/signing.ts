@@ -1,6 +1,11 @@
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
-import { Contract, hashMessage, toUtf8String, TypedDataEncoder } from 'ethers'
+import {
+  Contract,
+  hashMessage as ethersHashMessage,
+  toUtf8String,
+  TypedDataEncoder,
+} from 'ethers'
 
 const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0aB83D845Ac265BE939c57F53AD838012c9'
 const SIGN_MESSAGE_LIB_ABI = [
@@ -16,7 +21,7 @@ const signMessageLib = new Contract(
 export const signMessage = (message: string): MetaTransactionData => ({
   to: SIGN_MESSAGE_LIB_ADDRESS,
   data: signMessageLib.interface.encodeFunctionData('signMessage', [
-    hashMessage(decode(message)),
+    hashMessage(message),
   ]),
   value: '0',
   operation: 1,
@@ -39,6 +44,9 @@ export const signTypedData = (data: EIP712TypedData) => {
     operation: 1,
   }
 }
+
+export const hashMessage = (message: string) =>
+  ethersHashMessage(decode(message))
 
 const decode = (message: string): string => {
   if (!message.startsWith('0x')) {

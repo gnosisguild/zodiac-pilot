@@ -2,17 +2,18 @@ import React from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 
 import { Flex, Spinner, Tag } from '../../components'
-import { useTenderlyProvider } from '../../providers'
 
 import classes from './style.module.css'
 import { TransactionState } from '../../state'
 import { ExecutionStatus } from '../../state/reducer'
+import { useProvider } from '../ProvideProvider'
 
 const SimulationStatus: React.FC<{
   transactionState: TransactionState
   mini?: boolean
 }> = ({ transactionState, mini = false }) => {
-  const tenderlyProvider = useTenderlyProvider()
+  const provider = useProvider()
+
   if (mini) {
     return (
       <>
@@ -22,9 +23,9 @@ const SimulationStatus: React.FC<{
         {transactionState.status === ExecutionStatus.SUCCESS && (
           <Tag head={<RiGitBranchLine />} color="success"></Tag>
         )}
-        {transactionState.status === ExecutionStatus.REVERTED ||
+        {transactionState.status === ExecutionStatus.FAILED ||
           (transactionState.status ===
-            ExecutionStatus.MODULE_TRANSACTION_REVERTED && (
+            ExecutionStatus.META_TRANSACTION_REVERTED && (
             <Tag head={<RiGitBranchLine />} color="danger"></Tag>
           ))}
       </>
@@ -56,15 +57,15 @@ const SimulationStatus: React.FC<{
                 Success
               </Tag>
             )}
-            {transactionState.status === ExecutionStatus.REVERTED && (
+            {transactionState.status === ExecutionStatus.FAILED && (
               <Tag head={<RiGitBranchLine />} color="danger">
-                Reverted
+                Failed
               </Tag>
             )}
             {transactionState.status ===
-              ExecutionStatus.MODULE_TRANSACTION_REVERTED && (
+              ExecutionStatus.META_TRANSACTION_REVERTED && (
               <Tag head={<RiGitBranchLine />} color="danger">
-                Module transaction reverted
+                Reverted
               </Tag>
             )}
           </Flex>
@@ -72,7 +73,7 @@ const SimulationStatus: React.FC<{
 
         {transactionState.transactionHash && (
           <a
-            href={tenderlyProvider?.getTransactionLink(
+            href={provider?.getTransactionLink(
               transactionState.transactionHash
             )}
             target="_blank"
