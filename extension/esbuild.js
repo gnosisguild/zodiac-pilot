@@ -3,7 +3,6 @@ const esbuild = require('esbuild')
 const cssModulesPlugin = require('esbuild-css-modules-plugin')
 const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
 const stdLibBrowser = require('node-stdlib-browser')
-const { on } = require('events')
 
 require('dotenv').config()
 

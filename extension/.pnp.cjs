@@ -85,7 +85,7 @@ const RAW_RUNTIME_STATE =
           ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.8.0"],\
           ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ser-kit", "npm:0.3.10"],\
+          ["ser-kit", "npm:0.3.12"],\
           ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"],\
           ["typescript-eslint", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:7.18.0"],\
           ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.1.0"],\
@@ -10261,10 +10261,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["ser-kit", [\
-      ["npm:0.3.10", {\
-        "packageLocation": "./.yarn/cache/ser-kit-npm-0.3.10-5f1f4f21e9-cf9788b578.zip/node_modules/ser-kit/",\
+      ["npm:0.3.12", {\
+        "packageLocation": "./.yarn/cache/ser-kit-npm-0.3.12-5da07f5d4e-224ad1a80e.zip/node_modules/ser-kit/",\
         "packageDependencies": [\
-          ["ser-kit", "npm:0.3.10"],\
+          ["ser-kit", "npm:0.3.12"],\
           ["@safe-global/api-kit", "npm:2.4.4"],\
           ["@safe-global/protocol-kit", "npm:4.0.4"],\
           ["@safe-global/safe-core-sdk-types", "npm:5.0.3"],\
@@ -12458,7 +12458,7 @@ const RAW_RUNTIME_STATE =
           ["react-select", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.8.0"],\
           ["react-toastify", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:9.1.3"],\
           ["rimraf", "npm:3.0.2"],\
-          ["ser-kit", "npm:0.3.10"],\
+          ["ser-kit", "npm:0.3.12"],\
           ["typescript", "patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"],\
           ["typescript-eslint", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:7.18.0"],\
           ["typescript-plugin-css-modules", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:5.1.0"],\

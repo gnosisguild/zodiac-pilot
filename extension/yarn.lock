@@ -8814,15 +8814,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ser-kit@npm:^0.3.10":
-  version: 0.3.10
-  resolution: "ser-kit@npm:0.3.10"
+"ser-kit@npm:^0.3.12":
+  version: 0.3.12
+  resolution: "ser-kit@npm:0.3.12"
   dependencies:
     "@safe-global/api-kit": "npm:^2.4.2"
     "@safe-global/protocol-kit": "npm:^4.0.2"
     "@safe-global/safe-core-sdk-types": "npm:^5.0.2"
     viem: "npm:^2.13.8"
-  checksum: 10/cf9788b578a2b8c38748028cee29d99ce201effdc564690dc9bc6c14411ca16a8d95cb5099314ec186fbc8188a6bb2bc04ba8f638fe1a00a997966ea26232518
+  checksum: 10/224ad1a80e6930de5ac6a2fa5508d7311099d324748a4636d81c55d6607cb96766498803d2c81ff30994d62eeb965a6046eb2187abd47dae59804a6d5bd5f54a
   languageName: node
   linkType: hard
 
@@ -10691,7 +10691,7 @@ __metadata:
     react-select: "npm:^5.2.1"
     react-toastify: "npm:^9.0.8"
     rimraf: "npm:^3.0.2"
-    ser-kit: "npm:^0.3.10"
+    ser-kit: "npm:^0.3.12"
     typescript: "npm:^5.5.4"
     typescript-eslint: "npm:^7.16.0"
     typescript-plugin-css-modules: "npm:^5.1.0"
