@@ -25,17 +25,28 @@ if (window.name === 'pilot-frame') {
     if (message.type === 'requestChainId') {
       fetch(message.url, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           method: 'eth_chainId',
           params: [],
           jsonrpc: '2.0',
-          id: 1,
+          id: Math.floor(Math.random() * 100000000),
         }),
       })
         .then((res) => res.json())
         .then((json) => {
           const networkId = parseInt(json.result)
           respond(networkId && !isNaN(networkId) ? networkId : undefined)
+        })
+        .catch((e) => {
+          console.error(
+            'Failed to determine chainId for endpoint',
+            message.url,
+            e
+          )
+          respond(undefined)
         })
 
       return true // without this the response won't be sent
