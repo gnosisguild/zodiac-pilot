@@ -11,7 +11,6 @@ function inject(windowName: string, scriptPath: string) {
     }
     parent.dataset.zodiacPilotInjected = 'true'
     parent.insertBefore(node, parent.children[0])
-    console.log('parent', parent)
     node.onload = function () {
       node.remove()
     }
