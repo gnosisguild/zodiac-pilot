@@ -3,10 +3,10 @@ import { useCallback } from 'react'
 import { ForkProvider } from '../providers'
 import { useProvider } from '../browser/ProvideProvider'
 
-import { useAllTransactions, useDispatch } from '.'
+import { useTransactions, useDispatch } from '.'
 
 export const useClearTransactions = () => {
-  const transactions = useAllTransactions()
+  const transactions = useTransactions()
   const provider = useProvider()
   const dispatch = useDispatch()
 

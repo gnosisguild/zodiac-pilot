@@ -3,7 +3,7 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useProvider } from '../ProvideProvider'
-import { TransactionState, useDispatch, useNewTransactions } from '../../state'
+import { TransactionState, useDispatch, useTransactions } from '../../state'
 
 import classes from './style.module.css'
 
@@ -15,7 +15,7 @@ type Props = {
 export const Remove: React.FC<Props> = ({ transactionState, index }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
-  const transactions = useNewTransactions()
+  const transactions = useTransactions()
 
   if (!(provider instanceof ForkProvider)) {
     // Removing transactions is only supported when using ForkProvider

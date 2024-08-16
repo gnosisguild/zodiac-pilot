@@ -6,11 +6,7 @@ import reducer, { TransactionState } from './reducer'
 export type { TransactionState }
 
 const TransactionsContext = createContext<TransactionState[]>([])
-export const useAllTransactions = () => useContext(TransactionsContext)
-export const useNewTransactions = () =>
-  useContext(TransactionsContext).filter((tx) => !tx.batchTransactionHash)
-export const usePendingTransactions = () =>
-  useContext(TransactionsContext).filter((tx) => tx.batchTransactionHash)
+export const useTransactions = () => useContext(TransactionsContext)
 
 const DispatchContext = createContext<React.Dispatch<Action> | null>(null)
 export const useDispatch = () => {

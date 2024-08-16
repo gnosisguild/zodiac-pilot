@@ -5,7 +5,7 @@ import { IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '../ProvideProvider'
-import { TransactionState, useDispatch, useNewTransactions } from '../../state'
+import { TransactionState, useDispatch, useTransactions } from '../../state'
 
 import classes from './style.module.css'
 
@@ -22,7 +22,7 @@ export const Translate: React.FC<Props> = ({
 }) => {
   const provider = useProvider()
   const dispatch = useDispatch()
-  const transactions = useNewTransactions()
+  const transactions = useTransactions()
   const translation = useApplicableTranslation(transactionState.transaction)
 
   if (!(provider instanceof ForkProvider)) {

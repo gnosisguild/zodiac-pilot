@@ -49,17 +49,10 @@ interface RemoveTransactionAction {
   }
 }
 
-interface SubmitTransactionsAction {
-  type: 'SUBMIT_TRANSACTIONS'
-  payload: {
-    batchTransactionHash: string
-  }
-}
-
 interface ClearTransactionsAction {
   type: 'CLEAR_TRANSACTIONS'
   payload: {
-    batchTransactionHash: string
+    lastTransactionId: string
   }
 }
 
@@ -69,5 +62,4 @@ export type Action =
   | ConfirmTransactionAction
   | UpdateTransactionStatusAction
   | RemoveTransactionAction
-  | SubmitTransactionsAction
   | ClearTransactionsAction

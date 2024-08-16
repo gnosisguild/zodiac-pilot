@@ -6,22 +6,15 @@ import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../../providers'
 import { useRoute } from '../../routes'
 import { useProvider } from '../ProvideProvider'
-import {
-  useAllTransactions,
-  useDispatch,
-  useNewTransactions,
-} from '../../state'
+import { useDispatch, useTransactions } from '../../state'
 
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
-import { planExecution, Route as SerRoute, ExecutionActionType } from 'ser-kit'
-import { ZeroAddress } from 'ethers'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
-  const allTransactions = useAllTransactions()
-  const newTransactions = useNewTransactions()
+  const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
   const { route } = useRoute()
@@ -34,18 +27,18 @@ const TransactionsDrawer: React.FC = () => {
 
   const lengthRef = useRef(0)
   useEffect(() => {
-    if (newTransactions.length > lengthRef.current) {
-      setScrollItemIntoView(newTransactions.length - 1)
+    if (transactions.length > lengthRef.current) {
+      setScrollItemIntoView(transactions.length - 1)
     }
 
-    lengthRef.current = newTransactions.length
-  }, [newTransactions])
+    lengthRef.current = transactions.length
+  }, [transactions])
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { id: allTransactions[0].id },
+      payload: { id: transactions[0].id },
     })
 
     if (!(provider instanceof ForkProvider)) {
@@ -55,15 +48,13 @@ const TransactionsDrawer: React.FC = () => {
     await provider.deleteFork()
 
     // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
-    for (const transaction of newTransactions) {
+    for (const transaction of transactions) {
       await provider.sendMetaTransaction(transaction.transaction)
     }
   }
 
   const copyTransactionData = async () => {
-    const metaTransactions = newTransactions.map(
-      (txState) => txState.transaction
-    )
+    const metaTransactions = transactions.map((txState) => txState.transaction)
 
     navigator.clipboard.writeText(
       JSON.stringify(metaTransactions, undefined, 2)
@@ -94,7 +85,7 @@ const TransactionsDrawer: React.FC = () => {
               className={classes.body + ' coll'}
               direction="column"
             >
-              {newTransactions.map((transactionState, index) => (
+              {transactions.map((transactionState, index) => (
                 <BlockButton
                   key={transactionState.id}
                   onClick={(ev) => {
@@ -121,14 +112,14 @@ const TransactionsDrawer: React.FC = () => {
           <Flex gap={0}>
             <IconButton
               title="Copy batch transaction data to clipboard"
-              disabled={newTransactions.length === 0}
+              disabled={transactions.length === 0}
               onClick={copyTransactionData}
             >
               <RiFileCopy2Line />
             </IconButton>
             <IconButton
               title="Re-simulate on current blockchain head"
-              disabled={newTransactions.length === 0}
+              disabled={transactions.length === 0}
               onClick={reforkAndRerun}
             >
               <RiRefreshLine />
@@ -149,7 +140,7 @@ const TransactionsDrawer: React.FC = () => {
           className={classes.body + ' exp'}
           direction="column"
         >
-          {newTransactions.map((transactionState, index) => (
+          {transactions.map((transactionState, index) => (
             <Transaction
               key={transactionState.id}
               transactionState={transactionState}
@@ -158,7 +149,7 @@ const TransactionsDrawer: React.FC = () => {
             />
           ))}
 
-          {newTransactions.length === 0 && (
+          {transactions.length === 0 && (
             <p className={classes.hint}>
               As you interact with apps in the browser, transactions will be
               recorded here. You can then sign and submit them as a batch.
@@ -170,7 +161,7 @@ const TransactionsDrawer: React.FC = () => {
             <Button
               secondary
               onClick={copyTransactionData}
-              disabled={newTransactions.length === 0}
+              disabled={transactions.length === 0}
             >
               Copy transaction data
             </Button>

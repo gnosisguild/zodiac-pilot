@@ -18,7 +18,6 @@ export interface TransactionState {
   snapshotId?: string
   contractInfo?: ContractInfo
   transactionHash?: string
-  batchTransactionHash?: string
 }
 
 const rootReducer = (
@@ -58,17 +57,10 @@ const rootReducer = (
       )
     }
 
-    case 'SUBMIT_TRANSACTIONS': {
-      const { batchTransactionHash } = action.payload
-      return state.map((item) =>
-        !item.batchTransactionHash ? { ...item, batchTransactionHash } : item
-      )
-    }
-
     case 'CLEAR_TRANSACTIONS': {
-      const { batchTransactionHash } = action.payload
-      return state.filter(
-        (item) => item.batchTransactionHash === batchTransactionHash
+      const { lastTransactionId } = action.payload
+      return state.slice(
+        state.findIndex((item) => item.id === lastTransactionId) + 1
       )
     }
   }
