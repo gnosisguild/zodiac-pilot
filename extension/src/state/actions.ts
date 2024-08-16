@@ -5,7 +5,7 @@ import { ExecutionStatus } from './reducer'
 interface AppendTransactionAction {
   type: 'APPEND_TRANSACTION'
   payload: {
-    snapshotId: string
+    id: string
     transaction: MetaTransactionData
   }
 }
@@ -13,7 +13,7 @@ interface AppendTransactionAction {
 interface DecodeTransactionAction {
   type: 'DECODE_TRANSACTION'
   payload: {
-    snapshotId: string
+    id: string
     contractInfo: ContractInfo
   }
 }
@@ -21,6 +21,7 @@ interface DecodeTransactionAction {
 interface ConfirmTransactionAction {
   type: 'CONFIRM_TRANSACTION'
   payload: {
+    id: string
     snapshotId: string
     transactionHash: string
   }
@@ -29,7 +30,7 @@ interface ConfirmTransactionAction {
 interface UpdateTransactionStatusAction {
   type: 'UPDATE_TRANSACTION_STATUS'
   payload: {
-    snapshotId: string
+    id: string
     status: ExecutionStatus
   }
 }
@@ -37,28 +38,21 @@ interface UpdateTransactionStatusAction {
 interface RemoveTransactionAction {
   type: 'REMOVE_TRANSACTION'
   payload: {
-    snapshotId: string
+    id: string
   }
 }
 
 interface RemoveTransactionAction {
   type: 'REMOVE_TRANSACTION'
   payload: {
-    snapshotId: string
-  }
-}
-
-interface SubmitTransactionsAction {
-  type: 'SUBMIT_TRANSACTIONS'
-  payload: {
-    batchTransactionHash: string
+    id: string
   }
 }
 
 interface ClearTransactionsAction {
   type: 'CLEAR_TRANSACTIONS'
   payload: {
-    batchTransactionHash: string
+    lastTransactionId: string
   }
 }
 
@@ -68,5 +62,4 @@ export type Action =
   | ConfirmTransactionAction
   | UpdateTransactionStatusAction
   | RemoveTransactionAction
-  | SubmitTransactionsAction
   | ClearTransactionsAction

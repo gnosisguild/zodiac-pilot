@@ -10,7 +10,7 @@ import React, {
 import { ForkProvider } from '../providers'
 import { useRoute } from '../routes'
 import { Eip1193Provider } from '../types'
-import { useDispatch, useNewTransactions } from '../state'
+import { useDispatch, useTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ExecutionStatus } from '../state/reducer'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
@@ -35,15 +35,15 @@ const ProviderContext = createContext<
 >(null)
 export const useProvider = () => useContext(ProviderContext)
 
-const SubmitTransactionsContext = createContext<(() => Promise<string>) | null>(
-  null
-)
+const SubmitTransactionsContext = createContext<
+  (() => Promise<{ txHash?: `0x${string}`; safeTxHash?: `0x${string}` }>) | null
+>(null)
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 const ProvideProvider: React.FC<Props> = ({ children }) => {
   const { provider, route, chainId } = useRoute()
   const dispatch = useDispatch()
-  const transactions = useNewTransactions()
+  const transactions = useTransactions()
 
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
   const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
@@ -63,11 +63,11 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     connectionType === ConnectionType.OWNS ? connectedFrom : undefined
 
   const onBeforeTransactionSend = useCallback(
-    async (snapshotId: string, transaction: MetaTransactionData) => {
+    async (id: string, transaction: MetaTransactionData) => {
       // Immediately update the state with the transaction so that the UI can show it as pending.
       dispatch({
         type: 'APPEND_TRANSACTION',
-        payload: { transaction, snapshotId },
+        payload: { transaction, id },
       })
 
       // Now we can take some time decoding the transaction and we update the state once that's done.
@@ -78,7 +78,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'DECODE_TRANSACTION',
         payload: {
-          snapshotId,
+          id,
           contractInfo,
         },
       })
@@ -88,6 +88,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
 
   const onTransactionSent = useCallback(
     async (
+      id: string,
       snapshotId: string,
       transactionHash: string,
       provider: Eip1193Provider
@@ -95,6 +96,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'CONFIRM_TRANSACTION',
         payload: {
+          id,
           snapshotId,
           transactionHash,
         },
@@ -107,7 +109,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.FAILED,
           },
         })
@@ -121,7 +123,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.META_TRANSACTION_REVERTED,
           },
         })
@@ -129,7 +131,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.SUCCESS,
           },
         })
@@ -169,6 +171,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
 
   const submitTransactions = useCallback(async () => {
     const metaTransactions = transactions.map((txState) => txState.transaction)
+    const lastTransactionId = transactions[transactions.length - 1].id
 
     console.log(
       transactions.length === 1
@@ -182,31 +185,31 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     }
 
     const plan = await planExecution(metaTransactions, route as SerRoute)
-
-    if (plan.length > 1) {
-      throw new Error('Multi-step execution not yet supported')
-    }
-
-    if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
-      throw new Error('Only transaction execution is currently supported')
-    }
+    console.log('Execution plan:', plan)
 
     const state = [] as ExecutionState
-    await execute(plan, state, provider)
-
-    const [batchTransactionHash] = state
-    if (!batchTransactionHash) {
-      throw new Error('Execution failed')
-    }
+    await execute(plan, state, provider, { origin: 'Zodiac Pilot' })
 
     dispatch({
-      type: 'SUBMIT_TRANSACTIONS',
-      payload: { batchTransactionHash },
+      type: 'CLEAR_TRANSACTIONS',
+      payload: { lastTransactionId },
     })
-    console.log(
-      `multi-send batch has been submitted with transaction hash ${batchTransactionHash}`
-    )
-    return batchTransactionHash
+
+    // return the txHash if the execution is already complete or the safeTxHash if the safe transaction was proposed
+    const safeTxHash =
+      state[
+        plan.findLastIndex(
+          (action) =>
+            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION
+        )
+      ]
+    const txHash =
+      state[
+        plan.findLastIndex(
+          (action) => action.type === ExecutionActionType.EXECUTE_TRANSACTION
+        )
+      ]
+    return { safeTxHash, txHash: !safeTxHash ? txHash : undefined }
   }, [transactions, provider, dispatch, route])
 
   if (!forkProviderRef.current) {

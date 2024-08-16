@@ -12,12 +12,12 @@ export enum ExecutionStatus {
 }
 
 export interface TransactionState {
-  snapshotId: string
+  id: string
   transaction: MetaTransactionData
   status: ExecutionStatus
+  snapshotId?: string
   contractInfo?: ContractInfo
   transactionHash?: string
-  batchTransactionHash?: string
 }
 
 const rootReducer = (
@@ -26,53 +26,41 @@ const rootReducer = (
 ): TransactionState[] => {
   switch (action.type) {
     case 'APPEND_TRANSACTION': {
-      const { snapshotId, transaction } = action.payload
-      return [
-        ...state,
-        { snapshotId, transaction, status: ExecutionStatus.PENDING },
-      ]
+      const { id, transaction } = action.payload
+      return [...state, { id, transaction, status: ExecutionStatus.PENDING }]
     }
 
     case 'DECODE_TRANSACTION': {
-      const { snapshotId, contractInfo } = action.payload
+      const { id, contractInfo } = action.payload
       return state.map((item) =>
-        item.snapshotId === snapshotId ? { ...item, contractInfo } : item
+        item.id === id ? { ...item, contractInfo } : item
       )
     }
 
     case 'CONFIRM_TRANSACTION': {
-      const { snapshotId, transactionHash } = action.payload
+      const { id, snapshotId, transactionHash } = action.payload
       return state.map((item) =>
-        item.snapshotId === snapshotId ? { ...item, transactionHash } : item
+        item.id === id ? { ...item, snapshotId, transactionHash } : item
       )
     }
 
     case 'UPDATE_TRANSACTION_STATUS': {
-      const { snapshotId, status } = action.payload
-      return state.map((item) =>
-        item.snapshotId === snapshotId ? { ...item, status } : item
-      )
+      const { id, status } = action.payload
+      return state.map((item) => (item.id === id ? { ...item, status } : item))
     }
 
     case 'REMOVE_TRANSACTION': {
-      const { snapshotId } = action.payload
+      const { id } = action.payload
       return state.slice(
         0,
-        state.findIndex((item) => item.snapshotId === snapshotId)
-      )
-    }
-
-    case 'SUBMIT_TRANSACTIONS': {
-      const { batchTransactionHash } = action.payload
-      return state.map((item) =>
-        !item.batchTransactionHash ? { ...item, batchTransactionHash } : item
+        state.findIndex((item) => item.id === id)
       )
     }
 
     case 'CLEAR_TRANSACTIONS': {
-      const { batchTransactionHash } = action.payload
-      return state.filter(
-        (item) => item.batchTransactionHash === batchTransactionHash
+      const { lastTransactionId } = action.payload
+      return state.slice(
+        state.findIndex((item) => item.id === lastTransactionId) + 1
       )
     }
   }

@@ -14,7 +14,8 @@
   },
   "permissions": [
     "tabs",
-    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback",
     "webRequest"
   ],
   "background": {

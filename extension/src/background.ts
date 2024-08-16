@@ -6,6 +6,16 @@ interface Fork {
   rpcUrl: string
 }
 
+chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+  if (details.rule.ruleId !== HEADERS_RULE_ID) {
+    console.debug(
+      'rule matched on request',
+      details.request.url,
+      details.rule.ruleId
+    )
+  }
+})
+
 // Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 // generally circumvent this security mechanism, so we only apply it to extension tabs.
@@ -27,42 +37,62 @@ const stopTrackingTab = (tabId: number) => {
   console.log('Pilot: stopped tracking tab', tabId)
 }
 
+const HEADERS_RULE_ID = 1
+
 const updateHeadersRule = () => {
-  const RULE_ID = 1
+  // TODO removing the CSP headers alone is not enough as it does not handle apps setting CSPs via <meta http-equiv> tags in the HTML (such as Uniswap, for example)
+  // see: https://github.com/w3c/webextensions/issues/169#issuecomment-1689812644
+  // A potential solution could be a service worker rewriting the HTML content in the doc request to filter out these tags?
   chrome.declarativeNetRequest.updateSessionRules(
     {
       addRules: [
         {
-          id: RULE_ID,
+          id: HEADERS_RULE_ID,
           priority: 1,
           action: {
-            // @ts-expect-error @types/chrome uses enums which we can't access
-            type: 'modifyHeaders',
+            type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
             responseHeaders: [
-              // @ts-expect-error @types/chrome uses enums which we can't access
-              { header: 'x-frame-options', operation: 'remove' },
-              // @ts-expect-error @types/chrome uses enums which we can't access
-              { header: 'X-Frame-Options', operation: 'remove' },
-              // @ts-expect-error @types/chrome uses enums which we can't access
-              { header: 'content-security-policy', operation: 'remove' },
-              // @ts-expect-error @types/chrome uses enums which we can't access
-              { header: 'Content-Security-Policy', operation: 'remove' },
+              {
+                header: 'x-frame-options',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+              {
+                header: 'X-Frame-Options',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+              {
+                header: 'content-security-policy',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+              {
+                header: 'Content-Security-Policy',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+              {
+                header: 'content-security-policy-report-only',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
+              {
+                header: 'Content-Security-Policy-Report-Only',
+                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+              },
             ],
           },
           condition: {
-            // @ts-expect-error @types/chrome uses enums which we can't access
-            resourceTypes: ['sub_frame'],
+            resourceTypes: [
+              chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
+            ],
             tabIds: Array.from(activeExtensionTabs),
           },
         },
       ],
-      removeRuleIds: [RULE_ID],
+      removeRuleIds: [HEADERS_RULE_ID],
     },
     () => {
       if (chrome.runtime.lastError) {
-        console.error('Rule update failed', chrome.runtime.lastError)
+        console.error('Headers rule update failed', chrome.runtime.lastError)
       } else {
-        console.debug('Rule update successful', activeExtensionTabs)
+        console.debug('Headers rule update successful', activeExtensionTabs)
       }
     }
   )
@@ -131,7 +161,6 @@ async function clearStaleRules() {
   activeExtensionTabs.difference(openTabIds).forEach((tabId) => {
     activeExtensionTabs.delete(tabId)
   })
-  console.log({ activeExtensionTabs, openTabIds })
 
   // clear simulatingExtensionTabs that are not active (= extension is activated) anymore
   const simulatingTabIds = new Set(simulatingExtensionTabs.keys())
@@ -139,13 +168,14 @@ async function clearStaleRules() {
     simulatingExtensionTabs.delete(tabId)
   })
 
-  // remove rules for tabs that are not simulating anymore
+  // remove redirect rules for tabs that are not simulating anymore
   const staleRules = await new Promise<chrome.declarativeNetRequest.Rule[]>(
     (resolve) => {
       chrome.declarativeNetRequest.getSessionRules((rules) => {
         resolve(
           rules.filter(
             (rule) =>
+              rule.id !== HEADERS_RULE_ID &&
               rule.condition.tabIds?.length === 1 &&
               !simulatingExtensionTabs.has(rule.condition.tabIds[0])
           )
@@ -160,7 +190,7 @@ async function clearStaleRules() {
   console.debug('Cleared stale rules', staleRules)
 }
 
-const updateRpcRedirectRules = (tabId: number) => {
+const updateRpcRedirectRules = async (tabId: number) => {
   const fork = simulatingExtensionTabs.get(tabId)
   if (!fork) {
     return
@@ -177,11 +207,13 @@ const updateRpcRedirectRules = (tabId: number) => {
           id: hash(rpcUrl, tabId),
           priority: 1,
           action: {
-            type: 'redirect',
+            type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
             redirect: { url: fork.rpcUrl },
           },
           condition: {
-            resourceTypes: ['xmlhttprequest'],
+            resourceTypes: [
+              chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+            ],
             urlFilter: rpcUrl,
             tabIds: [tabId],
           },
@@ -192,7 +224,7 @@ const updateRpcRedirectRules = (tabId: number) => {
     hash(rpcUrl, tabId)
   )
 
-  chrome.declarativeNetRequest.updateSessionRules({
+  await chrome.declarativeNetRequest.updateSessionRules({
     addRules,
     removeRuleIds: ruleIds,
   })
@@ -211,15 +243,7 @@ const removeRpcRedirectRules = (tabId: number) => {
   chrome.declarativeNetRequest.updateSessionRules({
     removeRuleIds: ruleIds,
   })
-  console.log(
-    'removeRpcRedirectRules',
-    tabId,
-    ruleIds,
-    hash(
-      'https://virtual.mainnet.rpc.tenderly.co/880388c4-9707-46ce-97a5-1095090a6768',
-      735219801
-    )
-  )
+  console.log('removed all RPC redirect rules for tab', tabId, ruleIds)
 }
 
 chrome.runtime.onMessage.addListener((message, sender) => {
@@ -227,9 +251,6 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 
   if (message.type === 'startSimulating') {
     const { networkId, rpcUrl } = message
-    console.log('startSimulating', networkId, rpcUrl, {
-      simulatingExtensionTabs,
-    })
     simulatingExtensionTabs.delete(sender.tab.id)
     removeRpcRedirectRules(sender.tab.id)
     simulatingExtensionTabs.set(sender.tab.id, {
@@ -245,7 +266,6 @@ chrome.runtime.onMessage.addListener((message, sender) => {
   }
 
   if (message.type === 'stopSimulating') {
-    console.log('stopSimulating', sender.tab.id, { simulatingExtensionTabs })
     simulatingExtensionTabs.delete(sender.tab.id)
     removeRpcRedirectRules(sender.tab.id)
 
@@ -304,12 +324,12 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   ) as Map<string, Promise<number | undefined>>
 
   if (!networkIdOfRpcUrlPromise.has(url)) {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise<number | undefined>((resolve) => {
       // fetch from the injected script, so the request has the apps origin (otherwise the request may be blocked by the RPC provider)
       chrome.tabs.sendMessage(tabId, { type: 'requestChainId', url }, resolve)
     })
 
-    networkIdOfRpcUrlPromise.set(url, promise as Promise<number | undefined>)
+    networkIdOfRpcUrlPromise.set(url, promise)
   }
 
   const result = await networkIdOfRpcUrlPromise.get(url)

@@ -6,8 +6,6 @@ import { toast } from 'react-toastify'
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
 import { EXPLORER_URL, CHAIN_NAME } from '../../chains'
-import { waitForMultisigExecution } from '../../integrations/safe'
-// import { shallExecuteDirectly } from '../../safe/sendTransaction'
 import { useRoute } from '../../routes'
 import { JsonRpcError, ProviderType } from '../../types'
 import {
@@ -16,33 +14,22 @@ import {
   decodeRolesV2Error,
 } from '../../utils'
 import { useSubmitTransactions } from '../ProvideProvider'
-import { useDispatch, useNewTransactions } from '../../state'
+import { useTransactions } from '../../state'
 
 import classes from './style.module.css'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { usePushConnectionsRoute } from '../../routing'
-import { PrefixedAddress } from 'ser-kit'
+import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { waitForMultisigExecution } from '../../integrations/safe'
 
 const Submit: React.FC = () => {
   const { route, chainId, connect, connected } = useRoute()
-  const { initiator, providerType } = route
-  const dispatch = useDispatch()
+  const { initiator, providerType, avatar } = route
   const pushConnectionsRoute = usePushConnectionsRoute()
 
-  const transactions = useNewTransactions()
+  const transactions = useTransactions()
   const submitTransactions = useSubmitTransactions()
   const [signaturePending, setSignaturePending] = useState(false)
-  // const [executesDirectly, setExecutesDirectly] = useState(false)
-
-  // useEffect(() => {
-  //   let canceled = false
-  //   shallExecuteDirectly(provider, connection).then((executesDirectly) => {
-  //     if (!canceled) setExecutesDirectly(executesDirectly)
-  //   })
-  //   return () => {
-  //     canceled = true
-  //   }
-  // }, [provider, connection])
 
   const connectWallet = () => {
     pushConnectionsRoute(route.id)
@@ -64,9 +51,13 @@ const Submit: React.FC = () => {
 
     if (!submitTransactions) throw new Error('invariant violation')
     setSignaturePending(true)
-    let batchTransactionHash: string
+
+    let result: {
+      txHash?: `0x${string}`
+      safeTxHash?: `0x${string}`
+    }
     try {
-      batchTransactionHash = await submitTransactions()
+      result = await submitTransactions()
     } catch (e) {
       console.warn(e)
       setSignaturePending(false)
@@ -86,40 +77,68 @@ const Submit: React.FC = () => {
     }
     setSignaturePending(false)
 
-    // wait for transaction to be mined
-    const realBatchTransactionHash = await waitForMultisigExecution(
-      chainId,
-      batchTransactionHash
-    )
-    console.log(
-      `Transaction batch ${batchTransactionHash} has been executed with transaction hash ${realBatchTransactionHash}`
-    )
-    const receipt = await getReadOnlyProvider(chainId).waitForTransaction(
-      realBatchTransactionHash
-    )
-    console.log(
-      `Transaction ${realBatchTransactionHash} has been mined`,
-      receipt
-    )
+    const { txHash, safeTxHash } = result
+    if (txHash) {
+      console.log(
+        `Transaction batch has been submitted with transaction hash ${txHash}`
+      )
+      const receipt =
+        await getReadOnlyProvider(chainId).waitForTransaction(txHash)
+      console.log(`Transaction ${txHash} has been executed`, receipt)
 
-    dispatch({
-      type: 'CLEAR_TRANSACTIONS',
-      payload: { batchTransactionHash },
-    })
+      toast(
+        <>
+          Transaction batch has been executed
+          <a
+            href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <RiExternalLinkLine />
+            View in block explorer
+          </a>
+        </>
+      )
+    }
 
-    toast(
-      <>
-        Transaction batch has been executed
-        <a
-          href={`${EXPLORER_URL[chainId]}/tx/${realBatchTransactionHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <RiExternalLinkLine />
-          View on block explorer
-        </a>
-      </>
-    )
+    if (safeTxHash) {
+      console.log(
+        `Transaction batch has been proposed with safeTxHash ${safeTxHash}`
+      )
+      const [, avatarAddress] = parsePrefixedAddress(avatar)
+      toast(
+        <>
+          Transaction batch has been proposed for execution
+          <a
+            href={`//app.safe.global/transactions/tx?safe=${avatar}&id=multisig_${avatarAddress}_${safeTxHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <RiExternalLinkLine />
+            {'View in Safe{Wallet}'}
+          </a>
+        </>
+      )
+
+      // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
+      const txHash = await waitForMultisigExecution(chainId, safeTxHash)
+      console.log(
+        `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`
+      )
+      toast(
+        <>
+          Proposed Safe transaction has been confirmed and executed{' '}
+          <a
+            href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <RiExternalLinkLine />
+            View in block explorer
+          </a>
+        </>
+      )
+    }
   }
 
   return (
@@ -151,15 +170,6 @@ const Submit: React.FC = () => {
           account={initiator}
         />
       )}
-
-      {/* {signaturePending && executesDirectly && (
-        <AwaitingMultisigExecutionModal
-          isOpen={signaturePending}
-          onClose={() => setSignaturePending(false)}
-          chainId={chainId}
-          avatarAddress={avatarAddress}
-        />
-      )} */}
     </>
   )
 }
@@ -199,37 +209,6 @@ const AwaitingSignatureModal: React.FC<{
     )}
   </Modal>
 )
-
-// const AwaitingMultisigExecutionModal: React.FC<{
-//   isOpen: boolean
-//   onClose(): void
-//   chainId: ChainId
-//   avatarAddress: string
-// }> = ({ isOpen, onClose, chainId, avatarAddress }) => (
-//   <Modal
-//     isOpen={isOpen}
-//     style={modalStyle}
-//     contentLabel="Sign the batch transaction"
-//   >
-//     <IconButton className={classes.modalClose} title="Cancel" onClick={onClose}>
-//       <RiCloseLine />
-//     </IconButton>
-//     <p>Awaiting execution of Safe transaction ...</p>
-
-//     <br />
-//     <p>
-//       <a
-//         className={classes.safeAppLink}
-//         href={`https://app.safe.global/${NETWORK_PREFIX[chainId]}:${avatarAddress}/transactions/queue`}
-//         target="_blank"
-//         rel="noreferrer"
-//       >
-//         <RiExternalLinkLine />
-//         Collect signatures and trigger execution
-//       </a>
-//     </p>
-//   </Modal>
-// )
 
 Modal.setAppElement('#root')
 

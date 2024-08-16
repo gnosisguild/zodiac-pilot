@@ -21,7 +21,7 @@ export function waitForMultisigExecution(
       // around 5 seconds to be available on the transaction-service starts with
       // isExecuted set to false
       // NOTE2: after the multisig transaction is approved and mined, it takes
-      // around an additional around 30 seconds to be reflected in the service and
+      // around an additional around 30 seconds to be reflected in the service
       // and come out with meaningful isExecuted and isSuccessful values
       try {
         safeMultisigTxResponse = await safeService.getTransaction(safeTxHash)

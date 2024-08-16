@@ -1,3 +1,4 @@
+// @ts-check
 const esbuild = require('esbuild')
 const cssModulesPlugin = require('esbuild-css-modules-plugin')
 const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
@@ -6,7 +7,7 @@ const stdLibBrowser = require('node-stdlib-browser')
 require('dotenv').config()
 
 esbuild
-  .build({
+  .context({
     entryPoints: [
       './src/background.ts',
       './src/contentScript.ts',
@@ -33,11 +34,14 @@ esbuild
       global: 'window',
     },
     plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
-    watch: process.env.NODE_ENV === 'development' && {
-      onRebuild() {
-        console.log('Rebuild successful.')
-      },
-    },
+    logLevel: 'info',
   })
-  .then(() => console.log('Build successful.'))
-  .catch(() => process.exit(1))
+  .then(async (ctx) => {
+    if (process.env.NODE_ENV === 'development') {
+      await ctx.watch()
+    } else {
+      await ctx.rebuild()
+      console.log('Build successful.')
+      ctx.dispose()
+    }
+  })

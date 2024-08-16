@@ -3,10 +3,10 @@ import { useCallback } from 'react'
 import { ForkProvider } from '../providers'
 import { useProvider } from '../browser/ProvideProvider'
 
-import { useAllTransactions, useDispatch } from '.'
+import { useTransactions, useDispatch } from '.'
 
 export const useClearTransactions = () => {
-  const transactions = useAllTransactions()
+  const transactions = useTransactions()
   const provider = useProvider()
   const dispatch = useDispatch()
 
@@ -18,7 +18,7 @@ export const useClearTransactions = () => {
 
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: transactions[0].snapshotId },
+      payload: { id: transactions[0].id },
     })
 
     if (provider instanceof ForkProvider) {

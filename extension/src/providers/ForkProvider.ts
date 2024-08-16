@@ -16,17 +16,16 @@ import {
 } from '../integrations/safe/signing'
 import { ChainId } from 'ser-kit'
 import { decodeGenericError } from '../utils'
+import { nanoid } from 'nanoid'
 
 class UnsupportedMethodError extends Error {
   code = 4200
 }
 
 interface Handlers {
-  onBeforeTransactionSend(
-    checkpointId: string,
-    metaTx: MetaTransactionData
-  ): void
+  onBeforeTransactionSend(id: string, metaTx: MetaTransactionData): void
   onTransactionSent(
+    id: string,
     checkpointId: string,
     hash: string,
     provider: Eip1193Provider
@@ -187,13 +186,16 @@ class ForkProvider extends EventEmitter {
   async sendMetaTransaction(metaTx: MetaTransactionData): Promise<string> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
+    const id = nanoid()
+    this.handlers.onBeforeTransactionSend(id, metaTx)
+
     // If there's a pending request, wait for it to finish before sending the next one
     const send = this.pendingMetaTransaction
       ? async () => {
           await this.pendingMetaTransaction
-          return await this.sendMetaTransactionIsSeries(metaTx)
+          return await this.sendMetaTransactionIsSeries(metaTx, id)
         }
-      : async () => await this.sendMetaTransactionIsSeries(metaTx)
+      : async () => await this.sendMetaTransactionIsSeries(metaTx, id)
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
@@ -201,7 +203,8 @@ class ForkProvider extends EventEmitter {
   }
 
   private async sendMetaTransactionIsSeries(
-    metaTx: MetaTransactionData
+    metaTx: MetaTransactionData,
+    id: string
   ): Promise<string> {
     if (!this.isInitialized) {
       // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
@@ -222,8 +225,6 @@ class ForkProvider extends EventEmitter {
       params: [Math.ceil(Date.now() / 1000).toString()],
     })
 
-    this.handlers.onBeforeTransactionSend(checkpointId, metaTx)
-
     let from = this.moduleAddress || this.ownerAddress || DUMMY_MODULE_ADDRESS
     if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
 
@@ -236,12 +237,12 @@ class ForkProvider extends EventEmitter {
     )
 
     // execute transaction in fork
-    const result = await this.provider.request({
+    const hash = await this.provider.request({
       method: 'eth_sendTransaction',
       params: [tx],
     })
-    this.handlers.onTransactionSent(checkpointId, result, this.provider)
-    return result
+    this.handlers.onTransactionSent(id, checkpointId, hash, this.provider)
+    return hash
   }
 
   async initFork(): Promise<void> {
