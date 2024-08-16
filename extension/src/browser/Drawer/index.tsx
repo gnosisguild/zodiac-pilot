@@ -45,7 +45,7 @@ const TransactionsDrawer: React.FC = () => {
     // remove all transactions from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: allTransactions[0].snapshotId },
+      payload: { id: allTransactions[0].id },
     })
 
     if (!(provider instanceof ForkProvider)) {
@@ -65,21 +65,8 @@ const TransactionsDrawer: React.FC = () => {
       (txState) => txState.transaction
     )
 
-    const routeWithInitiator = (
-      route.initiator ? route : { ...route, initiator: ZeroAddress }
-    ) as SerRoute
-    const plan = await planExecution(metaTransactions, routeWithInitiator)
-
-    if (plan.length > 1) {
-      throw new Error('Multi-step execution not yet supported')
-    }
-
-    if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
-      throw new Error('Only transaction execution is currently supported')
-    }
-
     navigator.clipboard.writeText(
-      JSON.stringify(plan[0].transaction, undefined, 2)
+      JSON.stringify(metaTransactions, undefined, 2)
     )
     toast(<>Transaction data has been copied to clipboard.</>)
   }
@@ -109,7 +96,7 @@ const TransactionsDrawer: React.FC = () => {
             >
               {newTransactions.map((transactionState, index) => (
                 <BlockButton
-                  key={transactionState.snapshotId}
+                  key={transactionState.id}
                   onClick={(ev) => {
                     ev.stopPropagation()
                     setScrollItemIntoView(index)
@@ -164,7 +151,7 @@ const TransactionsDrawer: React.FC = () => {
         >
           {newTransactions.map((transactionState, index) => (
             <Transaction
-              key={transactionState.snapshotId}
+              key={transactionState.id}
               transactionState={transactionState}
               index={index}
               scrollIntoView={scrollItemIntoView === index}

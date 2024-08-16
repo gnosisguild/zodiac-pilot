@@ -28,7 +28,7 @@ export const Remove: React.FC<Props> = ({ transactionState, index }) => {
     // remove the transaction and all later ones from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: transactionState.snapshotId },
+      payload: { id: transactionState.id },
     })
 
     if (transactions.length === 1) {

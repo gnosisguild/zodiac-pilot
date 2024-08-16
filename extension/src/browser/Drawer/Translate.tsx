@@ -42,7 +42,7 @@ export const Translate: React.FC<Props> = ({
     // remove the transaction and all later ones from the store
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: transactionState.snapshotId },
+      payload: { id: transactionState.id },
     })
 
     // revert to checkpoint before the transaction to remove

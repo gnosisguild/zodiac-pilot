@@ -17,7 +17,6 @@ import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   ConnectionType,
   execute,
-  ExecutionActionType,
   ExecutionState,
   parsePrefixedAddress,
   planExecution,
@@ -63,11 +62,11 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     connectionType === ConnectionType.OWNS ? connectedFrom : undefined
 
   const onBeforeTransactionSend = useCallback(
-    async (snapshotId: string, transaction: MetaTransactionData) => {
+    async (id: string, transaction: MetaTransactionData) => {
       // Immediately update the state with the transaction so that the UI can show it as pending.
       dispatch({
         type: 'APPEND_TRANSACTION',
-        payload: { transaction, snapshotId },
+        payload: { transaction, id },
       })
 
       // Now we can take some time decoding the transaction and we update the state once that's done.
@@ -78,7 +77,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'DECODE_TRANSACTION',
         payload: {
-          snapshotId,
+          id,
           contractInfo,
         },
       })
@@ -88,6 +87,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
 
   const onTransactionSent = useCallback(
     async (
+      id: string,
       snapshotId: string,
       transactionHash: string,
       provider: Eip1193Provider
@@ -95,6 +95,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
       dispatch({
         type: 'CONFIRM_TRANSACTION',
         payload: {
+          id,
           snapshotId,
           transactionHash,
         },
@@ -107,7 +108,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.FAILED,
           },
         })
@@ -121,7 +122,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.META_TRANSACTION_REVERTED,
           },
         })
@@ -129,7 +130,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
           payload: {
-            snapshotId,
+            id,
             status: ExecutionStatus.SUCCESS,
           },
         })
@@ -182,14 +183,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     }
 
     const plan = await planExecution(metaTransactions, route as SerRoute)
-
-    if (plan.length > 1) {
-      throw new Error('Multi-step execution not yet supported')
-    }
-
-    if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
-      throw new Error('Only transaction execution is currently supported')
-    }
+    console.log('plan', plan)
 
     const state = [] as ExecutionState
     await execute(plan, state, provider)

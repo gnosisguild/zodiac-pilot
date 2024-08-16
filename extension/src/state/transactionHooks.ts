@@ -18,7 +18,7 @@ export const useClearTransactions = () => {
 
     dispatch({
       type: 'REMOVE_TRANSACTION',
-      payload: { snapshotId: transactions[0].snapshotId },
+      payload: { id: transactions[0].id },
     })
 
     if (provider instanceof ForkProvider) {
