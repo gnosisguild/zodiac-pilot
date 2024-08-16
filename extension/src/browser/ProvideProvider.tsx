@@ -183,7 +183,7 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     }
 
     const plan = await planExecution(metaTransactions, route as SerRoute)
-    console.log('plan', plan)
+    console.log('Execution plan:', plan)
 
     const state = [] as ExecutionState
     await execute(plan, state, provider)
