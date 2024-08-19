@@ -1,34 +1,54 @@
 // This script will be injected via contentScripts.ts into the browser iframe running the Dapp.
 
 import InjectedProvider from './bridge/InjectedProvider'
-declare let window: Window & { ethereum: InjectedProvider }
-
-if (window.ethereum) {
-  // There is already a provider injected
-  const descriptor = Object.getOwnPropertyDescriptor(window, 'ethereum')
-  if (descriptor?.configurable === false) {
-    // We got a problem: The provider is not configurable (most probably Rabby)
-    alert(
-      'Zodiac Pilot is unable to connect. In Rabby, flip the setting so it is banned and reload the page.'
-    )
+declare let window: Window & {
+  ethereum: InjectedProvider
+  rabbyWalletRouter?: {
+    setDefaultProvider(rabbyAsDefault: boolean): void
+    addProvider(provider: InjectedProvider): void
   }
 }
 
 // inject bridged ethereum provider
 const injectedProvider = new InjectedProvider()
-Object.defineProperties(window, {
-  ethereum: {
-    get() {
-      return injectedProvider
-    },
-    set() {
-      // do nothing
-    },
-    configurable: false,
-  },
-})
 
-console.log('injected into', document.title)
+const canSetWindowEthereum =
+  Object.getOwnPropertyDescriptor(window, 'ethereum')?.configurable !== false
+
+if (canSetWindowEthereum) {
+  Object.defineProperties(window, {
+    ethereum: {
+      get() {
+        return injectedProvider
+      },
+      set() {
+        // do nothing
+      },
+      configurable: false,
+    },
+  })
+
+  console.log('Injected Zodiac Pilot provider')
+} else {
+  // Houston, we have a problem: There is already a provider injected by another extension and it's not configurable
+
+  // If it's Rabby we have a trick to make sure it routes to the Pilot provider
+  if (window.rabbyWalletRouter) {
+    console.log(
+      'Rabby detected, setting Pilot as default provider in Rabby Wallet Router',
+      window.rabbyWalletRouter
+    )
+    window.rabbyWalletRouter.addProvider(injectedProvider)
+    window.rabbyWalletRouter.setDefaultProvider(false)
+    // prevent Rabby from setting its own provider as default subsequently
+    window.rabbyWalletRouter.setDefaultProvider = () => {}
+  } else {
+    // If it's not Rabby, we have to alert the user
+    alert(
+      'Zodiac Pilot is unable to connect because of another wallet extension. Disable the other extension and reload the page.'
+    )
+  }
+}
 
 // establish message bridge for location requests
 window.addEventListener('message', (ev: MessageEvent) => {

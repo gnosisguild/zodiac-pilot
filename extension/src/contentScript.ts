@@ -1,6 +1,8 @@
 function inject(windowName: string, scriptPath: string) {
   if (window.name === windowName) {
     const node = document.createElement('script')
+    node.type = 'text/javascript'
+    node.async = false
     node.src = chrome.runtime.getURL(scriptPath)
 
     const parent = document.head || document.documentElement
@@ -11,9 +13,7 @@ function inject(windowName: string, scriptPath: string) {
     }
     parent.dataset.zodiacPilotInjected = 'true'
     parent.insertBefore(node, parent.children[0])
-    node.onload = function () {
-      node.remove()
-    }
+    node.remove()
   }
 }
 

@@ -33,6 +33,7 @@ const simulateRolesTransaction = async (
   ) as SerRoute
   const plan = await planExecution([encodedTransaction], routeWithInitiator)
 
+  // TODO generalize permission checking logic (ser-kit)
   if (plan.length > 1) {
     throw new Error('Multi-step execution not yet supported')
   }
