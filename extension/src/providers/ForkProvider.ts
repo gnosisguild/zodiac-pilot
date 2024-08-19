@@ -180,6 +180,7 @@ class ForkProvider extends EventEmitter {
    *
    * Even for regular calls (operation: 0) this method is useful to simulate the transaction through the Safe contract with the module or owner as sender (if set).
    * This is necessary to make sure the simulation succeeds for some edge cases: If a contract calls `.transfer()` on the sender's address this comes only with a 2300 gas stipend, not enough to run a cold Safe's `fallback` function.
+   * This could alternatively be solved using EIP-2930 access lists, though.
    *
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
@@ -325,6 +326,9 @@ const readBlockGasLimit = async (provider: Eip1193Provider) => {
   return block?.gasLimit || 30_000_000n
 }
 
+/**
+ * Makes sure that the given Safe is ready for simulating transactions, which requires at least one module to be enabled.
+ */
 async function prepareSafeForSimulation(
   {
     chainId,
