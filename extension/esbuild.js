@@ -9,7 +9,7 @@ require('dotenv').config()
 esbuild
   .context({
     entryPoints: [
-      './src/background.ts',
+      './src/background/index.ts',
       './src/contentScript.ts',
       './src/launch.ts',
       './src/injection.ts',
