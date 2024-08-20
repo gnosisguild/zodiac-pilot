@@ -101,36 +101,6 @@ const updateHeadersRule = () => {
   )
 }
 
-// When clicking the extension button, load the current tab's page in the simulation browser
-const toggle = async (tab: chrome.tabs.Tab) => {
-  if (!tab.id || !tab.url) return
-
-  if (!tab.url.startsWith(PILOT_URL)) {
-    // add to tracked list
-    startTrackingTab(tab.id)
-
-    const url =
-      tab.url.startsWith('chrome://') || tab.url.startsWith('about:')
-        ? ''
-        : tab.url
-    chrome.tabs.update(tab.id, {
-      url: `${PILOT_URL}#${encodeURIComponent(url)}`,
-    })
-  } else {
-    // remove from tracked list
-    stopTrackingTab(tab.id)
-
-    const url = new URL(tab.url)
-    const appUrl = decodeURIComponent(url.hash.slice(1))
-
-    await chrome.tabs.update(tab.id, {
-      url: appUrl,
-    })
-  }
-}
-
-chrome.action.onClicked.addListener(toggle)
-
 // Track extension tabs that are actively simulating, meaning that RPC requests are being sent to
 // a fork network.
 const simulatingExtensionTabs = new Map<number, Fork>()
@@ -366,6 +336,7 @@ const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   return json
 }
 
+<<<<<<< HEAD
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   const isExtensionTab = !!tab.url?.startsWith(PILOT_URL)
   const wasExtensionTab = activeExtensionTabs.has(tabId)
@@ -380,6 +351,57 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status === 'complete' && isExtensionTab) {
     chrome.tabs.sendMessage(tabId, { type: 'navigationDetected' })
   }
+=======
+const onTabActivated = (tabId: number) => {
+  const enabled = activeExtensionTabs.has(tabId)
+  chrome.sidePanel.setOptions({
+    tabId,
+    enabled,
+  })
+}
+
+chrome.tabs.onActivated.addListener((tab) => {
+  onTabActivated(tab.tabId)
+>>>>>>> de6ddc9 (per tab panel toggling)
 })
+
+// tracks if a simulation is currently running
+const isSimulating = false
+
+chrome.action.onClicked.addListener((tab) => {
+  const tabId = tab.id
+  if (!tabId) return
+
+  if (!activeExtensionTabs.has(tabId)) {
+    chrome.sidePanel.setOptions({
+      tabId,
+      path: 'sidepanel.html',
+      enabled: true,
+    })
+    chrome.sidePanel.open({ tabId })
+    activeExtensionTabs.add(tabId)
+    startTrackingTab(tabId)
+  } else {
+    chrome.sidePanel.setOptions({
+      tabId,
+      enabled: false,
+    })
+    activeExtensionTabs.delete(tabId)
+    stopTrackingTab(tabId)
+  }
+
+  if (isSimulating) {
+    // TODO Force tab reload if simulation is running
+    // (this makes sure the app connects to the latest fork state / reconnects back to actual origin chain state)
+  }
+})
+
+// TODO set status badge if a simulation is active
+// chrome.action.setBadgeBackgroundColor(
+//   { color: [0, 255, 0, 0] }, // Green
+//   () => {
+//     /* ... */
+//   }
+// )
 
 export {}

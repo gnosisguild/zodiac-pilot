@@ -41,7 +41,7 @@ const RAW_RUNTIME_STATE =
           ["@testing-library/dom", "npm:10.4.0"],\
           ["@testing-library/jest-dom", "npm:6.4.8"],\
           ["@testing-library/react", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:16.0.0"],\
-          ["@types/chrome", "npm:0.0.233"],\
+          ["@types/chrome", "npm:0.0.268"],\
           ["@types/eslint__js", "npm:8.42.3"],\
           ["@types/events", "npm:3.0.3"],\
           ["@types/react", "npm:18.3.3"],\
@@ -2655,10 +2655,10 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["@types/chrome", [\
-      ["npm:0.0.233", {\
-        "packageLocation": "./.yarn/cache/@types-chrome-npm-0.0.233-2aead4eff9-dda7413b55.zip/node_modules/@types/chrome/",\
+      ["npm:0.0.268", {\
+        "packageLocation": "./.yarn/cache/@types-chrome-npm-0.0.268-c3c9492d83-f03cf2f816.zip/node_modules/@types/chrome/",\
         "packageDependencies": [\
-          ["@types/chrome", "npm:0.0.233"],\
+          ["@types/chrome", "npm:0.0.268"],\
           ["@types/filesystem", "npm:0.0.36"],\
           ["@types/har-format", "npm:1.2.15"]\
         ],\
@@ -12414,7 +12414,7 @@ const RAW_RUNTIME_STATE =
           ["@testing-library/dom", "npm:10.4.0"],\
           ["@testing-library/jest-dom", "npm:6.4.8"],\
           ["@testing-library/react", "virtual:919984625f908c00f58e56a3a023a4bcc5a02977fb9ef0230392d1979706b2cc874abc287345e6561886da69e547c4d1330a8c5645be8f7e62b06d5144141c21#npm:16.0.0"],\
-          ["@types/chrome", "npm:0.0.233"],\
+          ["@types/chrome", "npm:0.0.268"],\
           ["@types/eslint__js", "npm:8.42.3"],\
           ["@types/events", "npm:3.0.3"],\
           ["@types/react", "npm:18.3.3"],\

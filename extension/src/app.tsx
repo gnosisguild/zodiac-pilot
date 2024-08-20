@@ -17,6 +17,8 @@ import { useMatchConnectionsRoute, usePushConnectionsRoute } from './routing'
 import { ProvideRoutes } from './routes'
 import { useRoutes, useUpdateLastUsedRoute } from './routes/routeHooks'
 
+console.log('win', window, window.ethereum)
+
 const Routes: React.FC = () => {
   const connectionsRouteMatch = useMatchConnectionsRoute()
   const pushConnectionsRoute = usePushConnectionsRoute()
