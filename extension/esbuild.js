@@ -11,9 +11,8 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
       './src/contentScript.ts',
-      './src/launch.ts',
       './src/injection.ts',
-      './src/app.tsx',
+      './src/panel/app.tsx',
     ],
     bundle: true,
     minify: process.env.NODE_ENV === 'production',

@@ -16,9 +16,6 @@ declare let window: Window & {
 // inject bridged ethereum provider
 const injectedProvider = new InjectedProvider()
 
-// keep track of provider injected by other wallet extensions
-let walletProvider = window.ethereum
-
 const canSetWindowEthereum =
   Object.getOwnPropertyDescriptor(window, 'ethereum')?.configurable !== false
 
@@ -28,9 +25,8 @@ if (canSetWindowEthereum) {
       get() {
         return injectedProvider
       },
-      set(value: Eip1193Provider) {
-        // store as user wallet provider so we can connect to it from the side panel
-        walletProvider = value
+      set() {
+        // ignore attempts to set window.ethereum
       },
       configurable: false,
     },
@@ -49,19 +45,10 @@ if (canSetWindowEthereum) {
 
     const { rabbyWalletRouter } = window
 
-    walletProvider = rabbyWalletRouter.currentProvider
     rabbyWalletRouter.addProvider(injectedProvider)
     rabbyWalletRouter.setDefaultProvider(false)
     // prevent Rabby from setting its own provider as default subsequently
-
-    rabbyWalletRouter.setDefaultProvider = (rabbyAsDefault) => {
-      const rabbyProvider: Eip1193Provider = (window as any).rabby
-      if (rabbyAsDefault) {
-        walletProvider = rabbyProvider
-      } else {
-        walletProvider = rabbyWalletRouter.lastInjectedProvider ?? rabbyProvider
-      }
-    }
+    rabbyWalletRouter.setDefaultProvider = () => {}
   } else {
     // If it's not Rabby, we have to alert the user
     alert(
@@ -69,8 +56,6 @@ if (canSetWindowEthereum) {
     )
   }
 }
-
-console.log('injected into', document.title, chrome.runtime.id)
 
 /**
  * EIP-6963 support
@@ -117,10 +102,8 @@ window.addEventListener('eip6963:announceProvider', (event) => {
       })
     )
 
-    // TODO proxy this event to the side panel so we can connect to this user wallet from there
+    event.stopImmediatePropagation()
   }
-
-  event.stopImmediatePropagation()
 })
 
 window.dispatchEvent(new Event('ethereum#initialized'))

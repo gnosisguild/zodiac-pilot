@@ -1,7 +1,7 @@
 import { networkIdOfRpcUrl } from './rpcTracking'
 import { activeExtensionTabs, REMOVE_CSP_RULE_ID } from './tabsTracking'
 
-// debug logging for rpc intercepts
+// debug logging for RPC intercepts
 chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
   if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
     console.debug(
@@ -46,7 +46,7 @@ interface Fork {
 let currentRuleIds: number[] = []
 
 /**
- * Updare the RPC redirect rules. This must be called whenever the active fork changes or when activeExtensionTabs changes.
+ * Update the RPC redirect rules. This must be called whenever the active fork changes or when activeExtensionTabs changes.
  */
 export const updateRpcRedirectRules = async (fork: Fork | null) => {
   const addRules = fork
