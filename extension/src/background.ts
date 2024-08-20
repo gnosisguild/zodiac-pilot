@@ -48,47 +48,57 @@ const updateHeadersRule = () => {
   // A potential solution could be a service worker rewriting the HTML content in the doc request to filter out these tags?
   chrome.declarativeNetRequest.updateSessionRules(
     {
-      addRules: [
-        {
-          id: HEADERS_RULE_ID,
-          priority: 1,
-          action: {
-            type: chrome.declarativeNetRequest.RuleActionType.MODIFY_HEADERS,
-            responseHeaders: [
+      addRules:
+        activeExtensionTabs.size > 0
+          ? [
               {
-                header: 'x-frame-options',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                id: HEADERS_RULE_ID,
+                priority: 1,
+                action: {
+                  type: chrome.declarativeNetRequest.RuleActionType
+                    .MODIFY_HEADERS,
+                  responseHeaders: [
+                    {
+                      header: 'x-frame-options',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'X-Frame-Options',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'content-security-policy',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'Content-Security-Policy',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'content-security-policy-report-only',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'Content-Security-Policy-Report-Only',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                  ],
+                },
+                condition: {
+                  resourceTypes: [
+                    chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
+                  ],
+                  tabIds: Array.from(activeExtensionTabs),
+                },
               },
-              {
-                header: 'X-Frame-Options',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-              },
-              {
-                header: 'content-security-policy',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-              },
-              {
-                header: 'Content-Security-Policy',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-              },
-              {
-                header: 'content-security-policy-report-only',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-              },
-              {
-                header: 'Content-Security-Policy-Report-Only',
-                operation: chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-              },
-            ],
-          },
-          condition: {
-            resourceTypes: [
-              chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
-            ],
-            tabIds: Array.from(activeExtensionTabs),
-          },
-        },
-      ],
+            ]
+          : [],
       removeRuleIds: [HEADERS_RULE_ID],
     },
     () => {
