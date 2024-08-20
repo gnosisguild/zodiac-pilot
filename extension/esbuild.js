@@ -11,7 +11,6 @@ esbuild
     entryPoints: [
       './src/background.ts',
       './src/contentScript.ts',
-      './src/introduce.ts',
       './src/launch.ts',
       './src/injection.ts',
       './src/app.tsx',

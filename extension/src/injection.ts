@@ -1,16 +1,23 @@
 // This script will be injected via contentScripts.ts into the browser iframe running the Dapp.
 
 import InjectedProvider from './bridge/InjectedProvider'
+import { Eip1193Provider } from './types'
+
 declare let window: Window & {
-  ethereum: InjectedProvider
+  ethereum: Eip1193Provider
   rabbyWalletRouter?: {
     setDefaultProvider(rabbyAsDefault: boolean): void
     addProvider(provider: InjectedProvider): void
+    currentProvider: Eip1193Provider
+    lastInjectedProvider?: Eip1193Provider
   }
 }
 
 // inject bridged ethereum provider
 const injectedProvider = new InjectedProvider()
+
+// keep track of provider injected by other wallet extensions
+let walletProvider = window.ethereum
 
 const canSetWindowEthereum =
   Object.getOwnPropertyDescriptor(window, 'ethereum')?.configurable !== false
@@ -21,8 +28,9 @@ if (canSetWindowEthereum) {
       get() {
         return injectedProvider
       },
-      set() {
-        // do nothing
+      set(value: Eip1193Provider) {
+        // store as user wallet provider so we can connect to it from the side panel
+        walletProvider = value
       },
       configurable: false,
     },
@@ -38,10 +46,22 @@ if (canSetWindowEthereum) {
       'Rabby detected, setting Pilot as default provider in Rabby Wallet Router',
       window.rabbyWalletRouter
     )
-    window.rabbyWalletRouter.addProvider(injectedProvider)
-    window.rabbyWalletRouter.setDefaultProvider(false)
+
+    const { rabbyWalletRouter } = window
+
+    walletProvider = rabbyWalletRouter.currentProvider
+    rabbyWalletRouter.addProvider(injectedProvider)
+    rabbyWalletRouter.setDefaultProvider(false)
     // prevent Rabby from setting its own provider as default subsequently
-    window.rabbyWalletRouter.setDefaultProvider = () => {}
+
+    rabbyWalletRouter.setDefaultProvider = (rabbyAsDefault) => {
+      const rabbyProvider: Eip1193Provider = (window as any).rabby
+      if (rabbyAsDefault) {
+        walletProvider = rabbyProvider
+      } else {
+        walletProvider = rabbyWalletRouter.lastInjectedProvider ?? rabbyProvider
+      }
+    }
   } else {
     // If it's not Rabby, we have to alert the user
     alert(
@@ -50,24 +70,7 @@ if (canSetWindowEthereum) {
   }
 }
 
-// establish message bridge for location requests
-window.addEventListener('message', (ev: MessageEvent) => {
-  const { zodiacPilotHrefRequest, zodiacPilotReloadRequest } = ev.data
-  if (zodiacPilotHrefRequest) {
-    if (!window.top) throw new Error('Must run inside iframe')
-    window.top.postMessage(
-      {
-        zodiacPilotHrefResponse: true,
-        href: window.location.href,
-      },
-      '*'
-    )
-  }
-
-  if (zodiacPilotReloadRequest) {
-    window.location.reload()
-  }
-})
+console.log('injected into', document.title, chrome.runtime.id)
 
 /**
  * EIP-6963 support
@@ -113,8 +116,11 @@ window.addEventListener('eip6963:announceProvider', (event) => {
         }),
       })
     )
-    event.stopImmediatePropagation()
+
+    // TODO proxy this event to the side panel so we can connect to this user wallet from there
   }
+
+  event.stopImmediatePropagation()
 })
 
 window.dispatchEvent(new Event('ethereum#initialized'))

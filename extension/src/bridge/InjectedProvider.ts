@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { nanoid } from 'nanoid'
 
 interface JsonRpcRequest {
   method: string
@@ -11,8 +12,10 @@ interface JsonRpcResponse {
   error?: Error
 }
 
+const injectionId = nanoid()
+
 export default class InjectedProvider extends EventEmitter {
-  private messageId = 0
+  private messageCounter = 0
 
   chainId = '0x1'
 
@@ -64,12 +67,11 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   request = (request: JsonRpcRequest): Promise<any> => {
-    const currentMessageId = this.messageId
-    this.messageId++
+    const currentMessageId = injectionId + this.messageCounter
+    this.messageCounter++
 
     return new Promise((resolve, reject) => {
-      if (!window.top) throw new Error('Must run inside iframe')
-      window.top.postMessage(
+      (window.top || window).postMessage(
         {
           zodiacPilotBridgeRequest: true,
           request,
