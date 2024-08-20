@@ -64,27 +64,12 @@ const updateHeadersRule = () => {
                         chrome.declarativeNetRequest.HeaderOperation.REMOVE,
                     },
                     {
-                      header: 'X-Frame-Options',
-                      operation:
-                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    },
-                    {
                       header: 'content-security-policy',
                       operation:
                         chrome.declarativeNetRequest.HeaderOperation.REMOVE,
                     },
                     {
-                      header: 'Content-Security-Policy',
-                      operation:
-                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    },
-                    {
                       header: 'content-security-policy-report-only',
-                      operation:
-                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    },
-                    {
-                      header: 'Content-Security-Policy-Report-Only',
                       operation:
                         chrome.declarativeNetRequest.HeaderOperation.REMOVE,
                     },
