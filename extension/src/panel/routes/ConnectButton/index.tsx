@@ -6,7 +6,6 @@ import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
 import { CHAIN_NAME } from '../../../chains'
 import { useMetaMask, useWalletConnect } from '../../providers'
-import PUBLIC_PATH from '../../../publicPath'
 import { ProviderType } from '../../../types'
 import { validateAddress } from '../../utils'
 import { useRoute, useRoutes } from '../routeHooks'
@@ -22,11 +21,14 @@ import {
 import { ZeroAddress } from 'ethers'
 
 const walletConnectLogo = (
-  <img src={PUBLIC_PATH + walletConnectLogoUrl} alt="wallet connect logo" />
+  <img
+    src={chrome.runtime.getURL(walletConnectLogoUrl)}
+    alt="wallet connect logo"
+  />
 )
 const metamaskLogo = (
   <img
-    src={PUBLIC_PATH + metamaskLogoUrl}
+    src={chrome.runtime.getURL(metamaskLogoUrl)}
     alt="metamask logo"
     style={{ height: 28 }}
   />
