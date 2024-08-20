@@ -10,12 +10,21 @@
     "128": "zodiac128.png"
   },
   "action": {
-    "default_title": "Zodiac Pilot"
+    "default_title": "Click to open Zodiac Pilot panel"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "externally_connectable": {
+    "matches": [
+      "<all_urls>"
+    ]
   },
   "permissions": [
     "tabs",
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback",
+    "sidePanel",
     "webRequest"
   ],
   "background": {
@@ -33,24 +42,6 @@
       "all_frames": true,
       "js": [
         "build/contentScript.js"
-      ]
-    },
-    {
-      "matches": [
-        "https://pilot.gnosisguild.org/"
-      ],
-      "run_at": "document_start",
-      "js": [
-        "build/introduce.js"
-      ]
-    },
-    {
-      "matches": [
-        "https://pilot.gnosisguild.org/"
-      ],
-      "run_at": "document_end",
-      "js": [
-        "build/launch.js"
       ]
     }
   ],

@@ -2161,13 +2161,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:^0.0.233":
-  version: 0.0.233
-  resolution: "@types/chrome@npm:0.0.233"
+"@types/chrome@npm:^0.0.268":
+  version: 0.0.268
+  resolution: "@types/chrome@npm:0.0.268"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10/dda7413b55866e6c1c88823f858277916d6cf9921c42ea47ea3e1767dc5f4fd86a50337a7e64b115c987d2246cb1a835bc0efd899b42bab644303535a4c14cdf
+  checksum: 10/f03cf2f816f7c8f19319299af9399dd3eed8b46b3e4791bd7c1c70d982ae63634580a4c03509841cd65b91e99e6bc47f05358811d2c8b707968746d3d482b983
   languageName: node
   linkType: hard
 
@@ -10647,7 +10647,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.3.1"
     "@testing-library/jest-dom": "npm:^6.4.6"
     "@testing-library/react": "npm:^16.0.0"
-    "@types/chrome": "npm:^0.0.233"
+    "@types/chrome": "npm:^0.0.268"
     "@types/eslint__js": "npm:^8.42.3"
     "@types/events": "npm:^3.0.3"
     "@types/react": "npm:^18.2.39"
