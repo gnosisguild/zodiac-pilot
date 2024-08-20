@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
 
 import { Box, Flex } from '../../components'
-import ToggleButton from '../../components/Drawer/ToggleButton'
+import ToggleButton from '../../components/ToggleButton'
 import { CHAIN_CURRENCY } from '../../chains'
 import { useRoute } from '../routes'
 import { TransactionState } from '../state'
@@ -134,40 +134,6 @@ export const Transaction: React.FC<Props> = ({
             )}
           </Box>
         </>
-      )}
-    </Box>
-  )
-}
-
-export const TransactionBadge: React.FC<Props> = ({
-  index,
-  transactionState,
-  scrollIntoView,
-}) => {
-  const { route } = useRoute()
-
-  const showRoles = routeGoesThroughRoles(route)
-
-  const elementRef = useScrollIntoView(scrollIntoView)
-
-  return (
-    <Box
-      ref={elementRef}
-      p={2}
-      className={classes.badgeContainer}
-      double
-      rounded
-    >
-      <div className={classes.txNumber}>{index + 1}</div>
-
-      <SimulationStatus transactionState={transactionState} mini />
-
-      {showRoles && (
-        <RolePermissionCheck
-          transactionState={transactionState}
-          index={index}
-          mini
-        />
       )}
     </Box>
   )

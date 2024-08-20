@@ -9,9 +9,9 @@
   height: 44px;
 }
 
-.connectionBubble:hover,
-.connectionBubble:hover .currentConnectionContainer,
-.connectionBubble:hover .connectionsContainer {
+.routeBubble:hover,
+.routeBubble:hover .currentConnectionContainer,
+.routeBubble:hover .connectionsContainer {
   border-color: rgba(217, 212, 173, 0.8);
 }
 
@@ -59,7 +59,7 @@
   backdrop-filter: blur(3px);
   border-radius: 40px;
 }
-.connectionBubble:hover .infoContainer {
+.routeBubble:hover .infoContainer {
   pointer-events: all;
   opacity: 1;
 }
