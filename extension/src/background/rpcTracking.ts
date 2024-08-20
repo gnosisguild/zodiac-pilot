@@ -34,6 +34,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     // ignore requests to fork RPCs
     if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/'))
       return
+
     // only consider requests with a JSON RPC body
     if (!getJsonRpcBody(details)) return
 

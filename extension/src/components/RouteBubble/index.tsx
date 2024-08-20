@@ -1,8 +1,6 @@
 import React from 'react'
 
-import { useConnectionsHash } from '../../routing'
 import { useRoute } from '../../panel/routes'
-import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
 import Box from '../Box'
 import ConnectionStack from '../ConnectionStack'
@@ -11,22 +9,17 @@ import Flex from '../Flex'
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
 import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
+import { Link } from 'react-router-dom'
 
-interface ConnectionBubbleProps {
-  onConnectionsClick: () => void
-}
-
-const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
-  onConnectionsClick,
-}) => {
+const RouteBubble: React.FC = () => {
   const { route } = useRoute()
   const connection = asLegacyConnection(route)
-  const currentConnectionHash = useConnectionsHash(route.id)
+
   return (
-    <Box roundedLeft className={classes.connectionBubble}>
-      <BlockLink onClick={onConnectionsClick}>
-        <Flex gap={1}>
-          <Box bg roundedLeft className={classes.currentConnectionContainer}>
+    <Box roundedLeft className={classes.routeBubble}>
+      <Flex gap={1}>
+        <Box bg roundedLeft className={classes.currentConnectionContainer}>
+          <Link to={'/routes/' + route.id}>
             <Flex justifyContent="space-between" alignItems="center" gap={3}>
               <div className={classes.blockieStack}>
                 {connection.pilotAddress && (
@@ -54,24 +47,27 @@ const ConnectionBubble: React.FC<ConnectionBubbleProps> = ({
               </div>
               <p className={classes.label}>{connection.label}</p>
             </Flex>
-          </Box>
+          </Link>
+        </Box>
+        <Link to="/routes">
           <Box bg className={classes.connectionsContainer}>
             <ConnectionsIcon height="100%" width="100%" />
           </Box>
-        </Flex>
-      </BlockLink>
+        </Link>
+      </Flex>
+
       <div className={classes.infoContainer}>
         <Box bg p={3} className={classes.info}>
-          <BlockLink href={currentConnectionHash}>
+          <Link to={'/routes/' + connection.id}>
             <ConnectionStack
               connection={connection}
               className={classes.stack}
             />
-          </BlockLink>
+          </Link>
         </Box>
       </div>
     </Box>
   )
 }
 
-export default ConnectionBubble
+export default RouteBubble
