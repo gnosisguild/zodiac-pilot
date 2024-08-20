@@ -2,18 +2,18 @@ import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 
-import { BlockButton, Button, Drawer, Flex, IconButton } from '../../components'
+import { Button, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../providers'
 import { useRoute } from '../routes'
 import { useProvider } from '../providers/ProvideProvider'
 import { useDispatch, useTransactions } from '../state'
 
 import Submit from './Submit'
-import { Transaction, TransactionBadge } from './Transaction'
+import { Transaction } from './Transaction'
 import classes from './style.module.css'
+import RouteBubble from '../../components/RouteBubble'
 
-const TransactionsDrawer: React.FC = () => {
-  const [expanded, setExpanded] = useState(true)
+const Transactions: React.FC = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
@@ -63,49 +63,11 @@ const TransactionsDrawer: React.FC = () => {
   }
 
   return (
-    <Drawer
-      expanded={expanded}
-      onToggle={() => {
-        setScrollItemIntoView(undefined) // clear scrollItemIntoView so that the original scroll position is restored
-        setExpanded(!expanded)
-      }}
-      collapsedChildren={
-        <div className={classes.collapsed}>
-          <div className={classes.recordingIcon} />
-          <Flex
-            gap={2}
-            direction="column"
-            alignItems="stretch"
-            className={classes.wrapper}
-          >
-            <Flex
-              gap={1}
-              data-collapsed={true}
-              ref={scrollContainerRef}
-              className={classes.body + ' coll'}
-              direction="column"
-            >
-              {transactions.map((transactionState, index) => (
-                <BlockButton
-                  key={transactionState.id}
-                  onClick={(ev) => {
-                    ev.stopPropagation()
-                    setScrollItemIntoView(index)
-                    setExpanded(true)
-                  }}
-                >
-                  <TransactionBadge
-                    index={index}
-                    transactionState={transactionState}
-                    scrollIntoView={scrollItemIntoView === index}
-                  />
-                </BlockButton>
-              ))}
-            </Flex>
-          </Flex>
-        </div>
-      }
-    >
+    <Flex direction="column" gap={0}>
+      <Flex justifyContent="end" gap={0}>
+        <RouteBubble />
+      </Flex>
+
       <Flex gap={2} alignItems="center">
         <h4 className={classes.header}>Recording Transactions</h4>
         <Flex gap={1} className={classes.headerButtons}>
@@ -169,8 +131,8 @@ const TransactionsDrawer: React.FC = () => {
           <Submit />
         </Flex>
       </Flex>
-    </Drawer>
+    </Flex>
   )
 }
 
-export default TransactionsDrawer
+export default Transactions
