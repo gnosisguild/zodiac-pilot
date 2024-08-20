@@ -87,5 +87,8 @@
     "vitest": "^2.0.2",
     "zodiac-roles-deployments": "^2.2.2"
   },
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.3.1",
+  "dependencies": {
+    "react-router-dom": "^6.26.1"
+  }
 }

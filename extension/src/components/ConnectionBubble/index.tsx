@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useConnectionsHash } from '../../routing'
-import { useRoute } from '../../routes'
+import { useRoute } from '../../panel/routes'
 import BlockLink from '../BlockLink'
 import Blockie from '../Blockie'
 import Box from '../Box'
@@ -10,7 +10,7 @@ import Flex from '../Flex'
 
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
-import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
+import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
 
 interface ConnectionBubbleProps {
   onConnectionsClick: () => void
