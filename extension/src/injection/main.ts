@@ -1,7 +1,7 @@
-// This script will be injected via contentScripts.ts into the browser iframe running the Dapp.
+// This script will be injected via contentScripts.ts into each tab
 
-import InjectedProvider from './bridge/InjectedProvider'
-import { Eip1193Provider } from './types'
+import InjectedProvider from '../bridge/InjectedProvider'
+import { Eip1193Provider } from '../types'
 
 declare let window: Window & {
   ethereum: Eip1193Provider

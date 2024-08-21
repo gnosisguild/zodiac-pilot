@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useEffect } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
-import { useMetaMask, useWalletConnect } from '../providers'
+import { useInjectedWallet, useWalletConnect } from '../providers'
 import {
   Route,
   LegacyConnection,
@@ -9,7 +9,7 @@ import {
   ProviderType,
 } from '../../types'
 import { useStickyState } from '../utils'
-import { MetaMaskContextT } from '../providers/useMetaMask'
+import { MetaMaskContextT } from '../providers/useInjectedWallet'
 import { WalletConnectResult } from '../providers/useWalletConnect'
 import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
 import {
@@ -170,7 +170,7 @@ export const useRoute = (id?: string) => {
     throw new Error('chainId is empty')
   }
 
-  const metamask = useMetaMask()
+  const metamask = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
   const defaultProvider = getEip1193ReadOnlyProvider(chainId)
 

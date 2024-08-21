@@ -5,7 +5,7 @@ import { RiAlertLine } from 'react-icons/ri'
 import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
 import { CHAIN_NAME } from '../../../chains'
-import { useMetaMask, useWalletConnect } from '../../providers'
+import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { ProviderType } from '../../../types'
 import { validateAddress } from '../../utils'
 import { useRoute, useRoutes } from '../routeHooks'
@@ -41,7 +41,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
   if (pilotAddress === ZeroAddress) pilotAddress = ''
 
-  const metamask = useMetaMask()
+  const metamask = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
   const connect = (

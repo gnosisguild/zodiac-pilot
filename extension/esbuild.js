@@ -11,7 +11,9 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
       './src/contentScript.ts',
-      './src/injection.ts',
+      './src/connectContentScript.ts',
+      './src/injection/main.ts',
+      './src/injection/connect.ts',
       './src/panel/app.tsx',
     ],
     bundle: true,
