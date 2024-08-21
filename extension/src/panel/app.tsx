@@ -10,12 +10,12 @@ import './global.css'
 import ProvideProvider from './providers/ProvideProvider'
 import { ProvideState } from './state'
 import ZodiacToastContainer from '../components/Toast'
-import { ProvideMetaMask } from './providers'
+import { ProvideInjectedWallet } from './providers'
 import { ProvideRoutes, RoutesEdit } from './routes'
 import { useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
-import { PILOT_PANEL_OPENED } from '../messages'
+import { PILOT_PANEL_OPENED, USER_WALLET_REQUEST } from '../messages'
 
 // chrome.windows.getCurrent().then((window) => {
 //   if (!window.id) throw new Error('cannot determine window id')
@@ -26,13 +26,25 @@ import { PILOT_PANEL_OPENED } from '../messages'
 //   })
 // })
 
-chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
   if (tabs.length === 0) throw new Error('no active tab found')
   chrome.runtime.sendMessage({
     type: PILOT_PANEL_OPENED,
     windowId: tabs[0].windowId,
     tabId: tabs[0].id,
   })
+})
+
+chrome.tabs.query({ currentWindow: true, active: true }, async (tabs) => {
+  if (tabs.length === 0 || !tabs[0].id) throw new Error('no tab found')
+
+  console.log('posting msg to tab', tabs[0])
+  const res = await chrome.tabs.sendMessage(tabs[0].id, {
+    type: USER_WALLET_REQUEST,
+    request: { method: 'eth_requestAccounts', params: [] },
+  })
+
+  console.log('chainId response', res)
 })
 
 const router = createHashRouter([
@@ -69,11 +81,11 @@ root.render(
   <React.StrictMode>
     <ProvideState>
       <ProvideRoutes>
-        <ProvideMetaMask>
+        <ProvideInjectedWallet>
           <ProvideProvider>
             <App />
           </ProvideProvider>
-        </ProvideMetaMask>
+        </ProvideInjectedWallet>
       </ProvideRoutes>
     </ProvideState>
   </React.StrictMode>

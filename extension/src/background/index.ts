@@ -3,7 +3,7 @@ import { updateRpcRedirectRules } from './rpcRedirect'
 import { activePilotSessions } from './tabsTracking'
 import { Fork } from './types'
 
-chrome.runtime.onMessage.addListener(async (message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender) => {
   // ignore messages that don't come from the extension itself
   if (sender.id === chrome.runtime.id) return
 
@@ -14,6 +14,7 @@ chrome.runtime.onMessage.addListener(async (message, sender) => {
       fork: null,
       tabs: new Set([message.tabId]),
     })
+    return true
   }
 
   // if (message.type === 'startSimulating') {

@@ -38,10 +38,23 @@
       "matches": [
         "<all_urls>"
       ],
+      "exclude_globs": [
+        "https://vnet-api.pilot.gnosisguild.org/"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "js": [
         "build/contentScript.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://vnet-api.pilot.gnosisguild.org/"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": [
+        "build/connectContentScript.js"
       ]
     }
   ],
