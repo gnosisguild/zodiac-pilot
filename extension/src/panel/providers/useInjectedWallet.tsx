@@ -13,14 +13,15 @@ import { EXPLORER_URL, CHAIN_CURRENCY, CHAIN_NAME, RPC } from '../../chains'
 import { Eip1193Provider } from '../../types'
 import { BrowserProvider } from 'ethers'
 
-export interface MetaMaskContextT {
+export interface InjectedWalletContextT {
   provider: Eip1193Provider | undefined
   connect: () => Promise<{ chainId: number; accounts: string[] }>
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
 }
-const MetaMaskContext = React.createContext<MetaMaskContextT | null>(null)
+const InjectedWalletContext =
+  React.createContext<InjectedWalletContextT | null>(null)
 
 declare global {
   interface Window {
@@ -28,7 +29,7 @@ declare global {
   }
 }
 
-export const ProvideMetaMask: React.FC<{
+export const ProvideInjectedWallet: React.FC<{
   children: ReactNode
 }> = ({ children }) => {
   const [accounts, setAccounts] = useState<string[]>([])
@@ -47,13 +48,13 @@ export const ProvideMetaMask: React.FC<{
       }
 
     const handleAccountsChanged = ifNotCanceled((accounts: string[]) => {
-      console.log(`MetaMask accounts changed to ${accounts}`)
+      console.log(`InjectedWallet accounts changed to ${accounts}`)
       setAccounts(accounts)
     })
 
     const handleChainChanged = ifNotCanceled((chainIdHex: string) => {
       const chainId = parseInt(chainIdHex.slice(2), 16)
-      console.log(`MetaMask network changed to ${chainId}`)
+      console.log(`InjectedWallet network changed to ${chainId}`)
       setChainId(chainId)
     })
 
@@ -77,7 +78,7 @@ export const ProvideMetaMask: React.FC<{
   }, [])
 
   const connect = useCallback(async () => {
-    const { accounts, chainId: chainIdBigInt } = await connectMetaMask()
+    const { accounts, chainId: chainIdBigInt } = await connectInjectedWallet()
     const chainId = Number(chainIdBigInt)
     setAccounts(accounts)
     setChainId(chainId)
@@ -96,26 +97,30 @@ export const ProvideMetaMask: React.FC<{
   )
 
   return (
-    <MetaMaskContext.Provider value={packed}>
-      <iframe title="MetaMask" src="https://pilot.gnosisguild.org" hidden />
+    <InjectedWalletContext.Provider value={packed}>
+      <iframe
+        title="InjectedWallet"
+        src="https://pilot.gnosisguild.org"
+        hidden
+      />
       {children}
-    </MetaMaskContext.Provider>
+    </InjectedWalletContext.Provider>
   )
 }
 
-const useMetaMask = () => {
-  const context = useContext(MetaMaskContext)
+const useInjectedWallet = () => {
+  const context = useContext(InjectedWalletContext)
   if (!context) {
     throw new Error(
-      'useMetaMaskProvider must be used within a <ProvideMetaMask>'
+      'useInjectedWalletProvider must be used within a <ProvideInjectedWallet>'
     )
   }
   return context
 }
 
-export default useMetaMask
+export default useInjectedWallet
 
-interface MetaMaskError extends Error {
+interface InjectedWalletError extends Error {
   code: number
 }
 
@@ -132,15 +137,15 @@ const memoWhilePending = <T extends (...args: any) => Promise<any>>(
     return pendingPromise
   }) as T
 
-const connectMetaMask = memoWhilePending(async () => {
-  if (!window.ethereum) throw new Error('MetaMask not found')
+const connectInjectedWallet = memoWhilePending(async () => {
+  if (!window.ethereum) throw new Error('InjectedWallet not found')
 
   const browserProvider = new BrowserProvider(window.ethereum)
 
   const accountsPromise = browserProvider
     .send('eth_requestAccounts', [])
     .catch((err: any) => {
-      if ((err as MetaMaskError).code === -32002) {
+      if ((err as InjectedWalletError).code === -32002) {
         return new Promise((resolve: (value: string[]) => void) => {
           const toastId = toast.warn(
             <>Check your wallet to confirm connection</>,
@@ -170,7 +175,7 @@ const connectMetaMask = memoWhilePending(async () => {
 })
 
 const switchChain = async (chainId: ChainId) => {
-  if (!window.ethereum) throw new Error('MetaMask not found')
+  if (!window.ethereum) throw new Error('InjectedWallet not found')
 
   try {
     await window.ethereum.request({
@@ -178,7 +183,7 @@ const switchChain = async (chainId: ChainId) => {
       params: [{ chainId: `0x${chainId.toString(16)}` }],
     })
   } catch (err) {
-    if ((err as MetaMaskError).code === -32002) {
+    if ((err as InjectedWalletError).code === -32002) {
       // another wallet_switchEthereumChain request is already pending
       await new Promise((resolve: (value: void) => void) => {
         const toastId = toast.warn(
@@ -195,8 +200,8 @@ const switchChain = async (chainId: ChainId) => {
       return
     }
 
-    if ((err as MetaMaskError).code === 4902) {
-      // the requested chain has not been added by MetaMask
+    if ((err as InjectedWalletError).code === 4902) {
+      // the requested chain has not been added by InjectedWallet
       await window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -218,7 +223,7 @@ const switchChain = async (chainId: ChainId) => {
     }
   }
 
-  // wait for chain change event (MetaMask will emit this event only after some delay, so our state that reacts to this event would be out of sync if we don't wait here)
+  // wait for chain change event (InjectedWallet will emit this event only after some delay, so our state that reacts to this event would be out of sync if we don't wait here)
   await new Promise((resolve: (value: void) => void) => {
     const handleChainChanged = () => {
       resolve()
