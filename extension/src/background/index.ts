@@ -1,67 +1,43 @@
+import { PILOT_PANEL_OPENED } from '../messages'
 import { updateRpcRedirectRules } from './rpcRedirect'
-import {
-  activeExtensionTabs,
-  startTrackingTab,
-  stopTrackingTab,
-} from './tabsTracking'
+import { activePilotSessions } from './tabsTracking'
+import { Fork } from './types'
 
-interface Fork {
-  networkId: number
-  rpcUrl: string
-}
+chrome.runtime.onMessage.addListener(async (message, sender) => {
+  // ignore messages that don't come from the extension itself
+  if (sender.id === chrome.runtime.id) return
 
-let activeFork: Fork | null = null
+  console.debug('received message:', message)
 
-chrome.tabs.onRemoved.addListener(stopTrackingTab)
-
-chrome.runtime.onMessage.addListener((message, sender) => {
-  if (!sender.tab?.id) return
-
-  if (message.type === 'startSimulating') {
-    const { networkId, rpcUrl } = message
-    activeFork = { networkId, rpcUrl }
-    updateRpcRedirectRules(activeFork)
-    console.debug(
-      `start intercepting JSON RPC requests for network #${networkId}`,
-      rpcUrl
-    )
+  if (message.type === PILOT_PANEL_OPENED) {
+    activePilotSessions.set(message.windowId, {
+      fork: null,
+      tabs: new Set([message.tabId]),
+    })
   }
 
-  if (message.type === 'stopSimulating') {
-    activeFork = null
-    updateRpcRedirectRules(activeFork)
-    console.debug(
-      `stop intercepting JSON RPC requests in tab #${sender.tab.id}`
-    )
-  }
+  // if (message.type === 'startSimulating') {
+  //   const { networkId, rpcUrl } = message
+  //   activeFork = { networkId, rpcUrl }
+  //   updateRpcRedirectRules(activeFork)
+  //   console.debug(
+  //     `start intercepting JSON RPC requests for network #${networkId}`,
+  //     rpcUrl
+  //   )
+  // }
+
+  // if (message.type === 'stopSimulating') {
+  //   activeFork = null
+  //   updateRpcRedirectRules(activeFork)
+  //   console.debug(
+  //     `stop intercepting JSON RPC requests in tab #${sender.tab.id}`
+  //   )
+  // }
 })
 
-chrome.action.onClicked.addListener((tab) => {
-  const tabId = tab.id
-  if (!tabId) return
-
-  if (!activeExtensionTabs.has(tabId)) {
-    chrome.sidePanel.setOptions({
-      tabId,
-      path: 'sidepanel.html',
-      enabled: true,
-    })
-    chrome.sidePanel.open({ tabId })
-    startTrackingTab(tabId)
-  } else {
-    chrome.sidePanel.setOptions({
-      tabId,
-      enabled: false,
-    })
-    stopTrackingTab(tabId)
-  }
-
-  if (activeFork) {
-    updateRpcRedirectRules(activeFork)
-    // TODO Force tab reload if simulation is running
-    // (this makes sure the app connects to the latest fork state / reconnects back to actual origin chain state)
-  }
-})
+chrome.sidePanel
+  .setPanelBehavior({ openPanelOnActionClick: true })
+  .catch((error) => console.error(error))
 
 // TODO set status badge if a simulation is active
 // chrome.action.setBadgeBackgroundColor(
