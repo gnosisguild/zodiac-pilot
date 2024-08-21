@@ -1,4 +1,4 @@
-import { activeExtensionTabs } from './tabsTracking'
+import { activePilotSessions } from './tabsTracking'
 
 // Keep track of the network IDs for all JSON RPC endpoints used from apps
 export const networkIdOfRpcUrl = new Map<string, number | undefined>()
@@ -25,8 +25,12 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
 
 chrome.webRequest.onBeforeRequest.addListener(
   (details: chrome.webRequest.WebRequestBodyDetails) => {
+    const hasActiveSession = Array.from(activePilotSessions.values()).some(
+      (session) => session.tabs.has(details.tabId)
+    )
+
     // only handle requests in tracked tabs
-    if (!activeExtensionTabs.has(details.tabId)) return
+    if (!hasActiveSession) return
     // skip urls we already know
     if (!networkIdOfRpcUrlPromise.has(details.url)) return
     // only consider POST requests
