@@ -1,0 +1,1 @@
+export const PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED'
