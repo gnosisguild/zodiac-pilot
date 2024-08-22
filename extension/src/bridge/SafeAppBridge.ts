@@ -25,7 +25,7 @@ import {
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
 import { LegacyConnection, Eip1193Provider } from '../types'
-import { reloadIframe, requestIframeHref } from '../location'
+
 import { getAddress } from 'ethers'
 
 type MessageHandler = (

@@ -1,4 +1,10 @@
-import { REQUEST_CHAIN_ID } from '../messages'
+import './probeChainId'
+import {
+  INJECTED_PROVIDER_EVENT,
+  INJECTED_PROVIDER_INITIALIZED,
+  INJECTED_PROVIDER_REQUEST,
+  Message,
+} from './messages'
 
 function inject(scriptPath: string) {
   const node = document.createElement('script')
@@ -20,41 +26,28 @@ function inject(scriptPath: string) {
 
 inject('build/inject/injectedScript.js')
 
-chrome.runtime.onMessage.addListener((message, sender, respond) => {
+// relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
+window.addEventListener('message', async (event: MessageEvent<Message>) => {
+  const message = event.data
+  if (message.type === INJECTED_PROVIDER_INITIALIZED) {
+    chrome.runtime.sendMessage(message)
+  }
+
+  if (message.type === INJECTED_PROVIDER_REQUEST) {
+    const responseMessage: Message = await chrome.runtime.sendMessage(message)
+    window.postMessage(responseMessage, '*')
+  }
+})
+
+// Relay events from the Eip1193Provider in the panel to the InjectedProvider in the tab
+chrome.runtime.onMessage.addListener((message, sender) => {
   console.log('[inject/contentScript] chrome.runtime.onMessage', message, {
     sender,
   })
   if (sender.id !== chrome.runtime.id) return
 
-  // Provide the background script with the chainId of a given RPC endpoint on request
-  if (message.type === REQUEST_CHAIN_ID) {
-    fetch(message.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        method: 'eth_chainId',
-        params: [],
-        jsonrpc: '2.0',
-        id: Math.floor(Math.random() * 100000000),
-      }),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        const networkId = parseInt(json.result)
-        respond(networkId && !isNaN(networkId) ? networkId : undefined)
-      })
-      .catch((e) => {
-        console.error(
-          'Failed to determine chainId for endpoint',
-          message.url,
-          e
-        )
-        respond(undefined)
-      })
-
-    return true // without this the response won't be sent
+  if (message.type === INJECTED_PROVIDER_EVENT) {
+    window.postMessage(message, '*')
   }
 })
 
