@@ -14,7 +14,7 @@ interface JsonRpcRequest {
   params?: Array<any>
 }
 
-export class InjectedWalletError extends Error {
+class InjectedWalletError extends Error {
   code: number
   constructor(message: string, code: number) {
     super(message)
