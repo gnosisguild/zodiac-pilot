@@ -10,10 +10,14 @@ esbuild
   .context({
     entryPoints: [
       './src/background/index.ts',
-      './src/contentScript.ts',
-      './src/connectContentScript.ts',
-      './src/injection/main.ts',
-      './src/injection/connect.ts',
+
+      './src/connect/contentScript.ts',
+      './src/connect/contentScriptIframe.ts',
+      './src/connect/injectedScript.ts',
+
+      './src/inject/contentScript.ts',
+      './src/inject/injectedScript.ts',
+
       './src/panel/app.tsx',
     ],
     bundle: true,

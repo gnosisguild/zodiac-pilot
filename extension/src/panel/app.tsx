@@ -15,16 +15,8 @@ import { ProvideRoutes, RoutesEdit } from './routes'
 import { useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
-import { PILOT_PANEL_OPENED, USER_WALLET_REQUEST } from '../messages'
-
-// chrome.windows.getCurrent().then((window) => {
-//   if (!window.id) throw new Error('cannot determine window id')
-
-//   chrome.runtime.sendMessage({
-//     type: PILOT_PANEL_OPENED,
-//     windowId: window.id,
-//   })
-// })
+import { PILOT_PANEL_OPENED } from '../messages'
+import { USER_WALLET_REQUEST } from '../connect/messages'
 
 chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
   if (tabs.length === 0) throw new Error('no active tab found')
