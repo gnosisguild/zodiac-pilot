@@ -6,6 +6,8 @@ const stdLibBrowser = require('node-stdlib-browser')
 
 require('dotenv').config()
 
+const SERVE_PORT = 3999
+
 esbuild
   .context({
     entryPoints: [
@@ -34,7 +36,10 @@ esbuild
     publicPath: '/build',
     inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
     define: {
-      'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+      'process.env.LIVE_RELOAD':
+        process.env.NODE_ENV === 'development'
+          ? `"http://127.0.0.1:${SERVE_PORT}/esbuild"`
+          : 'false',
       global: 'window',
     },
     plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
@@ -42,6 +47,7 @@ esbuild
   })
   .then(async (ctx) => {
     if (process.env.NODE_ENV === 'development') {
+      await ctx.serve({ port: SERVE_PORT, servedir: './public' })
       await ctx.watch()
     } else {
       await ctx.rebuild()

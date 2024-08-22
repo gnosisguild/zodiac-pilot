@@ -82,3 +82,17 @@ root.render(
     </ProvideState>
   </React.StrictMode>
 )
+
+if (process.env.LIVE_RELOAD) {
+  new EventSource(process.env.LIVE_RELOAD).addEventListener('change', (ev) => {
+    const { added, removed, updated } = JSON.parse(ev.data)
+    if (
+      [...added, ...removed, ...updated].some((path) =>
+        path.startsWith('/build/build/panel/')
+      )
+    ) {
+      console.log('🔄 detected change, reloading panel...')
+      location.reload()
+    }
+  })
+}
