@@ -1,5 +1,13 @@
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
+import {
+  INJECTED_PROVIDER_ERROR,
+  INJECTED_PROVIDER_EVENT,
+  INJECTED_PROVIDER_INITIALIZED,
+  INJECTED_PROVIDER_REQUEST,
+  INJECTED_PROVIDER_RESPONSE,
+  Message,
+} from './messages'
 
 interface JsonRpcRequest {
   method: string
@@ -10,6 +18,14 @@ interface JsonRpcResponse {
   method: string
   result?: unknown
   error?: Error
+}
+
+class InjectedWalletError extends Error {
+  code: number
+  constructor(message: string, code: number) {
+    super(message)
+    this.code = code
+  }
 }
 
 const injectionId = nanoid()
@@ -28,8 +44,8 @@ export default class InjectedProvider extends EventEmitter {
 
     window.top.postMessage(
       {
-        zodiacPilotBridgeInit: true,
-      },
+        type: INJECTED_PROVIDER_INITIALIZED,
+      } as Message,
       '*'
     )
 
@@ -40,14 +56,14 @@ export default class InjectedProvider extends EventEmitter {
       })
     })
 
-    const handleBridgeEvent = (ev: MessageEvent) => {
-      const { zodiacPilotBridgeEvent, event, args } = ev.data
-      if (!zodiacPilotBridgeEvent) {
+    // relay wallet events
+    const handleBridgeEvent = (ev: MessageEvent<Message>) => {
+      const message = ev.data
+      if (message.type !== INJECTED_PROVIDER_EVENT) {
         return
       }
-      this.emit(event, ...args)
+      this.emit(message.eventName, message.eventData)
     }
-
     window.addEventListener('message', handleBridgeEvent)
 
     this.request({ method: 'eth_chainId' }).then((chainId) => {
@@ -67,33 +83,41 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   request = (request: JsonRpcRequest): Promise<any> => {
-    const currentMessageId = injectionId + this.messageCounter
+    const requestId = injectionId + this.messageCounter
     this.messageCounter++
 
     return new Promise((resolve, reject) => {
-      (window.top || window).postMessage(
+      ;(window.top || window).postMessage(
         {
-          zodiacPilotBridgeRequest: true,
+          type: INJECTED_PROVIDER_REQUEST,
+          requestId,
           request,
-          messageId: currentMessageId,
-        },
+        } as Message,
         '*'
       )
 
-      const handleMessage = (ev: MessageEvent) => {
-        const { zodiacPilotBridgeResponse, messageId, error, response } =
-          ev.data
-        if (zodiacPilotBridgeResponse && messageId === currentMessageId) {
+      // wait for response...
+      const handleMessage = (ev: MessageEvent<Message>) => {
+        const message = ev.data
+
+        if (
+          message.type === INJECTED_PROVIDER_RESPONSE &&
+          message.requestId == requestId
+        ) {
           window.removeEventListener('message', handleMessage)
-          console.debug('RES', messageId, response)
-          if (error) {
-            reject(error)
-          } else {
-            resolve(response)
-          }
+          resolve(message.response)
+        }
+
+        if (
+          message.type == INJECTED_PROVIDER_ERROR &&
+          message.requestId == requestId
+        ) {
+          window.removeEventListener('message', handleMessage)
+          reject(
+            new InjectedWalletError(message.error.message, message.error.code)
+          )
         }
       }
-
       window.addEventListener('message', handleMessage)
     })
   }

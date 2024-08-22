@@ -1,4 +1,4 @@
-import { REQUEST_CHAIN_ID } from '../messages'
+import { PROBE_CHAIN_ID } from '../messages'
 import { activePilotSessions } from './tabsTracking'
 
 // Keep track of the network IDs for all JSON RPC endpoints used from apps
@@ -9,7 +9,7 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   if (!networkIdOfRpcUrlPromise.has(url)) {
     const promise = new Promise<number | undefined>((resolve) => {
       // fetch from the injected script, so the request has the apps origin (otherwise the request may be blocked by the RPC provider)
-      chrome.tabs.sendMessage(tabId, { type: REQUEST_CHAIN_ID, url }, resolve)
+      chrome.tabs.sendMessage(tabId, { type: PROBE_CHAIN_ID, url }, resolve)
     })
 
     networkIdOfRpcUrlPromise.set(url, promise)

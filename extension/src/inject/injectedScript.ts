@@ -1,6 +1,6 @@
 // This script will be injected via contentScripts.ts into each tab
 
-import InjectedProvider from '../bridge/InjectedProvider'
+import InjectedProvider from './InjectedProvider'
 import { Eip1193Provider } from '../types'
 
 declare let window: Window & {
