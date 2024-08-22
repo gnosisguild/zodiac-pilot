@@ -12,6 +12,7 @@ import { ChainId } from 'ser-kit'
 import { EXPLORER_URL, CHAIN_CURRENCY, CHAIN_NAME, RPC } from '../../chains'
 import { Eip1193Provider } from '../../types'
 import { BrowserProvider } from 'ethers'
+import ConnectProvider from '../../connect/ConnectProvider'
 
 export interface InjectedWalletContextT {
   provider: Eip1193Provider | undefined
@@ -23,11 +24,9 @@ export interface InjectedWalletContextT {
 const InjectedWalletContext =
   React.createContext<InjectedWalletContextT | null>(null)
 
-declare global {
-  interface Window {
-    ethereum?: Eip1193Provider
-  }
-}
+// Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
+// connectProvider can be used just like window.ethereum
+const connectProvider = new ConnectProvider()
 
 export const ProvideInjectedWallet: React.FC<{
   children: ReactNode
@@ -36,8 +35,6 @@ export const ProvideInjectedWallet: React.FC<{
   const [chainId, setChainId] = useState<number | null>(null)
 
   useEffect(() => {
-    if (!window.ethereum) return
-
     let canceled = false
     const ifNotCanceled =
       <Args extends any[]>(callback: (...operationParameters: Args) => void) =>
@@ -64,16 +61,16 @@ export const ProvideInjectedWallet: React.FC<{
       setAccounts([])
     })
 
-    window.ethereum.on('accountsChanged', handleAccountsChanged)
-    window.ethereum.on('chainChanged', handleChainChanged)
-    window.ethereum.on('disconnect', handleDisconnect)
+    connectProvider.on('accountsChanged', handleAccountsChanged)
+    connectProvider.on('chainChanged', handleChainChanged)
+    connectProvider.on('disconnect', handleDisconnect)
 
     return () => {
-      if (!window.ethereum) return
+      if (!connectProvider) return
       canceled = true
-      window.ethereum.removeListener('accountsChanged', handleAccountsChanged)
-      window.ethereum.removeListener('chainChanged', handleChainChanged)
-      window.ethereum.removeListener('disconnect', handleDisconnect)
+      connectProvider.removeListener('accountsChanged', handleAccountsChanged)
+      connectProvider.removeListener('chainChanged', handleChainChanged)
+      connectProvider.removeListener('disconnect', handleDisconnect)
     }
   }, [])
 
@@ -87,7 +84,7 @@ export const ProvideInjectedWallet: React.FC<{
 
   const packed = useMemo(
     () => ({
-      provider: window.ethereum,
+      provider: connectProvider,
       connect,
       switchChain,
       accounts,
@@ -98,11 +95,6 @@ export const ProvideInjectedWallet: React.FC<{
 
   return (
     <InjectedWalletContext.Provider value={packed}>
-      <iframe
-        title="InjectedWallet"
-        src="https://pilot.gnosisguild.org"
-        hidden
-      />
       {children}
     </InjectedWalletContext.Provider>
   )
@@ -138,9 +130,7 @@ const memoWhilePending = <T extends (...args: any) => Promise<any>>(
   }) as T
 
 const connectInjectedWallet = memoWhilePending(async () => {
-  if (!window.ethereum) throw new Error('InjectedWallet not found')
-
-  const browserProvider = new BrowserProvider(window.ethereum)
+  const browserProvider = new BrowserProvider(connectProvider)
 
   const accountsPromise = browserProvider
     .send('eth_requestAccounts', [])
@@ -154,12 +144,12 @@ const connectInjectedWallet = memoWhilePending(async () => {
           const handleAccountsChanged = (accounts: string[]) => {
             resolve(accounts)
             toast.dismiss(toastId)
-            window.ethereum?.removeListener(
+            connectProvider?.removeListener(
               'accountsChanged',
               handleAccountsChanged
             )
           }
-          window.ethereum?.on('accountsChanged', handleAccountsChanged)
+          connectProvider?.on('accountsChanged', handleAccountsChanged)
         })
       }
 
@@ -175,10 +165,10 @@ const connectInjectedWallet = memoWhilePending(async () => {
 })
 
 const switchChain = async (chainId: ChainId) => {
-  if (!window.ethereum) throw new Error('InjectedWallet not found')
+  if (!connectProvider) throw new Error('InjectedWallet not found')
 
   try {
-    await window.ethereum.request({
+    await connectProvider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: `0x${chainId.toString(16)}` }],
     })
@@ -193,16 +183,16 @@ const switchChain = async (chainId: ChainId) => {
         const handleChainChanged = () => {
           resolve()
           toast.dismiss(toastId)
-          window.ethereum?.removeListener('chainChanged', handleChainChanged)
+          connectProvider?.removeListener('chainChanged', handleChainChanged)
         }
-        window.ethereum?.on('chainChanged', handleChainChanged)
+        connectProvider?.on('chainChanged', handleChainChanged)
       })
       return
     }
 
     if ((err as InjectedWalletError).code === 4902) {
       // the requested chain has not been added by InjectedWallet
-      await window.ethereum.request({
+      await connectProvider.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
@@ -227,8 +217,8 @@ const switchChain = async (chainId: ChainId) => {
   await new Promise((resolve: (value: void) => void) => {
     const handleChainChanged = () => {
       resolve()
-      window.ethereum?.removeListener('chainChanged', handleChainChanged)
+      connectProvider?.removeListener('chainChanged', handleChainChanged)
     }
-    window.ethereum?.on('chainChanged', handleChainChanged)
+    connectProvider?.on('chainChanged', handleChainChanged)
   })
 }

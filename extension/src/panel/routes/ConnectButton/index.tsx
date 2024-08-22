@@ -134,7 +134,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   // Metamask: right account, wrong chain
   if (
-    route.providerType === ProviderType.MetaMask &&
+    route.providerType === ProviderType.InjectedWallet &&
     metamask.provider &&
     pilotAddress &&
     metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
@@ -185,7 +185,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   // MetaMask: wrong account
   if (
-    route.providerType === ProviderType.MetaMask &&
+    route.providerType === ProviderType.InjectedWallet &&
     metamask.provider &&
     pilotAddress &&
     !metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
@@ -225,7 +225,11 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           className={classes.walletButton}
           onClick={async () => {
             const { chainId, accounts } = await metamask.connect()
-            connect(ProviderType.MetaMask, chainId as ChainId, accounts[0])
+            connect(
+              ProviderType.InjectedWallet,
+              chainId as ChainId,
+              accounts[0]
+            )
           }}
         >
           {metamaskLogo}

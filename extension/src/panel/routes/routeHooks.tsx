@@ -9,7 +9,7 @@ import {
   ProviderType,
 } from '../../types'
 import { useStickyState } from '../utils'
-import { MetaMaskContextT } from '../providers/useInjectedWallet'
+import { InjectedWalletContextT } from '../providers/useInjectedWallet'
 import { WalletConnectResult } from '../providers/useWalletConnect'
 import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
 import {
@@ -43,7 +43,7 @@ const ROUTES_DEFAULT_VALUE: Route[] = [
   {
     id: nanoid(),
     label: '',
-    providerType: ProviderType.MetaMask,
+    providerType: ProviderType.InjectedWallet,
     avatar: ETH_ZERO_ADDRESS,
     initiator: undefined,
     waypoints: undefined,
@@ -175,32 +175,34 @@ export const useRoute = (id?: string) => {
   const defaultProvider = getEip1193ReadOnlyProvider(chainId)
 
   const provider: Eip1193Provider =
-    (route.providerType === ProviderType.MetaMask
+    (route.providerType === ProviderType.InjectedWallet
       ? metamask.provider
       : walletConnect?.provider) || defaultProvider
 
   const connected =
     route.initiator &&
     isConnectedTo(
-      route.providerType === ProviderType.MetaMask ? metamask : walletConnect,
+      route.providerType === ProviderType.InjectedWallet
+        ? metamask
+        : walletConnect,
       route.initiator,
       chainId
     )
 
   const providerChainId =
-    route.providerType === ProviderType.MetaMask
+    route.providerType === ProviderType.InjectedWallet
       ? metamask.chainId
       : walletConnect?.chainId || null
 
   const mustConnectMetaMask =
-    route.providerType === ProviderType.MetaMask && !metamask.chainId
+    route.providerType === ProviderType.InjectedWallet && !metamask.chainId
 
   const pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
   const canEstablishConnection =
     !connected &&
     pilotAddress &&
-    route.providerType === ProviderType.MetaMask &&
+    route.providerType === ProviderType.InjectedWallet &&
     metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     metamask.chainId !== chainId
 
@@ -243,7 +245,7 @@ export const useRoute = (id?: string) => {
 }
 
 const isConnectedTo = (
-  providerContext: MetaMaskContextT | WalletConnectResult | null,
+  providerContext: InjectedWalletContextT | WalletConnectResult | null,
   account: PrefixedAddress,
   chainId?: number
 ) => {

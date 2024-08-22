@@ -107,7 +107,7 @@ export function fromLegacyConnection(connection: LegacyConnection): Route {
   const { chainId, providerType, moduleType } = connection
 
   // We assume an EOA if the providerType is MetaMask, a Safe otherwise
-  const isEoa = providerType === ProviderType.MetaMask
+  const isEoa = providerType === ProviderType.InjectedWallet
 
   const avatarAddress = (connection.avatarAddress ||
     ZeroAddress) as `0x${string}`

@@ -3,7 +3,7 @@ import { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export enum ProviderType {
   WalletConnect,
-  MetaMask,
+  InjectedWallet,
 }
 
 export interface LegacyConnection {
