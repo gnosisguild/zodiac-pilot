@@ -191,7 +191,7 @@ const RoutesList: React.FC = () => {
       {
         id,
         label: '',
-        providerType: ProviderType.MetaMask,
+        providerType: ProviderType.InjectedWallet,
         avatar: ETH_ZERO_ADDRESS,
         initiator: undefined,
         waypoints: undefined,

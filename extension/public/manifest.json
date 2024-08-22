@@ -44,7 +44,20 @@
       "run_at": "document_start",
       "all_frames": true,
       "js": [
-        "build/contentScript.js"
+        "build/inject/contentScript.js"
+      ]
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "exclude_globs": [
+        "https://vnet-api.pilot.gnosisguild.org/"
+      ],
+      "run_at": "document_start",
+      "all_frames": false,
+      "js": [
+        "build/connect/contentScript.js"
       ]
     },
     {
@@ -54,7 +67,7 @@
       "run_at": "document_start",
       "all_frames": true,
       "js": [
-        "build/connectContentScript.js"
+        "build/connect/contentScriptIframe.js"
       ]
     }
   ],

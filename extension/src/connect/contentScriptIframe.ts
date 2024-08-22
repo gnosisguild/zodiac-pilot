@@ -16,6 +16,7 @@ function inject(scriptPath: string) {
   node.remove()
 }
 
-inject('build/injection/connect.js')
+inject('build/connect/injectedScript.js')
+console.log('injected connect script')
 
 export {}
