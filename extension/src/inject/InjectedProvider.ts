@@ -51,7 +51,7 @@ export default class InjectedProvider extends EventEmitter {
     // relay wallet events
     const handleBridgeEvent = (ev: MessageEvent<Message>) => {
       const message = ev.data
-      if (message.type !== INJECTED_PROVIDER_EVENT) {
+      if (!message || message.type !== INJECTED_PROVIDER_EVENT) {
         return
       }
       this.emit(message.eventName, message.eventData)
@@ -91,6 +91,7 @@ export default class InjectedProvider extends EventEmitter {
       // wait for response...
       const handleMessage = (ev: MessageEvent<Message>) => {
         const message = ev.data
+        if (!message) return
 
         if (
           message.type === INJECTED_PROVIDER_RESPONSE &&
