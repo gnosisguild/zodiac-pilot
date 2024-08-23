@@ -3,7 +3,7 @@
 ### connect
 
 Establish a connection to the user's wallet provided by another extension, such as MetaMask. We connect using an extra iframe we inject to every active tab. This allows us to connect to the wallet under origin connect.pilot.gnosisguild.org.
-The communication between the injected wallet in the iframe and the Eip1193 provider in the app, goes through messages
+The communication between the injected wallet in the iframe and the Eip1193 provider in the app, goes through messages:
 
 ```
 REQUEST:

@@ -12,7 +12,7 @@ let chainId: ChainId = 1
 let account = ZeroAddress as `0x${string}`
 
 /** Update the wallet */
-export const update = async (
+export const update = (
   newProvider: Eip1193Provider,
   newChainId: ChainId,
   newAccount: `0x${string}`
@@ -35,14 +35,14 @@ const emitEvent = (eventName: string, eventData: any) => {
     type: INJECTED_PROVIDER_EVENT,
     eventName,
     eventData,
-  } as Message)
+  } satisfies Message)
 }
 
 // Relay RPC requests
 chrome.runtime.onMessage.addListener(
   (message: Message, sender, sendResponse) => {
-    // TODO validate sender
-    // if (sender.id !== chrome.runtime.id) return
+    // only handle messages from our extension
+    if (sender.id !== chrome.runtime.id) return
 
     if (message.type === INJECTED_PROVIDER_REQUEST) {
       if (!provider) {
@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener(
             type: 'INJECTED_PROVIDER_RESPONSE',
             requestId: message.requestId,
             response,
-          } as Message)
+          } satisfies Message)
         })
         .catch((error) => {
           sendResponse({
@@ -66,7 +66,7 @@ chrome.runtime.onMessage.addListener(
               message: error.message,
               code: error.code,
             },
-          } as Message)
+          } satisfies Message)
         })
 
       // without this the response won't be sent

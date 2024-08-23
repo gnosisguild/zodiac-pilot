@@ -17,6 +17,7 @@ import {
 import { ChainId } from 'ser-kit'
 import { decodeGenericError } from '../utils'
 import { nanoid } from 'nanoid'
+import { Message, SIMULATE_START, SIMULATE_STOP } from '../../messages'
 
 class UnsupportedMethodError extends Error {
   code = 4200
@@ -289,24 +290,32 @@ class ForkProvider extends EventEmitter {
       )
     }
 
-    // notify the background script to start intercepting JSON RPC requests
+    // notify the background script to start intercepting JSON RPC requests in the current window
     // we use the public RPC for requests originating from apps
-    window.postMessage(
-      {
-        type: 'startSimulating',
-        toBackground: true,
+    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+      if (tabs.length === 0) throw new Error('no active tab found')
+      const { windowId } = tabs[0]
+      chrome.runtime.sendMessage({
+        type: SIMULATE_START,
+        windowId,
         networkId: this.chainId,
-        rpcUrl: this.provider.publicRpc,
-      },
-      '*'
-    )
+        rpcUrl: this.provider.publicRpc!,
+      } satisfies Message)
+    })
 
     this.isInitialized = true
   }
 
   async deleteFork(): Promise<void> {
     // notify the background script to stop intercepting JSON RPC requests
-    window.postMessage({ type: 'stopSimulating', toBackground: true }, '*')
+    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+      if (tabs.length === 0) throw new Error('no active tab found')
+      const { windowId } = tabs[0]
+      chrome.runtime.sendMessage({
+        type: SIMULATE_STOP,
+        windowId,
+      } satisfies Message)
+    })
     await this.provider.deleteFork()
     this.isInitialized = false
   }

@@ -1,7 +1,6 @@
 import './probeChainId'
 import {
   INJECTED_PROVIDER_EVENT,
-  INJECTED_PROVIDER_INITIALIZED,
   INJECTED_PROVIDER_REQUEST,
   Message,
 } from './messages'
@@ -29,9 +28,6 @@ inject('build/inject/injectedScript.js')
 // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
   const message = event.data
-  if (message.type === INJECTED_PROVIDER_INITIALIZED) {
-    chrome.runtime.sendMessage(message)
-  }
 
   if (message.type === INJECTED_PROVIDER_REQUEST) {
     const responseMessage: Message = await chrome.runtime.sendMessage(message)
