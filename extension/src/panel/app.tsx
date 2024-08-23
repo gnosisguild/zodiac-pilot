@@ -1,5 +1,5 @@
 // This is the entrypoint to the panel app.
-// It has access to chrome.* APIs, but it can interact with other extensions such as MetaMask.
+// It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import React from 'react'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
@@ -16,27 +16,19 @@ import { useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
 import { PILOT_PANEL_OPENED } from '../messages'
-import { USER_WALLET_REQUEST } from '../connect/messages'
+import { setWindowId } from '../inject/bridge'
 
+// notify the background script that the panel has been opened
 chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
   if (tabs.length === 0) throw new Error('no active tab found')
+
+  setWindowId(tabs[0].windowId)
+
   chrome.runtime.sendMessage({
     type: PILOT_PANEL_OPENED,
     windowId: tabs[0].windowId,
     tabId: tabs[0].id,
   })
-})
-
-chrome.tabs.query({ currentWindow: true, active: true }, async (tabs) => {
-  if (tabs.length === 0 || !tabs[0].id) throw new Error('no tab found')
-
-  console.log('posting msg to tab', tabs[0])
-  const res = await chrome.tabs.sendMessage(tabs[0].id, {
-    type: USER_WALLET_REQUEST,
-    request: { method: 'eth_requestAccounts', params: [] },
-  })
-
-  console.log('chainId response', res)
 })
 
 const router = createHashRouter([

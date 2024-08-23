@@ -1,3 +1,4 @@
+// this will be bundled in the panel app
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../types'
 import {
@@ -7,9 +8,16 @@ import {
 } from './messages'
 import { ZeroAddress } from 'ethers'
 
+let windowId: number | undefined = undefined
+
 let provider: Eip1193Provider | undefined
 let chainId: ChainId = 1
 let account = ZeroAddress as `0x${string}`
+
+/** Set the window ID RPC events will only be relayed to tabs in this window */
+export const setWindowId = (id: number) => {
+  windowId = id
+}
 
 /** Update the wallet */
 export const update = (
@@ -31,8 +39,10 @@ export const update = (
 }
 
 const emitEvent = (eventName: string, eventData: any) => {
+  if (!windowId) throw new Error('windowId not set')
   chrome.runtime.sendMessage({
     type: INJECTED_PROVIDER_EVENT,
+    windowId,
     eventName,
     eventData,
   } satisfies Message)
