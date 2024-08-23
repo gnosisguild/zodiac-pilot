@@ -5,6 +5,7 @@ export const INJECTED_PROVIDER_EVENT = 'INJECTED_PROVIDER_EVENT'
 
 interface InjectedProviderRequest {
   type: typeof INJECTED_PROVIDER_REQUEST
+  windowId: number
   requestId: string
   request: {
     method: string
@@ -29,6 +30,7 @@ interface InjectedProviderError {
 
 interface InjectedProviderEvent {
   type: typeof INJECTED_PROVIDER_EVENT
+  windowId: number
   eventName: string
   eventData: any
 }
