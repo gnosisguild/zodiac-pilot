@@ -67,6 +67,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
 // relay wallet events from the connect iframe to the panel
 window.addEventListener('message', (event: MessageEvent<Message>) => {
   const message = event.data
+  if (!message) return
   if (
     message.type === USER_WALLET_INITIALIZED ||
     message.type === USER_WALLET_EVENT

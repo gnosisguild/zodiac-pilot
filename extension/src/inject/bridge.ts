@@ -38,14 +38,21 @@ export const update = (
   account = newAccount
 }
 
-const emitEvent = (eventName: string, eventData: any) => {
+const emitEvent = async (eventName: string, eventData: any) => {
   if (!windowId) throw new Error('windowId not set')
-  chrome.runtime.sendMessage({
-    type: INJECTED_PROVIDER_EVENT,
-    windowId,
-    eventName,
-    eventData,
-  } satisfies Message)
+  const tabs = (
+    await chrome.tabs.query({
+      currentWindow: true,
+    })
+  ).filter((tab) => !!tab.id)
+
+  for (const tab of tabs) {
+    chrome.tabs.sendMessage(tab.id!, {
+      type: INJECTED_PROVIDER_EVENT,
+      eventName,
+      eventData,
+    } satisfies Message)
+  }
 }
 
 // Relay RPC requests
@@ -53,6 +60,9 @@ chrome.runtime.onMessage.addListener(
   (message: Message, sender, sendResponse) => {
     // only handle messages from our extension
     if (sender.id !== chrome.runtime.id) return
+    console.log({ sender })
+    // only handle messages from the current window
+    if (sender.tab?.windowId !== windowId) return
 
     if (message.type === INJECTED_PROVIDER_REQUEST) {
       if (!provider) {
