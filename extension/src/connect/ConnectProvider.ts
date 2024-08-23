@@ -1,3 +1,4 @@
+// this will be bundled in the panel app
 import { EventEmitter } from 'events'
 import { Eip1193Provider } from '../types'
 import {

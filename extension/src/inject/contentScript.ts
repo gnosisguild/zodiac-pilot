@@ -25,11 +25,19 @@ function inject(scriptPath: string) {
 
 inject('build/inject/injectedScript.js')
 
+// get the windowId of the tab
+let windowId: number
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  windowId = tabs[0].windowId
+})
+
 // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
   const message = event.data
 
   if (message.type === INJECTED_PROVIDER_REQUEST) {
+    // attach windowId so the event will be handled by the right panel instance
+    message.windowId = windowId
     const responseMessage: Message = await chrome.runtime.sendMessage(message)
     window.postMessage(responseMessage, '*')
   }
@@ -43,6 +51,9 @@ chrome.runtime.onMessage.addListener((message, sender) => {
   if (sender.id !== chrome.runtime.id) return
 
   if (message.type === INJECTED_PROVIDER_EVENT) {
+    // only handle events from our own panel
+    if (message.windowId !== windowId) return
+
     window.postMessage(message, '*')
   }
 })

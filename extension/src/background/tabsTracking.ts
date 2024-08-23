@@ -1,5 +1,5 @@
-// Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
-// This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
+// Track which tabs belong to which active Pilot sessions, so we can dynamically adjust the declarativeNetRequest rule.
+// This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { activePilotSessions } from './sessionTracking'
 
