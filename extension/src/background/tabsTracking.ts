@@ -1,15 +1,7 @@
 // Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 
-import { Fork } from './types'
-
-interface PilotSession {
-  fork: Fork | null
-  tabs: Set<number>
-}
-
-/** maps `windowId` to pilot session */
-export const activePilotSessions = new Map<number, PilotSession>()
+import { activePilotSessions } from './sessionTracking'
 
 const startTrackingTab = (tabId: number, windowId: number) => {
   const activeSession = activePilotSessions.get(windowId)

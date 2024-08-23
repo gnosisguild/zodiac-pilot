@@ -1,5 +1,5 @@
 import { PROBE_CHAIN_ID } from '../messages'
-import { activePilotSessions } from './tabsTracking'
+import { activePilotSessions } from './sessionTracking'
 
 // Keep track of the network IDs for all JSON RPC endpoints used from apps
 export const networkIdOfRpcUrl = new Map<string, number | undefined>()

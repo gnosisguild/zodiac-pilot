@@ -1,5 +1,6 @@
 import { networkIdOfRpcUrl } from './rpcTracking'
-import { activePilotSessions, REMOVE_CSP_RULE_ID } from './tabsTracking'
+import { REMOVE_CSP_RULE_ID } from './tabsTracking'
+import { PilotSession } from './types'
 
 // debug logging for RPC intercepts
 chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
@@ -17,7 +18,9 @@ let currentRuleIds: number[] = []
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
-export const updateRpcRedirectRules = async () => {
+export const updateRpcRedirectRules = async (
+  activePilotSessions: Map<number, PilotSession>
+) => {
   const addRules = [...activePilotSessions.entries()]
     .filter(([, session]) => session.fork)
     .map(

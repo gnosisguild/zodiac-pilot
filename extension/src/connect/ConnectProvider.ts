@@ -60,7 +60,7 @@ export default class ConnectProvider
             type: USER_WALLET_REQUEST,
             requestId,
             request,
-          } as Message
+          } satisfies Message
         )
 
         if (responseMessage.type === USER_WALLET_RESPONSE) {

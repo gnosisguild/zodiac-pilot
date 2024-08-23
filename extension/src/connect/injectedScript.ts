@@ -29,7 +29,7 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
           type: USER_WALLET_RESPONSE,
           requestId: message.requestId,
           response,
-        } as Message,
+        } satisfies Message,
         '*'
       )
     } catch (err) {
@@ -42,7 +42,7 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
             message: (err as any).message,
             code: (err as any).code,
           },
-        } as Message,
+        } satisfies Message,
         '*'
       )
     }
@@ -61,7 +61,7 @@ const relayEvent = (eventName: string) => {
         type: USER_WALLET_EVENT,
         eventName,
         eventData,
-      } as Message,
+      } satisfies Message,
       '*'
     )
   })
