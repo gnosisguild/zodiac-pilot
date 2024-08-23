@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid'
 import {
   INJECTED_PROVIDER_ERROR,
   INJECTED_PROVIDER_EVENT,
-  INJECTED_PROVIDER_INITIALIZED,
   INJECTED_PROVIDER_REQUEST,
   INJECTED_PROVIDER_RESPONSE,
   Message,
@@ -41,13 +40,6 @@ export default class InjectedProvider extends EventEmitter {
   constructor() {
     super()
     if (!window.top) throw new Error('Must run inside iframe')
-
-    window.top.postMessage(
-      {
-        type: INJECTED_PROVIDER_INITIALIZED,
-      } as Message,
-      '*'
-    )
 
     this.request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
@@ -92,7 +84,7 @@ export default class InjectedProvider extends EventEmitter {
           type: INJECTED_PROVIDER_REQUEST,
           requestId,
           request,
-        } as Message,
+        } satisfies Message,
         '*'
       )
 

@@ -1,12 +1,7 @@
-export const INJECTED_PROVIDER_INITIALIZED = 'INJECTED_PROVIDER_INITIALIZED'
 export const INJECTED_PROVIDER_REQUEST = 'INJECTED_PROVIDER_REQUEST'
 export const INJECTED_PROVIDER_RESPONSE = 'INJECTED_PROVIDER_RESPONSE'
 export const INJECTED_PROVIDER_ERROR = 'INJECTED_PROVIDER_ERROR'
 export const INJECTED_PROVIDER_EVENT = 'INJECTED_PROVIDER_EVENT'
-
-interface InjectedProviderInitialized {
-  type: typeof INJECTED_PROVIDER_INITIALIZED
-}
 
 interface InjectedProviderRequest {
   type: typeof INJECTED_PROVIDER_REQUEST
@@ -39,7 +34,6 @@ interface InjectedProviderEvent {
 }
 
 export type Message =
-  | InjectedProviderInitialized
   | InjectedProviderRequest
   | InjectedProviderResponse
   | InjectedProviderError

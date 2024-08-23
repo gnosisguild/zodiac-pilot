@@ -1,3 +1,5 @@
+import { JsonRpcRequest } from '../types'
+
 export const USER_WALLET_INITIALIZED = 'USER_WALLET_INITIALIZED'
 export const USER_WALLET_REQUEST = 'USER_WALLET_REQUEST'
 export const USER_WALLET_ERROR = 'USER_WALLET_ERROR'
@@ -11,10 +13,7 @@ interface UserWalletInitialized {
 interface UserWalletRequest {
   type: typeof USER_WALLET_REQUEST
   requestId: string
-  request: {
-    method: string
-    params: any[]
-  }
+  request: JsonRpcRequest
 }
 
 interface UserWalletError {
