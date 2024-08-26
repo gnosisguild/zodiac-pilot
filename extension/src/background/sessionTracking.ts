@@ -1,5 +1,6 @@
 import {
   Message,
+  PILOT_PANEL_CLOSED,
   PILOT_PANEL_OPENED,
   SIMULATE_START,
   SIMULATE_STOP,
@@ -20,8 +21,14 @@ chrome.runtime.onMessage.addListener((message: Message, sender) => {
   if (message.type === PILOT_PANEL_OPENED) {
     activePilotSessions.set(message.windowId, {
       fork: null,
-      tabs: new Set([message.tabId]),
+      tabs: new Set(message.tabId ? [message.tabId] : []),
     })
+  }
+
+  if (message.type === PILOT_PANEL_CLOSED) {
+    activePilotSessions.delete(message.windowId)
+    // make sure all rpc redirects are
+    updateRpcRedirectRules(activePilotSessions)
   }
 
   if (message.type === SIMULATE_START) {

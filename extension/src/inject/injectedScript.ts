@@ -83,6 +83,7 @@ window.addEventListener('eip6963:requestProvider', () => {
 announceEip6963Provider(injectedProvider)
 
 // override EIP-6963 provider announcement for MetaMask
+// window.setTimeout(() => {
 window.addEventListener('eip6963:announceProvider', (event) => {
   const ev = event as CustomEvent
   if (
@@ -105,6 +106,7 @@ window.addEventListener('eip6963:announceProvider', (event) => {
     event.stopImmediatePropagation()
   }
 })
+// }, 10)
 
 window.dispatchEvent(new Event('ethereum#initialized'))
 
