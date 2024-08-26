@@ -17,6 +17,5 @@ function inject(scriptPath: string) {
 }
 
 inject('build/connect/injectedScript.js')
-console.log('injected connect script')
 
 export {}

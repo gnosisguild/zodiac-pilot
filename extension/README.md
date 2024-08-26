@@ -24,3 +24,11 @@ Override the `window.ethereum` injected provider for apps to connect to Pilot. W
 ```
 inject/InjectedProvider --window.top.postMessage()--> inject/contentScript --runtime.tabs.sendMessage.sendResponse()--> panel
 ```
+
+### background
+
+The background script, handling tracking of tabs with active Pilot sessions and simulations and RPC request intercepting. There is always only a single running instance of the script across all windows.
+
+### components
+
+A collection of React UI components. These components implement pure, self-contained UI controls so they could eventually make up a design system.

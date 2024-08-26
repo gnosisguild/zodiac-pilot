@@ -39,7 +39,6 @@ export default class InjectedProvider extends EventEmitter {
 
   constructor() {
     super()
-    if (!window.top) throw new Error('Must run inside iframe')
 
     this.request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
@@ -78,6 +77,8 @@ export default class InjectedProvider extends EventEmitter {
     const requestId = injectionId + this.messageCounter
     this.messageCounter++
 
+    console.debug('request', requestId, request)
+
     return new Promise((resolve, reject) => {
       ;(window.top || window).postMessage(
         {
@@ -99,6 +100,7 @@ export default class InjectedProvider extends EventEmitter {
         ) {
           window.removeEventListener('message', handleMessage)
           resolve(message.response)
+          console.debug('response', requestId, request)
         }
 
         if (

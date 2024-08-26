@@ -134,6 +134,7 @@ const EditConnection: React.FC = () => {
     }
 
     setSelectedRouteId(route.id)
+    navigate('/')
   }
 
   const error = useConnectionDryRun(asLegacyConnection(route))
