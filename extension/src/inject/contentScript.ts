@@ -39,22 +39,19 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
   if (message.type === INJECTED_PROVIDER_REQUEST) {
     // attach windowId so the event will be handled by the right panel instance
     // message.windowId = windowId
+    console.debug('relaying request to panel', message)
     const responseMessage: Message = await chrome.runtime.sendMessage(message)
+    console.debug('relaying response from panel', responseMessage)
     window.postMessage(responseMessage, '*')
   }
 })
 
 // Relay events from the Eip1193Provider in the panel to the InjectedProvider in the tab
 chrome.runtime.onMessage.addListener((message, sender) => {
-  console.log('[inject/contentScript] chrome.runtime.onMessage', message, {
-    sender,
-  })
   if (sender.id !== chrome.runtime.id) return
 
   if (message.type === INJECTED_PROVIDER_EVENT) {
-    // only handle events from our own panel
-    // if (message.windowId !== windowId) return
-
+    console.debug('relaying event from panel', message)
     window.postMessage(message, '*')
   }
 })

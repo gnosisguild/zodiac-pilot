@@ -41,7 +41,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
   if (pilotAddress === ZeroAddress) pilotAddress = ''
 
-  const metamask = useInjectedWallet()
+  const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
   const connect = (
@@ -135,10 +135,10 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   // Metamask: right account, wrong chain
   if (
     route.providerType === ProviderType.InjectedWallet &&
-    metamask.provider &&
+    injectedWallet.provider &&
     pilotAddress &&
-    metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
-    metamask.chainId !== chainId
+    injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
+    injectedWallet.chainId !== chainId
   ) {
     return (
       <div
@@ -157,7 +157,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           <Button
             className={classes.disconnectButton}
             onClick={() => {
-              metamask.switchChain(chainId)
+              injectedWallet.switchChain(chainId)
             }}
           >
             Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
@@ -186,9 +186,9 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
   // MetaMask: wrong account
   if (
     route.providerType === ProviderType.InjectedWallet &&
-    metamask.provider &&
+    injectedWallet.provider &&
     pilotAddress &&
-    !metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
+    !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
   ) {
     return (
       <div className={classes.connectedContainer}>
@@ -220,11 +220,11 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
         {walletConnectLogo}
         Connect via WalletConnect
       </Button>
-      {metamask.provider && (
+      {injectedWallet.provider && (
         <Button
           className={classes.walletButton}
           onClick={async () => {
-            const { chainId, accounts } = await metamask.connect()
+            const { chainId, accounts } = await injectedWallet.connect()
             connect(
               ProviderType.InjectedWallet,
               chainId as ChainId,

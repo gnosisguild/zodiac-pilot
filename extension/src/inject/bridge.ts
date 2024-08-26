@@ -39,7 +39,6 @@ export const update = (
 }
 
 const emitEvent = async (eventName: string, eventData: any) => {
-  if (!windowId) throw new Error('windowId not set')
   const tabs = (
     await chrome.tabs.query({
       currentWindow: true,
@@ -60,7 +59,7 @@ chrome.runtime.onMessage.addListener(
   (message: Message, sender, sendResponse) => {
     // only handle messages from our extension
     if (sender.id !== chrome.runtime.id) return
-    console.log({ sender })
+
     // only handle messages from the current window
     if (sender.tab?.windowId !== windowId) return
 

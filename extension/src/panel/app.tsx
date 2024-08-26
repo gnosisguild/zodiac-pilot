@@ -1,6 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import 'react-toastify/dist/ReactToastify.css'
@@ -12,11 +12,12 @@ import { ProvideState } from './state'
 import ZodiacToastContainer from '../components/Toast'
 import { ProvideInjectedWallet } from './providers'
 import { ProvideRoutes, RoutesEdit } from './routes'
-import { useUpdateLastUsedRoute } from './routes/routeHooks'
+import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
 import { PILOT_PANEL_OPENED } from '../messages'
-import { setWindowId } from '../inject/bridge'
+import { setWindowId, update } from '../inject/bridge'
+import { parsePrefixedAddress } from 'ser-kit'
 
 // notify the background script that the panel has been opened
 chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
@@ -47,7 +48,15 @@ const router = createHashRouter([
 ])
 
 const App: React.FC = () => {
+  // update the last used timestamp for the current route
   useUpdateLastUsedRoute()
+
+  // make sure the injected provider stays updated on every relevant route change
+  const { provider, route, chainId } = useRoute()
+  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+  useEffect(() => {
+    update(provider, chainId, avatarAddress)
+  }, [provider, chainId, avatarAddress])
 
   return (
     <>

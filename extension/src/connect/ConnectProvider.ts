@@ -54,7 +54,7 @@ export default class ConnectProvider
       chrome.tabs.query({ currentWindow: true, active: true }, async (tabs) => {
         if (tabs.length === 0 || !tabs[0].id) throw new Error('no tab found')
 
-        console.log('[connect/ConnectProvider] posting msg to tab', tabs[0])
+        console.debug('posting request msg to tab', tabs[0].id)
         const responseMessage: Message = await chrome.tabs.sendMessage(
           tabs[0].id,
           {
@@ -80,12 +80,7 @@ export default class ConnectProvider
     })
   }
 
-  #handleMessage = (message: Message, sender: chrome.runtime.MessageSender) => {
-    console.log(
-      '[connect/ConnectProvider] chrome.runtime.onMessage',
-      message,
-      sender
-    )
+  #handleMessage = (message: Message) => {
     if (message.type === USER_WALLET_INITIALIZED) {
       this.initialized = true
     }
