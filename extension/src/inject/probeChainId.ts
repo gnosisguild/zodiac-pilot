@@ -1,9 +1,6 @@
 import { PROBE_CHAIN_ID } from '../messages'
 
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
-  console.log('[inject/probeChainId] chrome.runtime.onMessage', message, {
-    sender,
-  })
   if (sender.id !== chrome.runtime.id) return
 
   // Provide the background script with the chainId of a given RPC endpoint on request
