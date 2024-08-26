@@ -2,7 +2,10 @@ import './probeChainId'
 import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
+  PILOT_CONNECT,
+  PILOT_DISCONNECT,
   Message,
+  InjectedProviderResponse,
 } from './messages'
 
 function inject(scriptPath: string) {
@@ -25,35 +28,41 @@ function inject(scriptPath: string) {
 
 inject('build/inject/injectedScript.js')
 
-// get the windowId of the tab
-// let windowId: number
-// chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-//   windowId = tabs[0].windowId
-// })
-
 // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
   const message = event.data
   if (!message) return
 
   if (message.type === INJECTED_PROVIDER_REQUEST) {
-    // attach windowId so the event will be handled by the right panel instance
-    // message.windowId = windowId
-    console.debug('relaying request to panel', message)
-    const responseMessage: Message = await chrome.runtime.sendMessage(message)
-    console.debug('relaying response from panel', responseMessage)
+    const { requestId, request } = message
+    console.debug('rpc request to pilot', requestId, request)
+    const responseMessage: InjectedProviderResponse =
+      await chrome.runtime.sendMessage(message)
+    const { response } = responseMessage
+    console.debug('rpc response from pilot', requestId, response)
     window.postMessage(responseMessage, '*')
   }
 })
 
-// Relay events from the Eip1193Provider in the panel to the InjectedProvider in the tab
-chrome.runtime.onMessage.addListener((message, sender) => {
+// Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
+chrome.runtime.onMessage.addListener((message: Message, sender) => {
   if (sender.id !== chrome.runtime.id) return
 
+  if (message.type === PILOT_CONNECT) {
+    console.debug('Pilot connected')
+    window.postMessage(message, '*')
+  }
+  if (message.type === PILOT_DISCONNECT) {
+    console.debug('Pilot disconnected')
+    window.postMessage(message, '*')
+  }
+
   if (message.type === INJECTED_PROVIDER_EVENT) {
-    console.debug('relaying event from panel', message)
+    console.debug('eip1193 event from pilot', message)
     window.postMessage(message, '*')
   }
 })
+
+console.log('listening to INJECTED_PROVIDER_EVENT')
 
 export {}

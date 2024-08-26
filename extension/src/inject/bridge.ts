@@ -33,7 +33,7 @@ export const update = (
   chainId = newChainId
 
   if (newAccount !== account) {
-    emitEvent('accountsChanged', [newChainId])
+    emitEvent('accountsChanged', [newAccount])
   }
   account = newAccount
 }
@@ -43,7 +43,7 @@ const emitEvent = async (eventName: string, eventData: any) => {
     await chrome.tabs.query({
       currentWindow: true,
     })
-  ).filter((tab) => !!tab.id)
+  ).filter((tab) => !!tab.id && !tab.url?.startsWith('chrome://'))
 
   for (const tab of tabs) {
     chrome.tabs.sendMessage(tab.id!, {

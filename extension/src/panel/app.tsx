@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import './global.css'
 
-import ProvideProvider from './providers/ProvideProvider'
+import ProvideProvider, { useProvider } from './providers/ProvideProvider'
 import { ProvideState } from './state'
 import ZodiacToastContainer from '../components/Toast'
 import { ProvideInjectedWallet } from './providers'
@@ -15,20 +15,33 @@ import { ProvideRoutes, RoutesEdit } from './routes'
 import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
-import { PILOT_PANEL_OPENED } from '../messages'
+import { Message, PILOT_PANEL_CLOSED, PILOT_PANEL_OPENED } from '../messages'
 import { setWindowId, update } from '../inject/bridge'
 import { parsePrefixedAddress } from 'ser-kit'
+
+let windowId: number | undefined = undefined
 
 // notify the background script that the panel has been opened
 chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
   if (tabs.length === 0) throw new Error('no active tab found')
 
+  windowId = tabs[0].windowId
   setWindowId(tabs[0].windowId)
 
   chrome.runtime.sendMessage({
     type: PILOT_PANEL_OPENED,
-    windowId: tabs[0].windowId,
+    windowId: windowId,
     tabId: tabs[0].id,
+  } satisfies Message)
+})
+
+// notify the background script once the panel is closed
+window.addEventListener('beforeunload', () => {
+  if (!windowId) console.error('Could not emit PILOT_PANEL_CLOSED event')
+  console.log('windowId', windowId)
+  chrome.runtime.sendMessage({
+    type: PILOT_PANEL_CLOSED,
+    windowId,
   })
 })
 
@@ -52,7 +65,8 @@ const App: React.FC = () => {
   useUpdateLastUsedRoute()
 
   // make sure the injected provider stays updated on every relevant route change
-  const { provider, route, chainId } = useRoute()
+  const { route, chainId } = useRoute()
+  const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
   useEffect(() => {
     update(provider, chainId, avatarAddress)

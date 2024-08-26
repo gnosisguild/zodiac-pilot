@@ -50,7 +50,6 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
         return
       }
       if (event.data.requestId !== message.requestId) return
-
       window.removeEventListener('message', handleResponse)
       respond(event.data)
     }
