@@ -33,7 +33,13 @@ interface Props {
 const ProviderContext = createContext<
   (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
 >(null)
-export const useProvider = () => useContext(ProviderContext)
+export const useProvider = (): Eip1193Provider => {
+  const result = useContext(ProviderContext)
+  if (!result) {
+    throw new Error('useProvider() must be used within a <ProvideProvider/>')
+  }
+  return result
+}
 
 const SubmitTransactionsContext = createContext<
   (() => Promise<{ txHash?: `0x${string}`; safeTxHash?: `0x${string}` }>) | null

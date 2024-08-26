@@ -18,6 +18,8 @@ declare global {
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
   const message = event.data
   if (message.type === USER_WALLET_REQUEST) {
+    console.debug('user wallet request', message)
+
     if (!window.ethereum) {
       throw new Error('No ethereum provider')
     }

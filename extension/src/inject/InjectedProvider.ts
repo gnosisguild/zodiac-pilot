@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
 import {
+  PILOT_CONNECT,
+  PILOT_DISCONNECT,
   INJECTED_PROVIDER_ERROR,
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
@@ -31,6 +33,7 @@ const injectionId = nanoid()
 
 export default class InjectedProvider extends EventEmitter {
   private messageCounter = 0
+  private pilotConnected = false
 
   chainId = '0x1'
 
@@ -40,7 +43,7 @@ export default class InjectedProvider extends EventEmitter {
   constructor() {
     super()
 
-    this.request({ method: 'eth_chainId' }).then((chainId) => {
+    this.#request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
       this.emit('connect', {
         chainId,
@@ -50,14 +53,23 @@ export default class InjectedProvider extends EventEmitter {
     // relay wallet events
     const handleBridgeEvent = (ev: MessageEvent<Message>) => {
       const message = ev.data
-      if (!message || message.type !== INJECTED_PROVIDER_EVENT) {
-        return
+      if (!message) return
+
+      if (message.type === PILOT_CONNECT) {
+        this.pilotConnected = true
       }
-      this.emit(message.eventName, message.eventData)
+
+      if (message.type === PILOT_DISCONNECT) {
+        this.pilotConnected = false
+      }
+
+      if (message.type === INJECTED_PROVIDER_EVENT) {
+        this.emit(message.eventName, message.eventData)
+      }
     }
     window.addEventListener('message', handleBridgeEvent)
 
-    this.request({ method: 'eth_chainId' }).then((chainId) => {
+    this.#request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
       this.emit('connect', {
         chainId,
@@ -65,7 +77,7 @@ export default class InjectedProvider extends EventEmitter {
     })
 
     // keep window.ethereum.selectedAddress in sync
-    this.request({ method: 'eth_accounts' }).then((accounts) => {
+    this.#request({ method: 'eth_accounts' }).then((accounts) => {
       this.selectedAddress = accounts[0]
     })
     this.on('accountsChanged', (accounts) => {
@@ -73,11 +85,9 @@ export default class InjectedProvider extends EventEmitter {
     })
   }
 
-  request = (request: JsonRpcRequest): Promise<any> => {
+  #request = (request: JsonRpcRequest): Promise<any> => {
     const requestId = injectionId + this.messageCounter
     this.messageCounter++
-
-    console.debug('request', requestId, request)
 
     return new Promise((resolve, reject) => {
       ;(window.top || window).postMessage(
@@ -100,7 +110,6 @@ export default class InjectedProvider extends EventEmitter {
         ) {
           window.removeEventListener('message', handleMessage)
           resolve(message.response)
-          console.debug('response', requestId, request)
         }
 
         if (
@@ -115,6 +124,13 @@ export default class InjectedProvider extends EventEmitter {
       }
       window.addEventListener('message', handleMessage)
     })
+  }
+
+  request = async (request: JsonRpcRequest): Promise<any> => {
+    if (!this.pilotConnected) {
+      await this.#openPilotPanel()
+    }
+    return this.#request(request)
   }
 
   // Legacy API (still used by some Dapps)
@@ -149,6 +165,10 @@ export default class InjectedProvider extends EventEmitter {
   // This is required for connecting to Etherscan
   enable = () => {
     return Promise.resolve()
+  }
+
+  #openPilotPanel = async () => {
+    // TODO
   }
 
   // Some apps don't support generic injected providers, so we pretend to be MetaMask
