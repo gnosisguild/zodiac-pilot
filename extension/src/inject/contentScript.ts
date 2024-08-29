@@ -27,6 +27,7 @@ function inject(scriptPath: string) {
 }
 
 inject('build/inject/injectedScript.js')
+console.log('injected injectedScript')
 
 // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
@@ -62,7 +63,5 @@ chrome.runtime.onMessage.addListener((message: Message, sender) => {
     window.postMessage(message, '*')
   }
 })
-
-console.log('listening to INJECTED_PROVIDER_EVENT')
 
 export {}

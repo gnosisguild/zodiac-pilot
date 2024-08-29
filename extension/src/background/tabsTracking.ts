@@ -4,7 +4,7 @@
 import { PILOT_CONNECT, PILOT_DISCONNECT } from '../inject/messages'
 import { activePilotSessions } from './sessionTracking'
 
-const startTrackingTab = (tabId: number, windowId: number) => {
+export const startTrackingTab = (tabId: number, windowId: number) => {
   const activeSession = activePilotSessions.get(windowId)
   if (!activeSession) {
     throw new Error(`no active session found for window ${windowId}`)
@@ -12,10 +12,22 @@ const startTrackingTab = (tabId: number, windowId: number) => {
   activeSession.tabs.add(tabId)
   updateHeadersRule()
   console.log('Pilot: started tracking tab', tabId, windowId)
-  chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT })
+  // chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT })
+  chrome.scripting.executeScript({
+    target: { tabId, allFrames: true },
+    func() {
+      console.log('EXEC SCRIPT', tabId)
+    },
+    injectImmediately: true,
+  })
+
+  chrome.tabs.onUpdated.addListener((tabId, info, tab) =>
+    console.log('TAB UPDATED', { tabId, info, tab })
+  )
 }
 
-const stopTrackingTab = (tabId: number, windowId: number) => {
+export const stopTrackingTab = (tabId: number, windowId: number) => {
+  console.log('stop tracking tab', tabId, windowId)
   const activeSession = activePilotSessions.get(windowId)
   if (activeSession) activeSession.tabs.delete(tabId)
   updateHeadersRule()
@@ -24,6 +36,7 @@ const stopTrackingTab = (tabId: number, windowId: number) => {
 }
 
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
+  console.log('TAB ACTIVATED', tabId, windowId, activePilotSessions)
   const activePilotSession = activePilotSessions.get(windowId)
 
   if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
