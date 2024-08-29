@@ -40,7 +40,7 @@
         "<all_urls>"
       ],
       "exclude_globs": [
-        "https://vnet-api.pilot.gnosisguild.org/"
+        "https://connect.pilot.gnosisguild.org/"
       ],
       "run_at": "document_start",
       "all_frames": true,
@@ -53,7 +53,7 @@
         "<all_urls>"
       ],
       "exclude_globs": [
-        "https://vnet-api.pilot.gnosisguild.org/"
+        "https://connect.pilot.gnosisguild.org/"
       ],
       "run_at": "document_start",
       "all_frames": false,
@@ -63,7 +63,7 @@
     },
     {
       "matches": [
-        "https://vnet-api.pilot.gnosisguild.org/"
+        "https://connect.pilot.gnosisguild.org/"
       ],
       "run_at": "document_start",
       "all_frames": true,

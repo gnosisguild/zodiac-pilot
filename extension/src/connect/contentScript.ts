@@ -26,7 +26,7 @@ function injectIframe(src: string) {
 }
 
 // Render an invisible iframe to be able to connect with the injected provider from other wallet extensions
-const iframe = injectIframe('https://vnet-api.pilot.gnosisguild.org/') // TODO replace with https://connect.pilot.gnosisguild.org/, also needs to be updated in manifest content_scripts
+const iframe = injectIframe('https://connect.pilot.gnosisguild.org/') 
 console.debug('injected connect iframe')
 
 // relay requests from the panel to the connect iframe
