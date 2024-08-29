@@ -1,14 +1,13 @@
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
 import {
-  PILOT_CONNECT,
-  PILOT_DISCONNECT,
   INJECTED_PROVIDER_ERROR,
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
   INJECTED_PROVIDER_RESPONSE,
   Message,
 } from './messages'
+import { isPilotConnected } from './connectedState'
 
 interface JsonRpcRequest {
   method: string
@@ -33,7 +32,6 @@ const injectionId = nanoid()
 
 export default class InjectedProvider extends EventEmitter {
   private messageCounter = 0
-  private pilotConnected = false
 
   chainId = '0x1'
 
@@ -54,14 +52,6 @@ export default class InjectedProvider extends EventEmitter {
     const handleBridgeEvent = (ev: MessageEvent<Message>) => {
       const message = ev.data
       if (!message) return
-
-      if (message.type === PILOT_CONNECT) {
-        this.pilotConnected = true
-      }
-
-      if (message.type === PILOT_DISCONNECT) {
-        this.pilotConnected = false
-      }
 
       if (message.type === INJECTED_PROVIDER_EVENT) {
         this.emit(message.eventName, message.eventData)
@@ -127,7 +117,8 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   request = async (request: JsonRpcRequest): Promise<any> => {
-    if (!this.pilotConnected) {
+    if (!isPilotConnected()) {
+      // This can happen if the app connected through EIP-6963 while the panel was closed
       await this.#openPilotPanel()
     }
     return this.#request(request)
@@ -169,6 +160,7 @@ export default class InjectedProvider extends EventEmitter {
 
   #openPilotPanel = async () => {
     // TODO
+    throw new Error('Not implemented')
   }
 
   // Some apps don't support generic injected providers, so we pretend to be MetaMask

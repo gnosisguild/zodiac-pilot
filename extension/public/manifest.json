@@ -23,6 +23,7 @@
   "permissions": [
     "sidePanel",
     "tabs",
+    "scripting",
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback",
     "webRequest"

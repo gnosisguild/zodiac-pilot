@@ -6,6 +6,7 @@ import {
   SIMULATE_STOP,
 } from '../messages'
 import { updateRpcRedirectRules } from './rpcRedirect'
+import { startTrackingTab, stopTrackingTab } from './tabsTracking'
 import { PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
@@ -14,18 +15,25 @@ export const activePilotSessions = new Map<number, PilotSession>()
 // track when a Pilot session is started for a window and when the simulation is started/stopped
 chrome.runtime.onMessage.addListener((message: Message, sender) => {
   // ignore messages that don't come from the extension itself
-  if (sender.id === chrome.runtime.id) return
-
-  console.debug('received message:', message)
+  if (sender.id !== chrome.runtime.id) return
 
   if (message.type === PILOT_PANEL_OPENED) {
+    console.log('Pilot panel opened', message)
     activePilotSessions.set(message.windowId, {
       fork: null,
       tabs: new Set(message.tabId ? [message.tabId] : []),
     })
+    if (message.tabId) {
+      startTrackingTab(message.tabId, message.windowId)
+    }
   }
 
   if (message.type === PILOT_PANEL_CLOSED) {
+    console.log('Pilot panel closed', message)
+    const tabs = activePilotSessions.get(message.windowId)?.tabs ?? []
+    for (const tabId of tabs) {
+      stopTrackingTab(tabId, message.windowId)
+    }
     activePilotSessions.delete(message.windowId)
     // make sure all rpc redirects are
     updateRpcRedirectRules(activePilotSessions)
