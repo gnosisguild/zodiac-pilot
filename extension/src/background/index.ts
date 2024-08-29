@@ -1,3 +1,4 @@
+import './tabsTracking'
 import './sessionTracking'
 
 chrome.sidePanel

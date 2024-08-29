@@ -2,6 +2,8 @@
 
 import InjectedProvider from './InjectedProvider'
 import { Eip1193Provider } from '../types'
+import { PILOT_CONNECT, PILOT_DISCONNECT, Message } from './messages'
+import { isPilotConnected } from './connectedState'
 
 declare let window: Window & {
   ethereum: Eip1193Provider
@@ -13,8 +15,11 @@ declare let window: Window & {
   }
 }
 
+// keep track of the original provider
+let thirdPartyProvider = window.ethereum
+
 // inject bridged ethereum provider
-const injectedProvider = new InjectedProvider()
+const pilotProvider = new InjectedProvider()
 
 const canSetWindowEthereum =
   Object.getOwnPropertyDescriptor(window, 'ethereum')?.configurable !== false
@@ -23,16 +28,14 @@ if (canSetWindowEthereum) {
   Object.defineProperties(window, {
     ethereum: {
       get() {
-        return injectedProvider
+        return isPilotConnected() ? pilotProvider : thirdPartyProvider
       },
-      set() {
-        // ignore attempts to set window.ethereum
+      set(value) {
+        thirdPartyProvider = value
       },
       configurable: false,
     },
   })
-
-  console.log('Injected Zodiac Pilot provider')
 } else {
   // Houston, we have a problem: There is already a provider injected by another extension and it's not configurable
 
@@ -44,11 +47,31 @@ if (canSetWindowEthereum) {
     )
 
     const { rabbyWalletRouter } = window
+    const setDefaultProvider = rabbyWalletRouter.setDefaultProvider
 
-    rabbyWalletRouter.addProvider(injectedProvider)
-    rabbyWalletRouter.setDefaultProvider(false)
-    // prevent Rabby from setting its own provider as default subsequently
-    rabbyWalletRouter.setDefaultProvider = () => {}
+    if (isPilotConnected()) {
+      rabbyWalletRouter.addProvider(pilotProvider)
+      setDefaultProvider(false)
+      // prevent Rabby from setting its own provider as default while Pilot is connected
+      rabbyWalletRouter.setDefaultProvider = () => {}
+    }
+
+    window.addEventListener('message', (ev: MessageEvent<Message>) => {
+      const message = ev.data
+      if (!message) return
+
+      if (message.type === PILOT_CONNECT) {
+        rabbyWalletRouter.addProvider(pilotProvider)
+        setDefaultProvider(false)
+        // prevent Rabby from setting its own provider as default while Pilot is connected
+        rabbyWalletRouter.setDefaultProvider = () => {}
+      }
+
+      if (message.type === PILOT_DISCONNECT) {
+        setDefaultProvider(true)
+        rabbyWalletRouter.setDefaultProvider = setDefaultProvider
+      }
+    })
   } else {
     // If it's not Rabby, we have to alert the user
     alert(
@@ -77,36 +100,37 @@ const announceEip6963Provider = (provider: InjectedProvider) => {
 }
 
 window.addEventListener('eip6963:requestProvider', () => {
-  announceEip6963Provider(injectedProvider)
+  announceEip6963Provider(pilotProvider)
 })
 
-announceEip6963Provider(injectedProvider)
+announceEip6963Provider(pilotProvider)
 
-// override EIP-6963 provider announcement for MetaMask
-// window.setTimeout(() => {
-window.addEventListener('eip6963:announceProvider', (event) => {
-  const ev = event as CustomEvent
-  if (
-    ev.detail.info.rdns === 'io.metamask' &&
-    ev.detail.info.name !== 'Zodiac Pilot'
-  ) {
-    window.dispatchEvent(
-      new CustomEvent('eip6963:announceProvider', {
-        detail: Object.freeze({
-          info: {
-            ...ev.detail.info,
-            name: 'Zodiac Pilot',
-            icon: '//pilot.gnosisguild.org/zodiac48.png',
-          },
-          provider: injectedProvider,
-        }),
-      })
-    )
+// override EIP-6963 provider announcement for MetaMask while Pilot is connected
+// (this gives us an extra chance to connect to apps that only listen to MetaMask)
+if (isPilotConnected()) {
+  window.addEventListener('eip6963:announceProvider', (event) => {
+    const ev = event as CustomEvent
+    if (
+      ev.detail.info.rdns === 'io.metamask' &&
+      ev.detail.info.name !== 'Zodiac Pilot'
+    ) {
+      window.dispatchEvent(
+        new CustomEvent('eip6963:announceProvider', {
+          detail: Object.freeze({
+            info: {
+              ...ev.detail.info,
+              name: 'Zodiac Pilot',
+              icon: '//pilot.gnosisguild.org/zodiac48.png',
+            },
+            provider: pilotProvider,
+          }),
+        })
+      )
 
-    event.stopImmediatePropagation()
-  }
-})
-// }, 10)
+      event.stopImmediatePropagation()
+    }
+  })
+}
 
 window.dispatchEvent(new Event('ethereum#initialized'))
 
