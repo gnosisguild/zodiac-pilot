@@ -15,35 +15,11 @@ import { ProvideRoutes, RoutesEdit } from './routes'
 import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import Transactions from './transactions'
 import { RoutesList } from './routes'
-import { Message, PILOT_PANEL_CLOSED, PILOT_PANEL_OPENED } from '../messages'
-import { setWindowId, update } from '../inject/bridge'
+import { update } from '../inject/bridge'
 import { parsePrefixedAddress } from 'ser-kit'
+import { initPort } from './port'
 
-let windowId: number | undefined = undefined
-
-// notify the background script that the panel has been opened
-chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-  if (tabs.length === 0) throw new Error('no active tab found')
-
-  windowId = tabs[0].windowId
-  setWindowId(tabs[0].windowId)
-
-  chrome.runtime.sendMessage({
-    type: PILOT_PANEL_OPENED,
-    windowId: windowId,
-    tabId: tabs[0].id,
-  } satisfies Message)
-})
-
-// notify the background script once the panel is closed
-window.addEventListener('beforeunload', () => {
-  if (!windowId) console.error('Could not emit PILOT_PANEL_CLOSED event')
-  console.log('windowId', windowId)
-  chrome.runtime.sendMessage({
-    type: PILOT_PANEL_CLOSED,
-    windowId,
-  })
-})
+initPort()
 
 const router = createHashRouter([
   {

@@ -7,7 +7,6 @@ import {
   INJECTED_PROVIDER_RESPONSE,
   Message,
 } from './messages'
-import { isPilotConnected } from './connectedState'
 
 interface JsonRpcRequest {
   method: string
@@ -41,7 +40,7 @@ export default class InjectedProvider extends EventEmitter {
   constructor() {
     super()
 
-    this.#request({ method: 'eth_chainId' }).then((chainId) => {
+    this.request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
       this.emit('connect', {
         chainId,
@@ -59,7 +58,7 @@ export default class InjectedProvider extends EventEmitter {
     }
     window.addEventListener('message', handleBridgeEvent)
 
-    this.#request({ method: 'eth_chainId' }).then((chainId) => {
+    this.request({ method: 'eth_chainId' }).then((chainId) => {
       this.chainId = chainId
       this.emit('connect', {
         chainId,
@@ -67,7 +66,7 @@ export default class InjectedProvider extends EventEmitter {
     })
 
     // keep window.ethereum.selectedAddress in sync
-    this.#request({ method: 'eth_accounts' }).then((accounts) => {
+    this.request({ method: 'eth_accounts' }).then((accounts) => {
       this.selectedAddress = accounts[0]
     })
     this.on('accountsChanged', (accounts) => {
@@ -75,7 +74,7 @@ export default class InjectedProvider extends EventEmitter {
     })
   }
 
-  #request = (request: JsonRpcRequest): Promise<any> => {
+  request = (request: JsonRpcRequest): Promise<any> => {
     const requestId = injectionId + this.messageCounter
     this.messageCounter++
 
@@ -116,14 +115,6 @@ export default class InjectedProvider extends EventEmitter {
     })
   }
 
-  request = async (request: JsonRpcRequest): Promise<any> => {
-    if (!isPilotConnected()) {
-      // This can happen if the app connected through EIP-6963 while the panel was closed
-      await this.#openPilotPanel()
-    }
-    return this.#request(request)
-  }
-
   // Legacy API (still used by some Dapps)
   send = async (
     method: string,
@@ -156,11 +147,6 @@ export default class InjectedProvider extends EventEmitter {
   // This is required for connecting to Etherscan
   enable = () => {
     return Promise.resolve()
-  }
-
-  #openPilotPanel = async () => {
-    // TODO
-    throw new Error('Not implemented')
   }
 
   // Some apps don't support generic injected providers, so we pretend to be MetaMask

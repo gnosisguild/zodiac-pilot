@@ -19,15 +19,23 @@ connect/injectedScript --window.top.postMessage()--> connect/contentScript --run
 
 ### inject
 
-Override the `window.ethereum` injected provider for apps to connect to Pilot. Wallet requests will be relayed to the panel app through messages:
+Override the `window.ethereum` injected provider for apps to connect to Pilot. Will only be injected to pages that are loaded while the panel is open.
+
+Wallet requests will be relayed to the panel app through messages:
 
 ```
 inject/InjectedProvider --window.top.postMessage()--> inject/contentScript --runtime.tabs.sendMessage.sendResponse()--> panel
 ```
 
+### monitor
+
+Injected only to the top-level window (not child frames windows), this content script is responsible for hinting the user about required page reload after panel toggling.
+
 ### background
 
 The background script, handling tracking of tabs with active Pilot sessions and simulations and RPC request intercepting. There is always only a single running instance of the script across all windows.
+
+Communication between the background script and the panel app goes exclusively through a single port.
 
 ### components
 

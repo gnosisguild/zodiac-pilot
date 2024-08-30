@@ -17,8 +17,11 @@ esbuild
       './src/connect/contentScriptIframe.ts',
       './src/connect/injectedScript.ts',
 
-      './src/inject/contentScript.ts',
       './src/inject/injectedScript.ts',
+      './src/inject/contentScript.ts',
+
+      './src/monitor/injectedScript.ts',
+      './src/monitor/contentScript.ts',
 
       './src/panel/app.tsx',
     ],

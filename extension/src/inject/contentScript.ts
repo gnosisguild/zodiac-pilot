@@ -2,32 +2,10 @@ import './probeChainId'
 import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
-  PILOT_CONNECT,
   PILOT_DISCONNECT,
   Message,
   InjectedProviderResponse,
 } from './messages'
-
-function inject(scriptPath: string) {
-  const node = document.createElement('script')
-  node.type = 'text/javascript'
-  node.async = false
-  node.src = chrome.runtime.getURL(scriptPath)
-
-  if (document.documentElement.dataset.__zodiacPilotInjected) {
-    // another installation of the extension has already injected itself
-    // (this can happen when when loading unpacked extensions)
-    return
-  }
-  document.documentElement.dataset.__zodiacPilotInjected = 'true'
-
-  const parent = document.head || document.documentElement
-  parent.insertBefore(node, parent.children[0])
-  node.remove()
-}
-
-inject('build/inject/injectedScript.js')
-console.log('injected injectedScript')
 
 // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
@@ -49,13 +27,20 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
 chrome.runtime.onMessage.addListener((message: Message, sender) => {
   if (sender.id !== chrome.runtime.id) return
 
-  if (message.type === PILOT_CONNECT) {
-    console.debug('Pilot connected')
-    window.postMessage(message, '*')
-  }
+  // when the panel is closed, we trigger an EIP1193 'close' event
   if (message.type === PILOT_DISCONNECT) {
     console.debug('Pilot disconnected')
-    window.postMessage(message, '*')
+    window.postMessage(
+      {
+        type: INJECTED_PROVIDER_EVENT,
+        eventName: 'close',
+        eventData: {
+          code: 1000, // "Normal Closure" (see codes: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code#value)
+          reason: 'Zodiac Pilot disconnected',
+        },
+      } as Message,
+      '*'
+    )
   }
 
   if (message.type === INJECTED_PROVIDER_EVENT) {

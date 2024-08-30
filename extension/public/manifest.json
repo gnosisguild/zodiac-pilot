@@ -43,6 +43,18 @@
         "https://connect.pilot.gnosisguild.org/"
       ],
       "run_at": "document_start",
+      "js": [
+        "build/monitor/contentScript.js"
+      ]
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "exclude_globs": [
+        "https://connect.pilot.gnosisguild.org/"
+      ],
+      "run_at": "document_start",
       "all_frames": true,
       "js": [
         "build/inject/contentScript.js"
