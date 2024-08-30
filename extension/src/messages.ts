@@ -1,5 +1,8 @@
 import { ChainId } from 'ser-kit'
 
+// we use a port to communicate between the panel app and the background script as this allows us to track when the panel is closed
+export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
+
 export const PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED'
 export const PILOT_PANEL_CLOSED = 'PILOT_PANEL_CLOSED'
 

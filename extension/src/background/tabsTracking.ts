@@ -11,32 +11,42 @@ export const startTrackingTab = (tabId: number, windowId: number) => {
   }
   activeSession.tabs.add(tabId)
   updateHeadersRule()
-  console.log('Pilot: started tracking tab', tabId, windowId)
-  // chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT })
-  chrome.scripting.executeScript({
-    target: { tabId, allFrames: true },
-    func() {
-      console.log('EXEC SCRIPT', tabId)
-    },
-    injectImmediately: true,
+
+  // for debugging only
+  chrome.action.setBadgeText({
+    text: '🔴',
+    tabId,
   })
 
-  chrome.tabs.onUpdated.addListener((tabId, info, tab) =>
-    console.log('TAB UPDATED', { tabId, info, tab })
-  )
+  console.log('Pilot: started tracking tab', tabId, windowId)
+  chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT })
 }
 
-export const stopTrackingTab = (tabId: number, windowId: number) => {
+export const stopTrackingTab = (
+  tabId: number,
+  windowId: number,
+  closed?: boolean
+) => {
   console.log('stop tracking tab', tabId, windowId)
   const activeSession = activePilotSessions.get(windowId)
   if (activeSession) activeSession.tabs.delete(tabId)
   updateHeadersRule()
   console.log('Pilot: stopped tracking tab', tabId, windowId)
-  chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
+
+  // for debugging only
+  chrome.action.setBadgeText({
+    text: '',
+    tabId,
+  })
+
+  if (!closed) {
+    // avoid errors from sending messages to closed tabs
+    chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
+  }
 }
 
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  console.log('TAB ACTIVATED', tabId, windowId, activePilotSessions)
+  console.log('TAB ACTIVATED', tabId)
   const activePilotSession = activePilotSessions.get(windowId)
 
   if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
@@ -48,7 +58,21 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
   const activePilotSession = activePilotSessions.get(windowId)
 
   if (activePilotSession && activePilotSession.tabs.has(tabId)) {
-    stopTrackingTab(tabId, windowId)
+    stopTrackingTab(tabId, windowId, true)
+  }
+})
+
+// inject the provider script into tracked tabs whenever they start loading a new page
+chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
+  const activePilotSession = activePilotSessions.get(tab.windowId)
+  const isTrackedTab = activePilotSession && activePilotSession.tabs.has(tabId)
+
+  if (isTrackedTab && info.status === 'loading') {
+    chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: ['build/inject/injectedScript.js'],
+      injectImmediately: true,
+    })
   }
 })
 
