@@ -19,6 +19,11 @@ export const setWindowId = (id: number) => {
   windowId = id
 }
 
+let resolveInitPromise: () => void
+const initPromise = new Promise<void>((resolve) => {
+  resolveInitPromise = resolve
+})
+
 /** Update the wallet */
 export const update = (
   newProvider: Eip1193Provider,
@@ -36,6 +41,8 @@ export const update = (
     emitEvent('accountsChanged', [newAccount])
   }
   account = newAccount
+
+  resolveInitPromise()
 }
 
 const emitEvent = async (eventName: string, eventData: any) => {
@@ -64,12 +71,8 @@ chrome.runtime.onMessage.addListener(
     if (sender.tab?.windowId !== windowId) return
 
     if (message.type === INJECTED_PROVIDER_REQUEST) {
-      if (!provider) {
-        throw new Error('Provider not yet initialized')
-      }
-
-      provider
-        .request(message.request)
+      initPromise
+        .then(() => provider!.request(message.request))
         .then((response) => {
           sendResponse({
             type: 'INJECTED_PROVIDER_RESPONSE',

@@ -26,7 +26,7 @@ function injectIframe(src: string) {
 }
 
 // Render an invisible iframe to be able to connect with the injected provider from other wallet extensions
-const iframe = injectIframe('https://connect.pilot.gnosisguild.org/') 
+const iframe = injectIframe('https://connect.pilot.gnosisguild.org/')
 console.debug('injected connect iframe')
 
 // relay requests from the panel to the connect iframe
