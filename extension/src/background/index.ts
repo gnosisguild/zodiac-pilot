@@ -21,7 +21,6 @@ chrome.runtime.onConnect.addListener(function (port) {
       }
     })
 
-    console.log('Sidepanel open.')
     port.onDisconnect.addListener(async () => {
       console.log('Sidepanel closed.', windowId)
       stopPilotSession(windowId)
