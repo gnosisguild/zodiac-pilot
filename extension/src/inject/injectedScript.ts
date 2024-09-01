@@ -19,7 +19,9 @@ declare let window: Window & {
 // We also must not inject into the connect iframes, since the point of these is connecting to the other wallet extension.
 if (
   !window.zodiacPilot &&
-  window.location.origin !== 'https://connect.pilot.gnosisguild.org'
+  window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
+  !window.location.href.startsWith('about:') &&
+  !window.location.href.startsWith('chrome:')
 ) {
   // inject bridged ethereum provider
   const pilotProvider = new InjectedProvider()
@@ -45,8 +47,6 @@ if (
     )
   } else {
     // Houston, we have a problem: There is already a provider injected by another extension and it's not configurable.
-    // Afaict, this no longer happens since executing this script on the tab update 'loading' state seems to be reliably earlier than content script injections.
-    // We still keep the Rabby workaround in place for good measure.
 
     // If it's Rabby we have a trick to make sure it routes to the Pilot provider
     if (window.rabbyWalletRouter) {
@@ -97,8 +97,9 @@ if (
     )
   }
 
-  window.addEventListener('eip6963:requestProvider', () => {
+  window.addEventListener('eip6963:requestProvider', (event) => {
     announceEip6963Provider(pilotProvider)
+    event.stopImmediatePropagation()
   })
 
   announceEip6963Provider(pilotProvider)
