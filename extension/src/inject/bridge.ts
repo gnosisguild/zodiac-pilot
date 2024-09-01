@@ -4,7 +4,7 @@ import { Eip1193Provider } from '../types'
 import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
-  Message,
+  InjectedProviderMessage,
 } from './messages'
 import { ZeroAddress } from 'ethers'
 
@@ -57,13 +57,13 @@ const emitEvent = async (eventName: string, eventData: any) => {
       type: INJECTED_PROVIDER_EVENT,
       eventName,
       eventData,
-    } satisfies Message)
+    } satisfies InjectedProviderMessage)
   }
 }
 
 // Relay RPC requests
 chrome.runtime.onMessage.addListener(
-  (message: Message, sender, sendResponse) => {
+  (message: InjectedProviderMessage, sender, sendResponse) => {
     // only handle messages from our extension
     if (sender.id !== chrome.runtime.id) return
 
@@ -78,7 +78,7 @@ chrome.runtime.onMessage.addListener(
             type: 'INJECTED_PROVIDER_RESPONSE',
             requestId: message.requestId,
             response,
-          } satisfies Message)
+          } satisfies InjectedProviderMessage)
         })
         .catch((error) => {
           sendResponse({
@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener(
               message: error.message,
               code: error.code,
             },
-          } satisfies Message)
+          } satisfies InjectedProviderMessage)
         })
 
       // without this the response won't be sent
