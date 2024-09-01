@@ -16,7 +16,11 @@ declare let window: Window & {
 
 // This script might be injected multiple times, so we need to check if the provider is already set.
 // This should also handle the case where the extension is installed multiple times (e.g. when loading unpacked extensions).
-if (!window.zodiacPilot) {
+// We also must not inject into the connect iframes, since the point of these is connecting to the other wallet extension.
+if (
+  !window.zodiacPilot &&
+  window.location.origin !== 'https://connect.pilot.gnosisguild.org'
+) {
   // inject bridged ethereum provider
   const pilotProvider = new InjectedProvider()
   window.zodiacPilot = pilotProvider
@@ -35,7 +39,10 @@ if (!window.zodiacPilot) {
       },
     })
 
-    console.log('🔌 Zodiac Pilot injected as `window.ethereum`')
+    console.log(
+      '🔌 Zodiac Pilot injected as `window.ethereum`',
+      window.location.href
+    )
   } else {
     // Houston, we have a problem: There is already a provider injected by another extension and it's not configurable.
     // Afaict, this no longer happens since executing this script on the tab update 'loading' state seems to be reliably earlier than content script injections.

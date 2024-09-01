@@ -17,6 +17,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         windowId = message.windowId
         console.log('Sidepanel opened.', windowId)
         startPilotSession(message.windowId, message.tabId)
+        if (message.tabId) chrome.tabs.reload(message.tabId)
       }
     })
 
@@ -24,6 +25,10 @@ chrome.runtime.onConnect.addListener(function (port) {
     port.onDisconnect.addListener(async () => {
       console.log('Sidepanel closed.', windowId)
       stopPilotSession(windowId)
+      chrome.tabs.query({ windowId, active: true }, (tabs) => {
+        const tabId = tabs[0]?.id
+        if (tabId) chrome.tabs.reload(tabId)
+      })
     })
   }
 })
