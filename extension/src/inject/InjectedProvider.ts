@@ -5,7 +5,7 @@ import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
   INJECTED_PROVIDER_RESPONSE,
-  Message,
+  InjectedProviderMessage,
 } from './messages'
 
 interface JsonRpcRequest {
@@ -48,7 +48,7 @@ export default class InjectedProvider extends EventEmitter {
     })
 
     // relay wallet events
-    const handleBridgeEvent = (ev: MessageEvent<Message>) => {
+    const handleBridgeEvent = (ev: MessageEvent<InjectedProviderMessage>) => {
       const message = ev.data
       if (!message) return
 
@@ -84,12 +84,12 @@ export default class InjectedProvider extends EventEmitter {
           type: INJECTED_PROVIDER_REQUEST,
           requestId,
           request,
-        } satisfies Message,
+        } satisfies InjectedProviderMessage,
         '*'
       )
 
       // wait for response...
-      const handleMessage = (ev: MessageEvent<Message>) => {
+      const handleMessage = (ev: MessageEvent<InjectedProviderMessage>) => {
         const message = ev.data
         if (!message) return
 

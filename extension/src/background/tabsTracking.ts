@@ -1,7 +1,7 @@
 // Track which tabs belong to which active Pilot sessions, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
-import { PILOT_CONNECT, PILOT_DISCONNECT } from '../inject/messages'
+import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { activePilotSessions } from './sessionTracking'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
@@ -70,7 +70,7 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
   if (isTrackedTab && info.status === 'loading') {
     chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: ['build/inject/injectedScript.js'],
+      files: ['build/inject/contentScript.js'],
       injectImmediately: true,
     })
   }
