@@ -23,7 +23,6 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { useBeforeUnload } from '../utils'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 interface Props {
@@ -169,11 +168,6 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     onBeforeTransactionSend,
     onTransactionSent,
   ])
-
-  // delete fork when closing browser tab (the effect teardown won't be executed in that case)
-  useBeforeUnload(() => {
-    forkProviderRef.current?.deleteFork()
-  })
 
   const submitTransactions = useCallback(async () => {
     const metaTransactions = transactions.map((txState) => txState.transaction)

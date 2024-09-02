@@ -1,108 +1,63 @@
-import React, { ReactNode, useCallback, useEffect } from 'react'
+import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 
 import { useInjectedWallet, useWalletConnect } from '../providers'
-import {
-  Route,
-  LegacyConnection,
-  Eip1193Provider,
-  ProviderType,
-} from '../../types'
-import { useStickyState } from '../utils'
+import { Route, Eip1193Provider, ProviderType } from '../../types'
 import { InjectedWalletContextT } from '../providers/useInjectedWallet'
 import { WalletConnectResult } from '../providers/useWalletConnect'
 import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
-import {
-  fromLegacyConnection,
-  migrateLegacyConnections,
-} from './legacyConnectionMigrations'
+
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 import { nanoid } from 'nanoid'
+import useStorage, { useStorageEntries } from '../utils/useStorage'
 
-type RouteContextT = [Route[], React.Dispatch<React.SetStateAction<Route[]>>]
+type RouteContextT = readonly [
+  Route[],
+  (value: Route) => void,
+  (id: string) => void,
+]
 const RouteContext = createContext<RouteContextT | null>(null)
-type SelectedRouteContextT = [string, React.Dispatch<string>]
+type SelectedRouteContextT = readonly [string, React.Dispatch<string>]
 const SelectedRouteContext = createContext<SelectedRouteContextT | null>(null)
 
-const CONNECTIONS_DEFAULT_VALUE: LegacyConnection[] = [
-  {
-    id: nanoid(),
-    label: '',
-    chainId: 1,
-    moduleAddress: '',
-    avatarAddress: '',
-    pilotAddress: '',
-    providerType: ProviderType.WalletConnect,
-    moduleType: undefined,
-    roleId: '',
-  },
-]
-
 const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
-const ROUTES_DEFAULT_VALUE: Route[] = [
-  {
-    id: nanoid(),
-    label: '',
-    providerType: ProviderType.InjectedWallet,
-    avatar: ETH_ZERO_ADDRESS,
-    initiator: undefined,
-    waypoints: undefined,
-  },
-]
+const INITIAL_DEFAULT_ROUTE: Route = {
+  id: nanoid(),
+  label: '',
+  providerType: ProviderType.InjectedWallet,
+  avatar: ETH_ZERO_ADDRESS,
+  initiator: undefined,
+  waypoints: undefined,
+}
 
 export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [legacyConnections] = useStickyState<LegacyConnection[]>(
-    CONNECTIONS_DEFAULT_VALUE,
-    'connections'
+  // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
+  // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
+  const [routes, setRoute, removeRoute] = useStorageEntries<Route>('routes')
+
+  const saveRoute = useCallback(
+    (route: Route) => {
+      setRoute(route.id, route)
+    },
+    [setRoute]
   )
 
-  const [routes, setRoutes] = useStickyState<Route[]>(
-    ROUTES_DEFAULT_VALUE,
-    'routes'
-  )
-
-  // In the future we can use this to keep track of the migration state
-  const [routesRevision, setRoutesRevision] = useStickyState<number>(
-    0,
-    'routesRevision'
-  )
-
-  const [selectedRouteId, setSelectedRouteId] = useStickyState<string>(
-    routes[0].id,
-    'selectedRoute'
-  )
-
-  useEffect(() => {
-    if (routesRevision === 0) {
-      migrateLegacyConnections(legacyConnections).then(
-        (migratedConnections) => {
-          const routes = migratedConnections.map(fromLegacyConnection)
-          setRoutes(routes)
-          setRoutesRevision(1)
-          setSelectedRouteId(routes[0].id)
-        }
-      )
-    }
-  }, [
-    routesRevision,
-    legacyConnections,
-    setRoutes,
-    setRoutesRevision,
-    setSelectedRouteId,
-  ])
+  const [selectedRouteId, setSelectedRouteId] =
+    useStorage<string>('selectedRoute')
 
   const packedRoutesContext: RouteContextT = useMemo(
-    () => [routes, setRoutes],
-    [routes, setRoutes]
+    () => [Object.values(routes || {}), saveRoute, removeRoute] as const,
+    [routes, saveRoute, removeRoute]
   )
   const packedSelectedRouteContext: SelectedRouteContextT = useMemo(
-    () => [selectedRouteId, setSelectedRouteId],
+    () => [selectedRouteId || '', setSelectedRouteId] as const,
     [selectedRouteId, setSelectedRouteId]
   )
 
-  if (routesRevision === 0) {
+  // wait for routes to be loaded from storage
+  if (!routes) {
     return null
   }
 
@@ -117,25 +72,19 @@ export const ProvideRoutes: React.FC<{ children: ReactNode }> = ({
 
 export const useUpdateLastUsedRoute = () => {
   const [selectedRouteId] = useSelectedRouteId()
-  const [, setRoutes] = useRoutes()
+  const [routes, saveRoute] = useRoutes()
 
-  const updateLastUsedRoute = useCallback(
-    (routeId: string) => {
-      setRoutes((routes: Route[]) =>
-        routes.map((route) =>
-          route.id === routeId
-            ? { ...route, lastUsed: Math.floor(Date.now() / 1000) }
-            : route
-        )
-      )
-    },
-    [setRoutes]
-  )
+  const updateRef = useRef<(routeId: string) => void>()
+  updateRef.current = (routeId: string) => {
+    const route = routes.find((route) => route.id === routeId)
+    if (!route) throw new Error('route not found')
+    saveRoute({ ...route, lastUsed: Math.floor(Date.now() / 1000) })
+  }
 
   useEffect(() => {
     console.debug('update last used timestamp for route', selectedRouteId)
-    updateLastUsedRoute(selectedRouteId)
-  }, [selectedRouteId, updateLastUsedRoute])
+    updateRef.current!(selectedRouteId)
+  }, [selectedRouteId])
 }
 
 export const useRoutes = () => {
@@ -158,11 +107,10 @@ export const useRoute = (id?: string) => {
   const [routes] = useRoutes()
   const [selectedRouteId] = useSelectedRouteId()
   const routeId = id || selectedRouteId
-  const route = (routeId && routes.find((c) => c.id === routeId)) || routes[0]
-
-  if (!route) {
-    throw new Error('routes is empty, which must never happen')
-  }
+  const route =
+    (routeId && routes.find((c) => c.id === routeId)) ||
+    routes[0] ||
+    INITIAL_DEFAULT_ROUTE
 
   // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
   const [chainId] = parsePrefixedAddress(route.avatar)
