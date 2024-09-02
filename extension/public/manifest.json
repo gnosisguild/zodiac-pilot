@@ -26,7 +26,8 @@
     "scripting",
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback",
-    "webRequest"
+    "webRequest",
+    "storage"
   ],
   "background": {
     "service_worker": "build/background/index.js"
