@@ -3,11 +3,13 @@ import { ChainId } from 'ser-kit'
 // we use a port to communicate between the panel app and the background script as this allows us to track when the panel is closed
 export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
 
-export const PILOT_CONNECT = 'PILOT_CONNECT'
-export const PILOT_DISCONNECT = 'PILOT_DISCONNECT'
-
+// triggered when the panel is toggled
 export const PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED'
 export const PILOT_PANEL_CLOSED = 'PILOT_PANEL_CLOSED'
+
+// triggered the first time a tab is activated after the panel has been toggled
+export const PILOT_CONNECT = 'PILOT_CONNECT'
+export const PILOT_DISCONNECT = 'PILOT_DISCONNECT'
 
 export const PROBE_CHAIN_ID = 'PROBE_CHAIN_ID'
 

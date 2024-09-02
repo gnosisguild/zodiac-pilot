@@ -1,5 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
@@ -46,14 +46,19 @@ type ConnectionPatch = {
 }
 
 const EditConnection: React.FC = () => {
-  const [routes, setRoutes] = useRoutes()
+  const [routes, saveRoute, removeRouteById] = useRoutes()
   const { routeId } = useParams()
   if (!routeId) {
     throw new Error('Route ID is required')
   }
+  const originalRoute = routes.find((r) => r.id === routeId)
+  if (!originalRoute) {
+    throw new Error('Route not found')
+  }
+  const [route, setRoute] = useState(originalRoute)
 
   const navigate = useNavigate()
-  const { route } = useRoute(routeId)
+
   const [, setSelectedRouteId] = useSelectedRouteId()
   const currentlySelected = useRoute()
 
@@ -61,7 +66,7 @@ const EditConnection: React.FC = () => {
     const exists = routes.some((r) => r.id === routeId)
 
     if (!exists) {
-      navigate('/connections')
+      navigate('/routes')
     }
   }, [routeId, routes, navigate])
 
@@ -107,21 +112,21 @@ const EditConnection: React.FC = () => {
     : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
-    setRoutes((routes) =>
-      routes.map((r) => {
-        if (r.id !== route.id) return r
-        return fromLegacyConnection({ ...asLegacyConnection(r), ...patch })
-      })
-    )
+    const route = routes.find((r) => r.id === routeId)
+    if (!route) throw new Error('Route not found')
+    setRoute(fromLegacyConnection({ ...asLegacyConnection(route), ...patch }))
   }
 
   const removeRoute = () => {
-    const newRoutes = routes.filter((c) => c.id !== route.id)
-    setRoutes(newRoutes)
-    navigate('/connections')
+    removeRouteById(routeId)
+    navigate('/routes')
   }
 
   const launchRoute = async () => {
+    if (route !== originalRoute) {
+      saveRoute(route)
+    }
+
     // we continue working with the same avatar, so don't have to clear the recorded transaction
     const keepTransactionBundle =
       currentlySelected.route.avatar === route.avatar
@@ -159,7 +164,7 @@ const EditConnection: React.FC = () => {
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">
               <h2>{route.label || 'New connection'}</h2>
-              <Link className={classes.backLink} to="/connections">
+              <Link className={classes.backLink} to="/routes">
                 &#8592; All Connections
               </Link>
             </Flex>
@@ -169,7 +174,7 @@ const EditConnection: React.FC = () => {
                 disabled={!connection.avatarAddress}
                 onClick={launchRoute}
               >
-                Launch
+                {route !== originalRoute ? 'Save & Launch' : 'Launch'}
               </Button>
               <IconButton
                 onClick={removeRoute}

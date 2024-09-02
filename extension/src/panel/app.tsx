@@ -18,6 +18,7 @@ import { RoutesList } from './routes'
 import { update } from '../inject/bridge'
 import { parsePrefixedAddress } from 'ser-kit'
 import { initPort } from './port'
+import useStorage from './utils/useStorage'
 
 initPort()
 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
     update(provider, chainId, avatarAddress)
   }, [provider, chainId, avatarAddress])
 
+  useStorage('lastUsedRoute', route.id)
   return (
     <>
       <RouterProvider router={router} />
