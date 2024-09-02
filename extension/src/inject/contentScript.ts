@@ -25,53 +25,59 @@ function inject(scriptPath: string) {
   node.remove()
 }
 
-inject('build/inject/injectedScript.js')
+if (
+  window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
+  !window.location.href.startsWith('about:') &&
+  !window.location.href.startsWith('chrome:')
+) {
+  inject('build/inject/injectedScript.js')
 
-// relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
-window.addEventListener(
-  'message',
-  async (event: MessageEvent<InjectedProviderMessage>) => {
-    const message = event.data
-    if (!message) return
+  // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
+  window.addEventListener(
+    'message',
+    async (event: MessageEvent<InjectedProviderMessage>) => {
+      const message = event.data
+      if (!message) return
 
-    if (message.type === INJECTED_PROVIDER_REQUEST) {
-      const { requestId, request } = message
-      console.debug('rpc request to pilot', requestId, request)
-      const responseMessage: InjectedProviderResponse =
-        await chrome.runtime.sendMessage(message)
-      const { response } = responseMessage
-      console.debug('rpc response from pilot', requestId, response)
-      window.postMessage(responseMessage, '*')
+      if (message.type === INJECTED_PROVIDER_REQUEST) {
+        const { requestId, request } = message
+        console.debug('rpc request to pilot', requestId, request)
+        const responseMessage: InjectedProviderResponse =
+          await chrome.runtime.sendMessage(message)
+        const { response } = responseMessage
+        console.debug('rpc response from pilot', requestId, response)
+        window.postMessage(responseMessage, '*')
+      }
     }
-  }
-)
+  )
 
-// Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
-chrome.runtime.onMessage.addListener(
-  (message: InjectedProviderMessage | Message, sender) => {
-    if (sender.id !== chrome.runtime.id) return
+  // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
+  chrome.runtime.onMessage.addListener(
+    (message: InjectedProviderMessage | Message, sender) => {
+      if (sender.id !== chrome.runtime.id) return
 
-    // when the panel is closed, we trigger an EIP1193 'close' event
-    if (message.type === PILOT_DISCONNECT) {
-      console.debug('Pilot disconnected')
-      window.postMessage(
-        {
-          type: INJECTED_PROVIDER_EVENT,
-          eventName: 'close',
-          eventData: {
-            code: 1000, // "Normal Closure" (see codes: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code#value)
-            reason: 'Zodiac Pilot disconnected',
-          },
-        } as InjectedProviderMessage,
-        '*'
-      )
+      // when the panel is closed, we trigger an EIP1193 'close' event
+      if (message.type === PILOT_DISCONNECT) {
+        console.debug('Pilot disconnected')
+        window.postMessage(
+          {
+            type: INJECTED_PROVIDER_EVENT,
+            eventName: 'close',
+            eventData: {
+              code: 1000, // "Normal Closure" (see codes: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code#value)
+              reason: 'Zodiac Pilot disconnected',
+            },
+          } as InjectedProviderMessage,
+          '*'
+        )
+      }
+
+      if (message.type === INJECTED_PROVIDER_EVENT) {
+        console.debug('eip1193 event from pilot', message)
+        window.postMessage(message, '*')
+      }
     }
-
-    if (message.type === INJECTED_PROVIDER_EVENT) {
-      console.debug('eip1193 event from pilot', message)
-      window.postMessage(message, '*')
-    }
-  }
-)
+  )
+}
 
 export {}

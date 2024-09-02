@@ -29,6 +29,7 @@ function check() {
   }
 }
 
+// TODO maybe check only after a slight delay to give the PILOT_CONNECT message time to arrive
 check()
 
 window.addEventListener('message', (event: MessageEvent) => {
