@@ -43,8 +43,12 @@ if (
       if (message.type === INJECTED_PROVIDER_REQUEST) {
         const { requestId, request } = message
         console.debug('rpc request to pilot', requestId, request)
-        const responseMessage: InjectedProviderResponse =
+        const responseMessage: InjectedProviderResponse | undefined =
           await chrome.runtime.sendMessage(message)
+
+        // This can happen if the panel is closed before the response is received
+        if (!responseMessage) return
+
         const { response } = responseMessage
         console.debug('rpc response from pilot', requestId, response)
         window.postMessage(responseMessage, '*')

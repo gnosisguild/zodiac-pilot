@@ -33,6 +33,7 @@ esbuild
       '.woff': 'file',
       '.woff2': 'file',
       '.png': 'file',
+      '.html': 'text',
     },
     target: ['chrome96'],
     outdir: './public/build',

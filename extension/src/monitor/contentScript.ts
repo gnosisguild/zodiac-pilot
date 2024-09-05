@@ -2,6 +2,9 @@
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 
+window.document.documentElement.dataset.__zodiacPilotBasePath =
+  chrome.runtime.getURL('/')
+
 function inject(scriptPath: string) {
   const node = document.createElement('script')
   node.type = 'text/javascript'
