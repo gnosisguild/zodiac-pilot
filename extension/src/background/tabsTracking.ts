@@ -39,8 +39,8 @@ export const stopTrackingTab = (
     tabId,
   })
 
+  // avoid errors from sending messages to closed tabs
   if (!closed) {
-    // avoid errors from sending messages to closed tabs
     chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
   }
 }
