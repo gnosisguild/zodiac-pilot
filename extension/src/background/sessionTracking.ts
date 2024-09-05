@@ -30,7 +30,7 @@ export const stopPilotSession = (windowId: number) => {
     stopTrackingTab(tabId, windowId)
   }
   activePilotSessions.delete(windowId)
-  // make sure all rpc redirects are
+  // make sure all rpc redirects are cleared
   updateRpcRedirectRules(activePilotSessions)
 }
 

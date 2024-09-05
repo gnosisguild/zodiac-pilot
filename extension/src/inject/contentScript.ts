@@ -61,16 +61,18 @@ if (
     (message: InjectedProviderMessage | Message, sender) => {
       if (sender.id !== chrome.runtime.id) return
 
-      // when the panel is closed, we trigger an EIP1193 'close' event
+      // when the panel is closed, we trigger an EIP1193 'disconnect' event
       if (message.type === PILOT_DISCONNECT) {
         console.debug('Pilot disconnected')
         window.postMessage(
           {
             type: INJECTED_PROVIDER_EVENT,
-            eventName: 'close',
+            eventName: 'disconnect',
             eventData: {
-              code: 1000, // "Normal Closure" (see codes: https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code#value)
-              reason: 'Zodiac Pilot disconnected',
+              error: {
+                message: 'Zodiac Pilot disconnected',
+                code: 4900,
+              },
             },
           } as InjectedProviderMessage,
           '*'
