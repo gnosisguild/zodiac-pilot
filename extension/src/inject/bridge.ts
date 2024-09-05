@@ -6,13 +6,13 @@ import {
   INJECTED_PROVIDER_REQUEST,
   InjectedProviderMessage,
 } from './messages'
-import { ZeroAddress } from 'ethers'
+import { toQuantity } from 'ethers'
 
-let windowId: number | undefined = undefined
+let windowId: number | undefined
 
 let provider: Eip1193Provider | undefined
-let chainId: ChainId = 1
-let account = ZeroAddress as `0x${string}`
+let chainId: ChainId | undefined
+let account: `0x${string}` | undefined
 
 /** Set the window ID RPC events will only be relayed to tabs in this window */
 export const setWindowId = (id: number) => {
@@ -33,7 +33,11 @@ export const update = (
   provider = newProvider
 
   if (newChainId !== chainId) {
-    emitEvent('chainChanged', [newChainId])
+    if (chainId === undefined) {
+      emitEvent('connect', { chainId: toQuantity(newChainId) })
+    } else {
+      emitEvent('chainChanged', [toQuantity(newChainId)])
+    }
   }
   chainId = newChainId
 

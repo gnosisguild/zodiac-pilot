@@ -40,13 +40,6 @@ export default class InjectedProvider extends EventEmitter {
   constructor() {
     super()
 
-    this.request({ method: 'eth_chainId' }).then((chainId) => {
-      this.chainId = chainId
-      this.emit('connect', {
-        chainId,
-      })
-    })
-
     // relay wallet events
     const handleBridgeEvent = (ev: MessageEvent<InjectedProviderMessage>) => {
       const message = ev.data
@@ -58,16 +51,11 @@ export default class InjectedProvider extends EventEmitter {
     }
     window.addEventListener('message', handleBridgeEvent)
 
-    this.request({ method: 'eth_chainId' }).then((chainId) => {
+    this.on('connect', ({ chainId }) => {
       this.chainId = chainId
-      this.emit('connect', {
-        chainId,
-      })
     })
-
-    // keep window.ethereum.selectedAddress in sync
-    this.request({ method: 'eth_accounts' }).then((accounts) => {
-      this.selectedAddress = accounts[0]
+    this.on('chainChanged', (chainId) => {
+      this.chainId = chainId
     })
     this.on('accountsChanged', (accounts) => {
       this.selectedAddress = accounts[0]

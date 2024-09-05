@@ -19,7 +19,6 @@ function inject(scriptPath: string) {
 inject('build/monitor/injectedScript.js')
 
 chrome.runtime.onMessage.addListener((message: Message) => {
-  console.log('monitor content script received message', message)
   if (message.type === PILOT_CONNECT || message.type === PILOT_DISCONNECT) {
     document.documentElement.dataset.__zodiacPilotConnected = (
       message.type === PILOT_CONNECT
