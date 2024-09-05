@@ -4,6 +4,11 @@
 
 import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { Eip1193Provider } from '../types'
+import {
+  dismissHint,
+  renderConnectHint,
+  renderDisconnectHint,
+} from './renderHint'
 
 declare let window: Window & {
   zodiacPilot?: Eip1193Provider
@@ -15,22 +20,26 @@ function check() {
     !window.zodiacPilot
   ) {
     console.log(
-      '🕵 Zodiac Pilot is connected and the provider is not injected. Please reload the page.'
+      '🕵 Zodiac Pilot is open but the provider is not injected. Please reload the page.'
     )
-  }
-
-  if (
+    renderConnectHint()
+  } else if (
     document.documentElement.dataset.__zodiacPilotConnected !== 'true' &&
     window.zodiacPilot
   ) {
     console.log(
       '🕵 Zodiac Pilot is closed but the provider is still injected. Please reload the page.'
     )
+    renderDisconnectHint()
+  } else {
+    dismissHint()
   }
 }
 
-// TODO maybe check only after a slight delay to give the PILOT_CONNECT message time to arrive
-check()
+// initially check after a slight delay to give the PILOT_CONNECT message time to arrive
+window.setTimeout(() => {
+  check()
+}, 20)
 
 window.addEventListener('message', (event: MessageEvent) => {
   if (
