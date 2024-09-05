@@ -124,7 +124,6 @@ export function fromLegacyConnection(connection: LegacyConnection): Route {
     waypoints: waypoints as Route['waypoints'],
     initiator: pilotPrefixedAddress,
     avatar: avatarPrefixedAddress,
-    _migratedFromLegacyConnection: true,
   }
 }
 

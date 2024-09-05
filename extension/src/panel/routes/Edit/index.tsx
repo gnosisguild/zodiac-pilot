@@ -33,6 +33,7 @@ import {
 } from '../legacyConnectionMigrations'
 import { ZeroAddress } from 'ethers'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ProviderType, Route } from '../../../types'
 
 type ConnectionPatch = {
   label?: string
@@ -45,16 +46,24 @@ type ConnectionPatch = {
   multisendCallOnly?: string
 }
 
+const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
+
 const EditConnection: React.FC = () => {
   const [routes, saveRoute, removeRouteById] = useRoutes()
   const { routeId } = useParams()
   if (!routeId) {
     throw new Error('Route ID is required')
   }
-  const originalRoute = routes.find((r) => r.id === routeId)
-  if (!originalRoute) {
-    throw new Error('Route not found')
-  }
+  const originalRoute =
+    routes.find((r) => r.id === routeId) ||
+    ({
+      id: routeId,
+      label: '',
+      providerType: ProviderType.InjectedWallet,
+      avatar: ETH_ZERO_ADDRESS,
+      initiator: undefined,
+      waypoints: undefined,
+    } satisfies Route)
   const [route, setRoute] = useState(originalRoute)
 
   const navigate = useNavigate()

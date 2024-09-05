@@ -25,7 +25,6 @@ describe('legacy connection migrations', () => {
     const standardMigrated = fromLegacyConnection(standard)!
     expect(standardMigrated).toMatchInlineSnapshot(`
       {
-        "_migratedFromLegacyConnection": true,
         "avatar": "eth:0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c",
         "id": "PnNZf8JmJTUCzEuS0kAwV",
         "initiator": "eth:0xe697903dc6ca014d3e17ba61f4daf657afd51561",
@@ -95,7 +94,6 @@ describe('legacy connection migrations', () => {
     const noPilotMigrated = fromLegacyConnection(noPilot)!
     expect(noPilotMigrated).toMatchInlineSnapshot(`
       {
-        "_migratedFromLegacyConnection": true,
         "avatar": "eth:0x849d52316331967b6ff1198e5e32a0eb168d039d",
         "id": "bxY85cd9V24e8CvHBmwYo",
         "initiator": "eth:0x0000000000000000000000000000000000000000",
@@ -177,7 +175,6 @@ describe('legacy connection migrations', () => {
     const noModuleMigrated = fromLegacyConnection(noModule)!
     expect(noModuleMigrated).toMatchInlineSnapshot(`
       {
-        "_migratedFromLegacyConnection": true,
         "avatar": "eth:0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c",
         "id": "PnNZf8JmJTUCzEuS0kAwV",
         "initiator": "eth:0xe697903dc6ca014d3e17ba61f4daf657afd51561",
@@ -227,7 +224,6 @@ describe('legacy connection migrations', () => {
       })
     ).toMatchInlineSnapshot(`
       {
-        "_migratedFromLegacyConnection": true,
         "avatar": "eth:0xd0ca2a7ed8aee7972750b085b27350f1cd387f9b",
         "id": "28KuFy7mBqI1lQdOs5KgE",
         "initiator": "eoa:0x0000000000000000000000000000000000000000",
