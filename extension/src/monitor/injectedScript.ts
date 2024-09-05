@@ -20,7 +20,7 @@ function check() {
   }
 
   if (
-    document.documentElement.dataset.__zodiacPilotConnected === 'false' &&
+    document.documentElement.dataset.__zodiacPilotConnected !== 'true' &&
     window.zodiacPilot
   ) {
     console.log(

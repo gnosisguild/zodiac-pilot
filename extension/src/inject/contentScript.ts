@@ -18,7 +18,8 @@ function inject(scriptPath: string) {
     // (this can happen when when loading unpacked extensions)
     return
   }
-  document.documentElement.dataset.__zodiacPilotInjected = 'false'
+  document.documentElement.dataset.__zodiacPilotInjected = 'true'
+  document.documentElement.dataset.__zodiacPilotConnected = 'true'
 
   const parent = document.head || document.documentElement
   parent.insertBefore(node, parent.children[0])

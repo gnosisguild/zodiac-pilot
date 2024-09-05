@@ -73,7 +73,6 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
       files: ['build/inject/contentScript.js'],
       injectImmediately: true,
     })
-    chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT } satisfies Message)
   }
 })
 

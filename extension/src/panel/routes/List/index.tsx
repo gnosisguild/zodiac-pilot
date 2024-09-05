@@ -12,7 +12,7 @@ import {
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
-import { ProviderType, Route } from '../../../types'
+import { Route } from '../../../types'
 import { useClearTransactions } from '../../state/transactionHooks'
 
 import classes from './style.module.css'
@@ -169,11 +169,9 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
   )
 }
 
-const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
-
 const RoutesList: React.FC = () => {
   const [, selectRoute] = useSelectedRouteId()
-  const [routes, setRoutes] = useRoutes()
+  const [routes] = useRoutes()
   const navigate = useNavigate()
 
   const handleLaunch = (routeId: string) => {
@@ -185,19 +183,8 @@ const RoutesList: React.FC = () => {
   }
 
   const handleCreate = () => {
-    const id = nanoid()
-    setRoutes([
-      ...routes,
-      {
-        id,
-        label: '',
-        providerType: ProviderType.InjectedWallet,
-        avatar: ETH_ZERO_ADDRESS,
-        initiator: undefined,
-        waypoints: undefined,
-      },
-    ])
-    navigate('/routes/' + id)
+    const newRouteId = nanoid()
+    navigate('/routes/' + newRouteId)
   }
 
   return (

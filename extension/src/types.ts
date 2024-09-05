@@ -38,7 +38,6 @@ export type Route = PartialRoute & {
   providerType: ProviderType
   label: string
   lastUsed?: number
-  _migratedFromLegacyConnection?: boolean
 }
 
 export interface JsonRpcRequest {
