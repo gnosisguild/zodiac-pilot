@@ -8,13 +8,6 @@ function inject(scriptPath: string) {
   node.async = false
   node.src = chrome.runtime.getURL(scriptPath)
 
-  if ('__zodiacPilotConnected' in document.documentElement.dataset) {
-    // another installation of the extension has already injected itself
-    // (this can happen when when loading unpacked extensions)
-    return
-  }
-  document.documentElement.dataset.__zodiacPilotConnected = 'false'
-
   const parent = document.head || document.documentElement
   parent.insertBefore(node, parent.children[0])
   node.remove()

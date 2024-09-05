@@ -77,8 +77,9 @@ export const useUpdateLastUsedRoute = () => {
   const updateRef = useRef<(routeId: string) => void>()
   updateRef.current = (routeId: string) => {
     const route = routes.find((route) => route.id === routeId)
-    if (!route) throw new Error('route not found')
-    saveRoute({ ...route, lastUsed: Math.floor(Date.now() / 1000) })
+    if (route) {
+      saveRoute({ ...route, lastUsed: Math.floor(Date.now() / 1000) })
+    }
   }
 
   useEffect(() => {
@@ -111,6 +112,8 @@ export const useRoute = (id?: string) => {
     (routeId && routes.find((c) => c.id === routeId)) ||
     routes[0] ||
     INITIAL_DEFAULT_ROUTE
+
+  console.log('route', route)
 
   // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
   const [chainId] = parsePrefixedAddress(route.avatar)
