@@ -53,15 +53,10 @@ if (!window.zodiacPilot) {
       const { rabbyWalletRouter } = window
       const setDefaultProvider = rabbyWalletRouter.setDefaultProvider
 
-      window.addEventListener('message', (ev) => {
-        const message = ev.data
-        if (!message) return
-
-        rabbyWalletRouter.addProvider(pilotProvider)
-        setDefaultProvider(false)
-        // prevent Rabby from setting its own provider as default while Pilot is connected
-        rabbyWalletRouter.setDefaultProvider = () => {}
-      })
+      rabbyWalletRouter.addProvider(pilotProvider)
+      setDefaultProvider(false)
+      // prevent Rabby from setting its own provider as default while Pilot is connected
+      rabbyWalletRouter.setDefaultProvider = () => {}
     } else {
       // If it's not Rabby, we have to alert the user
       console.error(
