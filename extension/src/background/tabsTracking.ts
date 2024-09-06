@@ -39,14 +39,13 @@ export const stopTrackingTab = (
     tabId,
   })
 
-  // avoid errors from sending messages to closed tabs
+  // important to check if closed to avoid errors from sending messages to closed tabs
   if (!closed) {
     chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
   }
 }
 
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  console.log('TAB ACTIVATED', tabId)
   const activePilotSession = activePilotSessions.get(windowId)
 
   if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
@@ -68,6 +67,8 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
   const isTrackedTab = activePilotSession && activePilotSession.tabs.has(tabId)
 
   if (isTrackedTab && info.status === 'loading') {
+    // The update event can be triggered multiple times for the same page load,
+    // so the content script must handle the case that it has already been injected before.
     chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
       files: ['build/inject/contentScript.js'],
