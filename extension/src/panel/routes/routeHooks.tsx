@@ -113,8 +113,6 @@ export const useRoute = (id?: string) => {
     routes[0] ||
     INITIAL_DEFAULT_ROUTE
 
-  console.log('route', route)
-
   // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
   const [chainId] = parsePrefixedAddress(route.avatar)
   if (!chainId) {
