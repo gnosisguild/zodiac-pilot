@@ -40,12 +40,43 @@ function renderToShadow(hint: string) {
 
 export function renderConnectHint() {
   renderToShadow('Reload the page to connect Zodiac Pilot.')
+  // TODO we keep it disabled for now just to go sure it will actually work and won't interfere with the declarative net request rules
+  // addPrerenderRule()
 }
 
 export function renderDisconnectHint() {
   renderToShadow('Zodiac Pilot disconnected<br/>Reload the page to continue.')
+  // TODO we keep it disabled for now just to go sure it will actually work and won't interfere with the declarative net request rules
+  // addPrerenderRule()
 }
 
 export function dismissHint() {
   if (shadow) shadow.innerHTML = ''
+  // TODO we keep it disabled for now just to go sure it will actually work and won't interfere with the declarative net request rules
+  // removePrerenderRule()
+}
+
+let specScript: HTMLScriptElement | null = null
+
+/** Adds a prerender rule for the current href so the reload will be instant */
+function addPrerenderRule() {
+  if (specScript) specScript.remove()
+  specScript = document.createElement('script')
+  specScript.type = 'speculationrules'
+  const specRules = {
+    prefetch: [
+      {
+        source: 'list',
+        urls: [window.location.href],
+        eagerness: 'immediate',
+      },
+    ],
+  }
+  specScript.textContent = JSON.stringify(specRules)
+  document.body.append(specScript)
+}
+
+function removePrerenderRule() {
+  if (specScript) specScript.remove()
+  specScript = null
 }
