@@ -1,5 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
@@ -39,11 +39,13 @@ type ConnectionPatch = {
   label?: string
   avatarAddress?: string
   moduleAddress?: string
+  pilotAddress?: string
   moduleType?: SupportedModuleType
   roleId?: string
   chainId?: ChainId
   multisend?: string
   multisendCallOnly?: string
+  providerType?: ProviderType
 }
 
 const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
@@ -70,14 +72,6 @@ const EditConnection: React.FC = () => {
 
   const [, setSelectedRouteId] = useSelectedRouteId()
   const currentlySelected = useRoute()
-
-  useEffect(() => {
-    const exists = routes.some((r) => r.id === routeId)
-
-    if (!exists) {
-      navigate('/routes')
-    }
-  }, [routeId, routes, navigate])
 
   const connection = asLegacyConnection(route)
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
@@ -121,9 +115,9 @@ const EditConnection: React.FC = () => {
     : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
-    const route = routes.find((r) => r.id === routeId)
-    if (!route) throw new Error('Route not found')
-    setRoute(fromLegacyConnection({ ...asLegacyConnection(route), ...patch }))
+    setRoute((route) =>
+      fromLegacyConnection({ ...asLegacyConnection(route), ...patch })
+    )
   }
 
   const removeRoute = () => {
@@ -164,8 +158,6 @@ const EditConnection: React.FC = () => {
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
 
-  const canRemove = routes.length > 1
-
   return (
     <>
       <Flex direction="column" gap={4} className={classes.editContainer}>
@@ -187,7 +179,6 @@ const EditConnection: React.FC = () => {
               </Button>
               <IconButton
                 onClick={removeRoute}
-                disabled={!canRemove}
                 danger
                 className={classes.removeButton}
               >
@@ -228,7 +219,19 @@ const EditConnection: React.FC = () => {
               />
             </Field>
             <Field label="Pilot Account" labelFor="">
-              <ConnectButton id={routeId} />
+              <ConnectButton
+                id={routeId}
+                onConnect={({ providerType, chainId, account }) =>
+                  updateConnection({
+                    providerType,
+                    chainId,
+                    pilotAddress: account,
+                  })
+                }
+                onDisconnect={() => {
+                  updateConnection({ pilotAddress: '' })
+                }}
+              />
             </Field>
             <Field label="Piloted Safe" labelFor="">
               <AvatarInput
