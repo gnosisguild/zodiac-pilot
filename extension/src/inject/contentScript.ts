@@ -7,19 +7,20 @@ import {
 } from './messages'
 import { Message, PILOT_DISCONNECT } from '../messages'
 
+// The content script is injected on tab update events, which can be triggered multiple times for the same page load.
+// That's why we need to check if the script has already been injected before injecting it again.
+
+const alreadyInjected =
+  '__zodiacPilotInjected' in document.documentElement.dataset
+
+document.documentElement.dataset.__zodiacPilotInjected = 'true'
+document.documentElement.dataset.__zodiacPilotConnected = 'true'
+
 function inject(scriptPath: string) {
   const node = document.createElement('script')
   node.type = 'text/javascript'
   node.async = false
   node.src = chrome.runtime.getURL(scriptPath)
-
-  if ('__zodiacPilotInjected' in document.documentElement.dataset) {
-    // another installation of the extension has already injected itself
-    // (this can happen when when loading unpacked extensions)
-    return
-  }
-  document.documentElement.dataset.__zodiacPilotInjected = 'true'
-  document.documentElement.dataset.__zodiacPilotConnected = 'true'
 
   const parent = document.head || document.documentElement
   parent.insertBefore(node, parent.children[0])
@@ -27,6 +28,7 @@ function inject(scriptPath: string) {
 }
 
 if (
+  !alreadyInjected &&
   window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
   !window.location.href.startsWith('about:') &&
   !window.location.href.startsWith('chrome:')
