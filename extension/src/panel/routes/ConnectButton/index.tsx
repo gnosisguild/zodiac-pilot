@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import React from 'react'
 import { RiAlertLine } from 'react-icons/ri'
+import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { ZeroAddress } from 'ethers'
 
 import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
@@ -8,17 +10,11 @@ import { CHAIN_NAME } from '../../../chains'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { ProviderType } from '../../../types'
 import { validateAddress } from '../../utils'
-import { useRoute, useRoutes } from '../routeHooks'
+import { useRoute } from '../routeHooks'
 
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
-import {
-  asLegacyConnection,
-  fromLegacyConnection,
-} from '../legacyConnectionMigrations'
-import { ZeroAddress } from 'ethers'
 
 const walletConnectLogo = (
   <img
@@ -34,8 +30,17 @@ const metamaskLogo = (
   />
 )
 
-const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
-  const [routes, setRoutes] = useRoutes()
+interface Props {
+  id: string
+  onConnect(args: {
+    providerType: ProviderType
+    chainId: ChainId
+    account: string
+  }): void
+  onDisconnect(): void
+}
+
+const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
   const { connected, route, chainId } = useRoute(id)
   let pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
@@ -43,25 +48,6 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
 
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
-
-  const connect = (
-    providerType: ProviderType,
-    chainId: ChainId,
-    account: string
-  ) => {
-    setRoutes(
-      routes.map((r) =>
-        r.id === id
-          ? fromLegacyConnection({
-              ...asLegacyConnection(r),
-              providerType,
-              chainId,
-              pilotAddress: account,
-            })
-          : r
-      )
-    )
-  }
 
   const disconnect = () => {
     if (route.providerType === ProviderType.WalletConnect) {
@@ -71,16 +57,7 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
       walletConnect.disconnect()
     }
 
-    setRoutes(
-      routes.map((r) =>
-        r.id === id
-          ? fromLegacyConnection({
-              ...asLegacyConnection(route),
-              pilotAddress: '',
-            })
-          : r
-      )
-    )
+    onDisconnect()
   }
 
   // good to go
@@ -214,7 +191,11 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
             throw new Error('walletConnect provider is not available')
           }
           const { chainId, accounts } = await walletConnect.connect()
-          connect(ProviderType.WalletConnect, chainId as ChainId, accounts[0])
+          onConnect({
+            providerType: ProviderType.WalletConnect,
+            chainId: chainId as ChainId,
+            account: accounts[0],
+          })
         }}
       >
         {walletConnectLogo}
@@ -225,11 +206,11 @@ const ConnectButton: React.FC<{ id: string }> = ({ id }) => {
           className={classes.walletButton}
           onClick={async () => {
             const { chainId, accounts } = await injectedWallet.connect()
-            connect(
-              ProviderType.InjectedWallet,
-              chainId as ChainId,
-              accounts[0]
-            )
+            onConnect({
+              providerType: ProviderType.InjectedWallet,
+              chainId: chainId as ChainId,
+              account: accounts[0],
+            })
           }}
         >
           {metamaskLogo}
