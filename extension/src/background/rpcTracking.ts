@@ -5,6 +5,8 @@ import { activePilotSessions } from './sessionTracking'
 export const networkIdOfRpcUrl = new Map<string, number | undefined>()
 const networkIdOfRpcUrlPromise = new Map<string, Promise<number | undefined>>()
 
+export const rpcUrlsPerTab = new Map<number, Set<string>>()
+
 const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   if (!networkIdOfRpcUrlPromise.has(url)) {
     const promise = new Promise<number | undefined>((resolve) => {
@@ -16,7 +18,9 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   }
 
   const result = await networkIdOfRpcUrlPromise.get(url)
-  if (!networkIdOfRpcUrl.has(url)) {
+  if (result && !networkIdOfRpcUrl.has(url)) {
+    if (!rpcUrlsPerTab.has(tabId)) rpcUrlsPerTab.set(tabId, new Set())
+    rpcUrlsPerTab.get(tabId)!.add(url)
     networkIdOfRpcUrl.set(url, result)
     console.debug(
       `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
@@ -33,7 +37,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     // only handle requests in tracked tabs
     if (!hasActiveSession) return
     // skip urls we already know
-    if (!networkIdOfRpcUrlPromise.has(details.url)) return
+    if (networkIdOfRpcUrlPromise.has(details.url)) return
     // only consider POST requests
     if (details.method !== 'POST') return
     // ignore requests to fork RPCs

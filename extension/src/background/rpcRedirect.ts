@@ -1,4 +1,4 @@
-import { networkIdOfRpcUrl } from './rpcTracking'
+import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
 import { REMOVE_CSP_RULE_ID } from './tabsTracking'
 import { PilotSession } from './types'
 
@@ -21,26 +21,33 @@ let currentRuleIds: number[] = []
 export const updateRpcRedirectRules = async (
   activePilotSessions: Map<number, PilotSession>
 ) => {
-  const addRules = [...activePilotSessions.entries()]
-    .filter(([, session]) => session.fork)
-    .map(
-      ([windowId, session]) =>
-        ({
-          id: windowId,
-          priority: 1,
-          action: {
-            type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-            redirect: { url: session.fork!.rpcUrl },
-          },
-          condition: {
-            resourceTypes: [
-              chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-            ],
-            urlRegex: makeUrlRegex(session.fork!.networkId),
-            tabIds: Array.from(session.tabs),
-          },
-        }) as chrome.declarativeNetRequest.Rule
+  const addRules = [...activePilotSessions.values()]
+    .filter((session) => session.fork)
+    .flatMap((session) =>
+      Array.from(session.tabs).map((tabId) => ({
+        tabId,
+        redirectUrl: session.fork!.rpcUrl,
+        regexFilter: makeUrlRegex(tabId, session.fork!.networkId),
+      }))
     )
+    .filter(({ regexFilter }) => !!regexFilter)
+    .map(({ tabId, redirectUrl, regexFilter }) => {
+      return {
+        id: tabId,
+        priority: 1,
+        action: {
+          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+          redirect: { url: redirectUrl },
+        },
+        condition: {
+          resourceTypes: [
+            chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+          ],
+          regexFilter: regexFilter!,
+          tabIds: [tabId],
+        },
+      } satisfies chrome.declarativeNetRequest.Rule
+    })
 
   const previousRuleIds = currentRuleIds
   currentRuleIds = addRules.map((rule) => rule.id)
@@ -55,18 +62,33 @@ export const updateRpcRedirectRules = async (
   })
 }
 
-/** Concatenates all RPC urls for the given network into a regular expression matching any of them */
-const makeUrlRegex = (networkId: number) => {
-  const rpcUrls = Array.from(networkIdOfRpcUrl.entries())
-    .filter(([, id]) => id === networkId)
-    .map(([url]) => url)
+/**
+ * Concatenates all RPC urls for the given tab & network into a regular expression matching any of them.
+ */
+const makeUrlRegex = (tabId: number, networkId: number) => {
+  const rpcUrls = Array.from(rpcUrlsPerTab.get(tabId) ?? []).filter(
+    (url) => networkIdOfRpcUrl.get(url) === networkId
+  )
 
-  return new RegExp(
+  if (rpcUrls.length === 0) {
+    return null
+  }
+
+  const regex =
+    '^(' +
     rpcUrls
       // Escape special characters
       .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
       // Sort for maximal munch
       .sort((a, b) => b.length - a.length)
-      .join('|')
-  )
+      .join('|') +
+    ')$'
+
+  if (regex.length > 1500) {
+    console.warn(
+      'Regex longer than 1500 chars. Running in danger of exceeding 2kb rule size limit'
+    )
+  }
+
+  return regex
 }
