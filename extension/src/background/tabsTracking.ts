@@ -2,7 +2,8 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
-import { activePilotSessions } from './sessionTracking'
+import { rpcUrlsPerTab } from './rpcTracking'
+import { activePilotSessions, updateSimulatingBadge } from './sessionTracking'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
   const activeSession = activePilotSessions.get(windowId)
@@ -11,12 +12,7 @@ export const startTrackingTab = (tabId: number, windowId: number) => {
   }
   activeSession.tabs.add(tabId)
   updateHeadersRule()
-
-  // for debugging only
-  chrome.action.setBadgeText({
-    text: '🔴',
-    tabId,
-  })
+  updateSimulatingBadge(windowId)
 
   console.log('Pilot: started tracking tab', tabId, windowId)
   chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT } satisfies Message)
@@ -31,13 +27,8 @@ export const stopTrackingTab = (
   const activeSession = activePilotSessions.get(windowId)
   if (activeSession) activeSession.tabs.delete(tabId)
   updateHeadersRule()
+  updateSimulatingBadge(windowId)
   console.log('Pilot: stopped tracking tab', tabId, windowId)
-
-  // for debugging only
-  chrome.action.setBadgeText({
-    text: '',
-    tabId,
-  })
 
   // important to check if closed to avoid errors from sending messages to closed tabs
   if (!closed) {
@@ -58,6 +49,7 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
 
   if (activePilotSession && activePilotSession.tabs.has(tabId)) {
     stopTrackingTab(tabId, windowId, true)
+    rpcUrlsPerTab.delete(tabId)
   }
 })
 
