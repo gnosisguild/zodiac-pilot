@@ -13,9 +13,6 @@ import { Message, PILOT_DISCONNECT } from '../messages'
 const alreadyInjected =
   '__zodiacPilotInjected' in document.documentElement.dataset
 
-document.documentElement.dataset.__zodiacPilotInjected = 'true'
-document.documentElement.dataset.__zodiacPilotConnected = 'true'
-
 function inject(scriptPath: string) {
   const node = document.createElement('script')
   node.type = 'text/javascript'
@@ -33,6 +30,8 @@ if (
   !window.location.href.startsWith('about:') &&
   !window.location.href.startsWith('chrome:')
 ) {
+  document.documentElement.dataset.__zodiacPilotInjected = 'true'
+  document.documentElement.dataset.__zodiacPilotConnected = 'true'
   inject('build/inject/injectedScript.js')
 
   // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
@@ -43,8 +42,18 @@ if (
       if (!message) return
 
       if (message.type === INJECTED_PROVIDER_REQUEST) {
+        // Prevent the same request from being handled multiple times through other instances of this content script
+        event.stopImmediatePropagation()
+
         const { requestId, request } = message
-        console.debug('rpc request to pilot', requestId, request)
+
+        const logDetails = { request, response: '⏳' } as any
+        const requestIndex = requestId.split('_').pop()
+        console.debug(
+          `🧑‍✈️ request #${requestIndex}: \x1B[34m${request.method}\x1B[m %O`,
+          logDetails
+        )
+
         const responseMessage: InjectedProviderResponse | undefined =
           await chrome.runtime.sendMessage(message)
 
@@ -52,7 +61,8 @@ if (
         if (!responseMessage) return
 
         const { response } = responseMessage
-        console.debug('rpc response from pilot', requestId, response)
+        Object.assign(logDetails, { response })
+
         window.postMessage(responseMessage, '*')
       }
     }
@@ -82,7 +92,7 @@ if (
       }
 
       if (message.type === INJECTED_PROVIDER_EVENT) {
-        console.debug('eip1193 event from pilot', message)
+        console.debug('🧑‍✈️ event', message)
         window.postMessage(message, '*')
       }
     }
