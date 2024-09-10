@@ -63,7 +63,7 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   request = (request: JsonRpcRequest): Promise<any> => {
-    const requestId = injectionId + this.messageCounter
+    const requestId = injectionId + '_' + this.messageCounter
     this.messageCounter++
 
     return new Promise((resolve, reject) => {
