@@ -50,19 +50,6 @@
     },
     {
       "matches": [
-        "<all_urls>"
-      ],
-      "exclude_globs": [
-        "https://connect.pilot.gnosisguild.org/"
-      ],
-      "run_at": "document_start",
-      "all_frames": false,
-      "js": [
-        "build/connect/contentScript.js"
-      ]
-    },
-    {
-      "matches": [
         "https://connect.pilot.gnosisguild.org/"
       ],
       "run_at": "document_start",
