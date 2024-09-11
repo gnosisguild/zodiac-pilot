@@ -46,8 +46,7 @@ if (!window.zodiacPilot) {
     // If it's Rabby we have a trick to make sure it routes to the Pilot provider
     if (window.rabbyWalletRouter) {
       console.log(
-        '🔌 Rabby detected, setting Pilot as default provider in Rabby Wallet Router',
-        window.rabbyWalletRouter
+        '🔌 Rabby detected, setting Pilot as default provider in Rabby Wallet Router'
       )
 
       const { rabbyWalletRouter } = window

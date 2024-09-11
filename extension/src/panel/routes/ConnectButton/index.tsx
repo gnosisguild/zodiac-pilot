@@ -109,7 +109,7 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
     )
   }
 
-  // Metamask: right account, wrong chain
+  // Injected wallet: right account, wrong chain
   if (
     route.providerType === ProviderType.InjectedWallet &&
     injectedWallet.provider &&
@@ -140,27 +140,11 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
             Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
           </Button>
         )}
-
-        {/* {metamask.chainId && (
-          <Button
-            className={classes.disconnectButton}
-            onClick={() => {
-              connect(
-                ProviderType.MetaMask,
-                metamask.chainId as ChainId,
-                connection.pilotAddress
-              )
-            }}
-          >
-            Connect to{' '}
-            {CHAIN_NAME[metamask.chainId as ChainId] || `#${metamask.chainId}`}
-          </Button>
-        )} */}
       </div>
     )
   }
 
-  // MetaMask: wrong account
+  // Injected wallet: wrong account
   if (
     route.providerType === ProviderType.InjectedWallet &&
     injectedWallet.provider &&

@@ -1,34 +1,41 @@
 import { Eip1193Provider } from '../types'
 import {
-  USER_WALLET_EVENT,
-  USER_WALLET_REQUEST,
-  USER_WALLET_ERROR,
-  USER_WALLET_RESPONSE,
+  CONNECTED_WALLET_EVENT,
+  CONNECTED_WALLET_REQUEST,
+  CONNECTED_WALLET_ERROR,
+  CONNECTED_WALLET_RESPONSE,
   Message,
-  USER_WALLET_INITIALIZED,
+  CONNECTED_WALLET_INITIALIZED,
 } from './messages'
 
 declare global {
   interface Window {
     ethereum?: Eip1193Provider
+    __zodiacPilotInjected?: boolean
   }
 }
 
 // relay window messages to the injected provider
 window.addEventListener('message', async (event: MessageEvent<Message>) => {
   const message = event.data
-  if (message.type === USER_WALLET_REQUEST) {
-    console.debug('user wallet request', message)
-
+  if (message.type === CONNECTED_WALLET_REQUEST) {
     if (!window.ethereum) {
       throw new Error('No ethereum provider')
     }
 
+    const { request, requestId } = message
+    const logDetails = { request, response: '⏳' } as any
+    console.debug(
+      `🧑‍✈️ connect request #${requestId}: \x1B[34m${request.method}\x1B[m %O`,
+      logDetails
+    )
+
     try {
       const response = await window.ethereum.request(message.request)
+      Object.assign(logDetails, { response })
       window.top!.postMessage(
         {
-          type: USER_WALLET_RESPONSE,
+          type: CONNECTED_WALLET_RESPONSE,
           requestId: message.requestId,
           response,
         } satisfies Message,
@@ -38,7 +45,7 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
       console.error('Error sending request to window.ethereum', message, err)
       window.top!.postMessage(
         {
-          type: USER_WALLET_ERROR,
+          type: CONNECTED_WALLET_ERROR,
           requestId: message.requestId,
           error: {
             message: (err as any).message,
@@ -60,7 +67,7 @@ const relayEvent = (eventName: string) => {
   window.ethereum.on(eventName, (eventData: unknown) => {
     window.top!.postMessage(
       {
-        type: USER_WALLET_EVENT,
+        type: CONNECTED_WALLET_EVENT,
         eventName,
         eventData,
       } satisfies Message,
@@ -70,9 +77,10 @@ const relayEvent = (eventName: string) => {
 }
 
 const initProvider = () => {
+  console.log('🔌 Ready to relay requests to connected wallet')
   window.top!.postMessage(
     {
-      type: USER_WALLET_INITIALIZED,
+      type: CONNECTED_WALLET_INITIALIZED,
     },
     '*'
   )
@@ -82,7 +90,7 @@ const initProvider = () => {
   relayEvent('disconnect')
 }
 
-if (!window.ethereum) {
+if (window.ethereum) {
   initProvider()
 } else {
   const handleInitialize = () => {

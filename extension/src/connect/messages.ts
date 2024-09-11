@@ -1,23 +1,23 @@
 import { JsonRpcRequest } from '../types'
 
-export const USER_WALLET_INITIALIZED = 'USER_WALLET_INITIALIZED'
-export const USER_WALLET_REQUEST = 'USER_WALLET_REQUEST'
-export const USER_WALLET_ERROR = 'USER_WALLET_ERROR'
-export const USER_WALLET_RESPONSE = 'USER_WALLET_RESPONSE'
-export const USER_WALLET_EVENT = 'USER_WALLET_EVENT'
+export const CONNECTED_WALLET_INITIALIZED = 'CONNECTED_WALLET_INITIALIZED'
+export const CONNECTED_WALLET_REQUEST = 'CONNECTED_WALLET_REQUEST'
+export const CONNECTED_WALLET_ERROR = 'CONNECTED_WALLET_ERROR'
+export const CONNECTED_WALLET_RESPONSE = 'CONNECTED_WALLET_RESPONSE'
+export const CONNECTED_WALLET_EVENT = 'CONNECTED_WALLET_EVENT'
 
 interface UserWalletInitialized {
-  type: typeof USER_WALLET_INITIALIZED
+  type: typeof CONNECTED_WALLET_INITIALIZED
 }
 
 interface UserWalletRequest {
-  type: typeof USER_WALLET_REQUEST
+  type: typeof CONNECTED_WALLET_REQUEST
   requestId: string
   request: JsonRpcRequest
 }
 
 interface UserWalletError {
-  type: typeof USER_WALLET_ERROR
+  type: typeof CONNECTED_WALLET_ERROR
   requestId: string
   error: {
     message: string
@@ -26,13 +26,13 @@ interface UserWalletError {
 }
 
 interface UserWalletResponse {
-  type: typeof USER_WALLET_RESPONSE
+  type: typeof CONNECTED_WALLET_RESPONSE
   requestId: string
   response: any
 }
 
 interface UserWalletEvent {
-  type: typeof USER_WALLET_EVENT
+  type: typeof CONNECTED_WALLET_EVENT
   eventName: string
   eventData: any
 }

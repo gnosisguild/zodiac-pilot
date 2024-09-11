@@ -3,11 +3,11 @@ import { EventEmitter } from 'events'
 import { Eip1193Provider } from '../types'
 import {
   Message,
-  USER_WALLET_ERROR,
-  USER_WALLET_EVENT,
-  USER_WALLET_INITIALIZED,
-  USER_WALLET_REQUEST,
-  USER_WALLET_RESPONSE,
+  CONNECTED_WALLET_ERROR,
+  CONNECTED_WALLET_EVENT,
+  CONNECTED_WALLET_INITIALIZED,
+  CONNECTED_WALLET_REQUEST,
+  CONNECTED_WALLET_RESPONSE,
 } from './messages'
 
 interface JsonRpcRequest {
@@ -37,8 +37,6 @@ export default class ConnectProvider
 
   constructor() {
     super()
-    if (!window.top) throw new Error('Must run inside iframe')
-
     chrome.runtime.onMessage.addListener(this.#handleMessage)
   }
 
@@ -46,48 +44,88 @@ export default class ConnectProvider
     return this.initialized
   }
 
-  request = (request: JsonRpcRequest): Promise<any> => {
+  request = async (request: JsonRpcRequest) => {
     const requestId = `${this.instanceId}:${this.messageCounter}`
     this.messageCounter++
 
-    return new Promise((resolve, reject) => {
-      chrome.tabs.query({ currentWindow: true, active: true }, async (tabs) => {
-        if (tabs.length === 0 || !tabs[0].id) throw new Error('no tab found')
+    const responseMessage: Message = await this.#sendRequestToConnectIframe(
+      requestId,
+      request
+    )
 
-        console.debug('posting request msg to tab', tabs[0].id)
-        const responseMessage: Message = await chrome.tabs.sendMessage(
-          tabs[0].id,
-          {
-            type: USER_WALLET_REQUEST,
-            requestId,
-            request,
-          } satisfies Message
+    if (responseMessage.type === CONNECTED_WALLET_RESPONSE) {
+      return responseMessage.response
+    } else if (responseMessage.type === CONNECTED_WALLET_ERROR) {
+      const error = new InjectedWalletError(
+        responseMessage.error.message,
+        responseMessage.error.code
+      )
+      throw error
+    } else {
+      console.error('Unexpected response', responseMessage)
+      throw new Error('Unexpected response')
+    }
+  }
+
+  #sendRequestToConnectIframe = (
+    requestId: string,
+    request: JsonRpcRequest
+  ): Promise<Message> => {
+    return new Promise((resolve) => {
+      chrome.tabs.query({ currentWindow: true }, async (tabs) => {
+        const trackedTabs = tabs.filter(
+          (tab) =>
+            tab.id &&
+            tab.url &&
+            !tab.url.startsWith('chrome:') &&
+            !tab.url.startsWith('about:')
         )
 
-        if (responseMessage.type === USER_WALLET_RESPONSE) {
-          resolve(responseMessage.response)
-        } else if (responseMessage.type === USER_WALLET_ERROR) {
-          const error = new InjectedWalletError(
-            responseMessage.error.message,
-            responseMessage.error.code
-          )
-          reject(error)
-        } else {
-          console.error('Unexpected response', responseMessage)
-          throw new Error('Unexpected response')
+        for (const tab of trackedTabs) {
+          try {
+            const isBeingHandled = await chrome.tabs.sendMessage(tab.id!, {
+              type: CONNECTED_WALLET_REQUEST,
+              requestId,
+              request,
+            })
+            if (!isBeingHandled) continue
+
+            const handleResponse = (
+              message: Message,
+              sender: chrome.runtime.MessageSender
+            ) => {
+              if (sender.id !== chrome.runtime.id) return
+              if (
+                message.type !== CONNECTED_WALLET_RESPONSE &&
+                message.type !== CONNECTED_WALLET_ERROR
+              )
+                return
+              if (message.requestId !== requestId) return
+              chrome.runtime.onMessage.removeListener(handleResponse)
+              resolve(message)
+            }
+            chrome.runtime.onMessage.addListener(handleResponse)
+
+            return
+          } catch (error) {
+            console.warn('Error sending message to tab', tab.id, error)
+          }
         }
+        // TODO open a new tab with https://connect.pilot.gnosisguild.org/ if no tracked tabs are found
+        throw new Error('No tab with a connect iframe available')
       })
     })
   }
 
-  #handleMessage = (message: Message) => {
-    if (message.type === USER_WALLET_INITIALIZED) {
+  #handleMessage = (message: Message, sender: chrome.runtime.MessageSender) => {
+    if (sender.id !== chrome.runtime.id) return
+
+    if (message.type === CONNECTED_WALLET_INITIALIZED) {
       this.initialized = true
     }
-    if (message.type === USER_WALLET_EVENT) {
+    if (message.type === CONNECTED_WALLET_EVENT) {
       this.#emitOnce(message.eventName, message.eventData)
     }
-    return false
   }
 
   /** Wallet events will be relayed multiple times, once from each tab with a connect iframe. So we need to deduplicate. */
