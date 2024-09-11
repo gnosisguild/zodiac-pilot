@@ -119,20 +119,20 @@ export const useRoute = (id?: string) => {
     throw new Error('chainId is empty')
   }
 
-  const metamask = useInjectedWallet()
+  const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
   const defaultProvider = getEip1193ReadOnlyProvider(chainId)
 
   const provider: Eip1193Provider =
     (route.providerType === ProviderType.InjectedWallet
-      ? metamask.provider
+      ? injectedWallet.provider
       : walletConnect?.provider) || defaultProvider
 
   const connected =
     route.initiator &&
     isConnectedTo(
       route.providerType === ProviderType.InjectedWallet
-        ? metamask
+        ? injectedWallet
         : walletConnect,
       route.initiator,
       chainId
@@ -140,11 +140,12 @@ export const useRoute = (id?: string) => {
 
   const providerChainId =
     route.providerType === ProviderType.InjectedWallet
-      ? metamask.chainId
+      ? injectedWallet.chainId
       : walletConnect?.chainId || null
 
-  const mustConnectMetaMask =
-    route.providerType === ProviderType.InjectedWallet && !metamask.chainId
+  const mustConnectInjectedWallet =
+    route.providerType === ProviderType.InjectedWallet &&
+    !injectedWallet.chainId
 
   const pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
@@ -152,18 +153,18 @@ export const useRoute = (id?: string) => {
     !connected &&
     pilotAddress &&
     route.providerType === ProviderType.InjectedWallet &&
-    metamask.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
-    metamask.chainId !== chainId
+    injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
+    injectedWallet.chainId !== chainId
 
-  const connectMetaMask = metamask.connect
-  const switchChain = metamask.switchChain
+  const connectInjectedWallet = injectedWallet.connect
+  const switchChain = injectedWallet.switchChain
   const requiredChainId = chainId
 
   useEffect(() => {
-    if (mustConnectMetaMask) {
-      connectMetaMask()
+    if (mustConnectInjectedWallet) {
+      connectInjectedWallet()
     }
-  }, [mustConnectMetaMask, connectMetaMask])
+  }, [mustConnectInjectedWallet, connectInjectedWallet])
 
   const connect = useCallback(async () => {
     if (requiredChainId && providerChainId !== requiredChainId) {

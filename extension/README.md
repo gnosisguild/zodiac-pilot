@@ -1,3 +1,26 @@
+## Things to keep in mind
+
+### Content scripts
+
+Can access the page's DOM, but JavaScript is sandboxed from the page's execution context. They have access to `chrome.` APIs.
+
+There are multiple ways to register content scripts:
+
+1. statically via `content_scripts` in manifest.json
+2. dynamically via `chrome.scripting.registerContentScripts()` (supports [same properties](https://developer.chrome.com/docs/extensions/reference/api/scripting#type-RegisteredContentScript) as `content_scripts` in manifest.json)
+3. dynamically via `chrome.scripting.executeScript()`
+
+While options 1 and 2 will automatically run the content script once for every page load, option 3 just runs once at the moment `executeScript()` is invoked.
+So we have to manually track when a tab loads a new page to run the content script again in the context of the new page.
+
+We have yet to find a way that reliably lets us run `executeScript()` exactly once for every page.
+At the moment we use the `chrome.tabs.onUpdated` event which can trigger multiple times per page loaded.
+Thus content scripts executed in this way must handle the case that multiple instances of themselves might run in parallel.
+
+### Injected script
+
+Scripts that are inserted from content scripts via script nodes into the page's DOM. As such they run in the page's execution context. They have no access to `chrome.` APIs. Communicate with content scripts via `window.postMessage`.
+
 ## src folder overview
 
 ### panel
