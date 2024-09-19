@@ -3,14 +3,16 @@ import { REMOVE_CSP_RULE_ID } from './tabsTracking'
 import { PilotSession } from './types'
 
 // debug logging for RPC intercepts
-chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-  if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
-    console.debug(
-      'rule matched on request',
-      details.request.url,
-      details.rule.ruleId
-    )
-  }
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
+      console.debug(
+        'rule matched on request',
+        details.request.url,
+        details.rule.ruleId
+      )
+    }
+  })
 })
 
 let currentRuleIds: number[] = []
