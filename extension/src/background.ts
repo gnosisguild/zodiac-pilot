@@ -6,6 +6,16 @@ interface Fork {
   rpcUrl: string
 }
 
+chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+  if (details.rule.ruleId !== HEADERS_RULE_ID) {
+    console.debug(
+      'rule matched on request',
+      details.request.url,
+      details.rule.ruleId
+    )
+  }
+})
+
 // Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
 // generally circumvent this security mechanism, so we only apply it to extension tabs.
@@ -115,6 +125,14 @@ const toggle = async (tab: chrome.tabs.Tab) => {
     })
   }
 }
+
+chrome.action.onClicked.addListener(toggle)
+
+// wake up the background script after chrome restarts
+// this fixes an issue of the action onClicked listener not being triggered (see: https://stackoverflow.com/a/76344225)
+chrome.runtime.onStartup.addListener(() => {
+  console.debug(`Zodiac Pilot startup`)
+})
 
 // Track extension tabs that are actively simulating, meaning that RPC requests are being sent to
 // a fork network.
@@ -235,6 +253,35 @@ const removeRpcRedirectRules = (tabId: number) => {
   console.log('removed all RPC redirect rules for tab', tabId, ruleIds)
 }
 
+chrome.runtime.onMessage.addListener((message, sender) => {
+  if (!sender.tab?.id) return
+
+  if (message.type === 'startSimulating') {
+    const { networkId, rpcUrl } = message
+    simulatingExtensionTabs.delete(sender.tab.id)
+    removeRpcRedirectRules(sender.tab.id)
+    simulatingExtensionTabs.set(sender.tab.id, {
+      networkId,
+      rpcUrl,
+    })
+    updateRpcRedirectRules(sender.tab.id)
+
+    console.debug(
+      `start intercepting JSON RPC requests for network #${networkId} in tab #${sender.tab.id}`,
+      rpcUrl
+    )
+  }
+
+  if (message.type === 'stopSimulating') {
+    simulatingExtensionTabs.delete(sender.tab.id)
+    removeRpcRedirectRules(sender.tab.id)
+
+    console.debug(
+      `stop intercepting JSON RPC requests in tab #${sender.tab.id}`
+    )
+  }
+})
+
 // Keep track of the network IDs for all JSON RPC endpoints used from apps in the Pilot frame
 const networkIdOfRpcUrlPerTab = new Map<
   number,
@@ -321,63 +368,20 @@ const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   return json
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.action.onClicked.addListener(toggle)
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  const isExtensionTab = !!tab.url?.startsWith(PILOT_URL)
+  const wasExtensionTab = activeExtensionTabs.has(tabId)
 
-  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-    if (details.rule.ruleId !== HEADERS_RULE_ID) {
-      console.debug(
-        'rule matched on request',
-        details.request.url,
-        details.rule.ruleId
-      )
-    }
-  })
+  if (isExtensionTab && !wasExtensionTab) {
+    startTrackingTab(tabId)
+  }
+  if (!isExtensionTab && wasExtensionTab) {
+    stopTrackingTab(tabId)
+  }
 
-  chrome.runtime.onMessage.addListener((message, sender) => {
-    if (!sender.tab?.id) return
-
-    if (message.type === 'startSimulating') {
-      const { networkId, rpcUrl } = message
-      simulatingExtensionTabs.delete(sender.tab.id)
-      removeRpcRedirectRules(sender.tab.id)
-      simulatingExtensionTabs.set(sender.tab.id, {
-        networkId,
-        rpcUrl,
-      })
-      updateRpcRedirectRules(sender.tab.id)
-
-      console.debug(
-        `start intercepting JSON RPC requests for network #${networkId} in tab #${sender.tab.id}`,
-        rpcUrl
-      )
-    }
-
-    if (message.type === 'stopSimulating') {
-      simulatingExtensionTabs.delete(sender.tab.id)
-      removeRpcRedirectRules(sender.tab.id)
-
-      console.debug(
-        `stop intercepting JSON RPC requests in tab #${sender.tab.id}`
-      )
-    }
-  })
-
-  chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    const isExtensionTab = !!tab.url?.startsWith(PILOT_URL)
-    const wasExtensionTab = activeExtensionTabs.has(tabId)
-
-    if (isExtensionTab && !wasExtensionTab) {
-      startTrackingTab(tabId)
-    }
-    if (!isExtensionTab && wasExtensionTab) {
-      stopTrackingTab(tabId)
-    }
-
-    if (changeInfo.status === 'complete' && isExtensionTab) {
-      chrome.tabs.sendMessage(tabId, { type: 'navigationDetected' })
-    }
-  })
+  if (changeInfo.status === 'complete' && isExtensionTab) {
+    chrome.tabs.sendMessage(tabId, { type: 'navigationDetected' })
+  }
 })
 
 export {}
