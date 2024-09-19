@@ -6,15 +6,18 @@ interface Fork {
   rpcUrl: string
 }
 
-chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-  if (details.rule.ruleId !== HEADERS_RULE_ID) {
-    console.debug(
-      'rule matched on request',
-      details.request.url,
-      details.rule.ruleId
-    )
-  }
-})
+// The chrome.declarativeNetRequest.onRuleMatchedDebug is only available for unpacked extensions.
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+    if (details.rule.ruleId !== HEADERS_RULE_ID) {
+      console.debug(
+        'rule matched on request',
+        details.request.url,
+        details.rule.ruleId
+      )
+    }
+  })
+}
 
 // Track tabs showing our extension, so we can dynamically adjust the declarativeNetRequest rule.
 // This rule removes some headers so foreign pages can be loaded in iframes. We don't want to
@@ -127,12 +130,6 @@ const toggle = async (tab: chrome.tabs.Tab) => {
 }
 
 chrome.action.onClicked.addListener(toggle)
-
-// wake up the background script after chrome restarts
-// this fixes an issue of the action onClicked listener not being triggered (see: https://stackoverflow.com/a/76344225)
-chrome.runtime.onStartup.addListener(() => {
-  console.debug(`Zodiac Pilot startup`)
-})
 
 // Track extension tabs that are actively simulating, meaning that RPC requests are being sent to
 // a fork network.
@@ -291,6 +288,7 @@ const networkIdOfRpcUrlPromisePerTab = new Map<
   number,
   Map<string, Promise<number | undefined>>
 >()
+
 chrome.webRequest.onBeforeRequest.addListener(
   (details: chrome.webRequest.WebRequestBodyDetails) => {
     // only consider requests from extension tabs
