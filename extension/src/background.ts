@@ -125,7 +125,14 @@ const toggle = async (tab: chrome.tabs.Tab) => {
     })
   }
 }
+
 chrome.action.onClicked.addListener(toggle)
+
+// wake up the background script after chrome restarts
+// this fixes an issue of the action onClicked listener not being triggered (see: https://stackoverflow.com/a/76344225)
+chrome.runtime.onStartup.addListener(() => {
+  console.debug(`Zodiac Pilot startup`)
+})
 
 // Track extension tabs that are actively simulating, meaning that RPC requests are being sent to
 // a fork network.
