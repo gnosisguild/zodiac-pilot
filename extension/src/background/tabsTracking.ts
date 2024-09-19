@@ -36,40 +36,43 @@ export const stopTrackingTab = (
   }
 }
 
-chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  const activePilotSession = activePilotSessions.get(windowId)
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
+    const activePilotSession = activePilotSessions.get(windowId)
 
-  if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
-    startTrackingTab(tabId, windowId)
-  }
-})
+    if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
+      startTrackingTab(tabId, windowId)
+    }
+  })
 
-chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
-  const activePilotSession = activePilotSessions.get(windowId)
+  chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
+    const activePilotSession = activePilotSessions.get(windowId)
 
-  if (activePilotSession && activePilotSession.tabs.has(tabId)) {
-    stopTrackingTab(tabId, windowId, true)
-    rpcUrlsPerTab.delete(tabId)
-  }
-})
+    if (activePilotSession && activePilotSession.tabs.has(tabId)) {
+      stopTrackingTab(tabId, windowId, true)
+      rpcUrlsPerTab.delete(tabId)
+    }
+  })
 
-// inject the provider script into tracked tabs whenever they start loading a new page
-chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  const activePilotSession = activePilotSessions.get(tab.windowId)
-  const isTrackedTab = activePilotSession && activePilotSession.tabs.has(tabId)
+  // inject the provider script into tracked tabs whenever they start loading a new page
+  chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
+    const activePilotSession = activePilotSessions.get(tab.windowId)
+    const isTrackedTab =
+      activePilotSession && activePilotSession.tabs.has(tabId)
 
-  if (isTrackedTab && info.status === 'loading') {
-    // The update event can be triggered multiple times for the same page load,
-    // so each executed content scripts must handle the case that it has already been injected before.
-    chrome.scripting.executeScript({
-      target: { tabId, allFrames: true },
-      files: [
-        'build/inject/contentScript.js',
-        'build/connect/contentScript.js',
-      ],
-      injectImmediately: true,
-    })
-  }
+    if (isTrackedTab && info.status === 'loading') {
+      // The update event can be triggered multiple times for the same page load,
+      // so each executed content scripts must handle the case that it has already been injected before.
+      chrome.scripting.executeScript({
+        target: { tabId, allFrames: true },
+        files: [
+          'build/inject/contentScript.js',
+          'build/connect/contentScript.js',
+        ],
+        injectImmediately: true,
+      })
+    }
+  })
 })
 
 // Disable CSPs for extension tabs. This is necessary to enable declarativeNetRequest REDIRECT rules for RPC interception.
