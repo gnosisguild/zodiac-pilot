@@ -28,35 +28,33 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   }
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.webRequest.onBeforeRequest.addListener(
-    (details: chrome.webRequest.WebRequestBodyDetails) => {
-      const hasActiveSession = Array.from(activePilotSessions.values()).some(
-        (session) => session.tabs.has(details.tabId)
-      )
+chrome.webRequest.onBeforeRequest.addListener(
+  (details: chrome.webRequest.WebRequestBodyDetails) => {
+    const hasActiveSession = Array.from(activePilotSessions.values()).some(
+      (session) => session.tabs.has(details.tabId)
+    )
 
-      // only handle requests in tracked tabs
-      if (!hasActiveSession) return
-      // skip urls we already know
-      if (networkIdOfRpcUrlPromise.has(details.url)) return
-      // only consider POST requests
-      if (details.method !== 'POST') return
-      // ignore requests to fork RPCs
-      if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/'))
-        return
+    // only handle requests in tracked tabs
+    if (!hasActiveSession) return
+    // skip urls we already know
+    if (networkIdOfRpcUrlPromise.has(details.url)) return
+    // only consider POST requests
+    if (details.method !== 'POST') return
+    // ignore requests to fork RPCs
+    if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/'))
+      return
 
-      // only consider requests with a JSON RPC body
-      if (!getJsonRpcBody(details)) return
+    // only consider requests with a JSON RPC body
+    if (!getJsonRpcBody(details)) return
 
-      detectNetworkOfRpcUrl(details.url, details.tabId)
-    },
-    {
-      urls: ['<all_urls>'],
-      types: ['xmlhttprequest'],
-    },
-    ['requestBody']
-  )
-})
+    detectNetworkOfRpcUrl(details.url, details.tabId)
+  },
+  {
+    urls: ['<all_urls>'],
+    types: ['xmlhttprequest'],
+  },
+  ['requestBody']
+)
 
 const decoder = new TextDecoder('utf-8')
 const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
