@@ -3,7 +3,8 @@ import { REMOVE_CSP_RULE_ID } from './tabsTracking'
 import { PilotSession } from './types'
 
 // debug logging for RPC intercepts
-chrome.runtime.onInstalled.addListener(() => {
+// This API is only available in unpacked mode!
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
   chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
     if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
       console.debug(
@@ -13,7 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
       )
     }
   })
-})
+}
 
 let currentRuleIds: number[] = []
 
