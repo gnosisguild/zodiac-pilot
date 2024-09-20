@@ -183,12 +183,13 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
         }}
       >
         {walletConnectLogo}
-        Connect via WalletConnect
+        Connect with WalletConnect
       </Button>
       {injectedWallet.provider && (
         <Button
           className={classes.walletButton}
           onClick={async () => {
+            console.log('connecting injected wallet', injectedWallet)
             const { chainId, accounts } = await injectedWallet.connect()
             onConnect({
               providerType: ProviderType.InjectedWallet,
@@ -198,7 +199,7 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
           }}
         >
           {metamaskLogo}
-          Connect via MetaMask
+          Connect with MetaMask
         </Button>
       )}
     </Flex>
