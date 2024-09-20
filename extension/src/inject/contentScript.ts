@@ -92,7 +92,10 @@ if (
       }
 
       if (message.type === INJECTED_PROVIDER_EVENT) {
-        console.debug('🧑‍✈️ event', message)
+        console.debug(
+          `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
+          message.eventData
+        )
         window.postMessage(message, '*')
       }
     }
