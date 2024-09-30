@@ -60,13 +60,10 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
 
   if (isTrackedTab && info.status === 'loading') {
     // The update event can be triggered multiple times for the same page load,
-    // so each executed content scripts must handle the case that it has already been injected before.
+    // so the executed content scripts must handle the case that it has already been injected before.
     chrome.scripting.executeScript({
       target: { tabId, allFrames: true },
-      files: [
-        'build/inject/contentScript.js',
-        'build/connect/contentScript.js',
-      ],
+      files: ['build/inject/contentScript.js'],
       injectImmediately: true,
     })
   }
