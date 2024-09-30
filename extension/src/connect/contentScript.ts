@@ -25,11 +25,8 @@ function ensureIframe() {
   return node
 }
 
-console.log('CONNECT content script waiting for connection from panel....')
-
 // wait for connection from ConnectProvider (running in extension page), then inject iframe to establish a bridge to the user's injected wallet
 chrome.runtime.onConnect.addListener((port) => {
-  console.log('CONNECT content script connected to panel')
   const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
@@ -71,7 +68,6 @@ chrome.runtime.onConnect.addListener((port) => {
       message.type === CONNECTED_WALLET_EVENT
     ) {
       event.stopImmediatePropagation()
-      console.log('Relaying event to panel', message)
       port.postMessage(message)
     }
   }

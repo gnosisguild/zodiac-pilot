@@ -10,6 +10,7 @@ import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 import { nanoid } from 'nanoid'
 import useStorage, { useStorageEntries } from '../utils/useStorage'
+import { ZeroAddress } from 'ethers'
 
 type RouteContextT = readonly [
   Route[],
@@ -123,11 +124,6 @@ export const useRoute = (id?: string) => {
   const walletConnect = useWalletConnect(route.id)
   const defaultProvider = getEip1193ReadOnlyProvider(chainId)
 
-  console.log(
-    route.providerType === ProviderType.InjectedWallet,
-    route.initiator
-  )
-
   const provider: Eip1193Provider =
     (route.providerType === ProviderType.InjectedWallet
       ? injectedWallet.provider
@@ -153,7 +149,9 @@ export const useRoute = (id?: string) => {
     !injectedWallet.chainId
 
   const pilotAddress =
-    route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
+    route.initiator && route.initiator !== `eoa:` + ZeroAddress
+      ? parsePrefixedAddress(route.initiator)[1].toLowerCase()
+      : undefined
   const canEstablishConnection =
     !connected &&
     pilotAddress &&
@@ -199,7 +197,7 @@ export const useRoute = (id?: string) => {
   }
 }
 
-const isConnectedTo = (
+export const isConnectedTo = (
   providerContext: InjectedWalletContextT | WalletConnectResult | null,
   account: PrefixedAddress,
   chainId?: number
