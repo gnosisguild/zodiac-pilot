@@ -93,6 +93,8 @@ export const ProvideInjectedWallet: React.FC<{
     [accounts, connect, chainId]
   )
 
+  console.log('InjectedWalletProvider PACKED', packed)
+
   return (
     <InjectedWalletContext.Provider value={packed}>
       {children}
@@ -130,11 +132,13 @@ const memoWhilePending = <T extends (...args: any) => Promise<any>>(
   }) as T
 
 const connectInjectedWallet = memoWhilePending(async () => {
+  console.log('connecting...............')
   const browserProvider = new BrowserProvider(connectProvider)
 
   const accountsPromise = browserProvider
     .send('eth_requestAccounts', [])
     .catch((err: any) => {
+      console.log('error eth_requestAccounts', err)
       if ((err as InjectedWalletError).code === -32002) {
         return new Promise((resolve: (value: string[]) => void) => {
           const toastId = toast.warn(
@@ -160,6 +164,8 @@ const connectInjectedWallet = memoWhilePending(async () => {
     accountsPromise,
     browserProvider.getNetwork().then((network) => network.chainId),
   ])
+
+  console.log('connected!!!!!!!!!!!!!', { accounts, chainId })
 
   return { accounts, chainId }
 })
