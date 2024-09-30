@@ -3,48 +3,46 @@ import {
   CONNECTED_WALLET_ERROR,
   CONNECTED_WALLET_RESPONSE,
   CONNECTED_WALLET_EVENT,
-  Message,
   CONNECTED_WALLET_INITIALIZED,
+  Message,
 } from './messages'
 
-function injectIframe(src: string) {
-  const node = document.createElement('iframe')
-  node.src = src
-  node.style.display = 'none'
+function ensureIframe() {
+  let node: HTMLIFrameElement | null = document.querySelector(
+    'iframe[data__zodiacPilotConnectIframe]'
+  )
 
-  const parent = document.body || document.documentElement
-  parent.append(node)
+  if (!node) {
+    node = document.createElement('iframe')
+    node.src = 'https://connect.pilot.gnosisguild.org/'
+    node.style.display = 'none'
+    node.dataset.__zodiacPilotConnectIframe === 'true'
 
-  return node.contentWindow
+    const parent = document.body || document.documentElement
+    parent.append(node)
+  }
+
+  return node
 }
 
-const alreadyInjected =
-  document.documentElement.dataset.__zodiacPilotIframeInjected === 'true'
+console.log('CONNECT content script waiting for connection from panel....')
 
-if (
-  !alreadyInjected &&
-  window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
-  !window.location.href.startsWith('about:') &&
-  !window.location.href.startsWith('chrome:')
-) {
-  // prevent duplicate injection
-  document.documentElement.dataset.__zodiacPilotIframeInjected = 'true'
-
-  // Render an invisible iframe to be able to connect with the injected provider from other wallet extensions
-  const iframe = injectIframe('https://connect.pilot.gnosisguild.org/')
+// wait for connection from ConnectProvider (running in extension page), then inject iframe to establish a bridge to the user's injected wallet
+chrome.runtime.onConnect.addListener((port) => {
+  console.log('CONNECT content script connected to panel')
+  const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
-  chrome.runtime.onMessage.addListener((message: Message, sender, respond) => {
-    // Since there might be multiple instances of this script running per page, we should not use the sendResponse callback.
-    // Otherwise we might end up receiving the window response message in the wrong instance (not the one that the panel is waiting to receive the response from).
-    if (sender.id !== chrome.runtime.id) return
+  port.onMessage.addListener((message: Message) => {
     if (message.type === CONNECTED_WALLET_REQUEST) {
-      if (!iframe) {
+      // relay user wallet request to connect iframe so the connectInjection can receive it
+      if (!iframe.contentWindow) {
         throw new Error('cannot access connect iframe window')
       }
-
-      // relay user wallet request to connect iframe so the connectInjection can receive it
-      iframe.postMessage(message, 'https://connect.pilot.gnosisguild.org/') // TODO maybe use connect.pilot.gnosisguild.org instead of *?
+      iframe.contentWindow.postMessage(
+        message,
+        'https://connect.pilot.gnosisguild.org/'
+      )
 
       // wait for response
       const handleResponse = (event: MessageEvent<Message>) => {
@@ -58,16 +56,14 @@ if (
 
         event.stopImmediatePropagation()
         window.removeEventListener('message', handleResponse)
-        chrome.runtime.sendMessage(event.data)
+        port.postMessage(event.data)
       }
       window.addEventListener('message', handleResponse)
-
-      respond(true) // indicate that the request is being handled
     }
   })
 
   // relay wallet events from the connect iframe to the panel
-  window.addEventListener('message', (event: MessageEvent<Message>) => {
+  const handleEvent = (event: MessageEvent<Message>) => {
     const message = event.data
     if (!message) return
     if (
@@ -75,9 +71,19 @@ if (
       message.type === CONNECTED_WALLET_EVENT
     ) {
       event.stopImmediatePropagation()
-      chrome.runtime.sendMessage(message)
+      console.log('Relaying event to panel', message)
+      port.postMessage(message)
+    }
+  }
+  window.addEventListener('message', handleEvent)
+
+  // clean up when the panel disconnects
+  port.onDisconnect.addListener(async () => {
+    window.removeEventListener('message', handleEvent)
+    if (iframe) {
+      iframe.remove()
     }
   })
-}
+})
 
 export {}
