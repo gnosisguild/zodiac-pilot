@@ -41,7 +41,23 @@
         "<all_urls>"
       ],
       "exclude_globs": [
-        "https://connect.pilot.gnosisguild.org/"
+        "https://connect.pilot.gnosisguild.org/",
+        "about:*",
+        "chrome:*"
+      ],
+      "run_at": "document_start",
+      "js": [
+        "build/connect/contentScript.js"
+      ]
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "exclude_globs": [
+        "https://connect.pilot.gnosisguild.org/",
+        "about:*",
+        "chrome:*"
       ],
       "run_at": "document_start",
       "js": [
