@@ -122,7 +122,7 @@ export function fromLegacyConnection(connection: LegacyConnection): Route {
     lastUsed: connection.lastUsed,
     providerType,
     waypoints: waypoints as Route['waypoints'],
-    initiator: pilotPrefixedAddress,
+    initiator: pilotAddress ? pilotPrefixedAddress : undefined,
     avatar: avatarPrefixedAddress,
   }
 }
@@ -160,7 +160,8 @@ export function asLegacyConnection(route: Route): LegacyConnection {
     label: route.label,
     moduleAddress: moduleWaypoint?.account.address || '',
     avatarAddress,
-    pilotAddress,
+    pilotAddress:
+      pilotAddress && pilotAddress !== ZeroAddress ? pilotAddress : '',
     chainId,
     providerType: route.providerType,
     moduleType:

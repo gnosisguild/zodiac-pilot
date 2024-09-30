@@ -115,6 +115,7 @@ const EditConnection: React.FC = () => {
     : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
+    console.log('updateConnection', patch)
     setRoute((route) =>
       fromLegacyConnection({ ...asLegacyConnection(route), ...patch })
     )
@@ -220,14 +221,14 @@ const EditConnection: React.FC = () => {
             </Field>
             <Field label="Pilot Account" labelFor="">
               <ConnectButton
-                id={routeId}
-                onConnect={({ providerType, chainId, account }) =>
+                route={route}
+                onConnect={({ providerType, chainId, account }) => {
                   updateConnection({
                     providerType,
                     chainId,
                     pilotAddress: account,
                   })
-                }
+                }}
                 onDisconnect={() => {
                   updateConnection({ pilotAddress: '' })
                 }}

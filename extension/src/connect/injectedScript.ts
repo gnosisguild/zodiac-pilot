@@ -23,10 +23,10 @@ window.addEventListener('message', async (event: MessageEvent<Message>) => {
       throw new Error('No ethereum provider')
     }
 
-    const { request, requestId } = message
+    const { request } = message
     const logDetails = { request, response: '⏳' } as any
     console.debug(
-      `🧑‍✈️ connect request #${requestId}: \x1B[34m${request.method}\x1B[m %O`,
+      `🧑‍✈️ connect request: \x1B[34m${request.method}\x1B[m %O`,
       logDetails
     )
 
@@ -77,7 +77,7 @@ const relayEvent = (eventName: string) => {
 }
 
 const initProvider = () => {
-  console.log('🔌 Ready to relay requests to connected wallet')
+  console.log('🧑‍✈️ Ready to relay requests to connected wallet')
   window.top!.postMessage(
     {
       type: CONNECTED_WALLET_INITIALIZED,
