@@ -8,9 +8,9 @@ import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
 import { CHAIN_NAME } from '../../../chains'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
-import { ProviderType } from '../../../types'
+import { ProviderType, Route } from '../../../types'
 import { validateAddress } from '../../utils'
-import { useRoute } from '../routeHooks'
+import { isConnectedTo, useRoute } from '../routeHooks'
 
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
@@ -31,7 +31,7 @@ const metamaskLogo = (
 )
 
 interface Props {
-  id: string
+  route: Route
   onConnect(args: {
     providerType: ProviderType
     chainId: ChainId
@@ -40,8 +40,7 @@ interface Props {
   onDisconnect(): void
 }
 
-const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
-  const { connected, route, chainId } = useRoute(id)
+const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   let pilotAddress =
     route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
   if (pilotAddress === ZeroAddress) pilotAddress = ''
@@ -59,6 +58,24 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
 
     onDisconnect()
   }
+
+  // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
+  const [chainId] = parsePrefixedAddress(route.avatar)
+  if (!chainId) {
+    throw new Error('chainId is empty')
+  }
+
+  const connected =
+    route.initiator &&
+    isConnectedTo(
+      route.providerType === ProviderType.InjectedWallet
+        ? injectedWallet
+        : walletConnect,
+      route.initiator,
+      chainId
+    )
+
+  console.log({ connected, pilotAddress, route, chainId })
 
   // good to go
   if (connected && pilotAddress) {
@@ -189,7 +206,6 @@ const ConnectButton: React.FC<Props> = ({ id, onConnect, onDisconnect }) => {
         <Button
           className={classes.walletButton}
           onClick={async () => {
-            console.log('connecting injected wallet', injectedWallet)
             const { chainId, accounts } = await injectedWallet.connect()
             onConnect({
               providerType: ProviderType.InjectedWallet,
