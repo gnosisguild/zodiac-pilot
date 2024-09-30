@@ -123,6 +123,11 @@ export const useRoute = (id?: string) => {
   const walletConnect = useWalletConnect(route.id)
   const defaultProvider = getEip1193ReadOnlyProvider(chainId)
 
+  console.log(
+    route.providerType === ProviderType.InjectedWallet,
+    route.initiator
+  )
+
   const provider: Eip1193Provider =
     (route.providerType === ProviderType.InjectedWallet
       ? injectedWallet.provider
