@@ -131,15 +131,5 @@ export default class InjectedProvider extends EventEmitter {
   }
 
   // Some apps don't support generic injected providers, so we pretend to be MetaMask
-  isMetaMask = HOSTNAMES_REQUIRING_METAMASK.includes(window.location.hostname)
+  isMetaMask = true
 }
-
-const HOSTNAMES_REQUIRING_METAMASK = [
-  'v2.stakewise.io',
-  'app.aura.finance',
-  'www.ankr.com',
-  'www.staderlabs.com',
-  'metavault.trade',
-  'quickswap.exchange',
-  'app.foundance.org',
-]
