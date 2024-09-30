@@ -23,9 +23,7 @@ export default {
 
     if (parseInt(value) > 0) {
       // We don't support unfolding of transactions with value since it's hard to tell which individual calls are supposed to receive the value
-      console.warn(
-        'Unfolding multicall with value is not supported. The unfolded transactions will not include value and need manual editing.'
-      )
+      return undefined
     }
 
     let functionCalls: string[] = []
