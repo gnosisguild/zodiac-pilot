@@ -1,9 +1,9 @@
 import { ChainId, PrefixedAddress, Route as CompleteRoute } from 'ser-kit'
-import { SupportedModuleType } from './integrations/zodiac/types'
+import { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export enum ProviderType {
   WalletConnect,
-  MetaMask,
+  InjectedWallet,
 }
 
 export interface LegacyConnection {
@@ -38,7 +38,6 @@ export type Route = PartialRoute & {
   providerType: ProviderType
   label: string
   lastUsed?: number
-  _migratedFromLegacyConnection?: boolean
 }
 
 export interface JsonRpcRequest {
