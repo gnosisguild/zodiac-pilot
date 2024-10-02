@@ -9,8 +9,8 @@ type BalanceProps = {
 
 export const Balance = ({ address, contract }: BalanceProps) => {
   return (
-    <div className="flex items-center gap-2 text-gray-500">
-      <span className="text-xs font-semibold uppercase">Balance</span>
+    <div className="flex items-center gap-2 text-xs leading-none text-gray-500">
+      <span className="font-semibold uppercase">Balance</span>
       {contract ? (
         <ER20Balance address={address} contract={contract} />
       ) : (
@@ -59,7 +59,7 @@ type UseER20BalanceOptions<T extends Abi> = {
   contract: Address
 }
 
-const useER20Balance = <T extends Abi>({
+const useERC20Balance = <T extends Abi>({
   address,
   contract,
 }: UseER20BalanceOptions<T>): BalanceValue | [null, null] => {
@@ -95,7 +95,7 @@ type ER20BalanceProps = {
 }
 
 const ER20Balance = ({ address, contract }: ER20BalanceProps) => {
-  const [balance, symbol] = useER20Balance({ address, contract })
+  const [balance, symbol] = useERC20Balance({ address, contract })
 
   return (
     <>

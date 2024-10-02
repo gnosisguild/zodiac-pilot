@@ -9,17 +9,17 @@ export const Input = ({ label, children, ...props }: InputProps) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="ml-2 font-semibold">
+      <label htmlFor={id} className="ml-4 font-semibold">
         {label}
       </label>
 
       <input
         {...props}
         id={id}
-        className="w-full rounded border border-gray-100 bg-gray-50 px-2 py-1"
+        className="w-full rounded border border-gray-200 bg-gray-100 px-4 py-2 outline-none ring-2 ring-transparent focus:border-blue-600 focus:ring-blue-300"
       />
 
-      {children && <div className="ml-2">{children}</div>}
+      {children && <div className="ml-4">{children}</div>}
     </div>
   )
 }
