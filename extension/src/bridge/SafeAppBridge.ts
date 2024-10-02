@@ -51,6 +51,7 @@ export const SAFE_APP_WHITELIST = [
   'https://app.spark.fi',
   'https://community.safe.global',
   'https://app.nexusmutual.io',
+  'https://v2.nexusmutual.io',
 ]
 
 export default class SafeAppBridge {
