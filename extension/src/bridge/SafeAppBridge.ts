@@ -122,13 +122,12 @@ export default class SafeAppBridge {
       | undefined
     if (!handler) return
 
-    const responseState = { pending: true } as any
-    console.debug('SAFE_APP_MESSAGE', msg.data, responseState)
+    const logDetails = { data: msg.data, response: '⏳' } as any
+    console.debug('SAFE_APP_MESSAGE', logDetails)
     try {
       const response = await handler(msg.data.params, msg.data.id, msg.data.env)
       if (typeof response !== 'undefined') {
-        delete responseState.pending
-        responseState.response = response
+        logDetails.response = response
         this.postResponse(msg.source, response, msg.data.id)
       } else {
         throw new Error('No response returned from handler')
