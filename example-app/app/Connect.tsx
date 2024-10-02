@@ -1,3 +1,4 @@
+import { Button } from '@/components'
 import { ConnectKitButton } from 'connectkit'
 import { PropsWithChildren } from 'react'
 import { ClientOnly } from 'remix-utils/client-only'
@@ -14,12 +15,9 @@ export const Connect = () => {
   return (
     <ClientOnly>
       {() => (
-        <button
-          className="rounded bg-red-500 px-4 py-2 text-white outline-none transition-colors hover:bg-red-600"
-          onClick={() => disconnect()}
-        >
+        <Button style="critical" onClick={() => disconnect()}>
           Disconnect wallet
-        </button>
+        </Button>
       )}
     </ClientOnly>
   )

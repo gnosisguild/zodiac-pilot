@@ -1,4 +1,4 @@
-import { Input } from '@/components'
+import { Button, Input } from '@/components'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
@@ -76,12 +76,7 @@ export const Transfer = () => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="rounded border border-transparent bg-gray-900 px-4 py-2 font-semibold text-white outline-none ring-2 ring-transparent hover:bg-gray-800 focus:border-purple-700 focus:ring-purple-400"
-          >
-            Transfer
-          </button>
+          <Button type="submit">Transfer</Button>
         </Fragment>
       ))}
     </form>
