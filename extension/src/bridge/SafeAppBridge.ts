@@ -20,6 +20,7 @@ import { ChainId } from 'ser-kit'
 import {
   getBalances,
   getSafeInfo,
+  SafeInfo,
   TransactionDetails,
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { CHAIN_CURRENCY, CHAIN_NAME, CHAIN_PREFIX } from '../chains'
@@ -56,10 +57,16 @@ export default class SafeAppBridge {
   private provider: Eip1193Provider
   private connection: LegacyConnection
   private connectedOrigin: string | undefined
+  private safeInfoPromise: Promise<SafeInfo>
 
   constructor(provider: Eip1193Provider, connection: LegacyConnection) {
     this.provider = provider
     this.connection = connection
+
+    this.safeInfoPromise = getSafeInfo(
+      CHAIN_PREFIX[this.connection.chainId],
+      getAddress(this.connection.avatarAddress)
+    )
   }
 
   setProvider = (provider: Eip1193Provider) => {
@@ -70,6 +77,11 @@ export default class SafeAppBridge {
     const accountOrChainSwitched =
       connection.avatarAddress !== this.connection.avatarAddress ||
       connection.chainId !== this.connection.chainId
+
+    this.safeInfoPromise = getSafeInfo(
+      CHAIN_PREFIX[this.connection.chainId],
+      getAddress(this.connection.avatarAddress)
+    )
 
     this.connection = connection
     const href = await requestIframeHref()
@@ -110,10 +122,13 @@ export default class SafeAppBridge {
       | undefined
     if (!handler) return
 
-    console.debug('SAFE_APP_MESSAGE', msg.data)
+    const responseState = { pending: true } as any
+    console.debug('SAFE_APP_MESSAGE', msg.data, responseState)
     try {
       const response = await handler(msg.data.params, msg.data.id, msg.data.env)
       if (typeof response !== 'undefined') {
+        delete responseState.pending
+        responseState.response = response
         this.postResponse(msg.source, response, msg.data.id)
       } else {
         throw new Error('No response returned from handler')
@@ -174,10 +189,7 @@ export default class SafeAppBridge {
     }),
 
     [Methods.getSafeInfo]: async () => {
-      const info = await getSafeInfo(
-        CHAIN_PREFIX[this.connection.chainId],
-        getAddress(this.connection.avatarAddress)
-      )
+      const info = await this.safeInfoPromise
       return {
         safeAddress: getAddress(this.connection.avatarAddress),
         chainId: this.connection.chainId,
