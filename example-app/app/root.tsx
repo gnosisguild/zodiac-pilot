@@ -17,11 +17,7 @@ const getProjectId = () => {
   return PROJECT_ID
 }
 
-export const loader = () => {
-  const projectId = getProjectId()
-
-  return json({ projectId })
-}
+export const loader = () => json({ projectId: getProjectId() })
 
 export const queryClient = new QueryClient()
 

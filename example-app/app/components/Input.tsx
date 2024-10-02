@@ -4,7 +4,7 @@ type InputProps = AllHTMLAttributes<HTMLInputElement> & {
   label: string
 }
 
-export const Input = ({ label, ...props }: InputProps) => {
+export const Input = ({ label, children, ...props }: InputProps) => {
   const id = useId()
 
   return (
@@ -12,11 +12,14 @@ export const Input = ({ label, ...props }: InputProps) => {
       <label htmlFor={id} className="ml-2 font-semibold">
         {label}
       </label>
+
       <input
         {...props}
         id={id}
         className="w-full rounded border border-gray-100 bg-gray-50 px-2 py-1"
       />
+
+      {children && <div className="ml-2">{children}</div>}
     </div>
   )
 }
