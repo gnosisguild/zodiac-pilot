@@ -1,10 +1,11 @@
+import classNames from 'classnames'
 import { AllHTMLAttributes, useId } from 'react'
 
 type InputProps = AllHTMLAttributes<HTMLInputElement> & {
   label: string
 }
 
-export const Input = ({ label, children, ...props }: InputProps) => {
+export const Input = ({ label, children, disabled, ...props }: InputProps) => {
   const id = useId()
 
   return (
@@ -16,7 +17,11 @@ export const Input = ({ label, children, ...props }: InputProps) => {
       <input
         {...props}
         id={id}
-        className="w-full rounded border border-gray-200 bg-gray-100 px-4 py-2 outline-none ring-2 ring-transparent focus:border-blue-600 focus:ring-blue-300"
+        disabled={disabled}
+        className={classNames(
+          'w-full rounded border border-gray-200 bg-gray-100 px-4 py-2 outline-none ring-2 ring-transparent focus:border-blue-600 focus:ring-blue-300',
+          disabled && 'opacity-50',
+        )}
       />
 
       {children && <div className="ml-4">{children}</div>}

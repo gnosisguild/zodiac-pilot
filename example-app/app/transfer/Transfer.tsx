@@ -50,6 +50,8 @@ export const Transfer = () => {
               chain: account.chain,
               value: parseUnits(getString(data, 'eth'), 18),
             })
+
+            break
           }
         }
       }}
