@@ -6,6 +6,7 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@epic-web/invariant": "^1.0.0",
     "@remix-run/express": "^2.12.1",
     "@remix-run/node": "^2.12.1",
     "@remix-run/react": "^2.12.1",
