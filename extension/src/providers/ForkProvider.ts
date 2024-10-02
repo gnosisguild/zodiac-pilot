@@ -44,6 +44,7 @@ class ForkProvider extends EventEmitter {
   private handlers: Handlers
 
   private blockGasLimitPromise: Promise<bigint>
+  private isSafePromise: Promise<boolean>
 
   private pendingMetaTransaction: Promise<any> | undefined
   private isInitialized = false
@@ -72,6 +73,9 @@ class ForkProvider extends EventEmitter {
     this.handlers = handlers
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
+
+    // for now we generally assume smart accounts are Safes
+    this.isSafePromise = isSmartAccount(this.avatarAddress, this.provider)
   }
 
   async request(request: {
@@ -194,16 +198,16 @@ class ForkProvider extends EventEmitter {
     const send = this.pendingMetaTransaction
       ? async () => {
           await this.pendingMetaTransaction
-          return await this.sendMetaTransactionIsSeries(metaTx, id)
+          return await this.sendMetaTransactionInSeries(metaTx, id)
         }
-      : async () => await this.sendMetaTransactionIsSeries(metaTx, id)
+      : async () => await this.sendMetaTransactionInSeries(metaTx, id)
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
     return await this.pendingMetaTransaction
   }
 
-  private async sendMetaTransactionIsSeries(
+  private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionData,
     id: string
   ): Promise<string> {
@@ -212,8 +216,22 @@ class ForkProvider extends EventEmitter {
       await this.initFork()
     }
 
+    const ownerAddress =
+      this.ownerAddress === ZeroAddress ? undefined : this.ownerAddress
+    const isSafe = await this.isSafePromise
+
+    console.log(this.moduleAddress, ownerAddress)
+    if (!isSafe && (this.moduleAddress || ownerAddress)) {
+      throw new Error(
+        'moduleAddress or ownerAddress is only supported for Safes as avatar'
+      )
+    }
+
     const isDelegateCall = metaTx.operation === 1
-    if (isDelegateCall && !this.moduleAddress && !this.ownerAddress) {
+    if (isDelegateCall && !isSafe) {
+      throw new Error('delegatecall is only supported for Safes as avatar')
+    }
+    if (isDelegateCall && !this.moduleAddress && !ownerAddress) {
       throw new Error('delegatecall requires moduleAddress or ownerAddress')
     }
 
@@ -226,16 +244,27 @@ class ForkProvider extends EventEmitter {
       params: [Math.ceil(Date.now() / 1000).toString()],
     })
 
-    let from = this.moduleAddress || this.ownerAddress || DUMMY_MODULE_ADDRESS
-    if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
+    let tx: TransactionData
+    if (isSafe) {
+      let from = this.moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
+      if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
 
-    // correctly route the meta tx through the avatar
-    const tx = execTransactionFromModule(
-      metaTx,
-      this.avatarAddress,
-      from,
-      await this.blockGasLimitPromise
-    )
+      // correctly route the meta tx through the avatar
+      tx = execTransactionFromModule(
+        metaTx,
+        this.avatarAddress,
+        from,
+        await this.blockGasLimitPromise
+      )
+    } else {
+      // for EOA, we can just send the transaction directly
+      tx = {
+        to: metaTx.to,
+        value: toQuantity(metaTx.value || 0),
+        data: metaTx.data || '0x',
+        from: this.avatarAddress,
+      }
+    }
 
     // execute transaction in fork
     const hash = await this.provider.request({
@@ -248,16 +277,18 @@ class ForkProvider extends EventEmitter {
 
   async initFork(): Promise<void> {
     console.log('Initializing fork for simulation...')
-
-    await prepareSafeForSimulation(
-      {
-        chainId: this.chainId,
-        avatarAddress: this.avatarAddress,
-        moduleAddress: this.moduleAddress,
-        ownerAddress: this.ownerAddress,
-      },
-      this.provider
-    )
+    const isSafe = await this.isSafePromise
+    if (isSafe) {
+      await prepareSafeForSimulation(
+        {
+          chainId: this.chainId,
+          avatarAddress: this.avatarAddress,
+          moduleAddress: this.moduleAddress,
+          ownerAddress: this.ownerAddress,
+        },
+        this.provider
+      )
+    }
 
     // notify the background script to start intercepting JSON RPC requests
     // we use the public RPC for requests originating from apps
@@ -320,10 +351,19 @@ const execTransactionFromModule = (
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DUMMY_MODULE_ADDRESS = '0xfacade0000000000000000000000000000000000'
 
-const readBlockGasLimit = async (provider: Eip1193Provider) => {
+async function readBlockGasLimit(provider: Eip1193Provider) {
   const browserProvider = new BrowserProvider(provider)
   const block = await browserProvider.getBlock('latest')
   return block?.gasLimit || 30_000_000n
+}
+
+async function isSmartAccount(address: string, provider: Eip1193Provider) {
+  return (
+    (await provider.request({
+      method: 'eth_getCode',
+      params: [address, 'latest'],
+    })) !== '0x'
+  )
 }
 
 /**
