@@ -4,7 +4,8 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "paths": {
-      "@/transfer": ["./app/transfer"]
+      "@/transfer": ["./app/transfer"],
+      "@/components": ["./app/components"]
     }
   }
 }
