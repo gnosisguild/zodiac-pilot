@@ -17,10 +17,6 @@ export const Transfer = () => {
       className="flex w-1/3 flex-col gap-8"
       onSubmit={(event) => {
         event.preventDefault()
-
-        const data = new FormData(event.currentTarget)
-
-        console.log({ data: Object.fromEntries(data) })
       }}
     >
       {account.addresses.map((address) => (
