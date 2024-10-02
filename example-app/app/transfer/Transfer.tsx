@@ -1,24 +1,61 @@
 import { Button, Input } from '@/components'
+import { invariant } from '@epic-web/invariant'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
-import { useAccount } from 'wagmi'
+import { parseUnits } from 'viem'
+import { useAccount, useWriteContract } from 'wagmi'
 import { Balance } from './Balance'
 import { Gas } from './Gas'
+import { wethAbi } from './wethAbi'
 
 type Target = 'ETH' | 'WETH'
+
+const wethContract = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 
 export const Transfer = () => {
   const account = useAccount()
 
   const [target, setTarget] = useState<Target>('WETH')
 
+  const { writeContract, error } = useWriteContract()
+
   return (
     <form
       className="flex flex-col gap-8"
       onSubmit={(event) => {
         event.preventDefault()
+
+        const data = new FormData(event.currentTarget)
+
+        switch (target) {
+          case 'ETH': {
+            writeContract({
+              abi: wethAbi,
+              functionName: 'withdraw',
+              address: wethContract,
+              account: account.address,
+              chain: account.chain,
+              args: [parseUnits(getString(data, 'weth'), 18)],
+            })
+
+            break
+          }
+
+          case 'WETH': {
+            writeContract({
+              abi: wethAbi,
+              functionName: 'deposit',
+              address: wethContract,
+              account: account.address,
+              chain: account.chain,
+              value: parseUnits(getString(data, 'eth'), 18),
+            })
+          }
+        }
       }}
     >
+      {error && error.message}
+
       <div className="grid grid-cols-5 gap-8">
         <div className="col-span-2">
           <Input
@@ -64,10 +101,7 @@ export const Transfer = () => {
             placeholder="0"
             type="number"
           >
-            <Balance
-              address={account.address}
-              contract="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-            />
+            <Balance address={account.address} contract={wethContract} />
           </Input>
         </div>
       </div>
@@ -79,4 +113,15 @@ export const Transfer = () => {
       </div>
     </form>
   )
+}
+
+const getString = (data: FormData, key: string) => {
+  const value = data.get(key)
+
+  invariant(
+    typeof value === 'string',
+    `Expected value to be of type "string" but got "${typeof value}"`,
+  )
+
+  return value
 }
