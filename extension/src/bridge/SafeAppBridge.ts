@@ -199,6 +199,36 @@ export default class SafeAppBridge {
         network:
           LEGACY_CHAIN_NAME[this.connection.chainId] ||
           CHAIN_NAME[this.connection.chainId].toUpperCase(),
+
+        // below is an example response as set within Safe{Wallet}:
+        // chainId: 1,
+        // fallbackHandler: '0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4',
+        // guard: null,
+        // implementation: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
+        // isReadOnly: true,
+        // modules: [
+        //   '0x27d8bb2e33Bc38A9CE93fdD90C80677b8436aFfb',
+        //   '0x1cFB0CD7B1111bf2054615C7C491a15C4A3303cc',
+        //   '0x0DA0C3e52C977Ed3cBc641fF02DD271c3ED55aFe',
+        // ],
+        // network: 'MAINNET',
+        // nonce: 2324,
+        // owners: [
+        //   '0x1B0C638616Ed79dB430Edbf549ad9512FF4a8ed1',
+        //   '0x507A7777E6DbF4680951E63fB3753a20F2c37706',
+        //   '0xa3a3456BC0c8ce4e0a0415B619803ee96509Ce30',
+        //   '0xe9eB7DA58f6B5CE5b0a6cFD778A2fa726203AAD5',
+        //   '0xFcf00B0fEdBc8f2F35a3B8d4B858d5805f2Bb05D',
+        //   '0xE4Df0cdC9eF7e388eA906226010bBD1B9A6fFeD9',
+        //   '0xD68f1A882f3F9ffddaBd4D30c4F8Dfca1f9e51Ba',
+        //   '0xA1cf7F847eCD82459ce05a218EaA38a9D92E7b6b',
+        //   '0x8fd960F1B9D68BAD2B97bD232FB75CC1f186B064',
+        //   '0x5eD64f02588C8B75582f2f8eFd7A5521e3F897CC',
+        //   '0x0DA0C3e52C977Ed3cBc641fF02DD271c3ED55aFe',
+        // ],
+        // safeAddress: '0x849D52316331967b6fF1198e5E32A0eB168D039d',
+        // threshold: 3,
+        // version: '1.3.0',
       }
     },
 
