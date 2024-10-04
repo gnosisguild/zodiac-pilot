@@ -220,7 +220,6 @@ class ForkProvider extends EventEmitter {
       this.ownerAddress === ZeroAddress ? undefined : this.ownerAddress
     const isSafe = await this.isSafePromise
 
-    console.log(this.moduleAddress, ownerAddress)
     if (!isSafe && (this.moduleAddress || ownerAddress)) {
       throw new Error(
         'moduleAddress or ownerAddress is only supported for Safes as avatar'
