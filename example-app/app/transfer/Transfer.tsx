@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { parseUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
-import { Balance } from './Balance'
+import { Balance } from './balance'
 import { Gas } from './Gas'
 import { wethAbi } from './wethAbi'
 
