@@ -103,7 +103,7 @@ export const Transfer = () => {
             placeholder="0"
             type="number"
           >
-            <Balance address={account.address} contract={wethContract} />
+            <Balance address={account.address} token={wethContract} />
           </Input>
         </div>
       </div>
