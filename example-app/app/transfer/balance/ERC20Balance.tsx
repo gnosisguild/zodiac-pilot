@@ -47,9 +47,16 @@ const useERC20Balance = ({
     address: contract,
   })
 
-  if (balanceOf.isFetched && decimals.isFetched && symbol.isFetched) {
-    return [formatUnits(balanceOf.data, decimals.data), symbol.data] as const
+  if (
+    !balanceOf.isFetched ||
+    balanceOf.error != null ||
+    !decimals.isFetched ||
+    decimals.error != null ||
+    !symbol.isFetched ||
+    symbol.error != null
+  ) {
+    return [null, null]
   }
 
-  return [null, null]
+  return [formatUnits(balanceOf.data, decimals.data), symbol.data] as const
 }

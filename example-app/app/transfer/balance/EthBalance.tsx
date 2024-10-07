@@ -20,11 +20,11 @@ export const EthBalance = ({ address }: EthBalanceProps) => {
 }
 
 const useEthBalance = (address: Address): BalanceValue | [null, null] => {
-  const { data, isFetched } = useBalance({ address })
+  const { data, isFetched, error } = useBalance({ address })
 
-  if (isFetched) {
-    return [formatEther(data.value), data.symbol] as const
+  if (error || !isFetched) {
+    return [null, null]
   }
 
-  return [null, null]
+  return [formatEther(data.value), data.symbol] as const
 }
