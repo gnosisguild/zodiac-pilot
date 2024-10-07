@@ -32,19 +32,24 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="flex h-full w-full flex-col items-center justify-center gap-8 text-sm">
+      <body className="flex h-full w-full flex-col items-center bg-white text-sm">
         <WagmiProvider config={wagmiConfig}>
           <QueryClientProvider client={queryClient}>
             <ConnectKitProvider>
-              <h1 className="text-2xl font-bold">
-                zodiac pilot <span className="font-normal">example app</span>
-              </h1>
+              <div className="flex h-full flex-1 flex-col justify-between py-12 xl:w-1/2">
+                <div className="flex flex-col gap-8">
+                  <h1 className="text-2xl font-bold">
+                    zodiac pilot{' '}
+                    <span className="font-normal">example app</span>
+                  </h1>
 
-              <Connect />
+                  <Connected>
+                    <Transfer />
+                  </Connected>
+                </div>
 
-              <Connected>
-                <Transfer />
-              </Connected>
+                <Connect />
+              </div>
             </ConnectKitProvider>
           </QueryClientProvider>
         </WagmiProvider>
