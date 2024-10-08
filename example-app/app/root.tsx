@@ -7,7 +7,7 @@ import { WagmiProvider } from 'wagmi'
 import { config } from './config'
 import { Connect, Connected } from './Connect'
 import './tailwind.css'
-import { Transfer } from './transfer'
+import { WalletProvider } from './WalletProvider'
 
 const getProjectId = () => {
   const { PROJECT_ID } = process.env
@@ -33,10 +33,10 @@ export default function App() {
         <Links />
       </head>
       <body className="flex h-full w-full flex-col items-center bg-white text-sm">
-        <WagmiProvider config={wagmiConfig}>
+        <div className="flex h-full flex-1 flex-col justify-between py-12 xl:w-1/2">
           <QueryClientProvider client={queryClient}>
-            <ConnectKitProvider>
-              <div className="flex h-full flex-1 flex-col justify-between py-12 xl:w-1/2">
+            <WagmiProvider config={wagmiConfig}>
+              <ConnectKitProvider>
                 <div className="flex flex-col gap-8">
                   <h1 className="text-2xl font-bold">
                     zodiac pilot{' '}
@@ -44,15 +44,15 @@ export default function App() {
                   </h1>
 
                   <Connected>
-                    <Transfer />
+                    <WalletProvider />
                   </Connected>
                 </div>
 
                 <Connect />
-              </div>
-            </ConnectKitProvider>
+              </ConnectKitProvider>
+            </WagmiProvider>
           </QueryClientProvider>
-        </WagmiProvider>
+        </div>
 
         <Scripts />
       </body>
