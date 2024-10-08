@@ -4,11 +4,11 @@ import { Section } from './components'
 import { ProvideConfig } from './ConfigProvider'
 import { Connected } from './Connect'
 
-export const WalletProvider = ({ children }: PropsWithChildren) => {
+export const WalletClient = ({ children }: PropsWithChildren) => {
   return (
     <Connected>
       <Section
-        title="Wallet provider"
+        title="Wallet client"
         description="Interact through the connected wallet which also allows to write a contract."
       >
         <ProvideConfig

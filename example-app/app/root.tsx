@@ -9,7 +9,8 @@ import { Connect } from './Connect'
 import { PublicClient } from './PublicClient'
 import './tailwind.css'
 import { Balance, Transfer } from './transfer'
-import { WalletProvider } from './WalletProvider'
+import { WalletClient } from './WalletClient'
+import { WebsocketClient } from './WebsocketClient'
 import { wethContract } from './wethContract'
 
 const getProjectId = () => {
@@ -50,14 +51,20 @@ export default function App() {
                   </div>
 
                   <div className="col-span-2 flex flex-col gap-8">
-                    <WalletProvider>
+                    <WalletClient>
                       <Transfer />
-                    </WalletProvider>
+                    </WalletClient>
                   </div>
 
-                  <PublicClient>
-                    <Balances />
-                  </PublicClient>
+                  <div className="flex flex-col gap-8">
+                    <PublicClient>
+                      <Balances />
+                    </PublicClient>
+
+                    <WebsocketClient>
+                      <Balances />
+                    </WebsocketClient>
+                  </div>
                 </ConnectKitProvider>
               </WagmiProvider>
             </QueryClientProvider>

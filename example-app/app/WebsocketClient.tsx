@@ -1,14 +1,16 @@
 import { PropsWithChildren } from 'react'
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, webSocket } from 'viem'
 import { Section } from './components'
 import { ProvideConfig } from './ConfigProvider'
 import { Connected } from './Connect'
 
-export const PublicClient = ({ children }: PropsWithChildren) => (
+export const WebsocketClient = ({ children }: PropsWithChildren) => (
   <Connected>
-    <Section title="Public client">
+    <Section title="Websocket client">
       <ProvideConfig
-        client={({ chain }) => createPublicClient({ chain, transport: http() })}
+        client={({ chain }) =>
+          createPublicClient({ chain, transport: webSocket() })
+        }
       >
         {children}
       </ProvideConfig>
