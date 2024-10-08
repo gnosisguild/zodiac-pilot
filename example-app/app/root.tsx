@@ -3,12 +3,14 @@ import { json } from '@remix-run/node'
 import { Links, Meta, Scripts, useLoaderData } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider } from 'connectkit'
-import { WagmiProvider } from 'wagmi'
+import { useAccount, WagmiProvider } from 'wagmi'
 import { config } from './config'
-import { Connect, Connected } from './Connect'
+import { Connect } from './Connect'
 import { PublicClient } from './PublicClient'
 import './tailwind.css'
+import { Balance, Transfer } from './transfer'
 import { WalletProvider } from './WalletProvider'
+import { wethContract } from './wethContract'
 
 const getProjectId = () => {
   const { PROJECT_ID } = process.env
@@ -24,7 +26,7 @@ export const queryClient = new QueryClient()
 
 export default function App() {
   const { projectId } = useLoaderData<typeof loader>()
-  const wagmiConfig = config(projectId)
+  const defaultConfig = config(projectId)
 
   return (
     <html className="h-full w-full">
@@ -34,26 +36,28 @@ export default function App() {
         <Links />
       </head>
       <body className="flex h-full w-full flex-col items-center bg-white text-sm">
-        <div className="flex h-full flex-1 flex-col gap-8 py-12 xl:w-1/2">
+        <div className="flex h-full flex-1 flex-col gap-8 py-12 xl:w-2/3">
           <h1 className="text-2xl font-bold">
             zodiac pilot <span className="font-normal">example app</span>
           </h1>
 
           <div className="grid grid-cols-3 gap-8">
             <QueryClientProvider client={queryClient}>
-              <WagmiProvider config={wagmiConfig}>
+              <WagmiProvider config={defaultConfig}>
                 <ConnectKitProvider>
                   <div className="col-span-3">
                     <Connect />
                   </div>
 
                   <div className="col-span-2 flex flex-col gap-8">
-                    <Connected>
-                      <WalletProvider />
-                    </Connected>
+                    <WalletProvider>
+                      <Transfer />
+                    </WalletProvider>
                   </div>
 
-                  <PublicClient />
+                  <PublicClient>
+                    <Balances />
+                  </PublicClient>
                 </ConnectKitProvider>
               </WagmiProvider>
             </QueryClientProvider>
@@ -63,5 +67,16 @@ export default function App() {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+const Balances = () => {
+  const account = useAccount()
+
+  return (
+    <>
+      <Balance address={account.address} />
+      <Balance address={account.address} token={wethContract} />
+    </>
   )
 }

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useId } from 'react'
 
 type SectionProps = PropsWithChildren<{
-  title: string
+  title?: string
   description?: string
 }>
 
@@ -10,16 +10,26 @@ export const Section = ({ title, description, children }: SectionProps) => {
   const descriptionId = useId()
 
   return (
-    <section
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-      className="flex flex-col gap-6"
-    >
-      <h2 id={titleId} className="text-xl font-semibold">
-        {title}
-      </h2>
+    <div className="flex flex-col gap-4">
+      {title && (
+        <h2 id={titleId} className="text-lg font-semibold">
+          {title}
+        </h2>
+      )}
 
-      {children}
-    </section>
+      <section
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        className="flex flex-col gap-6 rounded border border-gray-200 p-4"
+      >
+        {description && (
+          <p id={descriptionId} className="text-gray-500">
+            {description}
+          </p>
+        )}
+
+        {children}
+      </section>
+    </div>
   )
 }
