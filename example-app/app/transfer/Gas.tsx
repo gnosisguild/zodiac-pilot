@@ -4,7 +4,8 @@ import { useGasPrice } from 'wagmi'
 import { useWagmiConfig } from '../ConfigProvider'
 
 export const Gas = () => {
-  const { isFetched, data, error } = useGasPrice({ config: useWagmiConfig() })
+  const [config, scopeKey] = useWagmiConfig()
+  const { isFetched, data, error } = useGasPrice({ config, scopeKey })
 
   if (error != null) {
     return null

@@ -8,6 +8,7 @@ export const WebsocketClient = ({ children }: PropsWithChildren) => (
   <Connected>
     <Section title="Websocket client">
       <ProvideConfig
+        scopeKey="websocket"
         client={({ chain }) =>
           createPublicClient({ chain, transport: webSocket() })
         }

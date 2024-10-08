@@ -8,6 +8,7 @@ export const PublicClient = ({ children }: PropsWithChildren) => (
   <Connected>
     <Section title="Public client">
       <ProvideConfig
+        scopeKey="public"
         client={({ chain }) => createPublicClient({ chain, transport: http() })}
       >
         {children}

@@ -29,10 +29,12 @@ const useERC20Balance = ({
   address,
   token,
 }: UseER20BalanceOptions): BalanceValue | [null, null] => {
+  const [config, scopeKey] = useWagmiConfig()
   const { data, isFetched, error } = useBalance({
     address,
     token,
-    config: useWagmiConfig(),
+    config,
+    scopeKey,
   })
 
   if (error || !isFetched) {

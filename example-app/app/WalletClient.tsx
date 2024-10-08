@@ -12,6 +12,7 @@ export const WalletClient = ({ children }: PropsWithChildren) => {
         description="Interact through the connected wallet which also allows to write a contract."
       >
         <ProvideConfig
+          scopeKey="wallet"
           client={({ chain }) =>
             createWalletClient({ chain, transport: http() })
           }

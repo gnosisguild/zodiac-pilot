@@ -14,11 +14,10 @@ type Target = 'ETH' | 'WETH'
 
 export const Transfer = () => {
   const account = useAccount()
-
+  const [config] = useWagmiConfig()
   const [target, setTarget] = useState<Target>('WETH')
-
   const { writeContract, error } = useWriteContract({
-    config: useWagmiConfig(),
+    config,
   })
 
   return (
