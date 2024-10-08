@@ -4,13 +4,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { parseUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
+import { wethContract } from '../wethContract'
 import { Balance } from './balance'
 import { Gas } from './Gas'
 import { wethAbi } from './wethAbi'
 
 type Target = 'ETH' | 'WETH'
-
-const wethContract = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 
 export const Transfer = () => {
   const account = useAccount()
