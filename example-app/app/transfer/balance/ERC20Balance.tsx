@@ -1,15 +1,16 @@
-import { Address, erc20Abi, formatUnits } from 'viem'
-import { useReadContract } from 'wagmi'
+import { Address, formatUnits } from 'viem'
+import { useBalance } from 'wagmi'
+import { useWagmiConfig } from '../../ConfigProvider'
 import { BalanceValue } from './BalanceValue'
 import { Symbol } from './Symbol'
 
 type ER20BalanceProps = {
   address: Address
-  contract: Address
+  token?: Address
 }
 
-export const ER20Balance = ({ address, contract }: ER20BalanceProps) => {
-  const [balance, symbol] = useERC20Balance({ address, contract })
+export const ER20Balance = ({ address, token }: ER20BalanceProps) => {
+  const [balance, symbol] = useERC20Balance({ address, token })
 
   return (
     <>
@@ -21,42 +22,24 @@ export const ER20Balance = ({ address, contract }: ER20BalanceProps) => {
 
 type UseER20BalanceOptions = {
   address: Address
-  contract: Address
+  token: Address
 }
 
 const useERC20Balance = ({
   address,
-  contract,
+  token,
 }: UseER20BalanceOptions): BalanceValue | [null, null] => {
-  const balanceOf = useReadContract({
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    address: contract,
-    args: [address],
+  const [config, scopeKey] = useWagmiConfig()
+  const { data, isFetched, error } = useBalance({
+    address,
+    token,
+    config,
+    scopeKey,
   })
 
-  const decimals = useReadContract({
-    abi: erc20Abi,
-    functionName: 'decimals',
-    address: contract,
-  })
-
-  const symbol = useReadContract({
-    abi: erc20Abi,
-    functionName: 'symbol',
-    address: contract,
-  })
-
-  if (
-    !balanceOf.isFetched ||
-    balanceOf.error != null ||
-    !decimals.isFetched ||
-    decimals.error != null ||
-    !symbol.isFetched ||
-    symbol.error != null
-  ) {
+  if (error || !isFetched) {
     return [null, null]
   }
 
-  return [formatUnits(balanceOf.data, decimals.data), symbol.data] as const
+  return [formatUnits(data.value, data.decimals), data.symbol] as const
 }

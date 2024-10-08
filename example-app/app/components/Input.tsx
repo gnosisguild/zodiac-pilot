@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import { AllHTMLAttributes, useId } from 'react'
+import { ComponentPropsWithoutRef, useId } from 'react'
 
-type InputProps = AllHTMLAttributes<HTMLInputElement> & {
+type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'id'> & {
   label: string
 }
 

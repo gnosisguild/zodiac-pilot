@@ -1,1 +1,2 @@
-export { Transfer } from "./Transfer";
+export { Balance } from './balance'
+export { Transfer } from './Transfer'

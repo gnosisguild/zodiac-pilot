@@ -1,4 +1,4 @@
-import { Button, Input } from '@/components'
+import { Button, Input, Section } from '@/components'
 import { ConnectKitButton } from 'connectkit'
 import { PropsWithChildren } from 'react'
 import { ClientOnly } from 'remix-utils/client-only'
@@ -15,21 +15,23 @@ export const Connect = () => {
   return (
     <ClientOnly>
       {() => (
-        <section className="grid grid-cols-4 items-end gap-4 rounded border border-x-gray-200 p-4">
-          <Input
-            disabled
-            label="Wallet"
-            defaultValue={account.connector.name}
-          />
+        <Section>
+          <div className="grid grid-cols-4 items-end gap-4">
+            <Input
+              disabled
+              label="Wallet"
+              defaultValue={account.connector.name}
+            />
 
-          <Input disabled label="Chain" defaultValue={account.chain.name} />
+            <Input disabled label="Chain" defaultValue={account.chain.name} />
 
-          <Input disabled defaultValue={account.address} label="Account" />
+            <Input disabled defaultValue={account.address} label="Account" />
 
-          <Button style="critical" onClick={() => disconnect()}>
-            Disconnect wallet
-          </Button>
-        </section>
+            <Button style="critical" onClick={() => disconnect()}>
+              Disconnect wallet
+            </Button>
+          </div>
+        </Section>
       )}
     </ClientOnly>
   )
