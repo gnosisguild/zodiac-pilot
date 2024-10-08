@@ -1,9 +1,10 @@
 import { Fuel } from 'lucide-react'
 import { formatGwei } from 'viem'
 import { useGasPrice } from 'wagmi'
+import { useWagmiConfig } from '../ConfigProvider'
 
 export const Gas = () => {
-  const { isFetched, data, error } = useGasPrice()
+  const { isFetched, data, error } = useGasPrice({ config: useWagmiConfig() })
 
   if (error != null) {
     return null

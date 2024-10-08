@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { parseUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
+import { useWagmiConfig } from '../ConfigProvider'
 import { wethContract } from '../wethContract'
 import { Balance } from './balance'
 import { Gas } from './Gas'
@@ -16,7 +17,9 @@ export const Transfer = () => {
 
   const [target, setTarget] = useState<Target>('WETH')
 
-  const { writeContract, error } = useWriteContract()
+  const { writeContract, error } = useWriteContract({
+    config: useWagmiConfig(),
+  })
 
   return (
     <form
