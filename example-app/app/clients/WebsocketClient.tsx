@@ -10,7 +10,10 @@ export const WebsocketClient = ({ children }: PropsWithChildren) => (
       <ProvideConfig
         scopeKey="websocket"
         client={({ chain }) =>
-          createPublicClient({ chain, transport: webSocket() })
+          createPublicClient({
+            chain,
+            transport: webSocket(chain.rpcUrls.default.webSocket?.[0]),
+          })
         }
       >
         {children}
