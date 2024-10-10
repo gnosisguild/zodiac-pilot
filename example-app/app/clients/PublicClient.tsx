@@ -10,18 +10,16 @@ export const PublicClient = ({
   batch,
 }: PropsWithChildren<ClientProps>) => (
   <Connected>
-    <Section title="Public client">
-      <ProvideConfig
-        scopeKey="public"
-        client={({ chain }) =>
-          createPublicClient({
-            chain,
-            transport: http(chain.rpcUrls.default.http[0], { batch }),
-          })
-        }
-      >
-        {children}
-      </ProvideConfig>
-    </Section>
+    <ProvideConfig
+      scopeKey="public"
+      client={({ chain }) =>
+        createPublicClient({
+          chain,
+          transport: http(chain.rpcUrls.default.http[0], { batch }),
+        })
+      }
+    >
+      <Section title="Public client">{children}</Section>
+    </ProvideConfig>
   </Connected>
 )
