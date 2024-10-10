@@ -40,10 +40,10 @@ export const useWagmiConfig = (): [config: Config, scopeKey: string] => {
   return [
     {
       ...config,
-      getClient: ({ chainId }) => {
-        const chain = config.chains.find((chain) => chain.id === chainId)
+      getClient: (options) => {
+        const chain = getChain(config.chains, options)
 
-        invariant(chain != null, `Could not find chain with id "${chainId}"`)
+        invariant(chain != null, `Could not find chain with id`)
 
         return client({ chain })
       },
@@ -58,4 +58,17 @@ const useConfigScope = () => {
   invariant(scopeKey != null, 'No "scopeKey" found on context')
 
   return scopeKey
+}
+
+type GetChainOptions = { chainId?: number }
+
+const getChain = (
+  chains: Config['chains'],
+  { chainId }: GetChainOptions = {},
+) => {
+  if (chainId == null) {
+    return chains.at(0)
+  }
+
+  return chains.find((chain) => chain.id === chainId)
 }
