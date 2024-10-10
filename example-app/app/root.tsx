@@ -72,12 +72,12 @@ export default function App() {
                   <div className="flex flex-col gap-8">
                     <PublicClient batch={batch}>
                       <Balances />
-                      {/* <BlockHeight /> */}
+                      <BlockHeight />
                     </PublicClient>
 
                     <WebsocketClient>
                       <Balances />
-                      {/* <BlockHeight /> */}
+                      <BlockHeight />
                     </WebsocketClient>
                   </div>
                 </ConnectKitProvider>
