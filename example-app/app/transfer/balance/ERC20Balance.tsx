@@ -1,6 +1,6 @@
+import { useWagmiConfig } from '@/config'
 import { Address, formatUnits } from 'viem'
 import { useBalance } from 'wagmi'
-import { useWagmiConfig } from '../../ConfigProvider'
 import { BalanceValue } from './BalanceValue'
 import { Symbol } from './Symbol'
 
@@ -22,7 +22,7 @@ export const ER20Balance = ({ address, token }: ER20BalanceProps) => {
 
 type UseER20BalanceOptions = {
   address: Address
-  token: Address
+  token?: Address
 }
 
 const useERC20Balance = ({
@@ -37,7 +37,7 @@ const useERC20Balance = ({
     scopeKey,
   })
 
-  if (error || !isFetched) {
+  if (error || !isFetched || data == null) {
     return [null, null]
   }
 

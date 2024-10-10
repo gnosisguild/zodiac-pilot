@@ -1,12 +1,14 @@
 import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
-import { getWagmiConfig } from '@/config'
+import { getWagmiConfig, useWagmiConfig } from '@/config'
 import { Balance, Transfer } from '@/transfer'
 import { invariantResponse } from '@epic-web/invariant'
 import { json } from '@remix-run/node'
 import { Links, Meta, Scripts, useLoaderData } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider } from 'connectkit'
-import { useAccount, WagmiProvider } from 'wagmi'
+import { formatUnits } from 'viem'
+import { useAccount, useBlock, WagmiProvider } from 'wagmi'
+import { Value } from './components'
 import { Connect } from './Connect'
 import './tailwind.css'
 import { wethContract } from './wethContract'
@@ -57,10 +59,12 @@ export default function App() {
                   <div className="flex flex-col gap-8">
                     <PublicClient>
                       <Balances />
+                      <BlockHeight />
                     </PublicClient>
 
                     <WebsocketClient>
                       <Balances />
+                      <BlockHeight />
                     </WebsocketClient>
                   </div>
                 </ConnectKitProvider>
@@ -88,4 +92,20 @@ const Balances = () => {
       <Balance address={account.address} token={wethContract} />
     </>
   )
+}
+
+const byteFormatter = new Intl.NumberFormat('en-US', {
+  style: 'unit',
+  unit: 'byte',
+})
+
+const BlockHeight = () => {
+  const [config, scopeKey] = useWagmiConfig()
+  const block = useBlock({ blockTag: 'latest', config, scopeKey })
+
+  if (block.data == null) {
+    return null
+  }
+
+  return <Value label="Block size">{formatUnits(block.data.size, 0)}</Value>
 }
