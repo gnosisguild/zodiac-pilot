@@ -39,7 +39,7 @@ export default function App() {
         <Links />
       </head>
       <body className="flex h-full w-full flex-col items-center bg-white text-sm">
-        <div className="flex h-full flex-1 flex-col gap-8 py-12 xl:w-2/3">
+        <div className="mx-8 flex h-full flex-1 flex-col gap-8 py-12 xl:w-2/3">
           <h1 className="text-2xl font-bold">
             zodiac pilot <span className="font-normal">example app</span>
           </h1>
@@ -115,5 +115,10 @@ const BlockHeight = () => {
     return null
   }
 
-  return <Value label="Block size">{formatUnits(block.data.size, 0)}</Value>
+  return (
+    <>
+      <Value label="Block number">{formatUnits(block.data.number, 0)}</Value>
+      <Value label="Block size">{formatUnits(block.data.size, 0)}</Value>
+    </>
+  )
 }
