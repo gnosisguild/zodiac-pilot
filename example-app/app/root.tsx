@@ -1,14 +1,14 @@
 import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
+import { getWagmiConfig } from '@/config'
+import { Balance, Transfer } from '@/transfer'
 import { invariantResponse } from '@epic-web/invariant'
 import { json } from '@remix-run/node'
 import { Links, Meta, Scripts, useLoaderData } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider } from 'connectkit'
 import { useAccount, WagmiProvider } from 'wagmi'
-import { config } from './config'
 import { Connect } from './Connect'
 import './tailwind.css'
-import { Balance, Transfer } from './transfer'
 import { wethContract } from './wethContract'
 
 const getProjectId = () => {
@@ -25,7 +25,7 @@ export const queryClient = new QueryClient()
 
 export default function App() {
   const { projectId } = useLoaderData<typeof loader>()
-  const defaultConfig = config(projectId)
+  const defaultConfig = getWagmiConfig(projectId)
 
   return (
     <html className="h-full w-full">
@@ -77,6 +77,10 @@ export default function App() {
 
 const Balances = () => {
   const account = useAccount()
+
+  if (account.address == null) {
+    return null
+  }
 
   return (
     <>

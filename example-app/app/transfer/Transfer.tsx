@@ -1,10 +1,10 @@
 import { Button, Input } from '@/components'
+import { useWagmiConfig } from '@/config'
 import { invariant } from '@epic-web/invariant'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { parseUnits } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
-import { useWagmiConfig } from '../ConfigProvider'
 import { wethContract } from '../wethContract'
 import { Balance } from './balance'
 import { Gas } from './Gas'
@@ -19,6 +19,10 @@ export const Transfer = () => {
   const { writeContract, error } = useWriteContract({
     config,
   })
+
+  if (account.address == null) {
+    return null
+  }
 
   return (
     <form

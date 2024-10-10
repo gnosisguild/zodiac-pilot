@@ -1,8 +1,8 @@
 import { Section } from '@/components'
+import { ProvideConfig } from '@/config'
 import { PropsWithChildren } from 'react'
 import { createWalletClient, http } from 'viem'
 import { Connected } from '../Connect'
-import { ProvideConfig } from './ConfigProvider'
 
 export const WalletClient = ({ children }: PropsWithChildren) => {
   return (

@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
+    "strict": true,
     "module": "ES2022",
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "paths": {
       "@/transfer": ["./app/transfer"],
       "@/components": ["./app/components"],
-      "@/clients": ["./app/clients"]
+      "@/clients": ["./app/clients"],
+      "@/config": ["./app/config"]
     }
   }
 }
