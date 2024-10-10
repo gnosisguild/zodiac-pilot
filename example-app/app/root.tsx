@@ -94,11 +94,6 @@ const Balances = () => {
   )
 }
 
-const byteFormatter = new Intl.NumberFormat('en-US', {
-  style: 'unit',
-  unit: 'byte',
-})
-
 const BlockHeight = () => {
   const [config, scopeKey] = useWagmiConfig()
   const block = useBlock({ blockTag: 'latest', config, scopeKey })
