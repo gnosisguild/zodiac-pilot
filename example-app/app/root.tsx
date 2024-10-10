@@ -1,3 +1,4 @@
+import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
 import { invariantResponse } from '@epic-web/invariant'
 import { json } from '@remix-run/node'
 import { Links, Meta, Scripts, useLoaderData } from '@remix-run/react'
@@ -6,11 +7,8 @@ import { ConnectKitProvider } from 'connectkit'
 import { useAccount, WagmiProvider } from 'wagmi'
 import { config } from './config'
 import { Connect } from './Connect'
-import { PublicClient } from './PublicClient'
 import './tailwind.css'
 import { Balance, Transfer } from './transfer'
-import { WalletClient } from './WalletClient'
-import { WebsocketClient } from './WebsocketClient'
 import { wethContract } from './wethContract'
 
 const getProjectId = () => {
