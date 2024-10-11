@@ -11,22 +11,22 @@ export const WalletClient = ({
 }: PropsWithChildren<ClientProps>) => {
   return (
     <Connected>
-      <Section
-        title="Wallet client"
-        description="Interact through the connected wallet which also allows to write a contract."
+      <ProvideConfig
+        scopeKey="wallet"
+        client={({ chain }) =>
+          createWalletClient({
+            chain,
+            transport: http(chain.rpcUrls.default.http[0], { batch }),
+          })
+        }
       >
-        <ProvideConfig
-          scopeKey="wallet"
-          client={({ chain }) =>
-            createWalletClient({
-              chain,
-              transport: http(chain.rpcUrls.default.http[0], { batch }),
-            })
-          }
+        <Section
+          title="Wallet client"
+          description="Interact through the connected wallet which also allows to write a contract."
         >
           {children}
-        </ProvideConfig>
-      </Section>
+        </Section>
+      </ProvideConfig>
     </Connected>
   )
 }

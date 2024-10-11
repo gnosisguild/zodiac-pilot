@@ -10,7 +10,7 @@ export const Checkbox = ({ children, ...props }: CheckboxProps) => {
   return (
     <div className="flex items-center gap-2">
       <input {...props} id={id} type="checkbox" />
-      <label htmlFor={id} className="text-xs font-semibold">
+      <label htmlFor={id} className="font-semibold">
         {children}
       </label>
     </div>

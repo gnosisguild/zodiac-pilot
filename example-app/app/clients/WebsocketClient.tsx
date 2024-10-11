@@ -6,18 +6,16 @@ import { Connected } from '../Connect'
 
 export const WebsocketClient = ({ children }: PropsWithChildren) => (
   <Connected>
-    <Section title="Websocket client">
-      <ProvideConfig
-        scopeKey="websocket"
-        client={({ chain }) =>
-          createPublicClient({
-            chain,
-            transport: webSocket(chain.rpcUrls.default.webSocket?.[0]),
-          })
-        }
-      >
-        {children}
-      </ProvideConfig>
-    </Section>
+    <ProvideConfig
+      scopeKey="websocket"
+      client={({ chain }) =>
+        createPublicClient({
+          chain,
+          transport: webSocket(chain.rpcUrls.default.webSocket?.[0]),
+        })
+      }
+    >
+      <Section title="Websocket client">{children}</Section>
+    </ProvideConfig>
   </Connected>
 )
