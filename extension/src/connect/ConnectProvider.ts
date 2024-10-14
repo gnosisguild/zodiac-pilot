@@ -44,51 +44,37 @@ export default class ConnectProvider
 
   #connect = () => {
     return new Promise<chrome.runtime.Port>((resolve) => {
-      chrome.tabs.query({ currentWindow: true }, async (tabs) => {
-        const trackedTabs = tabs.filter(
-          (tab) =>
-            tab.id &&
-            tab.url &&
-            !tab.url.startsWith('chrome:') &&
-            !tab.url.startsWith('about:')
-        )
-        // const activeTab = trackedTabs.find((tab) => tab.active)
-        // const otherTabs = trackedTabs.filter((tab) => tab !== activeTab)
-        // console.log({ trackedTabs, activeTab, otherTabs })
-
-        // Sequentially try to connect to each tab that potentially has a connect iframe
-        for (const tab of trackedTabs) {
-          console.log(tab, { ...tab })
-          try {
-            const port = await this.#connectToTab(tab.id!)
-            console.log('Connected to tab', tab.id)
-            port.onMessage.addListener(this.#handleEventMessage)
-            port.onDisconnect.addListener(() => {
-              this.initialized = false
-              console.log(
-                'Disconnected from connect iframe, reconnecting to a different tab...'
-              )
-              this.#connect()
-            })
-            resolve(port)
-            return
-          } catch (error) {
-            console.debug(
-              `could not connect to tab #${tab.id}, trying next tab...`,
-              error
-            )
-          }
+      chrome.tabs.onUpdated.addListener(async (tabId, info) => {
+        if (info.status !== 'complete') {
+          return
         }
 
-        if (trackedTabs.length === 0) {
-          // There's no open tab with a connect iframe
-          // TODO handle this by opening a new tab with a dummy page (could show some help text saying "at least one tab must be open")
-          throw new Error('No tab with a connect iframe available')
-        } else {
-          // retry after timeout to wait on connect content script to be injected into currently reloading tabs
-          window.setTimeout(() => {
-            resolve(this.#connect())
-          }, 100)
+        const tab = await chrome.tabs.get(tabId)
+
+        if (tab.id !== tabId || !isValidTab(tab)) {
+          return
+        }
+
+        try {
+          const port = await this.#connectToTab(tabId)
+
+          console.log('Connected to tab', tabId)
+
+          port.onMessage.addListener(this.#handleEventMessage)
+
+          port.onDisconnect.addListener(() => {
+            this.initialized = false
+
+            console.log(
+              'Disconnected from connect iframe, reconnecting to a different tab...'
+            )
+
+            this.#connect()
+          })
+
+          resolve(port)
+        } catch (error) {
+          console.debug(`could not connect to tab #${tabId}`, error)
         }
       })
     })
@@ -96,7 +82,7 @@ export default class ConnectProvider
 
   #connectToTab = (tabId: number) => {
     return new Promise<chrome.runtime.Port>((resolve, reject) => {
-      const potentialPort = chrome.tabs.connect(tabId, {
+      const port = chrome.tabs.connect(tabId, {
         name: 'connect',
       })
 
@@ -104,17 +90,21 @@ export default class ConnectProvider
       const handleDisconnect = () => {
         reject(new Error('No response from connect iframe'))
       }
-      potentialPort.onDisconnect.addListener(handleDisconnect)
+      port.onDisconnect.addListener(handleDisconnect)
 
       // if we receive the CONNECTED_WALLET_INITIALIZED message, we resolve the promise to this port
       const handleInitMessage = (message: Message) => {
-        if (message.type === CONNECTED_WALLET_INITIALIZED) {
-          potentialPort.onDisconnect.removeListener(handleDisconnect)
-          potentialPort.onMessage.removeListener(handleInitMessage)
-          resolve(potentialPort)
+        if (message.type !== CONNECTED_WALLET_INITIALIZED) {
+          return
         }
+
+        port.onDisconnect.removeListener(handleDisconnect)
+        port.onMessage.removeListener(handleInitMessage)
+
+        resolve(port)
       }
-      potentialPort.onMessage.addListener(handleInitMessage)
+
+      port.onMessage.addListener(handleInitMessage)
     })
   }
 
@@ -150,6 +140,7 @@ export default class ConnectProvider
     request: JsonRpcRequest
   ): Promise<Message> => {
     const port = await this.portPromise
+
     return new Promise((resolve) => {
       const handleResponse = (message: Message) => {
         if (
@@ -187,3 +178,9 @@ export default class ConnectProvider
     }
   }
 }
+
+const isValidTab = (tab: chrome.tabs.Tab) =>
+  tab.active &&
+  tab.url &&
+  !tab.url.startsWith('chrome:') &&
+  !tab.url.startsWith('about:')
