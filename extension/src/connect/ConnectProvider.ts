@@ -9,6 +9,7 @@ import {
   CONNECTED_WALLET_REQUEST,
   CONNECTED_WALLET_RESPONSE,
 } from './messages'
+import { invariant } from '@epic-web/invariant'
 
 interface JsonRpcRequest {
   method: string
@@ -29,147 +30,99 @@ export default class ConnectProvider
   extends EventEmitter
   implements Eip1193Provider
 {
-  private portPromise: Promise<chrome.runtime.Port>
+  private port: chrome.runtime.Port | null = null
 
-  private initialized = false
   private instanceId = instanceCounter++
   private messageCounter = 0
 
-  // private emittedEventIds = new Set<string>()
-
   constructor() {
     super()
-    this.portPromise = this.#connect()
-  }
 
-  #connect = () => {
-    return new Promise<chrome.runtime.Port>((resolve) => {
-      chrome.tabs.onUpdated.addListener(async (tabId, info) => {
-        if (info.status !== 'complete') {
-          return
-        }
+    chrome.tabs.onActivated.addListener(async (info) => {
+      const tab = await chrome.tabs.get(info.tabId)
 
-        const tab = await chrome.tabs.get(tabId)
+      void handleActiveTab(tab)
+    })
 
-        if (tab.id !== tabId || !isValidTab(tab)) {
-          return
-        }
+    chrome.tabs.getCurrent().then((tab) => {
+      if (tab == null) {
+        return
+      }
 
-        try {
-          const port = await this.#connectToTab(tabId)
-
-          console.log('Connected to tab', tabId)
-
-          port.onMessage.addListener(this.#handleEventMessage)
-
-          port.onDisconnect.addListener(() => {
-            this.initialized = false
-
-            console.log(
-              'Disconnected from connect iframe, reconnecting to a different tab...'
-            )
-
-            this.#connect()
-          })
-
-          resolve(port)
-        } catch (error) {
-          console.debug(`could not connect to tab #${tabId}`, error)
-        }
-      })
+      void handleActiveTab(tab)
     })
   }
 
-  #connectToTab = (tabId: number) => {
-    return new Promise<chrome.runtime.Port>((resolve, reject) => {
-      const port = chrome.tabs.connect(tabId, {
-        name: 'connect',
-      })
+  async setupPort(port: chrome.runtime.Port) {
+    port.onMessage.addListener(this.#handleEventMessage)
 
-      // if the port connection cannot be established, this will trigger a disconnect event
-      const handleDisconnect = () => {
-        reject(new Error('No response from connect iframe'))
+    this.port = port
+  }
+
+  waitForPort(maxWait: number = 1000, waited: number = 0) {
+    const waitTime = 10
+
+    if (waited > maxWait) {
+      return Promise.reject(`Port did not open in time. Waited ${maxWait}ms.`)
+    }
+
+    return new Promise<void>((resolve) => {
+      if (this.port != null) {
+        resolve()
+      } else {
+        sleep(waitTime)
+          .then(() => this.waitForPort(maxWait, waited + waitTime))
+          .then(resolve)
       }
-      port.onDisconnect.addListener(handleDisconnect)
-
-      // if we receive the CONNECTED_WALLET_INITIALIZED message, we resolve the promise to this port
-      const handleInitMessage = (message: Message) => {
-        if (message.type !== CONNECTED_WALLET_INITIALIZED) {
-          return
-        }
-
-        port.onDisconnect.removeListener(handleDisconnect)
-        port.onMessage.removeListener(handleInitMessage)
-
-        resolve(port)
-      }
-
-      port.onMessage.addListener(handleInitMessage)
     })
   }
 
-  isInitialized = (): boolean => {
-    return this.initialized
+  getPort() {
+    invariant(this.port != null, 'Port has not been initialized')
+
+    return this.port
   }
 
-  request = async (request: JsonRpcRequest) => {
+  request = async (request: JsonRpcRequest): Promise<any> => {
     const requestId = `${this.instanceId}:${this.messageCounter}`
     this.messageCounter++
 
-    const responseMessage: Message = await this.#sendRequestToConnectIframe(
-      requestId,
-      request
-    )
+    await this.waitForPort()
 
-    if (responseMessage.type === CONNECTED_WALLET_RESPONSE) {
-      return responseMessage.response
-    } else if (responseMessage.type === CONNECTED_WALLET_ERROR) {
-      const error = new InjectedWalletError(
-        responseMessage.error.message,
-        responseMessage.error.code
+    try {
+      const responseMessage = await sendRequestToConnectIframe(
+        this.getPort(),
+        requestId,
+        request
       )
-      throw error
-    } else {
+
+      if (responseMessage.type === CONNECTED_WALLET_RESPONSE) {
+        return responseMessage.response
+      }
+
+      if (responseMessage.type === CONNECTED_WALLET_ERROR) {
+        const error = new InjectedWalletError(
+          responseMessage.error.message,
+          responseMessage.error.code
+        )
+
+        throw error
+      }
+
       console.error('Unexpected response', responseMessage)
       throw new Error('Unexpected response')
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Attempting to use a disconnected port object'
+      ) {
+        // the port was closed in the meantime, we reconnect and resend...
+
+        return this.request(request)
+      }
+
+      throw error
     }
-  }
-
-  #sendRequestToConnectIframe = async (
-    requestId: string,
-    request: JsonRpcRequest
-  ): Promise<Message> => {
-    const port = await this.portPromise
-
-    return new Promise((resolve) => {
-      const handleResponse = (message: Message) => {
-        if (
-          message.type !== CONNECTED_WALLET_RESPONSE &&
-          message.type !== CONNECTED_WALLET_ERROR
-        ) {
-          return
-        }
-        if (message.requestId !== requestId) return
-        port.onMessage.removeListener(handleResponse)
-        resolve(message)
-      }
-      port.onMessage.addListener(handleResponse)
-      try {
-        port.postMessage({
-          type: CONNECTED_WALLET_REQUEST,
-          requestId,
-          request,
-        })
-      } catch (error: any) {
-        if (error.message === 'Attempting to use a disconnected port object') {
-          // the port was closed in the meantime, we reconnect and resend...
-          this.portPromise = this.#connect()
-          this.#sendRequestToConnectIframe(requestId, request)
-        } else {
-          console.error('Error sending message to connect iframe', error)
-        }
-      }
-    })
   }
 
   #handleEventMessage = (message: Message) => {
@@ -179,8 +132,92 @@ export default class ConnectProvider
   }
 }
 
-const isValidTab = (tab: chrome.tabs.Tab) =>
-  tab.active &&
-  tab.url &&
-  !tab.url.startsWith('chrome:') &&
-  !tab.url.startsWith('about:')
+type TabInfo = {
+  status?: string
+  url?: string
+}
+
+const isValidTab = (info: TabInfo) =>
+  info.url != null &&
+  !info.url.startsWith('chrome:') &&
+  !info.url.startsWith('about:')
+
+const openPort = (tabId: number, info: TabInfo) => {
+  if (!isValidTab(info)) {
+    return Promise.resolve(null)
+  }
+
+  return new Promise<chrome.runtime.Port>((resolve, reject) => {
+    const port = chrome.tabs.connect(tabId, {
+      name: 'connect',
+    })
+
+    // if the port connection cannot be established, this will trigger a disconnect event
+    const handleDisconnect = () => {
+      reject(new Error('No response from connect iframe'))
+    }
+    port.onDisconnect.addListener(handleDisconnect)
+
+    // if we receive the CONNECTED_WALLET_INITIALIZED message, we resolve the promise to this port
+    const handleInitMessage = (message: Message) => {
+      if (message.type !== CONNECTED_WALLET_INITIALIZED) {
+        return
+      }
+
+      port.onDisconnect.removeListener(handleDisconnect)
+      port.onMessage.removeListener(handleInitMessage)
+
+      resolve(port)
+    }
+
+    port.onMessage.addListener(handleInitMessage)
+  })
+}
+
+const sendRequestToConnectIframe = async (
+  port: chrome.runtime.Port,
+  requestId: string,
+  request: JsonRpcRequest
+): Promise<Message> =>
+  new Promise((resolve) => {
+    const handleResponse = (message: Message) => {
+      if (
+        message.type !== CONNECTED_WALLET_RESPONSE &&
+        message.type !== CONNECTED_WALLET_ERROR
+      ) {
+        return
+      }
+
+      if (message.requestId !== requestId) {
+        return
+      }
+
+      port.onMessage.removeListener(handleResponse)
+
+      resolve(message)
+    }
+
+    port.onMessage.addListener(handleResponse)
+
+    port.postMessage({
+      type: CONNECTED_WALLET_REQUEST,
+      requestId,
+      request,
+    })
+  })
+
+const handleActiveTab = async (tab: chrome.tabs.Tab) =>
+  new Promise((resolve) => {
+    if (tab.id != null && tab.status === 'complete') {
+      resolve(openPort(tab.id, tab))
+    } else {
+      chrome.tabs.onUpdated.addListener(async (tabId, info) => {
+        if (tab.id === tabId && info.status === 'complete') {
+          resolve(openPort(tabId, info))
+        }
+      })
+    }
+  })
+
+const sleep = (time: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, time))
