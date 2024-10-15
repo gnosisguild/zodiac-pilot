@@ -41,15 +41,27 @@ export default class ConnectProvider
     chrome.tabs.onActivated.addListener(async (info) => {
       const tab = await chrome.tabs.get(info.tabId)
 
-      void handleActiveTab(tab)
+      console.debug(`Tab (id: "${tab.id}", url: "${tab.url}") became active.`)
+
+      const port = await handleActiveTab(tab)
+
+      if (port != null) {
+        this.setupPort(port)
+      } else {
+        this.tearDownPort()
+      }
     })
 
-    chrome.tabs.getCurrent().then((tab) => {
+    chrome.tabs.getCurrent().then(async (tab) => {
       if (tab == null) {
         return
       }
 
-      void handleActiveTab(tab)
+      const port = await handleActiveTab(tab)
+
+      if (port != null) {
+        this.setupPort(port)
+      }
     })
   }
 
@@ -57,6 +69,18 @@ export default class ConnectProvider
     port.onMessage.addListener(this.#handleEventMessage)
 
     this.port = port
+
+    this.emit('readyChanged', true)
+  }
+
+  tearDownPort() {
+    this.port = null
+
+    this.emit('readyChanged', false)
+  }
+
+  ready() {
+    return this.port != null
   }
 
   waitForPort(maxWait: number = 1000, waited: number = 0) {
@@ -144,6 +168,10 @@ const isValidTab = (info: TabInfo) =>
 
 const openPort = (tabId: number, info: TabInfo) => {
   if (!isValidTab(info)) {
+    console.debug(
+      `Tab (id: "${tabId}", url: "${info.url}") does not meet connect criteria.`
+    )
+
     return Promise.resolve(null)
   }
 
@@ -166,6 +194,8 @@ const openPort = (tabId: number, info: TabInfo) => {
 
       port.onDisconnect.removeListener(handleDisconnect)
       port.onMessage.removeListener(handleInitMessage)
+
+      console.debug(`Tab (id: "${tabId}") connected.`)
 
       resolve(port)
     }
@@ -207,12 +237,22 @@ const sendRequestToConnectIframe = async (
   })
 
 const handleActiveTab = async (tab: chrome.tabs.Tab) =>
-  new Promise((resolve) => {
+  new Promise<chrome.runtime.Port | null>((resolve) => {
     if (tab.id != null && tab.status === 'complete') {
+      console.debug(
+        `Tab (id: "${tab.id}", url: "${tab.url}") was already loaded. Opening port.`
+      )
+
       resolve(openPort(tab.id, tab))
     } else {
+      console.debug(`Tab (id: "${tab.id}", url: "${tab.url}") NOT ready.`)
+
       chrome.tabs.onUpdated.addListener(async (tabId, info) => {
         if (tab.id === tabId && info.status === 'complete') {
+          console.debug(
+            `Tab (id: "${tab.id}", url: "${tab.url}") became ready. Opening port.`
+          )
+
           resolve(openPort(tabId, info))
         }
       })

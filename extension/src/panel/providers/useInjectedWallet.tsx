@@ -31,8 +31,34 @@ const connectProvider = new ConnectProvider()
 export const ProvideInjectedWallet: React.FC<{
   children: ReactNode
 }> = ({ children }) => {
+  const { provider, connect, accounts, chainId, ready } = useConnectProvider()
+
+  const packed = useMemo(
+    () => ({
+      provider,
+      connect,
+      switchChain,
+      accounts,
+      chainId,
+    }),
+    [provider, connect, accounts, chainId]
+  )
+
+  if (ready) {
+    return (
+      <InjectedWalletContext.Provider value={packed}>
+        {children}
+      </InjectedWalletContext.Provider>
+    )
+  }
+
+  return null
+}
+
+const useConnectProvider = () => {
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     let canceled = false
@@ -45,13 +71,12 @@ export const ProvideInjectedWallet: React.FC<{
       }
 
     const handleAccountsChanged = ifNotCanceled((accounts: string[]) => {
-      console.log(`InjectedWallet accounts changed to ${accounts}`)
       setAccounts(accounts)
     })
 
     const handleChainChanged = ifNotCanceled((chainIdHex: string) => {
       const chainId = parseInt(chainIdHex.slice(2), 16)
-      console.log(`InjectedWallet network changed to ${chainId}`)
+
       setChainId(chainId)
     })
 
@@ -64,13 +89,19 @@ export const ProvideInjectedWallet: React.FC<{
     connectProvider.on('accountsChanged', handleAccountsChanged)
     connectProvider.on('chainChanged', handleChainChanged)
     connectProvider.on('disconnect', handleDisconnect)
+    connectProvider.on('readyChanged', ifNotCanceled(setReady))
 
     return () => {
-      if (!connectProvider) return
+      if (!connectProvider) {
+        return
+      }
+
       canceled = true
+
       connectProvider.removeListener('accountsChanged', handleAccountsChanged)
       connectProvider.removeListener('chainChanged', handleChainChanged)
       connectProvider.removeListener('disconnect', handleDisconnect)
+      connectProvider.removeListener('readyChanged', setReady)
     }
   }, [])
 
@@ -82,24 +113,14 @@ export const ProvideInjectedWallet: React.FC<{
     return { accounts, chainId }
   }, [])
 
-  const packed = useMemo(
-    () => ({
-      provider: connectProvider,
-      connect,
-      switchChain,
-      accounts,
-      chainId,
-    }),
-    [accounts, connect, chainId]
-  )
-
-  console.log('InjectedWalletProvider PACKED', packed)
-
-  return (
-    <InjectedWalletContext.Provider value={packed}>
-      {children}
-    </InjectedWalletContext.Provider>
-  )
+  return {
+    provider: connectProvider,
+    ready,
+    connect,
+    switchChain,
+    accounts,
+    chainId,
+  }
 }
 
 const useInjectedWallet = () => {
@@ -132,13 +153,11 @@ const memoWhilePending = <T extends (...args: any) => Promise<any>>(
   }) as T
 
 const connectInjectedWallet = memoWhilePending(async () => {
-  console.log('connecting...............')
   const browserProvider = new BrowserProvider(connectProvider)
 
   const accountsPromise = browserProvider
     .send('eth_requestAccounts', [])
     .catch((err: any) => {
-      console.log('error eth_requestAccounts', err)
       if ((err as InjectedWalletError).code === -32002) {
         return new Promise((resolve: (value: string[]) => void) => {
           const toastId = toast.warn(
@@ -164,8 +183,6 @@ const connectInjectedWallet = memoWhilePending(async () => {
     accountsPromise,
     browserProvider.getNetwork().then((network) => network.chainId),
   ])
-
-  console.log('connected!!!!!!!!!!!!!', { accounts, chainId })
 
   return { accounts, chainId }
 })
