@@ -27,6 +27,7 @@ const RAW_RUNTIME_STATE =
       [null, {\
         "packageLocation": "./",\
         "packageDependencies": [\
+          ["@epic-web/invariant", "npm:1.0.0"],\
           ["@eslint/compat", "npm:1.1.1"],\
           ["@eslint/eslintrc", "npm:3.1.0"],\
           ["@eslint/js", "npm:9.9.0"],\
@@ -849,6 +850,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./.yarn/cache/@emotion-weak-memoize-npm-0.4.0-76aafb2333-db5da0e89b.zip/node_modules/@emotion/weak-memoize/",\
         "packageDependencies": [\
           ["@emotion/weak-memoize", "npm:0.4.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["@epic-web/invariant", [\
+      ["npm:1.0.0", {\
+        "packageLocation": "./.yarn/cache/@epic-web-invariant-npm-1.0.0-a4ac7c9c5e-28b36a7447.zip/node_modules/@epic-web/invariant/",\
+        "packageDependencies": [\
+          ["@epic-web/invariant", "npm:1.0.0"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -12461,6 +12471,7 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "./",\
         "packageDependencies": [\
           ["zodiac-pilot", "workspace:."],\
+          ["@epic-web/invariant", "npm:1.0.0"],\
           ["@eslint/compat", "npm:1.1.1"],\
           ["@eslint/eslintrc", "npm:3.1.0"],\
           ["@eslint/js", "npm:9.9.0"],\
