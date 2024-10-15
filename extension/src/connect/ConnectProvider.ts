@@ -165,6 +165,7 @@ export default class ConnectProvider
   }
 
   async request(request: JsonRpcRequest): Promise<any> {
+    const requestId = `${this.instanceId}:${this.messageCounter}`
     this.messageCounter++
 
     await this.waitForPort()
@@ -172,7 +173,7 @@ export default class ConnectProvider
     try {
       const responseMessage = await sendRequestToConnectIframe({
         port: this.getPort(),
-        requestId: `${this.instanceId}:${this.messageCounter}`,
+        requestId,
         request,
       })
 
