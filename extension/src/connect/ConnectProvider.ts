@@ -66,6 +66,8 @@ export default class ConnectProvider
   }
 
   async setupPort(port: chrome.runtime.Port) {
+    this.tearDownPort()
+
     port.onMessage.addListener(this.#handleEventMessage)
 
     this.port = port
@@ -74,13 +76,16 @@ export default class ConnectProvider
   }
 
   tearDownPort() {
+    if (this.port == null) {
+      return
+    }
+
+    console.debug('Disconnecting current port')
+
+    this.port.disconnect()
     this.port = null
 
     this.emit('readyChanged', false)
-  }
-
-  ready() {
-    return this.port != null
   }
 
   waitForPort(maxWait: number = 1000, waited: number = 0) {
@@ -162,9 +167,10 @@ type TabInfo = {
 }
 
 const isValidTab = (info: TabInfo) =>
-  info.url != null &&
-  !info.url.startsWith('chrome:') &&
-  !info.url.startsWith('about:')
+  info.url != null && info.url !== '' && isValidProtocol(info.url)
+
+const isValidProtocol = (url: string) =>
+  ['chrome:', 'about:'].every((protocol) => !url.startsWith(protocol))
 
 const openPort = (tabId: number, info: TabInfo) => {
   if (!isValidTab(info)) {
