@@ -72,9 +72,17 @@ export default class ConnectProvider
       const url = tabInfo.get(tabId)
 
       if (url === currentTab.url) {
-        console.debug(
-          `Tab (id: "${tabId}", url: "${currentTab.url}") has no changes that require a new port.`
-        )
+        if (isValidTab(url)) {
+          console.debug(
+            `Tab (id: "${tabId}", url: "${currentTab.url}") has no changes that require a new port.`
+          )
+        } else {
+          console.debug(
+            `Tab (id: "${tabId}", url: "${currentTab.url}") cannot be used.`
+          )
+
+          this.tearDownPort()
+        }
 
         return
       }
@@ -107,6 +115,8 @@ export default class ConnectProvider
 
   async setupPort(port: chrome.runtime.Port) {
     this.tearDownPort()
+
+    console.debug('Connecting new port.')
 
     port.onMessage.addListener(this.#handleEventMessage)
 
@@ -236,7 +246,7 @@ const createPort = (tabId: number, url: string | undefined) => {
       port.onDisconnect.removeListener(handleDisconnect)
       port.onMessage.removeListener(handleInitMessage)
 
-      console.debug(`Tab (id: "${tabId}") connected.`)
+      console.debug(`Tab (id: "${tabId}") port created.`)
 
       resolve(port)
     }
