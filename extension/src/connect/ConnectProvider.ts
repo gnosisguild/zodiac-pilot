@@ -162,18 +162,17 @@ export default class ConnectProvider
     return this.port
   }
 
-  request = async (request: JsonRpcRequest): Promise<any> => {
-    const requestId = `${this.instanceId}:${this.messageCounter}`
+  async request(request: JsonRpcRequest): Promise<any> {
     this.messageCounter++
 
     await this.waitForPort()
 
     try {
-      const responseMessage = await sendRequestToConnectIframe(
-        this.getPort(),
-        requestId,
-        request
-      )
+      const responseMessage = await sendRequestToConnectIframe({
+        port: this.getPort(),
+        requestId: `${this.instanceId}:${this.messageCounter}`,
+        request,
+      })
 
       if (responseMessage.type === CONNECTED_WALLET_RESPONSE) {
         return responseMessage.response
@@ -189,7 +188,8 @@ export default class ConnectProvider
       }
 
       console.error('Unexpected response', responseMessage)
-      throw new Error('Unexpected response')
+
+      throw new Error('Unexpected response', { cause: responseMessage })
     } catch (error) {
       if (
         error instanceof Error &&
@@ -204,7 +204,7 @@ export default class ConnectProvider
     }
   }
 
-  #handleEventMessage = (message: Message) => {
+  #handleEventMessage(message: Message) {
     if (message.type === CONNECTED_WALLET_EVENT) {
       this.emit(message.eventName, message.eventData)
     }
@@ -255,11 +255,17 @@ const createPort = (tabId: number, url: string | undefined) => {
   })
 }
 
-const sendRequestToConnectIframe = async (
-  port: chrome.runtime.Port,
-  requestId: string,
+type SendRequestToConnectIFrameOptions = {
+  port: chrome.runtime.Port
+  requestId: string
   request: JsonRpcRequest
-): Promise<Message> =>
+}
+
+const sendRequestToConnectIframe = async ({
+  port,
+  request,
+  requestId,
+}: SendRequestToConnectIFrameOptions): Promise<Message> =>
   new Promise((resolve) => {
     const handleResponse = (message: Message) => {
       if (
