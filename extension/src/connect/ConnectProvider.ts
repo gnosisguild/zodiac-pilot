@@ -40,17 +40,17 @@ export default class ConnectProvider
   constructor() {
     super()
 
-    chrome.tabs.onActivated.addListener(async (info) => {
-      const tab = await chrome.tabs.get(info.tabId)
+    chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+      const tab = await chrome.tabs.get(tabId)
 
-      console.debug(`Tab (id: "${tab.id}", url: "${tab.url}") became active.`)
+      console.debug(`Tab (id: "${tabId}", url: "${tab.url}") became active.`)
 
       const port = await handleActiveTab(tab)
 
       if (port != null) {
-        this.setupPort(port)
+        this.setupPort(tabId, port)
       } else {
-        this.tearDownPort()
+        this.tearDownPort(tabId)
       }
     })
 
@@ -81,7 +81,7 @@ export default class ConnectProvider
             `Tab (id: "${tabId}", url: "${currentTab.url}") cannot be used.`
           )
 
-          this.tearDownPort()
+          this.tearDownPort(tabId)
         }
 
         return
@@ -96,25 +96,25 @@ export default class ConnectProvider
       const port = await handleActiveTab(currentTab)
 
       if (port != null) {
-        this.setupPort(port)
+        this.setupPort(tabId, port)
       }
     })
 
     getCurrentTab().then(async (tab) => {
-      if (tab == null) {
+      if (tab == null || tab.id == null) {
         return
       }
 
       const port = await handleActiveTab(tab)
 
       if (port != null) {
-        this.setupPort(port)
+        this.setupPort(tab.id, port)
       }
     })
   }
 
-  async setupPort(port: chrome.runtime.Port) {
-    this.tearDownPort()
+  async setupPort(tabId: number, port: chrome.runtime.Port) {
+    this.tearDownPort(tabId)
 
     console.debug('Connecting new port.')
 
@@ -125,7 +125,9 @@ export default class ConnectProvider
     this.emit('readyChanged', true)
   }
 
-  tearDownPort() {
+  tearDownPort(tabId: number) {
+    tabInfo.delete(tabId)
+
     if (this.port == null) {
       return
     }
@@ -311,9 +313,9 @@ const handleActiveTab = async (tab: chrome.tabs.Tab) => {
         const port = await createPort(tabId, url)
 
         if (port != null) {
-          console.debug(`Port to Tab (id: "${tab.id}", url: "${url}") created.`)
-
           chrome.tabs.onUpdated.removeListener(handleTabWhenReady)
+
+          console.debug(`Port to Tab (id: "${tab.id}", url: "${url}") created.`)
 
           resolve(port)
         }
@@ -333,7 +335,7 @@ const handleActiveTab = async (tab: chrome.tabs.Tab) => {
 
           resolve(port)
         } else {
-          chrome.tabs.onUpdated.addListener(handleTabWhenReady)
+          resolve(null)
         }
       })
     } else {
