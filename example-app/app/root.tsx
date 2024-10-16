@@ -1,5 +1,5 @@
 import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
-import { Checkbox, Section, Value } from '@/components'
+import { Button, Checkbox, Section, Value } from '@/components'
 import { getWagmiConfig, useWagmiConfig } from '@/config'
 import { Balance, Transfer } from '@/transfer'
 import { invariantResponse } from '@epic-web/invariant'
@@ -88,6 +88,14 @@ export default function App() {
                 </ConnectKitProvider>
               </WagmiProvider>
             </QueryClientProvider>
+
+            <Button
+              onClick={() => {
+                chrome.runtime.sendMessage({ type: 'open-extension-panel' })
+              }}
+            >
+              Open extension
+            </Button>
           </div>
         </div>
 

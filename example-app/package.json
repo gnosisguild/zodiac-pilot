@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
+    "@types/chrome": "^0.0.278",
     "@types/react": "^18.3.10",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
