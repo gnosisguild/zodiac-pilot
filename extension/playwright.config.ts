@@ -29,6 +29,9 @@ export default defineConfig({
     baseURL:
       process.env.PLAYWRIGHT_TEST_BASE_URL ||
       'https://zodiac-pilot-example-app.vercel.app',
+    extraHTTPHeaders: {
+      'x-vercel-protection-bypass': process.env.VERCEL_PROTECTION_BYPASS || '',
+    },
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
