@@ -33,6 +33,7 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.9.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@noble/hashes", "npm:1.4.0"],\
+          ["@playwright/test", "npm:1.48.1"],\
           ["@safe-global/api-kit", "npm:2.4.4"],\
           ["@safe-global/protocol-kit", "npm:4.0.4"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
@@ -45,6 +46,7 @@ const RAW_RUNTIME_STATE =
           ["@types/chrome", "npm:0.0.268"],\
           ["@types/eslint__js", "npm:8.42.3"],\
           ["@types/events", "npm:3.0.3"],\
+          ["@types/node", "npm:22.7.5"],\
           ["@types/react", "npm:18.3.3"],\
           ["@types/react-dom", "npm:18.3.0"],\
           ["@types/react-modal", "npm:3.16.3"],\
@@ -2113,6 +2115,16 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@playwright/test", [\
+      ["npm:1.48.1", {\
+        "packageLocation": "./.yarn/cache/@playwright-test-npm-1.48.1-5ad111e08c-26fe791868.zip/node_modules/@playwright/test/",\
+        "packageDependencies": [\
+          ["@playwright/test", "npm:1.48.1"],\
+          ["playwright", "npm:1.48.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@remix-run/router", [\
       ["npm:1.19.1", {\
         "packageLocation": "./.yarn/cache/@remix-run-router-npm-1.19.1-61ed432c7e-2800c2f656.zip/node_modules/@remix-run/router/",\
@@ -2775,6 +2787,14 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@types/node", "npm:22.3.0"],\
           ["undici-types", "npm:6.18.2"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
+      ["npm:22.7.5", {\
+        "packageLocation": "./.yarn/cache/@types-node-npm-22.7.5-0428b60a8c-e8ba102f8c.zip/node_modules/@types/node/",\
+        "packageDependencies": [\
+          ["@types/node", "npm:22.7.5"],\
+          ["undici-types", "npm:6.19.8"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -6318,6 +6338,14 @@ const RAW_RUNTIME_STATE =
       }]\
     ]],\
     ["fsevents", [\
+      ["patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1", {\
+        "packageLocation": "./.yarn/unplugged/fsevents-patch-19706e7e35/node_modules/fsevents/",\
+        "packageDependencies": [\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["node-gyp", "npm:10.2.0"]\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1", {\
         "packageLocation": "./.yarn/unplugged/fsevents-patch-6b67494872/node_modules/fsevents/",\
         "packageDependencies": [\
@@ -9148,6 +9176,26 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["playwright", [\
+      ["npm:1.48.1", {\
+        "packageLocation": "./.yarn/cache/playwright-npm-1.48.1-9015558d40-39e231af3d.zip/node_modules/playwright/",\
+        "packageDependencies": [\
+          ["playwright", "npm:1.48.1"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"],\
+          ["playwright-core", "npm:1.48.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["playwright-core", [\
+      ["npm:1.48.1", {\
+        "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.48.1-219ce4bfd1/node_modules/playwright-core/",\
+        "packageDependencies": [\
+          ["playwright-core", "npm:1.48.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["pngjs", [\
       ["npm:5.0.0", {\
         "packageLocation": "./.yarn/cache/pngjs-npm-5.0.0-e8ba79f838-3457816447.zip/node_modules/pngjs/",\
@@ -11365,6 +11413,13 @@ const RAW_RUNTIME_STATE =
           ["undici-types", "npm:6.18.2"]\
         ],\
         "linkType": "HARD"\
+      }],\
+      ["npm:6.19.8", {\
+        "packageLocation": "./.yarn/cache/undici-types-npm-6.19.8-9f12285b7a-cf0b48ed4f.zip/node_modules/undici-types/",\
+        "packageDependencies": [\
+          ["undici-types", "npm:6.19.8"]\
+        ],\
+        "linkType": "HARD"\
       }]\
     ]],\
     ["unenv", [\
@@ -11699,6 +11754,49 @@ const RAW_RUNTIME_STATE =
         ],\
         "linkType": "SOFT"\
       }],\
+      ["virtual:b245c19738b7c4eae5e13f992563c4bfec9ac0e6e66e38bb3ec610d9fe2fbcd1044bc2916d13332b94ed2b86e0e1918a31567cebb1ba01df3cb0ba3e86eaae8c#npm:5.4.0", {\
+        "packageLocation": "./.yarn/__virtual__/vite-virtual-c4e5a5e23e/0/cache/vite-npm-5.4.0-6fbda5653e-5a98b1d30c.zip/node_modules/vite/",\
+        "packageDependencies": [\
+          ["vite", "virtual:b245c19738b7c4eae5e13f992563c4bfec9ac0e6e66e38bb3ec610d9fe2fbcd1044bc2916d13332b94ed2b86e0e1918a31567cebb1ba01df3cb0ba3e86eaae8c#npm:5.4.0"],\
+          ["@types/less", null],\
+          ["@types/lightningcss", null],\
+          ["@types/node", "npm:22.7.5"],\
+          ["@types/sass", null],\
+          ["@types/sass-embedded", null],\
+          ["@types/stylus", null],\
+          ["@types/sugarss", null],\
+          ["@types/terser", null],\
+          ["esbuild", "npm:0.21.5"],\
+          ["fsevents", "patch:fsevents@npm%3A2.3.3#optional!builtin<compat/fsevents>::version=2.3.3&hash=df0bf1"],\
+          ["less", null],\
+          ["lightningcss", null],\
+          ["postcss", "npm:8.4.41"],\
+          ["rollup", "npm:4.20.0"],\
+          ["sass", null],\
+          ["sass-embedded", null],\
+          ["stylus", null],\
+          ["sugarss", null],\
+          ["terser", null]\
+        ],\
+        "packagePeers": [\
+          "@types/less",\
+          "@types/lightningcss",\
+          "@types/node",\
+          "@types/sass-embedded",\
+          "@types/sass",\
+          "@types/stylus",\
+          "@types/sugarss",\
+          "@types/terser",\
+          "less",\
+          "lightningcss",\
+          "sass-embedded",\
+          "sass",\
+          "stylus",\
+          "sugarss",\
+          "terser"\
+        ],\
+        "linkType": "HARD"\
+      }],\
       ["virtual:ec0bec3024247e69d5bba029f4048d6a079e4c027a7bf9456d53326db601f5e87f3a0f0957dfde9beb9985b0c496d1d5bb94c5f61353cfa81ca41e43ea981e06#npm:5.4.0", {\
         "packageLocation": "./.yarn/__virtual__/vite-virtual-9dbb4c14f2/0/cache/vite-npm-5.4.0-6fbda5653e-5a98b1d30c.zip/node_modules/vite/",\
         "packageDependencies": [\
@@ -11774,7 +11872,7 @@ const RAW_RUNTIME_STATE =
           ["@types/edge-runtime__vm", null],\
           ["@types/happy-dom", null],\
           ["@types/jsdom", null],\
-          ["@types/node", null],\
+          ["@types/node", "npm:22.7.5"],\
           ["@types/vitest__browser", null],\
           ["@types/vitest__ui", null],\
           ["@vitest/browser", null],\
@@ -11796,7 +11894,7 @@ const RAW_RUNTIME_STATE =
           ["tinybench", "npm:2.9.0"],\
           ["tinypool", "npm:1.0.0"],\
           ["tinyrainbow", "npm:1.2.0"],\
-          ["vite", "virtual:ec0bec3024247e69d5bba029f4048d6a079e4c027a7bf9456d53326db601f5e87f3a0f0957dfde9beb9985b0c496d1d5bb94c5f61353cfa81ca41e43ea981e06#npm:5.4.0"],\
+          ["vite", "virtual:b245c19738b7c4eae5e13f992563c4bfec9ac0e6e66e38bb3ec610d9fe2fbcd1044bc2916d13332b94ed2b86e0e1918a31567cebb1ba01df3cb0ba3e86eaae8c#npm:5.4.0"],\
           ["vite-node", "npm:2.0.5"],\
           ["why-is-node-running", "npm:2.3.0"]\
         ],\
@@ -12508,6 +12606,7 @@ const RAW_RUNTIME_STATE =
           ["@eslint/js", "npm:9.9.0"],\
           ["@gnosis.pm/zodiac", "npm:4.0.3"],\
           ["@noble/hashes", "npm:1.4.0"],\
+          ["@playwright/test", "npm:1.48.1"],\
           ["@safe-global/api-kit", "npm:2.4.4"],\
           ["@safe-global/protocol-kit", "npm:4.0.4"],\
           ["@safe-global/safe-apps-sdk", "npm:9.1.0"],\
@@ -12520,6 +12619,7 @@ const RAW_RUNTIME_STATE =
           ["@types/chrome", "npm:0.0.268"],\
           ["@types/eslint__js", "npm:8.42.3"],\
           ["@types/events", "npm:3.0.3"],\
+          ["@types/node", "npm:22.7.5"],\
           ["@types/react", "npm:18.3.3"],\
           ["@types/react-dom", "npm:18.3.0"],\
           ["@types/react-modal", "npm:3.16.3"],\
