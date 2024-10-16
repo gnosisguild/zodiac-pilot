@@ -238,15 +238,6 @@ export const OPTIMISM_CONNEXT_BRIDGE: BridgeData = {
   tokenArgument: 2,
 };
 
-export const OPTIMISM_OPTIMISM_BRIDGE: BridgeData = {
-  address: '0x4200000000000000000000000000000000000010',
-  interface: new Interface([
-    'function withdraw(address _l2Token, uint256 _amount, uint32 _minGasLimit, bytes _extraData)',
-    'function withdrawTo(address _l2Token, address _to, uint256 _amount, uint32 _minGasLimit, bytes _extraData)'
-  ]),
-  token: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-};
-
 export const OPTIMISM_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   address: '0x2B4069517957735bE00ceE0fadAE88a26365528f',
   interface: new Interface([
@@ -301,7 +292,6 @@ const OETH_BRIDGES: BridgeData[] = [
     OPTIMISM_CIRCLE_TOKEN_MESSENGER,
     OPTIMISM_CONNEXT_BRIDGE,
     OPTIMISM_DAI_TOKEN_BRIDGE,
-    OPTIMISM_OPTIMISM_BRIDGE,
     OPTIMISM_L2_HOP_CCTP,
     OPTIMISM_HOP_DAI_WRAPPER
 ]
