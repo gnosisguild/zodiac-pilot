@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
 import { ZeroAddress } from 'ethers'
 import React from 'react'
@@ -72,8 +73,6 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       route.initiator,
       chainId
     )
-
-  console.log({ connected, pilotAddress, route, chainId })
 
   // good to go
   if (connected && pilotAddress) {
@@ -185,10 +184,13 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
     <Flex gap={2}>
       <Button
         className={classes.walletButton}
+        disabled={walletConnect == null}
         onClick={async () => {
-          if (!walletConnect) {
-            throw new Error('walletConnect provider is not available')
-          }
+          invariant(
+            walletConnect != null,
+            'walletConnect provider is not available'
+          )
+
           const { chainId, accounts } = await walletConnect.connect()
           onConnect({
             providerType: ProviderType.WalletConnect,
@@ -203,6 +205,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       {injectedWallet.provider && (
         <Button
           className={classes.walletButton}
+          disabled={!injectedWallet.connected}
           onClick={async () => {
             const { chainId, accounts } = await injectedWallet.connect()
             onConnect({
