@@ -89,13 +89,7 @@ export default function App() {
               </WagmiProvider>
             </QueryClientProvider>
 
-            <Button
-              onClick={() => {
-                chrome.runtime.sendMessage({ type: 'open-extension-panel' })
-              }}
-            >
-              Open extension
-            </Button>
+            <Button id="open-panel-button">Open extension</Button>
           </div>
         </div>
 

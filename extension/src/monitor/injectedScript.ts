@@ -50,4 +50,18 @@ window.addEventListener('message', (event: MessageEvent) => {
   }
 })
 
+const handleLoad = () => {
+  window.removeEventListener('load', handleLoad)
+
+  const button = document.getElementById('open-panel-button')
+
+  button.addEventListener('click', function () {
+    chrome.runtime.sendMessage('nablbkjkkphmokibliebnendfpgaokpj', {
+      type: 'open_side_panel',
+    })
+  })
+}
+
+window.addEventListener('load', handleLoad)
+
 export {}
