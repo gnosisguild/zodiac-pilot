@@ -1,12 +1,10 @@
 import React from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
-
 import { Flex, Spinner, Tag } from '../../components'
-
-import classes from './style.module.css'
+import { useProvider } from '../providers/ProvideProvider'
 import { TransactionState } from '../state'
 import { ExecutionStatus } from '../state/reducer'
-import { useProvider } from '../providers/ProvideProvider'
+import classes from './style.module.css'
 
 const SimulationStatus: React.FC<{
   transactionState: TransactionState

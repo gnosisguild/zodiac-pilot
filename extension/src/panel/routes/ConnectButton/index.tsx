@@ -1,17 +1,16 @@
+import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
+import { ZeroAddress } from 'ethers'
 import React from 'react'
 import { RiAlertLine } from 'react-icons/ri'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
-import { ZeroAddress } from 'ethers'
-
+import { CHAIN_NAME } from '../../../chains'
 import { Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
-import { CHAIN_NAME } from '../../../chains'
-import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { ProviderType, Route } from '../../../types'
+import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { validateAddress } from '../../utils'
-import { isConnectedTo, useRoute } from '../routeHooks'
-
+import { isConnectedTo } from '../routeHooks'
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
@@ -74,8 +73,6 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       route.initiator,
       chainId
     )
-
-  console.log({ connected, pilotAddress, route, chainId })
 
   // good to go
   if (connected && pilotAddress) {
@@ -187,10 +184,13 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
     <Flex gap={2}>
       <Button
         className={classes.walletButton}
+        disabled={walletConnect == null}
         onClick={async () => {
-          if (!walletConnect) {
-            throw new Error('walletConnect provider is not available')
-          }
+          invariant(
+            walletConnect != null,
+            'walletConnect provider is not available'
+          )
+
           const { chainId, accounts } = await walletConnect.connect()
           onConnect({
             providerType: ProviderType.WalletConnect,
@@ -205,6 +205,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       {injectedWallet.provider && (
         <Button
           className={classes.walletButton}
+          disabled={!injectedWallet.connected}
           onClick={async () => {
             const { chainId, accounts } = await injectedWallet.connect()
             onConnect({

@@ -8027,6 +8027,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-organize-imports@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "prettier-plugin-organize-imports@npm:4.1.0"
+  peerDependencies:
+    prettier: ">=2.0"
+    typescript: ">=2.9"
+    vue-tsc: ^2.1.0
+  peerDependenciesMeta:
+    vue-tsc:
+      optional: true
+  checksum: 10/8223af6d42d06f6a5140a2724a6c6c2cef4a2e149721ceb25b945af71f4de7499bc63e47ea003b9eee84e6b94728b59d91b4275d3c53b718a747e273fb30cee2
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^3.3.3":
   version: 3.3.3
   resolution: "prettier@npm:3.3.3"
@@ -10722,6 +10736,7 @@ __metadata:
     nanoid: "npm:^3.1.30"
     node-stdlib-browser: "npm:^1.2.0"
     prettier: "npm:^3.3.3"
+    prettier-plugin-organize-imports: "npm:^4.1.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-icons: "npm:^4.3.1"
@@ -10737,6 +10752,9 @@ __metadata:
     typescript-plugin-css-modules: "npm:^5.1.0"
     vitest: "npm:^2.0.2"
     zodiac-roles-deployments: "npm:^2.2.2"
+  dependenciesMeta:
+    prettier-plugin-organize-imports@4.1.0:
+      unplugged: true
   languageName: unknown
   linkType: soft
 
