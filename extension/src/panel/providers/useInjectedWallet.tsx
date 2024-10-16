@@ -9,6 +9,7 @@ export interface InjectedWalletContextT {
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
+  connected: boolean
 }
 const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
 
@@ -23,19 +24,16 @@ export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
       switchChain,
       accounts,
       chainId,
+      connected: ready,
     }),
-    [provider, connect, switchChain, accounts, chainId]
+    [provider, connect, switchChain, accounts, chainId, ready]
   )
 
-  if (ready) {
-    return (
-      <InjectedWalletContext.Provider value={packed}>
-        {children}
-      </InjectedWalletContext.Provider>
-    )
-  }
-
-  return null
+  return (
+    <InjectedWalletContext.Provider value={packed}>
+      {children}
+    </InjectedWalletContext.Provider>
+  )
 }
 
 export const useInjectedWallet = () => {

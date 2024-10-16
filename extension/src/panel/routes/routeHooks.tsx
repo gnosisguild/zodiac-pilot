@@ -151,7 +151,8 @@ export const useRoute = (id?: string) => {
 
   const mustConnectInjectedWallet =
     route.providerType === ProviderType.InjectedWallet &&
-    !injectedWallet.chainId
+    !injectedWallet.chainId &&
+    injectedWallet.connected
 
   const pilotAddress =
     route.initiator && route.initiator !== `eoa:` + ZeroAddress
@@ -217,6 +218,6 @@ export const isConnectedTo = (
     providerContext.accounts?.some(
       (acc) => acc.toLowerCase() === accountLower
     ) &&
-    ('connected' in providerContext ? providerContext.connected : true)
+    providerContext.connected
   )
 }
