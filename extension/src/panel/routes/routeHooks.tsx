@@ -1,16 +1,21 @@
-import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
-import { createContext, useContext, useMemo } from 'react'
-
+import { ZeroAddress } from 'ethers'
+import { nanoid } from 'nanoid'
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
+import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { Eip1193Provider, ProviderType, Route } from '../../types'
 import { useInjectedWallet, useWalletConnect } from '../providers'
-import { Route, Eip1193Provider, ProviderType } from '../../types'
+import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
 import { InjectedWalletContextT } from '../providers/useInjectedWallet'
 import { WalletConnectResult } from '../providers/useWalletConnect'
-import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
-
-import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { nanoid } from 'nanoid'
 import useStorage, { useStorageEntries } from '../utils/useStorage'
-import { ZeroAddress } from 'ethers'
 
 type RouteContextT = readonly [
   Route[],
@@ -146,7 +151,8 @@ export const useRoute = (id?: string) => {
 
   const mustConnectInjectedWallet =
     route.providerType === ProviderType.InjectedWallet &&
-    !injectedWallet.chainId
+    !injectedWallet.chainId &&
+    injectedWallet.connected
 
   const pilotAddress =
     route.initiator && route.initiator !== `eoa:` + ZeroAddress
@@ -212,6 +218,6 @@ export const isConnectedTo = (
     providerContext.accounts?.some(
       (acc) => acc.toLowerCase() === accountLower
     ) &&
-    ('connected' in providerContext ? providerContext.connected : true)
+    providerContext.connected
   )
 }

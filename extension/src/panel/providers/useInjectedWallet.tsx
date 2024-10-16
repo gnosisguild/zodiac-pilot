@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useMemo } from 'react'
+import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../../types'
 import { useConnectProvider } from './useConnectProvider'
@@ -9,13 +9,11 @@ export interface InjectedWalletContextT {
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
+  connected: boolean
 }
-const InjectedWalletContext =
-  React.createContext<InjectedWalletContextT | null>(null)
+const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
 
-export const ProvideInjectedWallet: React.FC<{
-  children: ReactNode
-}> = ({ children }) => {
+export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
   const { provider, connect, accounts, chainId, ready, switchChain } =
     useConnectProvider()
 
@@ -26,22 +24,19 @@ export const ProvideInjectedWallet: React.FC<{
       switchChain,
       accounts,
       chainId,
+      connected: ready,
     }),
-    [provider, connect, switchChain, accounts, chainId]
+    [provider, connect, switchChain, accounts, chainId, ready]
   )
 
-  if (ready) {
-    return (
-      <InjectedWalletContext.Provider value={packed}>
-        {children}
-      </InjectedWalletContext.Provider>
-    )
-  }
-
-  return null
+  return (
+    <InjectedWalletContext.Provider value={packed}>
+      {children}
+    </InjectedWalletContext.Provider>
+  )
 }
 
-const useInjectedWallet = () => {
+export const useInjectedWallet = () => {
   const context = useContext(InjectedWalletContext)
   if (!context) {
     throw new Error(
@@ -50,5 +45,3 @@ const useInjectedWallet = () => {
   }
   return context
 }
-
-export default useInjectedWallet
