@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { LegacyConnection } from '../../types'
 import {
