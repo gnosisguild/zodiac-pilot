@@ -1,20 +1,31 @@
-// @ts-check
-const esbuild = require('esbuild')
-const cssModulesPlugin = require('esbuild-css-modules-plugin')
-const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
-const stdLibBrowser = require('node-stdlib-browser')
+import esbuild from 'esbuild'
+import cssModulesPlugin from 'esbuild-css-modules-plugin'
+import stdLibBrowser from 'node-stdlib-browser'
+import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
+import { fileURLToPath } from 'url'
 
-require('dotenv').config()
+import { config } from 'dotenv'
+
+config()
+
+const SERVE_PORT = 3999
 
 esbuild
   .context({
     entryPoints: [
-      './src/background.ts',
-      './src/contentScript.ts',
-      './src/introduce.ts',
-      './src/launch.ts',
-      './src/injection.ts',
-      './src/app.tsx',
+      './src/background/index.ts',
+
+      './src/connect/contentScript.ts',
+      './src/connect/contentScriptIframe.ts',
+      './src/connect/injectedScript.ts',
+
+      './src/inject/injectedScript.ts',
+      './src/inject/contentScript.ts',
+
+      './src/monitor/injectedScript.ts',
+      './src/monitor/contentScript.ts',
+
+      './src/panel/app.tsx',
     ],
     bundle: true,
     minify: process.env.NODE_ENV === 'production',
@@ -24,13 +35,21 @@ esbuild
       '.woff': 'file',
       '.woff2': 'file',
       '.png': 'file',
+      '.html': 'text',
     },
     target: ['chrome96'],
     outdir: './public/build',
     publicPath: '/build',
-    inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
+    inject: [
+      fileURLToPath(
+        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim')
+      ),
+    ],
     define: {
-      'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+      'process.env.LIVE_RELOAD':
+        process.env.NODE_ENV === 'development'
+          ? `"http://127.0.0.1:${SERVE_PORT}/esbuild"`
+          : 'false',
       global: 'window',
     },
     plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
@@ -38,6 +57,7 @@ esbuild
   })
   .then(async (ctx) => {
     if (process.env.NODE_ENV === 'development') {
+      await ctx.serve({ port: SERVE_PORT, servedir: './public' })
       await ctx.watch()
     } else {
       await ctx.rebuild()

@@ -9,8 +9,8 @@
     "apikey",
     "arbitrum",
     "barnbridge",
-    "bitshift",
     "Bitmask",
+    "bitshift",
     "Blockhash",
     "blockie",
     "blockies",
@@ -29,6 +29,7 @@
     "hexlify",
     "honeyswap",
     "IERC20",
+    "Iframe",
     "iframes",
     "instadapp",
     "keyvaluestorage",
@@ -66,16 +67,24 @@
     "walletconnect",
     "whatsabi",
     "xdai",
-    "xmlhttprequest"
+    "xmlhttprequest",
+    "serviceworker",
+    "textbox",
+    "servedir",
+    "sidepanel",
+    "sandboxed",
+    "speculationrules"
   ],
   "flagWords": [],
   "ignorePaths": [
     "package.json",
-    "yarn.lock",
+    "pnpm-lock.yaml",
     "node_modules/**",
     "tsconfig.json",
     "public/build/**",
     "public/_metadata/**",
-    "**/*.svg"
+    "playwright-report/**",
+    "**/*.svg",
+    "patches/**"
   ]
 }

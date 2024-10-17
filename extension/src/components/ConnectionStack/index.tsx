@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import React from 'react'
 
-import { MODULE_NAMES } from '../../integrations/zodiac/useZodiacModules'
+import { MODULE_NAMES } from '../../panel/integrations/zodiac/useZodiacModules'
 import { LegacyConnection } from '../../types'
 import Address from '../Address'
 import Box from '../Box'

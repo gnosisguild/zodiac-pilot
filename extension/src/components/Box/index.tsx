@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { forwardRef, ReactNode } from 'react'
+import { forwardRef, ReactNode } from 'react'
 
 import classes from './style.module.css'
 
