@@ -10,10 +10,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 21
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
-      - run: yarn install --immutable
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - run: pnpm install --prefer-offline
         working-directory: ./extension
       - name: Run static checks
-        run: yarn run check
+        run: pnpm check
         working-directory: ./extension
