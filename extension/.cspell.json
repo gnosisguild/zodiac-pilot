@@ -67,16 +67,24 @@
     "walletconnect",
     "whatsabi",
     "xdai",
-    "xmlhttprequest"
+    "xmlhttprequest",
+    "serviceworker",
+    "textbox",
+    "servedir",
+    "sidepanel",
+    "sandboxed",
+    "speculationrules"
   ],
   "flagWords": [],
   "ignorePaths": [
     "package.json",
-    "package-lock.json",
+    "pnpm-lock.yaml",
     "node_modules/**",
     "tsconfig.json",
     "public/build/**",
     "public/_metadata/**",
-    "**/*.svg"
+    "playwright-report/**",
+    "**/*.svg",
+    "patches/**"
   ]
 }
