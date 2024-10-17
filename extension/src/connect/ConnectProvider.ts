@@ -1,15 +1,15 @@
 // this will be bundled in the panel app
+import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'
 import { Eip1193Provider } from '../types'
 import {
-  Message,
   CONNECTED_WALLET_ERROR,
   CONNECTED_WALLET_EVENT,
   CONNECTED_WALLET_INITIALIZED,
   CONNECTED_WALLET_REQUEST,
   CONNECTED_WALLET_RESPONSE,
+  Message,
 } from './messages'
-import { invariant } from '@epic-web/invariant'
 
 interface JsonRpcRequest {
   method: string

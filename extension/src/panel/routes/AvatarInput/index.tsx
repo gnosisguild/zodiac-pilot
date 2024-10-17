@@ -7,8 +7,8 @@ import { selectStyles } from '../../../components/Select'
 import { validateAddress } from '../../utils'
 import { Option } from '../ModSelect'
 
-import classes from './style.module.css'
 import { getAddress } from 'ethers'
+import classes from './style.module.css'
 
 interface Props {
   value: string

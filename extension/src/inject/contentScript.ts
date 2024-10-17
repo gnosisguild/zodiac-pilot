@@ -1,11 +1,11 @@
-import './probeChainId'
+import { Message, PILOT_DISCONNECT } from '../messages'
 import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
   InjectedProviderMessage,
   InjectedProviderResponse,
 } from './messages'
-import { Message, PILOT_DISCONNECT } from '../messages'
+import './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.
 // That's why we need to check if the script has already been injected before injecting it again.

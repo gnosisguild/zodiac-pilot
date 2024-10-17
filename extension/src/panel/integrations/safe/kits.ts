@@ -1,5 +1,5 @@
-import Safe from '@safe-global/protocol-kit'
 import SafeApiKit from '@safe-global/api-kit'
+import Safe from '@safe-global/protocol-kit'
 import { ChainId } from 'ser-kit'
 import { RPC } from '../../../chains'
 

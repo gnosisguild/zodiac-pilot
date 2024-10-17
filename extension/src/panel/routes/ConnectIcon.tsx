@@ -1,4 +1,3 @@
-import React from 'react'
 import { IconType } from 'react-icons/lib'
 
 export const ConnectedIcon: IconType = ({ size, color, title, role }) => (

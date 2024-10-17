@@ -1,23 +1,23 @@
 import EventEmitter from 'events'
 
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 
+import { nanoid } from 'nanoid'
+import { ChainId } from 'ser-kit'
+import { Message, SIMULATE_START, SIMULATE_STOP } from '../../messages'
 import { Eip1193Provider, TransactionData } from '../../types'
-import TenderlyProvider from './TenderlyProvider'
 import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
-import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
 import {
   hashMessage,
   signMessage,
   signTypedData,
   typedDataHash,
 } from '../integrations/safe/signing'
-import { ChainId } from 'ser-kit'
+import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
 import { decodeGenericError } from '../utils'
-import { nanoid } from 'nanoid'
-import { Message, SIMULATE_START, SIMULATE_STOP } from '../../messages'
+import TenderlyProvider from './TenderlyProvider'
 
 class UnsupportedMethodError extends Error {
   code = 4200

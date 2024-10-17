@@ -5,8 +5,8 @@ import { Select } from '../../../components'
 import Blockie from '../../../components/Blockie'
 import Box from '../../../components/Box'
 
-import classes from './style.module.css'
 import { getAddress } from 'ethers'
+import classes from './style.module.css'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
 export interface Option {

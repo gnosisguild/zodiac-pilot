@@ -3,8 +3,11 @@ name: CI
 on: [push]
 
 jobs:
-  tests:
+  static_checks:
     runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: ./extension
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -16,7 +19,22 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "**/pnpm-lock.yaml"
       - run: pnpm install --prefer-offline
-        working-directory: ./extension
       - name: Run static checks
         run: pnpm check
+  unit_tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
         working-directory: ./extension
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - run: pnpm install --prefer-offline
+      - run: pnpm test:unit

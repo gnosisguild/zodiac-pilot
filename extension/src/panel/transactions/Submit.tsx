@@ -3,24 +3,24 @@ import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { toast } from 'react-toastify'
 
+import { CHAIN_NAME, EXPLORER_URL } from '../../chains'
 import { Button, IconButton } from '../../components'
 import toastClasses from '../../components/Toast/Toast.module.css'
-import { EXPLORER_URL, CHAIN_NAME } from '../../chains'
-import { useRoute } from '../routes'
 import { JsonRpcError, ProviderType } from '../../types'
+import { useSubmitTransactions } from '../providers/ProvideProvider'
+import { useRoute } from '../routes'
+import { useTransactions } from '../state'
 import {
   decodeGenericError,
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '../utils'
-import { useSubmitTransactions } from '../providers/ProvideProvider'
-import { useTransactions } from '../state'
 
-import classes from './style.module.css'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
+import { useNavigate } from 'react-router-dom'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 import { waitForMultisigExecution } from '../integrations/safe'
-import { useNavigate } from 'react-router-dom'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
+import classes from './style.module.css'
 
 const Submit: React.FC = () => {
   const { route, chainId, connect, connected } = useRoute()

@@ -56,27 +56,27 @@ export function dismissHint() {
   // removePrerenderRule()
 }
 
-let specScript: HTMLScriptElement | null = null
+// let specScript: HTMLScriptElement | null = null
 
 /** Adds a prerender rule for the current href so the reload will be instant */
-function addPrerenderRule() {
-  if (specScript) specScript.remove()
-  specScript = document.createElement('script')
-  specScript.type = 'speculationrules'
-  const specRules = {
-    prefetch: [
-      {
-        source: 'list',
-        urls: [window.location.href],
-        eagerness: 'immediate',
-      },
-    ],
-  }
-  specScript.textContent = JSON.stringify(specRules)
-  document.body.append(specScript)
-}
+// function addPrerenderRule() {
+//   if (specScript) specScript.remove()
+//   specScript = document.createElement('script')
+//   specScript.type = 'speculationrules'
+//   const specRules = {
+//     prefetch: [
+//       {
+//         source: 'list',
+//         urls: [window.location.href],
+//         eagerness: 'immediate',
+//       },
+//     ],
+//   }
+//   specScript.textContent = JSON.stringify(specRules)
+//   document.body.append(specScript)
+// }
 
-function removePrerenderRule() {
-  if (specScript) specScript.remove()
-  specScript = null
-}
+// function removePrerenderRule() {
+//   if (specScript) specScript.remove()
+//   specScript = null
+// }

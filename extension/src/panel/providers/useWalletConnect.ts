@@ -1,16 +1,16 @@
 import { Core } from '@walletconnect/core'
 import WalletConnectEthereumProvider from '@walletconnect/ethereum-provider'
-import { WalletConnectModal } from '@walletconnect/modal'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
-import { UniversalProvider } from '@walletconnect/universal-provider'
-import { SignClient } from '@walletconnect/sign-client'
-import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
 import { EthereumProviderOptions } from '@walletconnect/ethereum-provider/dist/types/EthereumProvider'
+import { RequestArguments } from '@walletconnect/ethereum-provider/dist/types/types'
+import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
+import { WalletConnectModal } from '@walletconnect/modal'
+import { SignClient } from '@walletconnect/sign-client'
+import { UniversalProvider } from '@walletconnect/universal-provider'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { RPC } from '../../chains'
-import { waitForMultisigExecution } from '../integrations/safe'
 import { JsonRpcError } from '../../types'
+import { waitForMultisigExecution } from '../integrations/safe'
 
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
 

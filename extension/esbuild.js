@@ -1,10 +1,12 @@
-// @ts-check
-const esbuild = require('esbuild')
-const cssModulesPlugin = require('esbuild-css-modules-plugin')
-const plugin = require('node-stdlib-browser/helpers/esbuild/plugin')
-const stdLibBrowser = require('node-stdlib-browser')
+import esbuild from 'esbuild'
+import cssModulesPlugin from 'esbuild-css-modules-plugin'
+import stdLibBrowser from 'node-stdlib-browser'
+import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
+import { fileURLToPath } from 'url'
 
-require('dotenv').config()
+import { config } from 'dotenv'
+
+config()
 
 const SERVE_PORT = 3999
 
@@ -38,7 +40,11 @@ esbuild
     target: ['chrome96'],
     outdir: './public/build',
     publicPath: '/build',
-    inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
+    inject: [
+      fileURLToPath(
+        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim')
+      ),
+    ],
     define: {
       'process.env.LIVE_RELOAD':
         process.env.NODE_ENV === 'development'

@@ -2,15 +2,16 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 
-import { wrapRequest } from './wrapRequest'
-import { LegacyConnection, JsonRpcError } from '../../types'
+import { JsonRpcError, LegacyConnection } from '../../types'
 import {
   decodeGenericError,
   decodeRoleKey,
   decodeRolesV1Error,
   decodeRolesV2Error,
+  isSmartContractAddress,
+  validateAddress,
 } from '../utils'
-import { isSmartContractAddress, validateAddress } from '../utils'
+import { wrapRequest } from './wrapRequest'
 
 import { useRoute } from './routeHooks'
 

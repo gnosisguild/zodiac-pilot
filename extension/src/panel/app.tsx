@@ -1,23 +1,22 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import React, { useEffect } from 'react'
-import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 
 import './global.css'
 
-import ProvideProvider, { useProvider } from './providers/ProvideProvider'
-import { ProvideState } from './state'
-import ZodiacToastContainer from '../components/Toast'
-import { ProvideInjectedWallet } from './providers'
-import { ProvideRoutes, RoutesEdit } from './routes'
-import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
-import Transactions from './transactions'
-import { RoutesList } from './routes'
-import { update } from '../inject/bridge'
 import { parsePrefixedAddress } from 'ser-kit'
+import ZodiacToastContainer from '../components/Toast'
+import { update } from '../inject/bridge'
 import { initPort } from './port'
+import { ProvideInjectedWallet } from './providers'
+import ProvideProvider, { useProvider } from './providers/ProvideProvider'
+import { ProvideRoutes, RoutesEdit, RoutesList } from './routes'
+import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
+import { ProvideState } from './state'
+import Transactions from './transactions'
 import useStorage from './utils/useStorage'
 
 initPort()

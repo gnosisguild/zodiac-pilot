@@ -1,4 +1,5 @@
 // this will be bundled in the panel app
+import { toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../types'
 import {
@@ -6,7 +7,6 @@ import {
   INJECTED_PROVIDER_REQUEST,
   InjectedProviderMessage,
 } from './messages'
-import { toQuantity } from 'ethers'
 
 let windowId: number | undefined
 
