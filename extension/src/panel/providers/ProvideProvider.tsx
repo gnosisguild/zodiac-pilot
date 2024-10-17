@@ -7,12 +7,7 @@ import React, {
   useRef,
 } from 'react'
 
-import { ForkProvider } from '.'
-import { useRoute } from '../routes'
-import { Eip1193Provider } from '../../types'
-import { useDispatch, useTransactions } from '../state'
-import { fetchContractInfo } from '../utils/abi'
-import { ExecutionStatus } from '../state/reducer'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   ConnectionType,
@@ -23,7 +18,12 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { ForkProvider } from '.'
+import { Eip1193Provider } from '../../types'
+import { useRoute } from '../routes'
+import { useDispatch, useTransactions } from '../state'
+import { ExecutionStatus } from '../state/reducer'
+import { fetchContractInfo } from '../utils/abi'
 
 interface Props {
   children: ReactNode
@@ -32,7 +32,7 @@ interface Props {
 const ProviderContext = createContext<
   (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
 >(null)
-export const useProvider = (): Eip1193Provider => {
+export const useProvider = () => {
   const result = useContext(ProviderContext)
   if (!result) {
     throw new Error('useProvider() must be used within a <ProvideProvider/>')
