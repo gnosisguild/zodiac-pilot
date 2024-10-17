@@ -13,8 +13,10 @@ test('possibility to open the panel', async ({ page, extensionId }) => {
   await page.getByRole('textbox', { name: 'Extension ID' }).fill(extensionId)
   await page.getByRole('button', { name: 'Open extension' }).click()
 
+  const extension = await getExtensionPage(page)
+
   await expect(
-    getExtensionPage(page).getByRole('heading', {
+    extension.getByRole('heading', {
       name: 'Recording Transactions',
     })
   ).toBeInViewport()
