@@ -99,11 +99,6 @@
     "@epic-web/invariant": "^1.0.0",
     "react-router-dom": "^6.26.1"
   },
-  "dependenciesMeta": {
-    "prettier-plugin-organize-imports@4.1.0": {
-      "unplugged": true
-    }
-  },
   "pnpm": {
     "patchedDependencies": {
       "vitest-chrome": "patches/vitest-chrome.patch"
