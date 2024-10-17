@@ -1,7 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 
-import { TransactionTranslation } from './types'
 import { id, Interface } from 'ethers'
+import { TransactionTranslation } from './types'
 
 const GP_V2_SETTLEMENT_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
 const GPv2SettlementInterface = new Interface([

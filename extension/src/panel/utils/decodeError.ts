@@ -1,6 +1,6 @@
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { JsonRpcError } from '../../types'
 import { AbiCoder } from 'ethers'
+import { JsonRpcError } from '../../types'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()

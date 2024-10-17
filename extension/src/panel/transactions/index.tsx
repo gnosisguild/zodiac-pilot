@@ -4,15 +4,15 @@ import { toast } from 'react-toastify'
 
 import { Button, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../providers'
-import { useRoute } from '../routes'
 import { useProvider } from '../providers/ProvideProvider'
+import { useRoute } from '../routes'
 import { useDispatch, useTransactions } from '../state'
 
+import RouteBubble from '../../components/RouteBubble'
 import Submit from './Submit'
 import { Transaction } from './Transaction'
 import classes from './style.module.css'
 import { useGloballyApplicableTranslation } from '../transactionTranslations'
-import RouteBubble from '../../components/RouteBubble'
 
 const Transactions: React.FC = () => {
   const transactions = useTransactions()

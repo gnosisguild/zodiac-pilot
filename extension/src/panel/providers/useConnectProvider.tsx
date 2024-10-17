@@ -1,16 +1,25 @@
-import { useCallback, useEffect, useState } from 'react'
-import { memoWhilePending } from './memoWhilePending'
-import ConnectProvider from '../../connect/ConnectProvider'
 import { BrowserProvider } from 'ethers'
+import { MutableRefObject, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { ChainId } from 'ser-kit'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '../../chains'
+import ConnectProvider from '../../connect/ConnectProvider'
+import { memoWhilePending } from './memoWhilePending'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
 // connectProvider can be used just like window.ethereum
-const provider = new ConnectProvider()
+
+const providerRef: MutableRefObject<ConnectProvider | null> = { current: null }
+const getProvider = () => {
+  if (providerRef.current == null) {
+    providerRef.current = new ConnectProvider()
+  }
+
+  return providerRef.current
+}
 
 export const useConnectProvider = () => {
+  const provider = getProvider()
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
   const [ready, setReady] = useState(false)
@@ -58,15 +67,16 @@ export const useConnectProvider = () => {
       provider.removeListener('disconnect', handleDisconnect)
       provider.removeListener('readyChanged', setReady)
     }
-  }, [])
+  }, [provider])
 
   const connect = useCallback(async () => {
-    const { accounts, chainId: chainIdBigInt } = await connectInjectedWallet()
+    const { accounts, chainId: chainIdBigInt } =
+      await connectInjectedWallet(provider)
     const chainId = Number(chainIdBigInt)
     setAccounts(accounts)
     setChainId(chainId)
     return { accounts, chainId }
-  }, [])
+  }, [provider])
 
   return {
     provider,
@@ -82,40 +92,42 @@ interface InjectedWalletError extends Error {
   code: number
 }
 
-const connectInjectedWallet = memoWhilePending(async () => {
-  const browserProvider = new BrowserProvider(provider)
+const connectInjectedWallet = memoWhilePending(
+  async (provider: ConnectProvider) => {
+    const browserProvider = new BrowserProvider(provider)
 
-  const accountsPromise = browserProvider
-    .send('eth_requestAccounts', [])
-    .catch((err: any) => {
-      if ((err as InjectedWalletError).code === -32002) {
-        return new Promise((resolve: (value: string[]) => void) => {
-          const toastId = toast.warn(
-            <>Check your wallet to confirm connection</>,
-            { autoClose: false }
-          )
-          const handleAccountsChanged = (accounts: string[]) => {
-            resolve(accounts)
-            toast.dismiss(toastId)
-            provider?.removeListener('accountsChanged', handleAccountsChanged)
-          }
-          provider?.on('accountsChanged', handleAccountsChanged)
-        })
-      }
+    const accountsPromise = browserProvider
+      .send('eth_requestAccounts', [])
+      .catch((err: any) => {
+        if ((err as InjectedWalletError).code === -32002) {
+          return new Promise((resolve: (value: string[]) => void) => {
+            const toastId = toast.warn(
+              <>Check your wallet to confirm connection</>,
+              { autoClose: false }
+            )
+            const handleAccountsChanged = (accounts: string[]) => {
+              resolve(accounts)
+              toast.dismiss(toastId)
+              provider?.removeListener('accountsChanged', handleAccountsChanged)
+            }
+            provider?.on('accountsChanged', handleAccountsChanged)
+          })
+        }
 
-      throw err
-    })
+        throw err
+      })
 
-  const [accounts, chainId] = await Promise.all([
-    accountsPromise,
-    browserProvider.getNetwork().then((network) => network.chainId),
-  ])
+    const [accounts, chainId] = await Promise.all([
+      accountsPromise,
+      browserProvider.getNetwork().then((network) => network.chainId),
+    ])
 
-  return { accounts, chainId }
-})
+    return { accounts, chainId }
+  }
+)
 
 const switchChain = async (chainId: ChainId) => {
-  if (!provider) throw new Error('InjectedWallet not found')
+  const provider = getProvider()
 
   try {
     await provider.request({
@@ -133,9 +145,9 @@ const switchChain = async (chainId: ChainId) => {
         const handleChainChanged = () => {
           resolve()
           toast.dismiss(toastId)
-          provider?.removeListener('chainChanged', handleChainChanged)
+          provider.removeListener('chainChanged', handleChainChanged)
         }
-        provider?.on('chainChanged', handleChainChanged)
+        provider.on('chainChanged', handleChainChanged)
       })
       return
     }

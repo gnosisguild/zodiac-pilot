@@ -5,35 +5,34 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 import { Box, Button, Field, Flex, IconButton } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
 
-import { useSafesWithOwner } from '../../integrations/safe'
-import { useSafeDelegates } from '../../integrations/safe'
-import AvatarInput from '../AvatarInput'
-import ConnectButton from '../ConnectButton'
-import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
+import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
+import { SupportedModuleType } from '../../integrations/zodiac/types'
 import {
   MODULE_NAMES,
   useZodiacModules,
 } from '../../integrations/zodiac/useZodiacModules'
-import { SupportedModuleType } from '../../integrations/zodiac/types'
+import { useClearTransactions } from '../../state/transactionHooks'
+import AvatarInput from '../AvatarInput'
+import ConnectButton from '../ConnectButton'
+import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
-import { useClearTransactions } from '../../state/transactionHooks'
 
-import classes from './style.module.css'
-import { decodeRoleKey, encodeRoleKey } from '../../utils'
-import ChainSelect from '../ChainSelect'
+import { ZeroAddress } from 'ethers'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ChainId } from 'ser-kit'
+import { ProviderType, Route } from '../../../types'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
-import { ChainId } from 'ser-kit'
+import { decodeRoleKey, encodeRoleKey } from '../../utils'
+import ChainSelect from '../ChainSelect'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import { ZeroAddress } from 'ethers'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ProviderType, Route } from '../../../types'
+import classes from './style.module.css'
 
 type ConnectionPatch = {
   label?: string

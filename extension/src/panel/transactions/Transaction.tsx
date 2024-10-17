@@ -1,24 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
 
+import { CHAIN_CURRENCY } from '../../chains'
 import { Box, Flex } from '../../components'
 import ToggleButton from '../../components/ToggleButton'
-import { CHAIN_CURRENCY } from '../../chains'
 import { useRoute } from '../routes'
 import { TransactionState } from '../state'
 
+import { formatEther, Fragment } from 'ethers'
+import { Route } from '../../types'
 import ContractAddress from './ContractAddress'
 import CopyToClipboard from './CopyToClipboard'
+import DecodedTransaction from './DecodedTransaction'
 import RawTransaction from './RawTransaction'
 import { Remove } from './Remove'
 import RolePermissionCheck from './RolePermissionCheck'
 import SimulationStatus from './SimulationStatus'
 import { Translate } from './Translate'
 import classes from './style.module.css'
-import DecodedTransaction from './DecodedTransaction'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
-import { Route } from '../../types'
-import { formatEther, Fragment } from 'ethers'
 
 interface HeaderProps {
   index: number

@@ -8,11 +8,11 @@ import { Contract, id, Interface } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 
-import { validateAddress } from '../../utils'
-import { useRoute } from '../../routes/routeHooks'
-import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
-import { SupportedModuleType } from './types'
 import { ChainId } from 'ser-kit'
+import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
+import { useRoute } from '../../routes/routeHooks'
+import { validateAddress } from '../../utils'
+import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,

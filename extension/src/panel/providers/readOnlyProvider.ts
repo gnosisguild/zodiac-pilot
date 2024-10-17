@@ -1,8 +1,8 @@
 import EventEmitter from 'events'
 
-import { RPC } from '../../chains'
 import { JsonRpcProvider, toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
+import { RPC } from '../../chains'
 import { JsonRpcRequest } from '../../types'
 
 const readOnlyProviderCache = new Map<ChainId, JsonRpcProvider>()
