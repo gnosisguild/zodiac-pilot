@@ -12,7 +12,7 @@
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
     "dev": "NODE_ENV=development node esbuild.js",
     "test": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --headed",
     "check": "yarn check:ts && yarn check:format && yarn check:lint && yarn check:spelling",
     "check:ts": "yarn tsc --noEmit",
     "check:lint": "eslint src",
