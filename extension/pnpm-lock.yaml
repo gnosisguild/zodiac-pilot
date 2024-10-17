@@ -227,9 +227,6 @@ importers:
       zodiac-roles-deployments:
         specifier: ^2.2.2
         version: 2.2.6
-    dependenciesMeta:
-      prettier-plugin-organize-imports@4.1.0:
-        unplugged: true
 
 packages:
 
