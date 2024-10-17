@@ -4,8 +4,8 @@ import { toast } from 'react-toastify'
 
 import { IconButton } from '../../components'
 
-import classes from './style.module.css'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import classes from './style.module.css'
 
 interface Props {
   transaction: MetaTransactionData

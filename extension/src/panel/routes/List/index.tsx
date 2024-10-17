@@ -10,14 +10,14 @@ import {
   Flex,
 } from '../../../components'
 import { useConfirmationModal } from '../../../components/ConfirmationModal'
-import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
-import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import { Route } from '../../../types'
 import { useClearTransactions } from '../../state/transactionHooks'
+import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
+import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 
-import classes from './style.module.css'
-import { asLegacyConnection } from '../legacyConnectionMigrations'
 import { useNavigate } from 'react-router-dom'
+import { asLegacyConnection } from '../legacyConnectionMigrations'
+import classes from './style.module.css'
 
 interface RouteItemProps {
   route: Route

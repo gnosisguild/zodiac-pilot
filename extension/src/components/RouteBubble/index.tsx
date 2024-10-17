@@ -6,10 +6,10 @@ import Box from '../Box'
 import ConnectionStack from '../ConnectionStack'
 import Flex from '../Flex'
 
+import { Link } from 'react-router-dom'
+import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
-import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
-import { Link } from 'react-router-dom'
 
 const RouteBubble: React.FC = () => {
   const { route } = useRoute()

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
-import { memoWhilePending } from './memoWhilePending'
-import ConnectProvider from '../../connect/ConnectProvider'
 import { BrowserProvider } from 'ethers'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { ChainId } from 'ser-kit'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '../../chains'
+import ConnectProvider from '../../connect/ConnectProvider'
+import { memoWhilePending } from './memoWhilePending'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
 // connectProvider can be used just like window.ethereum

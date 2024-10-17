@@ -3,9 +3,9 @@ import { BiWrench } from 'react-icons/bi'
 
 import { IconButton } from '../../components'
 import { ForkProvider } from '../providers'
-import { useApplicableTranslation } from '../transactionTranslations'
 import { useProvider } from '../providers/ProvideProvider'
 import { TransactionState, useDispatch, useTransactions } from '../state'
+import { useApplicableTranslation } from '../transactionTranslations'
 
 import classes from './style.module.css'
 

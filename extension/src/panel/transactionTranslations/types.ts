@@ -1,6 +1,6 @@
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { ChainId } from 'ser-kit'
 import { SupportedModuleType } from '../integrations/zodiac/types'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 export interface TransactionTranslation {
   /** A descriptive title of the translation, will be displayed as a tooltip of the translate button */

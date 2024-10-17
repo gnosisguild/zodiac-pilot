@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { ForkProvider } from '../providers'
 import { useProvider } from '../providers/ProvideProvider'
 
-import { useTransactions, useDispatch } from '.'
+import { useDispatch, useTransactions } from '.'
 
 export const useClearTransactions = () => {
   const transactions = useTransactions()

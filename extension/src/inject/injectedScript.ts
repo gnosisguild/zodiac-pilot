@@ -1,7 +1,7 @@
 // This script will be injected via executeScript to all windows in tracked tabs
 
-import InjectedProvider from './InjectedProvider'
 import { Eip1193Provider } from '../types'
+import InjectedProvider from './InjectedProvider'
 
 declare let window: Window & {
   zodiacPilot?: InjectedProvider

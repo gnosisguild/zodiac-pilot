@@ -2,10 +2,10 @@ import EventEmitter from 'events'
 
 import { customAlphabet } from 'nanoid'
 
+import { JsonRpcProvider } from 'ethers'
+import { ChainId } from 'ser-kit'
 import { JsonRpcRequest } from '../../types'
 import { getReadOnlyProvider } from './readOnlyProvider'
-import { ChainId } from 'ser-kit'
-import { JsonRpcProvider } from 'ethers'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 

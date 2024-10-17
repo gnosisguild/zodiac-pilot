@@ -1,4 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { ZeroAddress } from 'ethers'
 import {
   AccountType,
   ConnectionType,
@@ -8,12 +9,11 @@ import {
   Roles,
   Waypoint,
 } from 'ser-kit'
+import { LegacyConnection, ProviderType, Route } from '../../types'
 import {
   MULTISEND,
   MULTISEND_CALL_ONLY,
 } from '../integrations/zodiac/rolesMultisend'
-import { Route, LegacyConnection, ProviderType } from '../../types'
-import { ZeroAddress } from 'ethers'
 
 export function fromLegacyConnection(connection: LegacyConnection): Route {
   const { chainId, providerType, moduleType } = connection
