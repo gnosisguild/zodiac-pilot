@@ -1,5 +1,6 @@
 {
   "name": "example-app",
+  "packageManager": "npm@10.8.3",
   "private": true,
   "type": "module",
   "scripts": {
