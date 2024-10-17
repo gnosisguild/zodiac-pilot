@@ -11,9 +11,9 @@ const BridgeAwareInterface: Interface = new Interface([
 ])
 
 export default {
-  title: 'Unfold individual calls',
+  title: 'Add bridgeStart call',
 
-  recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
+  recommendedFor: [KnownContracts.ROLES_V2],
 
   translate: async (transaction) => {
     const bridgedTokenAddress = extractBridgedTokenAddress(transaction)
@@ -22,7 +22,8 @@ export default {
       return
     }
 
-    const bridgeAwareContractAddress = '0x1234'
+    const bridgeAwareContractAddress =
+      '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
 
     return [
       transaction,
