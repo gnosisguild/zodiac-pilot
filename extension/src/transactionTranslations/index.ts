@@ -7,11 +7,13 @@ import cowswapSetPreSignature from './cowswapSetPreSignature'
 import { TransactionTranslation } from './types'
 import uniswapMulticall from './uniswapMulticall'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import kpkBridgeAware from './karpatkeyInstitutional/kpkBridgeAware'
 
 // ADD ANY NEW TRANSLATIONS TO THIS ARRAY
 const translations: TransactionTranslation[] = [
   uniswapMulticall,
   cowswapSetPreSignature,
+  kpkBridgeAware,
 ]
 
 interface ApplicableTranslation {
