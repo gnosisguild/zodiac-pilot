@@ -1,13 +1,13 @@
 /* eslint-disable no-empty-pattern */
 import { test as base, chromium, type BrowserContext } from '@playwright/test'
-import path from 'path'
+import { fileURLToPath } from 'url'
 
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
 }>({
   context: async ({}, use) => {
-    const pathToExtension = path.join(__dirname, '../public')
+    const pathToExtension = fileURLToPath(new URL('../public', import.meta.url))
 
     const context = await chromium.launchPersistentContext('', {
       headless: false,
