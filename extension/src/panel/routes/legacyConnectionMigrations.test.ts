@@ -155,7 +155,7 @@ describe('legacy connection migrations', () => {
         "moduleType": "roles_v1",
         "multisend": "0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761",
         "multisendCallOnly": undefined,
-        "pilotAddress": "0x0000000000000000000000000000000000000000",
+        "pilotAddress": "",
         "providerType": 0,
         "roleId": "1",
       }
