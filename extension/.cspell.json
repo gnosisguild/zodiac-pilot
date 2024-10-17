@@ -72,7 +72,7 @@
   "flagWords": [],
   "ignorePaths": [
     "package.json",
-    "yarn.lock",
+    "package-lock.json",
     "node_modules/**",
     "tsconfig.json",
     "public/build/**",

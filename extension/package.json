@@ -13,12 +13,12 @@
     "dev": "NODE_ENV=development node esbuild.js",
     "test": "vitest",
     "test:e2e": "playwright test --headed",
-    "check": "yarn check:ts && yarn check:format && yarn check:lint && yarn check:spelling",
-    "check:ts": "yarn tsc --noEmit",
+    "check": "pnpm check:ts && pnpm check:format && pnpm check:lint && pnpm check:spelling",
+    "check:ts": "pnpm tsc --noEmit",
     "check:lint": "eslint src",
     "check:format": "prettier \"src/**/*.(ts|tsx)\" --list-different",
     "check:spelling": "cspell \"**\"",
-    "fix": "yarn fix:format && yarn fix:lint",
+    "fix": "pnpm fix:format && pnpm fix:lint",
     "fix:format": "prettier \"src/**/*.(ts|tsx)\" --write",
     "fix:lint": "eslint src --fix"
   },
@@ -91,7 +91,7 @@
     "vitest": "^2.0.2",
     "zodiac-roles-deployments": "^2.2.2"
   },
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "pnpm@9.11.0",
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "react-router-dom": "^6.26.1"
