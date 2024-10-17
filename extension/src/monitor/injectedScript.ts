@@ -2,6 +2,7 @@
 // It tracks if the Pilot panel is connected and if the Pilot provider is injected.
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
+import { invariant } from '@epic-web/invariant'
 import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { Eip1193Provider } from '../types'
 import {
@@ -53,10 +54,21 @@ window.addEventListener('message', (event: MessageEvent) => {
 const handleLoad = () => {
   window.removeEventListener('load', handleLoad)
 
-  const button = document.getElementById('open-panel-button')
+  const form = document.getElementById('open-panel')
 
-  button.addEventListener('click', function () {
-    chrome.runtime.sendMessage('nablbkjkkphmokibliebnendfpgaokpj', {
+  invariant(form != null, 'No form to open side panel found')
+  invariant(form instanceof HTMLFormElement, 'Not a form')
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const data = new FormData(form)
+    const extensionId = data.get('extensionId')
+
+    invariant(typeof extensionId === 'string', 'Not a string')
+
+    chrome.runtime.sendMessage(extensionId, {
       type: 'open_side_panel',
     })
   })

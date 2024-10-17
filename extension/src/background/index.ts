@@ -34,7 +34,7 @@ chrome.runtime.onConnect.addListener(function (port) {
   }
 })
 
-chrome.runtime.onMessage.addListener(async (message, sender) => {
+chrome.runtime.onMessageExternal.addListener(async (message, sender) => {
   // The callback for runtime.onMessage must return falsy if we're not sending a response
 
   console.log({ message })

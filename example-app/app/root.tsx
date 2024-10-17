@@ -1,5 +1,5 @@
 import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
-import { Button, Checkbox, Section, Value } from '@/components'
+import { Button, Checkbox, Input, Section, Value } from '@/components'
 import { getWagmiConfig, useWagmiConfig } from '@/config'
 import { Balance, Transfer } from '@/transfer'
 import { invariantResponse } from '@epic-web/invariant'
@@ -89,7 +89,10 @@ export default function App() {
               </WagmiProvider>
             </QueryClientProvider>
 
-            <Button id="open-panel-button">Open extension</Button>
+            <form id="open-panel">
+              <Input label="Extension ID" name="extensionId" />
+              <Button type="submit">Open extension</Button>
+            </form>
           </div>
         </div>
 

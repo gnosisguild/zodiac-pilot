@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { test as base, chromium, type BrowserContext } from '@playwright/test'
 import path from 'path'
 
@@ -7,13 +8,19 @@ export const test = base.extend<{
 }>({
   context: async ({}, use) => {
     const pathToExtension = path.join(__dirname, '../public')
+    console.log({ pathToExtension })
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
+        `--headless=new`,
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
       ],
+      ignoreDefaultArgs: [
+        '--disable-component-extensions-with-background-pages',
+      ],
     })
+
     await use(context)
     await context.close()
   },
