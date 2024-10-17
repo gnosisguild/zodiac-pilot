@@ -16,7 +16,7 @@
     "test:e2e": "playwright test --headed",
     "check": "pnpm check:ts && pnpm check:format && pnpm check:lint && pnpm check:spelling",
     "check:ts": "pnpm tsc --noEmit",
-    "check:lint": "eslint src",
+    "check:lint": "eslint . --max-warnings=0",
     "check:format": "prettier \"src/**/*.(ts|tsx)\" --list-different",
     "check:spelling": "cspell \"**\"",
     "fix": "pnpm fix:format && pnpm fix:lint",
