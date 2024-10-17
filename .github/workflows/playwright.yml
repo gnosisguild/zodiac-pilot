@@ -11,23 +11,25 @@ jobs:
         working-directory: ./extension
     steps:
       - uses: actions/checkout@v4
-
+      - uses: pnpm/action-setup@v4
+        with:
+           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+          node-version: latest
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install dependencies
-        run: yarn install --immutable
+        run: pnpm install --prefer-offline
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps chromium
+        run: pnpm playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: xvfb-run yarn playwright test
+        run: xvfb-run pnpm playwright test
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
