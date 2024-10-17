@@ -27,7 +27,7 @@ jobs:
         run: yarn playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: yarn playwright test
+        run: xvfb-run yarn playwright test
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
