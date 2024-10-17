@@ -1,7 +1,9 @@
-import './tabsTracking'
-import './sessionTracking'
+import { invariant } from '@epic-web/invariant'
+import { resolve } from 'path'
 import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../messages'
+import './sessionTracking'
 import { startPilotSession, stopPilotSession } from './sessionTracking'
+import './tabsTracking'
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
@@ -28,6 +30,27 @@ chrome.runtime.onConnect.addListener(function (port) {
         const tabId = tabs[0]?.id
         if (tabId) chrome.tabs.reload(tabId)
       })
+    })
+  }
+})
+
+chrome.runtime.onMessageExternal.addListener(async (message, sender) => {
+  // The callback for runtime.onMessage must return falsy if we're not sending a response
+
+  console.log({ message })
+  if (message.type === 'open_side_panel') {
+    invariant(sender.tab != null, 'Can not access sender tab information')
+
+    // This will open a tab-specific side panel only on the current tab.
+    await chrome.sidePanel.open({
+      tabId: sender.tab.id,
+      windowId: sender.tab.windowId,
+    })
+    await chrome.sidePanel.setOptions({
+      tabId: sender.tab.id,
+      path: resolve(__dirname, '../../sidepanel.html'),
+      // path: 'src/pages/sidepanel/sidepanel.html', // replace with your sidepanel index
+      enabled: true,
     })
   }
 })
