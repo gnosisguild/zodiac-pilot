@@ -1,5 +1,5 @@
 import { BrowserProvider } from 'ethers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MutableRefObject, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { ChainId } from 'ser-kit'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '../../chains'
@@ -9,8 +9,17 @@ import { memoWhilePending } from './memoWhilePending'
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
 // connectProvider can be used just like window.ethereum
 
+const providerRef: MutableRefObject<ConnectProvider | null> = { current: null }
+const getProvider = () => {
+  if (providerRef.current == null) {
+    providerRef.current = new ConnectProvider()
+  }
+
+  return providerRef.current
+}
+
 export const useConnectProvider = () => {
-  const provider = useMemo(() => new ConnectProvider(), [])
+  const provider = getProvider()
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
   const [ready, setReady] = useState(false)
@@ -117,8 +126,8 @@ const connectInjectedWallet = memoWhilePending(
   }
 )
 
-const switchChain = async (provider: ConnectProvider, chainId: ChainId) => {
-  if (!provider) throw new Error('InjectedWallet not found')
+const switchChain = async (chainId: ChainId) => {
+  const provider = getProvider()
 
   try {
     await provider.request({
@@ -136,9 +145,9 @@ const switchChain = async (provider: ConnectProvider, chainId: ChainId) => {
         const handleChainChanged = () => {
           resolve()
           toast.dismiss(toastId)
-          provider?.removeListener('chainChanged', handleChainChanged)
+          provider.removeListener('chainChanged', handleChainChanged)
         }
-        provider?.on('chainChanged', handleChainChanged)
+        provider.on('chainChanged', handleChainChanged)
       })
       return
     }
