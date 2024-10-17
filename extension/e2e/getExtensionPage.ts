@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test'
 import { waitFor } from './waitFor'
 
-export const getExtensionPage = async (page: Page) => {
-  const extension = await waitFor(() => {
+export const getExtensionPage = (page: Page) =>
+  waitFor(() => {
     const extension = page
       .context()
       .pages()
@@ -14,6 +14,3 @@ export const getExtensionPage = async (page: Page) => {
 
     return extension
   })
-
-  return extension
-}
