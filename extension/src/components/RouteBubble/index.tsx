@@ -51,6 +51,7 @@ const RouteBubble: React.FC = () => {
         </Box>
         <Link to="/routes">
           <Box bg className={classes.connectionsContainer}>
+            <span className="sr-only">Configure routes</span>
             <ConnectionsIcon height="100%" width="100%" />
           </Box>
         </Link>

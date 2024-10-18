@@ -7,5 +7,7 @@ test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
 
   const extension = await loadExtension(page, extensionId)
 
+  extension.getByRole('link', { name: 'Configure routes' }).click()
+
   await page.getByRole('button', { name: 'Disconnect Wallet' }).click()
 })
