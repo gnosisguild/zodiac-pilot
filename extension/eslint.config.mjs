@@ -41,7 +41,7 @@ export default tsEslint.config(
     },
   },
   {
-    ignores: ['public/build'],
+    ignores: ['public/build', 'playwright-report'],
   },
   {
     files: ['esbuild.js', 'manifest-util.js'],
