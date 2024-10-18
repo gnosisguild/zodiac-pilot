@@ -4,7 +4,12 @@ import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
 test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
-  mockWeb3(page, () => mock('ethereum'))
+  mockWeb3(page, () =>
+    mock({
+      blockchain: 'ethereum',
+      accounts: { return: ['0x0000000000000000000000000000000000000000'] },
+    })
+  )
 
   const extension = await loadExtension(page, extensionId)
 
