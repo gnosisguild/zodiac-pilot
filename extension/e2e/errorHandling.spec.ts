@@ -1,13 +1,18 @@
 import { mock } from '@depay/web3-mock'
-import { test } from './fixture'
+import { expect, test } from './fixture'
 import { loadExtension } from './loadExtension'
+import { mockWeb3 } from './mockWeb3'
 
 test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
-  mock('ethereum')
+  mockWeb3(page, () => mock('ethereum'))
 
   const extension = await loadExtension(page, extensionId)
 
-  extension.getByRole('link', { name: 'Configure routes' }).click()
+  await extension.getByRole('link', { name: 'Configure routes' }).click()
+  await extension.getByRole('button', { name: 'Add Route' }).click()
+  await extension.getByRole('button', { name: 'Connect with MetaMask' }).click()
 
-  await page.getByRole('button', { name: 'Disconnect Wallet' }).click()
+  await expect(
+    extension.getByRole('alert', { name: 'Account disconnected' })
+  ).toBeInViewport()
 })
