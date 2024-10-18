@@ -67,7 +67,7 @@ root.render(
       <ProvideRoutes>
         <ProvideInjectedWallet>
           <ProvideProvider>
-            <div className="p-6">
+            <div className="px-6 py-8">
               <App />
             </div>
           </ProvideProvider>
