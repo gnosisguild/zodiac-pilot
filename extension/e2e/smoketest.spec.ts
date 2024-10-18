@@ -1,5 +1,5 @@
 import { expect, test } from './fixture'
-import { getExtensionPage } from './getExtensionPage'
+import { loadExtension } from './loadExtension'
 
 test('connection to example app', async ({ page }) => {
   await page.goto('/')
@@ -8,12 +8,7 @@ test('connection to example app', async ({ page }) => {
 })
 
 test('possibility to open the panel', async ({ page, extensionId }) => {
-  await page.goto('/')
-
-  await page.getByRole('textbox', { name: 'Extension ID' }).fill(extensionId)
-  await page.getByRole('button', { name: 'Open extension' }).click()
-
-  const extension = await getExtensionPage(page)
+  const extension = await loadExtension(page, extensionId)
 
   await expect(
     extension.getByRole('heading', {

@@ -18,13 +18,14 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [11155111]: 'https://safe-transaction-sepolia.safe.global/api',
 }
 
-export const initSafeApiKit = (chainId: ChainId) => {
+export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {
   const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
   if (!txServiceUrl) {
     throw new Error(`service not available for chain #${chainId}`)
   }
 
-  return new SafeApiKit({ txServiceUrl, chainId: BigInt(chainId) })
+  // @ts-expect-error SafeApiKit is only available as a CJS module. That doesn't play super nice with us being ESM.
+  return new SafeApiKit.default({ txServiceUrl, chainId: BigInt(chainId) })
 }
 
 export const initSafeProtocolKit = async (

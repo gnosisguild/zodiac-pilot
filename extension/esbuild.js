@@ -1,10 +1,11 @@
+import autoprefixer from 'autoprefixer'
+import { config } from 'dotenv'
 import esbuild from 'esbuild'
-import cssModulesPlugin from 'esbuild-css-modules-plugin'
+import postCssPlugin from 'esbuild-style-plugin'
 import stdLibBrowser from 'node-stdlib-browser'
 import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
+import tailwindcss from 'tailwindcss'
 import { fileURLToPath } from 'url'
-
-import { config } from 'dotenv'
 
 config()
 
@@ -52,7 +53,13 @@ esbuild
           : 'false',
       global: 'window',
     },
-    plugins: [plugin(stdLibBrowser), cssModulesPlugin()],
+    plugins: [
+      plugin(stdLibBrowser),
+      // cssModulesPlugin(),
+      postCssPlugin({
+        postcss: { plugins: [tailwindcss, autoprefixer] },
+      }),
+    ],
     logLevel: 'info',
   })
   .then(async (ctx) => {
