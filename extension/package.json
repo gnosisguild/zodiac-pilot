@@ -99,6 +99,7 @@
   "packageManager": "pnpm@9.11.0",
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
+    "date-fns": "^4.1.0",
     "react-router-dom": "^6.26.1"
   },
   "pnpm": {

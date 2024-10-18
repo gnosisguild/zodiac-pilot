@@ -15,6 +15,7 @@ import { useClearTransactions } from '../../state/transactionHooks'
 import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 
+import { formatDistanceToNow } from 'date-fns'
 import { useNavigate } from 'react-router-dom'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
 import classes from './style.module.css'
@@ -78,6 +79,8 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
     handleModify()
   }
+
+  console.log({ Moment })
 
   return (
     <>
@@ -148,9 +151,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
               >
                 <div className={classes.infoDatum}>
                   {route.lastUsed ? (
-                    <Moment unix fromNow>
-                      {route.lastUsed}
-                    </Moment>
+                    formatDistanceToNow(route.lastUsed)
                   ) : (
                     <>N/A</>
                   )}
