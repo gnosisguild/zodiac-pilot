@@ -4,10 +4,10 @@ import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
 test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
-  mockWeb3(page, () =>
+  const { trigger } = mockWeb3(page, () =>
     mock({
       blockchain: 'ethereum',
-      accounts: { return: ['0x0000000000000000000000000000000000000000'] },
+      accounts: { return: ['0x1000000000000000000000000000000000000000'] },
     })
   )
 
@@ -16,6 +16,11 @@ test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
   await extension.getByRole('link', { name: 'Configure routes' }).click()
   await extension.getByRole('button', { name: 'Add Route' }).click()
   await extension.getByRole('button', { name: 'Connect with MetaMask' }).click()
+  await expect(
+    extension.getByText('0x1000000000000000000000000000000000000000')
+  ).toBeInViewport()
+
+  await trigger('disconnect')
 
   await expect(
     extension.getByRole('alert', { name: 'Account disconnected' })
