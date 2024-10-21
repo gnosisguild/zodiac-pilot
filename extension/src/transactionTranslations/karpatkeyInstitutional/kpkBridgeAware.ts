@@ -8,6 +8,9 @@ const KARPATKEY_INSTITUTIONAL_AVATARS = [
   '0x846e7f810e08f1e2af2c5afd06847cc95f5cae1b',
 ]
 
+const BRIDGE_AWARE_CONTRACT_ADDRESS =
+  '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
+
 const BridgeAwareInterface: Interface = new Interface([
   `function bridgeStart(address asset)`,
 ])
@@ -18,7 +21,7 @@ export default {
   recommendedFor: [KnownContracts.ROLES_V2],
   autoApply: true,
 
-  translate: async (transaction, chainId, avatarAddress) => {
+  translate: async (transaction, chainId, avatarAddress, allTransactions) => {
     if (
       !KARPATKEY_INSTITUTIONAL_AVATARS.includes(avatarAddress.toLowerCase())
     ) {
@@ -31,18 +34,23 @@ export default {
       return
     }
 
-    const bridgeAwareContractAddress =
-      '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
+    const bridgeStartCall = {
+      to: BRIDGE_AWARE_CONTRACT_ADDRESS,
+      data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
+        bridgedTokenAddress,
+      ]),
+      value: '0x00',
+    }
 
-    return [
-      transaction,
-      {
-        to: bridgeAwareContractAddress,
-        data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
-          bridgedTokenAddress,
-        ]),
-        value: '0x00',
-      },
-    ]
+    if (
+      allTransactions.some(
+        (tx) => tx.to === bridgeStartCall.to && tx.data === bridgeStartCall.data
+      )
+    ) {
+      // the bridgeStart() call already exists in the batch, so this translation was already applied and should not be applied again
+      return undefined
+    }
+
+    return [transaction, bridgeStartCall]
   },
 } satisfies TransactionTranslation

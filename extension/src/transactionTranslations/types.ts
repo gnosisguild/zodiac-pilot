@@ -13,6 +13,7 @@ export interface TransactionTranslation {
   translate: (
     transaction: MetaTransactionData,
     chainId: ChainId,
-    avatarAddress: `0x${string}`
+    avatarAddress: `0x${string}`,
+    allTransactions: MetaTransactionData[]
   ) => Promise<MetaTransactionData[] | undefined>
 }
