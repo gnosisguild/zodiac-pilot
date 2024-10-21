@@ -18,5 +18,4 @@ jobs:
         with:
           path-to-signatures: "signatures/version1/cla.json"
           path-to-document: "https://github.com/gnosisguild/CLA"
-          # branch should not be protected
           branch: "cla-signatures"
