@@ -1,22 +1,19 @@
 import cn from 'classnames'
-import React from 'react'
-
+import { ComponentPropsWithoutRef } from 'react'
 import classes from './style.module.css'
 
-interface ButtonProps
-  extends React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  > {
+type ButtonProps = ComponentPropsWithoutRef<'button'> & {
   secondary?: boolean
 }
-const Button: React.FC<ButtonProps> = ({
-  className,
-  secondary = false,
-  ...rest
-}) => (
+
+const Button = ({ className, secondary = false, ...rest }: ButtonProps) => (
   <button
-    className={cn(classes.button, className, secondary && classes.secondary)}
+    className={cn(
+      'from-zodiac-dark-blue via-zodiac-light-blue to-zodiac-dark-blue enabled:hover:border-zodiac-light-mustard flex w-full items-center justify-center border-[3px] border-double bg-gradient-to-r p-2 font-spectral text-base text-white transition-all enabled:hover:cursor-pointer disabled:opacity-60',
+      secondary && 'bg-none',
+      classes.button,
+      className
+    )}
     {...rest}
   />
 )
