@@ -4,6 +4,10 @@ module.exports = {
   semi: false,
   singleQuote: true,
   trailingComma: 'es5',
-  // eslint-disable-next-line no-undef
-  plugins: [require.resolve('prettier-plugin-organize-imports')],
+  plugins: [
+    // eslint-disable-next-line no-undef
+    require.resolve('prettier-plugin-organize-imports'),
+    // eslint-disable-next-line no-undef
+    require.resolve('prettier-plugin-tailwindcss'),
+  ],
 }
