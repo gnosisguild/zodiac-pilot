@@ -7,7 +7,7 @@ const web3Content: MutableRefObject<string | null> = { current: null }
 
 declare global {
   type mock = {
-    trigger: (event: string) => void
+    trigger: (event: string, data: unknown) => void
   }
 
   const Web3Mock: mock
@@ -19,8 +19,8 @@ export const mockWeb3 = (page: Page, fn: () => unknown) => {
   })
 
   return {
-    trigger(event: string) {
-      return page.evaluate(() => Web3Mock.trigger(event))
+    lockWallet() {
+      return page.evaluate(() => Web3Mock.trigger('accountsChanged', []))
     },
   }
 }

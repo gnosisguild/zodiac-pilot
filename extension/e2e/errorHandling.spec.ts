@@ -4,7 +4,7 @@ import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
 test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
-  const { trigger } = mockWeb3(page, () =>
+  const { lockWallet } = mockWeb3(page, () =>
     mock({
       blockchain: 'ethereum',
       accounts: { return: ['0x1000000000000000000000000000000000000000'] },
@@ -20,7 +20,7 @@ test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
     extension.getByText('0x1000000000000000000000000000000000000000')
   ).toBeInViewport()
 
-  await trigger('disconnect')
+  await lockWallet()
 
   await expect(
     extension.getByRole('alert', { name: 'Account disconnected' })
