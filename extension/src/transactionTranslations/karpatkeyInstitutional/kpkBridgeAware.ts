@@ -4,7 +4,9 @@ import { TransactionTranslation } from '../types'
 import { Interface } from 'ethers'
 import { extractBridgedTokenAddress } from './bridges'
 
-//Abstracting for mainnet
+const KARPATKEY_INSTITUTIONAL_AVATARS = [
+  '0x846e7f810e08f1e2af2c5afd06847cc95f5cae1b',
+]
 
 const BridgeAwareInterface: Interface = new Interface([
   `function bridgeStart(address asset)`,
@@ -14,8 +16,15 @@ export default {
   title: 'Add bridgeStart call',
 
   recommendedFor: [KnownContracts.ROLES_V2],
+  autoApply: true,
 
-  translate: async (transaction) => {
+  translate: async (transaction, chainId, avatarAddress) => {
+    if (
+      !KARPATKEY_INSTITUTIONAL_AVATARS.includes(avatarAddress.toLowerCase())
+    ) {
+      return
+    }
+
     const bridgedTokenAddress = extractBridgedTokenAddress(transaction)
 
     if (!bridgedTokenAddress) {

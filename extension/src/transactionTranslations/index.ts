@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChainId } from 'ser-kit'
+import { ChainId, parsePrefixedAddress } from 'ser-kit'
 
 import { useRoute } from '../routes'
 
@@ -30,28 +30,36 @@ export const useApplicableTranslation = (
     ApplicableTranslation | undefined
   >(undefined)
 
-  const { chainId } = useRoute()
+  const { chainId, route } = useRoute()
+  const [_, avatarAddress] = parsePrefixedAddress(route.avatar)
 
   useEffect(() => {
-    findApplicableTranslation(encodedTransaction, chainId).then(setTranslation)
-  }, [encodedTransaction, chainId])
+    findApplicableTranslation(encodedTransaction, chainId, avatarAddress).then(
+      setTranslation
+    )
+  }, [encodedTransaction, chainId, avatarAddress])
 
   return translation
 }
 
 const findApplicableTranslation = async (
   transaction: MetaTransactionData,
-  chainId: ChainId
+  chainId: ChainId,
+  avatarAddress: `0x${string}`
 ): Promise<ApplicableTranslation | undefined> => {
   // we cache the result of the translation to avoid test-running translation functions over and over again
-  const key = cacheKey(transaction, chainId)
+  const key = cacheKey(transaction, chainId, avatarAddress)
   if (applicableTranslationsCache.has(key)) {
     return await applicableTranslationsCache.get(key)
   }
 
   const tryApplyingTranslations = async () => {
     for (const translation of translations) {
-      const result = await translation.translate(transaction, chainId)
+      const result = await translation.translate(
+        transaction,
+        chainId,
+        avatarAddress
+      )
       if (result) {
         return {
           title: translation.title,
@@ -71,7 +79,11 @@ const applicableTranslationsCache = new Map<
   string,
   Promise<ApplicableTranslation | undefined>
 >()
-const cacheKey = (transaction: MetaTransactionData, chainId: ChainId) =>
-  `${chainId}:${transaction.to}:${transaction.value}:${transaction.data}:${
+const cacheKey = (
+  transaction: MetaTransactionData,
+  chainId: ChainId,
+  avatarAddress: `0x${string}`
+) =>
+  `${chainId}:${avatarAddress}:${transaction.to}:${transaction.value}:${transaction.data}:${
     transaction.operation || 0
   }`
