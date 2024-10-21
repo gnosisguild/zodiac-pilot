@@ -28,7 +28,7 @@ export default {
       return
     }
 
-    const bridgedTokenAddress = extractBridgedTokenAddress(transaction)
+    const bridgedTokenAddress = extractBridgedTokenAddress(transaction, chainId)
 
     if (!bridgedTokenAddress) {
       return

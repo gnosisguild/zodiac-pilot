@@ -1,9 +1,11 @@
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { FunctionFragment, Interface } from 'ethers'
+import { ChainId } from 'ser-kit';
 
-export function extractBridgedTokenAddress({ to, data }: MetaTransactionData) {
+export function extractBridgedTokenAddress({ to, data }: MetaTransactionData, chainId: ChainId) {
   const bridge = allBridges.find(
     bridge => to.toLowerCase() === bridge.address.toLowerCase()
+      && +chainId === bridge.sourceChainId
   )
   if (!bridge) return undefined
 
@@ -29,6 +31,7 @@ export function extractBridgedTokenAddress({ to, data }: MetaTransactionData) {
 type BridgeData = {
   address: string
   interface: Interface
+  sourceChainId: ChainId
   /** takes precedence of `token` */
   tokenArgument?: number
   /** fallback token address to use in case no address could be decoded using `tokenArgument` */
@@ -40,6 +43,7 @@ export const ETH_GNO_XDAI_BRIDGE: BridgeData = {
   interface: new Interface([
     'function relayTokens(address _receiver, uint256 _amount)'
   ]),
+  sourceChainId: 1,
   token: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
 };
 
@@ -48,6 +52,7 @@ export const ETH_HOP_DAI_BRIDGE: BridgeData = {
   interface: new Interface([
     'function sendToL2(uint256 chainId, address recipient, uint256 amount, uint256 amountOutMin, uint256 deadline, address relayer, uint256 relayerFee)'
   ]),
+  sourceChainId: 1,
   token: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
 };
 
@@ -56,6 +61,7 @@ export const ETH_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 2,
 };
 
@@ -64,6 +70,7 @@ export const ETH_GNO_OMNIBRIDGE: BridgeData = {
   interface: new Interface([
     'function relayTokensAndCall(address token, address _receiver, uint256 _value, bytes _data)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 0,
 };
 
@@ -73,6 +80,7 @@ export const ETH_OPT_DAI_BRIDGE: BridgeData = {
     'function depositERC20(address _l1Token, address _l2Token, uint256 _amount, uint32 _l2Gas, bytes _data)',
     'function depositERC20To(address _l1Token, address _l2Token, address _to, uint256 _amount, uint32 _l2Gas, bytes _data)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 0,
 };
 
@@ -82,6 +90,7 @@ export const ETH_OPT_GATEWAY: BridgeData = {
     'function depositERC20(address _l1Token, address _l2Token, uint256 _amount, uint32 _minGasLimit, bytes _extraData)',
     'function depositERC20To(address _l1Token, address _l2Token, address _to, uint256 _amount, uint32 _minGasLimit, bytes _extraData)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 0,
 };
 
@@ -90,6 +99,7 @@ export const ETH_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   interface: new Interface([
     'function depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 3,
 };
 
@@ -98,6 +108,7 @@ export const ETH_L1_HOP_CCTP: BridgeData = {
   interface: new Interface([
     'function send(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee)'
   ]),
+  sourceChainId: 1,
   token: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
 };
 
@@ -106,6 +117,7 @@ export const ETH_ARB_DAI_GATEWAY: BridgeData = {
   interface: new Interface([
     'function outboundTransfer(address l1Token, address to, uint256 amount, uint256 maxGas, uint256 gasPriceBid, bytes data)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 0,
 };
 
@@ -114,6 +126,7 @@ export const ETH_ARB_ERC20_GATEWAY: BridgeData = {
   interface: new Interface([
     'function outboundTransfer(address _l1Token, address _to, uint256 _amount, uint256 _maxGas, uint256 _gasPriceBid, bytes _data)'
   ]),
+  sourceChainId: 1,
   tokenArgument: 0,
 };
 
@@ -122,6 +135,7 @@ export const ARB1_GATEWAY_ROUTER: BridgeData = {
   interface: new Interface([
     'function outboundTransfer(address _l1Token, address _to, uint256 _amount, bytes _data)'
   ]),
+  sourceChainId: 42161,
   tokenArgument: 0,
 };
 
@@ -130,6 +144,7 @@ export const ARB1_HOP_DAI_WRAPPER: BridgeData = {
   interface: new Interface([
     'function swapAndSend(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee, uint256 amountOutMin, uint256 deadline, uint256 destinationAmountOutMin, uint256 destinationDeadline)'
   ]),
+  sourceChainId: 42161,
   token: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
 };
 
@@ -138,6 +153,7 @@ export const ARB1_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
+  sourceChainId: 42161,
   tokenArgument: 2,
 };
 
@@ -146,6 +162,7 @@ export const ARB1_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   interface: new Interface([
     'function depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)'
   ]),
+  sourceChainId: 42161,
   token: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
 };
 
@@ -154,6 +171,7 @@ export const ARB1_L2_HOP_CCTP: BridgeData = {
   interface: new Interface([
     'function send(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee)'
   ]),
+  sourceChainId: 42161,
   token: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
 };
 
@@ -162,6 +180,7 @@ export const BASE_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   interface: new Interface([
     'function depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)'
   ]),
+  sourceChainId: 8453,
   token: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
 };
 
@@ -170,6 +189,7 @@ export const BASE_L2_HOP_CCTP: BridgeData = {
   interface: new Interface([
     'function send(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee)'
   ]),
+  sourceChainId: 8453,
   token: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
 };
 
@@ -178,6 +198,7 @@ export const BASE_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
+  sourceChainId: 8453,
   tokenArgument: 2,
 };
 
@@ -186,6 +207,7 @@ export const GNOSIS_XDAI_BRIDGE_2: BridgeData = {
   interface: new Interface([
     'function relayTokens(address _receiver)'
   ]),
+  sourceChainId: 100,
   token: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
 };
 
@@ -194,6 +216,7 @@ export const GNOSIS_HOP_DAI_WRAPPER: BridgeData = {
   interface: new Interface([
     'function swapAndSend(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee, uint256 amountOutMin, uint256 deadline, uint256 destinationAmountOutMin, uint256 destinationDeadline)'
   ]),
+  sourceChainId: 100,
   token: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
 };
 
@@ -202,6 +225,7 @@ export const GNOSIS_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
+  sourceChainId: 100,
   tokenArgument: 2,
 };
 
@@ -210,6 +234,7 @@ export const GNOSIS_USDC: BridgeData = {
   interface: new Interface([
     'function transferAndCall(address _to, uint256 _value, bytes _data)'
   ]),
+  sourceChainId: 100,
   token: '0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83',
 };
 
@@ -219,6 +244,7 @@ export const OPTIMISM_DAI_TOKEN_BRIDGE: BridgeData = {
     'function withdraw(address _l2Token, uint256 _amount, uint32 _l1Gas, bytes _data)',
     'function withdrawTo(address _l2Token, address _to, uint256 _amount, uint32 _l1Gas, bytes _data)'
   ]),
+  sourceChainId: 11155420,
   tokenArgument: 0,
 };
 
@@ -227,6 +253,7 @@ export const OPTIMISM_HOP_DAI_WRAPPER: BridgeData = {
   interface: new Interface([
     'function swapAndSend(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee, uint256 amountOutMin, uint256 deadline, uint256 destinationAmountOutMin, uint256 destinationDeadline)'
   ]),
+  sourceChainId: 11155420,
   token: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
 };
 
@@ -235,6 +262,7 @@ export const OPTIMISM_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
+  sourceChainId: 11155420,
   tokenArgument: 2,
 };
 
@@ -243,6 +271,7 @@ export const OPTIMISM_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   interface: new Interface([
     'function depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)'
   ]),
+  sourceChainId: 11155420,
   tokenArgument: 3,
 };
 
@@ -251,6 +280,7 @@ export const OPTIMISM_L2_HOP_CCTP: BridgeData = {
   interface: new Interface([
     'function send(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee)'
   ]),
+  sourceChainId: 11155420,
   token: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
 };
 
