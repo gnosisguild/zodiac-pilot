@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import { Page } from '@playwright/test'
 import { readFileSync } from 'fs'
 import { MutableRefObject } from 'react'
@@ -20,7 +21,15 @@ export const mockWeb3 = (page: Page, fn: () => unknown) => {
 
   return {
     lockWallet() {
-      return page.evaluate(() => Web3Mock.trigger('accountsChanged', []))
+      const frame = page.frame({
+        url: 'https://connect.pilot.gnosisguild.org/',
+      })
+
+      invariant(frame != null, 'Connect iframe not found')
+
+      return frame.evaluate(() => {
+        console.log(Web3Mock.trigger('accountsChanged', []))
+      })
     },
   }
 }

@@ -118,7 +118,7 @@ export default class ConnectProvider
 
     console.debug('Connecting new port.')
 
-    port.onMessage.addListener(this.#handleEventMessage)
+    port.onMessage.addListener((message) => this.#handleEventMessage(message))
 
     this.port = port
 
