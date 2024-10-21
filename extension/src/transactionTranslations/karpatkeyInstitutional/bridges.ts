@@ -244,7 +244,7 @@ export const OPTIMISM_DAI_TOKEN_BRIDGE: BridgeData = {
     'function withdraw(address _l2Token, uint256 _amount, uint32 _l1Gas, bytes _data)',
     'function withdrawTo(address _l2Token, address _to, uint256 _amount, uint32 _l1Gas, bytes _data)'
   ]),
-  sourceChainId: 11155420,
+  sourceChainId: 10,
   tokenArgument: 0,
 };
 
@@ -253,7 +253,7 @@ export const OPTIMISM_HOP_DAI_WRAPPER: BridgeData = {
   interface: new Interface([
     'function swapAndSend(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee, uint256 amountOutMin, uint256 deadline, uint256 destinationAmountOutMin, uint256 destinationDeadline)'
   ]),
-  sourceChainId: 11155420,
+  sourceChainId: 10,
   token: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
 };
 
@@ -262,7 +262,7 @@ export const OPTIMISM_CONNEXT_BRIDGE: BridgeData = {
   interface: new Interface([
     'function xcall(uint32 _destination, address _to, address _asset, address _delegate, uint256 _amount, uint256 _slippage, bytes _callData, uint256 _relayerFee)'
   ]),
-  sourceChainId: 11155420,
+  sourceChainId: 10,
   tokenArgument: 2,
 };
 
@@ -271,7 +271,7 @@ export const OPTIMISM_CIRCLE_TOKEN_MESSENGER: BridgeData = {
   interface: new Interface([
     'function depositForBurn(uint256 amount, uint32 destinationDomain, bytes32 mintRecipient, address burnToken)'
   ]),
-  sourceChainId: 11155420,
+  sourceChainId: 10,
   tokenArgument: 3,
 };
 
@@ -280,7 +280,7 @@ export const OPTIMISM_L2_HOP_CCTP: BridgeData = {
   interface: new Interface([
     'function send(uint256 chainId, address recipient, uint256 amount, uint256 bonderFee)'
   ]),
-  sourceChainId: 11155420,
+  sourceChainId: 10,
   token: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
 };
 
