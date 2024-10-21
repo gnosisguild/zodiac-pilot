@@ -5,7 +5,7 @@ import React from 'react'
 import { RiAlertLine } from 'react-icons/ri'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { CHAIN_NAME } from '../../../chains'
-import { Button, Flex, Tag } from '../../../components'
+import { Alert, Button, Flex, Tag } from '../../../components'
 import { shortenAddress } from '../../../components/Address'
 import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
@@ -162,21 +162,29 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   if (
     route.providerType === ProviderType.InjectedWallet &&
     injectedWallet.provider &&
-    pilotAddress &&
-    !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
+    pilotAddress
   ) {
-    return (
-      <div className={classes.connectedContainer}>
-        <div className={classes.connectionWarning}>
-          <Tag head={<RiAlertLine />} color="warning">
-            Switch wallet to account {shortenAddress(pilotAddress)}
-          </Tag>
+    // Account disconnected
+    if (injectedWallet.accounts.length === 0) {
+      return <Alert>Account Disconnected</Alert>
+    }
+
+    if (
+      !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
+    ) {
+      return (
+        <div className={classes.connectedContainer}>
+          <div className={classes.connectionWarning}>
+            <Tag head={<RiAlertLine />} color="warning">
+              Switch wallet to account {shortenAddress(pilotAddress)}
+            </Tag>
+          </div>
+          <Button onClick={disconnect} className={classes.disconnectButton}>
+            Disconnect
+          </Button>
         </div>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
-      </div>
-    )
+      )
+    }
   }
 
   // not connected
