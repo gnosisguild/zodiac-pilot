@@ -1,4 +1,5 @@
 export { default as Address } from './Address'
+export { Alert } from './Alert'
 export { default as BlockButton } from './BlockButton'
 export { default as BlockLink } from './BlockLink'
 export { default as Box } from './Box'
