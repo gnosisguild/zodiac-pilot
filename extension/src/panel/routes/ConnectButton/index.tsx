@@ -166,7 +166,20 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   ) {
     // Account disconnected
     if (injectedWallet.accounts.length === 0) {
-      return <Alert>Account Disconnected</Alert>
+      return (
+        <Alert
+          actions={
+            <>
+              <Button onClick={() => injectedWallet.connect()}>
+                Reconnect
+              </Button>
+              <Button onClick={disconnect}>Disconnect</Button>
+            </>
+          }
+        >
+          Account disconnected
+        </Alert>
+      )
     }
 
     if (
