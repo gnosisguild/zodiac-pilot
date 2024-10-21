@@ -28,7 +28,7 @@ export const mockWeb3 = (page: Page, fn: () => unknown) => {
       invariant(frame != null, 'Connect iframe not found')
 
       return frame.evaluate(() => {
-        console.log(Web3Mock.trigger('accountsChanged', []))
+        Web3Mock.trigger('accountsChanged', [])
       })
     },
   }
