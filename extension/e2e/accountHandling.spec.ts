@@ -1,31 +1,29 @@
-import { mock } from '@depay/web3-mock'
+import { Page } from '@playwright/test'
 import { expect, test } from './fixture'
 import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
 test.describe('Locked account', () => {
+  const account = '0x1000000000000000000000000000000000000000'
+
+  const openConfiguration = async (page: Page) => {
+    await page.getByRole('link', { name: 'Configure routes' }).click()
+    await page.getByRole('button', { name: 'Add Route' }).click()
+    await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
+    await expect(page.getByText(account)).toBeInViewport()
+  }
+
   test('handles wallet disconnect gracefully', async ({
     page,
     extensionId,
   }) => {
-    const { lockWallet } = mockWeb3(page, () =>
-      mock({
-        blockchain: 'ethereum',
-        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
-      })
-    )
+    const { lockWallet } = await mockWeb3(page, {
+      accounts: [account],
+    })
 
     const extension = await loadExtension(page, extensionId)
 
-    await extension.getByRole('link', { name: 'Configure routes' }).click()
-    await extension.getByRole('button', { name: 'Add Route' }).click()
-    await extension
-      .getByRole('button', { name: 'Connect with MetaMask' })
-      .click()
-    await expect(
-      extension.getByText('0x1000000000000000000000000000000000000000')
-    ).toBeInViewport()
-
+    await openConfiguration(extension)
     await lockWallet()
 
     await expect(
@@ -37,55 +35,31 @@ test.describe('Locked account', () => {
     page,
     extensionId,
   }) => {
-    const { lockWallet } = mockWeb3(page, () =>
-      mock({
-        blockchain: 'ethereum',
-        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
-      })
-    )
+    const { lockWallet } = await mockWeb3(page, {
+      accounts: [account],
+    })
 
     const extension = await loadExtension(page, extensionId)
 
-    await extension.getByRole('link', { name: 'Configure routes' }).click()
-    await extension.getByRole('button', { name: 'Add Route' }).click()
-    await extension
-      .getByRole('button', { name: 'Connect with MetaMask' })
-      .click()
-    await expect(
-      extension.getByText('0x1000000000000000000000000000000000000000')
-    ).toBeInViewport()
-
+    await openConfiguration(extension)
     await lockWallet()
 
     await extension.getByRole('button', { name: 'Reconnect' }).click()
 
-    await expect(
-      extension.getByText('0x1000000000000000000000000000000000000000')
-    ).toBeInViewport()
+    await expect(extension.getByText(account)).toBeInViewport()
   })
 
   test('it is possible to disconnect a locked account', async ({
     page,
     extensionId,
   }) => {
-    const { lockWallet } = mockWeb3(page, () =>
-      mock({
-        blockchain: 'ethereum',
-        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
-      })
-    )
+    const { lockWallet } = await mockWeb3(page, {
+      accounts: [account],
+    })
 
     const extension = await loadExtension(page, extensionId)
 
-    await extension.getByRole('link', { name: 'Configure routes' }).click()
-    await extension.getByRole('button', { name: 'Add Route' }).click()
-    await extension
-      .getByRole('button', { name: 'Connect with MetaMask' })
-      .click()
-    await expect(
-      extension.getByText('0x1000000000000000000000000000000000000000')
-    ).toBeInViewport()
-
+    await openConfiguration(extension)
     await lockWallet()
 
     await extension.getByRole('button', { name: 'Disconnect' }).click()
