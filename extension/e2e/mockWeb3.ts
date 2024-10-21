@@ -9,14 +9,17 @@ const web3Content: MutableRefObject<string | null> = { current: null }
 declare global {
   type mock = {
     trigger: (event: string, data: unknown) => void
+    mock: (options: { chain: string; accounts: { return: string[] } }) => void
   }
 
   const Web3Mock: mock
 }
 
-export const mockWeb3 = (page: Page, fn: () => unknown) => {
+type MockOptions = { accounts: string[] }
+
+export const mockWeb3 = async (page: Page, { accounts }: MockOptions) => {
   page.addInitScript({
-    content: `${getLibraryCode()}\n(${fn.toString().replaceAll('mock', 'Web3Mock.mock')})()`,
+    content: `${getLibraryCode()}\n(() => { Web3Mock.mock(${JSON.stringify({ blockchain: 'ethereum', accounts: { return: accounts } })})})()`,
   })
 
   return {
@@ -28,7 +31,7 @@ export const mockWeb3 = (page: Page, fn: () => unknown) => {
       invariant(frame != null, 'Connect iframe not found')
 
       return frame.evaluate(() => {
-        console.log(Web3Mock.trigger('accountsChanged', []))
+        Web3Mock.trigger('accountsChanged', [])
       })
     },
   }
