@@ -5,10 +5,24 @@ import { fileURLToPath } from 'url'
 
 const web3Content: MutableRefObject<string | null> = { current: null }
 
+declare global {
+  type mock = {
+    trigger: (event: string) => void
+  }
+
+  const Web3Mock: mock
+}
+
 export const mockWeb3 = (page: Page, fn: () => unknown) => {
   page.addInitScript({
     content: `${getLibraryCode()}\n(${fn.toString().replaceAll('mock', 'Web3Mock.mock')})()`,
   })
+
+  return {
+    trigger(event: string) {
+      return page.evaluate(() => Web3Mock.trigger(event))
+    },
+  }
 }
 
 const getLibraryCode = () => {
