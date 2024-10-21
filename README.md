@@ -1,7 +1,7 @@
 # Zodiac Pilot
 
-[![Build Status](https://github.com/gnosis/zodiac-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/gnosis/zodiac-pilot/actions/workflows/ci.yml)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/gnosis/CODE_OF_CONDUCT)
+[![Build Status](https://github.com/gnosis/zodiac-pilot/actions/workflows/ci.yml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/ci.yml)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/gnosiguild/CODE_OF_CONDUCT)
 
 Chrome extension to simulate Dapp interactions and record transactions. [Available on the Chrome Webstore](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb?hl=en&authuser=0)
 
