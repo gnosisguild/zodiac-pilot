@@ -8,21 +8,26 @@ Reading and following these guidelines will help us make the contribution proces
 
 - [Contributing to Gnosis Guild Projects](#contributing-to-gnosis-guild-projects)
   - [Quicklinks](#quicklinks)
+  - [CLA](#cla)
   - [Code of Conduct](#code-of-conduct)
   - [Getting Started](#getting-started)
     - [Issues](#issues)
     - [Pull Requests](#pull-requests)
   - [Getting Help](#getting-help)
 
+## CLA
+
+It is a requirement for all contributors to sign the [Contributor License Agreement](https://github.com/gnosisguild/CLA) (CLA) in order to proceed with their contribution.
+
 ## Code of Conduct
 
-We take our open source community seriously and hold ourselves and other contributors to high standards of communication. By participating and contributing to this project, you agree to uphold our [Code of Conduct](https://github.com/gnosis/CODE_OF_CONDUCT).
+We take our open source community seriously and hold ourselves and other contributors to high standards of communication. By participating and contributing to this project, you agree to uphold our [Code of Conduct](https://github.com/gnosisguild/CODE_OF_CONDUCT).
 
 ## Getting Started
 
 Contributions are made to this repo via Issues and Pull Requests (PRs). A few general guidelines that cover both:
 
-- To report security vulnerabilities, please responsibly disclose to [bounty@gnosis.io](mailto:bounty@gnosis.io) or via any of our [immunefi](https://immunefi.com/) bounties which are monitored by our security team.
+- To report security vulnerabilities, please responsibly disclose to [pilot@gnosisguild.org](mailto:pilot@gnosisguild.org).
 - Search for existing Issues and PRs before creating your own.
 - We work hard to makes sure issues are handled in a timely manner but, depending on the impact, it could take a while to investigate the root cause. A friendly ping in the comment thread to the submitter or a contributor can help draw attention if your issue is blocking.
 
@@ -55,4 +60,4 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 
 ## Getting Help
 
-Join us in the [Gnosis Guild Discord](https://discord.gg/gnosisguild) and say hi 👋.
+Join us in the [Gnosis Guild Discord](https://discord.gnosisguild.org) and say hi 👋.
