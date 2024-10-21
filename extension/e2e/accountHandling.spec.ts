@@ -3,55 +3,95 @@ import { expect, test } from './fixture'
 import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
-test('handles wallet disconnect gracefully', async ({ page, extensionId }) => {
-  const { lockWallet } = mockWeb3(page, () =>
-    mock({
-      blockchain: 'ethereum',
-      accounts: { return: ['0x1000000000000000000000000000000000000000'] },
-    })
-  )
+test.describe('Locked account', () => {
+  test('handles wallet disconnect gracefully', async ({
+    page,
+    extensionId,
+  }) => {
+    const { lockWallet } = mockWeb3(page, () =>
+      mock({
+        blockchain: 'ethereum',
+        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
+      })
+    )
 
-  const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page, extensionId)
 
-  await extension.getByRole('link', { name: 'Configure routes' }).click()
-  await extension.getByRole('button', { name: 'Add Route' }).click()
-  await extension.getByRole('button', { name: 'Connect with MetaMask' }).click()
-  await expect(
-    extension.getByText('0x1000000000000000000000000000000000000000')
-  ).toBeInViewport()
+    await extension.getByRole('link', { name: 'Configure routes' }).click()
+    await extension.getByRole('button', { name: 'Add Route' }).click()
+    await extension
+      .getByRole('button', { name: 'Connect with MetaMask' })
+      .click()
+    await expect(
+      extension.getByText('0x1000000000000000000000000000000000000000')
+    ).toBeInViewport()
 
-  await lockWallet()
+    await lockWallet()
 
-  await expect(
-    extension.getByRole('alert', { name: 'Account disconnected' })
-  ).toBeInViewport()
-})
+    await expect(
+      extension.getByRole('alert', { name: 'Account disconnected' })
+    ).toBeInViewport()
+  })
 
-test('it is possible to reconnect an account', async ({
-  page,
-  extensionId,
-}) => {
-  const { lockWallet } = mockWeb3(page, () =>
-    mock({
-      blockchain: 'ethereum',
-      accounts: { return: ['0x1000000000000000000000000000000000000000'] },
-    })
-  )
+  test('it is possible to reconnect an account', async ({
+    page,
+    extensionId,
+  }) => {
+    const { lockWallet } = mockWeb3(page, () =>
+      mock({
+        blockchain: 'ethereum',
+        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
+      })
+    )
 
-  const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page, extensionId)
 
-  await extension.getByRole('link', { name: 'Configure routes' }).click()
-  await extension.getByRole('button', { name: 'Add Route' }).click()
-  await extension.getByRole('button', { name: 'Connect with MetaMask' }).click()
-  await expect(
-    extension.getByText('0x1000000000000000000000000000000000000000')
-  ).toBeInViewport()
+    await extension.getByRole('link', { name: 'Configure routes' }).click()
+    await extension.getByRole('button', { name: 'Add Route' }).click()
+    await extension
+      .getByRole('button', { name: 'Connect with MetaMask' })
+      .click()
+    await expect(
+      extension.getByText('0x1000000000000000000000000000000000000000')
+    ).toBeInViewport()
 
-  await lockWallet()
+    await lockWallet()
 
-  await extension.getByRole('button', { name: 'Reconnect' }).click()
+    await extension.getByRole('button', { name: 'Reconnect' }).click()
 
-  await expect(
-    extension.getByText('0x1000000000000000000000000000000000000000')
-  ).toBeInViewport()
+    await expect(
+      extension.getByText('0x1000000000000000000000000000000000000000')
+    ).toBeInViewport()
+  })
+
+  test('it is possible to disconnect a locked account', async ({
+    page,
+    extensionId,
+  }) => {
+    const { lockWallet } = mockWeb3(page, () =>
+      mock({
+        blockchain: 'ethereum',
+        accounts: { return: ['0x1000000000000000000000000000000000000000'] },
+      })
+    )
+
+    const extension = await loadExtension(page, extensionId)
+
+    await extension.getByRole('link', { name: 'Configure routes' }).click()
+    await extension.getByRole('button', { name: 'Add Route' }).click()
+    await extension
+      .getByRole('button', { name: 'Connect with MetaMask' })
+      .click()
+    await expect(
+      extension.getByText('0x1000000000000000000000000000000000000000')
+    ).toBeInViewport()
+
+    await lockWallet()
+
+    await extension.getByRole('button', { name: 'Disconnect' }).click()
+
+    await expect(
+      extension.getByRole('button', { name: 'Connect with MetaMask' })
+    ).toBeInViewport()
+  })
 })

@@ -173,10 +173,11 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
               <Button onClick={() => injectedWallet.connect()}>
                 Reconnect
               </Button>
+              <Button onClick={disconnect}>Disconnect</Button>
             </>
           }
         >
-          Account Disconnected
+          Account disconnected
         </Alert>
       )
     }
