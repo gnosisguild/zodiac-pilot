@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
   "author": "Jan-Felix <jan@gnosisguild.org>",
-  "license": "LGPLv3",
+  "license": "GPLv3",
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production rimraf public/build && node esbuild.js",
