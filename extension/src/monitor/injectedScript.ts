@@ -3,7 +3,11 @@
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
 import { invariant } from '@epic-web/invariant'
-import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
+import {
+  PILOT_CONNECT,
+  PILOT_DISCONNECT,
+  PILOT_OPEN_SIDEPANEL,
+} from '../messages'
 import { Eip1193Provider } from '../types'
 import {
   dismissHint,
@@ -54,7 +58,7 @@ window.addEventListener('message', (event: MessageEvent) => {
 const handleLoad = () => {
   window.removeEventListener('load', handleLoad)
 
-  const form = document.getElementById('open-panel')
+  const form = document.getElementById('ZODIAC-PILOT::open-panel-button')
 
   invariant(form != null, 'No form to open side panel found')
   invariant(form instanceof HTMLFormElement, 'Not a form')
@@ -69,7 +73,7 @@ const handleLoad = () => {
     invariant(typeof extensionId === 'string', 'Not a string')
 
     chrome.runtime.sendMessage(extensionId, {
-      type: 'open_side_panel',
+      type: PILOT_OPEN_SIDEPANEL,
     })
   })
 }

@@ -89,7 +89,7 @@ export default function App() {
               </WagmiProvider>
             </QueryClientProvider>
 
-            <form id="open-panel">
+            <form id="ZODIAC-PILOT::open-panel-button">
               <Input label="Extension ID" name="extensionId" />
               <Button type="submit">Open extension</Button>
             </form>
