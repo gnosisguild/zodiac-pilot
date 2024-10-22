@@ -1,10 +1,8 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
+import { activePilotSessions } from './activePilotSessions'
 import { updateRpcRedirectRules } from './rpcRedirect'
 import { startTrackingTab, stopTrackingTab } from './tabsTracking'
-import { PilotSession } from './types'
-
-/** maps `windowId` to pilot session */
-export const activePilotSessions = new Map<number, PilotSession>()
+import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startPilotSession = (windowId: number, tabId?: number) => {
   console.log('start pilot session', windowId)
@@ -63,16 +61,3 @@ chrome.runtime.onMessage.addListener((message: Message, sender) => {
     updateSimulatingBadge(message.windowId)
   }
 })
-
-export const updateSimulatingBadge = (windowId: number) => {
-  const isSimulating = !!activePilotSessions.get(windowId)?.fork
-  chrome.tabs.query({ windowId }, (tabs) => {
-    for (const tab of tabs) {
-      // TODO use a different icon while simulating to make this more beautiful
-      chrome.action.setBadgeText({
-        text: isSimulating ? '🟢' : '',
-        tabId: tab.id,
-      })
-    }
-  })
-}

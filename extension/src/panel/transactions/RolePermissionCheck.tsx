@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { RiGroupLine } from 'react-icons/ri'
-
-import { Flex, Tag } from '../../components'
-import { Eip1193Provider, JsonRpcError, Route } from '../../types'
-import { useApplicableTranslation } from '../transactionTranslations'
-import { decodeRolesV1Error } from '../utils'
-import { decodeGenericError, decodeRolesV2Error } from '../utils/decodeError'
-
+import { Flex, Tag } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
+import React, { useEffect, useState } from 'react'
+import { RiGroupLine } from 'react-icons/ri'
 import {
   ExecutionActionType,
   parsePrefixedAddress,
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
+import { Eip1193Provider, JsonRpcError, Route } from '../../types'
 import { useProvider } from '../providers/ProvideProvider'
 import { useRoute } from '../routes'
 import { TransactionState } from '../state'
+import { useApplicableTranslation } from '../transactionTranslations'
+import { decodeRolesV1Error } from '../utils'
+import { decodeGenericError, decodeRolesV2Error } from '../utils/decodeError'
 import CopyToClipboard from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'

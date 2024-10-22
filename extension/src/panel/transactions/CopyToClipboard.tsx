@@ -1,10 +1,8 @@
+import { IconButton } from '@/components'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import React from 'react'
 import { RiFileCopy2Line } from 'react-icons/ri'
 import { toast } from 'react-toastify'
-
-import { IconButton } from '../../components'
-
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import classes from './style.module.css'
 
 interface Props {

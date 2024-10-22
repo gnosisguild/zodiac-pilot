@@ -1,11 +1,7 @@
+import { Blockie, Box, Select } from '@/components'
+import { getAddress } from 'ethers'
 import React from 'react'
 import { Props as SelectProps } from 'react-select'
-
-import { Select } from '../../../components'
-import Blockie from '../../../components/Blockie'
-import Box from '../../../components/Box'
-
-import { getAddress } from 'ethers'
 import classes from './style.module.css'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }

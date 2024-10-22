@@ -16,7 +16,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "paths": {
+      "@/components": ["./src/components/index.ts"],
+      "@/utils": ["./src/utils/index.ts"]
+    }
   },
   "include": ["src"]
 }

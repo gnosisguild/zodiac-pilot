@@ -1,7 +1,7 @@
+import { Select } from '@/components'
 import React from 'react'
 import { ChainId } from 'ser-kit'
 import { CHAIN_NAME } from '../../../chains'
-import { Select } from '../../../components'
 
 import classes from './style.module.css'
 

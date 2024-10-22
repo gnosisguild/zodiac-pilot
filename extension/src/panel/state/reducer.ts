@@ -1,15 +1,7 @@
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { ContractInfo } from '../utils/abi'
 import { Action } from './actions'
-
-export enum ExecutionStatus {
-  PENDING,
-  SUCCESS,
-  /** Submitting the transaction failed. This is probably due to an issue in the execution route. */
-  FAILED,
-  /** Submitting the transaction succeeded, but the Safe meta transaction reverted. */
-  META_TRANSACTION_REVERTED,
-}
+import { ExecutionStatus } from './executionStatus'
 
 export interface TransactionState {
   id: string

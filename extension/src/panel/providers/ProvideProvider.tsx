@@ -1,3 +1,5 @@
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import React, {
   createContext,
   ReactNode,
@@ -6,9 +8,6 @@ import React, {
   useEffect,
   useRef,
 } from 'react'
-
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   ConnectionType,
   execute,
@@ -21,8 +20,7 @@ import {
 import { ForkProvider } from '.'
 import { Eip1193Provider } from '../../types'
 import { useRoute } from '../routes'
-import { useDispatch, useTransactions } from '../state'
-import { ExecutionStatus } from '../state/reducer'
+import { ExecutionStatus, useDispatch, useTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 
 interface Props {
