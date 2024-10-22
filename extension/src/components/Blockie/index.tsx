@@ -9,7 +9,7 @@ interface Props {
   className?: string
 }
 
-const Blockie: React.FC<Props> = ({ address, className }) => {
+export const Blockie: React.FC<Props> = ({ address, className }) => {
   const blockie = useMemo(() => address && makeBlockie(address), [address])
   return (
     <div className={classNames(classes.container, className)}>
@@ -17,5 +17,3 @@ const Blockie: React.FC<Props> = ({ address, className }) => {
     </div>
   )
 }
-
-export default Blockie

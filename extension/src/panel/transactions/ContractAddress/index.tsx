@@ -1,12 +1,11 @@
+import { BlockLink, Box, Flex, IconButton } from '@/components'
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
+import { getAddress } from 'ethers'
 import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
-
-import { getAddress } from 'ethers'
 import { ChainId } from 'ser-kit'
 import { EXPLORER_URL } from '../../../chains'
-import { BlockLink, Box, Flex, IconButton } from '../../../components'
 import { ContractInfo } from '../../utils/abi'
 import classes from './style.module.css'
 

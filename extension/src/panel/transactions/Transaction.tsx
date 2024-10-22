@@ -1,14 +1,11 @@
+import { Box, Flex, ToggleButton } from '@/components'
+import { formatEther, Fragment } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
-
 import { CHAIN_CURRENCY } from '../../chains'
-import { Box, Flex } from '../../components'
-import ToggleButton from '../../components/ToggleButton'
+import { Route } from '../../types'
 import { useRoute } from '../routes'
 import { TransactionState } from '../state'
-
-import { formatEther, Fragment } from 'ethers'
-import { Route } from '../../types'
 import ContractAddress from './ContractAddress'
 import CopyToClipboard from './CopyToClipboard'
 import DecodedTransaction from './DecodedTransaction'

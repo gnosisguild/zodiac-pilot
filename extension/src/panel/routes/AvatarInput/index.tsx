@@ -1,13 +1,9 @@
+import { Blockie, Box, selectStyles } from '@/components'
+import { validateAddress } from '@/utils'
+import { getAddress } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-
-import { Box } from '../../../components'
-import Blockie from '../../../components/Blockie'
-import { selectStyles } from '../../../components/Select'
-import { validateAddress } from '../../utils'
 import { Option } from '../ModSelect'
-
-import { getAddress } from 'ethers'
 import classes from './style.module.css'
 
 interface Props {

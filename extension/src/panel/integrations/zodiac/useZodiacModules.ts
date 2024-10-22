@@ -1,3 +1,4 @@
+import { validateAddress } from '@/utils'
 import {
   ContractAbis,
   ContractAddresses,
@@ -7,11 +8,9 @@ import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
-
 import { ChainId } from 'ser-kit'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { useRoute } from '../../routes/routeHooks'
-import { validateAddress } from '../../utils'
 import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [

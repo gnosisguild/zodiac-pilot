@@ -1,23 +1,21 @@
-import { nanoid } from 'nanoid'
-import React from 'react'
-import Moment from 'react-moment'
-
 import {
   Box,
   BoxButton,
   Button,
   ConnectionStack,
   Flex,
-} from '../../../components'
-import { useConfirmationModal } from '../../../components/ConfirmationModal'
+  useConfirmationModal,
+} from '@/components'
+import { formatDistanceToNow } from 'date-fns'
+import { nanoid } from 'nanoid'
+import React from 'react'
+import Moment from 'react-moment'
+import { useNavigate } from 'react-router-dom'
 import { Route } from '../../../types'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
-import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
-
-import { formatDistanceToNow } from 'date-fns'
-import { useNavigate } from 'react-router-dom'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
+import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import classes from './style.module.css'
 
 interface RouteItemProps {

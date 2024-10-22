@@ -1,17 +1,15 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 import { useRoute } from '../../panel/routes'
-import Blockie from '../Blockie'
+import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
+import { Blockie } from '../Blockie'
 import Box from '../Box'
 import ConnectionStack from '../ConnectionStack'
 import Flex from '../Flex'
-
-import { Link } from 'react-router-dom'
-import { asLegacyConnection } from '../../panel/routes/legacyConnectionMigrations'
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
 
-const RouteBubble: React.FC = () => {
+export const RouteBubble: React.FC = () => {
   const { route } = useRoute()
   const connection = asLegacyConnection(route)
 
@@ -70,5 +68,3 @@ const RouteBubble: React.FC = () => {
     </Box>
   )
 }
-
-export default RouteBubble

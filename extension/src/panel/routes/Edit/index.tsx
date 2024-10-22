@@ -1,37 +1,40 @@
+import {
+  Box,
+  Button,
+  Field,
+  Flex,
+  IconButton,
+  useConfirmationModal,
+} from '@/components'
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
-
-import { Box, Button, Field, Flex, IconButton } from '../../../components'
-import { useConfirmationModal } from '../../../components/ConfirmationModal'
-
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { ChainId } from 'ser-kit'
+import { ProviderType, Route } from '../../../types'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
+import {
+  queryRolesV1MultiSend,
+  queryRolesV2MultiSend,
+} from '../../integrations/zodiac/rolesMultisend'
 import { SupportedModuleType } from '../../integrations/zodiac/types'
 import {
   MODULE_NAMES,
   useZodiacModules,
 } from '../../integrations/zodiac/useZodiacModules'
 import { useClearTransactions } from '../../state/transactionHooks'
-import AvatarInput from '../AvatarInput'
-import ConnectButton from '../ConnectButton'
-import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
-import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
-import useConnectionDryRun from '../useConnectionDryRun'
-
-import { ZeroAddress } from 'ethers'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ChainId } from 'ser-kit'
-import { ProviderType, Route } from '../../../types'
-import {
-  queryRolesV1MultiSend,
-  queryRolesV2MultiSend,
-} from '../../integrations/zodiac/rolesMultisend'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
+import AvatarInput from '../AvatarInput'
 import ChainSelect from '../ChainSelect'
+import ConnectButton from '../ConnectButton'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
+import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
+import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
+import useConnectionDryRun from '../useConnectionDryRun'
 import classes from './style.module.css'
 
 type ConnectionPatch = {
