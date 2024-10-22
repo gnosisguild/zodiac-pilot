@@ -22,5 +22,5 @@
       "@/utils": ["./src/utils/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "e2e"]
 }

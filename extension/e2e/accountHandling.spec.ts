@@ -1,9 +1,10 @@
+import { shortenAddress } from '@/utils'
 import { Page } from '@playwright/test'
 import { expect, test } from './fixture'
 import { loadExtension } from './loadExtension'
 import { mockWeb3 } from './mockWeb3'
 
-const openConfiguration = async (page: Page, account) => {
+const openConfiguration = async (page: Page, account: `0x${string}`) => {
   await page.getByRole('link', { name: 'Configure routes' }).click()
   await page.getByRole('button', { name: 'Add Route' }).click()
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()

@@ -1,4 +1,4 @@
-export { default as Address, shortenAddress } from './Address'
+export { default as Address } from './Address'
 export { Alert } from './Alert'
 export { default as BlockButton } from './BlockButton'
 export { Blockie } from './Blockie'

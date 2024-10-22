@@ -187,9 +187,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       return (
         <div className={classes.connectedContainer}>
           <div className={classes.connectionWarning}>
-            <Tag head={<RiAlertLine />} color="warning">
-              Switch wallet to account {shortenAddress(pilotAddress)}
-            </Tag>
+            <Alert>Account {shortenAddress(pilotAddress)} not available</Alert>
           </div>
           <Button onClick={disconnect} className={classes.disconnectButton}>
             Disconnect
