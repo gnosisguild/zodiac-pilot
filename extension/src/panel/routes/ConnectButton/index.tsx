@@ -45,9 +45,8 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
 
   // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
   const [chainId] = parsePrefixedAddress(route.avatar)
-  if (!chainId) {
-    throw new Error('chainId is empty')
-  }
+
+  invariant(chainId != null, 'chainId is empty')
 
   const connected =
     route.initiator &&

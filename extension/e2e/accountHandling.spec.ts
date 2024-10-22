@@ -81,6 +81,8 @@ test.describe('Account unavailable', () => {
       extension.getByRole('alert', {
         name: `Account is not connected`,
       })
-    ).toBeInViewport()
+    ).toHaveAccessibleDescription(
+      'Switch your wallet to this account in order to use Pilot.'
+    )
   })
 })
