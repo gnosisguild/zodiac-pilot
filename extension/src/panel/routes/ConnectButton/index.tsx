@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Tag } from '@/components'
+import { Alert, Button, Flex, RawAddress, Tag } from '@/components'
 import { shortenAddress, validateAddress } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
@@ -10,6 +10,7 @@ import { CHAIN_NAME } from '../../../chains'
 import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
+import { Account } from './Account'
 import metamaskLogoUrl from './metamask-logo.svg'
 import classes from './style.module.css'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
@@ -77,16 +78,8 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   if (connected && pilotAddress) {
     return (
       <div className={classes.connectedContainer}>
-        <div className={classes.connectedAccount}>
-          <div className={classes.walletLogo}>
-            {route.providerType === ProviderType.WalletConnect
-              ? walletConnectLogo
-              : metamaskLogo}
-          </div>
-          <code className={classes.pilotAddress}>
-            {validateAddress(pilotAddress)}
-          </code>
-        </div>
+        <Account providerType={route.providerType}>{pilotAddress}</Account>
+
         <Button onClick={disconnect} className={classes.disconnectButton}>
           Disconnect
         </Button>
@@ -109,9 +102,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
           classes.connectionWarning
         )}
       >
-        <code className={classes.pilotAddress}>
-          {validateAddress(pilotAddress)}
-        </code>
+        <RawAddress>{validateAddress(pilotAddress)}</RawAddress>
         <Tag head={<RiAlertLine />} color="warning">
           Chain mismatch
         </Tag>
@@ -137,9 +128,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
           classes.connectionWarning
         )}
       >
-        <code className={classes.pilotAddress}>
-          {validateAddress(pilotAddress)}
-        </code>
+        <RawAddress>{validateAddress(pilotAddress)}</RawAddress>
         <Tag head={<RiAlertLine />} color="warning">
           Chain mismatch
         </Tag>
@@ -157,38 +146,42 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
     )
   }
 
-  // Injected wallet: wrong account
   if (
     route.providerType === ProviderType.InjectedWallet &&
     injectedWallet.provider &&
     pilotAddress
   ) {
-    // Account disconnected
+    // Wallet disconnected
     if (injectedWallet.accounts.length === 0) {
       return (
-        <Alert
-          actions={
-            <>
-              <Button onClick={() => injectedWallet.connect()}>
-                Reconnect
-              </Button>
-              <Button onClick={disconnect}>Disconnect</Button>
-            </>
-          }
-        >
-          Account disconnected
-        </Alert>
+        <div className="flex flex-col gap-4">
+          <Alert title="Wallet disconnected">
+            Your wallet is disconnected from Pilot. Reconnect it to use the
+            selected account with Pilot.
+          </Alert>
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+          <div className="flex justify-end gap-2">
+            <Button onClick={() => injectedWallet.connect()}>Connect</Button>
+            <Button onClick={disconnect}>Disconnect</Button>
+          </div>
+        </div>
       )
     }
 
+    // Wrong account
     if (
       !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
     ) {
       return (
         <div className={classes.connectedContainer}>
           <div className={classes.connectionWarning}>
-            <Alert>Account {shortenAddress(pilotAddress)} not available</Alert>
+            {/* Hint: Account is not connected. */}
+            <Alert>Wallet {shortenAddress(pilotAddress)} not available</Alert>
+            {/* CTA: Switch wallet to this account */}
           </div>
+
+          {/* Todo same button was above */}
           <Button onClick={disconnect} className={classes.disconnectButton}>
             Disconnect
           </Button>

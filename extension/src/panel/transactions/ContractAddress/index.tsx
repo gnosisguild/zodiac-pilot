@@ -1,4 +1,4 @@
-import { BlockLink, Box, Flex, IconButton } from '@/components'
+import { BlockLink, Box, Flex, IconButton, RawAddress } from '@/components'
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
@@ -54,7 +54,7 @@ const ContractAddress: React.FC<Props> = ({
       )}
 
       <Flex gap={1} alignItems="center" className={classes.addressContainer}>
-        <code>{displayAddress}</code>
+        <RawAddress>{displayAddress}</RawAddress>
 
         {copyToClipboard && (
           <IconButton

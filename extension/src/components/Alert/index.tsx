@@ -1,21 +1,25 @@
-import { PropsWithChildren, ReactNode, useId } from 'react'
+import { PropsWithChildren, useId } from 'react'
 
 type AlertProps = PropsWithChildren<{
-  actions?: ReactNode
+  title?: string
 }>
 
-export const Alert = ({ children, actions }: AlertProps) => {
+export const Alert = ({ children, title }: AlertProps) => {
   const id = useId()
 
   return (
     <div
       role="alert"
       aria-labelledby={id}
-      className="flex justify-between rounded border border-yellow-600 bg-yellow-900 px-4 py-2"
+      className="flex flex-col gap-2 rounded border border-yellow-600 bg-yellow-900 px-4 py-2"
     >
-      <h4 id={id}>{children}</h4>
+      {title && (
+        <h4 id={id} className="font-bold">
+          {title}
+        </h4>
+      )}
 
-      {actions && <div className="flex gap-2">{actions}</div>}
+      {children && <div className="text-sm">{children}</div>}
     </div>
   )
 }
