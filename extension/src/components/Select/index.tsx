@@ -7,7 +7,7 @@ export const selectStyles = {
     fontFamily: "'Roboto Mono', monospace",
     fontSize: '14px',
     borderRadius: 0,
-    background: 'rgba(217, 212, 173, 0.01)',
+    backgroundColor: 'rgba(217, 212, 173, 0.01)',
     borderColor: state.isFocused ? 'white' : 'rgba(217, 212, 173, 0.8)',
     boxShadow: 'none',
     cursor: 'pointer',

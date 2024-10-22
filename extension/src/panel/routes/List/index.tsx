@@ -9,7 +9,6 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { nanoid } from 'nanoid'
 import React from 'react'
-import Moment from 'react-moment'
 import { useNavigate } from 'react-router-dom'
 import { Route } from '../../../types'
 import { useClearTransactions } from '../../state/transactionHooks'
@@ -25,7 +24,7 @@ interface RouteItemProps {
 }
 
 const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
-  const { connected, connect } = useRoute(route.id)
+  const { connected, connect, chainId } = useRoute(route.id)
   const { route: currentlySelectedRoute } = useRoute()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
@@ -77,8 +76,6 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
     handleModify()
   }
-
-  console.log({ Moment })
 
   return (
     <>
@@ -137,6 +134,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
               className={classes.infoContainer}
             >
               <ConnectionStack
+                chainId={chainId}
                 connection={asLegacyConnection(route)}
                 addressBoxClass={classes.addressBox}
                 className={classes.connectionStack}

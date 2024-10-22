@@ -3,8 +3,8 @@ import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
+import { ChainId } from 'ser-kit'
 import { EXPLORER_URL } from '../../chains'
-import { useRoute } from '../../panel/routes'
 import { Blockie } from '../Blockie'
 import Box from '../Box'
 import IconButton from '../IconButton'
@@ -12,6 +12,7 @@ import classes from './style.module.css'
 
 interface Props {
   address: string
+  chainId: ChainId
   explorerLink?: boolean
   copyToClipboard?: boolean
   className?: string
@@ -22,8 +23,8 @@ const Address: React.FC<Props> = ({
   explorerLink,
   copyToClipboard,
   className,
+  chainId,
 }) => {
-  const { chainId } = useRoute()
   const explorerUrl = chainId && EXPLORER_URL[chainId]
   const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)

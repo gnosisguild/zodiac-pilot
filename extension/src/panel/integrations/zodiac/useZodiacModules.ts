@@ -162,9 +162,3 @@ export const AvatarInterface = new Interface([
 ])
 
 const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
-
-export const MODULE_NAMES = {
-  [KnownContracts.DELAY]: 'Delay',
-  [KnownContracts.ROLES_V1]: 'Roles v1',
-  [KnownContracts.ROLES_V2]: 'Roles v2',
-}

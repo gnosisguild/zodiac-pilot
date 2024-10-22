@@ -2,8 +2,7 @@ import { Flex, Spinner, Tag } from '@/components'
 import React from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 import { useProvider } from '../providers/ProvideProvider'
-import { TransactionState } from '../state'
-import { ExecutionStatus } from '../state/reducer'
+import { ExecutionStatus, TransactionState } from '../state'
 import classes from './style.module.css'
 
 const SimulationStatus: React.FC<{

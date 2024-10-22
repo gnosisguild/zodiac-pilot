@@ -12,6 +12,7 @@ import React, { useState } from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChainId } from 'ser-kit'
+import { MODULE_NAMES } from '../../../const'
 import { ProviderType, Route } from '../../../types'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import {
@@ -19,10 +20,7 @@ import {
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
 import { SupportedModuleType } from '../../integrations/zodiac/types'
-import {
-  MODULE_NAMES,
-  useZodiacModules,
-} from '../../integrations/zodiac/useZodiacModules'
+import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
 import AvatarInput from '../AvatarInput'
