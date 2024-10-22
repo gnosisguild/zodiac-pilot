@@ -1,7 +1,6 @@
 {
   "name": "zodiac-pilot",
   "version": "0.0.0",
-  "type": "module",
   "description": "Chrome extension to simulate dApp interactions and record transactions",
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
@@ -10,9 +9,9 @@
   "private": true,
   "scripts": {
     "prebuild": "rimraf public/build",
-    "build": "NODE_ENV=production node esbuild.js",
+    "build": "NODE_ENV=production node esbuild.mjs",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
-    "dev": "NODE_ENV=development node esbuild.js",
+    "dev": "NODE_ENV=development node esbuild.mjs",
     "test:unit": "vitest",
     "test:e2e": "playwright test --headed",
     "check": "pnpm check:ts && pnpm check:format && pnpm check:lint && pnpm check:spelling",
@@ -33,7 +32,7 @@
     "@noble/hashes": "^1.4.0",
     "@playwright/test": "^1.48.1",
     "@safe-global/api-kit": "^2.4.2",
-    "@safe-global/protocol-kit": "^4.0.2",
+    "@safe-global/protocol-kit": "^5.0.1",
     "@safe-global/safe-apps-sdk": "^9.1.0",
     "@safe-global/safe-core-sdk-types": "^5.0.2",
     "@safe-global/safe-gateway-typescript-sdk": "^3.21.10",

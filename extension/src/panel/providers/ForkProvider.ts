@@ -406,9 +406,9 @@ async function prepareSafeForSimulation(
   let from = moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
   if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
 
-  const iface = safe.getContractManager().safeContract?.contract.interface
+  const { safeContract } = safe.getContractManager()
 
-  invariant(iface, 'Safe contract not found')
+  invariant(safeContract != null, 'Safe contract not found')
 
   try {
     await provider.request({
@@ -416,7 +416,7 @@ async function prepareSafeForSimulation(
       params: [
         {
           to: avatarAddress,
-          data: iface.encodeFunctionData('enableModule', [from]),
+          data: safeContract.encode('enableModule', [from]),
           from: avatarAddress,
         },
       ],
