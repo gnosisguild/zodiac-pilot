@@ -1,7 +1,6 @@
-import React from 'react'
-
+import { Box } from '@/components'
 import { FunctionFragment, Result } from 'ethers'
-import { Box } from '../../components'
+import React from 'react'
 import classes from './style.module.css'
 
 interface Props {

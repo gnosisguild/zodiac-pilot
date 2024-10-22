@@ -1,13 +1,15 @@
+import { Button, IconButton, toastClasses } from '@/components'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
+import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 import { CHAIN_NAME, EXPLORER_URL } from '../../chains'
-import { Button, IconButton } from '../../components'
-import toastClasses from '../../components/Toast/Toast.module.css'
 import { JsonRpcError, ProviderType } from '../../types'
+import { waitForMultisigExecution } from '../integrations/safe'
 import { useSubmitTransactions } from '../providers/ProvideProvider'
+import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 import { useRoute } from '../routes'
 import { useTransactions } from '../state'
 import {
@@ -15,11 +17,6 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '../utils'
-
-import { useNavigate } from 'react-router-dom'
-import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { waitForMultisigExecution } from '../integrations/safe'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 import classes from './style.module.css'
 
 const Submit: React.FC = () => {

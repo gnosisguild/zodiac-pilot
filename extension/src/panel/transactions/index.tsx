@@ -1,14 +1,12 @@
+import { Button, Flex, IconButton } from '@/components'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
-
-import { Button, Flex, IconButton } from '../../components'
 import { ForkProvider } from '../providers'
 import { useProvider } from '../providers/ProvideProvider'
 import { useRoute } from '../routes'
 import { useDispatch, useTransactions } from '../state'
-
-import RouteBubble from '../../components/RouteBubble'
+import { RouteBubble } from './RouteBubble'
 import Submit from './Submit'
 import { Transaction } from './Transaction'
 import classes from './style.module.css'

@@ -1,3 +1,4 @@
+import { validateAddress } from '@/utils'
 import {
   ContractAbis,
   ContractAddresses,
@@ -7,11 +8,9 @@ import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
-
 import { ChainId } from 'ser-kit'
 import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
 import { useRoute } from '../../routes/routeHooks'
-import { validateAddress } from '../../utils'
 import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
@@ -163,9 +162,3 @@ export const AvatarInterface = new Interface([
 ])
 
 const ADDRESS_ONE = '0x0000000000000000000000000000000000000001'
-
-export const MODULE_NAMES = {
-  [KnownContracts.DELAY]: 'Delay',
-  [KnownContracts.ROLES_V1]: 'Roles v1',
-  [KnownContracts.ROLES_V2]: 'Roles v2',
-}

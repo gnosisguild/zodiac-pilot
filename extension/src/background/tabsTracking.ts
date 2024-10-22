@@ -2,8 +2,9 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
+import { activePilotSessions } from './activePilotSessions'
 import { rpcUrlsPerTab } from './rpcTracking'
-import { activePilotSessions, updateSimulatingBadge } from './sessionTracking'
+import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
   const activeSession = activePilotSessions.get(windowId)

@@ -1,9 +1,7 @@
+import { validateAddress } from '@/utils'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
-
 import { useRoute } from '../../routes'
-import { validateAddress } from '../../utils'
-
 import { initSafeApiKit } from './kits'
 
 export const useSafesWithOwner = (

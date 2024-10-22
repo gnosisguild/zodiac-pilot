@@ -1,15 +1,13 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
+import { ZodiacToastContainer } from '@/components'
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
-
-import './global.css'
-
 import { parsePrefixedAddress } from 'ser-kit'
-import ZodiacToastContainer from '../components/Toast'
 import { update } from '../inject/bridge'
+import './global.css'
 import { initPort } from './port'
 import { ProvideInjectedWallet } from './providers'
 import ProvideProvider, { useProvider } from './providers/ProvideProvider'

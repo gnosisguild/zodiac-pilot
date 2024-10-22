@@ -1,7 +1,5 @@
+import { Box } from '@/components'
 import React from 'react'
-
-import { Box } from '../../components'
-
 import classes from './style.module.css'
 
 interface Props {
