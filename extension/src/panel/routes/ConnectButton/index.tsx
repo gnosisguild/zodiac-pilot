@@ -1,10 +1,7 @@
-import { Alert, Button, RawAddress, Tag } from '@/components'
-import { validateAddress } from '@/utils'
+import { Alert, Button } from '@/components'
 import { invariant } from '@epic-web/invariant'
-import classNames from 'classnames'
 import { ZeroAddress } from 'ethers'
 import React from 'react'
-import { RiAlertLine } from 'react-icons/ri'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { CHAIN_NAME } from '../../../chains'
 import { ProviderType, Route } from '../../../types'
@@ -12,7 +9,6 @@ import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
 import { Account } from './Account'
 import { InjectedWallet } from './InjectedWallet'
-import classes from './style.module.css'
 import { WalletConnect } from './WalletConnect'
 
 interface Props {
@@ -111,23 +107,18 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
     walletConnect.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     walletConnect.chainId !== chainId
   ) {
+    const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+
     return (
-      <div
-        className={classNames(
-          classes.connectedContainer,
-          classes.connectionWarning
-        )}
-      >
-        <RawAddress>{validateAddress(pilotAddress)}</RawAddress>
-        <Tag head={<RiAlertLine />} color="warning">
-          Chain mismatch
-        </Tag>
-        <Button
-          onClick={() => walletConnect.disconnect()}
-          className={classes.disconnectButton}
-        >
-          Disconnect
-        </Button>
+      <div className="flex flex-col gap-4">
+        <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+        <Alert title="Chain mismatch">
+          The connected wallet belongs to a different chain. Connect a wallet on{' '}
+          {chainName} to use Pilot.
+        </Alert>
+
+        <Button onClick={() => walletConnect.disconnect()}>Disconnect</Button>
       </div>
     )
   }
