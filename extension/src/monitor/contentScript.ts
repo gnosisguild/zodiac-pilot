@@ -4,6 +4,7 @@ import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 
 window.document.documentElement.dataset.__zodiacPilotBasePath =
   chrome.runtime.getURL('/')
+window.document.documentElement.dataset.__zodiacExtensionId = chrome.runtime.id
 
 function inject(scriptPath: string) {
   const node = document.createElement('script')

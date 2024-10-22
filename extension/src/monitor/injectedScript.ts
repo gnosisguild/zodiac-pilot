@@ -58,19 +58,21 @@ window.addEventListener('message', (event: MessageEvent) => {
 const handleLoad = () => {
   window.removeEventListener('load', handleLoad)
 
-  const form = document.getElementById('ZODIAC-PILOT::open-panel-button')
+  const button = document.getElementById('ZODIAC-PILOT::open-panel-button')
 
-  invariant(form != null, 'No form to open side panel found')
-  invariant(form instanceof HTMLFormElement, 'Not a form')
+  invariant(button != null, 'No button to open side panel found')
 
-  form.addEventListener('submit', (event) => {
+  button.addEventListener('click', (event) => {
     event.preventDefault()
     event.stopPropagation()
 
-    const data = new FormData(form)
-    const extensionId = data.get('extensionId')
+    const extensionId =
+      window.document.documentElement.dataset['__zodiacExtensionId']
 
-    invariant(typeof extensionId === 'string', 'Not a string')
+    invariant(
+      typeof extensionId === 'string',
+      'Could not find zodiac extension id'
+    )
 
     chrome.runtime.sendMessage(extensionId, {
       type: PILOT_OPEN_SIDEPANEL,
