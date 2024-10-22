@@ -1,5 +1,5 @@
 import { Alert, Button, Flex, RawAddress, Tag } from '@/components'
-import { shortenAddress, validateAddress } from '@/utils'
+import { validateAddress } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
 import { ZeroAddress } from 'ethers'
@@ -174,17 +174,14 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
     ) {
       return (
-        <div className={classes.connectedContainer}>
-          <div className={classes.connectionWarning}>
-            {/* Hint: Account is not connected. */}
-            <Alert>Wallet {shortenAddress(pilotAddress)} not available</Alert>
-            {/* CTA: Switch wallet to this account */}
-          </div>
+        <div className="flex flex-col gap-4">
+          <Alert title="Account is not connected">
+            Switch your wallet to this account in order to use Pilot.
+          </Alert>
 
-          {/* Todo same button was above */}
-          <Button onClick={disconnect} className={classes.disconnectButton}>
-            Disconnect
-          </Button>
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+          <Button onClick={disconnect}>Disconnect</Button>
         </div>
       )
     }

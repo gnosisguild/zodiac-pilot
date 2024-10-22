@@ -1,4 +1,3 @@
-import { shortenAddress } from '@/utils'
 import { Page } from '@playwright/test'
 import { expect, test } from './fixture'
 import { loadExtension } from './loadExtension'
@@ -14,51 +13,44 @@ const openConfiguration = async (page: Page, account: `0x${string}`) => {
 test.describe('Locked account', () => {
   const account = '0x1000000000000000000000000000000000000000'
 
-  test('handles wallet disconnect gracefully', async ({
-    page,
-    extensionId,
-  }) => {
+  test('handles wallet disconnect gracefully', async ({ page }) => {
     const { lockWallet } = await mockWeb3(page, {
       accounts: [account],
     })
 
-    const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page)
 
     await openConfiguration(extension, account)
     await lockWallet()
 
     await expect(
-      extension.getByRole('alert', { name: 'Account disconnected' })
+      extension.getByRole('alert', { name: 'Wallet disconnected' })
     ).toBeInViewport()
   })
 
-  test('it is possible to reconnect an account', async ({
-    page,
-    extensionId,
-  }) => {
+  test('it is possible to reconnect an account', async ({ page }) => {
     const { lockWallet } = await mockWeb3(page, {
       accounts: [account],
     })
 
-    const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page)
 
     await openConfiguration(extension, account)
     await lockWallet()
 
-    await extension.getByRole('button', { name: 'Reconnect' }).click()
+    await extension
+      .getByRole('button', { name: 'Connect', exact: true })
+      .click()
 
     await expect(extension.getByText(account)).toBeInViewport()
   })
 
-  test('it is possible to disconnect a locked account', async ({
-    page,
-    extensionId,
-  }) => {
+  test('it is possible to disconnect a locked account', async ({ page }) => {
     const { lockWallet } = await mockWeb3(page, {
       accounts: [account],
     })
 
-    const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page)
 
     await openConfiguration(extension, account)
     await lockWallet()
@@ -72,15 +64,12 @@ test.describe('Locked account', () => {
 })
 
 test.describe('Account unavailable', () => {
-  test('handles unavailable accounts gracefully', async ({
-    page,
-    extensionId,
-  }) => {
+  test('handles unavailable accounts gracefully', async ({ page }) => {
     const { loadAccounts } = await mockWeb3(page, {
       accounts: ['0x1000000000000000000000000000000000000000'],
     })
 
-    const extension = await loadExtension(page, extensionId)
+    const extension = await loadExtension(page)
 
     await openConfiguration(
       extension,
@@ -90,7 +79,7 @@ test.describe('Account unavailable', () => {
 
     await expect(
       extension.getByRole('alert', {
-        name: `Account ${shortenAddress('0x1000000000000000000000000000000000000000')} not available`,
+        name: `Account is not connected`,
       })
     ).toBeInViewport()
   })
