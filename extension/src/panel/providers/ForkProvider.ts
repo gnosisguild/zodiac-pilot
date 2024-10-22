@@ -399,7 +399,7 @@ async function prepareSafeForSimulation(
   let from = moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
   if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
 
-  const {safeContract} = safe.getContractManager()
+  const { safeContract } = safe.getContractManager()
   if (!safeContract) {
     throw new Error('Safe contract not found')
   }
