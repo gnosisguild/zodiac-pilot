@@ -2,6 +2,7 @@ import { invariant } from '@epic-web/invariant'
 import { Page } from '@playwright/test'
 import { readFileSync } from 'fs'
 import { MutableRefObject } from 'react'
+import { ChainId } from 'ser-kit'
 import { fileURLToPath } from 'url'
 
 const web3Content: MutableRefObject<string | null> = { current: null }
@@ -17,7 +18,12 @@ declare global {
 
 type MockOptions = { accounts: string[] }
 
-export const mockWeb3 = async (page: Page, { accounts }: MockOptions) => {
+export const defaultMockAccount = '0x1000000000000000000000000000000000000000'
+
+export const mockWeb3 = async (
+  page: Page,
+  { accounts }: MockOptions = { accounts: [defaultMockAccount] }
+) => {
   page.addInitScript({
     content: `${getLibraryCode()}\n(() => { Web3Mock.mock(${JSON.stringify({ blockchain: 'ethereum', accounts: { return: accounts } })})})()`,
   })
@@ -34,6 +40,14 @@ export const mockWeb3 = async (page: Page, { accounts }: MockOptions) => {
           Web3Mock.trigger('accountsChanged', accounts)
         },
         [accounts]
+      )
+    },
+    switchChain(chainId: ChainId) {
+      return getConnectFrame(page).evaluate(
+        ([chainId]) => {
+          Web3Mock.trigger('chainChanged', `0x${chainId}`)
+        },
+        [chainId]
       )
     },
   }

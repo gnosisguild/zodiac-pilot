@@ -158,27 +158,24 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
 
     // Injected wallet: right account, wrong chain
     if (accountInWallet && injectedWallet.chainId !== chainId) {
+      const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+
       return (
-        <div
-          className={classNames(
-            classes.connectedContainer,
-            classes.connectionWarning
-          )}
-        >
-          <RawAddress>{validateAddress(pilotAddress)}</RawAddress>
-          <Tag head={<RiAlertLine />} color="warning">
-            Chain mismatch
-          </Tag>
-          {chainId && (
-            <Button
-              className={classes.disconnectButton}
-              onClick={() => {
-                injectedWallet.switchChain(chainId)
-              }}
-            >
-              Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
-            </Button>
-          )}
+        <div className="flex flex-col gap-4">
+          <Alert title="Chain mismatch">
+            The connected wallet belongs to a different chain. To use it you
+            need to switch back to {chainName}
+          </Alert>
+
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+          <Button
+            onClick={() => {
+              injectedWallet.switchChain(chainId)
+            }}
+          >
+            Switch wallet to {chainName}
+          </Button>
         </div>
       )
     }
