@@ -90,7 +90,7 @@ test.describe('Account unavailable', () => {
 
     await expect(
       extension.getByRole('alert', {
-        name: `Account ${shortenAddress} not available`,
+        name: `Account ${shortenAddress('0x1000000000000000000000000000000000000000')} not available`,
       })
     ).toBeInViewport()
   })
