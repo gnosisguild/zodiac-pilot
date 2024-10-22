@@ -11,8 +11,9 @@ import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
 import { Account } from './Account'
-import { ProviderLogo } from './ProviderLogo'
+import { InjectedWallet } from './InjectedWallet'
 import classes from './style.module.css'
+import { WalletConnect } from './WalletConnect'
 
 interface Props {
   route: Route
@@ -25,53 +26,35 @@ interface Props {
 }
 
 const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
-  let pilotAddress =
-    route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
-
-  if (pilotAddress === ZeroAddress) pilotAddress = ''
+  const pilotAddress = getPilotAddress(route)
 
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
   // not connected
-  if (pilotAddress === '' || pilotAddress == null) {
+  if (pilotAddress == null) {
     return (
       <div className="flex flex-col gap-2">
-        <Button
-          disabled={walletConnect == null}
-          onClick={async () => {
-            invariant(
-              walletConnect != null,
-              'walletConnect provider is not available'
-            )
-
-            const { chainId, accounts } = await walletConnect.connect()
+        <WalletConnect
+          routeId={route.id}
+          onConnect={(chainId, account) =>
             onConnect({
               providerType: ProviderType.WalletConnect,
-              chainId: chainId as ChainId,
-              account: accounts[0],
+              chainId,
+              account,
             })
-          }}
-        >
-          <ProviderLogo providerType={ProviderType.WalletConnect} />
-          Connect with WalletConnect
-        </Button>
-        {injectedWallet.provider && (
-          <Button
-            disabled={!injectedWallet.connected}
-            onClick={async () => {
-              const { chainId, accounts } = await injectedWallet.connect()
-              onConnect({
-                providerType: ProviderType.InjectedWallet,
-                chainId: chainId as ChainId,
-                account: accounts[0],
-              })
-            }}
-          >
-            <ProviderLogo providerType={ProviderType.InjectedWallet} />
-            Connect with MetaMask
-          </Button>
-        )}
+          }
+        />
+
+        <InjectedWallet
+          onConnect={(chainId, account) =>
+            onConnect({
+              providerType: ProviderType.InjectedWallet,
+              chainId,
+              account,
+            })
+          }
+        />
       </div>
     )
   }
@@ -218,3 +201,17 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
 }
 
 export default ConnectButton
+
+const getPilotAddress = (route: Route) => {
+  if (route.initiator == null) {
+    return null
+  }
+
+  const address = parsePrefixedAddress(route.initiator)[1].toLowerCase()
+
+  if (address === ZeroAddress) {
+    return null
+  }
+
+  return address
+}
