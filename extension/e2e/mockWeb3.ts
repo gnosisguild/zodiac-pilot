@@ -24,17 +24,29 @@ export const mockWeb3 = async (page: Page, { accounts }: MockOptions) => {
 
   return {
     lockWallet() {
-      const frame = page.frame({
-        url: 'https://connect.pilot.gnosisguild.org/',
-      })
-
-      invariant(frame != null, 'Connect iframe not found')
-
-      return frame.evaluate(() => {
+      return getConnectFrame(page).evaluate(() => {
         Web3Mock.trigger('accountsChanged', [])
       })
     },
+    loadAccounts(accounts: string[]) {
+      return getConnectFrame(page).evaluate(
+        ([accounts]) => {
+          Web3Mock.trigger('accountsChanged', accounts)
+        },
+        [accounts]
+      )
+    },
   }
+}
+
+const getConnectFrame = (page: Page) => {
+  const frame = page.frame({
+    url: 'https://connect.pilot.gnosisguild.org/',
+  })
+
+  invariant(frame != null, 'Connect iframe not found')
+
+  return frame
 }
 
 const getLibraryCode = () => {
