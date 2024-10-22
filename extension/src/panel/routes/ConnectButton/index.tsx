@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, RawAddress, Tag } from '@/components'
+import { Alert, Button, RawAddress, Tag } from '@/components'
 import { validateAddress } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
@@ -11,23 +11,8 @@ import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
 import { Account } from './Account'
-import metamaskLogoUrl from './metamask-logo.svg'
+import { ProviderLogo } from './ProviderLogo'
 import classes from './style.module.css'
-import walletConnectLogoUrl from './wallet-connect-logo.png'
-
-const walletConnectLogo = (
-  <img
-    src={chrome.runtime.getURL(walletConnectLogoUrl)}
-    alt="wallet connect logo"
-  />
-)
-const metamaskLogo = (
-  <img
-    src={chrome.runtime.getURL(metamaskLogoUrl)}
-    alt="metamask logo"
-    style={{ height: 28 }}
-  />
-)
 
 interface Props {
   route: Route
@@ -77,12 +62,10 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   // good to go
   if (connected && pilotAddress) {
     return (
-      <div className={classes.connectedContainer}>
+      <div className="flex flex-col gap-4">
         <Account providerType={route.providerType}>{pilotAddress}</Account>
 
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
+        <Button onClick={disconnect}>Disconnect</Button>
       </div>
     )
   }
@@ -189,9 +172,8 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
 
   // not connected
   return (
-    <Flex gap={2}>
+    <div className="flex flex-col gap-2">
       <Button
-        className={classes.walletButton}
         disabled={walletConnect == null}
         onClick={async () => {
           invariant(
@@ -207,12 +189,11 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
           })
         }}
       >
-        {walletConnectLogo}
+        <ProviderLogo providerType={ProviderType.WalletConnect} />
         Connect with WalletConnect
       </Button>
       {injectedWallet.provider && (
         <Button
-          className={classes.walletButton}
           disabled={!injectedWallet.connected}
           onClick={async () => {
             const { chainId, accounts } = await injectedWallet.connect()
@@ -223,11 +204,11 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
             })
           }}
         >
-          {metamaskLogo}
+          <ProviderLogo providerType={ProviderType.InjectedWallet} />
           Connect with MetaMask
         </Button>
       )}
-    </Flex>
+    </div>
   )
 }
 
