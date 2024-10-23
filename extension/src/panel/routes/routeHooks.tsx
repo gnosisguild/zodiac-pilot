@@ -1,4 +1,11 @@
 import { getChainId } from '@/chains'
+import {
+  getEip1193ReadOnlyProvider,
+  isConnected,
+  useInjectedWallet,
+  useWalletConnect,
+} from '@/providers'
+import { Eip1193Provider, ProviderType, Route } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import React, {
@@ -10,12 +17,7 @@ import React, {
   useMemo,
   useRef,
 } from 'react'
-import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { Eip1193Provider, ProviderType, Route } from '../../types'
-import { useInjectedWallet, useWalletConnect } from '../providers'
-import { getEip1193ReadOnlyProvider } from '../providers/readOnlyProvider'
-import { InjectedWalletContextT } from '../providers/useInjectedWallet'
-import { WalletConnectResult } from '../providers/useWalletConnect'
+import { parsePrefixedAddress } from 'ser-kit'
 import useStorage, { useStorageEntries } from '../utils/useStorage'
 
 type RouteContextT = readonly [
@@ -133,7 +135,7 @@ export const useRoute = (id?: string) => {
 
   const connected =
     route.initiator != null &&
-    isConnectedTo(
+    isConnected(
       route.providerType === ProviderType.InjectedWallet
         ? injectedWallet
         : walletConnect,
@@ -198,23 +200,4 @@ export const useRoute = (id?: string) => {
     /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet by asking the user to switch it to the right chain. */
     connect: canEstablishConnection ? connect : null,
   }
-}
-
-export const isConnectedTo = (
-  providerContext: InjectedWalletContextT | WalletConnectResult | null,
-  account: PrefixedAddress,
-  chainId?: number
-) => {
-  if (!providerContext) return false
-  const [_chain, accountAddress] = parsePrefixedAddress(account)
-  const accountLower = accountAddress.toLowerCase()
-
-  return (
-    providerContext &&
-    (!chainId || chainId === providerContext.chainId) &&
-    providerContext.accounts?.some(
-      (acc) => acc.toLowerCase() === accountLower
-    ) &&
-    providerContext.connected
-  )
 }

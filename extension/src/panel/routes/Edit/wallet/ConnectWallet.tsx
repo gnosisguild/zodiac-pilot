@@ -1,9 +1,12 @@
 import { getChainId } from '@/chains'
-import { InjectedWalletContextT, WalletConnectResult } from '@/providers'
+import {
+  InjectedWalletContextT,
+  WalletConnectResult,
+  isConnected as isConnectedBase,
+} from '@/providers'
 import { ProviderType, Route } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
-import { isConnectedTo } from '../../routeHooks'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
 
@@ -24,7 +27,8 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
   const isConnected = (
     provider: InjectedWalletContextT | WalletConnectResult
   ) =>
-    route.initiator != null && isConnectedTo(provider, route.initiator, chainId)
+    route.initiator != null &&
+    isConnectedBase(provider, route.initiator, chainId)
 
   // not connected
   if (pilotAddress == null) {
