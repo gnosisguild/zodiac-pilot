@@ -30,7 +30,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
+import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 import classes from './style.module.css'
@@ -157,7 +157,7 @@ const EditConnection: React.FC = () => {
     (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase()
   )
   const defaultModOption =
-    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
+    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
   return (
     <>
@@ -257,6 +257,7 @@ const EditConnection: React.FC = () => {
             </Field>
             <Field label="Zodiac Mod" disabled={modules.length === 0}>
               <ModSelect
+                isMulti={false}
                 options={[
                   ...(pilotIsOwner || pilotIsDelegate
                     ? [NO_MODULE_OPTION]
@@ -267,8 +268,17 @@ const EditConnection: React.FC = () => {
                   })),
                 ]}
                 onChange={async (selected) => {
+                  if (selected == null) {
+                    updateConnection({
+                      moduleAddress: undefined,
+                      moduleType: undefined,
+                    })
+
+                    return
+                  }
+
                   const mod = modules.find(
-                    (mod) => mod.moduleAddress === (selected as Option).value
+                    (mod) => mod.moduleAddress === selected.value
                   )
                   updateConnection({
                     moduleAddress: mod?.moduleAddress,

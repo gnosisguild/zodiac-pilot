@@ -56,6 +56,8 @@ export const selectStyles = {
   }),
 }
 
-export const Select = (props: Props) => (
-  <BaseSelect {...props} styles={selectStyles as any} />
-)
+export function Select<Option = unknown, Multi extends boolean = boolean>(
+  props: Props<Option, Multi>
+) {
+  return <BaseSelect {...props} styles={selectStyles as any} />
+}
