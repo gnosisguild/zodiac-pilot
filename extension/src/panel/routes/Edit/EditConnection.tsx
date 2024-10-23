@@ -7,6 +7,7 @@ import {
   IconButton,
   useConfirmationModal,
 } from '@/components'
+import { ProviderType, Route } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -14,7 +15,6 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../../const'
-import { ProviderType, Route } from '../../../types'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
@@ -24,16 +24,16 @@ import { SupportedModuleType } from '../../integrations/zodiac/types'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
-import AvatarInput from '../AvatarInput'
-import ChainSelect from '../ChainSelect'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
-import useConnectionDryRun from '../useConnectionDryRun'
+import { AvatarInput } from './AvatarInput'
+import { ChainSelect } from './ChainSelect'
+import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import classes from './style.module.css'
+import { useConnectionDryRun } from './useConnectionDryRun'
 import { ConnectWallet } from './wallet'
 
 type ConnectionPatch = {
@@ -51,7 +51,7 @@ type ConnectionPatch = {
 
 const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
 
-const EditConnection: React.FC = () => {
+export const EditConnection = () => {
   const [routes, saveRoute, removeRouteById] = useRoutes()
   const { routeId } = useParams()
   if (!routeId) {
@@ -365,5 +365,3 @@ const EditConnection: React.FC = () => {
     </>
   )
 }
-
-export default EditConnection

@@ -3,7 +3,7 @@ import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-import { Option } from '../ModSelect'
+import { Option } from './ModSelect'
 
 interface Props {
   value: string
@@ -41,11 +41,11 @@ const createSelectStyles = {
   }),
 }
 
-const AvatarInput: React.FC<Props> = ({
+export const AvatarInput = ({
   value,
   onChange,
   availableSafes = [],
-}) => {
+}: Props) => {
   const [pendingValue, setPendingValue] = useState(value)
 
   useEffect(() => {
@@ -64,10 +64,12 @@ const AvatarInput: React.FC<Props> = ({
           placeholder="Paste in Safe address or select from owned Safes"
           styles={createSelectStyles as any}
           value={
-            checksumAvatarAddress && {
-              value: checksumAvatarAddress,
-              label: checksumAvatarAddress,
-            }
+            checksumAvatarAddress !== ''
+              ? {
+                  value: checksumAvatarAddress,
+                  label: checksumAvatarAddress,
+                }
+              : undefined
           }
           options={availableSafes.map((address) => {
             return { value: address, label: address }
@@ -106,10 +108,9 @@ const AvatarInput: React.FC<Props> = ({
   )
 }
 
-const SafeOptionLabel: React.FC<unknown> = (opt) => {
-  const option = opt as Option
-
+const SafeOptionLabel = (option: Option) => {
   const checksumAddress = getAddress(option.value)
+
   return (
     <div className="flex items-center gap-4 py-3">
       <Circle>
@@ -120,5 +121,3 @@ const SafeOptionLabel: React.FC<unknown> = (opt) => {
     </div>
   )
 }
-
-export default AvatarInput

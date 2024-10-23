@@ -7,15 +7,16 @@ import {
   Flex,
   useConfirmationModal,
 } from '@/components'
+import { Route } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Route } from '../../../types'
 import { useClearTransactions } from '../../state/transactionHooks'
-import { ConnectedIcon, DisconnectedIcon } from '../ConnectIcon'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
+import { ConnectedIcon } from './ConnectedIcon'
+import { DisconnectedIcon } from './DisconnectedIcon'
 import classes from './style.module.css'
 
 interface RouteItemProps {
@@ -94,29 +95,16 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
             >
               <Flex direction="row" alignItems="center" gap={3}>
                 <Box className={classes.connectionIcon}>
-                  {connected && (
-                    <ConnectedIcon
-                      role="status"
-                      size={24}
-                      color="green"
-                      title="Pilot wallet is connected"
-                    />
-                  )}
-                  {!connected && !connect && (
-                    <DisconnectedIcon
-                      role="status"
-                      size={24}
-                      color="crimson"
-                      title="Pilot wallet is not connected"
-                    />
-                  )}
-                  {!connected && connect && (
-                    <ConnectedIcon
-                      role="status"
-                      size={24}
-                      color="orange"
-                      title="Pilot wallet is connected to a different chain"
-                    />
+                  {connected ? (
+                    <ConnectedIcon>Pilot wallet is connected</ConnectedIcon>
+                  ) : connect ? (
+                    <ConnectedIcon color="orange">
+                      Pilot wallet is connected to a different chain
+                    </ConnectedIcon>
+                  ) : (
+                    <DisconnectedIcon>
+                      Pilot wallet is not connected
+                    </DisconnectedIcon>
                   )}
                 </Box>
                 <h2>
@@ -155,7 +143,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
   )
 }
 
-const RoutesList: React.FC = () => {
+export const RoutesList = () => {
   const [, selectRoute] = useSelectedRouteId()
   const [routes] = useRoutes()
   const navigate = useNavigate()
@@ -197,5 +185,3 @@ const RoutesList: React.FC = () => {
     </div>
   )
 }
-
-export default RoutesList
