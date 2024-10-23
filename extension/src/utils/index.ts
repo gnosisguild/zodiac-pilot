@@ -1,5 +1,2 @@
-export * from './decodeError'
-export * from './roleKey'
-export { default as useBeforeUnload } from './useBeforeUnload'
-export { default as useStickyState } from './useStickyState'
 export * from './addressValidation'
+export { shortenAddress } from './shortenAddress'

@@ -1,0 +1,62 @@
+<template>
+  <link rel="stylesheet" href="{{BASE_PATH}}build/monitor/injectedScript.css" />
+
+  <div class="zodiacPilot_hint">
+    <img
+      src="{{BASE_PATH}}zodiac48.png"
+      class="zodiacPilot_logo"
+      alt="Zodiac Pilot logo"
+    />
+    <div class="zodiacPilot_body">
+      <div id="message"></div>
+    </div>
+    <div class="zodiacPilot_actions">
+      <button
+        class="zodiacPilot_reload"
+        onclick="window.dispatchEvent(new CustomEvent('ZodiacPilot:monitor:reload'))"
+        title="Reload"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="zodiacPilot_icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="white"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path
+            d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747"
+          />
+          <path d="M20 4v5h-5" />
+        </svg>
+      </button>
+      <button
+        class="zodiacPilot_dismiss"
+        onclick="window.dispatchEvent(new CustomEvent('ZodiacPilot:monitor:dismiss'))"
+        title="Dismiss"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="zodiacPilot_icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="white"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M18 6l-12 12" />
+          <path d="M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</template>

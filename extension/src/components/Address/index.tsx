@@ -1,32 +1,21 @@
+import { EXPLORER_URL } from '@/chains'
+import { shortenAddress, validateAddress } from '@/utils'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
 import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
-import { EXPLORER_URL } from '../../chains'
-
-import { useRoute } from '../../routes'
-import { validateAddress } from '../../utils'
-import Blockie from '../Blockie'
+import { ChainId } from 'ser-kit'
+import { Blockie } from '../Blockie'
 import Box from '../Box'
 import IconButton from '../IconButton'
-
 import classes from './style.module.css'
 
 interface Props {
   address: string
+  chainId: ChainId
   explorerLink?: boolean
   copyToClipboard?: boolean
   className?: string
-}
-
-const VISIBLE_START = 4
-const VISIBLE_END = 4
-
-export const shortenAddress = (address: string): string => {
-  const checksumAddress = validateAddress(address)
-  const start = checksumAddress.substring(0, VISIBLE_START + 2)
-  const end = checksumAddress.substring(42 - VISIBLE_END, 42)
-  return `${start}...${end}`
 }
 
 const Address: React.FC<Props> = ({
@@ -34,8 +23,8 @@ const Address: React.FC<Props> = ({
   explorerLink,
   copyToClipboard,
   className,
+  chainId,
 }) => {
-  const { chainId } = useRoute()
   const explorerUrl = chainId && EXPLORER_URL[chainId]
   const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)

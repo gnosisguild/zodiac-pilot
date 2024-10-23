@@ -1,5 +1,5 @@
 import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
-import { Checkbox, Section, Value } from '@/components'
+import { Button, Checkbox, Section, Value } from '@/components'
 import { getWagmiConfig, useWagmiConfig } from '@/config'
 import { Balance, Transfer } from '@/transfer'
 import { invariantResponse } from '@epic-web/invariant'
@@ -45,7 +45,9 @@ export default function App() {
               zodiac pilot
             </span>
             <span className="text-sm font-semibold uppercase text-gray-500">
-              Test app
+              <Button type="submit" id="ZODIAC-PILOT::open-panel-button">
+                Open extension
+              </Button>
             </span>
           </h1>
 
