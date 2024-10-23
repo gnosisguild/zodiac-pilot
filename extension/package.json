@@ -2,6 +2,7 @@
   "name": "zodiac-pilot",
   "version": "0.0.0",
   "description": "Chrome extension to simulate dApp interactions and record transactions",
+  "type": "module",
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
   "author": "Jan-Felix <jan@gnosisguild.org>",
