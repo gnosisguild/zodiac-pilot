@@ -1,7 +1,7 @@
+import { CHAIN_NAME } from '@/chains'
 import { Alert, Button } from '@/components'
 import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
-import { CHAIN_NAME } from '../../../chains'
 import { Section } from './Section'
 
 type SwitchChainProps = PropsWithChildren<{
