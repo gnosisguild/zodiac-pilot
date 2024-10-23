@@ -22,6 +22,7 @@
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
       "@/chains": ["./src/chains/index.ts"],
+      "@/zodiac-routes": ["./src/panel/zodiac-routes/index.ts"],
       "@/providers": ["./src/panel/providers/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"]
     }
