@@ -15,7 +15,7 @@ import { parsePrefixedAddress } from 'ser-kit'
 import { update } from '../inject/bridge'
 import './global.css'
 import { initPort } from './port'
-import { ProvideRoutes, RoutesEdit, RoutesList } from './routes'
+import { EditConnection, ProvideRoutes, RoutesList } from './routes'
 import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import { ProvideState } from './state'
 import Transactions from './transactions'
@@ -34,7 +34,7 @@ const router = createHashRouter([
   },
   {
     path: '/routes/:routeId',
-    element: <RoutesEdit />,
+    element: <EditConnection />,
   },
 ])
 

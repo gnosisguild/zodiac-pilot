@@ -143,7 +143,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
   )
 }
 
-const RoutesList: React.FC = () => {
+export const RoutesList = () => {
   const [, selectRoute] = useSelectedRouteId()
   const [routes] = useRoutes()
   const navigate = useNavigate()
@@ -185,5 +185,3 @@ const RoutesList: React.FC = () => {
     </div>
   )
 }
-
-export default RoutesList

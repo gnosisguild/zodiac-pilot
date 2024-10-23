@@ -51,7 +51,7 @@ type ConnectionPatch = {
 
 const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
 
-const EditConnection: React.FC = () => {
+export const EditConnection = () => {
   const [routes, saveRoute, removeRouteById] = useRoutes()
   const { routeId } = useParams()
   if (!routeId) {
@@ -365,5 +365,3 @@ const EditConnection: React.FC = () => {
     </>
   )
 }
-
-export default EditConnection
