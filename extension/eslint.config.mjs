@@ -44,7 +44,7 @@ export default tsEslint.config(
     ignores: ['public/build', 'playwright-report'],
   },
   {
-    files: ['esbuild.js', 'manifest-util.js'],
+    files: ['esbuild.mjs', 'manifest-util.js'],
     languageOptions: { globals: { process: true } },
   }
 )
