@@ -1,4 +1,4 @@
-import { Blockie, Box, selectStyles } from '@/components'
+import { Blockie, Box, RawAddress, selectStyles } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import React, { useEffect, useState } from 'react'
@@ -117,7 +117,7 @@ const SafeOptionLabel: React.FC<unknown> = (opt) => {
         <Blockie address={option.value} className={classes.safeBlockie} />
       </Box>
       <div className={classes.safeLabel}>
-        <code className={classes.address}>{checksumAddress}</code>
+        <RawAddress>{checksumAddress}</RawAddress>
       </div>
     </div>
   )

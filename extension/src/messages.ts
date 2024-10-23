@@ -6,6 +6,7 @@ export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
 // triggered when the panel is toggled
 export const PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED'
 export const PILOT_PANEL_CLOSED = 'PILOT_PANEL_CLOSED'
+export const PILOT_OPEN_SIDEPANEL = 'PILOT_OPEN_SIDEPANEL'
 
 // triggered the first time a tab is activated after the panel has been toggled
 export const PILOT_CONNECT = 'PILOT_CONNECT'

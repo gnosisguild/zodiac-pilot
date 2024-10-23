@@ -1,32 +1,15 @@
-import { Alert, Button, Flex, Tag } from '@/components'
-import { shortenAddress, validateAddress } from '@/utils'
+import { Alert, Button } from '@/components'
 import { invariant } from '@epic-web/invariant'
-import classNames from 'classnames'
 import { ZeroAddress } from 'ethers'
 import React from 'react'
-import { RiAlertLine } from 'react-icons/ri'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { CHAIN_NAME } from '../../../chains'
 import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
-import metamaskLogoUrl from './metamask-logo.svg'
-import classes from './style.module.css'
-import walletConnectLogoUrl from './wallet-connect-logo.png'
-
-const walletConnectLogo = (
-  <img
-    src={chrome.runtime.getURL(walletConnectLogoUrl)}
-    alt="wallet connect logo"
-  />
-)
-const metamaskLogo = (
-  <img
-    src={chrome.runtime.getURL(metamaskLogoUrl)}
-    alt="metamask logo"
-    style={{ height: 28 }}
-  />
-)
+import { Account } from './Account'
+import { InjectedWallet } from './InjectedWallet'
+import { WalletConnect } from './WalletConnect'
 
 interface Props {
   route: Route
@@ -39,55 +22,78 @@ interface Props {
 }
 
 const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
-  let pilotAddress =
-    route.initiator && parsePrefixedAddress(route.initiator)[1].toLowerCase()
-  if (pilotAddress === ZeroAddress) pilotAddress = ''
+  const pilotAddress = getPilotAddress(route)
 
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
-  const disconnect = () => {
-    if (route.providerType === ProviderType.WalletConnect) {
-      if (!walletConnect) {
-        throw new Error('walletConnect provider is not available')
-      }
-      walletConnect.disconnect()
-    }
+  // not connected
+  if (pilotAddress == null) {
+    return (
+      <div className="flex flex-col gap-2">
+        <WalletConnect
+          routeId={route.id}
+          onConnect={(chainId, account) =>
+            onConnect({
+              providerType: ProviderType.WalletConnect,
+              chainId,
+              account,
+            })
+          }
+        />
 
-    onDisconnect()
+        <InjectedWallet
+          onConnect={(chainId, account) =>
+            onConnect({
+              providerType: ProviderType.InjectedWallet,
+              chainId,
+              account,
+            })
+          }
+        />
+      </div>
+    )
   }
+
+  const isWalletConnectWallet =
+    route.providerType === ProviderType.WalletConnect
+  const walletConnectProviderAvailable = walletConnect != null
+
+  const isInjectedWallet = route.providerType === ProviderType.InjectedWallet
 
   // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
   const [chainId] = parsePrefixedAddress(route.avatar)
-  if (!chainId) {
-    throw new Error('chainId is empty')
-  }
+
+  invariant(chainId != null, 'chainId is empty')
 
   const connected =
     route.initiator &&
     isConnectedTo(
-      route.providerType === ProviderType.InjectedWallet
-        ? injectedWallet
-        : walletConnect,
+      isInjectedWallet ? injectedWallet : walletConnect,
       route.initiator,
       chainId
     )
 
   // good to go
-  if (connected && pilotAddress) {
+  if (connected) {
     return (
-      <div className={classes.connectedContainer}>
-        <div className={classes.connectedAccount}>
-          <div className={classes.walletLogo}>
-            {route.providerType === ProviderType.WalletConnect
-              ? walletConnectLogo
-              : metamaskLogo}
-          </div>
-          <code className={classes.pilotAddress}>
-            {validateAddress(pilotAddress)}
-          </code>
-        </div>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
+      <div className="flex flex-col gap-4">
+        <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+        <Button
+          onClick={() => {
+            if (isWalletConnectWallet) {
+              invariant(
+                walletConnectProviderAvailable,
+                'walletConnect provider is not available'
+              )
+
+              walletConnect.disconnect()
+            }
+
+            onDisconnect()
+          }}
+        >
           Disconnect
         </Button>
       </div>
@@ -96,151 +102,104 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
 
   // WalletConnect: wrong chain
   if (
-    route.providerType === ProviderType.WalletConnect &&
+    isWalletConnectWallet &&
     walletConnect &&
-    pilotAddress &&
     walletConnect.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     walletConnect.chainId !== chainId
   ) {
+    const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+
     return (
-      <div
-        className={classNames(
-          classes.connectedContainer,
-          classes.connectionWarning
-        )}
-      >
-        <code className={classes.pilotAddress}>
-          {validateAddress(pilotAddress)}
-        </code>
-        <Tag head={<RiAlertLine />} color="warning">
-          Chain mismatch
-        </Tag>
-        <Button onClick={disconnect} className={classes.disconnectButton}>
-          Disconnect
-        </Button>
+      <div className="flex flex-col gap-4">
+        <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+        <Alert title="Chain mismatch">
+          The connected wallet belongs to a different chain. Connect a wallet on{' '}
+          {chainName} to use Pilot.
+        </Alert>
+
+        <Button onClick={() => walletConnect.disconnect()}>Disconnect</Button>
       </div>
     )
   }
 
-  // Injected wallet: right account, wrong chain
-  if (
-    route.providerType === ProviderType.InjectedWallet &&
-    injectedWallet.provider &&
-    pilotAddress &&
-    injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
-    injectedWallet.chainId !== chainId
-  ) {
-    return (
-      <div
-        className={classNames(
-          classes.connectedContainer,
-          classes.connectionWarning
-        )}
-      >
-        <code className={classes.pilotAddress}>
-          {validateAddress(pilotAddress)}
-        </code>
-        <Tag head={<RiAlertLine />} color="warning">
-          Chain mismatch
-        </Tag>
-        {chainId && (
+  // Injected wallet
+  if (isInjectedWallet && injectedWallet.provider) {
+    const accountInWallet = injectedWallet.accounts.some(
+      (acc) => acc.toLowerCase() === pilotAddress
+    )
+
+    // Wallet disconnected
+    if (injectedWallet.accounts.length === 0) {
+      return (
+        <div className="flex flex-col gap-4">
+          <Alert title="Wallet disconnected">
+            Your wallet is disconnected from Pilot. Reconnect it to use the
+            selected account with Pilot.
+          </Alert>
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+          <div className="flex justify-end gap-2">
+            <Button onClick={() => injectedWallet.connect()}>Connect</Button>
+            <Button onClick={onDisconnect}>Disconnect</Button>
+          </div>
+        </div>
+      )
+    }
+
+    // Injected wallet: right account, wrong chain
+    if (accountInWallet && injectedWallet.chainId !== chainId) {
+      const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+
+      return (
+        <div className="flex flex-col gap-4">
+          <Alert title="Chain mismatch">
+            The connected wallet belongs to a different chain. To use it you
+            need to switch back to {chainName}
+          </Alert>
+
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
           <Button
-            className={classes.disconnectButton}
             onClick={() => {
               injectedWallet.switchChain(chainId)
             }}
           >
-            Switch wallet to {CHAIN_NAME[chainId] || `#${chainId}`}
-          </Button>
-        )}
-      </div>
-    )
-  }
-
-  // Injected wallet: wrong account
-  if (
-    route.providerType === ProviderType.InjectedWallet &&
-    injectedWallet.provider &&
-    pilotAddress
-  ) {
-    // Account disconnected
-    if (injectedWallet.accounts.length === 0) {
-      return (
-        <Alert
-          actions={
-            <>
-              <Button onClick={() => injectedWallet.connect()}>
-                Reconnect
-              </Button>
-              <Button onClick={disconnect}>Disconnect</Button>
-            </>
-          }
-        >
-          Account disconnected
-        </Alert>
-      )
-    }
-
-    if (
-      !injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress)
-    ) {
-      return (
-        <div className={classes.connectedContainer}>
-          <div className={classes.connectionWarning}>
-            <Tag head={<RiAlertLine />} color="warning">
-              Switch wallet to account {shortenAddress(pilotAddress)}
-            </Tag>
-          </div>
-          <Button onClick={disconnect} className={classes.disconnectButton}>
-            Disconnect
+            Switch wallet to {chainName}
           </Button>
         </div>
       )
     }
+
+    // Wrong account
+    if (!accountInWallet) {
+      return (
+        <div className="flex flex-col gap-4">
+          <Alert title="Account is not connected">
+            Switch your wallet to this account in order to use Pilot.
+          </Alert>
+
+          <Account providerType={route.providerType}>{pilotAddress}</Account>
+
+          <Button onClick={onDisconnect}>Disconnect</Button>
+        </div>
+      )
+    }
   }
-
-  // not connected
-  return (
-    <Flex gap={2}>
-      <Button
-        className={classes.walletButton}
-        disabled={walletConnect == null}
-        onClick={async () => {
-          invariant(
-            walletConnect != null,
-            'walletConnect provider is not available'
-          )
-
-          const { chainId, accounts } = await walletConnect.connect()
-          onConnect({
-            providerType: ProviderType.WalletConnect,
-            chainId: chainId as ChainId,
-            account: accounts[0],
-          })
-        }}
-      >
-        {walletConnectLogo}
-        Connect with WalletConnect
-      </Button>
-      {injectedWallet.provider && (
-        <Button
-          className={classes.walletButton}
-          disabled={!injectedWallet.connected}
-          onClick={async () => {
-            const { chainId, accounts } = await injectedWallet.connect()
-            onConnect({
-              providerType: ProviderType.InjectedWallet,
-              chainId: chainId as ChainId,
-              account: accounts[0],
-            })
-          }}
-        >
-          {metamaskLogo}
-          Connect with MetaMask
-        </Button>
-      )}
-    </Flex>
-  )
 }
 
 export default ConnectButton
+
+const getPilotAddress = (route: Route) => {
+  if (route.initiator == null) {
+    return null
+  }
+
+  const address = parsePrefixedAddress(route.initiator)[1].toLowerCase()
+
+  if (address === ZeroAddress) {
+    return null
+  }
+
+  return address
+}

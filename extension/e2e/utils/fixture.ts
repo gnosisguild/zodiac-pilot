@@ -7,7 +7,9 @@ export const test = base.extend<{
   extensionId: string
 }>({
   context: async ({}, use) => {
-    const pathToExtension = fileURLToPath(new URL('../public', import.meta.url))
+    const pathToExtension = fileURLToPath(
+      new URL('../../public', import.meta.url)
+    )
 
     const context = await chromium.launchPersistentContext('', {
       headless: false,
