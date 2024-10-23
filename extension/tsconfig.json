@@ -19,7 +19,8 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "paths": {
       "@/components": ["./src/components/index.ts"],
-      "@/utils": ["./src/utils/index.ts"]
+      "@/utils": ["./src/utils/index.ts"],
+      "@/e2e-utils": ["./e2e/utils/index.ts"]
     }
   },
   "include": ["src", "e2e"]

@@ -1,5 +1,4 @@
-import { expect, test } from './fixture'
-import { loadExtension } from './loadExtension'
+import { expect, loadExtension, test } from '@/e2e-utils'
 
 test('connection to example app', async ({ page }) => {
   await page.goto('/')

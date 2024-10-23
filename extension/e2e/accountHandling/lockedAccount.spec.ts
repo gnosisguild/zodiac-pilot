@@ -1,7 +1,11 @@
+import {
+  defaultMockAccount,
+  expect,
+  loadExtension,
+  mockWeb3,
+  test,
+} from '@/e2e-utils'
 import { Page } from '@playwright/test'
-import { expect, test } from './fixture'
-import { loadExtension } from './loadExtension'
-import { defaultMockAccount, mockWeb3 } from './mockWeb3'
 
 const openConfiguration = async (
   page: Page,
@@ -58,60 +62,6 @@ test.describe('Locked account', () => {
 
     await expect(
       extension.getByRole('button', { name: 'Connect with MetaMask' })
-    ).toBeInViewport()
-  })
-})
-
-test.describe('Account unavailable', () => {
-  test('handles unavailable accounts gracefully', async ({ page }) => {
-    const { loadAccounts } = await mockWeb3(page, {
-      accounts: ['0x1000000000000000000000000000000000000000'],
-    })
-
-    const extension = await loadExtension(page)
-
-    await openConfiguration(
-      extension,
-      '0x1000000000000000000000000000000000000000'
-    )
-    await loadAccounts(['0x2000000000000000000000000000000000000000'])
-
-    await expect(
-      extension.getByRole('alert', {
-        name: `Account is not connected`,
-      })
-    ).toHaveAccessibleDescription(
-      'Switch your wallet to this account in order to use Pilot.'
-    )
-  })
-})
-
-test.describe('Wrong chain selected', () => {
-  test('it is possible to switch to the correct chain', async ({ page }) => {
-    const { switchChain } = await mockWeb3(page)
-
-    const extension = await loadExtension(page)
-
-    await openConfiguration(extension)
-    await switchChain(10)
-
-    await expect(
-      extension.getByRole('alert', { name: 'Chain mismatch' })
-    ).toBeInViewport()
-  })
-
-  test('it is possible to switch back to the connected chain', async ({
-    page,
-  }) => {
-    const { switchChain } = await mockWeb3(page)
-
-    const extension = await loadExtension(page)
-
-    await openConfiguration(extension)
-    await switchChain(10)
-
-    await expect(
-      extension.getByRole('button', { name: 'Switch wallet to Ethereum' })
     ).toBeInViewport()
   })
 })
