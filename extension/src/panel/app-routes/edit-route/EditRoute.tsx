@@ -8,6 +8,7 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { ProviderType, Route } from '@/types'
+import { useRoute, useRoutes, useSelectedRouteId } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -28,7 +29,6 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
@@ -51,7 +51,7 @@ type ConnectionPatch = {
 
 const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
 
-export const EditConnection = () => {
+export const EditRoute = () => {
   const [routes, saveRoute, removeRouteById] = useRoutes()
   const { routeId } = useParams()
   if (!routeId) {

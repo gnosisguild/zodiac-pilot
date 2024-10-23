@@ -1,6 +1,7 @@
 import { getReadOnlyProvider } from '@/providers'
 import { JsonRpcError, LegacyConnection } from '@/types'
 import { isSmartContractAddress, validateAddress } from '@/utils'
+import { useRoute } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 import {
@@ -9,7 +10,6 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '../../utils'
-import { useRoute } from '../routeHooks'
 import { wrapRequest } from './wrapRequest'
 
 export const useConnectionDryRun = (connection: LegacyConnection) => {

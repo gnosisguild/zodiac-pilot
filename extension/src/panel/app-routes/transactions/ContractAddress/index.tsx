@@ -6,7 +6,7 @@ import { getAddress } from 'ethers'
 import React, { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
-import { ContractInfo } from '../../utils/abi'
+import { ContractInfo } from '../../../utils/abi'
 import classes from './style.module.css'
 
 interface Props {

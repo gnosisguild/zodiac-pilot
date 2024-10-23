@@ -1,7 +1,7 @@
 import { validateAddress } from '@/utils'
+import { useRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
-import { useRoute } from '../../routes'
 import { initSafeApiKit } from './kits'
 
 export const useSafeDelegates = (

@@ -1,4 +1,5 @@
 import { Eip1193Provider } from '@/types'
+import { useRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
@@ -18,7 +19,6 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { useRoute } from '../routes'
 import { ExecutionStatus, useDispatch, useTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ForkProvider } from './ForkProvider'

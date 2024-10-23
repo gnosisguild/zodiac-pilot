@@ -1,6 +1,6 @@
+import { TransactionState } from '@/state'
 import { Interface } from 'ethers'
 import { useMemo } from 'react'
-import { TransactionState } from '../state'
 
 export const useDecodedFunctionData = (transactionState: TransactionState) => {
   const { contractInfo, transaction } = transactionState

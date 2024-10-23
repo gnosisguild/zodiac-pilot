@@ -1,22 +1,21 @@
 import { CHAIN_NAME, EXPLORER_URL } from '@/chains'
 import { Button, IconButton, RawAddress, toastClasses } from '@/components'
+import { getReadOnlyProvider, useSubmitTransactions } from '@/providers'
+import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
+import { useRoute } from '@/zodiac-routes'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { waitForMultisigExecution } from '../integrations/safe'
-import { useSubmitTransactions } from '../providers/ProvideProvider'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
-import { useRoute } from '../routes'
-import { useTransactions } from '../state'
+import { waitForMultisigExecution } from '../../integrations/safe'
 import {
   decodeGenericError,
   decodeRolesV1Error,
   decodeRolesV2Error,
-} from '../utils'
+} from '../../utils'
 import classes from './style.module.css'
 
 const Submit: React.FC = () => {

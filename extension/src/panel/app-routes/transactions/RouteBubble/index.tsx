@@ -1,8 +1,8 @@
 import { Blockie, Box, ConnectionStack } from '@/components'
+import { useRoute } from '@/zodiac-routes'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useRoute } from '../../routes'
-import { asLegacyConnection } from '../../routes/legacyConnectionMigrations'
+import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
 
