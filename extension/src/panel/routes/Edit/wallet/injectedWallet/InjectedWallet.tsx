@@ -1,6 +1,6 @@
-import { useInjectedWallet } from '@/providers'
+import { InjectedWalletContextT, useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
-import { useRoute } from '../../../routeHooks'
+import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
 import { SwitchChain } from '../SwitchChain'
@@ -9,20 +9,21 @@ import { WrongAccount } from '../WrongAccount'
 
 type InjectedWalletProps = {
   pilotAddress: string
-  routeId: string
+  chainId: ChainId
 
   onDisconnect: () => void
+  isConnected: (provider: InjectedWalletContextT) => boolean
 }
 
 export const InjectedWallet = ({
   pilotAddress,
-  routeId,
+  chainId,
   onDisconnect,
+  isConnected,
 }: InjectedWalletProps) => {
   const injectedWallet = useInjectedWallet()
-  const { connected, chainId } = useRoute(routeId)
 
-  if (connected) {
+  if (isConnected(injectedWallet)) {
     return (
       <Connected onDisconnect={onDisconnect}>
         <Account providerType={ProviderType.InjectedWallet}>

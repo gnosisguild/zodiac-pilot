@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import React, {
@@ -110,6 +111,15 @@ export const useSelectedRouteId = () => {
   return result
 }
 
+export const getChainId = (address: PrefixedAddress) => {
+  // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
+  const [chainId] = parsePrefixedAddress(address)
+
+  invariant(chainId != null, 'chainId is empty')
+
+  return chainId
+}
+
 export const useRoute = (id?: string) => {
   const [routes] = useRoutes()
   const [selectedRouteId] = useSelectedRouteId()
@@ -119,11 +129,7 @@ export const useRoute = (id?: string) => {
     routes[0] ||
     INITIAL_DEFAULT_ROUTE
 
-  // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
-  const [chainId] = parsePrefixedAddress(route.avatar)
-  if (!chainId) {
-    throw new Error('chainId is empty')
-  }
+  const chainId = getChainId(route.avatar)
 
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
@@ -135,7 +141,7 @@ export const useRoute = (id?: string) => {
       : walletConnect?.provider) || defaultProvider
 
   const connected =
-    route.initiator &&
+    route.initiator != null &&
     isConnectedTo(
       route.providerType === ProviderType.InjectedWallet
         ? injectedWallet

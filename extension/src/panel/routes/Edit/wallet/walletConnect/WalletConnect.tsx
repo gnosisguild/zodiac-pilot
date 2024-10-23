@@ -1,7 +1,7 @@
-import { useWalletConnect } from '@/providers'
+import { useWalletConnect, WalletConnectResult } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { useRoute } from '../../../routeHooks'
+import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
 import { SwitchChain } from '../SwitchChain'
@@ -9,21 +9,25 @@ import { SwitchChain } from '../SwitchChain'
 type WalletConnectProps = {
   routeId: string
   pilotAddress: string
+  chainId: ChainId
+
+  isConnected: (provider: WalletConnectResult) => boolean
 }
 
 export const WalletConnect = ({
   routeId,
   pilotAddress,
+  chainId,
+  isConnected,
 }: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
-  const { connected, chainId } = useRoute(routeId)
 
   invariant(
     walletConnect != null,
     'Wallet connect chosen as provider but not available'
   )
 
-  if (connected) {
+  if (isConnected(walletConnect)) {
     return (
       <Connected onDisconnect={() => walletConnect.disconnect()}>
         <Account providerType={ProviderType.WalletConnect}>
