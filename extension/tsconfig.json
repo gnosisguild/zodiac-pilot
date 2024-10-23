@@ -20,6 +20,8 @@
     "paths": {
       "@/components": ["./src/components/index.ts"],
       "@/utils": ["./src/utils/index.ts"],
+      "@/types": ["./src/types.ts"],
+      "@/providers": ["./src/panel/providers/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"]
     }
   },

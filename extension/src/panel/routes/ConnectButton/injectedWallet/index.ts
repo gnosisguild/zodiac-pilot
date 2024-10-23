@@ -1,0 +1,1 @@
+export { InjectedWalletConnect } from './InjectedWalletConnect'

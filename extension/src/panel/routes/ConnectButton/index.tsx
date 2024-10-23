@@ -8,8 +8,8 @@ import { ProviderType, Route } from '../../../types'
 import { useInjectedWallet, useWalletConnect } from '../../providers'
 import { isConnectedTo } from '../routeHooks'
 import { Account } from './Account'
-import { InjectedWallet } from './InjectedWallet'
-import { WalletConnect } from './WalletConnect'
+import { InjectedWalletConnect } from './injectedWallet'
+import { WalletConnectConnect } from './walletConnect'
 
 interface Props {
   route: Route
@@ -31,7 +31,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
   if (pilotAddress == null) {
     return (
       <div className="flex flex-col gap-2">
-        <WalletConnect
+        <WalletConnectConnect
           routeId={route.id}
           onConnect={(chainId, account) =>
             onConnect({
@@ -42,7 +42,7 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
           }
         />
 
-        <InjectedWallet
+        <InjectedWalletConnect
           onConnect={(chainId, account) =>
             onConnect({
               providerType: ProviderType.InjectedWallet,

@@ -1,16 +1,19 @@
 import { Button } from '@/components'
+import { useWalletConnect } from '@/providers'
+import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ChainId } from 'ser-kit'
-import { ProviderType } from '../../../types'
-import { useWalletConnect } from '../../providers'
-import { ProviderLogo } from './ProviderLogo'
+import { ProviderLogo } from '../ProviderLogo'
 
 type WalletConnectProps = {
   routeId: string
   onConnect: (chainId: ChainId, account: string) => void
 }
 
-export const WalletConnect = ({ routeId, onConnect }: WalletConnectProps) => {
+export const WalletConnectConnect = ({
+  routeId,
+  onConnect,
+}: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
 
   return (
