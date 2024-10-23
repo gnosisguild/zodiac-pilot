@@ -3,7 +3,7 @@ import { useWalletConnect } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ChainId } from 'ser-kit'
-import { ProviderLogo } from '../ProviderLogo'
+import { ProviderLogo } from '../providerLogo'
 
 type WalletConnectProps = {
   routeId: string

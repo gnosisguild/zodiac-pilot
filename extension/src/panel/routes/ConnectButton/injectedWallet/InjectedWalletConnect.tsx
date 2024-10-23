@@ -2,7 +2,7 @@ import { Button } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
 import { ChainId } from 'ser-kit'
-import { ProviderLogo } from '../ProviderLogo'
+import { ProviderLogo } from '../providerLogo'
 
 type InjectedWalletProps = {
   onConnect: (chainId: ChainId, account: string) => void
