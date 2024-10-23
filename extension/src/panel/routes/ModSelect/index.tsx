@@ -1,4 +1,4 @@
-import { Blockie, Box, Select } from '@/components'
+import { Blockie, Box, RawAddress, Select } from '@/components'
 import { getAddress } from 'ethers'
 import React from 'react'
 import { Props as SelectProps } from 'react-select'
@@ -27,7 +27,7 @@ const ModSelect: React.FC<Props> = (props) => {
         </Box>
         <div className={classes.modLabel}>
           <p className={classes.type}>{option.label}</p>
-          <code className={classes.address}>{checksumAddress}</code>
+          <RawAddress>{checksumAddress}</RawAddress>
         </div>
       </div>
     )
@@ -44,9 +44,7 @@ const ModSelect: React.FC<Props> = (props) => {
         </Box>
         <div className={classes.modLabel}>
           <p className={classes.type}>No Mod — Direct execution</p>
-          <code className={classes.address}>
-            Transactions submitted directly to the Safe
-          </code>
+          <RawAddress>Transactions submitted directly to the Safe</RawAddress>
         </div>
       </div>
     )

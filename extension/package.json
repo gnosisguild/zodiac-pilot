@@ -44,7 +44,6 @@
     "@types/chrome": "^0.0.268",
     "@types/eslint__js": "^8.42.3",
     "@types/events": "^3.0.3",
-    "@types/jest": "^29.5.13",
     "@types/node": "^22.7.5",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.17",

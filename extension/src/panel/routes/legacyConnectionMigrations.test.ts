@@ -1,4 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { describe, expect, it } from 'vitest'
 import { LegacyConnection } from '../../types'
 import {
   asLegacyConnection,

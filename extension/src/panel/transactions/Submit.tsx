@@ -1,4 +1,4 @@
-import { Button, IconButton, toastClasses } from '@/components'
+import { Button, IconButton, RawAddress, toastClasses } from '@/components'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
@@ -66,7 +66,7 @@ const Submit: React.FC = () => {
         <>
           <p>Submitting the transaction batch failed:</p>
           <br />
-          <code>{name}</code>
+          <RawAddress>{name}</RawAddress>
         </>,
         { className: toastClasses.toastError }
       )

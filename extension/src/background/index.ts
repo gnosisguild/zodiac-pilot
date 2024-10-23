@@ -1,6 +1,11 @@
 import { invariant } from '@epic-web/invariant'
 import { resolve } from 'path'
-import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../messages'
+import {
+  Message,
+  PILOT_OPEN_SIDEPANEL,
+  PILOT_PANEL_OPENED,
+  PILOT_PANEL_PORT,
+} from '../messages'
 import './sessionTracking'
 import { startPilotSession, stopPilotSession } from './sessionTracking'
 import './tabsTracking'
@@ -37,8 +42,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 chrome.runtime.onMessageExternal.addListener(async (message, sender) => {
   // The callback for runtime.onMessage must return falsy if we're not sending a response
 
-  console.log({ message })
-  if (message.type === 'open_side_panel') {
+  if (message.type === PILOT_OPEN_SIDEPANEL) {
     invariant(sender.tab != null, 'Can not access sender tab information')
 
     // This will open a tab-specific side panel only on the current tab.
@@ -49,7 +53,6 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender) => {
     await chrome.sidePanel.setOptions({
       tabId: sender.tab.id,
       path: resolve(__dirname, '../../sidepanel.html'),
-      // path: 'src/pages/sidepanel/sidepanel.html', // replace with your sidepanel index
       enabled: true,
     })
   }

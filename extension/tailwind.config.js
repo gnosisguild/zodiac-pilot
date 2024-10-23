@@ -11,7 +11,10 @@ export default {
           'dark-blue': 'rgba(43, 34, 101, 0.08)',
           'light-blue': '#223265',
 
-          'light-mustard': 'rgba(217, 212, 173, 0.8)',
+          'light-mustard': 'rgba(217, 212, 173)',
+          'dark-mustard': '#3e3d2ad1',
+
+          'dark-green': 'rgba(0, 166, 56, 0.47)',
         },
       },
     },
