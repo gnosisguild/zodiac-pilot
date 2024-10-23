@@ -1,6 +1,12 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ZodiacToastContainer } from '@/components'
+import {
+  ProvideInjectedWallet,
+  ProvideProvider,
+  useProvider,
+} from '@/providers'
+import { invariant } from '@epic-web/invariant'
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
@@ -9,13 +15,11 @@ import { parsePrefixedAddress } from 'ser-kit'
 import { update } from '../inject/bridge'
 import './global.css'
 import { initPort } from './port'
-import { ProvideInjectedWallet } from './providers'
-import ProvideProvider, { useProvider } from './providers/ProvideProvider'
-import { ProvideRoutes, RoutesEdit, RoutesList } from './routes'
+import { EditConnection, ProvideRoutes, RoutesList } from './routes'
 import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import { ProvideState } from './state'
 import Transactions from './transactions'
-import useStorage from './utils/useStorage'
+import { useStorage } from './utils'
 
 initPort()
 
@@ -30,11 +34,11 @@ const router = createHashRouter([
   },
   {
     path: '/routes/:routeId',
-    element: <RoutesEdit />,
+    element: <EditConnection />,
   },
 ])
 
-const App: React.FC = () => {
+const App = () => {
   // update the last used timestamp for the current route
   useUpdateLastUsedRoute()
 
@@ -56,10 +60,10 @@ const App: React.FC = () => {
 }
 
 const rootEl = document.getElementById('root')
-if (!rootEl) throw new Error('invariant violation')
-const root = createRoot(rootEl)
 
-root.render(
+invariant(rootEl != null, 'Could not find DOM node to attach app')
+
+createRoot(rootEl).render(
   <React.StrictMode>
     <ProvideState>
       <ProvideRoutes>

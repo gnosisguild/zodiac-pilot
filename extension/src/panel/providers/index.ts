@@ -1,5 +1,10 @@
-export { default as ForkProvider } from './ForkProvider'
-export { getReadOnlyProvider } from './readOnlyProvider'
+export { ForkProvider } from './ForkProvider'
+export { isConnected } from './isConnected'
+export { ProvideProvider, useProvider } from './ProvideProvider'
+export {
+  getEip1193ReadOnlyProvider,
+  getReadOnlyProvider,
+} from './readOnlyProvider'
 export {
   ProvideInjectedWallet,
   useInjectedWallet,

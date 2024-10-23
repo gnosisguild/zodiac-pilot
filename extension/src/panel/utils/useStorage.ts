@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 /**
  * Read and write a value to extension sync storage under the given `key`.
  */
-export default function useStorage<T>(key: string, initialValue?: T) {
+export function useStorage<T>(key: string, initialValue?: T) {
   const [value, setValue] = useState<T>()
 
   // keep state in sync with storage
