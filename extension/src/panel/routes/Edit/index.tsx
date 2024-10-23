@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Field,
   Flex,
   IconButton,
@@ -30,7 +31,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import ModSelect, { NO_MODULE_OPTION, Option } from '../ModSelect'
+import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 import classes from './style.module.css'
@@ -157,11 +158,11 @@ const EditConnection: React.FC = () => {
     (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase()
   )
   const defaultModOption =
-    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : ''
+    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
   return (
     <>
-      <Flex direction="column" gap={4} className={classes.editContainer}>
+      <div className="relative flex flex-1 flex-col gap-4 px-6 py-8">
         <Flex gap={2} direction="column">
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">
@@ -170,7 +171,7 @@ const EditConnection: React.FC = () => {
                 &#8592; All Connections
               </Link>
             </Flex>
-            <Flex gap={4} alignItems="center">
+            <div className="flex items-center gap-4">
               <Button
                 className={classes.launchButton}
                 disabled={!connection.avatarAddress}
@@ -185,10 +186,12 @@ const EditConnection: React.FC = () => {
               >
                 <RiDeleteBinLine size={24} title="Remove this connection" />
               </IconButton>
-            </Flex>
+            </div>
           </Flex>
-          <hr />
         </Flex>
+
+        <Divider />
+
         <Flex direction="column" gap={2}>
           <Flex direction="column" gap={3} className={classes.form}>
             {error && (
@@ -257,6 +260,7 @@ const EditConnection: React.FC = () => {
             </Field>
             <Field label="Zodiac Mod" disabled={modules.length === 0}>
               <ModSelect
+                isMulti={false}
                 options={[
                   ...(pilotIsOwner || pilotIsDelegate
                     ? [NO_MODULE_OPTION]
@@ -267,8 +271,17 @@ const EditConnection: React.FC = () => {
                   })),
                 ]}
                 onChange={async (selected) => {
+                  if (selected == null) {
+                    updateConnection({
+                      moduleAddress: undefined,
+                      moduleType: undefined,
+                    })
+
+                    return
+                  }
+
                   const mod = modules.find(
-                    (mod) => mod.moduleAddress === (selected as Option).value
+                    (mod) => mod.moduleAddress === selected.value
                   )
                   updateConnection({
                     moduleAddress: mod?.moduleAddress,
@@ -347,7 +360,7 @@ const EditConnection: React.FC = () => {
             )}
           </Flex>
         </Flex>
-      </Flex>
+      </div>
       <ConfirmationModal />
     </>
   )

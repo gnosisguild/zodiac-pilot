@@ -1,4 +1,4 @@
-import { Blockie, Box, ConnectionStack, Flex } from '@/components'
+import { Blockie, Box, ConnectionStack } from '@/components'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useRoute } from '../../routes'
@@ -11,11 +11,11 @@ export const RouteBubble: React.FC = () => {
   const connection = asLegacyConnection(route)
 
   return (
-    <Box roundedLeft className={classes.routeBubble}>
-      <Flex gap={1}>
-        <Box bg roundedLeft className={classes.currentConnectionContainer}>
+    <Box rounded className={classes.routeBubble}>
+      <div className="flex gap-1">
+        <Box bg roundedLeft className="flex-1 py-0 pl-0 pr-8">
           <Link to={'/routes/' + route.id}>
-            <Flex justifyContent="space-between" alignItems="center" gap={3}>
+            <div className="flex items-center gap-2">
               <div className={classes.blockieStack}>
                 {connection.pilotAddress && (
                   <Box rounded className={classes.blockieBox}>
@@ -41,16 +41,16 @@ export const RouteBubble: React.FC = () => {
                 </Box>
               </div>
               <p className={classes.label}>{connection.label}</p>
-            </Flex>
+            </div>
           </Link>
         </Box>
         <Link to="/routes">
-          <Box bg className={classes.connectionsContainer}>
+          <Box bg roundedRight className={classes.connectionsContainer}>
             <span className="sr-only">Configure routes</span>
             <ConnectionsIcon height="100%" width="100%" />
           </Box>
         </Link>
-      </Flex>
+      </div>
 
       <div className={classes.infoContainer}>
         <Box bg p={3} className={classes.info}>

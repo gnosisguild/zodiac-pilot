@@ -1,4 +1,4 @@
-import { Button, Flex, IconButton } from '@/components'
+import { Button, IconButton } from '@/components'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
@@ -65,44 +65,38 @@ const Transactions: React.FC = () => {
   }
 
   return (
-    <Flex direction="column" gap={0}>
-      <Flex justifyContent="end" gap={0}>
+    <div className="flex flex-1 flex-col gap-4 pb-8 pt-4">
+      <div className="px-4">
         <RouteBubble />
-      </Flex>
+      </div>
 
-      <Flex gap={2} alignItems="center">
+      <div className="flex items-center justify-between px-6">
         <h4 className={classes.header}>Recording Transactions</h4>
-        <Flex gap={1} className={classes.headerButtons}>
-          <Flex gap={0}>
-            <IconButton
-              title="Copy batch transaction data to clipboard"
-              disabled={transactions.length === 0}
-              onClick={copyTransactionData}
-            >
-              <RiFileCopy2Line />
-            </IconButton>
-            <IconButton
-              title="Re-simulate on current blockchain head"
-              disabled={transactions.length === 0}
-              onClick={reforkAndRerun}
-            >
-              <RiRefreshLine />
-            </IconButton>
-          </Flex>
+
+        <div className="flex gap-1">
+          <IconButton
+            title="Copy batch transaction data to clipboard"
+            disabled={transactions.length === 0}
+            onClick={copyTransactionData}
+          >
+            <RiFileCopy2Line />
+          </IconButton>
+          <IconButton
+            title="Re-simulate on current blockchain head"
+            disabled={transactions.length === 0}
+            onClick={reforkAndRerun}
+          >
+            <RiRefreshLine />
+          </IconButton>
+
           <div className={classes.recordingIcon} />
-        </Flex>
-      </Flex>
-      <Flex
-        gap={2}
-        direction="column"
-        alignItems="stretch"
-        className={classes.wrapper}
-      >
-        <Flex
-          gap={4}
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-8 overflow-hidden px-6">
+        <div
           ref={scrollContainerRef}
-          className={classes.body + ' exp'}
-          direction="column"
+          className="exp flex flex-grow flex-col gap-4 overflow-y-auto"
         >
           {transactions.map((transactionState, index) => (
             <Transaction
@@ -119,8 +113,9 @@ const Transactions: React.FC = () => {
               recorded here. You can then sign and submit them as a batch.
             </p>
           )}
-        </Flex>
-        <Flex justifyContent="space-between" gap={2}>
+        </div>
+
+        <div className="flex gap-2">
           {!route.initiator && (
             <Button
               secondary
@@ -131,9 +126,9 @@ const Transactions: React.FC = () => {
             </Button>
           )}
           <Submit />
-        </Flex>
-      </Flex>
-    </Flex>
+        </div>
+      </div>
+    </div>
   )
 }
 
