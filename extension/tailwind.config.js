@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         spectral: 'Sepctral',
+        mono: '"Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       },
       colors: {
         zodiac: {
