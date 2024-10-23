@@ -1,9 +1,7 @@
+import { CHAIN_NAME } from '@/chains'
 import { Select } from '@/components'
 import React from 'react'
 import { ChainId } from 'ser-kit'
-import { CHAIN_NAME } from '../../../chains'
-
-import classes from './style.module.css'
 
 export interface Props {
   value: ChainId
@@ -20,10 +18,10 @@ const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
   label: name,
 }))
 
-const ChainSelect: React.FC<Props> = ({ value, onChange }) => {
+export const ChainSelect = ({ value, onChange }: Props) => {
   const ChainOptionLabel: React.FC<Option> = ({ value, label }) => (
-    <div className={classes.chainOption}>
-      <div className={classes.chainLabel}>{label || `#${value}`}</div>
+    <div className="flex items-center gap-4 py-3">
+      <div className="pl-1 font-spectral">{label || `#${value}`}</div>
     </div>
   )
 
@@ -36,5 +34,3 @@ const ChainSelect: React.FC<Props> = ({ value, onChange }) => {
     />
   )
 }
-
-export default ChainSelect

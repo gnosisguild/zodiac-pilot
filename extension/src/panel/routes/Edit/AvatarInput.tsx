@@ -41,11 +41,11 @@ const createSelectStyles = {
   }),
 }
 
-const AvatarInput: React.FC<Props> = ({
+export const AvatarInput = ({
   value,
   onChange,
   availableSafes = [],
-}) => {
+}: Props) => {
   const [pendingValue, setPendingValue] = useState(value)
 
   useEffect(() => {
@@ -120,5 +120,3 @@ const SafeOptionLabel: React.FC<unknown> = (opt) => {
     </div>
   )
 }
-
-export default AvatarInput

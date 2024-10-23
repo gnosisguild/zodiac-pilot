@@ -24,8 +24,6 @@ import { SupportedModuleType } from '../../integrations/zodiac/types'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
-import AvatarInput from '../AvatarInput'
-import ChainSelect from '../ChainSelect'
 import {
   asLegacyConnection,
   fromLegacyConnection,
@@ -33,6 +31,8 @@ import {
 import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
+import { AvatarInput } from './AvatarInput'
+import { ChainSelect } from './ChainSelect'
 import classes from './style.module.css'
 import { ConnectWallet } from './wallet'
 
