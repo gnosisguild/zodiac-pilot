@@ -29,11 +29,11 @@ export const InjectedWallet = ({
 
   if (connected) {
     return (
-      <Connected
-        providerType={ProviderType.InjectedWallet}
-        pilotAddress={pilotAddress}
-        onDisconnect={onDisconnect}
-      />
+      <Connected onDisconnect={onDisconnect}>
+        <Account providerType={ProviderType.InjectedWallet}>
+          {pilotAddress}
+        </Account>
+      </Connected>
     )
   }
 

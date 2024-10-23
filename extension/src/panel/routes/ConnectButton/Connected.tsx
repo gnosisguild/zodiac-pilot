@@ -1,22 +1,14 @@
 import { Button } from '@/components'
-import { ProviderType } from '@/types'
-import { Account } from './Account'
+import { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
-type ConnectedProps = {
-  providerType: ProviderType
-  pilotAddress: string
-
+type ConnectedProps = PropsWithChildren<{
   onDisconnect: () => void
-}
+}>
 
-export const Connected = ({
-  providerType,
-  pilotAddress,
-  onDisconnect,
-}: ConnectedProps) => (
+export const Connected = ({ children, onDisconnect }: ConnectedProps) => (
   <Section>
-    <Account providerType={providerType}>{pilotAddress}</Account>
+    {children}
 
     <Button onClick={onDisconnect}>Disconnect</Button>
   </Section>

@@ -32,11 +32,11 @@ export const WalletConnect = ({
 
   if (connected) {
     return (
-      <Connected
-        providerType={ProviderType.WalletConnect}
-        pilotAddress={pilotAddress}
-        onDisconnect={() => walletConnect.disconnect()}
-      />
+      <Connected onDisconnect={() => walletConnect.disconnect()}>
+        <Account providerType={ProviderType.WalletConnect}>
+          {pilotAddress}
+        </Account>
+      </Connected>
     )
   }
 
