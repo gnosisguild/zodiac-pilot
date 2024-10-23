@@ -29,6 +29,7 @@ esbuild
       './src/panel/app.tsx',
     ],
     bundle: true,
+    format: 'esm',
     minify: process.env.NODE_ENV === 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
     loader: {
