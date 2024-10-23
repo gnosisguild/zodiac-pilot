@@ -4,6 +4,7 @@ import { PropsWithChildren } from 'react'
 import { Props as SelectProps } from 'react-select'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
+
 export interface Option {
   value: string
   label: string

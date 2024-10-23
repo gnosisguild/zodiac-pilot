@@ -29,11 +29,11 @@ import {
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
-import useConnectionDryRun from '../useConnectionDryRun'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import classes from './style.module.css'
+import { useConnectionDryRun } from './useConnectionDryRun'
 import { ConnectWallet } from './wallet'
 
 type ConnectionPatch = {

@@ -1,18 +1,18 @@
+import { getReadOnlyProvider } from '@/providers'
+import { JsonRpcError, LegacyConnection } from '@/types'
 import { isSmartContractAddress, validateAddress } from '@/utils'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
-import { JsonRpcError, LegacyConnection } from '../../types'
-import { getReadOnlyProvider } from '../providers/readOnlyProvider'
 import {
   decodeGenericError,
   decodeRoleKey,
   decodeRolesV1Error,
   decodeRolesV2Error,
-} from '../utils'
-import { useRoute } from './routeHooks'
+} from '../../utils'
+import { useRoute } from '../routeHooks'
 import { wrapRequest } from './wrapRequest'
 
-const useConnectionDryRun = (connection: LegacyConnection) => {
+export const useConnectionDryRun = (connection: LegacyConnection) => {
   const [error, setError] = useState<string | null>(null)
   const { connected } = useRoute(connection.id)
 
@@ -148,5 +148,3 @@ async function dryRun(connection: LegacyConnection) {
 
   await provider.estimateGas(request)
 }
-
-export default useConnectionDryRun
