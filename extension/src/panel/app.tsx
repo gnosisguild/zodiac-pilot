@@ -6,6 +6,11 @@ import {
   ProvideProvider,
   useProvider,
 } from '@/providers'
+import {
+  ProvideRoutes,
+  useRoute,
+  useUpdateLastUsedRoute,
+} from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -13,12 +18,11 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { parsePrefixedAddress } from 'ser-kit'
 import { update } from '../inject/bridge'
-import { appRoutes, ProvideRoutes, useRoute } from './app-routes'
+import { appRoutes } from './app-routes'
 import './global.css'
 import { initPort } from './port'
 import { ProvideState } from './state'
 import { useStorage } from './utils'
-import { useUpdateLastUsedRoute } from './zodiac-routes'
 
 initPort()
 
