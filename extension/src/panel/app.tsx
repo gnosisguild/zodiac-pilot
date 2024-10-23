@@ -65,7 +65,7 @@ root.render(
       <ProvideRoutes>
         <ProvideInjectedWallet>
           <ProvideProvider>
-            <div className="flex flex-1 flex-col px-6 py-8">
+            <div className="flex flex-1 flex-col">
               <App />
             </div>
           </ProvideProvider>

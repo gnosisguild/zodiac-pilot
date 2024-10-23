@@ -1,4 +1,4 @@
-import { Button, Flex, IconButton } from '@/components'
+import { Button, IconButton } from '@/components'
 import React, { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
@@ -61,12 +61,12 @@ const Transactions: React.FC = () => {
   }
 
   return (
-    <>
-      <Flex justifyContent="end" gap={0}>
+    <div className="flex flex-1 flex-col gap-4 pb-8 pt-4">
+      <div className="px-4">
         <RouteBubble />
-      </Flex>
+      </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-6">
         <h4 className={classes.header}>Recording Transactions</h4>
 
         <div className="flex gap-1">
@@ -89,7 +89,7 @@ const Transactions: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-8 overflow-hidden">
+      <div className="flex flex-1 flex-col gap-8 overflow-hidden px-6">
         <div
           ref={scrollContainerRef}
           className="exp flex flex-grow flex-col gap-4 overflow-y-auto"
@@ -124,7 +124,7 @@ const Transactions: React.FC = () => {
           <Submit />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

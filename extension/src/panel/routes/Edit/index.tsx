@@ -162,7 +162,7 @@ const EditConnection: React.FC = () => {
 
   return (
     <>
-      <div className="relative flex flex-col gap-4">
+      <div className="relative flex flex-1 flex-col gap-4 px-6 py-8">
         <Flex gap={2} direction="column">
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">

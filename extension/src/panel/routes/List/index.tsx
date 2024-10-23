@@ -174,7 +174,7 @@ const RoutesList: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
       <Flex gap={2} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
           <h2>Pilot Routes</h2>
