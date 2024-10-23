@@ -1,4 +1,4 @@
-import { invariant } from '@epic-web/invariant'
+import { getChainId } from '@/chains'
 import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import React, {
@@ -109,15 +109,6 @@ export const useSelectedRouteId = () => {
     throw new Error('useSelectedRouteId must be used within a <ProvideRoutes>')
   }
   return result
-}
-
-export const getChainId = (address: PrefixedAddress) => {
-  // atm, we don't yet support cross-chain routes, so can derive a general chainId from the avatar
-  const [chainId] = parsePrefixedAddress(address)
-
-  invariant(chainId != null, 'chainId is empty')
-
-  return chainId
 }
 
 export const useRoute = (id?: string) => {

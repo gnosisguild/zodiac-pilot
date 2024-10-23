@@ -1,9 +1,9 @@
-import { WalletConnectResult } from '@/providers'
+import { getChainId } from '@/chains'
+import { InjectedWalletContextT, WalletConnectResult } from '@/providers'
 import { ProviderType, Route } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
-import { InjectedWalletContextT } from '../../../providers/useInjectedWallet'
-import { getChainId, isConnectedTo } from '../../routeHooks'
+import { isConnectedTo } from '../../routeHooks'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
 
