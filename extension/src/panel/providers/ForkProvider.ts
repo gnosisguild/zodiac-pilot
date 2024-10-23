@@ -34,7 +34,7 @@ interface Handlers {
 }
 
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
-class ForkProvider extends EventEmitter {
+export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
 
   private chainId: ChainId
@@ -324,8 +324,6 @@ class ForkProvider extends EventEmitter {
     return this.provider.getTransactionLink(txHash)
   }
 }
-
-export default ForkProvider
 
 /** Encode an execTransactionFromModule call with the given meta transaction data */
 const execTransactionFromModule = (

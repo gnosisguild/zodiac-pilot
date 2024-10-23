@@ -1,8 +1,9 @@
+import { Eip1193Provider } from '@/types'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
-import React, {
+import {
   createContext,
-  ReactNode,
+  PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
@@ -17,15 +18,10 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { ForkProvider } from '.'
-import { Eip1193Provider } from '../../types'
 import { useRoute } from '../routes'
 import { ExecutionStatus, useDispatch, useTransactions } from '../state'
 import { fetchContractInfo } from '../utils/abi'
-
-interface Props {
-  children: ReactNode
-}
+import { ForkProvider } from './ForkProvider'
 
 const ProviderContext = createContext<
   (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
@@ -43,7 +39,7 @@ const SubmitTransactionsContext = createContext<
 >(null)
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
-const ProvideProvider: React.FC<Props> = ({ children }) => {
+export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const { provider, route, chainId } = useRoute()
   const dispatch = useDispatch()
   const transactions = useTransactions()
@@ -222,8 +218,6 @@ const ProvideProvider: React.FC<Props> = ({ children }) => {
     </ProviderContext.Provider>
   )
 }
-
-export default ProvideProvider
 
 const isExecutionFailure = (
   log: TransactionReceipt['logs'][0],
