@@ -26,7 +26,6 @@ import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
 import AvatarInput from '../AvatarInput'
 import ChainSelect from '../ChainSelect'
-import ConnectButton from '../ConnectButton'
 import {
   asLegacyConnection,
   fromLegacyConnection,
@@ -35,6 +34,7 @@ import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 import classes from './style.module.css'
+import { ConnectWallet } from './wallet'
 
 type ConnectionPatch = {
   label?: string
@@ -223,7 +223,7 @@ const EditConnection: React.FC = () => {
               />
             </Field>
             <Field label="Pilot Account" labelFor="">
-              <ConnectButton
+              <ConnectWallet
                 route={route}
                 onConnect={({ providerType, chainId, account }) => {
                   updateConnection({

@@ -1,7 +1,7 @@
 import { Circle, RawAddress } from '@/components'
+import { ProviderType } from '@/types'
 import { validateAddress } from '@/utils'
-import { ProviderType } from '../../../types'
-import { ProviderLogo } from './ProviderLogo'
+import { ProviderLogo } from './providerLogo'
 
 type AccountProps = {
   providerType: ProviderType

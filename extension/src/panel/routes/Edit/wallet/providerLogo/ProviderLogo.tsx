@@ -1,4 +1,4 @@
-import { ProviderType } from '../../../types'
+import { ProviderType } from '@/types'
 import metamaskLogoUrl from './metamask-logo.svg'
 import walletConnectLogoUrl from './wallet-connect-logo.png'
 
