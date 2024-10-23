@@ -18,7 +18,7 @@ import React, {
   useRef,
 } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
-import useStorage, { useStorageEntries } from '../utils/useStorage'
+import { useStorage, useStorageEntries } from '../utils'
 
 type RouteContextT = readonly [
   Route[],
