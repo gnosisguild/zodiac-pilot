@@ -3,6 +3,7 @@ import {
   BoxButton,
   Button,
   ConnectionStack,
+  Divider,
   Flex,
   useConfirmationModal,
 } from '@/components'
@@ -79,7 +80,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
   return (
     <>
-      <div className={classes.connection}>
+      <div className="relative">
         <BoxButton
           className={classes.connectionItemContainer}
           onClick={handleLaunch}
@@ -119,42 +120,30 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
                   )}
                 </Box>
                 <h2>
-                  {route.label || (
-                    <>
-                      <em>Unnamed route</em>
-                    </>
-                  )}
+                  {route.label || <em>Unnamed route</em>}
+
+                  <div className="flex items-end gap-2 text-sm font-normal">
+                    <div className="text-xs uppercase text-zodiac-light-mustard">
+                      Last Used
+                    </div>
+                    <div className="font-mono opacity-70">
+                      {route.lastUsed ? (
+                        `${formatDistanceToNow(route.lastUsed)} ago`
+                      ) : (
+                        <>N/A</>
+                      )}
+                    </div>
+                  </div>
                 </h2>
               </Flex>
             </Flex>
-            <Flex
-              direction="row"
-              gap={4}
-              alignItems="baseline"
-              className={classes.infoContainer}
-            >
-              <ConnectionStack
-                chainId={chainId}
-                connection={asLegacyConnection(route)}
-                addressBoxClass={classes.addressBox}
-                className={classes.connectionStack}
-              />
-              <Flex
-                direction="column"
-                alignItems="start"
-                gap={2}
-                className={classes.info}
-              >
-                <div className={classes.infoDatum}>
-                  {route.lastUsed ? (
-                    formatDistanceToNow(route.lastUsed)
-                  ) : (
-                    <>N/A</>
-                  )}
-                </div>
-                <div className={classes.infoLabel}>Last Used</div>
-              </Flex>
-            </Flex>
+
+            <ConnectionStack
+              chainId={chainId}
+              connection={asLegacyConnection(route)}
+              addressBoxClass={classes.addressBox}
+              className={classes.connectionStack}
+            />
           </Flex>
         </BoxButton>
         <BoxButton onClick={handleModify} className={classes.modifyButton}>
@@ -185,7 +174,7 @@ const RoutesList: React.FC = () => {
   }
 
   return (
-    <Flex gap={4} direction="column">
+    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
       <Flex gap={2} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
           <h2>Pilot Routes</h2>
@@ -193,8 +182,10 @@ const RoutesList: React.FC = () => {
             Add Route
           </Button>
         </Flex>
-        <hr />
       </Flex>
+
+      <Divider />
+
       {routes.map((route) => (
         <RouteItem
           key={route.id}
@@ -203,7 +194,7 @@ const RoutesList: React.FC = () => {
           onModify={handleModify}
         />
       ))}
-    </Flex>
+    </div>
   )
 }
 

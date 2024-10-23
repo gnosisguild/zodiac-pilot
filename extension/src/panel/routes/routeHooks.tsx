@@ -84,7 +84,7 @@ export const useUpdateLastUsedRoute = () => {
   updateRef.current = (routeId: string) => {
     const route = routes.find((route) => route.id === routeId)
     if (route) {
-      saveRoute({ ...route, lastUsed: Math.floor(Date.now() / 1000) })
+      saveRoute({ ...route, lastUsed: Date.now() })
     }
   }
 

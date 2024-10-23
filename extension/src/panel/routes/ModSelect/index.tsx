@@ -1,8 +1,7 @@
-import { Blockie, Box, RawAddress, Select } from '@/components'
+import { Blockie, Circle, RawAddress, Select } from '@/components'
 import { getAddress } from 'ethers'
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import { Props as SelectProps } from 'react-select'
-import classes from './style.module.css'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
 export interface Option {
@@ -10,45 +9,31 @@ export interface Option {
   label: string
 }
 
-interface Props extends SelectProps {
+interface Props<Option = unknown, Multi extends boolean = boolean>
+  extends SelectProps<Option, Multi> {
   avatarAddress: string
 }
 
-const ModSelect: React.FC<Props> = (props) => {
-  const ModuleOptionLabel: React.FC<unknown> = (props) => {
-    const option = props as Option
-    if (!option.value) return <NoModuleOptionLabel />
+export function ModSelect<Multi extends boolean = boolean>({
+  avatarAddress,
+  ...props
+}: Props<Option, Multi>) {
+  const ModuleOptionLabel = (option: Option) => {
+    if (!option.value)
+      return (
+        <Value label="No Mod — Direct execution" address={avatarAddress}>
+          Transactions submitted directly to the Safe
+        </Value>
+      )
 
     const checksumAddress = getAddress(option.value)
     return (
-      <div className={classes.modOption}>
-        <Box rounded>
-          <Blockie address={option.value} className={classes.modBlockie} />
-        </Box>
-        <div className={classes.modLabel}>
-          <p className={classes.type}>{option.label}</p>
-          <RawAddress>{checksumAddress}</RawAddress>
-        </div>
-      </div>
+      <Value address={option.value} label={option.label}>
+        {checksumAddress}
+      </Value>
     )
   }
 
-  const NoModuleOptionLabel = () => {
-    return (
-      <div className={classes.modOption}>
-        <Box rounded>
-          <Blockie
-            address={props.avatarAddress}
-            className={classes.modBlockie}
-          />
-        </Box>
-        <div className={classes.modLabel}>
-          <p className={classes.type}>No Mod — Direct execution</p>
-          <RawAddress>Transactions submitted directly to the Safe</RawAddress>
-        </div>
-      </div>
-    )
-  }
   return (
     <Select
       {...props}
@@ -58,4 +43,19 @@ const ModSelect: React.FC<Props> = (props) => {
   )
 }
 
-export default ModSelect
+type ValueProps = PropsWithChildren<{
+  label: string
+  address: string
+}>
+
+const Value = ({ label, address, children }: ValueProps) => (
+  <div className="flex items-center gap-4 py-3">
+    <Circle>
+      <Blockie address={address} className="size-10" />
+    </Circle>
+    <div className="flex flex-col gap-1 overflow-hidden">
+      <p className="pl-1 font-spectral text-base">{label}</p>
+      <RawAddress>{children}</RawAddress>
+    </div>
+  </div>
+)

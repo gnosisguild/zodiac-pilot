@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.tsx'],
+  content: ['./src/**/*.tsx', './public/*.html'],
   theme: {
     extend: {
       fontFamily: {
         spectral: 'Sepctral',
+        mono: '"Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       },
       colors: {
         zodiac: {

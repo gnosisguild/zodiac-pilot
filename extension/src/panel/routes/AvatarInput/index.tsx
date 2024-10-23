@@ -1,10 +1,9 @@
-import { Blockie, Box, RawAddress, selectStyles } from '@/components'
+import { Blockie, Circle, RawAddress, selectStyles } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import React, { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import { Option } from '../ModSelect'
-import classes from './style.module.css'
 
 interface Props {
   value: string
@@ -112,13 +111,12 @@ const SafeOptionLabel: React.FC<unknown> = (opt) => {
 
   const checksumAddress = getAddress(option.value)
   return (
-    <div className={classes.safeOption}>
-      <Box rounded>
-        <Blockie address={option.value} className={classes.safeBlockie} />
-      </Box>
-      <div className={classes.safeLabel}>
-        <RawAddress>{checksumAddress}</RawAddress>
-      </div>
+    <div className="flex items-center gap-4 py-3">
+      <Circle>
+        <Blockie address={option.value} className="size-10" />
+      </Circle>
+
+      <RawAddress>{checksumAddress}</RawAddress>
     </div>
   )
 }
