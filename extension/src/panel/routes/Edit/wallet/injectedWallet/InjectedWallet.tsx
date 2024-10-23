@@ -1,7 +1,6 @@
 import { useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
-import { ChainId, PrefixedAddress } from 'ser-kit'
-import { isConnectedTo } from '../../routeHooks'
+import { useRoute } from '../../../routeHooks'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
 import { SwitchChain } from '../SwitchChain'
@@ -10,22 +9,18 @@ import { WrongAccount } from '../WrongAccount'
 
 type InjectedWalletProps = {
   pilotAddress: string
-  chainId: ChainId
-  initiator: PrefixedAddress | undefined
+  routeId: string
 
   onDisconnect: () => void
 }
 
 export const InjectedWallet = ({
   pilotAddress,
-  chainId,
-  initiator,
+  routeId,
   onDisconnect,
 }: InjectedWalletProps) => {
   const injectedWallet = useInjectedWallet()
-
-  const connected =
-    initiator && isConnectedTo(injectedWallet, initiator, chainId)
+  const { connected, chainId } = useRoute(routeId)
 
   if (connected) {
     return (
