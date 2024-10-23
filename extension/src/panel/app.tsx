@@ -18,7 +18,7 @@ import { initPort } from './port'
 import { EditConnection, ProvideRoutes, RoutesList } from './routes'
 import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import { ProvideState } from './state'
-import Transactions from './transactions'
+import { Transactions } from './transactions'
 import { useStorage } from './utils'
 
 initPort()

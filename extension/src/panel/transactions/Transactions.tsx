@@ -1,9 +1,8 @@
 import { Button, IconButton } from '@/components'
-import React, { useEffect, useRef, useState } from 'react'
+import { ForkProvider, useProvider } from '@/providers'
+import { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
-import { ForkProvider } from '../providers'
-import { useProvider } from '../providers/ProvideProvider'
 import { useRoute } from '../routes'
 import { useDispatch, useTransactions } from '../state'
 import { RouteBubble } from './RouteBubble'
@@ -11,7 +10,7 @@ import Submit from './Submit'
 import { Transaction } from './Transaction'
 import classes from './style.module.css'
 
-const Transactions: React.FC = () => {
+export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
@@ -127,5 +126,3 @@ const Transactions: React.FC = () => {
     </div>
   )
 }
-
-export default Transactions
