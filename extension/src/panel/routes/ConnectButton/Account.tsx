@@ -1,4 +1,4 @@
-import { RawAddress } from '@/components'
+import { Circle, RawAddress } from '@/components'
 import { validateAddress } from '@/utils'
 import { ProviderType } from '../../../types'
 import { ProviderLogo } from './ProviderLogo'
@@ -11,9 +11,9 @@ type AccountProps = {
 export const Account = ({ providerType, children }: AccountProps) => {
   return (
     <div className="flex items-center gap-4 overflow-hidden">
-      <div className="relative flex size-12 flex-shrink-0 items-center justify-center rounded-full border border-zodiac-dark-green">
+      <Circle>
         <ProviderLogo providerType={providerType} />
-      </div>
+      </Circle>
 
       <RawAddress>{validateAddress(children)}</RawAddress>
     </div>
