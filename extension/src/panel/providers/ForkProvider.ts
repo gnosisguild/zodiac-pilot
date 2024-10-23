@@ -416,6 +416,7 @@ async function prepareSafeForSimulation(
       params: [
         {
           to: avatarAddress,
+          // @ts-expect-error TODO: needs a fix in protocol-kit -> https://github.com/safe-global/safe-core-sdk/issues/1021
           data: safeContract.encode('enableModule', [from]),
           from: avatarAddress,
         },
