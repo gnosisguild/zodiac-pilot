@@ -1,5 +1,5 @@
-import { EditConnection } from './edit-route'
-import { RoutesList } from './list-routes'
+import { EditRoute } from './edit-route'
+import { ListRoutes } from './list-routes'
 import { Transactions } from './transactions'
 
 export const appRoutes = [
@@ -9,10 +9,10 @@ export const appRoutes = [
   },
   {
     path: '/routes',
-    element: <RoutesList />,
+    element: <ListRoutes />,
   },
   {
     path: '/routes/:routeId',
-    element: <EditConnection />,
+    element: <EditRoute />,
   },
 ]

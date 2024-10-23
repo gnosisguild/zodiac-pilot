@@ -1,9 +1,8 @@
 import { IconButton } from '@/components'
+import { ForkProvider, useProvider } from '@/providers'
+import { TransactionState, useDispatch, useTransactions } from '@/state'
 import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
-import { ForkProvider } from '../providers'
-import { useProvider } from '../providers/ProvideProvider'
-import { TransactionState, useDispatch, useTransactions } from '../state'
 
 import classes from './style.module.css'
 

@@ -1,4 +1,6 @@
+import { getReadOnlyProvider } from '@/providers'
 import { validateAddress } from '@/utils'
+import { useRoute } from '@/zodiac-routes'
 import {
   ContractAbis,
   ContractAddresses,
@@ -9,8 +11,6 @@ import { Contract, id, Interface } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
-import { getReadOnlyProvider } from '../../providers/readOnlyProvider'
-import { useRoute } from '../../routes/routeHooks'
 import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
