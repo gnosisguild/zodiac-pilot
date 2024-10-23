@@ -3,6 +3,7 @@ import {
   BoxButton,
   Button,
   ConnectionStack,
+  Divider,
   Flex,
   useConfirmationModal,
 } from '@/components'
@@ -185,7 +186,7 @@ const RoutesList: React.FC = () => {
   }
 
   return (
-    <Flex gap={4} direction="column">
+    <div className="flex flex-col gap-4">
       <Flex gap={2} direction="column">
         <Flex gap={1} justifyContent="space-between" alignItems="baseline">
           <h2>Pilot Routes</h2>
@@ -193,8 +194,10 @@ const RoutesList: React.FC = () => {
             Add Route
           </Button>
         </Flex>
-        <hr />
       </Flex>
+
+      <Divider />
+
       {routes.map((route) => (
         <RouteItem
           key={route.id}
@@ -203,7 +206,7 @@ const RoutesList: React.FC = () => {
           onModify={handleModify}
         />
       ))}
-    </Flex>
+    </div>
   )
 }
 

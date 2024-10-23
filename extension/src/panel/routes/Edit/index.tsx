@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Divider,
   Field,
   Flex,
   IconButton,
@@ -161,7 +162,7 @@ const EditConnection: React.FC = () => {
 
   return (
     <>
-      <Flex direction="column" gap={4} className={classes.editContainer}>
+      <div className="relative flex flex-col gap-4">
         <Flex gap={2} direction="column">
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">
@@ -170,7 +171,7 @@ const EditConnection: React.FC = () => {
                 &#8592; All Connections
               </Link>
             </Flex>
-            <Flex gap={4} alignItems="center">
+            <div className="flex items-center gap-4">
               <Button
                 className={classes.launchButton}
                 disabled={!connection.avatarAddress}
@@ -185,10 +186,12 @@ const EditConnection: React.FC = () => {
               >
                 <RiDeleteBinLine size={24} title="Remove this connection" />
               </IconButton>
-            </Flex>
+            </div>
           </Flex>
-          <hr />
         </Flex>
+
+        <Divider />
+
         <Flex direction="column" gap={2}>
           <Flex direction="column" gap={3} className={classes.form}>
             {error && (
@@ -357,7 +360,7 @@ const EditConnection: React.FC = () => {
             )}
           </Flex>
         </Flex>
-      </Flex>
+      </div>
       <ConfirmationModal />
     </>
   )
