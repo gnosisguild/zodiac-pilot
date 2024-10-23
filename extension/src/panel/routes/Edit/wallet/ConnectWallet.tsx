@@ -1,7 +1,6 @@
 import { ProviderType, Route } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ZeroAddress } from 'ethers'
-import React from 'react'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
@@ -16,7 +15,7 @@ interface Props {
   onDisconnect(): void
 }
 
-const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
+export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
   const pilotAddress = getPilotAddress(route)
 
   // not connected
@@ -73,8 +72,6 @@ const ConnectButton: React.FC<Props> = ({ route, onConnect, onDisconnect }) => {
       )
   }
 }
-
-export default ConnectButton
 
 const getPilotAddress = (route: Route) => {
   if (route.initiator == null) {
