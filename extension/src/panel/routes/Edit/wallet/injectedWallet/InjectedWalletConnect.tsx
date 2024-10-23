@@ -1,14 +1,14 @@
 import { Button } from '@/components'
+import { useInjectedWallet } from '@/providers'
+import { ProviderType } from '@/types'
 import { ChainId } from 'ser-kit'
-import { ProviderType } from '../../../types'
-import { useInjectedWallet } from '../../providers'
-import { ProviderLogo } from './ProviderLogo'
+import { ProviderLogo } from '../providerLogo'
 
 type InjectedWalletProps = {
   onConnect: (chainId: ChainId, account: string) => void
 }
 
-export const InjectedWallet = ({ onConnect }: InjectedWalletProps) => {
+export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
   const injectedWallet = useInjectedWallet()
 
   if (injectedWallet.provider == null) {
