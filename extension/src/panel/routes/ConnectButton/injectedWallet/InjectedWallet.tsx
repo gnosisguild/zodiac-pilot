@@ -37,10 +37,6 @@ export const InjectedWallet = ({
     )
   }
 
-  const accountInWallet = injectedWallet.accounts.some(
-    (acc) => acc.toLowerCase() === pilotAddress
-  )
-
   // Wallet disconnected
   if (injectedWallet.accounts.length === 0) {
     return (
@@ -56,7 +52,7 @@ export const InjectedWallet = ({
   }
 
   // Injected wallet: right account, wrong chain
-  if (accountInWallet && injectedWallet.chainId !== chainId) {
+  if (injectedWallet.chainId !== chainId) {
     return (
       <SwitchChain
         chainId={chainId}
@@ -68,6 +64,10 @@ export const InjectedWallet = ({
       </SwitchChain>
     )
   }
+
+  const accountInWallet = injectedWallet.accounts.some(
+    (acc) => acc.toLowerCase() === pilotAddress
+  )
 
   // Wrong account
   if (!accountInWallet) {
