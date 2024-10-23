@@ -1,10 +1,12 @@
-import { Alert, Button } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
 import { ChainId, PrefixedAddress } from 'ser-kit'
-import { CHAIN_NAME } from '../../../../chains'
 import { isConnectedTo } from '../../routeHooks'
 import { Account } from '../Account'
+import { Connected } from '../Connected'
+import { SwitchChain } from '../SwitchChain'
+import { WalletDisconnected } from '../WalletDisconnected'
+import { WrongAccount } from '../WrongAccount'
 
 type InjectedWalletProps = {
   pilotAddress: string
@@ -27,13 +29,11 @@ export const InjectedWallet = ({
 
   if (connected) {
     return (
-      <div className="flex flex-col gap-4">
-        <Account providerType={ProviderType.InjectedWallet}>
-          {pilotAddress}
-        </Account>
-
-        <Button onClick={onDisconnect}>Disconnect</Button>
-      </div>
+      <Connected
+        providerType={ProviderType.InjectedWallet}
+        pilotAddress={pilotAddress}
+        onDisconnect={onDisconnect}
+      />
     )
   }
 
@@ -44,63 +44,39 @@ export const InjectedWallet = ({
   // Wallet disconnected
   if (injectedWallet.accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-4">
-        <Alert title="Wallet disconnected">
-          Your wallet is disconnected from Pilot. Reconnect it to use the
-          selected account with Pilot.
-        </Alert>
+      <WalletDisconnected
+        onDisconnect={onDisconnect}
+        onReconnect={() => injectedWallet.connect()}
+      >
         <Account providerType={ProviderType.InjectedWallet}>
           {pilotAddress}
         </Account>
-
-        <div className="flex justify-end gap-2">
-          <Button onClick={() => injectedWallet.connect()}>Connect</Button>
-          <Button onClick={onDisconnect}>Disconnect</Button>
-        </div>
-      </div>
+      </WalletDisconnected>
     )
   }
 
   // Injected wallet: right account, wrong chain
   if (accountInWallet && injectedWallet.chainId !== chainId) {
-    const chainName = CHAIN_NAME[chainId] || `#${chainId}`
-
     return (
-      <div className="flex flex-col gap-4">
-        <Alert title="Chain mismatch">
-          The connected wallet belongs to a different chain. To use it you need
-          to switch back to {chainName}
-        </Alert>
-
+      <SwitchChain
+        chainId={chainId}
+        onSwitch={() => injectedWallet.switchChain(chainId)}
+      >
         <Account providerType={ProviderType.InjectedWallet}>
           {pilotAddress}
         </Account>
-
-        <Button
-          onClick={() => {
-            injectedWallet.switchChain(chainId)
-          }}
-        >
-          Switch wallet to {chainName}
-        </Button>
-      </div>
+      </SwitchChain>
     )
   }
 
   // Wrong account
   if (!accountInWallet) {
     return (
-      <div className="flex flex-col gap-4">
-        <Alert title="Account is not connected">
-          Switch your wallet to this account in order to use Pilot.
-        </Alert>
-
+      <WrongAccount onDisconnect={onDisconnect}>
         <Account providerType={ProviderType.InjectedWallet}>
           {pilotAddress}
         </Account>
-
-        <Button onClick={onDisconnect}>Disconnect</Button>
-      </div>
+      </WrongAccount>
     )
   }
 }

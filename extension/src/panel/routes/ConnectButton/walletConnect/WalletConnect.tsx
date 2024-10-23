@@ -1,11 +1,11 @@
-import { Alert, Button } from '@/components'
 import { useWalletConnect } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ChainId, PrefixedAddress } from 'ser-kit'
-import { CHAIN_NAME } from '../../../../chains'
 import { isConnectedTo } from '../../routeHooks'
 import { Account } from '../Account'
+import { Connected } from '../Connected'
+import { SwitchChain } from '../SwitchChain'
 
 type WalletConnectProps = {
   routeId: string
@@ -32,13 +32,11 @@ export const WalletConnect = ({
 
   if (connected) {
     return (
-      <div className="flex flex-col gap-4">
-        <Account providerType={ProviderType.WalletConnect}>
-          {pilotAddress}
-        </Account>
-
-        <Button onClick={() => walletConnect.disconnect()}>Disconnect</Button>
-      </div>
+      <Connected
+        providerType={ProviderType.WalletConnect}
+        pilotAddress={pilotAddress}
+        onDisconnect={() => walletConnect.disconnect()}
+      />
     )
   }
 
@@ -46,21 +44,15 @@ export const WalletConnect = ({
     walletConnect.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
     walletConnect.chainId !== chainId
   ) {
-    const chainName = CHAIN_NAME[chainId] || `#${chainId}`
-
     return (
-      <div className="flex flex-col gap-4">
+      <SwitchChain
+        chainId={chainId}
+        onDisconnect={() => walletConnect.disconnect()}
+      >
         <Account providerType={ProviderType.WalletConnect}>
           {pilotAddress}
         </Account>
-
-        <Alert title="Chain mismatch">
-          The connected wallet belongs to a different chain. Connect a wallet on{' '}
-          {chainName} to use Pilot.
-        </Alert>
-
-        <Button onClick={() => walletConnect.disconnect()}>Disconnect</Button>
-      </div>
+      </SwitchChain>
     )
   }
 }
