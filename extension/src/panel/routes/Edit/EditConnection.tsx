@@ -7,6 +7,7 @@ import {
   IconButton,
   useConfirmationModal,
 } from '@/components'
+import { ProviderType, Route } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -14,7 +15,6 @@ import { RiDeleteBinLine } from 'react-icons/ri'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../../const'
-import { ProviderType, Route } from '../../../types'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
@@ -28,11 +28,11 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
-import { ModSelect, NO_MODULE_OPTION } from '../ModSelect'
 import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import useConnectionDryRun from '../useConnectionDryRun'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
+import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import classes from './style.module.css'
 import { ConnectWallet } from './wallet'
 
