@@ -9,6 +9,7 @@ import {
 } from '@/providers'
 import {
   ProvideZodiacRoutes,
+  useConnectInjectedWalletIfNeeded,
   useMarkRouteAsUsed,
   useZodiacRoute,
 } from '@/zodiac-routes'
@@ -35,6 +36,9 @@ const App = () => {
 
   // make sure the injected provider stays updated on every relevant route change
   const route = useZodiacRoute()
+
+  useConnectInjectedWalletIfNeeded(route)
+
   const chainId = getChainId(route.avatar)
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
