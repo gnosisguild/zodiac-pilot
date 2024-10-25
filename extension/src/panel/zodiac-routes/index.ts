@@ -1,5 +1,5 @@
 export { useSelectedRouteId } from './SelectedRouteContext'
-export { useZodiacRoute } from './useZodiacRoute'
+export { INITIAL_DEFAULT_ROUTE, useZodiacRoute } from './useZodiacRoute'
 export {
   ProvideZodiacRoutes,
   useMarkRouteAsUsed,

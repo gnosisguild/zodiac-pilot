@@ -1,21 +1,18 @@
-import { ETH_ZERO_ADDRESS } from '@/chains'
 import {
   Box,
-  Button,
   Divider,
   Field,
   Flex,
   IconButton,
   useConfirmationModal,
 } from '@/components'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ProviderType } from '@/types'
 import {
+  INITIAL_DEFAULT_ROUTE,
   useRemoveZodiacRoute,
-  useSaveZodiacRoute,
-  useSelectedRouteId,
-  useZodiacRoute,
   useZodiacRoutes,
 } from '@/zodiac-routes'
+import { invariant } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -38,6 +35,7 @@ import {
 } from '../legacyConnectionMigrations'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
+import { LaunchButton } from './LaunchButton'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
@@ -58,29 +56,17 @@ type ConnectionPatch = {
 
 export const EditRoute = () => {
   const routes = useZodiacRoutes()
-  const saveRoute = useSaveZodiacRoute()
   const removeRouteById = useRemoveZodiacRoute()
 
-  const { routeId } = useParams()
-  if (!routeId) {
-    throw new Error('Route ID is required')
+  const routeId = useRouteId()
+
+  const originalRoute = routes.find((r) => r.id === routeId) || {
+    ...INITIAL_DEFAULT_ROUTE,
+    id: routeId,
   }
-  const originalRoute =
-    routes.find((r) => r.id === routeId) ||
-    ({
-      id: routeId,
-      label: '',
-      providerType: ProviderType.InjectedWallet,
-      avatar: ETH_ZERO_ADDRESS,
-      initiator: undefined,
-      waypoints: undefined,
-    } satisfies ZodiacRoute)
   const [route, setRoute] = useState(originalRoute)
 
   const navigate = useNavigate()
-
-  const [, setSelectedRouteId] = useSelectedRouteId()
-  const currentlySelected = useZodiacRoute()
 
   const connection = asLegacyConnection(route)
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
@@ -135,26 +121,6 @@ export const EditRoute = () => {
     navigate('/routes')
   }
 
-  const launchRoute = async () => {
-    if (route !== originalRoute) {
-      saveRoute(route)
-    }
-
-    // we continue working with the same avatar, so don't have to clear the recorded transaction
-    const keepTransactionBundle =
-      currentlySelected.route.avatar === route.avatar
-
-    const confirmed =
-      keepTransactionBundle || (await confirmClearTransactions())
-
-    if (!confirmed) {
-      return
-    }
-
-    setSelectedRouteId(route.id)
-    navigate('/')
-  }
-
   const error = useConnectionDryRun(asLegacyConnection(route))
 
   const [roleIdError, setRoleIdError] = React.useState<string | null>(null)
@@ -180,16 +146,16 @@ export const EditRoute = () => {
               </Link>
             </Flex>
             <div className="flex items-center gap-4">
-              <Button
-                className={classes.launchButton}
+              <LaunchButton
                 disabled={!connection.avatarAddress}
-                onClick={launchRoute}
-              >
-                {route !== originalRoute ? 'Save & Launch' : 'Launch'}
-              </Button>
+                initialRouteState={originalRoute}
+                currentRouteState={route}
+                onNeedConfirmationToClearTransactions={confirmClearTransactions}
+              />
+
               <IconButton
-                onClick={removeRoute}
                 danger
+                onClick={removeRoute}
                 className={classes.removeButton}
               >
                 <RiDeleteBinLine size={24} title="Remove this connection" />
@@ -372,4 +338,12 @@ export const EditRoute = () => {
       <ConfirmationModal />
     </>
   )
+}
+
+const useRouteId = () => {
+  const { routeId } = useParams()
+
+  invariant(routeId != null, 'No "routeId" found in params')
+
+  return routeId
 }

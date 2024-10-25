@@ -13,7 +13,7 @@ import { parsePrefixedAddress } from 'ser-kit'
 import { useSelectedRouteId } from './SelectedRouteContext'
 import { useZodiacRoutes } from './ZodiacRoutesContext'
 
-const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
+export const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
   id: nanoid(),
   label: '',
   providerType: ProviderType.InjectedWallet,
