@@ -10,6 +10,8 @@ import {
 } from '@/components'
 import { ProviderType, ZodiacRoute } from '@/types'
 import {
+  useRemoveZodiacRoute,
+  useSaveZodiacRoute,
   useSelectedRouteId,
   useZodiacRoute,
   useZodiacRoutes,
@@ -55,7 +57,10 @@ type ConnectionPatch = {
 }
 
 export const EditRoute = () => {
-  const [routes, saveRoute, removeRouteById] = useZodiacRoutes()
+  const routes = useZodiacRoutes()
+  const saveRoute = useSaveZodiacRoute()
+  const removeRouteById = useRemoveZodiacRoute()
+
   const { routeId } = useParams()
   if (!routeId) {
     throw new Error('Route ID is required')

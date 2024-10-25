@@ -23,7 +23,7 @@ const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
 }
 
 export const useZodiacRoute = (id?: string) => {
-  const [routes] = useZodiacRoutes()
+  const routes = useZodiacRoutes()
   const [selectedRouteId] = useSelectedRouteId()
   const routeId = id || selectedRouteId
   const route =

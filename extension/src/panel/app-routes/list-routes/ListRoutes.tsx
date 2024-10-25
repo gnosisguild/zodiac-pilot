@@ -149,7 +149,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
 export const ListRoutes = () => {
   const [, selectRoute] = useSelectedRouteId()
-  const [routes] = useZodiacRoutes()
+  const routes = useZodiacRoutes()
   const navigate = useNavigate()
 
   const handleLaunch = (routeId: string) => {
