@@ -1,4 +1,4 @@
-import { Box, Divider, Field, Flex, useConfirmationModal } from '@/components'
+import { Box, Divider, Field, Flex } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -13,12 +13,12 @@ import {
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
-import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
+import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { LaunchButton } from './LaunchButton'
@@ -282,29 +282,4 @@ export const EditRoute = () => {
       <ConfirmationModal />
     </>
   )
-}
-
-const useConfirmClearTransactions = () => {
-  const { hasTransactions, clearTransactions } = useClearTransactions()
-  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
-
-  const confirmClearTransactions = async () => {
-    if (!hasTransactions) {
-      return true
-    }
-
-    const confirmation = await getConfirmation(
-      'Switching the Piloted Safe will empty your current transaction bundle.'
-    )
-
-    if (!confirmation) {
-      return false
-    }
-
-    clearTransactions()
-
-    return true
-  }
-
-  return [confirmClearTransactions, ConfirmationModal] as const
 }

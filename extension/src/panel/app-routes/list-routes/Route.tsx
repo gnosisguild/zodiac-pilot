@@ -1,15 +1,9 @@
-import {
-  Box,
-  BoxButton,
-  ConnectionStack,
-  Flex,
-  useConfirmationModal,
-} from '@/components'
+import { Box, BoxButton, ConnectionStack, Flex } from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
-import { useClearTransactions } from '../../state/transactionHooks'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
+import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
 import { ConnectedIcon } from './ConnectedIcon'
 import { DisconnectedIcon } from './DisconnectedIcon'
 
@@ -22,26 +16,9 @@ interface RouteProps {
 export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
   const { connected, connect, chainId } = useZodiacRoute(route.id)
   const { route: currentlySelectedRoute } = useZodiacRoute()
-  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
-  const { hasTransactions, clearTransactions } = useClearTransactions()
 
-  const confirmClearTransactions = async () => {
-    if (!hasTransactions) {
-      return true
-    }
-
-    const confirmation = await getConfirmation(
-      'Switching the Piloted Safe will empty your current transaction bundle.'
-    )
-
-    if (!confirmation) {
-      return false
-    }
-
-    clearTransactions()
-
-    return true
-  }
+  const [confirmClearTransactions, ConfirmationModal] =
+    useConfirmClearTransactions()
 
   const handleLaunch = async () => {
     // we continue working with the same avatar, so don't have to clear the recorded transaction
