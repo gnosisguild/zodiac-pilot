@@ -19,8 +19,6 @@ interface RouteProps {
   onModify: (routeId: string) => void
 }
 
-const classes = {}
-
 export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
   const { connected, connect, chainId } = useZodiacRoute(route.id)
   const { route: currentlySelectedRoute } = useZodiacRoute()
@@ -44,8 +42,6 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
 
     return true
   }
-
-  const handleModify = () => onModify(route.id)
 
   const handleLaunch = async () => {
     // we continue working with the same avatar, so don't have to clear the recorded transaction
@@ -72,7 +68,7 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
       }
     }
 
-    handleModify()
+    onModify(route.id)
   }
 
   return (
@@ -117,7 +113,7 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
               </Flex>
 
               <BoxButton
-                onClick={handleModify}
+                onClick={() => onModify(route.id)}
                 className="bg-none px-4 py-1 before:content-none"
               >
                 Modify
