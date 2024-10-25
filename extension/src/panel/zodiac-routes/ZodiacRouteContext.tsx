@@ -4,10 +4,15 @@ import {
   PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
 } from 'react'
 import { useStorageEntries } from '../utils'
-import { ProvideSelectedZodiacRoute } from './SelectedRouteContext'
+import {
+  ProvideSelectedZodiacRoute,
+  useSelectedRouteId,
+} from './SelectedRouteContext'
 
 type RouteContextT = readonly [
   Route[],
@@ -53,4 +58,22 @@ export const useZodiacRoutes = () => {
     throw new Error('useRoutes must be used within a <ProvideRoutes>')
   }
   return result
+}
+
+export const useMarkRouteAsUsed = () => {
+  const [selectedRouteId] = useSelectedRouteId()
+  const [routes, saveRoute] = useZodiacRoutes()
+
+  const updateRef = useRef<(routeId: string) => void>()
+  updateRef.current = (routeId: string) => {
+    const route = routes.find((route) => route.id === routeId)
+    if (route) {
+      saveRoute({ ...route, lastUsed: Date.now() })
+    }
+  }
+
+  useEffect(() => {
+    console.debug('update last used timestamp for route', selectedRouteId)
+    updateRef.current!(selectedRouteId)
+  }, [selectedRouteId])
 }

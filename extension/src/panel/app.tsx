@@ -8,7 +8,7 @@ import {
 } from '@/providers'
 import {
   ProvideZodiacRoutes,
-  useUpdateLastUsedRoute,
+  useMarkRouteAsUsed,
   useZodiacRoute,
 } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
@@ -30,7 +30,7 @@ const router = createHashRouter(appRoutes)
 
 const App = () => {
   // update the last used timestamp for the current route
-  useUpdateLastUsedRoute()
+  useMarkRouteAsUsed()
 
   // make sure the injected provider stays updated on every relevant route change
   const { route, chainId } = useZodiacRoute()
