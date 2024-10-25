@@ -17,6 +17,7 @@ export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
 
   return (
     <Button
+      fluid
       disabled={injectedWallet.connected === false}
       onClick={async () => {
         const { chainId, accounts } = await injectedWallet.connect()

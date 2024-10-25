@@ -18,6 +18,7 @@ export const WalletConnectConnect = ({
 
   return (
     <Button
+      fluid
       disabled={walletConnect == null}
       onClick={async () => {
         invariant(

@@ -1,8 +1,8 @@
 import { Flex, Tag } from '@/components'
 import { useProvider } from '@/providers'
 import { TransactionState } from '@/state'
-import { Eip1193Provider, JsonRpcError, Route } from '@/types'
-import { useRoute } from '@/zodiac-routes'
+import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
 import React, { useEffect, useState } from 'react'
@@ -22,7 +22,7 @@ import classes from './style.module.css'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
-  route: Route,
+  route: ZodiacRoute,
   provider: Eip1193Provider
 ) => {
   const routeWithInitiator = (
@@ -82,7 +82,7 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const { route } = useRoute()
+  const { route } = useZodiacRoute()
   const provider = useProvider()
 
   const translationAvailable = !!useApplicableTranslation(

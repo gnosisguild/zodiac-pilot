@@ -21,8 +21,12 @@ export const WalletDisconnected = ({
     {children}
 
     <Section.Actions>
-      <Button onClick={onReconnect}>Connect</Button>
-      <Button onClick={onDisconnect}>Disconnect</Button>
+      <Button fluid onClick={onReconnect}>
+        Connect
+      </Button>
+      <Button fluid onClick={onDisconnect}>
+        Disconnect
+      </Button>
     </Section.Actions>
   </Section>
 )

@@ -1,5 +1,5 @@
 import { validateAddress } from '@/utils'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
 import { initSafeApiKit } from './kits'
@@ -8,7 +8,7 @@ export const useSafesWithOwner = (
   ownerAddress: string,
   connectionId?: string
 ) => {
-  const { chainId } = useRoute(connectionId)
+  const { chainId } = useZodiacRoute(connectionId)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])

@@ -1,4 +1,4 @@
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
@@ -26,7 +26,7 @@ export const useApplicableTranslation = (
     ApplicableTranslation | undefined
   >(undefined)
 
-  const { chainId } = useRoute()
+  const { chainId } = useZodiacRoute()
 
   useEffect(() => {
     findApplicableTranslation(encodedTransaction, chainId).then(setTranslation)
