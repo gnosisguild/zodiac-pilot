@@ -8,13 +8,13 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { Route } from '@/types'
+import { useRoute, useRoutes, useSelectedRouteId } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
 import { nanoid } from 'nanoid'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
-import { useRoute, useRoutes, useSelectedRouteId } from '../routeHooks'
 import { ConnectedIcon } from './ConnectedIcon'
 import { DisconnectedIcon } from './DisconnectedIcon'
 import classes from './style.module.css'
@@ -143,7 +143,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
   )
 }
 
-export const RoutesList = () => {
+export const ListRoutes = () => {
   const [, selectRoute] = useSelectedRouteId()
   const [routes] = useRoutes()
   const navigate = useNavigate()
