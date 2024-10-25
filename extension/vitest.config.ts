@@ -18,6 +18,6 @@ export default defineConfig({
     alias,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.mts'],
-    include: ['./src/**/*.{spec,test}.ts'],
+    include: ['./src/**/*.{spec,test}.{ts,tsx}'],
   },
 })

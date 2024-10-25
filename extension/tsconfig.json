@@ -25,8 +25,9 @@
       "@/zodiac-routes": ["./src/panel/zodiac-routes/index.ts"],
       "@/state": ["./src/panel/state/index.tsx"],
       "@/providers": ["./src/panel/providers/index.ts"],
-      "@/e2e-utils": ["./e2e/utils/index.ts"]
+      "@/e2e-utils": ["./e2e/utils/index.ts"],
+      "@/test-utils": ["./test-utils/index.ts"]
     }
   },
-  "include": ["src", "e2e"]
+  "include": ["src", "e2e", "test-utils"]
 }
