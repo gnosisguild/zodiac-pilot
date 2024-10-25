@@ -1,5 +1,5 @@
 import { Eip1193Provider } from '@/types'
-import { useZodiacRoute } from '@/zodiac-routes'
+import { useRouteProvider, useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
@@ -40,7 +40,8 @@ const SubmitTransactionsContext = createContext<
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
-  const { provider, route, chainId } = useZodiacRoute()
+  const { route, chainId } = useZodiacRoute()
+  const provider = useRouteProvider(route)
   const dispatch = useDispatch()
   const transactions = useTransactions()
 

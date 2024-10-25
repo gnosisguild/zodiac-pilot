@@ -1,11 +1,6 @@
 import { ETH_ZERO_ADDRESS, getChainId } from '@/chains'
-import {
-  getEip1193ReadOnlyProvider,
-  isConnected,
-  useInjectedWallet,
-  useWalletConnect,
-} from '@/providers'
-import { Eip1193Provider, ProviderType, ZodiacRoute } from '@/types'
+import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
+import { ProviderType, ZodiacRoute } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useCallback, useEffect } from 'react'
@@ -35,12 +30,6 @@ export const useZodiacRoute = (id?: string) => {
 
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
-  const defaultProvider = getEip1193ReadOnlyProvider(chainId)
-
-  const provider: Eip1193Provider =
-    (route.providerType === ProviderType.InjectedWallet
-      ? injectedWallet.provider
-      : walletConnect?.provider) || defaultProvider
 
   const connected =
     route.initiator != null &&
@@ -98,7 +87,6 @@ export const useZodiacRoute = (id?: string) => {
 
   return {
     route,
-    provider,
     /** Indicates if `provider` is connected to the right account and chain. */
     connected,
 
