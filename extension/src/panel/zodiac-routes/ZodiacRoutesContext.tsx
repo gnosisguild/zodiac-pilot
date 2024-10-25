@@ -93,12 +93,19 @@ export const useMarkRouteAsUsed = () => {
   const routes = useZodiacRoutes()
   const saveRoute = useSaveZodiacRoute()
 
-  const updateRef = useRef<(routeId: string) => void>()
-  updateRef.current = (routeId: string) => {
-    const route = routes.find((route) => route.id === routeId)
-    if (route) {
-      saveRoute({ ...route, lastUsed: Date.now() })
+  const updateRef = useRef<(routeId: string | undefined) => void>()
+  updateRef.current = (routeId) => {
+    if (routeId == null) {
+      return
     }
+
+    const route = routes.find((route) => route.id === routeId)
+
+    if (route == null) {
+      return
+    }
+
+    saveRoute({ ...route, lastUsed: Date.now() })
   }
 
   useEffect(() => {

@@ -1,34 +1,39 @@
-import { invariant } from '@epic-web/invariant'
-import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
+import { createContext, Dispatch, PropsWithChildren, useContext } from 'react'
 import { useStorage } from '../utils'
 
-type SelectedRouteContextT = readonly [string, React.Dispatch<string>]
+type Context = {
+  selectedRouteId: string | undefined
+  setSelectedRouteId: Dispatch<string>
+}
 
-const SelectedRouteContext = createContext<SelectedRouteContextT | null>(null)
+const SelectedRouteContext = createContext<Context>({
+  selectedRouteId: undefined,
+  setSelectedRouteId() {
+    throw new Error(
+      '"setSelectedRouteId" cannot be used outside <ProvideSelectedZodiacRoute /> context.'
+    )
+  },
+})
 
 export const ProvideSelectedZodiacRoute = ({ children }: PropsWithChildren) => {
   const [selectedRouteId, setSelectedRouteId] =
     useStorage<string>('selectedRoute')
 
-  const packedSelectedRouteContext = useMemo(
-    () => [selectedRouteId || '', setSelectedRouteId] as const,
-    [selectedRouteId, setSelectedRouteId]
-  )
-
   return (
-    <SelectedRouteContext.Provider value={packedSelectedRouteContext}>
+    <SelectedRouteContext.Provider
+      value={{
+        selectedRouteId,
+        setSelectedRouteId,
+      }}
+    >
       {children}
     </SelectedRouteContext.Provider>
   )
 }
 
 export const useSelectedRouteId = () => {
-  const result = useContext(SelectedRouteContext)
+  const { selectedRouteId, setSelectedRouteId } =
+    useContext(SelectedRouteContext)
 
-  invariant(
-    result != null,
-    'useSelectedRouteId must be used within a <ProvideRoutes>'
-  )
-
-  return result
+  return [selectedRouteId, setSelectedRouteId] as const
 }
