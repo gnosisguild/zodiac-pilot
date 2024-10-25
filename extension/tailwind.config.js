@@ -16,6 +16,8 @@ export default {
           'dark-mustard': '#3e3d2ad1',
 
           'dark-green': 'rgba(0, 166, 56, 0.47)',
+
+          'light-red': 'rgba(220, 20, 60)',
         },
       },
     },

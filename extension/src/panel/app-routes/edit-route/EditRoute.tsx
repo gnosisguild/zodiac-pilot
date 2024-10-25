@@ -1,23 +1,10 @@
-import {
-  Box,
-  Divider,
-  Field,
-  Flex,
-  IconButton,
-  useConfirmationModal,
-} from '@/components'
+import { Box, Divider, Field, Flex, useConfirmationModal } from '@/components'
 import { ProviderType } from '@/types'
-import {
-  INITIAL_DEFAULT_ROUTE,
-  useRemoveZodiacRoute,
-  useZodiacRoutes,
-} from '@/zodiac-routes'
-import { invariant } from '@epic-web/invariant'
+import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
-import { RiDeleteBinLine } from 'react-icons/ri'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../../const'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
@@ -37,8 +24,10 @@ import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { LaunchButton } from './LaunchButton'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
+import { RemoveButton } from './RemoveButton'
 import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
+import { useRouteId } from './useRouteId'
 import { ConnectWallet } from './wallet'
 
 type ConnectionPatch = {
@@ -56,7 +45,6 @@ type ConnectionPatch = {
 
 export const EditRoute = () => {
   const routes = useZodiacRoutes()
-  const removeRouteById = useRemoveZodiacRoute()
 
   const routeId = useRouteId()
 
@@ -65,8 +53,6 @@ export const EditRoute = () => {
     id: routeId,
   }
   const [route, setRoute] = useState(originalRoute)
-
-  const navigate = useNavigate()
 
   const connection = asLegacyConnection(route)
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
@@ -116,11 +102,6 @@ export const EditRoute = () => {
     )
   }
 
-  const removeRoute = () => {
-    removeRouteById(routeId)
-    navigate('/routes')
-  }
-
   const error = useConnectionDryRun(asLegacyConnection(route))
 
   const [roleIdError, setRoleIdError] = React.useState<string | null>(null)
@@ -153,13 +134,7 @@ export const EditRoute = () => {
                 onNeedConfirmationToClearTransactions={confirmClearTransactions}
               />
 
-              <IconButton
-                danger
-                onClick={removeRoute}
-                className={classes.removeButton}
-              >
-                <RiDeleteBinLine size={24} title="Remove this connection" />
-              </IconButton>
+              <RemoveButton />
             </div>
           </Flex>
         </Flex>
@@ -338,12 +313,4 @@ export const EditRoute = () => {
       <ConfirmationModal />
     </>
   )
-}
-
-const useRouteId = () => {
-  const { routeId } = useParams()
-
-  invariant(routeId != null, 'No "routeId" found in params')
-
-  return routeId
 }
