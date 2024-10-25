@@ -1,82 +1,48 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Field,
-  Flex,
-  IconButton,
-  useConfirmationModal,
-} from '@/components'
-import { ProviderType, Route } from '@/types'
-import { useRoute, useRoutes, useSelectedRouteId } from '@/zodiac-routes'
+import { Box, Divider, Field, Flex } from '@/components'
+import { LegacyConnection } from '@/types'
+import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
-import { RiDeleteBinLine } from 'react-icons/ri'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ChainId } from 'ser-kit'
+import { RiArrowLeftSLine } from 'react-icons/ri'
+import { Link } from 'react-router-dom'
 import { MODULE_NAMES } from '../../../const'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
-import { SupportedModuleType } from '../../integrations/zodiac/types'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
-import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
+import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
+import { LaunchButton } from './LaunchButton'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
+import { RemoveButton } from './RemoveButton'
 import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
+import { useRouteId } from './useRouteId'
 import { ConnectWallet } from './wallet'
 
-type ConnectionPatch = {
-  label?: string
-  avatarAddress?: string
-  moduleAddress?: string
-  pilotAddress?: string
-  moduleType?: SupportedModuleType
-  roleId?: string
-  chainId?: ChainId
-  multisend?: string
-  multisendCallOnly?: string
-  providerType?: ProviderType
-}
-
-const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
+type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
 export const EditRoute = () => {
-  const [routes, saveRoute, removeRouteById] = useRoutes()
-  const { routeId } = useParams()
-  if (!routeId) {
-    throw new Error('Route ID is required')
+  const routes = useZodiacRoutes()
+  const routeId = useRouteId()
+
+  const initialRouteState = routes.find((r) => r.id === routeId) || {
+    ...INITIAL_DEFAULT_ROUTE,
+    id: routeId,
   }
-  const originalRoute =
-    routes.find((r) => r.id === routeId) ||
-    ({
-      id: routeId,
-      label: '',
-      providerType: ProviderType.InjectedWallet,
-      avatar: ETH_ZERO_ADDRESS,
-      initiator: undefined,
-      waypoints: undefined,
-    } satisfies Route)
-  const [route, setRoute] = useState(originalRoute)
+  const [currentRouteState, setRoute] = useState(initialRouteState)
 
-  const navigate = useNavigate()
-
-  const [, setSelectedRouteId] = useSelectedRouteId()
-  const currentlySelected = useRoute()
-
-  const connection = asLegacyConnection(route)
-  const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
-    connection
+  const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =
+    asLegacyConnection(currentRouteState)
 
   const { safes } = useSafesWithOwner(pilotAddress, routeId)
   const { delegates } = useSafeDelegates(avatarAddress, routeId)
@@ -90,26 +56,8 @@ export const EditRoute = () => {
     modules,
   } = useZodiacModules(avatarAddress, routeId)
 
-  const { hasTransactions, clearTransactions } = useClearTransactions()
-  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
-
-  const confirmClearTransactions = async () => {
-    if (!hasTransactions) {
-      return true
-    }
-
-    const confirmation = await getConfirmation(
-      'Switching the Piloted Safe will empty your current transaction bundle.'
-    )
-
-    if (!confirmation) {
-      return false
-    }
-
-    clearTransactions()
-
-    return true
-  }
+  const [confirmClearTransactions, ConfirmationModal] =
+    useConfirmClearTransactions()
 
   const selectedModule = moduleAddress
     ? modules.find((mod) => mod.moduleAddress === moduleAddress)
@@ -122,32 +70,7 @@ export const EditRoute = () => {
     )
   }
 
-  const removeRoute = () => {
-    removeRouteById(routeId)
-    navigate('/routes')
-  }
-
-  const launchRoute = async () => {
-    if (route !== originalRoute) {
-      saveRoute(route)
-    }
-
-    // we continue working with the same avatar, so don't have to clear the recorded transaction
-    const keepTransactionBundle =
-      currentlySelected.route.avatar === route.avatar
-
-    const confirmed =
-      keepTransactionBundle || (await confirmClearTransactions())
-
-    if (!confirmed) {
-      return
-    }
-
-    setSelectedRouteId(route.id)
-    navigate('/')
-  }
-
-  const error = useConnectionDryRun(asLegacyConnection(route))
+  const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
   const [roleIdError, setRoleIdError] = React.useState<string | null>(null)
 
@@ -162,33 +85,32 @@ export const EditRoute = () => {
 
   return (
     <>
-      <div className="relative flex flex-1 flex-col gap-4 px-6 py-8">
-        <Flex gap={2} direction="column">
-          <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-            <Flex gap={1} direction="column" alignItems="baseline">
-              <h2>{route.label || 'New connection'}</h2>
-              <Link className={classes.backLink} to="/routes">
-                &#8592; All Connections
-              </Link>
-            </Flex>
+      <div className="relative flex flex-1 flex-col gap-4 px-6 pb-8 pt-6">
+        <div className="flex flex-col gap-1">
+          <Link
+            className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
+            to="/routes"
+          >
+            <RiArrowLeftSLine /> All Connections
+          </Link>
+
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-2xl">
+              {currentRouteState.label || 'New connection'}
+            </h2>
+
             <div className="flex items-center gap-4">
-              <Button
-                className={classes.launchButton}
-                disabled={!connection.avatarAddress}
-                onClick={launchRoute}
-              >
-                {route !== originalRoute ? 'Save & Launch' : 'Launch'}
-              </Button>
-              <IconButton
-                onClick={removeRoute}
-                danger
-                className={classes.removeButton}
-              >
-                <RiDeleteBinLine size={24} title="Remove this connection" />
-              </IconButton>
+              <LaunchButton
+                disabled={!avatarAddress}
+                initialRouteState={initialRouteState}
+                currentRouteState={currentRouteState}
+                onNeedConfirmationToClearTransactions={confirmClearTransactions}
+              />
+
+              <RemoveButton />
             </div>
-          </Flex>
-        </Flex>
+          </div>
+        </div>
 
         <Divider />
 
@@ -218,13 +140,13 @@ export const EditRoute = () => {
             </Field>
             <Field label="Chain">
               <ChainSelect
-                value={connection.chainId}
+                value={chainId}
                 onChange={(chainId) => updateConnection({ chainId })}
               />
             </Field>
             <Field label="Pilot Account" labelFor="">
               <ConnectWallet
-                route={route}
+                route={currentRouteState}
                 onConnect={({ providerType, chainId, account }) => {
                   updateConnection({
                     providerType,
@@ -243,8 +165,7 @@ export const EditRoute = () => {
                 value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
                 onChange={async (address) => {
                   const keepTransactionBundle =
-                    address.toLowerCase() ===
-                    connection.avatarAddress.toLowerCase()
+                    address.toLowerCase() === avatarAddress.toLowerCase()
                   const confirmed =
                     keepTransactionBundle || (await confirmClearTransactions())
 
@@ -291,17 +212,14 @@ export const EditRoute = () => {
                   if (mod?.type === KnownContracts.ROLES_V1) {
                     updateConnection({
                       multisend: await queryRolesV1MultiSend(
-                        connection.chainId,
+                        chainId,
                         mod.moduleAddress
                       ),
                     })
                   }
                   if (mod?.type === KnownContracts.ROLES_V2) {
                     updateConnection(
-                      await queryRolesV2MultiSend(
-                        connection.chainId,
-                        mod.moduleAddress
-                      )
+                      await queryRolesV2MultiSend(chainId, mod.moduleAddress)
                     )
                   }
                 }}
@@ -325,7 +243,7 @@ export const EditRoute = () => {
                 <input
                   type="text"
                   value={roleId}
-                  onChange={async (ev) => {
+                  onChange={(ev) => {
                     updateConnection({ roleId: ev.target.value })
                   }}
                   placeholder="0"
@@ -336,7 +254,7 @@ export const EditRoute = () => {
               <Field label="Role Key">
                 <input
                   type="text"
-                  key={route.id} // makes sure the defaultValue is reset when switching connections
+                  key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
                   defaultValue={decodedRoleKey || roleId}
                   onChange={(ev) => {
                     try {

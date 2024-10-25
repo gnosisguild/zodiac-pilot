@@ -1,7 +1,7 @@
 import { Button, IconButton } from '@/components'
 import { ForkProvider, useProvider } from '@/providers'
 import { useDispatch, useTransactions } from '@/state'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
@@ -15,7 +15,7 @@ export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { route } = useRoute()
+  const { route } = useZodiacRoute()
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()

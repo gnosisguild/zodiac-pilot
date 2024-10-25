@@ -30,10 +30,16 @@ export const SwitchChain = ({
 
       <Section.Actions>
         {onSwitch && (
-          <Button onClick={onSwitch}>Switch wallet to {chainName}</Button>
+          <Button fluid onClick={onSwitch}>
+            Switch wallet to {chainName}
+          </Button>
         )}
 
-        {onDisconnect && <Button onClick={onDisconnect}>Disconnect</Button>}
+        {onDisconnect && (
+          <Button fluid onClick={onDisconnect}>
+            Disconnect
+          </Button>
+        )}
       </Section.Actions>
     </Section>
   )

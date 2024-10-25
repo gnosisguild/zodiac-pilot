@@ -7,9 +7,9 @@ import {
   useProvider,
 } from '@/providers'
 import {
-  ProvideRoutes,
-  useRoute,
-  useUpdateLastUsedRoute,
+  ProvideZodiacRoutes,
+  useMarkRouteAsUsed,
+  useZodiacRoute,
 } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import React, { useEffect } from 'react'
@@ -30,17 +30,19 @@ const router = createHashRouter(appRoutes)
 
 const App = () => {
   // update the last used timestamp for the current route
-  useUpdateLastUsedRoute()
+  useMarkRouteAsUsed()
 
   // make sure the injected provider stays updated on every relevant route change
-  const { route, chainId } = useRoute()
+  const { route, chainId } = useZodiacRoute()
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+
   useEffect(() => {
     update(provider, chainId, avatarAddress)
   }, [provider, chainId, avatarAddress])
 
   useStorage('lastUsedRoute', route.id)
+
   return (
     <>
       <RouterProvider router={router} />
@@ -56,7 +58,7 @@ invariant(rootEl != null, 'Could not find DOM node to attach app')
 createRoot(rootEl).render(
   <React.StrictMode>
     <ProvideState>
-      <ProvideRoutes>
+      <ProvideZodiacRoutes>
         <ProvideInjectedWallet>
           <ProvideProvider>
             <div className="flex flex-1 flex-col">
@@ -64,7 +66,7 @@ createRoot(rootEl).render(
             </div>
           </ProvideProvider>
         </ProvideInjectedWallet>
-      </ProvideRoutes>
+      </ProvideZodiacRoutes>
     </ProvideState>
   </React.StrictMode>
 )

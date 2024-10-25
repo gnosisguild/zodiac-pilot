@@ -1,4 +1,4 @@
-import { LegacyConnection, ProviderType, Route } from '@/types'
+import { LegacyConnection, ProviderType, ZodiacRoute } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
@@ -15,7 +15,9 @@ import {
   MULTISEND_CALL_ONLY,
 } from '../integrations/zodiac/rolesMultisend'
 
-export function fromLegacyConnection(connection: LegacyConnection): Route {
+export function fromLegacyConnection(
+  connection: LegacyConnection
+): ZodiacRoute {
   const { chainId, providerType, moduleType } = connection
 
   // We assume an EOA if the providerType is MetaMask, a Safe otherwise
@@ -121,13 +123,13 @@ export function fromLegacyConnection(connection: LegacyConnection): Route {
     label: connection.label,
     lastUsed: connection.lastUsed,
     providerType,
-    waypoints: waypoints as Route['waypoints'],
+    waypoints: waypoints as ZodiacRoute['waypoints'],
     initiator: pilotAddress ? pilotPrefixedAddress : undefined,
     avatar: avatarPrefixedAddress,
   }
 }
 
-export function asLegacyConnection(route: Route): LegacyConnection {
+export function asLegacyConnection(route: ZodiacRoute): LegacyConnection {
   if (route.waypoints && route.waypoints.length > 3) {
     throw new Error('Not representable as legacy connection')
   }

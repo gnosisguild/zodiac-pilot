@@ -1,4 +1,4 @@
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
@@ -30,7 +30,7 @@ export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
 
   const dispatch = useDispatch()
-  const { chainId, route } = useRoute()
+  const { chainId, route } = useZodiacRoute()
   const [_, avatarAddress] = parsePrefixedAddress(route.avatar)
 
   const apply = useCallback(
@@ -147,7 +147,7 @@ export const useApplicableTranslation = (transactionIndex: number) => {
   const metaTransaction = transactions[transactionIndex].transaction
 
   const dispatch = useDispatch()
-  const { chainId, route } = useRoute()
+  const { chainId, route } = useZodiacRoute()
   const [_, avatarAddress] = parsePrefixedAddress(route.avatar)
 
   const [translation, setTranslation] = useState<
