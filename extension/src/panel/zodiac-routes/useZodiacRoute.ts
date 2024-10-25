@@ -11,7 +11,7 @@ import { nanoid } from 'nanoid'
 import { useCallback, useEffect } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useSelectedRouteId } from './SelectedRouteContext'
-import { useZodiacRoutes } from './ZodiacRouteContext'
+import { useZodiacRoutes } from './ZodiacRoutesContext'
 
 const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
   id: nanoid(),

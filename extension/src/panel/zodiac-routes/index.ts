@@ -6,4 +6,4 @@ export {
   useRemoveZodiacRoute,
   useSaveZodiacRoute,
   useZodiacRoutes,
-} from './ZodiacRouteContext'
+} from './ZodiacRoutesContext'

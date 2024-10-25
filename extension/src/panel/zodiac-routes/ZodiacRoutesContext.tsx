@@ -20,7 +20,7 @@ type Context = {
   removeRoute: (routeId: string) => void
 }
 
-const ZodiacRouteContext = createContext<Context>({
+const ZodiacRoutesContext = createContext<Context>({
   routes: [],
   saveRoute() {
     throw new Error(
@@ -58,7 +58,7 @@ export const ProvideZodiacRoutes = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <ZodiacRouteContext.Provider
+    <ZodiacRoutesContext.Provider
       value={{
         routes: routesList,
         saveRoute,
@@ -66,24 +66,24 @@ export const ProvideZodiacRoutes = ({ children }: PropsWithChildren) => {
       }}
     >
       <ProvideSelectedZodiacRoute>{children}</ProvideSelectedZodiacRoute>
-    </ZodiacRouteContext.Provider>
+    </ZodiacRoutesContext.Provider>
   )
 }
 
 export const useZodiacRoutes = () => {
-  const { routes } = useContext(ZodiacRouteContext)
+  const { routes } = useContext(ZodiacRoutesContext)
 
   return routes
 }
 
 export const useSaveZodiacRoute = () => {
-  const { saveRoute } = useContext(ZodiacRouteContext)
+  const { saveRoute } = useContext(ZodiacRoutesContext)
 
   return saveRoute
 }
 
 export const useRemoveZodiacRoute = () => {
-  const { removeRoute } = useContext(ZodiacRouteContext)
+  const { removeRoute } = useContext(ZodiacRoutesContext)
 
   return removeRoute
 }
