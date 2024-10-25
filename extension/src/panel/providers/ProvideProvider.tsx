@@ -10,7 +10,7 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
+  useState,
 } from 'react'
 import { ConnectionType, parsePrefixedAddress } from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
@@ -123,11 +123,11 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     [dispatch, avatarAddress, moduleAddress]
   )
 
-  const forkProviderRef = useRef<ForkProvider | null>(null)
+  const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
 
   // whenever anything changes in the connection settings, we delete the current fork and start afresh
   useEffect(() => {
-    forkProviderRef.current = new ForkProvider({
+    const forkProvider = new ForkProvider({
       chainId,
       avatarAddress,
       moduleAddress,
@@ -135,8 +135,11 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       onBeforeTransactionSend,
       onTransactionSent,
     })
+
+    setForkProvider(forkProvider)
+
     return () => {
-      forkProviderRef.current?.deleteFork()
+      forkProvider.deleteFork()
     }
   }, [
     chainId,
@@ -147,12 +150,12 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     onTransactionSent,
   ])
 
-  if (!forkProviderRef.current) {
+  if (forkProvider == null) {
     return null
   }
 
   return (
-    <ProviderContext.Provider value={forkProviderRef.current}>
+    <ProviderContext.Provider value={forkProvider}>
       <ProvideSubmitTransactionContext>
         {children}
       </ProvideSubmitTransactionContext>
