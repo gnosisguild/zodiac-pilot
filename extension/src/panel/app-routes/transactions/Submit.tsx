@@ -141,6 +141,7 @@ const Submit: React.FC = () => {
     <>
       {(connected || !!connect) && (
         <Button
+          fluid
           onClick={submit}
           disabled={!submitTransactions || transactions.length === 0}
         >
@@ -150,6 +151,7 @@ const Submit: React.FC = () => {
 
       {!connected && !connect && (
         <Button
+          fluid
           onClick={connectWallet}
           disabled={!submitTransactions || transactions.length === 0}
           secondary
