@@ -1,7 +1,7 @@
 import { CHAIN_CURRENCY } from '@/chains'
 import { Box, Flex, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
-import { Route } from '@/types'
+import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { formatEther, Fragment } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
@@ -234,7 +234,7 @@ function getScrollParent(node: Element | null): Element | null {
   }
 }
 
-const routeGoesThroughRoles = (route: Route) =>
+const routeGoesThroughRoles = (route: ZodiacRoute) =>
   route.waypoints?.some(
     (waypoint) => waypoint.account.type === AccountType.ROLES
   )

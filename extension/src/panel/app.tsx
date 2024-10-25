@@ -36,11 +36,13 @@ const App = () => {
   const { route, chainId } = useZodiacRoute()
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+
   useEffect(() => {
     update(provider, chainId, avatarAddress)
   }, [provider, chainId, avatarAddress])
 
   useStorage('lastUsedRoute', route.id)
+
   return (
     <>
       <RouterProvider router={router} />

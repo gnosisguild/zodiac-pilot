@@ -8,7 +8,7 @@ import {
   IconButton,
   useConfirmationModal,
 } from '@/components'
-import { ProviderType, Route } from '@/types'
+import { ProviderType, ZodiacRoute } from '@/types'
 import {
   useSelectedRouteId,
   useZodiacRoute,
@@ -69,7 +69,7 @@ export const EditRoute = () => {
       avatar: ETH_ZERO_ADDRESS,
       initiator: undefined,
       waypoints: undefined,
-    } satisfies Route)
+    } satisfies ZodiacRoute)
   const [route, setRoute] = useState(originalRoute)
 
   const navigate = useNavigate()

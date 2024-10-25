@@ -27,14 +27,14 @@ export interface LegacyConnection {
   lastUsed?: number
 }
 
-interface PartialRoute {
+interface PartialZodiacRoute {
   id: string
   initiator: PrefixedAddress | undefined
   avatar: PrefixedAddress
   waypoints: CompleteRoute['waypoints'] | undefined
 }
 
-export type Route = PartialRoute & {
+export type ZodiacRoute = PartialZodiacRoute & {
   providerType: ProviderType
   label: string
   lastUsed?: number

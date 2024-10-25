@@ -5,7 +5,7 @@ import {
   useInjectedWallet,
   useWalletConnect,
 } from '@/providers'
-import { Eip1193Provider, ProviderType, Route } from '@/types'
+import { Eip1193Provider, ProviderType, ZodiacRoute } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useCallback, useEffect } from 'react'
@@ -13,7 +13,7 @@ import { parsePrefixedAddress } from 'ser-kit'
 import { useSelectedRouteId } from './SelectedRouteContext'
 import { useZodiacRoutes } from './ZodiacRouteContext'
 
-const INITIAL_DEFAULT_ROUTE: Route = {
+const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
   id: nanoid(),
   label: '',
   providerType: ProviderType.InjectedWallet,

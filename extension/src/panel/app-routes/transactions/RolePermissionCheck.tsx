@@ -1,7 +1,7 @@
 import { Flex, Tag } from '@/components'
 import { useProvider } from '@/providers'
 import { TransactionState } from '@/state'
-import { Eip1193Provider, JsonRpcError, Route } from '@/types'
+import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
@@ -22,7 +22,7 @@ import classes from './style.module.css'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
-  route: Route,
+  route: ZodiacRoute,
   provider: Eip1193Provider
 ) => {
   const routeWithInitiator = (

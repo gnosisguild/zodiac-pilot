@@ -7,7 +7,7 @@ import {
   Flex,
   useConfirmationModal,
 } from '@/components'
-import { Route } from '@/types'
+import { ZodiacRoute } from '@/types'
 import {
   useSelectedRouteId,
   useZodiacRoute,
@@ -24,7 +24,7 @@ import { DisconnectedIcon } from './DisconnectedIcon'
 import classes from './style.module.css'
 
 interface RouteItemProps {
-  route: Route
+  route: ZodiacRoute
   onLaunch: (routeId: string) => void
   onModify: (routeId: string) => void
 }

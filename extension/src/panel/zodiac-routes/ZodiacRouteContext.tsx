@@ -1,4 +1,4 @@
-import { Route } from '@/types'
+import { ZodiacRoute } from '@/types'
 import {
   createContext,
   PropsWithChildren,
@@ -14,21 +14,22 @@ import {
   useSelectedRouteId,
 } from './SelectedRouteContext'
 
-type RouteContextT = readonly [
-  Route[],
-  (value: Route) => void,
+type Context = readonly [
+  ZodiacRoute[],
+  (value: ZodiacRoute) => void,
   (id: string) => void,
 ]
 
-const ZodiacRouteContext = createContext<RouteContextT | null>(null)
+const ZodiacRouteContext = createContext<Context | null>(null)
 
 export const ProvideZodiacRoutes = ({ children }: PropsWithChildren) => {
   // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
   // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
-  const [routes, setRoute, removeRoute] = useStorageEntries<Route>('routes')
+  const [routes, setRoute, removeRoute] =
+    useStorageEntries<ZodiacRoute>('routes')
 
   const saveRoute = useCallback(
-    (route: Route) => {
+    (route: ZodiacRoute) => {
       setRoute(route.id, route)
     },
     [setRoute]
