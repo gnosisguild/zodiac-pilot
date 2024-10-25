@@ -8,8 +8,8 @@ import {
 } from '@/providers'
 import {
   ProvideRoutes,
-  useRoute,
   useUpdateLastUsedRoute,
+  useZodiacRoute,
 } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import React, { useEffect } from 'react'
@@ -33,7 +33,7 @@ const App = () => {
   useUpdateLastUsedRoute()
 
   // make sure the injected provider stays updated on every relevant route change
-  const { route, chainId } = useRoute()
+  const { route, chainId } = useZodiacRoute()
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
   useEffect(() => {

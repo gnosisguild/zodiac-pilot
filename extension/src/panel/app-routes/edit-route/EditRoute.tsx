@@ -8,7 +8,7 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { ProviderType, Route } from '@/types'
-import { useRoute, useRoutes, useSelectedRouteId } from '@/zodiac-routes'
+import { useRoutes, useSelectedRouteId, useZodiacRoute } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -72,7 +72,7 @@ export const EditRoute = () => {
   const navigate = useNavigate()
 
   const [, setSelectedRouteId] = useSelectedRouteId()
-  const currentlySelected = useRoute()
+  const currentlySelected = useZodiacRoute()
 
   const connection = asLegacyConnection(route)
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =

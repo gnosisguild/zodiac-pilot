@@ -1,5 +1,5 @@
 import { Blockie, Box, ConnectionStack } from '@/components'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
@@ -7,7 +7,7 @@ import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
 
 export const RouteBubble: React.FC = () => {
-  const { route, chainId } = useRoute()
+  const { route, chainId } = useZodiacRoute()
   const connection = asLegacyConnection(route)
 
   return (

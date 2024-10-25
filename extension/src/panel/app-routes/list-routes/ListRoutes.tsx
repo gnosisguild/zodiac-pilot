@@ -8,7 +8,7 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { Route } from '@/types'
-import { useRoute, useRoutes, useSelectedRouteId } from '@/zodiac-routes'
+import { useRoutes, useSelectedRouteId, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
 import { nanoid } from 'nanoid'
 import React from 'react'
@@ -26,8 +26,8 @@ interface RouteItemProps {
 }
 
 const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
-  const { connected, connect, chainId } = useRoute(route.id)
-  const { route: currentlySelectedRoute } = useRoute()
+  const { connected, connect, chainId } = useZodiacRoute(route.id)
+  const { route: currentlySelectedRoute } = useZodiacRoute()
   const [getConfirmation, ConfirmationModal] = useConfirmationModal()
   const { hasTransactions, clearTransactions } = useClearTransactions()
 

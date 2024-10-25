@@ -1,6 +1,6 @@
 import { getReadOnlyProvider } from '@/providers'
 import { validateAddress } from '@/utils'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import {
   ContractAbis,
   ContractAddresses,
@@ -33,7 +33,7 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { chainId } = useRoute(connectionId)
+  const { chainId } = useZodiacRoute(connectionId)
   useEffect(() => {
     setLoading(true)
     setError(false)

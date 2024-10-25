@@ -2,7 +2,7 @@ import { CHAIN_CURRENCY } from '@/chains'
 import { Box, Flex, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { Route } from '@/types'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import { formatEther, Fragment } from 'ethers'
 import React, { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
@@ -81,7 +81,7 @@ export const Transaction: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
-  const { route, chainId } = useRoute()
+  const { route, chainId } = useZodiacRoute()
   const elementRef = useScrollIntoView(scrollIntoView)
 
   const decoded = useDecodedFunctionData(transactionState)
@@ -169,7 +169,7 @@ const TransactionStatus: React.FC<StatusProps> = ({
 )
 
 const EtherValue: React.FC<{ value: string }> = ({ value }) => {
-  const { chainId } = useRoute()
+  const { chainId } = useZodiacRoute()
   return (
     <Flex
       gap={1}

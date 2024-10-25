@@ -3,7 +3,7 @@ import { Button, IconButton, RawAddress, toastClasses } from '@/components'
 import { getReadOnlyProvider, useSubmitTransactions } from '@/providers'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
-import { useRoute } from '@/zodiac-routes'
+import { useZodiacRoute } from '@/zodiac-routes'
 import React, { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
@@ -19,7 +19,7 @@ import {
 import classes from './style.module.css'
 
 const Submit: React.FC = () => {
-  const { route, chainId, connect, connected } = useRoute()
+  const { route, chainId, connect, connected } = useZodiacRoute()
   const { initiator, providerType, avatar } = route
   const navigate = useNavigate()
 
