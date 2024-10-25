@@ -1,6 +1,6 @@
 import { Box, BoxButton, ConnectionStack, Flex } from '@/components'
 import { ZodiacRoute } from '@/types'
-import { useZodiacRoute } from '@/zodiac-routes'
+import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
 import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
@@ -14,7 +14,8 @@ interface RouteProps {
 }
 
 export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
-  const { connected, connect, chainId } = useZodiacRoute(route.id)
+  const { chainId } = useZodiacRoute(route.id)
+  const [connected, connect] = useRouteConnect(route)
   const { route: currentlySelectedRoute } = useZodiacRoute()
 
   const [confirmClearTransactions, ConfirmationModal] =

@@ -1,10 +1,8 @@
 import { ETH_ZERO_ADDRESS, getChainId } from '@/chains'
-import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
+import { useInjectedWallet, useWalletConnect } from '@/providers'
 import { ProviderType, ZodiacRoute } from '@/types'
-import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
-import { useCallback, useEffect } from 'react'
-import { parsePrefixedAddress } from 'ser-kit'
+import { useEffect } from 'react'
 import { useSelectedRouteId } from './SelectedRouteContext'
 import { useZodiacRoutes } from './ZodiacRoutesContext'
 
@@ -31,16 +29,6 @@ export const useZodiacRoute = (id?: string) => {
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
-  const connected =
-    route.initiator != null &&
-    isConnected(
-      route.providerType === ProviderType.InjectedWallet
-        ? injectedWallet
-        : walletConnect,
-      route.initiator,
-      chainId
-    )
-
   const providerChainId =
     route.providerType === ProviderType.InjectedWallet
       ? injectedWallet.chainId
@@ -51,20 +39,7 @@ export const useZodiacRoute = (id?: string) => {
     !injectedWallet.chainId &&
     injectedWallet.connected
 
-  const pilotAddress =
-    route.initiator && route.initiator !== `eoa:` + ZeroAddress
-      ? parsePrefixedAddress(route.initiator)[1].toLowerCase()
-      : undefined
-  const canEstablishConnection =
-    !connected &&
-    pilotAddress &&
-    route.providerType === ProviderType.InjectedWallet &&
-    injectedWallet.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
-    injectedWallet.chainId !== chainId
-
   const connectInjectedWallet = injectedWallet.connect
-  const switchChain = injectedWallet.switchChain
-  const requiredChainId = chainId
 
   useEffect(() => {
     if (mustConnectInjectedWallet) {
@@ -72,29 +47,11 @@ export const useZodiacRoute = (id?: string) => {
     }
   }, [mustConnectInjectedWallet, connectInjectedWallet])
 
-  const connect = useCallback(async () => {
-    if (requiredChainId && providerChainId !== requiredChainId) {
-      try {
-        await switchChain(requiredChainId)
-      } catch (e) {
-        console.error('Error switching chain', e)
-        return false
-      }
-    }
-
-    return true
-  }, [switchChain, providerChainId, requiredChainId])
-
   return {
     route,
-    /** Indicates if `provider` is connected to the right account and chain. */
-    connected,
 
     chainId,
     /** The chain ID the `provider` is currently connected to. */
     providerChainId,
-
-    /** If this callback is set, it can be invoked to establish a connection to the Pilot wallet by asking the user to switch it to the right chain. */
-    connect: canEstablishConnection ? connect : null,
   }
 }
