@@ -1,18 +1,16 @@
 import { Box, Divider, Field, Flex, useConfirmationModal } from '@/components'
-import { ProviderType } from '@/types'
+import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../../const'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
-import { SupportedModuleType } from '../../integrations/zodiac/types'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
 import { useClearTransactions } from '../../state/transactionHooks'
 import { decodeRoleKey, encodeRoleKey } from '../../utils'
@@ -30,22 +28,10 @@ import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
 import { ConnectWallet } from './wallet'
 
-type ConnectionPatch = {
-  label?: string
-  avatarAddress?: string
-  moduleAddress?: string
-  pilotAddress?: string
-  moduleType?: SupportedModuleType
-  roleId?: string
-  chainId?: ChainId
-  multisend?: string
-  multisendCallOnly?: string
-  providerType?: ProviderType
-}
+type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
 export const EditRoute = () => {
   const routes = useZodiacRoutes()
-
   const routeId = useRouteId()
 
   const initialRouteState = routes.find((r) => r.id === routeId) || {
@@ -54,9 +40,8 @@ export const EditRoute = () => {
   }
   const [currentRouteState, setRoute] = useState(initialRouteState)
 
-  const connection = asLegacyConnection(currentRouteState)
-  const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
-    connection
+  const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =
+    asLegacyConnection(currentRouteState)
 
   const { safes } = useSafesWithOwner(pilotAddress, routeId)
   const { delegates } = useSafeDelegates(avatarAddress, routeId)
@@ -70,26 +55,8 @@ export const EditRoute = () => {
     modules,
   } = useZodiacModules(avatarAddress, routeId)
 
-  const { hasTransactions, clearTransactions } = useClearTransactions()
-  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
-
-  const confirmClearTransactions = async () => {
-    if (!hasTransactions) {
-      return true
-    }
-
-    const confirmation = await getConfirmation(
-      'Switching the Piloted Safe will empty your current transaction bundle.'
-    )
-
-    if (!confirmation) {
-      return false
-    }
-
-    clearTransactions()
-
-    return true
-  }
+  const [confirmClearTransactions, ConfirmationModal] =
+    useConfirmClearTransactions()
 
   const selectedModule = moduleAddress
     ? modules.find((mod) => mod.moduleAddress === moduleAddress)
@@ -128,7 +95,7 @@ export const EditRoute = () => {
             </Flex>
             <div className="flex items-center gap-4">
               <LaunchButton
-                disabled={!connection.avatarAddress}
+                disabled={!avatarAddress}
                 initialRouteState={initialRouteState}
                 currentRouteState={currentRouteState}
                 onNeedConfirmationToClearTransactions={confirmClearTransactions}
@@ -167,7 +134,7 @@ export const EditRoute = () => {
             </Field>
             <Field label="Chain">
               <ChainSelect
-                value={connection.chainId}
+                value={chainId}
                 onChange={(chainId) => updateConnection({ chainId })}
               />
             </Field>
@@ -192,8 +159,7 @@ export const EditRoute = () => {
                 value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
                 onChange={async (address) => {
                   const keepTransactionBundle =
-                    address.toLowerCase() ===
-                    connection.avatarAddress.toLowerCase()
+                    address.toLowerCase() === avatarAddress.toLowerCase()
                   const confirmed =
                     keepTransactionBundle || (await confirmClearTransactions())
 
@@ -240,17 +206,14 @@ export const EditRoute = () => {
                   if (mod?.type === KnownContracts.ROLES_V1) {
                     updateConnection({
                       multisend: await queryRolesV1MultiSend(
-                        connection.chainId,
+                        chainId,
                         mod.moduleAddress
                       ),
                     })
                   }
                   if (mod?.type === KnownContracts.ROLES_V2) {
                     updateConnection(
-                      await queryRolesV2MultiSend(
-                        connection.chainId,
-                        mod.moduleAddress
-                      )
+                      await queryRolesV2MultiSend(chainId, mod.moduleAddress)
                     )
                   }
                 }}
@@ -274,7 +237,7 @@ export const EditRoute = () => {
                 <input
                   type="text"
                   value={roleId}
-                  onChange={async (ev) => {
+                  onChange={(ev) => {
                     updateConnection({ roleId: ev.target.value })
                   }}
                   placeholder="0"
@@ -313,4 +276,29 @@ export const EditRoute = () => {
       <ConfirmationModal />
     </>
   )
+}
+
+const useConfirmClearTransactions = () => {
+  const { hasTransactions, clearTransactions } = useClearTransactions()
+  const [getConfirmation, ConfirmationModal] = useConfirmationModal()
+
+  const confirmClearTransactions = async () => {
+    if (!hasTransactions) {
+      return true
+    }
+
+    const confirmation = await getConfirmation(
+      'Switching the Piloted Safe will empty your current transaction bundle.'
+    )
+
+    if (!confirmation) {
+      return false
+    }
+
+    clearTransactions()
+
+    return true
+  }
+
+  return [confirmClearTransactions, ConfirmationModal] as const
 }
