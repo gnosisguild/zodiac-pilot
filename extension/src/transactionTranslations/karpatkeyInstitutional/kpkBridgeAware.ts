@@ -7,8 +7,6 @@ import { extractBridgedTokenAddress } from './bridges'
 const KARPATKEY_INSTITUTIONAL_AVATARS = [
   '0x846e7f810e08f1e2af2c5afd06847cc95f5cae1b',
   '0xd0ca2a7ed8aee7972750b085b27350f1cd387f9b',
-
-  '0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c',
 ].map((address) => address.toLowerCase())
 
 const BRIDGE_AWARE_CONTRACT_ADDRESS =
