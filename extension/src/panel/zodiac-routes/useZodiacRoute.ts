@@ -10,7 +10,8 @@ import { ZeroAddress } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useCallback, useEffect } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
-import { useRoutes, useSelectedRouteId } from './routeHooks'
+import { useSelectedRouteId } from './SelectedRouteContext'
+import { useZodiacRoutes } from './ZodiacRouteContext'
 
 const INITIAL_DEFAULT_ROUTE: Route = {
   id: nanoid(),
@@ -22,7 +23,7 @@ const INITIAL_DEFAULT_ROUTE: Route = {
 }
 
 export const useZodiacRoute = (id?: string) => {
-  const [routes] = useRoutes()
+  const [routes] = useZodiacRoutes()
   const [selectedRouteId] = useSelectedRouteId()
   const routeId = id || selectedRouteId
   const route =

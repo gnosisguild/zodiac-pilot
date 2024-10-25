@@ -1,3 +1,4 @@
+import { ETH_ZERO_ADDRESS } from '@/chains'
 import {
   Box,
   Button,
@@ -8,7 +9,11 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { ProviderType, Route } from '@/types'
-import { useRoutes, useSelectedRouteId, useZodiacRoute } from '@/zodiac-routes'
+import {
+  useSelectedRouteId,
+  useZodiacRoute,
+  useZodiacRoutes,
+} from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
@@ -49,10 +54,8 @@ type ConnectionPatch = {
   providerType?: ProviderType
 }
 
-const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
-
 export const EditRoute = () => {
-  const [routes, saveRoute, removeRouteById] = useRoutes()
+  const [routes, saveRoute, removeRouteById] = useZodiacRoutes()
   const { routeId } = useParams()
   if (!routeId) {
     throw new Error('Route ID is required')

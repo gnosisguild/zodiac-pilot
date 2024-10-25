@@ -7,7 +7,7 @@ import {
   useProvider,
 } from '@/providers'
 import {
-  ProvideRoutes,
+  ProvideZodiacRoutes,
   useUpdateLastUsedRoute,
   useZodiacRoute,
 } from '@/zodiac-routes'
@@ -56,7 +56,7 @@ invariant(rootEl != null, 'Could not find DOM node to attach app')
 createRoot(rootEl).render(
   <React.StrictMode>
     <ProvideState>
-      <ProvideRoutes>
+      <ProvideZodiacRoutes>
         <ProvideInjectedWallet>
           <ProvideProvider>
             <div className="flex flex-1 flex-col">
@@ -64,7 +64,7 @@ createRoot(rootEl).render(
             </div>
           </ProvideProvider>
         </ProvideInjectedWallet>
-      </ProvideRoutes>
+      </ProvideZodiacRoutes>
     </ProvideState>
   </React.StrictMode>
 )

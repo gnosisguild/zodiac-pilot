@@ -8,7 +8,11 @@ import {
   useConfirmationModal,
 } from '@/components'
 import { Route } from '@/types'
-import { useRoutes, useSelectedRouteId, useZodiacRoute } from '@/zodiac-routes'
+import {
+  useSelectedRouteId,
+  useZodiacRoute,
+  useZodiacRoutes,
+} from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
 import { nanoid } from 'nanoid'
 import React from 'react'
@@ -145,7 +149,7 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
 
 export const ListRoutes = () => {
   const [, selectRoute] = useSelectedRouteId()
-  const [routes] = useRoutes()
+  const [routes] = useZodiacRoutes()
   const navigate = useNavigate()
 
   const handleLaunch = (routeId: string) => {
