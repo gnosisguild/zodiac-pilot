@@ -88,9 +88,7 @@ const RolePermissionCheck: React.FC<{
   const { route } = useRoute()
   const provider = useProvider()
 
-  const translationAvailable = !!useApplicableTranslation(
-    transactionState.transaction
-  )
+  const translationAvailable = !!useApplicableTranslation(index)
 
   useEffect(() => {
     let canceled = false

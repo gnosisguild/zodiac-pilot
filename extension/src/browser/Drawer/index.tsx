@@ -11,6 +11,7 @@ import { useDispatch, useTransactions } from '../../state'
 import Submit from './Submit'
 import { Transaction, TransactionBadge } from './Transaction'
 import classes from './style.module.css'
+import { useGloballyApplicableTranslation } from '../../transactionTranslations'
 
 const TransactionsDrawer: React.FC = () => {
   const [expanded, setExpanded] = useState(true)
@@ -18,6 +19,9 @@ const TransactionsDrawer: React.FC = () => {
   const dispatch = useDispatch()
   const provider = useProvider()
   const { route } = useRoute()
+
+  // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
+  useGloballyApplicableTranslation()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
