@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { Box, BoxButton, ConnectionStack, Flex } from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
@@ -14,9 +15,9 @@ interface RouteProps {
 }
 
 export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
-  const { chainId } = useZodiacRoute(route.id)
+  const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
-  const { route: currentlySelectedRoute } = useZodiacRoute()
+  const currentlySelectedRoute = useZodiacRoute()
 
   const [confirmClearTransactions, ConfirmationModal] =
     useConfirmClearTransactions()

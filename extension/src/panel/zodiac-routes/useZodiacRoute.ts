@@ -1,4 +1,4 @@
-import { ETH_ZERO_ADDRESS, getChainId } from '@/chains'
+import { ETH_ZERO_ADDRESS } from '@/chains'
 import { useInjectedWallet } from '@/providers'
 import { ProviderType, ZodiacRoute } from '@/types'
 import { nanoid } from 'nanoid'
@@ -25,8 +25,6 @@ export const useZodiacRoute = (id?: string) => {
     routes[0] ||
     INITIAL_DEFAULT_ROUTE
 
-  const chainId = getChainId(route.avatar)
-
   const injectedWallet = useInjectedWallet()
 
   const mustConnectInjectedWallet =
@@ -42,9 +40,5 @@ export const useZodiacRoute = (id?: string) => {
     }
   }, [mustConnectInjectedWallet, connectInjectedWallet])
 
-  return {
-    route,
-
-    chainId,
-  }
+  return route
 }

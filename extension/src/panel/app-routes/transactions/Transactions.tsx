@@ -14,7 +14,7 @@ export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { route } = useZodiacRoute()
+  const route = useZodiacRoute()
 
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 

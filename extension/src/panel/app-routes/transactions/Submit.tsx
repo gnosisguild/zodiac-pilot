@@ -1,4 +1,4 @@
-import { CHAIN_NAME, EXPLORER_URL } from '@/chains'
+import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import { Button, IconButton, RawAddress, toastClasses } from '@/components'
 import { getReadOnlyProvider, useSubmitTransactions } from '@/providers'
 import { useTransactions } from '@/state'
@@ -19,7 +19,8 @@ import {
 import classes from './style.module.css'
 
 const Submit: React.FC = () => {
-  const { route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const { initiator, providerType, avatar } = route
   const navigate = useNavigate()

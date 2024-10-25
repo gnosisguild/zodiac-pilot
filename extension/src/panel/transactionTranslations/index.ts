@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useEffect, useState } from 'react'
@@ -26,7 +27,8 @@ export const useApplicableTranslation = (
     ApplicableTranslation | undefined
   >(undefined)
 
-  const { chainId } = useZodiacRoute()
+  const { avatar } = useZodiacRoute()
+  const chainId = getChainId(avatar)
 
   useEffect(() => {
     findApplicableTranslation(encodedTransaction, chainId).then(setTranslation)

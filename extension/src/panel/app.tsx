@@ -1,5 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
+import { getChainId } from '@/chains'
 import { ZodiacToastContainer } from '@/components'
 import {
   ProvideInjectedWallet,
@@ -33,7 +34,8 @@ const App = () => {
   useMarkRouteAsUsed()
 
   // make sure the injected provider stays updated on every relevant route change
-  const { route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
 

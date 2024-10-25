@@ -14,7 +14,7 @@ import { wrapRequest } from './wrapRequest'
 
 export const useConnectionDryRun = (connection: LegacyConnection) => {
   const [error, setError] = useState<string | null>(null)
-  const { route } = useZodiacRoute(connection.id)
+  const route = useZodiacRoute(connection.id)
   const [connected] = useRouteConnect(route)
 
   useEffect(() => {

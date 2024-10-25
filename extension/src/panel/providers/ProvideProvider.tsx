@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { Eip1193Provider } from '@/types'
 import { useRouteProvider, useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
@@ -40,7 +41,8 @@ const SubmitTransactionsContext = createContext<
 export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
-  const { route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
   const provider = useRouteProvider(route)
   const dispatch = useDispatch()
   const transactions = useTransactions()

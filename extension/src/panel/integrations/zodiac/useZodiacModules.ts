@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { getReadOnlyProvider } from '@/providers'
 import { validateAddress } from '@/utils'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -33,7 +34,9 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
 
-  const { chainId } = useZodiacRoute(connectionId)
+  const route = useZodiacRoute(connectionId)
+  const chainId = getChainId(route.avatar)
+
   useEffect(() => {
     setLoading(true)
     setError(false)
