@@ -1,5 +1,5 @@
 import { ETH_ZERO_ADDRESS, getChainId } from '@/chains'
-import { useInjectedWallet, useWalletConnect } from '@/providers'
+import { useInjectedWallet } from '@/providers'
 import { ProviderType, ZodiacRoute } from '@/types'
 import { nanoid } from 'nanoid'
 import { useEffect } from 'react'
@@ -18,6 +18,7 @@ export const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
 export const useZodiacRoute = (id?: string) => {
   const routes = useZodiacRoutes()
   const [selectedRouteId] = useSelectedRouteId()
+
   const routeId = id || selectedRouteId
   const route =
     (routeId && routes.find((c) => c.id === routeId)) ||
@@ -27,12 +28,6 @@ export const useZodiacRoute = (id?: string) => {
   const chainId = getChainId(route.avatar)
 
   const injectedWallet = useInjectedWallet()
-  const walletConnect = useWalletConnect(route.id)
-
-  const providerChainId =
-    route.providerType === ProviderType.InjectedWallet
-      ? injectedWallet.chainId
-      : walletConnect?.chainId || null
 
   const mustConnectInjectedWallet =
     route.providerType === ProviderType.InjectedWallet &&
@@ -51,7 +46,5 @@ export const useZodiacRoute = (id?: string) => {
     route,
 
     chainId,
-    /** The chain ID the `provider` is currently connected to. */
-    providerChainId,
   }
 }
