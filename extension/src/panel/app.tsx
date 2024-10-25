@@ -6,6 +6,11 @@ import {
   ProvideProvider,
   useProvider,
 } from '@/providers'
+import {
+  ProvideRoutes,
+  useRoute,
+  useUpdateLastUsedRoute,
+} from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -13,30 +18,15 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { parsePrefixedAddress } from 'ser-kit'
 import { update } from '../inject/bridge'
+import { appRoutes } from './app-routes'
 import './global.css'
 import { initPort } from './port'
-import { EditConnection, ProvideRoutes, RoutesList } from './routes'
-import { useRoute, useUpdateLastUsedRoute } from './routes/routeHooks'
 import { ProvideState } from './state'
-import Transactions from './transactions'
 import { useStorage } from './utils'
 
 initPort()
 
-const router = createHashRouter([
-  {
-    path: '/',
-    element: <Transactions />,
-  },
-  {
-    path: '/routes',
-    element: <RoutesList />,
-  },
-  {
-    path: '/routes/:routeId',
-    element: <EditConnection />,
-  },
-])
+const router = createHashRouter(appRoutes)
 
 const App = () => {
   // update the last used timestamp for the current route

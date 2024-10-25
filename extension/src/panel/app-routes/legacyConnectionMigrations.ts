@@ -1,3 +1,4 @@
+import { LegacyConnection, ProviderType, Route } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
@@ -9,7 +10,6 @@ import {
   Roles,
   Waypoint,
 } from 'ser-kit'
-import { LegacyConnection, ProviderType, Route } from '../../types'
 import {
   MULTISEND,
   MULTISEND_CALL_ONLY,
