@@ -48,13 +48,13 @@ export const EditRoute = () => {
 
   const routeId = useRouteId()
 
-  const originalRoute = routes.find((r) => r.id === routeId) || {
+  const initialRouteState = routes.find((r) => r.id === routeId) || {
     ...INITIAL_DEFAULT_ROUTE,
     id: routeId,
   }
-  const [route, setRoute] = useState(originalRoute)
+  const [currentRouteState, setRoute] = useState(initialRouteState)
 
-  const connection = asLegacyConnection(route)
+  const connection = asLegacyConnection(currentRouteState)
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId } =
     connection
 
@@ -102,7 +102,7 @@ export const EditRoute = () => {
     )
   }
 
-  const error = useConnectionDryRun(asLegacyConnection(route))
+  const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
   const [roleIdError, setRoleIdError] = React.useState<string | null>(null)
 
@@ -121,7 +121,7 @@ export const EditRoute = () => {
         <Flex gap={2} direction="column">
           <Flex gap={1} justifyContent="space-between" alignItems="baseline">
             <Flex gap={1} direction="column" alignItems="baseline">
-              <h2>{route.label || 'New connection'}</h2>
+              <h2>{currentRouteState.label || 'New connection'}</h2>
               <Link className={classes.backLink} to="/routes">
                 &#8592; All Connections
               </Link>
@@ -129,8 +129,8 @@ export const EditRoute = () => {
             <div className="flex items-center gap-4">
               <LaunchButton
                 disabled={!connection.avatarAddress}
-                initialRouteState={originalRoute}
-                currentRouteState={route}
+                initialRouteState={initialRouteState}
+                currentRouteState={currentRouteState}
                 onNeedConfirmationToClearTransactions={confirmClearTransactions}
               />
 
@@ -173,7 +173,7 @@ export const EditRoute = () => {
             </Field>
             <Field label="Pilot Account" labelFor="">
               <ConnectWallet
-                route={route}
+                route={currentRouteState}
                 onConnect={({ providerType, chainId, account }) => {
                   updateConnection({
                     providerType,
@@ -285,7 +285,7 @@ export const EditRoute = () => {
               <Field label="Role Key">
                 <input
                   type="text"
-                  key={route.id} // makes sure the defaultValue is reset when switching connections
+                  key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
                   defaultValue={decodedRoleKey || roleId}
                   onChange={(ev) => {
                     try {
