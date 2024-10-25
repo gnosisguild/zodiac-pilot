@@ -10,6 +10,8 @@ export const Connected = ({ children, onDisconnect }: ConnectedProps) => (
   <Section>
     {children}
 
-    <Button onClick={onDisconnect}>Disconnect</Button>
+    <Button fluid onClick={onDisconnect}>
+      Disconnect
+    </Button>
   </Section>
 )

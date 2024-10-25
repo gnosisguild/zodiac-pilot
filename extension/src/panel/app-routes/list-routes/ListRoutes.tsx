@@ -23,6 +23,48 @@ import { ConnectedIcon } from './ConnectedIcon'
 import { DisconnectedIcon } from './DisconnectedIcon'
 import classes from './style.module.css'
 
+export const ListRoutes = () => {
+  const [, selectRoute] = useSelectedRouteId()
+  const routes = useZodiacRoutes()
+  const navigate = useNavigate()
+
+  const handleLaunch = (routeId: string) => {
+    selectRoute(routeId)
+    navigate('/')
+  }
+  const handleModify = (routeId: string) => {
+    navigate('/routes/' + routeId)
+  }
+
+  const handleCreate = () => {
+    const newRouteId = nanoid()
+    navigate('/routes/' + newRouteId)
+  }
+
+  return (
+    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl">Pilot Routes</h2>
+
+        <Button onClick={handleCreate} className={classes.addConnection}>
+          Add Route
+        </Button>
+      </div>
+
+      <Divider />
+
+      {routes.map((route) => (
+        <RouteItem
+          key={route.id}
+          route={route}
+          onLaunch={handleLaunch}
+          onModify={handleModify}
+        />
+      ))}
+    </div>
+  )
+}
+
 interface RouteItemProps {
   route: ZodiacRoute
   onLaunch: (routeId: string) => void
@@ -144,48 +186,5 @@ const RouteItem: React.FC<RouteItemProps> = ({ onLaunch, onModify, route }) => {
       </div>
       <ConfirmationModal />
     </>
-  )
-}
-
-export const ListRoutes = () => {
-  const [, selectRoute] = useSelectedRouteId()
-  const routes = useZodiacRoutes()
-  const navigate = useNavigate()
-
-  const handleLaunch = (routeId: string) => {
-    selectRoute(routeId)
-    navigate('/')
-  }
-  const handleModify = (routeId: string) => {
-    navigate('/routes/' + routeId)
-  }
-
-  const handleCreate = () => {
-    const newRouteId = nanoid()
-    navigate('/routes/' + newRouteId)
-  }
-
-  return (
-    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
-      <Flex gap={2} direction="column">
-        <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-          <h2>Pilot Routes</h2>
-          <Button onClick={handleCreate} className={classes.addConnection}>
-            Add Route
-          </Button>
-        </Flex>
-      </Flex>
-
-      <Divider />
-
-      {routes.map((route) => (
-        <RouteItem
-          key={route.id}
-          route={route}
-          onLaunch={handleLaunch}
-          onModify={handleModify}
-        />
-      ))}
-    </div>
   )
 }

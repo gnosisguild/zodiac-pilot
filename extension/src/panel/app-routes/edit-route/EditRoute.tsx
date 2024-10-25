@@ -4,6 +4,7 @@ import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import React, { useState } from 'react'
+import { RiArrowLeftSLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { MODULE_NAMES } from '../../../const'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
@@ -84,15 +85,20 @@ export const EditRoute = () => {
 
   return (
     <>
-      <div className="relative flex flex-1 flex-col gap-4 px-6 py-8">
-        <Flex gap={2} direction="column">
-          <Flex gap={1} justifyContent="space-between" alignItems="baseline">
-            <Flex gap={1} direction="column" alignItems="baseline">
-              <h2>{currentRouteState.label || 'New connection'}</h2>
-              <Link className={classes.backLink} to="/routes">
-                &#8592; All Connections
-              </Link>
-            </Flex>
+      <div className="relative flex flex-1 flex-col gap-4 px-6 pb-8 pt-6">
+        <div className="flex flex-col gap-1">
+          <Link
+            className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
+            to="/routes"
+          >
+            <RiArrowLeftSLine /> All Connections
+          </Link>
+
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-2xl">
+              {currentRouteState.label || 'New connection'}
+            </h2>
+
             <div className="flex items-center gap-4">
               <LaunchButton
                 disabled={!avatarAddress}
@@ -103,8 +109,8 @@ export const EditRoute = () => {
 
               <RemoveButton />
             </div>
-          </Flex>
-        </Flex>
+          </div>
+        </div>
 
         <Divider />
 

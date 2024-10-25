@@ -14,6 +14,8 @@ export const WrongAccount = ({ children, onDisconnect }: WrongAccountProps) => (
 
     {children}
 
-    <Button onClick={onDisconnect}>Disconnect</Button>
+    <Button fluid onClick={onDisconnect}>
+      Disconnect
+    </Button>
   </Section>
 )
