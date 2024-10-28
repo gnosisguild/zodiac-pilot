@@ -1,9 +1,11 @@
+import { Button } from '@/components'
 import { useWalletConnect, WalletConnectResult } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
+import { Section } from '../Section'
 import { SwitchChain } from '../SwitchChain'
 
 type WalletConnectProps = {
@@ -37,10 +39,23 @@ export const WalletConnect = ({
     )
   }
 
-  if (
-    walletConnect.accounts.some((acc) => acc.toLowerCase() === pilotAddress) &&
-    walletConnect.chainId !== chainId
-  ) {
+  const knownAccount = walletConnect.accounts.some(
+    (acc) => acc.toLowerCase() === pilotAddress
+  )
+
+  if (knownAccount === false) {
+    return (
+      <Section>
+        <Account providerType={ProviderType.WalletConnect}>
+          {pilotAddress}
+        </Account>
+
+        <Button onClick={() => walletConnect.disconnect()}>Disconnect</Button>
+      </Section>
+    )
+  }
+
+  if (walletConnect.chainId !== chainId) {
     return (
       <SwitchChain
         chainId={chainId}
