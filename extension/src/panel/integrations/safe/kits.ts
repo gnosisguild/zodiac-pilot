@@ -25,7 +25,12 @@ export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {
   }
 
   // @ts-expect-error SafeApiKit is only available as a CJS module. That doesn't play super nice with us being ESM.
-  return new SafeApiKit.default({ txServiceUrl, chainId: BigInt(chainId) })
+  if (SafeApiKit.default) {
+    // @ts-expect-error See above
+    return new SafeApiKit.default({ txServiceUrl, chainId: BigInt(chainId) })
+  }
+
+  return new SafeApiKit({ txServiceUrl, chainId: BigInt(chainId) })
 }
 
 export const initSafeProtocolKit = async (
