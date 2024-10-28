@@ -27,8 +27,6 @@ const App = () => {
 
   useStorage('lastUsedRoute', route.id)
 
-  console.log('HEYA')
-
   return <Outlet />
 }
 
