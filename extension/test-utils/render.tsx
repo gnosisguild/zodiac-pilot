@@ -25,7 +25,7 @@ export const render = async (
         <ProvideProvider>
           <MemoryRouter initialEntries={[currentPath]}>
             <Routes>
-              <Route path="*" element={<TestElement />}>
+              <Route path="/" element={<TestElement />}>
                 {routes.map(({ path, Component }) => (
                   <Route key={path} path={path} element={<Component />} />
                 ))}
