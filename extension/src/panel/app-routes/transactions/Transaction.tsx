@@ -1,4 +1,4 @@
-import { CHAIN_CURRENCY } from '@/chains'
+import { CHAIN_CURRENCY, getChainId } from '@/chains'
 import { Box, Flex, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
@@ -81,7 +81,8 @@ export const Transaction: React.FC<Props> = ({
   scrollIntoView,
 }) => {
   const [expanded, setExpanded] = useState(true)
-  const { route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
   const elementRef = useScrollIntoView(scrollIntoView)
 
   const decoded = useDecodedFunctionData(transactionState)
@@ -169,7 +170,9 @@ const TransactionStatus: React.FC<StatusProps> = ({
 )
 
 const EtherValue: React.FC<{ value: string }> = ({ value }) => {
-  const { chainId } = useZodiacRoute()
+  const { avatar } = useZodiacRoute()
+  const chainId = getChainId(avatar)
+
   return (
     <Flex
       gap={1}

@@ -82,7 +82,7 @@ const RolePermissionCheck: React.FC<{
   mini?: boolean
 }> = ({ transactionState, index, mini = false }) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const { route } = useZodiacRoute()
+  const route = useZodiacRoute()
   const provider = useProvider()
 
   const translationAvailable = !!useApplicableTranslation(index)

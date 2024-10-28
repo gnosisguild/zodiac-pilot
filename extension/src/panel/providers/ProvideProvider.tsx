@@ -1,5 +1,7 @@
+import { getChainId } from '@/chains'
 import { Eip1193Provider } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
+import { invariant } from '@epic-web/invariant'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
@@ -8,41 +10,23 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
+  useState,
 } from 'react'
-import {
-  ConnectionType,
-  execute,
-  ExecutionActionType,
-  ExecutionState,
-  parsePrefixedAddress,
-  planExecution,
-  Route as SerRoute,
-} from 'ser-kit'
-import { ExecutionStatus, useDispatch, useTransactions } from '../state'
+import { ConnectionType, parsePrefixedAddress } from 'ser-kit'
+import { ExecutionStatus, useDispatch } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ForkProvider } from './ForkProvider'
+import { ProvideSubmitTransactionContext } from './SubmitTransactionContext'
 
 const ProviderContext = createContext<
   (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
 >(null)
-export const useProvider = () => {
-  const result = useContext(ProviderContext)
-  if (!result) {
-    throw new Error('useProvider() must be used within a <ProvideProvider/>')
-  }
-  return result
-}
-
-const SubmitTransactionsContext = createContext<
-  (() => Promise<{ txHash?: `0x${string}`; safeTxHash?: `0x${string}` }>) | null
->(null)
-export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
-  const { provider, route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
+
   const dispatch = useDispatch()
-  const transactions = useTransactions()
 
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
   const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
@@ -139,11 +123,11 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     [dispatch, avatarAddress, moduleAddress]
   )
 
-  const forkProviderRef = useRef<ForkProvider | null>(null)
+  const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
 
   // whenever anything changes in the connection settings, we delete the current fork and start afresh
   useEffect(() => {
-    forkProviderRef.current = new ForkProvider({
+    const forkProvider = new ForkProvider({
       chainId,
       avatarAddress,
       moduleAddress,
@@ -151,8 +135,11 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       onBeforeTransactionSend,
       onTransactionSent,
     })
+
+    setForkProvider(forkProvider)
+
     return () => {
-      forkProviderRef.current?.deleteFork()
+      forkProvider.deleteFork()
     }
   }, [
     chainId,
@@ -163,60 +150,28 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     onTransactionSent,
   ])
 
-  const submitTransactions = useCallback(async () => {
-    const metaTransactions = transactions.map((txState) => txState.transaction)
-    const lastTransactionId = transactions[transactions.length - 1].id
-
-    console.log(
-      transactions.length === 1
-        ? 'submitting transaction...'
-        : `submitting ${transactions.length} transactions as multi-send batch...`,
-      transactions
-    )
-
-    if (!route.initiator) {
-      throw new Error('Cannot execute without a connected Pilot wallet')
-    }
-
-    const plan = await planExecution(metaTransactions, route as SerRoute)
-    console.log('Execution plan:', plan)
-
-    const state = [] as ExecutionState
-    await execute(plan, state, provider, { origin: 'Zodiac Pilot' })
-
-    dispatch({
-      type: 'CLEAR_TRANSACTIONS',
-      payload: { lastTransactionId },
-    })
-
-    // return the txHash if the execution is already complete or the safeTxHash if the safe transaction was proposed
-    const safeTxHash =
-      state[
-        plan.findLastIndex(
-          (action) =>
-            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION
-        )
-      ]
-    const txHash =
-      state[
-        plan.findLastIndex(
-          (action) => action.type === ExecutionActionType.EXECUTE_TRANSACTION
-        )
-      ]
-    return { safeTxHash, txHash: !safeTxHash ? txHash : undefined }
-  }, [transactions, provider, dispatch, route])
-
-  if (!forkProviderRef.current) {
+  if (forkProvider == null) {
     return null
   }
 
   return (
-    <ProviderContext.Provider value={forkProviderRef.current}>
-      <SubmitTransactionsContext.Provider value={submitTransactions}>
+    <ProviderContext.Provider value={forkProvider}>
+      <ProvideSubmitTransactionContext>
         {children}
-      </SubmitTransactionsContext.Provider>
+      </ProvideSubmitTransactionContext>
     </ProviderContext.Provider>
   )
+}
+
+export const useProvider = () => {
+  const provider = useContext(ProviderContext)
+
+  invariant(
+    provider != null,
+    'useProvider() must be used within a <ProvideProvider/>'
+  )
+
+  return provider
 }
 
 const isExecutionFailure = (
@@ -224,7 +179,9 @@ const isExecutionFailure = (
   avatarAddress: string,
   moduleAddress?: string
 ) => {
-  if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) return false
+  if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) {
+    return false
+  }
 
   if (moduleAddress) {
     return (
@@ -232,7 +189,7 @@ const isExecutionFailure = (
       log.topics[1] ===
         AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress])
     )
-  } else {
-    return log.topics[0] === id('ExecutionFailure(bytes32, uint256)')
   }
+
+  return log.topics[0] === id('ExecutionFailure(bytes32, uint256)')
 }

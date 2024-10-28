@@ -15,7 +15,7 @@ export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { route } = useZodiacRoute()
+  const route = useZodiacRoute()
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()

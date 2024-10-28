@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
@@ -30,8 +31,9 @@ export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
 
   const dispatch = useDispatch()
-  const { chainId, route } = useZodiacRoute()
-  const [_, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const { avatar } = useZodiacRoute()
+  const chainId = getChainId(avatar)
+  const [_, avatarAddress] = parsePrefixedAddress(avatar)
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
@@ -147,8 +149,8 @@ export const useApplicableTranslation = (transactionIndex: number) => {
   const metaTransaction = transactions[transactionIndex].transaction
 
   const dispatch = useDispatch()
-  const { chainId, route } = useZodiacRoute()
-  const [_, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const { avatar } = useZodiacRoute()
+  const [_, avatarAddress] = parsePrefixedAddress(avatar)
 
   const [translation, setTranslation] = useState<
     ApplicableTranslation | undefined
@@ -185,6 +187,8 @@ export const useApplicableTranslation = (transactionIndex: number) => {
     },
     [provider, dispatch, transactions, transactionIndex]
   )
+
+  const chainId = getChainId(avatar)
 
   useEffect(() => {
     let canceled = false
