@@ -5,16 +5,14 @@ import { useEffect } from 'react'
 export const useConnectInjectedWalletIfNeeded = (route: ZodiacRoute) => {
   const { chainId, connect, connected } = useInjectedWallet()
 
-  const routeUsesInjectedWallet =
-    route.providerType === ProviderType.InjectedWallet
-  const routeIsNotConnected = chainId == null || !connected
-
+  const mustConnectInjectedWallet =
+    route.providerType === ProviderType.InjectedWallet && !chainId && connected
   // only use computed properties in here
   // otherwise, the effect will synchronize too often and
   // re-trigger the connection which leads to an infinite loop
   useEffect(() => {
-    if (routeUsesInjectedWallet && routeIsNotConnected) {
+    if (mustConnectInjectedWallet) {
       connect()
     }
-  }, [connect, routeIsNotConnected, routeUsesInjectedWallet])
+  }, [connect, mustConnectInjectedWallet])
 }

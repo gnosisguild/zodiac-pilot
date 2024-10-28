@@ -1,10 +1,6 @@
 import { getChainId } from '@/chains'
 import { useProvider } from '@/providers'
-import {
-  useConnectInjectedWalletIfNeeded,
-  useMarkRouteAsUsed,
-  useZodiacRoute,
-} from '@/zodiac-routes'
+import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
 import { useEffect } from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
@@ -20,8 +16,6 @@ const App = () => {
 
   // make sure the injected provider stays updated on every relevant route change
   const route = useZodiacRoute()
-
-  useConnectInjectedWalletIfNeeded(route)
 
   const chainId = getChainId(route.avatar)
   const provider = useProvider()
