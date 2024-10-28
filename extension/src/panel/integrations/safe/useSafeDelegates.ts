@@ -1,5 +1,6 @@
+import { getChainId } from '@/chains'
 import { validateAddress } from '@/utils'
-import { useZodiacRoute } from '@/zodiac-routes'
+import { useRouteProvider, useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
 import { initSafeApiKit } from './kits'
@@ -8,7 +9,9 @@ export const useSafeDelegates = (
   safeAddress: string,
   connectionId?: string
 ) => {
-  const { provider, chainId } = useZodiacRoute(connectionId)
+  const route = useZodiacRoute(connectionId)
+  const chainId = getChainId(route.avatar)
+  const provider = useRouteProvider(route)
 
   const [loading, setLoading] = useState(false)
   const [delegates, setDelegates] = useState<string[]>([])

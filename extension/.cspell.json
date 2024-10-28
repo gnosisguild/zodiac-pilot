@@ -88,6 +88,7 @@
     "public/_metadata/**",
     "playwright-report/**",
     "**/*.svg",
-    "patches/**"
+    "patches/**",
+    "test-utils/**"
   ]
 }

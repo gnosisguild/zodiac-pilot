@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { Blockie, Box, ConnectionStack } from '@/components'
 import { useZodiacRoute } from '@/zodiac-routes'
 import React from 'react'
@@ -7,7 +8,8 @@ import ConnectionsIcon from './ConnectionsIcon'
 import classes from './style.module.css'
 
 export const RouteBubble: React.FC = () => {
-  const { route, chainId } = useZodiacRoute()
+  const route = useZodiacRoute()
+  const chainId = getChainId(route.avatar)
   const connection = asLegacyConnection(route)
 
   return (

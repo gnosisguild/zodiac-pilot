@@ -1,3 +1,4 @@
+import { getChainId } from '@/chains'
 import { validateAddress } from '@/utils'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
@@ -8,7 +9,8 @@ export const useSafesWithOwner = (
   ownerAddress: string,
   connectionId?: string
 ) => {
-  const { chainId } = useZodiacRoute(connectionId)
+  const route = useZodiacRoute(connectionId)
+  const chainId = getChainId(route.avatar)
 
   const [loading, setLoading] = useState(false)
   const [safes, setSafes] = useState<string[]>([])

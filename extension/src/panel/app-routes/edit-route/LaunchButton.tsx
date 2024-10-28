@@ -40,7 +40,7 @@ export const LaunchButton = ({
 
         // we continue working with the same avatar, so don't have to clear the recorded transaction
         const keepTransactionBundle =
-          currentZodiacRoute.route.avatar === currentRouteState.avatar
+          currentZodiacRoute.avatar === currentRouteState.avatar
 
         const confirmed =
           keepTransactionBundle ||
