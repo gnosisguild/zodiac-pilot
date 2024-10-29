@@ -3,22 +3,6 @@ import { screen } from '@testing-library/react'
 import { describe, it, vi } from 'vitest'
 import { EditRoute } from './EditRoute'
 
-// vi.mock('ethers', async (importOriginal) => {
-//   const pkg = await importOriginal<typeof import('ethers')>()
-//   class MockProvider extends pkg.JsonRpcProvider {
-//     async call(...args): Promise<string> {
-//       console.log(...args)
-//       return ''
-//     }
-//   }
-
-//   return {
-//     ...pkg,
-
-//     JsonRpcProvider: MockProvider,
-//   }
-// })
-
 vi.mock('../../providers/useWalletConnect.ts', () => ({
   default: vi.fn(),
 }))
