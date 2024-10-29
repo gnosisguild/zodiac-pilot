@@ -4,21 +4,24 @@ import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { render as baseRender, screen } from '@testing-library/react'
 import { ComponentType } from 'react'
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom'
-import { vi } from 'vitest'
+import { mockActiveTab } from './mockActiveTab'
 
 type Route = {
   path: string
   Component: ComponentType
 }
 
-type Options = Parameters<typeof baseRender>[1]
+type Options = Parameters<typeof baseRender>[1] & {
+  /** Can be used to change the attributes of the currently active tab */
+  activeTab?: Partial<chrome.tabs.Tab>
+}
 
 export const render = async (
   currentPath: string,
   routes: Route[],
-  options?: Options
+  { activeTab, ...options }: Options = {}
 ) => {
-  vi.spyOn(chrome.tabs, 'query').mockResolvedValue([])
+  mockActiveTab(activeTab)
 
   const result = baseRender(
     <ProvideState>

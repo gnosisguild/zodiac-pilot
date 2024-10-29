@@ -1,4 +1,5 @@
 // this will be bundled in the panel app
+import { getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'
 import { Eip1193Provider } from '../types'
@@ -55,11 +56,7 @@ export default class ConnectProvider
     })
 
     chrome.tabs.onUpdated.addListener(async (tabId) => {
-      const currentTab = await getCurrentTab()
-
-      if (currentTab == null) {
-        return
-      }
+      const currentTab = await getActiveTab()
 
       if (currentTab.id !== tabId) {
         return
@@ -100,8 +97,8 @@ export default class ConnectProvider
       }
     })
 
-    getCurrentTab().then(async (tab) => {
-      if (tab == null || tab.id == null) {
+    getActiveTab().then(async (tab) => {
+      if (tab.id == null) {
         return
       }
 
@@ -349,12 +346,3 @@ const handleActiveTab = async (tab: chrome.tabs.Tab) => {
 
 const sleep = (time: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, time))
-
-const getCurrentTab = async () => {
-  const [currentTab] = await chrome.tabs.query({
-    currentWindow: true,
-    active: true,
-  })
-
-  return currentTab
-}

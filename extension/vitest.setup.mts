@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest'
 import { vi } from 'vitest'
-import { chrome } from 'vitest-chrome'
 
 window.document.body.innerHTML = '<div id="root"></div>'
 
@@ -17,10 +16,3 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
-
-Object.assign(chrome.storage.sync, {
-  ...chrome.storage.sync,
-  onChanged: { addListener: vi.fn() },
-})
-
-Object.assign(global, { chrome })
