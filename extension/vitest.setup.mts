@@ -1,13 +1,8 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import { vi } from 'vitest'
 import { chrome } from 'vitest-chrome'
 
 window.document.body.innerHTML = '<div id="root"></div>'
-
-afterEach(() => {
-  cleanup()
-})
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -21,6 +16,11 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
+})
+
+Object.assign(chrome.storage.sync, {
+  ...chrome.storage.sync,
+  onChanged: { addListener: vi.fn() },
 })
 
 Object.assign(global, { chrome })

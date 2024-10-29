@@ -1,4 +1,4 @@
-import { Box, Divider, Field, Flex } from '@/components'
+import { Box, Divider, Field, Flex, TextInput } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -126,9 +126,9 @@ export const EditRoute = () => {
                 </div>
               </Box>
             )}
-            <Field label="Route Label">
-              <input
-                type="text"
+            <Field>
+              <TextInput
+                label="Route label"
                 value={label}
                 placeholder="Label this route"
                 onChange={(ev) => {
