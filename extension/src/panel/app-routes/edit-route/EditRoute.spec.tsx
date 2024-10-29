@@ -1,10 +1,27 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import { Outlet } from 'react-router-dom'
 import { describe, it, vi } from 'vitest'
 import { EditRoute } from './EditRoute'
 
-vi.mock('./wallet', () => ({ ConnectWallet: Outlet }))
+// vi.mock('ethers', async (importOriginal) => {
+//   const pkg = await importOriginal<typeof import('ethers')>()
+//   class MockProvider extends pkg.JsonRpcProvider {
+//     async call(...args): Promise<string> {
+//       console.log(...args)
+//       return ''
+//     }
+//   }
+
+//   return {
+//     ...pkg,
+
+//     JsonRpcProvider: MockProvider,
+//   }
+// })
+
+vi.mock('../../providers/useWalletConnect.ts', () => ({
+  default: vi.fn(),
+}))
 
 describe('Edit Zodiac route', () => {
   it('does not explode', async () => {
