@@ -98,7 +98,7 @@ export default class ConnectProvider
     })
 
     getActiveTab().then(async (tab) => {
-      if (tab == null || tab.id == null) {
+      if (tab.id == null) {
         return
       }
 
