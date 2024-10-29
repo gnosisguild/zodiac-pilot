@@ -8,7 +8,7 @@ import {
   KnownContracts,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
-import { Contract, id, Interface } from 'ethers'
+import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
@@ -61,6 +61,10 @@ async function fetchModules(
   chainId: ChainId,
   previous: Set<string> = new Set()
 ): Promise<Module[]> {
+  if (safeOrModifierAddress === ZeroAddress) {
+    return []
+  }
+
   if (previous.has(safeOrModifierAddress.toLowerCase())) {
     // circuit breaker in case of circular module references
     return []
@@ -70,6 +74,7 @@ async function fetchModules(
   const provider = getReadOnlyProvider(chainId)
 
   const mastercopyAddresses = ContractAddresses[chainId] || {}
+
   const contract = new Contract(
     safeOrModifierAddress,
     AvatarInterface,
