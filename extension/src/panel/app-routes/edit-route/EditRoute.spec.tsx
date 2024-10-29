@@ -1,14 +1,13 @@
-import { render } from '@/test-utils'
+import { mockRoute, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import { describe, it, vi } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it } from 'vitest'
 import { EditRoute } from './EditRoute'
 
-vi.mock('../../providers/useWalletConnect.ts', () => ({
-  default: vi.fn(),
-}))
-
 describe('Edit Zodiac route', () => {
-  it('does not explode', async () => {
+  it('is possible to rename a route', async () => {
+    mockRoute('route-id')
+
     render('/routes/route-id', [
       {
         path: '/routes/:routeId',
@@ -16,6 +15,15 @@ describe('Edit Zodiac route', () => {
       },
     ])
 
-    await screen.findByRole('textbox', { name: 'Route label' })
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Route label' }),
+      'Test route'
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save & Launch' }))
+
+    expect(chrome.storage.sync.set).toHaveBeenCalledWith({
+      'routes[route-id]': expect.objectContaining({ label: 'Test route' }),
+    })
   })
 })

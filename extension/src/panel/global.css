@@ -83,7 +83,6 @@ p {
   margin: 0;
 }
 
-input,
 select {
   font-size: 14px;
   background-color: transparent;
@@ -99,14 +98,11 @@ select {
   transition: all 0.1s ease;
 }
 
-input:hover:enabled,
 select:hover:enabled {
   border-color: white;
 }
 
-input:active,
 select:active,
-input:focus,
 select:focus {
   border: 1px solid white;
   outline: none;
