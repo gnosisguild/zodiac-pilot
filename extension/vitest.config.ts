@@ -16,7 +16,7 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
 export default defineConfig({
   test: {
     alias,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: ['./vitest.setup.mts'],
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
   },
