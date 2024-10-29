@@ -17,7 +17,7 @@ export default defineConfig({
   test: {
     alias,
     environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.mts'],
+    setupFiles: ['./vitest.setup.mts', './setup-chrome-mock.ts'],
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
   },
 })

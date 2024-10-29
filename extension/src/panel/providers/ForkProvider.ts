@@ -4,6 +4,7 @@ import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 
+import { getActiveTab } from '@/utils'
 import { nanoid } from 'nanoid'
 import { ChainId } from 'ser-kit'
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../../messages'
@@ -292,30 +293,27 @@ export class ForkProvider extends EventEmitter {
 
     // notify the background script to start intercepting JSON RPC requests in the current window
     // we use the public RPC for requests originating from apps
-    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-      if (tabs.length === 0) throw new Error('no active tab found')
-      const { windowId } = tabs[0]
-      chrome.runtime.sendMessage({
-        type: SIMULATE_START,
-        windowId,
-        networkId: this.chainId,
-        rpcUrl: this.provider.publicRpc!,
-      } satisfies Message)
-    })
+    const activeTab = await getActiveTab()
+
+    chrome.runtime.sendMessage({
+      type: SIMULATE_START,
+      windowId: activeTab.windowId,
+      networkId: this.chainId,
+      rpcUrl: this.provider.publicRpc!,
+    } satisfies Message)
 
     this.isInitialized = true
   }
 
   async deleteFork(): Promise<void> {
     // notify the background script to stop intercepting JSON RPC requests
-    chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
-      if (tabs.length === 0) throw new Error('no active tab found')
-      const { windowId } = tabs[0]
-      chrome.runtime.sendMessage({
-        type: SIMULATE_STOP,
-        windowId,
-      } satisfies Message)
-    })
+    const activeTab = await getActiveTab()
+
+    chrome.runtime.sendMessage({
+      type: SIMULATE_STOP,
+      windowId: activeTab.windowId,
+    } satisfies Message)
+
     await this.provider.deleteFork()
     this.isInitialized = false
   }
