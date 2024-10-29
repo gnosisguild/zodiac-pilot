@@ -1,5 +1,6 @@
 import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
 import { ProvideState } from '@/state'
+import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { render as baseRender, screen } from '@testing-library/react'
 import { ComponentType } from 'react'
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom'
@@ -23,15 +24,17 @@ export const render = async (
     <ProvideState>
       <ProvideInjectedWallet>
         <ProvideProvider>
-          <MemoryRouter initialEntries={[currentPath]}>
-            <Routes>
-              <Route path="/" element={<TestElement />}>
-                {routes.map(({ path, Component }) => (
-                  <Route key={path} path={path} element={<Component />} />
-                ))}
-              </Route>
-            </Routes>
-          </MemoryRouter>
+          <ProvideZodiacRoutes>
+            <MemoryRouter initialEntries={[currentPath]}>
+              <Routes>
+                <Route path="/" element={<TestElement />}>
+                  {routes.map(({ path, Component }) => (
+                    <Route key={path} path={path} element={<Component />} />
+                  ))}
+                </Route>
+              </Routes>
+            </MemoryRouter>
+          </ProvideZodiacRoutes>
         </ProvideProvider>
       </ProvideInjectedWallet>
     </ProvideState>,
