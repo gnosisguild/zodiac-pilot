@@ -17,23 +17,21 @@ export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
       }))
     )
     .filter(({ regexFilter }) => regexFilter != null)
-    .map(({ tabId, redirectUrl, regexFilter }) => {
-      return {
-        id: tabId,
-        priority: 1,
-        action: {
-          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-          redirect: { url: redirectUrl },
-        },
-        condition: {
-          resourceTypes: [
-            chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-          ],
-          regexFilter: regexFilter!,
-          tabIds: [tabId],
-        },
-      } satisfies chrome.declarativeNetRequest.Rule
-    })
+    .map(({ tabId, redirectUrl, regexFilter }) => ({
+      id: tabId,
+      priority: 1,
+      action: {
+        type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+        redirect: { url: redirectUrl },
+      },
+      condition: {
+        resourceTypes: [
+          chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+        ],
+        regexFilter: regexFilter!,
+        tabIds: [tabId],
+      },
+    }))
 
   const previousRuleIds = currentRuleIds
   currentRuleIds = addRules.map((rule) => rule.id)

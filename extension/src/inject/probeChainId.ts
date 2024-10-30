@@ -1,11 +1,6 @@
-import { Message, PROBE_CHAIN_ID } from '../messages'
-
-chrome.runtime.onMessage.addListener((message: Message, sender, respond) => {
-  if (sender.id !== chrome.runtime.id) return
-
-  // Provide the background script with the chainId of a given RPC endpoint on request
-  if (message.type === PROBE_CHAIN_ID) {
-    fetch(message.url, {
+export const probeChainId = async (url: string) => {
+  try {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -17,20 +12,15 @@ chrome.runtime.onMessage.addListener((message: Message, sender, respond) => {
         id: Math.floor(Math.random() * 100000000),
       }),
     })
-      .then((res) => res.json())
-      .then((json) => {
-        const networkId = parseInt(json.result)
-        respond(networkId && !isNaN(networkId) ? networkId : undefined)
-      })
-      .catch((e) => {
-        console.error(
-          'Failed to determine chainId for endpoint',
-          message.url,
-          e
-        )
-        respond(undefined)
-      })
 
-    return true // without this the response won't be sent
+    const json = await response.json()
+
+    const networkId = parseInt(json.result)
+
+    if (networkId != null && !isNaN(networkId)) {
+      return networkId
+    }
+  } catch (e) {
+    console.error('Failed to determine chainId for endpoint', url, e)
   }
-})
+}

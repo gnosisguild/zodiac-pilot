@@ -18,32 +18,49 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   }
 
   const result = await networkIdOfRpcUrlPromise.get(url)
-  if (result && !networkIdOfRpcUrl.has(url)) {
-    if (!rpcUrlsPerTab.has(tabId)) rpcUrlsPerTab.set(tabId, new Set())
-    rpcUrlsPerTab.get(tabId)!.add(url)
-    networkIdOfRpcUrl.set(url, result)
-    console.debug(
-      `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
-    )
+
+  if (result == null || networkIdOfRpcUrl.has(url)) {
+    return
   }
+
+  if (!rpcUrlsPerTab.has(tabId)) {
+    rpcUrlsPerTab.set(tabId, new Set())
+  }
+
+  rpcUrlsPerTab.get(tabId)!.add(url)
+
+  networkIdOfRpcUrl.set(url, result)
+
+  console.debug(
+    `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
+  )
 }
 
 chrome.webRequest.onBeforeRequest.addListener(
-  (details: chrome.webRequest.WebRequestBodyDetails) => {
+  (details) => {
     const hasActiveSession = isTrackedTab({ tabId: details.tabId })
 
     // only handle requests in tracked tabs
-    if (!hasActiveSession) return
-    // skip urls we already know
-    if (networkIdOfRpcUrlPromise.has(details.url)) return
-    // only consider POST requests
-    if (details.method !== 'POST') return
-    // ignore requests to fork RPCs
-    if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/'))
+    if (!hasActiveSession) {
       return
+    }
+    // skip urls we already know
+    if (networkIdOfRpcUrlPromise.has(details.url)) {
+      return
+    }
+    // only consider POST requests
+    if (details.method !== 'POST') {
+      return
+    }
+    // ignore requests to fork RPCs
+    if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
+      return
+    }
 
     // only consider requests with a JSON RPC body
-    if (!getJsonRpcBody(details)) return
+    if (!getJsonRpcBody(details)) {
+      return
+    }
 
     detectNetworkOfRpcUrl(details.url, details.tabId)
   },
