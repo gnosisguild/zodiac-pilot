@@ -6,9 +6,10 @@ import {
   PILOT_PANEL_OPENED,
   PILOT_PANEL_PORT,
 } from '../messages'
-import './sessionTracking'
+import { startTrackingRequests } from './rpcTracking'
 import { startPilotSession, stopPilotSession } from './sessionTracking'
-import './tabsTracking'
+
+startTrackingRequests()
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })

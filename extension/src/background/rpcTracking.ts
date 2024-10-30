@@ -1,5 +1,6 @@
 import { PROBE_CHAIN_ID } from '../messages'
 import { isTrackedTab } from './activePilotSessions'
+import { hasJsonRpcBody } from './hasJsonRpcBody'
 
 // Keep track of the network IDs for all JSON RPC endpoints used from apps
 const networkIdOfRpcUrl = new Map<string, number | undefined>()
@@ -7,40 +8,49 @@ const networkIdOfRpcUrlPromise = new Map<string, Promise<number | undefined>>()
 
 const rpcUrlsPerTab = new Map<number, Set<string>>()
 
-chrome.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    const hasActiveSession = isTrackedTab({ tabId: details.tabId })
+const trackRequests = ({
+  tabId,
+  url,
+  method,
+  requestBody,
+}: chrome.webRequest.WebRequestBodyDetails) => {
+  const hasActiveSession = isTrackedTab({ tabId })
 
-    // only handle requests in tracked tabs
-    if (!hasActiveSession) {
-      return
-    }
-    // skip urls we already know
-    if (networkIdOfRpcUrlPromise.has(details.url)) {
-      return
-    }
-    // only consider POST requests
-    if (details.method !== 'POST') {
-      return
-    }
-    // ignore requests to fork RPCs
-    if (details.url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
-      return
-    }
+  // only handle requests in tracked tabs
+  if (!hasActiveSession) {
+    return
+  }
+  // skip urls we already know
+  if (networkIdOfRpcUrlPromise.has(url)) {
+    return
+  }
+  // only consider POST requests
+  if (method !== 'POST') {
+    return
+  }
+  // ignore requests to fork RPCs
+  if (url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
+    return
+  }
 
-    // only consider requests with a JSON RPC body
-    if (!getJsonRpcBody(details)) {
-      return
-    }
+  // only consider requests with a JSON RPC body
+  if (!hasJsonRpcBody(requestBody)) {
+    return
+  }
 
-    detectNetworkOfRpcUrl(details.url, details.tabId)
-  },
-  {
-    urls: ['<all_urls>'],
-    types: ['xmlhttprequest'],
-  },
-  ['requestBody']
-)
+  detectNetworkOfRpcUrl(url, tabId)
+}
+
+export const startTrackingRequests = () => {
+  chrome.webRequest.onBeforeRequest.addListener(
+    trackRequests,
+    {
+      urls: ['<all_urls>'],
+      types: ['xmlhttprequest'],
+    },
+    ['requestBody']
+  )
+}
 
 type GetRPCUrlsOptions = {
   tabId: number
@@ -102,23 +112,3 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
 chrome.tabs.onRemoved.addListener((tabId) => {
   rpcUrlsPerTab.delete(tabId)
 })
-
-const decoder = new TextDecoder('utf-8')
-const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
-  const bytes = details.requestBody?.raw?.[0]?.bytes
-  if (!bytes) return undefined
-
-  let json
-  try {
-    json = JSON.parse(decodeURIComponent(decoder.decode(bytes)))
-  } catch (e) {
-    return undefined
-  }
-
-  const probeRpc = Array.isArray(json) ? json[0] : json
-  if (probeRpc && probeRpc.jsonrpc !== '2.0') {
-    return undefined
-  }
-
-  return json
-}
