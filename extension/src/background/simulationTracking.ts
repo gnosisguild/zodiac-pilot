@@ -1,6 +1,6 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
-import { getForkedSessions, getPilotSession } from './activePilotSessions'
-import { enableRPCDebugLogging, updateRpcRedirectRules } from './rpcRedirect'
+import { getPilotSession } from './activePilotSessions'
+import { enableRPCDebugLogging } from './rpcRedirect'
 
 export const trackSimulations = () => {
   enableRPCDebugLogging()
@@ -18,7 +18,6 @@ export const trackSimulations = () => {
         const session = getPilotSession(message.windowId)
         const fork = session.createFork({ networkId, rpcUrl })
 
-        updateRpcRedirectRules(getForkedSessions())
         console.debug(
           `start intercepting JSON RPC requests in window #${message.windowId}`,
           fork
@@ -35,8 +34,6 @@ export const trackSimulations = () => {
         const session = getPilotSession(message.windowId)
 
         session.clearFork()
-
-        updateRpcRedirectRules(getForkedSessions())
 
         console.debug(
           `stop intercepting JSON RPC requests in window #${message.windowId}`
