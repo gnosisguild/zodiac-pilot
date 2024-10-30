@@ -1,6 +1,6 @@
 import { chromeMock, mockRPCRequest, startPilotSession } from '@/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { Message, SIMULATE_START } from '../messages'
+import { beforeAll, describe, expect, it } from 'vitest'
+import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
@@ -23,7 +23,22 @@ describe('Simulation tracking', () => {
     )
   }
 
-  beforeEach(() => {
+  type StopSimulationOptions = {
+    windowId: number
+  }
+
+  const stopSimulation = ({ windowId }: StopSimulationOptions) => {
+    chromeMock.runtime.onMessage.callListeners(
+      {
+        type: SIMULATE_STOP,
+        windowId,
+      } satisfies Message,
+      { id: chrome.runtime.id },
+      () => {}
+    )
+  }
+
+  beforeAll(() => {
     trackSessions()
     trackRequests()
     trackSimulations()
@@ -60,6 +75,22 @@ describe('Simulation tracking', () => {
           ],
         })
       )
+    })
+
+    it('removes redirect rules when the simulation stops', async () => {
+      startPilotSession({ windowId: 1, tabId: 2 })
+
+      await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+
+      startSimulation({ windowId: 1 })
+      stopSimulation({ windowId: 1 })
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).toHaveBeenLastCalledWith({
+        addRules: [],
+        removeRuleIds: [2],
+      })
     })
   })
 })
