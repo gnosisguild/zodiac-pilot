@@ -23,7 +23,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (message.type === PILOT_PANEL_OPENED) {
         windowId = message.windowId
         console.log('Sidepanel opened.', windowId)
-        startPilotSession(message.windowId, message.tabId)
+        startPilotSession({ windowId: message.windowId, tabId: message.tabId })
         if (message.tabId) chrome.tabs.reload(message.tabId)
       }
     })
