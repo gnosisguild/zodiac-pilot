@@ -72,9 +72,13 @@ const makeUrlRegex = (tabId: number, networkId: number) => {
   return `^(${regex})$`
 }
 
-// debug logging for RPC intercepts
-// This API is only available in unpacked mode!
-if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+export const enableRPCDebugLogging = () => {
+  // debug logging for RPC intercepts
+  // This API is only available in unpacked mode!
+  if (chrome.declarativeNetRequest.onRuleMatchedDebug == null) {
+    return
+  }
+
   chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
     if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
       console.debug(

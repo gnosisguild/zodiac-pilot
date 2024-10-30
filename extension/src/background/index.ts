@@ -31,5 +31,3 @@ chrome.runtime.onMessageExternal.addListener(async (message, sender) => {
     })
   }
 })
-
-export {}
