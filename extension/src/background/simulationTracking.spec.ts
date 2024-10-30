@@ -1,43 +1,16 @@
-import { chromeMock, mockRPCRequest, startPilotSession } from '@/test-utils'
+import {
+  chromeMock,
+  mockRPCRequest,
+  startPilotSession,
+  startSimulation,
+  stopSimulation,
+} from '@/test-utils'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 
 describe('Simulation tracking', () => {
-  type StartSimulationOptions = {
-    windowId: number
-  }
-
-  const startSimulation = ({ windowId }: StartSimulationOptions) => {
-    chromeMock.runtime.onMessage.callListeners(
-      {
-        type: SIMULATE_START,
-        windowId,
-        networkId: 1,
-        rpcUrl: 'http://test.com',
-      } satisfies Message,
-      { id: chrome.runtime.id },
-      () => {}
-    )
-  }
-
-  type StopSimulationOptions = {
-    windowId: number
-  }
-
-  const stopSimulation = ({ windowId }: StopSimulationOptions) => {
-    chromeMock.runtime.onMessage.callListeners(
-      {
-        type: SIMULATE_STOP,
-        windowId,
-      } satisfies Message,
-      { id: chrome.runtime.id },
-      () => {}
-    )
-  }
-
   beforeAll(() => {
     trackSessions()
     trackRequests()
