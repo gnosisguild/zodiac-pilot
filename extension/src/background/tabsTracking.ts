@@ -2,7 +2,7 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
-import { getTrackedTabs, isTrackedTab } from './activePilotSessions'
+import { getTrackedTabs } from './activePilotSessions'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
@@ -29,22 +29,6 @@ export const stopTrackingTab = (
     chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
   }
 }
-
-// inject the provider script into tracked tabs whenever they start loading a new page
-chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  if (
-    isTrackedTab({ windowId: tab.windowId, tabId }) &&
-    info.status === 'loading'
-  ) {
-    // The update event can be triggered multiple times for the same page load,
-    // so the executed content scripts must handle the case that it has already been injected before.
-    chrome.scripting.executeScript({
-      target: { tabId, allFrames: true },
-      files: ['build/inject/contentScript.js'],
-      injectImmediately: true,
-    })
-  }
-})
 
 // Disable CSPs for extension tabs. This is necessary to enable declarativeNetRequest REDIRECT rules for RPC interception.
 // (Unfortunately, redirect targets are subject to the page's CSPs.)

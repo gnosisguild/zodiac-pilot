@@ -3,6 +3,7 @@ import {
   createPilotSession,
   getForkedSessions,
   getPilotSession,
+  isTrackedTab,
   withPilotSession,
 } from './activePilotSessions'
 import { updateRpcRedirectRules } from './rpcRedirect'
@@ -106,4 +107,20 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
 
     rpcUrlsPerTab.delete(tabId)
   })
+})
+
+// inject the provider script into tracked tabs whenever they start loading a new page
+chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
+  if (
+    isTrackedTab({ windowId: tab.windowId, tabId }) &&
+    info.status === 'loading'
+  ) {
+    // The update event can be triggered multiple times for the same page load,
+    // so the executed content scripts must handle the case that it has already been injected before.
+    chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: ['build/inject/contentScript.js'],
+      injectImmediately: true,
+    })
+  }
 })

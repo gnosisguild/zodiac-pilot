@@ -19,5 +19,6 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.mts', './setup-chrome-mock.ts'],
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
+    mockReset: true,
   },
 })
