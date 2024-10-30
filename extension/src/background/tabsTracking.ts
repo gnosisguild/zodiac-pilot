@@ -2,19 +2,10 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
-import {
-  getPilotSession,
-  getTrackedTabs,
-  isTrackedTab,
-  withPilotSession,
-} from './activePilotSessions'
+import { getTrackedTabs, isTrackedTab } from './activePilotSessions'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
-  const session = getPilotSession(windowId)
-
-  session.trackTab(tabId)
-
   updateHeadersRule()
   updateSimulatingBadge(windowId)
 
@@ -28,8 +19,6 @@ export const stopTrackingTab = (
   closed?: boolean
 ) => {
   console.log('stop tracking tab', tabId, windowId)
-
-  withPilotSession(windowId, ({ untrackTab }) => untrackTab(tabId))
 
   updateHeadersRule()
   updateSimulatingBadge(windowId)

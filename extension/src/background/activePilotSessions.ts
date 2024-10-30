@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import { Fork, ForkedSession, PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
@@ -27,6 +28,16 @@ export const withPilotSession = (windowId: number, callback: CallbackFn) => {
 }
 
 export const getPilotSession = (windowId: number): ActionablePilotSession => {
+  const session = activePilotSessions.get(windowId)
+
+  invariant(session != null, `No session found for windowId "${windowId}"`)
+
+  return makeActionable(session)
+}
+
+export const getOrCreatePilotSession = (
+  windowId: number
+): ActionablePilotSession => {
   let session = activePilotSessions.get(windowId)
 
   if (session == null) {
@@ -81,7 +92,9 @@ export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
   return session.tabs.has(tabId)
 }
 
-const createPilotSession = (windowId: number): PilotSession => {
+export const createPilotSession = (
+  windowId: number
+): ActionablePilotSession => {
   const session = {
     id: windowId,
     fork: null,
@@ -90,7 +103,7 @@ const createPilotSession = (windowId: number): PilotSession => {
 
   activePilotSessions.set(windowId, session)
 
-  return session
+  return makeActionable(session)
 }
 
 export const hasFork = (windowId: number) => {
@@ -108,3 +121,5 @@ export const getForkedSessions = (): ForkedSession[] =>
 
 const isForkedSession = (session: PilotSession): session is ForkedSession =>
   session.fork != null
+
+export const clearAllSessions = () => activePilotSessions.clear()

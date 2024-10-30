@@ -1,5 +1,6 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import {
+  createPilotSession,
   getForkedSessions,
   getPilotSession,
   withPilotSession,
@@ -9,12 +10,24 @@ import { rpcUrlsPerTab } from './rpcTracking'
 import { startTrackingTab, stopTrackingTab } from './tabsTracking'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
-export const startPilotSession = (windowId: number, tabId?: number) => {
+type StartPilotSessionOptions = {
+  windowId: number
+  tabId?: number
+}
+
+export const startPilotSession = ({
+  windowId,
+  tabId,
+}: StartPilotSessionOptions) => {
   console.log('start pilot session', { windowId })
+
+  const session = createPilotSession(windowId)
 
   if (tabId == null) {
     return
   }
+
+  session.trackTab(tabId)
 
   startTrackingTab(tabId, windowId)
 }
@@ -70,20 +83,24 @@ chrome.runtime.onMessage.addListener((message: Message, sender) => {
 })
 
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  withPilotSession(windowId, ({ isTracked }) => {
+  withPilotSession(windowId, ({ isTracked, trackTab }) => {
     if (isTracked(tabId)) {
       return
     }
+
+    trackTab(tabId)
 
     startTrackingTab(tabId, windowId)
   })
 })
 
 chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
-  withPilotSession(windowId, ({ isTracked }) => {
+  withPilotSession(windowId, ({ isTracked, untrackTab }) => {
     if (!isTracked(tabId)) {
       return
     }
+
+    untrackTab(tabId)
 
     stopTrackingTab(tabId, windowId, true)
 
