@@ -1,13 +1,16 @@
 import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
+  beforeAll(() => {
+    trackSessions()
+  })
+
   beforeEach(() => {
     clearAllSessions()
-    trackSessions()
   })
 
   describe('Start session', () => {
