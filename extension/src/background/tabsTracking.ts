@@ -2,16 +2,19 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
-import { activePilotSessions } from './activePilotSessions'
-import { rpcUrlsPerTab } from './rpcTracking'
+import {
+  getPilotSession,
+  getTrackedTabs,
+  isTrackedTab,
+  withPilotSession,
+} from './activePilotSessions'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
-  const activeSession = activePilotSessions.get(windowId)
-  if (!activeSession) {
-    throw new Error(`no active session found for window ${windowId}`)
-  }
-  activeSession.tabs.add(tabId)
+  const session = getPilotSession(windowId)
+
+  session.trackTab(tabId)
+
   updateHeadersRule()
   updateSimulatingBadge(windowId)
 
@@ -25,8 +28,9 @@ export const stopTrackingTab = (
   closed?: boolean
 ) => {
   console.log('stop tracking tab', tabId, windowId)
-  const activeSession = activePilotSessions.get(windowId)
-  if (activeSession) activeSession.tabs.delete(tabId)
+
+  withPilotSession(windowId, ({ untrackTab }) => untrackTab(tabId))
+
   updateHeadersRule()
   updateSimulatingBadge(windowId)
   console.log('Pilot: stopped tracking tab', tabId, windowId)
@@ -37,29 +41,12 @@ export const stopTrackingTab = (
   }
 }
 
-chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  const activePilotSession = activePilotSessions.get(windowId)
-
-  if (activePilotSession && !activePilotSession.tabs.has(tabId)) {
-    startTrackingTab(tabId, windowId)
-  }
-})
-
-chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
-  const activePilotSession = activePilotSessions.get(windowId)
-
-  if (activePilotSession && activePilotSession.tabs.has(tabId)) {
-    stopTrackingTab(tabId, windowId, true)
-    rpcUrlsPerTab.delete(tabId)
-  }
-})
-
 // inject the provider script into tracked tabs whenever they start loading a new page
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  const activePilotSession = activePilotSessions.get(tab.windowId)
-  const isTrackedTab = activePilotSession && activePilotSession.tabs.has(tabId)
-
-  if (isTrackedTab && info.status === 'loading') {
+  if (
+    isTrackedTab({ windowId: tab.windowId, tabId }) &&
+    info.status === 'loading'
+  ) {
     // The update event can be triggered multiple times for the same page load,
     // so the executed content scripts must handle the case that it has already been injected before.
     chrome.scripting.executeScript({
@@ -77,9 +64,7 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
 export const REMOVE_CSP_RULE_ID = 1
 
 const updateHeadersRule = () => {
-  const activeExtensionTabs = Array.from(activePilotSessions.values()).flatMap(
-    (session) => Array.from(session.tabs)
-  )
+  const activeExtensionTabs = getTrackedTabs()
 
   // TODO removing the CSP headers alone is not enough as it does not handle apps setting CSPs via <meta http-equiv> tags in the HTML (such as Uniswap, for example)
   // see: https://github.com/w3c/webextensions/issues/169#issuecomment-1689812644

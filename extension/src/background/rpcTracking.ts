@@ -1,5 +1,5 @@
 import { PROBE_CHAIN_ID } from '../messages'
-import { activePilotSessions } from './activePilotSessions'
+import { isTrackedTab } from './activePilotSessions'
 
 // Keep track of the network IDs for all JSON RPC endpoints used from apps
 export const networkIdOfRpcUrl = new Map<string, number | undefined>()
@@ -30,9 +30,7 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
 
 chrome.webRequest.onBeforeRequest.addListener(
   (details: chrome.webRequest.WebRequestBodyDetails) => {
-    const hasActiveSession = Array.from(activePilotSessions.values()).some(
-      (session) => session.tabs.has(details.tabId)
-    )
+    const hasActiveSession = isTrackedTab({ tabId: details.tabId })
 
     // only handle requests in tracked tabs
     if (!hasActiveSession) return

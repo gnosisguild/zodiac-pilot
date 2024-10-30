@@ -1,6 +1,6 @@
 import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
 import { REMOVE_CSP_RULE_ID } from './tabsTracking'
-import { PilotSession } from './types'
+import { ForkedSession } from './types'
 
 // debug logging for RPC intercepts
 // This API is only available in unpacked mode!
@@ -21,11 +21,8 @@ let currentRuleIds: number[] = []
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
-export const updateRpcRedirectRules = async (
-  activePilotSessions: Map<number, PilotSession>
-) => {
-  const addRules = [...activePilotSessions.values()]
-    .filter((session) => session.fork)
+export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
+  const addRules = sessions
     .flatMap((session) =>
       Array.from(session.tabs).map((tabId) => ({
         tabId,
