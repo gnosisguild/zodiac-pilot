@@ -135,7 +135,7 @@ describe('Session tracking', () => {
     })
   })
 
-  describe('CSPs', () => {
+  describe('CSP rules', () => {
     describe('Start session', () => {
       it('removes CSP headers', () => {
         startPilotSession({ windowId: 1, tabId: 1 })
@@ -185,7 +185,6 @@ describe('Session tracking', () => {
                     chromeMock.declarativeNetRequest.ResourceType.MAIN_FRAME,
                     chromeMock.declarativeNetRequest.ResourceType.SUB_FRAME,
                   ],
-                  // tabIds: [1],
                 }),
               }),
             ],
@@ -222,8 +221,58 @@ describe('Session tracking', () => {
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
         ).toHaveBeenCalledWith(
-          expect.objectContaining({
+          {
             removeRuleIds: [1],
+          },
+          expect.anything()
+        )
+      })
+    })
+
+    describe('Tab opened', () => {
+      it('updates the rules to include the new tab', () => {
+        startPilotSession({ windowId: 1 })
+
+        chromeMock.tabs.onActivated.callListeners({ tabId: 1, windowId: 1 })
+
+        expect(
+          chromeMock.declarativeNetRequest.updateSessionRules
+        ).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            addRules: [
+              expect.objectContaining({
+                condition: expect.objectContaining({
+                  tabIds: [1],
+                }),
+              }),
+            ],
+          }),
+          expect.anything()
+        )
+      })
+    })
+
+    describe('Tab closed', () => {
+      it('updates the rules and removes the closed tab', () => {
+        startPilotSession({ windowId: 1, tabId: 2 })
+
+        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
+        chromeMock.tabs.onRemoved.callListeners(2, {
+          windowId: 1,
+          isWindowClosing: false,
+        })
+
+        expect(
+          chromeMock.declarativeNetRequest.updateSessionRules
+        ).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            addRules: [
+              expect.objectContaining({
+                condition: expect.objectContaining({
+                  tabIds: [1],
+                }),
+              }),
+            ],
           }),
           expect.anything()
         )
