@@ -1,12 +1,10 @@
-import { reloadActiveTab } from '@/utils'
+import { reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../messages'
 import {
-  getForkedSessions,
   getOrCreatePilotSession,
   withPilotSession,
 } from './activePilotSessions'
-import { updateRpcRedirectRules } from './rpcRedirect'
 
 export const trackSessions = () => {
   // all messages from the panel app are received here
@@ -29,7 +27,7 @@ export const trackSessions = () => {
         })
 
         if (message.tabId) {
-          chrome.tabs.reload(message.tabId)
+          reloadTab(message.tabId)
         }
       }
     })
@@ -106,7 +104,4 @@ const stopPilotSession = (windowId: number) => {
   console.log('stop pilot session', { windowId })
 
   withPilotSession(windowId, (session) => session.delete())
-
-  // make sure all rpc redirects are cleared
-  updateRpcRedirectRules(getForkedSessions())
 }

@@ -1,3 +1,5 @@
+import { reloadTab } from './reloadTab'
+
 export const reloadActiveTab = (windowId: number) => {
   chrome.tabs.query({ windowId, active: true }, (tabs) => {
     const [activeTab] = tabs
@@ -7,7 +9,7 @@ export const reloadActiveTab = (windowId: number) => {
     }
 
     if (activeTab.id != null) {
-      chrome.tabs.reload(activeTab.id)
+      reloadTab(activeTab.id)
     }
   })
 }
