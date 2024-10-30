@@ -54,6 +54,10 @@ chrome.webRequest.onBeforeRequest.addListener(
   ['requestBody']
 )
 
+chrome.tabs.onRemoved.addListener((tabId) => {
+  rpcUrlsPerTab.delete(tabId)
+})
+
 const decoder = new TextDecoder('utf-8')
 const getJsonRpcBody = (details: chrome.webRequest.WebRequestBodyDetails) => {
   const bytes = details.requestBody?.raw?.[0]?.bytes

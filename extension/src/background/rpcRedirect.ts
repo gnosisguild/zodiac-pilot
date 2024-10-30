@@ -9,14 +9,14 @@ let currentRuleIds: number[] = []
  */
 export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
   const addRules = sessions
-    .flatMap((session) =>
-      Array.from(session.tabs).map((tabId) => ({
+    .flatMap(({ tabs, fork }) =>
+      Array.from(tabs).map((tabId) => ({
         tabId,
-        redirectUrl: session.fork!.rpcUrl,
-        regexFilter: makeUrlRegex(tabId, session.fork!.networkId),
+        redirectUrl: fork.rpcUrl,
+        regexFilter: makeUrlRegex(tabId, fork.networkId),
       }))
     )
-    .filter(({ regexFilter }) => !!regexFilter)
+    .filter(({ regexFilter }) => regexFilter != null)
     .map(({ tabId, redirectUrl, regexFilter }) => {
       return {
         id: tabId,

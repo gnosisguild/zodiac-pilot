@@ -6,7 +6,6 @@ import {
   withPilotSession,
 } from './activePilotSessions'
 import { updateRpcRedirectRules } from './rpcRedirect'
-import { rpcUrlsPerTab } from './rpcTracking'
 import { startTrackingTab } from './tabsTracking'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
@@ -95,8 +94,6 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
     }
 
     session.untrackTab(tabId)
-
-    rpcUrlsPerTab.delete(tabId)
   })
 })
 
