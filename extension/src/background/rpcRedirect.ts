@@ -1,39 +1,22 @@
+import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
-import { REMOVE_CSP_RULE_ID } from './tabsTracking'
-import { PilotSession } from './types'
-
-// debug logging for RPC intercepts
-// This API is only available in unpacked mode!
-if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
-  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
-      console.debug(
-        'rule matched on request',
-        details.request.url,
-        details.rule.ruleId
-      )
-    }
-  })
-}
+import { ForkedSession } from './types'
 
 let currentRuleIds: number[] = []
 
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
-export const updateRpcRedirectRules = async (
-  activePilotSessions: Map<number, PilotSession>
-) => {
-  const addRules = [...activePilotSessions.values()]
-    .filter((session) => session.fork)
-    .flatMap((session) =>
-      Array.from(session.tabs).map((tabId) => ({
+export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
+  const addRules = sessions
+    .flatMap(({ tabs, fork }) =>
+      Array.from(tabs).map((tabId) => ({
         tabId,
-        redirectUrl: session.fork!.rpcUrl,
-        regexFilter: makeUrlRegex(tabId, session.fork!.networkId),
+        redirectUrl: fork.rpcUrl,
+        regexFilter: makeUrlRegex(tabId, fork.networkId),
       }))
     )
-    .filter(({ regexFilter }) => !!regexFilter)
+    .filter(({ regexFilter }) => regexFilter != null)
     .map(({ tabId, redirectUrl, regexFilter }) => {
       return {
         id: tabId,
@@ -94,4 +77,18 @@ const makeUrlRegex = (tabId: number, networkId: number) => {
   }
 
   return regex
+}
+
+// debug logging for RPC intercepts
+// This API is only available in unpacked mode!
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
+      console.debug(
+        'rule matched on request',
+        details.request.url,
+        details.rule.ruleId
+      )
+    }
+  })
 }

@@ -1,9 +1,3 @@
-import { vi } from 'vitest'
-import { chrome } from 'vitest-chrome'
+import { chrome as chromeMock } from 'vitest-chrome'
 
-Object.assign(chrome.storage.sync, {
-  ...chrome.storage.sync,
-  onChanged: { addListener: vi.fn() },
-})
-
-Object.assign(global, { chrome })
+Object.assign(global, { chrome: chromeMock })
