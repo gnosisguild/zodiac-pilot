@@ -1,4 +1,3 @@
-import { invariant } from '@epic-web/invariant'
 import { Fork, ForkedSession, PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
@@ -28,12 +27,11 @@ export const withPilotSession = (windowId: number, callback: CallbackFn) => {
 }
 
 export const getPilotSession = (windowId: number): ActionablePilotSession => {
-  const session = activePilotSessions.get(windowId)
+  let session = activePilotSessions.get(windowId)
 
-  invariant(
-    session != null,
-    `No active pilot session found for windowId "${windowId}"`
-  )
+  if (session == null) {
+    session = createPilotSession(windowId)
+  }
 
   return makeActionable(session)
 }
@@ -83,16 +81,16 @@ export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
   return session.tabs.has(tabId)
 }
 
-export const createPilotSession = (
-  windowId: number
-): ActionablePilotSession => {
-  activePilotSessions.set(windowId, {
+const createPilotSession = (windowId: number): PilotSession => {
+  const session = {
     id: windowId,
     fork: null,
     tabs: new Set<number>(),
-  })
+  }
 
-  return getPilotSession(windowId)
+  activePilotSessions.set(windowId, session)
+
+  return session
 }
 
 export const hasFork = (windowId: number) => {

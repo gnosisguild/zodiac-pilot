@@ -1,6 +1,5 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import {
-  createPilotSession,
   getForkedSessions,
   getPilotSession,
   withPilotSession,
@@ -13,13 +12,9 @@ import { updateSimulatingBadge } from './updateSimulationBadge'
 export const startPilotSession = (windowId: number, tabId?: number) => {
   console.log('start pilot session', { windowId })
 
-  const session = createPilotSession(windowId)
-
   if (tabId == null) {
     return
   }
-
-  session.trackTab(tabId)
 
   startTrackingTab(tabId, windowId)
 }
