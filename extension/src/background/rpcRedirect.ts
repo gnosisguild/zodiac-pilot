@@ -1,6 +1,6 @@
+import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
 import { ForkedSession } from './types'
-import { REMOVE_CSP_RULE_ID } from './updateHeaderRules'
 
 let currentRuleIds: number[] = []
 
