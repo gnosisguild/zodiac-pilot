@@ -2,11 +2,9 @@
 // This rule removes some headers so foreign pages can be loaded in iframes.
 
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
-import { getTrackedTabs } from './activePilotSessions'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const startTrackingTab = (tabId: number, windowId: number) => {
-  updateHeadersRule()
   updateSimulatingBadge(windowId)
 
   console.log('Pilot: started tracking tab', tabId, windowId)
@@ -20,7 +18,6 @@ export const stopTrackingTab = (
 ) => {
   console.log('stop tracking tab', tabId, windowId)
 
-  updateHeadersRule()
   updateSimulatingBadge(windowId)
   console.log('Pilot: stopped tracking tab', tabId, windowId)
 
@@ -28,67 +25,4 @@ export const stopTrackingTab = (
   if (!closed) {
     chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
   }
-}
-
-// Disable CSPs for extension tabs. This is necessary to enable declarativeNetRequest REDIRECT rules for RPC interception.
-// (Unfortunately, redirect targets are subject to the page's CSPs.)
-// So we keep declarativeNetRequest rule in sync wth activeExtensionTabs.
-// This rule removes CSP headers for extension tabs and must be kept in sync with activeExtensionTabs.
-export const REMOVE_CSP_RULE_ID = 1
-
-const updateHeadersRule = () => {
-  const activeExtensionTabs = getTrackedTabs()
-
-  // TODO removing the CSP headers alone is not enough as it does not handle apps setting CSPs via <meta http-equiv> tags in the HTML (such as Uniswap, for example)
-  // see: https://github.com/w3c/webextensions/issues/169#issuecomment-1689812644
-  // A potential solution could be a service worker rewriting the HTML content in the doc request to filter out these tags?
-  chrome.declarativeNetRequest.updateSessionRules(
-    {
-      addRules:
-        activeExtensionTabs.length > 0
-          ? [
-              {
-                id: REMOVE_CSP_RULE_ID,
-                priority: 1,
-                action: {
-                  type: chrome.declarativeNetRequest.RuleActionType
-                    .MODIFY_HEADERS,
-                  responseHeaders: [
-                    // {
-                    //   header: 'x-frame-options',
-                    //   operation:
-                    //     chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    // },
-                    {
-                      header: 'content-security-policy',
-                      operation:
-                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    },
-                    {
-                      header: 'content-security-policy-report-only',
-                      operation:
-                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
-                    },
-                  ],
-                },
-                condition: {
-                  resourceTypes: [
-                    chrome.declarativeNetRequest.ResourceType.MAIN_FRAME,
-                    chrome.declarativeNetRequest.ResourceType.SUB_FRAME,
-                  ],
-                  tabIds: Array.from(activeExtensionTabs),
-                },
-              },
-            ]
-          : [],
-      removeRuleIds: [REMOVE_CSP_RULE_ID],
-    },
-    () => {
-      if (chrome.runtime.lastError) {
-        console.error('Headers rule update failed', chrome.runtime.lastError)
-      } else {
-        console.debug('Headers rule update successful', activeExtensionTabs)
-      }
-    }
-  )
 }

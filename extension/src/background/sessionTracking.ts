@@ -3,12 +3,13 @@ import {
   createPilotSession,
   getForkedSessions,
   getPilotSession,
-  isTrackedTab,
   withPilotSession,
 } from './activePilotSessions'
+import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { updateRpcRedirectRules } from './rpcRedirect'
 import { rpcUrlsPerTab } from './rpcTracking'
 import { startTrackingTab, stopTrackingTab } from './tabsTracking'
+
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 type StartPilotSessionOptions = {
@@ -30,6 +31,8 @@ export const startPilotSession = ({
 
   session.trackTab(tabId)
 
+  updateCSPHeaderRule(session.tabs)
+
   startTrackingTab(tabId, windowId)
 }
 
@@ -43,6 +46,8 @@ export const stopPilotSession = (windowId: number) => {
 
     session.delete()
   })
+
+  removeCSPHeaderRule()
 
   // make sure all rpc redirects are cleared
   updateRpcRedirectRules(getForkedSessions())
@@ -84,25 +89,27 @@ chrome.runtime.onMessage.addListener((message: Message, sender) => {
 })
 
 chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-  withPilotSession(windowId, ({ isTracked, trackTab }) => {
-    if (isTracked(tabId)) {
+  withPilotSession(windowId, (session) => {
+    if (session.isTracked(tabId)) {
       return
     }
 
-    trackTab(tabId)
+    session.trackTab(tabId)
 
+    updateCSPHeaderRule(session.tabs)
     startTrackingTab(tabId, windowId)
   })
 })
 
 chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
-  withPilotSession(windowId, ({ isTracked, untrackTab }) => {
-    if (!isTracked(tabId)) {
+  withPilotSession(windowId, (session) => {
+    if (!session.isTracked(tabId)) {
       return
     }
 
-    untrackTab(tabId)
+    session.untrackTab(tabId)
 
+    updateCSPHeaderRule(session.tabs)
     stopTrackingTab(tabId, windowId, true)
 
     rpcUrlsPerTab.delete(tabId)
@@ -111,10 +118,11 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
 
 // inject the provider script into tracked tabs whenever they start loading a new page
 chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-  if (
-    isTrackedTab({ windowId: tab.windowId, tabId }) &&
-    info.status === 'loading'
-  ) {
+  withPilotSession(tab.windowId, (session) => {
+    if (!session.isTracked(tabId) || info.status !== 'loading') {
+      return
+    }
+
     // The update event can be triggered multiple times for the same page load,
     // so the executed content scripts must handle the case that it has already been injected before.
     chrome.scripting.executeScript({
@@ -122,5 +130,5 @@ chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
       files: ['build/inject/contentScript.js'],
       injectImmediately: true,
     })
-  }
+  })
 })

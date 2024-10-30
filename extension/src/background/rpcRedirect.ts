@@ -1,20 +1,6 @@
 import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
-import { REMOVE_CSP_RULE_ID } from './tabsTracking'
 import { ForkedSession } from './types'
-
-// debug logging for RPC intercepts
-// This API is only available in unpacked mode!
-if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
-  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
-      console.debug(
-        'rule matched on request',
-        details.request.url,
-        details.rule.ruleId
-      )
-    }
-  })
-}
+import { REMOVE_CSP_RULE_ID } from './updateHeaderRules'
 
 let currentRuleIds: number[] = []
 
@@ -91,4 +77,18 @@ const makeUrlRegex = (tabId: number, networkId: number) => {
   }
 
   return regex
+}
+
+// debug logging for RPC intercepts
+// This API is only available in unpacked mode!
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
+    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
+      console.debug(
+        'rule matched on request',
+        details.request.url,
+        details.rule.ruleId
+      )
+    }
+  })
 }

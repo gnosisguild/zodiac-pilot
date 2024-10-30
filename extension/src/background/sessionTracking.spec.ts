@@ -26,6 +26,98 @@ describe('Session tracking', () => {
         tabs: new Set([2]),
       })
     })
+
+    describe('CSPs', () => {
+      it('removes CSP headers', () => {
+        startPilotSession({ windowId: 1, tabId: 1 })
+
+        expect(
+          chromeMock.declarativeNetRequest.updateSessionRules
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            addRules: [
+              expect.objectContaining({
+                id: 1,
+                priority: 1,
+                action: {
+                  type: chromeMock.declarativeNetRequest.RuleActionType
+                    .MODIFY_HEADERS,
+                  responseHeaders: [
+                    {
+                      header: 'content-security-policy',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                    {
+                      header: 'content-security-policy-report-only',
+                      operation:
+                        chrome.declarativeNetRequest.HeaderOperation.REMOVE,
+                    },
+                  ],
+                },
+              }),
+            ],
+          }),
+          expect.anything()
+        )
+      })
+
+      it('removes CSP from the main frame and any sub frame', () => {
+        startPilotSession({ windowId: 1, tabId: 1 })
+
+        expect(
+          chromeMock.declarativeNetRequest.updateSessionRules
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            addRules: [
+              expect.objectContaining({
+                condition: expect.objectContaining({
+                  resourceTypes: [
+                    chromeMock.declarativeNetRequest.ResourceType.MAIN_FRAME,
+                    chromeMock.declarativeNetRequest.ResourceType.SUB_FRAME,
+                  ],
+                  // tabIds: [1],
+                }),
+              }),
+            ],
+          }),
+          expect.anything()
+        )
+      })
+
+      it('removes CSP headers only from tracked tabs', () => {
+        startPilotSession({ windowId: 1, tabId: 1 })
+
+        expect(
+          chromeMock.declarativeNetRequest.updateSessionRules
+        ).toHaveBeenCalledWith(
+          expect.objectContaining({
+            addRules: [
+              expect.objectContaining({
+                condition: expect.objectContaining({
+                  tabIds: [1],
+                }),
+              }),
+            ],
+          }),
+          expect.anything()
+        )
+      })
+    })
+
+    it('always removes the previous rules', () => {
+      startPilotSession({ windowId: 1 })
+      stopPilotSession(1)
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          removeRuleIds: [1],
+        }),
+        expect.anything()
+      )
+    })
   })
 
   describe('Stop session', () => {

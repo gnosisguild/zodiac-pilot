@@ -5,6 +5,18 @@ type ChromeMock = typeof vitestChrome & {
   scripting: {
     executeScript: MockedFunction<(typeof chrome.scripting)['executeScript']>
   }
+
+  declarativeNetRequest: Pick<
+    typeof chrome.declarativeNetRequest,
+    'RuleActionType' | 'HeaderOperation' | 'ResourceType'
+  > & {
+    updateSessionRules: MockedFunction<
+      (typeof chrome.declarativeNetRequest)['updateSessionRules']
+    >
+    getSessionRules: MockedFunction<
+      (typeof chrome.declarativeNetRequest)['getSessionRules']
+    >
+  }
 }
 
 Object.assign(vitestChrome.storage.sync, {
