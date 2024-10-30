@@ -1,4 +1,5 @@
 export { chromeMock } from './chromeMock'
+export { createMockPort } from './createMockPort'
 export { createMockTab } from './createMockTab'
 export { mockActiveTab } from './mockActiveTab'
 export { mockRoute } from './mockRoute'

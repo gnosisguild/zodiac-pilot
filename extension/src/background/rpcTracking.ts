@@ -8,7 +8,7 @@ const networkIdOfRpcUrlPromise = new Map<string, Promise<number | undefined>>()
 
 const rpcUrlsPerTab = new Map<number, Set<string>>()
 
-const trackRequests = ({
+const trackRequest = ({
   tabId,
   url,
   method,
@@ -41,9 +41,9 @@ const trackRequests = ({
   detectNetworkOfRpcUrl(url, tabId)
 }
 
-export const startTrackingRequests = () => {
+export const trackRequests = () => {
   chrome.webRequest.onBeforeRequest.addListener(
-    trackRequests,
+    trackRequest,
     {
       urls: ['<all_urls>'],
       types: ['xmlhttprequest'],
