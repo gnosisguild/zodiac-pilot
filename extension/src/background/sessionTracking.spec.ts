@@ -1,11 +1,14 @@
-import { chromeMock, createMockTab } from '@/test-utils'
+import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
-import { startPilotSession, stopPilotSession } from './sessionTracking'
+import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
-  beforeEach(clearAllSessions)
+  beforeEach(() => {
+    clearAllSessions()
+    trackSessions()
+  })
 
   describe('Start session', () => {
     it('tracks a new session for a given window', () => {
@@ -39,17 +42,20 @@ describe('Session tracking', () => {
 
   describe('Stop session', () => {
     it('removes the session', () => {
-      startPilotSession({ windowId: 1 })
-      stopPilotSession(1)
+      const { stopPilotSession } = startPilotSession({ windowId: 1 })
+      stopPilotSession()
 
       expect(() => getPilotSession(1)).toThrow()
     })
 
     it('sends a disconnect message to all connected tabs', () => {
-      startPilotSession({ windowId: 1, tabId: 1 })
-      startPilotSession({ windowId: 1, tabId: 2 })
+      const { stopPilotSession, startAnotherSession } = startPilotSession({
+        windowId: 1,
+        tabId: 1,
+      })
+      startAnotherSession({ tabId: 2 })
 
-      stopPilotSession(1)
+      stopPilotSession()
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
         type: PILOT_DISCONNECT,
@@ -261,8 +267,8 @@ describe('Session tracking', () => {
 
     describe('Stop session', () => {
       it('always removes the previous rules', () => {
-        startPilotSession({ windowId: 1 })
-        stopPilotSession(1)
+        const { stopPilotSession } = startPilotSession({ windowId: 1 })
+        stopPilotSession()
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules

@@ -1,8 +1,14 @@
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
-import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
+import { getRPCUrls } from './rpcTracking'
 import { ForkedSession } from './types'
 
 let currentRuleIds: number[] = []
+
+export const removeAllRpcRedirectRules = async () => {
+  await chrome.declarativeNetRequest.updateSessionRules({
+    removeRuleIds: currentRuleIds,
+  })
+}
 
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
@@ -17,23 +23,21 @@ export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
       }))
     )
     .filter(({ regexFilter }) => regexFilter != null)
-    .map(({ tabId, redirectUrl, regexFilter }) => {
-      return {
-        id: tabId,
-        priority: 1,
-        action: {
-          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-          redirect: { url: redirectUrl },
-        },
-        condition: {
-          resourceTypes: [
-            chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-          ],
-          regexFilter: regexFilter!,
-          tabIds: [tabId],
-        },
-      } satisfies chrome.declarativeNetRequest.Rule
-    })
+    .map(({ tabId, redirectUrl, regexFilter }) => ({
+      id: tabId,
+      priority: 1,
+      action: {
+        type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+        redirect: { url: redirectUrl },
+      },
+      condition: {
+        resourceTypes: [
+          chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+        ],
+        regexFilter: regexFilter!,
+        tabIds: [tabId],
+      },
+    }))
 
   const previousRuleIds = currentRuleIds
   currentRuleIds = addRules.map((rule) => rule.id)
@@ -52,23 +56,18 @@ export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
  * Concatenates all RPC urls for the given tab & network into a regular expression matching any of them.
  */
 const makeUrlRegex = (tabId: number, networkId: number) => {
-  const rpcUrls = Array.from(rpcUrlsPerTab.get(tabId) ?? []).filter(
-    (url) => networkIdOfRpcUrl.get(url) === networkId
-  )
+  const rpcUrls = getRPCUrls({ tabId, networkId })
 
   if (rpcUrls.length === 0) {
     return null
   }
 
-  const regex =
-    '^(' +
-    rpcUrls
-      // Escape special characters
-      .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
-      // Sort for maximal munch
-      .sort((a, b) => b.length - a.length)
-      .join('|') +
-    ')$'
+  const regex = rpcUrls
+    // Escape special characters
+    .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
+    // Sort for maximal munch
+    .sort((a, b) => b.length - a.length)
+    .join('|')
 
   if (regex.length > 1500) {
     console.warn(
@@ -76,12 +75,16 @@ const makeUrlRegex = (tabId: number, networkId: number) => {
     )
   }
 
-  return regex
+  return `^(${regex})$`
 }
 
-// debug logging for RPC intercepts
-// This API is only available in unpacked mode!
-if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+export const enableRPCDebugLogging = () => {
+  // debug logging for RPC intercepts
+  // This API is only available in unpacked mode!
+  if (chrome.declarativeNetRequest.onRuleMatchedDebug == null) {
+    return
+  }
+
   chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
     if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
       console.debug(

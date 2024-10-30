@@ -1,11 +1,11 @@
-import { Message, PILOT_DISCONNECT } from '../messages'
+import { Message, PILOT_DISCONNECT, PROBE_CHAIN_ID } from '../messages'
 import {
   INJECTED_PROVIDER_EVENT,
   INJECTED_PROVIDER_REQUEST,
   InjectedProviderMessage,
   InjectedProviderResponse,
 } from './messages'
-import './probeChainId'
+import { probeChainId } from './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.
 // That's why we need to check if the script has already been injected before injecting it again.
@@ -70,33 +70,48 @@ if (
 
   // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
   chrome.runtime.onMessage.addListener(
-    (message: InjectedProviderMessage | Message, sender) => {
-      if (sender.id !== chrome.runtime.id) return
-
-      // when the panel is closed, we trigger an EIP1193 'disconnect' event
-      if (message.type === PILOT_DISCONNECT) {
-        console.debug('Pilot disconnected')
-        window.postMessage(
-          {
-            type: INJECTED_PROVIDER_EVENT,
-            eventName: 'disconnect',
-            eventData: {
-              error: {
-                message: 'Zodiac Pilot disconnected',
-                code: 4900,
-              },
-            },
-          } as InjectedProviderMessage,
-          '*'
-        )
+    (message: InjectedProviderMessage | Message, sender, respond) => {
+      if (sender.id !== chrome.runtime.id) {
+        return
       }
 
-      if (message.type === INJECTED_PROVIDER_EVENT) {
-        console.debug(
-          `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
-          message.eventData
-        )
-        window.postMessage(message, '*')
+      switch (message.type) {
+        // when the panel is closed, we trigger an EIP1193 'disconnect' event
+        case PILOT_DISCONNECT: {
+          console.debug('Pilot disconnected')
+          window.postMessage(
+            {
+              type: INJECTED_PROVIDER_EVENT,
+              eventName: 'disconnect',
+              eventData: {
+                error: {
+                  message: 'Zodiac Pilot disconnected',
+                  code: 4900,
+                },
+              },
+            } as InjectedProviderMessage,
+            '*'
+          )
+
+          break
+        }
+
+        case INJECTED_PROVIDER_EVENT: {
+          console.debug(
+            `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
+            message.eventData
+          )
+          window.postMessage(message, '*')
+
+          break
+        }
+
+        case PROBE_CHAIN_ID: {
+          probeChainId(message.url).then(respond)
+
+          // without this the response won't be sent
+          return true
+        }
       }
     }
   )
