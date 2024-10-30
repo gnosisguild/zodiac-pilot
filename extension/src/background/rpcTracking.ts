@@ -28,6 +28,7 @@ const trackRequest = ({
   if (method !== 'POST') {
     return
   }
+
   // ignore requests to fork RPCs
   if (url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
     return

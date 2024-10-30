@@ -1,48 +1,10 @@
-import { chromeMock, createMockPort, createMockTab } from '@/test-utils'
+import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
-import {
-  Message,
-  PILOT_CONNECT,
-  PILOT_DISCONNECT,
-  PILOT_PANEL_OPENED,
-  PILOT_PANEL_PORT,
-} from '../messages'
+import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
-  type StartSessionOptions = {
-    windowId: number
-    tabId?: number
-  }
-
-  type AnotherSessionStartOptions = {
-    tabId: number
-  }
-
-  const startPilotSession = ({ windowId, tabId }: StartSessionOptions) => {
-    const port = createMockPort({ name: PILOT_PANEL_PORT })
-
-    chromeMock.runtime.onConnect.callListeners(port)
-
-    port.onMessage.callListeners(
-      { type: PILOT_PANEL_OPENED, windowId, tabId } satisfies Message,
-      port
-    )
-
-    return {
-      stopPilotSession: () => {
-        port.onDisconnect.callListeners(port)
-      },
-      startAnotherSession: ({ tabId }: AnotherSessionStartOptions) => {
-        port.onMessage.callListeners(
-          { type: PILOT_PANEL_OPENED, windowId, tabId } satisfies Message,
-          port
-        )
-      },
-    }
-  }
-
   beforeEach(() => {
     clearAllSessions()
     trackSessions()
