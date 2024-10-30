@@ -1,4 +1,7 @@
 import { invariant } from '@epic-web/invariant'
+import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
+import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
+import { stopTrackingTab } from './tabsTracking'
 import { Fork, ForkedSession, PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
@@ -51,10 +54,31 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
   ...session,
 
   isTracked: (tabId) => session.tabs.has(tabId),
-  trackTab: (tabId) => session.tabs.add(tabId),
-  untrackTab: (tabId) => session.tabs.delete(tabId),
+  trackTab: (tabId) => {
+    session.tabs.add(tabId)
 
-  delete: () => activePilotSessions.delete(session.id),
+    updateCSPHeaderRule(session.tabs)
+
+    chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT } satisfies Message)
+  },
+  untrackTab: (tabId) => {
+    session.tabs.delete(tabId)
+
+    updateCSPHeaderRule(session.tabs)
+    stopTrackingTab({ windowId: session.id, tabId })
+  },
+
+  delete: () => {
+    activePilotSessions.delete(session.id)
+
+    for (const tabId of session.tabs) {
+      stopTrackingTab({ tabId, windowId: session.id })
+
+      chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
+    }
+
+    removeCSPHeaderRule()
+  },
 
   createFork: (fork) => {
     session.fork = fork

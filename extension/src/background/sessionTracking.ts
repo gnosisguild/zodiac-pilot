@@ -5,10 +5,9 @@ import {
   getPilotSession,
   withPilotSession,
 } from './activePilotSessions'
-import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { updateRpcRedirectRules } from './rpcRedirect'
 import { rpcUrlsPerTab } from './rpcTracking'
-import { startTrackingTab, stopTrackingTab } from './tabsTracking'
+import { startTrackingTab } from './tabsTracking'
 
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
@@ -31,23 +30,13 @@ export const startPilotSession = ({
 
   session.trackTab(tabId)
 
-  updateCSPHeaderRule(session.tabs)
-
   startTrackingTab({ tabId, windowId })
 }
 
 export const stopPilotSession = (windowId: number) => {
   console.log('stop pilot session', { windowId })
 
-  withPilotSession(windowId, (session) => {
-    for (const tabId of session.tabs) {
-      stopTrackingTab({ tabId, windowId })
-    }
-
-    session.delete()
-  })
-
-  removeCSPHeaderRule()
+  withPilotSession(windowId, (session) => session.delete())
 
   // make sure all rpc redirects are cleared
   updateRpcRedirectRules(getForkedSessions())
@@ -96,7 +85,6 @@ chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
 
     session.trackTab(tabId)
 
-    updateCSPHeaderRule(session.tabs)
     startTrackingTab({ tabId, windowId })
   })
 })
@@ -108,9 +96,6 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
     }
 
     session.untrackTab(tabId)
-
-    updateCSPHeaderRule(session.tabs)
-    stopTrackingTab({ tabId, windowId, closed: true })
 
     rpcUrlsPerTab.delete(tabId)
   })
