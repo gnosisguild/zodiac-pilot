@@ -20,5 +20,6 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.mts', './setup-chrome-mock.ts'],
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
+    clearMocks: true,
   },
 })

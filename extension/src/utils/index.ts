@@ -1,3 +1,5 @@
 export * from './addressValidation'
 export { getActiveTab } from './getActiveTab'
+export { reloadActiveTab } from './reloadActiveTab'
+export { reloadTab } from './reloadTab'
 export { shortenAddress } from './shortenAddress'
