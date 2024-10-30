@@ -8,7 +8,6 @@ import {
 import { updateRpcRedirectRules } from './rpcRedirect'
 import { rpcUrlsPerTab } from './rpcTracking'
 import { startTrackingTab } from './tabsTracking'
-
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
 type StartPilotSessionOptions = {
