@@ -65,5 +65,20 @@ describe('Simulation tracking', () => {
         removeRuleIds: [2],
       })
     })
+
+    it('removes redirect rules when the pilot session ends', async () => {
+      const { stopPilotSession } = startPilotSession({ windowId: 1, tabId: 2 })
+
+      await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+
+      startSimulation({ windowId: 1 })
+      stopPilotSession()
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).toHaveBeenLastCalledWith({
+        removeRuleIds: [2],
+      })
+    })
   })
 })
