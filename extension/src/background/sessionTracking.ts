@@ -1,3 +1,4 @@
+import { reloadActiveTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../messages'
 import {
@@ -6,8 +7,6 @@ import {
   withPilotSession,
 } from './activePilotSessions'
 import { updateRpcRedirectRules } from './rpcRedirect'
-import { startTrackingTab } from './tabsTracking'
-import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const trackSessions = () => {
   // all messages from the panel app are received here
@@ -44,20 +43,7 @@ export const trackSessions = () => {
 
       stopPilotSession(windowIdRef.current)
 
-      chrome.tabs.query(
-        { windowId: windowIdRef.current, active: true },
-        (tabs) => {
-          const [activeTab] = tabs
-
-          if (activeTab == null) {
-            return
-          }
-
-          if (activeTab.id != null) {
-            chrome.tabs.reload(activeTab.id)
-          }
-        }
-      )
+      reloadActiveTab(windowIdRef.current)
     })
   })
 
@@ -68,8 +54,6 @@ export const trackSessions = () => {
       }
 
       session.trackTab(tabId)
-
-      startTrackingTab({ tabId, windowId })
     })
   })
 
@@ -116,8 +100,6 @@ const startPilotSession = ({ windowId, tabId }: StartPilotSessionOptions) => {
   }
 
   session.trackTab(tabId)
-
-  startTrackingTab({ tabId, windowId })
 }
 
 const stopPilotSession = (windowId: number) => {
@@ -127,5 +109,4 @@ const stopPilotSession = (windowId: number) => {
 
   // make sure all rpc redirects are cleared
   updateRpcRedirectRules(getForkedSessions())
-  updateSimulatingBadge(windowId)
 }

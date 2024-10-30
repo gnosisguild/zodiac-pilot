@@ -1,7 +1,6 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import { getForkedSessions, getPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging, updateRpcRedirectRules } from './rpcRedirect'
-import { updateSimulatingBadge } from './updateSimulationBadge'
 
 export const trackSimulations = () => {
   enableRPCDebugLogging()
@@ -24,7 +23,10 @@ export const trackSimulations = () => {
           `start intercepting JSON RPC requests in window #${message.windowId}`,
           fork
         )
-        updateSimulatingBadge(message.windowId)
+        updateSimulatingBadge({
+          windowId: message.windowId,
+          isSimulating: true,
+        })
 
         break
       }
@@ -39,10 +41,33 @@ export const trackSimulations = () => {
         console.debug(
           `stop intercepting JSON RPC requests in window #${message.windowId}`
         )
-        updateSimulatingBadge(message.windowId)
+        updateSimulatingBadge({
+          windowId: message.windowId,
+          isSimulating: false,
+        })
 
         break
       }
+    }
+  })
+}
+
+type UpdateSimulationBadgeOptions = {
+  windowId: number
+  isSimulating: boolean
+}
+
+export const updateSimulatingBadge = ({
+  windowId,
+  isSimulating,
+}: UpdateSimulationBadgeOptions) => {
+  chrome.tabs.query({ windowId }, (tabs) => {
+    for (const tab of tabs) {
+      // TODO use a different icon while simulating to make this more beautiful
+      chrome.action.setBadgeText({
+        text: isSimulating ? '🟢' : '',
+        tabId: tab.id,
+      })
     }
   })
 }

@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
-import { stopTrackingTab } from './tabsTracking'
+import { updateSimulatingBadge } from './simulationTracking'
 import { Fork, ForkedSession, PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
@@ -65,14 +65,13 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
     session.tabs.delete(tabId)
 
     updateCSPHeaderRule(session.tabs)
-    stopTrackingTab({ windowId: session.id, tabId })
   },
 
   delete: () => {
     activePilotSessions.delete(session.id)
 
     for (const tabId of session.tabs) {
-      stopTrackingTab({ tabId, windowId: session.id })
+      updateSimulatingBadge({ windowId: session.id, isSimulating: false })
 
       chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
     }
