@@ -1,5 +1,6 @@
 import { chromeMock, createMockTab } from '@/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { startPilotSession, stopPilotSession } from './sessionTracking'
 
@@ -26,6 +27,14 @@ describe('Session tracking', () => {
         tabs: new Set([2]),
       })
     })
+
+    it('sends a connect message the respective tab', () => {
+      startPilotSession({ windowId: 1, tabId: 1 })
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
+        type: PILOT_CONNECT,
+      })
+    })
   })
 
   describe('Stop session', () => {
@@ -34,6 +43,20 @@ describe('Session tracking', () => {
       stopPilotSession(1)
 
       expect(() => getPilotSession(1)).toThrow()
+    })
+
+    it('sends a disconnect message to all connected tabs', () => {
+      startPilotSession({ windowId: 1, tabId: 1 })
+      startPilotSession({ windowId: 1, tabId: 2 })
+
+      stopPilotSession(1)
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
+        type: PILOT_DISCONNECT,
+      })
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
+        type: PILOT_DISCONNECT,
+      })
     })
   })
 
@@ -55,6 +78,16 @@ describe('Session tracking', () => {
         chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
 
         expect(() => getPilotSession(1)).toThrow()
+      })
+
+      it('sends a pilot connect method to the new tab', () => {
+        startPilotSession({ windowId: 1 })
+
+        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
+
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
+          type: PILOT_CONNECT,
+        })
       })
     })
 
@@ -81,6 +114,19 @@ describe('Session tracking', () => {
         })
 
         expect(() => getPilotSession(1)).toThrow()
+      })
+
+      it('does not send a pilot disconnect message', () => {
+        startPilotSession({ windowId: 1, tabId: 1 })
+
+        chromeMock.tabs.onRemoved.callListeners(1, {
+          windowId: 1,
+          isWindowClosing: false,
+        })
+
+        expect(chrome.tabs.sendMessage).not.toHaveBeenCalledWith(1, {
+          type: PILOT_DISCONNECT,
+        })
       })
     })
 

@@ -1,7 +1,7 @@
 import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
 import {
-  createPilotSession,
   getForkedSessions,
+  getOrCreatePilotSession,
   getPilotSession,
   withPilotSession,
 } from './activePilotSessions'
@@ -23,7 +23,7 @@ export const startPilotSession = ({
 }: StartPilotSessionOptions) => {
   console.log('start pilot session', { windowId })
 
-  const session = createPilotSession(windowId)
+  const session = getOrCreatePilotSession(windowId)
 
   if (tabId == null) {
     return
@@ -33,7 +33,7 @@ export const startPilotSession = ({
 
   updateCSPHeaderRule(session.tabs)
 
-  startTrackingTab(tabId, windowId)
+  startTrackingTab({ tabId, windowId })
 }
 
 export const stopPilotSession = (windowId: number) => {
@@ -41,7 +41,7 @@ export const stopPilotSession = (windowId: number) => {
 
   withPilotSession(windowId, (session) => {
     for (const tabId of session.tabs) {
-      stopTrackingTab(tabId, windowId)
+      stopTrackingTab({ tabId, windowId })
     }
 
     session.delete()
@@ -97,7 +97,7 @@ chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
     session.trackTab(tabId)
 
     updateCSPHeaderRule(session.tabs)
-    startTrackingTab(tabId, windowId)
+    startTrackingTab({ tabId, windowId })
   })
 })
 
@@ -110,7 +110,7 @@ chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
     session.untrackTab(tabId)
 
     updateCSPHeaderRule(session.tabs)
-    stopTrackingTab(tabId, windowId, true)
+    stopTrackingTab({ tabId, windowId, closed: true })
 
     rpcUrlsPerTab.delete(tabId)
   })

@@ -4,18 +4,29 @@
 import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { updateSimulatingBadge } from './updateSimulationBadge'
 
-export const startTrackingTab = (tabId: number, windowId: number) => {
+type StartTrackingTabOptions = { windowId: number; tabId: number }
+
+export const startTrackingTab = ({
+  windowId,
+  tabId,
+}: StartTrackingTabOptions) => {
   updateSimulatingBadge(windowId)
 
   console.log('Pilot: started tracking tab', tabId, windowId)
   chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT } satisfies Message)
 }
 
-export const stopTrackingTab = (
-  tabId: number,
-  windowId: number,
+type StopTrackingTabOptions = {
+  windowId: number
+  tabId: number
   closed?: boolean
-) => {
+}
+
+export const stopTrackingTab = ({
+  windowId,
+  tabId,
+  closed,
+}: StopTrackingTabOptions) => {
   console.log('stop tracking tab', tabId, windowId)
 
   updateSimulatingBadge(windowId)
