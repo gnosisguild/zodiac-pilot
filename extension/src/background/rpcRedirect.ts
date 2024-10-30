@@ -1,5 +1,5 @@
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
-import { networkIdOfRpcUrl, rpcUrlsPerTab } from './rpcTracking'
+import { getRPCUrls } from './rpcTracking'
 import { ForkedSession } from './types'
 
 let currentRuleIds: number[] = []
@@ -50,23 +50,18 @@ export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
  * Concatenates all RPC urls for the given tab & network into a regular expression matching any of them.
  */
 const makeUrlRegex = (tabId: number, networkId: number) => {
-  const rpcUrls = Array.from(rpcUrlsPerTab.get(tabId) ?? []).filter(
-    (url) => networkIdOfRpcUrl.get(url) === networkId
-  )
+  const rpcUrls = getRPCUrls({ tabId, networkId })
 
   if (rpcUrls.length === 0) {
     return null
   }
 
-  const regex =
-    '^(' +
-    rpcUrls
-      // Escape special characters
-      .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
-      // Sort for maximal munch
-      .sort((a, b) => b.length - a.length)
-      .join('|') +
-    ')$'
+  const regex = rpcUrls
+    // Escape special characters
+    .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
+    // Sort for maximal munch
+    .sort((a, b) => b.length - a.length)
+    .join('|')
 
   if (regex.length > 1500) {
     console.warn(
@@ -74,7 +69,7 @@ const makeUrlRegex = (tabId: number, networkId: number) => {
     )
   }
 
-  return regex
+  return `^(${regex})$`
 }
 
 // debug logging for RPC intercepts
