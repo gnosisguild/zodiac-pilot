@@ -1,12 +1,11 @@
 import { Box } from '@/components'
-import React from 'react'
 import classes from './style.module.css'
 
 interface Props {
   data: string
 }
 
-export const RawTransaction: React.FC<Props> = ({ data }) => (
+export const RawTransaction = ({ data }: Props) => (
   <div className={classes.transaction}>
     <label>
       <span>Data</span>

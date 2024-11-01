@@ -1,18 +1,15 @@
 import { IconButton } from '@/components'
 import { ForkProvider, useProvider } from '@/providers'
-import { TransactionState } from '@/state'
-import React from 'react'
 import { BiWrench } from 'react-icons/bi'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import classes from './style.module.css'
 
 type Props = {
-  transactionState: TransactionState
   index: number
   labeled?: true
 }
 
-export const Translate: React.FC<Props> = ({ index, labeled }) => {
+export const Translate = ({  index, labeled }: Props) => {
   const provider = useProvider()
   const translation = useApplicableTranslation(index)
 

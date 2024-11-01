@@ -1,14 +1,21 @@
 import classNames from 'classnames'
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Box } from '../Box'
 import classes from './style.module.css'
 
-export const Field: React.FC<{
+type Props = {
   label?: string
   labelFor?: string
   children: ReactNode
   disabled?: boolean
-}> = ({ label, labelFor, children, disabled = false }) => (
+}
+
+export const Field = ({
+  label,
+  labelFor,
+  children,
+  disabled = false,
+}: Props) => (
   <Box double bg p={3} className={classNames({ [classes.disabled]: disabled })}>
     {label ? (
       <label htmlFor={labelFor}>

@@ -4,7 +4,7 @@ import { ZodiacToastContainer } from '@/components'
 import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
@@ -19,7 +19,7 @@ const router = createHashRouter(appRoutes)
 
 const Root = () => {
   return (
-    <React.StrictMode>
+    <StrictMode>
       <ProvideState>
         <ProvideZodiacRoutes>
           <ProvideInjectedWallet>
@@ -32,7 +32,7 @@ const Root = () => {
           </ProvideInjectedWallet>
         </ProvideZodiacRoutes>
       </ProvideState>
-    </React.StrictMode>
+    </StrictMode>
   )
 }
 

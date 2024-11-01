@@ -1,6 +1,5 @@
 import { IconButton } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import React from 'react'
 import { RiFileCopy2Line } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import classes from './style.module.css'
@@ -10,7 +9,7 @@ interface Props {
   labeled?: boolean
 }
 
-export const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
+export const CopyToClipboard = ({ transaction, labeled }: Props) => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(transaction, undefined, 2))
     toast(<>Transaction data has been copied to clipboard.</>)

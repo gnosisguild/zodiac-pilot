@@ -2,7 +2,6 @@ import { EXPLORER_URL } from '@/chains'
 import { shortenAddress, validateAddress } from '@/utils'
 import cn from 'classnames'
 import copy from 'copy-to-clipboard'
-import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { Blockie } from '../Blockie'
@@ -18,13 +17,13 @@ interface Props {
   className?: string
 }
 
-export const Address: React.FC<Props> = ({
+export const Address = ({
   address,
   explorerLink,
   copyToClipboard,
   className,
   chainId,
-}) => {
+}: Props) => {
   const explorerUrl = chainId && EXPLORER_URL[chainId]
   const checksumAddress = validateAddress(address)
   const displayAddress = shortenAddress(checksumAddress)

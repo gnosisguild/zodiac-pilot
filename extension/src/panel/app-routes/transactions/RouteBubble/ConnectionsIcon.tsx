@@ -1,14 +1,12 @@
-import React from 'react'
-
 interface ConnectionsIconProps {
   width?: string
   height?: string
 }
 
-export const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
+export const ConnectionsIcon = ({
   width = '49',
   height = '36',
-}) => (
+}: ConnectionsIconProps) => (
   <svg
     width={width}
     height={height}
