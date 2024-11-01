@@ -18,22 +18,24 @@ export const trackSessions = () => {
     }
 
     port.onMessage.addListener((message: Message) => {
-      if (message.type === PilotMessageType.PILOT_PANEL_OPENED) {
-        windowIdRef.current = message.windowId
-        console.log('Sidepanel opened.', message.windowId)
+      if (message.type !== PilotMessageType.PILOT_PANEL_OPENED) {
+        return
+      }
 
-        startPilotSession({
-          windowId: message.windowId,
-          tabId: message.tabId,
-        })
+      windowIdRef.current = message.windowId
+      console.log('Sidepanel opened.', message.windowId)
 
-        if (message.tabId) {
-          reloadTab(message.tabId)
-        }
+      startPilotSession({
+        windowId: message.windowId,
+        tabId: message.tabId,
+      })
+
+      if (message.tabId) {
+        reloadTab(message.tabId)
       }
     })
 
-    port.onDisconnect.addListener(async () => {
+    port.onDisconnect.addListener(() => {
       if (windowIdRef.current == null) {
         return
       }
