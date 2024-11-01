@@ -76,7 +76,7 @@ chrome.runtime.onMessage.addListener(
             'The provider for the injected bridge has not been set, yet'
           )
 
-          provider.request(message.request)
+          return provider.request(message.request)
         })
         .then((response) => {
           sendResponse({
