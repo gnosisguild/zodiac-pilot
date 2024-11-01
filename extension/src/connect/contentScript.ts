@@ -1,11 +1,7 @@
 import {
-  CONNECTED_WALLET_ERROR,
-  CONNECTED_WALLET_EVENT,
-  CONNECTED_WALLET_INITIALIZED,
-  CONNECTED_WALLET_REQUEST,
-  CONNECTED_WALLET_RESPONSE,
-  Message,
-} from './messages'
+  ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/pilot-messages'
 
 function ensureIframe() {
   let node: HTMLIFrameElement | null = document.querySelector(
@@ -30,8 +26,8 @@ chrome.runtime.onConnect.addListener((port) => {
   const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
-  port.onMessage.addListener((message: Message) => {
-    if (message.type === CONNECTED_WALLET_REQUEST) {
+  port.onMessage.addListener((message: ConnectedWalletMessage) => {
+    if (message.type === ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST) {
       // relay user wallet request to connect iframe so the connectInjection can receive it
       if (!iframe.contentWindow) {
         throw new Error('cannot access connect iframe window')
@@ -42,10 +38,11 @@ chrome.runtime.onConnect.addListener((port) => {
       )
 
       // wait for response
-      const handleResponse = (event: MessageEvent<Message>) => {
+      const handleResponse = (event: MessageEvent<ConnectedWalletMessage>) => {
         if (
-          event.data.type !== CONNECTED_WALLET_RESPONSE &&
-          event.data.type !== CONNECTED_WALLET_ERROR
+          event.data.type !==
+            ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE &&
+          event.data.type !== ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
         ) {
           return
         }
@@ -60,12 +57,13 @@ chrome.runtime.onConnect.addListener((port) => {
   })
 
   // relay wallet events from the connect iframe to the panel
-  const handleEvent = (event: MessageEvent<Message>) => {
+  const handleEvent = (event: MessageEvent<ConnectedWalletMessage>) => {
     const message = event.data
     if (!message) return
     if (
-      message.type === CONNECTED_WALLET_INITIALIZED ||
-      message.type === CONNECTED_WALLET_EVENT
+      message.type ===
+        ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED ||
+      message.type === ConnectedWalletMessageType.CONNECTED_WALLET_EVENT
     ) {
       event.stopImmediatePropagation()
       port.postMessage(message)

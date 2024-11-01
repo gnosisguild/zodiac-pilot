@@ -1,16 +1,12 @@
 // this will be bundled in the panel app
+import {
+  ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/pilot-messages'
+import { Eip1193Provider } from '@/types'
 import { getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'
-import { Eip1193Provider } from '../types'
-import {
-  CONNECTED_WALLET_ERROR,
-  CONNECTED_WALLET_EVENT,
-  CONNECTED_WALLET_INITIALIZED,
-  CONNECTED_WALLET_REQUEST,
-  CONNECTED_WALLET_RESPONSE,
-  Message,
-} from './messages'
 
 interface JsonRpcRequest {
   method: string
@@ -174,11 +170,17 @@ export default class ConnectProvider
         request,
       })
 
-      if (responseMessage.type === CONNECTED_WALLET_RESPONSE) {
+      if (
+        responseMessage.type ===
+        ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE
+      ) {
         return responseMessage.response
       }
 
-      if (responseMessage.type === CONNECTED_WALLET_ERROR) {
+      if (
+        responseMessage.type ===
+        ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
+      ) {
         const error = new InjectedWalletError(
           responseMessage.error.message,
           responseMessage.error.code
@@ -204,8 +206,8 @@ export default class ConnectProvider
     }
   }
 
-  #handleEventMessage(message: Message) {
-    if (message.type === CONNECTED_WALLET_EVENT) {
+  #handleEventMessage(message: ConnectedWalletMessage) {
+    if (message.type === ConnectedWalletMessageType.CONNECTED_WALLET_EVENT) {
       this.emit(message.eventName, message.eventData)
     }
   }
@@ -238,8 +240,10 @@ const createPort = (tabId: number, url: string | undefined) => {
     port.onDisconnect.addListener(handleDisconnect)
 
     // if we receive the CONNECTED_WALLET_INITIALIZED message, we resolve the promise to this port
-    const handleInitMessage = (message: Message) => {
-      if (message.type !== CONNECTED_WALLET_INITIALIZED) {
+    const handleInitMessage = (message: ConnectedWalletMessage) => {
+      if (
+        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED
+      ) {
         return
       }
 
@@ -265,12 +269,12 @@ const sendRequestToConnectIframe = async ({
   port,
   request,
   requestId,
-}: SendRequestToConnectIFrameOptions): Promise<Message> =>
+}: SendRequestToConnectIFrameOptions): Promise<ConnectedWalletMessage> =>
   new Promise((resolve) => {
-    const handleResponse = (message: Message) => {
+    const handleResponse = (message: ConnectedWalletMessage) => {
       if (
-        message.type !== CONNECTED_WALLET_RESPONSE &&
-        message.type !== CONNECTED_WALLET_ERROR
+        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE &&
+        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
       ) {
         return
       }
@@ -287,7 +291,7 @@ const sendRequestToConnectIframe = async ({
     port.onMessage.addListener(handleResponse)
 
     port.postMessage({
-      type: CONNECTED_WALLET_REQUEST,
+      type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST,
       requestId,
       request,
     })

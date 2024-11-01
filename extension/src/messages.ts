@@ -100,3 +100,49 @@ export type InjectedProviderMessage =
   | InjectedProviderResponse
   | InjectedProviderError
   | InjectedProviderEvent
+
+export enum ConnectedWalletMessageType {
+  CONNECTED_WALLET_INITIALIZED = 'CONNECTED_WALLET_INITIALIZED',
+  CONNECTED_WALLET_REQUEST = 'CONNECTED_WALLET_REQUEST',
+  CONNECTED_WALLET_ERROR = 'CONNECTED_WALLET_ERROR',
+  CONNECTED_WALLET_RESPONSE = 'CONNECTED_WALLET_RESPONSE',
+  CONNECTED_WALLET_EVENT = 'CONNECTED_WALLET_EVENT',
+}
+
+interface UserWalletInitialized {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED
+}
+
+interface UserWalletRequest {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST
+  requestId: string
+  request: JsonRpcRequest
+}
+
+interface UserWalletError {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
+  requestId: string
+  error: {
+    message: string
+    code: number
+  }
+}
+
+interface UserWalletResponse {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE
+  requestId: string
+  response: any
+}
+
+interface UserWalletEvent {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_EVENT
+  eventName: string
+  eventData: any
+}
+
+export type ConnectedWalletMessage =
+  | UserWalletInitialized
+  | UserWalletRequest
+  | UserWalletError
+  | UserWalletResponse
+  | UserWalletEvent
