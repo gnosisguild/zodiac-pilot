@@ -15,7 +15,7 @@ interface Props {
   children?: ReactNode
 }
 
-const Box = forwardRef<HTMLDivElement, Props>(
+export const Box = forwardRef<HTMLDivElement, Props>(
   (
     {
       children,
@@ -51,5 +51,3 @@ const Box = forwardRef<HTMLDivElement, Props>(
   )
 )
 Box.displayName = 'Box'
-
-export default Box

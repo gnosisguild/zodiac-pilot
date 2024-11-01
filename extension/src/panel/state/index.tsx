@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useContext, useReducer } from 'react'
-
 import { Action } from './actions'
-import reducer, { TransactionState } from './reducer'
+import { rootReducer, TransactionState } from './reducer'
 
 export type { TransactionState }
 
@@ -18,7 +17,7 @@ export const useDispatch = () => {
 export const ProvideState: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(reducer, [])
+  const [state, dispatch] = useReducer(rootReducer, [])
 
   return (
     <DispatchContext.Provider value={dispatch}>

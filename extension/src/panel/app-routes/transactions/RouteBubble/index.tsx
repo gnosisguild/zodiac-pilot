@@ -4,7 +4,7 @@ import { useZodiacRoute } from '@/zodiac-routes'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
-import ConnectionsIcon from './ConnectionsIcon'
+import { ConnectionsIcon } from './ConnectionsIcon'
 import classes from './style.module.css'
 
 export const RouteBubble: React.FC = () => {

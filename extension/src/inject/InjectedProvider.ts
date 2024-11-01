@@ -23,7 +23,7 @@ class InjectedWalletError extends Error {
 
 const injectionId = nanoid()
 
-export default class InjectedProvider extends EventEmitter {
+export class InjectedProvider extends EventEmitter {
   private messageCounter = 0
 
   chainId = '0x1'

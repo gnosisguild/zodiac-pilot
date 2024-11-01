@@ -5,7 +5,7 @@ interface ConnectionsIconProps {
   height?: string
 }
 
-const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
+export const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
   width = '49',
   height = '36',
 }) => (
@@ -30,5 +30,3 @@ const ConnectionsIcon: React.FC<ConnectionsIconProps> = ({
     />
   </svg>
 )
-
-export default ConnectionsIcon

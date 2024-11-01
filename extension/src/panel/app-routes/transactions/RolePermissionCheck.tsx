@@ -16,7 +16,7 @@ import {
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { decodeRolesV1Error } from '../../utils'
 import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
-import CopyToClipboard from './CopyToClipboard'
+import { CopyToClipboard } from './CopyToClipboard'
 import { Translate } from './Translate'
 import classes from './style.module.css'
 
@@ -76,7 +76,7 @@ const simulateRolesTransaction = async (
   return false
 }
 
-const RolePermissionCheck: React.FC<{
+export const RolePermissionCheck: React.FC<{
   transactionState: TransactionState
   index: number
   mini?: boolean
@@ -154,8 +154,6 @@ const RolePermissionCheck: React.FC<{
     </Flex>
   )
 }
-
-export default RolePermissionCheck
 
 enum RolesV2Status {
   Ok,

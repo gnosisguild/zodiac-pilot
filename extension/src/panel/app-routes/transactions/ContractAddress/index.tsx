@@ -21,7 +21,7 @@ interface Props {
 const VISIBLE_START = 4
 const VISIBLE_END = 4
 
-const ContractAddress: React.FC<Props> = ({
+export const ContractAddress: React.FC<Props> = ({
   chainId,
   address,
   contractInfo,
@@ -81,5 +81,3 @@ const ContractAddress: React.FC<Props> = ({
     </Flex>
   )
 }
-
-export default ContractAddress

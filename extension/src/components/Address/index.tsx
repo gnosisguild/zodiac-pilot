@@ -6,8 +6,8 @@ import React from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { Blockie } from '../Blockie'
-import Box from '../Box'
-import IconButton from '../IconButton'
+import { Box } from '../Box'
+import { IconButton } from '../IconButton'
 import classes from './style.module.css'
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   className?: string
 }
 
-const Address: React.FC<Props> = ({
+export const Address: React.FC<Props> = ({
   address,
   explorerLink,
   copyToClipboard,
@@ -61,5 +61,3 @@ const Address: React.FC<Props> = ({
     </Box>
   )
 }
-
-export default Address

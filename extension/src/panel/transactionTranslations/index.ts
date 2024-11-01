@@ -3,12 +3,12 @@ import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
-import cowswapSetPreSignature from './cowswapSetPreSignature'
+import { cowswapSetPreSignature } from './cowswapSetPreSignature'
 import { TransactionTranslation } from './types'
-import uniswapMulticall from './uniswapMulticall'
+import { uniswapMulticall } from './uniswapMulticall'
 import kpkBridgeAware from './karpatkeyInstitutional/kpkBridgeAware'
-import { TransactionState, useDispatch, useTransactions } from '../state'
-import { useProvider, ForkProvider } from '@/provider'
+import { ForkProvider, useProvider } from '@/providers'
+import { TransactionState, useDispatch, useTransactions } from '@/state'
 
 // ADD ANY NEW TRANSLATIONS TO THIS ARRAY
 const translations: TransactionTranslation[] = [
