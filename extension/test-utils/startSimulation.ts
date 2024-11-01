@@ -1,4 +1,4 @@
-import { Message, PilotSimulationMessageType } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
 import { chromeMock } from './chromeMock'
 
 type StartSimulationOptions = {
@@ -12,7 +12,7 @@ export const startSimulation = ({ windowId }: StartSimulationOptions) => {
       windowId,
       networkId: 1,
       rpcUrl: 'http://test.com',
-    } satisfies Message,
+    } satisfies SimulationMessage,
     { id: chrome.runtime.id },
     () => {}
   )

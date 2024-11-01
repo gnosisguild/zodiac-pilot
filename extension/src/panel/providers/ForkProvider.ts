@@ -1,4 +1,4 @@
-import { Message, PilotSimulationMessageType } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
 import { Eip1193Provider, TransactionData } from '@/types'
 import { getActiveTab } from '@/utils'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
@@ -298,7 +298,7 @@ export class ForkProvider extends EventEmitter {
       windowId: activeTab.windowId,
       networkId: this.chainId,
       rpcUrl: this.provider.publicRpc!,
-    } satisfies Message)
+    } satisfies SimulationMessage)
 
     this.isInitialized = true
   }
@@ -310,7 +310,7 @@ export class ForkProvider extends EventEmitter {
     chrome.runtime.sendMessage({
       type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId: activeTab.windowId,
-    } satisfies Message)
+    } satisfies SimulationMessage)
 
     await this.provider.deleteFork()
     this.isInitialized = false

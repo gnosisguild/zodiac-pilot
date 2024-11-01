@@ -1,4 +1,4 @@
-import { Message, PilotSimulationMessageType } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
 import { getPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
 
@@ -6,7 +6,7 @@ export const trackSimulations = () => {
   enableRPCDebugLogging()
 
   // track when a Pilot session is started for a window and when the simulation is started/stopped
-  chrome.runtime.onMessage.addListener((message: Message, sender) => {
+  chrome.runtime.onMessage.addListener((message: SimulationMessage, sender) => {
     // ignore messages that don't come from the extension itself
     if (sender.id !== chrome.runtime.id) {
       return

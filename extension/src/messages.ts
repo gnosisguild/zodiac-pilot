@@ -50,10 +50,10 @@ interface SimulateStop {
   windowId: number
 }
 
+export type SimulationMessage = SimulateStart | SimulateStop
+
 export type Message =
   | PilotConnect
   | PilotDisconnect
   | PilotPanelOpened
   | ProbeChainId
-  | SimulateStart
-  | SimulateStop

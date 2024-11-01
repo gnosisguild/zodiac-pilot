@@ -1,4 +1,4 @@
-import { Message, PilotSimulationMessageType } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
 import { chromeMock } from './chromeMock'
 
 type StopSimulationOptions = {
@@ -10,7 +10,7 @@ export const stopSimulation = ({ windowId }: StopSimulationOptions) => {
     {
       type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId,
-    } satisfies Message,
+    } satisfies SimulationMessage,
     { id: chrome.runtime.id },
     () => {}
   )
