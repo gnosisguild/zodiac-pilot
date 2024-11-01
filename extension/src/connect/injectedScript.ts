@@ -1,7 +1,4 @@
-import {
-  ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/pilot-messages'
+import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 import { Eip1193Provider } from '../types'
 
 declare global {

@@ -1,4 +1,4 @@
-import { PilotMessageType } from '@/pilot-messages'
+import { PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 import { resolve } from 'path'
 import { trackRequests } from './rpcTracking'

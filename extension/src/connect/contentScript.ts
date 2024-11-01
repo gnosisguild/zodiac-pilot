@@ -1,7 +1,4 @@
-import {
-  ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/pilot-messages'
+import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 
 function ensureIframe() {
   let node: HTMLIFrameElement | null = document.querySelector(

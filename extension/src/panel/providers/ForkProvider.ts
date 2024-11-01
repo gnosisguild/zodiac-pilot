@@ -1,4 +1,4 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { Eip1193Provider, TransactionData } from '@/types'
 import { getActiveTab } from '@/utils'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'

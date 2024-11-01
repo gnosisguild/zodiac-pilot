@@ -1,4 +1,4 @@
-import { RPCMessageType } from '@/pilot-messages'
+import { RPCMessageType } from '@/messages'
 import { isTrackedTab } from './activePilotSessions'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 

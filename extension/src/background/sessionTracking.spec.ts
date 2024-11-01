@@ -1,4 +1,4 @@
-import { PilotMessageType } from '@/pilot-messages'
+import { PilotMessageType } from '@/messages'
 import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'

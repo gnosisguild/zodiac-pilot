@@ -6,7 +6,7 @@ import {
   PilotMessageType,
   RPCMessage,
   RPCMessageType,
-} from '@/pilot-messages'
+} from '@/messages'
 import { probeChainId } from './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.

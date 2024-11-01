@@ -1,4 +1,4 @@
-import { Message, PilotMessageType } from '@/pilot-messages'
+import { Message, PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import {

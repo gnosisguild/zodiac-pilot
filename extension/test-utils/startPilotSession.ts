@@ -1,4 +1,4 @@
-import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/pilot-messages'
+import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/messages'
 import { chromeMock } from './chromeMock'
 import { createMockPort } from './createMockPort'
 

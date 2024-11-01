@@ -1,7 +1,4 @@
-import {
-  InjectedProviderMessage,
-  InjectedProviderMessageTyp,
-} from '@/pilot-messages'
+import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
 

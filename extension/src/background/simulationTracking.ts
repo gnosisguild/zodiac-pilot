@@ -1,4 +1,4 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/pilot-messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { getPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
 

@@ -1,8 +1,5 @@
 // this will be bundled in the panel app
-import {
-  ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/pilot-messages'
+import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 import { Eip1193Provider } from '@/types'
 import { getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'

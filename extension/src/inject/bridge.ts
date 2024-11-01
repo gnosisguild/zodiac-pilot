@@ -1,8 +1,5 @@
 // this will be bundled in the panel app
-import {
-  InjectedProviderMessage,
-  InjectedProviderMessageTyp,
-} from '@/pilot-messages'
+import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'

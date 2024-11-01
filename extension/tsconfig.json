@@ -27,7 +27,7 @@
       "@/providers": ["./src/panel/providers/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
-      "@/pilot-messages": ["./src/messages.ts"]
+      "@/messages": ["./src/messages.ts"]
     }
   },
   "include": ["src", "e2e", "test-utils"]

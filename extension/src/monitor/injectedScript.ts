@@ -2,7 +2,7 @@
 // It tracks if the Pilot panel is connected and if the Pilot provider is injected.
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
-import { PilotMessageType } from '@/pilot-messages'
+import { PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 import { Eip1193Provider } from '../types'
 import {
