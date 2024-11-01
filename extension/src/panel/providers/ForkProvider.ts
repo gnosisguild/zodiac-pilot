@@ -1,14 +1,12 @@
-import EventEmitter from 'events'
-
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
+import { Eip1193Provider, TransactionData } from '@/types'
+import { getActiveTab } from '@/utils'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
-
-import { getActiveTab } from '@/utils'
+import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import { ChainId } from 'ser-kit'
-import { Message, SIMULATE_START, SIMULATE_STOP } from '../../messages'
-import { Eip1193Provider, TransactionData } from '../../types'
 import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
 import {
   hashMessage,
@@ -296,11 +294,11 @@ export class ForkProvider extends EventEmitter {
     const activeTab = await getActiveTab()
 
     chrome.runtime.sendMessage({
-      type: SIMULATE_START,
+      type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
       networkId: this.chainId,
       rpcUrl: this.provider.publicRpc!,
-    } satisfies Message)
+    } satisfies SimulationMessage)
 
     this.isInitialized = true
   }
@@ -310,9 +308,9 @@ export class ForkProvider extends EventEmitter {
     const activeTab = await getActiveTab()
 
     chrome.runtime.sendMessage({
-      type: SIMULATE_STOP,
+      type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId: activeTab.windowId,
-    } satisfies Message)
+    } satisfies SimulationMessage)
 
     await this.provider.deleteFork()
     this.isInitialized = false

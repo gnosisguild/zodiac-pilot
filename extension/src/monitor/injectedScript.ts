@@ -2,12 +2,8 @@
 // It tracks if the Pilot panel is connected and if the Pilot provider is injected.
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
+import { PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
-import {
-  PILOT_CONNECT,
-  PILOT_DISCONNECT,
-  PILOT_OPEN_SIDEPANEL,
-} from '../messages'
 import { Eip1193Provider } from '../types'
 import {
   dismissHint,
@@ -20,18 +16,16 @@ declare let window: Window & {
 }
 
 function check() {
-  if (
-    document.documentElement.dataset.__zodiacPilotConnected === 'true' &&
-    !window.zodiacPilot
-  ) {
+  const pilotConnected =
+    document.documentElement.dataset.__zodiacPilotConnected === 'true'
+  const providerInjected = window.zodiacPilot != null
+
+  if (pilotConnected && !providerInjected) {
     console.log(
       '🕵 Zodiac Pilot is open but the provider is not injected. Please reload the page.'
     )
     renderConnectHint()
-  } else if (
-    document.documentElement.dataset.__zodiacPilotConnected !== 'true' &&
-    window.zodiacPilot
-  ) {
+  } else if (!pilotConnected && providerInjected) {
     console.log(
       '🕵 Zodiac Pilot is closed but the provider is still injected. Please reload the page.'
     )
@@ -48,8 +42,8 @@ window.setTimeout(() => {
 
 window.addEventListener('message', (event: MessageEvent) => {
   if (
-    event.data?.type === PILOT_CONNECT ||
-    event.data?.type === PILOT_DISCONNECT
+    event.data?.type === PilotMessageType.PILOT_CONNECT ||
+    event.data?.type === PilotMessageType.PILOT_DISCONNECT
   ) {
     check()
   }
@@ -75,7 +69,7 @@ const handleLoad = () => {
     )
 
     chrome.runtime.sendMessage(extensionId, {
-      type: PILOT_OPEN_SIDEPANEL,
+      type: PilotMessageType.PILOT_OPEN_SIDEPANEL,
     })
   })
 }
