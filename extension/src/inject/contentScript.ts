@@ -1,4 +1,4 @@
-import { Message, PILOT_DISCONNECT, PROBE_CHAIN_ID } from '../messages'
+import { Message, PilotMessageType, PROBE_CHAIN_ID } from '@/pilot-messages'
 import {
   InjectedProviderMessage,
   InjectedProviderMessageTyp,
@@ -78,7 +78,7 @@ if (
 
       switch (message.type) {
         // when the panel is closed, we trigger an EIP1193 'disconnect' event
-        case PILOT_DISCONNECT: {
+        case PilotMessageType.PILOT_DISCONNECT: {
           console.debug('Pilot disconnected')
           window.postMessage(
             {

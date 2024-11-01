@@ -1,6 +1,6 @@
+import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/pilot-messages'
 import { reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
-import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../messages'
 import {
   getOrCreatePilotSession,
   withPilotSession,
@@ -17,7 +17,7 @@ export const trackSessions = () => {
     }
 
     port.onMessage.addListener((message: Message) => {
-      if (message.type === PILOT_PANEL_OPENED) {
+      if (message.type === PilotMessageType.PILOT_PANEL_OPENED) {
         windowIdRef.current = message.windowId
         console.log('Sidepanel opened.', message.windowId)
 

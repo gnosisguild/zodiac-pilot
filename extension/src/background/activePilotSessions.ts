@@ -1,5 +1,5 @@
+import { Message, PilotMessageType } from '@/pilot-messages'
 import { invariant } from '@epic-web/invariant'
-import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import {
   removeAllRpcRedirectRules,
@@ -63,7 +63,9 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
 
     updateCSPHeaderRule(session.tabs)
 
-    chrome.tabs.sendMessage(tabId, { type: PILOT_CONNECT } satisfies Message)
+    chrome.tabs.sendMessage(tabId, {
+      type: PilotMessageType.PILOT_CONNECT,
+    } satisfies Message)
   },
   untrackTab: (tabId) => {
     session.tabs.delete(tabId)
@@ -77,7 +79,9 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
     for (const tabId of session.tabs) {
       updateSimulatingBadge({ windowId: session.id, isSimulating: false })
 
-      chrome.tabs.sendMessage(tabId, { type: PILOT_DISCONNECT })
+      chrome.tabs.sendMessage(tabId, {
+        type: PilotMessageType.PILOT_DISCONNECT,
+      })
     }
 
     removeCSPHeaderRule()

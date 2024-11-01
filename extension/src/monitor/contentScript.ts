@@ -1,6 +1,6 @@
 // injects a minimal script into the page to hint the user to reload the page when the panel is toggled
 
-import { Message, PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
+import { Message, PilotMessageType } from '@/pilot-messages'
 
 window.document.documentElement.dataset.__zodiacPilotBasePath =
   chrome.runtime.getURL('/')
@@ -20,9 +20,12 @@ function inject(scriptPath: string) {
 inject('build/monitor/injectedScript.js')
 
 chrome.runtime.onMessage.addListener((message: Message) => {
-  if (message.type === PILOT_CONNECT || message.type === PILOT_DISCONNECT) {
+  if (
+    message.type === PilotMessageType.PILOT_CONNECT ||
+    message.type === PilotMessageType.PILOT_DISCONNECT
+  ) {
     document.documentElement.dataset.__zodiacPilotConnected = (
-      message.type === PILOT_CONNECT
+      message.type === PilotMessageType.PILOT_CONNECT
     ).toString()
     window.postMessage(message, '*')
   }

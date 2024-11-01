@@ -1,4 +1,4 @@
-import { Message, PILOT_PANEL_OPENED, PILOT_PANEL_PORT } from '../src/messages'
+import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/pilot-messages'
 import { chromeMock } from './chromeMock'
 import { createMockPort } from './createMockPort'
 
@@ -17,7 +17,11 @@ export const startPilotSession = ({ windowId, tabId }: StartSessionOptions) => {
   chromeMock.runtime.onConnect.callListeners(port)
 
   port.onMessage.callListeners(
-    { type: PILOT_PANEL_OPENED, windowId, tabId } satisfies Message,
+    {
+      type: PilotMessageType.PILOT_PANEL_OPENED,
+      windowId,
+      tabId,
+    } satisfies Message,
     port
   )
 
@@ -27,7 +31,11 @@ export const startPilotSession = ({ windowId, tabId }: StartSessionOptions) => {
     },
     startAnotherSession: ({ tabId }: AnotherSessionStartOptions) => {
       port.onMessage.callListeners(
-        { type: PILOT_PANEL_OPENED, windowId, tabId } satisfies Message,
+        {
+          type: PilotMessageType.PILOT_PANEL_OPENED,
+          windowId,
+          tabId,
+        } satisfies Message,
         port
       )
     },

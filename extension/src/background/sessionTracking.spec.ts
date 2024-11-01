@@ -1,6 +1,6 @@
+import { PilotMessageType } from '@/pilot-messages'
 import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { PILOT_CONNECT, PILOT_DISCONNECT } from '../messages'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackSessions } from './sessionTracking'
 
@@ -38,7 +38,7 @@ describe('Session tracking', () => {
       startPilotSession({ windowId: 1, tabId: 1 })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-        type: PILOT_CONNECT,
+        type: PilotMessageType.PILOT_CONNECT,
       })
     })
   })
@@ -61,10 +61,10 @@ describe('Session tracking', () => {
       stopPilotSession()
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-        type: PILOT_DISCONNECT,
+        type: PilotMessageType.PILOT_DISCONNECT,
       })
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
-        type: PILOT_DISCONNECT,
+        type: PilotMessageType.PILOT_DISCONNECT,
       })
     })
   })
@@ -95,7 +95,7 @@ describe('Session tracking', () => {
         chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
 
         expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
-          type: PILOT_CONNECT,
+          type: PilotMessageType.PILOT_CONNECT,
         })
       })
     })
@@ -134,7 +134,7 @@ describe('Session tracking', () => {
         })
 
         expect(chrome.tabs.sendMessage).not.toHaveBeenCalledWith(1, {
-          type: PILOT_DISCONNECT,
+          type: PilotMessageType.PILOT_DISCONNECT,
         })
       })
     })
