@@ -1,12 +1,10 @@
 import cn from 'classnames'
-import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react'
+import { ComponentPropsWithoutRef } from 'react'
 import classes from './style.module.css'
 
-type Props = DetailedHTMLProps<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->
-
-export const BlockButton = ({ className, ...rest }: Props) => (
+export const BlockButton = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'button'>) => (
   <button className={cn(classes.button, className)} {...rest} />
 )
