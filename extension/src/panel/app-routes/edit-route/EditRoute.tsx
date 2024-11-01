@@ -64,7 +64,7 @@ export const EditRoute = () => {
     : undefined
 
   const updateConnection = (patch: ConnectionPatch) => {
-    console.log('updateConnection', patch)
+    console.debug('updateConnection', patch)
     setRoute((route) =>
       fromLegacyConnection({ ...asLegacyConnection(route), ...patch })
     )

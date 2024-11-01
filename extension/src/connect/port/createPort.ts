@@ -44,9 +44,7 @@ const connectToContentScript = (
 ): Promise<chrome.runtime.Port> => {
   const { promise, resolve } = Promise.withResolvers<chrome.runtime.Port>()
 
-  const port = chrome.tabs.connect(tabId, {
-    name: 'connect',
-  })
+  const port = chrome.tabs.connect(tabId)
 
   const timeout = setTimeout(() => {
     port.disconnect()

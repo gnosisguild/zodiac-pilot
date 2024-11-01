@@ -26,7 +26,7 @@ export function waitForMultisigExecution(
       try {
         safeMultisigTxResponse = await safeService.getTransaction(safeTxHash)
       } catch (e) {
-        console.log('poll error', e)
+        console.debug('poll error', e)
         return tryAgain()
       }
 

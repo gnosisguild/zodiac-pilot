@@ -50,7 +50,7 @@ if (process.env.LIVE_RELOAD) {
         path.startsWith('/build/build/panel/')
       )
     ) {
-      console.log('🔄 detected change, reloading panel...')
+      console.debug('🔄 detected change, reloading panel...')
       location.reload()
     }
   })

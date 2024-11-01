@@ -35,6 +35,16 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
         this.tearDownPort()
       } else {
         this.setupPort(tabId, port)
+
+        // disconnect the current port when another tab
+        // becomes active. this way we can ensure
+        // that once a user comes back to this page
+        // everything will be set up correctly again
+        chrome.tabs.onActivated.addListener((info) => {
+          if (info.tabId !== tabId) {
+            port.disconnect()
+          }
+        })
       }
     })
   }

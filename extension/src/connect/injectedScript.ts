@@ -73,18 +73,20 @@ const relayEvent = (eventName: string) => {
 }
 
 const initProvider = () => {
-  console.log('🧑‍✈️ Ready to relay requests to connected wallet')
+  console.debug('🧑‍✈️ Ready to relay requests to connected wallet')
 
   relayEvent('accountsChanged')
   relayEvent('chainChanged')
   relayEvent('disconnect')
 
-  window.top!.postMessage(
-    {
-      type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
-    } satisfies ConnectedWalletMessage,
-    '*'
-  )
+  setInterval(() => {
+    window.top!.postMessage(
+      {
+        type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
+      } satisfies ConnectedWalletMessage,
+      '*'
+    )
+  }, 500)
 }
 
 if (window.ethereum) {

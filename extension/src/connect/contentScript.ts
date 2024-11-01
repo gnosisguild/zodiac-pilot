@@ -20,7 +20,6 @@ function ensureIframe() {
 
 // wait for connection from ConnectProvider (running in extension page), then inject iframe to establish a bridge to the user's injected wallet
 chrome.runtime.onConnect.addListener((port) => {
-  console.log('PORT OPEN FROM CONNECT PROVIDER')
   const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
@@ -94,6 +93,7 @@ chrome.runtime.onConnect.addListener((port) => {
   // clean up when the panel disconnects
   port.onDisconnect.addListener(async () => {
     window.removeEventListener('message', handleEvent)
+    window.removeEventListener('message', handleInit)
 
     if (iframe) {
       iframe.remove()

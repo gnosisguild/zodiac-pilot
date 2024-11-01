@@ -23,7 +23,7 @@ export const trackSessions = () => {
       }
 
       windowIdRef.current = message.windowId
-      console.log('Sidepanel opened.', message.windowId)
+      console.debug('Sidepanel opened.', message.windowId)
 
       startPilotSession({
         windowId: message.windowId,
@@ -40,7 +40,7 @@ export const trackSessions = () => {
         return
       }
 
-      console.log('Sidepanel closed.', windowIdRef.current)
+      console.debug('Sidepanel closed.', windowIdRef.current)
 
       stopPilotSession(windowIdRef.current)
 
@@ -92,7 +92,7 @@ type StartPilotSessionOptions = {
 }
 
 const startPilotSession = ({ windowId, tabId }: StartPilotSessionOptions) => {
-  console.log('start pilot session', { windowId })
+  console.debug('start pilot session', { windowId })
 
   const session = getOrCreatePilotSession(windowId)
 
@@ -104,7 +104,7 @@ const startPilotSession = ({ windowId, tabId }: StartPilotSessionOptions) => {
 }
 
 const stopPilotSession = (windowId: number) => {
-  console.log('stop pilot session', { windowId })
+  console.debug('stop pilot session', { windowId })
 
   withPilotSession(windowId, (session) => session.delete())
 }

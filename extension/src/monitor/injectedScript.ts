@@ -21,12 +21,12 @@ function check() {
   const providerInjected = window.zodiacPilot != null
 
   if (pilotConnected && !providerInjected) {
-    console.log(
+    console.debug(
       '🕵 Zodiac Pilot is open but the provider is not injected. Please reload the page.'
     )
     renderConnectHint()
   } else if (!pilotConnected && providerInjected) {
-    console.log(
+    console.debug(
       '🕵 Zodiac Pilot is closed but the provider is still injected. Please reload the page.'
     )
     renderDisconnectHint()
