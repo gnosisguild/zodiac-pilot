@@ -1,6 +1,7 @@
-import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/messages'
+import { Message, PilotMessageType } from '@/messages'
 import { reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
+import { PILOT_PANEL_PORT } from '../const'
 import {
   getOrCreatePilotSession,
   withPilotSession,

@@ -1,5 +1,6 @@
-import { Message, PILOT_PANEL_PORT, PilotMessageType } from '@/messages'
+import { Message, PilotMessageType } from '@/messages'
 import { getActiveTab } from '@/utils'
+import { PILOT_PANEL_PORT } from '../const'
 import { setWindowId } from '../inject/bridge'
 
 // all communication with the background script goes through this central port
