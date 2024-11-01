@@ -1,12 +1,6 @@
+import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
-import {
-  INJECTED_PROVIDER_ERROR,
-  INJECTED_PROVIDER_EVENT,
-  INJECTED_PROVIDER_REQUEST,
-  INJECTED_PROVIDER_RESPONSE,
-  InjectedProviderMessage,
-} from './messages'
 
 interface JsonRpcRequest {
   method: string
@@ -45,7 +39,7 @@ export default class InjectedProvider extends EventEmitter {
       const message = ev.data
       if (!message) return
 
-      if (message.type === INJECTED_PROVIDER_EVENT) {
+      if (message.type === InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT) {
         this.emit(message.eventName, message.eventData)
       }
     }
@@ -69,7 +63,7 @@ export default class InjectedProvider extends EventEmitter {
     return new Promise((resolve, reject) => {
       ;(window.top || window).postMessage(
         {
-          type: INJECTED_PROVIDER_REQUEST,
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
           requestId,
           request,
         } satisfies InjectedProviderMessage,
@@ -82,7 +76,8 @@ export default class InjectedProvider extends EventEmitter {
         if (!message) return
 
         if (
-          message.type === INJECTED_PROVIDER_RESPONSE &&
+          message.type ===
+            InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE &&
           message.requestId == requestId
         ) {
           window.removeEventListener('message', handleMessage)
@@ -90,7 +85,7 @@ export default class InjectedProvider extends EventEmitter {
         }
 
         if (
-          message.type == INJECTED_PROVIDER_ERROR &&
+          message.type == InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR &&
           message.requestId == requestId
         ) {
           window.removeEventListener('message', handleMessage)

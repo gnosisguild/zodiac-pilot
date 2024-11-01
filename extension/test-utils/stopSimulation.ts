@@ -1,4 +1,4 @@
-import { Message, SIMULATE_STOP } from '../src/messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { chromeMock } from './chromeMock'
 
 type StopSimulationOptions = {
@@ -8,9 +8,9 @@ type StopSimulationOptions = {
 export const stopSimulation = ({ windowId }: StopSimulationOptions) => {
   chromeMock.runtime.onMessage.callListeners(
     {
-      type: SIMULATE_STOP,
+      type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId,
-    } satisfies Message,
+    } satisfies SimulationMessage,
     { id: chrome.runtime.id },
     () => {}
   )

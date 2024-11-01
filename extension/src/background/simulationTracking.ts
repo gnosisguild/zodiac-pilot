@@ -1,4 +1,4 @@
-import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { getPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
 
@@ -6,14 +6,14 @@ export const trackSimulations = () => {
   enableRPCDebugLogging()
 
   // track when a Pilot session is started for a window and when the simulation is started/stopped
-  chrome.runtime.onMessage.addListener((message: Message, sender) => {
+  chrome.runtime.onMessage.addListener((message: SimulationMessage, sender) => {
     // ignore messages that don't come from the extension itself
     if (sender.id !== chrome.runtime.id) {
       return
     }
 
     switch (message.type) {
-      case SIMULATE_START: {
+      case PilotSimulationMessageType.SIMULATE_START: {
         const { networkId, rpcUrl } = message
         const session = getPilotSession(message.windowId)
         const fork = session.createFork({ networkId, rpcUrl })
@@ -30,7 +30,7 @@ export const trackSimulations = () => {
         break
       }
 
-      case SIMULATE_STOP: {
+      case PilotSimulationMessageType.SIMULATE_STOP: {
         const session = getPilotSession(message.windowId)
 
         session.clearFork()
