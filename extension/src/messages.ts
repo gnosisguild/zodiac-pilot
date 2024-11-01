@@ -4,20 +4,14 @@ import { ChainId } from 'ser-kit'
 export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
 
 export enum PilotMessageType {
-  // triggered when the panel is toggled
+  /**  sent when the panel is toggled */
   PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED',
+  /** can be sent to open the panel from within an application */
   PILOT_OPEN_SIDEPANEL = 'PILOT_OPEN_SIDEPANEL',
-
-  // triggered the first time a tab is activated after the panel has been toggled
+  /** sent the first time a tab is activated after the panel has been opened */
   PILOT_CONNECT = 'PILOT_CONNECT',
+  /** sent when the panel is closed */
   PILOT_DISCONNECT = 'PILOT_DISCONNECT',
-}
-
-export const PROBE_CHAIN_ID = 'PROBE_CHAIN_ID'
-
-export enum PilotSimulationMessageType {
-  SIMULATE_START = 'SIMULATE_START',
-  SIMULATE_STOP = 'SIMULATE_STOP',
 }
 
 interface PilotConnect {
@@ -33,9 +27,22 @@ interface PilotPanelOpened {
   tabId?: number
 }
 
+export type Message = PilotConnect | PilotDisconnect | PilotPanelOpened
+
+export enum RPCMessageType {
+  PROBE_CHAIN_ID = 'PROBE_CHAIN_ID',
+}
+
 interface ProbeChainId {
-  type: typeof PROBE_CHAIN_ID
+  type: RPCMessageType.PROBE_CHAIN_ID
   url: string
+}
+
+export type RPCMessage = ProbeChainId
+
+export enum PilotSimulationMessageType {
+  SIMULATE_START = 'SIMULATE_START',
+  SIMULATE_STOP = 'SIMULATE_STOP',
 }
 
 interface SimulateStart {
@@ -52,8 +59,44 @@ interface SimulateStop {
 
 export type SimulationMessage = SimulateStart | SimulateStop
 
-export type Message =
-  | PilotConnect
-  | PilotDisconnect
-  | PilotPanelOpened
-  | ProbeChainId
+import { JsonRpcRequest } from '@/types'
+
+export enum InjectedProviderMessageTyp {
+  INJECTED_PROVIDER_REQUEST = 'INJECTED_PROVIDER_REQUEST',
+  INJECTED_PROVIDER_RESPONSE = 'INJECTED_PROVIDER_RESPONSE',
+  INJECTED_PROVIDER_ERROR = 'INJECTED_PROVIDER_ERROR',
+  INJECTED_PROVIDER_EVENT = 'INJECTED_PROVIDER_EVENT',
+}
+
+interface InjectedProviderRequest {
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST
+  requestId: string
+  request: JsonRpcRequest
+}
+
+export interface InjectedProviderResponse {
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE
+  requestId: string
+  response: unknown
+}
+
+interface InjectedProviderError {
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR
+  requestId: string
+  error: {
+    message: string
+    code: number
+  }
+}
+
+interface InjectedProviderEvent {
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT
+  eventName: string
+  eventData: unknown
+}
+
+export type InjectedProviderMessage =
+  | InjectedProviderRequest
+  | InjectedProviderResponse
+  | InjectedProviderError
+  | InjectedProviderEvent

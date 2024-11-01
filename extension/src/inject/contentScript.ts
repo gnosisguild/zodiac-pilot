@@ -1,9 +1,12 @@
-import { Message, PilotMessageType, PROBE_CHAIN_ID } from '@/pilot-messages'
 import {
   InjectedProviderMessage,
   InjectedProviderMessageTyp,
   InjectedProviderResponse,
-} from './messages'
+  Message,
+  PilotMessageType,
+  RPCMessage,
+  RPCMessageType,
+} from '@/pilot-messages'
 import { probeChainId } from './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.
@@ -71,7 +74,11 @@ if (
 
   // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
   chrome.runtime.onMessage.addListener(
-    (message: InjectedProviderMessage | Message, sender, respond) => {
+    (
+      message: InjectedProviderMessage | RPCMessage | Message,
+      sender,
+      respond
+    ) => {
       if (sender.id !== chrome.runtime.id) {
         return
       }
@@ -107,7 +114,7 @@ if (
           break
         }
 
-        case PROBE_CHAIN_ID: {
+        case RPCMessageType.PROBE_CHAIN_ID: {
           probeChainId(message.url).then(respond)
 
           // without this the response won't be sent

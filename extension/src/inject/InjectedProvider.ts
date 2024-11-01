@@ -1,6 +1,9 @@
+import {
+  InjectedProviderMessage,
+  InjectedProviderMessageTyp,
+} from '@/pilot-messages'
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
-import { InjectedProviderMessage, InjectedProviderMessageTyp } from './messages'
 
 interface JsonRpcRequest {
   method: string

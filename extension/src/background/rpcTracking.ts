@@ -1,4 +1,4 @@
-import { PROBE_CHAIN_ID } from '../messages'
+import { RPCMessageType } from '@/pilot-messages'
 import { isTrackedTab } from './activePilotSessions'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 
@@ -89,7 +89,11 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   if (!networkIdOfRpcUrlPromise.has(url)) {
     const promise = new Promise<number | undefined>((resolve) => {
       // fetch from the injected script, so the request has the apps origin (otherwise the request may be blocked by the RPC provider)
-      chrome.tabs.sendMessage(tabId, { type: PROBE_CHAIN_ID, url }, resolve)
+      chrome.tabs.sendMessage(
+        tabId,
+        { type: RPCMessageType.PROBE_CHAIN_ID, url },
+        resolve
+      )
     })
 
     networkIdOfRpcUrlPromise.set(url, promise)
