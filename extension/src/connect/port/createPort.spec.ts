@@ -12,7 +12,7 @@ describe('Create port', () => {
     }
   )
 
-  it.only('resolves to the port when it received the initialize message', async () => {
+  it('resolves to the port when it received the initialize message', async () => {
     vi.useFakeTimers()
 
     const port = createMockPort()
