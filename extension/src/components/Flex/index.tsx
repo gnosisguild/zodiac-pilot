@@ -1,6 +1,5 @@
 import cn from 'classnames'
 import React, { forwardRef } from 'react'
-
 import classes from './style.module.css'
 
 interface Props {
@@ -19,7 +18,7 @@ interface Props {
   style?: React.CSSProperties
 }
 
-const Flex = forwardRef<HTMLDivElement | null, Props>(
+export const Flex = forwardRef<HTMLDivElement | null, Props>(
   (
     {
       gap,
@@ -51,5 +50,3 @@ const Flex = forwardRef<HTMLDivElement | null, Props>(
   )
 )
 Flex.displayName = 'Flex'
-
-export default Flex

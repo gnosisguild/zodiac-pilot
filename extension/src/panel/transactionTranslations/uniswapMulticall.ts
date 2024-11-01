@@ -9,7 +9,7 @@ const uniswapMulticallInterface = new Interface([
   'function multicall(bytes32 previousBlockhash, bytes[] calldata data) external returns (bytes[] memory results)',
 ])
 
-export default {
+export const uniswapMulticall = {
   title: 'Unfold individual calls',
 
   recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],

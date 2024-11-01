@@ -7,7 +7,7 @@ type ButtonProps = ComponentPropsWithoutRef<'button'> & {
   fluid?: boolean
 }
 
-const Button = ({
+export const Button = ({
   className,
   secondary = false,
   fluid = false,
@@ -24,5 +24,3 @@ const Button = ({
     {...rest}
   />
 )
-
-export default Button

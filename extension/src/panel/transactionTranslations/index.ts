@@ -3,9 +3,9 @@ import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
-import cowswapSetPreSignature from './cowswapSetPreSignature'
+import { cowswapSetPreSignature } from './cowswapSetPreSignature'
 import { TransactionTranslation } from './types'
-import uniswapMulticall from './uniswapMulticall'
+import { uniswapMulticall } from './uniswapMulticall'
 
 // ADD ANY NEW TRANSLATIONS TO THIS ARRAY
 const translations: TransactionTranslation[] = [

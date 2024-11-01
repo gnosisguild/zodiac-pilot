@@ -131,7 +131,9 @@ export interface WalletConnectResult {
   chainId?: number
 }
 
-const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
+export const useWalletConnect = (
+  connectionId: string
+): WalletConnectResult | null => {
   const [provider, setProvider] =
     useState<WalletConnectEthereumMultiProvider | null>(null)
   const [connected, setConnected] = useState(
@@ -243,8 +245,6 @@ const useWalletConnect = (connectionId: string): WalletConnectResult | null => {
 
   return packed
 }
-
-export default useWalletConnect
 
 /** Adjusted from https://github.com/WalletConnect/walletconnect-utils/blob/master/misc/keyvaluestorage/src/browser/index.ts */
 class PrefixedKeyValueStorage extends KeyValueStorage {

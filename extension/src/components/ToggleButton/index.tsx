@@ -1,5 +1,4 @@
 import React from 'react'
-
 import classes from './style.module.css'
 
 interface Props {
@@ -7,7 +6,7 @@ interface Props {
   onToggle(): void
 }
 
-const ToggleButton: React.FC<Props> = ({ expanded, onToggle }) => (
+export const ToggleButton: React.FC<Props> = ({ expanded, onToggle }) => (
   <button
     className={classes.toggleButton}
     onClick={onToggle}
@@ -64,5 +63,3 @@ const ToggleButton: React.FC<Props> = ({ expanded, onToggle }) => (
     </svg>
   </button>
 )
-
-export default ToggleButton

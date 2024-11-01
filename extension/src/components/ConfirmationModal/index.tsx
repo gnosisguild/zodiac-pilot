@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
-import Button from '../Button'
-import Flex from '../Flex'
-import IconButton from '../IconButton'
+import { Button } from '../Button'
+import { Flex } from '../Flex'
+import { IconButton } from '../IconButton'
 import classes from './style.module.css'
 
 type PropTypes = {

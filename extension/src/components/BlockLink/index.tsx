@@ -3,7 +3,7 @@ import React from 'react'
 
 import classes from './style.module.css'
 
-const BlockLink: React.FC<
+export const BlockLink: React.FC<
   React.DetailedHTMLProps<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement
@@ -13,5 +13,3 @@ const BlockLink: React.FC<
     {children}
   </a>
 )
-
-export default BlockLink

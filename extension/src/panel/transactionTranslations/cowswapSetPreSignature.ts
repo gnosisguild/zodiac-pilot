@@ -32,7 +32,7 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
   11155111: 'sepolia',
 }
 
-export default {
+export const cowswapSetPreSignature = {
   title: 'Route through CowswapOrderSigner',
 
   recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],

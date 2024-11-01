@@ -18,7 +18,7 @@ import {
 } from '../../utils'
 import classes from './style.module.css'
 
-const Submit: React.FC = () => {
+export const Submit: React.FC = () => {
   const route = useZodiacRoute()
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
@@ -173,8 +173,6 @@ const Submit: React.FC = () => {
     </>
   )
 }
-
-export default Submit
 
 const AwaitingSignatureModal: React.FC<{
   isOpen: boolean

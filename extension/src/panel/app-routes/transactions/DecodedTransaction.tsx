@@ -7,7 +7,10 @@ interface Props {
   functionFragment: FunctionFragment
   data: Result
 }
-const DecodedTransaction: React.FC<Props> = ({ functionFragment, data }) => (
+export const DecodedTransaction: React.FC<Props> = ({
+  functionFragment,
+  data,
+}) => (
   <div className={classes.transaction}>
     {functionFragment.inputs.length > 0 && (
       <fieldset>
@@ -25,5 +28,3 @@ const DecodedTransaction: React.FC<Props> = ({ functionFragment, data }) => (
     )}
   </div>
 )
-
-export default DecodedTransaction

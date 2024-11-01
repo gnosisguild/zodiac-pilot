@@ -9,7 +9,7 @@ import { getReadOnlyProvider } from './readOnlyProvider'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
-export default class TenderlyProvider extends EventEmitter {
+export class TenderlyProvider extends EventEmitter {
   private chainId: number
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
 

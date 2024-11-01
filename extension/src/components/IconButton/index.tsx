@@ -1,6 +1,5 @@
 import cn from 'classnames'
 import React from 'react'
-
 import classes from './style.module.css'
 
 type Props = React.DetailedHTMLProps<
@@ -10,11 +9,9 @@ type Props = React.DetailedHTMLProps<
   danger?: boolean
 }
 
-const IconButton: React.FC<Props> = ({ className, danger, ...rest }) => (
+export const IconButton: React.FC<Props> = ({ className, danger, ...rest }) => (
   <button
     className={cn(classes.button, { [classes.danger]: danger }, className)}
     {...rest}
   />
 )
-
-export default IconButton

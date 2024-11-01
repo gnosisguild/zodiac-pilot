@@ -1,11 +1,9 @@
 import classNames from 'classnames'
 import React, { ReactNode } from 'react'
-
-import Box from '../Box'
-
+import { Box } from '../Box'
 import classes from './style.module.css'
 
-const Field: React.FC<{
+export const Field: React.FC<{
   label?: string
   labelFor?: string
   children: ReactNode
@@ -22,5 +20,3 @@ const Field: React.FC<{
     )}
   </Box>
 )
-
-export default Field
