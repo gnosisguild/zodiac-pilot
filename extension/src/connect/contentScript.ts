@@ -20,6 +20,7 @@ function ensureIframe() {
 
 // wait for connection from ConnectProvider (running in extension page), then inject iframe to establish a bridge to the user's injected wallet
 chrome.runtime.onConnect.addListener((port) => {
+  console.log('PORT OPEN FROM CONNECT PROVIDER')
   const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
@@ -66,17 +67,29 @@ chrome.runtime.onConnect.addListener((port) => {
       return
     }
 
-    if (
-      message.type ===
-        ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED ||
-      message.type === ConnectedWalletMessageType.CONNECTED_WALLET_EVENT
-    ) {
+    if (message.type === ConnectedWalletMessageType.CONNECTED_WALLET_EVENT) {
       event.stopImmediatePropagation()
       port.postMessage(message)
     }
   }
 
   window.addEventListener('message', handleEvent)
+
+  const handleInit = (event: MessageEvent<ConnectedWalletMessage>) => {
+    const message = event.data
+
+    if (
+      message == null ||
+      message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED
+    ) {
+      return
+    }
+
+    event.stopImmediatePropagation()
+    port.postMessage(message)
+  }
+
+  window.addEventListener('message', handleInit)
 
   // clean up when the panel disconnects
   port.onDisconnect.addListener(async () => {
@@ -86,6 +99,10 @@ chrome.runtime.onConnect.addListener((port) => {
       iframe.remove()
     }
   })
+
+  port.postMessage({
+    type: ConnectedWalletMessageType.CONNECTED_WALLET_CONNECTED,
+  } satisfies ConnectedWalletMessage)
 })
 
 export {}

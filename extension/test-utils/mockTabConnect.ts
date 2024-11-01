@@ -1,8 +1,22 @@
+import { MutableRefObject } from 'react'
 import { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { chromeMock } from './chromeMock'
 
-export const mockTabConnect = (port: Runtime.Port) =>
+type PortCreateFn = () => Runtime.Port
+
+export const mockTabConnect = (port: Runtime.Port | PortCreateFn) => {
+  const portRef: MutableRefObject<Runtime.Port | null> = { current: null }
+
   // @ts-expect-error The native chrome and mock chrome events
   // that can be part of the result are not compatible.
   // we ignore this fact for now
-  chromeMock.tabs.connect.mockReturnValue(port)
+  chromeMock.tabs.connect.mockImplementation(() => {
+    const mockPort = typeof port === 'function' ? port() : port
+
+    portRef.current = mockPort
+
+    return mockPort
+  })
+
+  return portRef
+}

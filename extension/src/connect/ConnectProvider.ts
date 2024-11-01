@@ -1,9 +1,10 @@
 // this will be bundled in the panel app
 import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 import { Eip1193Provider } from '@/types'
-import { getActiveTab } from '@/utils'
+import { sleep } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'
+import { createPortOnTabActivity } from './port'
 
 interface JsonRpcRequest {
   method: string
@@ -20,8 +21,6 @@ class InjectedWalletError extends Error {
 
 let instanceCounter = 0
 
-const tabInfo = new Map<number, string | undefined>()
-
 export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   private port: chrome.runtime.Port | null = null
 
@@ -31,77 +30,19 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   constructor() {
     super()
 
-    chrome.tabs.onActivated.addListener(async ({ tabId }) => {
-      const tab = await chrome.tabs.get(tabId)
+    createPortOnTabActivity((tabId, port) => {
+      console.log('NEW PORT', { port })
 
-      console.debug(`Tab (id: "${tabId}", url: "${tab.url}") became active.`)
-
-      const port = await handleActiveTab(tab)
-
-      if (port != null) {
-        this.setupPort(tabId, port)
+      if (port == null) {
+        this.tearDownPort()
       } else {
-        this.tearDownPort(tabId)
-      }
-    })
-
-    chrome.tabs.onUpdated.addListener(async (tabId) => {
-      const currentTab = await getActiveTab()
-
-      if (currentTab.id !== tabId) {
-        return
-      }
-
-      console.debug(
-        `Tab (id: "${tabId}", url: "${currentTab.url}") has been updated.`
-      )
-
-      const url = tabInfo.get(tabId)
-
-      if (url === currentTab.url) {
-        if (isValidTab(url)) {
-          console.debug(
-            `Tab (id: "${tabId}", url: "${currentTab.url}") has no changes that require a new port.`
-          )
-        } else {
-          console.debug(
-            `Tab (id: "${tabId}", url: "${currentTab.url}") cannot be used.`
-          )
-
-          this.tearDownPort(tabId)
-        }
-
-        return
-      }
-
-      console.debug(
-        `Tab (id: "${tabId}") updated URL from "${url}" to "${currentTab.url}".`
-      )
-
-      tabInfo.set(tabId, currentTab.url)
-
-      const port = await handleActiveTab(currentTab)
-
-      if (port != null) {
         this.setupPort(tabId, port)
-      }
-    })
-
-    getActiveTab().then(async (tab) => {
-      if (tab.id == null) {
-        return
-      }
-
-      const port = await handleActiveTab(tab)
-
-      if (port != null) {
-        this.setupPort(tab.id, port)
       }
     })
   }
 
   async setupPort(tabId: number, port: chrome.runtime.Port) {
-    this.tearDownPort(tabId)
+    this.tearDownPort()
 
     console.debug('Connecting new port.')
 
@@ -112,9 +53,7 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
     this.emit('readyChanged', true)
   }
 
-  tearDownPort(tabId: number) {
-    tabInfo.delete(tabId)
-
+  tearDownPort() {
     if (this.port == null) {
       return
     }
@@ -207,52 +146,6 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   }
 }
 
-const isValidTab = (url: string | undefined) =>
-  url != null && url !== '' && isValidProtocol(url)
-
-const isValidProtocol = (url: string) =>
-  ['chrome:', 'about:'].every((protocol) => !url.startsWith(protocol))
-
-const createPort = (tabId: number, url: string | undefined) => {
-  if (!isValidTab(url)) {
-    console.debug(
-      `Tab (id: "${tabId}", url: "${url}") does not meet connect criteria.`
-    )
-
-    return Promise.resolve(null)
-  }
-
-  return new Promise<chrome.runtime.Port>((resolve, reject) => {
-    const port = chrome.tabs.connect(tabId, {
-      name: 'connect',
-    })
-
-    // if the port connection cannot be established, this will trigger a disconnect event
-    const handleDisconnect = () => {
-      reject(new Error('No response from connect iframe'))
-    }
-    port.onDisconnect.addListener(handleDisconnect)
-
-    // if we receive the CONNECTED_WALLET_INITIALIZED message, we resolve the promise to this port
-    const handleInitMessage = (message: ConnectedWalletMessage) => {
-      if (
-        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED
-      ) {
-        return
-      }
-
-      port.onDisconnect.removeListener(handleDisconnect)
-      port.onMessage.removeListener(handleInitMessage)
-
-      console.debug(`Tab (id: "${tabId}") port created.`)
-
-      resolve(port)
-    }
-
-    port.onMessage.addListener(handleInitMessage)
-  })
-}
-
 type SendRequestToConnectIFrameOptions = {
   port: chrome.runtime.Port
   requestId: string
@@ -290,57 +183,3 @@ const sendRequestToConnectIframe = async ({
       request,
     })
   })
-
-const handleActiveTab = async (tab: chrome.tabs.Tab) => {
-  return new Promise<chrome.runtime.Port | null>((resolve) => {
-    const handleTabWhenReady = async (
-      tabId: number,
-      info: chrome.tabs.TabChangeInfo
-    ) => {
-      const url = info.url || tabInfo.get(tabId)
-
-      tabInfo.set(tabId, url)
-
-      if (tab.id === tabId && info.status === 'complete') {
-        console.debug(
-          `Tab (id: "${tab.id}", url: "${url}") became ready. Trying to open port.`
-        )
-
-        const port = await createPort(tabId, url)
-
-        if (port != null) {
-          chrome.tabs.onUpdated.removeListener(handleTabWhenReady)
-
-          console.debug(`Port to Tab (id: "${tab.id}", url: "${url}") created.`)
-
-          resolve(port)
-        }
-      }
-    }
-
-    if (tab.id != null && tab.status === 'complete') {
-      console.debug(
-        `Tab (id: "${tab.id}", url: "${tab.url}") was already loaded. Trying to create port.`
-      )
-
-      createPort(tab.id, tab.url).then((port) => {
-        if (port != null) {
-          console.debug(
-            `Port to Tab (id: "${tab.id}", url: "${tab.url}") created.`
-          )
-
-          resolve(port)
-        } else {
-          resolve(null)
-        }
-      })
-    } else {
-      console.debug(`Tab (id: "${tab.id}", url: "${tab.url}") NOT ready.`)
-
-      chrome.tabs.onUpdated.addListener(handleTabWhenReady)
-    }
-  })
-}
-
-const sleep = (time: number) =>
-  new Promise<void>((resolve) => setTimeout(resolve, time))
