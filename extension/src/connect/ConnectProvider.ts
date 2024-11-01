@@ -31,8 +31,6 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
     super()
 
     createPortOnTabActivity((tabId, port) => {
-      console.log('NEW PORT', { port })
-
       if (port == null) {
         this.tearDownPort()
       } else {

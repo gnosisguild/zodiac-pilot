@@ -29,7 +29,7 @@ const connectToIframe = async (tabId: number) => {
 
     port.onMessage.removeListener(handleInitMessage)
 
-    console.debug(`Tab (id: "${tabId}") port created.`)
+    console.debug(`Connected to injected iframe in Tab (id: "${tabId}").`)
 
     resolve(port)
   }
