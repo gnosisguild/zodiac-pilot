@@ -2,14 +2,13 @@ import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 
 function ensureIframe() {
   let node: HTMLIFrameElement | null = document.querySelector(
-    'iframe[data__zodiacPilotConnectIframe]'
+    'iframe[src="https://connect.pilot.gnosisguild.org/"]'
   )
 
   if (!node) {
     node = document.createElement('iframe')
     node.src = 'https://connect.pilot.gnosisguild.org/'
     node.style.display = 'none'
-    node.dataset.__zodiacPilotConnectIframe === 'true'
 
     const parent = document.body || document.documentElement
     parent.append(node)
