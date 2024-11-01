@@ -5,7 +5,7 @@ import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RiGroupLine } from 'react-icons/ri'
 import {
   ExecutionActionType,
@@ -76,11 +76,17 @@ const simulateRolesTransaction = async (
   return false
 }
 
-export const RolePermissionCheck: React.FC<{
+type Props = {
   transactionState: TransactionState
   index: number
   mini?: boolean
-}> = ({ transactionState, index, mini = false }) => {
+}
+
+export const RolePermissionCheck = ({
+  transactionState,
+  index,
+  mini = false,
+}: Props) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const route = useZodiacRoute()
   const provider = useProvider()

@@ -4,7 +4,7 @@ import { getReadOnlyProvider, useSubmitTransactions } from '@/providers'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +18,7 @@ import {
 } from '../../utils'
 import classes from './style.module.css'
 
-export const Submit: React.FC = () => {
+export const Submit = () => {
   const route = useZodiacRoute()
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
@@ -174,12 +174,18 @@ export const Submit: React.FC = () => {
   )
 }
 
-const AwaitingSignatureModal: React.FC<{
+type Props = {
   isOpen: boolean
   onClose(): void
   usesWalletConnect: boolean // for now we assume that a walletconnect'ed wallet is generally a Safe
   account: PrefixedAddress
-}> = ({ isOpen, onClose, usesWalletConnect, account }) => (
+}
+const AwaitingSignatureModal = ({
+  isOpen,
+  onClose,
+  usesWalletConnect,
+  account,
+}: Props) => (
   <Modal
     isOpen={isOpen}
     style={modalStyle}

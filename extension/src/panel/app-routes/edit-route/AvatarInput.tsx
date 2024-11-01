@@ -1,7 +1,7 @@
 import { Blockie, Circle, RawAddress, selectStyles } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
-import React, { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import { Option } from './ModSelect'
 
@@ -13,7 +13,7 @@ interface Props {
 
 const createSelectStyles = {
   ...selectStyles,
-  dropdownIndicator: (provided: React.CSSProperties, state: any) => {
+  dropdownIndicator: (provided: CSSProperties, state: any) => {
     if (state.options.length === 0) {
       return {
         ...provided,
@@ -24,7 +24,7 @@ const createSelectStyles = {
       ...provided,
     }
   },
-  indicatorSeparator: (provided: React.CSSProperties, state: any) => {
+  indicatorSeparator: (provided: CSSProperties, state: any) => {
     if (state.options.length === 0) {
       return {
         ...provided,
@@ -35,7 +35,7 @@ const createSelectStyles = {
       ...provided,
     }
   },
-  indicatorContainer: (provided: React.CSSProperties) => ({
+  indicatorContainer: (provided: CSSProperties) => ({
     ...provided,
     color: 'white',
   }),

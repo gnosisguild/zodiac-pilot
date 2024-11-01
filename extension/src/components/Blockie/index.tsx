@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import makeBlockie from 'ethereum-blockies-base64'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import classes from './style.module.css'
 
@@ -9,7 +9,7 @@ interface Props {
   className?: string
 }
 
-export const Blockie: React.FC<Props> = ({ address, className }) => {
+export const Blockie = ({ address, className }: Props) => {
   const blockie = useMemo(() => address && makeBlockie(address), [address])
   return (
     <div className={classNames(classes.container, className)}>
