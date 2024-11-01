@@ -1,4 +1,4 @@
-import { Message, SIMULATE_START, SIMULATE_STOP } from '../messages'
+import { Message, PilotSimulationMessageType } from '@/pilot-messages'
 import { getPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
 
@@ -13,7 +13,7 @@ export const trackSimulations = () => {
     }
 
     switch (message.type) {
-      case SIMULATE_START: {
+      case PilotSimulationMessageType.SIMULATE_START: {
         const { networkId, rpcUrl } = message
         const session = getPilotSession(message.windowId)
         const fork = session.createFork({ networkId, rpcUrl })
@@ -30,7 +30,7 @@ export const trackSimulations = () => {
         break
       }
 
-      case SIMULATE_STOP: {
+      case PilotSimulationMessageType.SIMULATE_STOP: {
         const session = getPilotSession(message.windowId)
 
         session.clearFork()

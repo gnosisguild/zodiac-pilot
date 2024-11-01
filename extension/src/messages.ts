@@ -15,8 +15,10 @@ export enum PilotMessageType {
 
 export const PROBE_CHAIN_ID = 'PROBE_CHAIN_ID'
 
-export const SIMULATE_START = 'SIMULATE_START'
-export const SIMULATE_STOP = 'SIMULATE_STOP'
+export enum PilotSimulationMessageType {
+  SIMULATE_START = 'SIMULATE_START',
+  SIMULATE_STOP = 'SIMULATE_STOP',
+}
 
 interface PilotConnect {
   type: PilotMessageType.PILOT_CONNECT
@@ -37,14 +39,14 @@ interface ProbeChainId {
 }
 
 interface SimulateStart {
-  type: typeof SIMULATE_START
+  type: PilotSimulationMessageType.SIMULATE_START
   windowId: number
   networkId: ChainId
   rpcUrl: string
 }
 
 interface SimulateStop {
-  type: typeof SIMULATE_STOP
+  type: PilotSimulationMessageType.SIMULATE_STOP
   windowId: number
 }
 

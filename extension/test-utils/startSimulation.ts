@@ -1,4 +1,4 @@
-import { Message, SIMULATE_START } from '../src/messages'
+import { Message, PilotSimulationMessageType } from '@/pilot-messages'
 import { chromeMock } from './chromeMock'
 
 type StartSimulationOptions = {
@@ -8,7 +8,7 @@ type StartSimulationOptions = {
 export const startSimulation = ({ windowId }: StartSimulationOptions) => {
   chromeMock.runtime.onMessage.callListeners(
     {
-      type: SIMULATE_START,
+      type: PilotSimulationMessageType.SIMULATE_START,
       windowId,
       networkId: 1,
       rpcUrl: 'http://test.com',
