@@ -1,24 +1,26 @@
 import { JsonRpcRequest } from '../types'
 
-export const INJECTED_PROVIDER_REQUEST = 'INJECTED_PROVIDER_REQUEST'
-export const INJECTED_PROVIDER_RESPONSE = 'INJECTED_PROVIDER_RESPONSE'
-export const INJECTED_PROVIDER_ERROR = 'INJECTED_PROVIDER_ERROR'
-export const INJECTED_PROVIDER_EVENT = 'INJECTED_PROVIDER_EVENT'
+export enum InjectedProviderMessageTyp {
+  INJECTED_PROVIDER_REQUEST = 'INJECTED_PROVIDER_REQUEST',
+  INJECTED_PROVIDER_RESPONSE = 'INJECTED_PROVIDER_RESPONSE',
+  INJECTED_PROVIDER_ERROR = 'INJECTED_PROVIDER_ERROR',
+  INJECTED_PROVIDER_EVENT = 'INJECTED_PROVIDER_EVENT',
+}
 
 interface InjectedProviderRequest {
-  type: typeof INJECTED_PROVIDER_REQUEST
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST
   requestId: string
   request: JsonRpcRequest
 }
 
 export interface InjectedProviderResponse {
-  type: typeof INJECTED_PROVIDER_RESPONSE
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE
   requestId: string
-  response: any
+  response: unknown
 }
 
 interface InjectedProviderError {
-  type: typeof INJECTED_PROVIDER_ERROR
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR
   requestId: string
   error: {
     message: string
@@ -27,9 +29,9 @@ interface InjectedProviderError {
 }
 
 interface InjectedProviderEvent {
-  type: typeof INJECTED_PROVIDER_EVENT
+  type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT
   eventName: string
-  eventData: any
+  eventData: unknown
 }
 
 export type InjectedProviderMessage =

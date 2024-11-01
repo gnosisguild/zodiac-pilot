@@ -1,12 +1,9 @@
 // this will be bundled in the panel app
+import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../types'
-import {
-  INJECTED_PROVIDER_EVENT,
-  INJECTED_PROVIDER_REQUEST,
-  InjectedProviderMessage,
-} from './messages'
+import { InjectedProviderMessage, InjectedProviderMessageTyp } from './messages'
 
 let windowId: number | undefined
 
@@ -19,10 +16,7 @@ export const setWindowId = (id: number) => {
   windowId = id
 }
 
-let resolveInitPromise: () => void
-const initPromise = new Promise<void>((resolve) => {
-  resolveInitPromise = resolve
-})
+const { promise, resolve } = Promise.withResolvers<void>()
 
 /** Update the wallet */
 export const update = (
@@ -46,7 +40,7 @@ export const update = (
   }
   account = newAccount
 
-  resolveInitPromise()
+  resolve()
 }
 
 const emitEvent = async (eventName: string, eventData: any) => {
@@ -58,7 +52,7 @@ const emitEvent = async (eventName: string, eventData: any) => {
 
   for (const tab of tabs) {
     chrome.tabs.sendMessage(tab.id!, {
-      type: INJECTED_PROVIDER_EVENT,
+      type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
       eventName,
       eventData,
     } satisfies InjectedProviderMessage)
@@ -74,19 +68,26 @@ chrome.runtime.onMessage.addListener(
     // only handle messages from the current window
     if (sender.tab?.windowId !== windowId) return
 
-    if (message.type === INJECTED_PROVIDER_REQUEST) {
-      initPromise
-        .then(() => provider!.request(message.request))
+    if (message.type === InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST) {
+      promise
+        .then(() => {
+          invariant(
+            provider != null,
+            'The provider for the injected bridge has not been set, yet'
+          )
+
+          provider.request(message.request)
+        })
         .then((response) => {
           sendResponse({
-            type: 'INJECTED_PROVIDER_RESPONSE',
+            type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE,
             requestId: message.requestId,
             response,
           } satisfies InjectedProviderMessage)
         })
         .catch((error) => {
           sendResponse({
-            type: 'INJECTED_PROVIDER_ERROR',
+            type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
             requestId: message.requestId,
             error: {
               message: error.message,

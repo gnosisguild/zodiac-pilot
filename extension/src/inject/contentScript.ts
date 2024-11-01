@@ -1,8 +1,7 @@
 import { Message, PILOT_DISCONNECT, PROBE_CHAIN_ID } from '../messages'
 import {
-  INJECTED_PROVIDER_EVENT,
-  INJECTED_PROVIDER_REQUEST,
   InjectedProviderMessage,
+  InjectedProviderMessageTyp,
   InjectedProviderResponse,
 } from './messages'
 import { probeChainId } from './probeChainId'
@@ -41,7 +40,9 @@ if (
       const message = event.data
       if (!message) return
 
-      if (message.type === INJECTED_PROVIDER_REQUEST) {
+      if (
+        message.type === InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST
+      ) {
         // Prevent the same request from being handled multiple times through other instances of this content script
         event.stopImmediatePropagation()
 
@@ -81,7 +82,7 @@ if (
           console.debug('Pilot disconnected')
           window.postMessage(
             {
-              type: INJECTED_PROVIDER_EVENT,
+              type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
               eventName: 'disconnect',
               eventData: {
                 error: {
@@ -96,7 +97,7 @@ if (
           break
         }
 
-        case INJECTED_PROVIDER_EVENT: {
+        case InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT: {
           console.debug(
             `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
             message.eventData

@@ -5,7 +5,6 @@ export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
 
 // triggered when the panel is toggled
 export const PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED'
-export const PILOT_PANEL_CLOSED = 'PILOT_PANEL_CLOSED'
 export const PILOT_OPEN_SIDEPANEL = 'PILOT_OPEN_SIDEPANEL'
 
 // triggered the first time a tab is activated after the panel has been toggled
@@ -30,11 +29,6 @@ interface PilotPanelOpened {
   tabId?: number
 }
 
-interface PilotPanelClosed {
-  type: typeof PILOT_PANEL_CLOSED
-  windowId: number
-}
-
 interface ProbeChainId {
   type: typeof PROBE_CHAIN_ID
   url: string
@@ -56,7 +50,6 @@ export type Message =
   | PilotConnect
   | PilotDisconnect
   | PilotPanelOpened
-  | PilotPanelClosed
   | ProbeChainId
   | SimulateStart
   | SimulateStop
