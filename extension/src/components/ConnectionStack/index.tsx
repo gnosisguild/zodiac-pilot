@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import React from 'react'
 import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../const'
 import { LegacyConnection } from '../../types'
@@ -15,13 +14,13 @@ interface Props {
   className?: string
 }
 
-export const ConnectionStack: React.FC<Props> = ({
+export const ConnectionStack = ({
   connection,
   chainId,
   helperClass,
   addressBoxClass,
   className,
-}) => {
+}: Props) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
   return (
     <div className={cn(classes.connectionStack, className)}>

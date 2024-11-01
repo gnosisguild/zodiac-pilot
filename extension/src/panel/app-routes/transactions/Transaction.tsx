@@ -4,7 +4,7 @@ import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { formatEther, Fragment } from 'ethers'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
 import { ContractAddress } from './ContractAddress'
 import { CopyToClipboard } from './CopyToClipboard'
@@ -26,14 +26,14 @@ interface HeaderProps {
   showRoles?: boolean
 }
 
-const TransactionHeader: React.FC<HeaderProps> = ({
+const TransactionHeader = ({
   index,
   transactionState,
   functionFragment,
   onExpandToggle,
   expanded,
   showRoles = false,
-}) => {
+}: HeaderProps) => {
   return (
     <div className={classes.transactionHeader}>
       <label className={classes.start}>
@@ -75,11 +75,11 @@ interface Props {
   scrollIntoView: boolean
 }
 
-export const Transaction: React.FC<Props> = ({
+export const Transaction = ({
   index,
   transactionState,
   scrollIntoView,
-}) => {
+}: Props) => {
   const [expanded, setExpanded] = useState(true)
   const route = useZodiacRoute()
   const chainId = getChainId(route.avatar)
@@ -143,11 +143,11 @@ interface StatusProps {
   index: number
 }
 
-const TransactionStatus: React.FC<StatusProps> = ({
+const TransactionStatus = ({
   transactionState,
   index,
   showRoles = false,
-}) => (
+}: StatusProps) => (
   <Flex
     gap={1}
     justifyContent="space-between"
@@ -169,7 +169,9 @@ const TransactionStatus: React.FC<StatusProps> = ({
   </Flex>
 )
 
-const EtherValue: React.FC<{ value: string }> = ({ value }) => {
+type EtherValueProps = { value: string }
+
+const EtherValue = ({ value }: EtherValueProps) => {
   const { avatar } = useZodiacRoute()
   const chainId = getChainId(avatar)
 

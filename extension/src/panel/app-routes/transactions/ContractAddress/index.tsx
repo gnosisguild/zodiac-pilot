@@ -3,7 +3,7 @@ import { BlockLink, Box, Flex, IconButton, RawAddress } from '@/components'
 import copy from 'copy-to-clipboard'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { ContractInfo } from '../../../utils/abi'
@@ -21,14 +21,14 @@ interface Props {
 const VISIBLE_START = 4
 const VISIBLE_END = 4
 
-export const ContractAddress: React.FC<Props> = ({
+export const ContractAddress = ({
   chainId,
   address,
   contractInfo,
   explorerLink,
   copyToClipboard,
   className,
-}) => {
+}: Props) => {
   const explorerUrl = EXPLORER_URL[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])

@@ -1,14 +1,15 @@
 import { Flex, Spinner, Tag } from '@/components'
 import { useProvider } from '@/providers'
 import { ExecutionStatus, TransactionState } from '@/state'
-import React from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 import classes from './style.module.css'
 
-export const SimulationStatus: React.FC<{
+type Props = {
   transactionState: TransactionState
   mini?: boolean
-}> = ({ transactionState, mini = false }) => {
+}
+
+export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
   const provider = useProvider()
 
   if (mini) {

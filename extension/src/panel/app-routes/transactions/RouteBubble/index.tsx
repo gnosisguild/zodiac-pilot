@@ -1,13 +1,12 @@
 import { getChainId } from '@/chains'
 import { Blockie, Box, ConnectionStack } from '@/components'
 import { useZodiacRoute } from '@/zodiac-routes'
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { ConnectionsIcon } from './ConnectionsIcon'
 import classes from './style.module.css'
 
-export const RouteBubble: React.FC = () => {
+export const RouteBubble = () => {
   const route = useZodiacRoute()
   const chainId = getChainId(route.avatar)
   const connection = asLegacyConnection(route)

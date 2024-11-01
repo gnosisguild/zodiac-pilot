@@ -1,7 +1,6 @@
 import { IconButton } from '@/components'
 import { ForkProvider, useProvider } from '@/providers'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
-import React from 'react'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
 import classes from './style.module.css'
@@ -11,7 +10,7 @@ type Props = {
   index: number
 }
 
-export const Remove: React.FC<Props> = ({ transactionState, index }) => {
+export const Remove = ({ transactionState, index }: Props) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useTransactions()

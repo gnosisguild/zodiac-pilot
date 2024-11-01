@@ -3,7 +3,7 @@ import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { RiArrowLeftSLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { MODULE_NAMES } from '../../../const'
@@ -72,7 +72,7 @@ export const EditRoute = () => {
 
   const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
-  const [roleIdError, setRoleIdError] = React.useState<string | null>(null)
+  const [roleIdError, setRoleIdError] = useState<string | null>(null)
 
   const pilotIsOwner = safes.some(
     (safe) => safe.toLowerCase() === avatarAddress.toLowerCase()

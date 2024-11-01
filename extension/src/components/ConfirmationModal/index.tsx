@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { Button } from '../Button'
@@ -10,15 +10,15 @@ type PropTypes = {
   isOpen: boolean
   onAccept(): void
   onReject(): void
-  children: React.ReactNode
+  children: ReactNode
 }
 
-export const ConfirmationModal: React.FC<PropTypes> = ({
+export const ConfirmationModal = ({
   isOpen,
   onAccept,
   onReject,
   children,
-}) => (
+}: PropTypes) => (
   <Modal
     isOpen={isOpen}
     style={modalStyle}

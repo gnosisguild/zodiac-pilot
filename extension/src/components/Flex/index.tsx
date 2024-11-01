@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import React, { forwardRef } from 'react'
+import { CSSProperties, forwardRef, ReactNode } from 'react'
 import classes from './style.module.css'
 
 interface Props {
@@ -14,8 +14,8 @@ interface Props {
   alignItems?: 'normal' | 'stretch' | 'center' | 'end' | 'start' | 'baseline'
   gap: 0 | 1 | 2 | 3 | 4 | 5
   className?: string
-  children?: React.ReactNode
-  style?: React.CSSProperties
+  children?: ReactNode
+  style?: CSSProperties
 }
 
 export const Flex = forwardRef<HTMLDivElement | null, Props>(

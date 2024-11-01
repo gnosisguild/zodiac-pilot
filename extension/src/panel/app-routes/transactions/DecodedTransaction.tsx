@@ -1,16 +1,12 @@
 import { Box } from '@/components'
 import { FunctionFragment, Result } from 'ethers'
-import React from 'react'
 import classes from './style.module.css'
 
 interface Props {
   functionFragment: FunctionFragment
   data: Result
 }
-export const DecodedTransaction: React.FC<Props> = ({
-  functionFragment,
-  data,
-}) => (
+export const DecodedTransaction = ({ functionFragment, data }: Props) => (
   <div className={classes.transaction}>
     {functionFragment.inputs.length > 0 && (
       <fieldset>
