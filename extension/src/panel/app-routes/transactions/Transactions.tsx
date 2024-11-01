@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { RouteBubble } from './RouteBubble'
-import Submit from './Submit'
+import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import classes from './style.module.css'
 

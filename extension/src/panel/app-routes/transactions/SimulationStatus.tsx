@@ -5,7 +5,7 @@ import React from 'react'
 import { RiExternalLinkLine, RiGitBranchLine } from 'react-icons/ri'
 import classes from './style.module.css'
 
-const SimulationStatus: React.FC<{
+export const SimulationStatus: React.FC<{
   transactionState: TransactionState
   mini?: boolean
 }> = ({ transactionState, mini = false }) => {
@@ -85,5 +85,3 @@ const SimulationStatus: React.FC<{
     </Flex>
   )
 }
-
-export default SimulationStatus

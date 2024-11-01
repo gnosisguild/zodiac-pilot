@@ -6,7 +6,7 @@ interface Props {
   data: string
 }
 
-const RawTransaction: React.FC<Props> = ({ data }) => (
+export const RawTransaction: React.FC<Props> = ({ data }) => (
   <div className={classes.transaction}>
     <label>
       <span>Data</span>
@@ -21,5 +21,3 @@ const RawTransaction: React.FC<Props> = ({ data }) => (
     </label>
   </div>
 )
-
-export default RawTransaction

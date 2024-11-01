@@ -3,8 +3,8 @@ import React from 'react'
 import { ChainId } from 'ser-kit'
 import { MODULE_NAMES } from '../../const'
 import { LegacyConnection } from '../../types'
-import Address from '../Address'
-import Box from '../Box'
+import { Address } from '../Address'
+import { Box } from '../Box'
 import classes from './style.module.css'
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   className?: string
 }
 
-const ConnectionStack: React.FC<Props> = ({
+export const ConnectionStack: React.FC<Props> = ({
   connection,
   chainId,
   helperClass,
@@ -51,5 +51,3 @@ const ConnectionStack: React.FC<Props> = ({
     </div>
   )
 }
-
-export default ConnectionStack

@@ -22,10 +22,7 @@ let instanceCounter = 0
 
 const tabInfo = new Map<number, string | undefined>()
 
-export default class ConnectProvider
-  extends EventEmitter
-  implements Eip1193Provider
-{
+export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   private port: chrome.runtime.Port | null = null
 
   private instanceId = instanceCounter++

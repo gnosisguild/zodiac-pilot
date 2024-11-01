@@ -16,7 +16,7 @@ import {
 } from '../integrations/safe/signing'
 import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
 import { decodeGenericError } from '../utils'
-import TenderlyProvider from './TenderlyProvider'
+import { TenderlyProvider } from './TenderlyProvider'
 
 class UnsupportedMethodError extends Error {
   code = 4200

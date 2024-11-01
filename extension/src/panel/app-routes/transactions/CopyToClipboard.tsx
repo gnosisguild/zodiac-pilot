@@ -10,7 +10,7 @@ interface Props {
   labeled?: boolean
 }
 
-const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
+export const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(transaction, undefined, 2))
     toast(<>Transaction data has been copied to clipboard.</>)
@@ -34,5 +34,3 @@ const CopyToClipboard: React.FC<Props> = ({ transaction, labeled }) => {
     )
   }
 }
-
-export default CopyToClipboard

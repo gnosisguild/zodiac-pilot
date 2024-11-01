@@ -12,7 +12,7 @@ export interface TransactionState {
   transactionHash?: string
 }
 
-const rootReducer = (
+export const rootReducer = (
   state: TransactionState[],
   action: Action
 ): TransactionState[] => {
@@ -57,5 +57,3 @@ const rootReducer = (
     }
   }
 }
-
-export default rootReducer

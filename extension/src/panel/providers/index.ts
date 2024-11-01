@@ -11,7 +11,4 @@ export {
   useInjectedWallet,
   type InjectedWalletContextT,
 } from './useInjectedWallet'
-export {
-  default as useWalletConnect,
-  type WalletConnectResult,
-} from './useWalletConnect'
+export { useWalletConnect, type WalletConnectResult } from './useWalletConnect'
