@@ -1,4 +1,6 @@
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import {
+  callListeners,
   chromeMock,
   mockRPCRequest,
   startPilotSession,
@@ -82,6 +84,22 @@ describe('Simulation tracking', () => {
       ).toHaveBeenLastCalledWith({
         removeRuleIds: [2],
       })
+    })
+  })
+
+  describe('Pilot sessions', () => {
+    it('does not break when a simulation is stopped outside of an active pilot session', async () => {
+      await expect(
+        callListeners(
+          chromeMock.runtime.onMessage,
+          {
+            type: PilotSimulationMessageType.SIMULATE_STOP,
+            windowId: 1,
+          } satisfies SimulationMessage,
+          { id: chromeMock.runtime.id },
+          () => {}
+        )
+      ).resolves.not.toThrow()
     })
   })
 })
