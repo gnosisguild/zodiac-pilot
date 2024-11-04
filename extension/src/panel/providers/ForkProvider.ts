@@ -116,7 +116,7 @@ export class ForkProvider extends EventEmitter {
         const signTx = signMessage(message)
         const safeTxHash = await this.sendMetaTransaction(signTx)
 
-        console.log('message signed', {
+        console.debug('message signed', {
           safeTxHash,
           messageHash: hashMessage(message),
         })
@@ -144,7 +144,7 @@ export class ForkProvider extends EventEmitter {
         if (snapshotVoteTx) {
           const safeTxHash = await this.sendMetaTransaction(snapshotVoteTx)
 
-          console.log('Snapshot vote EIP-712 message signed', {
+          console.debug('Snapshot vote EIP-712 message signed', {
             safeTxHash,
             safeMessageHash,
             typedDataHash: dataHash,
@@ -154,7 +154,7 @@ export class ForkProvider extends EventEmitter {
           const signTx = signTypedData(data)
           const safeTxHash = await this.sendMetaTransaction(signTx)
 
-          console.log('EIP-712 message signed', {
+          console.debug('EIP-712 message signed', {
             safeTxHash,
             safeMessageHash,
             typedDataHash: dataHash,
@@ -275,7 +275,7 @@ export class ForkProvider extends EventEmitter {
   }
 
   async initFork(): Promise<void> {
-    console.log('Initializing fork for simulation...')
+    console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
     if (isSafe) {
       await prepareSafeForSimulation(

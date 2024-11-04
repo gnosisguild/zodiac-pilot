@@ -6,10 +6,10 @@ type ResultFn = (tabs: chrome.tabs.Tab[]) => void
 export const mockActiveTab = (tab: Partial<chrome.tabs.Tab> = {}) => {
   const mockQuery = vi.mocked(chrome.tabs.query)
 
+  const activeTab = createMockTab(tab)
+
   mockQuery.mockImplementation(
     (_: chrome.tabs.QueryInfo, callback?: ResultFn) => {
-      const activeTab = createMockTab(tab)
-
       if (typeof callback === 'function') {
         callback([activeTab])
       }
@@ -17,4 +17,6 @@ export const mockActiveTab = (tab: Partial<chrome.tabs.Tab> = {}) => {
       return Promise.resolve([activeTab])
     }
   )
+
+  return activeTab
 }

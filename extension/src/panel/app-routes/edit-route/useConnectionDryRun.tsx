@@ -33,7 +33,7 @@ export const useConnectionDryRun = (connection: LegacyConnection) => {
     ) {
       dryRun(connection)
         .then(() => {
-          console.log('dry run success')
+          console.debug('dry run success')
           setError(null)
         })
         .catch((e: JsonRpcError) => {

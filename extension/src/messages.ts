@@ -99,11 +99,24 @@ export type InjectedProviderMessage =
   | InjectedProviderEvent
 
 export enum ConnectedWalletMessageType {
+  /**
+   * sent to establish the connection between
+   * connect/contentScript and the connect provider
+   */
+  CONNECTED_WALLET_CONNECTED = 'CONNECTED_WALLET_CONNECTED',
+  /**
+   * sent to connect the injected wallet provider
+   * and the connect provider
+   */
   CONNECTED_WALLET_INITIALIZED = 'CONNECTED_WALLET_INITIALIZED',
   CONNECTED_WALLET_REQUEST = 'CONNECTED_WALLET_REQUEST',
   CONNECTED_WALLET_ERROR = 'CONNECTED_WALLET_ERROR',
   CONNECTED_WALLET_RESPONSE = 'CONNECTED_WALLET_RESPONSE',
   CONNECTED_WALLET_EVENT = 'CONNECTED_WALLET_EVENT',
+}
+
+type ScriptConnectionEstablished = {
+  type: ConnectedWalletMessageType.CONNECTED_WALLET_CONNECTED
 }
 
 interface UserWalletInitialized {
@@ -138,6 +151,7 @@ interface UserWalletEvent {
 }
 
 export type ConnectedWalletMessage =
+  | ScriptConnectionEstablished
   | UserWalletInitialized
   | UserWalletRequest
   | UserWalletError

@@ -105,12 +105,14 @@ const connectInjectedWallet = memoWhilePending(
               <>Check your wallet to confirm connection</>,
               { autoClose: false }
             )
+
             const handleAccountsChanged = (accounts: string[]) => {
               resolve(accounts)
               toast.dismiss(toastId)
-              provider?.removeListener('accountsChanged', handleAccountsChanged)
+              provider.removeListener('accountsChanged', handleAccountsChanged)
             }
-            provider?.on('accountsChanged', handleAccountsChanged)
+
+            provider.on('accountsChanged', handleAccountsChanged)
           })
         }
 
