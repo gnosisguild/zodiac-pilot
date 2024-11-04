@@ -1,5 +1,5 @@
 import { Message, PilotMessageType } from '@/messages'
-import { getActiveTab } from '@/utils'
+import { getActiveTab, isValidTab } from '@/utils'
 import { PILOT_PANEL_PORT } from '../const'
 import { setWindowId } from '../inject/bridge'
 
@@ -9,6 +9,45 @@ export const initPort = async () => {
 
   const windowId = activeTab.windowId
   setWindowId(activeTab.windowId)
+
+  const { promise, resolve } = Promise.withResolvers()
+
+  if (!isValidTab(activeTab.url)) {
+    const handleActivate = () => {
+      chrome.tabs.onActivated.removeListener(handleActivate)
+      chrome.tabs.onUpdated.removeListener(handleUpdated)
+
+      resolve(initPort())
+    }
+
+    chrome.tabs.onActivated.addListener(handleActivate)
+
+    const handleUpdated = (
+      updatedTabId: number,
+      changeInfo: chrome.tabs.TabChangeInfo
+    ) => {
+      if (updatedTabId !== activeTab.id) {
+        return
+      }
+
+      if (changeInfo.url == null) {
+        return
+      }
+
+      if (!isValidTab(changeInfo.url)) {
+        return
+      }
+
+      chrome.tabs.onUpdated.removeListener(handleUpdated)
+      chrome.tabs.onActivated.removeListener(handleActivate)
+
+      resolve(initPort())
+    }
+
+    chrome.tabs.onUpdated.addListener(handleUpdated)
+
+    return promise
+  }
 
   const connectPort = () => {
     const port = chrome.runtime.connect({ name: PILOT_PANEL_PORT })
