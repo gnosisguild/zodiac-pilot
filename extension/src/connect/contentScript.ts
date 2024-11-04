@@ -48,7 +48,9 @@ chrome.runtime.onConnect.addListener((port) => {
       ) {
         return
       }
-      if (event.data.requestId !== message.requestId) return
+      if (event.data.requestId !== message.requestId) {
+        return
+      }
 
       event.stopImmediatePropagation()
       window.removeEventListener('message', handleResponse)
@@ -66,10 +68,14 @@ chrome.runtime.onConnect.addListener((port) => {
       return
     }
 
-    if (message.type === ConnectedWalletMessageType.CONNECTED_WALLET_EVENT) {
-      event.stopImmediatePropagation()
-      port.postMessage(message)
+    if (message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_EVENT) {
+      return
     }
+
+    console.debug('Event received from iframe', message.type)
+
+    event.stopImmediatePropagation()
+    port.postMessage(message)
   }
 
   window.addEventListener('message', handleEvent)
@@ -83,6 +89,10 @@ chrome.runtime.onConnect.addListener((port) => {
     ) {
       return
     }
+
+    console.debug('Init message received from iframe')
+
+    window.removeEventListener('message', handleInit)
 
     event.stopImmediatePropagation()
     port.postMessage(message)
