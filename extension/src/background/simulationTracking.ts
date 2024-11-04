@@ -1,5 +1,5 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { getPilotSession } from './activePilotSessions'
+import { getPilotSession, withPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
 
 export const trackSimulations = () => {
@@ -31,16 +31,16 @@ export const trackSimulations = () => {
       }
 
       case PilotSimulationMessageType.SIMULATE_STOP: {
-        const session = getPilotSession(message.windowId)
+        withPilotSession(message.windowId, (session) => {
+          session.clearFork()
 
-        session.clearFork()
-
-        console.debug(
-          `stop intercepting JSON RPC requests in window #${message.windowId}`
-        )
-        updateSimulatingBadge({
-          windowId: message.windowId,
-          isSimulating: false,
+          console.debug(
+            `stop intercepting JSON RPC requests in window #${message.windowId}`
+          )
+          updateSimulatingBadge({
+            windowId: message.windowId,
+            isSimulating: false,
+          })
         })
 
         break
