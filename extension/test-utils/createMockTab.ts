@@ -1,6 +1,6 @@
-export const createMockTab = (
-  tab: Partial<chrome.tabs.Tab>
-): chrome.tabs.Tab & { id: number } => ({
+export type MockTab = chrome.tabs.Tab & { id: number }
+
+export const createMockTab = (tab: Partial<chrome.tabs.Tab> = {}): MockTab => ({
   id: Math.random() * 1000,
   active: true,
   autoDiscardable: true,
@@ -12,6 +12,7 @@ export const createMockTab = (
   pinned: false,
   windowId: 0,
   selected: true,
+  status: 'complete',
 
   ...tab,
 })

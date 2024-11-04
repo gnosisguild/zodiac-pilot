@@ -1,5 +1,10 @@
 import { PilotMessageType } from '@/messages'
-import { chromeMock, createMockTab, startPilotSession } from '@/test-utils'
+import {
+  callListeners,
+  chromeMock,
+  createMockTab,
+  startPilotSession,
+} from '@/test-utils'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackSessions } from './sessionTracking'
@@ -14,8 +19,8 @@ describe('Session tracking', () => {
   })
 
   describe('Start session', () => {
-    it('tracks a new session for a given window', () => {
-      startPilotSession({ windowId: 1 })
+    it('tracks a new session for a given window', async () => {
+      await startPilotSession({ windowId: 1 })
 
       expect(getPilotSession(1)).toMatchObject({
         fork: null,
@@ -24,8 +29,8 @@ describe('Session tracking', () => {
       })
     })
 
-    it('starts tracking a tab if provided with a tabId', () => {
-      startPilotSession({ windowId: 1, tabId: 2 })
+    it('starts tracking a tab if provided with a tabId', async () => {
+      await startPilotSession({ windowId: 1, tabId: 2 })
 
       expect(getPilotSession(1)).toMatchObject({
         fork: null,
@@ -34,8 +39,8 @@ describe('Session tracking', () => {
       })
     })
 
-    it('sends a connect message the respective tab', () => {
-      startPilotSession({ windowId: 1, tabId: 1 })
+    it('sends a connect message the respective tab', async () => {
+      await startPilotSession({ windowId: 1, tabId: 1 })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
         type: PilotMessageType.PILOT_CONNECT,
@@ -44,21 +49,23 @@ describe('Session tracking', () => {
   })
 
   describe('Stop session', () => {
-    it('removes the session', () => {
-      const { stopPilotSession } = startPilotSession({ windowId: 1 })
-      stopPilotSession()
+    it('removes the session', async () => {
+      const { stopPilotSession } = await startPilotSession({ windowId: 1 })
+      await stopPilotSession()
 
       expect(() => getPilotSession(1)).toThrow()
     })
 
-    it('sends a disconnect message to all connected tabs', () => {
-      const { stopPilotSession, startAnotherSession } = startPilotSession({
-        windowId: 1,
-        tabId: 1,
-      })
-      startAnotherSession({ tabId: 2 })
+    it('sends a disconnect message to all connected tabs', async () => {
+      const { stopPilotSession, startAnotherSession } = await startPilotSession(
+        {
+          windowId: 1,
+          tabId: 1,
+        }
+      )
+      await startAnotherSession({ tabId: 2 })
 
-      stopPilotSession()
+      await stopPilotSession()
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
         type: PilotMessageType.PILOT_DISCONNECT,
@@ -71,10 +78,12 @@ describe('Session tracking', () => {
 
   describe('Tab handling', () => {
     describe('When a tab is opened', () => {
-      it('tracks new tabs in a window, when a session is active', () => {
-        startPilotSession({ windowId: 1 })
-
-        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
+      it('tracks new tabs in a window, when a session is active', async () => {
+        await startPilotSession({ windowId: 1 })
+        await callListeners(chromeMock.tabs.onActivated, {
+          windowId: 1,
+          tabId: 1,
+        })
 
         expect(getPilotSession(1)).toMatchObject({
           id: 1,
@@ -83,16 +92,22 @@ describe('Session tracking', () => {
         })
       })
 
-      it('does nothing when no pilot session is active', () => {
-        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
+      it('does nothing when no pilot session is active', async () => {
+        await callListeners(chromeMock.tabs.onActivated, {
+          windowId: 1,
+          tabId: 1,
+        })
 
         expect(() => getPilotSession(1)).toThrow()
       })
 
-      it('sends a pilot connect method to the new tab', () => {
-        startPilotSession({ windowId: 1 })
+      it('sends a pilot connect method to the new tab', async () => {
+        await startPilotSession({ windowId: 1 })
 
-        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
+        await callListeners(chromeMock.tabs.onActivated, {
+          windowId: 1,
+          tabId: 1,
+        })
 
         expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
           type: PilotMessageType.PILOT_CONNECT,
@@ -101,10 +116,10 @@ describe('Session tracking', () => {
     })
 
     describe('When a tab is closed', () => {
-      it('stops tracking tabs in a window, when they are closed', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('stops tracking tabs in a window, when they are closed', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
-        chromeMock.tabs.onRemoved.callListeners(1, {
+        await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
           isWindowClosing: false,
         })
@@ -116,8 +131,8 @@ describe('Session tracking', () => {
         })
       })
 
-      it('does nothing when no pilot session is active', () => {
-        chromeMock.tabs.onRemoved.callListeners(1, {
+      it('does nothing when no pilot session is active', async () => {
+        await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
           isWindowClosing: false,
         })
@@ -125,10 +140,10 @@ describe('Session tracking', () => {
         expect(() => getPilotSession(1)).toThrow()
       })
 
-      it('does not send a pilot disconnect message', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('does not send a pilot disconnect message', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
-        chromeMock.tabs.onRemoved.callListeners(1, {
+        await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
           isWindowClosing: false,
         })
@@ -140,10 +155,11 @@ describe('Session tracking', () => {
     })
 
     describe('When a tab updates', () => {
-      it('injects the provider script when new pages are loaded', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('injects the provider script when new pages are loaded', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
-        chromeMock.tabs.onUpdated.callListeners(
+        await callListeners(
+          chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
           createMockTab({ windowId: 1 })
@@ -156,10 +172,11 @@ describe('Session tracking', () => {
         })
       })
 
-      it('does nothing for untracked tabs', () => {
-        startPilotSession({ windowId: 1 })
+      it('does nothing for untracked tabs', async () => {
+        await startPilotSession({ windowId: 1 })
 
-        chromeMock.tabs.onUpdated.callListeners(
+        await callListeners(
+          chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
           createMockTab({ windowId: 1 })
@@ -168,8 +185,9 @@ describe('Session tracking', () => {
         expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
       })
 
-      it('does nothing when no pilot session is active', () => {
-        chromeMock.tabs.onUpdated.callListeners(
+      it('does nothing when no pilot session is active', async () => {
+        await callListeners(
+          chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
           createMockTab({ windowId: 1 })
@@ -178,8 +196,9 @@ describe('Session tracking', () => {
         expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
       })
 
-      it('does nothing when the page is not in the loading state', () => {
-        chromeMock.tabs.onUpdated.callListeners(
+      it('does nothing when the page is not in the loading state', async () => {
+        await callListeners(
+          chromeMock.tabs.onUpdated,
           1,
           { status: 'complete' },
           createMockTab({ windowId: 1 })
@@ -192,8 +211,8 @@ describe('Session tracking', () => {
 
   describe('CSP rules', () => {
     describe('Start session', () => {
-      it('removes CSP headers', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('removes CSP headers', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
@@ -226,8 +245,8 @@ describe('Session tracking', () => {
         )
       })
 
-      it('removes CSP from the main frame and any sub frame', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('removes CSP from the main frame and any sub frame', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
@@ -248,8 +267,8 @@ describe('Session tracking', () => {
         )
       })
 
-      it('removes CSP headers only from tracked tabs', () => {
-        startPilotSession({ windowId: 1, tabId: 1 })
+      it('removes CSP headers only from tracked tabs', async () => {
+        await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
@@ -269,9 +288,9 @@ describe('Session tracking', () => {
     })
 
     describe('Stop session', () => {
-      it('always removes the previous rules', () => {
-        const { stopPilotSession } = startPilotSession({ windowId: 1 })
-        stopPilotSession()
+      it('always removes the previous rules', async () => {
+        const { stopPilotSession } = await startPilotSession({ windowId: 1 })
+        await stopPilotSession()
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
@@ -285,10 +304,13 @@ describe('Session tracking', () => {
     })
 
     describe('Tab opened', () => {
-      it('updates the rules to include the new tab', () => {
-        startPilotSession({ windowId: 1 })
+      it('updates the rules to include the new tab', async () => {
+        await startPilotSession({ windowId: 1 })
 
-        chromeMock.tabs.onActivated.callListeners({ tabId: 1, windowId: 1 })
+        await callListeners(chromeMock.tabs.onActivated, {
+          tabId: 1,
+          windowId: 1,
+        })
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules
@@ -308,11 +330,14 @@ describe('Session tracking', () => {
     })
 
     describe('Tab closed', () => {
-      it('updates the rules and removes the closed tab', () => {
-        startPilotSession({ windowId: 1, tabId: 2 })
+      it('updates the rules and removes the closed tab', async () => {
+        await startPilotSession({ windowId: 1, tabId: 2 })
 
-        chromeMock.tabs.onActivated.callListeners({ windowId: 1, tabId: 1 })
-        chromeMock.tabs.onRemoved.callListeners(2, {
+        await callListeners(chromeMock.tabs.onActivated, {
+          windowId: 1,
+          tabId: 1,
+        })
+        await callListeners(chromeMock.tabs.onRemoved, 2, {
           windowId: 1,
           isWindowClosing: false,
         })

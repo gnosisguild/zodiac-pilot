@@ -1,12 +1,14 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
+import { callListeners } from './callListeners'
 import { chromeMock } from './chromeMock'
 
 type StartSimulationOptions = {
   windowId: number
 }
 
-export const startSimulation = ({ windowId }: StartSimulationOptions) => {
-  chromeMock.runtime.onMessage.callListeners(
+export const startSimulation = ({ windowId }: StartSimulationOptions) =>
+  callListeners(
+    chromeMock.runtime.onMessage,
     {
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId,
@@ -16,4 +18,3 @@ export const startSimulation = ({ windowId }: StartSimulationOptions) => {
     { id: chrome.runtime.id },
     () => {}
   )
-}

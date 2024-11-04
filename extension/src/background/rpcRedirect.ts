@@ -4,11 +4,10 @@ import { ForkedSession } from './types'
 
 let currentRuleIds: number[] = []
 
-export const removeAllRpcRedirectRules = async () => {
-  await chrome.declarativeNetRequest.updateSessionRules({
+export const removeAllRpcRedirectRules = () =>
+  chrome.declarativeNetRequest.updateSessionRules({
     removeRuleIds: currentRuleIds,
   })
-}
 
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
