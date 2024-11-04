@@ -33,7 +33,6 @@ export const hasJsonRpcBody = (
 
     return true
   } catch (e) {
-    console.log(e)
     return false
   }
 }

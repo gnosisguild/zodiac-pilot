@@ -36,7 +36,7 @@ if (!window.zodiacPilot) {
       },
     })
 
-    console.log(
+    console.debug(
       '🧑‍✈️ Zodiac Pilot injected as `window.ethereum`',
       window.location.href
     )
@@ -45,7 +45,7 @@ if (!window.zodiacPilot) {
 
     // If it's Rabby we have a trick to make sure it routes to the Pilot provider
     if (window.rabbyWalletRouter) {
-      console.log(
+      console.debug(
         '🧑‍✈️ Rabby detected, setting Pilot as default provider in Rabby Wallet Router'
       )
 

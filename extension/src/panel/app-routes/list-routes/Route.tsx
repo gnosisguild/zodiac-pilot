@@ -1,5 +1,5 @@
 import { getChainId } from '@/chains'
-import { Box, BoxButton, ConnectionStack, Flex } from '@/components'
+import { Box, BoxButton, BoxLink, ConnectionStack, Flex } from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
@@ -91,12 +91,12 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
                 </h2>
               </Flex>
 
-              <BoxButton
-                onClick={() => onModify(route.id)}
+              <BoxLink
+                to={`/routes/${route.id}`}
                 className="bg-none px-4 py-1 before:content-none"
               >
                 Modify
-              </BoxButton>
+              </BoxLink>
             </div>
 
             <div className="my-6 flex justify-center">

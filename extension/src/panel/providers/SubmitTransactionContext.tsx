@@ -32,7 +32,7 @@ export const ProvideSubmitTransactionContext = ({
     const metaTransactions = transactions.map((txState) => txState.transaction)
     const lastTransactionId = transactions[transactions.length - 1].id
 
-    console.log(
+    console.debug(
       transactions.length === 1
         ? 'submitting transaction...'
         : `submitting ${transactions.length} transactions as multi-send batch...`,
@@ -44,7 +44,7 @@ export const ProvideSubmitTransactionContext = ({
     }
 
     const plan = await planExecution(metaTransactions, route as Route)
-    console.log('Execution plan:', plan)
+    console.debug('Execution plan:', plan)
 
     const state = [] as ExecutionState
     await execute(plan, state, provider, { origin: 'Zodiac Pilot' })
