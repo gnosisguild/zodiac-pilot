@@ -12,7 +12,9 @@ export const createMockTab = (tab: Partial<chrome.tabs.Tab> = {}): MockTab => ({
   pinned: false,
   windowId: 0,
   selected: true,
+
   status: 'complete',
+  url: 'http://test-tab-url.com',
 
   ...tab,
 })
