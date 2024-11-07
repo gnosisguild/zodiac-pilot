@@ -1,8 +1,12 @@
 /* spell-checker: disable */
 
-import { ChainId } from 'ser-kit'
+import { HexAddress } from '@/types'
+import { ChainId, PrefixedAddress } from 'ser-kit'
 
-export const ETH_ZERO_ADDRESS = 'eth:0x0000000000000000000000000000000000000000'
+export const ZERO_ADDRESS: HexAddress =
+  '0x0000000000000000000000000000000000000000'
+export const ETH_ZERO_ADDRESS: PrefixedAddress =
+  'eth:0x0000000000000000000000000000000000000000'
 
 export const RPC: Record<ChainId, string> = {
   1: 'https://airlock.gnosisguild.org/api/v1/1/rpc',

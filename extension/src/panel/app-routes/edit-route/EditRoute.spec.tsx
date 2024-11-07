@@ -6,7 +6,7 @@ import { EditRoute } from './EditRoute'
 
 describe('Edit Zodiac route', () => {
   it('is possible to rename a route', async () => {
-    mockRoute('route-id')
+    mockRoute({ id: 'route-id' })
 
     await render('/routes/route-id', [
       {
