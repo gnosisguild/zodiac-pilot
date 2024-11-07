@@ -1,6 +1,6 @@
 import { isValidTab } from './isValidTab'
 
-export const sendTabMessage = async (tabId: number, message: unknown) => {
+export const sendMessageToTab = async (tabId: number, message: unknown) => {
   const tab = await chrome.tabs.get(tabId)
   const { promise, resolve } = Promise.withResolvers()
 
@@ -9,7 +9,7 @@ export const sendTabMessage = async (tabId: number, message: unknown) => {
       chrome.tabs.onActivated.removeListener(handleActivate)
       chrome.tabs.onUpdated.removeListener(handleUpdate)
 
-      resolve(sendTabMessage(activeInfo.tabId, message))
+      resolve(sendMessageToTab(activeInfo.tabId, message))
     }
 
     chrome.tabs.onActivated.addListener(handleActivate)
@@ -33,7 +33,7 @@ export const sendTabMessage = async (tabId: number, message: unknown) => {
       chrome.tabs.onActivated.removeListener(handleActivate)
       chrome.tabs.onUpdated.removeListener(handleUpdate)
 
-      resolve(sendTabMessage(tabId, message))
+      resolve(sendMessageToTab(tabId, message))
     }
 
     chrome.tabs.onUpdated.addListener(handleUpdate)

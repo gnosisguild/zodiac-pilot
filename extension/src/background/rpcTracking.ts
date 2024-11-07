@@ -1,5 +1,5 @@
 import { RPCMessageType } from '@/messages'
-import { sendTabMessage } from '@/utils'
+import { sendMessageToTab } from '@/utils'
 import { isTrackedTab } from './activePilotSessions'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 
@@ -90,7 +90,7 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   if (!networkIdOfRpcUrlPromise.has(url)) {
     networkIdOfRpcUrlPromise.set(
       url,
-      sendTabMessage(tabId, { type: RPCMessageType.PROBE_CHAIN_ID, url })
+      sendMessageToTab(tabId, { type: RPCMessageType.PROBE_CHAIN_ID, url })
     )
   }
 

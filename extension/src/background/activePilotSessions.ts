@@ -1,5 +1,5 @@
 import { Message, PilotMessageType } from '@/messages'
-import { sendTabMessage } from '@/utils'
+import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import {
@@ -64,7 +64,7 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
 
     updateCSPHeaderRule(session.tabs)
 
-    sendTabMessage(tabId, {
+    sendMessageToTab(tabId, {
       type: PilotMessageType.PILOT_CONNECT,
     } satisfies Message)
   },
@@ -80,7 +80,7 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
     for (const tabId of session.tabs) {
       updateSimulatingBadge({ windowId: session.id, isSimulating: false })
 
-      sendTabMessage(tabId, {
+      sendMessageToTab(tabId, {
         type: PilotMessageType.PILOT_DISCONNECT,
       })
     }

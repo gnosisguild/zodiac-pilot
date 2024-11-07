@@ -1,6 +1,6 @@
 // this will be bundled in the panel app
 import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
-import { sendTabMessage } from '@/utils'
+import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
@@ -52,7 +52,7 @@ const emitEvent = async (eventName: string, eventData: any) => {
   ).filter((tab) => !!tab.id && !tab.url?.startsWith('chrome:'))
 
   for (const tab of tabs) {
-    sendTabMessage(tab.id!, {
+    sendMessageToTab(tab.id!, {
       type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
       eventName,
       eventData,
