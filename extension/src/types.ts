@@ -66,3 +66,5 @@ export interface TransactionData {
   data?: string
   from?: string
 }
+
+export type HexAddress = `0x${string}`

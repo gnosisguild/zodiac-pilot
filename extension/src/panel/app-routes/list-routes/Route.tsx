@@ -94,6 +94,7 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
               <BoxLink
                 to={`/routes/${route.id}`}
                 className="bg-none px-4 py-1 before:content-none"
+                onClick={(event) => event.stopPropagation()}
               >
                 Modify
               </BoxLink>
