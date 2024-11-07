@@ -8,7 +8,7 @@ describe('Edit Zodiac route', () => {
   it('is possible to rename a route', async () => {
     mockRoute('route-id')
 
-    render('/routes/route-id', [
+    await render('/routes/route-id', [
       {
         path: '/routes/:routeId',
         Component: EditRoute,
