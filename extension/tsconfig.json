@@ -30,5 +30,5 @@
       "@/messages": ["./src/messages.ts"]
     }
   },
-  "include": ["src", "e2e", "test-utils"]
+  "include": ["src", "e2e", "test-utils", "./vitest.setup.mts"]
 }

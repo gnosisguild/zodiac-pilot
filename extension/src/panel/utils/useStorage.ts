@@ -43,6 +43,7 @@ export function useStorageEntries<T>(collection: string) {
       const matchingEntries = Object.entries(allEntries)
         .map(([itemKey, value]) => {
           const match = itemKey.match(new RegExp(`${collection}\\[(\\w+)\\]`))
+
           if (!match) return null
           return [match[1], value]
         })
