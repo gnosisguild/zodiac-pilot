@@ -1,4 +1,5 @@
 import { Alert, Button } from '@/components'
+import { useInjectedWallet } from '@/providers'
 import { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
@@ -11,22 +12,30 @@ export const WalletDisconnected = ({
   children,
   onReconnect,
   onDisconnect,
-}: WalletDisconnectedProps) => (
-  <Section>
-    <Alert title="Wallet disconnected">
-      Your wallet is disconnected from Pilot. Reconnect it to use the selected
-      account with Pilot.
-    </Alert>
+}: WalletDisconnectedProps) => {
+  const injectedWallet = useInjectedWallet()
 
-    {children}
+  return (
+    <Section>
+      <Alert title="Wallet disconnected">
+        Your wallet is disconnected from Pilot. Reconnect it to use the selected
+        account with Pilot.
+      </Alert>
 
-    <Section.Actions>
-      <Button fluid onClick={onReconnect}>
-        Connect
-      </Button>
-      <Button fluid onClick={onDisconnect}>
-        Disconnect
-      </Button>
-    </Section.Actions>
-  </Section>
-)
+      {children}
+
+      <Section.Actions>
+        <Button
+          fluid
+          disabled={!injectedWallet.connected}
+          onClick={onReconnect}
+        >
+          Connect
+        </Button>
+        <Button fluid onClick={onDisconnect}>
+          Disconnect
+        </Button>
+      </Section.Actions>
+    </Section>
+  )
+}

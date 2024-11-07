@@ -164,30 +164,35 @@ const sendRequestToConnectIframe = async ({
   port,
   request,
   requestId,
-}: SendRequestToConnectIFrameOptions): Promise<ConnectedWalletMessage> =>
-  new Promise((resolve) => {
-    const handleResponse = (message: ConnectedWalletMessage) => {
-      if (
-        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE &&
-        message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
-      ) {
-        return
-      }
+}: SendRequestToConnectIFrameOptions): Promise<ConnectedWalletMessage> => {
+  const { promise, resolve } = Promise.withResolvers<ConnectedWalletMessage>()
 
-      if (message.requestId !== requestId) {
-        return
-      }
-
-      port.onMessage.removeListener(handleResponse)
-
-      resolve(message)
+  const handleResponse = (message: ConnectedWalletMessage) => {
+    if (
+      message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE &&
+      message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
+    ) {
+      return
     }
 
-    port.onMessage.addListener(handleResponse)
+    if (message.requestId !== requestId) {
+      return
+    }
 
-    port.postMessage({
-      type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST,
-      requestId,
-      request,
-    })
+    port.onMessage.removeListener(handleResponse)
+
+    resolve(message)
+  }
+
+  port.onMessage.addListener(handleResponse)
+
+  console.debug('Sending request to injected iframe')
+
+  port.postMessage({
+    type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST,
+    requestId,
+    request,
   })
+
+  return promise
+}
