@@ -1,6 +1,8 @@
+export { callListeners } from './callListeners'
 export { chromeMock } from './chromeMock'
 export { createMockPort } from './createMockPort'
 export { createMockTab } from './createMockTab'
+export type { MockTab } from './createMockTab'
 export { createMockWebRequest } from './createMockWebRequest'
 export { mockActiveTab } from './mockActiveTab'
 export { mockRoute } from './mockRoute'

@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../../types'
@@ -38,10 +39,11 @@ export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
 
 export const useInjectedWallet = () => {
   const context = useContext(InjectedWalletContext)
-  if (!context) {
-    throw new Error(
-      'useInjectedWalletProvider must be used within a <ProvideInjectedWallet>'
-    )
-  }
+
+  invariant(
+    context != null,
+    'useInjectedWalletProvider must be used within a <ProvideInjectedWallet>'
+  )
+
   return context
 }

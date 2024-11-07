@@ -4,7 +4,9 @@ import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { render as baseRender, screen } from '@testing-library/react'
 import { ComponentType } from 'react'
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom'
+import { createMockPort } from './createMockPort'
 import { mockActiveTab } from './mockActiveTab'
+import { mockTabConnect } from './mockTabConnect'
 
 type Route = {
   path: string
@@ -21,7 +23,10 @@ export const render = async (
   routes: Route[],
   { activeTab, ...options }: Options = {}
 ) => {
-  mockActiveTab(activeTab)
+  const mockedTab = mockActiveTab(activeTab)
+  const mockedPort = createMockPort()
+
+  mockTabConnect(mockedPort)
 
   const result = baseRender(
     <ProvideState>
@@ -46,7 +51,7 @@ export const render = async (
 
   await screen.findByTestId('test-element-id')
 
-  return result
+  return { ...result, mockedTab, mockedPort }
 }
 
 const TestElement = () => (

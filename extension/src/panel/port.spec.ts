@@ -1,10 +1,13 @@
 import { PilotMessageType } from '@/messages'
 import {
+  callListeners,
   chromeMock,
   createMockPort,
+  createMockTab,
   mockActiveTab,
   mockRuntimeConnect,
 } from '@/test-utils'
+import { sleep } from '@/utils'
 import { describe, expect, it } from 'vitest'
 import { initPort } from './port'
 
@@ -41,5 +44,80 @@ describe('Init port', () => {
       windowId: tab.windowId,
       tabId: tab.id,
     })
+  })
+
+  it('waits for a non-chrome tab to become active before sending the message', async () => {
+    const chromeTab = createMockTab({ url: 'chrome://extensions' })
+    const regularTab = createMockTab({ url: 'http://test.com' })
+
+    mockActiveTab(chromeTab)
+
+    const port = createMockPort()
+
+    mockRuntimeConnect(port)
+
+    const { promise, resolve } = Promise.withResolvers()
+
+    initPort().then(resolve)
+
+    await sleep(1)
+
+    expect(port.postMessage).not.toHaveBeenCalled()
+
+    mockActiveTab(regularTab)
+
+    await callListeners(chromeMock.tabs.onActivated, {
+      tabId: regularTab.id,
+      windowId: regularTab.windowId,
+    })
+
+    await sleep(1)
+
+    expect(port.postMessage).toHaveBeenCalledWith({
+      type: PilotMessageType.PILOT_PANEL_OPENED,
+      windowId: regularTab.windowId,
+      tabId: regularTab.id,
+    })
+
+    return promise
+  })
+
+  it('sends the message to the same tab when it moves to a proper URL', async () => {
+    const tab = createMockTab({ url: 'chrome://extensions' })
+
+    mockActiveTab(tab)
+
+    const port = createMockPort()
+
+    mockRuntimeConnect(port)
+
+    const { promise, resolve } = Promise.withResolvers()
+
+    initPort().then(resolve)
+
+    await sleep(1)
+
+    expect(port.postMessage).not.toHaveBeenCalled()
+
+    mockActiveTab({ ...tab, url: 'http://test.com' })
+
+    await callListeners(
+      chromeMock.tabs.onUpdated,
+      tab.id,
+      {
+        url: 'http://test.com',
+      },
+      tab
+    )
+
+    await sleep(1)
+
+    expect(port.postMessage).toHaveBeenCalledWith({
+      type: PilotMessageType.PILOT_PANEL_OPENED,
+      windowId: tab.windowId,
+      tabId: tab.id,
+    })
+
+    return promise
   })
 })

@@ -1,4 +1,6 @@
+import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import {
+  callListeners,
   chromeMock,
   mockRPCRequest,
   startPilotSession,
@@ -19,11 +21,11 @@ describe('Simulation tracking', () => {
 
   describe('RPC redirect rules', () => {
     it('sets up redirect rules when a simulation starts', async () => {
-      startPilotSession({ windowId: 1, tabId: 2 })
+      await startPilotSession({ windowId: 1, tabId: 2 })
 
       await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
-      startSimulation({ windowId: 1 })
+      await startSimulation({ windowId: 1 })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
@@ -55,8 +57,8 @@ describe('Simulation tracking', () => {
 
       await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
-      startSimulation({ windowId: 1 })
-      stopSimulation({ windowId: 1 })
+      await startSimulation({ windowId: 1 })
+      await stopSimulation({ windowId: 1 })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
@@ -67,18 +69,37 @@ describe('Simulation tracking', () => {
     })
 
     it('removes redirect rules when the pilot session ends', async () => {
-      const { stopPilotSession } = startPilotSession({ windowId: 1, tabId: 2 })
+      const { stopPilotSession } = await startPilotSession({
+        windowId: 1,
+        tabId: 2,
+      })
 
       await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
-      startSimulation({ windowId: 1 })
-      stopPilotSession()
+      await startSimulation({ windowId: 1 })
+      await stopPilotSession()
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
       ).toHaveBeenLastCalledWith({
         removeRuleIds: [2],
       })
+    })
+  })
+
+  describe('Pilot sessions', () => {
+    it('does not break when a simulation is stopped outside of an active pilot session', async () => {
+      await expect(
+        callListeners(
+          chromeMock.runtime.onMessage,
+          {
+            type: PilotSimulationMessageType.SIMULATE_STOP,
+            windowId: 1,
+          } satisfies SimulationMessage,
+          { id: chromeMock.runtime.id },
+          () => {}
+        )
+      ).resolves.not.toThrow()
     })
   })
 })
