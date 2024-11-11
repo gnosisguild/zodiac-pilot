@@ -306,8 +306,6 @@ export class ForkProvider extends EventEmitter {
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
 
-    invariant(this.provider.publicRpc != null, 'RPC URL of provider is not set')
-
     chrome.runtime.sendMessage({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,

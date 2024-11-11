@@ -23,7 +23,10 @@ export const updateRpcRedirectRules = async (
         regexFilter: makeUrlRegex(trackedRPCUrlsByTabId.get(tabId) || []),
       }))
     )
-    .filter(({ regexFilter }) => regexFilter != null)
+    .filter(
+      ({ regexFilter, redirectUrl }) =>
+        regexFilter != null && redirectUrl != null
+    )
     .map(({ tabId, redirectUrl, regexFilter }) => ({
       id: tabId,
       priority: 1,

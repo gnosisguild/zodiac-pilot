@@ -46,7 +46,7 @@ interface SimulateStart {
   type: PilotSimulationMessageType.SIMULATE_START
   windowId: number
   chainId: ChainId
-  rpcUrl: string
+  rpcUrl?: string
 }
 
 interface SimulateStop {
