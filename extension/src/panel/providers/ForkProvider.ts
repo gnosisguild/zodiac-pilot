@@ -1,6 +1,7 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { Eip1193Provider, TransactionData } from '@/types'
 import { getActiveTab } from '@/utils'
+import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
@@ -30,6 +31,7 @@ interface Handlers {
     hash: string,
     provider: Eip1193Provider
   ): void
+  onTransactionError: (id: string, error: unknown) => void
 }
 
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
@@ -188,7 +190,9 @@ export class ForkProvider extends EventEmitter {
    *
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
-  async sendMetaTransaction(metaTx: MetaTransactionData): Promise<string> {
+  async sendMetaTransaction(
+    metaTx: MetaTransactionData
+  ): Promise<string | null> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
     const id = nanoid()
@@ -204,7 +208,14 @@ export class ForkProvider extends EventEmitter {
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
-    return await this.pendingMetaTransaction
+
+    try {
+      return await this.pendingMetaTransaction
+    } catch (error) {
+      this.handlers.onTransactionError(id, error)
+
+      return null
+    }
   }
 
   private async sendMetaTransactionInSeries(
@@ -220,19 +231,21 @@ export class ForkProvider extends EventEmitter {
       this.ownerAddress === ZeroAddress ? undefined : this.ownerAddress
     const isSafe = await this.isSafePromise
 
-    if (!isSafe && (this.moduleAddress || ownerAddress)) {
-      throw new Error(
-        'moduleAddress or ownerAddress is only supported for Safes as avatar'
-      )
-    }
+    invariant(
+      isSafe || (this.moduleAddress == null && ownerAddress == null),
+      'moduleAddress or ownerAddress is only supported for Safes as avatar'
+    )
 
     const isDelegateCall = metaTx.operation === 1
-    if (isDelegateCall && !isSafe) {
-      throw new Error('delegatecall is only supported for Safes as avatar')
-    }
-    if (isDelegateCall && !this.moduleAddress && !ownerAddress) {
-      throw new Error('delegatecall requires moduleAddress or ownerAddress')
-    }
+
+    invariant(
+      isSafe || !isDelegateCall,
+      'delegatecall is only supported for Safes as avatar'
+    )
+    invariant(
+      !isDelegateCall || this.moduleAddress != null || ownerAddress != null,
+      'delegatecall requires moduleAddress or ownerAddress'
+    )
 
     // take a snapshot and record the meta transaction
     const checkpointId: string = await this.provider.request({
@@ -394,9 +407,8 @@ async function prepareSafeForSimulation(
   if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
 
   const iface = safe.getContractManager().safeContract?.contract.interface
-  if (!iface) {
-    throw new Error('Safe contract not found')
-  }
+
+  invariant(iface, 'Safe contract not found')
 
   try {
     await provider.request({

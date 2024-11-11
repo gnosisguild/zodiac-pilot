@@ -123,6 +123,21 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     [dispatch, avatarAddress, moduleAddress]
   )
 
+  const onTransactionError = useCallback(
+    (id: string, error: unknown) => {
+      dispatch({
+        type: 'UPDATE_TRANSACTION_STATUS',
+        payload: {
+          id,
+          status: ExecutionStatus.FAILED,
+        },
+      })
+
+      console.debug(`Transaction ${id} failed`, { error })
+    },
+    [dispatch]
+  )
+
   const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
 
   // whenever anything changes in the connection settings, we delete the current fork and start afresh
@@ -134,6 +149,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       ownerAddress,
       onBeforeTransactionSend,
       onTransactionSent,
+      onTransactionError,
     })
 
     setForkProvider(forkProvider)
@@ -148,6 +164,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     ownerAddress,
     onBeforeTransactionSend,
     onTransactionSent,
+    onTransactionError,
   ])
 
   if (forkProvider == null) {
