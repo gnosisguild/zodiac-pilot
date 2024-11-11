@@ -15,8 +15,8 @@ import { trackSimulations } from './simulationTracking'
 describe('Simulation tracking', () => {
   beforeAll(() => {
     trackSessions()
-    trackRequests()
-    trackSimulations()
+    const trackRequestsResult = trackRequests()
+    trackSimulations(trackRequestsResult)
   })
 
   describe('RPC redirect rules', () => {

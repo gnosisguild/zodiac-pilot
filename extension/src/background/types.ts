@@ -1,5 +1,7 @@
+import { ChainId } from 'ser-kit'
+
 export interface Fork {
-  networkId: number
+  networkId: ChainId
   rpcUrl: string
 }
 

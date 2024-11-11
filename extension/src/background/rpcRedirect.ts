@@ -1,5 +1,4 @@
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
-import { getRPCUrls } from './rpcTracking'
 import { ForkedSession } from './types'
 
 let currentRuleIds: number[] = []
@@ -12,13 +11,16 @@ export const removeAllRpcRedirectRules = () =>
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
-export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
+export const updateRpcRedirectRules = async (
+  sessions: ForkedSession[],
+  trackedRPCUrlsByTabId: Map<number, string[]>
+) => {
   const addRules = sessions
     .flatMap(({ tabs, fork }) =>
       Array.from(tabs).map((tabId) => ({
         tabId,
         redirectUrl: fork.rpcUrl,
-        regexFilter: makeUrlRegex(tabId, fork.networkId),
+        regexFilter: makeUrlRegex(trackedRPCUrlsByTabId.get(tabId) || []),
       }))
     )
     .filter(({ regexFilter }) => regexFilter != null)
@@ -54,9 +56,7 @@ export const updateRpcRedirectRules = async (sessions: ForkedSession[]) => {
 /**
  * Concatenates all RPC urls for the given tab & network into a regular expression matching any of them.
  */
-const makeUrlRegex = (tabId: number, networkId: number) => {
-  const rpcUrls = getRPCUrls({ tabId, networkId })
-
+const makeUrlRegex = (rpcUrls: string[]) => {
   if (rpcUrls.length === 0) {
     return null
   }

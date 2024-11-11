@@ -3,8 +3,8 @@ import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 
-trackRequests()
-trackSimulations()
+const trackRequestsResult = trackRequests()
+trackSimulations(trackRequestsResult)
 trackSessions()
 
 enableExternalPanelOpen()
