@@ -11,9 +11,8 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { expect } from 'vitest'
-import { createMockPort } from './createMockPort'
-import { mockActiveTab } from './mockActiveTab'
-import { mockTabConnect } from './mockTabConnect'
+import { mockActiveTab, mockTabConnect } from './chrome'
+import { createMockPort } from './creators'
 
 type Route = {
   path: string

@@ -1,6 +1,5 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { callListeners } from './callListeners'
-import { chromeMock } from './chromeMock'
+import { callListeners, chromeMock } from './chrome'
 
 type StartSimulationOptions = {
   windowId: number
