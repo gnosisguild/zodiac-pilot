@@ -104,7 +104,7 @@ export class TenderlyProvider extends EventEmitter {
   }
 
   private async createFork(
-    networkId: number,
+    chainId: number,
     blockNumber?: number
   ): Promise<JsonRpcProvider> {
     const res = await fetch(this.tenderlyVnetApi, {
@@ -113,13 +113,13 @@ export class TenderlyProvider extends EventEmitter {
         slug: slug(),
         display_name: 'Zodiac Pilot Test Flight',
         fork_config: {
-          network_id: networkId,
+          network_id: chainId,
           block_number: blockNumber,
         },
         virtual_network_config: {
           base_fee_per_gas: 0,
           chain_config: {
-            chain_id: networkId,
+            chain_id: chainId,
           },
         },
         sync_state_config: {

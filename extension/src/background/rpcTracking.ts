@@ -76,22 +76,22 @@ export const trackRequests = (): TrackRequestsResult => {
 
   return {
     getTrackedRPCUrlsForChainId: ({ chainId }) =>
-      getRPCUrlsByTabId(state, { networkId: chainId }),
+      getRPCUrlsByTabId(state, { chainId }),
   }
 }
 
 type GetRPCUrlsOptions = {
-  networkId: ChainId
+  chainId: ChainId
 }
 
 const getRPCUrlsByTabId = (
   { rpcUrlsByTabId, chainIdByRpcUrl }: TrackingState,
-  { networkId }: GetRPCUrlsOptions
+  { chainId }: GetRPCUrlsOptions
 ) => {
   return rpcUrlsByTabId.entries().reduce((result, [tabId, urls]) => {
     result.set(
       tabId,
-      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === networkId)
+      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === chainId)
     )
 
     return result

@@ -17,11 +17,11 @@ export const trackSimulations = ({
 
     switch (message.type) {
       case PilotSimulationMessageType.SIMULATE_START: {
-        const { networkId, rpcUrl } = message
+        const { chainId, rpcUrl } = message
         const session = getPilotSession(message.windowId)
         const fork = session.createFork(
-          getTrackedRPCUrlsForChainId({ chainId: networkId }),
-          { networkId, rpcUrl }
+          getTrackedRPCUrlsForChainId({ chainId }),
+          { chainId, rpcUrl }
         )
 
         console.debug(
@@ -43,7 +43,7 @@ export const trackSimulations = ({
           }
 
           session.clearFork(
-            getTrackedRPCUrlsForChainId({ chainId: session.fork.networkId })
+            getTrackedRPCUrlsForChainId({ chainId: session.fork.chainId })
           )
 
           console.debug(

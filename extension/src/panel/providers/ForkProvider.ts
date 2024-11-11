@@ -296,7 +296,7 @@ export class ForkProvider extends EventEmitter {
     chrome.runtime.sendMessage({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
-      networkId: this.chainId,
+      chainId: this.chainId,
       rpcUrl: this.provider.publicRpc!,
     } satisfies SimulationMessage)
 
