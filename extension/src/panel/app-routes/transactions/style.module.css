@@ -67,10 +67,6 @@
   align-items: center;
 }
 
-.transactionContainer {
-  margin-top: 12px;
-}
-
 .transaction label {
   display: block;
   margin-top: var(--spacing-3);
