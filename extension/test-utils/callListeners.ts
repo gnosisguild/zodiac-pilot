@@ -1,19 +1,12 @@
-import {
-  CallableEvent,
-  EventCallback,
-  MonotypeEventSelector,
-} from 'vitest-chrome/types/create-event'
+import { EventCallback } from 'vitest-chrome/types/create-event'
+import { Events } from 'vitest-chrome/types/vitest-chrome'
 
 export const callListeners = async <
   C extends EventCallback,
-  R extends MonotypeEventSelector<C>,
-  T extends CallableEvent<C, R>,
+  T extends Events.Event<C>,
 >(
   event: T,
   ...args: Parameters<T['callListeners']>
 ) => {
-  // @ts-expect-error in a very edge-case this could be wrong
-  // but since we're talking about a test utility here I don't
-  // give a crap
   return event.callListeners(...args)
 }
