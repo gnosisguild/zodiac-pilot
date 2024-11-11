@@ -97,6 +97,10 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   const result = await networkIdOfRpcUrlPromise.get(url)
 
   if (result == null || networkIdOfRpcUrl.has(url)) {
+    console.debug(
+      `detected already tracked network network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
+    )
+
     return
   }
 
@@ -105,7 +109,7 @@ const detectNetworkOfRpcUrl = async (url: string, tabId: number) => {
   networkIdOfRpcUrl.set(url, result)
 
   console.debug(
-    `detected network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
+    `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
   )
 }
 

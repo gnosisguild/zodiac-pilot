@@ -4,7 +4,11 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
   const tab = await chrome.tabs.get(tabId)
   const { promise, resolve } = Promise.withResolvers()
 
+  console.debug(`Trying to send message to tab "${tabId}"`, { message })
+
   if (!isValidTab(tab.url)) {
+    console.debug(`Tab URL "${tab.url}" is not valid.`)
+
     const handleActivate = async (activeInfo: chrome.tabs.TabActiveInfo) => {
       chrome.tabs.onActivated.removeListener(handleActivate)
       chrome.tabs.onUpdated.removeListener(handleUpdate)
@@ -30,6 +34,8 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
         return
       }
 
+      console.debug(`Tab "${tabId}" now has a valid URL "${changeInfo.url}".`)
+
       chrome.tabs.onActivated.removeListener(handleActivate)
       chrome.tabs.onUpdated.removeListener(handleUpdate)
 
@@ -42,8 +48,12 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
   }
 
   if (tab.status === 'complete') {
+    console.debug(`Sending message to tab "${tabId}".`, { message })
+
     return chrome.tabs.sendMessage(tabId, message)
   }
+
+  console.debug(`Tab "${tabId}" is not ready. Waiting for page load.`)
 
   const handleUpdate = (
     updatedTabId: number,
@@ -59,7 +69,9 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
 
     chrome.tabs.onUpdated.removeListener(handleUpdate)
 
-    resolve(chrome.tabs.sendMessage(tabId, message))
+    console.debug(`Tab "${tabId}" is now ready.`)
+
+    resolve(sendMessageToTab(tabId, message))
   }
 
   chrome.tabs.onUpdated.addListener(handleUpdate)
