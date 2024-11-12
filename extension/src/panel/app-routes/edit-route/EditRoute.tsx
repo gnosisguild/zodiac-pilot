@@ -185,19 +185,33 @@ export const EditRoute = () => {
                     moduleAddress: undefined,
                     moduleType: undefined,
                   })
-                } else {
-                  if (value.moduleType === KnownContracts.ROLES_V1) {
+
+                  return
+                }
+
+                switch (value.moduleType) {
+                  case KnownContracts.ROLES_V1: {
                     updateConnection({
+                      ...value,
                       multisend: await queryRolesV1MultiSend(
                         chainId,
                         value.moduleAddress
                       ),
                     })
+
+                    break
                   }
-                  if (value.moduleAddress === KnownContracts.ROLES_V2) {
-                    updateConnection(
-                      await queryRolesV2MultiSend(chainId, value.moduleAddress)
-                    )
+
+                  case KnownContracts.ROLES_V2: {
+                    updateConnection({
+                      ...value,
+                      ...(await queryRolesV2MultiSend(
+                        chainId,
+                        value.moduleAddress
+                      )),
+                    })
+
+                    break
                   }
                 }
               }}

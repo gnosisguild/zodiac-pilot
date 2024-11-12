@@ -94,7 +94,13 @@ export const ZodiacMod = ({
             : defaultModOption
         }
         isDisabled={loadingMods || !isValidSafe}
-        placeholder={loadingMods || !isValidSafe ? '' : 'Select a module'}
+        placeholder={
+          loadingMods
+            ? 'Loading modules...'
+            : isValidSafe
+              ? 'Select a module'
+              : ''
+        }
         avatarAddress={avatarAddress}
       />
     </div>
