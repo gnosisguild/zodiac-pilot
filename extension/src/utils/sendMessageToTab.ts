@@ -4,7 +4,9 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
   const tab = await chrome.tabs.get(tabId)
   const { promise, resolve } = Promise.withResolvers()
 
-  console.debug(`Trying to send message to tab "${tabId}"`, { message })
+  console.debug(`Trying to send message to tab "${tabId}" "${tab.url}"`, {
+    message,
+  })
 
   if (!isValidTab(tab.url)) {
     console.debug(`Tab URL "${tab.url}" is not valid.`)
