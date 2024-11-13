@@ -1,4 +1,4 @@
-import { Flex, Tag } from '@/components'
+import { Tag } from '@/components'
 import { useProvider } from '@/providers'
 import { TransactionState } from '@/state'
 import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
@@ -18,7 +18,6 @@ import { decodeRolesV1Error } from '../../utils'
 import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
 import { CopyToClipboard } from './CopyToClipboard'
 import { Translate } from './Translate'
-import classes from './style.module.css'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
@@ -127,39 +126,27 @@ export const RolePermissionCheck = ({
   }
 
   return (
-    <Flex gap={2} direction="column" justifyContent="space-between">
-      <Flex gap={2} justifyContent="space-between" alignItems="center">
-        <Flex gap={2} justifyContent="start" alignItems="center">
-          <div className={classes.checkLabel}>Role permissions</div>
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 py-1">
+        <div className="w-24">Role permissions</div>
 
-          <Flex
-            gap={0}
-            justifyContent="center"
-            className={classes.tagContainer}
-          >
-            {error === false ? (
-              <Tag head={<RiGroupLine />} color="success">
-                Allowed
-              </Tag>
-            ) : (
-              <Tag head={<RiGroupLine />} color="danger">
-                {error}
-              </Tag>
-            )}
-          </Flex>
-        </Flex>
-        {error && !!translationAvailable && (
-          <Translate
-            transactionState={transactionState}
-            index={index}
-            labeled
-          />
+        {error === false ? (
+          <Tag head={<RiGroupLine />} color="success">
+            Allowed
+          </Tag>
+        ) : (
+          <Tag head={<RiGroupLine />} color="danger">
+            {error}
+          </Tag>
         )}
-        {error && !translationAvailable && (
-          <CopyToClipboard transaction={transactionState.transaction} labeled />
-        )}
-      </Flex>
-    </Flex>
+      </div>
+      {error && !!translationAvailable && (
+        <Translate transactionState={transactionState} index={index} labeled />
+      )}
+      {error && !translationAvailable && (
+        <CopyToClipboard transaction={transactionState.transaction} labeled />
+      )}
+    </div>
   )
 }
 

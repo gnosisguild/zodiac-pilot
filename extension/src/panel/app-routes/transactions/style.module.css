@@ -52,26 +52,6 @@ button.link:hover {
   color: rgba(252, 248, 217, 0.8);
 }
 
-.tagContainer {
-  padding: 4px 0;
-}
-
-.checkLabel {
-  width: 100px;
-}
-
-.modalClose {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.safeAppLink {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-1);
-  font-size: 0.75em;
-}
-
 .hint {
   margin: auto var(--spacing-3);
   text-align: center;
@@ -80,25 +60,4 @@ button.link:hover {
 
 .secondaryButton {
   background: none;
-}
-
-@-webkit-keyframes pulse {
-  to {
-    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
-  }
-}
-@-moz-keyframes pulse {
-  to {
-    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
-  }
-}
-@-ms-keyframes pulse {
-  to {
-    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
-  }
-}
-@keyframes pulse {
-  to {
-    box-shadow: 0 0 0 8px rgba(232, 76, 61, 0);
-  }
 }
