@@ -37,6 +37,16 @@ export const initSafeProtocolKit = async (
   chainId: ChainId,
   safeAddress: string
 ) => {
+  // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
+  if (Safe.default) {
+    // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
+    return await Safe.default.init({
+      // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
+      provider: RPC[chainId],
+      safeAddress,
+    })
+  }
+
   return await Safe.init({
     // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
     provider: RPC[chainId],
