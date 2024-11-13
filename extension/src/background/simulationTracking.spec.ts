@@ -2,12 +2,13 @@ import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import {
   callListeners,
   chromeMock,
+  mockActiveTab,
   mockRPCRequest,
   startPilotSession,
   startSimulation,
   stopSimulation,
 } from '@/test-utils'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
@@ -17,6 +18,10 @@ describe('Simulation tracking', () => {
     trackSessions()
     const trackRequestsResult = trackRequests()
     trackSimulations(trackRequestsResult)
+  })
+
+  beforeEach(() => {
+    mockActiveTab()
   })
 
   describe('RPC redirect rules', () => {
