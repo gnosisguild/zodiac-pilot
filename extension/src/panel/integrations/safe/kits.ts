@@ -36,7 +36,7 @@ export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {
 export const initSafeProtocolKit = async (
   chainId: ChainId,
   safeAddress: string
-) => {
+): Promise<Safe> => {
   // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
   if (Safe.default) {
     // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
