@@ -1,6 +1,8 @@
+import { ChainId } from 'ser-kit'
+
 export interface Fork {
-  networkId: number
-  rpcUrl: string
+  chainId: ChainId
+  rpcUrl?: string
 }
 
 type BaseSession = {

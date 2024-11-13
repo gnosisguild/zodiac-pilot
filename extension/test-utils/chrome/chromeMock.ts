@@ -17,6 +17,11 @@ type ChromeMock = typeof vitestChrome & {
       (typeof chrome.declarativeNetRequest)['getSessionRules']
     >
   }
+
+  sidePanel: {
+    open: MockedFunction<(typeof chrome.sidePanel)['open']>
+    setOptions: MockedFunction<(typeof chrome.sidePanel)['setOptions']>
+  }
 }
 
 Object.assign(vitestChrome.storage.sync, {
@@ -69,6 +74,11 @@ const vitestChromeWithMissingMethods = Object.assign(vitestChrome, {
 
   scripting: {
     executeScript: vi.fn(),
+  },
+
+  sidePanel: {
+    open: vi.fn(),
+    setOptions: vi.fn(),
   },
 })
 

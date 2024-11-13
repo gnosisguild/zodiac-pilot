@@ -115,6 +115,8 @@ if (
         }
 
         case RPCMessageType.PROBE_CHAIN_ID: {
+          console.debug(`Probing chain ID using URL "${message.url}"`)
+
           probeChainId(message.url).then(respond)
 
           // without this the response won't be sent
