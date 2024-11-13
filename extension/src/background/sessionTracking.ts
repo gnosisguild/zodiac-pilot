@@ -44,7 +44,7 @@ export const trackSessions = () => {
 
       stopPilotSession(windowIdRef.current)
 
-      reloadActiveTab(windowIdRef.current)
+      reloadActiveTab()
     })
   })
 
