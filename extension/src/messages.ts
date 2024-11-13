@@ -45,8 +45,8 @@ export enum PilotSimulationMessageType {
 interface SimulateStart {
   type: PilotSimulationMessageType.SIMULATE_START
   windowId: number
-  networkId: ChainId
-  rpcUrl: string
+  chainId: ChainId
+  rpcUrl?: string
 }
 
 interface SimulateStop {

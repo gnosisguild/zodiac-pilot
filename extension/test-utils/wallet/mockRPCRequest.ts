@@ -1,7 +1,6 @@
 import { ChainId } from 'ser-kit'
-import { callListeners } from './callListeners'
-import { chromeMock } from './chromeMock'
-import { createMockWebRequest } from './createMockWebRequest'
+import { callListeners, chromeMock } from '../chrome'
+import { createMockWebRequest } from '../creators'
 
 type MockRPCRequestOptions = {
   chainId: ChainId

@@ -19,8 +19,8 @@ type ActionablePilotSession = Readonly<PilotSession> & {
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
 
-  createFork: (fork: Fork) => Fork
-  clearFork: () => void
+  createFork: (trackedRPCUrlsByTabId: Map<number, string[]>, fork: Fork) => Fork
+  clearFork: (trackedRPCUrlsByTabId: Map<number, string[]>) => void
 }
 
 type CallbackFn = (session: ActionablePilotSession) => void
@@ -89,17 +89,17 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
     removeAllRpcRedirectRules()
   },
 
-  createFork: (fork) => {
+  createFork: (trackedRPCUrls, fork) => {
     session.fork = fork
 
-    updateRpcRedirectRules(getForkedSessions())
+    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
 
     return fork
   },
-  clearFork: () => {
+  clearFork: (trackedRPCUrls) => {
     session.fork = null
 
-    updateRpcRedirectRules(getForkedSessions())
+    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
   },
 })
 

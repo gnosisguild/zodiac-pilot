@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { createMockTab } from './createMockTab'
+import { createMockTab } from '../creators'
 
 type ResultFn = (tabs: chrome.tabs.Tab[]) => void
 

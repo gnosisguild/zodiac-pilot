@@ -15,10 +15,10 @@ export const probeChainId = async (url: string) => {
 
     const json = await response.json()
 
-    const networkId = parseInt(json.result)
+    const chainId = parseInt(json.result)
 
-    if (networkId != null && !isNaN(networkId)) {
-      return networkId
+    if (chainId != null && !isNaN(chainId)) {
+      return chainId
     }
   } catch (e) {
     console.error('Failed to determine chainId for endpoint', url, e)

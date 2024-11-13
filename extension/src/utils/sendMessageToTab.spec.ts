@@ -31,6 +31,8 @@ describe('Send tab message', () => {
 
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
 
+    tab.status = 'complete'
+
     await callListeners(
       chromeMock.tabs.onUpdated,
       tab.id,
@@ -62,7 +64,6 @@ describe('Send tab message', () => {
 
     sendMessageToTab(chromeTab.id, 'test-message').then(resolve)
 
-    // wait for next event loop so that listeners can be set up
     await sleep(1)
 
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()

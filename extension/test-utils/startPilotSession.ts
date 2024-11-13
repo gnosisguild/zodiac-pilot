@@ -1,10 +1,8 @@
 import { Message, PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 import { PILOT_PANEL_PORT } from '../src/const'
-import { callListeners } from './callListeners'
-import { chromeMock } from './chromeMock'
-import { createMockPort } from './createMockPort'
-import { createMockTab, MockTab } from './createMockTab'
+import { callListeners, chromeMock } from './chrome'
+import { createMockPort, createMockTab, MockTab } from './creators'
 
 type StartSessionOptions = {
   windowId: number

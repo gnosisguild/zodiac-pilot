@@ -2,6 +2,7 @@ import { Button, IconButton } from '@/components'
 import { ForkProvider, useProvider } from '@/providers'
 import { useDispatch, useTransactions } from '@/state'
 import { useZodiacRoute } from '@/zodiac-routes'
+import { invariant } from '@epic-web/invariant'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
@@ -42,9 +43,10 @@ export const Transactions = () => {
       payload: { id: transactions[0].id },
     })
 
-    if (!(provider instanceof ForkProvider)) {
-      throw new Error('This is only supported when using ForkProvider')
-    }
+    invariant(
+      provider instanceof ForkProvider,
+      'This is only supported when using ForkProvider'
+    )
 
     await provider.deleteFork()
 

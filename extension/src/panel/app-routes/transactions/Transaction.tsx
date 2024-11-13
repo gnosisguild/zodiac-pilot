@@ -100,7 +100,7 @@ export const Transaction = ({
         showRoles={showRoles}
       />
       {expanded && (
-        <>
+        <div className="flex flex-col gap-3">
           <Box bg p={2} className={classes.subtitleContainer}>
             <Flex
               gap={3}
@@ -118,20 +118,19 @@ export const Transaction = ({
               <EtherValue value={transactionState.transaction.value} />
             </Flex>
           </Box>
+
           <TransactionStatus
             transactionState={transactionState}
             index={index}
             showRoles={showRoles}
           />
 
-          <Box p={2} bg className={classes.transactionContainer}>
-            {decoded ? (
-              <DecodedTransaction {...decoded} />
-            ) : (
-              <RawTransaction data={transactionState.transaction.data} />
-            )}
-          </Box>
-        </>
+          {decoded ? (
+            <DecodedTransaction {...decoded} />
+          ) : (
+            <RawTransaction data={transactionState.transaction.data} />
+          )}
+        </div>
       )}
     </Box>
   )

@@ -1,6 +1,6 @@
 import { ZodiacRoute } from '@/types'
 import { vi } from 'vitest'
-import { createMockRoute } from './createMockRoute'
+import { createMockRoute } from './creators'
 
 export const mockRoute = (route: Partial<ZodiacRoute> = {}) => {
   const mockGet = vi.mocked(chrome.storage.sync.get)

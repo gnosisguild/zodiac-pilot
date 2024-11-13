@@ -1,4 +1,4 @@
-import { Box, Divider, Field, Flex, TextInput } from '@/components'
+import { Box, Divider, Section, TextInput } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -6,8 +6,7 @@ import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
 import { RiArrowLeftSLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
-import { MODULE_NAMES } from '../../../const'
-import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
+import { useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -22,12 +21,12 @@ import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { LaunchButton } from './LaunchButton'
-import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { RemoveButton } from './RemoveButton'
 import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
 import { ConnectWallet } from './wallet'
+import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
@@ -45,16 +44,11 @@ export const EditRoute = () => {
     asLegacyConnection(currentRouteState)
 
   const { safes } = useSafesWithOwner(pilotAddress, routeId)
-  const { delegates } = useSafeDelegates(avatarAddress, routeId)
 
   const decodedRoleKey = roleId && decodeRoleKey(roleId)
 
   // TODO modules is a nested list, but we currently only render the top-level items
-  const {
-    loading: loadingMods,
-    isValidSafe,
-    modules,
-  } = useZodiacModules(avatarAddress, routeId)
+  const { modules } = useZodiacModules(avatarAddress, routeId)
 
   const [confirmClearTransactions, ConfirmationModal] =
     useConfirmClearTransactions()
@@ -73,15 +67,6 @@ export const EditRoute = () => {
   const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
   const [roleIdError, setRoleIdError] = useState<string | null>(null)
-
-  const pilotIsOwner = safes.some(
-    (safe) => safe.toLowerCase() === avatarAddress.toLowerCase()
-  )
-  const pilotIsDelegate = delegates.some(
-    (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase()
-  )
-  const defaultModOption =
-    pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
   return (
     <>
@@ -114,170 +99,164 @@ export const EditRoute = () => {
 
         <Divider />
 
-        <Flex direction="column" gap={2}>
-          <Flex direction="column" gap={3} className={classes.form}>
-            {error && (
-              <Box double p={3}>
-                <div className={classes.errorInfo}>
-                  <p>There seems to be a problem with this connection:</p>
-                  <Box p={3} className={classes.error}>
-                    {error}
-                  </Box>
-                </div>
-              </Box>
-            )}
-            <Field>
-              <TextInput
-                label="Route label"
-                value={label}
-                placeholder="Label this route"
-                onChange={(ev) => {
+        <div className="flex flex-col gap-4">
+          {error && (
+            <Box double p={3}>
+              <div className={classes.errorInfo}>
+                <p>There seems to be a problem with this connection:</p>
+                <Box p={3} className={classes.error}>
+                  {error}
+                </Box>
+              </div>
+            </Box>
+          )}
+          <Section>
+            <TextInput
+              label="Route label"
+              value={label}
+              placeholder="Label this route"
+              onChange={(ev) => {
+                updateConnection({
+                  label: ev.target.value,
+                })
+              }}
+            />
+          </Section>
+
+          <Section title="Chain">
+            <ChainSelect
+              value={chainId}
+              onChange={(chainId) => updateConnection({ chainId })}
+            />
+          </Section>
+
+          <Section title="Pilot Account">
+            <ConnectWallet
+              route={currentRouteState}
+              onConnect={({ providerType, chainId, account }) => {
+                updateConnection({
+                  providerType,
+                  chainId,
+                  pilotAddress: account,
+                })
+              }}
+              onDisconnect={() => {
+                updateConnection({ pilotAddress: '' })
+              }}
+            />
+          </Section>
+
+          <Section title="Piloted Safe">
+            <AvatarInput
+              availableSafes={safes}
+              value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
+              onChange={async (address) => {
+                const keepTransactionBundle =
+                  address.toLowerCase() === avatarAddress.toLowerCase()
+                const confirmed =
+                  keepTransactionBundle || (await confirmClearTransactions())
+
+                if (confirmed) {
                   updateConnection({
-                    label: ev.target.value,
+                    avatarAddress: address || undefined,
+                    moduleAddress: '',
+                    moduleType: undefined,
                   })
-                }}
-              />
-            </Field>
-            <Field label="Chain">
-              <ChainSelect
-                value={chainId}
-                onChange={(chainId) => updateConnection({ chainId })}
-              />
-            </Field>
-            <Field label="Pilot Account" labelFor="">
-              <ConnectWallet
-                route={currentRouteState}
-                onConnect={({ providerType, chainId, account }) => {
+                }
+              }}
+            />
+          </Section>
+
+          <Section title="Zodiac Mod">
+            <ZodiacMod
+              avatarAddress={avatarAddress}
+              pilotAddress={pilotAddress}
+              value={
+                selectedModule
+                  ? {
+                      moduleAddress: selectedModule.moduleAddress,
+                      moduleType: selectedModule.type,
+                    }
+                  : null
+              }
+              onSelect={async (value) => {
+                if (value == null) {
                   updateConnection({
-                    providerType,
-                    chainId,
-                    pilotAddress: account,
-                  })
-                }}
-                onDisconnect={() => {
-                  updateConnection({ pilotAddress: '' })
-                }}
-              />
-            </Field>
-            <Field label="Piloted Safe" labelFor="">
-              <AvatarInput
-                availableSafes={safes}
-                value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
-                onChange={async (address) => {
-                  const keepTransactionBundle =
-                    address.toLowerCase() === avatarAddress.toLowerCase()
-                  const confirmed =
-                    keepTransactionBundle || (await confirmClearTransactions())
-
-                  if (confirmed) {
-                    updateConnection({
-                      avatarAddress: address || undefined,
-                      moduleAddress: '',
-                      moduleType: undefined,
-                    })
-                  }
-                }}
-              />
-            </Field>
-            <Field label="Zodiac Mod" disabled={modules.length === 0}>
-              <ModSelect
-                isMulti={false}
-                options={[
-                  ...(pilotIsOwner || pilotIsDelegate
-                    ? [NO_MODULE_OPTION]
-                    : []),
-                  ...modules.map((mod) => ({
-                    value: mod.moduleAddress,
-                    label: `${MODULE_NAMES[mod.type]} Mod`,
-                  })),
-                ]}
-                onChange={async (selected) => {
-                  if (selected == null) {
-                    updateConnection({
-                      moduleAddress: undefined,
-                      moduleType: undefined,
-                    })
-
-                    return
-                  }
-
-                  const mod = modules.find(
-                    (mod) => mod.moduleAddress === selected.value
-                  )
-                  updateConnection({
-                    moduleAddress: mod?.moduleAddress,
-                    moduleType: mod?.type,
+                    moduleAddress: undefined,
+                    moduleType: undefined,
                   })
 
-                  if (mod?.type === KnownContracts.ROLES_V1) {
+                  return
+                }
+
+                switch (value.moduleType) {
+                  case KnownContracts.ROLES_V1: {
                     updateConnection({
+                      ...value,
                       multisend: await queryRolesV1MultiSend(
                         chainId,
-                        mod.moduleAddress
+                        value.moduleAddress
                       ),
                     })
+
+                    break
                   }
-                  if (mod?.type === KnownContracts.ROLES_V2) {
-                    updateConnection(
-                      await queryRolesV2MultiSend(chainId, mod.moduleAddress)
-                    )
+
+                  case KnownContracts.ROLES_V2: {
+                    updateConnection({
+                      ...value,
+                      ...(await queryRolesV2MultiSend(
+                        chainId,
+                        value.moduleAddress
+                      )),
+                    })
+
+                    break
+                  }
+                }
+              }}
+            />
+          </Section>
+
+          {selectedModule?.type === KnownContracts.ROLES_V1 && (
+            <Section>
+              <TextInput
+                label="Role ID"
+                value={roleId}
+                onChange={(ev) => {
+                  updateConnection({ roleId: ev.target.value })
+                }}
+                placeholder="0"
+              />
+            </Section>
+          )}
+          {selectedModule?.type === KnownContracts.ROLES_V2 && (
+            <Section>
+              <TextInput
+                label="Role Key"
+                key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
+                defaultValue={decodedRoleKey || roleId}
+                onChange={(ev) => {
+                  try {
+                    const roleId = encodeRoleKey(ev.target.value)
+                    setRoleIdError(null)
+                    updateConnection({ roleId })
+                  } catch (e) {
+                    updateConnection({ roleId: '' })
+                    setRoleIdError((e as Error).message)
                   }
                 }}
-                value={
-                  selectedModule
-                    ? {
-                        value: selectedModule.moduleAddress,
-                        label: MODULE_NAMES[selectedModule.type],
-                      }
-                    : defaultModOption
-                }
-                isDisabled={loadingMods || !isValidSafe}
-                placeholder={
-                  loadingMods || !isValidSafe ? '' : 'Select a module'
-                }
-                avatarAddress={avatarAddress}
+                placeholder="Enter key as bytes32 hex string or in human-readable decoding"
               />
-            </Field>
-            {selectedModule?.type === KnownContracts.ROLES_V1 && (
-              <Field label="Role ID">
-                <input
-                  type="text"
-                  value={roleId}
-                  onChange={(ev) => {
-                    updateConnection({ roleId: ev.target.value })
-                  }}
-                  placeholder="0"
-                />
-              </Field>
-            )}
-            {selectedModule?.type === KnownContracts.ROLES_V2 && (
-              <Field label="Role Key">
-                <input
-                  type="text"
-                  key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
-                  defaultValue={decodedRoleKey || roleId}
-                  onChange={(ev) => {
-                    try {
-                      const roleId = encodeRoleKey(ev.target.value)
-                      setRoleIdError(null)
-                      updateConnection({ roleId })
-                    } catch (e) {
-                      updateConnection({ roleId: '' })
-                      setRoleIdError((e as Error).message)
-                    }
-                  }}
-                  placeholder="Enter key as bytes32 hex string or in human-readable decoding"
-                />
 
-                {roleIdError && (
-                  <Box p={3} className={classes.error}>
-                    {roleIdError}
-                  </Box>
-                )}
-              </Field>
-            )}
-          </Flex>
-        </Flex>
+              {roleIdError && (
+                <Box p={3} className={classes.error}>
+                  {roleIdError}
+                </Box>
+              )}
+            </Section>
+          )}
+        </div>
       </div>
       <ConfirmationModal />
     </>
