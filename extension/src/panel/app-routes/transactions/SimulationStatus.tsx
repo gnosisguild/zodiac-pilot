@@ -33,7 +33,7 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-2 py-1">
-        <div className="w-24">Simulation</div>
+        <div className="w-32">Simulation</div>
 
         {transactionState.status === ExecutionStatus.PENDING && (
           <Tag head={<Spinner />} color="info">

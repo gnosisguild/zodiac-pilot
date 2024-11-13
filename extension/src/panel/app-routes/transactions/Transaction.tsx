@@ -94,7 +94,7 @@ export const Transaction = ({
     <Box
       ref={elementRef}
       p={2}
-      className="border border-zodiac-light-mustard border-opacity-80"
+      className="flex flex-col gap-2 border border-zodiac-light-mustard border-opacity-80"
     >
       <TransactionHeader
         index={index}
@@ -105,9 +105,9 @@ export const Transaction = ({
         showRoles={showRoles}
       />
       {expanded && (
-        <div className="flex flex-col gap-3">
-          <Box bg p={2} className="mt-2">
-            <div className="flex flex-1 items-center justify-between gap-2 text-xs">
+        <div className="flex flex-col gap-3 text-sm">
+          <Box bg p={2}>
+            <div className="flex flex-1 items-center justify-between gap-2">
               <ContractAddress
                 chainId={chainId}
                 address={transactionState.transaction.to}
@@ -147,7 +147,7 @@ const TransactionStatus = ({
   index,
   showRoles = false,
 }: StatusProps) => (
-  <div className="mt-3 flex flex-col justify-between gap-1 text-xs">
+  <>
     <Box bg p={2} className="flex-grow">
       <SimulationStatus transactionState={transactionState} />
     </Box>
@@ -160,7 +160,7 @@ const TransactionStatus = ({
         />
       </Box>
     )}
-  </div>
+  </>
 )
 
 type EtherValueProps = { value: string }

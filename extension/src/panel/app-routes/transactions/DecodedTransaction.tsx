@@ -1,7 +1,6 @@
 import { Box } from '@/components'
 import { FunctionFragment, Result } from 'ethers'
 import { BaseTransaction } from './BaseTransaction'
-import classes from './style.module.css'
 
 interface Props {
   functionFragment: FunctionFragment
@@ -18,7 +17,7 @@ export const DecodedTransaction = ({ functionFragment, data }: Props) => {
         <fieldset className="flex flex-col gap-2">
           {functionFragment.inputs.map((input, i) => (
             <BaseTransaction value={data[i].toString()}>
-              {input.name} <i className={classes.inputType}>{input.type}</i>
+              {input.name} <i className="pl-1 opacity-70">{input.type}</i>
             </BaseTransaction>
           ))}
         </fieldset>
