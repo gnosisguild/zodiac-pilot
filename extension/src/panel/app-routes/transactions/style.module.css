@@ -77,24 +77,6 @@ button.link:hover {
   text-align: center;
   opacity: 0.7;
 }
-.recordingIcon {
-  margin: 13px;
-  width: 12px;
-  height: 12px;
-  box-shadow: 0 0 0 0 #d9d4adb8;
-  border-radius: 50%;
-  background-color: #d9d4add9;
-  -webkit-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-  -moz-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-  -ms-animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-  animation: pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
-}
-
-.collapsed .recordingIcon {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
 
 .secondaryButton {
   background: none;
