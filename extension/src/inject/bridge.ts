@@ -1,6 +1,6 @@
 // this will be bundled in the panel app
 import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
-import { sendMessageToTab } from '@/utils'
+import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { ChainId } from 'ser-kit'
@@ -45,19 +45,13 @@ export const update = (
 }
 
 const emitEvent = async (eventName: string, eventData: any) => {
-  const tabs = (
-    await chrome.tabs.query({
-      currentWindow: true,
-    })
-  ).filter((tab) => !!tab.id && !tab.url?.startsWith('chrome:'))
+  const tab = await getActiveTab()
 
-  for (const tab of tabs) {
-    sendMessageToTab(tab.id!, {
-      type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
-      eventName,
-      eventData,
-    } satisfies InjectedProviderMessage)
-  }
+  sendMessageToTab(tab.id!, {
+    type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+    eventName,
+    eventData,
+  } satisfies InjectedProviderMessage)
 }
 
 // Relay RPC requests
