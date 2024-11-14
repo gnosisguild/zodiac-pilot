@@ -1,7 +1,8 @@
+import { ZERO_ADDRESS } from '@/chains'
 import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
 import { callListeners, chromeMock, mockActiveTab } from '@/test-utils'
 import { Eip1193Provider } from '@/types'
-import { cleanup, renderHook } from '@testing-library/react'
+import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import {
   afterEach,
   beforeEach,
@@ -14,23 +15,23 @@ import {
 import { useProviderBridge } from './bridge'
 
 describe('Bridge', () => {
-  describe('Provider handling', () => {
-    class MockProvider implements Eip1193Provider {
-      request: MockedFunction<Eip1193Provider['request']>
+  class MockProvider implements Eip1193Provider {
+    request: MockedFunction<Eip1193Provider['request']>
 
-      on = vi.fn()
-      removeListener = vi.fn()
+    on = vi.fn()
+    removeListener = vi.fn()
 
-      constructor() {
-        this.request = vi.fn().mockResolvedValue(null)
-      }
+    constructor() {
+      this.request = vi.fn().mockResolvedValue(null)
     }
+  }
 
+  afterEach(cleanup)
+
+  describe('Provider handling', () => {
     beforeEach(() => {
       mockActiveTab()
     })
-
-    afterEach(cleanup)
 
     it('relays requests to the provider', async () => {
       const provider = new MockProvider()
@@ -145,7 +146,56 @@ describe('Bridge', () => {
     })
   })
 
-  describe('Account handling', () => {})
+  describe('Account handling', () => {
+    const provider = new MockProvider()
+
+    it('emits an "accountsChanged" event when the hook initially renders with an account', async () => {
+      const tab = mockActiveTab()
+
+      renderHook(() => useProviderBridge({ provider, account: ZERO_ADDRESS }))
+
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+          eventName: 'accountsChanged',
+          eventData: [ZERO_ADDRESS],
+        })
+      })
+    })
+
+    it('does not emit an "accountsChanged" event when there is no account on the first render', async () => {
+      mockActiveTab()
+
+      renderHook(() => useProviderBridge({ provider }))
+
+      expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith()
+    })
+
+    it('does emit an "accountsChanged" event when the account resets on later renders', async () => {
+      const tab = mockActiveTab()
+
+      const { rerender } = renderHook<
+        void,
+        { account: `0x${string}` | undefined }
+      >(({ account }) => useProviderBridge({ provider, account }), {
+        initialProps: { account: ZERO_ADDRESS },
+      })
+
+      rerender({ account: undefined })
+
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+          eventName: 'accountsChanged',
+          eventData: [],
+        })
+      })
+
+      renderHook(() => useProviderBridge({ provider }))
+
+      expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith()
+    })
+  })
 
   describe('Chain handling', () => {})
 })
