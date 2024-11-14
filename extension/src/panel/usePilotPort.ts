@@ -7,6 +7,7 @@ import { PILOT_PANEL_PORT } from '../const'
 export const usePilotPort = () => {
   const activeTab = useActiveTab()
   const [portIsActive, setPortIsActive] = useState(false)
+  const [activeWindowId, setActiveWindowId] = useState<number | null>(null)
 
   useEffect(() => {
     if (portIsActive) {
@@ -27,8 +28,11 @@ export const usePilotPort = () => {
 
     connectPort({ windowId: activeTab.windowId, tabId: activeTab.id })
 
+    setActiveWindowId(activeTab.windowId)
     setPortIsActive(true)
   }, [activeTab, portIsActive])
+
+  return { activeWindowId }
 }
 
 type ConnectPortOptions = {

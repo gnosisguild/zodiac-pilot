@@ -1,11 +1,16 @@
 import { sleep } from '@/utils'
-import { renderHook as renderHookBase } from '@testing-library/react'
+import {
+  renderHook as renderHookBase,
+  RenderHookOptions,
+} from '@testing-library/react'
 
-type Fn = Parameters<typeof renderHookBase>[0]
-type Options = Parameters<typeof renderHookBase>[1]
+type Fn<Result, Props> = (props: Props) => Result
 
-export const renderHook = async (fn: Fn, options?: Options) => {
-  const result = renderHookBase(fn, options)
+export const renderHook = async <Result, Props>(
+  fn: Fn<Result, Props>,
+  options?: RenderHookOptions<Props>
+) => {
+  const result = renderHookBase<Result, Props>(fn, options)
 
   await sleep(1)
 

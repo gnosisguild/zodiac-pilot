@@ -11,7 +11,7 @@ import {
 import { sleep } from '@/utils'
 import { cleanup, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
-import { usePilotPort } from './port'
+import { usePilotPort } from './usePilotPort'
 
 describe('usePilotPort', () => {
   afterEach(cleanup)
