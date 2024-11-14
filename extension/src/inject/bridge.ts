@@ -115,7 +115,7 @@ export const useProviderBridge = ({
 }: UseProviderBridgeOptions) => {
   useHandleProviderRequests(provider)
 
-  const chainIdRef = useRef(chainId)
+  const chainIdRef = useRef<ChainId | null>(null)
 
   useEffect(() => {
     if (chainId == null) {

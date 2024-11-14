@@ -3,6 +3,8 @@ import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
 import { callListeners, chromeMock, mockActiveTab } from '@/test-utils'
 import { Eip1193Provider } from '@/types'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
+import { toQuantity } from 'ethers'
+import { ChainId } from 'ser-kit'
 import {
   afterEach,
   beforeEach,
@@ -197,5 +199,40 @@ describe('Bridge', () => {
     })
   })
 
-  describe('Chain handling', () => {})
+  describe('Chain handling', () => {
+    const provider = new MockProvider()
+
+    it('emits a "connect" event when the chainId is initially set', async () => {
+      const tab = mockActiveTab()
+
+      renderHook(() => useProviderBridge({ provider, chainId: 1 }))
+
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+          eventName: 'connect',
+          eventData: { chainId: toQuantity(1) },
+        })
+      })
+    })
+
+    it('emits a "chainChanged" event when the chain changes on a later render', async () => {
+      const tab = mockActiveTab()
+
+      const { rerender } = renderHook<void, { chainId: ChainId }>(
+        ({ chainId }) => useProviderBridge({ provider, chainId }),
+        { initialProps: { chainId: 1 } }
+      )
+
+      rerender({ chainId: 10 })
+
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+          eventName: 'chainChanged',
+          eventData: [toQuantity(10)],
+        })
+      })
+    })
+  })
 })
