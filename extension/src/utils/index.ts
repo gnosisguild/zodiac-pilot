@@ -1,5 +1,5 @@
 export * from './addressValidation'
-export { getActiveTab } from './getActiveTab'
+export { getActiveTab, useActiveTab } from './getActiveTab'
 export { isValidTab } from './isValidTab'
 export { reloadActiveTab } from './reloadActiveTab'
 export { reloadTab } from './reloadTab'

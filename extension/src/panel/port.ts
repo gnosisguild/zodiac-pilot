@@ -1,5 +1,6 @@
 import { Message, PilotMessageType } from '@/messages'
-import { getActiveTab, isValidTab } from '@/utils'
+import { getActiveTab, isValidTab, useActiveTab } from '@/utils'
+import { useEffect } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import { setWindowId } from './useProviderBridge'
 
@@ -49,16 +50,6 @@ export const initPort = async () => {
     return promise
   }
 
-  const connectPort = () => {
-    const port = chrome.runtime.connect({ name: PILOT_PANEL_PORT })
-
-    port.postMessage({
-      type: PilotMessageType.PILOT_PANEL_OPENED,
-      windowId,
-      tabId: activeTab.id,
-    } satisfies Message)
-  }
-
   if (activeTab.status === 'loading') {
     const handleTabLoad = (
       tabId: number,
@@ -74,11 +65,46 @@ export const initPort = async () => {
 
       chrome.tabs.onUpdated.removeListener(handleTabLoad)
 
-      connectPort()
+      connectPort({ windowId, tabId: activeTab.id })
     }
 
     chrome.tabs.onUpdated.addListener(handleTabLoad)
   } else {
-    connectPort()
+    connectPort({ windowId, tabId: activeTab.id })
   }
+}
+
+export const usePilotPort = () => {
+  const activeTab = useActiveTab()
+
+  useEffect(() => {
+    if (activeTab == null) {
+      return
+    }
+
+    if (!isValidTab(activeTab.url)) {
+      return
+    }
+
+    if (activeTab.status !== 'complete') {
+      return
+    }
+
+    connectPort({ windowId: activeTab.windowId, tabId: activeTab.id })
+  }, [activeTab])
+}
+
+type ConnectPortOptions = {
+  tabId?: number
+  windowId: number
+}
+
+const connectPort = ({ tabId, windowId }: ConnectPortOptions) => {
+  const port = chrome.runtime.connect({ name: PILOT_PANEL_PORT })
+
+  port.postMessage({
+    type: PilotMessageType.PILOT_PANEL_OPENED,
+    windowId,
+    tabId,
+  } satisfies Message)
 }
