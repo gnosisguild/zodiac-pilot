@@ -3,11 +3,11 @@ import { useProvider } from '@/providers'
 import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
+import { useProviderBridge } from '../useProviderBridge'
 import { useStorage } from '../utils'
 import { EditRoute } from './edit-route'
 import { ListRoutes } from './list-routes'
 import { Transactions } from './transactions'
-import { useProviderBridge } from './useProviderBridge'
 
 const App = () => {
   // update the last used timestamp for the current route
