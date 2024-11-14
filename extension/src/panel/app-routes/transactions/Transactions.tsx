@@ -6,6 +6,7 @@ import { invariant } from '@epic-web/invariant'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
+import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
@@ -82,6 +83,7 @@ export const Transactions = () => {
           >
             <RiFileCopy2Line />
           </IconButton>
+
           <IconButton
             title="Re-simulate on current blockchain head"
             disabled={transactions.length === 0}
@@ -90,7 +92,7 @@ export const Transactions = () => {
             <RiRefreshLine />
           </IconButton>
 
-          <div className={classes.recordingIcon} />
+          <RecordingIcon />
         </div>
       </div>
 

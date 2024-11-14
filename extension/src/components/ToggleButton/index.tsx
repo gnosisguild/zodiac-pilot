@@ -1,5 +1,3 @@
-import classes from './style.module.css'
-
 interface Props {
   expanded: boolean
   onToggle(): void
@@ -7,7 +5,7 @@ interface Props {
 
 export const ToggleButton = ({ expanded, onToggle }: Props) => (
   <button
-    className={classes.toggleButton}
+    className="flex w-8 cursor-pointer items-center justify-center border border-zodiac-light-mustard border-opacity-30 bg-zodiac-very-dark-blue p-1 transition-all hover:brightness-150"
     onClick={onToggle}
     title={expanded ? 'collapse' : 'expand'}
   >

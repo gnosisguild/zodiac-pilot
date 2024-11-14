@@ -22,6 +22,10 @@ type ChromeMock = typeof vitestChrome & {
     open: MockedFunction<(typeof chrome.sidePanel)['open']>
     setOptions: MockedFunction<(typeof chrome.sidePanel)['setOptions']>
   }
+
+  action: {
+    setBadgeText: MockedFunction<(typeof chrome.action)['setBadgeText']>
+  }
 }
 
 Object.assign(vitestChrome.storage.sync, {
@@ -79,6 +83,10 @@ const vitestChromeWithMissingMethods = Object.assign(vitestChrome, {
   sidePanel: {
     open: vi.fn(),
     setOptions: vi.fn(),
+  },
+
+  action: {
+    setBadgeText: vi.fn(),
   },
 })
 

@@ -1,15 +1,10 @@
+import { getActiveTab } from './getActiveTab'
 import { reloadTab } from './reloadTab'
 
-export const reloadActiveTab = (windowId: number) => {
-  chrome.tabs.query({ windowId, active: true }, (tabs) => {
-    const [activeTab] = tabs
+export const reloadActiveTab = async () => {
+  const tab = await getActiveTab()
 
-    if (activeTab == null) {
-      return
-    }
-
-    if (activeTab.id != null) {
-      reloadTab(activeTab.id)
-    }
-  })
+  if (tab.id != null) {
+    reloadTab(tab.id)
+  }
 }

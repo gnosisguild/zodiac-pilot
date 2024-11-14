@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Box, Flex, ToggleButton } from '@/components'
+import { Box, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -14,7 +14,6 @@ import { Remove } from './Remove'
 import { RolePermissionCheck } from './RolePermissionCheck'
 import { SimulationStatus } from './SimulationStatus'
 import { Translate } from './Translate'
-import classes from './style.module.css'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
 
 interface HeaderProps {
@@ -35,22 +34,24 @@ const TransactionHeader = ({
   showRoles = false,
 }: HeaderProps) => {
   return (
-    <div className={classes.transactionHeader}>
-      <label className={classes.start}>
-        <div className={classes.index}>{index + 1}</div>
-        <div className={classes.toggle}>
-          <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+    <div className="flex items-center justify-between">
+      <label className="flex w-3/5 cursor-pointer items-center gap-2">
+        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
+          {index + 1}
         </div>
-        <h5 className={classes.transactionTitle}>
+
+        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+
+        <h5 className="flex items-center gap-2">
           {functionFragment
             ? functionFragment.format('sighash').split('(')[0]
             : 'Raw transaction'}
           {transactionState.transaction.operation === 1 && (
-            <code className={classes.delegateCall}>delegatecall</code>
+            <code className="text-xs">delegatecall</code>
           )}
         </h5>
       </label>
-      <div className={classes.end}>
+      <div className="flex items-center justify-end gap-2">
         <SimulationStatus transactionState={transactionState} mini />
         {showRoles && (
           <RolePermissionCheck
@@ -59,11 +60,11 @@ const TransactionHeader = ({
             mini
           />
         )}
-        <Flex gap={0}>
+        <div className="flex">
           <Translate transactionState={transactionState} index={index} />
           <CopyToClipboard transaction={transactionState.transaction} />
           <Remove transactionState={transactionState} index={index} />
-        </Flex>
+        </div>
       </div>
     </div>
   )
@@ -90,7 +91,11 @@ export const Transaction = ({
   const showRoles = routeGoesThroughRoles(route)
 
   return (
-    <Box ref={elementRef} p={2} className={classes.container}>
+    <Box
+      ref={elementRef}
+      p={2}
+      className="flex flex-col gap-2 border border-zodiac-light-mustard border-opacity-80"
+    >
       <TransactionHeader
         index={index}
         transactionState={transactionState}
@@ -100,23 +105,18 @@ export const Transaction = ({
         showRoles={showRoles}
       />
       {expanded && (
-        <div className="flex flex-col gap-3">
-          <Box bg p={2} className={classes.subtitleContainer}>
-            <Flex
-              gap={3}
-              alignItems="center"
-              justifyContent="space-between"
-              className={classes.transactionSubtitle}
-            >
+        <div className="flex flex-col gap-3 text-sm">
+          <Box bg p={2}>
+            <div className="flex flex-1 items-center justify-between gap-2">
               <ContractAddress
                 chainId={chainId}
                 address={transactionState.transaction.to}
                 contractInfo={transactionState.contractInfo}
                 explorerLink
-                className={classes.contractName}
+                className="w-px flex-grow"
               />
               <EtherValue value={transactionState.transaction.value} />
-            </Flex>
+            </div>
           </Box>
 
           <TransactionStatus
@@ -147,25 +147,20 @@ const TransactionStatus = ({
   index,
   showRoles = false,
 }: StatusProps) => (
-  <Flex
-    gap={1}
-    justifyContent="space-between"
-    className={classes.transactionStatus}
-    direction="column"
-  >
-    <Box bg p={2} className={classes.statusHeader}>
+  <>
+    <Box bg p={2} className="flex-grow">
       <SimulationStatus transactionState={transactionState} />
     </Box>
 
     {showRoles && (
-      <Box bg p={2} className={classes.statusHeader}>
+      <Box bg p={2} className="flex-grow">
         <RolePermissionCheck
           transactionState={transactionState}
           index={index}
         />
       </Box>
     )}
-  </Flex>
+  </>
 )
 
 type EtherValueProps = { value: string }
@@ -175,15 +170,12 @@ const EtherValue = ({ value }: EtherValueProps) => {
   const chainId = getChainId(avatar)
 
   return (
-    <Flex
-      gap={1}
-      alignItems="baseline"
-      justifyContent="space-between"
-      className={classes.value}
-    >
+    <div className="flex max-w-36 items-baseline justify-between gap-1">
       <div>{CHAIN_CURRENCY[chainId]}:</div>
-      <code className={classes.valueValue}>{formatEther(value || 0)}</code>
-    </Flex>
+      <code className="overflow-hidden text-ellipsis">
+        {formatEther(value || 0)}
+      </code>
+    </div>
   )
 }
 

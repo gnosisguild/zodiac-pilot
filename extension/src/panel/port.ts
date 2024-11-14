@@ -1,7 +1,7 @@
 import { Message, PilotMessageType } from '@/messages'
 import { getActiveTab, isValidTab } from '@/utils'
 import { PILOT_PANEL_PORT } from '../const'
-import { setWindowId } from '../inject/bridge'
+import { setWindowId } from './useProviderBridge'
 
 // notify the background script that the panel has been opened
 export const initPort = async () => {

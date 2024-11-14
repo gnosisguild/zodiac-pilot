@@ -16,7 +16,6 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '../../utils'
-import classes from './style.module.css'
 
 export const Submit = () => {
   const route = useZodiacRoute()
@@ -191,7 +190,11 @@ const AwaitingSignatureModal = ({
     style={modalStyle}
     contentLabel="Sign the batch transaction"
   >
-    <IconButton className={classes.modalClose} title="Cancel" onClick={onClose}>
+    <IconButton
+      className="absolute right-0 top-0"
+      title="Cancel"
+      onClick={onClose}
+    >
       <RiCloseLine />
     </IconButton>
     <p>Awaiting your signature ...</p>
@@ -200,7 +203,7 @@ const AwaitingSignatureModal = ({
         <br />
         <p>
           <a
-            className={classes.safeAppLink}
+            className="inline-flex items-center gap-1 text-xs"
             href={`https://app.safe.global/${account}`}
             target="_blank"
             rel="noreferrer"
