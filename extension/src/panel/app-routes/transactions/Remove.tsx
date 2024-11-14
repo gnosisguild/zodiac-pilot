@@ -3,8 +3,6 @@ import { ForkProvider, useProvider } from '@/providers'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
-import classes from './style.module.css'
-
 type Props = {
   transactionState: TransactionState
   index: number
@@ -48,11 +46,7 @@ export const Remove = ({ transactionState, index }: Props) => {
   }
 
   return (
-    <IconButton
-      onClick={handleRemove}
-      className={classes.removeTransaction}
-      title="Remove transaction"
-    >
+    <IconButton onClick={handleRemove} title="Remove transaction">
       <RiDeleteBinLine />
     </IconButton>
   )

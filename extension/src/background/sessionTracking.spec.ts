@@ -3,6 +3,7 @@ import {
   callListeners,
   chromeMock,
   createMockTab,
+  mockActiveTab,
   startPilotSession,
 } from '@/test-utils'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
@@ -16,6 +17,8 @@ describe('Session tracking', () => {
 
   beforeEach(() => {
     clearAllSessions()
+
+    mockActiveTab()
   })
 
   describe('Start session', () => {
