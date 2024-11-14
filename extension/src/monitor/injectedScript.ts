@@ -54,7 +54,9 @@ const handleLoad = () => {
 
   const button = document.getElementById('ZODIAC-PILOT::open-panel-button')
 
-  invariant(button != null, 'No button to open side panel found')
+  if (button == null) {
+    return
+  }
 
   button.addEventListener('click', (event) => {
     event.preventDefault()
