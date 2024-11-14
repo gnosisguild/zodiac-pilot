@@ -10,14 +10,15 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { appRoutes } from './app-routes'
 import './global.css'
-import { initPort } from './port'
-import { ProvideState } from './state'
 
-initPort()
+import { ProvideState } from './state'
+import { usePilotPort } from './usePilotPort'
 
 const router = createHashRouter(appRoutes)
 
 const Root = () => {
+  usePilotPort()
+
   return (
     <StrictMode>
       <ProvideState>
