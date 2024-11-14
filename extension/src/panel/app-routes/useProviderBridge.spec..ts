@@ -14,7 +14,7 @@ import {
   MockedFunction,
   vi,
 } from 'vitest'
-import { useProviderBridge } from './bridge'
+import { useProviderBridge } from './useProviderBridge'
 
 describe('Bridge', () => {
   class MockProvider implements Eip1193Provider {

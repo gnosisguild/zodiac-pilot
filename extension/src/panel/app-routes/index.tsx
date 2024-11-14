@@ -1,14 +1,13 @@
 import { getChainId } from '@/chains'
 import { useProvider } from '@/providers'
 import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
-import { useEffect } from 'react'
 import { Outlet, RouteObject } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
-import { update } from '../../inject/bridge'
 import { useStorage } from '../utils'
 import { EditRoute } from './edit-route'
 import { ListRoutes } from './list-routes'
 import { Transactions } from './transactions'
+import { useProviderBridge } from './useProviderBridge'
 
 const App = () => {
   // update the last used timestamp for the current route
@@ -21,9 +20,7 @@ const App = () => {
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
 
-  useEffect(() => {
-    update(provider, chainId, avatarAddress)
-  }, [provider, chainId, avatarAddress])
+  useProviderBridge({ provider, chainId, account: avatarAddress })
 
   useStorage('lastUsedRoute', route.id)
 
