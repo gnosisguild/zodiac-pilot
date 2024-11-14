@@ -1,5 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
+import { ProvideBridgeContext } from '@/bridge'
 import { ZodiacToastContainer } from '@/components'
 import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
@@ -10,24 +11,30 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { appRoutes } from './app-routes'
 import './global.css'
-import { initPort } from './port'
 import { ProvideState } from './state'
-
-initPort()
+import { usePilotPort } from './usePilotPort'
 
 const router = createHashRouter(appRoutes)
 
 const Root = () => {
+  const { activeWindowId } = usePilotPort()
+
+  if (activeWindowId == null) {
+    return null
+  }
+
   return (
     <StrictMode>
       <ProvideState>
         <ProvideZodiacRoutes>
           <ProvideInjectedWallet>
             <ProvideProvider>
-              <div className="flex flex-1 flex-col">
-                <RouterProvider router={router} />
-                <ZodiacToastContainer />
-              </div>
+              <ProvideBridgeContext windowId={activeWindowId}>
+                <div className="flex flex-1 flex-col">
+                  <RouterProvider router={router} />
+                  <ZodiacToastContainer />
+                </div>
+              </ProvideBridgeContext>
             </ProvideProvider>
           </ProvideInjectedWallet>
         </ProvideZodiacRoutes>

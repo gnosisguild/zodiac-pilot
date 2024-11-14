@@ -1,6 +1,3 @@
-import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
-import { ProvideState } from '@/state'
-import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import { ComponentType } from 'react'
 import {
@@ -13,6 +10,7 @@ import {
 import { expect } from 'vitest'
 import { mockActiveTab, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
+import { RenderWrapper } from './RenderWrapper'
 
 type Route = {
   path: string
@@ -41,31 +39,21 @@ export const render = async (
   mockTabConnect(mockedPort)
 
   const result = baseRender(
-    <ProvideState>
-      <ProvideInjectedWallet>
-        <ProvideProvider>
-          <ProvideZodiacRoutes>
-            <MemoryRouter initialEntries={[currentPath]}>
-              <Routes>
-                <Route path="/" element={<TestElement />}>
-                  {routes.map(({ path, Component }) => (
-                    <Route key={path} path={path} element={<Component />} />
-                  ))}
+    <RenderWrapper>
+      <MemoryRouter initialEntries={[currentPath]}>
+        <Routes>
+          <Route path="/" element={<TestElement />}>
+            {routes.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
 
-                  {inspectRoutes.map((route) => (
-                    <Route
-                      key={route}
-                      path={route}
-                      element={<InspectRoute />}
-                    />
-                  ))}
-                </Route>
-              </Routes>
-            </MemoryRouter>
-          </ProvideZodiacRoutes>
-        </ProvideProvider>
-      </ProvideInjectedWallet>
-    </ProvideState>,
+            {inspectRoutes.map((route) => (
+              <Route key={route} path={route} element={<InspectRoute />} />
+            ))}
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </RenderWrapper>,
     options
   )
 
