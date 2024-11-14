@@ -6,24 +6,30 @@ import {
   createMockTab,
   mockActiveTab,
   mockRuntimeConnect,
+  renderHook,
 } from '@/test-utils'
 import { sleep } from '@/utils'
-import { describe, expect, it } from 'vitest'
-import { initPort } from './port'
+import { cleanup, waitFor } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
+import { usePilotPort } from './usePilotPort'
 
-describe('Init port', () => {
+describe('usePilotPort', () => {
+  afterEach(cleanup)
+
   it('sends the PILOT_PANEL_OPEN event to the current tab', async () => {
     const tab = mockActiveTab()
     const port = createMockPort()
 
     mockRuntimeConnect(port)
 
-    await initPort()
+    await renderHook(() => usePilotPort())
 
-    expect(port.postMessage).toHaveBeenCalledWith({
-      type: PilotMessageType.PILOT_PANEL_OPENED,
-      windowId: tab.windowId,
-      tabId: tab.id,
+    await waitFor(() => {
+      expect(port.postMessage).toHaveBeenCalledWith({
+        type: PilotMessageType.PILOT_PANEL_OPENED,
+        windowId: tab.windowId,
+        tabId: tab.id,
+      })
     })
   })
 
@@ -33,16 +39,25 @@ describe('Init port', () => {
 
     mockRuntimeConnect(port)
 
-    await initPort()
+    await renderHook(() => usePilotPort())
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
-    chromeMock.tabs.onUpdated.callListeners(tab.id, { status: 'complete' }, tab)
+    mockActiveTab({ ...tab, status: 'complete' })
 
-    expect(port.postMessage).toHaveBeenCalledWith({
-      type: PilotMessageType.PILOT_PANEL_OPENED,
-      windowId: tab.windowId,
-      tabId: tab.id,
+    await callListeners(
+      chromeMock.tabs.onUpdated,
+      tab.id,
+      { status: 'complete' },
+      tab
+    )
+
+    await waitFor(() => {
+      expect(port.postMessage).toHaveBeenCalledWith({
+        type: PilotMessageType.PILOT_PANEL_OPENED,
+        windowId: tab.windowId,
+        tabId: tab.id,
+      })
     })
   })
 
@@ -56,11 +71,7 @@ describe('Init port', () => {
 
     mockRuntimeConnect(port)
 
-    const { promise, resolve } = Promise.withResolvers()
-
-    initPort().then(resolve)
-
-    await sleep(1)
+    await renderHook(() => usePilotPort())
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
@@ -78,8 +89,6 @@ describe('Init port', () => {
       windowId: regularTab.windowId,
       tabId: regularTab.id,
     })
-
-    return promise
   })
 
   it('sends the message to the same tab when it moves to a proper URL', async () => {
@@ -91,11 +100,7 @@ describe('Init port', () => {
 
     mockRuntimeConnect(port)
 
-    const { promise, resolve } = Promise.withResolvers()
-
-    initPort().then(resolve)
-
-    await sleep(1)
+    await renderHook(() => usePilotPort())
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
@@ -117,7 +122,23 @@ describe('Init port', () => {
       windowId: tab.windowId,
       tabId: tab.id,
     })
+  })
 
-    return promise
+  it('does not connect again, when another tab becomes active', async () => {
+    mockActiveTab({ id: 1, windowId: 1 })
+
+    const port = createMockPort()
+
+    mockRuntimeConnect(port)
+
+    await renderHook(() => usePilotPort())
+
+    expect(port.postMessage).toHaveBeenCalledTimes(1)
+
+    mockActiveTab({ id: 2, windowId: 1 })
+
+    await callListeners(chromeMock.tabs.onActivated, { tabId: 2, windowId: 2 })
+
+    expect(port.postMessage).toHaveBeenCalledTimes(1)
   })
 })

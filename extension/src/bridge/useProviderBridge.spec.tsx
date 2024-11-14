@@ -1,9 +1,16 @@
 import { ZERO_ADDRESS } from '@/chains'
 import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
-import { callListeners, chromeMock, mockActiveTab } from '@/test-utils'
+import {
+  callListeners,
+  chromeMock,
+  createMockTab,
+  mockActiveTab,
+  renderHook,
+} from '@/test-utils'
 import { Eip1193Provider } from '@/types'
-import { cleanup, renderHook, waitFor } from '@testing-library/react'
+import { cleanup, waitFor } from '@testing-library/react'
 import { toQuantity } from 'ethers'
+import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
 import {
   afterEach,
@@ -14,6 +21,7 @@ import {
   MockedFunction,
   vi,
 } from 'vitest'
+import { ProvideBridgeContext } from './BridgeContext'
 import { useProviderBridge } from './useProviderBridge'
 
 describe('Bridge', () => {
@@ -28,17 +36,23 @@ describe('Bridge', () => {
     }
   }
 
+  const Wrapper = ({ children }: PropsWithChildren) => (
+    <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>
+  )
+
   afterEach(cleanup)
 
   describe('Provider handling', () => {
     beforeEach(() => {
-      mockActiveTab()
+      mockActiveTab({ windowId: 1 })
     })
 
     it('relays requests to the provider', async () => {
       const provider = new MockProvider()
 
-      renderHook(() => useProviderBridge({ provider }))
+      await renderHook(() => useProviderBridge({ provider }), {
+        wrapper: Wrapper,
+      })
 
       const request = { method: 'eth_chainId' }
 
@@ -49,7 +63,7 @@ describe('Bridge', () => {
           request,
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id },
+        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
         vi.fn()
       )
 
@@ -63,7 +77,9 @@ describe('Bridge', () => {
 
       provider.request.mockResolvedValue(response)
 
-      renderHook(() => useProviderBridge({ provider }))
+      await renderHook(() => useProviderBridge({ provider }), {
+        wrapper: Wrapper,
+      })
 
       const request = { method: 'eth_chainId' }
 
@@ -76,7 +92,7 @@ describe('Bridge', () => {
           request,
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id },
+        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
         sendMessage
       )
 
@@ -94,7 +110,9 @@ describe('Bridge', () => {
 
       provider.request.mockRejectedValue(error)
 
-      renderHook(() => useProviderBridge({ provider }))
+      await renderHook(() => useProviderBridge({ provider }), {
+        wrapper: Wrapper,
+      })
 
       const request = { method: 'eth_chainId' }
 
@@ -107,7 +125,7 @@ describe('Bridge', () => {
           request,
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id },
+        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
         sendMessage
       )
 
@@ -124,10 +142,10 @@ describe('Bridge', () => {
 
       const request = { method: 'eth_chainId' }
 
-      const { rerender } = renderHook(
+      const { rerender } = await renderHook(
         ({ provider }: { provider: Eip1193Provider }) =>
           useProviderBridge({ provider }),
-        { initialProps: { provider: providerA } }
+        { initialProps: { provider: providerA }, wrapper: Wrapper }
       )
 
       rerender({ provider: providerB })
@@ -139,7 +157,7 @@ describe('Bridge', () => {
           request,
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id },
+        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
         vi.fn()
       )
 
@@ -154,7 +172,10 @@ describe('Bridge', () => {
     it('emits an "accountsChanged" event when the hook initially renders with an account', async () => {
       const tab = mockActiveTab()
 
-      renderHook(() => useProviderBridge({ provider, account: ZERO_ADDRESS }))
+      await renderHook(
+        () => useProviderBridge({ provider, account: ZERO_ADDRESS }),
+        { wrapper: Wrapper }
+      )
 
       await waitFor(() => {
         expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
@@ -168,7 +189,9 @@ describe('Bridge', () => {
     it('does not emit an "accountsChanged" event when there is no account on the first render', async () => {
       mockActiveTab()
 
-      renderHook(() => useProviderBridge({ provider }))
+      await renderHook(() => useProviderBridge({ provider }), {
+        wrapper: Wrapper,
+      })
 
       expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith()
     })
@@ -176,11 +199,12 @@ describe('Bridge', () => {
     it('does emit an "accountsChanged" event when the account resets on later renders', async () => {
       const tab = mockActiveTab()
 
-      const { rerender } = renderHook<
+      const { rerender } = await renderHook<
         void,
         { account: `0x${string}` | undefined }
       >(({ account }) => useProviderBridge({ provider, account }), {
         initialProps: { account: ZERO_ADDRESS },
+        wrapper: Wrapper,
       })
 
       rerender({ account: undefined })
@@ -192,10 +216,6 @@ describe('Bridge', () => {
           eventData: [],
         })
       })
-
-      renderHook(() => useProviderBridge({ provider }))
-
-      expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith()
     })
   })
 
@@ -205,7 +225,9 @@ describe('Bridge', () => {
     it('emits a "connect" event when the chainId is initially set', async () => {
       const tab = mockActiveTab()
 
-      renderHook(() => useProviderBridge({ provider, chainId: 1 }))
+      await renderHook(() => useProviderBridge({ provider, chainId: 1 }), {
+        wrapper: Wrapper,
+      })
 
       await waitFor(() => {
         expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
@@ -219,9 +241,9 @@ describe('Bridge', () => {
     it('emits a "chainChanged" event when the chain changes on a later render', async () => {
       const tab = mockActiveTab()
 
-      const { rerender } = renderHook<void, { chainId: ChainId }>(
+      const { rerender } = await renderHook<void, { chainId: ChainId }>(
         ({ chainId }) => useProviderBridge({ provider, chainId }),
-        { initialProps: { chainId: 1 } }
+        { initialProps: { chainId: 1 }, wrapper: Wrapper }
       )
 
       rerender({ chainId: 10 })

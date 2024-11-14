@@ -6,13 +6,7 @@ import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import { ChainId } from 'ser-kit'
-
-let windowId: number | undefined
-
-/** Set the window ID RPC events will only be relayed to tabs in this window */
-export const setWindowId = (id: number) => {
-  windowId = id
-}
+import { useWindowId } from './BridgeContext'
 
 const emitEvent = async (eventName: string, eventData: any) => {
   const tab = await getActiveTab()
@@ -71,6 +65,8 @@ export const useProviderBridge = ({
 }
 
 const useHandleProviderRequests = (provider: Eip1193Provider) => {
+  const windowId = useWindowId()
+
   const handleMessage = useCallback(
     (
       message: InjectedProviderMessage,
@@ -116,7 +112,7 @@ const useHandleProviderRequests = (provider: Eip1193Provider) => {
       // without this the response won't be sent
       return true
     },
-    [provider]
+    [provider, windowId]
   )
 
   useEffect(() => {
