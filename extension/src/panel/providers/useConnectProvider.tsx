@@ -69,14 +69,19 @@ export const useConnectProvider = () => {
     }
   }, [provider])
 
-  const connect = useCallback(async () => {
-    const { accounts, chainId: chainIdBigInt } =
-      await connectInjectedWallet(provider)
-    const chainId = Number(chainIdBigInt)
-    setAccounts(accounts)
-    setChainId(chainId)
-    return { accounts, chainId }
-  }, [provider])
+  const connect = useCallback(
+    async ({ force }: { force?: boolean } = {}) => {
+      const { accounts, chainId: chainIdBigInt } = await connectInjectedWallet(
+        { force },
+        provider
+      )
+      const chainId = Number(chainIdBigInt)
+      setAccounts(accounts)
+      setChainId(chainId)
+      return { accounts, chainId }
+    },
+    [provider]
+  )
 
   return {
     provider,

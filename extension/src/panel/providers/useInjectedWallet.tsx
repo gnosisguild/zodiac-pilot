@@ -6,7 +6,9 @@ import { useConnectProvider } from './useConnectProvider'
 
 export interface InjectedWalletContextT {
   provider: Eip1193Provider
-  connect: () => Promise<{ chainId: number; accounts: string[] }>
+  connect: (options?: {
+    force?: boolean
+  }) => Promise<{ chainId: number; accounts: string[] }>
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
