@@ -1,11 +1,9 @@
-import { BaseTransaction } from './BaseTransaction'
+import { TextInput } from '@/components'
 
 interface Props {
   data: string
 }
 
 export const RawTransaction = ({ data }: Props) => (
-  <BaseTransaction value={data || ''}>
-    <span>Data</span>
-  </BaseTransaction>
+  <TextInput readOnly defaultValue={data || ''} label="Data" />
 )
