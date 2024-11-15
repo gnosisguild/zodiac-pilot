@@ -27,32 +27,48 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   private instanceId = instanceCounter++
   private messageCounter = 0
 
+  private createNewPort: () => Promise<void>
+
   constructor(windowId: number) {
     super()
+
+    const { promise, resolve } = Promise.withResolvers<() => Promise<void>>()
+
+    this.createNewPort = async () => {
+      const createNewPort = await promise
+
+      return createNewPort()
+    }
 
     createPortOnTabActivity(
       (tabId, port) => {
         if (port == null) {
           this.tearDownPort()
         } else {
-          this.setupPort(tabId, port)
+          this.setupPort(port)
+
+          const handleActivated = (info: chrome.tabs.TabActiveInfo) => {
+            if (info.tabId !== tabId) {
+              port.disconnect()
+            }
+          }
 
           // disconnect the current port when another tab
           // becomes active. this way we can ensure
           // that once a user comes back to this page
           // everything will be set up correctly again
-          chrome.tabs.onActivated.addListener((info) => {
-            if (info.tabId !== tabId) {
-              port.disconnect()
-            }
-          })
+          chrome.tabs.onActivated.addListener(handleActivated)
+
+          port.onDisconnect.addListener(() =>
+            chrome.tabs.onActivated.removeListener(handleActivated)
+          )
         }
       },
       { windowId }
-    )
+    ).then(resolve)
   }
 
-  async setupPort(tabId: number, port: chrome.runtime.Port) {
+  async setupPort(port: chrome.runtime.Port) {
     this.tearDownPort()
 
     console.debug('Connecting new port.')
@@ -107,9 +123,11 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
 
     await this.waitForPort()
 
+    const port = this.getPort()
+
     try {
       const responseMessage = await sendRequestToConnectIframe({
-        port: this.getPort(),
+        port,
         requestId,
         request,
       })
@@ -141,7 +159,11 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
         error instanceof Error &&
         error.message === 'Attempting to use a disconnected port object'
       ) {
+        console.debug('Attempted to use disconnected port. Recreating...')
         // the port was closed in the meantime, we reconnect and resend...
+
+        this.tearDownPort()
+        await this.createNewPort()
 
         return this.request(request)
       }

@@ -94,4 +94,18 @@ describe('createPortOnTabActivity', () => {
 
     expect(callback).not.toHaveBeenCalledWith(newTab.id, expect.anything())
   })
+
+  it('returns a function that can be used to create a new port', async () => {
+    const tab = mockActiveTab({ windowId: 1 })
+
+    const callback = vi.fn()
+
+    const createNewPort = await createPortOnTabActivity(callback, {
+      windowId: 1,
+    })
+
+    await createNewPort()
+
+    expect(callback).toHaveBeenNthCalledWith(2, tab.id, expect.anything())
+  })
 })

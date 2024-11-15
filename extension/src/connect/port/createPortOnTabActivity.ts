@@ -51,6 +51,14 @@ export const createPortOnTabActivity = async (
     fn(tabId, port)
   })
 
+  await createPortInActiveTab(fn)
+
+  return async function createNewPort() {
+    await createPortInActiveTab(fn)
+  }
+}
+
+const createPortInActiveTab = async (fn: PortCallbackFn) => {
   const activeTab = await getActiveTab()
 
   if (activeTab.id == null) {
