@@ -1,5 +1,5 @@
 import { Message, PilotMessageType } from '@/messages'
-import { reloadActiveTab, reloadTab } from '@/utils'
+import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import {
@@ -72,6 +72,10 @@ export const trackSessions = () => {
   chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
     withPilotSession(tab.windowId, (session) => {
       if (!session.isTracked(tabId) || info.status !== 'loading') {
+        return
+      }
+
+      if (!isValidTab(tab.url)) {
         return
       }
 
