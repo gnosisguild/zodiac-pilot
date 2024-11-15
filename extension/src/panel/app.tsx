@@ -9,12 +9,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
-import { appRoutes } from './app-routes'
+import { routes } from './app-routes'
 import './global.css'
 import { ProvideState } from './state'
 import { usePilotPort } from './usePilotPort'
 
-const router = createHashRouter(appRoutes)
+const router = createHashRouter(routes)
 
 const Root = () => {
   const { activeWindowId } = usePilotPort()
