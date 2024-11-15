@@ -58,4 +58,40 @@ describe('createPortOnTabActivity', () => {
 
     expect(callback).not.toHaveBeenCalledWith(newTab.id, expect.anything())
   })
+
+  it('creates a new port when a tab changes to a different URL', async () => {
+    const tab = mockActiveTab({ windowId: 1 })
+
+    const callback = vi.fn()
+
+    await createPortOnTabActivity(callback, { windowId: 1 })
+
+    await callListeners(
+      chromeMock.tabs.onUpdated,
+      tab.id,
+      { url: 'http://new-url.com' },
+      tab
+    )
+
+    expect(callback).toHaveBeenCalledWith(tab.id, expect.anything())
+  })
+
+  it('does not create a new port when the active tab in a different window changes to a different URL', async () => {
+    mockActiveTab({ windowId: 1 })
+
+    const callback = vi.fn()
+
+    await createPortOnTabActivity(callback, { windowId: 1 })
+
+    const newTab = mockActiveTab({ windowId: 2 })
+
+    await callListeners(
+      chromeMock.tabs.onUpdated,
+      newTab.id,
+      { url: 'http://new-url.com' },
+      newTab
+    )
+
+    expect(callback).not.toHaveBeenCalledWith(newTab.id, expect.anything())
+  })
 })

@@ -30,7 +30,7 @@ export const createPortOnTabActivity = async (
   chrome.tabs.onUpdated.addListener(async (tabId, info) => {
     const tab = await getActiveTab()
 
-    if (tab.id !== tabId) {
+    if (tab.id !== tabId || tab.windowId !== windowId) {
       return
     }
 
