@@ -67,7 +67,7 @@ export const Transactions = () => {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 pb-8 pt-4">
+    <div className="flex flex-1 flex-col gap-4 overflow-hidden pb-8 pt-4">
       <div className="px-4">
         <RouteBubble />
       </div>
@@ -96,10 +96,10 @@ export const Transactions = () => {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-8 overflow-hidden px-6">
+      <div className="flex flex-1 flex-col gap-8 overflow-hidden">
         <div
           ref={scrollContainerRef}
-          className="exp flex flex-grow flex-col gap-4 overflow-y-auto"
+          className="exp flex flex-grow flex-col gap-4 overflow-y-auto px-6"
         >
           {transactions.map((transactionState, index) => (
             <Transaction
@@ -118,7 +118,7 @@ export const Transactions = () => {
           )}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 px-6">
           {!route.initiator && (
             <Button
               secondary
@@ -128,6 +128,7 @@ export const Transactions = () => {
               Copy transaction data
             </Button>
           )}
+
           <Submit />
         </div>
       </div>
