@@ -30,7 +30,7 @@ const Root = () => {
           <ProvideZodiacRoutes>
             <ProvideInjectedWallet>
               <ProvideProvider>
-                <div className="flex flex-1 flex-col">
+                <div className="flex h-full flex-1 flex-col">
                   <RouterProvider router={router} />
                   <ZodiacToastContainer />
                 </div>

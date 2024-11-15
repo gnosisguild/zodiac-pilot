@@ -1,18 +1,31 @@
 import { ReactNode, useId } from 'react'
 
-type InputProps = {
-  label: string
-  children: (inputId: string) => ReactNode
+type RenderProps = {
+  inputId: string
+  descriptionId: string
 }
 
-export const Input = ({ children, label }: InputProps) => {
-  const id = useId()
+type InputProps = {
+  label: string
+  description?: string
+  children: (props: RenderProps) => ReactNode
+}
+
+export const Input = ({ children, label, description }: InputProps) => {
+  const inputId = useId()
+  const descriptionId = useId()
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={inputId}>{label}</label>
 
-      {children(id)}
+      {children({ inputId, descriptionId })}
+
+      {description && (
+        <span className="opacity-70" id={descriptionId}>
+          {description}
+        </span>
+      )}
     </div>
   )
 }
