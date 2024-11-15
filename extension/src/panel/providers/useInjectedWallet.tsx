@@ -13,12 +13,20 @@ export interface InjectedWalletContextT {
   accounts: string[]
   chainId: number | null
   connected: boolean
+  connecting: boolean
 }
 const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
 
 export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
-  const { provider, connect, accounts, chainId, ready, switchChain } =
-    useConnectProvider()
+  const {
+    provider,
+    connect,
+    connecting,
+    accounts,
+    chainId,
+    ready,
+    switchChain,
+  } = useConnectProvider()
 
   const packed = useMemo(
     () => ({
@@ -28,8 +36,9 @@ export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
       accounts,
       chainId,
       connected: ready,
+      connecting,
     }),
-    [provider, connect, switchChain, accounts, chainId, ready]
+    [provider, connect, switchChain, accounts, chainId, ready, connecting]
   )
 
   return (

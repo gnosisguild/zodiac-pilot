@@ -18,7 +18,7 @@ export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
   return (
     <Button
       fluid
-      disabled={injectedWallet.connected === false}
+      disabled={injectedWallet.connected === false || injectedWallet.connecting}
       onClick={async () => {
         const { chainId, accounts } = await injectedWallet.connect({
           force: true,
@@ -28,7 +28,7 @@ export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
       }}
     >
       <ProviderLogo providerType={ProviderType.InjectedWallet} />
-      Connect with MetaMask
+      {injectedWallet.connecting ? 'Connecting...' : 'Connect with MetaMask'}
     </Button>
   )
 }

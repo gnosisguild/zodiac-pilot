@@ -25,6 +25,7 @@ export const useConnectProvider = () => {
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
   const [ready, setReady] = useState(false)
+  const [connecting, setConnecting] = useState(false)
 
   useEffect(() => {
     let canceled = false
@@ -73,14 +74,19 @@ export const useConnectProvider = () => {
 
   const connect = useCallback(
     async ({ force }: { force?: boolean } = {}) => {
-      const { accounts, chainId: chainIdBigInt } = await connectInjectedWallet(
-        { force },
-        provider
-      )
-      const chainId = Number(chainIdBigInt)
-      setAccounts(accounts)
-      setChainId(chainId)
-      return { accounts, chainId }
+      setConnecting(true)
+
+      try {
+        const { accounts, chainId: chainIdBigInt } =
+          await connectInjectedWallet({ force }, provider)
+
+        const chainId = Number(chainIdBigInt)
+        setAccounts(accounts)
+        setChainId(chainId)
+        return { accounts, chainId }
+      } finally {
+        setConnecting(false)
+      }
     },
     [provider]
   )
@@ -89,6 +95,7 @@ export const useConnectProvider = () => {
     provider,
     ready,
     connect,
+    connecting,
     switchChain: (chainId: ChainId) => switchChain(provider, chainId),
     accounts,
     chainId,
