@@ -1,4 +1,6 @@
+import { useWindowId } from '@/bridge'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
+import { Eip1193Provider } from '@/types'
 import { BrowserProvider } from 'ethers'
 import { MutableRefObject, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -10,16 +12,16 @@ import { memoWhilePending } from './memoWhilePending'
 // connectProvider can be used just like window.ethereum
 
 const providerRef: MutableRefObject<ConnectProvider | null> = { current: null }
-const getProvider = () => {
+const getProvider = (windowId: number) => {
   if (providerRef.current == null) {
-    providerRef.current = new ConnectProvider()
+    providerRef.current = new ConnectProvider(windowId)
   }
 
   return providerRef.current
 }
 
 export const useConnectProvider = () => {
-  const provider = getProvider()
+  const provider = getProvider(useWindowId())
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<number | null>(null)
   const [ready, setReady] = useState(false)
@@ -87,7 +89,7 @@ export const useConnectProvider = () => {
     provider,
     ready,
     connect,
-    switchChain,
+    switchChain: (chainId: ChainId) => switchChain(provider, chainId),
     accounts,
     chainId,
   }
@@ -133,9 +135,7 @@ const connectInjectedWallet = memoWhilePending(
   }
 )
 
-const switchChain = async (chainId: ChainId) => {
-  const provider = getProvider()
-
+const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
   try {
     await provider.request({
       method: 'wallet_switchEthereumChain',

@@ -27,26 +27,29 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   private instanceId = instanceCounter++
   private messageCounter = 0
 
-  constructor() {
+  constructor(windowId: number) {
     super()
 
-    createPortOnTabActivity((tabId, port) => {
-      if (port == null) {
-        this.tearDownPort()
-      } else {
-        this.setupPort(tabId, port)
+    createPortOnTabActivity(
+      (tabId, port) => {
+        if (port == null) {
+          this.tearDownPort()
+        } else {
+          this.setupPort(tabId, port)
 
-        // disconnect the current port when another tab
-        // becomes active. this way we can ensure
-        // that once a user comes back to this page
-        // everything will be set up correctly again
-        chrome.tabs.onActivated.addListener((info) => {
-          if (info.tabId !== tabId) {
-            port.disconnect()
-          }
-        })
-      }
-    })
+          // disconnect the current port when another tab
+          // becomes active. this way we can ensure
+          // that once a user comes back to this page
+          // everything will be set up correctly again
+          chrome.tabs.onActivated.addListener((info) => {
+            if (info.tabId !== tabId) {
+              port.disconnect()
+            }
+          })
+        }
+      },
+      { windowId }
+    )
   }
 
   async setupPort(tabId: number, port: chrome.runtime.Port) {
@@ -186,7 +189,7 @@ const sendRequestToConnectIframe = async ({
 
   port.onMessage.addListener(handleResponse)
 
-  console.debug('Sending request to injected iframe')
+  console.debug('Sending request to injected iframe', { request })
 
   port.postMessage({
     type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST,

@@ -25,20 +25,20 @@ const Root = () => {
 
   return (
     <StrictMode>
-      <ProvideState>
-        <ProvideZodiacRoutes>
-          <ProvideInjectedWallet>
-            <ProvideProvider>
-              <ProvideBridgeContext windowId={activeWindowId}>
+      <ProvideBridgeContext windowId={activeWindowId}>
+        <ProvideState>
+          <ProvideZodiacRoutes>
+            <ProvideInjectedWallet>
+              <ProvideProvider>
                 <div className="flex flex-1 flex-col">
                   <RouterProvider router={router} />
                   <ZodiacToastContainer />
                 </div>
-              </ProvideBridgeContext>
-            </ProvideProvider>
-          </ProvideInjectedWallet>
-        </ProvideZodiacRoutes>
-      </ProvideState>
+              </ProvideProvider>
+            </ProvideInjectedWallet>
+          </ProvideZodiacRoutes>
+        </ProvideState>
+      </ProvideBridgeContext>
     </StrictMode>
   )
 }
