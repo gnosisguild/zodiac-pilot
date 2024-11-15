@@ -3,15 +3,28 @@ import { createPortWhenTabIsReady } from './createPortWhenTabIsReady'
 
 type PortCallbackFn = (tabId: number, port: chrome.runtime.Port | null) => void
 
-export const createPortOnTabActivity = (fn: PortCallbackFn) => {
-  chrome.tabs.onActivated.addListener(async ({ tabId }) => {
-    const tab = await chrome.tabs.get(tabId)
+type CreatePortOnTabActivityOptions = {
+  windowId: number
+}
 
-    console.debug(`Tab (id: "${tabId}", url: "${tab.url}") became active.`)
+export const createPortOnTabActivity = async (
+  fn: PortCallbackFn,
+  { windowId }: CreatePortOnTabActivityOptions
+) => {
+  chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    if (activeInfo.windowId !== windowId) {
+      return
+    }
+
+    const tab = await chrome.tabs.get(activeInfo.tabId)
+
+    console.debug(
+      `Tab (id: "${activeInfo.tabId}", url: "${tab.url}") became active.`
+    )
 
     const port = await createPortWhenTabIsReady(tab)
 
-    fn(tabId, port)
+    fn(activeInfo.tabId, port)
   })
 
   chrome.tabs.onUpdated.addListener(async (tabId, info) => {
@@ -38,13 +51,13 @@ export const createPortOnTabActivity = (fn: PortCallbackFn) => {
     fn(tabId, port)
   })
 
-  getActiveTab().then(async (tab) => {
-    if (tab.id == null) {
-      return
-    }
+  const activeTab = await getActiveTab()
 
-    const port = await createPortWhenTabIsReady(tab)
+  if (activeTab.id == null) {
+    return
+  }
 
-    fn(tab.id, port)
-  })
+  const port = await createPortWhenTabIsReady(activeTab)
+
+  fn(activeTab.id, port)
 }
