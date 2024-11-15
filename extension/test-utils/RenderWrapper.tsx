@@ -12,15 +12,13 @@ export const RenderWrapper = ({
   children,
   windowId = 1,
 }: RenderWraperProps) => (
-  <ProvideState>
-    <ProvideInjectedWallet>
-      <ProvideProvider>
-        <ProvideZodiacRoutes>
-          <ProvideBridgeContext windowId={windowId}>
-            {children}
-          </ProvideBridgeContext>
-        </ProvideZodiacRoutes>
-      </ProvideProvider>
-    </ProvideInjectedWallet>
-  </ProvideState>
+  <ProvideBridgeContext windowId={windowId}>
+    <ProvideState>
+      <ProvideInjectedWallet>
+        <ProvideProvider>
+          <ProvideZodiacRoutes>{children}</ProvideZodiacRoutes>
+        </ProvideProvider>
+      </ProvideInjectedWallet>
+    </ProvideState>
+  </ProvideBridgeContext>
 )

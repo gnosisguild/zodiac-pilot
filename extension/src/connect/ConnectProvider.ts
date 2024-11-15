@@ -27,29 +27,32 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
   private instanceId = instanceCounter++
   private messageCounter = 0
 
-  constructor() {
+  private createNewPort: () => Promise<void>
+
+  constructor(windowId: number) {
     super()
 
-    createPortOnTabActivity((tabId, port) => {
-      if (port == null) {
-        this.tearDownPort()
-      } else {
-        this.setupPort(tabId, port)
+    const { promise, resolve } = Promise.withResolvers<() => Promise<void>>()
 
-        // disconnect the current port when another tab
-        // becomes active. this way we can ensure
-        // that once a user comes back to this page
-        // everything will be set up correctly again
-        chrome.tabs.onActivated.addListener((info) => {
-          if (info.tabId !== tabId) {
-            port.disconnect()
-          }
-        })
-      }
-    })
+    this.createNewPort = async () => {
+      const createNewPort = await promise
+
+      return createNewPort()
+    }
+
+    createPortOnTabActivity(
+      (tabId, port) => {
+        if (port == null) {
+          this.tearDownPort()
+        } else {
+          this.setupPort(port)
+        }
+      },
+      { windowId }
+    ).then(resolve)
   }
 
-  async setupPort(tabId: number, port: chrome.runtime.Port) {
+  async setupPort(port: chrome.runtime.Port) {
     this.tearDownPort()
 
     console.debug('Connecting new port.')
@@ -66,34 +69,29 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
       return
     }
 
-    console.debug('Disconnecting current port')
+    console.debug('Removing current port from connect provider')
 
-    this.port.disconnect()
     this.port = null
 
     this.emit('readyChanged', false)
   }
 
-  waitForPort(maxWait: number = 1000, waited: number = 0) {
+  async waitForPort(
+    maxWait: number = 1000,
+    waited: number = 0
+  ): Promise<chrome.runtime.Port> {
     const waitTime = 10
 
-    if (waited > maxWait) {
-      return Promise.reject(`Port did not open in time. Waited ${maxWait}ms.`)
+    invariant(
+      waited <= maxWait,
+      `Port did not open in time. Waited ${maxWait}ms.`
+    )
+
+    if (this.port == null) {
+      await sleep(waitTime)
+
+      return this.waitForPort(maxWait, waited + waitTime)
     }
-
-    return new Promise<void>((resolve) => {
-      if (this.port != null) {
-        resolve()
-      } else {
-        sleep(waitTime)
-          .then(() => this.waitForPort(maxWait, waited + waitTime))
-          .then(resolve)
-      }
-    })
-  }
-
-  getPort() {
-    invariant(this.port != null, 'Port has not been initialized')
 
     return this.port
   }
@@ -102,43 +100,43 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
     const requestId = `${this.instanceId}:${this.messageCounter}`
     this.messageCounter++
 
-    await this.waitForPort()
+    const port = await this.waitForPort()
 
     try {
       const responseMessage = await sendRequestToConnectIframe({
-        port: this.getPort(),
+        port,
         requestId,
         request,
       })
 
-      if (
-        responseMessage.type ===
-        ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE
-      ) {
-        return responseMessage.response
+      switch (responseMessage.type) {
+        case ConnectedWalletMessageType.CONNECTED_WALLET_RESPONSE: {
+          return responseMessage.response
+        }
+
+        case ConnectedWalletMessageType.CONNECTED_WALLET_ERROR: {
+          throw new InjectedWalletError(
+            responseMessage.error.message,
+            responseMessage.error.code
+          )
+        }
+
+        default: {
+          console.error('Unexpected response', responseMessage)
+
+          throw new Error('Unexpected response', { cause: responseMessage })
+        }
       }
-
-      if (
-        responseMessage.type ===
-        ConnectedWalletMessageType.CONNECTED_WALLET_ERROR
-      ) {
-        const error = new InjectedWalletError(
-          responseMessage.error.message,
-          responseMessage.error.code
-        )
-
-        throw error
-      }
-
-      console.error('Unexpected response', responseMessage)
-
-      throw new Error('Unexpected response', { cause: responseMessage })
     } catch (error) {
       if (
         error instanceof Error &&
         error.message === 'Attempting to use a disconnected port object'
       ) {
+        console.debug('Attempted to use disconnected port. Recreating...')
         // the port was closed in the meantime, we reconnect and resend...
+
+        this.tearDownPort()
+        await this.createNewPort()
 
         return this.request(request)
       }
@@ -186,7 +184,7 @@ const sendRequestToConnectIframe = async ({
 
   port.onMessage.addListener(handleResponse)
 
-  console.debug('Sending request to injected iframe')
+  console.debug('Sending request to injected iframe', { request })
 
   port.postMessage({
     type: ConnectedWalletMessageType.CONNECTED_WALLET_REQUEST,
