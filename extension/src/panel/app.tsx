@@ -20,7 +20,12 @@ const Root = () => {
   const { activeWindowId } = usePilotPort()
 
   if (activeWindowId == null) {
-    return null
+    return (
+      <div className="flex h-full flex-col items-center justify-center px-10 text-center">
+        Pilot is waiting to connect to a dApp. Open the dApp you want to
+        simulate and Pilot will automatically connect to it.
+      </div>
+    )
   }
 
   return (
