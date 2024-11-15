@@ -7,7 +7,7 @@ export const createPort = async (tabId: number, url: string | undefined) => {
       `Tab (id: "${tabId}", url: "${url}") does not meet connect criteria.`
     )
 
-    return Promise.resolve(null)
+    return null
   }
 
   console.debug(`Connecting to Tab (id: "${tabId}")`)
