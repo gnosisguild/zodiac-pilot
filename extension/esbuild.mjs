@@ -21,11 +21,13 @@ esbuild
 
       './src/pilot-connect/injectedScripts/connectOriginalWalletToPilot.ts',
 
-      './src/injected-wallet-connect/enableInjectedProvider.ts',
-      './src/injected-wallet-connect/enableInjectedProviderCommunication.ts',
+      './src/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.ts',
 
-      './src/pilot-connect-monitor/handleConnectionStatusChange.ts',
-      './src/pilot-connect-monitor/setupConnectionMonitoring.ts',
+      './src/injected-wallet-connect/injectedScripts/enableInjectedProvider.ts',
+
+      './src/pilot-connect-monitor/contentScripts/setupConnectionMonitoring.ts',
+
+      './src/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.ts',
 
       './src/panel/app.tsx',
     ],

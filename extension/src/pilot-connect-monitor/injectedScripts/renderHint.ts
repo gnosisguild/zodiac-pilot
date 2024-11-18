@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import '../panel/global.css'
+import '../../global.css'
 import './hint.css'
 import hintHtmlTemplate from './hint.html'
 

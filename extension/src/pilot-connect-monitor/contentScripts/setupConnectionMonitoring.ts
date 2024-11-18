@@ -7,7 +7,9 @@ window.document.documentElement.dataset.__zodiacPilotBasePath =
   chrome.runtime.getURL('/')
 window.document.documentElement.dataset.__zodiacExtensionId = chrome.runtime.id
 
-injectScript('build/pilot-connect-monitor/handleConnectionStatusChange.js')
+injectScript(
+  'build/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.js'
+)
 
 chrome.runtime.onMessage.addListener((message: Message) => {
   if (

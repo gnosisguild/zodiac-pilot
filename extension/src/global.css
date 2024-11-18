@@ -17,9 +17,9 @@
   font-style: normal;
   font-weight: 400;
   src:
-    url(../assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff)
+    url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff)
       format('woff2'),
-    url(../assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2)
+    url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2)
       format('woff');
 }
 
@@ -29,8 +29,8 @@
   font-style: normal;
   font-weight: 400;
   src:
-    url(../assets/fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
-    url(../assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
+    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
+    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
 }
 
 body {
@@ -38,7 +38,7 @@ body {
   font-size: 16px;
   color: white;
   min-height: 100vh;
-  background: url(../assets/zodiac-bg.svg) 0% 0% / cover fixed;
+  background: url(./assets/zodiac-bg.svg) 0% 0% / cover fixed;
   margin: 0px;
 }
 

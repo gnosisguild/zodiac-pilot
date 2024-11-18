@@ -3,8 +3,8 @@
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
 import { PilotMessageType } from '@/messages'
+import { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { Eip1193Provider } from '../types'
 import {
   dismissHint,
   renderConnectHint,
