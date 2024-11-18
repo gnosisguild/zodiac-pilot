@@ -171,7 +171,7 @@ describe('Session tracking', () => {
         expect(chromeMock.scripting.executeScript).toHaveBeenCalledWith({
           target: { tabId: 1, allFrames: true },
           files: [
-            'build/injected-wallet-connect/enableInjectedProviderCommunication.js',
+            'build/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.js',
           ],
           injectImmediately: true,
         })
