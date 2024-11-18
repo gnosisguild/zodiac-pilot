@@ -16,15 +16,18 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
 
+      // CONNECt DAPP
       './src/pilot-connect/contentScripts/connectPilotToDApp.ts',
       './src/pilot-connect/contentScripts/connectPilotToInjectedIFrame.ts',
 
       './src/pilot-connect/injectedScripts/connectOriginalWalletToPilot.ts',
 
+      // CONNECT INJECTED WALLET
       './src/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.ts',
 
       './src/injected-wallet-connect/injectedScripts/enableInjectedProvider.ts',
 
+      // MONITOR
       './src/pilot-connect-monitor/contentScripts/setupConnectionMonitoring.ts',
 
       './src/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.ts',

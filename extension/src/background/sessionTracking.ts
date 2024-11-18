@@ -84,7 +84,7 @@ export const trackSessions = () => {
       chrome.scripting.executeScript({
         target: { tabId, allFrames: true },
         files: [
-          'build/injected-wallet-connect/enableInjectedProviderCommunication.js',
+          'build/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.js',
         ],
         injectImmediately: true,
       })

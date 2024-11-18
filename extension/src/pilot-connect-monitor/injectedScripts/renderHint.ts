@@ -26,9 +26,9 @@ function renderToShadow(hint: string) {
   const container = document.createElement('div')
   container.innerHTML = hintHtml
 
-  const reloadButton = container.querySelector(
-    `#${CSS.escape('zodiac-pilot::reload')}`
-  )
+  const template = container.firstElementChild as HTMLTemplateElement
+
+  const reloadButton = template.content.querySelector(`#zodiac-pilot-reload`)
 
   invariant(
     reloadButton != null,
@@ -43,9 +43,7 @@ function renderToShadow(hint: string) {
     event.stopImmediatePropagation()
   })
 
-  const dismissButton = container.querySelector(
-    `#${CSS.escape('zodiac-pilot::dismiss')}`
-  )
+  const dismissButton = template.content.querySelector(`#zodiac-pilot-dismiss`)
 
   invariant(
     dismissButton != null,
@@ -56,7 +54,6 @@ function renderToShadow(hint: string) {
     dismissHint()
   })
 
-  const template = container.firstElementChild as HTMLTemplateElement
   template.content.getElementById('message')!.innerHTML = hint
   shadow.appendChild(template.content)
 }

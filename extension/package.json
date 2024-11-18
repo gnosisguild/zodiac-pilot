@@ -10,9 +10,11 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "prebuild": "rimraf public/build",
+    "clean": "rimraf public/build",
+    "prebuild": "pnpm clean",
     "build": "NODE_ENV=production node esbuild.mjs",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
+    "predev": "pnpm clean",
     "dev": "NODE_ENV=development node esbuild.mjs",
     "test:unit": "vitest",
     "test:e2e": "playwright test --headed",

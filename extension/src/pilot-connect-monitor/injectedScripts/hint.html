@@ -1,5 +1,8 @@
-<template>
-  <link rel="stylesheet" href="{{BASE_PATH}}build/monitor/injectedScript.css" />
+<template id="zodiac-template">
+  <link
+    rel="stylesheet"
+    href="{{BASE_PATH}}build/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.css"
+  />
 
   <div class="zodiacPilot_hint">
     <img
@@ -12,7 +15,7 @@
     </div>
     <div class="zodiacPilot_actions">
       <button
-        id="zodiac-pilot::reload"
+        id="zodiac-pilot-reload"
         class="zodiacPilot_reload"
         title="Reload"
       >
@@ -36,7 +39,7 @@
         </svg>
       </button>
       <button
-        id="zodiac-pilot::dimiss"
+        id="zodiac-pilot-dismiss"
         class="zodiacPilot_dismiss"
         title="Dismiss"
       >
