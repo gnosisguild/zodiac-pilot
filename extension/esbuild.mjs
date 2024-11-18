@@ -20,7 +20,7 @@ esbuild
       './src/pilot-connect/connectOriginalWalletToPilot.ts',
       './src/pilot-connect/connectPilotToInjectedIFrame.ts',
 
-      './src/injected-wallet-connect/announceProvider.ts',
+      './src/injected-wallet-connect/enableInjectedProvider.ts',
       './src/injected-wallet-connect/enableInjectedProviderCommunication.ts',
 
       './src/pilot-connect-monitor/handleConnectionStatusChange.ts',
@@ -30,6 +30,7 @@ esbuild
     ],
     bundle: true,
     format: 'esm',
+    treeShaking: true,
     minify: process.env.NODE_ENV === 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
     loader: {
