@@ -1,5 +1,5 @@
 import { Message, PilotMessageType } from '@/messages'
-import { reloadActiveTab, reloadTab } from '@/utils'
+import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import {
@@ -75,11 +75,17 @@ export const trackSessions = () => {
         return
       }
 
+      if (!isValidTab(tab.url)) {
+        return
+      }
+
       // The update event can be triggered multiple times for the same page load,
       // so the executed content scripts must handle the case that it has already been injected before.
       chrome.scripting.executeScript({
         target: { tabId, allFrames: true },
-        files: ['build/inject/contentScript.js'],
+        files: [
+          'build/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.js',
+        ],
         injectImmediately: true,
       })
     })

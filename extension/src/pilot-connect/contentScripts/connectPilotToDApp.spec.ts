@@ -3,10 +3,10 @@ import { chromeMock, createMockPort } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
-describe('Connect content script', () => {
+describe('Connect Pilot to DApp', () => {
   describe('Initialize wallet', () => {
     it('forwards init messages to the connected port', async () => {
-      await import('./contentScript')
+      await import('./connectPilotToDApp')
 
       const port = createMockPort()
 

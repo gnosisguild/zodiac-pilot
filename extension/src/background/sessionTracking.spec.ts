@@ -170,7 +170,9 @@ describe('Session tracking', () => {
 
         expect(chromeMock.scripting.executeScript).toHaveBeenCalledWith({
           target: { tabId: 1, allFrames: true },
-          files: ['build/inject/contentScript.js'],
+          files: [
+            'build/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.js',
+          ],
           injectImmediately: true,
         })
       })
@@ -199,16 +201,22 @@ describe('Session tracking', () => {
         expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
       })
 
-      it('does nothing when the page is not in the loading state', async () => {
-        await callListeners(
-          chromeMock.tabs.onUpdated,
-          1,
-          { status: 'complete' },
-          createMockTab({ windowId: 1 })
-        )
+      it.each(['complete', undefined])(
+        'does nothing when the page is in the "%s" status',
+        async (status) => {
+          const tab = createMockTab({ windowId: 1 })
+          await startPilotSession({ windowId: 1, tabId: tab.id })
 
-        expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
-      })
+          await callListeners(
+            chromeMock.tabs.onUpdated,
+            tab.id,
+            { status },
+            tab
+          )
+
+          expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
+        }
+      )
     })
   })
 
