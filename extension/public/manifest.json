@@ -40,7 +40,7 @@
         "chrome:*"
       ],
       "run_at": "document_start",
-      "js": ["build/pilot-connect/connectPilotToDApp.js"]
+      "js": ["build/pilot-connect/contentScripts/connectPilotToDApp.js"]
     },
     {
       "matches": ["<all_urls>"],
@@ -56,7 +56,9 @@
       "matches": ["https://connect.pilot.gnosisguild.org/"],
       "run_at": "document_start",
       "all_frames": true,
-      "js": ["build/pilot-connect/connectPilotToInjectedIFrame.js"]
+      "js": [
+        "build/pilot-connect/contentScripts/connectPilotToInjectedIFrame.js"
+      ]
     }
   ],
   "web_accessible_resources": [

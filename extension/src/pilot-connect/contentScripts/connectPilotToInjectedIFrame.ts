@@ -5,5 +5,5 @@ import { injectScript } from '@/utils'
 if (document.documentElement.dataset.__zodiacPilotInjected !== 'true') {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
 
-  injectScript('build/pilot-connect/connectOriginalWalletToPilot.js')
+  injectScript('build/pilot-connect/injected/connectOriginalWalletToPilot.js')
 }
