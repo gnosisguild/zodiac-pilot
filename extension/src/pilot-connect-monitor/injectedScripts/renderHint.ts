@@ -1,6 +1,5 @@
 import { invariant } from '@epic-web/invariant'
 import '../../global.css'
-import './hint.css'
 import hintHtmlTemplate from './hint.html'
 
 const basePath = window.document.documentElement.dataset.__zodiacPilotBasePath
