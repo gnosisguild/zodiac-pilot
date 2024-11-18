@@ -8,6 +8,7 @@
   "author": "Jan-Felix <jan@gnosisguild.org>",
   "license": "LGPLv3",
   "private": true,
+  "sideEffects": false,
   "scripts": {
     "prebuild": "rimraf public/build",
     "build": "NODE_ENV=production node esbuild.mjs",
