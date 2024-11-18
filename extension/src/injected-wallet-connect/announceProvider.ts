@@ -2,7 +2,7 @@
  * EIP-6963 support
  **/
 
-import { InjectedProvider } from './InjectedProvider'
+import type { InjectedProvider } from './InjectedProvider'
 
 export const announceEip6963Provider = (provider: InjectedProvider) => {
   const info = {

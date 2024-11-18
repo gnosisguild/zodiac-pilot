@@ -1,4 +1,4 @@
-import { InjectedProvider } from './InjectedProvider'
+import type { InjectedProvider } from './InjectedProvider'
 
 export const maskMetaMaskAnnouncement = (provider: InjectedProvider) => {
   // override EIP-6963 provider announcement for MetaMask while Pilot is connected
