@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import '../panel/global.css'
 import './hint.css'
 import hintHtmlTemplate from './hint.html'
@@ -10,20 +11,11 @@ window.addEventListener('beforeunload', () => {
   dismissHint()
 })
 
-window.addEventListener('ZodiacPilot:monitor:reload', (ev) => {
-  dismissHint()
-  window.location.reload()
-  ev.stopImmediatePropagation()
-})
-
-window.addEventListener('ZodiacPilot:monitor:dismiss', () => {
-  dismissHint()
-})
-
 let shadow: ShadowRoot | null = null
 
 function renderToShadow(hint: string) {
   if (shadow) shadow.innerHTML = ''
+
   if (!shadow) {
     const shadowHost = document.createElement('div')
     shadow = shadowHost.attachShadow({ mode: 'open' })
@@ -33,6 +25,33 @@ function renderToShadow(hint: string) {
 
   const container = document.createElement('div')
   container.innerHTML = hintHtml
+
+  const reloadButton = container.querySelector('#zodiac-pilot::reload')
+
+  invariant(
+    reloadButton != null,
+    'Could not find reload button in rendered HTML'
+  )
+
+  reloadButton.addEventListener('click', (event) => {
+    dismissHint()
+
+    window.location.reload()
+
+    event.stopImmediatePropagation()
+  })
+
+  const dismissButton = container.querySelector('#zodiac-pilot::dismiss')
+
+  invariant(
+    dismissButton != null,
+    'Could not find dismiss button in rendered HTML'
+  )
+
+  dismissButton.addEventListener('click', () => {
+    dismissHint()
+  })
+
   const template = container.firstElementChild as HTMLTemplateElement
   template.content.getElementById('message')!.innerHTML = hint
   shadow.appendChild(template.content)

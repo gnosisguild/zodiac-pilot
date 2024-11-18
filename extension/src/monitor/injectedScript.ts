@@ -77,5 +77,3 @@ const handleLoad = () => {
 }
 
 window.addEventListener('load', handleLoad)
-
-export {}

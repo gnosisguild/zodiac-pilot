@@ -98,7 +98,9 @@ if (!window.zodiacPilot) {
   window.addEventListener('eip6963:announceProvider', (event) => {
     const ev = event as CustomEvent
     // ignore our own events
-    if (ev.detail?.info?.name === 'Zodiac Pilot') return
+    if (ev.detail?.info?.name === 'Zodiac Pilot') {
+      return
+    }
 
     // override the provider announcement for MetaMask
     if (ev.detail?.info?.rdns === 'io.metamask') {
