@@ -50,7 +50,7 @@
         "chrome:*"
       ],
       "run_at": "document_start",
-      "js": ["build/monitor/contentScript.js"]
+      "js": ["build/pilot-connect-monitor/setupConnectionMonitoring.js"]
     },
     {
       "matches": ["https://connect.pilot.gnosisguild.org/"],

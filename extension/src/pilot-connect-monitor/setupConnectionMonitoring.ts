@@ -17,7 +17,7 @@ function inject(scriptPath: string) {
   node.remove()
 }
 
-inject('build/monitor/injectedScript.js')
+inject('build/pilot-connect-monitor/handleConnectionStatusChange.js')
 
 chrome.runtime.onMessage.addListener((message: Message) => {
   if (

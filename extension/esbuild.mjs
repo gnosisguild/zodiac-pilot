@@ -23,8 +23,8 @@ esbuild
       './src/injected-wallet-connect/announceProvider.ts',
       './src/injected-wallet-connect/enableInjectedProviderCommunication.ts',
 
-      './src/monitor/injectedScript.ts',
-      './src/monitor/contentScript.ts',
+      './src/pilot-connect-monitor/handleConnectionStatusChange.ts',
+      './src/pilot-connect-monitor/setupConnectionMonitoring.ts',
 
       './src/panel/app.tsx',
     ],
