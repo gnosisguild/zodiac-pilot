@@ -16,7 +16,7 @@ export const createPort = async (tabId: number, url: string | undefined) => {
 }
 
 const connectToIframe = async (tabId: number) => {
-  const port = await connectToContentScript(tabId)
+  const port = await connectToDApp(tabId)
 
   const { promise, resolve } = Promise.withResolvers<chrome.runtime.Port>()
 
@@ -39,9 +39,7 @@ const connectToIframe = async (tabId: number) => {
   return promise
 }
 
-const connectToContentScript = (
-  tabId: number
-): Promise<chrome.runtime.Port> => {
+const connectToDApp = (tabId: number): Promise<chrome.runtime.Port> => {
   const { promise, resolve } = Promise.withResolvers<chrome.runtime.Port>()
 
   const port = chrome.tabs.connect(tabId)
@@ -49,7 +47,7 @@ const connectToContentScript = (
   const timeout = setTimeout(() => {
     port.disconnect()
 
-    resolve(connectToContentScript(tabId))
+    resolve(connectToDApp(tabId))
   }, 500)
 
   const handleConnect = (message: ConnectedWalletMessage) => {

@@ -16,20 +16,27 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
 
-      './src/connect/contentScript.ts',
-      './src/connect/contentScriptIframe.ts',
-      './src/connect/injectedScript.ts',
+      // CONNECt DAPP
+      './src/pilot-connect/contentScripts/connectPilotToDApp.ts',
+      './src/pilot-connect/contentScripts/connectPilotToInjectedIFrame.ts',
 
-      './src/inject/injectedScript.ts',
-      './src/inject/contentScript.ts',
+      './src/pilot-connect/injectedScripts/connectOriginalWalletToPilot.ts',
 
-      './src/monitor/injectedScript.ts',
-      './src/monitor/contentScript.ts',
+      // CONNECT INJECTED WALLET
+      './src/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.ts',
+
+      './src/injected-wallet-connect/injectedScripts/enableInjectedProvider.ts',
+
+      // MONITOR
+      './src/pilot-connect-monitor/contentScripts/setupConnectionMonitoring.ts',
+
+      './src/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.ts',
 
       './src/panel/app.tsx',
     ],
     bundle: true,
     format: 'esm',
+    treeShaking: true,
     minify: process.env.NODE_ENV === 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
     loader: {

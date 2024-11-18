@@ -7,6 +7,7 @@ import {
   RPCMessage,
   RPCMessageType,
 } from '@/messages'
+import { injectScript, isValidTab } from '@/utils'
 import { probeChainId } from './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.
@@ -15,26 +16,17 @@ import { probeChainId } from './probeChainId'
 const alreadyInjected =
   '__zodiacPilotInjected' in document.documentElement.dataset
 
-function inject(scriptPath: string) {
-  const node = document.createElement('script')
-  node.type = 'text/javascript'
-  node.async = false
-  node.src = chrome.runtime.getURL(scriptPath)
-
-  const parent = document.head || document.documentElement
-  parent.insertBefore(node, parent.children[0])
-  node.remove()
-}
-
 if (
   !alreadyInjected &&
   window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
-  !window.location.href.startsWith('about:') &&
-  !window.location.href.startsWith('chrome:')
+  isValidTab(window.location.href)
 ) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
   document.documentElement.dataset.__zodiacPilotConnected = 'true'
-  inject('build/inject/injectedScript.js')
+
+  injectScript(
+    'build/injected-wallet-connect/injectedScripts/enableInjectedProvider.js'
+  )
 
   // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
   window.addEventListener(
@@ -126,5 +118,3 @@ if (
     }
   )
 }
-
-export {}

@@ -5,7 +5,7 @@ import { BrowserProvider } from 'ethers'
 import { MutableRefObject, useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { ChainId } from 'ser-kit'
-import { ConnectProvider } from '../../connect/ConnectProvider'
+import { ConnectProvider } from './ConnectProvider'
 import { memoWhilePending } from './memoWhilePending'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.

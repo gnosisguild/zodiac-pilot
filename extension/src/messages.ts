@@ -101,7 +101,7 @@ export type InjectedProviderMessage =
 export enum ConnectedWalletMessageType {
   /**
    * sent to establish the connection between
-   * connect/contentScript and the connect provider
+   * connect/connectPilotToDApp and the connect provider
    */
   CONNECTED_WALLET_CONNECTED = 'CONNECTED_WALLET_CONNECTED',
   /**

@@ -1,12 +1,3 @@
-@font-face {
-  font-family: 'Spectral';
-  font-style: normal;
-  font-weight: 400;
-  src:
-    url(../assets/fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
-    url(../assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
-}
-
 .zodiacPilot_hint {
   position: fixed;
   top: 35px; /* aligns with the panel */

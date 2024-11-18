@@ -34,7 +34,9 @@ export const createPortOnTabActivity = async (
       return
     }
 
-    console.debug(`Tab (id: "${tabId}", url: "${tab.url}") has been updated.`)
+    console.debug(`Tab (id: "${tabId}", url: "${tab.url}") has been updated.`, {
+      info,
+    })
 
     if (info.url == null && info.status == null) {
       console.debug(
@@ -44,7 +46,15 @@ export const createPortOnTabActivity = async (
       return
     }
 
-    console.debug(`Tab (id: "${tabId}") updated URL to "${tab.url}".`)
+    if (info.status === 'complete') {
+      // the `createPortWhenTabIsReady` helper will already handle the
+      // loading lifecycle of a tab. We don't want to call it twice
+      return
+    }
+
+    if (info.url != null) {
+      console.debug(`Tab (id: "${tabId}") updated URL to "${info.url}".`)
+    }
 
     const port = await createPortWhenTabIsReady(tab)
 
