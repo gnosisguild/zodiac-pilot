@@ -16,9 +16,9 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
 
-      './src/connect/contentScript.ts',
-      './src/connect/contentScriptIframe.ts',
-      './src/connect/injectedScript.ts',
+      './src/pilot-connect/connectPilotToDApp.ts',
+      './src/pilot-connect/connectOriginalWalletToPilot.ts',
+      './src/pilot-connect/connectPilotToInjectedIFrame.ts',
 
       './src/inject/injectedScript.ts',
       './src/inject/contentScript.ts',

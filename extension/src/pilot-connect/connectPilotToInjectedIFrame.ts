@@ -14,7 +14,7 @@ function inject(scriptPath: string) {
 if (document.documentElement.dataset.__zodiacPilotInjected !== 'true') {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
 
-  inject('build/connect/injectedScript.js')
+  inject('build/pilot-connect/connectOriginalWalletToPilot.js')
 }
 
 export {}
