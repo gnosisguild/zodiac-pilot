@@ -123,5 +123,3 @@ if (!window.zodiacPilot) {
 
   window.dispatchEvent(new Event('ethereum#initialized'))
 }
-
-export {}

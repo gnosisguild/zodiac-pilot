@@ -20,8 +20,8 @@ esbuild
       './src/pilot-connect/connectOriginalWalletToPilot.ts',
       './src/pilot-connect/connectPilotToInjectedIFrame.ts',
 
-      './src/inject/injectedScript.ts',
-      './src/inject/contentScript.ts',
+      './src/injected-wallet-connect/announceProvider.ts',
+      './src/injected-wallet-connect/enableInjectedProviderCommunication.ts',
 
       './src/monitor/injectedScript.ts',
       './src/monitor/contentScript.ts',

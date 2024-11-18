@@ -34,7 +34,7 @@ if (
 ) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
   document.documentElement.dataset.__zodiacPilotConnected = 'true'
-  inject('build/inject/injectedScript.js')
+  inject('build/injected-wallet-connect/announceProvider.js')
 
   // relay rpc requests from the InjectedProvider in the tab to the Eip1193Provider in the panel
   window.addEventListener(
@@ -126,5 +126,3 @@ if (
     }
   )
 }
-
-export {}
