@@ -4,24 +4,26 @@
     href="{{BASE_PATH}}build/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.css"
   />
 
-  <div class="zodiacPilot_hint">
+  <div
+    class="fixed right-8 top-8 isolate z-50 flex items-center justify-center gap-4 rounded-md border border-white border-opacity-90 bg-slate-800 p-4 shadow-md backdrop-blur-sm"
+  >
     <img
       src="{{BASE_PATH}}zodiac48.png"
-      class="zodiacPilot_logo"
+      class="m-2 size-6"
       alt="Zodiac Pilot logo"
     />
-    <div class="zodiacPilot_body">
-      <div id="message"></div>
-    </div>
-    <div class="zodiacPilot_actions">
+
+    <div id="message" class="font-spectral text-base text-white"></div>
+
+    <div class="flex gap-px">
       <button
         id="zodiac-pilot-reload"
-        class="zodiacPilot_reload"
+        class="m-0 block cursor-pointer border-none bg-none p-1 opacity-80 hover:opacity-100"
         title="Reload"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="zodiacPilot_icon"
+          class="block"
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -40,12 +42,12 @@
       </button>
       <button
         id="zodiac-pilot-dismiss"
-        class="zodiacPilot_dismiss"
+        class="m-0 block cursor-pointer border-none bg-none p-1 opacity-80 hover:opacity-100"
         title="Dismiss"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="zodiacPilot_icon"
+          class="block"
           width="24"
           height="24"
           viewBox="0 0 24 24"
