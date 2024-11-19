@@ -4,50 +4,21 @@ import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
+import { useState } from 'react'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
-import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
+import { ClearTransactionsModal } from '../useConfirmClearTransaction'
 
 interface RouteProps {
   route: ZodiacRoute
   onLaunch: (routeId: string) => void
-  onModify: (routeId: string) => void
 }
 
-export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
+export const Route = ({ onLaunch, route }: RouteProps) => {
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const currentlySelectedRoute = useZodiacRoute()
-
-  const [confirmClearTransactions, ConfirmationModal] =
-    useConfirmClearTransactions()
-
-  const handleLaunch = async () => {
-    // we continue working with the same avatar, so don't have to clear the recorded transaction
-    const keepTransactionBundle =
-      currentlySelectedRoute && currentlySelectedRoute.avatar === route.avatar
-
-    const confirmed =
-      keepTransactionBundle || (await confirmClearTransactions())
-
-    if (!confirmed) {
-      return
-    }
-
-    if (connected) {
-      onLaunch(route.id)
-      return
-    }
-
-    if (!connected && connect) {
-      const success = await connect()
-      if (success) {
-        onLaunch(route.id)
-        return
-      }
-    }
-
-    onModify(route.id)
-  }
+  const [confirmClearTransactions, setConfirmClearTransactions] =
+    useState(false)
 
   return (
     <>
@@ -90,7 +61,21 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
           <div className="flex gap-2">
             <BoxButton
               className="bg-none px-4 py-1 before:content-none"
-              onClick={handleLaunch}
+              disabled={!connected}
+              onClick={async () => {
+                // we continue working with the same avatar, so don't have to clear the recorded transaction
+                const keepTransactionBundle =
+                  currentlySelectedRoute &&
+                  currentlySelectedRoute.avatar === route.avatar
+
+                if (!keepTransactionBundle) {
+                  setConfirmClearTransactions(true)
+
+                  return
+                }
+
+                onLaunch(route.id)
+              }}
             >
               Launch
             </BoxButton>
@@ -106,7 +91,11 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
         </div>
       </div>
 
-      <ConfirmationModal />
+      <ClearTransactionsModal
+        open={confirmClearTransactions}
+        onClose={() => setConfirmClearTransactions(false)}
+        onConfirm={() => onLaunch(route.id)}
+      />
     </>
   )
 }

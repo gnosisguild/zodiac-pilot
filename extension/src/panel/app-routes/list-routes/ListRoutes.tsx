@@ -25,9 +25,6 @@ export const ListRoutes = () => {
 
               navigate('/')
             }}
-            onModify={(routeId) => {
-              navigate('/routes/' + routeId)
-            }}
           />
         ))}
       </div>
