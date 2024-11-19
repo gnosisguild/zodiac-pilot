@@ -57,7 +57,6 @@ export const Transaction = ({
               chainId={chainId}
               address={transactionState.transaction.to}
               contractInfo={transactionState.contractInfo}
-              className="w-px flex-grow"
             />
 
             <EtherValue value={transactionState.transaction.value} />

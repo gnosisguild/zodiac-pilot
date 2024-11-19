@@ -24,14 +24,14 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
         <RiFileCopy2Line className="size-4" />
       </button>
     )
-  } else {
-    return (
-      <IconButton
-        onClick={copyToClipboard}
-        title="Copy transaction data to clipboard"
-      >
-        <RiFileCopy2Line />
-      </IconButton>
-    )
   }
+
+  return (
+    <IconButton
+      onClick={copyToClipboard}
+      title="Copy transaction data to clipboard"
+    >
+      <RiFileCopy2Line />
+    </IconButton>
+  )
 }
