@@ -40,7 +40,7 @@ export const Transaction = ({
     <Box
       ref={elementRef}
       p={2}
-      className="flex flex-col gap-2 border border-zodiac-light-mustard border-opacity-80"
+      className="flex flex-col gap-2 rounded-md border border-zodiac-light-mustard/60"
     >
       <TransactionHeader
         index={index}
