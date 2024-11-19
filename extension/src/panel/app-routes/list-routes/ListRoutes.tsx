@@ -10,7 +10,7 @@ export const ListRoutes = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
+    <div className="flex flex-1 flex-col gap-4 px-4 py-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl">Pilot Routes</h2>
 

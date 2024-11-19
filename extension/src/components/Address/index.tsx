@@ -6,7 +6,7 @@ import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { Blockie } from '../Blockie'
 import { Box } from '../Box'
-import { IconButton } from '../IconButton'
+import { IconButton } from '../buttons'
 import classes from './style.module.css'
 
 interface Props {
