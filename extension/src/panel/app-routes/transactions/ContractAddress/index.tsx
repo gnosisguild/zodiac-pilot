@@ -33,7 +33,7 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
         <img src={blockie} alt={address} />
       </Circle>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         {contractInfo?.name && (
           <div className="flex-shrink-0 text-xs font-bold uppercase">
             {contractInfo?.name}

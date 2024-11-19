@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Box, ToggleButton } from '@/components'
+import { Box, RawAddress, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -52,16 +52,15 @@ export const Transaction = ({
       />
       {expanded && (
         <div className="flex flex-col gap-3 text-sm">
-          <Box bg p={2}>
-            <div className="flex flex-1 items-center justify-between gap-2">
-              <ContractAddress
-                chainId={chainId}
-                address={transactionState.transaction.to}
-                contractInfo={transactionState.contractInfo}
-                className="w-px flex-grow"
-              />
-              <EtherValue value={transactionState.transaction.value} />
-            </div>
+          <Box bg p={2} className="flex justify-between gap-4">
+            <ContractAddress
+              chainId={chainId}
+              address={transactionState.transaction.to}
+              contractInfo={transactionState.contractInfo}
+              className="w-px flex-grow"
+            />
+
+            <EtherValue value={transactionState.transaction.value} />
           </Box>
 
           <TransactionStatus
@@ -170,11 +169,14 @@ const EtherValue = ({ value }: EtherValueProps) => {
   const chainId = getChainId(avatar)
 
   return (
-    <div className="flex max-w-36 items-baseline justify-between gap-1">
-      <div>{CHAIN_CURRENCY[chainId]}:</div>
-      <code className="overflow-hidden text-ellipsis">
-        {formatEther(value || 0)}
-      </code>
+    <div className="flex flex-col gap-2 text-xs">
+      <div className="font-bold">
+        Amount <span className="font-normal">({CHAIN_CURRENCY[chainId]})</span>
+      </div>
+
+      <div className="flex flex-1 justify-end">
+        <RawAddress>{formatEther(value || 0)}</RawAddress>
+      </div>
     </div>
   )
 }
