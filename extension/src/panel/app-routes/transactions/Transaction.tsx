@@ -16,60 +16,6 @@ import { SimulationStatus } from './SimulationStatus'
 import { Translate } from './Translate'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
 
-interface HeaderProps {
-  index: number
-  transactionState: TransactionState
-  functionFragment?: Fragment
-  onExpandToggle(): void
-  expanded: boolean
-  showRoles?: boolean
-}
-
-const TransactionHeader = ({
-  index,
-  transactionState,
-  functionFragment,
-  onExpandToggle,
-  expanded,
-  showRoles = false,
-}: HeaderProps) => {
-  return (
-    <div className="flex items-center justify-between">
-      <label className="flex w-3/5 cursor-pointer items-center gap-2">
-        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
-          {index + 1}
-        </div>
-
-        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
-
-        <h5 className="flex items-center gap-2">
-          {functionFragment
-            ? functionFragment.format('sighash').split('(')[0]
-            : 'Raw transaction'}
-          {transactionState.transaction.operation === 1 && (
-            <code className="text-xs">delegatecall</code>
-          )}
-        </h5>
-      </label>
-      <div className="flex items-center justify-end gap-2">
-        <SimulationStatus transactionState={transactionState} mini />
-        {showRoles && (
-          <RolePermissionCheck
-            transactionState={transactionState}
-            index={index}
-            mini
-          />
-        )}
-        <div className="flex">
-          <Translate transactionState={transactionState} index={index} />
-          <CopyToClipboard transaction={transactionState.transaction} />
-          <Remove transactionState={transactionState} index={index} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
 interface Props {
   transactionState: TransactionState
   index: number
@@ -112,7 +58,6 @@ export const Transaction = ({
                 chainId={chainId}
                 address={transactionState.transaction.to}
                 contractInfo={transactionState.contractInfo}
-                explorerLink
                 className="w-px flex-grow"
               />
               <EtherValue value={transactionState.transaction.value} />
@@ -133,6 +78,61 @@ export const Transaction = ({
         </div>
       )}
     </Box>
+  )
+}
+
+interface HeaderProps {
+  index: number
+  transactionState: TransactionState
+  functionFragment?: Fragment
+  onExpandToggle(): void
+  expanded: boolean
+  showRoles?: boolean
+}
+
+const TransactionHeader = ({
+  index,
+  transactionState,
+  functionFragment,
+  onExpandToggle,
+  expanded,
+  showRoles = false,
+}: HeaderProps) => {
+  return (
+    <div className="flex items-center justify-between">
+      <label className="flex w-3/5 cursor-pointer items-center gap-2">
+        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
+          {index + 1}
+        </div>
+
+        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+
+        <h5 className="flex items-center gap-2">
+          {functionFragment
+            ? functionFragment.format('sighash').split('(')[0]
+            : 'Raw transaction'}
+
+          {transactionState.transaction.operation === 1 && (
+            <code className="text-xs">delegatecall</code>
+          )}
+        </h5>
+      </label>
+      <div className="flex items-center justify-end gap-2">
+        <SimulationStatus transactionState={transactionState} mini />
+        {showRoles && (
+          <RolePermissionCheck
+            transactionState={transactionState}
+            index={index}
+            mini
+          />
+        )}
+        <div className="flex">
+          <Translate transactionState={transactionState} index={index} />
+          <CopyToClipboard transaction={transactionState.transaction} />
+          <Remove transactionState={transactionState} index={index} />
+        </div>
+      </div>
+    </div>
   )
 }
 
