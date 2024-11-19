@@ -1,4 +1,4 @@
-import { Alert, Button } from '@/components'
+import { Button, Warning } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { PropsWithChildren } from 'react'
 import { Section } from './Section'
@@ -17,10 +17,10 @@ export const WalletDisconnected = ({
 
   return (
     <Section>
-      <Alert title="Wallet disconnected">
+      <Warning title="Wallet disconnected">
         Your wallet is disconnected from Pilot. Reconnect it to use the selected
         account with Pilot.
-      </Alert>
+      </Warning>
 
       {children}
 

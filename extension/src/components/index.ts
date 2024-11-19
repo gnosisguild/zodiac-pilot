@@ -1,5 +1,5 @@
 export { Address } from './Address'
-export { Alert } from './Alert'
+export * from './alerts'
 export { BlockButton } from './BlockButton'
 export { Blockie } from './Blockie'
 export { BlockLink } from './BlockLink'

@@ -4,7 +4,7 @@ type AlertProps = PropsWithChildren<{
   title?: string
 }>
 
-export const Alert = ({ children, title }: AlertProps) => {
+export const Warning = ({ children, title }: AlertProps) => {
   const titleId = useId()
   const descriptionId = useId()
 

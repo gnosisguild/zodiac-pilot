@@ -1,5 +1,5 @@
 import { CHAIN_NAME } from '@/chains'
-import { Alert, Button } from '@/components'
+import { Button, Warning } from '@/components'
 import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
 import { Section } from './Section'
@@ -21,10 +21,10 @@ export const SwitchChain = ({
 
   return (
     <Section>
-      <Alert title="Chain mismatch">
+      <Warning title="Chain mismatch">
         The connected wallet belongs to a different chain. To use it you need to
         switch back to {chainName}
-      </Alert>
+      </Warning>
 
       {children}
 
