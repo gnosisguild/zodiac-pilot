@@ -76,7 +76,7 @@ export const EditRoute = () => {
             className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
             to="/routes"
           >
-            <RiArrowLeftSLine /> All Connections
+            <RiArrowLeftSLine /> All routes
           </Link>
 
           <h2 className="text-xl">

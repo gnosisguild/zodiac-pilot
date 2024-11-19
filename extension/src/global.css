@@ -51,23 +51,6 @@ a:hover {
   color: rgba(252, 248, 217, 0.8);
 }
 
-h1 {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 48px;
-  line-height: 73px;
-  text-align: center;
-  margin: 0;
-}
-
-h3 {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 36px;
-  margin: 0;
-}
-
 p {
   margin: 0;
 }

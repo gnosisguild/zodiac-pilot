@@ -1,12 +1,11 @@
 import { getChainId } from '@/chains'
-import { Box, BoxButton, BoxLink, ConnectionStack, Flex } from '@/components'
+import { BoxButton, BoxLink, ConnectionStack, Tag } from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
+import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { asLegacyConnection } from '../legacyConnectionMigrations'
 import { useConfirmClearTransactions } from '../useConfirmClearTransaction'
-import { ConnectedIcon } from './ConnectedIcon'
-import { DisconnectedIcon } from './DisconnectedIcon'
 
 interface RouteProps {
   route: ZodiacRoute
@@ -53,62 +52,60 @@ export const Route = ({ onLaunch, onModify, route }: RouteProps) => {
   return (
     <>
       <div className="relative">
-        <BoxButton
-          className="w-full border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50"
-          onClick={handleLaunch}
-        >
-          <Flex direction="column" gap={4}>
-            <div className="flex items-center justify-between gap-2 overflow-hidden">
-              <Flex direction="row" alignItems="center" gap={3}>
-                <Box className="relative m-1 flex items-center justify-center rounded-full border-[4px] border-double bg-black bg-opacity-30">
-                  {connected ? (
-                    <ConnectedIcon>Pilot wallet is connected</ConnectedIcon>
-                  ) : connect ? (
-                    <ConnectedIcon color="orange">
-                      Pilot wallet is connected to a different chain
-                    </ConnectedIcon>
-                  ) : (
-                    <DisconnectedIcon>
-                      Pilot wallet is not connected
-                    </DisconnectedIcon>
-                  )}
-                </Box>
-                <h2 className="overflow-hidden text-ellipsis whitespace-nowrap text-left text-2xl">
-                  {route.label || <em>Unnamed route</em>}
+        <div className="flex flex-col gap-4 border border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {route.label || <em>Unnamed route</em>}
+              </h3>
 
-                  <div className="flex items-end gap-2 text-sm font-normal">
-                    <div className="text-xs uppercase text-zodiac-light-mustard">
-                      Last Used
-                    </div>
-                    <div className="font-mono opacity-70">
-                      {route.lastUsed ? (
-                        `${formatDistanceToNow(route.lastUsed)} ago`
-                      ) : (
-                        <>N/A</>
-                      )}
-                    </div>
-                  </div>
-                </h2>
-              </Flex>
-
-              <BoxLink
-                to={`/routes/${route.id}`}
-                className="bg-none px-4 py-1 before:content-none"
-                onClick={(event) => event.stopPropagation()}
-              >
-                Modify
-              </BoxLink>
+              {connected ? (
+                <Tag color="success" head={<Cable size={16} />} />
+              ) : connect ? (
+                <Tag color="warning" head={<PlugZap size={16} />} />
+              ) : (
+                <Tag color="danger" head={<Unplug size={16} />} />
+              )}
             </div>
 
-            <div className="my-6 flex justify-center">
-              <ConnectionStack
-                chainId={chainId}
-                connection={asLegacyConnection(route)}
-              />
+            <div className="flex items-center gap-2 text-xs">
+              <div className="text-zodiac-light-mustard">Last Used</div>
+              <div className="opacity-70">
+                {route.lastUsed ? (
+                  `${formatDistanceToNow(route.lastUsed)} ago`
+                ) : (
+                  <>N/A</>
+                )}
+              </div>
             </div>
-          </Flex>
-        </BoxButton>
+          </div>
+
+          <div className="my-6 flex justify-center">
+            <ConnectionStack
+              chainId={chainId}
+              connection={asLegacyConnection(route)}
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <BoxButton
+              className="bg-none px-4 py-1 before:content-none"
+              onClick={handleLaunch}
+            >
+              Launch
+            </BoxButton>
+
+            <BoxLink
+              to={`/routes/${route.id}`}
+              className="bg-none px-4 py-1 before:content-none"
+              onClick={(event) => event.stopPropagation()}
+            >
+              Edit
+            </BoxLink>
+          </div>
+        </div>
       </div>
+
       <ConfirmationModal />
     </>
   )

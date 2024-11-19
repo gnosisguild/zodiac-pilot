@@ -10,37 +10,41 @@ export const ListRoutes = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-4 py-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl">Pilot Routes</h2>
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <h2 className="p-4 text-xl">Pilot Routes</h2>
 
-        <Button
-          onClick={() => {
-            const newRouteId = nanoid()
-            navigate('/routes/' + newRouteId)
-          }}
-          className="px-6 py-1"
-        >
-          Add Route
-        </Button>
+      <Divider />
+
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+        {routes.map((route) => (
+          <Route
+            key={route.id}
+            route={route}
+            onLaunch={(routeId) => {
+              selectRoute(routeId)
+
+              navigate('/')
+            }}
+            onModify={(routeId) => {
+              navigate('/routes/' + routeId)
+            }}
+          />
+        ))}
       </div>
 
       <Divider />
 
-      {routes.map((route) => (
-        <Route
-          key={route.id}
-          route={route}
-          onLaunch={(routeId) => {
-            selectRoute(routeId)
-
-            navigate('/')
+      <div className="flex p-4">
+        <Button
+          fluid
+          onClick={() => {
+            const newRouteId = nanoid()
+            navigate('/routes/' + newRouteId)
           }}
-          onModify={(routeId) => {
-            navigate('/routes/' + routeId)
-          }}
-        />
-      ))}
+        >
+          Add Route
+        </Button>
+      </div>
     </div>
   )
 }
