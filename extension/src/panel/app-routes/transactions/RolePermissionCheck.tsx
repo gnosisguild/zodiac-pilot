@@ -126,10 +126,9 @@ export const RolePermissionCheck = ({
   }
 
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2 py-1">
-        <div className="w-32">Role permissions</div>
-
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        Role permissions
         {error === false ? (
           <Tag head={<RiGroupLine />} color="success">
             Allowed
@@ -140,6 +139,7 @@ export const RolePermissionCheck = ({
           </Tag>
         )}
       </div>
+
       {error && !!translationAvailable && (
         <Translate transactionState={transactionState} index={index} labeled />
       )}

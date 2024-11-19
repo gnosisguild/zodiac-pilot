@@ -30,7 +30,7 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-1">
         Simulation
         <div className="flex flex-col gap-2">
@@ -63,7 +63,7 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
           href={provider?.getTransactionLink(transactionState.transactionHash)}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-1 text-xs opacity-75"
+          className="flex items-center gap-1 text-xs no-underline opacity-75"
         >
           View in Tenderly
           <RiExternalLinkLine className="size-4" />
