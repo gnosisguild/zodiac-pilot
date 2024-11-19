@@ -1,4 +1,4 @@
-import { Box, Divider, Section, TextInput } from '@/components'
+import { Box, Divider, Error, Section, TextInput } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -70,8 +70,8 @@ export const EditRoute = () => {
 
   return (
     <>
-      <div className="relative flex flex-1 flex-col gap-4 overflow-hidden py-4">
-        <div className="flex flex-col gap-1 px-4">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-col gap-1 p-4">
           <Link
             className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
             to="/routes"
@@ -86,18 +86,7 @@ export const EditRoute = () => {
 
         <Divider />
 
-        {error && (
-          <Box double p={3} className="mx-4">
-            <div className={classes.errorInfo}>
-              <p>There seems to be a problem with this connection:</p>
-              <Box p={3} className={classes.error}>
-                {error}
-              </Box>
-            </div>
-          </Box>
-        )}
-
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4">
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           <Section>
             <TextInput
               label="Route label"
@@ -246,15 +235,25 @@ export const EditRoute = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-4 px-4">
-          <RemoveButton />
+        <Divider />
 
-          <LaunchButton
-            disabled={!avatarAddress}
-            initialRouteState={initialRouteState}
-            currentRouteState={currentRouteState}
-            onNeedConfirmationToClearTransactions={confirmClearTransactions}
-          />
+        <div className="flex flex-col gap-4 p-4">
+          {error && (
+            <Error title="There is a problem with this connection">
+              {error}
+            </Error>
+          )}
+
+          <div className="flex items-center justify-between gap-4">
+            <RemoveButton />
+
+            <LaunchButton
+              disabled={!avatarAddress}
+              initialRouteState={initialRouteState}
+              currentRouteState={currentRouteState}
+              onNeedConfirmationToClearTransactions={confirmClearTransactions}
+            />
+          </div>
         </div>
       </div>
 

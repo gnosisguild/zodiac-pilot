@@ -23,18 +23,7 @@
       format('woff');
 }
 
-/* spectral-regular - latin */
-@font-face {
-  font-family: 'Spectral';
-  font-style: normal;
-  font-weight: 400;
-  src:
-    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
-    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
-}
-
 body {
-  font-family: 'Spectral';
   font-size: 16px;
   color: white;
   min-height: 100vh;
