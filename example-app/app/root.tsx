@@ -2,7 +2,6 @@ import { PublicClient, WalletClient, WebsocketClient } from '@/clients'
 import { Button, Checkbox, Section, Value } from '@/components'
 import { getWagmiConfig, useWagmiConfig } from '@/config'
 import { Balance, Transfer } from '@/transfer'
-import { invariantResponse } from '@epic-web/invariant'
 import { json } from '@remix-run/node'
 import { Links, Meta, Scripts, useLoaderData } from '@remix-run/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -15,11 +14,7 @@ import './tailwind.css'
 import { wethContract } from './wethContract'
 
 const getProjectId = () => {
-  const { PROJECT_ID } = process.env
-
-  invariantResponse(PROJECT_ID, '"PROJECT_ID" environment variable not found')
-
-  return PROJECT_ID
+  return '73072f6f94dd5f7b8295f7949e985992'
 }
 
 export const loader = () => json({ projectId: getProjectId() })
