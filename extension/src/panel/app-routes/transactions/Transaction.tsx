@@ -147,7 +147,7 @@ const TransactionStatus = ({
   showRoles = false,
 }: StatusProps) => (
   <>
-    <Box bg p={2} className="flex-grow">
+    <Box bg p={2}>
       <SimulationStatus transactionState={transactionState} />
     </Box>
 
