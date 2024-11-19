@@ -1,4 +1,3 @@
-import { getChainId } from '@/chains'
 import { BoxButton, BoxLink, ConnectionStack, Tag } from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
@@ -14,7 +13,6 @@ interface RouteProps {
 }
 
 export const Route = ({ onLaunch, route }: RouteProps) => {
-  const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const currentlySelectedRoute = useZodiacRoute()
   const [confirmClearTransactions, setConfirmClearTransactions] =
@@ -22,72 +20,65 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
 
   return (
     <>
-      <div className="relative">
-        <div className="flex flex-col gap-4 border border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {route.label || <em>Unnamed route</em>}
-              </h3>
+      <div className="flex flex-col gap-4 rounded-md border border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {route.label || <em>Unnamed route</em>}
+            </h3>
 
-              {connected ? (
-                <Tag color="success" head={<Cable size={16} />} />
-              ) : connect ? (
-                <Tag color="warning" head={<PlugZap size={16} />} />
+            {connected ? (
+              <Tag color="success" head={<Cable size={16} />} />
+            ) : connect ? (
+              <Tag color="warning" head={<PlugZap size={16} />} />
+            ) : (
+              <Tag color="danger" head={<Unplug size={16} />} />
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-xs">
+            <div className="text-zodiac-light-mustard">Last Used</div>
+            <div className="opacity-70">
+              {route.lastUsed ? (
+                `${formatDistanceToNow(route.lastUsed)} ago`
               ) : (
-                <Tag color="danger" head={<Unplug size={16} />} />
+                <>N/A</>
               )}
             </div>
-
-            <div className="flex items-center gap-2 text-xs">
-              <div className="text-zodiac-light-mustard">Last Used</div>
-              <div className="opacity-70">
-                {route.lastUsed ? (
-                  `${formatDistanceToNow(route.lastUsed)} ago`
-                ) : (
-                  <>N/A</>
-                )}
-              </div>
-            </div>
           </div>
+        </div>
 
-          <div className="my-6 flex justify-center">
-            <ConnectionStack
-              chainId={chainId}
-              connection={asLegacyConnection(route)}
-            />
-          </div>
+        <ConnectionStack connection={asLegacyConnection(route)} />
 
-          <div className="flex gap-2">
-            <BoxButton
-              className="bg-none px-4 py-1 before:content-none"
-              disabled={!connected}
-              onClick={async () => {
-                // we continue working with the same avatar, so don't have to clear the recorded transaction
-                const keepTransactionBundle =
-                  currentlySelectedRoute &&
-                  currentlySelectedRoute.avatar === route.avatar
+        <div className="flex justify-end gap-2">
+          <BoxLink
+            to={`/routes/${route.id}`}
+            className="bg-none px-4 py-1 before:content-none"
+            onClick={(event) => event.stopPropagation()}
+          >
+            Edit
+          </BoxLink>
 
-                if (!keepTransactionBundle) {
-                  setConfirmClearTransactions(true)
+          <BoxButton
+            className="bg-none px-4 py-1 before:content-none"
+            disabled={!connected}
+            onClick={async () => {
+              // we continue working with the same avatar, so don't have to clear the recorded transaction
+              const keepTransactionBundle =
+                currentlySelectedRoute &&
+                currentlySelectedRoute.avatar === route.avatar
 
-                  return
-                }
+              if (!keepTransactionBundle) {
+                setConfirmClearTransactions(true)
 
-                onLaunch(route.id)
-              }}
-            >
-              Launch
-            </BoxButton>
+                return
+              }
 
-            <BoxLink
-              to={`/routes/${route.id}`}
-              className="bg-none px-4 py-1 before:content-none"
-              onClick={(event) => event.stopPropagation()}
-            >
-              Edit
-            </BoxLink>
-          </div>
+              onLaunch(route.id)
+            }}
+          >
+            Launch
+          </BoxButton>
         </div>
       </div>
 

@@ -1,4 +1,3 @@
-export { Address } from './Address'
 export * from './alerts'
 export { BlockButton } from './BlockButton'
 export { Blockie } from './Blockie'

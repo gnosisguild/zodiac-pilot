@@ -1,4 +1,3 @@
-import { getChainId } from '@/chains'
 import { Blockie, Box, ConnectionStack } from '@/components'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { Link } from 'react-router-dom'
@@ -7,7 +6,6 @@ import { ConnectionsIcon } from './ConnectionsIcon'
 
 export const RouteBubble = () => {
   const route = useZodiacRoute()
-  const chainId = getChainId(route.avatar)
   const connection = asLegacyConnection(route)
 
   return (
@@ -63,12 +61,8 @@ export const RouteBubble = () => {
 
       <div className="pointer-events-none absolute -bottom-24 -right-px isolate z-10 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">
         <Box className="rounded-md bg-slate-900 bg-opacity-20 p-4 backdrop-blur-sm">
-          <Link to={'/routes/' + connection.id}>
-            <ConnectionStack
-              chainId={chainId}
-              connection={connection}
-              className="hover:border-zodiac-light-mustard hover:border-opacity-80"
-            />
+          <Link to={`/routes/${connection.id}`}>
+            <ConnectionStack connection={connection} />
           </Link>
         </Box>
       </div>
