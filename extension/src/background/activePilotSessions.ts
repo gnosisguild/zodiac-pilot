@@ -63,17 +63,17 @@ const makeActionable = (
   { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId }: TrackRequestsResult
 ): ActionablePilotSession => {
   const handleNewRPCEndpoint = () => {
-    if (session.fork == null) {
+    if (actionableSession.fork == null) {
       return
     }
 
     updateRpcRedirectRules(
       getForkedSessions(),
-      getTrackedRPCUrlsForChainId({ chainId: session.fork.chainId })
+      getTrackedRPCUrlsForChainId({ chainId: actionableSession.fork.chainId })
     )
   }
 
-  return {
+  const actionableSession = {
     ...session,
 
     isTracked: (tabId) => session.tabs.has(tabId),
@@ -108,7 +108,7 @@ const makeActionable = (
     },
 
     createFork: (fork) => {
-      session.fork = fork
+      actionableSession.fork = fork
 
       updateRpcRedirectRules(
         getForkedSessions(),
@@ -120,13 +120,13 @@ const makeActionable = (
       return fork
     },
     clearFork: () => {
-      if (session.fork == null) {
+      if (actionableSession.fork == null) {
         return
       }
 
-      const { chainId } = session.fork
+      const { chainId } = actionableSession.fork
 
-      Object.assign(session, { fork: null })
+      Object.assign(actionableSession, { fork: null })
 
       updateRpcRedirectRules(
         getForkedSessions(),
@@ -135,7 +135,9 @@ const makeActionable = (
 
       onNewRPCEndpointDetected.removeListener(handleNewRPCEndpoint)
     },
-  }
+  } satisfies ActionablePilotSession
+
+  return actionableSession
 }
 
 type IsTrackedTabOptions = {

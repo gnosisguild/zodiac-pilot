@@ -99,7 +99,7 @@ describe('Simulation tracking', () => {
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
-      ).toHaveBeenLastCalledWith(
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
             {
@@ -131,12 +131,10 @@ describe('Simulation tracking', () => {
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          addRules: [],
-          removeRuleIds: [1],
-        })
-      )
+      ).toHaveBeenCalledWith({
+        addRules: [],
+        removeRuleIds: [1],
+      })
     })
   })
 
