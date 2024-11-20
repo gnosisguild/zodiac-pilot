@@ -1,6 +1,6 @@
 import { ChainId } from 'ser-kit'
 import { callListeners, chromeMock } from '../chrome'
-import { createMockWebRequest } from '../creators'
+import { createMockTab, createMockWebRequest } from '../creators'
 
 type MockRPCRequestOptions = {
   chainId: ChainId
@@ -13,6 +13,10 @@ export const mockRPCRequest = async ({
   tabId,
   url,
 }: MockRPCRequestOptions) => {
+  const tab = createMockTab({ id: tabId })
+
+  chromeMock.tabs.get.mockResolvedValue(tab)
+
   // @ts-expect-error I don't give a crap in a test helper
   chromeMock.tabs.sendMessage.mockImplementation((_, __, respond) => {
     if (typeof respond === 'function') {
