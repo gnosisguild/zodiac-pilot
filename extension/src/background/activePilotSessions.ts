@@ -10,21 +10,20 @@ import { TrackRequestsResult } from './rpcTracking'
 import { updateSimulatingBadge } from './simulationTracking'
 import { Fork, ForkedSession, PilotSession } from './types'
 
-type Session = [pilotSession: PilotSession, trackRequests: TrackRequestsResult]
-
 /** maps `windowId` to pilot session */
-const activePilotSessions = new Map<number, Session>()
+const activePilotSessions = new Map<number, ActionablePilotSession>()
 
-type ActionablePilotSession = Readonly<PilotSession> & {
-  delete: () => void
+type ActionablePilotSession<S extends PilotSession = PilotSession> =
+  Readonly<S> & {
+    delete: () => void
 
-  isTracked: (tabId: number) => boolean
-  trackTab: (tabId: number) => void
-  untrackTab: (tabId: number) => void
+    isTracked: (tabId: number) => boolean
+    trackTab: (tabId: number) => void
+    untrackTab: (tabId: number) => void
 
-  createFork: (fork: Fork) => Fork
-  clearFork: () => void
-}
+    createFork: (fork: Fork) => Fork
+    clearFork: () => void
+  }
 
 type CallbackFn = (session: ActionablePilotSession) => void
 
@@ -35,7 +34,7 @@ export const withPilotSession = (windowId: number, callback: CallbackFn) => {
     return
   }
 
-  callback(makeActionable(session))
+  callback(session)
 }
 
 export const getPilotSession = (windowId: number): ActionablePilotSession => {
@@ -43,7 +42,7 @@ export const getPilotSession = (windowId: number): ActionablePilotSession => {
 
   invariant(session != null, `No session found for windowId "${windowId}"`)
 
-  return makeActionable(session)
+  return session
 }
 
 export const getOrCreatePilotSession = (
@@ -56,13 +55,13 @@ export const getOrCreatePilotSession = (
     return createPilotSession(trackRequests, windowId)
   }
 
-  return makeActionable(session)
+  return session
 }
 
-const makeActionable = ([
-  session,
-  { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId },
-]: Session): ActionablePilotSession => {
+const makeActionable = (
+  session: PilotSession,
+  { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId }: TrackRequestsResult
+): ActionablePilotSession => {
   const handleNewRPCEndpoint = () => {
     if (session.fork == null) {
       return
@@ -146,7 +145,7 @@ type IsTrackedTabOptions = {
 
 export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
   if (windowId == null) {
-    return Array.from(activePilotSessions.values()).some(([{ tabs }]) =>
+    return Array.from(activePilotSessions.values()).some(({ tabs }) =>
       tabs.has(tabId)
     )
   }
@@ -157,9 +156,7 @@ export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
     return false
   }
 
-  const [pilotSession] = session
-
-  return pilotSession.tabs.has(tabId)
+  return session.tabs.has(tabId)
 }
 
 export const createPilotSession = (
@@ -172,17 +169,18 @@ export const createPilotSession = (
     tabs: new Set<number>(),
   }
 
-  activePilotSessions.set(windowId, [session, trackRequests])
+  const actionablePilotSession = makeActionable(session, trackRequests)
 
-  return makeActionable([session, trackRequests])
+  activePilotSessions.set(windowId, actionablePilotSession)
+
+  return actionablePilotSession
 }
 
 const getForkedSessions = (): ForkedSession[] =>
-  Array.from(activePilotSessions.values())
-    .map(([pilotSession]) => pilotSession)
-    .filter(isForkedSession)
+  Array.from(activePilotSessions.values()).filter(isForkedSession)
 
-const isForkedSession = (session: PilotSession): session is ForkedSession =>
-  session.fork != null
+const isForkedSession = (
+  session: PilotSession
+): session is ActionablePilotSession<ForkedSession> => session.fork != null
 
 export const clearAllSessions = () => activePilotSessions.clear()
