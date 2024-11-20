@@ -3,8 +3,8 @@ import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
+import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
-import { RiArrowLeftSLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { useSafesWithOwner } from '../../integrations/safe'
 import {
@@ -76,7 +76,7 @@ export const EditRoute = () => {
             className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
             to="/routes"
           >
-            <RiArrowLeftSLine /> All routes
+            <ChevronLeft size={16} /> All routes
           </Link>
 
           <h2 className="text-xl">
