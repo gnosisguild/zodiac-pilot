@@ -1,21 +1,17 @@
 import { mockRPCRequest, startPilotSession } from '@/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
 describe('RPC Tracking', () => {
-  beforeEach(() => {
-    trackSessions()
-  })
-
   it('notifies when a new network has been tracked', async () => {
+    const result = trackRequests()
+    trackSessions(result)
+
     await startPilotSession({ windowId: 1, tabId: 1 })
-
-    const { onNewRPCEndpointDetected } = trackRequests()
-
     const handler = vi.fn()
 
-    onNewRPCEndpointDetected.addListener(handler)
+    result.onNewRPCEndpointDetected.addListener(handler)
 
     await mockRPCRequest({
       chainId: 1,
@@ -27,14 +23,15 @@ describe('RPC Tracking', () => {
   })
 
   it('is possible to stop getting notified', async () => {
-    await startPilotSession({ windowId: 1, tabId: 1 })
+    const result = trackRequests()
+    trackSessions(result)
 
-    const { onNewRPCEndpointDetected } = trackRequests()
+    await startPilotSession({ windowId: 1, tabId: 1 })
 
     const handler = vi.fn()
 
-    onNewRPCEndpointDetected.addListener(handler)
-    onNewRPCEndpointDetected.removeListener(handler)
+    result.onNewRPCEndpointDetected.addListener(handler)
+    result.onNewRPCEndpointDetected.removeListener(handler)
 
     await mockRPCRequest({
       chainId: 1,

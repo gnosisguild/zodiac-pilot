@@ -19,10 +19,7 @@ export const trackSimulations = ({
       case PilotSimulationMessageType.SIMULATE_START: {
         const { chainId, rpcUrl } = message
         const session = getPilotSession(message.windowId)
-        const fork = session.createFork(
-          getTrackedRPCUrlsForChainId({ chainId }),
-          { chainId, rpcUrl }
-        )
+        const fork = session.createFork({ chainId, rpcUrl })
 
         console.debug(
           `start intercepting JSON RPC requests in window #${message.windowId}`,

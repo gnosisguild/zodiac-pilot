@@ -15,8 +15,8 @@ import { trackSimulations } from './simulationTracking'
 
 describe('Simulation tracking', () => {
   beforeAll(() => {
-    trackSessions()
     const trackRequestsResult = trackRequests()
+    trackSessions(trackRequestsResult)
     trackSimulations(trackRequestsResult)
   })
 
@@ -89,6 +89,37 @@ describe('Simulation tracking', () => {
       ).toHaveBeenLastCalledWith({
         removeRuleIds: [2],
       })
+    })
+
+    it('updates the redirect rules when a new RPC endpoint is detected during simulation', async () => {
+      await startPilotSession({ windowId: 1, tabId: 1 })
+      await startSimulation({ windowId: 1 })
+
+      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          addRules: [
+            {
+              id: 1,
+              priority: 1,
+              action: {
+                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+                redirect: { url: 'http://test.com' },
+              },
+              condition: {
+                resourceTypes: [
+                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+                ],
+                regexFilter: '^(http:\\/\\/another\\-url)$',
+                tabIds: [1],
+              },
+            },
+          ],
+        })
+      )
     })
   })
 

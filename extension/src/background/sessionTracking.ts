@@ -6,8 +6,9 @@ import {
   getOrCreatePilotSession,
   withPilotSession,
 } from './activePilotSessions'
+import { TrackRequestsResult } from './rpcTracking'
 
-export const trackSessions = () => {
+export const trackSessions = (trackRequests: TrackRequestsResult) => {
   // all messages from the panel app are received here
   // (the port is opened from panel/port.ts)
   chrome.runtime.onConnect.addListener((port) => {
@@ -25,7 +26,7 @@ export const trackSessions = () => {
       windowIdRef.current = message.windowId
       console.debug('Sidepanel opened.', message.windowId)
 
-      startPilotSession({
+      startPilotSession(trackRequests, {
         windowId: message.windowId,
         tabId: message.tabId,
       })
@@ -97,10 +98,13 @@ type StartPilotSessionOptions = {
   tabId?: number
 }
 
-const startPilotSession = ({ windowId, tabId }: StartPilotSessionOptions) => {
+const startPilotSession = (
+  trackRequests: TrackRequestsResult,
+  { windowId, tabId }: StartPilotSessionOptions
+) => {
   console.debug('start pilot session', { windowId })
 
-  const session = getOrCreatePilotSession(windowId)
+  const session = getOrCreatePilotSession(trackRequests, windowId)
 
   if (tabId == null) {
     return

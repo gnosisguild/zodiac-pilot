@@ -6,11 +6,14 @@ import {
   removeAllRpcRedirectRules,
   updateRpcRedirectRules,
 } from './rpcRedirect'
+import { TrackRequestsResult } from './rpcTracking'
 import { updateSimulatingBadge } from './simulationTracking'
 import { Fork, ForkedSession, PilotSession } from './types'
 
+type Session = [pilotSession: PilotSession, trackRequests: TrackRequestsResult]
+
 /** maps `windowId` to pilot session */
-const activePilotSessions = new Map<number, PilotSession>()
+const activePilotSessions = new Map<number, Session>()
 
 type ActionablePilotSession = Readonly<PilotSession> & {
   delete: () => void
@@ -19,7 +22,7 @@ type ActionablePilotSession = Readonly<PilotSession> & {
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
 
-  createFork: (trackedRPCUrlsByTabId: Map<number, string[]>, fork: Fork) => Fork
+  createFork: (fork: Fork) => Fork
   clearFork: (trackedRPCUrlsByTabId: Map<number, string[]>) => void
 }
 
@@ -44,18 +47,22 @@ export const getPilotSession = (windowId: number): ActionablePilotSession => {
 }
 
 export const getOrCreatePilotSession = (
+  trackRequests: TrackRequestsResult,
   windowId: number
 ): ActionablePilotSession => {
-  let session = activePilotSessions.get(windowId)
+  const session = activePilotSessions.get(windowId)
 
   if (session == null) {
-    session = createPilotSession(windowId)
+    return createPilotSession(trackRequests, windowId)
   }
 
   return makeActionable(session)
 }
 
-const makeActionable = (session: PilotSession): ActionablePilotSession => ({
+const makeActionable = ([
+  session,
+  { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId },
+]: Session): ActionablePilotSession => ({
   ...session,
 
   isTracked: (tabId) => session.tabs.has(tabId),
@@ -89,10 +96,20 @@ const makeActionable = (session: PilotSession): ActionablePilotSession => ({
     removeAllRpcRedirectRules()
   },
 
-  createFork: (trackedRPCUrls, fork) => {
+  createFork: (fork) => {
     session.fork = fork
 
-    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
+    updateRpcRedirectRules(
+      getForkedSessions(),
+      getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
+    )
+
+    onNewRPCEndpointDetected.addListener(() => {
+      updateRpcRedirectRules(
+        getForkedSessions(),
+        getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
+      )
+    })
 
     return fork
   },
@@ -110,7 +127,7 @@ type IsTrackedTabOptions = {
 
 export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
   if (windowId == null) {
-    return Array.from(activePilotSessions.values()).some(({ tabs }) =>
+    return Array.from(activePilotSessions.values()).some(([{ tabs }]) =>
       tabs.has(tabId)
     )
   }
@@ -121,10 +138,13 @@ export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
     return false
   }
 
-  return session.tabs.has(tabId)
+  const [pilotSession] = session
+
+  return pilotSession.tabs.has(tabId)
 }
 
 export const createPilotSession = (
+  trackRequests: TrackRequestsResult,
   windowId: number
 ): ActionablePilotSession => {
   const session = {
@@ -133,13 +153,15 @@ export const createPilotSession = (
     tabs: new Set<number>(),
   }
 
-  activePilotSessions.set(windowId, session)
+  activePilotSessions.set(windowId, [session, trackRequests])
 
-  return makeActionable(session)
+  return makeActionable([session, trackRequests])
 }
 
 const getForkedSessions = (): ForkedSession[] =>
-  Array.from(activePilotSessions.values()).filter(isForkedSession)
+  Array.from(activePilotSessions.values())
+    .map(([pilotSession]) => pilotSession)
+    .filter(isForkedSession)
 
 const isForkedSession = (session: PilotSession): session is ForkedSession =>
   session.fork != null

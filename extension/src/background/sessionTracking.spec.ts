@@ -8,11 +8,12 @@ import {
 } from '@/test-utils'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
+import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
   beforeAll(() => {
-    trackSessions()
+    trackSessions(trackRequests())
   })
 
   beforeEach(() => {

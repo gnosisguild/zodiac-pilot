@@ -5,7 +5,7 @@ import { trackSimulations } from './simulationTracking'
 
 const trackRequestsResult = trackRequests()
 trackSimulations(trackRequestsResult)
-trackSessions()
+trackSessions(trackRequestsResult)
 
 enableExternalPanelOpen()
 
