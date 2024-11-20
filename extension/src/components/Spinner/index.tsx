@@ -1,3 +1,3 @@
-import classes from './style.module.css'
+import { LoaderCircle } from 'lucide-react'
 
-export const Spinner = () => <div className={classes.container} />
+export const Spinner = () => <LoaderCircle size={16} className="animate-spin" />
