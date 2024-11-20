@@ -59,7 +59,6 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
           </BoxLink>
 
           <BoxButton
-            disabled={!connected}
             onClick={async () => {
               // we continue working with the same avatar, so don't have to clear the recorded transaction
               const keepTransactionBundle =
