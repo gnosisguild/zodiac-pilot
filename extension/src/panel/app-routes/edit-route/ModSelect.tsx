@@ -55,7 +55,7 @@ const Value = ({ label, address, children }: ValueProps) => (
       <Blockie address={address} className="size-10" />
     </Circle>
     <div className="flex flex-col gap-1 overflow-hidden">
-      <p className="pl-1 font-spectral text-base">{label}</p>
+      <p className="pl-1 text-base">{label}</p>
       <RawAddress>{children}</RawAddress>
     </div>
   </div>

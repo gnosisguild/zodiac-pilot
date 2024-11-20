@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Box, ToggleButton } from '@/components'
+import { Box, RawAddress, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -15,60 +15,6 @@ import { RolePermissionCheck } from './RolePermissionCheck'
 import { SimulationStatus } from './SimulationStatus'
 import { Translate } from './Translate'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
-
-interface HeaderProps {
-  index: number
-  transactionState: TransactionState
-  functionFragment?: Fragment
-  onExpandToggle(): void
-  expanded: boolean
-  showRoles?: boolean
-}
-
-const TransactionHeader = ({
-  index,
-  transactionState,
-  functionFragment,
-  onExpandToggle,
-  expanded,
-  showRoles = false,
-}: HeaderProps) => {
-  return (
-    <div className="flex items-center justify-between">
-      <label className="flex w-3/5 cursor-pointer items-center gap-2">
-        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
-          {index + 1}
-        </div>
-
-        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
-
-        <h5 className="flex items-center gap-2">
-          {functionFragment
-            ? functionFragment.format('sighash').split('(')[0]
-            : 'Raw transaction'}
-          {transactionState.transaction.operation === 1 && (
-            <code className="text-xs">delegatecall</code>
-          )}
-        </h5>
-      </label>
-      <div className="flex items-center justify-end gap-2">
-        <SimulationStatus transactionState={transactionState} mini />
-        {showRoles && (
-          <RolePermissionCheck
-            transactionState={transactionState}
-            index={index}
-            mini
-          />
-        )}
-        <div className="flex">
-          <Translate transactionState={transactionState} index={index} />
-          <CopyToClipboard transaction={transactionState.transaction} />
-          <Remove transactionState={transactionState} index={index} />
-        </div>
-      </div>
-    </div>
-  )
-}
 
 interface Props {
   transactionState: TransactionState
@@ -94,7 +40,7 @@ export const Transaction = ({
     <Box
       ref={elementRef}
       p={2}
-      className="flex flex-col gap-2 border border-zodiac-light-mustard border-opacity-80"
+      className="flex flex-col gap-2 rounded-md border border-zodiac-light-mustard/60"
     >
       <TransactionHeader
         index={index}
@@ -104,19 +50,17 @@ export const Transaction = ({
         onExpandToggle={() => setExpanded(!expanded)}
         showRoles={showRoles}
       />
+
       {expanded && (
         <div className="flex flex-col gap-3 text-sm">
-          <Box bg p={2}>
-            <div className="flex flex-1 items-center justify-between gap-2">
-              <ContractAddress
-                chainId={chainId}
-                address={transactionState.transaction.to}
-                contractInfo={transactionState.contractInfo}
-                explorerLink
-                className="w-px flex-grow"
-              />
-              <EtherValue value={transactionState.transaction.value} />
-            </div>
+          <Box bg p={2} className="flex justify-between gap-4">
+            <ContractAddress
+              chainId={chainId}
+              address={transactionState.transaction.to}
+              contractInfo={transactionState.contractInfo}
+            />
+
+            <EtherValue value={transactionState.transaction.value} />
           </Box>
 
           <TransactionStatus
@@ -136,6 +80,61 @@ export const Transaction = ({
   )
 }
 
+interface HeaderProps {
+  index: number
+  transactionState: TransactionState
+  functionFragment?: Fragment
+  onExpandToggle(): void
+  expanded: boolean
+  showRoles?: boolean
+}
+
+const TransactionHeader = ({
+  index,
+  transactionState,
+  functionFragment,
+  onExpandToggle,
+  expanded,
+  showRoles = false,
+}: HeaderProps) => {
+  return (
+    <div className="flex items-center justify-between">
+      <label className="flex w-3/5 cursor-pointer items-center gap-2">
+        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+
+        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
+          {index + 1}
+        </div>
+
+        <h5 className="flex items-center gap-2">
+          {functionFragment
+            ? functionFragment.format('sighash').split('(')[0]
+            : 'Raw transaction'}
+
+          {transactionState.transaction.operation === 1 && (
+            <code className="text-xs">delegatecall</code>
+          )}
+        </h5>
+      </label>
+      <div className="flex items-center justify-end gap-2">
+        <SimulationStatus transactionState={transactionState} mini />
+        {showRoles && (
+          <RolePermissionCheck
+            transactionState={transactionState}
+            index={index}
+            mini
+          />
+        )}
+        <div className="flex">
+          <Translate transactionState={transactionState} index={index} />
+          <CopyToClipboard transaction={transactionState.transaction} />
+          <Remove transactionState={transactionState} index={index} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface StatusProps {
   transactionState: TransactionState
   showRoles?: boolean
@@ -148,7 +147,7 @@ const TransactionStatus = ({
   showRoles = false,
 }: StatusProps) => (
   <>
-    <Box bg p={2} className="flex-grow">
+    <Box bg p={2}>
       <SimulationStatus transactionState={transactionState} />
     </Box>
 
@@ -170,11 +169,14 @@ const EtherValue = ({ value }: EtherValueProps) => {
   const chainId = getChainId(avatar)
 
   return (
-    <div className="flex max-w-36 items-baseline justify-between gap-1">
-      <div>{CHAIN_CURRENCY[chainId]}:</div>
-      <code className="overflow-hidden text-ellipsis">
-        {formatEther(value || 0)}
-      </code>
+    <div className="flex flex-col gap-2 text-xs">
+      <div className="font-bold">
+        Amount <span className="font-normal">({CHAIN_CURRENCY[chainId]})</span>
+      </div>
+
+      <div className="flex flex-1 justify-end">
+        <RawAddress>{formatEther(value || 0)}</RawAddress>
+      </div>
     </div>
   )
 }

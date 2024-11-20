@@ -23,18 +23,7 @@
       format('woff');
 }
 
-/* spectral-regular - latin */
-@font-face {
-  font-family: 'Spectral';
-  font-style: normal;
-  font-weight: 400;
-  src:
-    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff) format('woff2'),
-    url(./assets/fonts/Spectral/spectral-v7-latin-regular.woff2) format('woff');
-}
-
 body {
-  font-family: 'Spectral';
   font-size: 16px;
   color: white;
   min-height: 100vh;
@@ -50,37 +39,6 @@ body {
     rgba(37, 6, 4, 0.85) 96.54%
   );
   min-height: 100vh;
-}
-
-a {
-  color: white;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-a:hover {
-  color: rgba(252, 248, 217, 0.8);
-}
-
-h1 {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 48px;
-  line-height: 73px;
-  text-align: center;
-  margin: 0;
-}
-
-h3 {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 24px;
-  line-height: 36px;
-  margin: 0;
-}
-
-p {
-  margin: 0;
 }
 
 select {

@@ -31,7 +31,7 @@ describe('List routes', () => {
       chainId: '0x1',
     })
 
-    await userEvent.click(screen.getByRole('link', { name: 'Modify' }))
+    await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
 
     await expectRouteToBe('/routes/testRoute')
   })
