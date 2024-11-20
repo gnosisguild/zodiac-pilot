@@ -2,7 +2,6 @@ import { ReactNode, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { Button, IconButton } from '../buttons'
-import { Flex } from '../Flex'
 import classes from './style.module.css'
 
 type PropTypes = {
@@ -30,15 +29,15 @@ export const ConfirmationModal = ({
     >
       <RiCloseLine />
     </IconButton>
-    <Flex direction="column" gap={3} justifyContent="center">
+    <div className="flex flex-col justify-center gap-3">
       <p className={classes.message}>
         {children || 'Are you sure you want to continue'}
       </p>
-      <Flex gap={4}>
+      <div className="flex gap-4">
         <Button onClick={onAccept}>Continue</Button>
         <Button onClick={onReject}>Cancel</Button>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   </Modal>
 )
 
