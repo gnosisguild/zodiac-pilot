@@ -100,11 +100,11 @@ const TransactionHeader = ({
   return (
     <div className="flex items-center justify-between">
       <label className="flex w-3/5 cursor-pointer items-center gap-2">
+        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
+
         <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
           {index + 1}
         </div>
-
-        <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
         <h5 className="flex items-center gap-2">
           {functionFragment
