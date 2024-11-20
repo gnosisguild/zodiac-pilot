@@ -6,22 +6,24 @@ import {
   removeAllRpcRedirectRules,
   updateRpcRedirectRules,
 } from './rpcRedirect'
+import { TrackRequestsResult } from './rpcTracking'
 import { updateSimulatingBadge } from './simulationTracking'
 import { Fork, ForkedSession, PilotSession } from './types'
 
 /** maps `windowId` to pilot session */
-const activePilotSessions = new Map<number, PilotSession>()
+const activePilotSessions = new Map<number, ActionablePilotSession>()
 
-type ActionablePilotSession = Readonly<PilotSession> & {
-  delete: () => void
+type ActionablePilotSession<S extends PilotSession = PilotSession> =
+  Readonly<S> & {
+    delete: () => void
 
-  isTracked: (tabId: number) => boolean
-  trackTab: (tabId: number) => void
-  untrackTab: (tabId: number) => void
+    isTracked: (tabId: number) => boolean
+    trackTab: (tabId: number) => void
+    untrackTab: (tabId: number) => void
 
-  createFork: (trackedRPCUrlsByTabId: Map<number, string[]>, fork: Fork) => Fork
-  clearFork: (trackedRPCUrlsByTabId: Map<number, string[]>) => void
-}
+    createFork: (fork: Fork) => Fork
+    clearFork: () => void
+  }
 
 type CallbackFn = (session: ActionablePilotSession) => void
 
@@ -32,7 +34,7 @@ export const withPilotSession = (windowId: number, callback: CallbackFn) => {
     return
   }
 
-  callback(makeActionable(session))
+  callback(session)
 }
 
 export const getPilotSession = (windowId: number): ActionablePilotSession => {
@@ -40,68 +42,106 @@ export const getPilotSession = (windowId: number): ActionablePilotSession => {
 
   invariant(session != null, `No session found for windowId "${windowId}"`)
 
-  return makeActionable(session)
+  return session
 }
 
 export const getOrCreatePilotSession = (
+  trackRequests: TrackRequestsResult,
   windowId: number
 ): ActionablePilotSession => {
-  let session = activePilotSessions.get(windowId)
+  const session = activePilotSessions.get(windowId)
 
   if (session == null) {
-    session = createPilotSession(windowId)
+    return createPilotSession(trackRequests, windowId)
   }
 
-  return makeActionable(session)
+  return session
 }
 
-const makeActionable = (session: PilotSession): ActionablePilotSession => ({
-  ...session,
-
-  isTracked: (tabId) => session.tabs.has(tabId),
-  trackTab: (tabId) => {
-    session.tabs.add(tabId)
-
-    updateCSPHeaderRule(session.tabs)
-
-    sendMessageToTab(tabId, {
-      type: PilotMessageType.PILOT_CONNECT,
-    } satisfies Message)
-  },
-  untrackTab: (tabId) => {
-    session.tabs.delete(tabId)
-
-    updateCSPHeaderRule(session.tabs)
-  },
-
-  delete: () => {
-    activePilotSessions.delete(session.id)
-
-    for (const tabId of session.tabs) {
-      updateSimulatingBadge({ windowId: session.id, isSimulating: false })
-
-      sendMessageToTab(tabId, {
-        type: PilotMessageType.PILOT_DISCONNECT,
-      })
+const makeActionable = (
+  pilotSession: PilotSession,
+  { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId }: TrackRequestsResult
+): ActionablePilotSession => {
+  const handleNewRPCEndpoint = () => {
+    if (actionableSession.fork == null) {
+      return
     }
 
-    removeCSPHeaderRule()
-    removeAllRpcRedirectRules()
-  },
+    updateRpcRedirectRules(
+      getForkedSessions(),
+      getTrackedRPCUrlsForChainId({ chainId: actionableSession.fork.chainId })
+    )
+  }
 
-  createFork: (trackedRPCUrls, fork) => {
-    session.fork = fork
+  const actionableSession: ActionablePilotSession = {
+    ...pilotSession,
 
-    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
+    isTracked: (tabId) => actionableSession.tabs.has(tabId),
+    trackTab: (tabId) => {
+      actionableSession.tabs.add(tabId)
 
-    return fork
-  },
-  clearFork: (trackedRPCUrls) => {
-    session.fork = null
+      updateCSPHeaderRule(actionableSession.tabs)
 
-    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
-  },
-})
+      sendMessageToTab(tabId, {
+        type: PilotMessageType.PILOT_CONNECT,
+      } satisfies Message)
+    },
+    untrackTab: (tabId) => {
+      actionableSession.tabs.delete(tabId)
+
+      updateCSPHeaderRule(actionableSession.tabs)
+    },
+
+    delete: () => {
+      activePilotSessions.delete(actionableSession.id)
+
+      for (const tabId of actionableSession.tabs) {
+        updateSimulatingBadge({
+          windowId: actionableSession.id,
+          isSimulating: false,
+        })
+
+        sendMessageToTab(tabId, {
+          type: PilotMessageType.PILOT_DISCONNECT,
+        })
+      }
+
+      removeCSPHeaderRule()
+      removeAllRpcRedirectRules()
+    },
+
+    createFork: (fork) => {
+      Object.assign(actionableSession, { fork })
+
+      updateRpcRedirectRules(
+        getForkedSessions(),
+        getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
+      )
+
+      onNewRPCEndpointDetected.addListener(handleNewRPCEndpoint)
+
+      return fork
+    },
+    clearFork: () => {
+      if (actionableSession.fork == null) {
+        return
+      }
+
+      const { chainId } = actionableSession.fork
+
+      Object.assign(actionableSession, { fork: null })
+
+      updateRpcRedirectRules(
+        getForkedSessions(),
+        getTrackedRPCUrlsForChainId({ chainId })
+      )
+
+      onNewRPCEndpointDetected.removeListener(handleNewRPCEndpoint)
+    },
+  }
+
+  return actionableSession
+}
 
 type IsTrackedTabOptions = {
   windowId?: number
@@ -125,6 +165,7 @@ export const isTrackedTab = ({ windowId, tabId }: IsTrackedTabOptions) => {
 }
 
 export const createPilotSession = (
+  trackRequests: TrackRequestsResult,
   windowId: number
 ): ActionablePilotSession => {
   const session = {
@@ -133,15 +174,18 @@ export const createPilotSession = (
     tabs: new Set<number>(),
   }
 
-  activePilotSessions.set(windowId, session)
+  const actionablePilotSession = makeActionable(session, trackRequests)
 
-  return makeActionable(session)
+  activePilotSessions.set(windowId, actionablePilotSession)
+
+  return actionablePilotSession
 }
 
 const getForkedSessions = (): ForkedSession[] =>
   Array.from(activePilotSessions.values()).filter(isForkedSession)
 
-const isForkedSession = (session: PilotSession): session is ForkedSession =>
-  session.fork != null
+const isForkedSession = (
+  session: PilotSession
+): session is ActionablePilotSession<ForkedSession> => session.fork != null
 
 export const clearAllSessions = () => activePilotSessions.clear()

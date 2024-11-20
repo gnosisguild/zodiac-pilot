@@ -11,47 +11,22 @@ type TrackingState = {
   rpcUrlsByTabId: Map<number, Set<string>>
 }
 
-const trackRequest =
-  (state: TrackingState) =>
-  ({
-    tabId,
-    url,
-    method,
-    requestBody,
-  }: chrome.webRequest.WebRequestBodyDetails) => {
-    const hasActiveSession = isTrackedTab({ tabId })
-
-    // only handle requests in tracked tabs
-    if (!hasActiveSession) {
-      return
-    }
-
-    // only consider POST requests
-    if (method !== 'POST') {
-      return
-    }
-
-    // ignore requests to fork RPCs
-    if (url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
-      return
-    }
-
-    // only consider requests with a JSON RPC body
-    if (!hasJsonRpcBody(requestBody)) {
-      return
-    }
-
-    detectNetworkOfRpcUrl(state, { url, tabId })
-  }
-
 type GetTrackedRPCUrlsForChainIdOptions = {
   chainId: ChainId
 }
+
+type Event<T> = {
+  addListener: (listener: T) => void
+  removeListener: (listener: T) => void
+}
+
+type NewRPCEndpointDetectedEventListener = () => void
 
 export type TrackRequestsResult = {
   getTrackedRPCUrlsForChainId: (
     options: GetTrackedRPCUrlsForChainIdOptions
   ) => Map<number, string[]>
+  onNewRPCEndpointDetected: Event<NewRPCEndpointDetectedEventListener>
 }
 
 export const trackRequests = (): TrackRequestsResult => {
@@ -61,8 +36,16 @@ export const trackRequests = (): TrackRequestsResult => {
     rpcUrlsByTabId: new Map(),
   }
 
+  const listeners = new Set<NewRPCEndpointDetectedEventListener>()
+
   chrome.webRequest.onBeforeRequest.addListener(
-    trackRequest(state),
+    (details) => {
+      trackRequest(state, details).then(({ newEndpoint }) => {
+        if (newEndpoint) {
+          listeners.forEach((listener) => listener())
+        }
+      })
+    },
     {
       urls: ['<all_urls>'],
       types: ['xmlhttprequest'],
@@ -77,7 +60,48 @@ export const trackRequests = (): TrackRequestsResult => {
   return {
     getTrackedRPCUrlsForChainId: ({ chainId }) =>
       getRPCUrlsByTabId(state, { chainId }),
+    onNewRPCEndpointDetected: {
+      addListener: (listener) => {
+        listeners.add(listener)
+      },
+      removeListener: (listener) => {
+        listeners.delete(listener)
+      },
+    },
   }
+}
+
+type TrackRequestResult = {
+  newEndpoint: boolean
+}
+
+const trackRequest = async (
+  state: TrackingState,
+  { tabId, url, method, requestBody }: chrome.webRequest.WebRequestBodyDetails
+): Promise<TrackRequestResult> => {
+  const hasActiveSession = isTrackedTab({ tabId })
+
+  // only handle requests in tracked tabs
+  if (!hasActiveSession) {
+    return { newEndpoint: false }
+  }
+
+  // only consider POST requests
+  if (method !== 'POST') {
+    return { newEndpoint: false }
+  }
+
+  // ignore requests to fork RPCs
+  if (url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
+    return { newEndpoint: false }
+  }
+
+  // only consider requests with a JSON RPC body
+  if (!hasJsonRpcBody(requestBody)) {
+    return { newEndpoint: false }
+  }
+
+  return detectNetworkOfRpcUrl(state, { url, tabId })
 }
 
 type GetRPCUrlsOptions = {
@@ -106,7 +130,7 @@ type DetectNetworkOfRPCOptions = {
 const detectNetworkOfRpcUrl = async (
   state: TrackingState,
   { url, tabId }: DetectNetworkOfRPCOptions
-) => {
+): Promise<TrackRequestResult> => {
   const { chainIdPromiseByRpcUrl, chainIdByRpcUrl } = state
 
   if (!chainIdPromiseByRpcUrl.has(url)) {
@@ -123,7 +147,7 @@ const detectNetworkOfRpcUrl = async (
       `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
     )
 
-    return
+    return { newEndpoint: false }
   }
 
   trackRPCUrl(state, { tabId, url })
@@ -133,6 +157,8 @@ const detectNetworkOfRpcUrl = async (
   console.debug(
     `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
   )
+
+  return { newEndpoint: true }
 }
 
 type TrackRPCUrlOptions = {
