@@ -53,14 +53,12 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
         <div className="flex justify-end gap-2">
           <BoxLink
             to={`/routes/${route.id}`}
-            className="bg-none px-4 py-1 before:content-none"
             onClick={(event) => event.stopPropagation()}
           >
             Edit
           </BoxLink>
 
           <BoxButton
-            className="bg-none px-4 py-1 before:content-none"
             disabled={!connected}
             onClick={async () => {
               // we continue working with the same avatar, so don't have to clear the recorded transaction
