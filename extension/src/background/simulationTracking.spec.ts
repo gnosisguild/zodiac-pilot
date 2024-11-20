@@ -17,7 +17,7 @@ describe('Simulation tracking', () => {
   beforeAll(() => {
     const trackRequestsResult = trackRequests()
     trackSessions(trackRequestsResult)
-    trackSimulations(trackRequestsResult)
+    trackSimulations()
   })
 
   beforeEach(() => {
@@ -99,7 +99,7 @@ describe('Simulation tracking', () => {
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
-      ).toHaveBeenCalledWith(
+      ).toHaveBeenLastCalledWith(
         expect.objectContaining({
           addRules: [
             {
@@ -118,6 +118,23 @@ describe('Simulation tracking', () => {
               },
             },
           ],
+        })
+      )
+    })
+
+    it('stops updating the redirect rules when the simulation stops', async () => {
+      await startPilotSession({ windowId: 1, tabId: 1 })
+      await startSimulation({ windowId: 1 })
+      await stopSimulation({ windowId: 1 })
+
+      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          addRules: [],
+          removeRuleIds: [1],
         })
       )
     })

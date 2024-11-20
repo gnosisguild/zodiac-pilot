@@ -1,11 +1,8 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { getPilotSession, withPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
-import { TrackRequestsResult } from './rpcTracking'
 
-export const trackSimulations = ({
-  getTrackedRPCUrlsForChainId,
-}: TrackRequestsResult) => {
+export const trackSimulations = () => {
   enableRPCDebugLogging()
 
   // track when a Pilot session is started for a window and when the simulation is started/stopped
@@ -39,9 +36,7 @@ export const trackSimulations = ({
             return
           }
 
-          session.clearFork(
-            getTrackedRPCUrlsForChainId({ chainId: session.fork.chainId })
-          )
+          session.clearFork()
 
           console.debug(
             `stop intercepting JSON RPC requests in window #${message.windowId}`

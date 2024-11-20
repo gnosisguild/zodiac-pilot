@@ -23,7 +23,7 @@ type ActionablePilotSession = Readonly<PilotSession> & {
   untrackTab: (tabId: number) => void
 
   createFork: (fork: Fork) => Fork
-  clearFork: (trackedRPCUrlsByTabId: Map<number, string[]>) => void
+  clearFork: () => void
 }
 
 type CallbackFn = (session: ActionablePilotSession) => void
@@ -62,63 +62,82 @@ export const getOrCreatePilotSession = (
 const makeActionable = ([
   session,
   { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId },
-]: Session): ActionablePilotSession => ({
-  ...session,
-
-  isTracked: (tabId) => session.tabs.has(tabId),
-  trackTab: (tabId) => {
-    session.tabs.add(tabId)
-
-    updateCSPHeaderRule(session.tabs)
-
-    sendMessageToTab(tabId, {
-      type: PilotMessageType.PILOT_CONNECT,
-    } satisfies Message)
-  },
-  untrackTab: (tabId) => {
-    session.tabs.delete(tabId)
-
-    updateCSPHeaderRule(session.tabs)
-  },
-
-  delete: () => {
-    activePilotSessions.delete(session.id)
-
-    for (const tabId of session.tabs) {
-      updateSimulatingBadge({ windowId: session.id, isSimulating: false })
-
-      sendMessageToTab(tabId, {
-        type: PilotMessageType.PILOT_DISCONNECT,
-      })
+]: Session): ActionablePilotSession => {
+  const handleNewRPCEndpoint = () => {
+    if (session.fork == null) {
+      return
     }
-
-    removeCSPHeaderRule()
-    removeAllRpcRedirectRules()
-  },
-
-  createFork: (fork) => {
-    session.fork = fork
 
     updateRpcRedirectRules(
       getForkedSessions(),
-      getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
+      getTrackedRPCUrlsForChainId({ chainId: session.fork.chainId })
     )
+  }
 
-    onNewRPCEndpointDetected.addListener(() => {
+  return {
+    ...session,
+
+    isTracked: (tabId) => session.tabs.has(tabId),
+    trackTab: (tabId) => {
+      session.tabs.add(tabId)
+
+      updateCSPHeaderRule(session.tabs)
+
+      sendMessageToTab(tabId, {
+        type: PilotMessageType.PILOT_CONNECT,
+      } satisfies Message)
+    },
+    untrackTab: (tabId) => {
+      session.tabs.delete(tabId)
+
+      updateCSPHeaderRule(session.tabs)
+    },
+
+    delete: () => {
+      activePilotSessions.delete(session.id)
+
+      for (const tabId of session.tabs) {
+        updateSimulatingBadge({ windowId: session.id, isSimulating: false })
+
+        sendMessageToTab(tabId, {
+          type: PilotMessageType.PILOT_DISCONNECT,
+        })
+      }
+
+      removeCSPHeaderRule()
+      removeAllRpcRedirectRules()
+    },
+
+    createFork: (fork) => {
+      session.fork = fork
+
       updateRpcRedirectRules(
         getForkedSessions(),
         getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
       )
-    })
 
-    return fork
-  },
-  clearFork: (trackedRPCUrls) => {
-    session.fork = null
+      onNewRPCEndpointDetected.addListener(handleNewRPCEndpoint)
 
-    updateRpcRedirectRules(getForkedSessions(), trackedRPCUrls)
-  },
-})
+      return fork
+    },
+    clearFork: () => {
+      if (session.fork == null) {
+        return
+      }
+
+      const { chainId } = session.fork
+
+      Object.assign(session, { fork: null })
+
+      updateRpcRedirectRules(
+        getForkedSessions(),
+        getTrackedRPCUrlsForChainId({ chainId })
+      )
+
+      onNewRPCEndpointDetected.removeListener(handleNewRPCEndpoint)
+    },
+  }
+}
 
 type IsTrackedTabOptions = {
   windowId?: number
