@@ -6,9 +6,13 @@ import { ProviderLogo } from '../providerLogo'
 
 type InjectedWalletProps = {
   onConnect: (chainId: ChainId, account: string) => void
+  onError: () => void
 }
 
-export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
+export const InjectedWalletConnect = ({
+  onConnect,
+  onError,
+}: InjectedWalletProps) => {
   const injectedWallet = useInjectedWallet()
 
   if (injectedWallet.provider == null) {
@@ -20,11 +24,17 @@ export const InjectedWalletConnect = ({ onConnect }: InjectedWalletProps) => {
       fluid
       disabled={injectedWallet.connected === false || injectedWallet.connecting}
       onClick={async () => {
-        const { chainId, accounts } = await injectedWallet.connect({
+        const connectResult = await injectedWallet.connect({
           force: true,
         })
 
-        onConnect(chainId as ChainId, accounts[0])
+        if (connectResult == null) {
+          onError()
+        } else {
+          const { chainId, accounts } = connectResult
+
+          onConnect(chainId, accounts[0])
+        }
       }}
     >
       <ProviderLogo providerType={ProviderType.InjectedWallet} />

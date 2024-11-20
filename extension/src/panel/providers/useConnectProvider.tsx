@@ -20,12 +20,22 @@ const getProvider = (windowId: number) => {
   return providerRef.current
 }
 
+type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
+
+type ConnectResult = { chainId: ChainId; accounts: string[] }
+
+export type ConnectFn = (options?: {
+  force?: boolean
+}) => Promise<ConnectResult | undefined>
+
 export const useConnectProvider = () => {
   const provider = getProvider(useWindowId())
   const [accounts, setAccounts] = useState<string[]>([])
-  const [chainId, setChainId] = useState<number | null>(null)
+  const [chainId, setChainId] = useState<ChainId | null>(null)
   const [ready, setReady] = useState(false)
   const [connecting, setConnecting] = useState(false)
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>('disconnected')
 
   useEffect(() => {
     let canceled = false
@@ -44,7 +54,7 @@ export const useConnectProvider = () => {
     const handleChainChanged = ifNotCanceled((chainIdHex: string) => {
       const chainId = parseInt(chainIdHex.slice(2), 16)
 
-      setChainId(chainId)
+      setChainId(chainId as unknown as ChainId)
     })
 
     const handleDisconnect = ifNotCanceled((error: Error) => {
@@ -73,17 +83,25 @@ export const useConnectProvider = () => {
   }, [provider])
 
   const connect = useCallback(
-    async ({ force }: { force?: boolean } = {}) => {
+    async ({ force }: { force?: boolean } = {}): Promise<
+      ConnectResult | undefined
+    > => {
       setConnecting(true)
+      setConnectionStatus('connecting')
 
       try {
-        const { accounts, chainId: chainIdBigInt } =
-          await connectInjectedWallet({ force }, provider)
+        const { accounts, chainId } = await connectInjectedWallet(
+          { force },
+          provider
+        )
 
-        const chainId = Number(chainIdBigInt)
         setAccounts(accounts)
         setChainId(chainId)
+        setConnectionStatus('connected')
+
         return { accounts, chainId }
+      } catch (e) {
+        setConnectionStatus('error')
       } finally {
         setConnecting(false)
       }
@@ -95,6 +113,7 @@ export const useConnectProvider = () => {
     provider,
     ready,
     connect,
+    connectionStatus,
     connecting,
     switchChain: (chainId: ChainId) => switchChain(provider, chainId),
     accounts,
@@ -107,7 +126,7 @@ interface InjectedWalletError extends Error {
 }
 
 const connectInjectedWallet = memoWhilePending(
-  async (provider: ConnectProvider) => {
+  async (provider: ConnectProvider): Promise<ConnectResult> => {
     const browserProvider = new BrowserProvider(provider)
 
     const accountsPromise = browserProvider
@@ -133,12 +152,12 @@ const connectInjectedWallet = memoWhilePending(
         throw err
       })
 
-    const [accounts, chainId] = await Promise.all([
+    const [accounts, chainIdBigInt] = await Promise.all([
       accountsPromise,
       browserProvider.getNetwork().then((network) => network.chainId),
     ])
 
-    return { accounts, chainId }
+    return { accounts, chainId: Number(chainIdBigInt) as unknown as ChainId }
   }
 )
 

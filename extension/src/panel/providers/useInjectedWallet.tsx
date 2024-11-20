@@ -2,13 +2,11 @@ import { invariant } from '@epic-web/invariant'
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../../types'
-import { useConnectProvider } from './useConnectProvider'
+import { ConnectFn, useConnectProvider } from './useConnectProvider'
 
 export interface InjectedWalletContextT {
   provider: Eip1193Provider
-  connect: (options?: {
-    force?: boolean
-  }) => Promise<{ chainId: number; accounts: string[] }>
+  connect: ConnectFn
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
