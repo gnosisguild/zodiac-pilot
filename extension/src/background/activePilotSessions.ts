@@ -59,7 +59,7 @@ export const getOrCreatePilotSession = (
 }
 
 const makeActionable = (
-  session: PilotSession,
+  pilotSession: PilotSession,
   { onNewRPCEndpointDetected, getTrackedRPCUrlsForChainId }: TrackRequestsResult
 ): ActionablePilotSession => {
   const handleNewRPCEndpoint = () => {
@@ -73,30 +73,33 @@ const makeActionable = (
     )
   }
 
-  const actionableSession = {
-    ...session,
+  const actionableSession: ActionablePilotSession = {
+    ...pilotSession,
 
-    isTracked: (tabId) => session.tabs.has(tabId),
+    isTracked: (tabId) => actionableSession.tabs.has(tabId),
     trackTab: (tabId) => {
-      session.tabs.add(tabId)
+      actionableSession.tabs.add(tabId)
 
-      updateCSPHeaderRule(session.tabs)
+      updateCSPHeaderRule(actionableSession.tabs)
 
       sendMessageToTab(tabId, {
         type: PilotMessageType.PILOT_CONNECT,
       } satisfies Message)
     },
     untrackTab: (tabId) => {
-      session.tabs.delete(tabId)
+      actionableSession.tabs.delete(tabId)
 
-      updateCSPHeaderRule(session.tabs)
+      updateCSPHeaderRule(actionableSession.tabs)
     },
 
     delete: () => {
-      activePilotSessions.delete(session.id)
+      activePilotSessions.delete(actionableSession.id)
 
-      for (const tabId of session.tabs) {
-        updateSimulatingBadge({ windowId: session.id, isSimulating: false })
+      for (const tabId of actionableSession.tabs) {
+        updateSimulatingBadge({
+          windowId: actionableSession.id,
+          isSimulating: false,
+        })
 
         sendMessageToTab(tabId, {
           type: PilotMessageType.PILOT_DISCONNECT,
@@ -108,7 +111,7 @@ const makeActionable = (
     },
 
     createFork: (fork) => {
-      actionableSession.fork = fork
+      Object.assign(actionableSession, { fork })
 
       updateRpcRedirectRules(
         getForkedSessions(),
@@ -135,7 +138,7 @@ const makeActionable = (
 
       onNewRPCEndpointDetected.removeListener(handleNewRPCEndpoint)
     },
-  } satisfies ActionablePilotSession
+  }
 
   return actionableSession
 }
