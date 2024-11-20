@@ -57,14 +57,14 @@ export const RouteBubble = () => {
                     </div>
                   )}
                   {connection.moduleAddress && (
-                    <div className="-ml-4 rounded-full border-2 border-slate-900">
+                    <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
                       <Blockie
                         address={connection.moduleAddress}
                         className="h-full"
                       />
                     </div>
                   )}
-                  <div className="-ml-4 rounded-full border-2 border-slate-900">
+                  <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
                     <Blockie
                       address={connection.avatarAddress}
                       className="h-full"
