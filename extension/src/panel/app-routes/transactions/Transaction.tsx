@@ -50,6 +50,7 @@ export const Transaction = ({
         onExpandToggle={() => setExpanded(!expanded)}
         showRoles={showRoles}
       />
+
       {expanded && (
         <div className="flex flex-col gap-3 text-sm">
           <Box bg p={2} className="flex justify-between gap-4">

@@ -2,8 +2,8 @@ import { EXPLORER_URL } from '@/chains'
 import { BlockLink, Circle, RawAddress } from '@/components'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
+import { SquareArrowOutUpRight } from 'lucide-react'
 import { useMemo } from 'react'
-import { RiExternalLinkLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { ContractInfo } from '../../../utils/abi'
 
@@ -49,7 +49,7 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
             title="Show in block explorer"
             rel="noreferrer"
           >
-            <RiExternalLinkLine className="size-4" />
+            <SquareArrowOutUpRight size={16} />
           </BlockLink>
         </div>
       </div>

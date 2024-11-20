@@ -1,7 +1,7 @@
 import { IconButton } from '@/components'
 import { ForkProvider, useProvider } from '@/providers'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import { Trash2 } from 'lucide-react'
 
 type Props = {
   transactionState: TransactionState
@@ -47,7 +47,7 @@ export const Remove = ({ transactionState, index }: Props) => {
 
   return (
     <IconButton onClick={handleRemove} title="Remove transaction">
-      <RiDeleteBinLine />
+      <Trash2 size={16} />
     </IconButton>
   )
 }

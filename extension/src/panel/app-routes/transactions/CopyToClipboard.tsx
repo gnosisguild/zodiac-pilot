@@ -1,6 +1,6 @@
 import { IconButton } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { RiFileCopy2Line } from 'react-icons/ri'
+import { Copy } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 interface Props {
@@ -21,7 +21,7 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
         className="flex items-center gap-1 text-xs opacity-75"
       >
         Copy data
-        <RiFileCopy2Line className="size-4" />
+        <Copy size={16} />
       </button>
     )
   }
@@ -31,7 +31,7 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
       onClick={copyToClipboard}
       title="Copy transaction data to clipboard"
     >
-      <RiFileCopy2Line />
+      <Copy size={16} />
     </IconButton>
   )
 }

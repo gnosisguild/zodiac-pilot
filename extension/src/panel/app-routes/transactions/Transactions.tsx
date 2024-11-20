@@ -3,8 +3,8 @@ import { ForkProvider, useProvider } from '@/providers'
 import { useDispatch, useTransactions } from '@/state'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
+import { Copy, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { RiFileCopy2Line, RiRefreshLine } from 'react-icons/ri'
 import { toast } from 'react-toastify'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
@@ -76,7 +76,7 @@ export const Transactions = () => {
               disabled={transactions.length === 0}
               onClick={copyTransactionData}
             >
-              <RiFileCopy2Line />
+              <Copy size={16} />
             </IconButton>
 
             <IconButton
@@ -84,7 +84,7 @@ export const Transactions = () => {
               disabled={transactions.length === 0}
               onClick={reforkAndRerun}
             >
-              <RiRefreshLine />
+              <RefreshCcw size={16} />
             </IconButton>
 
             <RecordingIcon />
