@@ -15,15 +15,18 @@ type GetTrackedRPCUrlsForChainIdOptions = {
   chainId: ChainId
 }
 
+type Event<T> = {
+  addListener: (listener: T) => void
+  removeListener: (listener: T) => void
+}
+
 type NewRPCEndpointDetectedEventListener = () => void
 
 export type TrackRequestsResult = {
   getTrackedRPCUrlsForChainId: (
     options: GetTrackedRPCUrlsForChainIdOptions
   ) => Map<number, string[]>
-  onNewRPCEndpointDetected: (
-    listener: NewRPCEndpointDetectedEventListener
-  ) => void
+  onNewRPCEndpointDetected: Event<NewRPCEndpointDetectedEventListener>
 }
 
 export const trackRequests = (): TrackRequestsResult => {
@@ -57,8 +60,13 @@ export const trackRequests = (): TrackRequestsResult => {
   return {
     getTrackedRPCUrlsForChainId: ({ chainId }) =>
       getRPCUrlsByTabId(state, { chainId }),
-    onNewRPCEndpointDetected: (listener) => {
-      listeners.add(listener)
+    onNewRPCEndpointDetected: {
+      addListener: (listener) => {
+        listeners.add(listener)
+      },
+      removeListener: (listener) => {
+        listeners.delete(listener)
+      },
     },
   }
 }

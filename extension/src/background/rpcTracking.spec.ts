@@ -15,7 +15,7 @@ describe('RPC Tracking', () => {
 
     const handler = vi.fn()
 
-    onNewRPCEndpointDetected(handler)
+    onNewRPCEndpointDetected.addListener(handler)
 
     await mockRPCRequest({
       chainId: 1,
@@ -24,5 +24,24 @@ describe('RPC Tracking', () => {
     })
 
     expect(handler).toHaveBeenCalled()
+  })
+
+  it('is possible to stop getting notified', async () => {
+    await startPilotSession({ windowId: 1, tabId: 1 })
+
+    const { onNewRPCEndpointDetected } = trackRequests()
+
+    const handler = vi.fn()
+
+    onNewRPCEndpointDetected.addListener(handler)
+    onNewRPCEndpointDetected.removeListener(handler)
+
+    await mockRPCRequest({
+      chainId: 1,
+      tabId: 1,
+      url: 'http://test-json-rpc.com',
+    })
+
+    expect(handler).not.toHaveBeenCalled()
   })
 })
