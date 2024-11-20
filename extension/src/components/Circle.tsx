@@ -1,7 +1,21 @@
+import classNames from 'classnames'
 import { PropsWithChildren } from 'react'
 
-export const Circle = ({ children }: PropsWithChildren) => (
-  <div className="relative flex size-12 flex-shrink-0 items-center justify-center rounded-full border border-zodiac-dark-green">
+type CircleProps = {
+  size?: 'sm' | 'base'
+}
+
+export const Circle = ({
+  children,
+  size = 'base',
+}: PropsWithChildren<CircleProps>) => (
+  <div
+    className={classNames(
+      'relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-zodiac-dark-green',
+      size === 'base' && 'size-12',
+      size === 'sm' && 'size-8'
+    )}
+  >
     {children}
   </div>
 )

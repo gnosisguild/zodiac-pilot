@@ -1,7 +1,8 @@
 import { Button, Divider } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
+import { ChevronLeft } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Route } from './Route'
 
 export const ListRoutes = () => {
@@ -10,37 +11,47 @@ export const ListRoutes = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-1 flex-col gap-4 px-6 py-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl">Pilot Routes</h2>
-
-        <Button
-          onClick={() => {
-            const newRouteId = nanoid()
-            navigate('/routes/' + newRouteId)
-          }}
-          className="px-6 py-1"
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-col gap-1 p-4">
+        <Link
+          className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
+          to="/"
         >
-          Add Route
-        </Button>
+          <ChevronLeft size={16} /> Transactions
+        </Link>
+
+        <h2 className="text-xl">Pilot Routes</h2>
       </div>
 
       <Divider />
 
-      {routes.map((route) => (
-        <Route
-          key={route.id}
-          route={route}
-          onLaunch={(routeId) => {
-            selectRoute(routeId)
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+        {routes.map((route) => (
+          <Route
+            key={route.id}
+            route={route}
+            onLaunch={(routeId) => {
+              selectRoute(routeId)
 
-            navigate('/')
+              navigate('/')
+            }}
+          />
+        ))}
+      </div>
+
+      <Divider />
+
+      <div className="flex p-4">
+        <Button
+          fluid
+          onClick={() => {
+            const newRouteId = nanoid()
+            navigate('/routes/' + newRouteId)
           }}
-          onModify={(routeId) => {
-            navigate('/routes/' + routeId)
-          }}
-        />
-      ))}
+        >
+          Add Route
+        </Button>
+      </div>
     </div>
   )
 }

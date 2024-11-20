@@ -1,8 +1,7 @@
 import { IconButton } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { RiFileCopy2Line } from 'react-icons/ri'
+import { Copy } from 'lucide-react'
 import { toast } from 'react-toastify'
-import classes from './style.module.css'
 
 interface Props {
   transaction: MetaTransactionData
@@ -17,19 +16,22 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
 
   if (labeled) {
     return (
-      <button onClick={copyToClipboard} className={classes.link}>
+      <button
+        onClick={copyToClipboard}
+        className="flex items-center gap-1 text-xs opacity-75"
+      >
         Copy data
-        <RiFileCopy2Line />
+        <Copy size={16} />
       </button>
     )
-  } else {
-    return (
-      <IconButton
-        onClick={copyToClipboard}
-        title="Copy transaction data to clipboard"
-      >
-        <RiFileCopy2Line />
-      </IconButton>
-    )
   }
+
+  return (
+    <IconButton
+      onClick={copyToClipboard}
+      title="Copy transaction data to clipboard"
+    >
+      <Copy size={16} />
+    </IconButton>
+  )
 }

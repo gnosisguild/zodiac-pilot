@@ -1,34 +1,22 @@
 import { EXPLORER_URL } from '@/chains'
-import { BlockLink, Box, Flex, IconButton, RawAddress } from '@/components'
-import copy from 'copy-to-clipboard'
+import { BlockLink, Circle, RawAddress } from '@/components'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
+import { SquareArrowOutUpRight } from 'lucide-react'
 import { useMemo } from 'react'
-import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
 import { ChainId } from 'ser-kit'
 import { ContractInfo } from '../../../utils/abi'
-import classes from './style.module.css'
 
 interface Props {
   chainId: ChainId
   address: string
   contractInfo?: ContractInfo
-  explorerLink?: boolean
-  copyToClipboard?: boolean
-  className?: string
 }
 
 const VISIBLE_START = 4
 const VISIBLE_END = 4
 
-export const ContractAddress = ({
-  chainId,
-  address,
-  contractInfo,
-  explorerLink,
-  copyToClipboard,
-  className,
-}: Props) => {
+export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
   const explorerUrl = EXPLORER_URL[chainId]
 
   const blockie = useMemo(() => address && makeBlockie(address), [address])
@@ -39,45 +27,32 @@ export const ContractAddress = ({
   const displayAddress = `${start}...${end}`
 
   return (
-    <Flex
-      gap={2}
-      alignItems="center"
-      justifyContent="start"
-      className={className}
-    >
-      <Box p={1} rounded className={classes.blockies}>
+    <div className="flex items-center gap-2">
+      <Circle size="sm">
         <img src={blockie} alt={address} />
-      </Box>
+      </Circle>
 
-      {contractInfo?.name && (
-        <div className={classes.contractName}>{contractInfo?.name}</div>
-      )}
-
-      <Flex gap={1} alignItems="center" className={classes.addressContainer}>
-        <RawAddress>{displayAddress}</RawAddress>
-
-        {copyToClipboard && (
-          <IconButton
-            title="Copy to clipboard"
-            onClick={() => {
-              copy(address)
-            }}
-          >
-            <RiFileCopyLine />
-          </IconButton>
+      <div className="flex flex-col gap-2">
+        {contractInfo?.name && (
+          <div className="flex flex-shrink-0 gap-1 text-xs font-bold">
+            Contract
+            <span className="font-normal">({contractInfo.name})</span>
+          </div>
         )}
-        {explorerLink && (
+
+        <div className="flex items-center gap-2 text-xs">
+          <RawAddress>{displayAddress}</RawAddress>
+
           <BlockLink
             href={`${explorerUrl}/search?q=${address}`}
             target="_blank"
-            className={classes.link}
             title="Show in block explorer"
             rel="noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
           </BlockLink>
-        )}
-      </Flex>
-    </Flex>
+        </div>
+      </div>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Alert } from '@/components'
+import { Warning } from '@/components'
 import { MODULE_NAMES } from '../../../const'
 import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
 import { SupportedModuleType } from '../../integrations/zodiac/types'
@@ -48,9 +48,9 @@ export const ZodiacMod = ({
   return (
     <div className="flex flex-col gap-4">
       {!isValidSafe && (
-        <Alert title="Selected safe is not valid">
+        <Warning title="Selected safe is not valid">
           Please select a valid safe to be able to select a mod.
-        </Alert>
+        </Warning>
       )}
 
       <ModSelect

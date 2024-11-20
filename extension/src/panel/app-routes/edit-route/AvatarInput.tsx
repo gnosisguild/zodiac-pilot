@@ -1,4 +1,10 @@
-import { Blockie, Circle, RawAddress, selectStyles } from '@/components'
+import {
+  Blockie,
+  Circle,
+  RawAddress,
+  selectStyles,
+  TextInput,
+} from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import { CSSProperties, useEffect, useState } from 'react'
@@ -91,8 +97,8 @@ export const AvatarInput = ({
           }}
         />
       ) : (
-        <input
-          type="text"
+        <TextInput
+          label="Piloted Safe"
           value={pendingValue}
           placeholder="Paste in Safe address"
           onChange={(ev) => {

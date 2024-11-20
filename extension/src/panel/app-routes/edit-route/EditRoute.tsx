@@ -1,10 +1,10 @@
-import { Box, Divider, Section, TextInput } from '@/components'
+import { Box, Divider, Error, Section, TextInput } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
+import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
-import { RiArrowLeftSLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { useSafesWithOwner } from '../../integrations/safe'
 import {
@@ -70,46 +70,23 @@ export const EditRoute = () => {
 
   return (
     <>
-      <div className="relative flex flex-1 flex-col gap-4 px-6 pb-8 pt-6">
-        <div className="flex flex-col gap-1">
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-col gap-1 p-4">
           <Link
             className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
             to="/routes"
           >
-            <RiArrowLeftSLine /> All Connections
+            <ChevronLeft size={16} /> All routes
           </Link>
 
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-2xl">
-              {currentRouteState.label || 'New connection'}
-            </h2>
-
-            <div className="flex items-center gap-4">
-              <LaunchButton
-                disabled={!avatarAddress}
-                initialRouteState={initialRouteState}
-                currentRouteState={currentRouteState}
-                onNeedConfirmationToClearTransactions={confirmClearTransactions}
-              />
-
-              <RemoveButton />
-            </div>
-          </div>
+          <h2 className="text-xl">
+            {currentRouteState.label || 'New connection'}
+          </h2>
         </div>
 
         <Divider />
 
-        <div className="flex flex-col gap-4">
-          {error && (
-            <Box double p={3}>
-              <div className={classes.errorInfo}>
-                <p>There seems to be a problem with this connection:</p>
-                <Box p={3} className={classes.error}>
-                  {error}
-                </Box>
-              </div>
-            </Box>
-          )}
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           <Section>
             <TextInput
               label="Route label"
@@ -146,7 +123,7 @@ export const EditRoute = () => {
             />
           </Section>
 
-          <Section title="Piloted Safe">
+          <Section title={safes.length > 0 ? 'Piloted Safe' : undefined}>
             <AvatarInput
               availableSafes={safes}
               value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
@@ -257,7 +234,29 @@ export const EditRoute = () => {
             </Section>
           )}
         </div>
+
+        <Divider />
+
+        <div className="flex flex-col gap-4 p-4">
+          {error && (
+            <Error title="There is a problem with this connection">
+              {error}
+            </Error>
+          )}
+
+          <div className="flex items-center justify-between gap-4">
+            <RemoveButton />
+
+            <LaunchButton
+              disabled={!avatarAddress}
+              initialRouteState={initialRouteState}
+              currentRouteState={currentRouteState}
+              onNeedConfirmationToClearTransactions={confirmClearTransactions}
+            />
+          </div>
+        </div>
       </div>
+
       <ConfirmationModal />
     </>
   )

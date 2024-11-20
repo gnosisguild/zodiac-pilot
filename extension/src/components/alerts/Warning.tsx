@@ -1,10 +1,10 @@
 import { PropsWithChildren, useId } from 'react'
 
-type AlertProps = PropsWithChildren<{
+type WarningProps = PropsWithChildren<{
   title?: string
 }>
 
-export const Alert = ({ children, title }: AlertProps) => {
+export const Warning = ({ children, title }: WarningProps) => {
   const titleId = useId()
   const descriptionId = useId()
 
@@ -13,7 +13,7 @@ export const Alert = ({ children, title }: AlertProps) => {
       role="alert"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
-      className="flex flex-col gap-2 rounded border border-yellow-600 bg-yellow-900 px-4 py-2"
+      className="flex flex-col gap-2 rounded bg-yellow-800 px-4 py-2 text-white shadow-md"
     >
       {title && (
         <h4 id={titleId} className="font-bold">

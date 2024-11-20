@@ -34,6 +34,6 @@ export const ChainSelect = ({ value, onChange }: Props) => (
 
 const ChainOptionLabel = ({ value, label }: Option) => (
   <div className="flex items-center gap-4 py-3">
-    <div className="pl-1 font-spectral">{label || `#${value}`}</div>
+    <div className="pl-1">{label || `#${value}`}</div>
   </div>
 )

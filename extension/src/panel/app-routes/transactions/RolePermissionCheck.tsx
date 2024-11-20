@@ -5,8 +5,8 @@ import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
+import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { RiGroupLine } from 'react-icons/ri'
 import {
   ExecutionActionType,
   parsePrefixedAddress,
@@ -117,29 +117,29 @@ export const RolePermissionCheck = ({
     return (
       <>
         {error === false ? (
-          <Tag head={<RiGroupLine />} color="success"></Tag>
+          <Tag head={<UsersRound size={16} />} color="success"></Tag>
         ) : (
-          <Tag head={<RiGroupLine />} color="danger"></Tag>
+          <Tag head={<UsersRound size={16} />} color="danger"></Tag>
         )}
       </>
     )
   }
 
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2 py-1">
-        <div className="w-32">Role permissions</div>
-
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        Role permissions
         {error === false ? (
-          <Tag head={<RiGroupLine />} color="success">
+          <Tag head={<Check size={16} />} color="success">
             Allowed
           </Tag>
         ) : (
-          <Tag head={<RiGroupLine />} color="danger">
+          <Tag head={<TriangleAlert size={16} />} color="danger">
             {error}
           </Tag>
         )}
       </div>
+
       {error && !!translationAvailable && (
         <Translate transactionState={transactionState} index={index} labeled />
       )}
