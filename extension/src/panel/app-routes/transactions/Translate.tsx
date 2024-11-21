@@ -1,9 +1,10 @@
 import { IconButton } from '@/components'
-import { ForkProvider, useProvider } from '@/providers'
+import { ForkProvider } from '@/providers'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { BiWrench } from 'react-icons/bi'
 import { useApplicableTranslation } from '../../transactionTranslations'
 
+import { useProvider } from '@/providers-ui'
 import classes from './style.module.css'
 
 type Props = {

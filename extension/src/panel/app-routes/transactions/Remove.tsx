@@ -1,5 +1,6 @@
 import { IconButton } from '@/components'
-import { ForkProvider, useProvider } from '@/providers'
+import { ForkProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { Trash2 } from 'lucide-react'
 

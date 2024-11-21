@@ -1,5 +1,6 @@
 import { ProvideBridgeContext } from '@/bridge'
-import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
+import { ProvideInjectedWallet } from '@/providers'
+import { ProvideProvider } from '@/providers-ui'
 import { ProvideState } from '@/state'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { PropsWithChildren } from 'react'

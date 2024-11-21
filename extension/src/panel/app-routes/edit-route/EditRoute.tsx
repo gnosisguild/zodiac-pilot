@@ -6,7 +6,6 @@ import { ZeroAddress } from 'ethers'
 import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useSafesWithOwner } from '../../integrations/safe'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -25,6 +24,7 @@ import { RemoveButton } from './RemoveButton'
 import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
+import { useSafesWithOwner } from './useSafesWithOwner'
 import { ConnectWallet } from './wallet'
 import { ZodiacMod } from './ZodiacMod'
 

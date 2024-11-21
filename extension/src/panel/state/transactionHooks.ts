@@ -1,9 +1,7 @@
+import { ForkProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { useCallback } from 'react'
-
-import { ForkProvider } from '../providers'
-import { useProvider } from '../providers/ProvideProvider'
-
-import { useDispatch, useTransactions } from '.'
+import { useDispatch, useTransactions } from './provideState'
 
 export const useClearTransactions = () => {
   const transactions = useTransactions()

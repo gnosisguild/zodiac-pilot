@@ -2,7 +2,7 @@
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideBridgeContext } from '@/bridge'
 import { ZodiacToastContainer } from '@/components'
-import { ProvideInjectedWallet, ProvideProvider } from '@/providers'
+import { ProvideInjectedWallet } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
@@ -11,6 +11,7 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import '../global.css'
 import { routes } from './app-routes'
+import { ProvideProvider } from './providers-ui'
 import { ProvideState } from './state'
 import { usePilotPort } from './usePilotPort'
 
