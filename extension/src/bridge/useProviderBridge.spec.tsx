@@ -13,7 +13,7 @@ import { cleanup, waitFor } from '@testing-library/react'
 import { toQuantity } from 'ethers'
 import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProvideBridgeContext } from './BridgeContext'
 import { useProviderBridge } from './useProviderBridge'
 
@@ -25,15 +25,12 @@ describe('Bridge', () => {
   afterEach(cleanup)
 
   describe('Provider handling', () => {
-    beforeEach(() => {
-      mockActiveTab({ windowId: 1 })
-    })
-
     it('relays requests to the provider', async () => {
       const provider = new MockProvider()
 
       await renderHook(() => useProviderBridge({ provider }), {
         wrapper: Wrapper,
+        activeTab: mockActiveTab({ windowId: 1 }),
       })
 
       const request = { method: 'eth_chainId' }
@@ -61,6 +58,7 @@ describe('Bridge', () => {
 
       await renderHook(() => useProviderBridge({ provider }), {
         wrapper: Wrapper,
+        activeTab: mockActiveTab({ windowId: 1 }),
       })
 
       const request = { method: 'eth_chainId' }
@@ -94,6 +92,7 @@ describe('Bridge', () => {
 
       await renderHook(() => useProviderBridge({ provider }), {
         wrapper: Wrapper,
+        activeTab: mockActiveTab({ windowId: 1 }),
       })
 
       const request = { method: 'eth_chainId' }
@@ -127,7 +126,11 @@ describe('Bridge', () => {
       const { rerender } = await renderHook(
         ({ provider }: { provider: Eip1193Provider }) =>
           useProviderBridge({ provider }),
-        { initialProps: { provider: providerA }, wrapper: Wrapper }
+        {
+          initialProps: { provider: providerA },
+          wrapper: Wrapper,
+          activeTab: mockActiveTab({ windowId: 1 }),
+        }
       )
 
       rerender({ provider: providerB })
@@ -156,7 +159,7 @@ describe('Bridge', () => {
 
       await renderHook(
         () => useProviderBridge({ provider, account: ZERO_ADDRESS }),
-        { wrapper: Wrapper }
+        { wrapper: Wrapper, activeTab: tab }
       )
 
       await waitFor(() => {
@@ -169,8 +172,6 @@ describe('Bridge', () => {
     })
 
     it('does not emit an "accountsChanged" event when there is no account on the first render', async () => {
-      mockActiveTab()
-
       await renderHook(() => useProviderBridge({ provider }), {
         wrapper: Wrapper,
       })
@@ -187,6 +188,7 @@ describe('Bridge', () => {
       >(({ account }) => useProviderBridge({ provider, account }), {
         initialProps: { account: ZERO_ADDRESS },
         wrapper: Wrapper,
+        activeTab: tab,
       })
 
       rerender({ account: undefined })
@@ -209,6 +211,7 @@ describe('Bridge', () => {
 
       await renderHook(() => useProviderBridge({ provider, chainId: 1 }), {
         wrapper: Wrapper,
+        activeTab: tab,
       })
 
       await waitFor(() => {
@@ -225,7 +228,7 @@ describe('Bridge', () => {
 
       const { rerender } = await renderHook<void, { chainId: ChainId }>(
         ({ chainId }) => useProviderBridge({ provider, chainId }),
-        { initialProps: { chainId: 1 }, wrapper: Wrapper }
+        { initialProps: { chainId: 1 }, wrapper: Wrapper, activeTab: tab }
       )
 
       rerender({ chainId: 10 })
