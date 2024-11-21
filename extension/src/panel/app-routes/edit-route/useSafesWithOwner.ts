@@ -1,9 +1,9 @@
 import { getChainId } from '@/chains'
+import { initSafeApiKit } from '@/safe'
 import { validateAddress } from '@/utils'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
-import { initSafeApiKit } from './kits'
 
 export const useSafesWithOwner = (
   ownerAddress: string,
