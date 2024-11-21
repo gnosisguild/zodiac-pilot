@@ -1,16 +1,20 @@
 import classNames from 'classnames'
+import { LucideIcon } from 'lucide-react'
 import { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router-dom'
 
 export type BaseButtonProps = ComponentPropsWithoutRef<'button'> & {
   fluid?: boolean
   iconOnly?: boolean
+  icon?: LucideIcon
 }
 
 export const BaseButton = ({
   className,
   fluid = false,
   iconOnly = false,
+  icon: Icon,
+  children,
   ...props
 }: BaseButtonProps) => (
   <button
@@ -21,7 +25,11 @@ export const BaseButton = ({
       iconOnly ? 'p-2' : 'px-4 py-2',
       className
     )}
-  />
+  >
+    {Icon && <Icon size={20} />}
+
+    {iconOnly ? <span className="sr-only">{children}</span> : children}
+  </button>
 )
 
 export type BaseLinkButtonProps = ComponentPropsWithoutRef<typeof Link> & {
