@@ -1,10 +1,11 @@
 import { Warning } from '@/components'
 import { MODULE_NAMES } from '../../../const'
-import { useSafeDelegates, useSafesWithOwner } from '../../integrations/safe'
+import { useSafesWithOwner } from '../../integrations/safe'
 import { SupportedModuleType } from '../../integrations/zodiac/types'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { useRouteId } from './useRouteId'
+import { useSafeDelegates } from './useSafeDelegates'
 
 type Value = {
   moduleType: SupportedModuleType
