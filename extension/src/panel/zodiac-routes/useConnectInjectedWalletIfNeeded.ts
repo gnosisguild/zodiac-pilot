@@ -3,11 +3,12 @@ import { ProviderType, ZodiacRoute } from '@/types'
 import { useEffect } from 'react'
 
 export const useConnectInjectedWalletIfNeeded = (route: ZodiacRoute) => {
-  const { chainId, connect, connectionStatus } = useInjectedWallet()
+  const { chainId, connect, connectionStatus, ready } = useInjectedWallet()
 
   const mustConnectInjectedWallet =
     route.providerType === ProviderType.InjectedWallet &&
     !chainId &&
+    ready &&
     connectionStatus === 'disconnected'
 
   // only use computed properties in here

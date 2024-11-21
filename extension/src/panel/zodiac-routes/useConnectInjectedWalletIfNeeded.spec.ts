@@ -44,4 +44,27 @@ describe('Connect injected wallet if needed', async () => {
 
     expect(connect).not.toHaveBeenCalled()
   })
+
+  it('does not connect the injected wallet when the connection is not ready', async () => {
+    const connect = vi.fn()
+
+    const route = createMockRoute({ providerType: ProviderType.InjectedWallet })
+
+    mockUseInjectedWallet.mockReturnValue({
+      accounts: [],
+      chainId: null,
+      connect,
+      ready: false,
+      provider: new MockProvider(),
+      switchChain: vi.fn(),
+      connectionStatus: 'disconnected',
+    })
+
+    await renderHook(() => useConnectInjectedWalletIfNeeded(route), {
+      wrapper: RenderWrapper,
+      routes: [route],
+    })
+
+    expect(connect).not.toHaveBeenCalled()
+  })
 })
