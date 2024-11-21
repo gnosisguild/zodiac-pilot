@@ -1,6 +1,6 @@
 import { Divider, PrimaryButton } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { Link, useNavigate } from 'react-router-dom'
 import { Route } from './Route'
@@ -44,6 +44,7 @@ export const ListRoutes = () => {
       <div className="flex p-4">
         <PrimaryButton
           fluid
+          icon={Plus}
           onClick={() => {
             const newRouteId = nanoid()
             navigate('/routes/' + newRouteId)
