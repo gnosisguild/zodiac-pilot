@@ -10,9 +10,8 @@ import { useSubmitTransactions } from '@/providers-ui'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
-import { X } from 'lucide-react'
+import { SquareArrowOutUpRight, X } from 'lucide-react'
 import { useState } from 'react'
-import { RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -98,7 +97,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
         </>
@@ -118,7 +117,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             {'View in Safe{Wallet}'}
           </a>
         </>
@@ -137,7 +136,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
         </>
@@ -210,7 +209,7 @@ const AwaitingSignatureModal = ({
             target="_blank"
             rel="noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             Open Pilot Safe
           </a>
         </p>
