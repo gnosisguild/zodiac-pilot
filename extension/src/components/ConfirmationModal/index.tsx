@@ -1,7 +1,7 @@
+import { X } from 'lucide-react'
 import { ReactNode, useState } from 'react'
-import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
-import { IconButton, PrimaryButton } from '../buttons'
+import { GhostButton, PrimaryButton } from '../buttons'
 
 type PropTypes = {
   isOpen: boolean
@@ -22,15 +22,15 @@ export const ConfirmationModal = ({
     contentLabel="Sign the batch transaction"
   >
     <div className="absolute right-0 top-0">
-      <IconButton title="Cancel" onClick={onReject}>
-        <RiCloseLine />
-      </IconButton>
+      <GhostButton iconOnly icon={X} onClick={onReject}>
+        Cancel
+      </GhostButton>
     </div>
     <div className="flex flex-col justify-center gap-3">
       <p>{children || 'Are you sure you want to continue'}</p>
       <div className="flex gap-4">
+        <GhostButton onClick={onReject}>Cancel</GhostButton>
         <PrimaryButton onClick={onAccept}>Continue</PrimaryButton>
-        <PrimaryButton onClick={onReject}>Cancel</PrimaryButton>
       </div>
     </div>
   </Modal>

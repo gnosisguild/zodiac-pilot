@@ -1,4 +1,4 @@
-import { IconButton } from '@/components'
+import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
@@ -47,8 +47,8 @@ export const Remove = ({ transactionState, index }: Props) => {
   }
 
   return (
-    <IconButton onClick={handleRemove} title="Remove transaction">
-      <Trash2 size={16} />
-    </IconButton>
+    <GhostButton iconOnly icon={Trash2} onClick={handleRemove}>
+      Remove transaction
+    </GhostButton>
   )
 }

@@ -1,4 +1,4 @@
-import { Divider, IconButton, PrimaryButton } from '@/components'
+import { Divider, GhostButton, PrimaryButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -72,21 +72,23 @@ export const Transactions = () => {
           <h4 className={classes.header}>Recording Transactions</h4>
 
           <div className="flex gap-1">
-            <IconButton
-              title="Copy batch transaction data to clipboard"
+            <GhostButton
+              iconOnly
+              icon={Copy}
               disabled={transactions.length === 0}
               onClick={copyTransactionData}
             >
-              <Copy size={16} />
-            </IconButton>
+              Copy batch transaction data to clipboard
+            </GhostButton>
 
-            <IconButton
-              title="Re-simulate on current blockchain head"
+            <GhostButton
+              iconOnly
+              icon={RefreshCcw}
               disabled={transactions.length === 0}
               onClick={reforkAndRerun}
             >
-              <RefreshCcw size={16} />
-            </IconButton>
+              Re-simulate on current blockchain head
+            </GhostButton>
 
             <RecordingIcon />
           </div>

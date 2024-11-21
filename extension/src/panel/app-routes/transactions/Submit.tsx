@@ -1,6 +1,6 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import {
-  IconButton,
+  GhostButton,
   PrimaryButton,
   RawAddress,
   toastClasses,
@@ -10,8 +10,9 @@ import { useSubmitTransactions } from '@/providers-ui'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
+import { X } from 'lucide-react'
 import { useState } from 'react'
-import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
+import { RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -194,9 +195,9 @@ const AwaitingSignatureModal = ({
     contentLabel="Sign the batch transaction"
   >
     <div className="absolute right-0 top-0">
-      <IconButton title="Cancel" onClick={onClose}>
-        <RiCloseLine />
-      </IconButton>
+      <GhostButton iconOnly icon={X} onClick={onClose}>
+        Cancel
+      </GhostButton>
     </div>
     <p>Awaiting your signature ...</p>
     {usesWalletConnect && (

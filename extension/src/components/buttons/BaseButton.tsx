@@ -15,10 +15,12 @@ export const BaseButton = ({
   iconOnly = false,
   icon: Icon,
   children,
+  title,
   ...props
 }: BaseButtonProps) => (
   <button
     {...props}
+    title={title ? title : typeof children === 'string' ? children : undefined}
     className={classNames(
       'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
