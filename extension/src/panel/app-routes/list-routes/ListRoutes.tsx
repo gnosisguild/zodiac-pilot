@@ -1,4 +1,4 @@
-import { Button, Divider } from '@/components'
+import { Divider, PrimaryButton } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
 import { ChevronLeft } from 'lucide-react'
 import { nanoid } from 'nanoid'
@@ -42,7 +42,7 @@ export const ListRoutes = () => {
       <Divider />
 
       <div className="flex p-4">
-        <Button
+        <PrimaryButton
           fluid
           onClick={() => {
             const newRouteId = nanoid()
@@ -50,7 +50,7 @@ export const ListRoutes = () => {
           }}
         >
           Add Route
-        </Button>
+        </PrimaryButton>
       </div>
     </div>
   )

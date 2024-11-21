@@ -1,5 +1,10 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
-import { Button, IconButton, RawAddress, toastClasses } from '@/components'
+import {
+  IconButton,
+  PrimaryButton,
+  RawAddress,
+  toastClasses,
+} from '@/components'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { useTransactions } from '@/state'
@@ -141,25 +146,22 @@ export const Submit = () => {
 
   return (
     <>
-      {(connected || !!connect) && (
-        <Button
+      {connected || connect ? (
+        <PrimaryButton
           fluid
           onClick={submit}
           disabled={!submitTransactions || transactions.length === 0}
         >
           Submit
-        </Button>
-      )}
-
-      {!connected && !connect && (
-        <Button
+        </PrimaryButton>
+      ) : (
+        <PrimaryButton
           fluid
           onClick={connectWallet}
           disabled={!submitTransactions || transactions.length === 0}
-          secondary
         >
           Connect wallet to submit
-        </Button>
+        </PrimaryButton>
       )}
 
       {signaturePending && initiator && (

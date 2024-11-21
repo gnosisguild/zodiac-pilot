@@ -1,4 +1,4 @@
-import { Button, Warning } from '@/components'
+import { PrimaryButton, Warning } from '@/components'
 import { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
@@ -14,8 +14,8 @@ export const WrongAccount = ({ children, onDisconnect }: WrongAccountProps) => (
 
     {children}
 
-    <Button fluid onClick={onDisconnect}>
+    <PrimaryButton fluid onClick={onDisconnect}>
       Disconnect
-    </Button>
+    </PrimaryButton>
   </Section>
 )

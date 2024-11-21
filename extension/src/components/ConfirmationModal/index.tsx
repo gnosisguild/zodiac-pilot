@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
-import { Button, IconButton } from '../buttons'
+import { IconButton, PrimaryButton } from '../buttons'
 
 type PropTypes = {
   isOpen: boolean
@@ -29,8 +29,8 @@ export const ConfirmationModal = ({
     <div className="flex flex-col justify-center gap-3">
       <p>{children || 'Are you sure you want to continue'}</p>
       <div className="flex gap-4">
-        <Button onClick={onAccept}>Continue</Button>
-        <Button onClick={onReject}>Cancel</Button>
+        <PrimaryButton onClick={onAccept}>Continue</PrimaryButton>
+        <PrimaryButton onClick={onReject}>Cancel</PrimaryButton>
       </div>
     </div>
   </Modal>

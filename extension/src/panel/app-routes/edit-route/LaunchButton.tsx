@@ -1,4 +1,4 @@
-import { Button } from '@/components'
+import { PrimaryButton } from '@/components'
 import { ZodiacRoute } from '@/types'
 import {
   useSaveZodiacRoute,
@@ -30,7 +30,7 @@ export const LaunchButton = ({
   const navigate = useNavigate()
 
   return (
-    <Button
+    <PrimaryButton
       disabled={disabled}
       onClick={async () => {
         if (currentRouteState !== initialRouteState) {
@@ -54,6 +54,6 @@ export const LaunchButton = ({
       }}
     >
       {currentRouteState !== initialRouteState ? 'Save & Launch' : 'Launch'}
-    </Button>
+    </PrimaryButton>
   )
 }
