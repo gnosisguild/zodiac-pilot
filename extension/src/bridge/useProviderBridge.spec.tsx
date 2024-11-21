@@ -5,6 +5,7 @@ import {
   chromeMock,
   createMockTab,
   mockActiveTab,
+  MockProvider,
   renderHook,
 } from '@/test-utils'
 import { Eip1193Provider } from '@/types'
@@ -12,30 +13,11 @@ import { cleanup, waitFor } from '@testing-library/react'
 import { toQuantity } from 'ethers'
 import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  MockedFunction,
-  vi,
-} from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ProvideBridgeContext } from './BridgeContext'
 import { useProviderBridge } from './useProviderBridge'
 
 describe('Bridge', () => {
-  class MockProvider implements Eip1193Provider {
-    request: MockedFunction<Eip1193Provider['request']>
-
-    on = vi.fn()
-    removeListener = vi.fn()
-
-    constructor() {
-      this.request = vi.fn().mockResolvedValue(null)
-    }
-  }
-
   const Wrapper = ({ children }: PropsWithChildren) => (
     <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>
   )

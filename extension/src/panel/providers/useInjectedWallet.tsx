@@ -1,8 +1,12 @@
 import { invariant } from '@epic-web/invariant'
-import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { ChainId } from 'ser-kit'
 import { Eip1193Provider } from '../../types'
-import { ConnectFn, useConnectProvider } from './useConnectProvider'
+import {
+  ConnectFn,
+  ConnectionStatus,
+  useConnectProvider,
+} from './useConnectProvider'
 
 export interface InjectedWalletContextT {
   provider: Eip1193Provider
@@ -12,6 +16,7 @@ export interface InjectedWalletContextT {
   chainId: number | null
   connected: boolean
   connecting: boolean
+  connectionStatus: ConnectionStatus
 }
 const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
 
@@ -24,23 +29,22 @@ export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
     chainId,
     ready,
     switchChain,
+    connectionStatus,
   } = useConnectProvider()
 
-  const packed = useMemo(
-    () => ({
-      provider,
-      connect,
-      switchChain,
-      accounts,
-      chainId,
-      connected: ready,
-      connecting,
-    }),
-    [provider, connect, switchChain, accounts, chainId, ready, connecting]
-  )
-
   return (
-    <InjectedWalletContext.Provider value={packed}>
+    <InjectedWalletContext.Provider
+      value={{
+        provider,
+        connect,
+        connecting,
+        accounts,
+        chainId,
+        connected: ready,
+        switchChain,
+        connectionStatus,
+      }}
+    >
       {children}
     </InjectedWalletContext.Provider>
   )

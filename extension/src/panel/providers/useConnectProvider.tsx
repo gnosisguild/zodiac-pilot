@@ -20,7 +20,11 @@ const getProvider = (windowId: number) => {
   return providerRef.current
 }
 
-type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error'
+export type ConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'error'
 
 type ConnectResult = { chainId: ChainId; accounts: string[] }
 
