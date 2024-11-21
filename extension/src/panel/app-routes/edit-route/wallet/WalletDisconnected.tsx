@@ -25,11 +25,7 @@ export const WalletDisconnected = ({
       {children}
 
       <Section.Actions>
-        <Button
-          fluid
-          disabled={!injectedWallet.connected}
-          onClick={onReconnect}
-        >
+        <Button fluid disabled={!injectedWallet.ready} onClick={onReconnect}>
           Connect
         </Button>
         <Button fluid onClick={onDisconnect}>

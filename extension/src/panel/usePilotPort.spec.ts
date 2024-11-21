@@ -22,7 +22,7 @@ describe('usePilotPort', () => {
 
     mockRuntimeConnect(port)
 
-    await renderHook(() => usePilotPort())
+    await renderHook(() => usePilotPort(), { activeTab: tab })
 
     await waitFor(() => {
       expect(port.postMessage).toHaveBeenCalledWith({
@@ -39,7 +39,7 @@ describe('usePilotPort', () => {
 
     mockRuntimeConnect(port)
 
-    await renderHook(() => usePilotPort())
+    await renderHook(() => usePilotPort(), { activeTab: tab })
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
@@ -65,13 +65,11 @@ describe('usePilotPort', () => {
     const chromeTab = createMockTab({ url: 'chrome://extensions' })
     const regularTab = createMockTab({ url: 'http://test.com' })
 
-    mockActiveTab(chromeTab)
-
     const port = createMockPort()
 
     mockRuntimeConnect(port)
 
-    await renderHook(() => usePilotPort())
+    await renderHook(() => usePilotPort(), { activeTab: chromeTab })
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
@@ -94,13 +92,11 @@ describe('usePilotPort', () => {
   it('sends the message to the same tab when it moves to a proper URL', async () => {
     const tab = createMockTab({ url: 'chrome://extensions' })
 
-    mockActiveTab(tab)
-
     const port = createMockPort()
 
     mockRuntimeConnect(port)
 
-    await renderHook(() => usePilotPort())
+    await renderHook(() => usePilotPort(), { activeTab: tab })
 
     expect(port.postMessage).not.toHaveBeenCalled()
 
@@ -125,13 +121,13 @@ describe('usePilotPort', () => {
   })
 
   it('does not connect again, when another tab becomes active', async () => {
-    mockActiveTab({ id: 1, windowId: 1 })
-
     const port = createMockPort()
 
     mockRuntimeConnect(port)
 
-    await renderHook(() => usePilotPort())
+    await renderHook(() => usePilotPort(), {
+      activeTab: mockActiveTab({ id: 1, windowId: 1 }),
+    })
 
     expect(port.postMessage).toHaveBeenCalledTimes(1)
 

@@ -124,7 +124,7 @@ class WalletConnectJsonRpcError extends Error implements JsonRpcError {
 
 export interface WalletConnectResult {
   provider: WalletConnectEthereumMultiProvider
-  connected: boolean
+  ready: boolean
   connect(): Promise<{ chainId: number; accounts: string[] }>
   disconnect(): void
   accounts: string[]
@@ -233,7 +233,7 @@ export const useWalletConnect = (
       provider
         ? {
             provider,
-            connected,
+            ready: connected,
             connect,
             disconnect,
             accounts,

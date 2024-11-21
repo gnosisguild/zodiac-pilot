@@ -6,6 +6,7 @@ import {
 } from '@/providers'
 import { ProviderType, ZodiacRoute } from '@/types'
 import { ZeroAddress } from 'ethers'
+import { toast } from 'react-toastify'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
@@ -53,6 +54,9 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
               account,
             })
           }
+          onError={() => {
+            toast('The connection to the wallet has failed.')
+          }}
         />
       </div>
     )
@@ -64,8 +68,11 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
         <InjectedWallet
           chainId={chainId}
           pilotAddress={pilotAddress}
-          onDisconnect={onDisconnect}
           isConnected={isConnected}
+          onDisconnect={onDisconnect}
+          onError={() => {
+            toast('The connection to the wallet has failed.')
+          }}
         />
       )
     case ProviderType.WalletConnect:

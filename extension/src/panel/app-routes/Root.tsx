@@ -1,7 +1,11 @@
 import { useProviderBridge } from '@/bridge'
 import { getChainId } from '@/chains'
 import { useProvider } from '@/providers-ui'
-import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
+import {
+  useConnectInjectedWalletIfNeeded,
+  useMarkRouteAsUsed,
+  useZodiacRoute,
+} from '@/zodiac-routes'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useStorage } from '../utils'
@@ -18,6 +22,7 @@ export const Root = () => {
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
 
   useProviderBridge({ provider, chainId, account: avatarAddress })
+  useConnectInjectedWalletIfNeeded(route)
 
   useStorage('lastUsedRoute', route.id)
 
