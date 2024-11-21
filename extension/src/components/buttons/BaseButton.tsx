@@ -4,18 +4,21 @@ import { Link } from 'react-router-dom'
 
 export type BaseButtonProps = ComponentPropsWithoutRef<'button'> & {
   fluid?: boolean
+  iconOnly?: boolean
 }
 
 export const BaseButton = ({
   className,
   fluid = false,
+  iconOnly = false,
   ...props
 }: BaseButtonProps) => (
   <button
     {...props}
     className={classNames(
-      'flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
+      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
+      iconOnly ? 'p-2' : 'px-4 py-2',
       className
     )}
   />
