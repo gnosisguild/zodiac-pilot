@@ -2,23 +2,6 @@ import { CSSProperties } from 'react'
 import BaseSelect, { Props } from 'react-select'
 
 export const selectStyles = {
-  control: (provided: CSSProperties, state: any) => ({
-    ...provided,
-    fontFamily: "'Roboto Mono', monospace",
-    fontSize: '14px',
-    borderRadius: 0,
-    backgroundColor: 'rgba(217, 212, 173, 0.01)',
-    borderColor: state.isFocused ? 'white' : 'rgba(217, 212, 173, 0.8)',
-    boxShadow: 'none',
-    cursor: 'pointer',
-    '&:hover': {
-      borderColor: 'white',
-    },
-  }),
-  valueContainer: (provided: CSSProperties) => ({
-    ...provided,
-    padding: '0px 8px',
-  }),
   input: (provided: CSSProperties) => ({
     ...provided,
     color: 'white',
@@ -59,5 +42,20 @@ export const selectStyles = {
 export function Select<Option = unknown, Multi extends boolean = boolean>(
   props: Props<Option, Multi>
 ) {
-  return <BaseSelect {...props} styles={selectStyles as any} />
+  return (
+    <BaseSelect
+      {...props}
+      unstyled
+      classNames={{
+        control: () =>
+          'rounded-md border border-zinc-600 text-sm bg-zinc-800 hover:border-zinc-500 cursor-pointer',
+        valueContainer: () => 'px-4',
+        dropdownIndicator: () => 'px-2',
+        menu: () =>
+          'bg-zinc-800 border-zinc-600 rounded-md mt-1 shadow-md text-sm overflow-hidden',
+        placeholder: () => 'placeholder:text-zinc-500',
+        option: () => 'text-sm hover:bg-zinc-700 px-4 cursor-pointer',
+      }}
+    />
+  )
 }
