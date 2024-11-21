@@ -1,5 +1,5 @@
 import { Tag } from '@/components'
-import { useProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { TransactionState } from '@/state'
 import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'

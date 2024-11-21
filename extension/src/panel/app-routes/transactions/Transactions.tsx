@@ -1,5 +1,6 @@
 import { Button, Divider, IconButton } from '@/components'
-import { ForkProvider, useProvider } from '@/providers'
+import { ForkProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'

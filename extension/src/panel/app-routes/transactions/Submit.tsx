@@ -1,6 +1,7 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import { Button, IconButton, RawAddress, toastClasses } from '@/components'
-import { getReadOnlyProvider, useSubmitTransactions } from '@/providers'
+import { getReadOnlyProvider } from '@/providers'
+import { useSubmitTransactions } from '@/providers-ui'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
