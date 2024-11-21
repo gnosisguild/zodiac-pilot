@@ -10,7 +10,7 @@ export const PrimaryButton = ({
 }: PrimaryButtonProps) => (
   <BaseButton
     className={cn(
-      'px-4 py-2 font-bold',
+      'font-bold',
       style === 'regular' &&
         'border-zinc border-zinc-500 bg-zinc-700 text-zinc-50 enabled:hover:bg-zinc-600'
     )}
