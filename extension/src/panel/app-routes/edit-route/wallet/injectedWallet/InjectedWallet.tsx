@@ -12,6 +12,7 @@ type InjectedWalletProps = {
   chainId: ChainId
 
   onDisconnect: () => void
+  onError: () => void
   isConnected: (provider: InjectedWalletContextT) => boolean
 }
 
@@ -19,6 +20,7 @@ export const InjectedWallet = ({
   pilotAddress,
   chainId,
   onDisconnect,
+  onError,
   isConnected,
 }: InjectedWalletProps) => {
   const injectedWallet = useInjectedWallet()
@@ -38,7 +40,13 @@ export const InjectedWallet = ({
     return (
       <WalletDisconnected
         onDisconnect={onDisconnect}
-        onReconnect={() => injectedWallet.connect()}
+        onReconnect={async () => {
+          const result = await injectedWallet.connect()
+
+          if (result == null) {
+            onError()
+          }
+        }}
       >
         <Account providerType={ProviderType.InjectedWallet}>
           {pilotAddress}

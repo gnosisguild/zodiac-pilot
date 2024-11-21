@@ -11,7 +11,7 @@ export const isConnected = (
     return false
   }
 
-  if (providerContext.connected === false) {
+  if (providerContext.ready === false) {
     return false
   }
 

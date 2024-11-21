@@ -19,10 +19,13 @@ export const memoWhilePending = <
       return pendingPromise
     }
 
-    pendingPromise = callback(...args)
-
-    pendingPromise.finally(() => {
-      pendingPromise = null
+    pendingPromise = new Promise((resolve, reject) => {
+      callback(...args)
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+          pendingPromise = null
+        })
     })
 
     return pendingPromise
