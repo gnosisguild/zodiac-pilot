@@ -20,7 +20,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 rounded-md border border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50">
+      <div className="flex flex-col gap-4 rounded-md border border-white/30 bg-zinc-900 p-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
             <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">

@@ -36,19 +36,31 @@ export const BaseButton = ({
 
 export type BaseLinkButtonProps = ComponentPropsWithoutRef<typeof Link> & {
   fluid?: boolean
+  iconOnly?: boolean
+  icon?: LucideIcon
 }
 
 export const BaseLinkButton = ({
   fluid = false,
   className,
+  iconOnly = false,
+  icon: Icon,
+  children,
+  title,
   ...props
 }: BaseLinkButtonProps) => (
   <Link
     {...props}
+    title={title ? title : typeof children === 'string' ? children : undefined}
     className={classNames(
-      'flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md border text-sm transition-all',
+      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all',
       fluid && 'flex-1',
+      iconOnly ? 'p-2' : 'px-4 py-2',
       className
     )}
-  />
+  >
+    {Icon && <Icon size={20} />}
+
+    {iconOnly ? <span className="sr-only">{children}</span> : children}
+  </Link>
 )

@@ -1,20 +1,34 @@
+import classNames from 'classnames'
 import {
   BaseButton,
   BaseButtonProps,
   BaseLinkButton,
   BaseLinkButtonProps,
 } from './BaseButton'
+import { WithStyle } from './types'
 
-export const BoxButton = (props: Omit<BaseButtonProps, 'className'>) => (
+type BoxButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
+
+export const BoxButton = ({ style = 'regular', ...props }: BoxButtonProps) => (
   <BaseButton
     {...props}
-    className="border-zodiac-light-mustard/30 bg-zodiac-light-mustard/10 px-4 py-1 text-white enabled:hover:border-zodiac-light-mustard/80"
+    className={classNames(
+      'font-bold',
+      style === 'regular' &&
+        'border-zinc-600 bg-zinc-950 text-zinc-50 enabled:hover:border-zinc-600 enabled:hover:bg-zinc-800'
+    )}
   />
 )
 
-export const BoxLink = (props: Omit<BaseLinkButtonProps, 'className'>) => (
+type BoxLinkProps = WithStyle<Omit<BaseLinkButtonProps, 'className'>>
+
+export const BoxLink = ({ style = 'regular', ...props }: BoxLinkProps) => (
   <BaseLinkButton
     {...props}
-    className="border-zodiac-light-mustard/30 bg-zodiac-light-mustard/10 px-4 py-1 text-white hover:border-zodiac-light-mustard/80"
+    className={classNames(
+      'font-bold',
+      style === 'regular' &&
+        'border-zinc-600 bg-zinc-950 text-zinc-50 hover:border-zinc-600 hover:bg-zinc-800'
+    )}
   />
 )
