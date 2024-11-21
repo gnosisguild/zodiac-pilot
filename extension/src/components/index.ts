@@ -1,7 +1,5 @@
 export * from './alerts'
-export { BlockButton } from './BlockButton'
 export { Blockie } from './Blockie'
-export { BlockLink } from './BlockLink'
 export { Box } from './Box'
 export * from './buttons'
 export { Circle } from './Circle'
