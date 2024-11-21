@@ -7,9 +7,12 @@ import {
 } from './BaseButton'
 import { WithStyle } from './types'
 
-type BoxButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
+type SecondaryButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
 
-export const BoxButton = ({ style = 'regular', ...props }: BoxButtonProps) => (
+export const SecondaryButton = ({
+  style = 'regular',
+  ...props
+}: SecondaryButtonProps) => (
   <BaseButton
     {...props}
     className={classNames(
@@ -20,9 +23,14 @@ export const BoxButton = ({ style = 'regular', ...props }: BoxButtonProps) => (
   />
 )
 
-type BoxLinkProps = WithStyle<Omit<BaseLinkButtonProps, 'className'>>
+type SecondaryLinkButtonProps = WithStyle<
+  Omit<BaseLinkButtonProps, 'className'>
+>
 
-export const BoxLink = ({ style = 'regular', ...props }: BoxLinkProps) => (
+export const SecondaryLinkButton = ({
+  style = 'regular',
+  ...props
+}: SecondaryLinkButtonProps) => (
   <BaseLinkButton
     {...props}
     className={classNames(
