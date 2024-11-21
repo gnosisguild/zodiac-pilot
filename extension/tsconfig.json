@@ -28,7 +28,8 @@
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
       "@/messages": ["./src/messages.ts"],
-      "@/bridge": ["./src/bridge/index.ts"]
+      "@/bridge": ["./src/bridge/index.ts"],
+      "@/safe": ["./src/panel/integrations/safe/index.ts"]
     }
   },
   "include": ["src", "e2e", "test-utils", "./vitest.setup.mts"]
