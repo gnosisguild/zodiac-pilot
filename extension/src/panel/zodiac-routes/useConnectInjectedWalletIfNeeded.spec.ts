@@ -32,7 +32,6 @@ describe('Connect injected wallet if needed', async () => {
       chainId: null,
       connect,
       connected: true,
-      connecting: false,
       provider: new MockProvider(),
       switchChain: vi.fn(),
       connectionStatus: 'error',

@@ -37,7 +37,6 @@ export const useConnectProvider = () => {
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<ChainId | null>(null)
   const [ready, setReady] = useState(false)
-  const [connecting, setConnecting] = useState(false)
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('disconnected')
 
@@ -90,7 +89,6 @@ export const useConnectProvider = () => {
     async ({ force }: { force?: boolean } = {}): Promise<
       ConnectResult | undefined
     > => {
-      setConnecting(true)
       setConnectionStatus('connecting')
 
       try {
@@ -106,8 +104,6 @@ export const useConnectProvider = () => {
         return { accounts, chainId }
       } catch (e) {
         setConnectionStatus('error')
-      } finally {
-        setConnecting(false)
       }
     },
     [provider]
@@ -118,7 +114,6 @@ export const useConnectProvider = () => {
     ready,
     connect,
     connectionStatus,
-    connecting,
     switchChain: (chainId: ChainId) => switchChain(provider, chainId),
     accounts,
     chainId,
