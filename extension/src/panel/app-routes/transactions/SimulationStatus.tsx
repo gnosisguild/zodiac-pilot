@@ -1,5 +1,5 @@
 import { Spinner, Tag } from '@/components'
-import { useProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { ExecutionStatus, TransactionState } from '@/state'
 import {
   Check,

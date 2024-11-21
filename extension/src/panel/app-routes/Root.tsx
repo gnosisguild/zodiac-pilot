@@ -1,6 +1,6 @@
 import { useProviderBridge } from '@/bridge'
 import { getChainId } from '@/chains'
-import { useProvider } from '@/providers'
+import { useProvider } from '@/providers-ui'
 import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'

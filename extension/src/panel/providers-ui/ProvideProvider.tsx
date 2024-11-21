@@ -1,4 +1,5 @@
 import { getChainId } from '@/chains'
+import { ForkProvider } from '@/providers'
 import { Eip1193Provider } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
@@ -15,7 +16,6 @@ import {
 import { ConnectionType, parsePrefixedAddress } from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
 import { fetchContractInfo } from '../utils/abi'
-import { ForkProvider } from './ForkProvider'
 import { ProvideSubmitTransactionContext } from './SubmitTransactionContext'
 
 const ProviderContext = createContext<
