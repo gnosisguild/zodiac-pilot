@@ -23,7 +23,7 @@ export const InjectedWalletConnect = ({
     <Button
       fluid
       disabled={
-        injectedWallet.connected === false ||
+        injectedWallet.ready === false ||
         injectedWallet.connectionStatus === 'connecting'
       }
       onClick={async () => {

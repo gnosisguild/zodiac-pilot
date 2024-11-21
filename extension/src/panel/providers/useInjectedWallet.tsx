@@ -14,7 +14,7 @@ export interface InjectedWalletContextT {
   switchChain: (chainId: ChainId) => Promise<void>
   accounts: string[]
   chainId: number | null
-  connected: boolean
+  ready: boolean
   connectionStatus: ConnectionStatus
 }
 const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
@@ -37,7 +37,7 @@ export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
         connect,
         accounts,
         chainId,
-        connected: ready,
+        ready,
         switchChain,
         connectionStatus,
       }}
