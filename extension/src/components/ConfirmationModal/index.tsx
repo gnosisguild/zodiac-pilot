@@ -2,7 +2,6 @@ import { ReactNode, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { Button, IconButton } from '../buttons'
-import classes from './style.module.css'
 
 type PropTypes = {
   isOpen: boolean
@@ -22,17 +21,13 @@ export const ConfirmationModal = ({
     style={modalStyle}
     contentLabel="Sign the batch transaction"
   >
-    <IconButton
-      className={classes.modalClose}
-      title="Cancel"
-      onClick={onReject}
-    >
-      <RiCloseLine />
-    </IconButton>
+    <div className="absolute right-0 top-0">
+      <IconButton title="Cancel" onClick={onReject}>
+        <RiCloseLine />
+      </IconButton>
+    </div>
     <div className="flex flex-col justify-center gap-3">
-      <p className={classes.message}>
-        {children || 'Are you sure you want to continue'}
-      </p>
+      <p>{children || 'Are you sure you want to continue'}</p>
       <div className="flex gap-4">
         <Button onClick={onAccept}>Continue</Button>
         <Button onClick={onReject}>Cancel</Button>

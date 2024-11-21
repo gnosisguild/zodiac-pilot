@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router-dom'
 
-type ButtonProps = ComponentPropsWithoutRef<'button'> & {
+export type BaseButtonProps = ComponentPropsWithoutRef<'button'> & {
   fluid?: boolean
 }
 
@@ -10,7 +10,7 @@ export const BaseButton = ({
   className,
   fluid = false,
   ...props
-}: ButtonProps) => (
+}: BaseButtonProps) => (
   <button
     {...props}
     className={classNames(
@@ -21,7 +21,7 @@ export const BaseButton = ({
   />
 )
 
-type LinkButtonProps = ComponentPropsWithoutRef<typeof Link> & {
+export type BaseLinkButtonProps = ComponentPropsWithoutRef<typeof Link> & {
   fluid?: boolean
 }
 
@@ -29,7 +29,7 @@ export const BaseLinkButton = ({
   fluid = false,
   className,
   ...props
-}: LinkButtonProps) => (
+}: BaseLinkButtonProps) => (
   <Link
     {...props}
     className={classNames(

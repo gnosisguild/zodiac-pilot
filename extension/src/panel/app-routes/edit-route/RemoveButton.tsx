@@ -16,7 +16,6 @@ export const RemoveButton = () => {
         removeRouteById(routeId)
         navigate('/routes')
       }}
-      className="aspect-square border-[3px] border-double border-red-800 p-1 hover:bg-zodiac-light-red hover:bg-opacity-20"
     >
       <RiDeleteBinLine size={24} title="Remove this connection" />
     </IconButton>

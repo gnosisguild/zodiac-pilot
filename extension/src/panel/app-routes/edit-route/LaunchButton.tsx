@@ -31,7 +31,6 @@ export const LaunchButton = ({
 
   return (
     <Button
-      className="px-6 py-1"
       disabled={disabled}
       onClick={async () => {
         if (currentRouteState !== initialRouteState) {

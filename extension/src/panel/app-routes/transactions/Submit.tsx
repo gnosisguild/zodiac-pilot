@@ -191,13 +191,11 @@ const AwaitingSignatureModal = ({
     style={modalStyle}
     contentLabel="Sign the batch transaction"
   >
-    <IconButton
-      className="absolute right-0 top-0"
-      title="Cancel"
-      onClick={onClose}
-    >
-      <RiCloseLine />
-    </IconButton>
+    <div className="absolute right-0 top-0">
+      <IconButton title="Cancel" onClick={onClose}>
+        <RiCloseLine />
+      </IconButton>
+    </div>
     <p>Awaiting your signature ...</p>
     {usesWalletConnect && (
       <>
