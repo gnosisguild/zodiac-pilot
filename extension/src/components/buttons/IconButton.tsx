@@ -1,14 +1,15 @@
 import cn from 'classnames'
 import { ComponentPropsWithoutRef } from 'react'
+import { BaseButton } from './BaseButton'
 
 type Props = ComponentPropsWithoutRef<'button'> & {
   danger?: boolean
 }
 
 export const IconButton = ({ className, danger, ...rest }: Props) => (
-  <button
+  <BaseButton
     className={cn(
-      'flex size-9 cursor-pointer items-center justify-center rounded-md border-none bg-transparent p-1 disabled:cursor-not-allowed disabled:opacity-60',
+      'size-9 border-transparent bg-transparent p-1',
       danger ? 'text-red-500' : 'text-white',
       className
     )}
