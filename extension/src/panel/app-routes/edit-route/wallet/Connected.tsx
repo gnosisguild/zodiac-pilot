@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/components'
+import { SecondaryButton } from '@/components'
 import { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
@@ -10,8 +10,8 @@ export const Connected = ({ children, onDisconnect }: ConnectedProps) => (
   <Section>
     {children}
 
-    <PrimaryButton fluid onClick={onDisconnect}>
+    <SecondaryButton fluid onClick={onDisconnect}>
       Disconnect
-    </PrimaryButton>
+    </SecondaryButton>
   </Section>
 )

@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/components'
+import { SecondaryButton } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
 import { ChainId } from 'ser-kit'
@@ -20,7 +20,7 @@ export const InjectedWalletConnect = ({
   }
 
   return (
-    <PrimaryButton
+    <SecondaryButton
       fluid
       disabled={
         injectedWallet.ready === false ||
@@ -44,6 +44,6 @@ export const InjectedWalletConnect = ({
       {injectedWallet.connectionStatus === 'connecting'
         ? 'Connecting...'
         : 'Connect with MetaMask'}
-    </PrimaryButton>
+    </SecondaryButton>
   )
 }

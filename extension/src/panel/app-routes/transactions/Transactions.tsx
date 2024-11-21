@@ -1,4 +1,4 @@
-import { Divider, GhostButton, PrimaryButton } from '@/components'
+import { Divider, GhostButton, SecondaryButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -122,13 +122,12 @@ export const Transactions = () => {
 
       <div className="flex gap-2 p-4">
         {!route.initiator && (
-          <PrimaryButton
-            // secondary
+          <SecondaryButton
             onClick={copyTransactionData}
             disabled={transactions.length === 0}
           >
             Copy transaction data
-          </PrimaryButton>
+          </SecondaryButton>
         )}
 
         <Submit />

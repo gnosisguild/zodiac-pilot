@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/components'
+import { SecondaryButton } from '@/components'
 import { useWalletConnect, WalletConnectResult } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
@@ -50,9 +50,9 @@ export const WalletConnect = ({
           {pilotAddress}
         </Account>
 
-        <PrimaryButton onClick={() => walletConnect.disconnect()}>
+        <SecondaryButton onClick={() => walletConnect.disconnect()}>
           Disconnect
-        </PrimaryButton>
+        </SecondaryButton>
       </Section>
     )
   }

@@ -1,4 +1,4 @@
-import { PrimaryButton } from '@/components'
+import { SecondaryButton } from '@/components'
 import { useWalletConnect } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
@@ -17,7 +17,7 @@ export const WalletConnectConnect = ({
   const walletConnect = useWalletConnect(routeId)
 
   return (
-    <PrimaryButton
+    <SecondaryButton
       fluid
       disabled={walletConnect == null}
       onClick={async () => {
@@ -33,6 +33,6 @@ export const WalletConnectConnect = ({
     >
       <ProviderLogo providerType={ProviderType.WalletConnect} />
       Connect with WalletConnect
-    </PrimaryButton>
+    </SecondaryButton>
   )
 }
