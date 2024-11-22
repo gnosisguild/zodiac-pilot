@@ -1,4 +1,4 @@
-import { Button, Warning } from '@/components'
+import { SecondaryButton, Warning } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { PropsWithChildren } from 'react'
 import { Section } from './Section'
@@ -25,12 +25,16 @@ export const WalletDisconnected = ({
       {children}
 
       <Section.Actions>
-        <Button fluid disabled={!injectedWallet.ready} onClick={onReconnect}>
+        <SecondaryButton
+          fluid
+          disabled={!injectedWallet.ready}
+          onClick={onReconnect}
+        >
           Connect
-        </Button>
-        <Button fluid onClick={onDisconnect}>
+        </SecondaryButton>
+        <SecondaryButton fluid onClick={onDisconnect}>
           Disconnect
-        </Button>
+        </SecondaryButton>
       </Section.Actions>
     </Section>
   )

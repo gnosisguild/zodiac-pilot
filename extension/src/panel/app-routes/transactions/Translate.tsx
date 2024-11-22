@@ -1,11 +1,10 @@
-import { IconButton } from '@/components'
+import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
-import { BiWrench } from 'react-icons/bi'
 import { useApplicableTranslation } from '../../transactionTranslations'
 
 import { useProvider } from '@/providers-ui'
-import classes from './style.module.css'
+import { Wrench } from 'lucide-react'
 
 type Props = {
   transactionState: TransactionState
@@ -28,40 +27,33 @@ export const Translate = ({ transactionState, index, labeled }: Props) => {
     return null
   }
 
-  const handleTranslate = async () => {
-    const laterTransactions = transactions
-      .slice(index + 1)
-      .map((txState) => txState.transaction)
+  return (
+    <GhostButton
+      iconOnly={!labeled}
+      icon={Wrench}
+      onClick={async () => {
+        const laterTransactions = transactions
+          .slice(index + 1)
+          .map((txState) => txState.transaction)
 
-    // remove the transaction and all later ones from the store
-    dispatch({
-      type: 'REMOVE_TRANSACTION',
-      payload: { id: transactionState.id },
-    })
+        // remove the transaction and all later ones from the store
+        dispatch({
+          type: 'REMOVE_TRANSACTION',
+          payload: { id: transactionState.id },
+        })
 
-    // revert to checkpoint before the transaction to remove
-    const checkpoint = transactionState.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
-    await provider.request({ method: 'evm_revert', params: [checkpoint] })
+        // revert to checkpoint before the transaction to remove
+        const checkpoint = transactionState.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
+        await provider.request({ method: 'evm_revert', params: [checkpoint] })
 
-    // re-simulate all transactions starting with the translated ones
-    const replayTransaction = [...translation.result, ...laterTransactions]
-    for (const tx of replayTransaction) {
-      provider.sendMetaTransaction(tx)
-    }
-  }
-
-  if (labeled) {
-    return (
-      <button onClick={handleTranslate} className={classes.link}>
-        {translation.title}
-        <BiWrench />
-      </button>
-    )
-  } else {
-    return (
-      <IconButton onClick={handleTranslate} title={translation.title}>
-        <BiWrench />
-      </IconButton>
-    )
-  }
+        // re-simulate all transactions starting with the translated ones
+        const replayTransaction = [...translation.result, ...laterTransactions]
+        for (const tx of replayTransaction) {
+          provider.sendMetaTransaction(tx)
+        }
+      }}
+    >
+      {translation.title}
+    </GhostButton>
+  )
 }

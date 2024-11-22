@@ -10,11 +10,13 @@ interface Props {
 export const Tag = ({ head, children, color }: Props) => (
   <div
     className={classNames(
-      'inline-flex items-center justify-center gap-2 rounded-full border text-white',
-      color === 'danger' && 'border-red-600 bg-red-800 text-red-100',
-      color === 'success' && 'border-green-600 bg-green-800 text-green-100',
-      color === 'warning' && 'border-amber-600 bg-amber-800 text-amber-100',
-      color === 'info' && 'border-blue-600 bg-blue-800 text-blue-100'
+      'inline-flex items-center justify-center gap-2 rounded-sm border font-semibold text-white',
+      color === 'danger' && 'border-red-800/80 bg-red-900/10 text-red-500/80',
+      color === 'success' &&
+        'border-green-800/80 bg-green-900/10 text-green-500/80',
+      color === 'warning' &&
+        'border-yellow-800/80 bg-yellow-900/10 text-yellow-500/80',
+      color === 'info' && 'border-blue-800/80 bg-blue-900/10 text-blue-400/80'
     )}
   >
     {head && (
