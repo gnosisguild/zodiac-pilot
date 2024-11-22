@@ -10,7 +10,7 @@ const KARPATKEY_INSTITUTIONAL_AVATARS = [
   '0xd0ca2a7ed8aee7972750b085b27350f1cd387f9b',
 ].map((address) => address.toLowerCase())
 
-const BRIDGE_AWARE_CONTACT_ADDRESSES = [
+export const BRIDGE_AWARE_CONTRACT_ADDRESSES = [
     //mainnet
   {
     chainId: 1,
@@ -23,12 +23,12 @@ const BRIDGE_AWARE_CONTACT_ADDRESSES = [
   },
     //Optimism
   {
-    chainId: 42161,
+    chainId: 10,
     address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
   },
   //Base
   {
-    chainId: 10,
+    chainId: 8453,
     address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
   },
   //Gnosis
@@ -69,7 +69,7 @@ export default {
     }
 
     const bridgeStartCalls = bridgedTokenAddresses.map(tokenAddress => {
-      const foundAddress = BRIDGE_AWARE_CONTACT_ADDRESSES.find(item => item.chainId === chainId);
+      const foundAddress = BRIDGE_AWARE_CONTRACT_ADDRESSES.find(item => item.chainId === chainId);
 
       if (!foundAddress) {
         return;
