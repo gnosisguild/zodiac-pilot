@@ -3,6 +3,7 @@ import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import {
+  deletePilotSession,
   getOrCreatePilotSession,
   withPilotSession,
 } from './activePilotSessions'
@@ -71,7 +72,7 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
 
   // inject the provider script into tracked tabs whenever they start loading a new page
   chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-    withPilotSession(tab.windowId, (session) => {
+    return withPilotSession(tab.windowId, (session) => {
       if (!session.isTracked(tabId) || info.status !== 'loading') {
         return
       }
@@ -116,5 +117,5 @@ const startPilotSession = (
 const stopPilotSession = (windowId: number) => {
   console.debug('stop pilot session', { windowId })
 
-  withPilotSession(windowId, (session) => session.delete())
+  return deletePilotSession(windowId)
 }

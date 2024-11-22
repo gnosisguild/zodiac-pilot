@@ -18,6 +18,7 @@ type GetTrackedRPCUrlsForChainIdOptions = {
 type Event<T> = {
   addListener: (listener: T) => void
   removeListener: (listener: T) => void
+  removeAllListeners: () => void
 }
 
 type NewRPCEndpointDetectedEventListener = () => void
@@ -66,6 +67,9 @@ export const trackRequests = (): TrackRequestsResult => {
       },
       removeListener: (listener) => {
         listeners.delete(listener)
+      },
+      removeAllListeners: () => {
+        listeners.clear()
       },
     },
   }
