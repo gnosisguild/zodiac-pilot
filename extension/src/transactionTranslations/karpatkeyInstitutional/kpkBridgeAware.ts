@@ -10,8 +10,38 @@ const KARPATKEY_INSTITUTIONAL_AVATARS = [
   '0xd0ca2a7ed8aee7972750b085b27350f1cd387f9b',
 ].map((address) => address.toLowerCase())
 
-const BRIDGE_AWARE_CONTRACT_ADDRESS =
-  '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
+const BRIDGE_AWARE_CONTACT_ADDRESSES = [
+    //mainnet
+  {
+    chainId: 1,
+    address: '0xf0125a04d74782e6d2ad6d298f0bc786e301aac1'
+  },
+    //Arbitrum1
+  {
+    chainId: 42161,
+    address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
+  },
+    //Optimism
+  {
+    chainId: 42161,
+    address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
+  },
+  //Base
+  {
+    chainId: 10,
+    address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
+  },
+  //Gnosis
+  {
+    chainId: 100,
+    address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
+  },
+  //Sepolia
+  {
+    chainId: 11155111,
+    address: '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
+  }
+]
 
 const BridgeAwareInterface: Interface = new Interface([
   `function bridgeStart(address asset)`,
@@ -38,13 +68,20 @@ export default {
       return
     }
 
-    const bridgeStartCalls = bridgedTokenAddresses.map((tokenAddress) => ({
-      to: BRIDGE_AWARE_CONTRACT_ADDRESS,
-      data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
-        tokenAddress,
-      ]),
-      value: '0',
-    }))
+    const bridgeStartCalls = bridgedTokenAddresses.map(tokenAddress => {
+      const foundAddress = BRIDGE_AWARE_CONTACT_ADDRESSES.find(item => item.chainId === chainId);
+
+      if (!foundAddress) {
+        return;
+      }
+
+      return {
+        to: foundAddress.address,
+        data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
+          tokenAddress,
+        ]),
+        value: '0',
+    }})
 
     const callsToAdd = bridgeStartCalls.filter(
       (bridgeStartCall) =>
