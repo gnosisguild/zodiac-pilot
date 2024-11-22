@@ -1,12 +1,17 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
-import { Button, IconButton, RawAddress, toastClasses } from '@/components'
+import {
+  GhostButton,
+  PrimaryButton,
+  RawAddress,
+  toastClasses,
+} from '@/components'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
+import { SquareArrowOutUpRight, X } from 'lucide-react'
 import { useState } from 'react'
-import { RiCloseLine, RiExternalLinkLine } from 'react-icons/ri'
 import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -92,7 +97,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
         </>
@@ -112,7 +117,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             {'View in Safe{Wallet}'}
           </a>
         </>
@@ -131,7 +136,7 @@ export const Submit = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
         </>
@@ -141,25 +146,22 @@ export const Submit = () => {
 
   return (
     <>
-      {(connected || !!connect) && (
-        <Button
+      {connected || connect ? (
+        <PrimaryButton
           fluid
           onClick={submit}
           disabled={!submitTransactions || transactions.length === 0}
         >
           Submit
-        </Button>
-      )}
-
-      {!connected && !connect && (
-        <Button
+        </PrimaryButton>
+      ) : (
+        <PrimaryButton
           fluid
           onClick={connectWallet}
           disabled={!submitTransactions || transactions.length === 0}
-          secondary
         >
           Connect wallet to submit
-        </Button>
+        </PrimaryButton>
       )}
 
       {signaturePending && initiator && (
@@ -191,13 +193,11 @@ const AwaitingSignatureModal = ({
     style={modalStyle}
     contentLabel="Sign the batch transaction"
   >
-    <IconButton
-      className="absolute right-0 top-0"
-      title="Cancel"
-      onClick={onClose}
-    >
-      <RiCloseLine />
-    </IconButton>
+    <div className="absolute right-0 top-0">
+      <GhostButton iconOnly icon={X} onClick={onClose}>
+        Cancel
+      </GhostButton>
+    </div>
     <p>Awaiting your signature ...</p>
     {usesWalletConnect && (
       <>
@@ -209,7 +209,7 @@ const AwaitingSignatureModal = ({
             target="_blank"
             rel="noreferrer"
           >
-            <RiExternalLinkLine />
+            <SquareArrowOutUpRight size={16} />
             Open Pilot Safe
           </a>
         </p>

@@ -1,9 +1,8 @@
-import { IconButton } from '@/components'
+import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
-import { BiWrench } from 'react-icons/bi'
 import { useApplicableTranslation } from '../../transactionTranslations'
 import { useProvider } from '@/providers-ui'
-import classes from './style.module.css'
+import { Wrench } from 'lucide-react'
 
 type Props = {
   index: number
@@ -23,18 +22,13 @@ export const Translate = ({  index, labeled }: Props) => {
     return null
   }
 
-  if (labeled) {
-    return (
-      <button onClick={translation.apply} className={classes.link}>
-        {translation.title}
-        <BiWrench />
-      </button>
-    )
-  } else {
-    return (
-      <IconButton onClick={translation.apply} title={translation.title}>
-        <BiWrench />
-      </IconButton>
-    )
-  }
+  return (
+    <GhostButton
+      iconOnly={!labeled}
+      icon={Wrench}
+      onClick={translation.apply}
+    >
+      {translation.title}
+    </GhostButton>
+  )
 }

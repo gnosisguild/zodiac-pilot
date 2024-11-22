@@ -1,4 +1,4 @@
-import { Button, Modal, useConfirmationModal } from '@/components'
+import { Modal, PrimaryButton, useConfirmationModal } from '@/components'
 import { useClearTransactions } from '../state/transactionHooks'
 
 type ClearTransactionsModalProps = {
@@ -22,8 +22,8 @@ export const ClearTransactionsModal = ({
       onClose={onClose}
     >
       <Modal.Actions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
+        <PrimaryButton onClick={onClose}>Cancel</PrimaryButton>
+        <PrimaryButton
           onClick={() => {
             clearTransactions()
             onClose()
@@ -31,7 +31,7 @@ export const ClearTransactionsModal = ({
           }}
         >
           Clear transactions
-        </Button>
+        </PrimaryButton>
       </Modal.Actions>
     </Modal>
   )

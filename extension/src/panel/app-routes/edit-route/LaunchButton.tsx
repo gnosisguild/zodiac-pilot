@@ -1,10 +1,11 @@
-import { Button } from '@/components'
+import { PrimaryButton } from '@/components'
 import { ZodiacRoute } from '@/types'
 import {
   useSaveZodiacRoute,
   useSelectedRouteId,
   useZodiacRoute,
 } from '@/zodiac-routes'
+import { Rocket } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 type LaunchButtonProps = {
@@ -30,9 +31,9 @@ export const LaunchButton = ({
   const navigate = useNavigate()
 
   return (
-    <Button
-      className="px-6 py-1"
+    <PrimaryButton
       disabled={disabled}
+      icon={Rocket}
       onClick={async () => {
         if (currentRouteState !== initialRouteState) {
           saveRoute(currentRouteState)
@@ -55,6 +56,6 @@ export const LaunchButton = ({
       }}
     >
       {currentRouteState !== initialRouteState ? 'Save & Launch' : 'Launch'}
-    </Button>
+    </PrimaryButton>
   )
 }

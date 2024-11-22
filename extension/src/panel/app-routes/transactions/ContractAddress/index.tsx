@@ -1,5 +1,5 @@
 import { EXPLORER_URL } from '@/chains'
-import { BlockLink, Circle, RawAddress } from '@/components'
+import { Circle, RawAddress } from '@/components'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -43,14 +43,14 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
         <div className="flex items-center gap-2 text-xs">
           <RawAddress>{displayAddress}</RawAddress>
 
-          <BlockLink
+          <a
             href={`${explorerUrl}/search?q=${address}`}
             target="_blank"
             title="Show in block explorer"
             rel="noreferrer"
           >
             <SquareArrowOutUpRight size={16} />
-          </BlockLink>
+          </a>
         </div>
       </div>
     </div>

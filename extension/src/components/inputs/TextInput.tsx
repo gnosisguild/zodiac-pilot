@@ -17,7 +17,7 @@ export const TextInput = ({ label, description, ...props }: TextInputProps) => (
         type="text"
         id={inputId}
         aria-describedby={descriptionId}
-        className="border border-zodiac-light-mustard border-opacity-80 bg-transparent px-3 py-2 font-mono text-sm text-white outline-none transition-all hover:border-white"
+        className="rounded-md border border-zinc-600 bg-zinc-800 px-3 py-2 text-sm text-white outline-none transition-all enabled:hover:border-zinc-500"
       />
     )}
   </Input>

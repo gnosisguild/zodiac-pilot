@@ -1,6 +1,6 @@
-import { IconButton } from '@/components'
+import { GhostButton } from '@/components'
 import { useRemoveZodiacRoute } from '@/zodiac-routes'
-import { RiDeleteBinLine } from 'react-icons/ri'
+import { Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useRouteId } from './useRouteId'
 
@@ -10,15 +10,16 @@ export const RemoveButton = () => {
   const routeId = useRouteId()
 
   return (
-    <IconButton
-      danger
+    <GhostButton
+      iconOnly
+      icon={Trash2}
+      style="critical"
       onClick={() => {
         removeRouteById(routeId)
         navigate('/routes')
       }}
-      className="aspect-square border-[3px] border-double border-red-800 p-1 hover:bg-zodiac-light-red hover:bg-opacity-20"
     >
-      <RiDeleteBinLine size={24} title="Remove this connection" />
-    </IconButton>
+      Remove this connection
+    </GhostButton>
   )
 }

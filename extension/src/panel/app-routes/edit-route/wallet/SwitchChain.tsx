@@ -1,5 +1,5 @@
 import { CHAIN_NAME } from '@/chains'
-import { Button, Warning } from '@/components'
+import { SecondaryButton, Warning } from '@/components'
 import { PropsWithChildren } from 'react'
 import { ChainId } from 'ser-kit'
 import { Section } from './Section'
@@ -30,15 +30,15 @@ export const SwitchChain = ({
 
       <Section.Actions>
         {onSwitch && (
-          <Button fluid onClick={onSwitch}>
+          <SecondaryButton fluid onClick={onSwitch}>
             Switch wallet to {chainName}
-          </Button>
+          </SecondaryButton>
         )}
 
         {onDisconnect && (
-          <Button fluid onClick={onDisconnect}>
+          <SecondaryButton fluid onClick={onDisconnect}>
             Disconnect
-          </Button>
+          </SecondaryButton>
         )}
       </Section.Actions>
     </Section>

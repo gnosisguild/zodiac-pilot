@@ -1,4 +1,9 @@
-import { BoxButton, BoxLink, ConnectionStack, Tag } from '@/components'
+import {
+  ConnectionStack,
+  SecondaryButton,
+  SecondaryLinkButton,
+  Tag,
+} from '@/components'
 import { ZodiacRoute } from '@/types'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { formatDistanceToNow } from 'date-fns'
@@ -20,7 +25,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 rounded-md border border-white border-opacity-30 bg-zodiac-very-dark-blue bg-opacity-70 p-4 hover:border-zodiac-light-mustard hover:border-opacity-50">
+      <div className="flex flex-col gap-4 rounded-md border border-white/30 bg-zinc-900 p-4">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
             <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -51,14 +56,14 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
         <ConnectionStack connection={asLegacyConnection(route)} />
 
         <div className="flex justify-end gap-2">
-          <BoxLink
+          <SecondaryLinkButton
             to={`/routes/${route.id}`}
             onClick={(event) => event.stopPropagation()}
           >
             Edit
-          </BoxLink>
+          </SecondaryLinkButton>
 
-          <BoxButton
+          <SecondaryButton
             onClick={async () => {
               // we continue working with the same avatar, so don't have to clear the recorded transaction
               const keepTransactionBundle =
@@ -75,7 +80,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
             }}
           >
             Launch
-          </BoxButton>
+          </SecondaryButton>
         </div>
       </div>
 

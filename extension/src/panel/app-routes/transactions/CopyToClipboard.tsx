@@ -1,4 +1,4 @@
-import { IconButton } from '@/components'
+import { GhostButton } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { Copy } from 'lucide-react'
 import { toast } from 'react-toastify'
@@ -27,11 +27,8 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
   }
 
   return (
-    <IconButton
-      onClick={copyToClipboard}
-      title="Copy transaction data to clipboard"
-    >
-      <Copy size={16} />
-    </IconButton>
+    <GhostButton iconOnly icon={Copy} onClick={copyToClipboard}>
+      Copy transaction data to clipboard
+    </GhostButton>
   )
 }
