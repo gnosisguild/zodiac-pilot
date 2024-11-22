@@ -1,28 +1,30 @@
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
-import { ForkedSession } from './types'
+import { PilotSession } from './PilotSession'
 
-let currentRuleIds: number[] = []
-
-export const removeAllRpcRedirectRules = () =>
-  chrome.declarativeNetRequest.updateSessionRules({
-    removeRuleIds: currentRuleIds,
+export const removeAllRpcRedirectRules = async (session: PilotSession) => {
+  await chrome.declarativeNetRequest.updateSessionRules({
+    removeRuleIds: Array.from(session.tabs),
   })
+
+  chrome.declarativeNetRequest.getSessionRules((rules) => {
+    console.debug('RPC redirect rules updated', rules)
+  })
+}
 
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
-export const updateRpcRedirectRules = async (
-  sessions: ForkedSession[],
+export const addRpcRedirectRules = async (
+  session: PilotSession,
   trackedRPCUrlsByTabId: Map<number, string[]>
 ) => {
-  const addRules = sessions
-    .flatMap(({ tabs, fork }) =>
-      Array.from(tabs).map((tabId) => ({
-        tabId,
-        redirectUrl: fork.rpcUrl,
-        regexFilter: makeUrlRegex(trackedRPCUrlsByTabId.get(tabId) || []),
-      }))
-    )
+  const addRules = session
+    .getTabs()
+    .map((tabId) => ({
+      tabId,
+      redirectUrl: session.getFork().rpcUrl,
+      regexFilter: makeUrlRegex(trackedRPCUrlsByTabId.get(tabId) || []),
+    }))
     .filter(
       ({ regexFilter, redirectUrl }) =>
         regexFilter != null && redirectUrl != null
@@ -43,17 +45,15 @@ export const updateRpcRedirectRules = async (
       },
     }))
 
-  const previousRuleIds = currentRuleIds
-  currentRuleIds = addRules.map((rule) => rule.id)
-
   await chrome.declarativeNetRequest.updateSessionRules({
     addRules,
-    removeRuleIds: previousRuleIds,
   })
 
   chrome.declarativeNetRequest.getSessionRules((rules) => {
     console.debug('RPC redirect rules updated', rules)
   })
+
+  return new Set(addRules.map(({ id }) => id))
 }
 
 /**
