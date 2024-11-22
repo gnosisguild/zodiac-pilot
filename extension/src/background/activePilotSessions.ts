@@ -106,6 +106,8 @@ const makeActionable = (
         })
       }
 
+      onNewRPCEndpointDetected.removeAllListeners()
+
       removeCSPHeaderRule()
       removeAllRpcRedirectRules()
     },
@@ -127,14 +129,9 @@ const makeActionable = (
         return
       }
 
-      const { chainId } = actionableSession.fork
-
       Object.assign(actionableSession, { fork: null })
 
-      updateRpcRedirectRules(
-        getForkedSessions(),
-        getTrackedRPCUrlsForChainId({ chainId })
-      )
+      removeAllRpcRedirectRules()
 
       onNewRPCEndpointDetected.removeListener(handleNewRPCEndpoint)
     },

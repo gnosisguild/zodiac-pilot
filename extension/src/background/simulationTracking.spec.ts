@@ -68,7 +68,6 @@ describe('Simulation tracking', () => {
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
       ).toHaveBeenLastCalledWith({
-        addRules: [],
         removeRuleIds: [2],
       })
     })
@@ -127,14 +126,67 @@ describe('Simulation tracking', () => {
       await startSimulation({ windowId: 1 })
       await stopSimulation({ windowId: 1 })
 
-      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
-      ).toHaveBeenCalledWith({
-        addRules: [],
-        removeRuleIds: [1],
+      ).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          addRules: [
+            {
+              id: 1,
+              priority: 1,
+              action: {
+                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+                redirect: { url: 'http://test.com' },
+              },
+              condition: {
+                resourceTypes: [
+                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+                ],
+                regexFilter: '^(http:\\/\\/test\\-url)$',
+                tabIds: [1],
+              },
+            },
+          ],
+        })
+      )
+    })
+
+    it('stops updating the redirect rules when the session ends', async () => {
+      const { stopPilotSession } = await startPilotSession({
+        windowId: 1,
+        tabId: 1,
       })
+      await startSimulation({ windowId: 1 })
+
+      await stopPilotSession()
+
+      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
+
+      expect(
+        chromeMock.declarativeNetRequest.updateSessionRules
+      ).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          addRules: [
+            {
+              id: 1,
+              priority: 1,
+              action: {
+                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+                redirect: { url: 'http://test.com' },
+              },
+              condition: {
+                resourceTypes: [
+                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
+                ],
+                regexFilter: '^(http:\\/\\/test\\-url)$',
+                tabIds: [1],
+              },
+            },
+          ],
+        })
+      )
     })
   })
 
