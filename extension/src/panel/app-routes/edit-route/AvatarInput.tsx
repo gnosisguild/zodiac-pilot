@@ -7,7 +7,7 @@ import {
 } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
-import { CSSProperties, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import { Option } from './ModSelect'
 
@@ -15,36 +15,6 @@ interface Props {
   value: string
   availableSafes?: string[]
   onChange(value: string): void
-}
-
-const createSelectStyles = {
-  ...selectStyles,
-  dropdownIndicator: (provided: CSSProperties, state: any) => {
-    if (state.options.length === 0) {
-      return {
-        ...provided,
-        display: 'none',
-      }
-    }
-    return {
-      ...provided,
-    }
-  },
-  indicatorSeparator: (provided: CSSProperties, state: any) => {
-    if (state.options.length === 0) {
-      return {
-        ...provided,
-        display: 'none',
-      }
-    }
-    return {
-      ...provided,
-    }
-  },
-  indicatorContainer: (provided: CSSProperties) => ({
-    ...provided,
-    color: 'white',
-  }),
 }
 
 export const AvatarInput = ({
@@ -64,11 +34,12 @@ export const AvatarInput = ({
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
         <CreatableSelect
-          blurInputOnSelect={true}
+          unstyled
+          blurInputOnSelect
           isClearable
           formatOptionLabel={SafeOptionLabel}
           placeholder="Paste in Safe address or select from owned Safes"
-          styles={createSelectStyles as any}
+          classNames={selectStyles}
           value={
             checksumAvatarAddress !== ''
               ? {
