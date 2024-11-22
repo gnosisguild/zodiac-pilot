@@ -41,4 +41,24 @@ describe('RPC Tracking', () => {
 
     expect(handler).not.toHaveBeenCalled()
   })
+
+  it('is possible to remove all listeners', async () => {
+    const result = trackRequests()
+    trackSessions(result)
+
+    await startPilotSession({ windowId: 1, tabId: 1 })
+
+    const handler = vi.fn()
+
+    result.onNewRPCEndpointDetected.addListener(handler)
+    result.onNewRPCEndpointDetected.removeAllListeners()
+
+    await mockRPCRequest({
+      chainId: 1,
+      tabId: 1,
+      url: 'http://test-json-rpc.com',
+    })
+
+    expect(handler).not.toHaveBeenCalled()
+  })
 })
