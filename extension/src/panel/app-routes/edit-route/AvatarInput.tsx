@@ -39,7 +39,7 @@ export const AvatarInput = ({
           isClearable
           formatOptionLabel={SafeOptionLabel}
           placeholder="Paste in Safe address or select from owned Safes"
-          classNames={selectStyles}
+          classNames={selectStyles<{ value: string; label: string }>()}
           value={
             checksumAvatarAddress !== ''
               ? {
