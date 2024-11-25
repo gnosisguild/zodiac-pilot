@@ -66,9 +66,11 @@ export class WalletConnectEthereumMultiProvider extends WalletConnectEthereumPro
 
   protected override async initialize(opts: EthereumProviderOptions) {
     this.rpc = this.getRpcConfig(opts)
+
     this.chainId = this.rpc.chains.length
       ? getEthereumChainId(this.rpc.chains)
       : getEthereumChainId(this.rpc.optionalChains || [])
+
     this.signer = await UniversalProvider.init({
       projectId: this.rpc.projectId,
       metadata: this.rpc.metadata,
@@ -88,8 +90,11 @@ export class WalletConnectEthereumMultiProvider extends WalletConnectEthereumPro
         }),
       }),
     })
+
     this.registerEventListeners()
+
     await this.loadPersistedSession()
+
     this.modal = modal
   }
 }
