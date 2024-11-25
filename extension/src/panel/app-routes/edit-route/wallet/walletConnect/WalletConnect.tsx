@@ -1,7 +1,6 @@
 import { SecondaryButton } from '@/components'
 import { useWalletConnect, WalletConnectResult } from '@/providers'
 import { ProviderType } from '@/types'
-import { invariant } from '@epic-web/invariant'
 import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
@@ -24,10 +23,9 @@ export const WalletConnect = ({
 }: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
 
-  invariant(
-    walletConnect != null,
-    'Wallet connect chosen as provider but not available'
-  )
+  if (walletConnect == null) {
+    return null
+  }
 
   if (isConnected(walletConnect)) {
     return (
