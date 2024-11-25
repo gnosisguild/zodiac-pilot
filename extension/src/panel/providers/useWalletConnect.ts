@@ -34,11 +34,17 @@ export const useWalletConnect = (
 
     console.debug('Connecting WalletConnect...')
 
-    await provider.disconnect()
-    await provider.enable()
+    const { promise, resolve } = Promise.withResolvers()
 
-    // at this point provider.chainId is generally 1, we gotta wait for the chainChanged event which will be emitted even if the final chainId continues to be 1
-    await new Promise((resolve) => provider.events.once('connect', resolve))
+    provider.once('chainChanged', resolve)
+
+    await provider.disconnect()
+    await provider.connect()
+
+    // at this point provider.chainId is generally 1.
+    // we gotta wait for the chainChanged event which
+    // will be emitted even if the final chainId continues to be 1
+    await promise
 
     console.debug('WalletConnect connected!')
 
