@@ -3,14 +3,10 @@ import { InjectedWalletContextT } from './useInjectedWallet'
 import { WalletConnectResult } from './useWalletConnect'
 
 export const isConnected = (
-  providerContext: InjectedWalletContextT | WalletConnectResult | null,
+  providerContext: InjectedWalletContextT | WalletConnectResult,
   account: PrefixedAddress,
   chainId: ChainId
 ) => {
-  if (providerContext == null) {
-    return false
-  }
-
   if (providerContext.ready === false) {
     return false
   }
