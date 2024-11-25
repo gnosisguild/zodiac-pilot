@@ -32,6 +32,7 @@ export const WalletDisconnected = ({
         >
           Connect
         </SecondaryButton>
+
         <SecondaryButton fluid onClick={onDisconnect}>
           Disconnect
         </SecondaryButton>
