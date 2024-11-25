@@ -75,6 +75,7 @@ export const useWalletConnect = (
     [provider, connected, accounts, chainId, connect, disconnect]
   )
 
+  console.log({ packed })
   return packed
 }
 
@@ -84,31 +85,23 @@ const useProvider = (routeId: string) => {
 
   // effect to initialize the provider
   useEffect(() => {
-    if (providers[routeId] != null) {
-      return
+    if (providers[routeId] == null) {
+      providers[routeId] = WalletConnectEthereumMultiProvider.init({
+        routeId,
+        projectId: WALLETCONNECT_PROJECT_ID,
+        showQrModal: true,
+        chains: [] as any, // recommended by WalletConnect for multi-chain apps (but somehow their typings don't allow it)
+        optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
+        rpcMap: RPC,
+        metadata: {
+          name: 'Zodiac Pilot',
+          description: 'Simulate dApp interactions and record transactions',
+          url: 'https://pilot.gnosisguild.org',
+          icons: ['//pilot.gnosisguild.org/zodiac48.png'],
+        },
+      })
     }
 
-    providers[routeId] = WalletConnectEthereumMultiProvider.init({
-      routeId,
-      projectId: WALLETCONNECT_PROJECT_ID,
-      showQrModal: true,
-      chains: [] as any, // recommended by WalletConnect for multi-chain apps (but somehow their typings don't allow it)
-      optionalChains: Object.keys(RPC).map((chainId) => Number(chainId)),
-      rpcMap: RPC,
-      metadata: {
-        name: 'Zodiac Pilot',
-        description: 'Simulate dApp interactions and record transactions',
-        url: 'https://pilot.gnosisguild.org',
-        icons: ['//pilot.gnosisguild.org/zodiac48.png'],
-      },
-    })
-
-    // providers[routeId].then((provider) => {
-    //   setProvider(provider)
-    // setConnected(provider.connected)
-    // setAccounts(provider.accounts)
-    // setChainId(provider.chainId)
-    // })
     providers[routeId].then(setProvider)
   }, [routeId])
 
