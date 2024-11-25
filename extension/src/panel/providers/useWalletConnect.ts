@@ -75,7 +75,6 @@ export const useWalletConnect = (
     [provider, connected, accounts, chainId, connect, disconnect]
   )
 
-  console.log({ packed })
   return packed
 }
 
@@ -119,13 +118,17 @@ const useProvider = (routeId: string) => {
 }
 
 const useConnected = (provider: WalletConnectEthereumMultiProvider | null) => {
-  const [connected, setConnected] = useState(
-    provider ? provider.connected : false
+  const [connected, setConnected] = useState<boolean | undefined>(
+    provider ? provider.connected : undefined
   )
 
   useEffect(() => {
     if (provider == null) {
       return
+    }
+
+    if (connected == null) {
+      setConnected(provider.connected)
     }
 
     const handleConnectionUpdate = () => {
@@ -146,17 +149,23 @@ const useConnected = (provider: WalletConnectEthereumMultiProvider | null) => {
       provider.events.removeListener('disconnect', handleConnectionUpdate)
       provider.events.removeListener('accountsChanged', handleAccountsChanged)
     }
-  }, [provider])
+  }, [connected, provider])
 
-  return connected
+  return connected === true
 }
 
 const useAccounts = (provider: WalletConnectEthereumMultiProvider | null) => {
-  const [accounts, setAccounts] = useState(provider ? provider.accounts : [])
+  const [accounts, setAccounts] = useState<string[] | undefined>(
+    provider ? provider.accounts : undefined
+  )
 
   useEffect(() => {
     if (provider == null) {
       return
+    }
+
+    if (accounts == null) {
+      setAccounts(provider.accounts)
     }
 
     const handleAccountsChanged = () => {
@@ -168,9 +177,9 @@ const useAccounts = (provider: WalletConnectEthereumMultiProvider | null) => {
     return () => {
       provider.events.removeListener('accountsChanged', handleAccountsChanged)
     }
-  }, [provider])
+  }, [accounts, provider])
 
-  return accounts
+  return accounts || []
 }
 
 const useChainId = (provider: WalletConnectEthereumMultiProvider | null) => {
@@ -181,6 +190,10 @@ const useChainId = (provider: WalletConnectEthereumMultiProvider | null) => {
       return
     }
 
+    if (chainId == undefined) {
+      setChainId(provider.chainId)
+    }
+
     const handleChainChanged = () => {
       setChainId(provider.chainId)
     }
@@ -189,7 +202,7 @@ const useChainId = (provider: WalletConnectEthereumMultiProvider | null) => {
     return () => {
       provider.events.removeListener('chainChanged', handleChainChanged)
     }
-  }, [provider])
+  }, [chainId, provider])
 
   return chainId
 }
