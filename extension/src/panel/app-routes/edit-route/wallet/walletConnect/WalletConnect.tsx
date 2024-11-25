@@ -23,10 +23,6 @@ export const WalletConnect = ({
 }: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
 
-  if (walletConnect == null) {
-    return null
-  }
-
   if (isConnected(walletConnect)) {
     return (
       <Connected onDisconnect={() => walletConnect.disconnect()}>
