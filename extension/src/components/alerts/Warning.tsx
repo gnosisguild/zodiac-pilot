@@ -1,31 +1,18 @@
-import { PropsWithChildren, useId } from 'react'
+import { PropsWithChildren } from 'react'
+import { BaseAlert } from './BaseAlert'
 
 type WarningProps = PropsWithChildren<{
   title?: string
 }>
 
-export const Warning = ({ children, title }: WarningProps) => {
-  const titleId = useId()
-  const descriptionId = useId()
+export const Warning = ({ children, title }: WarningProps) => (
+  <BaseAlert className="border-yellow-600/80 bg-yellow-800">
+    {title && <BaseAlert.Title className="text-white">{title}</BaseAlert.Title>}
 
-  return (
-    <div
-      role="alert"
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-      className="flex flex-col gap-2 rounded bg-yellow-800 px-4 py-2 text-white shadow-md"
-    >
-      {title && (
-        <h4 id={titleId} className="font-bold">
-          {title}
-        </h4>
-      )}
-
-      {children && (
-        <div id={descriptionId} className="text-sm">
-          {children}
-        </div>
-      )}
-    </div>
-  )
-}
+    {children && (
+      <BaseAlert.Description className="text-yellow-200">
+        {children}
+      </BaseAlert.Description>
+    )}
+  </BaseAlert>
+)

@@ -23,24 +23,6 @@
       format('woff');
 }
 
-body {
-  font-size: 16px;
-  color: white;
-  min-height: 100vh;
-  background: url(./assets/zodiac-bg.svg) 0% 0% / cover fixed;
-  margin: 0px;
-}
-
-#root {
-  background: linear-gradient(
-    108.86deg,
-    rgba(26, 33, 66, 0.85) 6.24%,
-    rgba(12, 19, 8, 0.85) 53.08%,
-    rgba(37, 6, 4, 0.85) 96.54%
-  );
-  min-height: 100vh;
-}
-
 select {
   font-size: 14px;
   background-color: transparent;
