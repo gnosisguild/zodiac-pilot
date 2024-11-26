@@ -1,6 +1,6 @@
 import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { InjectedWalletContextT } from './useInjectedWallet'
-import { WalletConnectResult } from './useWalletConnect'
+import { InjectedWalletContextT } from './injected-provider'
+import { WalletConnectResult } from './wallet-connect'
 
 export const isConnected = (
   providerContext: InjectedWalletContextT | WalletConnectResult,

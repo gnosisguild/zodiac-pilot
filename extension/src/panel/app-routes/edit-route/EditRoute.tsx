@@ -1,4 +1,5 @@
 import { Divider, Error, Section, TextInput } from '@/components'
+import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -56,8 +57,8 @@ export const EditRoute = () => {
     ? modules.find((mod) => mod.moduleAddress === moduleAddress)
     : undefined
 
-  const updateConnection = (patch: ConnectionPatch) => {
-    console.debug('updateConnection', patch)
+  const updateRoute = (patch: ConnectionPatch) => {
+    console.debug('updateRoute', patch)
     setRoute((route) =>
       fromLegacyConnection({ ...asLegacyConnection(route), ...patch })
     )
@@ -66,6 +67,10 @@ export const EditRoute = () => {
   const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
   const [roleIdError, setRoleIdError] = useState<string | null>(null)
+
+  useDisconnectWalletConnectIfNeeded(currentRouteState, {
+    onDisconnect: () => updateRoute({ pilotAddress: '' }),
+  })
 
   return (
     <>
@@ -92,7 +97,7 @@ export const EditRoute = () => {
               value={label}
               placeholder="Label this route"
               onChange={(ev) => {
-                updateConnection({
+                updateRoute({
                   label: ev.target.value,
                 })
               }}
@@ -102,7 +107,7 @@ export const EditRoute = () => {
           <Section title="Chain">
             <ChainSelect
               value={chainId}
-              onChange={(chainId) => updateConnection({ chainId })}
+              onChange={(chainId) => updateRoute({ chainId })}
             />
           </Section>
 
@@ -110,14 +115,14 @@ export const EditRoute = () => {
             <ConnectWallet
               route={currentRouteState}
               onConnect={({ providerType, chainId, account }) => {
-                updateConnection({
+                updateRoute({
                   providerType,
                   chainId,
                   pilotAddress: account,
                 })
               }}
               onDisconnect={() => {
-                updateConnection({ pilotAddress: '' })
+                updateRoute({ pilotAddress: '' })
               }}
             />
           </Section>
@@ -133,7 +138,7 @@ export const EditRoute = () => {
                   keepTransactionBundle || (await confirmClearTransactions())
 
                 if (confirmed) {
-                  updateConnection({
+                  updateRoute({
                     avatarAddress: address || undefined,
                     moduleAddress: '',
                     moduleType: undefined,
@@ -157,7 +162,7 @@ export const EditRoute = () => {
               }
               onSelect={async (value) => {
                 if (value == null) {
-                  updateConnection({
+                  updateRoute({
                     moduleAddress: undefined,
                     moduleType: undefined,
                   })
@@ -167,7 +172,7 @@ export const EditRoute = () => {
 
                 switch (value.moduleType) {
                   case KnownContracts.ROLES_V1: {
-                    updateConnection({
+                    updateRoute({
                       ...value,
                       multisend: await queryRolesV1MultiSend(
                         chainId,
@@ -179,7 +184,7 @@ export const EditRoute = () => {
                   }
 
                   case KnownContracts.ROLES_V2: {
-                    updateConnection({
+                    updateRoute({
                       ...value,
                       ...(await queryRolesV2MultiSend(
                         chainId,
@@ -200,7 +205,7 @@ export const EditRoute = () => {
                 label="Role ID"
                 value={roleId}
                 onChange={(ev) => {
-                  updateConnection({ roleId: ev.target.value })
+                  updateRoute({ roleId: ev.target.value })
                 }}
                 placeholder="0"
               />
@@ -217,9 +222,9 @@ export const EditRoute = () => {
                   try {
                     const roleId = encodeRoleKey(ev.target.value)
                     setRoleIdError(null)
-                    updateConnection({ roleId })
+                    updateRoute({ roleId })
                   } catch (e) {
-                    updateConnection({ roleId: '' })
+                    updateRoute({ roleId: '' })
                     setRoleIdError((e as Error).message)
                   }
                 }}

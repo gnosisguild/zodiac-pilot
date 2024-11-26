@@ -1,7 +1,7 @@
+import { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { ChainId } from 'ser-kit'
-import { Eip1193Provider } from '../../types'
 import {
   ConnectFn,
   ConnectionStatus,
