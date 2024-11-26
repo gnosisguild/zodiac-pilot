@@ -1,5 +1,10 @@
 import cn from 'classnames'
-import { BaseButton, BaseButtonProps } from './BaseButton'
+import {
+  BaseButton,
+  BaseButtonProps,
+  BaseLinkButton,
+  BaseLinkButtonProps,
+} from './BaseButton'
 import { WithStyle } from './types'
 
 type PrimaryButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
@@ -9,11 +14,27 @@ export const PrimaryButton = ({
   ...props
 }: PrimaryButtonProps) => (
   <BaseButton
+    {...props}
     className={cn(
       'font-bold',
       style === 'regular' &&
         'border-zinc border-zinc-500 bg-zinc-700 text-zinc-50 enabled:hover:bg-zinc-600'
     )}
+  />
+)
+
+type PrimaryLinkButtonProps = WithStyle<Omit<BaseLinkButtonProps, 'className'>>
+
+export const PrimaryLinkButton = ({
+  style = 'regular',
+  ...props
+}: PrimaryLinkButtonProps) => (
+  <BaseLinkButton
     {...props}
+    className={cn(
+      'font-bold',
+      style === 'regular' &&
+        'border-zinc border-zinc-500 bg-zinc-700 text-zinc-50 hover:bg-zinc-600'
+    )}
   />
 )
