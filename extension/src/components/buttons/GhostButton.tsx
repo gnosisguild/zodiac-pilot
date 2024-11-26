@@ -22,7 +22,7 @@ export const GhostButton = ({
       style === 'contrast' &&
         'text-zinc-200 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
       style === 'critical' &&
-        'text-red-500 enabled:hover:bg-red-900 enabled:hover:text-red-400'
+        'text-red-500 enabled:hover:bg-red-100 dark:text-red-500 dark:enabled:hover:bg-red-900 dark:enabled:hover:text-red-400'
     )}
   />
 )

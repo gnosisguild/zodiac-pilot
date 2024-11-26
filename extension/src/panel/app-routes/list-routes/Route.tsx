@@ -25,7 +25,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 rounded-md border border-white/30 bg-zinc-900 p-4">
+      <div className="flex flex-col gap-4 rounded-md border border-zinc-200 bg-zinc-100 p-4 dark:border-white/30 dark:bg-zinc-900">
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
             <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -42,7 +42,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <div className="font-semibold text-zinc-400">Last Used</div>
+            <div className="font-semibold dark:text-zinc-400">Last Used</div>
             <div className="opacity-70">
               {route.lastUsed ? (
                 `${formatDistanceToNow(route.lastUsed)} ago`
