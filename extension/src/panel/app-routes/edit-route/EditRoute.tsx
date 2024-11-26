@@ -127,7 +127,7 @@ export const EditRoute = () => {
             />
           </Section>
 
-          <Section title={safes.length > 0 ? 'Piloted Safe' : undefined}>
+          <Section>
             <AvatarInput
               availableSafes={safes}
               value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
