@@ -3,6 +3,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useZodiacRoute } from '@/zodiac-routes'
+import { invariant } from '@epic-web/invariant'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
@@ -32,11 +33,10 @@ export const useApplicableTranslation = (transactionIndex: number) => {
         .slice(transactionIndex + 1)
         .map((txState) => txState.transaction)
 
-      if (!(provider instanceof ForkProvider)) {
-        throw new Error(
-          'Transaction translation is only supported when using ForkProvider'
-        )
-      }
+      invariant(
+        provider instanceof ForkProvider,
+        'Transaction translation is only supported when using ForkProvider'
+      )
 
       // remove the transaction and all later ones from the store
       dispatch({

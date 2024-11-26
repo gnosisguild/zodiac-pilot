@@ -7,7 +7,6 @@ import {
   signTypedData,
   typedDataHash,
 } from '@/safe'
-import { translateSignSnapshotVote } from '@/transaction-translation'
 import { Eip1193Provider, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
@@ -18,6 +17,7 @@ import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import { ChainId } from 'ser-kit'
 import { TenderlyProvider } from './TenderlyProvider'
+import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 
 class UnsupportedMethodError extends Error {
   code = 4200
