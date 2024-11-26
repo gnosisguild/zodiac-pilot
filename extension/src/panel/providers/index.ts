@@ -9,4 +9,4 @@ export {
   useInjectedWallet,
   type InjectedWalletContextT,
 } from './useInjectedWallet'
-export { useWalletConnect, type WalletConnectResult } from './useWalletConnect'
+export * from './wallet-connect'
