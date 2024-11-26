@@ -7,8 +7,14 @@ import {
 } from '@/components'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
+import { waitForMultisigExecution } from '@/safe'
 import { useTransactions } from '@/state'
 import { JsonRpcError, ProviderType } from '@/types'
+import {
+  decodeGenericError,
+  decodeRolesV1Error,
+  decodeRolesV2Error,
+} from '@/utils'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { SquareArrowOutUpRight, X } from 'lucide-react'
 import { useState } from 'react'
@@ -16,12 +22,6 @@ import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { waitForMultisigExecution } from '../../integrations/safe'
-import {
-  decodeGenericError,
-  decodeRolesV1Error,
-  decodeRolesV2Error,
-} from '../../utils'
 
 export const Submit = () => {
   const route = useZodiacRoute()

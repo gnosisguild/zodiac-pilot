@@ -3,6 +3,11 @@ import { useProvider } from '@/providers-ui'
 import { TransactionState } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
 import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
+import {
+  decodeGenericError,
+  decodeRolesV1Error,
+  decodeRolesV2Error,
+} from '@/utils'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
@@ -14,8 +19,6 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { decodeRolesV1Error } from '../../utils'
-import { decodeGenericError, decodeRolesV2Error } from '../../utils/decodeError'
 import { CopyToClipboard } from './CopyToClipboard'
 import { Translate } from './Translate'
 

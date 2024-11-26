@@ -9,7 +9,7 @@ import {
 } from '@/safe'
 import { translateSignSnapshotVote } from '@/transaction-translation'
 import { Eip1193Provider, TransactionData } from '@/types'
-import { getActiveTab } from '@/utils'
+import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
@@ -17,7 +17,6 @@ import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import { ChainId } from 'ser-kit'
-import { decodeGenericError } from '../utils'
 import { TenderlyProvider } from './TenderlyProvider'
 
 class UnsupportedMethodError extends Error {
