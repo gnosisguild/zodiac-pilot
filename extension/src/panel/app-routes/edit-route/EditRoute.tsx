@@ -91,25 +91,21 @@ export const EditRoute = () => {
         <Divider />
 
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-          <Section>
-            <TextInput
-              label="Route label"
-              value={label}
-              placeholder="Label this route"
-              onChange={(ev) => {
-                updateRoute({
-                  label: ev.target.value,
-                })
-              }}
-            />
-          </Section>
+          <TextInput
+            label="Route label"
+            value={label}
+            placeholder="Label this route"
+            onChange={(ev) => {
+              updateRoute({
+                label: ev.target.value,
+              })
+            }}
+          />
 
-          <Section>
-            <ChainSelect
-              value={chainId}
-              onChange={(chainId) => updateRoute({ chainId })}
-            />
-          </Section>
+          <ChainSelect
+            value={chainId}
+            onChange={(chainId) => updateRoute({ chainId })}
+          />
 
           <Section title="Pilot Account">
             <ConnectWallet
@@ -127,110 +123,102 @@ export const EditRoute = () => {
             />
           </Section>
 
-          <Section>
-            <AvatarInput
-              availableSafes={safes}
-              value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
-              onChange={async (address) => {
-                const keepTransactionBundle =
-                  address.toLowerCase() === avatarAddress.toLowerCase()
-                const confirmed =
-                  keepTransactionBundle || (await confirmClearTransactions())
+          <AvatarInput
+            availableSafes={safes}
+            value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
+            onChange={async (address) => {
+              const keepTransactionBundle =
+                address.toLowerCase() === avatarAddress.toLowerCase()
+              const confirmed =
+                keepTransactionBundle || (await confirmClearTransactions())
 
-                if (confirmed) {
-                  updateRoute({
-                    avatarAddress: address || undefined,
-                    moduleAddress: '',
-                    moduleType: undefined,
-                  })
-                }
-              }}
-            />
-          </Section>
-
-          <Section>
-            <ZodiacMod
-              avatarAddress={avatarAddress}
-              pilotAddress={pilotAddress}
-              value={
-                selectedModule
-                  ? {
-                      moduleAddress: selectedModule.moduleAddress,
-                      moduleType: selectedModule.type,
-                    }
-                  : null
+              if (confirmed) {
+                updateRoute({
+                  avatarAddress: address || undefined,
+                  moduleAddress: '',
+                  moduleType: undefined,
+                })
               }
-              onSelect={async (value) => {
-                if (value == null) {
+            }}
+          />
+
+          <ZodiacMod
+            avatarAddress={avatarAddress}
+            pilotAddress={pilotAddress}
+            value={
+              selectedModule
+                ? {
+                    moduleAddress: selectedModule.moduleAddress,
+                    moduleType: selectedModule.type,
+                  }
+                : null
+            }
+            onSelect={async (value) => {
+              if (value == null) {
+                updateRoute({
+                  moduleAddress: undefined,
+                  moduleType: undefined,
+                })
+
+                return
+              }
+
+              switch (value.moduleType) {
+                case KnownContracts.ROLES_V1: {
                   updateRoute({
-                    moduleAddress: undefined,
-                    moduleType: undefined,
+                    ...value,
+                    multisend: await queryRolesV1MultiSend(
+                      chainId,
+                      value.moduleAddress
+                    ),
                   })
 
-                  return
+                  break
                 }
 
-                switch (value.moduleType) {
-                  case KnownContracts.ROLES_V1: {
-                    updateRoute({
-                      ...value,
-                      multisend: await queryRolesV1MultiSend(
-                        chainId,
-                        value.moduleAddress
-                      ),
-                    })
+                case KnownContracts.ROLES_V2: {
+                  updateRoute({
+                    ...value,
+                    ...(await queryRolesV2MultiSend(
+                      chainId,
+                      value.moduleAddress
+                    )),
+                  })
 
-                    break
-                  }
-
-                  case KnownContracts.ROLES_V2: {
-                    updateRoute({
-                      ...value,
-                      ...(await queryRolesV2MultiSend(
-                        chainId,
-                        value.moduleAddress
-                      )),
-                    })
-
-                    break
-                  }
+                  break
                 }
-              }}
-            />
-          </Section>
+              }
+            }}
+          />
 
           {selectedModule?.type === KnownContracts.ROLES_V1 && (
-            <Section>
-              <TextInput
-                label="Role ID"
-                value={roleId}
-                onChange={(ev) => {
-                  updateRoute({ roleId: ev.target.value })
-                }}
-                placeholder="0"
-              />
-            </Section>
+            <TextInput
+              label="Role ID"
+              value={roleId}
+              onChange={(ev) => {
+                updateRoute({ roleId: ev.target.value })
+              }}
+              placeholder="0"
+            />
           )}
           {selectedModule?.type === KnownContracts.ROLES_V2 && (
-            <Section>
-              <TextInput
-                label="Role Key"
-                key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
-                error={roleIdError}
-                defaultValue={decodedRoleKey || roleId}
-                onChange={(ev) => {
-                  try {
-                    const roleId = encodeRoleKey(ev.target.value)
-                    setRoleIdError(null)
-                    updateRoute({ roleId })
-                  } catch (e) {
-                    updateRoute({ roleId: '' })
-                    setRoleIdError((e as Error).message)
-                  }
-                }}
-                placeholder="Enter key as bytes32 hex string or in human-readable decoding"
-              />
-            </Section>
+            <TextInput
+              label="Role Key"
+              key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
+              error={roleIdError}
+              defaultValue={decodedRoleKey || roleId}
+              onChange={(ev) => {
+                try {
+                  const roleId = encodeRoleKey(ev.target.value)
+                  setRoleIdError(null)
+                  updateRoute({ roleId })
+                } catch (e) {
+                  updateRoute({ roleId: '' })
+                  setRoleIdError((e as Error).message)
+                }
+              }}
+              placeholder="Enter key as bytes32 hex string or in human-readable decoding"
+            />
           )}
         </div>
 

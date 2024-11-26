@@ -61,7 +61,6 @@ export const WalletConnect = ({
   if (knownAccount === false) {
     return (
       <Section>
-        Hallo
         <Account providerType={ProviderType.WalletConnect}>
           {pilotAddress}
         </Account>

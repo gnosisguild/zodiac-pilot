@@ -6,12 +6,9 @@ export const Section = ({ title, children }: SectionProps) => {
   const titleId = useId()
 
   return (
-    <section
-      aria-labelledby={titleId}
-      className="rounded-md border border-white/30 bg-zinc-900 p-4"
-    >
+    <section aria-labelledby={titleId}>
       {title && (
-        <h2 className="mb-1" id={titleId}>
+        <h2 className="mb-2 text-sm font-semibold text-gray-50" id={titleId}>
           {title}
         </h2>
       )}
