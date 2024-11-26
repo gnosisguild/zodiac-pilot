@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
-  extractBridgedTokenAddress,
   ETH_CIRCLE_TOKEN_MESSENGER,
   ETH_GNO_XDAI_BRIDGE,
+  extractBridgedTokenAddress,
 } from './bridges'
 
 describe('extractBridgedTokenAddress', () => {
