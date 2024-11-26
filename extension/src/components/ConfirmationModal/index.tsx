@@ -1,10 +1,11 @@
-import { X } from 'lucide-react'
 import { ReactNode, useState } from 'react'
-import Modal, { Styles } from 'react-modal'
-import { GhostButton, PrimaryButton } from '../buttons'
+import { GhostButton, SecondaryButton } from '../buttons'
+import { Modal } from '../Modal'
 
 type PropTypes = {
   isOpen: boolean
+  title: string
+  acceptLabel: string
   onAccept(): void
   onReject(): void
   children: ReactNode
@@ -12,27 +13,19 @@ type PropTypes = {
 
 export const ConfirmationModal = ({
   isOpen,
+  title,
+  acceptLabel,
   onAccept,
   onReject,
   children,
 }: PropTypes) => (
-  <Modal
-    isOpen={isOpen}
-    style={modalStyle}
-    contentLabel="Sign the batch transaction"
-  >
-    <div className="absolute right-0 top-0">
-      <GhostButton iconOnly icon={X} onClick={onReject}>
-        Cancel
-      </GhostButton>
-    </div>
-    <div className="flex flex-col justify-center gap-3">
-      <p>{children || 'Are you sure you want to continue'}</p>
-      <div className="flex gap-4">
-        <GhostButton onClick={onReject}>Cancel</GhostButton>
-        <PrimaryButton onClick={onAccept}>Continue</PrimaryButton>
-      </div>
-    </div>
+  <Modal open={isOpen} title={title} onClose={onReject} closeLabel="Cancel">
+    {children || 'Are you sure you want to continue'}
+
+    <Modal.Actions>
+      <GhostButton onClick={onReject}>Cancel</GhostButton>
+      <SecondaryButton onClick={onAccept}>{acceptLabel}</SecondaryButton>
+    </Modal.Actions>
   </Modal>
 )
 
@@ -63,6 +56,8 @@ export const useConfirmationModal = (): [
   const Confirmation = () => (
     <ConfirmationModal
       isOpen={open}
+      title="Clear existing transactions"
+      acceptLabel="Clear transaction"
       onAccept={() => handleConfirmation(true)}
       onReject={() => handleConfirmation(false)}
     >
@@ -71,28 +66,4 @@ export const useConfirmationModal = (): [
   )
 
   return [getConfirmation, Confirmation]
-}
-
-Modal.setAppElement('#root')
-
-const modalStyle: Styles = {
-  overlay: {
-    backgroundColor: 'rgb(35 34 17 / 82%)',
-    zIndex: 2000,
-  },
-
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    borderColor: '#d9d4ad',
-    width: 300,
-    borderRadius: 0,
-    paddingTop: 30,
-    background: 'rgb(84 83 62 / 71%)',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'center',
-  },
 }

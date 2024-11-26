@@ -1,8 +1,10 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import {
-  GhostButton,
+  Modal,
   PrimaryButton,
+  PrimaryLinkButton,
   RawAddress,
+  Spinner,
   toastClasses,
 } from '@/components'
 import { getReadOnlyProvider } from '@/providers'
@@ -16,9 +18,8 @@ import {
   decodeRolesV2Error,
 } from '@/utils'
 import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
-import { SquareArrowOutUpRight, X } from 'lucide-react'
+import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import Modal, { Styles } from 'react-modal'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
@@ -164,7 +165,7 @@ export const Submit = () => {
         </PrimaryButton>
       )}
 
-      {signaturePending && initiator && (
+      {initiator && (
         <AwaitingSignatureModal
           isOpen={signaturePending}
           onClose={() => setSignaturePending(false)}
@@ -189,54 +190,25 @@ const AwaitingSignatureModal = ({
   account,
 }: Props) => (
   <Modal
-    isOpen={isOpen}
-    style={modalStyle}
-    contentLabel="Sign the batch transaction"
+    open={isOpen}
+    title="Sign the batch transaction"
+    closeLabel="Abort transaction"
+    onClose={onClose}
   >
-    <div className="absolute right-0 top-0">
-      <GhostButton iconOnly icon={X} onClick={onClose}>
-        Cancel
-      </GhostButton>
+    <div className="flex items-center gap-2">
+      <Spinner /> Awaiting your signature ...
     </div>
-    <p>Awaiting your signature ...</p>
     {usesWalletConnect && (
-      <>
-        <br />
-        <p>
-          <a
-            className="inline-flex items-center gap-1 text-xs"
-            href={`https://app.safe.global/${account}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <SquareArrowOutUpRight size={16} />
-            Open Pilot Safe
-          </a>
-        </p>
-      </>
+      <Modal.Actions>
+        <PrimaryLinkButton
+          icon={SquareArrowOutUpRight}
+          to={`https://app.safe.global/${account}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open Pilot Safe
+        </PrimaryLinkButton>
+      </Modal.Actions>
     )}
   </Modal>
 )
-
-Modal.setAppElement('#root')
-
-const modalStyle: Styles = {
-  overlay: {
-    backgroundColor: 'rgb(35 34 17 / 52%)',
-  },
-
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    borderColor: '#d9d4ad',
-    width: 300,
-    borderRadius: 0,
-    paddingTop: 30,
-    background: 'rgb(84 83 62 / 71%)',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'center',
-  },
-}

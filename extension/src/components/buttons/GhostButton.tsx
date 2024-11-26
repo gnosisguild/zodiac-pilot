@@ -1,5 +1,10 @@
 import classNames from 'classnames'
-import { BaseButton, BaseButtonProps } from './BaseButton'
+import {
+  BaseButton,
+  BaseButtonProps,
+  BaseLinkButton,
+  BaseLinkButtonProps,
+} from './BaseButton'
 import { WithStyle } from './types'
 
 type GhostButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
@@ -12,9 +17,26 @@ export const GhostButton = ({
     {...props}
     className={classNames(
       'border-transparent bg-transparent font-bold',
-      style === 'regular' && 'text-zinc-200 enabled:hover:bg-zinc-800',
+      style === 'regular' &&
+        'text-zinc-400 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
       style === 'critical' &&
         'text-red-500 enabled:hover:bg-red-900 enabled:hover:text-red-400'
+    )}
+  />
+)
+
+type GhostLinkButtonProps = WithStyle<Omit<BaseLinkButtonProps, 'className'>>
+
+export const GhostLinkButton = ({
+  style = 'regular',
+  ...props
+}: GhostLinkButtonProps) => (
+  <BaseLinkButton
+    {...props}
+    className={classNames(
+      'border-transparent bg-transparent font-bold',
+      'text-zinc-900/30 hover:bg-zinc-800 hover:text-zinc-200',
+      style === 'critical' && 'text-red-500 hover:bg-red-900 hover:text-red-400'
     )}
   />
 )
