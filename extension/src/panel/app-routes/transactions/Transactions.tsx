@@ -1,4 +1,4 @@
-import { Divider, GhostButton, SecondaryButton } from '@/components'
+import { Divider, GhostButton, Info, SecondaryButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -12,7 +12,6 @@ import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
-import classes from './style.module.css'
 
 export const Transactions = () => {
   const transactions = useTransactions()
@@ -72,8 +71,8 @@ export const Transactions = () => {
       <div className="flex flex-col gap-4 p-4">
         <RouteBubble />
 
-        <div className="flex items-center justify-between">
-          <h4 className={classes.header}>Recording Transactions</h4>
+        <div className="flex items-center justify-between gap-2">
+          <h4>Recording Transactions</h4>
 
           <div className="flex gap-1">
             <GhostButton
@@ -115,10 +114,12 @@ export const Transactions = () => {
         ))}
 
         {transactions.length === 0 && (
-          <p className={classes.hint}>
-            As you interact with apps in the browser, transactions will be
-            recorded here. You can then sign and submit them as a batch.
-          </p>
+          <div className="my-auto">
+            <Info>
+              As you interact with apps in the browser, transactions will be
+              recorded here. You can then sign and submit them as a batch.
+            </Info>
+          </div>
         )}
       </div>
 

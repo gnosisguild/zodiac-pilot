@@ -82,6 +82,7 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
           chainId={chainId}
           routeId={route.id}
           isConnected={isConnected}
+          onDisconnect={onDisconnect}
         />
       )
   }
