@@ -1,4 +1,4 @@
-import { Box, Divider, Error, Section, TextInput } from '@/components'
+import { Divider, Error, Section, TextInput } from '@/components'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -21,7 +21,6 @@ import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { LaunchButton } from './LaunchButton'
 import { RemoveButton } from './RemoveButton'
-import classes from './style.module.css'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
 import { useSafesWithOwner } from './useSafesWithOwner'
@@ -212,6 +211,7 @@ export const EditRoute = () => {
               <TextInput
                 label="Role Key"
                 key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
+                error={roleIdError}
                 defaultValue={decodedRoleKey || roleId}
                 onChange={(ev) => {
                   try {
@@ -225,12 +225,6 @@ export const EditRoute = () => {
                 }}
                 placeholder="Enter key as bytes32 hex string or in human-readable decoding"
               />
-
-              {roleIdError && (
-                <Box p={3} className={classes.error}>
-                  {roleIdError}
-                </Box>
-              )}
             </Section>
           )}
         </div>

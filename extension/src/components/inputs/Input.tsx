@@ -8,10 +8,11 @@ type RenderProps = {
 type InputProps = {
   label: string
   description?: string
+  error?: string | null
   children: (props: RenderProps) => ReactNode
 }
 
-export const Input = ({ children, label, description }: InputProps) => {
+export const Input = ({ children, label, description, error }: InputProps) => {
   const inputId = useId()
   const descriptionId = useId()
 
@@ -28,6 +29,8 @@ export const Input = ({ children, label, description }: InputProps) => {
       </div>
 
       {children({ inputId, descriptionId })}
+
+      {error && <div className="text-sm font-bold text-red-600">{error}</div>}
     </div>
   )
 }
