@@ -1,6 +1,14 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
+import {
+  hashMessage,
+  initSafeProtocolKit,
+  safeInterface,
+  signMessage,
+  signTypedData,
+  typedDataHash,
+} from '@/safe'
 import { Eip1193Provider, TransactionData } from '@/types'
-import { getActiveTab } from '@/utils'
+import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
@@ -8,16 +16,8 @@ import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import { ChainId } from 'ser-kit'
-import { initSafeProtocolKit, safeInterface } from '../integrations/safe'
-import {
-  hashMessage,
-  signMessage,
-  signTypedData,
-  typedDataHash,
-} from '../integrations/safe/signing'
-import { translateSignSnapshotVote } from '../transactionTranslations/signSnapshotVote'
-import { decodeGenericError } from '../utils'
 import { TenderlyProvider } from './TenderlyProvider'
+import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 
 class UnsupportedMethodError extends Error {
   code = 4200

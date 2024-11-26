@@ -1,6 +1,7 @@
 import { Divider, Error, Section, TextInput } from '@/components'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
+import { decodeRoleKey, encodeRoleKey } from '@/utils'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
@@ -12,7 +13,6 @@ import {
   queryRolesV2MultiSend,
 } from '../../integrations/zodiac/rolesMultisend'
 import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
-import { decodeRoleKey, encodeRoleKey } from '../../utils'
 import {
   asLegacyConnection,
   fromLegacyConnection,
