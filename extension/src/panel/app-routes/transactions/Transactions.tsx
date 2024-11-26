@@ -7,12 +7,12 @@ import { invariant } from '@epic-web/invariant'
 import { Copy, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useGloballyApplicableTranslation } from '../../transactionTranslations'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import classes from './style.module.css'
-import { useGloballyApplicableTranslation } from '../transactionTranslations'
 
 export const Transactions = () => {
   const transactions = useTransactions()

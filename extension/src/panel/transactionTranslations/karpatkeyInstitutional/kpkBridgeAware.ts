@@ -1,7 +1,8 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 
-import { TransactionTranslation } from '../types'
+import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { Interface } from 'ethers'
+import { TransactionTranslation } from '../types'
 import { extractBridgedTokenAddress } from './bridges'
 
 const KARPATKEY_INSTITUTIONAL_AVATARS = [
@@ -11,17 +12,17 @@ const KARPATKEY_INSTITUTIONAL_AVATARS = [
 ].map((address) => address.toLowerCase())
 
 export const BRIDGE_AWARE_CONTRACT_ADDRESSES = [
-    //mainnet
+  //mainnet
   {
     chainId: 1,
-    address: '0xf0125a04d74782e6d2ad6d298f0bc786e301aac1'
+    address: '0xf0125a04d74782e6d2ad6d298f0bc786e301aac1',
   },
-    //Arbitrum1
+  //Arbitrum1
   {
     chainId: 42161,
     address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
   },
-    //Optimism
+  //Optimism
   {
     chainId: 10,
     address: '0x4abe155c97009e388e0493fe1516f636e0f3a390',
@@ -39,15 +40,15 @@ export const BRIDGE_AWARE_CONTRACT_ADDRESSES = [
   //Sepolia
   {
     chainId: 11155111,
-    address: '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4'
-  }
+    address: '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4',
+  },
 ]
 
 const BridgeAwareInterface: Interface = new Interface([
   `function bridgeStart(address asset)`,
 ])
 
-export default {
+export const kpkBridgeAware = {
   title: 'Add bridgeStart call',
 
   recommendedFor: [KnownContracts.ROLES_V2],
@@ -68,20 +69,29 @@ export default {
       return
     }
 
-    const bridgeStartCalls = bridgedTokenAddresses.map(tokenAddress => {
-      const foundAddress = BRIDGE_AWARE_CONTRACT_ADDRESSES.find(item => item.chainId === chainId);
+    const bridgeStartCalls = bridgedTokenAddresses.reduce(
+      (result, tokenAddress) => {
+        const foundAddress = BRIDGE_AWARE_CONTRACT_ADDRESSES.find(
+          (item) => item.chainId === chainId
+        )
 
-      if (!foundAddress) {
-        return;
-      }
+        if (!foundAddress) {
+          return result
+        }
 
-      return {
-        to: foundAddress.address,
-        data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
-          tokenAddress,
-        ]),
-        value: '0',
-    }})
+        return [
+          ...result,
+          {
+            to: foundAddress.address,
+            data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
+              tokenAddress,
+            ]),
+            value: '0',
+          },
+        ]
+      },
+      [] as MetaTransactionData[]
+    )
 
     const callsToAdd = bridgeStartCalls.filter(
       (bridgeStartCall) =>

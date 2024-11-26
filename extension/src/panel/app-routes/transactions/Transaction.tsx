@@ -126,7 +126,7 @@ const TransactionHeader = ({
           />
         )}
         <div className="flex">
-          <Translate transactionState={transactionState} index={index} />
+          <Translate index={index} />
           <CopyToClipboard transaction={transactionState.transaction} />
           <Remove transactionState={transactionState} index={index} />
         </div>
