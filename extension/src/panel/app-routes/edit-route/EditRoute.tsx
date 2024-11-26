@@ -1,4 +1,5 @@
 import { Divider, Error, Section, TextInput } from '@/components'
+import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -66,6 +67,10 @@ export const EditRoute = () => {
   const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
 
   const [roleIdError, setRoleIdError] = useState<string | null>(null)
+
+  useDisconnectWalletConnectIfNeeded(currentRouteState, {
+    onDisconnect: () => updateConnection({ pilotAddress: '' }),
+  })
 
   return (
     <>

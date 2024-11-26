@@ -4,7 +4,9 @@ import { ProviderType, ZodiacRoute } from '@/types'
 import { randomUUID } from 'crypto'
 import { AccountType } from 'ser-kit'
 
-export const createMockRoute = (route: Partial<ZodiacRoute>): ZodiacRoute => ({
+export const createMockRoute = (
+  route: Partial<ZodiacRoute> = {}
+): ZodiacRoute => ({
   id: randomUUID(),
   avatar: ETH_ZERO_ADDRESS,
   label: '',

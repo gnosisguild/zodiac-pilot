@@ -1,4 +1,5 @@
 import { RPC } from '@/chains'
+import { invariant } from '@epic-web/invariant'
 import { useEffect, useState } from 'react'
 import {
   WALLETCONNECT_PROJECT_ID,
@@ -46,6 +47,17 @@ export const useWalletConnectProvider = (routeId: string) => {
     // disable warning about too many listeners
     provider.events.setMaxListeners(0)
   }, [provider])
+
+  return provider
+}
+
+export const getWalletConnectProvider = (routeId: string) => {
+  const provider = providers[routeId]
+
+  invariant(
+    provider != null,
+    `No provider for route id "${routeId}" has been registered`
+  )
 
   return provider
 }
