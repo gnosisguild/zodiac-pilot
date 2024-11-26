@@ -20,6 +20,7 @@ const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
 
 export const ChainSelect = ({ value, onChange }: Props) => (
   <Select
+    label="Chain"
     isMulti={false}
     options={options}
     value={options.find((op) => op.value === value)}

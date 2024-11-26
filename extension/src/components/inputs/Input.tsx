@@ -19,7 +19,9 @@ export const Input = ({ children, label, description, error }: InputProps) => {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-1">
-        <label htmlFor={inputId}>{label}</label>
+        <label htmlFor={inputId} className="text-sm font-semibold text-zinc-50">
+          {label}
+        </label>
 
         {description && (
           <span className="opacity-70" id={descriptionId}>

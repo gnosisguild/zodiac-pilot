@@ -38,6 +38,7 @@ export function ModSelect<Multi extends boolean = boolean>({
   return (
     <Select
       {...props}
+      label="Zodiac Mod"
       formatOptionLabel={ModuleOptionLabel}
       noOptionsMessage={() => 'No modules are enabled on this Safe'}
     />

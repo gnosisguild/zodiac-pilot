@@ -1,6 +1,7 @@
 import {
   Blockie,
   Circle,
+  Input,
   RawAddress,
   selectStyles,
   TextInput,
@@ -30,43 +31,50 @@ export const AvatarInput = ({
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 
+  console.log({ availableSafes, checksumAvatarAddress })
+
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
-        <CreatableSelect
-          unstyled
-          blurInputOnSelect
-          isClearable
-          formatOptionLabel={SafeOptionLabel}
-          placeholder="Paste in Safe address or select from owned Safes"
-          classNames={selectStyles<{ value: string; label: string }>()}
-          value={
-            checksumAvatarAddress !== ''
-              ? {
-                  value: checksumAvatarAddress,
-                  label: checksumAvatarAddress,
-                }
-              : undefined
-          }
-          options={availableSafes.map((address) => {
-            return { value: address, label: address }
-          })}
-          onChange={(option) => {
-            if (option) {
-              const sanitized = (option as Option).value
-                .trim()
-                .replace(/^[a-z]{3}:/g, '')
-              if (validateAddress(sanitized)) {
-                onChange(sanitized.toLowerCase())
+        <Input label="Piloted Safe">
+          {({ inputId }) => (
+            <CreatableSelect
+              unstyled
+              inputId={inputId}
+              blurInputOnSelect
+              isClearable
+              formatOptionLabel={SafeOptionLabel}
+              placeholder="Paste in Safe address or select from owned Safes"
+              classNames={selectStyles<{ value: string; label: string }>()}
+              value={
+                checksumAvatarAddress !== ''
+                  ? {
+                      value: checksumAvatarAddress,
+                      label: checksumAvatarAddress,
+                    }
+                  : undefined
               }
-            } else {
-              onChange('')
-            }
-          }}
-          isValidNewOption={(option) => {
-            return !!validateAddress(option)
-          }}
-        />
+              options={availableSafes.map((address) => {
+                return { value: address, label: address }
+              })}
+              onChange={(option) => {
+                if (option) {
+                  const sanitized = (option as Option).value
+                    .trim()
+                    .replace(/^[a-z]{3}:/g, '')
+                  if (validateAddress(sanitized)) {
+                    onChange(sanitized.toLowerCase())
+                  }
+                } else {
+                  onChange('')
+                }
+              }}
+              isValidNewOption={(option) => {
+                return !!validateAddress(option)
+              }}
+            />
+          )}
+        </Input>
       ) : (
         <TextInput
           label="Piloted Safe"

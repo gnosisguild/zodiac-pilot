@@ -1,4 +1,5 @@
 import BaseSelect, { ClassNamesConfig, GroupBase, Props } from 'react-select'
+import { Input } from './Input'
 
 export const selectStyles = <
   Option = unknown,
@@ -20,14 +21,20 @@ export const selectStyles = <
   noOptionsMessage: () => 'p-4 italic opacity-75',
 })
 
-export function Select<Option = unknown, Multi extends boolean = boolean>(
-  props: Props<Option, Multi>
-) {
+export function Select<Option = unknown, Multi extends boolean = boolean>({
+  label,
+  ...props
+}: Props<Option, Multi> & { label: string }) {
   return (
-    <BaseSelect
-      {...props}
-      unstyled
-      classNames={selectStyles<Option, Multi>()}
-    />
+    <Input label={label}>
+      {({ inputId }) => (
+        <BaseSelect
+          {...props}
+          unstyled
+          inputId={inputId}
+          classNames={selectStyles<Option, Multi>()}
+        />
+      )}
+    </Input>
   )
 }
