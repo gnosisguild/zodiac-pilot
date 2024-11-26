@@ -1,4 +1,4 @@
-import { Divider, GhostButton, SecondaryButton } from '@/components'
+import { Divider, GhostButton, Info, SecondaryButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -115,10 +115,12 @@ export const Transactions = () => {
         ))}
 
         {transactions.length === 0 && (
-          <p className={classes.hint}>
-            As you interact with apps in the browser, transactions will be
-            recorded here. You can then sign and submit them as a batch.
-          </p>
+          <div className="my-auto">
+            <Info>
+              As you interact with apps in the browser, transactions will be
+              recorded here. You can then sign and submit them as a batch.
+            </Info>
+          </div>
         )}
       </div>
 
