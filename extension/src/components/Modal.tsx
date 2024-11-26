@@ -57,7 +57,7 @@ export const Modal = ({
 }
 
 const Actions = ({ children }: PropsWithChildren) => (
-  <div className="gap- mt-4 flex justify-end border-t border-zinc-300 pt-4">
+  <div className="mt-4 flex justify-end gap-2 border-t border-zinc-300 pt-4">
     {children}
   </div>
 )

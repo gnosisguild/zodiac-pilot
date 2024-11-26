@@ -1,4 +1,9 @@
-import { Modal, PrimaryButton, useConfirmationModal } from '@/components'
+import {
+  GhostButton,
+  Modal,
+  SecondaryButton,
+  useConfirmationModal,
+} from '@/components'
 import { useClearTransactions } from '../state/transactionHooks'
 
 type ClearTransactionsModalProps = {
@@ -17,13 +22,15 @@ export const ClearTransactionsModal = ({
   return (
     <Modal
       open={open}
+      closeLabel="Cancel"
       title="Clear transactions"
       description="Switching the Piloted Safe will empty your current transaction bundle."
       onClose={onClose}
     >
       <Modal.Actions>
-        <PrimaryButton onClick={onClose}>Cancel</PrimaryButton>
-        <PrimaryButton
+        <GhostButton onClick={onClose}>Cancel</GhostButton>
+
+        <SecondaryButton
           onClick={() => {
             clearTransactions()
             onClose()
@@ -31,7 +38,7 @@ export const ClearTransactionsModal = ({
           }}
         >
           Clear transactions
-        </PrimaryButton>
+        </SecondaryButton>
       </Modal.Actions>
     </Modal>
   )
