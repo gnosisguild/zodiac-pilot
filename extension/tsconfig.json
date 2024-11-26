@@ -30,6 +30,9 @@
       "@/test-utils": ["./test-utils/index.ts"],
       "@/messages": ["./src/messages.ts"],
       "@/bridge": ["./src/bridge/index.ts"],
+      "@/transaction-translation": [
+        "./src/panel/transactionTranslations/index.ts"
+      ],
       "@/safe": ["./src/panel/integrations/safe/index.ts"]
     }
   },
