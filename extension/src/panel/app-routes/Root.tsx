@@ -1,11 +1,8 @@
 import { useProviderBridge } from '@/bridge'
 import { getChainId } from '@/chains'
+import { useConnectInjectedWalletIfNeeded } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import {
-  useConnectInjectedWalletIfNeeded,
-  useMarkRouteAsUsed,
-  useZodiacRoute,
-} from '@/zodiac-routes'
+import { useMarkRouteAsUsed, useZodiacRoute } from '@/zodiac-routes'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useStorage } from '../utils'
