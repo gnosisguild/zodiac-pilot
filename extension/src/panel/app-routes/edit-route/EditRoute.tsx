@@ -104,7 +104,7 @@ export const EditRoute = () => {
             />
           </Section>
 
-          <Section title="Chain">
+          <Section>
             <ChainSelect
               value={chainId}
               onChange={(chainId) => updateRoute({ chainId })}
@@ -148,7 +148,7 @@ export const EditRoute = () => {
             />
           </Section>
 
-          <Section title="Zodiac Mod">
+          <Section>
             <ZodiacMod
               avatarAddress={avatarAddress}
               pilotAddress={pilotAddress}
