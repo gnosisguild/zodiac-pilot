@@ -12,7 +12,6 @@ import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
-import classes from './style.module.css'
 
 export const Transactions = () => {
   const transactions = useTransactions()
@@ -72,8 +71,8 @@ export const Transactions = () => {
       <div className="flex flex-col gap-4 p-4">
         <RouteBubble />
 
-        <div className="flex items-center justify-between">
-          <h4 className={classes.header}>Recording Transactions</h4>
+        <div className="flex items-center justify-between gap-2">
+          <h4>Recording Transactions</h4>
 
           <div className="flex gap-1">
             <GhostButton
