@@ -1,5 +1,5 @@
 import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { InjectedWalletContextT } from './useInjectedWallet'
+import { InjectedWalletContextT } from './injected-provider'
 import { WalletConnectResult } from './wallet-connect'
 
 export const isConnected = (
