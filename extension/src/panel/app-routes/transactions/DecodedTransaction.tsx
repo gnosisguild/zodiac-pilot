@@ -1,4 +1,4 @@
-import { Box, TextInput } from '@/components'
+import { TextInput } from '@/components'
 import { FunctionFragment, Result } from 'ethers'
 
 interface Props {
@@ -11,7 +11,7 @@ export const DecodedTransaction = ({ functionFragment, data }: Props) => {
   }
 
   return (
-    <Box p={2} bg>
+    <div className="bg-zinc-500/10 p-2">
       {functionFragment.inputs.length > 0 && (
         <fieldset className="flex flex-col gap-3 text-xs">
           {functionFragment.inputs.map((input, i) => (
@@ -25,6 +25,6 @@ export const DecodedTransaction = ({ functionFragment, data }: Props) => {
           ))}
         </fieldset>
       )}
-    </Box>
+    </div>
   )
 }
