@@ -13,8 +13,8 @@ type Fn<Result, Props> = (props: Props) => Result
 
 type ExtendedOptions = {
   routes?: ZodiacRoute[]
-  activeTab?: chrome.tabs.Tab
-  port?: VitestChromeNamespace.runtime.Port
+  activeTab?: Partial<chrome.tabs.Tab>
+  port?: Partial<VitestChromeNamespace.runtime.Port>
 }
 
 export const renderHook = async <Result, Props>(
@@ -26,13 +26,13 @@ export const renderHook = async <Result, Props>(
     ...options
   }: RenderHookOptions<Props> & ExtendedOptions = {}
 ) => {
-  mockActiveTab(activeTab)
-  mockTabConnect(createMockPort(port))
+  const mockedTab = mockActiveTab(activeTab)
+  const mockedPort = mockTabConnect(createMockPort(port))
   mockRoutes(...routes)
 
   const result = renderHookBase<Result, Props>(fn, options)
 
   await sleep(1)
 
-  return result
+  return { ...result, mockedTab, mockedPort }
 }
