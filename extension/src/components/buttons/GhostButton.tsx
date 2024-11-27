@@ -19,6 +19,8 @@ export const GhostButton = ({
       'border-transparent bg-transparent font-bold',
       style === 'regular' &&
         'text-zinc-400 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
+      style === 'contrast' &&
+        'text-zinc-200 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
       style === 'critical' &&
         'text-red-500 enabled:hover:bg-red-900 enabled:hover:text-red-400'
     )}
@@ -35,7 +37,10 @@ export const GhostLinkButton = ({
     {...props}
     className={classNames(
       'border-transparent bg-transparent font-bold',
-      'text-zinc-900/30 hover:bg-zinc-800 hover:text-zinc-200',
+      style === 'regular' &&
+        'text-zinc-900/30 hover:bg-zinc-800 hover:text-zinc-200',
+      style === 'contrast' &&
+        'text-zinc-200 hover:bg-zinc-500/80 hover:text-zinc-300',
       style === 'critical' && 'text-red-500 hover:bg-red-900 hover:text-red-400'
     )}
   />

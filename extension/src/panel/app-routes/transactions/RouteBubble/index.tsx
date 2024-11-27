@@ -1,12 +1,11 @@
-import { Blockie, Box, ConnectionStack } from '@/components'
+import { Blockie, ConnectionStack } from '@/components'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { Transition } from '@headlessui/react'
-import classNames from 'classnames'
+import { Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Stick from 'react-stick'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
-import { ConnectionsIcon } from './ConnectionsIcon'
 
 export const RouteBubble = () => {
   const route = useZodiacRoute()
@@ -27,66 +26,59 @@ export const RouteBubble = () => {
           enter="transition-opacity"
           leave="transition-opacity"
         >
-          <div className={classNames('isolate z-10 pt-4')}>
-            <Box className="rounded-md bg-zinc-900/80 p-2 shadow-lg backdrop-blur-sm">
+          <div className="isolate z-10 pt-2">
+            <div className="rounded-md border border-zinc-500/80 bg-zinc-900/80 px-4 py-2 shadow-lg backdrop-blur-sm">
               <ConnectionStack connection={connection} />
-            </Box>
+            </div>
           </div>
         </Transition>
       }
     >
-      <Box rounded className="group hover:border-zodiac-light-mustard/80">
-        <div
-          className="flex gap-1"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          <Box bg roundedLeft className="flex-1 py-0 pl-0 pr-2">
-            <Link to={'/routes/' + route.id}>
-              <div className="flex items-center gap-2">
-                <div className="flex h-10 flex-shrink-0 p-1">
-                  {connection.pilotAddress && (
-                    <div className="rounded-full border-2 border-slate-900">
-                      <Blockie
-                        address={connection.pilotAddress}
-                        className="h-full"
-                      />
-                    </div>
-                  )}
-                  {connection.moduleAddress && (
-                    <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
-                      <Blockie
-                        address={connection.moduleAddress}
-                        className="h-full"
-                      />
-                    </div>
-                  )}
-                  <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
-                    <Blockie
-                      address={connection.avatarAddress}
-                      className="h-full"
-                    />
-                  </div>
+      <div
+        className="group flex gap-2 overflow-hidden rounded-full border border-zinc-600/80 bg-zinc-800 hover:border-zinc-500/80"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <Link to={'/routes/' + route.id} className="flex-1">
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 flex-shrink-0 p-1">
+              {connection.pilotAddress && (
+                <div className="rounded-full border-2 border-slate-900">
+                  <Blockie
+                    address={connection.pilotAddress}
+                    className="h-full"
+                  />
                 </div>
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  {connection.label}
-                </p>
+              )}
+              {connection.moduleAddress && (
+                <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
+                  <Blockie
+                    address={connection.moduleAddress}
+                    className="h-full"
+                  />
+                </div>
+              )}
+              <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
+                <Blockie
+                  address={connection.avatarAddress}
+                  className="h-full"
+                />
               </div>
-            </Link>
-          </Box>
+            </div>
+            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {connection.label}
+            </p>
+          </div>
+        </Link>
 
-          <Link to="/routes">
-            <Box
-              bg
-              roundedRight
-              className="h-11 w-14 overflow-hidden group-hover:border-zodiac-light-mustard/80"
-            >
-              <span className="sr-only">Configure routes</span>
-              <ConnectionsIcon height="100%" width="100%" />
-            </Box>
-          </Link>
-        </div>
-      </Box>
+        <Link
+          to="/routes"
+          className="flex flex-shrink-0 items-center justify-center rounded-full px-3 py-2 text-zinc-200 hover:bg-zinc-500/80"
+        >
+          <span className="sr-only">Configure routes</span>
+          <Cog size={20} />
+        </Link>
+      </div>
     </Stick>
   )
 }
