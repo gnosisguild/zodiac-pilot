@@ -18,7 +18,7 @@ export const GhostButton = ({
     className={classNames(
       'border-transparent bg-transparent font-bold',
       style === 'regular' &&
-        'text-zinc-400 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
+        'text-zinc-500 enabled:hover:bg-zinc-200 enabled:hover:text-zinc-700 dark:text-zinc-400 dark:enabled:hover:bg-zinc-800 dark:enabled:hover:text-zinc-300',
       style === 'contrast' &&
         'text-zinc-200 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300',
       style === 'critical' &&
