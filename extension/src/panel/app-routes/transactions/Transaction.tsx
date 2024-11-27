@@ -39,9 +39,9 @@ export const Transaction = ({
   return (
     <div
       ref={elementRef}
-      className="flex flex-col rounded-md border border-zinc-500/60"
+      className="flex flex-col rounded-md border border-zinc-300/80 dark:border-zinc-500/60"
     >
-      <div className="bg-zinc-500/20 p-2">
+      <div className="bg-zinc-100/80 p-2 dark:bg-zinc-500/20">
         <TransactionHeader
           index={index}
           transactionState={transactionState}
@@ -53,7 +53,7 @@ export const Transaction = ({
       </div>
 
       {expanded && (
-        <div className="flex flex-col gap-3 border-t border-zinc-500/80 bg-zinc-500/30 px-2 py-4 text-sm">
+        <div className="flex flex-col gap-3 border-t border-zinc-300 bg-zinc-200/80 px-2 py-4 text-sm dark:border-zinc-500/80 dark:bg-zinc-500/30">
           <div className="flex justify-between gap-4">
             <ContractAddress
               chainId={chainId}
@@ -105,7 +105,7 @@ const TransactionHeader = ({
       <label className="flex w-3/5 cursor-pointer items-center gap-2">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
-        <div className="flex aspect-square items-center rounded-full border border-zinc-500/80 px-2">
+        <div className="flex aspect-square items-center rounded-full border border-zinc-300 px-2 dark:border-zinc-500/80">
           {index + 1}
         </div>
 

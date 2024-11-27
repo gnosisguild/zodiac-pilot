@@ -6,11 +6,11 @@ type WarningProps = PropsWithChildren<{
 }>
 
 export const Warning = ({ children, title }: WarningProps) => (
-  <BaseAlert className="border-yellow-600/80 bg-yellow-800">
+  <BaseAlert className="border-amber-600/80 bg-amber-500 dark:border-yellow-600/80 dark:bg-yellow-800">
     {title && <BaseAlert.Title className="text-white">{title}</BaseAlert.Title>}
 
     {children && (
-      <BaseAlert.Description className="text-yellow-200">
+      <BaseAlert.Description className="text-amber-50 dark:text-yellow-200">
         {children}
       </BaseAlert.Description>
     )}

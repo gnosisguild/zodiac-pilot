@@ -1,7 +1,7 @@
 import { Blockie, ConnectionStack } from '@/components'
 import { useZodiacRoute } from '@/zodiac-routes'
 import { Transition } from '@headlessui/react'
-import { Cog } from 'lucide-react'
+import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Stick from 'react-stick'
@@ -15,7 +15,10 @@ export const RouteBubble = () => {
   return (
     <Stick
       sameWidth
+      className="flex justify-between gap-2 overflow-hidden rounded-full border border-zinc-200/80 bg-zinc-100/80 text-zinc-600 hover:border-zinc-300/80 dark:border-zinc-600/80 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500/80"
       position="bottom center"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       node={
         <Transition
           show={hover}
@@ -27,58 +30,70 @@ export const RouteBubble = () => {
           leave="transition-opacity"
         >
           <div className="isolate z-10 pt-2">
-            <div className="rounded-md border border-zinc-500/80 bg-zinc-900/80 px-4 py-2 shadow-lg backdrop-blur-sm">
+            <div className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-4 py-2 shadow-lg backdrop-blur-sm dark:border-zinc-500/80 dark:bg-zinc-900/80">
               <ConnectionStack connection={connection} />
             </div>
           </div>
         </Transition>
       }
     >
-      <div
-        className="group flex gap-2 overflow-hidden rounded-full border border-zinc-600/80 bg-zinc-800 hover:border-zinc-500/80"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <Link to={'/routes/' + route.id} className="flex-1">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 flex-shrink-0 p-1">
-              {connection.pilotAddress && (
-                <div className="rounded-full border-2 border-slate-900">
-                  <Blockie
-                    address={connection.pilotAddress}
-                    className="h-full"
-                  />
-                </div>
-              )}
-              {connection.moduleAddress && (
-                <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
-                  <Blockie
-                    address={connection.moduleAddress}
-                    className="h-full"
-                  />
-                </div>
-              )}
-              <div className="-ml-4 rounded-full border-2 border-slate-900 first:ml-0">
-                <Blockie
-                  address={connection.avatarAddress}
-                  className="h-full"
-                />
-              </div>
-            </div>
-            <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {connection.label}
-            </p>
-          </div>
+      <div className="flex items-center gap-2 overflow-hidden">
+        <Blockies
+          avatarAddress={connection.avatarAddress}
+          moduleAddress={connection.moduleAddress}
+          pilotAddress={connection.pilotAddress}
+        />
+
+        <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {connection.label}
+        </p>
+      </div>
+
+      <div className="flex flex-shrink-0">
+        <Link
+          to={`/routes/${route.id}`}
+          className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
+        >
+          <span className="sr-only">Configure {connection.label}</span>
+          <Cog size={20} />
         </Link>
 
         <Link
           to="/routes"
-          className="flex flex-shrink-0 items-center justify-center rounded-full px-3 py-2 text-zinc-200 hover:bg-zinc-500/80"
+          className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
         >
           <span className="sr-only">Configure routes</span>
-          <Cog size={20} />
+          <AlignJustify size={20} />
         </Link>
       </div>
     </Stick>
   )
 }
+
+type BlockiesProps = {
+  avatarAddress: string
+  pilotAddress?: string
+  moduleAddress?: string
+}
+
+const Blockies = ({
+  pilotAddress,
+  moduleAddress,
+  avatarAddress,
+}: BlockiesProps) => (
+  <div className="flex h-10 flex-shrink-0 p-1">
+    {pilotAddress && (
+      <div className="rounded-full border-2 border-slate-500 dark:border-slate-900">
+        <Blockie address={pilotAddress} className="h-full" />
+      </div>
+    )}
+    {moduleAddress && (
+      <div className="-ml-4 rounded-full border-2 border-slate-500 first:ml-0 dark:border-slate-900">
+        <Blockie address={moduleAddress} className="h-full" />
+      </div>
+    )}
+    <div className="-ml-4 rounded-full border-2 border-slate-500 first:ml-0 dark:border-slate-900">
+      <Blockie address={avatarAddress} className="h-full" />
+    </div>
+  </div>
+)

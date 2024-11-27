@@ -7,7 +7,7 @@ interface Props {
 
 export const ToggleButton = ({ expanded, onToggle }: Props) => (
   <button
-    className="rounded p-1 hover:bg-zinc-700"
+    className="rounded p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700"
     onClick={(event) => {
       event.stopPropagation()
       event.preventDefault()

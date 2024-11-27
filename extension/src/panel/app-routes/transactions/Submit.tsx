@@ -2,8 +2,8 @@ import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import {
   Modal,
   PrimaryButton,
-  PrimaryLinkButton,
   RawAddress,
+  SecondaryLinkButton,
   Spinner,
   toastClasses,
 } from '@/components'
@@ -200,14 +200,15 @@ const AwaitingSignatureModal = ({
     </div>
     {usesWalletConnect && (
       <Modal.Actions>
-        <PrimaryLinkButton
+        <SecondaryLinkButton
+          style="contrast"
           icon={SquareArrowOutUpRight}
           to={`https://app.safe.global/${account}`}
           target="_blank"
           rel="noreferrer"
         >
           Open Pilot Safe
-        </PrimaryLinkButton>
+        </SecondaryLinkButton>
       </Modal.Actions>
     )}
   </Modal>

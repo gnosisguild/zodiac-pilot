@@ -1,7 +1,7 @@
 import {
   GhostButton,
   Modal,
-  SecondaryButton,
+  PrimaryButton,
   useConfirmationModal,
 } from '@/components'
 import { useClearTransactions } from '../state/transactionHooks'
@@ -28,9 +28,12 @@ export const ClearTransactionsModal = ({
       onClose={onClose}
     >
       <Modal.Actions>
-        <GhostButton onClick={onClose}>Cancel</GhostButton>
+        <GhostButton style="contrast" onClick={onClose}>
+          Cancel
+        </GhostButton>
 
-        <SecondaryButton
+        <PrimaryButton
+          style="contrast"
           onClick={() => {
             clearTransactions()
             onClose()
@@ -38,7 +41,7 @@ export const ClearTransactionsModal = ({
           }}
         >
           Clear transactions
-        </SecondaryButton>
+        </PrimaryButton>
       </Modal.Actions>
     </Modal>
   )
