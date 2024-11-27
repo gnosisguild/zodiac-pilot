@@ -11,7 +11,7 @@ export const Circle = ({
 }: PropsWithChildren<CircleProps>) => (
   <div
     className={classNames(
-      'relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-zodiac-dark-green',
+      'relative flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-green-900',
       size === 'base' && 'size-12',
       size === 'sm' && 'size-8'
     )}
