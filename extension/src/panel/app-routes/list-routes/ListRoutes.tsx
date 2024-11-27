@@ -1,8 +1,8 @@
-import { Divider, PrimaryButton } from '@/components'
+import { Breadcrumbs, Divider, PrimaryButton } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Route } from './Route'
 
 export const ListRoutes = () => {
@@ -13,12 +13,10 @@ export const ListRoutes = () => {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex flex-col gap-1 p-4">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase opacity-75">
-          /
-          <Link className="no-underline" to="/">
-            Transactions
-          </Link>
-        </div>
+        <Breadcrumbs>
+          <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
+        </Breadcrumbs>
+
         <h2 className="text-xl">Pilot Routes</h2>
       </div>
 

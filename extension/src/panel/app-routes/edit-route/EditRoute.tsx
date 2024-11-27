@@ -1,4 +1,4 @@
-import { Divider, Error, Section, TextInput } from '@/components'
+import { Breadcrumbs, Divider, Error, Section, TextInput } from '@/components'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -6,7 +6,6 @@ import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -75,16 +74,10 @@ export const EditRoute = () => {
     <>
       <div className="relative flex flex-1 flex-col overflow-hidden">
         <div className="flex flex-col gap-1 p-4">
-          <div className="flex items-center gap-2 font-mono text-xs uppercase opacity-75">
-            /
-            <Link className="no-underline" to="/">
-              Transactions
-            </Link>
-            /
-            <Link className="no-underline" to="/routes">
-              All routes
-            </Link>
-          </div>
+          <Breadcrumbs>
+            <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
+            <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
+          </Breadcrumbs>
 
           <h2 className="text-xl">
             {currentRouteState.label || 'New connection'}
