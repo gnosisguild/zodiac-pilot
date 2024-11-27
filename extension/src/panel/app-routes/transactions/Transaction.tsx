@@ -40,7 +40,7 @@ export const Transaction = ({
     <Box
       ref={elementRef}
       p={2}
-      className="flex flex-col gap-2 rounded-md border border-zodiac-light-mustard/60"
+      className="flex flex-col gap-2 rounded-md border border-zinc-500/60"
     >
       <TransactionHeader
         index={index}
@@ -102,7 +102,7 @@ const TransactionHeader = ({
       <label className="flex w-3/5 cursor-pointer items-center gap-2">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
-        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
+        <div className="flex aspect-square items-center rounded-full border border-zinc-500/80 px-2">
           {index + 1}
         </div>
 

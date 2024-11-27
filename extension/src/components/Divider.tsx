@@ -1,3 +1,3 @@
 export const Divider = () => (
-  <hr className="h-px border-none bg-zodiac-light-mustard bg-opacity-40" />
+  <hr className="h-px border-none bg-zinc-400 bg-opacity-40" />
 )

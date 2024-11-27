@@ -35,10 +35,7 @@ export const RouteBubble = () => {
         </Transition>
       }
     >
-      <Box
-        rounded
-        className="group hover:border-zodiac-light-mustard hover:border-opacity-80"
-      >
+      <Box rounded className="group hover:border-zodiac-light-mustard/80">
         <div
           className="flex gap-1"
           onMouseEnter={() => setHover(true)}
@@ -82,7 +79,7 @@ export const RouteBubble = () => {
             <Box
               bg
               roundedRight
-              className="h-11 w-14 overflow-hidden group-hover:border-zodiac-light-mustard group-hover:border-opacity-80"
+              className="h-11 w-14 overflow-hidden group-hover:border-zodiac-light-mustard/80"
             >
               <span className="sr-only">Configure routes</span>
               <ConnectionsIcon height="100%" width="100%" />
