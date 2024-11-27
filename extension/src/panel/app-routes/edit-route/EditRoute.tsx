@@ -1,4 +1,4 @@
-import { Breadcrumbs, Divider, Error, Section, TextInput } from '@/components'
+import { Breadcrumbs, Error, Page, Section, TextInput } from '@/components'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -72,21 +72,19 @@ export const EditRoute = () => {
 
   return (
     <>
-      <div className="relative flex flex-1 flex-col overflow-hidden">
-        <div className="flex flex-col gap-1 p-4">
+      <Page>
+        <Page.Header>
           <Breadcrumbs>
             <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
             <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
           </Breadcrumbs>
 
-          <h2 className="text-xl">
+          <h2 className="mt-1 text-xl">
             {currentRouteState.label || 'New connection'}
           </h2>
-        </div>
+        </Page.Header>
 
-        <Divider />
-
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+        <Page.Content>
           <TextInput
             label="Route label"
             value={label}
@@ -216,11 +214,9 @@ export const EditRoute = () => {
               placeholder="Enter key as bytes32 hex string or in human-readable decoding"
             />
           )}
-        </div>
+        </Page.Content>
 
-        <Divider />
-
-        <div className="flex flex-col gap-4 p-4">
+        <Page.Footer>
           {error && (
             <Error title="There is a problem with this connection">
               {error}
@@ -237,8 +233,8 @@ export const EditRoute = () => {
               onNeedConfirmationToClearTransactions={confirmClearTransactions}
             />
           </div>
-        </div>
-      </div>
+        </Page.Footer>
+      </Page>
 
       <ConfirmationModal />
     </>
