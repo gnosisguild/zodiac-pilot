@@ -40,7 +40,7 @@ export const Modal = ({
           <div className="flex items-center justify-between gap-4 text-zinc-50 dark:text-zinc-800">
             <DialogTitle className="pl-2 font-bold">{title}</DialogTitle>
 
-            <GhostButton iconOnly icon={X} onClick={onClose}>
+            <GhostButton style="contrast" iconOnly icon={X} onClick={onClose}>
               {closeLabel}
             </GhostButton>
           </div>

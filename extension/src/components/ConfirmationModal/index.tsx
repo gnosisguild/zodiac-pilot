@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react'
-import { GhostButton, SecondaryButton } from '../buttons'
+import { GhostButton, PrimaryButton } from '../buttons'
 import { Modal } from '../Modal'
 
 type PropTypes = {
@@ -23,8 +23,12 @@ export const ConfirmationModal = ({
     {children || 'Are you sure you want to continue'}
 
     <Modal.Actions>
-      <GhostButton onClick={onReject}>Cancel</GhostButton>
-      <SecondaryButton onClick={onAccept}>{acceptLabel}</SecondaryButton>
+      <GhostButton style="contrast" onClick={onReject}>
+        Cancel
+      </GhostButton>
+      <PrimaryButton style="contrast" onClick={onAccept}>
+        {acceptLabel}
+      </PrimaryButton>
     </Modal.Actions>
   </Modal>
 )
