@@ -5,7 +5,6 @@ import { decodeRoleKey, encodeRoleKey } from '@/utils'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
-import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -76,12 +75,16 @@ export const EditRoute = () => {
     <>
       <div className="relative flex flex-1 flex-col overflow-hidden">
         <div className="flex flex-col gap-1 p-4">
-          <Link
-            className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
-            to="/routes"
-          >
-            <ChevronLeft size={16} /> All routes
-          </Link>
+          <div className="flex items-center gap-2 font-mono text-xs uppercase opacity-75">
+            /
+            <Link className="no-underline" to="/">
+              Transactions
+            </Link>
+            /
+            <Link className="no-underline" to="/routes">
+              All routes
+            </Link>
+          </div>
 
           <h2 className="text-xl">
             {currentRouteState.label || 'New connection'}

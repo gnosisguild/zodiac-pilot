@@ -1,6 +1,6 @@
 import { Divider, PrimaryButton } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
-import { ChevronLeft, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { Link, useNavigate } from 'react-router-dom'
 import { Route } from './Route'
@@ -13,13 +13,12 @@ export const ListRoutes = () => {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex flex-col gap-1 p-4">
-        <Link
-          className="flex items-center gap-2 font-mono text-xs uppercase no-underline opacity-75"
-          to="/"
-        >
-          <ChevronLeft size={16} /> Transactions
-        </Link>
-
+        <div className="flex items-center gap-2 font-mono text-xs uppercase opacity-75">
+          /
+          <Link className="no-underline" to="/">
+            Transactions
+          </Link>
+        </div>
         <h2 className="text-xl">Pilot Routes</h2>
       </div>
 
