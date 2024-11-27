@@ -7,11 +7,6 @@ export default {
       fontFamily: {
         mono: '"Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
       },
-      colors: {
-        zodiac: {
-          'light-mustard': 'rgba(217, 212, 173)',
-        },
-      },
     },
   },
   plugins: [],
