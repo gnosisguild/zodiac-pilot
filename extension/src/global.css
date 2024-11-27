@@ -3,12 +3,6 @@
 @tailwind utilities;
 
 :root {
-  --spacing-1: 4px;
-  --spacing-2: 8px;
-  --spacing-3: 16px;
-  --spacing-4: 32px;
-  --spacing-5: 48px;
-
   --border-color: rgba(217, 212, 173, 0.3);
 }
 
@@ -21,43 +15,6 @@
       format('woff2'),
     url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2)
       format('woff');
-}
-
-select {
-  font-size: 14px;
-  background-color: transparent;
-  font-family: 'Roboto Mono', monospace;
-  color: white;
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  border: 1px solid rgba(217, 212, 173, 0.8);
-  line-height: 20px;
-  padding: 8px 10px;
-  height: 38px;
-  transition: all 0.1s ease;
-}
-
-select:hover:enabled {
-  border-color: white;
-}
-
-select:active,
-select:focus {
-  border: 1px solid white;
-  outline: none;
-}
-
-option {
-  padding: 0;
-}
-
-code {
-  font-family: 'Roboto Mono', monospace;
-  padding: 4px 8px;
-  background: #3e3d2ad1;
-  border-radius: 4px;
-  border: 1px solid rgba(217, 212, 173, 0.3);
 }
 
 .walletconnect-modal__base a {

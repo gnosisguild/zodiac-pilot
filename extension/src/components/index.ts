@@ -1,6 +1,5 @@
 export * from './alerts'
 export { Blockie } from './Blockie'
-export { Box } from './Box'
 export * from './buttons'
 export { Circle } from './Circle'
 export { ConfirmationModal, useConfirmationModal } from './ConfirmationModal'

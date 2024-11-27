@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Box, RawAddress, ToggleButton } from '@/components'
+import { Divider, RawAddress, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -37,23 +37,24 @@ export const Transaction = ({
   const showRoles = routeGoesThroughRoles(route)
 
   return (
-    <Box
+    <div
       ref={elementRef}
-      p={2}
-      className="flex flex-col gap-2 rounded-md border border-zodiac-light-mustard/60"
+      className="flex flex-col rounded-md border border-zinc-500/60"
     >
-      <TransactionHeader
-        index={index}
-        transactionState={transactionState}
-        functionFragment={decoded?.functionFragment}
-        expanded={expanded}
-        onExpandToggle={() => setExpanded(!expanded)}
-        showRoles={showRoles}
-      />
+      <div className="bg-zinc-500/20 p-2">
+        <TransactionHeader
+          index={index}
+          transactionState={transactionState}
+          functionFragment={decoded?.functionFragment}
+          expanded={expanded}
+          onExpandToggle={() => setExpanded(!expanded)}
+          showRoles={showRoles}
+        />
+      </div>
 
       {expanded && (
-        <div className="flex flex-col gap-3 text-sm">
-          <Box bg p={2} className="flex justify-between gap-4">
+        <div className="flex flex-col gap-3 border-t border-zinc-500/80 bg-zinc-500/30 px-2 py-4 text-sm">
+          <div className="flex justify-between gap-4">
             <ContractAddress
               chainId={chainId}
               address={transactionState.transaction.to}
@@ -61,7 +62,9 @@ export const Transaction = ({
             />
 
             <EtherValue value={transactionState.transaction.value} />
-          </Box>
+          </div>
+
+          <Divider />
 
           <TransactionStatus
             transactionState={transactionState}
@@ -76,7 +79,7 @@ export const Transaction = ({
           )}
         </div>
       )}
-    </Box>
+    </div>
   )
 }
 
@@ -102,7 +105,7 @@ const TransactionHeader = ({
       <label className="flex w-3/5 cursor-pointer items-center gap-2">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
-        <div className="flex aspect-square items-center rounded-full border border-zodiac-light-mustard border-opacity-30 px-2">
+        <div className="flex aspect-square items-center rounded-full border border-zinc-500/80 px-2">
           {index + 1}
         </div>
 
@@ -147,17 +150,17 @@ const TransactionStatus = ({
   showRoles = false,
 }: StatusProps) => (
   <>
-    <Box bg p={2}>
-      <SimulationStatus transactionState={transactionState} />
-    </Box>
+    <SimulationStatus transactionState={transactionState} />
 
     {showRoles && (
-      <Box bg p={2} className="flex-grow">
+      <>
+        <Divider />
+
         <RolePermissionCheck
           transactionState={transactionState}
           index={index}
         />
-      </Box>
+      </>
     )}
   </>
 )

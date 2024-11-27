@@ -42,7 +42,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <div className="text-zodiac-light-mustard">Last Used</div>
+            <div className="font-semibold text-zinc-400">Last Used</div>
             <div className="opacity-70">
               {route.lastUsed ? (
                 `${formatDistanceToNow(route.lastUsed)} ago`
