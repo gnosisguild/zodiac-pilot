@@ -1,4 +1,4 @@
-import { Breadcrumbs, Divider, PrimaryButton } from '@/components'
+import { Breadcrumbs, Page, PrimaryButton } from '@/components'
 import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
@@ -11,18 +11,16 @@ export const ListRoutes = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex flex-col gap-1 p-4">
+    <Page>
+      <Page.Header>
         <Breadcrumbs>
           <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
         </Breadcrumbs>
 
-        <h2 className="text-xl">Pilot Routes</h2>
-      </div>
+        <h2 className="mt-1 text-xl">Pilot Routes</h2>
+      </Page.Header>
 
-      <Divider />
-
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <Page.Content>
         {routes.map((route) => (
           <Route
             key={route.id}
@@ -34,11 +32,9 @@ export const ListRoutes = () => {
             }}
           />
         ))}
-      </div>
+      </Page.Content>
 
-      <Divider />
-
-      <div className="flex p-4">
+      <Page.Footer>
         <PrimaryButton
           fluid
           icon={Plus}
@@ -49,7 +45,7 @@ export const ListRoutes = () => {
         >
           Add Route
         </PrimaryButton>
-      </div>
-    </div>
+      </Page.Footer>
+    </Page>
   )
 }

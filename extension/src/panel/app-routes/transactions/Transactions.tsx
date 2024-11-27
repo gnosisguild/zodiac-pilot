@@ -1,4 +1,4 @@
-import { Divider, GhostButton, Info, SecondaryButton } from '@/components'
+import { GhostButton, Info, Page, SecondaryButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -67,11 +67,11 @@ export const Transactions = () => {
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex flex-col gap-4 p-4">
+    <Page>
+      <Page.Header>
         <RouteBubble />
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="mt-4 flex items-center justify-between gap-2">
           <h4>Recording Transactions</h4>
 
           <div className="flex gap-1">
@@ -96,14 +96,9 @@ export const Transactions = () => {
             <RecordingIcon />
           </div>
         </div>
-      </div>
+      </Page.Header>
 
-      <Divider />
-
-      <div
-        ref={scrollContainerRef}
-        className="flex flex-1 flex-col gap-4 overflow-y-auto p-4"
-      >
+      <Page.Content ref={scrollContainerRef}>
         {transactions.map((transactionState, index) => (
           <Transaction
             key={transactionState.id}
@@ -121,11 +116,9 @@ export const Transactions = () => {
             </Info>
           </div>
         )}
-      </div>
+      </Page.Content>
 
-      <Divider />
-
-      <div className="flex gap-2 p-4">
+      <Page.Footer>
         {!route.initiator && (
           <SecondaryButton
             onClick={copyTransactionData}
@@ -136,7 +129,7 @@ export const Transactions = () => {
         )}
 
         <Submit />
-      </div>
-    </div>
+      </Page.Footer>
+    </Page>
   )
 }
