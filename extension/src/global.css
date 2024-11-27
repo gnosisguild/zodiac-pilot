@@ -17,14 +17,6 @@
       format('woff');
 }
 
-code {
-  font-family: 'Roboto Mono', monospace;
-  padding: 4px 8px;
-  background: #3e3d2ad1;
-  border-radius: 4px;
-  border: 1px solid rgba(217, 212, 173, 0.3);
-}
-
 .walletconnect-modal__base a {
   color: black;
   text-decoration: none;
