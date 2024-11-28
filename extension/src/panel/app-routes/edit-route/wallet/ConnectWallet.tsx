@@ -1,4 +1,5 @@
 import { getChainId } from '@/chains'
+import { errorToast } from '@/components'
 import {
   InjectedWalletContextT,
   WalletConnectResult,
@@ -6,7 +7,6 @@ import {
 } from '@/providers'
 import { ProviderType, ZodiacRoute } from '@/types'
 import { ZeroAddress } from 'ethers'
-import { toast } from 'react-toastify'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
@@ -55,7 +55,7 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
             })
           }
           onError={() => {
-            toast('The connection to the wallet has failed.')
+            errorToast({ message: 'The connection to the wallet has failed.' })
           }}
         />
       </div>
@@ -71,7 +71,7 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
           isConnected={isConnected}
           onDisconnect={onDisconnect}
           onError={() => {
-            toast('The connection to the wallet has failed.')
+            errorToast({ message: 'The connection to the wallet has failed.' })
           }}
         />
       )
