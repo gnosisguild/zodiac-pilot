@@ -1,18 +1,16 @@
 import { invariant } from '@epic-web/invariant'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { ConnectionProvider, ConnectionStatus } from '../connectTypes'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 import { useAccounts } from './useAccounts'
 import { useChainId } from './useChainId'
+import { useConnect } from './useConnect'
 import { useConnected } from './useConnected'
 import { useWalletConnectProvider } from './useWalletConnectProvider'
 
-export interface WalletConnectResult {
+export type WalletConnectResult = ConnectionProvider & {
   provider: WalletConnectEthereumMultiProvider | null
-  ready: boolean
-  connect(): Promise<{ chainId: number; accounts: string[] }>
-  disconnect(): void
-  accounts: string[]
-  chainId?: number
+  disconnect: () => void
 }
 
 export const useWalletConnect = (routeId: string): WalletConnectResult => {
@@ -20,36 +18,27 @@ export const useWalletConnect = (routeId: string): WalletConnectResult => {
   const connected = useConnected(provider)
   const accounts = useAccounts(provider)
   const chainId = useChainId(provider)
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>('disconnected')
 
-  const connect = useCallback(async () => {
-    invariant(provider != null, 'provider not initialized')
-
-    console.debug('Connecting WalletConnect...')
-
-    const { promise, resolve } = Promise.withResolvers()
-
-    provider.once('chainChanged', resolve)
-
-    await provider.disconnect()
-    await provider.connect()
-
-    // at this point provider.chainId is generally 1.
-    // we gotta wait for the chainChanged event which
-    // will be emitted even if the final chainId continues to be 1
-    await promise
-
-    console.debug('WalletConnect connected!')
-
-    return {
-      chainId: provider.chainId,
-      accounts: provider.accounts,
-    }
-  }, [provider])
+  const connect = useConnect(provider, {
+    onBeforeConnect() {
+      setConnectionStatus('connecting')
+    },
+    onConnect() {
+      setConnectionStatus('connected')
+    },
+    onError() {
+      setConnectionStatus('error')
+    },
+  })
 
   const disconnect = useCallback(async () => {
     invariant(provider != null, 'provider not initialized')
 
     await provider.disconnect()
+
+    setConnectionStatus('disconnected')
 
     console.debug('WalletConnect disconnected!')
   }, [provider])
@@ -59,6 +48,7 @@ export const useWalletConnect = (routeId: string): WalletConnectResult => {
     ready: connected,
     connect,
     disconnect,
+    connectionStatus,
     accounts,
     chainId,
   }

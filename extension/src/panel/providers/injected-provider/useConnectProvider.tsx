@@ -2,12 +2,13 @@ import { useWindowId } from '@/bridge'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
 import { infoToast } from '@/components'
 import { Eip1193Provider } from '@/types'
-import { BrowserProvider } from 'ethers'
-import { MutableRefObject, useCallback, useEffect, useState } from 'react'
+import { MutableRefObject, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { ChainId } from 'ser-kit'
+import { ConnectionStatus } from '../connectTypes'
 import { ConnectProvider } from './ConnectProvider'
-import { memoWhilePending } from './memoWhilePending'
+import { InjectedWalletError } from './InjectedWalletError'
+import { useConnect } from './useConnect'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
 // connectProvider can be used just like window.ethereum
@@ -20,18 +21,6 @@ const getProvider = (windowId: number) => {
 
   return providerRef.current
 }
-
-export type ConnectionStatus =
-  | 'disconnected'
-  | 'connecting'
-  | 'connected'
-  | 'error'
-
-type ConnectResult = { chainId: ChainId; accounts: string[] }
-
-export type ConnectFn = (options?: {
-  force?: boolean
-}) => Promise<ConnectResult | undefined>
 
 export const useConnectProvider = () => {
   const provider = getProvider(useWindowId())
@@ -86,29 +75,20 @@ export const useConnectProvider = () => {
     }
   }, [provider])
 
-  const connect = useCallback(
-    async ({ force }: { force?: boolean } = {}): Promise<
-      ConnectResult | undefined
-    > => {
+  const connect = useConnect(provider, {
+    onBeforeConnect() {
       setConnectionStatus('connecting')
-
-      try {
-        const { accounts, chainId } = await connectInjectedWallet(
-          { force },
-          provider
-        )
-
-        setAccounts(accounts)
-        setChainId(chainId)
-        setConnectionStatus('connected')
-
-        return { accounts, chainId }
-      } catch (e) {
-        setConnectionStatus('error')
-      }
     },
-    [provider]
-  )
+    onConnect(chainId, accounts) {
+      setChainId(chainId)
+      setAccounts(accounts)
+
+      setConnectionStatus('connected')
+    },
+    onError() {
+      setConnectionStatus('error')
+    },
+  })
 
   return {
     provider,
@@ -120,46 +100,6 @@ export const useConnectProvider = () => {
     chainId,
   }
 }
-
-interface InjectedWalletError extends Error {
-  code: number
-}
-
-const connectInjectedWallet = memoWhilePending(
-  async (provider: ConnectProvider): Promise<ConnectResult> => {
-    const browserProvider = new BrowserProvider(provider)
-
-    const accountsPromise = browserProvider
-      .send('eth_requestAccounts', [])
-      .catch((err: any) => {
-        if ((err as InjectedWalletError).code === -32002) {
-          return new Promise((resolve: (value: string[]) => void) => {
-            const toastId = infoToast({
-              title: 'Connection',
-              message: 'Check your wallet to confirm connection',
-            })
-
-            const handleAccountsChanged = (accounts: string[]) => {
-              resolve(accounts)
-              toast.dismiss(toastId)
-              provider.removeListener('accountsChanged', handleAccountsChanged)
-            }
-
-            provider.on('accountsChanged', handleAccountsChanged)
-          })
-        }
-
-        throw err
-      })
-
-    const [accounts, chainIdBigInt] = await Promise.all([
-      accountsPromise,
-      browserProvider.getNetwork().then((network) => network.chainId),
-    ])
-
-    return { accounts, chainId: Number(chainIdBigInt) as unknown as ChainId }
-  }
-)
 
 const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
   try {

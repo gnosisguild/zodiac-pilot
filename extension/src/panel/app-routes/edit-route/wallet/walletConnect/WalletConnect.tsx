@@ -13,6 +13,7 @@ type WalletConnectProps = {
   pilotAddress: string
   chainId: ChainId
   onDisconnect: () => void
+  onError: () => void
   isConnected: (provider: WalletConnectResult) => boolean
 }
 
@@ -21,6 +22,7 @@ export const WalletConnect = ({
   pilotAddress,
   chainId,
   onDisconnect,
+  onError,
   isConnected,
 }: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
@@ -45,7 +47,13 @@ export const WalletConnect = ({
     return (
       <WalletDisconnected
         onDisconnect={onDisconnect}
-        onReconnect={() => walletConnect.connect()}
+        onReconnect={async () => {
+          const result = await walletConnect.connect()
+
+          if (result == null) {
+            onError()
+          }
+        }}
       >
         <Account providerType={ProviderType.WalletConnect}>
           {pilotAddress}
