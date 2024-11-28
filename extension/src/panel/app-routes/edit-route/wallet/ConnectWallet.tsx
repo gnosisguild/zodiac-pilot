@@ -1,5 +1,4 @@
 import { getChainId } from '@/chains'
-import { errorToast } from '@/components'
 import {
   InjectedWalletContextT,
   WalletConnectResult,
@@ -19,9 +18,15 @@ interface Props {
     account: string
   }): void
   onDisconnect(): void
+  onError: () => void
 }
 
-export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
+export const ConnectWallet = ({
+  route,
+  onConnect,
+  onDisconnect,
+  onError,
+}: Props) => {
   const pilotAddress = getPilotAddress(route)
   const chainId = getChainId(route.avatar)
 
@@ -44,9 +49,7 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
               account,
             })
           }
-          onError={() => {
-            throw new Error('Not implemented')
-          }}
+          onError={onError}
         />
 
         <InjectedWalletConnect
@@ -57,12 +60,7 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
               account,
             })
           }
-          onError={() => {
-            errorToast({
-              title: 'Connection error',
-              message: 'Could not connect to the wallet.',
-            })
-          }}
+          onError={onError}
         />
       </div>
     )
@@ -76,22 +74,18 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
           pilotAddress={pilotAddress}
           isConnected={isConnected}
           onDisconnect={onDisconnect}
-          onError={() => {
-            errorToast({
-              title: 'Connection error',
-              message: 'Could not connect to the wallet.',
-            })
-          }}
+          onError={onError}
         />
       )
     case ProviderType.WalletConnect:
       return (
         <WalletConnect
-          pilotAddress={pilotAddress}
           chainId={chainId}
+          pilotAddress={pilotAddress}
           routeId={route.id}
           isConnected={isConnected}
           onDisconnect={onDisconnect}
+          onError={onError}
         />
       )
   }

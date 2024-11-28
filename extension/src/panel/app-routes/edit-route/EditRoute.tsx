@@ -1,4 +1,11 @@
-import { Breadcrumbs, Error, Page, Section, TextInput } from '@/components'
+import {
+  Breadcrumbs,
+  Error,
+  errorToast,
+  Page,
+  Section,
+  TextInput,
+} from '@/components'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -113,6 +120,12 @@ export const EditRoute = () => {
               }}
               onDisconnect={() => {
                 updateRoute({ pilotAddress: '' })
+              }}
+              onError={() => {
+                errorToast({
+                  title: 'Connection error',
+                  message: 'Could not connect to the wallet.',
+                })
               }}
             />
           </Section>
