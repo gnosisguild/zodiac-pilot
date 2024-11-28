@@ -194,9 +194,6 @@ importers:
       madge:
         specifier: ^8.0.0
         version: 8.0.0(typescript@5.6.3)
-      moment:
-        specifier: ^2.29.4
-        version: 2.30.1
       nanoid:
         specifier: ^3.1.30
         version: 3.3.7
@@ -3485,9 +3482,6 @@ packages:
     resolution: {integrity: sha512-p7PzSVEWiW9fHRX9oM+V4aV5B2nCVddVNv4DZ/JB6t9GsXY4E+ZVhPpnwUX7bbJyGeeVZqhS8q/JZ/H77IqPFA==}
     engines: {node: '>=18'}
     hasBin: true
-
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
   motion@10.16.2:
     resolution: {integrity: sha512-p+PurYqfUdcJZvtnmAqu5fJgV2kR0uLFQuBKtLeFVTrYEVllI99tiOTSefVNYuip9ELTEkepIIDftNdze76NAQ==}
@@ -9097,8 +9091,6 @@ snapshots:
       glob: 7.2.3
       requirejs: 2.3.7
       requirejs-config-file: 4.0.0
-
-  moment@2.30.1: {}
 
   motion@10.16.2:
     dependencies:
