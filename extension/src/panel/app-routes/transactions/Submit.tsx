@@ -5,6 +5,7 @@ import {
   RawAddress,
   SecondaryLinkButton,
   Spinner,
+  successToast,
   toastClasses,
 } from '@/components'
 import { getReadOnlyProvider } from '@/providers'
@@ -90,9 +91,9 @@ export const Submit = () => {
         await getReadOnlyProvider(chainId).waitForTransaction(txHash)
       console.debug(`Transaction ${txHash} has been executed`, receipt)
 
-      toast(
-        <>
-          Transaction batch has been executed
+      successToast({
+        title: 'Transaction batch has been executed',
+        message: (
           <a
             href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
             target="_blank"
@@ -101,8 +102,8 @@ export const Submit = () => {
             <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
-        </>
-      )
+        ),
+      })
     }
 
     if (safeTxHash) {
@@ -110,9 +111,9 @@ export const Submit = () => {
         `Transaction batch has been proposed with safeTxHash ${safeTxHash}`
       )
       const [, avatarAddress] = parsePrefixedAddress(avatar)
-      toast(
-        <>
-          Transaction batch has been proposed for execution
+      successToast({
+        title: 'Transaction batch has been proposed for execution',
+        message: (
           <a
             href={`//app.safe.global/transactions/tx?safe=${avatar}&id=multisig_${avatarAddress}_${safeTxHash}`}
             target="_blank"
@@ -121,17 +122,17 @@ export const Submit = () => {
             <SquareArrowOutUpRight size={16} />
             {'View in Safe{Wallet}'}
           </a>
-        </>
-      )
+        ),
+      })
 
       // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
       const txHash = await waitForMultisigExecution(chainId, safeTxHash)
       console.debug(
         `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`
       )
-      toast(
-        <>
-          Proposed Safe transaction has been confirmed and executed{' '}
+      successToast({
+        title: 'Proposed Safe transaction has been confirmed and executed',
+        message: (
           <a
             href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
             target="_blank"
@@ -140,8 +141,8 @@ export const Submit = () => {
             <SquareArrowOutUpRight size={16} />
             View in block explorer
           </a>
-        </>
-      )
+        ),
+      })
     }
   }
 
