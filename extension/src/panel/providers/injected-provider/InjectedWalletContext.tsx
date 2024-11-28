@@ -2,46 +2,19 @@ import { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { ChainId } from 'ser-kit'
-import {
-  ConnectFn,
-  ConnectionStatus,
-  useConnectProvider,
-} from './useConnectProvider'
+import { ConnectionProvider, ConnectionStatus } from '../connectTypes'
+import { useConnectProvider } from './useConnectProvider'
 
-export interface InjectedWalletContextT {
+export type InjectedWalletContextT = ConnectionProvider & {
   provider: Eip1193Provider
-  connect: ConnectFn
   switchChain: (chainId: ChainId) => Promise<void>
-  accounts: string[]
-  chainId: number | null
-  ready: boolean
   connectionStatus: ConnectionStatus
 }
 const InjectedWalletContext = createContext<InjectedWalletContextT | null>(null)
 
 export const ProvideInjectedWallet = ({ children }: PropsWithChildren) => {
-  const {
-    provider,
-    connect,
-    accounts,
-    chainId,
-    ready,
-    switchChain,
-    connectionStatus,
-  } = useConnectProvider()
-
   return (
-    <InjectedWalletContext.Provider
-      value={{
-        provider,
-        connect,
-        accounts,
-        chainId,
-        ready,
-        switchChain,
-        connectionStatus,
-      }}
-    >
+    <InjectedWalletContext.Provider value={useConnectProvider()}>
       {children}
     </InjectedWalletContext.Provider>
   )

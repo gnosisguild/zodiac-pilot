@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { ChainId } from 'ser-kit'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 
 export const useChainId = (
   provider: WalletConnectEthereumMultiProvider | null
 ) => {
-  const [chainId, setChainId] = useState<number | undefined>()
+  const [chainId, setChainId] = useState<ChainId | null>(null)
 
   useEffect(() => {
     if (provider == null) {
@@ -12,7 +13,7 @@ export const useChainId = (
     }
 
     if (chainId == undefined) {
-      setChainId(provider.chainId)
+      setChainId(provider.chainId as unknown as ChainId)
     }
   }, [chainId, provider])
 
@@ -22,7 +23,7 @@ export const useChainId = (
     }
 
     const handleChainChanged = () => {
-      setChainId(provider.chainId)
+      setChainId(provider.chainId as unknown as ChainId)
     }
     provider.events.on('chainChanged', handleChainChanged)
 

@@ -8,11 +8,13 @@ import { ProviderLogo } from '../providerLogo'
 type WalletConnectProps = {
   routeId: string
   onConnect: (chainId: ChainId, account: string) => void
+  onError: () => void
 }
 
 export const WalletConnectConnect = ({
   routeId,
   onConnect,
+  onError,
 }: WalletConnectProps) => {
   const walletConnect = useWalletConnect(routeId)
 
@@ -26,9 +28,15 @@ export const WalletConnectConnect = ({
           'walletConnect provider is not available'
         )
 
-        const { chainId, accounts } = await walletConnect.connect()
+        const connectResult = await walletConnect.connect()
 
-        onConnect(chainId as ChainId, accounts[0])
+        if (connectResult == null) {
+          onError()
+        } else {
+          const { chainId, accounts } = connectResult
+
+          onConnect(chainId, accounts[0])
+        }
       }}
     >
       <ProviderLogo providerType={ProviderType.WalletConnect} />

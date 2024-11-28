@@ -44,6 +44,9 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
               account,
             })
           }
+          onError={() => {
+            throw new Error('Not implemented')
+          }}
         />
 
         <InjectedWalletConnect
