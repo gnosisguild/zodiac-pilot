@@ -1,23 +1,22 @@
 import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { InjectedWalletContextT } from './injected-provider'
-import { WalletConnectResult } from './wallet-connect'
+import { ConnectionProvider } from './connectTypes'
 
 export const isConnected = (
-  providerContext: InjectedWalletContextT | WalletConnectResult,
+  connection: ConnectionProvider,
   account: PrefixedAddress,
   chainId: ChainId
 ) => {
-  if (providerContext.ready === false) {
+  if (connection.ready === false) {
     return false
   }
 
-  if (providerContext.chainId !== chainId) {
+  if (connection.chainId !== chainId) {
     return false
   }
 
   const [, accountAddress] = parsePrefixedAddress(account)
 
-  return providerContext.accounts.some(
+  return connection.accounts.some(
     (account) => account.toLowerCase() === accountAddress.toLowerCase()
   )
 }
