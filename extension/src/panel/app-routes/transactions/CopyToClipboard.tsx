@@ -1,7 +1,6 @@
-import { GhostButton } from '@/components'
+import { GhostButton, infoToast } from '@/components'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { Copy } from 'lucide-react'
-import { toast } from 'react-toastify'
 
 interface Props {
   transaction: MetaTransactionData
@@ -11,7 +10,10 @@ interface Props {
 export const CopyToClipboard = ({ transaction, labeled }: Props) => {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(transaction, undefined, 2))
-    toast(<>Transaction data has been copied to clipboard.</>)
+    infoToast({
+      title: 'Copied!',
+      message: 'Transaction data has been copied to clipboard.',
+    })
   }
 
   if (labeled) {

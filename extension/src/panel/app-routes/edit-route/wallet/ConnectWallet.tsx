@@ -55,7 +55,10 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
             })
           }
           onError={() => {
-            errorToast({ message: 'The connection to the wallet has failed.' })
+            errorToast({
+              title: 'Connection error',
+              message: 'Could not connect to the wallet.',
+            })
           }}
         />
       </div>
@@ -71,7 +74,10 @@ export const ConnectWallet = ({ route, onConnect, onDisconnect }: Props) => {
           isConnected={isConnected}
           onDisconnect={onDisconnect}
           onError={() => {
-            errorToast({ message: 'The connection to the wallet has failed.' })
+            errorToast({
+              title: 'Connection error',
+              message: 'Could not connect to the wallet.',
+            })
           }}
         />
       )
