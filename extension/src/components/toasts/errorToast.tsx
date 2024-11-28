@@ -19,7 +19,10 @@ export const errorToast = ({ title, message }: ToastProps) =>
             <BaseToast.Title className="text-white">{title}</BaseToast.Title>
           )}
 
-          <BaseToast.Dismiss className="text-white hover:bg-white/20" />
+          <BaseToast.Dismiss
+            className="text-white hover:bg-white/20"
+            onDismiss={() => toast.dismiss(t.id)}
+          />
         </div>
 
         <div className="text-red-50">{message}</div>

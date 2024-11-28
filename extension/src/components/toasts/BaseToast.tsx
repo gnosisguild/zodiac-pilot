@@ -37,8 +37,12 @@ BaseToast.Title = Title
 const Dismiss = ({
   children,
   className,
-}: PropsWithChildren<{ className: string }>) => (
-  <button className={classNames('rounded-md p-1 transition-all', className)}>
+  onDismiss,
+}: PropsWithChildren<{ className: string; onDismiss: () => void }>) => (
+  <button
+    onClick={onDismiss}
+    className={classNames('rounded-md p-1 transition-all', className)}
+  >
     <X size={16} />
 
     <span className="sr-only">{children}</span>
