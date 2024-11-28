@@ -1,4 +1,10 @@
-import { GhostButton, Info, Page, SecondaryButton } from '@/components'
+import {
+  GhostButton,
+  Info,
+  infoToast,
+  Page,
+  SecondaryButton,
+} from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -7,7 +13,6 @@ import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { Copy, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-toastify'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
@@ -63,7 +68,10 @@ export const Transactions = () => {
     navigator.clipboard.writeText(
       JSON.stringify(metaTransactions, undefined, 2)
     )
-    toast(<>Transaction data has been copied to clipboard.</>)
+    infoToast({
+      title: 'Copied!',
+      message: 'Transaction data has been copied to clipboard.',
+    })
   }
 
   return (

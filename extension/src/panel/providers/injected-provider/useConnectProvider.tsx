@@ -1,9 +1,10 @@
 import { useWindowId } from '@/bridge'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
+import { infoToast } from '@/components'
 import { Eip1193Provider } from '@/types'
 import { BrowserProvider } from 'ethers'
 import { MutableRefObject, useCallback, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
+import toast from 'react-hot-toast'
 import { ChainId } from 'ser-kit'
 import { ConnectProvider } from './ConnectProvider'
 import { memoWhilePending } from './memoWhilePending'
@@ -133,10 +134,10 @@ const connectInjectedWallet = memoWhilePending(
       .catch((err: any) => {
         if ((err as InjectedWalletError).code === -32002) {
           return new Promise((resolve: (value: string[]) => void) => {
-            const toastId = toast.warn(
-              <>Check your wallet to confirm connection</>,
-              { autoClose: false }
-            )
+            const toastId = infoToast({
+              title: 'Connection',
+              message: 'Check your wallet to confirm connection',
+            })
 
             const handleAccountsChanged = (accounts: string[]) => {
               resolve(accounts)
@@ -170,10 +171,11 @@ const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
     if ((err as InjectedWalletError).code === -32002) {
       // another wallet_switchEthereumChain request is already pending
       await new Promise((resolve: (value: void) => void) => {
-        const toastId = toast.warn(
-          <>Check your wallet to confirm switching the network</>,
-          { autoClose: false }
-        )
+        const toastId = infoToast({
+          title: 'Chain',
+          message: 'Check your wallet to confirm switching the network',
+        })
+
         const handleChainChanged = () => {
           resolve()
           toast.dismiss(toastId)
