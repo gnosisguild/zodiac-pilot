@@ -1,12 +1,13 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideBridgeContext } from '@/bridge'
-import { Info, ZodiacToastContainer } from '@/components'
+import { Info } from '@/components'
 import { ProvideInjectedWallet } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Toaster } from 'react-hot-toast'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import '../global.css'
@@ -40,8 +41,9 @@ const Root = () => {
               <ProvideProvider>
                 <div className="flex h-full flex-1 flex-col">
                   <RouterProvider router={router} />
-                  <ZodiacToastContainer />
                 </div>
+
+                <Toaster position="top-center" />
               </ProvideProvider>
             </ProvideInjectedWallet>
           </ProvideZodiacRoutes>

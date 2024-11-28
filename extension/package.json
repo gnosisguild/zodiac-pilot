@@ -109,6 +109,7 @@
     "@headlessui/react": "^2.2.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.460.0",
+    "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.26.1",
     "react-stick": "^5.0.6",
     "zod": "^3.23.8"
