@@ -18,7 +18,7 @@ export const Input = ({ children, label, description, error }: InputProps) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-1">
+      <div className="flex items-center gap-1">
         <label
           htmlFor={inputId}
           className="text-sm font-semibold dark:text-zinc-50"
