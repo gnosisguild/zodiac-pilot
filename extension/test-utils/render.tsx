@@ -1,16 +1,11 @@
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import { ComponentType } from 'react'
-import {
-  MemoryRouter,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-} from 'react-router-dom'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { expect } from 'vitest'
 import { mockActiveTab, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { RenderWrapper } from './RenderWrapper'
+import { TestElement, waitForTestElement } from './TestElement'
 
 type Route = {
   path: string
@@ -57,17 +52,10 @@ export const render = async (
     options
   )
 
-  await screen.findByTestId('test-element-id')
+  await waitForTestElement()
 
   return { ...result, mockedTab, mockedPort }
 }
-
-const TestElement = () => (
-  <>
-    <div data-testid="test-element-id" />
-    <Outlet />
-  </>
-)
 
 const InspectRoute = () => {
   const location = useLocation()

@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest'
-import { vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import { afterEach, vi } from 'vitest'
 
 window.document.body.innerHTML = '<div id="root"></div>'
 
@@ -16,3 +17,5 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
+
+afterEach(() => cleanup())
