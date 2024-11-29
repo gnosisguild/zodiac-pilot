@@ -172,7 +172,7 @@ const EtherValue = ({ value }: EtherValueProps) => {
   const chainId = getChainId(avatar)
 
   return (
-    <div className="flex flex-col gap-2 text-xs">
+    <div className="flex flex-col gap-2 whitespace-nowrap text-xs">
       <div className="font-bold">
         Amount <span className="font-normal">({CHAIN_CURRENCY[chainId]})</span>
       </div>

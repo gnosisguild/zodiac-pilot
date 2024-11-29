@@ -29,12 +29,12 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <Circle>
-        <img src={blockie} alt={address} className="size-8" />
+        <img src={blockie} alt={address} className="size-8 rounded-full" />
       </Circle>
 
       <div className="flex flex-col gap-2">
         {contractInfo?.name && (
-          <div className="flex flex-shrink-0 gap-1 text-xs font-bold">
+          <div className="flex flex-shrink-0 gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs font-bold">
             Contract
             <span className="font-normal">({contractInfo.name})</span>
           </div>
