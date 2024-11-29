@@ -1,11 +1,4 @@
-import {
-  Blockie,
-  Circle,
-  Input,
-  RawAddress,
-  selectStyles,
-  TextInput,
-} from '@/components'
+import { Blockie, Input, selectStyles, TextInput } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -30,8 +23,6 @@ export const AvatarInput = ({
   }, [value])
 
   const checksumAvatarAddress = validateAddress(pendingValue)
-
-  console.log({ availableSafes, checksumAvatarAddress })
 
   return (
     <>
@@ -97,12 +88,12 @@ const SafeOptionLabel = (option: Option) => {
   const checksumAddress = getAddress(option.value)
 
   return (
-    <div className="flex items-center gap-4 py-3">
-      <Circle>
-        <Blockie address={option.value} className="size-10" />
-      </Circle>
+    <div className="flex items-center gap-4 py-2">
+      <Blockie address={option.value} className="size-5 shrink-0" />
 
-      <RawAddress>{checksumAddress}</RawAddress>
+      <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono">
+        {checksumAddress}
+      </code>
     </div>
   )
 }

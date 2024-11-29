@@ -1,5 +1,5 @@
 import { EXPLORER_URL } from '@/chains'
-import { Circle, RawAddress } from '@/components'
+import { Address, Circle } from '@/components'
 import makeBlockie from 'ethereum-blockies-base64'
 import { getAddress } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -28,8 +28,8 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Circle size="sm">
-        <img src={blockie} alt={address} />
+      <Circle>
+        <img src={blockie} alt={address} className="size-8" />
       </Circle>
 
       <div className="flex flex-col gap-2">
@@ -41,7 +41,7 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
         )}
 
         <div className="flex items-center gap-2 text-xs">
-          <RawAddress>{displayAddress}</RawAddress>
+          <Address>{displayAddress}</Address>
 
           <a
             href={`${explorerUrl}/search?q=${address}`}

@@ -7,7 +7,7 @@ import {
   TextInput,
 } from '@/components'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
-import { LegacyConnection } from '@/types'
+import { LegacyConnection, ProviderType } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
 import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
@@ -108,7 +108,16 @@ export const EditRoute = () => {
             onChange={(chainId) => updateRoute({ chainId })}
           />
 
-          <Section title="Pilot Account">
+          <Section
+            title="Pilot Account"
+            description={
+              currentRouteState.providerType === ProviderType.InjectedWallet
+                ? 'Meta Mask'
+                : currentRouteState.providerType === ProviderType.WalletConnect
+                  ? 'Wallet Connect'
+                  : undefined
+            }
+          >
             <ConnectWallet
               route={currentRouteState}
               onConnect={({ providerType, chainId, account }) => {

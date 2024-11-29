@@ -14,7 +14,7 @@ export const ProviderLogo = ({ providerType }: ProviderLogoProps) => {
           aria-hidden
           alt=""
           src={chrome.runtime.getURL(walletConnectLogoUrl)}
-          className="size-7"
+          className="h-5"
         />
       )
     case ProviderType.InjectedWallet:
@@ -23,7 +23,7 @@ export const ProviderLogo = ({ providerType }: ProviderLogoProps) => {
           aria-hidden
           alt=""
           src={chrome.runtime.getURL(metamaskLogoUrl)}
-          className="size-8"
+          className="size-5"
         />
       )
   }
