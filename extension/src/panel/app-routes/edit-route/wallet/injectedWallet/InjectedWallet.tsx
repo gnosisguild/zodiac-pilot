@@ -1,5 +1,4 @@
 import { InjectedWalletContextT, useInjectedWallet } from '@/providers'
-import { ProviderType } from '@/types'
 import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
@@ -28,9 +27,7 @@ export const InjectedWallet = ({
   if (isConnected(injectedWallet)) {
     return (
       <Connected onDisconnect={onDisconnect}>
-        <Account providerType={ProviderType.InjectedWallet}>
-          {pilotAddress}
-        </Account>
+        <Account>{pilotAddress}</Account>
       </Connected>
     )
   }
@@ -48,9 +45,7 @@ export const InjectedWallet = ({
           }
         }}
       >
-        <Account providerType={ProviderType.InjectedWallet}>
-          {pilotAddress}
-        </Account>
+        <Account>{pilotAddress}</Account>
       </WalletDisconnected>
     )
   }
@@ -62,9 +57,7 @@ export const InjectedWallet = ({
         chainId={chainId}
         onSwitch={() => injectedWallet.switchChain(chainId)}
       >
-        <Account providerType={ProviderType.InjectedWallet}>
-          {pilotAddress}
-        </Account>
+        <Account>{pilotAddress}</Account>
       </SwitchChain>
     )
   }
@@ -77,9 +70,7 @@ export const InjectedWallet = ({
   if (!accountInWallet) {
     return (
       <WrongAccount onDisconnect={onDisconnect}>
-        <Account providerType={ProviderType.InjectedWallet}>
-          {pilotAddress}
-        </Account>
+        <Account>{pilotAddress}</Account>
       </WrongAccount>
     )
   }
