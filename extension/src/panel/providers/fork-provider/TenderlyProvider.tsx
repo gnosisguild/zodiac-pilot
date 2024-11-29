@@ -141,6 +141,8 @@ export class TenderlyProvider extends EventEmitter {
     // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
     const provider = new JsonRpcProvider(adminRpc, this.chainId)
 
+    this.emit('update', { rpcUrl: this.publicRpc })
+
     return provider
   }
 

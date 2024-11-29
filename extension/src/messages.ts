@@ -39,6 +39,7 @@ export type RPCMessage = ProbeChainId
 
 export enum PilotSimulationMessageType {
   SIMULATE_START = 'SIMULATE_START',
+  SIMULATE_UPDATE = 'SIMULATE_UPDATE',
   SIMULATE_STOP = 'SIMULATE_STOP',
 }
 
@@ -49,12 +50,18 @@ interface SimulateStart {
   rpcUrl?: string
 }
 
+type SimulateUpdate = {
+  type: PilotSimulationMessageType.SIMULATE_UPDATE
+  windowId: number
+  rpcUrl: string
+}
+
 interface SimulateStop {
   type: PilotSimulationMessageType.SIMULATE_STOP
   windowId: number
 }
 
-export type SimulationMessage = SimulateStart | SimulateStop
+export type SimulationMessage = SimulateStart | SimulateStop | SimulateUpdate
 
 import { JsonRpcRequest } from '@/types'
 

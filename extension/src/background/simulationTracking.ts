@@ -31,6 +31,16 @@ export const trackSimulations = () => {
           break
         }
 
+        case PilotSimulationMessageType.SIMULATE_UPDATE: {
+          withPilotSession(message.windowId, (session) => {
+            console.debug('Updating current session', message.rpcUrl)
+
+            session.updateFork(message.rpcUrl)
+          })
+
+          break
+        }
+
         case PilotSimulationMessageType.SIMULATE_STOP: {
           withPilotSession(message.windowId, async (session) => {
             if (!session.isForked()) {

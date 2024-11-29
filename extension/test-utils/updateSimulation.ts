@@ -1,24 +1,20 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { ChainId } from 'ser-kit'
 import { callListeners, chromeMock } from './chrome'
 
-type StartSimulationOptions = {
+type UpdateSimulationOptions = {
   windowId: number
-  chainId?: ChainId
-  rpcUrl?: string
+  rpcUrl: string
 }
 
-export const startSimulation = ({
+export const updateSimulation = ({
   windowId,
-  chainId = 1,
   rpcUrl,
-}: StartSimulationOptions) =>
+}: UpdateSimulationOptions) =>
   callListeners(
     chromeMock.runtime.onMessage,
     {
-      type: PilotSimulationMessageType.SIMULATE_START,
+      type: PilotSimulationMessageType.SIMULATE_UPDATE,
       windowId,
-      chainId,
       rpcUrl,
     } satisfies SimulationMessage,
     { id: chrome.runtime.id },
