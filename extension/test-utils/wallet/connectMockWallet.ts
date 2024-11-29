@@ -1,6 +1,5 @@
 import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
 import { HexAddress } from '@/types'
-import { sleep } from '@/utils'
 import { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { callListeners } from '../chrome'
 
@@ -28,8 +27,6 @@ export const connectMockWallet = async (
     } satisfies ConnectedWalletMessage,
     mockPort
   )
-
-  await sleep(1)
 
   await callListeners(
     mockPort.onMessage,

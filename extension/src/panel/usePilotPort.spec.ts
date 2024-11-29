@@ -8,7 +8,7 @@ import {
   mockRuntimeConnect,
   renderHook,
 } from '@/test-utils'
-import { sleep } from '@/utils'
+import { sleepTillIdle } from '@/utils'
 import { cleanup, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { usePilotPort } from './usePilotPort'
@@ -80,7 +80,7 @@ describe('usePilotPort', () => {
       windowId: regularTab.windowId,
     })
 
-    await sleep(1)
+    await sleepTillIdle()
 
     expect(port.postMessage).toHaveBeenCalledWith({
       type: PilotMessageType.PILOT_PANEL_OPENED,
@@ -111,7 +111,7 @@ describe('usePilotPort', () => {
       tab
     )
 
-    await sleep(1)
+    await sleepTillIdle()
 
     expect(port.postMessage).toHaveBeenCalledWith({
       type: PilotMessageType.PILOT_PANEL_OPENED,

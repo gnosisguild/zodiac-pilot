@@ -1,7 +1,7 @@
 import { callListeners, chromeMock, createMockTab } from '@/test-utils'
 import { describe, expect, it } from 'vitest'
 import { sendMessageToTab } from './sendMessageToTab'
-import { sleep } from './sleep'
+import { sleepTillIdle } from './sleep'
 
 describe('Send tab message', () => {
   it('sends the message to the specified tab', async () => {
@@ -26,8 +26,7 @@ describe('Send tab message', () => {
 
     sendMessageToTab(tab.id, 'test-message').then(resolve)
 
-    // wait for next event loop so that listeners can be set up
-    await sleep(1)
+    await sleepTillIdle()
 
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
 
@@ -63,8 +62,7 @@ describe('Send tab message', () => {
     const { promise, resolve } = Promise.withResolvers()
 
     sendMessageToTab(chromeTab.id, 'test-message').then(resolve)
-
-    await sleep(1)
+    await sleepTillIdle()
 
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
 
@@ -90,8 +88,7 @@ describe('Send tab message', () => {
 
     sendMessageToTab(tab.id, 'test-message').then(resolve)
 
-    // wait for next event loop so that listeners can be set up
-    await sleep(1)
+    await sleepTillIdle()
 
     expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalled()
 

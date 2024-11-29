@@ -1,3 +1,4 @@
+import { sleepTillIdle } from '@/utils'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import { ComponentType } from 'react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
@@ -53,6 +54,7 @@ export const render = async (
   )
 
   await waitForTestElement()
+  await sleepTillIdle()
 
   return { ...result, mockedTab, mockedPort }
 }

@@ -1,4 +1,4 @@
-import { sleep } from '@/utils'
+import { sleepTillIdle } from '@/utils'
 import { EventCallback } from 'vitest-chrome/types/create-event'
 import { Events } from 'vitest-chrome/types/vitest-chrome'
 
@@ -11,8 +11,7 @@ export const callListeners = async <
 ) => {
   const result = event.callListeners(...args)
 
-  // flush the event loop
-  await sleep(1)
+  await sleepTillIdle()
 
   return result
 }

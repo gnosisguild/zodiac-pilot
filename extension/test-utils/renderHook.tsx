@@ -1,4 +1,5 @@
 import { ZodiacRoute } from '@/types'
+import { sleepTillIdle } from '@/utils'
 import {
   renderHook as renderHookBase,
   RenderHookOptions,
@@ -41,6 +42,8 @@ export const renderHook = async <Result, Props>(
   const result = renderHookBase<Result, Props>(fn, { ...options, wrapper })
 
   await waitForTestElement()
+
+  await sleepTillIdle()
 
   return { ...result, mockedTab, mockedPort }
 }
