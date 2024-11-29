@@ -28,7 +28,7 @@ export default defineConfig({
       skipFull: true,
       enabled: CI != null,
       reportOnFailure: CI != null,
-      reporter: CI ? ['json-summary'] : undefined,
+      reporter: CI ? ['json', 'json-summary'] : undefined,
       include: ['**/src/**/*.{ts,tsx}'],
       exclude: ['./setup-chrome-mock.ts'],
     },
