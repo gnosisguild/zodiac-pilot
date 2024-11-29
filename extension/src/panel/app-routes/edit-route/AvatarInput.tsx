@@ -44,7 +44,7 @@ export const AvatarInput = ({
               blurInputOnSelect
               isClearable
               formatOptionLabel={SafeOptionLabel}
-              placeholder="Paste in Safe address or select from owned Safes"
+              placeholder="Paste an address or select from the list"
               classNames={selectStyles<{ value: string; label: string }>()}
               value={
                 checksumAvatarAddress !== ''
