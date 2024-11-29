@@ -105,17 +105,15 @@ const TransactionHeader = ({
       <label className="flex w-3/5 cursor-pointer items-center gap-2">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
-        <div className="flex aspect-square items-center rounded-full border border-zinc-300 px-2 dark:border-zinc-500/80">
-          {index + 1}
-        </div>
-
-        <h5 className="flex items-center gap-2">
+        <h5 className="flex flex-col gap-1 text-sm font-semibold">
           {functionFragment
             ? functionFragment.format('sighash').split('(')[0]
             : 'Raw transaction'}
 
           {transactionState.transaction.operation === 1 && (
-            <code className="text-xs">delegatecall</code>
+            <span className="text-xs font-normal uppercase opacity-75">
+              delegatecall
+            </span>
           )}
         </h5>
       </label>
