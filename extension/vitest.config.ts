@@ -30,7 +30,7 @@ export default defineConfig({
       reportOnFailure: CI != null,
       reporter: CI ? ['json', 'json-summary'] : undefined,
       include: ['**/src/**/*.{ts,tsx}'],
-      exclude: ['./setup-chrome-mock.ts'],
+      exclude: ['./setup-chrome-mock.ts', '**/src/**/*.spec.{ts,tsx}'],
     },
   },
 })
