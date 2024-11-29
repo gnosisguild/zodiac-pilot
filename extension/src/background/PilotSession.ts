@@ -9,7 +9,7 @@ import { Fork } from './types'
 
 export class PilotSession {
   private id: number
-  private activeRPCRuleIds: Set<number>
+
   public readonly tabs: Set<number>
   private fork: Fork | null
   private rpcTracking: TrackRequestsResult
@@ -17,7 +17,6 @@ export class PilotSession {
 
   constructor(windowId: number, trackRequests: TrackRequestsResult) {
     this.id = windowId
-    this.activeRPCRuleIds = new Set()
     this.tabs = new Set()
     this.fork = null
     this.rpcTracking = trackRequests
@@ -95,13 +94,27 @@ export class PilotSession {
 
     this.fork = fork
 
-    this.activeRPCRuleIds = await addRpcRedirectRules(
+    await addRpcRedirectRules(
       this,
       this.rpcTracking.getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
     )
 
     this.rpcTracking.onNewRPCEndpointDetected.addListener(
       this.handleNewRPCEndpoint
+    )
+  }
+
+  async updateFork(rpcUrl: string) {
+    invariant(this.fork != null, 'Session is not forked')
+
+    this.fork = { ...this.fork, rpcUrl }
+
+    await removeAllRpcRedirectRules(this)
+    await addRpcRedirectRules(
+      this,
+      this.rpcTracking.getTrackedRPCUrlsForChainId({
+        chainId: this.fork.chainId,
+      })
     )
   }
 

@@ -313,12 +313,22 @@ export class ForkProvider extends EventEmitter {
       rpcUrl: this.provider.publicRpc,
     } satisfies SimulationMessage)
 
+    this.provider.on('update', ({ rpcUrl }) => {
+      chrome.runtime.sendMessage({
+        type: PilotSimulationMessageType.SIMULATE_UPDATE,
+        windowId: activeTab.windowId,
+        rpcUrl,
+      } satisfies SimulationMessage)
+    })
+
     this.isInitialized = true
   }
 
   async deleteFork(): Promise<void> {
     // notify the background script to stop intercepting JSON RPC requests
     const activeTab = await getActiveTab()
+
+    this.provider.removeAllListeners('update')
 
     chrome.runtime.sendMessage({
       type: PilotSimulationMessageType.SIMULATE_STOP,
