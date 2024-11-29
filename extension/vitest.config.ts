@@ -13,6 +13,8 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
   {}
 )
 
+const { CI } = process.env
+
 export default defineConfig({
   test: {
     alias,
@@ -23,8 +25,10 @@ export default defineConfig({
     clearMocks: true,
 
     coverage: {
-      reportOnFailure: true,
       skipFull: true,
+      enabled: CI != null,
+      reportOnFailure: CI != null,
+      reporter: CI ? ['json-summary'] : undefined,
       include: ['**/src/**/*.{ts,tsx}'],
       exclude: ['./setup-chrome-mock.ts'],
     },
