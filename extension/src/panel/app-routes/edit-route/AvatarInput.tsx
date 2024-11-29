@@ -1,11 +1,4 @@
-import {
-  Address,
-  Blockie,
-  Circle,
-  Input,
-  selectStyles,
-  TextInput,
-} from '@/components'
+import { Blockie, Input, selectStyles, TextInput } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -98,11 +91,11 @@ const SafeOptionLabel = (option: Option) => {
 
   return (
     <div className="flex items-center gap-4 py-2">
-      <Circle>
-        <Blockie address={option.value} className="size-6" />
-      </Circle>
+      <Blockie address={option.value} className="size-5 shrink-0" />
 
-      <Address>{checksumAddress}</Address>
+      <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono">
+        {checksumAddress}
+      </code>
     </div>
   )
 }
