@@ -1,4 +1,4 @@
-import { Address, Blockie, Circle, Select } from '@/components'
+import { Blockie, Select } from '@/components'
 import { getAddress } from 'ethers'
 import { PropsWithChildren } from 'react'
 import { Props as SelectProps } from 'react-select'
@@ -52,12 +52,13 @@ type ValueProps = PropsWithChildren<{
 
 const Value = ({ label, address, children }: ValueProps) => (
   <div className="flex items-center gap-4 py-2">
-    <Circle>
-      <Blockie address={address} className="size-8" />
-    </Circle>
-    <div className="flex flex-col gap-1 overflow-hidden">
-      <p className="pl-1 text-base">{label}</p>
-      <Address>{children}</Address>
+    <Blockie address={address} className="size-5 shrink-0" />
+
+    <div className="flex items-center gap-2 overflow-hidden">
+      <span className="whitespace-nowrap font-semibold">{label}</span>
+      <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono opacity-75">
+        {children}
+      </code>
     </div>
   </div>
 )
