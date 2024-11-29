@@ -1,4 +1,4 @@
-import { Circle, RawAddress } from '@/components'
+import { Address, Circle } from '@/components'
 import { ProviderType } from '@/types'
 import { validateAddress } from '@/utils'
 import { ProviderLogo } from './providerLogo'
@@ -15,7 +15,7 @@ export const Account = ({ providerType, children }: AccountProps) => {
         <ProviderLogo providerType={providerType} />
       </Circle>
 
-      <RawAddress>{validateAddress(children)}</RawAddress>
+      <Address>{validateAddress(children)}</Address>
     </div>
   )
 }

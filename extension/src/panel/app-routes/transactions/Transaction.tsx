@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Divider, RawAddress, ToggleButton } from '@/components'
+import { Address, Divider, ToggleButton } from '@/components'
 import { TransactionState } from '@/state'
 import { ZodiacRoute } from '@/types'
 import { useZodiacRoute } from '@/zodiac-routes'
@@ -178,7 +178,7 @@ const EtherValue = ({ value }: EtherValueProps) => {
       </div>
 
       <div className="flex flex-1 justify-end">
-        <RawAddress>{formatEther(value || 0)}</RawAddress>
+        <Address>{formatEther(value || 0)}</Address>
       </div>
     </div>
   )

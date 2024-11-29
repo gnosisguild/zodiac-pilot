@@ -1,7 +1,7 @@
 import { shortenAddress, validateAddress } from '@/utils'
 import { Unlink } from 'lucide-react'
+import { Address as BaseAddress } from '../Address'
 import { Blockie } from '../Blockie'
-import { RawAddress } from '../RawAddress'
 import { Tag } from '../Tag'
 
 interface Props {
@@ -18,9 +18,9 @@ export const Address = ({ address }: Props) => {
         <>
           <Blockie address={address} className="size-6" />
 
-          <RawAddress>
+          <BaseAddress>
             {checksumAddress ? displayAddress : 'No connection'}
-          </RawAddress>
+          </BaseAddress>
         </>
       )}
 

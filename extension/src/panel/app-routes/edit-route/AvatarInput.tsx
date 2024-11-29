@@ -1,8 +1,8 @@
 import {
+  Address,
   Blockie,
   Circle,
   Input,
-  RawAddress,
   selectStyles,
   TextInput,
 } from '@/components'
@@ -102,7 +102,7 @@ const SafeOptionLabel = (option: Option) => {
         <Blockie address={option.value} className="size-6" />
       </Circle>
 
-      <RawAddress>{checksumAddress}</RawAddress>
+      <Address>{checksumAddress}</Address>
     </div>
   )
 }

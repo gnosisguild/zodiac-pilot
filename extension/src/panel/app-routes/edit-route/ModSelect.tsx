@@ -1,4 +1,4 @@
-import { Blockie, Circle, RawAddress, Select } from '@/components'
+import { Address, Blockie, Circle, Select } from '@/components'
 import { getAddress } from 'ethers'
 import { PropsWithChildren } from 'react'
 import { Props as SelectProps } from 'react-select'
@@ -57,7 +57,7 @@ const Value = ({ label, address, children }: ValueProps) => (
     </Circle>
     <div className="flex flex-col gap-1 overflow-hidden">
       <p className="pl-1 text-base">{label}</p>
-      <RawAddress>{children}</RawAddress>
+      <Address>{children}</Address>
     </div>
   </div>
 )
