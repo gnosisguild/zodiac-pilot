@@ -43,6 +43,8 @@ describe('Create port', () => {
       port
     )
 
+    vi.useRealTimers()
+
     return promise
   })
 
@@ -84,6 +86,8 @@ describe('Create port', () => {
       } satisfies ConnectedWalletMessage,
       port
     )
+
+    vi.useRealTimers()
 
     return promise
   })

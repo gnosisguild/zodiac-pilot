@@ -1,4 +1,3 @@
-import { useInjectedWallet } from '@/providers'
 import {
   createMockRoute,
   MockProvider,
@@ -7,13 +6,14 @@ import {
 } from '@/test-utils'
 import { ProviderType } from '@/types'
 import { describe, expect, it, vi } from 'vitest'
+import { useInjectedWallet } from './InjectedWalletContext'
 import { useConnectInjectedWalletIfNeeded } from './useConnectInjectedWalletIfNeeded'
 
-vi.mock(import('@/providers'), async (importOriginal) => {
-  const providersModule = await importOriginal()
+vi.mock(import('./InjectedWalletContext'), async (importOriginal) => {
+  const module = await importOriginal()
 
   return {
-    ...providersModule,
+    ...module,
 
     useInjectedWallet: vi.fn(),
   }
