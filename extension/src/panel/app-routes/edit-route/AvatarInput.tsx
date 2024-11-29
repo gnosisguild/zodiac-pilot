@@ -24,8 +24,6 @@ export const AvatarInput = ({
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 
-  console.log({ availableSafes, checksumAvatarAddress })
-
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (

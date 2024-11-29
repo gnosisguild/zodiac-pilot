@@ -19,7 +19,7 @@ export const RemoveButton = () => {
         style="critical"
         onClick={() => setConfirmRemove(true)}
       >
-        Remove this connection
+        Remove route
       </GhostButton>
 
       <Modal
