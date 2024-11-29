@@ -97,9 +97,9 @@ const SafeOptionLabel = (option: Option) => {
   const checksumAddress = getAddress(option.value)
 
   return (
-    <div className="flex items-center gap-4 py-3">
+    <div className="flex items-center gap-4 py-2">
       <Circle>
-        <Blockie address={option.value} className="size-10" />
+        <Blockie address={option.value} className="size-6" />
       </Circle>
 
       <RawAddress>{checksumAddress}</RawAddress>

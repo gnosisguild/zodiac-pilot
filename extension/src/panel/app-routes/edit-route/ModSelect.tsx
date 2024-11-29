@@ -51,9 +51,9 @@ type ValueProps = PropsWithChildren<{
 }>
 
 const Value = ({ label, address, children }: ValueProps) => (
-  <div className="flex items-center gap-4 py-3">
+  <div className="flex items-center gap-4 py-2">
     <Circle>
-      <Blockie address={address} className="size-10" />
+      <Blockie address={address} className="size-8" />
     </Circle>
     <div className="flex flex-col gap-1 overflow-hidden">
       <p className="pl-1 text-base">{label}</p>
