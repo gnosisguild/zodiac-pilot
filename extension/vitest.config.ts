@@ -21,5 +21,12 @@ export default defineConfig({
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,
+
+    coverage: {
+      reportOnFailure: true,
+      skipFull: true,
+      include: ['**/src/**/*.{ts,tsx}'],
+      exclude: ['./setup-chrome-mock.ts'],
+    },
   },
 })

@@ -11,3 +11,4 @@ zodiac-pilot.zip
 /playwright/.cache/
 
 walletconnect.db
+/coverage
