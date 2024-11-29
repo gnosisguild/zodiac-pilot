@@ -29,7 +29,7 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <Circle>
-        <img src={blockie} alt={address} />
+        <img src={blockie} alt={address} className="size-8" />
       </Circle>
 
       <div className="flex flex-col gap-2">
