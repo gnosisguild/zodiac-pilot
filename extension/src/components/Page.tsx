@@ -27,11 +27,9 @@ const Content = (
 Page.Content = forwardRef(Content)
 
 const Footer = ({ children }: PropsWithChildren) => (
-  <>
-    <Divider />
-
-    <div className="flex flex-col gap-4 p-4">{children}</div>
-  </>
+  <div className="flex flex-col gap-4 border-t border-zinc-400/80 bg-zinc-100 p-4 dark:border-gray-700/80 dark:bg-gray-950/80">
+    {children}
+  </div>
 )
 
 Page.Footer = Footer
