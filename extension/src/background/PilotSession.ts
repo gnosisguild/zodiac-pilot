@@ -13,7 +13,7 @@ export class PilotSession {
   public readonly tabs: Set<number>
   private fork: Fork | null
   private rpcTracking: TrackRequestsResult
-  private handleNewRPCEndpoint: () => void
+  private handleNewRpcEndpoint: () => void
 
   constructor(windowId: number, trackRequests: TrackRequestsResult) {
     this.id = windowId
@@ -21,7 +21,7 @@ export class PilotSession {
     this.fork = null
     this.rpcTracking = trackRequests
 
-    this.handleNewRPCEndpoint = () => this._handleNewRPCEndpoint()
+    this.handleNewRpcEndpoint = () => this._handleNewRpcEndpoint()
   }
 
   isTracked(tabId: number) {
@@ -60,7 +60,7 @@ export class PilotSession {
       })
     }
 
-    this.rpcTracking.onNewRPCEndpointDetected.removeAllListeners()
+    this.rpcTracking.onNewRpcEndpointDetected.removeAllListeners()
 
     removeCSPHeaderRule()
     await removeAllRpcRedirectRules(this)
@@ -80,14 +80,14 @@ export class PilotSession {
     return this.fork != null
   }
 
-  _handleNewRPCEndpoint() {
+  _handleNewRpcEndpoint() {
     if (this.fork == null) {
       return
     }
 
     return addRpcRedirectRules(
       this,
-      this.rpcTracking.getTrackedRPCUrlsForChainId({
+      this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
       })
     )
@@ -100,11 +100,11 @@ export class PilotSession {
 
     await addRpcRedirectRules(
       this,
-      this.rpcTracking.getTrackedRPCUrlsForChainId({ chainId: fork.chainId })
+      this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId })
     )
 
-    this.rpcTracking.onNewRPCEndpointDetected.addListener(
-      this.handleNewRPCEndpoint
+    this.rpcTracking.onNewRpcEndpointDetected.addListener(
+      this.handleNewRpcEndpoint
     )
   }
 
@@ -116,7 +116,7 @@ export class PilotSession {
     await removeAllRpcRedirectRules(this)
     await addRpcRedirectRules(
       this,
-      this.rpcTracking.getTrackedRPCUrlsForChainId({
+      this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
       })
     )
@@ -131,8 +131,8 @@ export class PilotSession {
 
     await removeAllRpcRedirectRules(this)
 
-    this.rpcTracking.onNewRPCEndpointDetected.removeListener(
-      this.handleNewRPCEndpoint
+    this.rpcTracking.onNewRpcEndpointDetected.removeListener(
+      this.handleNewRpcEndpoint
     )
   }
 }

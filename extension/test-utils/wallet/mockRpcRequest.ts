@@ -2,17 +2,17 @@ import { ChainId } from 'ser-kit'
 import { callListeners, chromeMock } from '../chrome'
 import { createMockTab, createMockWebRequest } from '../creators'
 
-type MockRPCRequestOptions = {
+type MockRpcRequestOptions = {
   chainId: ChainId
   tabId: number
   url: string
 }
 
-export const mockRPCRequest = async ({
+export const mockRpcRequest = async ({
   chainId,
   tabId,
   url,
-}: MockRPCRequestOptions) => {
+}: MockRpcRequestOptions) => {
   const tab = createMockTab({ id: tabId })
 
   chromeMock.tabs.get.mockResolvedValue(tab)

@@ -4,8 +4,8 @@ import {
   InjectedProviderResponse,
   Message,
   PilotMessageType,
-  RPCMessage,
-  RPCMessageType,
+  RpcMessage,
+  RpcMessageType,
 } from '@/messages'
 import { injectScript, isValidTab } from '@/utils'
 import { probeChainId } from './probeChainId'
@@ -65,7 +65,7 @@ if (
   // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
   chrome.runtime.onMessage.addListener(
     (
-      message: InjectedProviderMessage | RPCMessage | Message,
+      message: InjectedProviderMessage | RpcMessage | Message,
       sender,
       respond
     ) => {
@@ -104,7 +104,7 @@ if (
           break
         }
 
-        case RPCMessageType.PROBE_CHAIN_ID: {
+        case RpcMessageType.PROBE_CHAIN_ID: {
           console.debug(`Probing chain ID using URL "${message.url}"`)
 
           probeChainId(message.url).then(respond)

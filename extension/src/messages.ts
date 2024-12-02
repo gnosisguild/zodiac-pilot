@@ -26,16 +26,16 @@ interface PilotPanelOpened {
 
 export type Message = PilotConnect | PilotDisconnect | PilotPanelOpened
 
-export enum RPCMessageType {
+export enum RpcMessageType {
   PROBE_CHAIN_ID = 'PROBE_CHAIN_ID',
 }
 
 interface ProbeChainId {
-  type: RPCMessageType.PROBE_CHAIN_ID
+  type: RpcMessageType.PROBE_CHAIN_ID
   url: string
 }
 
-export type RPCMessage = ProbeChainId
+export type RpcMessage = ProbeChainId
 
 export enum PilotSimulationMessageType {
   SIMULATE_START = 'SIMULATE_START',

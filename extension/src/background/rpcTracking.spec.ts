@@ -1,4 +1,4 @@
-import { mockRPCRequest, startPilotSession } from '@/test-utils'
+import { mockRpcRequest, startPilotSession } from '@/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
@@ -11,9 +11,9 @@ describe('RPC Tracking', () => {
     await startPilotSession({ windowId: 1, tabId: 1 })
     const handler = vi.fn()
 
-    result.onNewRPCEndpointDetected.addListener(handler)
+    result.onNewRpcEndpointDetected.addListener(handler)
 
-    await mockRPCRequest({
+    await mockRpcRequest({
       chainId: 1,
       tabId: 1,
       url: 'http://test-json-rpc.com',
@@ -30,10 +30,10 @@ describe('RPC Tracking', () => {
 
     const handler = vi.fn()
 
-    result.onNewRPCEndpointDetected.addListener(handler)
-    result.onNewRPCEndpointDetected.removeListener(handler)
+    result.onNewRpcEndpointDetected.addListener(handler)
+    result.onNewRpcEndpointDetected.removeListener(handler)
 
-    await mockRPCRequest({
+    await mockRpcRequest({
       chainId: 1,
       tabId: 1,
       url: 'http://test-json-rpc.com',
@@ -50,10 +50,10 @@ describe('RPC Tracking', () => {
 
     const handler = vi.fn()
 
-    result.onNewRPCEndpointDetected.addListener(handler)
-    result.onNewRPCEndpointDetected.removeAllListeners()
+    result.onNewRpcEndpointDetected.addListener(handler)
+    result.onNewRpcEndpointDetected.removeAllListeners()
 
-    await mockRPCRequest({
+    await mockRpcRequest({
       chainId: 1,
       tabId: 1,
       url: 'http://test-json-rpc.com',

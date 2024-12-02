@@ -3,7 +3,7 @@ import {
   callListeners,
   chromeMock,
   mockActiveTab,
-  mockRPCRequest,
+  mockRpcRequest,
   startPilotSession,
   startSimulation,
   stopSimulation,
@@ -27,7 +27,7 @@ describe('Simulation tracking', () => {
     it('sets up redirect rules when a simulation starts', async () => {
       await startPilotSession({ windowId: 1, tabId: 2 })
 
-      await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
       await startSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
 
@@ -59,7 +59,7 @@ describe('Simulation tracking', () => {
     it('removes redirect rules when the simulation stops', async () => {
       startPilotSession({ windowId: 1, tabId: 2 })
 
-      await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
       await startSimulation({ windowId: 1 })
       await stopSimulation({ windowId: 1 })
@@ -77,7 +77,7 @@ describe('Simulation tracking', () => {
         tabId: 2,
       })
 
-      await mockRPCRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
 
       await startSimulation({ windowId: 1 })
       await stopPilotSession()
@@ -93,7 +93,7 @@ describe('Simulation tracking', () => {
       await startPilotSession({ windowId: 1, tabId: 1 })
       await startSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
 
-      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
@@ -124,7 +124,7 @@ describe('Simulation tracking', () => {
       await startPilotSession({ windowId: 1, tabId: 1 })
       await startSimulation({ windowId: 1, rpcUrl: undefined })
 
-      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
 
       await updateSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
 
@@ -158,7 +158,7 @@ describe('Simulation tracking', () => {
       await startSimulation({ windowId: 1 })
       await stopSimulation({ windowId: 1 })
 
-      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules
@@ -194,7 +194,7 @@ describe('Simulation tracking', () => {
 
       await stopPilotSession()
 
-      await mockRPCRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules

@@ -1,4 +1,4 @@
-import { RPCMessageType } from '@/messages'
+import { RpcMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { ChainId } from 'ser-kit'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
@@ -11,7 +11,7 @@ type TrackingState = {
   rpcUrlsByTabId: Map<number, Set<string>>
 }
 
-type GetTrackedRPCUrlsForChainIdOptions = {
+type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
 }
 
@@ -21,15 +21,15 @@ type Event<T> = {
   removeAllListeners: () => void
 }
 
-type NewRPCEndpointDetectedEventListener = () => void
+type NewRpcEndpointDetectedEventListener = () => void
 
 export type TrackRequestsResult = {
-  getTrackedRPCUrlsForChainId: (
-    options: GetTrackedRPCUrlsForChainIdOptions
+  getTrackedRpcUrlsForChainId: (
+    options: GetTrackedRpcUrlsForChainIdOptions
   ) => Map<number, string[]>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
-  onNewRPCEndpointDetected: Event<NewRPCEndpointDetectedEventListener>
+  onNewRpcEndpointDetected: Event<NewRpcEndpointDetectedEventListener>
 }
 
 export const trackRequests = (): TrackRequestsResult => {
@@ -40,7 +40,7 @@ export const trackRequests = (): TrackRequestsResult => {
     rpcUrlsByTabId: new Map(),
   }
 
-  const listeners = new Set<NewRPCEndpointDetectedEventListener>()
+  const listeners = new Set<NewRpcEndpointDetectedEventListener>()
 
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
@@ -62,9 +62,9 @@ export const trackRequests = (): TrackRequestsResult => {
   })
 
   return {
-    getTrackedRPCUrlsForChainId: ({ chainId }) =>
-      getRPCUrlsByTabId(state, { chainId }),
-    onNewRPCEndpointDetected: {
+    getTrackedRpcUrlsForChainId: ({ chainId }) =>
+      getRpcUrlsByTabId(state, { chainId }),
+    onNewRpcEndpointDetected: {
       addListener: (listener) => {
         listeners.add(listener)
       },
@@ -104,12 +104,12 @@ const trackRequest = async (
     return { newEndpoint: false }
   }
 
-  // ignore requests to fork RPCs
+  // ignore requests to fork Rpcs
   if (url.startsWith('https://virtual.mainnet.rpc.tenderly.co/')) {
     return { newEndpoint: false }
   }
 
-  // only consider requests with a JSON RPC body
+  // only consider requests with a JSON Rpc body
   if (!hasJsonRpcBody(requestBody)) {
     return { newEndpoint: false }
   }
@@ -117,13 +117,13 @@ const trackRequest = async (
   return detectNetworkOfRpcUrl(state, { url, tabId })
 }
 
-type GetRPCUrlsOptions = {
+type GetRpcUrlsOptions = {
   chainId: ChainId
 }
 
-const getRPCUrlsByTabId = (
+const getRpcUrlsByTabId = (
   { rpcUrlsByTabId, chainIdByRpcUrl }: TrackingState,
-  { chainId }: GetRPCUrlsOptions
+  { chainId }: GetRpcUrlsOptions
 ) => {
   return rpcUrlsByTabId.entries().reduce((result, [tabId, urls]) => {
     result.set(
@@ -135,21 +135,21 @@ const getRPCUrlsByTabId = (
   }, new Map<number, string[]>())
 }
 
-type DetectNetworkOfRPCOptions = {
+type DetectNetworkOfRpcOptions = {
   url: string
   tabId: number
 }
 
 const detectNetworkOfRpcUrl = async (
   state: TrackingState,
-  { url, tabId }: DetectNetworkOfRPCOptions
+  { url, tabId }: DetectNetworkOfRpcOptions
 ): Promise<TrackRequestResult> => {
   const { chainIdPromiseByRpcUrl, chainIdByRpcUrl } = state
 
   if (!chainIdPromiseByRpcUrl.has(url)) {
     chainIdPromiseByRpcUrl.set(
       url,
-      sendMessageToTab(tabId, { type: RPCMessageType.PROBE_CHAIN_ID, url })
+      sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url })
     )
   }
 
@@ -163,7 +163,7 @@ const detectNetworkOfRpcUrl = async (
     return { newEndpoint: false }
   }
 
-  trackRPCUrl(state, { tabId, url })
+  trackRpcUrl(state, { tabId, url })
 
   chainIdByRpcUrl.set(url, result)
 
@@ -174,14 +174,14 @@ const detectNetworkOfRpcUrl = async (
   return { newEndpoint: true }
 }
 
-type TrackRPCUrlOptions = {
+type TrackRpcUrlOptions = {
   tabId: number
   url: string
 }
 
-const trackRPCUrl = (
+const trackRpcUrl = (
   { rpcUrlsByTabId }: TrackingState,
-  { tabId, url }: TrackRPCUrlOptions
+  { tabId, url }: TrackRpcUrlOptions
 ) => {
   const urls = rpcUrlsByTabId.get(tabId)
 
