@@ -10,12 +10,14 @@ const SelectedRouteContext = createContext<Context>({
   selectedRouteId: undefined,
   setSelectedRouteId() {
     throw new Error(
-      '"setSelectedRouteId" cannot be used outside <ProvideSelectedZodiacRoute /> context.'
+      '"setSelectedRouteId" cannot be used outside <ProvideSelectedExecutionRoute /> context.'
     )
   },
 })
 
-export const ProvideSelectedZodiacRoute = ({ children }: PropsWithChildren) => {
+export const ProvideSelectedExecutionRoute = ({
+  children,
+}: PropsWithChildren) => {
   const [selectedRouteId, setSelectedRouteId] =
     useStorage<string>('selectedRoute')
 

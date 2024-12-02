@@ -1,7 +1,7 @@
 import { getChainId } from '@/chains'
+import { useExecutionRoute, useRouteProvider } from '@/execution-routes'
 import { initSafeApiKit } from '@/safe'
 import { validateAddress } from '@/utils'
-import { useRouteProvider, useZodiacRoute } from '@/zodiac-routes'
 import { useEffect, useState } from 'react'
 import { ChainId } from 'ser-kit'
 
@@ -9,7 +9,7 @@ export const useSafeDelegates = (
   safeAddress: string,
   connectionId?: string
 ) => {
-  const route = useZodiacRoute(connectionId)
+  const route = useExecutionRoute(connectionId)
   const chainId = getChainId(route.avatar)
   const provider = useRouteProvider(route)
 

@@ -1,4 +1,4 @@
-import { LegacyConnection, ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, LegacyConnection, ProviderType } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
@@ -17,7 +17,7 @@ import {
 
 export function fromLegacyConnection(
   connection: LegacyConnection
-): ZodiacRoute {
+): ExecutionRoute {
   const { chainId, providerType, moduleType } = connection
 
   // We assume an EOA if the providerType is MetaMask, a Safe otherwise
@@ -123,13 +123,13 @@ export function fromLegacyConnection(
     label: connection.label,
     lastUsed: connection.lastUsed,
     providerType,
-    waypoints: waypoints as ZodiacRoute['waypoints'],
+    waypoints: waypoints as ExecutionRoute['waypoints'],
     initiator: pilotAddress ? pilotPrefixedAddress : undefined,
     avatar: avatarPrefixedAddress,
   }
 }
 
-export function asLegacyConnection(route: ZodiacRoute): LegacyConnection {
+export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
   if (route.waypoints && route.waypoints.length > 3) {
     throw new Error('Not representable as legacy connection')
   }

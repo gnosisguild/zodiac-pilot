@@ -1,5 +1,5 @@
 import { Breadcrumbs, Page, PrimaryButton } from '@/components'
-import { useSelectedRouteId, useZodiacRoutes } from '@/zodiac-routes'
+import { useExecutionRoutes, useSelectedRouteId } from '@/execution-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useNavigate } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { Route } from './Route'
 
 export const ListRoutes = () => {
   const [, selectRoute] = useSelectedRouteId()
-  const routes = useZodiacRoutes()
+  const routes = useExecutionRoutes()
   const navigate = useNavigate()
 
   return (

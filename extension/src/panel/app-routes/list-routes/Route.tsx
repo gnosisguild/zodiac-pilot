@@ -4,8 +4,8 @@ import {
   SecondaryLinkButton,
   Tag,
 } from '@/components'
-import { ZodiacRoute } from '@/types'
-import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
+import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useState } from 'react'
@@ -13,13 +13,13 @@ import { asLegacyConnection } from '../legacyConnectionMigrations'
 import { ClearTransactionsModal } from '../useConfirmClearTransaction'
 
 interface RouteProps {
-  route: ZodiacRoute
+  route: ExecutionRoute
   onLaunch: (routeId: string) => void
 }
 
 export const Route = ({ onLaunch, route }: RouteProps) => {
   const [connected, connect] = useRouteConnect(route)
-  const currentlySelectedRoute = useZodiacRoute()
+  const currentlySelectedRoute = useExecutionRoute()
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
 

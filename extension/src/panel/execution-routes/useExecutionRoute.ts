@@ -1,10 +1,10 @@
 import { ETH_ZERO_ADDRESS } from '@/chains'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 import { nanoid } from 'nanoid'
+import { useExecutionRoutes } from './ExecutionRoutesContext'
 import { useSelectedRouteId } from './SelectedRouteContext'
-import { useZodiacRoutes } from './ZodiacRoutesContext'
 
-export const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
+export const INITIAL_DEFAULT_ROUTE: ExecutionRoute = {
   id: nanoid(),
   label: '',
   providerType: ProviderType.InjectedWallet,
@@ -13,8 +13,8 @@ export const INITIAL_DEFAULT_ROUTE: ZodiacRoute = {
   waypoints: undefined,
 }
 
-export const useZodiacRoute = (id?: string) => {
-  const routes = useZodiacRoutes()
+export const useExecutionRoute = (id?: string) => {
+  const routes = useExecutionRoutes()
   const [selectedRouteId] = useSelectedRouteId()
 
   const routeId = id || selectedRouteId

@@ -4,9 +4,9 @@ import {
   useInjectedWallet,
   useWalletConnect,
 } from '@/providers'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 
-export const useRouteProvider = (route: ZodiacRoute) => {
+export const useRouteProvider = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 

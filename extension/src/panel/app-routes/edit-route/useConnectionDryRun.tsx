@@ -1,3 +1,4 @@
+import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
 import { JsonRpcError, LegacyConnection } from '@/types'
 import {
@@ -8,14 +9,13 @@ import {
   isSmartContractAddress,
   validateAddress,
 } from '@/utils'
-import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
 import { wrapRequest } from './wrapRequest'
 
 export const useConnectionDryRun = (connection: LegacyConnection) => {
   const [error, setError] = useState<string | null>(null)
-  const route = useZodiacRoute(connection.id)
+  const route = useExecutionRoute(connection.id)
   const [connected] = useRouteConnect(route)
 
   useEffect(() => {

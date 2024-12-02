@@ -1,12 +1,12 @@
 import { getChainId } from '@/chains'
 import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { useCallback } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useProviderChainId } from './useProviderChainId'
 
-export const useRouteConnect = (route: ZodiacRoute) => {
+export const useRouteConnect = (route: ExecutionRoute) => {
   const { switchChain } = useInjectedWallet()
   const connected = useConnected(route)
   const providerChainId = useProviderChainId(route)
@@ -35,7 +35,7 @@ export const useRouteConnect = (route: ZodiacRoute) => {
   ] as const
 }
 
-const useConnected = (route: ZodiacRoute) => {
+const useConnected = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 
@@ -53,7 +53,7 @@ const useConnected = (route: ZodiacRoute) => {
   }
 }
 
-const useCanEstablishConnection = (route: ZodiacRoute) => {
+const useCanEstablishConnection = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()
   const connected = useConnected(route)
 

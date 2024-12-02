@@ -1,8 +1,8 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { Info, PilotLogo } from '@/components'
+import { ProvideExecutionRoutes } from '@/execution-routes'
 import { ProvideInjectedWallet } from '@/providers'
-import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -36,7 +36,7 @@ const Root = () => {
     <StrictMode>
       <ProvideBridgeContext windowId={activeWindowId}>
         <ProvideState>
-          <ProvideZodiacRoutes>
+          <ProvideExecutionRoutes>
             <ProvideInjectedWallet>
               <ProvideProvider>
                 <div className="flex h-full flex-1 flex-col">
@@ -46,7 +46,7 @@ const Root = () => {
                 <Toaster position="top-center" />
               </ProvideProvider>
             </ProvideInjectedWallet>
-          </ProvideZodiacRoutes>
+          </ProvideExecutionRoutes>
         </ProvideState>
       </ProvideBridgeContext>
     </StrictMode>

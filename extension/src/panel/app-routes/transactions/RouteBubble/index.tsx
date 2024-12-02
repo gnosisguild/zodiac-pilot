@@ -1,5 +1,5 @@
 import { Blockie, ConnectionStack } from '@/components'
-import { useZodiacRoute } from '@/zodiac-routes'
+import { useExecutionRoute } from '@/execution-routes'
 import { Transition } from '@headlessui/react'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
@@ -8,7 +8,7 @@ import Stick from 'react-stick'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 
 export const RouteBubble = () => {
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const connection = asLegacyConnection(route)
   const [hover, setHover] = useState(false)
 

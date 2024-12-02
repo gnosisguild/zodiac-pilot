@@ -6,10 +6,10 @@ import {
   Section,
   TextInput,
 } from '@/components'
+import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { LegacyConnection, ProviderType } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
-import { INITIAL_DEFAULT_ROUTE, useZodiacRoutes } from '@/zodiac-routes'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
@@ -36,7 +36,7 @@ import { ZodiacMod } from './ZodiacMod'
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
 export const EditRoute = () => {
-  const routes = useZodiacRoutes()
+  const routes = useExecutionRoutes()
   const routeId = useRouteId()
 
   const initialRouteState = routes.find((r) => r.id === routeId) || {

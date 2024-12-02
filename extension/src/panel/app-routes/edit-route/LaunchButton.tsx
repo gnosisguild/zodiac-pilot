@@ -1,18 +1,18 @@
 import { PrimaryButton } from '@/components'
-import { ZodiacRoute } from '@/types'
 import {
-  useSaveZodiacRoute,
+  useExecutionRoute,
+  useSaveExecutionRoute,
   useSelectedRouteId,
-  useZodiacRoute,
-} from '@/zodiac-routes'
+} from '@/execution-routes'
+import { ExecutionRoute } from '@/types'
 import { Rocket } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 type LaunchButtonProps = {
   disabled: boolean
 
-  initialRouteState: ZodiacRoute
-  currentRouteState: ZodiacRoute
+  initialRouteState: ExecutionRoute
+  currentRouteState: ExecutionRoute
 
   onNeedConfirmationToClearTransactions: () => Promise<boolean>
 }
@@ -25,8 +25,8 @@ export const LaunchButton = ({
   onNeedConfirmationToClearTransactions,
 }: LaunchButtonProps) => {
   const [, setSelectedRouteId] = useSelectedRouteId()
-  const currentZodiacRoute = useZodiacRoute()
-  const saveRoute = useSaveZodiacRoute()
+  const currentExecutionRoute = useExecutionRoute()
+  const saveRoute = useSaveExecutionRoute()
 
   const navigate = useNavigate()
 
@@ -41,7 +41,7 @@ export const LaunchButton = ({
 
         // we continue working with the same avatar, so don't have to clear the recorded transaction
         const keepTransactionBundle =
-          currentZodiacRoute.avatar === currentRouteState.avatar
+          currentExecutionRoute.avatar === currentRouteState.avatar
 
         const confirmed =
           keepTransactionBundle ||

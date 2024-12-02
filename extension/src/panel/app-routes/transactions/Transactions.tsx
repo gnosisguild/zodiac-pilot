@@ -6,11 +6,11 @@ import {
   PilotLogo,
   SecondaryButton,
 } from '@/components'
+import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
-import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { Copy, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -23,7 +23,7 @@ export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()

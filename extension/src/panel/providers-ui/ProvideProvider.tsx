@@ -1,7 +1,7 @@
 import { getChainId } from '@/chains'
+import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { Eip1193Provider } from '@/types'
-import { useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
@@ -23,7 +23,7 @@ const ProviderContext = createContext<
 >(null)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
 
   const dispatch = useDispatch()

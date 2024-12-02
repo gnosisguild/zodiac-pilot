@@ -1,14 +1,14 @@
 import { getChainId } from '@/chains'
 import {
+  useExecutionRoute,
+  useMarkRouteAsUsed,
+  useSaveExecutionRoute,
+} from '@/execution-routes'
+import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
 } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import {
-  useMarkRouteAsUsed,
-  useSaveZodiacRoute,
-  useZodiacRoute,
-} from '@/zodiac-routes'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useProviderBridge } from '../../inject/bridge'
@@ -23,12 +23,12 @@ export const Root = () => {
   useMarkRouteAsUsed()
 
   // make sure the injected provider stays updated on every relevant route change
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
 
   const chainId = getChainId(route.avatar)
   const provider = useProvider()
   const [, avatarAddress] = parsePrefixedAddress(route.avatar)
-  const saveRoute = useSaveZodiacRoute()
+  const saveRoute = useSaveExecutionRoute()
 
   useProviderBridge({ provider, chainId, account: avatarAddress })
   useConnectInjectedWalletIfNeeded(route)

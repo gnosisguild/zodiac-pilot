@@ -4,14 +4,14 @@ import {
   WalletConnectResult,
   isConnected as isConnectedBase,
 } from '@/providers'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
 
 interface Props {
-  route: ZodiacRoute
+  route: ExecutionRoute
   onConnect(args: {
     providerType: ProviderType
     chainId: ChainId
@@ -91,7 +91,7 @@ export const ConnectWallet = ({
   }
 }
 
-const getPilotAddress = (route: ZodiacRoute) => {
+const getPilotAddress = (route: ExecutionRoute) => {
   if (route.initiator == null) {
     return null
   }

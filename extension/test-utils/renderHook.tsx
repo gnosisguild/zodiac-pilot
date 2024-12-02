@@ -1,4 +1,4 @@
-import { ZodiacRoute } from '@/types'
+import { ExecutionRoute } from '@/types'
 import { sleepTillIdle } from '@/utils'
 import {
   renderHook as renderHookBase,
@@ -14,7 +14,7 @@ import { TestElement, waitForTestElement } from './TestElement'
 type Fn<Result, Props> = (props: Props) => Result
 
 type ExtendedOptions = {
-  routes?: ZodiacRoute[]
+  routes?: ExecutionRoute[]
   activeTab?: Partial<chrome.tabs.Tab>
   port?: Partial<VitestChromeNamespace.runtime.Port>
 }

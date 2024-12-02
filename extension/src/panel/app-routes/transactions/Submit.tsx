@@ -8,6 +8,7 @@ import {
   Spinner,
   successToast,
 } from '@/components'
+import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { waitForMultisigExecution } from '@/safe'
@@ -18,7 +19,6 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '@/utils'
-import { useRouteConnect, useZodiacRoute } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
@@ -26,7 +26,7 @@ import { useNavigate } from 'react-router-dom'
 import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const { initiator, providerType, avatar } = route

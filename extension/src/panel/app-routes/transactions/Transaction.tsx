@@ -1,8 +1,8 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
 import { Address, Divider, ToggleButton } from '@/components'
+import { useExecutionRoute } from '@/execution-routes'
 import { TransactionState } from '@/state'
-import { ZodiacRoute } from '@/types'
-import { useZodiacRoute } from '@/zodiac-routes'
+import { ExecutionRoute } from '@/types'
 import { formatEther, Fragment } from 'ethers'
 import { useEffect, useRef, useState } from 'react'
 import { AccountType } from 'ser-kit'
@@ -28,7 +28,7 @@ export const Transaction = ({
   scrollIntoView,
 }: Props) => {
   const [expanded, setExpanded] = useState(true)
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
   const elementRef = useScrollIntoView(scrollIntoView)
 
@@ -166,7 +166,7 @@ const TransactionStatus = ({
 type EtherValueProps = { value: string }
 
 const EtherValue = ({ value }: EtherValueProps) => {
-  const { avatar } = useZodiacRoute()
+  const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
 
   return (
@@ -233,7 +233,7 @@ function getScrollParent(node: Element | null): Element | null {
   }
 }
 
-const routeGoesThroughRoles = (route: ZodiacRoute) =>
+const routeGoesThroughRoles = (route: ExecutionRoute) =>
   route.waypoints?.some(
     (waypoint) => waypoint.account.type === AccountType.ROLES
   )

@@ -1,4 +1,4 @@
-import { ZodiacRoute } from '@/types'
+import { ExecutionRoute } from '@/types'
 import {
   createContext,
   PropsWithChildren,
@@ -10,38 +10,38 @@ import {
 } from 'react'
 import { useStorageEntries } from '../utils'
 import {
-  ProvideSelectedZodiacRoute,
+  ProvideSelectedExecutionRoute,
   useSelectedRouteId,
 } from './SelectedRouteContext'
 
 type Context = {
-  routes: ZodiacRoute[]
-  saveRoute: (route: ZodiacRoute) => void
+  routes: ExecutionRoute[]
+  saveRoute: (route: ExecutionRoute) => void
   removeRoute: (routeId: string) => void
 }
 
-const ZodiacRoutesContext = createContext<Context>({
+const ExecutionRoutesContext = createContext<Context>({
   routes: [],
   saveRoute() {
     throw new Error(
-      '"saveRoute" is not available outside of `<ProvideZodiacRoutes />` context.'
+      '"saveRoute" is not available outside of `<ProvideExecutionRoutes />` context.'
     )
   },
   removeRoute() {
     throw new Error(
-      '"removeRoute" is not available outside of `<ProvideZodiacRoutes /> context.'
+      '"removeRoute" is not available outside of `<ProvideExecutionRoutes /> context.'
     )
   },
 })
 
-export const ProvideZodiacRoutes = ({ children }: PropsWithChildren) => {
+export const ProvideExecutionRoutes = ({ children }: PropsWithChildren) => {
   // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
   // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
   const [routes, setRoute, removeRoute] =
-    useStorageEntries<ZodiacRoute>('routes')
+    useStorageEntries<ExecutionRoute>('routes')
 
   const saveRoute = useCallback(
-    (route: ZodiacRoute) => {
+    (route: ExecutionRoute) => {
       setRoute(route.id, route)
     },
     [setRoute]
@@ -58,40 +58,40 @@ export const ProvideZodiacRoutes = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <ZodiacRoutesContext.Provider
+    <ExecutionRoutesContext.Provider
       value={{
         routes: routesList,
         saveRoute,
         removeRoute,
       }}
     >
-      <ProvideSelectedZodiacRoute>{children}</ProvideSelectedZodiacRoute>
-    </ZodiacRoutesContext.Provider>
+      <ProvideSelectedExecutionRoute>{children}</ProvideSelectedExecutionRoute>
+    </ExecutionRoutesContext.Provider>
   )
 }
 
-export const useZodiacRoutes = () => {
-  const { routes } = useContext(ZodiacRoutesContext)
+export const useExecutionRoutes = () => {
+  const { routes } = useContext(ExecutionRoutesContext)
 
   return routes
 }
 
-export const useSaveZodiacRoute = () => {
-  const { saveRoute } = useContext(ZodiacRoutesContext)
+export const useSaveExecutionRoute = () => {
+  const { saveRoute } = useContext(ExecutionRoutesContext)
 
   return saveRoute
 }
 
-export const useRemoveZodiacRoute = () => {
-  const { removeRoute } = useContext(ZodiacRoutesContext)
+export const useRemoveExecutionRoute = () => {
+  const { removeRoute } = useContext(ExecutionRoutesContext)
 
   return removeRoute
 }
 
 export const useMarkRouteAsUsed = () => {
   const [selectedRouteId] = useSelectedRouteId()
-  const routes = useZodiacRoutes()
-  const saveRoute = useSaveZodiacRoute()
+  const routes = useExecutionRoutes()
+  const saveRoute = useSaveExecutionRoute()
 
   const updateRef = useRef<(routeId: string | undefined) => void>()
   updateRef.current = (routeId) => {

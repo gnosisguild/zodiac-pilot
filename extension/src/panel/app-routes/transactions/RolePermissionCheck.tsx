@@ -1,14 +1,14 @@
 import { Tag } from '@/components'
+import { useExecutionRoute } from '@/execution-routes'
 import { useProvider } from '@/providers-ui'
 import { TransactionState } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
-import { Eip1193Provider, JsonRpcError, ZodiacRoute } from '@/types'
+import { Eip1193Provider, ExecutionRoute, JsonRpcError } from '@/types'
 import {
   decodeGenericError,
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '@/utils'
-import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
 import { Check, TriangleAlert, UsersRound } from 'lucide-react'
@@ -24,7 +24,7 @@ import { Translate } from './Translate'
 
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
-  route: ZodiacRoute,
+  route: ExecutionRoute,
   provider: Eip1193Provider
 ) => {
   const routeWithInitiator = (
@@ -90,7 +90,7 @@ export const RolePermissionCheck = ({
   mini = false,
 }: Props) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const provider = useProvider()
 
   const translationAvailable = !!useApplicableTranslation(index)

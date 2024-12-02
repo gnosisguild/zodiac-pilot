@@ -1,8 +1,8 @@
 import { useInjectedWallet, useWalletConnect } from '@/providers'
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 
 /** The chain ID the `provider` is currently connected to. */
-export const useProviderChainId = (route: ZodiacRoute) => {
+export const useProviderChainId = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()
   const walletConnect = useWalletConnect(route.id)
 

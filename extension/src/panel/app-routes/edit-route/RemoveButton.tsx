@@ -1,5 +1,5 @@
 import { GhostButton, Modal, PrimaryButton } from '@/components'
-import { useRemoveZodiacRoute } from '@/zodiac-routes'
+import { useRemoveExecutionRoute } from '@/execution-routes'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -7,7 +7,7 @@ import { useRouteId } from './useRouteId'
 
 export const RemoveButton = () => {
   const navigate = useNavigate()
-  const removeRouteById = useRemoveZodiacRoute()
+  const removeRouteById = useRemoveExecutionRoute()
   const routeId = useRouteId()
   const [confirmRemove, setConfirmRemove] = useState(false)
 
