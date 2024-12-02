@@ -30,7 +30,7 @@ export const useWalletConnectProvider = (routeId: string) => {
           name: 'Zodiac Pilot',
           description: 'Simulate dApp interactions and record transactions',
           url: 'https://pilot.gnosisguild.org',
-          icons: ['//pilot.gnosisguild.org/zodiac48.png'],
+          icons: ['//pilot.gnosisguild.org/pilot48.png'],
         },
       })
     }

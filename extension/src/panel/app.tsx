@@ -1,7 +1,7 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideBridgeContext } from '@/bridge'
-import { Info } from '@/components'
+import { Info, PilotLogo } from '@/components'
 import { ProvideInjectedWallet } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
@@ -22,7 +22,8 @@ const Root = () => {
 
   if (activeWindowId == null) {
     return (
-      <div className="relative top-1/4 flex h-full flex-col items-center px-4">
+      <div className="relative top-32 flex h-full flex-col items-center gap-32 px-4">
+        <PilotLogo />
         <Info title="Current tab is incompatible">
           Pilot is waiting to connect to a dApp. Open the dApp you want to
           simulate and Pilot will automatically connect to it.

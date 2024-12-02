@@ -3,7 +3,9 @@ import '../../global.css'
 import hintHtmlTemplate from './hint.html'
 
 const basePath = window.document.documentElement.dataset.__zodiacPilotBasePath
-if (!basePath) throw new Error('__zodiacPilotBasePath not set')
+
+invariant(basePath != null, '__zodiacPilotBasePath not set')
+
 const hintHtml = hintHtmlTemplate.replace(/\{\{BASE_PATH\}\}/g, basePath)
 
 window.addEventListener('beforeunload', () => {
