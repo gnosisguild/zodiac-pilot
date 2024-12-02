@@ -1,6 +1,5 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import { ProvideBridgeContext } from '@/bridge'
 import { Info, PilotLogo } from '@/components'
 import { ProvideInjectedWallet } from '@/providers'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
@@ -10,6 +9,7 @@ import { createRoot } from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import '../global.css'
+import { ProvideBridgeContext } from '../inject/bridge'
 import { routes } from './app-routes'
 import { ProvideProvider } from './providers-ui'
 import { ProvideState } from './state'

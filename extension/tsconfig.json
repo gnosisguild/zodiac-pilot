@@ -29,7 +29,6 @@
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
       "@/messages": ["./src/messages.ts"],
-      "@/bridge": ["./src/bridge/index.ts"],
       "@/transaction-translation": [
         "./src/panel/transactionTranslations/index.ts"
       ],

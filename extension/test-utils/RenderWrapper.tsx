@@ -1,9 +1,9 @@
-import { ProvideBridgeContext } from '@/bridge'
 import { ProvideInjectedWallet } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { ProvideState } from '@/state'
 import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { PropsWithChildren } from 'react'
+import { ProvideBridgeContext } from '../src/inject/bridge'
 
 type RenderWraperProps = PropsWithChildren<{
   windowId?: number

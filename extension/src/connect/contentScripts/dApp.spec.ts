@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest'
 describe('Connect Pilot to DApp', () => {
   describe('Initialize wallet', () => {
     it('forwards init messages to the connected port', async () => {
-      await import('./connectPilotToDApp')
+      await import('./dApp')
 
       const port = createMockPort()
 

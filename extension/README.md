@@ -1,24 +1,22 @@
 # Zodiac Pilot Browser Extension
 
-The Zodiac Pilot browser extension is build using the [sidepanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel) model.
-It will inject some code into web pages that allows us to act as a wallet and record and execute transactions.
+The Zodiac Pilot browser extension is built using the [sidepanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel) model.
+It injects some code into web pages that allows it to, one the one hand, act as a wallet and record transactions, and on the other hand, connect to the user's default wallet extension for signing and executing transactions.
 
 To achieve this we use three pillars:
 
-1. A [content script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that will be injected into every website to connect to the extension itself (`pilot-connect`)
-2. A [content script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that monitors whether our connection is running and whether a page needs to reload to function properly (`pilot-connect-monitor`)
-3. A [content script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that is only injected by `pilot-connect` when the extension is running (`injected-wallet-connect`).
-
-Each content script may or may not load more scripts into the page.
+- **[inject](./src/inject/)**: A script that is executed only for tracked tabs while the sidepanel is open and injects an EIP-1193 provider into the `window` object of apps to record transactions
+- **[connect](./src/connect/)**: A pair of [content scripts](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that allows the extension to connect to other wallet extensions installed in the browser.
+- **[monitor](./src/monitor/)**: A [content script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that monitors if tabs need to reload to make sure apps properly reflect after simulated execution of recorded transactions
 
 ## Gotchas
 
 Content scripts can access the page's DOM, but JavaScript is sandboxed from the page's execution context.
 They have access to `chrome.` APIs.
 
-To run code inside the page context we, therefore, **inject** more code from a content script into the page by dynamically creating a `script` node (see the `injectScript.ts` util for more info).
+To run code inside the page context we, therefore, **inject** more code from a content script into the page by dynamically creating a `script` node (see the [injectScript.ts](./src/utils/injectScript.ts) util for more info).
 The scripts that are injected in this way **cannot** access `chrome` APIs anymore.
-Communication between the injected code and the content script, therefore, uses `window.postMessage`.
+Communication between the injected code and the rest of the extension, therefore, uses `window.postMessage` and is relayed by the content script.
 
 ## Communication
 
@@ -48,7 +46,7 @@ With request tracking in place we can start to actively monitor Pilot sessions.
 An active Pilot session means the extension is active within a **window**.
 We'll then keep track of each **tab** inside the window where the extension was opened.
 
-When a tab is tracked by a session the extension will also inject the `injected-wallet-connect` content script that takes over as the main provider for `ethereum` in any given page.
+When a tab is tracked by a session the extension will also execute the [inject](./src/inject/contentScript/main.ts) content script that takes over as the main provider for `window.ethereum` in all pages loaded in that tab.
 
 #### With a fork (during simulation)
 
