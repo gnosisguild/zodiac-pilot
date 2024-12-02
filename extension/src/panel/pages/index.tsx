@@ -4,7 +4,7 @@ import { ListRoutes } from './list-routes'
 import { Root } from './Root'
 import { Transactions } from './transactions'
 
-export const routes: RouteObject[] = [
+export const pages: RouteObject[] = [
   {
     path: '/',
     element: <Root />,

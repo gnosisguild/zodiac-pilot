@@ -10,12 +10,12 @@ import { Toaster } from 'react-hot-toast'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import '../global.css'
 import { ProvideBridgeContext } from '../inject/bridge'
-import { routes } from './app-routes'
+import { pages } from './pages'
 import { ProvideProvider } from './providers-ui'
 import { ProvideState } from './state'
 import { usePilotPort } from './usePilotPort'
 
-const router = createHashRouter(routes)
+const router = createHashRouter(pages)
 
 const Root = () => {
   const { activeWindowId } = usePilotPort()
