@@ -5,26 +5,48 @@
   />
 
   <div
-    class="fixed right-8 top-8 isolate z-[99999] flex items-center justify-center gap-4 rounded-md border border-zinc-900/50 bg-slate-800/80 p-4 font-sans text-white shadow-md backdrop-blur-sm dark:border-white dark:bg-white/80 dark:text-zinc-900"
+    class="fixed right-8 top-8 isolate z-[99999] flex items-center justify-center rounded-md border border-zinc-900/50 bg-slate-800/80 font-sans text-sm text-white shadow-md backdrop-blur-sm dark:border-zinc-300/80 dark:bg-white/80 dark:text-zinc-900"
   >
-    <img
-      src="{{BASE_PATH}}zodiac48.png"
-      class="m-2 size-6"
-      alt="Zodiac Pilot logo"
-    />
+    <img src="{{BASE_PATH}}pilot32.png" class="ml-4" alt="Zodiac Pilot logo" />
 
-    <div id="message" class="text-sm"></div>
+    <div id="message" class="p-4"></div>
 
-    <div class="flex gap-px">
+    <div
+      class="flex flex-col divide-y divide-zinc-900/50 border-l border-zinc-900/50 dark:divide-zinc-300/80 dark:border-zinc-300/80"
+    >
+      <button
+        id="zodiac-pilot-dismiss"
+        class="flex cursor-pointer items-center gap-2 bg-none px-4 py-2 font-semibold text-zinc-50 transition-all hover:bg-zinc-800/60 dark:text-zinc-500 dark:hover:bg-zinc-100/60"
+        title="Dismiss"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-x"
+        >
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+
+        Dismiss
+      </button>
+
       <button
         id="zodiac-pilot-reload"
-        class="m-0 block cursor-pointer border-none bg-none p-1 opacity-80 hover:opacity-100"
+        class="flex cursor-pointer items-center gap-2 bg-none px-4 py-2 font-semibold text-zinc-50 transition-all hover:bg-zinc-800/60 dark:text-zinc-500 dark:hover:bg-zinc-100/60"
         title="Reload"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -38,27 +60,8 @@
           <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
           <path d="M16 16h5v5" />
         </svg>
-      </button>
-      <button
-        id="zodiac-pilot-dismiss"
-        class="m-0 block cursor-pointer border-none bg-none p-1 opacity-80 hover:opacity-100"
-        title="Dismiss"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-x"
-        >
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
+
+        Reload
       </button>
     </div>
   </div>
