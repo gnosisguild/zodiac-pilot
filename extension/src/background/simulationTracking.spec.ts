@@ -10,7 +10,6 @@ import {
   updateSimulation,
 } from '@/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { clearAllSessions } from './activePilotSessions'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
@@ -18,10 +17,9 @@ import { trackSimulations } from './simulationTracking'
 describe('Simulation tracking', () => {
   beforeEach(() => {
     const trackRequestsResult = trackRequests()
-    trackSessions(trackRequestsResult)
-    trackSimulations()
+    const trackSessionsResult = trackSessions(trackRequestsResult)
+    trackSimulations(trackSessionsResult)
 
-    clearAllSessions()
     mockActiveTab()
   })
 

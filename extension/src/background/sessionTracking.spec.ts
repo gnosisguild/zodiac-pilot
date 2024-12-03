@@ -7,20 +7,18 @@ import {
   startPilotSession,
 } from '@/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
   beforeEach(() => {
-    trackSessions(trackRequests())
-    clearAllSessions()
-
     mockActiveTab()
   })
 
   describe('Start session', () => {
     it('tracks a new session for a given window', async () => {
+      const { getPilotSession } = trackSessions(trackRequests())
+
       await startPilotSession({ windowId: 1 })
 
       expect(getPilotSession(1)).toMatchObject({
@@ -31,6 +29,8 @@ describe('Session tracking', () => {
     })
 
     it('starts tracking a tab if provided with a tabId', async () => {
+      const { getPilotSession } = trackSessions(trackRequests())
+
       await startPilotSession({ windowId: 1, tabId: 2 })
 
       expect(getPilotSession(1)).toMatchObject({
@@ -41,6 +41,8 @@ describe('Session tracking', () => {
     })
 
     it('sends a connect message the respective tab', async () => {
+      trackSessions(trackRequests())
+
       await startPilotSession({ windowId: 1, tabId: 1 })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
@@ -51,6 +53,8 @@ describe('Session tracking', () => {
 
   describe('Stop session', () => {
     it('removes the session', async () => {
+      const { getPilotSession } = trackSessions(trackRequests())
+
       const { stopPilotSession } = await startPilotSession({ windowId: 1 })
       await stopPilotSession()
 
@@ -58,6 +62,8 @@ describe('Session tracking', () => {
     })
 
     it('sends a disconnect message to all connected tabs', async () => {
+      trackSessions(trackRequests())
+
       const { stopPilotSession, startAnotherSession } = await startPilotSession(
         {
           windowId: 1,
@@ -80,6 +86,8 @@ describe('Session tracking', () => {
   describe('Tab handling', () => {
     describe('When a tab is opened', () => {
       it('tracks new tabs in a window, when a session is active', async () => {
+        const { getPilotSession } = trackSessions(trackRequests())
+
         await startPilotSession({ windowId: 1 })
         await callListeners(chromeMock.tabs.onActivated, {
           windowId: 1,
@@ -94,6 +102,8 @@ describe('Session tracking', () => {
       })
 
       it('does nothing when no pilot session is active', async () => {
+        const { getPilotSession } = trackSessions(trackRequests())
+
         await callListeners(chromeMock.tabs.onActivated, {
           windowId: 1,
           tabId: 1,
@@ -103,6 +113,8 @@ describe('Session tracking', () => {
       })
 
       it('sends a pilot connect method to the new tab', async () => {
+        trackSessions(trackRequests())
+
         await startPilotSession({ windowId: 1 })
 
         await callListeners(chromeMock.tabs.onActivated, {
@@ -118,6 +130,8 @@ describe('Session tracking', () => {
 
     describe('When a tab is closed', () => {
       it('stops tracking tabs in a window, when they are closed', async () => {
+        const { getPilotSession } = trackSessions(trackRequests())
+
         await startPilotSession({ windowId: 1, tabId: 1 })
 
         await callListeners(chromeMock.tabs.onRemoved, 1, {
@@ -133,6 +147,8 @@ describe('Session tracking', () => {
       })
 
       it('does nothing when no pilot session is active', async () => {
+        const { getPilotSession } = trackSessions(trackRequests())
+
         await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
           isWindowClosing: false,
@@ -142,6 +158,8 @@ describe('Session tracking', () => {
       })
 
       it('does not send a pilot disconnect message', async () => {
+        trackSessions(trackRequests())
+
         await startPilotSession({ windowId: 1, tabId: 1 })
 
         await callListeners(chromeMock.tabs.onRemoved, 1, {
@@ -156,6 +174,10 @@ describe('Session tracking', () => {
     })
 
     describe('When a tab updates', () => {
+      beforeEach(() => {
+        trackSessions(trackRequests())
+      })
+
       it('injects the provider script when new pages are loaded', async () => {
         await startPilotSession({ windowId: 1, tabId: 1 })
 
@@ -219,6 +241,10 @@ describe('Session tracking', () => {
   })
 
   describe('CSP rules', () => {
+    beforeEach(() => {
+      trackSessions(trackRequests())
+    })
+
     describe('Start session', () => {
       it('removes CSP headers', async () => {
         await startPilotSession({ windowId: 1, tabId: 1 })

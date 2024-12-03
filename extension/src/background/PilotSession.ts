@@ -31,6 +31,8 @@ export class PilotSession {
   trackTab(tabId: number) {
     this.tabs.add(tabId)
 
+    this.rpcTracking.trackTab(tabId)
+
     updateCSPHeaderRule(this.tabs)
 
     sendMessageToTab(tabId, {
@@ -40,6 +42,8 @@ export class PilotSession {
 
   untrackTab(tabId: number) {
     this.tabs.delete(tabId)
+
+    this.rpcTracking.untrackTab(tabId)
 
     updateCSPHeaderRule(this.tabs)
   }

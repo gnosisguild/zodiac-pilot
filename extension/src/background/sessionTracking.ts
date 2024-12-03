@@ -3,13 +3,26 @@ import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import {
-  deletePilotSession,
-  getOrCreatePilotSession,
+  CallbackFn,
+  createPilotSession,
+  getPilotSession,
+  Sessions,
   withPilotSession,
 } from './activePilotSessions'
+import { PilotSession } from './PilotSession'
 import { TrackRequestsResult } from './rpcTracking'
 
-export const trackSessions = (trackRequests: TrackRequestsResult) => {
+export type TrackSessionsResult = {
+  withPilotSession: (windowId: number, callback: CallbackFn) => Promise<void>
+  getPilotSession: (windowId: number) => PilotSession
+}
+
+export const trackSessions = (
+  trackRequests: TrackRequestsResult
+): TrackSessionsResult => {
+  /** maps `windowId` to pilot session */
+  const sessions = new Map<number, PilotSession>()
+
   // all messages from the panel app are received here
   // (the port is opened from panel/port.ts)
   chrome.runtime.onConnect.addListener((port) => {
@@ -27,7 +40,7 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
       windowIdRef.current = message.windowId
       console.debug('Sidepanel opened.', message.windowId)
 
-      startPilotSession(trackRequests, {
+      startPilotSession(sessions, trackRequests, {
         windowId: message.windowId,
         tabId: message.tabId,
       })
@@ -44,14 +57,22 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
 
       console.debug('Sidepanel closed.', windowIdRef.current)
 
-      stopPilotSession(windowIdRef.current)
+      const session = sessions.get(windowIdRef.current)
+
+      if (session) {
+        console.debug('stop pilot session', { windowId: windowIdRef.current })
+
+        session.delete()
+
+        sessions.delete(windowIdRef.current)
+      }
 
       reloadActiveTab()
     })
   })
 
   chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
-    withPilotSession(windowId, (session) => {
+    withPilotSession(sessions, windowId, (session) => {
       if (session.isTracked(tabId)) {
         return
       }
@@ -61,7 +82,7 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
   })
 
   chrome.tabs.onRemoved.addListener((tabId, { windowId }) => {
-    withPilotSession(windowId, (session) => {
+    withPilotSession(sessions, windowId, (session) => {
       if (!session.isTracked(tabId)) {
         return
       }
@@ -72,7 +93,7 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
 
   // inject the provider script into tracked tabs whenever they start loading a new page
   chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
-    return withPilotSession(tab.windowId, (session) => {
+    return withPilotSession(sessions, tab.windowId, (session) => {
       if (!session.isTracked(tabId) || info.status !== 'loading') {
         return
       }
@@ -92,6 +113,12 @@ export const trackSessions = (trackRequests: TrackRequestsResult) => {
       })
     })
   })
+
+  return {
+    withPilotSession: (windowId, callback) =>
+      withPilotSession(sessions, windowId, callback),
+    getPilotSession: (windowId) => getPilotSession(sessions, windowId),
+  }
 }
 
 type StartPilotSessionOptions = {
@@ -100,22 +127,25 @@ type StartPilotSessionOptions = {
 }
 
 const startPilotSession = (
+  sessions: Sessions,
   trackRequests: TrackRequestsResult,
   { windowId, tabId }: StartPilotSessionOptions
 ) => {
   console.debug('start pilot session', { windowId })
 
-  const session = getOrCreatePilotSession(trackRequests, windowId)
+  let session = sessions.get(windowId)
+
+  if (session == null) {
+    session = createPilotSession(trackRequests, windowId)
+
+    sessions.set(windowId, session)
+  }
 
   if (tabId == null) {
-    return
+    return session
   }
 
   session.trackTab(tabId)
-}
 
-const stopPilotSession = (windowId: number) => {
-  console.debug('stop pilot session', { windowId })
-
-  return deletePilotSession(windowId)
+  return session
 }

@@ -1,8 +1,11 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { getPilotSession, withPilotSession } from './activePilotSessions'
 import { enableRPCDebugLogging } from './rpcRedirect'
+import { TrackSessionsResult } from './sessionTracking'
 
-export const trackSimulations = () => {
+export const trackSimulations = ({
+  withPilotSession,
+  getPilotSession,
+}: TrackSessionsResult) => {
   enableRPCDebugLogging()
 
   // track when a Pilot session is started for a window and when the simulation is started/stopped
