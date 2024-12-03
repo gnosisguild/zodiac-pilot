@@ -21,7 +21,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL,
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3030',
     extraHTTPHeaders: {
       'x-vercel-protection-bypass': process.env.VERCEL_PROTECTION_BYPASS || '',
     },
