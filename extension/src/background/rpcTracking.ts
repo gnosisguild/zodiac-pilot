@@ -2,6 +2,7 @@ import { RpcMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { ChainId } from 'ser-kit'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
+import { enableRpcDebugLogging } from './rpcRedirect'
 
 type TrackingState = {
   trackedTabs: Set<number>
@@ -33,6 +34,8 @@ export type TrackRequestsResult = {
 }
 
 export const trackRequests = (): TrackRequestsResult => {
+  enableRpcDebugLogging()
+
   const state: TrackingState = {
     trackedTabs: new Set(),
     chainIdByRpcUrl: new Map(),

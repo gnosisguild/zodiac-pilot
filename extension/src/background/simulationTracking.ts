@@ -1,13 +1,10 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { enableRpcDebugLogging } from './rpcRedirect'
 import { TrackSessionsResult } from './sessionTracking'
 
 export const trackSimulations = ({
   withPilotSession,
   getPilotSession,
 }: TrackSessionsResult) => {
-  enableRpcDebugLogging()
-
   // track when a Pilot session is started for a window and when the simulation is started/stopped
   chrome.runtime.onMessage.addListener(
     async (message: SimulationMessage, sender) => {
