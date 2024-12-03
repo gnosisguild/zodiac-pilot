@@ -3,6 +3,7 @@ public/build
 public/_metadata
 *.log
 zodiac-pilot.zip
+.env.local
 
 /test-results/
 /playwright-report/
