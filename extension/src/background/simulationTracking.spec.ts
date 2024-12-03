@@ -9,20 +9,18 @@ import {
   stopSimulation,
   updateSimulation,
 } from '@/test-utils'
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { clearAllSessions } from './activePilotSessions'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 
 describe('Simulation tracking', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     const trackRequestsResult = trackRequests()
     trackSessions(trackRequestsResult)
     trackSimulations()
-  })
 
-  beforeEach(() => {
     clearAllSessions()
     mockActiveTab()
   })

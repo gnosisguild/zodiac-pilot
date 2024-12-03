@@ -6,17 +6,14 @@ import {
   mockActiveTab,
   startPilotSession,
 } from '@/test-utils'
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { clearAllSessions, getPilotSession } from './activePilotSessions'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
 describe('Session tracking', () => {
-  beforeAll(() => {
-    trackSessions(trackRequests())
-  })
-
   beforeEach(() => {
+    trackSessions(trackRequests())
     clearAllSessions()
 
     mockActiveTab()
