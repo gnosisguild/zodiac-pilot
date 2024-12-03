@@ -1,10 +1,10 @@
 import { RPCMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { ChainId } from 'ser-kit'
-import { isTrackedTab } from './activePilotSessions'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 
 type TrackingState = {
+  trackedTabs: Set<number>
   chainIdByRpcUrl: Map<string, number>
   chainIdPromiseByRpcUrl: Map<string, Promise<number | undefined>>
 
@@ -27,11 +27,14 @@ export type TrackRequestsResult = {
   getTrackedRPCUrlsForChainId: (
     options: GetTrackedRPCUrlsForChainIdOptions
   ) => Map<number, string[]>
+  trackTab: (tabId: number) => void
+  untrackTab: (tabId: number) => void
   onNewRPCEndpointDetected: Event<NewRPCEndpointDetectedEventListener>
 }
 
 export const trackRequests = (): TrackRequestsResult => {
   const state: TrackingState = {
+    trackedTabs: new Set(),
     chainIdByRpcUrl: new Map(),
     chainIdPromiseByRpcUrl: new Map(),
     rpcUrlsByTabId: new Map(),
@@ -72,6 +75,12 @@ export const trackRequests = (): TrackRequestsResult => {
         listeners.clear()
       },
     },
+    trackTab(tabId) {
+      state.trackedTabs.add(tabId)
+    },
+    untrackTab(tabId) {
+      state.trackedTabs.delete(tabId)
+    },
   }
 }
 
@@ -83,7 +92,7 @@ const trackRequest = async (
   state: TrackingState,
   { tabId, url, method, requestBody }: chrome.webRequest.WebRequestBodyDetails
 ): Promise<TrackRequestResult> => {
-  const hasActiveSession = isTrackedTab({ tabId })
+  const hasActiveSession = state.trackedTabs.has(tabId)
 
   // only handle requests in tracked tabs
   if (!hasActiveSession) {

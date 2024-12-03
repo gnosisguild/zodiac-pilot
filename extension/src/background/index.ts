@@ -4,8 +4,8 @@ import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 
 const trackRequestsResult = trackRequests()
-trackSessions(trackRequestsResult)
-trackSimulations()
+const trackSessionsResult = trackSessions(trackRequestsResult)
+trackSimulations(trackSessionsResult)
 
 enableExternalPanelOpen()
 
