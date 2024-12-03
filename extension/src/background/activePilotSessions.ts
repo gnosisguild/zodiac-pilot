@@ -1,6 +1,5 @@
 import { invariant } from '@epic-web/invariant'
 import { PilotSession } from './PilotSession'
-import { TrackRequestsResult } from './rpcTracking'
 
 type PublicPilotSession = Omit<PilotSession, 'delete'>
 export type CallbackFn = (session: PublicPilotSession) => void
@@ -28,15 +27,6 @@ export const getPilotSession = (
   const session = sessions.get(windowId)
 
   invariant(session != null, `No session found for windowId "${windowId}"`)
-
-  return session
-}
-
-export const createPilotSession = (
-  trackRequests: TrackRequestsResult,
-  windowId: number
-): PilotSession => {
-  const session = new PilotSession(windowId, trackRequests)
 
   return session
 }

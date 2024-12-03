@@ -4,7 +4,6 @@ import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import {
   CallbackFn,
-  createPilotSession,
   getPilotSession,
   Sessions,
   withPilotSession,
@@ -136,7 +135,7 @@ const startPilotSession = (
   let session = sessions.get(windowId)
 
   if (session == null) {
-    session = createPilotSession(trackRequests, windowId)
+    session = new PilotSession(windowId, trackRequests)
 
     sessions.set(windowId, session)
   }
