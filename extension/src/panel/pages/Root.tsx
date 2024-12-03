@@ -4,6 +4,7 @@ import {
   useMarkRouteAsUsed,
   useSaveExecutionRoute,
 } from '@/execution-routes'
+import { useProviderBridge } from '@/inject-bridge'
 import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
@@ -11,7 +12,6 @@ import {
 import { useProvider } from '@/providers-ui'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
-import { useProviderBridge } from '../../inject/bridge'
 import { useStorage } from '../utils'
 import {
   asLegacyConnection,

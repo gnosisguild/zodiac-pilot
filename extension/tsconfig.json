@@ -26,6 +26,7 @@
       "@/state": ["./src/panel/state/index.tsx"],
       "@/providers": ["./src/panel/providers/index.ts"],
       "@/providers-ui": ["./src/panel/providers-ui/index.ts"],
+      "@/inject-bridge": ["./src/inject/bridge/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
       "@/messages": ["./src/messages.ts"],
