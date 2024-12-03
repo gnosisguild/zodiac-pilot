@@ -5,5 +5,5 @@ import { injectScript } from '@/utils'
 if (document.documentElement.dataset.__zodiacPilotInjected !== 'true') {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
 
-  injectScript('build/inject/injectedScript/main.js')
+  injectScript('build/connect/injectedScript/main.js')
 }
