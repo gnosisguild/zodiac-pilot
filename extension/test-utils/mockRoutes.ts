@@ -1,8 +1,8 @@
-import { ZodiacRoute } from '@/types'
+import { ExecutionRoute } from '@/types'
 import { chromeMock } from './chrome'
 import { createMockRoute } from './creators'
 
-export const mockRoutes = (...routes: Partial<ZodiacRoute>[]) => {
+export const mockRoutes = (...routes: Partial<ExecutionRoute>[]) => {
   const mockedRoutes = routes.map(createMockRoute)
 
   chromeMock.storage.sync.get.mockImplementation(async (callback) => {

@@ -1,8 +1,8 @@
-import { ProvideBridgeContext } from '@/bridge'
+import { ProvideExecutionRoutes } from '@/execution-routes'
+import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideInjectedWallet } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { ProvideState } from '@/state'
-import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { PropsWithChildren } from 'react'
 
 type RenderWraperProps = PropsWithChildren<{
@@ -17,7 +17,7 @@ export const RenderWrapper = ({
     <ProvideState>
       <ProvideInjectedWallet>
         <ProvideProvider>
-          <ProvideZodiacRoutes>{children}</ProvideZodiacRoutes>
+          <ProvideExecutionRoutes>{children}</ProvideExecutionRoutes>
         </ProvideProvider>
       </ProvideInjectedWallet>
     </ProvideState>

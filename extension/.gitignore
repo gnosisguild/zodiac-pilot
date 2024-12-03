@@ -1,9 +1,9 @@
 node_modules
 public/build
 public/_metadata
-.env
 *.log
 zodiac-pilot.zip
+.env
 
 /test-results/
 /playwright-report/

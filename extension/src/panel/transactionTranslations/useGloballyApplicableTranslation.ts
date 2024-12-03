@@ -1,8 +1,8 @@
 import { getChainId } from '@/chains'
+import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
-import { useZodiacRoute } from '@/zodiac-routes'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect } from 'react'
 import { ChainId, parsePrefixedAddress } from 'ser-kit'
@@ -17,7 +17,7 @@ export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
 
   const dispatch = useDispatch()
-  const { avatar } = useZodiacRoute()
+  const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
   const [_, avatarAddress] = parsePrefixedAddress(avatar)
 

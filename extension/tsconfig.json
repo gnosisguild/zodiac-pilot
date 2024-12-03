@@ -22,14 +22,14 @@
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
       "@/chains": ["./src/chains/index.ts"],
-      "@/zodiac-routes": ["./src/panel/zodiac-routes/index.ts"],
+      "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
       "@/state": ["./src/panel/state/index.tsx"],
       "@/providers": ["./src/panel/providers/index.ts"],
       "@/providers-ui": ["./src/panel/providers-ui/index.ts"],
+      "@/inject-bridge": ["./src/inject/bridge/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
       "@/messages": ["./src/messages.ts"],
-      "@/bridge": ["./src/bridge/index.ts"],
       "@/transaction-translation": [
         "./src/panel/transactionTranslations/index.ts"
       ],

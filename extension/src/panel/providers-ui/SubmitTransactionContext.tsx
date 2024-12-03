@@ -1,5 +1,5 @@
+import { useExecutionRoute, useRouteProvider } from '@/execution-routes'
 import { useDispatch, useTransactions } from '@/state'
-import { useRouteProvider, useZodiacRoute } from '@/zodiac-routes'
 import {
   createContext,
   PropsWithChildren,
@@ -23,7 +23,7 @@ export const useSubmitTransactions = () => useContext(SubmitTransactionsContext)
 export const ProvideSubmitTransactionContext = ({
   children,
 }: PropsWithChildren) => {
-  const route = useZodiacRoute()
+  const route = useExecutionRoute()
   const provider = useRouteProvider(route)
   const transactions = useTransactions()
   const dispatch = useDispatch()

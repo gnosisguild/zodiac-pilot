@@ -80,7 +80,7 @@ const makeUrlRegex = (rpcUrls: string[]) => {
   return `^(${regex})$`
 }
 
-export const enableRPCDebugLogging = () => {
+export const enableRpcDebugLogging = () => {
   // debug logging for RPC intercepts
   // This API is only available in unpacked mode!
   if (chrome.declarativeNetRequest.onRuleMatchedDebug == null) {

@@ -102,9 +102,7 @@ export const trackSessions = (
       // so the executed content scripts must handle the case that it has already been injected before.
       chrome.scripting.executeScript({
         target: { tabId, allFrames: true },
-        files: [
-          'build/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.js',
-        ],
+        files: ['build/inject/contentScript/main.js'],
         injectImmediately: true,
       })
     })

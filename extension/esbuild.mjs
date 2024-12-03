@@ -16,22 +16,20 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
 
-      // CONNECt DAPP
-      './src/pilot-connect/contentScripts/connectPilotToDApp.ts',
-      './src/pilot-connect/contentScripts/connectPilotToInjectedIFrame.ts',
+      // ALLOW PILOT TO CONNECT TO USER'S BROWSER WALLET
+      './src/connect/contentScripts/dApp.ts',
+      './src/connect/contentScripts/connectIframe.ts',
+      './src/connect/injectedScript/main.ts',
 
-      './src/pilot-connect/injectedScripts/connectOriginalWalletToPilot.ts',
+      // INJECT EIP-1193 PROVIDER TO DAPPS TO RECORD TRANSACTIONS
+      './src/inject/contentScript/main.ts',
+      './src/inject/injectedScript/main.ts',
 
-      // CONNECT INJECTED WALLET
-      './src/injected-wallet-connect/contentScripts/enableInjectedProviderCommunication.ts',
+      // MONITOR TAB CONNECTION STATUS AND SHOW RELOAD NOTIFICATION
+      './src/monitor/contentScript/main.ts',
+      './src/monitor/injectedScript/main.ts',
 
-      './src/injected-wallet-connect/injectedScripts/enableInjectedProvider.ts',
-
-      // MONITOR
-      './src/pilot-connect-monitor/contentScripts/setupConnectionMonitoring.ts',
-
-      './src/pilot-connect-monitor/injectedScripts/handleConnectionStatusChange.ts',
-
+      // SIDEPANEL APP
       './src/panel/app.tsx',
     ],
     bundle: true,

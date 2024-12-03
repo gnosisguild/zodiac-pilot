@@ -1,4 +1,4 @@
-import { ZodiacRoute } from '@/types'
+import { ExecutionRoute } from '@/types'
 import { useEffect, useRef } from 'react'
 import { useWalletConnectProvider } from './useWalletConnectProvider'
 
@@ -7,7 +7,7 @@ type Options = {
 }
 
 export const useDisconnectWalletConnectIfNeeded = (
-  route: ZodiacRoute,
+  route: ExecutionRoute,
   { onDisconnect }: Options
 ) => {
   const provider = useWalletConnectProvider(route.id)

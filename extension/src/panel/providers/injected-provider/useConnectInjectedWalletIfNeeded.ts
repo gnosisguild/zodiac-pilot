@@ -1,8 +1,8 @@
-import { ProviderType, ZodiacRoute } from '@/types'
+import { ExecutionRoute, ProviderType } from '@/types'
 import { useEffect } from 'react'
 import { useInjectedWallet } from './InjectedWalletContext'
 
-export const useConnectInjectedWalletIfNeeded = (route: ZodiacRoute) => {
+export const useConnectInjectedWalletIfNeeded = (route: ExecutionRoute) => {
   const { chainId, connect, connectionStatus, ready } = useInjectedWallet()
 
   const mustConnectInjectedWallet =

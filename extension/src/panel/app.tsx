@@ -1,21 +1,21 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import { ProvideBridgeContext } from '@/bridge'
 import { Info, PilotLogo } from '@/components'
+import { ProvideExecutionRoutes } from '@/execution-routes'
+import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideInjectedWallet } from '@/providers'
-import { ProvideZodiacRoutes } from '@/zodiac-routes'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
 import '../global.css'
-import { routes } from './app-routes'
+import { pages } from './pages'
 import { ProvideProvider } from './providers-ui'
 import { ProvideState } from './state'
 import { usePilotPort } from './usePilotPort'
 
-const router = createHashRouter(routes)
+const router = createHashRouter(pages)
 
 const Root = () => {
   const { activeWindowId } = usePilotPort()
@@ -36,7 +36,7 @@ const Root = () => {
     <StrictMode>
       <ProvideBridgeContext windowId={activeWindowId}>
         <ProvideState>
-          <ProvideZodiacRoutes>
+          <ProvideExecutionRoutes>
             <ProvideInjectedWallet>
               <ProvideProvider>
                 <div className="flex h-full flex-1 flex-col">
@@ -46,7 +46,7 @@ const Root = () => {
                 <Toaster position="top-center" />
               </ProvideProvider>
             </ProvideInjectedWallet>
-          </ProvideZodiacRoutes>
+          </ProvideExecutionRoutes>
         </ProvideState>
       </ProvideBridgeContext>
     </StrictMode>

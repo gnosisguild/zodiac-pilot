@@ -1,6 +1,6 @@
-import { useWindowId } from '@/bridge'
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
 import { infoToast } from '@/components'
+import { useWindowId } from '@/inject-bridge'
 import { Eip1193Provider } from '@/types'
 import { MutableRefObject, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
