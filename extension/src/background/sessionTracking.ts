@@ -2,14 +2,11 @@ import { Message, PilotMessageType } from '@/messages'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
-import {
-  CallbackFn,
-  getPilotSession,
-  Sessions,
-  withPilotSession,
-} from './activePilotSessions'
+import { getPilotSession } from './getPilotSession'
 import { PilotSession } from './PilotSession'
 import { TrackRequestsResult } from './rpcTracking'
+import { Sessions } from './types'
+import { CallbackFn, withPilotSession } from './withPilotSession'
 
 export type TrackSessionsResult = {
   withPilotSession: (windowId: number, callback: CallbackFn) => Promise<void>

@@ -1,10 +1,8 @@
-import { invariant } from '@epic-web/invariant'
 import { PilotSession } from './PilotSession'
+import { Sessions } from './types'
 
 type PublicPilotSession = Omit<PilotSession, 'delete'>
 export type CallbackFn = (session: PublicPilotSession) => void
-
-export type Sessions = Map<number, PilotSession>
 
 export const withPilotSession = (
   sessions: Sessions,
@@ -18,15 +16,4 @@ export const withPilotSession = (
   }
 
   return Promise.resolve(callback(session))
-}
-
-export const getPilotSession = (
-  sessions: Sessions,
-  windowId: number
-): PilotSession => {
-  const session = sessions.get(windowId)
-
-  invariant(session != null, `No session found for windowId "${windowId}"`)
-
-  return session
 }
