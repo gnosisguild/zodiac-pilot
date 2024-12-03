@@ -7,7 +7,7 @@ window.document.documentElement.dataset.__zodiacPilotBasePath =
   chrome.runtime.getURL('/')
 window.document.documentElement.dataset.__zodiacExtensionId = chrome.runtime.id
 
-injectScript('build/pilot-connect-monitor/injectedScript/main.js')
+injectScript('build/monitor/injectedScript/main.js')
 
 chrome.runtime.onMessage.addListener((message: Message) => {
   if (
