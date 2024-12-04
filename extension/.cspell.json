@@ -97,6 +97,7 @@
     "playwright-report/**",
     "**/*.svg",
     "patches/**",
-    "test-utils/**"
+    "test-utils/**",
+    "**/*.sh"
   ]
 }
