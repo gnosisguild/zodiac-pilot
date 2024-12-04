@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight } from 'lucide-react'
+import { GhostButton } from './GhostButton'
 
 interface Props {
   expanded: boolean
@@ -6,16 +7,17 @@ interface Props {
 }
 
 export const ToggleButton = ({ expanded, onToggle }: Props) => (
-  <button
-    className="rounded p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+  <GhostButton
+    iconOnly
+    icon={expanded ? ChevronDown : ChevronRight}
+    size="small"
     onClick={(event) => {
       event.stopPropagation()
       event.preventDefault()
 
       onToggle()
     }}
-    title={expanded ? 'collapse' : 'expand'}
   >
-    {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-  </button>
+    {expanded ? 'collapse' : 'expand'}
+  </GhostButton>
 )

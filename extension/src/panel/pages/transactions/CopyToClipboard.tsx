@@ -29,7 +29,7 @@ export const CopyToClipboard = ({ transaction, labeled }: Props) => {
   }
 
   return (
-    <GhostButton iconOnly icon={Copy} onClick={copyToClipboard}>
+    <GhostButton iconOnly size="small" icon={Copy} onClick={copyToClipboard}>
       Copy transaction data to clipboard
     </GhostButton>
   )

@@ -23,7 +23,12 @@ export const Translate = ({ index, labeled }: Props) => {
   }
 
   return (
-    <GhostButton iconOnly={!labeled} icon={Wrench} onClick={translation.apply}>
+    <GhostButton
+      iconOnly={!labeled}
+      size="small"
+      icon={Wrench}
+      onClick={translation.apply}
+    >
       {translation.title}
     </GhostButton>
   )

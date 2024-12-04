@@ -80,11 +80,16 @@ export const Transactions = () => {
         <RouteBubble />
 
         <div className="mt-4 flex items-center justify-between gap-2">
-          <h4>Recording Transactions</h4>
+          <div className="flex items-center gap-2">
+            <RecordingIcon />
+
+            <h4>Recording Transactions</h4>
+          </div>
 
           <div className="flex gap-1">
             <GhostButton
               iconOnly
+              size="small"
               icon={Copy}
               disabled={transactions.length === 0}
               onClick={copyTransactionData}
@@ -94,14 +99,13 @@ export const Transactions = () => {
 
             <GhostButton
               iconOnly
+              size="small"
               icon={RefreshCcw}
               disabled={transactions.length === 0}
               onClick={reforkAndRerun}
             >
               Re-simulate on current blockchain head
             </GhostButton>
-
-            <RecordingIcon />
           </div>
         </div>
       </Page.Header>

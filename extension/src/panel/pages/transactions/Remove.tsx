@@ -47,7 +47,7 @@ export const Remove = ({ transactionState, index }: Props) => {
   }
 
   return (
-    <GhostButton iconOnly icon={Trash2} onClick={handleRemove}>
+    <GhostButton iconOnly size="small" icon={Trash2} onClick={handleRemove}>
       Remove transaction
     </GhostButton>
   )
