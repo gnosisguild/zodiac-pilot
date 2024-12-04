@@ -17,12 +17,12 @@ export const WalletDisconnected = ({
 
   return (
     <Section>
+      {children}
+
       <Warning title="Wallet disconnected">
         Your wallet is disconnected from Pilot. Reconnect it to use the selected
         account with Pilot.
       </Warning>
-
-      {children}
 
       <Section.Actions>
         <SecondaryButton

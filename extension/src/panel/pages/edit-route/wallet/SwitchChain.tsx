@@ -21,12 +21,12 @@ export const SwitchChain = ({
 
   return (
     <Section>
+      {children}
+
       <Warning title="Chain mismatch">
         The connected wallet belongs to a different chain. To use it you need to
         switch back to <span className="font-semibold">{chainName}</span>
       </Warning>
-
-      {children}
 
       <Section.Actions>
         {onSwitch && (

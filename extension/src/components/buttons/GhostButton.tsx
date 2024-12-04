@@ -18,7 +18,7 @@ export const GhostButton = ({
     className={classNames(
       'border-transparent bg-transparent font-bold',
       style === 'regular' &&
-        'text-zinc-500 enabled:hover:bg-zinc-200 enabled:hover:text-zinc-700 dark:text-zinc-400 dark:enabled:hover:bg-zinc-800 dark:enabled:hover:text-zinc-300',
+        'text-zinc-500 enabled:hover:bg-zinc-200 enabled:hover:text-zinc-700 dark:text-zinc-400 dark:enabled:hover:bg-zinc-100/10 dark:enabled:hover:text-zinc-300',
       style === 'contrast' &&
         'text-zinc-400 enabled:hover:bg-zinc-800 enabled:hover:text-zinc-300 dark:text-zinc-500 dark:enabled:hover:bg-zinc-200 dark:enabled:hover:text-zinc-700',
       style === 'critical' &&
@@ -38,9 +38,9 @@ export const GhostLinkButton = ({
     className={classNames(
       'border-transparent bg-transparent font-bold',
       style === 'regular' &&
-        'text-zinc-900/30 hover:bg-zinc-800 hover:text-zinc-200',
+        'text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-100/10 dark:hover:text-zinc-300',
       style === 'contrast' &&
-        'text-zinc-200 hover:bg-zinc-500/80 hover:text-zinc-300',
+        'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-300 dark:text-zinc-500 dark:hover:bg-zinc-200 dark:hover:text-zinc-700',
       style === 'critical' && 'text-red-500 hover:bg-red-900 hover:text-red-400'
     )}
   />

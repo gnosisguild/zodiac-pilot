@@ -1,3 +1,4 @@
+import { EOA_ZERO_ADDRESS } from '@/chains'
 import {
   Breadcrumbs,
   Error,
@@ -8,7 +9,7 @@ import {
 } from '@/components'
 import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
-import { LegacyConnection, ProviderType } from '@/types'
+import { LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
@@ -109,13 +110,10 @@ export const EditRoute = () => {
           />
 
           <Section
-            title="Pilot Account"
-            description={
-              currentRouteState.providerType === ProviderType.InjectedWallet
-                ? 'Meta Mask'
-                : currentRouteState.providerType === ProviderType.WalletConnect
-                  ? 'Wallet Connect'
-                  : undefined
+            title={
+              currentRouteState.initiator === EOA_ZERO_ADDRESS
+                ? 'Pilot Account'
+                : undefined
             }
           >
             <ConnectWallet

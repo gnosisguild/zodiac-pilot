@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Address, Divider, ToggleButton } from '@/components'
+import { Divider, TextInput, ToggleButton } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { TransactionState } from '@/state'
 import { ExecutionRoute } from '@/types'
@@ -54,15 +54,21 @@ export const Transaction = ({
 
       {expanded && (
         <div className="flex flex-col gap-3 border-t border-zinc-300 bg-zinc-200/80 px-2 py-4 text-sm dark:border-zinc-500/80 dark:bg-zinc-500/30">
-          <div className="flex justify-between gap-4">
-            <ContractAddress
-              chainId={chainId}
-              address={transactionState.transaction.to}
-              contractInfo={transactionState.contractInfo}
-            />
+          <ContractAddress
+            chainId={chainId}
+            address={transactionState.transaction.to}
+            contractInfo={transactionState.contractInfo}
+          />
 
-            <EtherValue value={transactionState.transaction.value} />
-          </div>
+          <EtherValue value={transactionState.transaction.value} />
+
+          <Divider />
+
+          {decoded ? (
+            <DecodedTransaction {...decoded} />
+          ) : (
+            <RawTransaction data={transactionState.transaction.data} />
+          )}
 
           <Divider />
 
@@ -71,12 +77,6 @@ export const Transaction = ({
             index={index}
             showRoles={showRoles}
           />
-
-          {decoded ? (
-            <DecodedTransaction {...decoded} />
-          ) : (
-            <RawTransaction data={transactionState.transaction.data} />
-          )}
         </div>
       )}
     </div>
@@ -101,24 +101,28 @@ const TransactionHeader = ({
   showRoles = false,
 }: HeaderProps) => {
   return (
-    <div className="flex items-center justify-between">
-      <label className="flex w-3/5 cursor-pointer items-center gap-2">
+    <div className="flex items-center justify-between gap-4">
+      <label className="flex cursor-pointer items-center gap-2 overflow-hidden">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
-        <h5 className="flex flex-col gap-1 text-sm font-semibold">
-          {functionFragment
-            ? functionFragment.format('sighash').split('(')[0]
-            : 'Raw transaction'}
+        <div className="flex flex-col gap-1 overflow-hidden">
+          <h5 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold">
+            {functionFragment
+              ? functionFragment.format('sighash').split('(')[0]
+              : 'Raw transaction'}
+          </h5>
 
           {transactionState.transaction.operation === 1 && (
             <span className="text-xs font-normal uppercase opacity-75">
               delegatecall
             </span>
           )}
-        </h5>
+        </div>
       </label>
+
       <div className="flex items-center justify-end gap-2">
         <SimulationStatus transactionState={transactionState} mini />
+
         {showRoles && (
           <RolePermissionCheck
             transactionState={transactionState}
@@ -126,6 +130,7 @@ const TransactionHeader = ({
             mini
           />
         )}
+
         <div className="flex">
           <Translate index={index} />
           <CopyToClipboard transaction={transactionState.transaction} />
@@ -170,15 +175,12 @@ const EtherValue = ({ value }: EtherValueProps) => {
   const chainId = getChainId(avatar)
 
   return (
-    <div className="flex flex-col gap-2 whitespace-nowrap text-xs">
-      <div className="font-bold">
-        Amount <span className="font-normal">({CHAIN_CURRENCY[chainId]})</span>
-      </div>
-
-      <div className="flex flex-1 justify-end">
-        <Address>{formatEther(value || 0)}</Address>
-      </div>
-    </div>
+    <TextInput
+      readOnly
+      value={formatEther(value || 0)}
+      label="Amount"
+      description={CHAIN_CURRENCY[chainId]}
+    />
   )
 }
 

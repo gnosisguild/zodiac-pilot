@@ -8,11 +8,11 @@ type WrongAccountProps = PropsWithChildren<{
 
 export const WrongAccount = ({ children, onDisconnect }: WrongAccountProps) => (
   <Section>
+    {children}
+
     <Warning title="Account is not connected">
       Switch your wallet to this account in order to use Pilot.
     </Warning>
-
-    {children}
 
     <SecondaryButton fluid onClick={onDisconnect}>
       Disconnect

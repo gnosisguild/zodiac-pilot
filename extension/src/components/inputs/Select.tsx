@@ -5,8 +5,7 @@ export const selectStyles = <
   Option = unknown,
   Multi extends boolean = boolean,
 >(): ClassNamesConfig<Option, Multi, GroupBase<Option>> => ({
-  control: () =>
-    'rounded-md border flex items-center bg-zinc-100 shadow-sm border-zinc-300 dark:border-zinc-600 text-sm dark:bg-zinc-800 dark:hover:border-zinc-500 cursor-pointer',
+  control: () => 'flex items-center text-sm cursor-pointer',
   valueContainer: () => 'px-4',
   dropdownIndicator: () =>
     'rounded-md flex-shrink-0 hover:bg-zinc-200 text-zinc-500 dark:text-zinc-50 dark:hover:bg-zinc-700 self-center size-6 flex items-center justify-center',

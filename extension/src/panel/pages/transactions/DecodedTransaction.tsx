@@ -10,21 +10,13 @@ export const DecodedTransaction = ({ functionFragment, data }: Props) => {
     return null
   }
 
-  return (
-    <div className="bg-zinc-500/10 p-2">
-      {functionFragment.inputs.length > 0 && (
-        <fieldset className="flex flex-col gap-3 text-xs">
-          {functionFragment.inputs.map((input, i) => (
-            <TextInput
-              key={`${input.name}-${i}`}
-              readOnly
-              defaultValue={data[i].toString()}
-              label={input.name}
-              description={input.type}
-            />
-          ))}
-        </fieldset>
-      )}
-    </div>
-  )
+  return functionFragment.inputs.map((input, i) => (
+    <TextInput
+      readOnly
+      key={`${input.name}-${i}`}
+      defaultValue={data[i].toString()}
+      label={input.name}
+      description={input.type}
+    />
+  ))
 }

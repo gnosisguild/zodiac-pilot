@@ -1,19 +1,17 @@
 import { ComponentPropsWithoutRef } from 'react'
-import { Input } from './Input'
+import { ComposableInputProps, Input } from './Input'
 
 type TextInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
   'id' | 'type' | 'className'
-> & {
-  label: string
-  description?: string
-  error?: string | null
-}
+> &
+  ComposableInputProps
 
 export const TextInput = ({
   label,
   description,
   error,
+
   ...props
 }: TextInputProps) => (
   <Input label={label} description={description} error={error}>
@@ -24,7 +22,7 @@ export const TextInput = ({
         id={inputId}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
-        className="rounded-md border border-zinc-300 bg-zinc-100 px-4 py-2 text-sm shadow-sm outline-none transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:enabled:hover:border-zinc-500"
+        className="w-full border-none bg-transparent px-4 py-2 text-sm outline-none"
       />
     )}
   </Input>

@@ -16,7 +16,9 @@ const openConfiguration = async (
 
   // MONDAY PHIL: This button is not being enabled
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
-  await expect(page.getByText(account)).toBeInViewport()
+  await expect(
+    page.getByRole('textbox', { name: 'Pilot Account' })
+  ).toHaveValue(account)
 }
 
 test.describe('Locked account', () => {
@@ -49,7 +51,9 @@ test.describe('Locked account', () => {
       .getByRole('button', { name: 'Connect', exact: true })
       .click()
 
-    await expect(extension.getByText(account)).toBeInViewport()
+    await expect(
+      extension.getByRole('textbox', { name: 'Pilot Account' })
+    ).toHaveValue(account)
   })
 
   test('it is possible to disconnect a locked account', async ({ page }) => {
