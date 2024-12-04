@@ -2,35 +2,35 @@ name: Release Extension
 
 on:
   release:
-    types: created
+    types: released
 
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build Extension
+    defaults:
+      run: 
+        working-directory: ./extension
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 21
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+          node-version: latest
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: Install deps and build
-        working-directory: ./extension
         run: |
-          yarn install --immutable
-          yarn build
+          pnpm install --prefer-offline
+          pnpm build
 
       - name: Update manifest.json with release tag
-        working-directory: ./extension
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: node ./manifest-util.js ./public/manifest.json
 
       - name: Create extension zip file
-        working-directory: ./extension
-        run: yarn zip
+        run: pnpm zip
 
       - name: Add zip to Github release
         uses: softprops/action-gh-release@v1
@@ -40,15 +40,15 @@ jobs:
       - name: Upload & release to Chrome Webstore
         uses: mnao305/chrome-extension-upload@3.0.0
         with:
-          file-path: ./extension/zodiac-pilot.zip
+          file-path: ./zodiac-pilot.zip
           extension-id: jklckajipokenkbbodifahogmidkekcb
           client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
           refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
           publish: false
 
-      - run: mkdir ./extension/release
-      - run: mv ./extension/zodiac-pilot.zip ./extension/release/zodiac-pilot.zip
+      - run: mkdir ./release
+      - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
 
       # - name: Pin to IPFS
       #   id: upload
