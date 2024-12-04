@@ -13,5 +13,6 @@
     "start": "env-cmd wrangler dev",
     "deploy": "wrangler publish",
     "format": "prettier --write  '*.{json,js}' 'src/**/*.ts'"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }

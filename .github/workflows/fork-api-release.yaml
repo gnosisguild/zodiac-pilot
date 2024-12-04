@@ -15,12 +15,15 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v3
         with:
-          node-version: 21
-          cache: "npm"
-          cache-dependency-path: "fork-api/package-lock.json"
-      - run: npm install
+          node-version: latest
+          cache: "pnpm"
+          cache-dependency-path: "fork-api/pnpm-lock.yaml"
+      - run: pnpm install
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
         with:
