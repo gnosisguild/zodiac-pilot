@@ -4,9 +4,9 @@ import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
-import { PilotSession } from './PilotSession'
+import { PilotSession, Sessions } from './PilotSession'
 import { TrackRequestsResult } from './rpcTracking'
-import { Event, Sessions } from './types'
+import { Event } from './types'
 import { CallbackFn, withPilotSession } from './withPilotSession'
 
 type SessionDeletedEventListener = (windowId: number) => void

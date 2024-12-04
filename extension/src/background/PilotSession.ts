@@ -6,6 +6,8 @@ import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import { TrackRequestsResult } from './rpcTracking'
 import { Fork } from './types'
 
+export type Sessions = Map<number, PilotSession>
+
 export class PilotSession {
   private id: number
 
@@ -57,7 +59,7 @@ export class PilotSession {
     this.rpcTracking.onNewRpcEndpointDetected.removeAllListeners()
 
     removeCSPHeaderRule()
-    await removeAllRpcRedirectRules(this)
+    await removeAllRpcRedirectRules(this.getTabs())
   }
 
   getTabs() {
@@ -80,7 +82,8 @@ export class PilotSession {
     }
 
     return addRpcRedirectRules(
-      this,
+      this.getTabs(),
+      this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
       })
@@ -93,7 +96,8 @@ export class PilotSession {
     this.fork = fork
 
     await addRpcRedirectRules(
-      this,
+      this.getTabs(),
+      this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId })
     )
 
@@ -107,9 +111,10 @@ export class PilotSession {
 
     this.fork = { ...this.fork, rpcUrl }
 
-    await removeAllRpcRedirectRules(this)
+    await removeAllRpcRedirectRules(this.getTabs())
     await addRpcRedirectRules(
-      this,
+      this.getTabs(),
+      this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
       })
@@ -123,7 +128,7 @@ export class PilotSession {
 
     this.fork = null
 
-    await removeAllRpcRedirectRules(this)
+    await removeAllRpcRedirectRules(this.getTabs())
 
     this.rpcTracking.onNewRpcEndpointDetected.removeListener(
       this.handleNewRpcEndpoint
