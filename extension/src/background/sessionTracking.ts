@@ -2,6 +2,7 @@ import { Message, PilotMessageType } from '@/messages'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
+import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession } from './PilotSession'
 import { TrackRequestsResult } from './rpcTracking'
@@ -22,7 +23,7 @@ export const trackSessions = (
   /** maps `windowId` to pilot session */
   const sessions = new Map<number, PilotSession>()
 
-  const listeners = new Set<SessionDeletedEventListener>()
+  const onDeleted = createEventListener<SessionDeletedEventListener>()
 
   // all messages from the panel app are received here
   // (the port is opened from panel/port.ts)
@@ -69,7 +70,7 @@ export const trackSessions = (
 
         sessions.delete(windowId)
 
-        listeners.forEach((listener) => listener(windowId))
+        onDeleted.callListeners(windowId)
       }
 
       reloadActiveTab()
@@ -121,17 +122,7 @@ export const trackSessions = (
     withPilotSession: (windowId, callback) =>
       withPilotSession(sessions, windowId, callback),
     getPilotSession: (windowId) => getPilotSession(sessions, windowId),
-    onDeleted: {
-      addListener(listener) {
-        listeners.add(listener)
-      },
-      removeAllListeners() {
-        listeners.clear()
-      },
-      removeListener(listener) {
-        listeners.delete(listener)
-      },
-    },
+    onDeleted: onDeleted.toEvent(),
   }
 }
 
