@@ -130,21 +130,22 @@ export const RolePermissionCheck = ({
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         Role permissions
-        {error === false ? (
-          <Tag head={<Check size={16} />} color="success">
-            Allowed
-          </Tag>
-        ) : (
-          <Tag head={<TriangleAlert size={16} />} color="danger">
-            {error}
-          </Tag>
-        )}
+        <div className="flex gap-2">
+          {error === false ? (
+            <Tag head={<Check size={16} />} color="success">
+              Allowed
+            </Tag>
+          ) : (
+            <Tag head={<TriangleAlert size={16} />} color="danger">
+              {error}
+            </Tag>
+          )}
+          {error && !translationAvailable && (
+            <CopyToClipboard transaction={transactionState.transaction} />
+          )}
+        </div>
+        {error && !!translationAvailable && <Translate index={index} labeled />}
       </div>
-
-      {error && !!translationAvailable && <Translate index={index} labeled />}
-      {error && !translationAvailable && (
-        <CopyToClipboard transaction={transactionState.transaction} labeled />
-      )}
     </div>
   )
 }

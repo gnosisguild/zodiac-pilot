@@ -1,4 +1,4 @@
-import { Spinner, Tag } from '@/components'
+import { GhostLinkButton, Spinner, Tag } from '@/components'
 import { useProvider } from '@/providers-ui'
 import { ExecutionStatus, TransactionState } from '@/state'
 import {
@@ -38,7 +38,7 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-1">
         Simulation
-        <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
           {transactionState.status === ExecutionStatus.PENDING && (
             <Tag head={<Spinner />} color="info">
               Pending...
@@ -60,20 +60,22 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
               Reverted
             </Tag>
           )}
+
+          {transactionState.transactionHash && (
+            <GhostLinkButton
+              openInNewWindow
+              iconOnly
+              size="small"
+              icon={SquareArrowOutUpRight}
+              to={provider?.getTransactionLink(
+                transactionState.transactionHash
+              )}
+            >
+              View in Tenderly
+            </GhostLinkButton>
+          )}
         </div>
       </div>
-
-      {transactionState.transactionHash && (
-        <a
-          href={provider?.getTransactionLink(transactionState.transactionHash)}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-1 text-xs no-underline opacity-75"
-        >
-          View in Tenderly
-          <SquareArrowOutUpRight size={14} />
-        </a>
-      )}
     </div>
   )
 }

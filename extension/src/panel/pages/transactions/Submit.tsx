@@ -199,11 +199,10 @@ const AwaitingSignatureModal = ({
     {usesWalletConnect && (
       <Modal.Actions>
         <SecondaryLinkButton
+          openInNewWindow
           style="contrast"
           icon={SquareArrowOutUpRight}
           to={`https://app.safe.global/${account}`}
-          target="_blank"
-          rel="noreferrer"
         >
           Open Pilot Safe
         </SecondaryLinkButton>
