@@ -25,6 +25,8 @@ export const trackSimulations = ({
             `start intercepting JSON RPC requests in window #${message.windowId}`,
             fork
           )
+
+          // TODO use a different icon while simulating to make this more beautiful
           updateBadge({
             windowId: message.windowId,
             text: '🟢',
