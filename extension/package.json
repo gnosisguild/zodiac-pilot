@@ -18,6 +18,7 @@
     "dev": "NODE_ENV=development node esbuild.mjs",
     "test:unit": "vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",
+    "test:e2e:ui": "pnpm test:e2e --ui",
     "check": "pnpm check:ts && pnpm check:format && pnpm check:lint && pnpm check:spelling && pnpm check:cycles",
     "check:ts": "pnpm tsc --noEmit",
     "check:lint": "eslint . --max-warnings=0",
