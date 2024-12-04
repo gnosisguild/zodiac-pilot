@@ -14,7 +14,9 @@ const openConfiguration = async (
   await page.getByRole('link', { name: 'Configure routes' }).click()
   await page.getByRole('button', { name: 'Add Route' }).click()
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
-  await expect(page.getByText(account)).toBeInViewport()
+  await expect(
+    page.getByRole('textbox', { name: 'Pilot Account' })
+  ).toHaveValue(account)
 }
 
 test.describe('Wrong chain selected', () => {
