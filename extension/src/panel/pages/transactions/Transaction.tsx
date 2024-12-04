@@ -60,9 +60,15 @@ export const Transaction = ({
             contractInfo={transactionState.contractInfo}
           />
 
+          <EtherValue value={transactionState.transaction.value} />
+
           <Divider />
 
-          <EtherValue value={transactionState.transaction.value} />
+          {decoded ? (
+            <DecodedTransaction {...decoded} />
+          ) : (
+            <RawTransaction data={transactionState.transaction.data} />
+          )}
 
           <Divider />
 
@@ -71,12 +77,6 @@ export const Transaction = ({
             index={index}
             showRoles={showRoles}
           />
-
-          {decoded ? (
-            <DecodedTransaction {...decoded} />
-          ) : (
-            <RawTransaction data={transactionState.transaction.data} />
-          )}
         </div>
       )}
     </div>
