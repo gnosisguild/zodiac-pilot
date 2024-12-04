@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'fs'
 
 // this script is used to update the release value
 // in the manifest.json when released through github

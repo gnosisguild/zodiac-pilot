@@ -3,16 +3,9 @@
   "editor.formatOnSave": true,
   "cSpell.userWords": [], // only use words from .cspell.json
   "cSpell.enabled": true,
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  },
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
-  "mdx-preview.preview.useVscodeMarkdownStyles": false,
-  "eslint.nodePath": ".yarn/sdks"
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

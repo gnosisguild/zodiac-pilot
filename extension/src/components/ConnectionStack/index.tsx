@@ -1,54 +1,36 @@
-import cn from 'classnames'
-import React from 'react'
-
-import { MODULE_NAMES } from '../../integrations/zodiac/useZodiacModules'
+import { MODULE_NAMES } from '../../const'
 import { LegacyConnection } from '../../types'
-import Address from '../Address'
-import Box from '../Box'
-
-import classes from './style.module.css'
+import { Address } from './Address'
 
 interface Props {
   connection: LegacyConnection
-  helperClass?: string
-  addressBoxClass?: string
-  className?: string
 }
 
-const ConnectionStack: React.FC<Props> = ({
-  connection,
-  helperClass,
-  addressBoxClass,
-  className,
-}) => {
+export const ConnectionStack = ({ connection }: Props) => {
   const { avatarAddress, moduleAddress, pilotAddress, moduleType } = connection
   return (
-    <div className={cn(classes.connectionStack, className)}>
-      <Box rounded className={cn([classes.address, addressBoxClass])}>
-        <Address address={pilotAddress} />
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <div className="text-sm">Pilot Account</div>
 
-        <div className={cn(classes.helper, helperClass)}>
-          <p>Pilot Account</p>
-        </div>
-      </Box>
+        <Address address={pilotAddress} />
+      </div>
+
       {moduleAddress && (
-        <Box roundedRight className={cn([classes.address, addressBoxClass])}>
+        <div className="flex items-center justify-between">
+          <div className="text-sm">
+            {(moduleType && MODULE_NAMES[moduleType]) || 'Zodiac'} Mod
+          </div>
+
           <Address address={moduleAddress} />
-          <div className={cn(classes.helper, helperClass)}>
-            <p>{(moduleType && MODULE_NAMES[moduleType]) || 'Zodiac'} Mod</p>
-          </div>
-        </Box>
+        </div>
       )}
-      <Box roundedRight className={cn([classes.address, addressBoxClass])}>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm">Piloted Safe</div>
+
         <Address address={avatarAddress} />
-        {avatarAddress && (
-          <div className={cn(classes.helper, helperClass)}>
-            <p>Piloted Safe</p>
-          </div>
-        )}
-      </Box>
+      </div>
     </div>
   )
 }
-
-export default ConnectionStack

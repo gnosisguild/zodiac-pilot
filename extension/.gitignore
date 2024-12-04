@@ -1,14 +1,14 @@
 node_modules
 public/build
 public/_metadata
-.env
 *.log
 zodiac-pilot.zip
+.env
 
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+walletconnect.db
+/coverage

@@ -1,5 +1,5 @@
+import { JsonRpcError } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { JsonRpcError } from '../types'
 import { AbiCoder } from 'ethers'
 
 const RolesV1Interface =

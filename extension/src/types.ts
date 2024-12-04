@@ -1,9 +1,9 @@
-import { ChainId, PrefixedAddress, Route as CompleteRoute } from 'ser-kit'
-import { SupportedModuleType } from './integrations/zodiac/types'
+import { ChainId, Route as CompleteRoute, PrefixedAddress } from 'ser-kit'
+import { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export enum ProviderType {
   WalletConnect,
-  MetaMask,
+  InjectedWallet,
 }
 
 export interface LegacyConnection {
@@ -27,18 +27,17 @@ export interface LegacyConnection {
   lastUsed?: number
 }
 
-interface PartialRoute {
+interface PartialExecutionRoute {
   id: string
   initiator: PrefixedAddress | undefined
   avatar: PrefixedAddress
   waypoints: CompleteRoute['waypoints'] | undefined
 }
 
-export type Route = PartialRoute & {
+export type ExecutionRoute = PartialExecutionRoute & {
   providerType: ProviderType
   label: string
   lastUsed?: number
-  _migratedFromLegacyConnection?: boolean
 }
 
 export interface JsonRpcRequest {
@@ -67,3 +66,5 @@ export interface TransactionData {
   data?: string
   from?: string
 }
+
+export type HexAddress = `0x${string}`
