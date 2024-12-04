@@ -18,15 +18,13 @@ type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
 }
 
-type NewRpcEndpointDetectedEventListener = () => void
-
 export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions
   ) => Map<number, string[]>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
-  onNewRpcEndpointDetected: Event<NewRpcEndpointDetectedEventListener>
+  onNewRpcEndpointDetected: Event
 }
 
 export const trackRequests = (): TrackRequestsResult => {
@@ -39,8 +37,7 @@ export const trackRequests = (): TrackRequestsResult => {
     rpcUrlsByTabId: new Map(),
   }
 
-  const onNewRpcEndpointDetected =
-    createEventListener<NewRpcEndpointDetectedEventListener>()
+  const onNewRpcEndpointDetected = createEventListener()
 
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
