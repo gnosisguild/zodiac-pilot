@@ -3,7 +3,6 @@ import {
   Info,
   infoToast,
   Page,
-  PilotLogo,
   SecondaryButton,
 } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
@@ -119,10 +118,6 @@ export const Transactions = () => {
 
         {transactions.length === 0 && (
           <div className="mt-32 flex flex-col gap-32">
-            <div className="text-gray-400 dark:text-gray-600">
-              <PilotLogo />
-            </div>
-
             <Info>
               As you interact with apps in the browser, transactions will be
               recorded here. You can then sign and submit them as a batch.
