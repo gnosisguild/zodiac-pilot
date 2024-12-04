@@ -1,6 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import { Info, PilotLogo } from '@/components'
+import { Info, ZodiacOsLogo } from '@/components'
 import { ProvideExecutionRoutes } from '@/execution-routes'
 import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideInjectedWallet } from '@/providers'
@@ -23,7 +23,8 @@ const Root = () => {
   if (activeWindowId == null) {
     return (
       <div className="relative top-32 flex h-full flex-col items-center gap-32 px-4">
-        <PilotLogo />
+        <ZodiacOsLogo className="h-12" />
+
         <Info title="Current tab is incompatible">
           Pilot is waiting to connect to a dApp. Open the dApp you want to
           simulate and Pilot will automatically connect to it.
