@@ -3,6 +3,7 @@ import { sendMessageToTab } from '@/utils'
 import { ChainId } from 'ser-kit'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
+import { Event } from './types'
 
 type TrackingState = {
   trackedTabs: Set<number>
@@ -14,12 +15,6 @@ type TrackingState = {
 
 type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
-}
-
-type Event<T> = {
-  addListener: (listener: T) => void
-  removeListener: (listener: T) => void
-  removeAllListeners: () => void
 }
 
 type NewRpcEndpointDetectedEventListener = () => void

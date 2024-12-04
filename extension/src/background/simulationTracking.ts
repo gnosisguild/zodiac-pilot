@@ -1,9 +1,11 @@
 import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
 import { TrackSessionsResult } from './sessionTracking'
+import { updateBadge } from './updateBadge'
 
 export const trackSimulations = ({
   withPilotSession,
   getPilotSession,
+  onDeleted,
 }: TrackSessionsResult) => {
   // track when a Pilot session is started for a window and when the simulation is started/stopped
   chrome.runtime.onMessage.addListener(
@@ -23,9 +25,9 @@ export const trackSimulations = ({
             `start intercepting JSON RPC requests in window #${message.windowId}`,
             fork
           )
-          updateSimulatingBadge({
+          updateBadge({
             windowId: message.windowId,
-            isSimulating: true,
+            text: '🟢',
           })
 
           break
@@ -53,9 +55,9 @@ export const trackSimulations = ({
               `stop intercepting JSON RPC requests in window #${message.windowId}`
             )
 
-            updateSimulatingBadge({
+            updateBadge({
               windowId: message.windowId,
-              isSimulating: false,
+              text: '',
             })
           })
 
@@ -64,24 +66,6 @@ export const trackSimulations = ({
       }
     }
   )
-}
 
-type UpdateSimulationBadgeOptions = {
-  windowId: number
-  isSimulating: boolean
-}
-
-export const updateSimulatingBadge = ({
-  windowId,
-  isSimulating,
-}: UpdateSimulationBadgeOptions) => {
-  chrome.tabs.query({ windowId }, (tabs) => {
-    for (const tab of tabs) {
-      // TODO use a different icon while simulating to make this more beautiful
-      chrome.action.setBadgeText({
-        text: isSimulating ? '🟢' : '',
-        tabId: tab.id,
-      })
-    }
-  })
+  onDeleted.addListener((windowId) => updateBadge({ windowId, text: '' }))
 }

@@ -20,7 +20,7 @@ describe('Simulation tracking', () => {
     const trackSessionsResult = trackSessions(trackRequestsResult)
     trackSimulations(trackSessionsResult)
 
-    mockActiveTab()
+    mockActiveTab({ id: 1 })
   })
 
   describe('RPC redirect rules', () => {
@@ -235,6 +235,47 @@ describe('Simulation tracking', () => {
           () => {}
         )
       ).resolves.not.toThrow()
+    })
+  })
+
+  describe('Badge', () => {
+    it('updates the badge when a simulation starts', async () => {
+      await startPilotSession({ windowId: 1, tabId: 1 })
+
+      await startSimulation({ windowId: 1 })
+
+      expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
+        text: '🟢',
+        tabId: 1,
+      })
+    })
+
+    it('updates the badge when a simulation stops', async () => {
+      await startPilotSession({ windowId: 1, tabId: 1 })
+
+      await startSimulation({ windowId: 1 })
+      await stopSimulation({ windowId: 1 })
+
+      expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
+        text: '',
+        tabId: 1,
+      })
+    })
+
+    it('updates the badge when a session ends', async () => {
+      const { stopPilotSession } = await startPilotSession({
+        windowId: 1,
+        tabId: 1,
+      })
+
+      await startSimulation({ windowId: 1 })
+
+      await stopPilotSession()
+
+      expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
+        text: '',
+        tabId: 1,
+      })
     })
   })
 })

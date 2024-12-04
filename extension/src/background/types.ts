@@ -7,3 +7,9 @@ export interface Fork {
 }
 
 export type Sessions = Map<number, PilotSession>
+
+export type Event<T> = {
+  addListener: (listener: T) => void
+  removeListener: (listener: T) => void
+  removeAllListeners: () => void
+}
