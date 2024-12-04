@@ -6,7 +6,7 @@ import {
   mockActiveTab,
   startPilotSession,
 } from '@/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
@@ -390,6 +390,21 @@ describe('Session tracking', () => {
           expect.anything()
         )
       })
+    })
+  })
+
+  describe('onDeleted', () => {
+    it('is possible to get notified when a session ends', async () => {
+      const { onDeleted } = trackSessions(trackRequests())
+
+      const handler = vi.fn()
+
+      onDeleted.addListener(handler)
+
+      const { stopPilotSession } = await startPilotSession({ windowId: 1 })
+      await stopPilotSession()
+
+      expect(handler).toHaveBeenCalled()
     })
   })
 })

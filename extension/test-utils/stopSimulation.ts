@@ -12,6 +12,6 @@ export const stopSimulation = ({ windowId }: StopSimulationOptions) =>
       type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId,
     } satisfies SimulationMessage,
-    { id: chrome.runtime.id },
+    { id: chromeMock.runtime.id },
     () => {}
   )

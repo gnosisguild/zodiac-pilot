@@ -1,8 +1,10 @@
 import { RpcMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { ChainId } from 'ser-kit'
+import { createEventListener } from './createEventListener'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
+import { Event } from './types'
 
 type TrackingState = {
   trackedTabs: Set<number>
@@ -16,21 +18,13 @@ type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
 }
 
-type Event<T> = {
-  addListener: (listener: T) => void
-  removeListener: (listener: T) => void
-  removeAllListeners: () => void
-}
-
-type NewRpcEndpointDetectedEventListener = () => void
-
 export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions
   ) => Map<number, string[]>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
-  onNewRpcEndpointDetected: Event<NewRpcEndpointDetectedEventListener>
+  onNewRpcEndpointDetected: Event
 }
 
 export const trackRequests = (): TrackRequestsResult => {
@@ -43,13 +37,13 @@ export const trackRequests = (): TrackRequestsResult => {
     rpcUrlsByTabId: new Map(),
   }
 
-  const listeners = new Set<NewRpcEndpointDetectedEventListener>()
+  const onNewRpcEndpointDetected = createEventListener()
 
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
       trackRequest(state, details).then(({ newEndpoint }) => {
         if (newEndpoint) {
-          listeners.forEach((listener) => listener())
+          onNewRpcEndpointDetected.callListeners()
         }
       })
     },
@@ -65,18 +59,8 @@ export const trackRequests = (): TrackRequestsResult => {
   })
 
   return {
-    getTrackedRpcUrlsForChainId: ({ chainId }) =>
-      getRpcUrlsByTabId(state, { chainId }),
-    onNewRpcEndpointDetected: {
-      addListener: (listener) => {
-        listeners.add(listener)
-      },
-      removeListener: (listener) => {
-        listeners.delete(listener)
-      },
-      removeAllListeners: () => {
-        listeners.clear()
-      },
+    getTrackedRpcUrlsForChainId({ chainId }) {
+      return getRpcUrlsByTabId(state, { chainId })
     },
     trackTab(tabId) {
       state.trackedTabs.add(tabId)
@@ -84,6 +68,7 @@ export const trackRequests = (): TrackRequestsResult => {
     untrackTab(tabId) {
       state.trackedTabs.delete(tabId)
     },
+    onNewRpcEndpointDetected: onNewRpcEndpointDetected.toEvent(),
   }
 }
 

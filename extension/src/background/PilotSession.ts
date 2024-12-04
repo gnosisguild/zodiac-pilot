@@ -4,7 +4,6 @@ import { invariant } from '@epic-web/invariant'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import { TrackRequestsResult } from './rpcTracking'
-import { updateSimulatingBadge } from './simulationTracking'
 import { Fork } from './types'
 
 export class PilotSession {
@@ -50,11 +49,6 @@ export class PilotSession {
 
   async delete() {
     for (const tabId of this.tabs) {
-      updateSimulatingBadge({
-        windowId: this.id,
-        isSimulating: false,
-      })
-
       sendMessageToTab(tabId, {
         type: PilotMessageType.PILOT_DISCONNECT,
       })

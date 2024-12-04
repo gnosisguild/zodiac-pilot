@@ -2,15 +2,19 @@ import { Message, PilotMessageType } from '@/messages'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
+import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession } from './PilotSession'
 import { TrackRequestsResult } from './rpcTracking'
-import { Sessions } from './types'
+import { Event, Sessions } from './types'
 import { CallbackFn, withPilotSession } from './withPilotSession'
+
+type SessionDeletedEventListener = (windowId: number) => void
 
 export type TrackSessionsResult = {
   withPilotSession: (windowId: number, callback: CallbackFn) => Promise<void>
   getPilotSession: (windowId: number) => PilotSession
+  onDeleted: Event<SessionDeletedEventListener>
 }
 
 export const trackSessions = (
@@ -18,6 +22,8 @@ export const trackSessions = (
 ): TrackSessionsResult => {
   /** maps `windowId` to pilot session */
   const sessions = new Map<number, PilotSession>()
+
+  const onDeleted = createEventListener<SessionDeletedEventListener>()
 
   // all messages from the panel app are received here
   // (the port is opened from panel/port.ts)
@@ -51,16 +57,20 @@ export const trackSessions = (
         return
       }
 
-      console.debug('Sidepanel closed.', windowIdRef.current)
+      const windowId = windowIdRef.current
 
-      const session = sessions.get(windowIdRef.current)
+      console.debug('Sidepanel closed.', windowId)
+
+      const session = sessions.get(windowId)
 
       if (session) {
-        console.debug('stop pilot session', { windowId: windowIdRef.current })
+        console.debug('stop pilot session', { windowId: windowId })
 
         session.delete()
 
-        sessions.delete(windowIdRef.current)
+        sessions.delete(windowId)
+
+        onDeleted.callListeners(windowId)
       }
 
       reloadActiveTab()
@@ -112,6 +122,7 @@ export const trackSessions = (
     withPilotSession: (windowId, callback) =>
       withPilotSession(sessions, windowId, callback),
     getPilotSession: (windowId) => getPilotSession(sessions, windowId),
+    onDeleted: onDeleted.toEvent(),
   }
 }
 
