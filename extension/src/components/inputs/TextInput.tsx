@@ -1,22 +1,27 @@
 import { ComponentPropsWithoutRef } from 'react'
-import { Input } from './Input'
+import { ComposableInputProps, Input } from './Input'
 
 type TextInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
   'id' | 'type' | 'className'
-> & {
-  label: string
-  description?: string
-  error?: string | null
-}
+> &
+  ComposableInputProps
 
 export const TextInput = ({
   label,
   description,
   error,
+  before,
+  after,
   ...props
 }: TextInputProps) => (
-  <Input label={label} description={description} error={error}>
+  <Input
+    label={label}
+    description={description}
+    error={error}
+    before={before}
+    after={after}
+  >
     {({ inputId, descriptionId }) => (
       <input
         {...props}

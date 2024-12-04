@@ -1,3 +1,4 @@
+export { AddressInput } from './AddressInput'
 export { Input } from './Input'
 export { Label } from './Label'
 export { Select, selectStyles } from './Select'

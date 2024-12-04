@@ -10,11 +10,24 @@ type InputProps = {
   label: string
   description?: string
   error?: string | null
-  header?: ReactNode
+  before?: ReactNode
+  after?: ReactNode
   children: (props: RenderProps) => ReactNode
 }
 
-export const Input = ({ children, label, description, error }: InputProps) => {
+export type ComposableInputProps = Omit<
+  InputProps,
+  'children' | 'after' | 'before'
+>
+
+export const Input = ({
+  children,
+  before,
+  after,
+  label,
+  description,
+  error,
+}: InputProps) => {
   const inputId = useId()
   const descriptionId = useId()
 
@@ -30,8 +43,12 @@ export const Input = ({ children, label, description, error }: InputProps) => {
         )}
       </div>
 
-      <div className="rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
+      <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
+        {before}
+
         {children({ inputId, descriptionId })}
+
+        {after}
       </div>
 
       {error && <div className="text-sm font-bold text-red-600">{error}</div>}
