@@ -11,17 +11,10 @@ export const TextInput = ({
   label,
   description,
   error,
-  before,
-  after,
+
   ...props
 }: TextInputProps) => (
-  <Input
-    label={label}
-    description={description}
-    error={error}
-    before={before}
-    after={after}
-  >
+  <Input label={label} description={description} error={error}>
     {({ inputId, descriptionId }) => (
       <input
         {...props}

@@ -1,5 +1,6 @@
 import { SecondaryButton } from '@/components'
 import { useWalletConnect, WalletConnectResult } from '@/providers'
+import { ProviderType } from '@/types'
 import { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
@@ -35,7 +36,7 @@ export const WalletConnect = ({
   if (isConnected(walletConnect)) {
     return (
       <Connected onDisconnect={disconnect}>
-        <Account>{pilotAddress}</Account>
+        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
       </Connected>
     )
   }
@@ -52,7 +53,7 @@ export const WalletConnect = ({
           }
         }}
       >
-        <Account>{pilotAddress}</Account>
+        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
       </WalletDisconnected>
     )
   }
@@ -64,7 +65,7 @@ export const WalletConnect = ({
   if (knownAccount === false) {
     return (
       <Section>
-        <Account>{pilotAddress}</Account>
+        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
         <SecondaryButton onClick={disconnect}>Disconnect</SecondaryButton>
       </Section>
     )
@@ -73,7 +74,7 @@ export const WalletConnect = ({
   if (walletConnect.chainId !== chainId) {
     return (
       <SwitchChain chainId={chainId} onDisconnect={disconnect}>
-        <Account>{pilotAddress}</Account>
+        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
       </SwitchChain>
     )
   }

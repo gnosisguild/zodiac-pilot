@@ -37,7 +37,7 @@ export const Input = ({
         <Label htmlFor={inputId}>{label}</Label>
 
         {description && (
-          <span className="opacity-70" id={descriptionId}>
+          <span className="text-sm opacity-70" id={descriptionId}>
             ({description})
           </span>
         )}
@@ -46,7 +46,7 @@ export const Input = ({
       <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
         {before}
 
-        {children({ inputId, descriptionId })}
+        <div className="flex-1">{children({ inputId, descriptionId })}</div>
 
         {after}
       </div>
