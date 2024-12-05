@@ -61,7 +61,7 @@ export const ZodiacMod = ({
           ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
           ...modules.map((mod) => ({
             value: mod.moduleAddress,
-            label: `${MODULE_NAMES[mod.type]} Mod`,
+            label: MODULE_NAMES[mod.type],
           })),
         ]}
         onChange={async (selected) => {
