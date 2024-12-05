@@ -7,7 +7,12 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
+import {
+  asLegacyConnection,
+  fromLegacyConnection,
+  INITIAL_DEFAULT_ROUTE,
+  useExecutionRoutes,
+} from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -21,10 +26,6 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
 import { formatPrefixedAddress } from 'ser-kit'
-import {
-  asLegacyConnection,
-  fromLegacyConnection,
-} from '../../legacyConnectionMigrations'
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'

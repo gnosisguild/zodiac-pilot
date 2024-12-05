@@ -1,4 +1,5 @@
-import { ExecutionRoute } from '@/types'
+import { ExecutionRoute, LegacyConnection, ProviderType } from '@/types'
+import { nanoid } from 'nanoid'
 import {
   createContext,
   PropsWithChildren,
@@ -13,15 +14,22 @@ import {
   ProvideSelectedExecutionRoute,
   useSelectedRouteId,
 } from './SelectedRouteContext'
+import { fromLegacyConnection } from './legacyConnectionMigrations'
 
 type Context = {
   routes: ExecutionRoute[]
+  createRoute: (route: Partial<Omit<LegacyConnection, 'id'>>) => void
   saveRoute: (route: ExecutionRoute) => void
   removeRoute: (routeId: string) => void
 }
 
 const ExecutionRoutesContext = createContext<Context>({
   routes: [],
+  createRoute() {
+    throw new Error(
+      '"createRoute" is not available outside of `<ProvideExecutionRoutes />` context.'
+    )
+  },
   saveRoute() {
     throw new Error(
       '"saveRoute" is not available outside of `<ProvideExecutionRoutes />` context.'
@@ -47,6 +55,27 @@ export const ProvideExecutionRoutes = ({ children }: PropsWithChildren) => {
     [setRoute]
   )
 
+  const createRoute = useCallback(
+    (route: Partial<Omit<LegacyConnection, 'id'>>) => {
+      const id = nanoid()
+
+      setRoute(
+        id,
+        fromLegacyConnection({
+          id,
+          label: '',
+          avatarAddress: '',
+          chainId: 1,
+          moduleAddress: '',
+          pilotAddress: '',
+          providerType: ProviderType.InjectedWallet,
+          ...route,
+        })
+      )
+    },
+    [setRoute]
+  )
+
   const routesList = useMemo(
     () => (routes == null ? [] : Object.values(routes)),
     [routes]
@@ -61,6 +90,7 @@ export const ProvideExecutionRoutes = ({ children }: PropsWithChildren) => {
     <ExecutionRoutesContext.Provider
       value={{
         routes: routesList,
+        createRoute,
         saveRoute,
         removeRoute,
       }}
@@ -80,6 +110,12 @@ export const useSaveExecutionRoute = () => {
   const { saveRoute } = useContext(ExecutionRoutesContext)
 
   return saveRoute
+}
+
+export const useCreateExecutionRoute = () => {
+  const { createRoute } = useContext(ExecutionRoutesContext)
+
+  return createRoute
 }
 
 export const useRemoveExecutionRoute = () => {
