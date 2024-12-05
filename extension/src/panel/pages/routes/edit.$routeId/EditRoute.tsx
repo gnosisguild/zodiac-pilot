@@ -92,9 +92,7 @@ export const EditRoute = () => {
             <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
           </Breadcrumbs>
 
-          <h2 className="mt-1 text-xl">
-            {currentRouteState.label || 'New connection'}
-          </h2>
+          <Page.Title>{currentRouteState.label || 'New connection'}</Page.Title>
         </Page.Header>
 
         <Page.Content>

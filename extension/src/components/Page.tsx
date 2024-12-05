@@ -15,6 +15,12 @@ const Header = ({ children }: PropsWithChildren) => (
 
 Page.Header = Header
 
+const Title = ({ children }: PropsWithChildren) => (
+  <h1 className="mt-1 text-xl">{children}</h1>
+)
+
+Page.Title = Title
+
 const Content = (
   { children }: PropsWithChildren,
   ref: ForwardedRef<HTMLDivElement>

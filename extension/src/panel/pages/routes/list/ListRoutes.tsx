@@ -16,7 +16,7 @@ export const ListRoutes = () => {
           <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
         </Breadcrumbs>
 
-        <h2 className="mt-1 text-xl">Pilot Routes</h2>
+        <Page.Title>Pilot Routes</Page.Title>
       </Page.Header>
 
       <Page.Content>
