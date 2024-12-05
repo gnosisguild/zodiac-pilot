@@ -4,7 +4,7 @@ import { invariant } from '@epic-web/invariant'
 import { ChainId } from 'ser-kit'
 
 export interface Props {
-  value: ChainId
+  value?: ChainId
   onChange(chainId: ChainId): void
 }
 

@@ -7,10 +7,16 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
+import {
+  asLegacyConnection,
+  fromLegacyConnection,
+  INITIAL_DEFAULT_ROUTE,
+  useExecutionRoutes,
+} from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
+import { ConnectWallet } from '@/wallet'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -20,19 +26,14 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
 import { formatPrefixedAddress } from 'ser-kit'
-import {
-  asLegacyConnection,
-  fromLegacyConnection,
-} from '../../legacyConnectionMigrations'
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
+import { ChainSelect } from '../ChainSelect'
 import { AvatarInput } from './AvatarInput'
-import { ChainSelect } from './ChainSelect'
 import { LaunchButton } from './LaunchButton'
 import { RemoveButton } from './RemoveButton'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
 import { useSafesWithOwner } from './useSafesWithOwner'
-import { ConnectWallet } from './wallet'
 import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
@@ -92,9 +93,7 @@ export const EditRoute = () => {
             <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
           </Breadcrumbs>
 
-          <h2 className="mt-1 text-xl">
-            {currentRouteState.label || 'New connection'}
-          </h2>
+          <Page.Title>{currentRouteState.label || 'New connection'}</Page.Title>
         </Page.Header>
 
         <Page.Content>

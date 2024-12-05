@@ -1,12 +1,11 @@
 import { Blockie } from '@/components'
-import { useExecutionRoute } from '@/execution-routes'
+import { asLegacyConnection, useExecutionRoute } from '@/execution-routes'
 import { Transition } from '@headlessui/react'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Stick from 'react-stick'
 import { ConnectionStack } from '../../ConnectionStack'
-import { asLegacyConnection } from '../../legacyConnectionMigrations'
 
 export const RouteBubble = () => {
   const route = useExecutionRoute()

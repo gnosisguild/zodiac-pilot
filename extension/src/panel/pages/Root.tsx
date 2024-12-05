@@ -1,5 +1,7 @@
 import { getChainId } from '@/chains'
 import {
+  asLegacyConnection,
+  fromLegacyConnection,
   useExecutionRoute,
   useMarkRouteAsUsed,
   useSaveExecutionRoute,
@@ -13,10 +15,6 @@ import { useProvider } from '@/providers-ui'
 import { Outlet } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
 import { useStorage } from '../utils'
-import {
-  asLegacyConnection,
-  fromLegacyConnection,
-} from './legacyConnectionMigrations'
 
 export const Root = () => {
   // update the last used timestamp for the current route

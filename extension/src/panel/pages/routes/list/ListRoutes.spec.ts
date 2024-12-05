@@ -1,10 +1,5 @@
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
-import {
-  connectMockWallet,
-  expectRouteToBe,
-  mockRoutes,
-  render,
-} from '@/test-utils'
+import { ETH_ZERO_ADDRESS } from '@/chains'
+import { expectRouteToBe, mockRoutes, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it } from 'vitest'
@@ -18,21 +13,24 @@ describe('List routes', () => {
       initiator: ETH_ZERO_ADDRESS,
     })
 
-    const { mockedPort } = await render(
-      '/routes',
-      [{ Component: ListRoutes, path: '/routes' }],
-      {
-        inspectRoutes: ['/routes/:route-id'],
-      }
-    )
-
-    await connectMockWallet(mockedPort, {
-      accounts: [ZERO_ADDRESS],
-      chainId: '0x1',
+    await render('/routes', [{ Component: ListRoutes, path: '/routes' }], {
+      inspectRoutes: ['/routes/:route-id'],
     })
 
     await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
 
     await expectRouteToBe('/routes/testRoute')
+  })
+
+  it('is possible to create a new route', async () => {
+    mockRoutes()
+
+    await render('/routes', [{ Component: ListRoutes, path: '/routes' }], {
+      inspectRoutes: ['/routes/new'],
+    })
+
+    await userEvent.click(screen.getByRole('link', { name: 'Add route' }))
+
+    await expectRouteToBe('/routes/new')
   })
 })
