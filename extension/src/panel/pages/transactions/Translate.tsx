@@ -1,15 +1,13 @@
 import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { Wrench } from 'lucide-react'
 import { useApplicableTranslation } from '../../transactionTranslations'
 
 type Props = {
   index: number
-  labeled?: true
 }
 
-export const Translate = ({ index, labeled }: Props) => {
+export const Translate = ({ index }: Props) => {
   const provider = useProvider()
   const translation = useApplicableTranslation(index)
 
@@ -24,9 +22,9 @@ export const Translate = ({ index, labeled }: Props) => {
 
   return (
     <GhostButton
-      iconOnly={!labeled}
+      iconOnly
       size="small"
-      icon={Wrench}
+      icon={translation.icon}
       onClick={translation.apply}
     >
       {translation.title}

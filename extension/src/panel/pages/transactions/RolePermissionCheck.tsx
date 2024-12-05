@@ -140,11 +140,17 @@ export const RolePermissionCheck = ({
               {error}
             </Tag>
           )}
-          {error && !translationAvailable && (
-            <CopyToClipboard transaction={transactionState.transaction} />
+
+          {error && (
+            <>
+              {translationAvailable ? (
+                <Translate index={index} />
+              ) : (
+                <CopyToClipboard transaction={transactionState.transaction} />
+              )}
+            </>
           )}
         </div>
-        {error && !!translationAvailable && <Translate index={index} labeled />}
       </div>
     </div>
   )
