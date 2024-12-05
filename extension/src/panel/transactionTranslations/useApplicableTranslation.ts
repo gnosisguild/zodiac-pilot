@@ -2,7 +2,7 @@ import { getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { useDispatch, useTransactions } from '@/state'
+import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
@@ -13,10 +13,11 @@ import {
 } from './applicableTranslationCache'
 import { translations } from './translations'
 
-export const useApplicableTranslation = (transactionIndex: number) => {
+export const useApplicableTranslation = (transactionId: string) => {
   const provider = useProvider()
   const transactions = useTransactions()
-  const metaTransaction = transactions[transactionIndex].transaction
+  const transactionState = getTransaction(transactions, transactionId)
+  const metaTransaction = transactionState.transaction
 
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
@@ -28,9 +29,10 @@ export const useApplicableTranslation = (transactionIndex: number) => {
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
-      const transactionState = transactions[transactionIndex]
+      const transactionState = getTransaction(transactions, transactionId)
+      const index = transactions.indexOf(transactionState)
       const laterTransactions = transactions
-        .slice(transactionIndex + 1)
+        .slice(index + 1)
         .map((txState) => txState.transaction)
 
       invariant(
@@ -54,7 +56,7 @@ export const useApplicableTranslation = (transactionIndex: number) => {
         provider.sendMetaTransaction(tx)
       }
     },
-    [provider, dispatch, transactions, transactionIndex]
+    [transactions, transactionId, provider, dispatch]
   )
 
   const chainId = getChainId(avatar)
@@ -135,3 +137,17 @@ const cacheKey = (
   `${chainId}:${avatarAddress}:${transaction.to}:${transaction.value}:${transaction.data}:${
     transaction.operation || 0
   }`
+
+const getTransaction = (
+  transactions: TransactionState[],
+  transactionId: string
+) => {
+  const transaction = transactions.find(({ id }) => id === transactionId)
+
+  invariant(
+    transaction != null,
+    `Could not find transaction with id "${transactionId}"`
+  )
+
+  return transaction
+}
