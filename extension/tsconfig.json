@@ -21,6 +21,7 @@
       "@/components": ["./src/components/index.ts"],
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
+      "@/const": ["./src/const.ts"],
       "@/chains": ["./src/chains/index.ts"],
       "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
       "@/state": ["./src/panel/state/index.tsx"],
@@ -33,7 +34,8 @@
       "@/transaction-translation": [
         "./src/panel/transactionTranslations/index.ts"
       ],
-      "@/safe": ["./src/panel/integrations/safe/index.ts"]
+      "@/safe": ["./src/panel/integrations/safe/index.ts"],
+      "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"]
     }
   },
   "include": ["src", "e2e", "test-utils", "./vitest.setup.mts"]

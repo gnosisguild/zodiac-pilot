@@ -1,4 +1,5 @@
 import { ExecutionRoute, LegacyConnection, ProviderType } from '@/types'
+import { MULTISEND, MULTISEND_CALL_ONLY } from '@/zodiac'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
@@ -10,10 +11,6 @@ import {
   Roles,
   Waypoint,
 } from 'ser-kit'
-import {
-  MULTISEND,
-  MULTISEND_CALL_ONLY,
-} from '../integrations/zodiac/rolesMultisend'
 
 export function fromLegacyConnection(
   connection: LegacyConnection

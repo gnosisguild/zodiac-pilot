@@ -1,7 +1,6 @@
 import { RouteObject } from 'react-router-dom'
-import { EditRoute } from './edit-route'
-import { ListRoutes } from './list-routes'
 import { Root } from './Root'
+import { routes } from './routes'
 import { Transactions } from './transactions'
 
 export const pages: RouteObject[] = [
@@ -15,11 +14,7 @@ export const pages: RouteObject[] = [
       },
       {
         path: '/routes',
-        element: <ListRoutes />,
-      },
-      {
-        path: '/routes/:routeId',
-        element: <EditRoute />,
+        children: routes,
       },
     ],
   },

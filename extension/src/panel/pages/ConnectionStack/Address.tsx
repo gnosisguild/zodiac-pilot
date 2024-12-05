@@ -1,8 +1,6 @@
+import { Address as BaseAddress, Blockie, Tag } from '@/components'
 import { shortenAddress, validateAddress } from '@/utils'
 import { Unlink } from 'lucide-react'
-import { Address as BaseAddress } from '../Address'
-import { Blockie } from '../Blockie'
-import { Tag } from '../Tag'
 
 interface Props {
   address: string
