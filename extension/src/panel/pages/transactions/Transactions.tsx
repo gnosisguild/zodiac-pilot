@@ -1,17 +1,11 @@
-import {
-  GhostButton,
-  Info,
-  infoToast,
-  Page,
-  SecondaryButton,
-} from '@/components'
+import { CopyToClipboard, GhostButton, Info, Page } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
-import { Copy, RefreshCcw } from 'lucide-react'
+import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
@@ -49,18 +43,6 @@ export const Transactions = () => {
     }
   }
 
-  const copyTransactionData = async () => {
-    const metaTransactions = transactions.map((txState) => txState.transaction)
-
-    navigator.clipboard.writeText(
-      JSON.stringify(metaTransactions, undefined, 2)
-    )
-    infoToast({
-      title: 'Copied!',
-      message: 'Transaction data has been copied to clipboard.',
-    })
-  }
-
   return (
     <Page>
       <Page.Header>
@@ -74,15 +56,14 @@ export const Transactions = () => {
           </div>
 
           <div className="flex gap-1">
-            <GhostButton
+            <CopyToClipboard
               iconOnly
-              size="small"
-              icon={Copy}
               disabled={transactions.length === 0}
-              onClick={copyTransactionData}
+              size="small"
+              data={transactions.map((txState) => txState.transaction)}
             >
               Copy batch transaction data to clipboard
-            </GhostButton>
+            </CopyToClipboard>
 
             <GhostButton
               iconOnly
@@ -116,12 +97,12 @@ export const Transactions = () => {
 
       <Page.Footer>
         {!route.initiator && (
-          <SecondaryButton
-            onClick={copyTransactionData}
+          <CopyToClipboard
+            data={transactions.map((txState) => txState.transaction)}
             disabled={transactions.length === 0}
           >
             Copy transaction data
-          </SecondaryButton>
+          </CopyToClipboard>
         )}
 
         <Submit />

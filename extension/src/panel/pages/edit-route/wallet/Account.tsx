@@ -1,7 +1,6 @@
-import { AddressInput, GhostButton, infoToast } from '@/components'
+import { AddressInput, CopyToClipboard } from '@/components'
 import { ProviderType } from '@/types'
 import { validateAddress } from '@/utils'
-import { Copy } from 'lucide-react'
 
 type AccountProps = {
   type: ProviderType
@@ -20,20 +19,9 @@ export const Account = ({ children, type }: AccountProps) => {
         type === ProviderType.InjectedWallet ? 'Meta Mask' : 'Wallet Connect'
       }
       action={
-        <GhostButton
-          iconOnly
-          size="small"
-          icon={Copy}
-          onClick={() => {
-            navigator.clipboard.writeText(JSON.stringify(address, undefined, 2))
-            infoToast({
-              title: 'Copied!',
-              message: 'Address has been copied to clipboard.',
-            })
-          }}
-        >
+        <CopyToClipboard iconOnly size="small" data={address}>
           Copy address
-        </GhostButton>
+        </CopyToClipboard>
       }
     />
   )

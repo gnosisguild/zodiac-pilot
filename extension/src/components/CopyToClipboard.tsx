@@ -6,17 +6,11 @@ import { infoToast } from './toasts'
 type CopyToClipboardProps = PropsWithChildren<{
   data: unknown
 }> &
-  Pick<BaseButtonProps, 'size' | 'iconOnly'>
+  Pick<BaseButtonProps, 'size' | 'iconOnly' | 'disabled'>
 
-export const CopyToClipboard = ({
-  data,
-  children,
-  iconOnly,
-  size,
-}: CopyToClipboardProps) => (
+export const CopyToClipboard = ({ data, ...props }: CopyToClipboardProps) => (
   <GhostButton
-    iconOnly={iconOnly}
-    size={size}
+    {...props}
     icon={Copy}
     onClick={() => {
       navigator.clipboard.writeText(JSON.stringify(data, undefined, 2))
@@ -26,7 +20,5 @@ export const CopyToClipboard = ({
         message: 'Data has been copied to the clipboard.',
       })
     }}
-  >
-    {children}
-  </GhostButton>
+  />
 )
