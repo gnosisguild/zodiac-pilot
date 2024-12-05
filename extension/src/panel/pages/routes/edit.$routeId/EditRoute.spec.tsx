@@ -1,8 +1,27 @@
-import { chromeMock, expectRouteToBe, mockRoute, render } from '@/test-utils'
+import { getReadOnlyProvider } from '@/providers'
+import {
+  chromeMock,
+  expectRouteToBe,
+  mockRoute,
+  mockRoutes,
+  render,
+} from '@/test-utils'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { EditRoute } from './EditRoute'
+
+vi.mock('@/providers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers')>()
+
+  return {
+    ...module,
+
+    getReadOnlyProvider: vi.fn(module.getReadOnlyProvider),
+  }
+})
+
+const mockGetReadOnlyProvider = vi.mocked(getReadOnlyProvider)
 
 describe('Edit Zodiac route', () => {
   it('is possible to rename a route', async () => {
@@ -101,6 +120,31 @@ describe('Edit Zodiac route', () => {
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
       await expectRouteToBe('/routes')
+    })
+  })
+
+  describe('New route', () => {
+    it('uses the correct chain to fetch zodiac modules', async () => {
+      mockRoutes()
+
+      await render('/routes/route-id', [
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+        },
+      ])
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(
+        screen.getByRole('option', { name: 'Arbitrum One' })
+      )
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Piloted Safe' }),
+        '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb'
+      )
+
+      expect(mockGetReadOnlyProvider).toHaveBeenCalledWith(42161)
     })
   })
 })

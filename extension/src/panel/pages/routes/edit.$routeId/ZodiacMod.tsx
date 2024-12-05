@@ -1,7 +1,7 @@
 import { Warning } from '@/components'
-import { MODULE_NAMES } from '../../../const'
-import { SupportedModuleType } from '../../integrations/zodiac/types'
-import { useZodiacModules } from '../../integrations/zodiac/useZodiacModules'
+import { MODULE_NAMES } from '@/const'
+import { SupportedModuleType, useZodiacModules } from '@/zodiac'
+import { PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { useRouteId } from './useRouteId'
 import { useSafeDelegates } from './useSafeDelegates'
@@ -13,7 +13,7 @@ type Value = {
 }
 
 type ZodiacModProps = {
-  avatarAddress: string
+  avatarAddress: PrefixedAddress
   pilotAddress: string
 
   value: Value | null
@@ -32,7 +32,7 @@ export const ZodiacMod = ({
     loading: loadingMods,
     isValidSafe,
     modules,
-  } = useZodiacModules(avatarAddress, routeId)
+  } = useZodiacModules(avatarAddress)
 
   const { safes } = useSafesWithOwner(pilotAddress, routeId)
   const { delegates } = useSafeDelegates(avatarAddress, routeId)
@@ -61,7 +61,7 @@ export const ZodiacMod = ({
           ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
           ...modules.map((mod) => ({
             value: mod.moduleAddress,
-            label: `${MODULE_NAMES[mod.type]} Mod`,
+            label: MODULE_NAMES[mod.type],
           })),
         ]}
         onChange={async (selected) => {

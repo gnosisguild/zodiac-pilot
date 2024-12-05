@@ -1,16 +1,12 @@
-import {
-  ConnectionStack,
-  SecondaryButton,
-  SecondaryLinkButton,
-  Tag,
-} from '@/components'
+import { SecondaryButton, SecondaryLinkButton, Tag } from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useState } from 'react'
-import { asLegacyConnection } from '../legacyConnectionMigrations'
-import { ClearTransactionsModal } from '../useConfirmClearTransaction'
+import { ConnectionStack } from '../../ConnectionStack'
+import { asLegacyConnection } from '../../legacyConnectionMigrations'
+import { ClearTransactionsModal } from '../../useConfirmClearTransaction'
 
 interface RouteProps {
   route: ExecutionRoute
