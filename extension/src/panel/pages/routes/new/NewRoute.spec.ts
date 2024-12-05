@@ -63,9 +63,32 @@ describe('New route', () => {
         screen.getByRole('button', { name: 'Save & Launch' })
       )
 
-      expect(mockCreateRoute).toHaveBeenCalledWith({ label: 'Test route' })
+      expect(mockCreateRoute).toHaveBeenCalledWith(
+        expect.objectContaining({ label: 'Test route' })
+      )
 
       await expectRouteToBe('/')
+    })
+  })
+
+  describe('Chain', () => {
+    it('allows to configure the chain', async () => {
+      await render('/routes/new', [
+        { path: '/routes/new', Component: NewRoute },
+      ])
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(
+        screen.getByRole('option', { name: 'Arbitrum One' })
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' })
+      )
+
+      expect(mockCreateRoute).toHaveBeenCalledWith(
+        expect.objectContaining({ chainId: 42161 })
+      )
     })
   })
 })

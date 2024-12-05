@@ -2,9 +2,12 @@ import { Breadcrumbs, Page, PrimaryButton, TextInput } from '@/components'
 import { useCreateExecutionRoute } from '@/execution-routes'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ChainId } from 'ser-kit'
+import { ChainSelect } from '../ChainSelect'
 
 export const NewRoute = () => {
   const [label, setLabel] = useState('')
+  const [chainId, setChainId] = useState<ChainId | undefined>(undefined)
 
   const createRoute = useCreateExecutionRoute()
   const navigate = useNavigate()
@@ -27,12 +30,14 @@ export const NewRoute = () => {
           placeholder="New route"
           onChange={(event) => setLabel(event.target.value)}
         />
+
+        <ChainSelect value={chainId} onChange={setChainId} />
       </Page.Content>
 
       <Page.Footer>
         <PrimaryButton
           onClick={() => {
-            createRoute({ label })
+            createRoute({ label, chainId })
 
             navigate('/')
           }}
