@@ -1,3 +1,4 @@
+import { TransactionState } from '@/state'
 import { sleepTillIdle } from '@/utils'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import { ComponentType } from 'react'
@@ -22,12 +23,16 @@ type Options = Parameters<typeof baseRender>[1] & {
    * `expectRouteToBe` helper from the render result.
    */
   inspectRoutes?: string[]
+  /**
+   * Initial transaction state when the component renders
+   */
+  initialState?: TransactionState[]
 }
 
 export const render = async (
   currentPath: string,
   routes: Route[],
-  { activeTab, inspectRoutes = [], ...options }: Options = {}
+  { activeTab, inspectRoutes = [], initialState, ...options }: Options = {}
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = createMockPort()
@@ -35,7 +40,7 @@ export const render = async (
   mockTabConnect(mockedPort)
 
   const result = baseRender(
-    <RenderWrapper>
+    <RenderWrapper initialState={initialState}>
       <MemoryRouter initialEntries={[currentPath]}>
         <Routes>
           <Route path="/" element={<TestElement />}>

@@ -29,7 +29,10 @@ export const Transaction = ({ index, transactionState }: Props) => {
   const showRoles = routeGoesThroughRoles(route)
 
   return (
-    <div className="flex flex-col rounded-md border border-zinc-300/80 dark:border-zinc-500/60">
+    <section
+      aria-labelledby={transactionState.id}
+      className="flex flex-col rounded-md border border-zinc-300/80 dark:border-zinc-500/60"
+    >
       <div className="bg-zinc-100/80 p-2 dark:bg-zinc-500/20">
         <TransactionHeader
           index={index}
@@ -68,7 +71,7 @@ export const Transaction = ({ index, transactionState }: Props) => {
           />
         </div>
       )}
-    </div>
+    </section>
   )
 }
 
@@ -95,7 +98,10 @@ const TransactionHeader = ({
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
         <div className="flex flex-col gap-1 overflow-hidden">
-          <h5 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold">
+          <h5
+            id={transactionState.id}
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
+          >
             {functionFragment
               ? functionFragment.format('sighash').split('(')[0]
               : 'Raw transaction'}
