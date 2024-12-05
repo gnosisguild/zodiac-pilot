@@ -12,7 +12,7 @@ import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { Copy, RefreshCcw } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
@@ -27,20 +27,7 @@ export const Transactions = () => {
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()
 
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-
-  const [scrollItemIntoView, setScrollItemIntoView] = useState<
-    number | undefined
-  >(undefined)
-
-  const lengthRef = useRef(0)
-  useEffect(() => {
-    if (transactions.length > lengthRef.current) {
-      setScrollItemIntoView(transactions.length - 1)
-    }
-
-    lengthRef.current = transactions.length
-  }, [transactions])
+  const scrollContainerRef = useScrollIntoView()
 
   const reforkAndRerun = async () => {
     // remove all transactions from the store
@@ -112,12 +99,9 @@ export const Transactions = () => {
 
       <Page.Content ref={scrollContainerRef}>
         {transactions.map((transactionState, index) => (
-          <Transaction
-            key={transactionState.id}
-            transactionState={transactionState}
-            index={index}
-            scrollIntoView={scrollItemIntoView === index}
-          />
+          <div id={`t-${transactionState.id}`} key={transactionState.id}>
+            <Transaction transactionState={transactionState} index={index} />
+          </div>
         ))}
 
         {transactions.length === 0 && (
@@ -144,4 +128,37 @@ export const Transactions = () => {
       </Page.Footer>
     </Page>
   )
+}
+
+const useScrollIntoView = () => {
+  const transactions = useTransactions()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const currentTransactionsRef = useRef(transactions)
+
+  useEffect(() => {
+    if (currentTransactionsRef.current.length < transactions.length) {
+      const lastTransaction = transactions.at(-1)
+
+      invariant(lastTransaction != null, 'Could not get new transaction')
+
+      if (scrollContainerRef.current != null) {
+        const element = scrollContainerRef.current.querySelector(
+          `#t-${lastTransaction.id}`
+        )
+
+        if (element != null) {
+          element.scrollIntoView({
+            block: 'nearest',
+            behavior: 'smooth',
+            inline: 'center',
+          })
+        }
+      }
+    }
+
+    currentTransactionsRef.current = transactions
+  }, [transactions])
+
+  return scrollContainerRef
 }

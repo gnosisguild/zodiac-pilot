@@ -24,8 +24,15 @@ export const useDispatch = () => {
   return dispatch
 }
 
-export const ProvideState = ({ children }: PropsWithChildren) => {
-  const [state, dispatch] = useReducer(rootReducer, [])
+type ProvideStateProps = PropsWithChildren<{
+  initialState?: TransactionState[]
+}>
+
+export const ProvideState = ({
+  children,
+  initialState = [],
+}: ProvideStateProps) => {
+  const [state, dispatch] = useReducer(rootReducer, initialState)
 
   return (
     <DispatchContext.Provider value={{ dispatch }}>

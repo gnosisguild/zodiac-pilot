@@ -77,9 +77,15 @@ export const useGloballyApplicableTranslation = () => {
         chainId,
         avatarAddress
       )
-      if (canceled) return
+      if (canceled) {
+        return
+      }
 
-      if (translation?.autoApply) {
+      if (translation == null) {
+        return
+      }
+
+      if (translation.autoApply) {
         apply(translation)
       } else {
         throw new Error('Not implemented')

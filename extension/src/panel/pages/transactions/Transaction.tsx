@@ -4,7 +4,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { TransactionState } from '@/state'
 import { ExecutionRoute } from '@/types'
 import { formatEther, Fragment } from 'ethers'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { AccountType } from 'ser-kit'
 import { ContractAddress } from './ContractAddress'
 import { CopyToClipboard } from './CopyToClipboard'
@@ -19,26 +19,18 @@ import { useDecodedFunctionData } from './useDecodedFunctionData'
 interface Props {
   transactionState: TransactionState
   index: number
-  scrollIntoView: boolean
 }
 
-export const Transaction = ({
-  index,
-  transactionState,
-  scrollIntoView,
-}: Props) => {
+export const Transaction = ({ index, transactionState }: Props) => {
   const [expanded, setExpanded] = useState(true)
   const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
-  const elementRef = useScrollIntoView(scrollIntoView)
-
   const decoded = useDecodedFunctionData(transactionState)
-
   const showRoles = routeGoesThroughRoles(route)
 
   return (
-    <div
-      ref={elementRef}
+    <section
+      aria-labelledby={transactionState.id}
       className="flex flex-col rounded-md border border-zinc-300/80 dark:border-zinc-500/60"
     >
       <div className="bg-zinc-100/80 p-2 dark:bg-zinc-500/20">
@@ -79,7 +71,7 @@ export const Transaction = ({
           />
         </div>
       )}
-    </div>
+    </section>
   )
 }
 
@@ -106,7 +98,10 @@ const TransactionHeader = ({
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
 
         <div className="flex flex-col gap-1 overflow-hidden">
-          <h5 className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold">
+          <h5
+            id={transactionState.id}
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
+          >
             {functionFragment
               ? functionFragment.format('sighash').split('(')[0]
               : 'Raw transaction'}
@@ -182,57 +177,6 @@ const EtherValue = ({ value }: EtherValueProps) => {
       description={CHAIN_CURRENCY[chainId]}
     />
   )
-}
-
-const useScrollIntoView = (enable: boolean) => {
-  const elementRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    if (!enable || !elementRef.current) return
-
-    const scrollParent = getScrollParent(elementRef.current)
-    if (!scrollParent) return
-
-    // scroll to it right away
-    elementRef.current.scrollIntoView({
-      behavior: 'smooth',
-    })
-
-    // keep it in view while it grows
-    const resizeObserver = new ResizeObserver(() => {
-      elementRef.current?.scrollIntoView({
-        behavior: 'smooth',
-      })
-
-      // this delay must be greater than the browser's native scrollIntoView animation duration
-      window.setTimeout(() => {
-        scrollParent.addEventListener('scroll', stopObserving)
-      }, 1000)
-    })
-    resizeObserver.observe(elementRef.current)
-
-    // stop keeping it in view once the user scrolls
-    const stopObserving = () => {
-      resizeObserver.disconnect()
-      scrollParent.removeEventListener('scroll', stopObserving)
-    }
-
-    return () => {
-      stopObserving()
-    }
-  }, [enable])
-  return elementRef
-}
-
-function getScrollParent(node: Element | null): Element | null {
-  if (node === null) {
-    return null
-  }
-
-  if (node.scrollHeight > node.clientHeight) {
-    return node
-  } else {
-    return getScrollParent(node.parentElement)
-  }
 }
 
 const routeGoesThroughRoles = (route: ExecutionRoute) =>
