@@ -1,7 +1,6 @@
-import { Breadcrumbs, Page, PrimaryButton } from '@/components'
+import { Breadcrumbs, Page, PrimaryLinkButton } from '@/components'
 import { useExecutionRoutes, useSelectedRouteId } from '@/execution-routes'
 import { Plus } from 'lucide-react'
-import { nanoid } from 'nanoid'
 import { useNavigate } from 'react-router-dom'
 import { Route } from './Route'
 
@@ -35,16 +34,9 @@ export const ListRoutes = () => {
       </Page.Content>
 
       <Page.Footer>
-        <PrimaryButton
-          fluid
-          icon={Plus}
-          onClick={() => {
-            const newRouteId = nanoid()
-            navigate('/routes/' + newRouteId)
-          }}
-        >
-          Add Route
-        </PrimaryButton>
+        <PrimaryLinkButton fluid icon={Plus} to="new">
+          Add route
+        </PrimaryLinkButton>
       </Page.Footer>
     </Page>
   )
