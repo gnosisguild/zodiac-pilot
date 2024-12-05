@@ -1,5 +1,5 @@
 import { CHAIN_CURRENCY, getChainId } from '@/chains'
-import { Divider, TextInput, ToggleButton } from '@/components'
+import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { TransactionState } from '@/state'
 import { ExecutionRoute } from '@/types'
@@ -7,7 +7,6 @@ import { formatEther, Fragment } from 'ethers'
 import { useState } from 'react'
 import { AccountType } from 'ser-kit'
 import { ContractAddress } from './ContractAddress'
-import { CopyToClipboard } from './CopyToClipboard'
 import { DecodedTransaction } from './DecodedTransaction'
 import { RawTransaction } from './RawTransaction'
 import { Remove } from './Remove'
@@ -119,7 +118,13 @@ const TransactionHeader = ({
 
         <div className="flex">
           <Translate transactionId={transactionState.id} />
-          <CopyToClipboard transaction={transactionState.transaction} />
+          <CopyToClipboard
+            iconOnly
+            size="small"
+            data={transactionState.transaction}
+          >
+            Copy transaction data to clipboard
+          </CopyToClipboard>
           <Remove transactionState={transactionState} />
         </div>
       </div>

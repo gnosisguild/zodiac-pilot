@@ -1,4 +1,4 @@
-import { Tag } from '@/components'
+import { CopyToClipboard, Tag } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProvider } from '@/providers-ui'
 import { TransactionState } from '@/state'
@@ -19,7 +19,6 @@ import {
   planExecution,
   Route as SerRoute,
 } from 'ser-kit'
-import { CopyToClipboard } from './CopyToClipboard'
 import { Translate } from './Translate'
 
 const simulateRolesTransaction = async (
@@ -144,7 +143,13 @@ export const RolePermissionCheck = ({
               {translationAvailable ? (
                 <Translate transactionId={transactionState.id} />
               ) : (
-                <CopyToClipboard transaction={transactionState.transaction} />
+                <CopyToClipboard
+                  iconOnly
+                  size="small"
+                  data={transactionState.transaction}
+                >
+                  Copy transaction data to the clipboard
+                </CopyToClipboard>
               )}
             </>
           )}
