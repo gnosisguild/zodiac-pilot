@@ -113,7 +113,10 @@ const findGloballyApplicableTranslation = async (
 
   const tryApplyingTranslations = async () => {
     for (const translation of translations) {
-      if (!('translateGlobal' in translation)) continue
+      if (!('translateGlobal' in translation)) {
+        continue
+      }
+
       const result = await translation.translateGlobal(
         transactions.map((txState) => txState.transaction),
         chainId,
@@ -123,9 +126,9 @@ const findGloballyApplicableTranslation = async (
         return {
           title: translation.title,
           autoApply: translation.autoApply,
+          icon: translation.icon,
           result,
         }
-        break
       }
     }
   }
