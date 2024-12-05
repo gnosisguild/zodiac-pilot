@@ -46,7 +46,7 @@ export const RouteBubble = () => {
         />
 
         <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {connection.label}
+          {connection.label || <span className="italic">Unnamed route</span>}
         </p>
       </div>
 
