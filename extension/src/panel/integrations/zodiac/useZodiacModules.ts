@@ -1,6 +1,6 @@
 import { getChainId } from '@/chains'
-import { useExecutionRoute } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
+import { HexAddress } from '@/types'
 import { validateAddress } from '@/utils'
 import {
   ContractAbis,
@@ -11,7 +11,7 @@ import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
-import { ChainId } from 'ser-kit'
+import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
 import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
@@ -27,29 +27,27 @@ interface Module {
 }
 
 export const useZodiacModules = (
-  safeAddress: string,
-  connectionId?: string
+  safeAddress: PrefixedAddress
 ): { loading: boolean; isValidSafe: boolean; modules: Module[] } => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
-
-  const route = useExecutionRoute(connectionId)
-  const chainId = getChainId(route.avatar)
+  const chainId = getChainId(safeAddress)
+  const [, address] = parsePrefixedAddress(safeAddress)
 
   useEffect(() => {
     setLoading(true)
     setError(false)
-    fetchModules(safeAddress, chainId)
+    fetchModules(address, chainId)
       .then((modules) => setModules(modules))
       .catch((e) => {
-        console.error(`Could not fetch modules of Safe ${safeAddress}`, e)
+        console.error(`Could not fetch modules of Safe ${address}`, e)
         setError(true)
       })
       .finally(() => setLoading(false))
-  }, [chainId, safeAddress])
+  }, [address, chainId])
 
-  if (!validateAddress(safeAddress) || error) {
+  if (!validateAddress(address) || error) {
     return { isValidSafe: false, loading, modules: [] }
   }
 
@@ -57,7 +55,7 @@ export const useZodiacModules = (
 }
 
 async function fetchModules(
-  safeOrModifierAddress: string,
+  safeOrModifierAddress: HexAddress,
   chainId: ChainId,
   previous: Set<string> = new Set()
 ): Promise<Module[]> {
@@ -82,7 +80,7 @@ async function fetchModules(
   )
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
-  )[0] as string[]
+  )[0] as HexAddress[]
 
   const enabledAndSupportedModules = moduleAddresses.map(
     async (moduleAddress) => {
