@@ -1,7 +1,5 @@
-import { Copy } from 'lucide-react'
 import { PropsWithChildren } from 'react'
-import { GhostButton } from './buttons'
-import { infoToast } from './toasts'
+import { CopyToClipboard } from './CopyToClipboard'
 
 export const Address = ({
   children,
@@ -13,19 +11,9 @@ export const Address = ({
     </code>
 
     {allowCopy && (
-      <GhostButton
-        iconOnly
-        icon={Copy}
-        onClick={() => {
-          navigator.clipboard.writeText(JSON.stringify(children, undefined, 2))
-          infoToast({
-            title: 'Copied!',
-            message: 'Address has been copied to clipboard.',
-          })
-        }}
-      >
+      <CopyToClipboard iconOnly data={children}>
         Copy address
-      </GhostButton>
+      </CopyToClipboard>
     )}
   </div>
 )
