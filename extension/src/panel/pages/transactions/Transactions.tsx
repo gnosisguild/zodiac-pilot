@@ -98,9 +98,9 @@ export const Transactions = () => {
       </Page.Header>
 
       <Page.Content ref={scrollContainerRef}>
-        {transactions.map((transactionState, index) => (
+        {transactions.map((transactionState) => (
           <div id={`t-${transactionState.id}`} key={transactionState.id}>
-            <Transaction transactionState={transactionState} index={index} />
+            <Transaction transactionState={transactionState} />
           </div>
         ))}
 

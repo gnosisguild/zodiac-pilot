@@ -80,20 +80,18 @@ const simulateRolesTransaction = async (
 
 type Props = {
   transactionState: TransactionState
-  index: number
   mini?: boolean
 }
 
 export const RolePermissionCheck = ({
   transactionState,
-  index,
   mini = false,
 }: Props) => {
   const [error, setError] = useState<string | undefined | false>(undefined)
   const route = useExecutionRoute()
   const provider = useProvider()
 
-  const translationAvailable = !!useApplicableTranslation(index)
+  const translationAvailable = !!useApplicableTranslation(transactionState.id)
 
   useEffect(() => {
     let canceled = false
@@ -144,7 +142,7 @@ export const RolePermissionCheck = ({
           {error && (
             <>
               {translationAvailable ? (
-                <Translate index={index} />
+                <Translate transactionId={transactionState.id} />
               ) : (
                 <CopyToClipboard transaction={transactionState.transaction} />
               )}

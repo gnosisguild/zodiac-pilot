@@ -6,10 +6,9 @@ import { Trash2 } from 'lucide-react'
 
 type Props = {
   transactionState: TransactionState
-  index: number
 }
 
-export const Remove = ({ transactionState, index }: Props) => {
+export const Remove = ({ transactionState }: Props) => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const transactions = useTransactions()
@@ -20,6 +19,7 @@ export const Remove = ({ transactionState, index }: Props) => {
   }
 
   const handleRemove = async () => {
+    const index = transactions.indexOf(transactionState)
     const laterTransactions = transactions.slice(index + 1)
 
     // remove the transaction and all later ones from the store

@@ -18,10 +18,9 @@ import { useDecodedFunctionData } from './useDecodedFunctionData'
 
 interface Props {
   transactionState: TransactionState
-  index: number
 }
 
-export const Transaction = ({ index, transactionState }: Props) => {
+export const Transaction = ({ transactionState }: Props) => {
   const [expanded, setExpanded] = useState(true)
   const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
@@ -35,7 +34,6 @@ export const Transaction = ({ index, transactionState }: Props) => {
     >
       <div className="bg-zinc-100/80 p-2 dark:bg-zinc-500/20">
         <TransactionHeader
-          index={index}
           transactionState={transactionState}
           functionFragment={decoded?.functionFragment}
           expanded={expanded}
@@ -66,7 +64,6 @@ export const Transaction = ({ index, transactionState }: Props) => {
 
           <TransactionStatus
             transactionState={transactionState}
-            index={index}
             showRoles={showRoles}
           />
         </div>
@@ -76,7 +73,6 @@ export const Transaction = ({ index, transactionState }: Props) => {
 }
 
 interface HeaderProps {
-  index: number
   transactionState: TransactionState
   functionFragment?: Fragment
   onExpandToggle(): void
@@ -85,7 +81,6 @@ interface HeaderProps {
 }
 
 const TransactionHeader = ({
-  index,
   transactionState,
   functionFragment,
   onExpandToggle,
@@ -119,17 +114,13 @@ const TransactionHeader = ({
         <SimulationStatus transactionState={transactionState} mini />
 
         {showRoles && (
-          <RolePermissionCheck
-            transactionState={transactionState}
-            index={index}
-            mini
-          />
+          <RolePermissionCheck transactionState={transactionState} mini />
         )}
 
         <div className="flex">
-          <Translate index={index} />
+          <Translate transactionId={transactionState.id} />
           <CopyToClipboard transaction={transactionState.transaction} />
-          <Remove transactionState={transactionState} index={index} />
+          <Remove transactionState={transactionState} />
         </div>
       </div>
     </div>
@@ -139,12 +130,10 @@ const TransactionHeader = ({
 interface StatusProps {
   transactionState: TransactionState
   showRoles?: boolean
-  index: number
 }
 
 const TransactionStatus = ({
   transactionState,
-  index,
   showRoles = false,
 }: StatusProps) => (
   <>
@@ -154,10 +143,7 @@ const TransactionStatus = ({
       <>
         <Divider />
 
-        <RolePermissionCheck
-          transactionState={transactionState}
-          index={index}
-        />
+        <RolePermissionCheck transactionState={transactionState} />
       </>
     )}
   </>

@@ -4,12 +4,12 @@ import { useProvider } from '@/providers-ui'
 import { useApplicableTranslation } from '../../transactionTranslations'
 
 type Props = {
-  index: number
+  transactionId: string
 }
 
-export const Translate = ({ index }: Props) => {
+export const Translate = ({ transactionId }: Props) => {
   const provider = useProvider()
-  const translation = useApplicableTranslation(index)
+  const translation = useApplicableTranslation(transactionId)
 
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
