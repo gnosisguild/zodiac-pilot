@@ -1,7 +1,6 @@
 import { getChainId } from '@/chains'
 import { getReadOnlyProvider } from '@/providers'
 import { HexAddress } from '@/types'
-import { validateAddress } from '@/utils'
 import {
   ContractAbis,
   ContractAddresses,
@@ -47,7 +46,7 @@ export const useZodiacModules = (
       .finally(() => setLoading(false))
   }, [address, chainId])
 
-  if (!validateAddress(address) || error) {
+  if (error) {
     return { isValidSafe: false, loading, modules: [] }
   }
 
