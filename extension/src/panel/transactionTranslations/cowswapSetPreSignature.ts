@@ -1,6 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 
 import { id, Interface } from 'ethers'
+import { Waypoints } from 'lucide-react'
 import { TransactionTranslation } from './types'
 
 const GP_V2_SETTLEMENT_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
@@ -34,7 +35,7 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
 
 export const cowswapSetPreSignature = {
   title: 'Route through CowswapOrderSigner',
-
+  icon: Waypoints,
   recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
 
   translate: async (transaction, chainId) => {

@@ -2,6 +2,7 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { Interface } from 'ethers'
+import { BetweenHorizontalStart } from 'lucide-react'
 import { TransactionTranslation } from '../types'
 import { extractBridgedTokenAddress } from './bridges'
 
@@ -50,7 +51,7 @@ const BridgeAwareInterface: Interface = new Interface([
 
 export const kpkBridgeAware = {
   title: 'Add bridgeStart call',
-
+  icon: BetweenHorizontalStart,
   recommendedFor: [KnownContracts.ROLES_V2],
   autoApply: true,
 

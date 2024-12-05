@@ -1,6 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
 
 import { FunctionFragment, Interface } from 'ethers'
+import { UnfoldVertical } from 'lucide-react'
 import { TransactionTranslation } from './types'
 
 const uniswapMulticallInterface = new Interface([
@@ -11,7 +12,7 @@ const uniswapMulticallInterface = new Interface([
 
 export const uniswapMulticall = {
   title: 'Unfold individual calls',
-
+  icon: UnfoldVertical,
   recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
 
   translate: async (transaction) => {

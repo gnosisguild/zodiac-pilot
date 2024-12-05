@@ -85,6 +85,7 @@ export const useApplicableTranslation = (transactionIndex: number) => {
     ? {
         title: translation.title,
         result: translation.result,
+        icon: translation.icon,
         apply: () => apply(translation),
       }
     : undefined
@@ -113,6 +114,7 @@ const findApplicableTranslation = async (
         return {
           title: translation.title,
           autoApply: translation.autoApply,
+          icon: translation.icon,
           result,
         }
         break

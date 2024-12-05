@@ -1,4 +1,5 @@
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { LucideIcon } from 'lucide-react'
 import { ChainId } from 'ser-kit'
 import { SupportedModuleType } from '../integrations/zodiac/types'
 
@@ -7,6 +8,7 @@ export type TransactionTranslation = {
   title: string
   /** If true, the translation will be applied automatically. By default translations will be suggested to the user who then applies them by clicking a button */
   autoApply?: boolean
+  icon: LucideIcon
   /** A list of zodiac modules for which using this translation is recommended */
   recommendedFor: SupportedModuleType[]
 } & (
