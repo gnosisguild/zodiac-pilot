@@ -11,6 +11,7 @@ import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
+import { ConnectWallet } from '@/wallet'
 import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -32,7 +33,6 @@ import { RemoveButton } from './RemoveButton'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useRouteId } from './useRouteId'
 import { useSafesWithOwner } from './useSafesWithOwner'
-import { ConnectWallet } from './wallet'
 import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
