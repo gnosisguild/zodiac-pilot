@@ -110,20 +110,23 @@ const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
   } catch (err) {
     if ((err as InjectedWalletError).code === -32002) {
       // another wallet_switchEthereumChain request is already pending
-      await new Promise((resolve: (value: void) => void) => {
-        const toastId = infoToast({
-          title: 'Chain',
-          message: 'Check your wallet to confirm switching the network',
-        })
+      const { promise, resolve } = Promise.withResolvers<void>()
 
-        const handleChainChanged = () => {
-          resolve()
-          toast.dismiss(toastId)
-          provider.removeListener('chainChanged', handleChainChanged)
-        }
-        provider.on('chainChanged', handleChainChanged)
+      const toastId = infoToast({
+        title: 'Chain',
+        message: 'Check your wallet to confirm switching the network',
       })
-      return
+
+      const handleChainChanged = (): void => {
+        toast.dismiss(toastId)
+        provider.removeListener('chainChanged', handleChainChanged)
+
+        resolve()
+      }
+
+      provider.on('chainChanged', handleChainChanged)
+
+      return promise
     }
 
     if ((err as InjectedWalletError).code === 4902) {
@@ -149,13 +152,18 @@ const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
     }
   }
 
-  // wait for chain change event (InjectedWallet will emit this event only after some delay, so our state that reacts to this event would be out of sync if we don't wait here)
-  await new Promise((resolve: (value: void) => void) => {
-    const handleChainChanged = () => {
-      resolve()
-      provider.removeListener('chainChanged', handleChainChanged)
-    }
+  const { promise, resolve } = Promise.withResolvers<void>()
 
-    provider.on('chainChanged', handleChainChanged)
-  })
+  const handleChainChanged = () => {
+    provider.removeListener('chainChanged', handleChainChanged)
+
+    resolve()
+  }
+
+  provider.on('chainChanged', handleChainChanged)
+
+  // wait for chain change event (InjectedWallet will emit this event
+  // only after some delay, so our state that reacts to this event
+  // would be out of sync if we don't wait here)
+  return promise
 }
