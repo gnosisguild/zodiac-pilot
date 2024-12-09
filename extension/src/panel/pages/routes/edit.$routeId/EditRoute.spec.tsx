@@ -1,14 +1,18 @@
-import { getReadOnlyProvider } from '@/providers'
+import { ZERO_ADDRESS } from '@/chains'
+import { getReadOnlyProvider, useInjectedWallet } from '@/providers'
 import {
   chromeMock,
   expectRouteToBe,
+  MockProvider,
   mockRoute,
   mockRoutes,
   render,
 } from '@/test-utils'
+import { ProviderType } from '@/types'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { formatPrefixedAddress } from 'ser-kit'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { EditRoute } from './EditRoute'
 
 vi.mock('@/providers', async (importOriginal) => {
@@ -18,31 +22,41 @@ vi.mock('@/providers', async (importOriginal) => {
     ...module,
 
     getReadOnlyProvider: vi.fn(module.getReadOnlyProvider),
+    useInjectedWallet: vi.fn(module.useInjectedWallet),
   }
 })
 
 const mockGetReadOnlyProvider = vi.mocked(getReadOnlyProvider)
+const mockUseInjectedWallet = vi.mocked(useInjectedWallet)
 
 describe('Edit Zodiac route', () => {
-  it('is possible to rename a route', async () => {
-    mockRoute({ id: 'route-id' })
+  beforeEach(() => {
+    mockUseInjectedWallet.mockRestore()
+  })
 
-    await render('/routes/route-id', [
-      {
-        path: '/routes/:routeId',
-        Component: EditRoute,
-      },
-    ])
+  describe('Label', () => {
+    it('is possible to rename a route', async () => {
+      mockRoute({ id: 'route-id' })
 
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Route label' }),
-      'Test route'
-    )
+      await render('/routes/route-id', [
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+        },
+      ])
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save & Launch' }))
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Route label' }),
+        'Test route'
+      )
 
-    expect(chrome.storage.sync.set).toHaveBeenCalledWith({
-      'routes[route-id]': expect.objectContaining({ label: 'Test route' }),
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' })
+      )
+
+      expect(chrome.storage.sync.set).toHaveBeenCalledWith({
+        'routes[route-id]': expect.objectContaining({ label: 'Test route' }),
+      })
     })
   })
 
@@ -120,6 +134,42 @@ describe('Edit Zodiac route', () => {
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
       await expectRouteToBe('/routes')
+    })
+  })
+
+  describe('Switch chain', () => {
+    it('is possible to switch the chain of an injected wallet', async () => {
+      mockRoute({
+        id: 'routeId',
+        providerType: ProviderType.InjectedWallet,
+        initiator: formatPrefixedAddress(
+          1,
+          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+        ),
+        avatar: formatPrefixedAddress(10, ZERO_ADDRESS),
+      })
+
+      const switchChain = vi.fn()
+
+      mockUseInjectedWallet.mockReturnValue({
+        accounts: ['0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'],
+        chainId: 1,
+        ready: true,
+        connectionStatus: 'connected',
+        connect: vi.fn(),
+        switchChain,
+        provider: new MockProvider(),
+      })
+
+      await render('/routes/routeId', [
+        { path: '/routes/:routeId', Component: EditRoute },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Switch wallet to Optimism' })
+      )
+
+      expect(switchChain).toHaveBeenCalledWith(10)
     })
   })
 
