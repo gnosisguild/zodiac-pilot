@@ -66,6 +66,12 @@ const connectToDApp = (tabId: number): Promise<chrome.runtime.Port> => {
     resolve(port)
   }
 
+  if (process.env.NODE_ENV === 'test' && port == null) {
+    // This can happen in tests because of the timeout above
+    // If you have a better solution, go ahead :)
+    return promise
+  }
+
   port.onMessage.addListener(handleConnect)
 
   return promise

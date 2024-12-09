@@ -8,9 +8,9 @@ export const mockRoute = (route: Partial<ExecutionRoute> = {}) => {
 
   mockGet.mockImplementation(async (callback) => {
     if (typeof callback === 'function') {
-      return callback({ [mockRoute.id]: mockRoute })
+      return callback({ [`routes[${mockRoute.id}]`]: mockRoute })
     }
 
-    return null
+    return { [`routes[${mockRoute.id}]`]: mockRoute }
   })
 }

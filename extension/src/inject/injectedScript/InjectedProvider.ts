@@ -61,6 +61,7 @@ export class InjectedProvider extends EventEmitter {
     this.messageCounter++
 
     return new Promise((resolve, reject) => {
+      console.debug('Relaying request to connected wallet', { request })
       ;(window.top || window).postMessage(
         {
           type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
@@ -80,6 +81,10 @@ export class InjectedProvider extends EventEmitter {
             InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE &&
           message.requestId == requestId
         ) {
+          console.debug(
+            'Received response from connected wallet',
+            message.response
+          )
           window.removeEventListener('message', handleMessage)
           resolve(message.response)
         }

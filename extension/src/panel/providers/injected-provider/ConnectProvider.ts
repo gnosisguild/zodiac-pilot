@@ -177,6 +177,8 @@ const sendRequestToConnectIframe = async ({
       return
     }
 
+    console.debug('Received response from connected iframe', { message })
+
     port.onMessage.removeListener(handleResponse)
 
     resolve(message)
