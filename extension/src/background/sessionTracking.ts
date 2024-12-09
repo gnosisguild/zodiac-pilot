@@ -1,13 +1,13 @@
-import { Message, PilotMessageType } from '@/messages'
+import { type Message, PilotMessageType } from '@/messages'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
-import { MutableRefObject } from 'react'
+import type { MutableRefObject } from 'react'
 import { PILOT_PANEL_PORT } from '../const'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
-import { PilotSession, Sessions } from './PilotSession'
-import { TrackRequestsResult } from './rpcTracking'
-import { Event } from './types'
-import { CallbackFn, withPilotSession } from './withPilotSession'
+import { PilotSession, type Sessions } from './PilotSession'
+import type { TrackRequestsResult } from './rpcTracking'
+import type { Event } from './types'
+import { type CallbackFn, withPilotSession } from './withPilotSession'
 
 type SessionDeletedEventListener = (windowId: number) => void
 

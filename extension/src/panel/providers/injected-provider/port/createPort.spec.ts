@@ -1,4 +1,7 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
 import { createMockPort, mockTabConnect } from '@/test-utils'
 import { invariant } from '@epic-web/invariant'
 import { describe, expect, it, vi } from 'vitest'

@@ -1,10 +1,10 @@
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { sleepTillIdle } from '@/utils'
 import {
   renderHook as renderHookBase,
-  RenderHookOptions,
+  type RenderHookOptions,
 } from '@testing-library/react'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
 import { mockActiveTab, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'

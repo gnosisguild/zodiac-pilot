@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, PropsWithChildren } from 'react'
+import { type ForwardedRef, forwardRef, type PropsWithChildren } from 'react'
 import { Divider } from './Divider'
 
 export const Page = ({ children }: PropsWithChildren) => (

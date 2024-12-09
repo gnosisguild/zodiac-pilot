@@ -4,7 +4,7 @@ import {
   useSaveExecutionRoute,
   useSelectedRouteId,
 } from '@/execution-routes'
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { Rocket } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 

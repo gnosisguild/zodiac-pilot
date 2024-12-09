@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { CopyToClipboard } from './CopyToClipboard'
 
 export const Address = ({

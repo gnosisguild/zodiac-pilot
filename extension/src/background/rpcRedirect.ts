@@ -1,5 +1,5 @@
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
-import { Fork } from './types'
+import type { Fork } from './types'
 
 export const removeAllRpcRedirectRules = async (tabIds: number[]) => {
   await chrome.declarativeNetRequest.updateSessionRules({

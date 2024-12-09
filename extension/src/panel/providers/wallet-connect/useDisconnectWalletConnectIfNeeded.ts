@@ -1,4 +1,4 @@
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { useEffect, useRef } from 'react'
 import { useWalletConnectProvider } from './useWalletConnectProvider'
 

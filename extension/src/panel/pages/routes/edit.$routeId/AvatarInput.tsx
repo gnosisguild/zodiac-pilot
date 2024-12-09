@@ -3,7 +3,7 @@ import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-import { Option } from './ModSelect'
+import type { Option } from './ModSelect'
 
 interface Props {
   value: string

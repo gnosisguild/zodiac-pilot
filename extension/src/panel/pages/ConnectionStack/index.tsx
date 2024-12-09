@@ -1,5 +1,5 @@
 import { MODULE_NAMES } from '@/const'
-import { LegacyConnection } from '@/types'
+import type { LegacyConnection } from '@/types'
 import { Address } from './Address'
 
 interface Props {

@@ -1,4 +1,4 @@
-import { TransactionState } from '@/state'
+import type { TransactionState } from '@/state'
 import { Interface } from 'ethers'
 import { useMemo } from 'react'
 

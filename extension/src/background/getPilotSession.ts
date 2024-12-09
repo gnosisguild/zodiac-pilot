@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { PilotSession, Sessions } from './PilotSession'
+import { PilotSession, type Sessions } from './PilotSession'
 
 export const getPilotSession = (
   sessions: Sessions,

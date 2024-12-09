@@ -1,6 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import { useCallback, useEffect, useRef } from 'react'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 
 type UseConnectOptions = {

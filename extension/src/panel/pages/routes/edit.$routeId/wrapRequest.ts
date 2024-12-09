@@ -1,6 +1,6 @@
-import { LegacyConnection, TransactionData } from '@/types'
+import type { LegacyConnection, TransactionData } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()

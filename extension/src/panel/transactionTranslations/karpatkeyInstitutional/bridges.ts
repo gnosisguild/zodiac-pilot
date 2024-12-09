@@ -1,6 +1,6 @@
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { FunctionFragment, Interface } from 'ethers'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 
 export function extractBridgedTokenAddress(
   { to, data }: MetaTransactionData,

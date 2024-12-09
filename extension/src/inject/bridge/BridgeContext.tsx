@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { createContext, type PropsWithChildren, useContext } from 'react'
 
 const BridgeContext = createContext<{ windowId: number | null }>({
   windowId: null,

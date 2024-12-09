@@ -1,5 +1,5 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { ChainId } from 'ser-kit'
+import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
+import type { ChainId } from 'ser-kit'
 import { callListeners, chromeMock } from './chrome'
 
 type StartSimulationOptions = {

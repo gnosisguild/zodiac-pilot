@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { BaseToast } from './BaseToast'
-import { ToastProps } from './ToastProps'
+import type { ToastProps } from './ToastProps'
 
 export const errorToast = ({ title, message }: ToastProps) =>
   toast.custom((t) => (

@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
 import { X } from 'lucide-react'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 
 type BaseToastProps = PropsWithChildren<{ className: string; visible: boolean }>
 

@@ -1,5 +1,5 @@
-import { Eip1193Provider } from '@/types'
-import { MockedFunction, vi } from 'vitest'
+import type { Eip1193Provider } from '@/types'
+import { type MockedFunction, vi } from 'vitest'
 
 export class MockProvider implements Eip1193Provider {
   request: MockedFunction<Eip1193Provider['request']>

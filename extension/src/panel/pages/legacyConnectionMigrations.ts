@@ -1,15 +1,19 @@
-import { ExecutionRoute, LegacyConnection, ProviderType } from '@/types'
+import {
+  type ExecutionRoute,
+  type LegacyConnection,
+  ProviderType,
+} from '@/types'
 import { MULTISEND, MULTISEND_CALL_ONLY } from '@/zodiac'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
   AccountType,
   ConnectionType,
-  Delay,
+  type Delay,
   formatPrefixedAddress,
   parsePrefixedAddress,
-  Roles,
-  Waypoint,
+  type Roles,
+  type Waypoint,
 } from 'ser-kit'
 
 export function fromLegacyConnection(

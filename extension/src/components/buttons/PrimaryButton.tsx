@@ -1,11 +1,11 @@
 import cn from 'classnames'
 import {
   BaseButton,
-  BaseButtonProps,
+  type BaseButtonProps,
   BaseLinkButton,
-  BaseLinkButtonProps,
+  type BaseLinkButtonProps,
 } from './BaseButton'
-import { WithStyle } from './types'
+import type { WithStyle } from './types'
 
 type PrimaryButtonProps = WithStyle<Omit<BaseButtonProps, 'className'>>
 

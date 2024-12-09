@@ -1,5 +1,8 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
-import { Eip1193Provider } from '@/types'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
+import type { Eip1193Provider } from '@/types'
 
 declare global {
   interface Window {

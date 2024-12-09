@@ -1,4 +1,4 @@
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 import { useEffect } from 'react'
 import { useInjectedWallet } from './InjectedWalletContext'
 

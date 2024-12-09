@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 
 export const useChainId = (

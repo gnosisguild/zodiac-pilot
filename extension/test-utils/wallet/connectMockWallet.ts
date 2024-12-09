@@ -1,5 +1,8 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
-import { HexAddress } from '@/types'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
+import type { HexAddress } from '@/types'
 import { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { callListeners } from '../chrome'
 

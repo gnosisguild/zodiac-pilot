@@ -1,6 +1,6 @@
 import { Copy } from 'lucide-react'
-import { PropsWithChildren } from 'react'
-import { BaseButtonProps, GhostButton } from './buttons'
+import type { PropsWithChildren } from 'react'
+import { type BaseButtonProps, GhostButton } from './buttons'
 import { infoToast } from './toasts'
 
 type CopyToClipboardProps = PropsWithChildren<{

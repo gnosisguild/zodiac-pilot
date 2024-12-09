@@ -1,4 +1,4 @@
-import { PilotSession, Sessions } from './PilotSession'
+import { PilotSession, type Sessions } from './PilotSession'
 
 type PublicPilotSession = Omit<PilotSession, 'delete'>
 export type CallbackFn = (session: PublicPilotSession) => void

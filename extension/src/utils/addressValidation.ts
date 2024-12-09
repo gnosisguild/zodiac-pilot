@@ -1,4 +1,4 @@
-import { getAddress, Provider } from 'ethers'
+import { getAddress, type Provider } from 'ethers'
 
 export const validateAddress = (address: string) => {
   try {

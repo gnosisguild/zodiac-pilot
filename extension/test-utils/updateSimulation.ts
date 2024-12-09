@@ -1,4 +1,4 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
+import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
 import { callListeners, chromeMock } from './chrome'
 
 type UpdateSimulationOptions = {

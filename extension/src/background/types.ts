@@ -1,4 +1,4 @@
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 
 export interface Fork {
   chainId: ChainId

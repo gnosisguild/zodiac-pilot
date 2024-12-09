@@ -1,4 +1,4 @@
-import { JsonRpcError } from '@/types'
+import type { JsonRpcError } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import { AbiCoder } from 'ethers'
 

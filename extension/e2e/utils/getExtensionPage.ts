@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { waitFor } from './waitFor'
 
 export const getExtensionPage = (page: Page) =>

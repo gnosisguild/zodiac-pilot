@@ -1,4 +1,4 @@
-import { Eip1193Provider } from '@/types'
+import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import type { InjectedProvider } from './InjectedProvider'
 
