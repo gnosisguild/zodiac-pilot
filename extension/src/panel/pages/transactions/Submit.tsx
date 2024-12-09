@@ -13,7 +13,7 @@ import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { waitForMultisigExecution } from '@/safe'
 import { useTransactions } from '@/state'
-import { JsonRpcError, ProviderType } from '@/types'
+import { type JsonRpcError, ProviderType } from '@/types'
 import {
   decodeGenericError,
   decodeRolesV1Error,
@@ -23,7 +23,7 @@ import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
   const route = useExecutionRoute()

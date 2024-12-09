@@ -1,7 +1,7 @@
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import {
   createContext,
-  PropsWithChildren,
+  type PropsWithChildren,
   useCallback,
   useContext,
   useEffect,

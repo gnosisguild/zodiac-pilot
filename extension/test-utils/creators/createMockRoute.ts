@@ -1,5 +1,5 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 
 import { randomUUID } from 'crypto'
 import { AccountType } from 'ser-kit'

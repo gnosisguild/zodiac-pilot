@@ -1,4 +1,4 @@
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { vi } from 'vitest'
 import { createMockRoute } from './creators'
 

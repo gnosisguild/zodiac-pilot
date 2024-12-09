@@ -1,4 +1,4 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
+import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
 import {
   hashMessage,
   initSafeProtocolKit,
@@ -7,15 +7,15 @@ import {
   signTypedData,
   typedDataHash,
 } from '@/safe'
-import { Eip1193Provider, TransactionData } from '@/types'
+import type { Eip1193Provider, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { TenderlyProvider } from './TenderlyProvider'
 import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 

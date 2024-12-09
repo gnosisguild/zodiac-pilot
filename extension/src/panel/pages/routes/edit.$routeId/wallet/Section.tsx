@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 
 export const Section = ({ children }: PropsWithChildren) => (
   <div className="flex flex-col gap-4">{children}</div>

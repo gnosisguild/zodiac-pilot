@@ -1,5 +1,5 @@
-import { PilotSimulationMessageType, SimulationMessage } from '@/messages'
-import { TrackSessionsResult } from './sessionTracking'
+import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
+import type { TrackSessionsResult } from './sessionTracking'
 import { updateBadge } from './updateBadge'
 
 export const trackSimulations = ({

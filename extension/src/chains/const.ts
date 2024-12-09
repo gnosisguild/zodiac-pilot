@@ -1,7 +1,7 @@
 /* spell-checker: disable */
 
-import { HexAddress } from '@/types'
-import { ChainId, PrefixedAddress } from 'ser-kit'
+import type { HexAddress } from '@/types'
+import type { ChainId, PrefixedAddress } from 'ser-kit'
 
 export const ZERO_ADDRESS: HexAddress =
   '0x0000000000000000000000000000000000000000'

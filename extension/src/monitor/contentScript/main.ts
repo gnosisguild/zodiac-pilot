@@ -1,6 +1,6 @@
 // injects a minimal script into the page to hint the user to reload the page when the panel is toggled
 
-import { Message, PilotMessageType } from '@/messages'
+import { type Message, PilotMessageType } from '@/messages'
 import { injectScript } from '@/utils'
 
 window.document.documentElement.dataset.__zodiacPilotBasePath =

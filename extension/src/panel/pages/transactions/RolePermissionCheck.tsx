@@ -1,15 +1,15 @@
 import { CopyToClipboard, Tag } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProvider } from '@/providers-ui'
-import { TransactionState } from '@/state'
+import type { TransactionState } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
-import { Eip1193Provider, ExecutionRoute, JsonRpcError } from '@/types'
+import type { Eip1193Provider, ExecutionRoute, JsonRpcError } from '@/types'
 import {
   decodeGenericError,
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '@/utils'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
 import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -17,7 +17,7 @@ import {
   ExecutionActionType,
   parsePrefixedAddress,
   planExecution,
-  Route as SerRoute,
+  type Route as SerRoute,
 } from 'ser-kit'
 import { Translate } from './Translate'
 

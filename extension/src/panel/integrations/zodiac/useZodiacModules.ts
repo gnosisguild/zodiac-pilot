@@ -1,6 +1,6 @@
 import { getChainId } from '@/chains'
 import { getReadOnlyProvider } from '@/providers'
-import { HexAddress } from '@/types'
+import type { HexAddress } from '@/types'
 import {
   ContractAbis,
   ContractAddresses,
@@ -10,8 +10,12 @@ import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
-import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { SupportedModuleType } from './types'
+import {
+  type ChainId,
+  parsePrefixedAddress,
+  type PrefixedAddress,
+} from 'ser-kit'
+import type { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,

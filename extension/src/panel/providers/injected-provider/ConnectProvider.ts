@@ -1,6 +1,9 @@
 // this will be bundled in the panel app
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
-import { Eip1193Provider } from '@/types'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
+import type { Eip1193Provider } from '@/types'
 import { sleep } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'

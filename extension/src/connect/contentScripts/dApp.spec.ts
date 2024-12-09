@@ -1,4 +1,7 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
 import { chromeMock, createMockPort } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'

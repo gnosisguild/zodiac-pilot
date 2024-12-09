@@ -1,6 +1,6 @@
 import { getChainId } from '@/chains'
 import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { useCallback } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'

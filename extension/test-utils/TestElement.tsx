@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react'
-import { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 import { Outlet } from 'react-router-dom'
 
 export const TestElement = ({ children }: PropsWithChildren) => (

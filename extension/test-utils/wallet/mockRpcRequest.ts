@@ -1,4 +1,4 @@
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { callListeners, chromeMock } from '../chrome'
 import { createMockTab, createMockWebRequest } from '../creators'
 

@@ -1,5 +1,9 @@
-import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
-import { ConnectionProvider } from './connectTypes'
+import {
+  type ChainId,
+  parsePrefixedAddress,
+  type PrefixedAddress,
+} from 'ser-kit'
+import type { ConnectionProvider } from './connectTypes'
 
 export const isConnected = (
   connection: ConnectionProvider,

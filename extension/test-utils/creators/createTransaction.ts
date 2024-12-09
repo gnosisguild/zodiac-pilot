@@ -1,5 +1,5 @@
 import { ZERO_ADDRESS } from '@/chains'
-import { ExecutionStatus, TransactionState } from '@/state'
+import { ExecutionStatus, type TransactionState } from '@/state'
 import { nanoid } from 'nanoid'
 
 export const createTransaction = (

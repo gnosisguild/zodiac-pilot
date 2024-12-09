@@ -2,10 +2,10 @@ import { infoToast } from '@/components'
 import { BrowserProvider } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
-import { ChainId } from 'ser-kit'
-import { ConnectResult } from '../connectTypes'
+import type { ChainId } from 'ser-kit'
+import type { ConnectResult } from '../connectTypes'
 import { ConnectProvider } from './ConnectProvider'
-import { InjectedWalletError } from './InjectedWalletError'
+import type { InjectedWalletError } from './InjectedWalletError'
 import { memoWhilePending } from './memoWhilePending'
 
 type ConnectOptions = {

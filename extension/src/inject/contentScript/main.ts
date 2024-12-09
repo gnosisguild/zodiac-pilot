@@ -1,10 +1,10 @@
 import {
-  InjectedProviderMessage,
+  type InjectedProviderMessage,
   InjectedProviderMessageTyp,
-  InjectedProviderResponse,
-  Message,
+  type InjectedProviderResponse,
+  type Message,
   PilotMessageType,
-  RpcMessage,
+  type RpcMessage,
   RpcMessageType,
 } from '@/messages'
 import { injectScript, isValidTab } from '@/utils'

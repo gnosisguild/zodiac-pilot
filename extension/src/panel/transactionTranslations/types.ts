@@ -1,7 +1,7 @@
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { LucideIcon } from 'lucide-react'
-import { ChainId } from 'ser-kit'
-import { SupportedModuleType } from '../integrations/zodiac/types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { LucideIcon } from 'lucide-react'
+import type { ChainId } from 'ser-kit'
+import type { SupportedModuleType } from '../integrations/zodiac/types'
 
 export type TransactionTranslation = {
   /** A descriptive title of the translation, will be displayed as a tooltip of the translate button */

@@ -1,11 +1,14 @@
 // this will be bundled in the panel app
-import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
-import { Eip1193Provider } from '@/types'
+import {
+  type InjectedProviderMessage,
+  InjectedProviderMessageTyp,
+} from '@/messages'
+import type { Eip1193Provider } from '@/types'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { toQuantity } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { useWindowId } from './BridgeContext'
 
 const emitEvent = async (eventName: string, eventData: any) => {

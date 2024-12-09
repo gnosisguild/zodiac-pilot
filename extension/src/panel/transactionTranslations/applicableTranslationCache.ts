@@ -1,5 +1,5 @@
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { LucideIcon } from 'lucide-react'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { LucideIcon } from 'lucide-react'
 
 export interface ApplicableTranslation {
   /** Title of the applied translation (TransactionTranslation.title) */

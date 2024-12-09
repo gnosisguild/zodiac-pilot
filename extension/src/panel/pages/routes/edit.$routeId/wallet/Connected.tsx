@@ -1,5 +1,5 @@
 import { SecondaryButton } from '@/components'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
 type ConnectedProps = PropsWithChildren<{

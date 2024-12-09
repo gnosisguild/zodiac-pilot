@@ -1,12 +1,12 @@
 import { getChainId } from '@/chains'
 import {
-  InjectedWalletContextT,
-  WalletConnectResult,
+  type InjectedWalletContextT,
+  type WalletConnectResult,
   isConnected as isConnectedBase,
 } from '@/providers'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
 

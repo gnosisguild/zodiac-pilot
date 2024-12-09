@@ -1,4 +1,9 @@
-import { createContext, Dispatch, PropsWithChildren, useContext } from 'react'
+import {
+  createContext,
+  type Dispatch,
+  type PropsWithChildren,
+  useContext,
+} from 'react'
 import { useStorage } from '../utils'
 
 type Context = {

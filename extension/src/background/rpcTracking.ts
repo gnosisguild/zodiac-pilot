@@ -1,10 +1,10 @@
 import { RpcMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { createEventListener } from './createEventListener'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
-import { Event } from './types'
+import type { Event } from './types'
 
 type TrackingState = {
   trackedTabs: Set<number>

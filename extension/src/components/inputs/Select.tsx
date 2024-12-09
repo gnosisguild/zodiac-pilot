@@ -1,4 +1,8 @@
-import BaseSelect, { ClassNamesConfig, GroupBase, Props } from 'react-select'
+import BaseSelect, {
+  type ClassNamesConfig,
+  type GroupBase,
+  type Props,
+} from 'react-select'
 import { Input } from './Input'
 
 export const selectStyles = <

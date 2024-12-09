@@ -2,13 +2,13 @@ import { getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { TransactionState, useDispatch, useTransactions } from '@/state'
+import { type TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import {
-  ApplicableTranslation,
+  type ApplicableTranslation,
   applicableTranslationsCache,
 } from './applicableTranslationCache'
 import { translations } from './translations'

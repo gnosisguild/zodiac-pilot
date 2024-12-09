@@ -1,8 +1,8 @@
-import { Eip1193Provider } from '@/types'
+import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { createContext, PropsWithChildren, useContext } from 'react'
-import { ChainId } from 'ser-kit'
-import { ConnectionProvider, ConnectionStatus } from '../connectTypes'
+import { createContext, type PropsWithChildren, useContext } from 'react'
+import type { ChainId } from 'ser-kit'
+import type { ConnectionProvider, ConnectionStatus } from '../connectTypes'
 import { useConnectProvider } from './useConnectProvider'
 
 export type InjectedWalletContextT = ConnectionProvider & {

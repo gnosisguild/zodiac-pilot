@@ -1,5 +1,5 @@
-import { ComponentPropsWithoutRef } from 'react'
-import { ComposableInputProps, Input } from './Input'
+import type { ComponentPropsWithoutRef } from 'react'
+import { type ComposableInputProps, Input } from './Input'
 
 type TextInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,

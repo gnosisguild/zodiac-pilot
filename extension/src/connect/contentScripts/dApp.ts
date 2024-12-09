@@ -1,4 +1,7 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
 import { invariant } from '@epic-web/invariant'
 
 function ensureIframe() {

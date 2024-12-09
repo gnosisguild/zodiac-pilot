@@ -1,4 +1,4 @@
-import { MockedFunction, vi } from 'vitest'
+import { type MockedFunction, vi } from 'vitest'
 import { chrome as vitestChrome } from 'vitest-chrome'
 
 type ChromeMock = typeof vitestChrome & {

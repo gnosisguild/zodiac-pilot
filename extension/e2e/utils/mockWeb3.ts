@@ -1,8 +1,8 @@
 import { invariant } from '@epic-web/invariant'
-import { Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { readFileSync } from 'fs'
-import { MutableRefObject } from 'react'
-import { ChainId } from 'ser-kit'
+import type { MutableRefObject } from 'react'
+import type { ChainId } from 'ser-kit'
 import { fileURLToPath } from 'url'
 
 const web3Content: MutableRefObject<string | null> = { current: null }

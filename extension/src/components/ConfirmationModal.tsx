@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { GhostButton, PrimaryButton } from './buttons'
 import { Modal } from './Modal'
 

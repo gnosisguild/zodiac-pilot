@@ -3,7 +3,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { initSafeApiKit } from '@/safe'
 import { validateAddress } from '@/utils'
 import { useEffect, useState } from 'react'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 
 export const useSafesWithOwner = (
   ownerAddress: string,

@@ -1,6 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
-import { createContext, PropsWithChildren, useContext, useId } from 'react'
+import { createContext, type PropsWithChildren, useContext, useId } from 'react'
 
 type BaseAlertProps = PropsWithChildren<{
   className?: string

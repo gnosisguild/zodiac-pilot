@@ -1,5 +1,5 @@
 import { useInjectedWallet, useWalletConnect } from '@/providers'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 
 /** The chain ID the `provider` is currently connected to. */
 export const useProviderChainId = (route: ExecutionRoute) => {

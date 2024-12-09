@@ -1,4 +1,4 @@
-import { Message, PilotMessageType } from '@/messages'
+import { type Message, PilotMessageType } from '@/messages'
 import { isValidTab, useActiveTab } from '@/utils'
 import { useEffect, useState } from 'react'
 import { PILOT_PANEL_PORT } from '../const'

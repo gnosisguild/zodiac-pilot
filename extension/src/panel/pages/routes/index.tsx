@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom'
+import type { RouteObject } from 'react-router-dom'
 import { EditRoute } from './edit.$routeId'
 import { ListRoutes } from './list'
 

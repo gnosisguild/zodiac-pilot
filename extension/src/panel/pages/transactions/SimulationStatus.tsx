@@ -1,6 +1,6 @@
 import { GhostLinkButton, Spinner, Tag } from '@/components'
 import { useProvider } from '@/providers-ui'
-import { ExecutionStatus, TransactionState } from '@/state'
+import { ExecutionStatus, type TransactionState } from '@/state'
 import {
   Check,
   Compass,

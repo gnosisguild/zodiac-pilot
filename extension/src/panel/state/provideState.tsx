@@ -1,12 +1,12 @@
 import {
   createContext,
-  Dispatch,
-  PropsWithChildren,
+  type Dispatch,
+  type PropsWithChildren,
   useContext,
   useReducer,
 } from 'react'
-import { Action } from './actions'
-import { rootReducer, TransactionState } from './reducer'
+import type { Action } from './actions'
+import { rootReducer, type TransactionState } from './reducer'
 
 const TransactionsContext = createContext<TransactionState[]>([])
 

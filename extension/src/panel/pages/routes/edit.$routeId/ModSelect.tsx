@@ -1,7 +1,7 @@
 import { Blockie, Select } from '@/components'
 import { getAddress } from 'ethers'
-import { PropsWithChildren } from 'react'
-import { Props as SelectProps } from 'react-select'
+import type { PropsWithChildren } from 'react'
+import type { Props as SelectProps } from 'react-select'
 
 export const NO_MODULE_OPTION = { value: '', label: '' }
 

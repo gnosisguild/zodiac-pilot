@@ -1,8 +1,8 @@
-import { JsonRpcRequest } from '@/types'
+import type { JsonRpcRequest } from '@/types'
 import { JsonRpcProvider } from 'ethers'
 import EventEmitter from 'events'
 import { customAlphabet } from 'nanoid'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { getReadOnlyProvider } from './readOnlyProvider'
 
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')

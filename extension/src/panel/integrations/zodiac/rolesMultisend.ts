@@ -1,7 +1,7 @@
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import {
-  ChainId as RolesV2ChainId,
+  type ChainId as RolesV2ChainId,
   chains as rolesV2Chains,
 } from 'zodiac-roles-deployments'
 import { getReadOnlyProvider } from '../../providers'

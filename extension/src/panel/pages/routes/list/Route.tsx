@@ -1,6 +1,6 @@
 import { SecondaryButton, SecondaryLinkButton, Tag } from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useState } from 'react'
