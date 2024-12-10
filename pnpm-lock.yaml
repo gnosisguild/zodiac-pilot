@@ -166,8 +166,8 @@ importers:
         specifier: ^3.21.10
         version: 3.22.4
       '@shazow/whatsabi':
-        specifier: ^0.13.2
-        version: 0.13.2(@noble/hashes@1.6.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^0.17.0
+        version: 0.17.0(@noble/hashes@1.6.1)(typescript@5.7.2)(zod@3.24.0)
       '@testing-library/dom':
         specifier: ^10.4.0
         version: 10.4.0
@@ -2258,8 +2258,8 @@ packages:
   '@scure/bip39@1.5.0':
     resolution: {integrity: sha512-Dop+ASYhnrwm9+HA/HwXg7j2ZqM6yk2fyLWb5znexjctFY3+E+eU8cIWI0Pql0Qx4hPZCijlGq4OL71g+Uz30A==}
 
-  '@shazow/whatsabi@0.13.2':
-    resolution: {integrity: sha512-omF4QMrGeXY1fW9EgkvtyHW9qEVF9jIE8tRlpbs+PcK4fzowOTEN0BowLX+rdylucnZ8fuWnuva0upU9dqDYCg==}
+  '@shazow/whatsabi@0.17.0':
+    resolution: {integrity: sha512-nebwY6SpU3saM3QtQtq0p9oPizZ7TfYi1crf9cvdDF2YDnz48yrlf0NwOZXQhdcScTwt8HFZ+Fpt/hbluFJt2w==}
     peerDependencies:
       '@noble/hashes': ^1
 
@@ -5634,6 +5634,14 @@ packages:
 
   ox@0.1.2:
     resolution: {integrity: sha512-ak/8K0Rtphg9vnRJlbOdaX9R7cmxD2MiSthjWGaQdMk3D7hrAlDoM+6Lxn7hN52Za3vrXfZ7enfke/5WjolDww==}
+    peerDependencies:
+      typescript: '>=5.4.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  ox@0.2.2:
+    resolution: {integrity: sha512-QWCyFfVk5hFOhg13SGqRKih5B7EBucrf+Z1dfmN9jJQ8MZdrRx9mbD78JQL5ogSzDT7fcHgyMCaXd/3AWn6xHQ==}
     peerDependencies:
       typescript: '>=5.4.0'
     peerDependenciesMeta:
@@ -9680,13 +9688,13 @@ snapshots:
       '@noble/hashes': 1.6.1
       '@scure/base': 1.2.1
 
-  '@shazow/whatsabi@0.13.2(@noble/hashes@1.6.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@shazow/whatsabi@0.17.0(@noble/hashes@1.6.1)(typescript@5.7.2)(zod@3.24.0)':
     dependencies:
       '@noble/hashes': 1.6.1
-      ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ox: 0.2.2(typescript@5.7.2)(zod@3.24.0)
     transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
+      - typescript
+      - zod
 
   '@socket.io/component-emitter@3.1.2': {}
 
@@ -14256,6 +14264,20 @@ snapshots:
   outdent@0.8.0: {}
 
   ox@0.1.2(typescript@5.7.2)(zod@3.24.0):
+    dependencies:
+      '@adraffy/ens-normalize': 1.11.0
+      '@noble/curves': 1.7.0
+      '@noble/hashes': 1.6.1
+      '@scure/bip32': 1.6.0
+      '@scure/bip39': 1.5.0
+      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
+      eventemitter3: 5.0.1
+    optionalDependencies:
+      typescript: 5.7.2
+    transitivePeerDependencies:
+      - zod
+
+  ox@0.2.2(typescript@5.7.2)(zod@3.24.0):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.7.0

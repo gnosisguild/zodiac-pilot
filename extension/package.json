@@ -42,7 +42,7 @@
     "@safe-global/safe-apps-sdk": "^9.1.0",
     "@safe-global/safe-core-sdk-types": "^5.0.2",
     "@safe-global/safe-gateway-typescript-sdk": "^3.21.10",
-    "@shazow/whatsabi": "^0.13.2",
+    "@shazow/whatsabi": "^0.17.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.1",
