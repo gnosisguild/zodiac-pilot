@@ -20,11 +20,18 @@ const SelectedRouteContext = createContext<Context>({
   },
 })
 
+type ProvideSelectedExecutionRouteProps = PropsWithChildren<{
+  initialValue?: string
+}>
+
 export const ProvideSelectedExecutionRoute = ({
   children,
-}: PropsWithChildren) => {
-  const [selectedRouteId, setSelectedRouteId] =
-    useStorage<string>('selectedRoute')
+  initialValue,
+}: ProvideSelectedExecutionRouteProps) => {
+  const [selectedRouteId, setSelectedRouteId] = useStorage<string>(
+    'selectedRoute',
+    initialValue
+  )
 
   return (
     <SelectedRouteContext.Provider

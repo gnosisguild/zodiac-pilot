@@ -27,6 +27,10 @@ type Options = Parameters<typeof baseRender>[1] & {
    * Initial transaction state when the component renders
    */
   initialState?: TransactionState[]
+  /**
+   * Pass a route id here to define the currently launched route
+   */
+  initialSelectedRouteId?: string
 }
 
 export const render = async (

@@ -1,5 +1,6 @@
 import { SecondaryButton, SecondaryLinkButton, Tag } from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
@@ -18,13 +19,20 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
   const currentlySelectedRoute = useExecutionRoute()
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
+  const transactions = useTransactions()
 
   return (
     <>
-      <div className="flex flex-col gap-4 rounded-md border border-zinc-200 bg-zinc-100 p-4 dark:border-white/30 dark:bg-zinc-900">
+      <section
+        aria-labelledby={route.id}
+        className="flex flex-col gap-4 rounded-md border border-zinc-200 bg-zinc-100 p-4 dark:border-white/30 dark:bg-zinc-900"
+      >
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="overflow-hidden text-ellipsis whitespace-nowrap">
+            <h3
+              id={route.id}
+              className="overflow-hidden text-ellipsis whitespace-nowrap"
+            >
               {route.label || <em>Unnamed route</em>}
             </h3>
 
@@ -61,15 +69,17 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
 
           <SecondaryButton
             onClick={async () => {
-              // we continue working with the same avatar, so don't have to clear the recorded transaction
-              const keepTransactionBundle =
-                currentlySelectedRoute &&
-                currentlySelectedRoute.avatar === route.avatar
+              if (transactions.length > 0) {
+                // we continue working with the same avatar, so don't have to clear the recorded transaction
+                const keepTransactionBundle =
+                  currentlySelectedRoute &&
+                  currentlySelectedRoute.avatar === route.avatar
 
-              if (!keepTransactionBundle) {
-                setConfirmClearTransactions(true)
+                if (!keepTransactionBundle) {
+                  setConfirmClearTransactions(true)
 
-                return
+                  return
+                }
               }
 
               onLaunch(route.id)
@@ -78,7 +88,7 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
             Launch
           </SecondaryButton>
         </div>
-      </div>
+      </section>
 
       <ClearTransactionsModal
         open={confirmClearTransactions}

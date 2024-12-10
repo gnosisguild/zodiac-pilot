@@ -8,18 +8,24 @@ import type { PropsWithChildren } from 'react'
 type RenderWraperProps = PropsWithChildren<{
   windowId?: number
   initialState?: TransactionState[]
+  initialSelectedRouteId?: string
 }>
 
 export const RenderWrapper = ({
   children,
   windowId = 1,
   initialState,
+  initialSelectedRouteId,
 }: RenderWraperProps) => (
   <ProvideBridgeContext windowId={windowId}>
     <ProvideState initialState={initialState}>
       <ProvideInjectedWallet>
         <ProvideProvider>
-          <ProvideExecutionRoutes>{children}</ProvideExecutionRoutes>
+          <ProvideExecutionRoutes
+            initialSelectedRouteId={initialSelectedRouteId}
+          >
+            {children}
+          </ProvideExecutionRoutes>
         </ProvideProvider>
       </ProvideInjectedWallet>
     </ProvideState>
