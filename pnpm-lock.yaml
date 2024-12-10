@@ -155,7 +155,7 @@ importers:
         version: 2.5.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
       '@safe-global/protocol-kit':
         specifier: ^5.0.1
-        version: 5.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+        version: 5.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
       '@safe-global/safe-apps-sdk':
         specifier: ^9.1.0
         version: 9.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
@@ -2208,9 +2208,6 @@ packages:
   '@safe-global/protocol-kit@4.1.1':
     resolution: {integrity: sha512-11Jui1gIpCOV1sUn5HlT+hVn/+gJnKjik0V0aUPDKIL2zajwc+jReZK43CH5GyOHKOF7gCs2yprMHOrQuKkkqw==}
 
-  '@safe-global/protocol-kit@5.0.4':
-    resolution: {integrity: sha512-e2BhyiS/7jMzJY8oNpkMIHWAViENyL42/SAvFOcFsEc6JBvnh+4GGvLRwLVEiQ8e+54sJinRjo1/iTCrTIoqOQ==}
-
   '@safe-global/protocol-kit@5.1.0':
     resolution: {integrity: sha512-tBLadf7yTGny9m56Fi+2aKhDo+IuxwXoBj4tt+E3kWIUbY4yB14Ed34eaVrpkMGuHzNMvH8HQlqnUqdpxgRJAQ==}
 
@@ -2233,9 +2230,6 @@ packages:
 
   '@safe-global/safe-modules-deployments@2.2.4':
     resolution: {integrity: sha512-m396ZrBPhZVYkapTTIuizyOOtoZsCKbicl0ztgDFfDbi7KbS6AtDP6cV89AYosQxUQS+v0q4ksQd30/j3L1BtQ==}
-
-  '@safe-global/types-kit@1.0.0':
-    resolution: {integrity: sha512-jZNUeHbWobeVrURbcEvfas4Q1IDasQni5UYm2umUtAR6SBDazp1kGni8IjZPRKq3+8q+fYwu9FmKpX50rUYn3w==}
 
   '@safe-global/types-kit@1.0.1':
     resolution: {integrity: sha512-T1mAgUVjtGehpwcZuROHgCx3DJHnaH0d2pSzYNcsEPvXlffu3lfCRTbrlmyEAVMEKtHaNvl7//v+GJKeLIeKhw==}
@@ -9581,21 +9575,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/protocol-kit@5.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)':
-    dependencies:
-      '@noble/hashes': 1.6.1
-      '@safe-global/safe-deployments': 1.37.21
-      '@safe-global/safe-modules-deployments': 2.2.4
-      '@safe-global/types-kit': 1.0.0(typescript@5.7.2)(zod@3.24.0)
-      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
-      semver: 7.6.3
-      viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@safe-global/protocol-kit@5.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)':
     dependencies:
       '@safe-global/safe-deployments': 1.37.21
@@ -9647,13 +9626,6 @@ snapshots:
   '@safe-global/safe-gateway-typescript-sdk@3.22.4': {}
 
   '@safe-global/safe-modules-deployments@2.2.4': {}
-
-  '@safe-global/types-kit@1.0.0(typescript@5.7.2)(zod@3.24.0)':
-    dependencies:
-      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
-    transitivePeerDependencies:
-      - typescript
-      - zod
 
   '@safe-global/types-kit@1.0.1(typescript@5.7.2)(zod@3.24.0)':
     dependencies:
