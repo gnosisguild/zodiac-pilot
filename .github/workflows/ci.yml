@@ -1,6 +1,6 @@
 name: CI
 
-on: 
+on:
   pull_request:
   push:
     branches:
@@ -10,13 +10,11 @@ jobs:
   static_checks:
     runs-on: ubuntu-latest
     defaults:
-      run: 
+      run:
         working-directory: ./extension
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: latest
@@ -28,13 +26,11 @@ jobs:
   unit_tests:
     runs-on: ubuntu-latest
     defaults:
-      run: 
+      run:
         working-directory: ./extension
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: latest
@@ -42,10 +38,10 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - run: pnpm install --prefer-offline
       - run: pnpm test:unit
-      - name: 'Report Coverage'
+      - name: "Report Coverage"
         # Set if: always() to also generate the report if tests are failing
         # Only works if you set `reportOnFailure: true` in your vite config as specified above
-        if: always() 
-        uses:  davelosert/vitest-coverage-report-action@v2
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
         with:
           working-directory: extension
