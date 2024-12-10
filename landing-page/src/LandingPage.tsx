@@ -33,7 +33,7 @@ export const LandingPage = () => (
         </a>
       </aside>
     </header>
-    <main className="flex flex-col gap-24">
+    <main className="flex max-w-7xl flex-col justify-center gap-24 self-center">
       <h1 className="text-balance text-center text-3xl font-thin lg:text-5xl">
         Secure, flexible, smart accounts with the ease of a browser extension.
       </h1>
