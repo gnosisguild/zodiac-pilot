@@ -64,7 +64,7 @@ importers:
         version: 2.5.4(typescript@5.6.3)(zod@3.23.8)
       '@safe-global/protocol-kit':
         specifier: ^5.0.1
-        version: 5.0.2(typescript@5.6.3)(zod@3.23.8)
+        version: 5.0.4(typescript@5.6.3)(zod@3.23.8)
       '@safe-global/safe-apps-sdk':
         specifier: ^9.1.0
         version: 9.1.0(typescript@5.6.3)(zod@3.23.8)
@@ -1298,9 +1298,6 @@ packages:
   '@safe-global/protocol-kit@4.1.1':
     resolution: {integrity: sha512-11Jui1gIpCOV1sUn5HlT+hVn/+gJnKjik0V0aUPDKIL2zajwc+jReZK43CH5GyOHKOF7gCs2yprMHOrQuKkkqw==}
 
-  '@safe-global/protocol-kit@5.0.2':
-    resolution: {integrity: sha512-GS+k7KR7bv/bWSR36UAIRHpjoXZbSlZtw7FfRkb0D48iqWob7/kw9YbjcFKchpSeHVx3bI/MTsPA0izscUgDcg==}
-
   '@safe-global/protocol-kit@5.0.4':
     resolution: {integrity: sha512-e2BhyiS/7jMzJY8oNpkMIHWAViENyL42/SAvFOcFsEc6JBvnh+4GGvLRwLVEiQ8e+54sJinRjo1/iTCrTIoqOQ==}
 
@@ -1310,9 +1307,6 @@ packages:
   '@safe-global/safe-core-sdk-types@5.1.0':
     resolution: {integrity: sha512-UzXR4zWmVzux25FcIm4H049QhZZpVpIBL5HE+V0p5gHpArZROL+t24fZmsKUf403CtBxIJM5zZSVQL0nFJi+IQ==}
     deprecated: 'WARNING: This project has been renamed to @safe-global/types-kit. Please, migrate from @safe-global/safe-core-sdk-types@5.1.0 to @safe-global/types-kit@1.0.0.'
-
-  '@safe-global/safe-deployments@1.37.10':
-    resolution: {integrity: sha512-lcxX9CV+xdcLs4dF6Cx18zDww5JyqaX6RdcvU0o/34IgJ4Wjo3J/RNzJAoMhurCAfTGr+0vyJ9V13Qo50AR6JA==}
 
   '@safe-global/safe-deployments@1.37.21':
     resolution: {integrity: sha512-Q5qvcxXjAIcKOO8e3uQ/iNOSE5vRI+5jCO6JW/id5tEwMBtfyj5Ec2Vkk6nz0AM0uo2pyGROYjNTTuefoTthvQ==}
@@ -6271,27 +6265,12 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.5.0
       '@safe-global/safe-core-sdk-types': 5.1.0(typescript@5.6.3)(zod@3.23.8)
-      '@safe-global/safe-deployments': 1.37.10
+      '@safe-global/safe-deployments': 1.37.21
       '@safe-global/safe-modules-deployments': 2.2.4
-      abitype: 1.0.6(typescript@5.6.3)(zod@3.23.8)
+      abitype: 1.0.7(typescript@5.6.3)(zod@3.23.8)
       ethereumjs-util: 7.1.5
       ethers: 6.13.4
       semver: 7.6.3
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@5.0.2(typescript@5.6.3)(zod@3.23.8)':
-    dependencies:
-      '@noble/hashes': 1.5.0
-      '@safe-global/safe-deployments': 1.37.10
-      '@safe-global/safe-modules-deployments': 2.2.4
-      '@safe-global/types-kit': 1.0.0(typescript@5.6.3)(zod@3.23.8)
-      abitype: 1.0.6(typescript@5.6.3)(zod@3.23.8)
-      semver: 7.6.3
-      viem: 2.21.28(typescript@5.6.3)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -6329,10 +6308,6 @@ snapshots:
     transitivePeerDependencies:
       - typescript
       - zod
-
-  '@safe-global/safe-deployments@1.37.10':
-    dependencies:
-      semver: 7.6.3
 
   '@safe-global/safe-deployments@1.37.21':
     dependencies:
