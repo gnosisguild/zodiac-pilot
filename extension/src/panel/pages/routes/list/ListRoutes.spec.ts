@@ -1,6 +1,7 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
 import {
   connectMockWallet,
+  createTransaction,
   expectRouteToBe,
   mockRoutes,
   render,
@@ -36,24 +37,70 @@ describe('List routes', () => {
     await expectRouteToBe('/routes/testRoute')
   })
 
-  it('should not warn about clearing transactions when there are none', async () => {
-    mockRoutes(
-      { id: 'firstRoute', label: 'First route' },
-      { id: 'secondRoute', label: 'Second route' }
-    )
+  describe('Clearing transactions', () => {
+    it('warns about clearing transactions when the avatars differ', async () => {
+      mockRoutes(
+        { id: 'firstRoute', label: 'First route' },
+        { id: 'secondRoute', label: 'Second route' }
+      )
 
-    await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
-      initialSelectedRouteId: 'firstRoute',
+      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
+        initialSelectedRouteId: 'firstRoute',
+        initialState: [createTransaction()],
+      })
+
+      const { getByRole } = within(
+        screen.getByRole('region', { name: 'Second route' })
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Launch' }))
+
+      expect(
+        screen.getByRole('dialog', { name: 'Clear transactions' })
+      ).toBeInTheDocument()
     })
 
-    const { getByRole } = within(
-      screen.getByRole('region', { name: 'Second route' })
-    )
+    it('warns about clearing transactions when the avatars differ', async () => {
+      mockRoutes(
+        { id: 'firstRoute', label: 'First route', avatar: ETH_ZERO_ADDRESS },
+        { id: 'secondRoute', label: 'Second route', avatar: ETH_ZERO_ADDRESS }
+      )
 
-    await userEvent.click(getByRole('button', { name: 'Launch' }))
+      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
+        initialSelectedRouteId: 'firstRoute',
+        initialState: [createTransaction()],
+      })
 
-    expect(
-      screen.queryByRole('dialog', { name: 'Clear transactions' })
-    ).not.toBeInTheDocument()
+      const { getByRole } = within(
+        screen.getByRole('region', { name: 'Second route' })
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Launch' }))
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Clear transactions' })
+      ).not.toBeInTheDocument()
+    })
+
+    it('should not warn about clearing transactions when there are none', async () => {
+      mockRoutes(
+        { id: 'firstRoute', label: 'First route' },
+        { id: 'secondRoute', label: 'Second route' }
+      )
+
+      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
+        initialSelectedRouteId: 'firstRoute',
+      })
+
+      const { getByRole } = within(
+        screen.getByRole('region', { name: 'Second route' })
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Launch' }))
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Clear transactions' })
+      ).not.toBeInTheDocument()
+    })
   })
 })
