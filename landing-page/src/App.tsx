@@ -1,4 +1,3 @@
-import { BadgeIcon, ZodiacPaper } from 'zodiac-ui-components'
 import './App.css'
 
 function App() {
@@ -6,27 +5,23 @@ function App() {
     <div className="container">
       <main className="main">
         <section className="descriptionContainer">
-          <ZodiacPaper>
-            <div className="description">
-              <h1>Zodiac Pilot</h1>
-              <p>A Chrome extension for building transactions for your Safe.</p>
-              <ul>
-                <li>Batch multiple transactions together to save on gas</li>
-                <li>
-                  Simulate every transaction with Tenderly to ensure accuracy
-                </li>
-                <li>
-                  Submit transactions directly to the Safe for easy signing
-                </li>
-              </ul>
-              <a
-                className="button"
-                href="https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
-              >
-                Install Extension
-              </a>
-            </div>
-          </ZodiacPaper>
+          <div className="description">
+            <h1>Zodiac Pilot</h1>
+            <p>A Chrome extension for building transactions for your Safe.</p>
+            <ul>
+              <li>Batch multiple transactions together to save on gas</li>
+              <li>
+                Simulate every transaction with Tenderly to ensure accuracy
+              </li>
+              <li>Submit transactions directly to the Safe for easy signing</li>
+            </ul>
+            <a
+              className="button"
+              href="https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
+            >
+              Install Extension
+            </a>
+          </div>
         </section>
         <section className="demo">
           <div className="videoContainer">
@@ -50,7 +45,7 @@ function App() {
           </a>
         </div>
         <a href="https://gnosisguild.org" className="guild-badge">
-          <BadgeIcon icon="zodiac" size={34} /> <p>Built by Gnosis Guild</p>
+          <p>Built by Gnosis Guild</p>
         </a>
       </footer>
     </div>
