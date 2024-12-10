@@ -26,9 +26,13 @@ export const createPortWhenTabIsReady = async (tab: chrome.tabs.Tab) => {
 
         const port = await createPort(tabId, tab.url)
 
-        console.debug(
-          `Port to Tab (id: "${tab.id}", url: "${tab.url}") created.`
-        )
+        if (port == null) {
+          console.debug(`Could not create port to Tab (id: "${tab.id})`)
+        } else {
+          console.debug(
+            `Port to Tab (id: "${tab.id}", url: "${tab.url}") created.`
+          )
+        }
 
         resolve(port)
       }
