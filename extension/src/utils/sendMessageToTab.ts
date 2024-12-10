@@ -52,11 +52,15 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
   if (tab.status === 'complete') {
     console.debug(`Sending message to tab "${tabId}".`, { message })
 
-    const response = await chrome.tabs.sendMessage(tabId, message)
+    try {
+      const response = await chrome.tabs.sendMessage(tabId, message)
 
-    console.debug(`Received response from tab`, { response })
+      console.debug(`Received response from tab`, { response })
 
-    return response
+      return response
+    } catch (e) {
+      console.debug('Could not send message to tab. Waiting for tab to reload.')
+    }
   }
 
   console.debug(`Tab "${tabId}" is not ready. Waiting for page load.`)
