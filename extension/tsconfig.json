@@ -39,5 +39,10 @@
       "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"]
     }
   },
-  "include": ["src", "e2e", "test-utils", "./vitest.setup.mts"]
+  "include": [
+    "./src/**/*",
+    "./e2e/**/*",
+    "./test-utils/**/*",
+    "./vitest.setup.mts"
+  ]
 }
