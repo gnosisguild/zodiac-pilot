@@ -6,5 +6,8 @@
     "patchedDependencies": {
       "vitest-chrome": "patches/vitest-chrome.patch"
     }
+  },
+  "devDependencies": {
+    "typescript": "5.7.2"
   }
 }
