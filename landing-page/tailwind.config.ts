@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss'
 
 const tailwindConfig = {
   important: true,
-  content: ['./src/**/*.tsx', './public/*.html', './src/**/*.html'],
+  content: ['./src/**/*.tsx', './index.html'],
   theme: {
     extend: {
       fontFamily: {
