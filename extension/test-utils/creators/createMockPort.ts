@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { Runtime } from 'vitest-chrome/types/vitest-chrome'
+import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { createMockEvent } from './createMockEvent'
 
 export const createMockPort = (

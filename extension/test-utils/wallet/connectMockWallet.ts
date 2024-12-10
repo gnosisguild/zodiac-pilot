@@ -3,7 +3,7 @@ import {
   ConnectedWalletMessageType,
 } from '@/messages'
 import type { HexAddress } from '@/types'
-import { Runtime } from 'vitest-chrome/types/vitest-chrome'
+import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { callListeners } from '../chrome'
 
 type ConnectMockWalletOptions = {

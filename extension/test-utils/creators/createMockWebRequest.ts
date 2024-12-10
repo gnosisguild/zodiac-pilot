@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { WebRequest } from 'vitest-chrome/types/vitest-chrome'
+import type { WebRequest } from 'vitest-chrome/types/vitest-chrome'
 
 const encoder = new TextEncoder()
 
