@@ -1,5 +1,5 @@
-import { ChainId, Route as CompleteRoute, PrefixedAddress } from 'ser-kit'
-import { SupportedModuleType } from './panel/integrations/zodiac/types'
+import type { ChainId, Route as CompleteRoute, PrefixedAddress } from 'ser-kit'
+import type { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export enum ProviderType {
   WalletConnect,

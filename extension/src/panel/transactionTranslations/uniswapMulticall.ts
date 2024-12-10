@@ -1,8 +1,7 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-
 import { FunctionFragment, Interface } from 'ethers'
 import { UnfoldVertical } from 'lucide-react'
-import { TransactionTranslation } from './types'
+import type { TransactionTranslation } from './types'
 
 const uniswapMulticallInterface = new Interface([
   'function multicall(bytes[] calldata data) external returns (bytes[] memory results)',

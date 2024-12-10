@@ -9,7 +9,7 @@ import {
 } from '@/components'
 import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
-import { HexAddress, LegacyConnection } from '@/types'
+import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
 import {
   queryRolesV1MultiSend,

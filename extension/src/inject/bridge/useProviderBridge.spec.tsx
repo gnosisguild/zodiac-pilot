@@ -1,5 +1,8 @@
 import { ZERO_ADDRESS } from '@/chains'
-import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
+import {
+  type InjectedProviderMessage,
+  InjectedProviderMessageTyp,
+} from '@/messages'
 import {
   callListeners,
   chromeMock,
@@ -8,11 +11,11 @@ import {
   MockProvider,
   renderHook,
 } from '@/test-utils'
-import { Eip1193Provider } from '@/types'
+import type { Eip1193Provider } from '@/types'
 import { cleanup, waitFor } from '@testing-library/react'
 import { toQuantity } from 'ethers'
-import { PropsWithChildren } from 'react'
-import { ChainId } from 'ser-kit'
+import type { PropsWithChildren } from 'react'
+import type { ChainId } from 'ser-kit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProvideBridgeContext } from './BridgeContext'
 import { useProviderBridge } from './useProviderBridge'

@@ -2,8 +2,8 @@ import { EXPLORER_URL } from '@/chains'
 import { AddressInput, GhostLinkButton } from '@/components'
 import { getAddress } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
-import { ChainId } from 'ser-kit'
-import { ContractInfo } from '../../../utils/abi'
+import type { ChainId } from 'ser-kit'
+import type { ContractInfo } from '../../../utils/abi'
 
 interface Props {
   chainId: ChainId

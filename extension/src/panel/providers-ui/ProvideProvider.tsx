@@ -1,13 +1,13 @@
 import { getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
-import { Eip1193Provider } from '@/types'
+import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   createContext,
-  PropsWithChildren,
+  type PropsWithChildren,
   useCallback,
   useContext,
   useEffect,

@@ -1,4 +1,4 @@
-import { Event, EventFn } from './types'
+import type { Event, EventFn } from './types'
 
 type EventListener<C extends EventFn> = {
   callListeners: (...args: Parameters<C>) => void

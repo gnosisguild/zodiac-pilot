@@ -1,4 +1,7 @@
-import { InjectedProviderMessage, InjectedProviderMessageTyp } from '@/messages'
+import {
+  type InjectedProviderMessage,
+  InjectedProviderMessageTyp,
+} from '@/messages'
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
 

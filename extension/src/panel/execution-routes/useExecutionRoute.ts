@@ -1,5 +1,5 @@
 import { ETH_ZERO_ADDRESS } from '@/chains'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 import { nanoid } from 'nanoid'
 import { useExecutionRoutes } from './ExecutionRoutesContext'
 import { useSelectedRouteId } from './SelectedRouteContext'

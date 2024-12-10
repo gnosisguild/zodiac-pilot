@@ -5,7 +5,7 @@ import {
   mockWeb3,
   test,
 } from '@/e2e-utils'
-import { Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 
 const openConfiguration = async (
   page: Page,

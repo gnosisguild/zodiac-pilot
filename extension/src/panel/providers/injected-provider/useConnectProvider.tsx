@@ -1,13 +1,13 @@
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
 import { infoToast } from '@/components'
 import { useWindowId } from '@/inject-bridge'
-import { Eip1193Provider } from '@/types'
-import { MutableRefObject, useEffect, useState } from 'react'
+import type { Eip1193Provider } from '@/types'
+import { type MutableRefObject, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { ChainId } from 'ser-kit'
-import { ConnectionStatus } from '../connectTypes'
+import type { ChainId } from 'ser-kit'
+import type { ConnectionStatus } from '../connectTypes'
 import { ConnectProvider } from './ConnectProvider'
-import { InjectedWalletError } from './InjectedWalletError'
+import type { InjectedWalletError } from './InjectedWalletError'
 import { useConnect } from './useConnect'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.

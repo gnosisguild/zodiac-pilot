@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { BaseAlert } from './BaseAlert'
 
 type InfoProps = PropsWithChildren<{ title?: string }>

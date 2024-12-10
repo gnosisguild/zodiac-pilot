@@ -4,7 +4,7 @@ import {
   useInjectedWallet,
   useWalletConnect,
 } from '@/providers'
-import { ExecutionRoute, ProviderType } from '@/types'
+import { type ExecutionRoute, ProviderType } from '@/types'
 
 export const useRouteProvider = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()

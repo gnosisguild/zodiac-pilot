@@ -1,4 +1,5 @@
-import { ChainId } from 'ser-kit'
+import type { JsonRpcRequest } from '@/types'
+import type { ChainId } from 'ser-kit'
 
 export enum PilotMessageType {
   /**  sent when the panel is toggled */
@@ -62,8 +63,6 @@ interface SimulateStop {
 }
 
 export type SimulationMessage = SimulateStart | SimulateStop | SimulateUpdate
-
-import { JsonRpcRequest } from '@/types'
 
 export enum InjectedProviderMessageTyp {
   INJECTED_PROVIDER_REQUEST = 'INJECTED_PROVIDER_REQUEST',

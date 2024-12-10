@@ -1,7 +1,7 @@
 import { ZERO_ADDRESS } from '@/chains'
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Blockie } from '../Blockie'
-import { ComposableInputProps, Input } from './Input'
+import { type ComposableInputProps, Input } from './Input'
 
 type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,

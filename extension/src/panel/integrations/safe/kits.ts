@@ -1,7 +1,7 @@
 import { RPC } from '@/chains'
 import SafeApiKit from '@safe-global/api-kit'
 import Safe from '@safe-global/protocol-kit'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
   [1]: 'https://safe-transaction-mainnet.safe.global/api',

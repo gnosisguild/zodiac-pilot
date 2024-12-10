@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import { LucideIcon } from 'lucide-react'
-import { ComponentPropsWithoutRef } from 'react'
+import type { LucideIcon } from 'lucide-react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router-dom'
 
 type SharedButtonProps = {

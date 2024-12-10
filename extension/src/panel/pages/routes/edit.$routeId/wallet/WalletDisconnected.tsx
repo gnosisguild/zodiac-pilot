@@ -1,6 +1,6 @@
 import { SecondaryButton, Warning } from '@/components'
 import { useInjectedWallet } from '@/providers'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
 type WalletDisconnectedProps = PropsWithChildren<{

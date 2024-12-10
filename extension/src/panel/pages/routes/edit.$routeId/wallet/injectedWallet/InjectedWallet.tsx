@@ -1,6 +1,6 @@
-import { InjectedWalletContextT, useInjectedWallet } from '@/providers'
+import { type InjectedWalletContextT, useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
 import { SwitchChain } from '../SwitchChain'

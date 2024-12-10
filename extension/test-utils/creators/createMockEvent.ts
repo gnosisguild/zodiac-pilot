@@ -1,5 +1,5 @@
-import { EventCallback } from 'vitest-chrome/types/create-event'
-import { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
+import type { EventCallback } from 'vitest-chrome/types/create-event'
+import type { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
 
 export const createMockEvent = <
   T extends EventCallback,

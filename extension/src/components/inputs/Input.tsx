@@ -1,4 +1,4 @@
-import { ReactNode, useId } from 'react'
+import { type ReactNode, useId } from 'react'
 import { Label } from './Label'
 
 type RenderProps = {

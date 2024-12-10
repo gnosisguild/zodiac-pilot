@@ -1,6 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import { useCallback, useState } from 'react'
-import { ConnectionProvider, ConnectionStatus } from '../connectTypes'
+import type { ConnectionProvider, ConnectionStatus } from '../connectTypes'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 import { useAccounts } from './useAccounts'
 import { useChainId } from './useChainId'

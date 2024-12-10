@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@headlessui/react'
 import { X } from 'lucide-react'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { GhostButton } from './buttons'
 
 type ModalProps = PropsWithChildren<{

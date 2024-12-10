@@ -1,4 +1,4 @@
-import { Eip1193Provider } from '@/types'
+import type { Eip1193Provider } from '@/types'
 import { InjectedProvider } from './InjectedProvider'
 import { isRabbyDetected, rabbyTakeOver } from './rabbyTakeOver'
 

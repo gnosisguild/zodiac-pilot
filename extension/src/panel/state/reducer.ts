@@ -1,6 +1,6 @@
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { ContractInfo } from '../utils/abi'
-import { Action } from './actions'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { ContractInfo } from '../utils/abi'
+import type { Action } from './actions'
 import { ExecutionStatus } from './executionStatus'
 
 export interface TransactionState {

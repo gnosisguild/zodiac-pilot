@@ -1,6 +1,6 @@
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
-import { JsonRpcError, LegacyConnection } from '@/types'
+import type { JsonRpcError, LegacyConnection } from '@/types'
 import {
   decodeGenericError,
   decodeRoleKey,

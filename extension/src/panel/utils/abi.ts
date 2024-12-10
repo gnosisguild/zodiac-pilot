@@ -1,5 +1,5 @@
 import { getAddress } from 'ethers'
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 
 type AbiFragment = object
 

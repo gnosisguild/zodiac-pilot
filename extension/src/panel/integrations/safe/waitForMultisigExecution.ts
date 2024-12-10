@@ -1,4 +1,4 @@
-import { ChainId } from 'ser-kit'
+import type { ChainId } from 'ser-kit'
 import { initSafeApiKit } from './kits'
 
 export function waitForMultisigExecution(

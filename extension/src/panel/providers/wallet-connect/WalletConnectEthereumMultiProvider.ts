@@ -1,14 +1,14 @@
 import { waitForMultisigExecution } from '@/safe'
-import { JsonRpcError } from '@/types'
+import type { JsonRpcError } from '@/types'
 import Core from '@walletconnect/core'
 import WalletConnectEthereumProvider, {
-  EthereumProviderOptions,
+  type EthereumProviderOptions,
 } from '@walletconnect/ethereum-provider'
 import KeyValueStorage from '@walletconnect/keyvaluestorage'
 import { WalletConnectModal } from '@walletconnect/modal'
 import SignClient from '@walletconnect/sign-client'
 import UniversalProvider, {
-  RequestArguments,
+  type RequestArguments,
 } from '@walletconnect/universal-provider'
 
 /**

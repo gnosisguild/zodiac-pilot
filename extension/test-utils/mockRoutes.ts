@@ -1,4 +1,4 @@
-import { ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { chromeMock } from './chrome'
 import { createMockRoute } from './creators'
 

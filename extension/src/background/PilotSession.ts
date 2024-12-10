@@ -1,10 +1,10 @@
-import { Message, PilotMessageType } from '@/messages'
+import { type Message, PilotMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
-import { TrackRequestsResult } from './rpcTracking'
-import { Fork } from './types'
+import type { TrackRequestsResult } from './rpcTracking'
+import type { Fork } from './types'
 
 export type Sessions = Map<number, PilotSession>
 

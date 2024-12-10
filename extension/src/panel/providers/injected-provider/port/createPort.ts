@@ -1,4 +1,7 @@
-import { ConnectedWalletMessage, ConnectedWalletMessageType } from '@/messages'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@/messages'
 import { isValidTab } from '@/utils'
 
 export const createPort = async (tabId: number, url: string | undefined) => {

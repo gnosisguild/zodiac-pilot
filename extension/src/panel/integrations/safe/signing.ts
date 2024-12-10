@@ -1,5 +1,5 @@
-import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
-import { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
+import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
 import {
   Contract,
   hashMessage as ethersHashMessage,

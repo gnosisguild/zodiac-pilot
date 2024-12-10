@@ -1,5 +1,5 @@
-import { MutableRefObject } from 'react'
-import { Runtime } from 'vitest-chrome/types/vitest-chrome'
+import type { MutableRefObject } from 'react'
+import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { chromeMock } from './chromeMock'
 
 type PortCreateFn = () => Runtime.Port
