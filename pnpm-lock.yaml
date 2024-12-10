@@ -152,7 +152,7 @@ importers:
         version: 1.49.1
       '@safe-global/api-kit':
         specifier: ^2.4.2
-        version: 2.5.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+        version: 2.5.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
       '@safe-global/protocol-kit':
         specifier: ^5.0.1
         version: 5.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
@@ -1985,6 +1985,9 @@ packages:
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
 
+  '@peculiar/asn1-schema@2.3.13':
+    resolution: {integrity: sha512-3Xq3a01WkHRZL8X04Zsfg//mGaA21xlL4tlVn4v2xGT0JStiztATRkMwa5b+f/HXmY2smsiLXYK46Gwgzvfg3g==}
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -2199,14 +2202,17 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@safe-global/api-kit@2.5.4':
-    resolution: {integrity: sha512-L12qTaEQdQqdlPhsjC+JCpH5qxphyegPptrc98cRFnxsES0Dz3i/2df7kSAIntaYIP4aFEbulpVwOjOgWf+hDQ==}
+  '@safe-global/api-kit@2.5.5':
+    resolution: {integrity: sha512-/0gMUW2FX3JvgMOZfZes4VQ+QJrrf2hxn62slZsbrCUDc6hukOpLM7njQWWabPFp2y+SgrcUJxawRmB6vl8MmA==}
 
   '@safe-global/protocol-kit@4.1.1':
     resolution: {integrity: sha512-11Jui1gIpCOV1sUn5HlT+hVn/+gJnKjik0V0aUPDKIL2zajwc+jReZK43CH5GyOHKOF7gCs2yprMHOrQuKkkqw==}
 
   '@safe-global/protocol-kit@5.0.4':
     resolution: {integrity: sha512-e2BhyiS/7jMzJY8oNpkMIHWAViENyL42/SAvFOcFsEc6JBvnh+4GGvLRwLVEiQ8e+54sJinRjo1/iTCrTIoqOQ==}
+
+  '@safe-global/protocol-kit@5.1.0':
+    resolution: {integrity: sha512-tBLadf7yTGny9m56Fi+2aKhDo+IuxwXoBj4tt+E3kWIUbY4yB14Ed34eaVrpkMGuHzNMvH8HQlqnUqdpxgRJAQ==}
 
   '@safe-global/safe-apps-provider@0.18.4':
     resolution: {integrity: sha512-SWYeG3gyTO6wGHMSokfHakZ9isByn2mHsM0VohIorYFFEyGGmJ89btnTm+DqDUSoQtvWAatZB7XNy6CaYMvqtg==}
@@ -2230,6 +2236,9 @@ packages:
 
   '@safe-global/types-kit@1.0.0':
     resolution: {integrity: sha512-jZNUeHbWobeVrURbcEvfas4Q1IDasQni5UYm2umUtAR6SBDazp1kGni8IjZPRKq3+8q+fYwu9FmKpX50rUYn3w==}
+
+  '@safe-global/types-kit@1.0.1':
+    resolution: {integrity: sha512-T1mAgUVjtGehpwcZuROHgCx3DJHnaH0d2pSzYNcsEPvXlffu3lfCRTbrlmyEAVMEKtHaNvl7//v+GJKeLIeKhw==}
 
   '@scure/base@1.1.9':
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
@@ -2897,6 +2906,10 @@ packages:
 
   asn1.js@4.10.1:
     resolution: {integrity: sha512-p32cOF5q0Zqs9uBiONKYLm6BClCoBCM5O9JfeUSlnQLBTxYdTK+pW+nXflm8UkKd2UYlEbYz5qEi0JuZR9ckSw==}
+
+  asn1js@3.0.5:
+    resolution: {integrity: sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==}
+    engines: {node: '>=12.0.0'}
 
   assert@2.1.0:
     resolution: {integrity: sha512-eLHpSK/Y4nhMJ07gDaAzoX/XAKS8PSaojml3M0DM4JpV1LAi5JOJ/p6H/XWrl8L+DzVEvVCW1z3vWAaB9oTsQw==}
@@ -6086,6 +6099,13 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  pvtsutils@1.3.6:
+    resolution: {integrity: sha512-PLgQXQ6H2FWCaeRak8vvk1GW462lMxB5s3Jm673N82zI4vqtVUPuZdffdZbPDFRoU8kAhItWFtPCWiPpp4/EDg==}
+
+  pvutils@1.1.3:
+    resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
+    engines: {node: '>=6.0.0'}
+
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
     engines: {node: '>=10.13.0'}
@@ -9263,6 +9283,13 @@ snapshots:
 
   '@paulmillr/qr@0.2.1': {}
 
+  '@peculiar/asn1-schema@2.3.13':
+    dependencies:
+      asn1js: 3.0.5
+      pvtsutils: 1.3.6
+      tslib: 2.8.1
+    optional: true
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -9517,10 +9544,10 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.28.1':
     optional: true
 
-  '@safe-global/api-kit@2.5.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)':
+  '@safe-global/api-kit@2.5.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)':
     dependencies:
-      '@safe-global/protocol-kit': 5.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
-      '@safe-global/types-kit': 1.0.0(typescript@5.7.2)(zod@3.24.0)
+      '@safe-global/protocol-kit': 5.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+      '@safe-global/types-kit': 1.0.1(typescript@5.7.2)(zod@3.24.0)
       node-fetch: 2.7.0
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
     transitivePeerDependencies:
@@ -9555,6 +9582,23 @@ snapshots:
       abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
       semver: 7.6.3
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@safe-global/protocol-kit@5.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)':
+    dependencies:
+      '@safe-global/safe-deployments': 1.37.21
+      '@safe-global/safe-modules-deployments': 2.2.4
+      '@safe-global/types-kit': 1.0.1(typescript@5.7.2)(zod@3.24.0)
+      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
+      semver: 7.6.3
+      viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+    optionalDependencies:
+      '@noble/curves': 1.7.0
+      '@peculiar/asn1-schema': 2.3.13
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -9597,6 +9641,13 @@ snapshots:
   '@safe-global/safe-modules-deployments@2.2.4': {}
 
   '@safe-global/types-kit@1.0.0(typescript@5.7.2)(zod@3.24.0)':
+    dependencies:
+      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
+    transitivePeerDependencies:
+      - typescript
+      - zod
+
+  '@safe-global/types-kit@1.0.1(typescript@5.7.2)(zod@3.24.0)':
     dependencies:
       abitype: 1.0.7(typescript@5.7.2)(zod@3.24.0)
     transitivePeerDependencies:
@@ -10866,6 +10917,13 @@ snapshots:
       bn.js: 4.12.1
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
+
+  asn1js@3.0.5:
+    dependencies:
+      pvtsutils: 1.3.6
+      pvutils: 1.1.3
+      tslib: 2.8.1
+    optional: true
 
   assert@2.1.0:
     dependencies:
@@ -14613,6 +14671,14 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  pvtsutils@1.3.6:
+    dependencies:
+      tslib: 2.8.1
+    optional: true
+
+  pvutils@1.1.3:
+    optional: true
+
   qrcode@1.5.3:
     dependencies:
       dijkstrajs: 1.0.3
@@ -15076,7 +15142,7 @@ snapshots:
 
   ser-kit@0.3.17(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0):
     dependencies:
-      '@safe-global/api-kit': 2.5.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
+      '@safe-global/api-kit': 2.5.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
       '@safe-global/protocol-kit': 4.1.1(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
       '@safe-global/safe-core-sdk-types': 5.1.0(typescript@5.7.2)(zod@3.24.0)
       viem: 2.21.54(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.0)
