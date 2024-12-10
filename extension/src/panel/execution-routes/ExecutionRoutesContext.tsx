@@ -34,7 +34,14 @@ const ExecutionRoutesContext = createContext<Context>({
   },
 })
 
-export const ProvideExecutionRoutes = ({ children }: PropsWithChildren) => {
+type ProvideExecutionRoutesProps = PropsWithChildren<{
+  initialSelectedRouteId?: string
+}>
+
+export const ProvideExecutionRoutes = ({
+  children,
+  initialSelectedRouteId,
+}: ProvideExecutionRoutesProps) => {
   // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
   // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
   const [routes, setRoute, removeRoute] =
@@ -65,7 +72,9 @@ export const ProvideExecutionRoutes = ({ children }: PropsWithChildren) => {
         removeRoute,
       }}
     >
-      <ProvideSelectedExecutionRoute>{children}</ProvideSelectedExecutionRoute>
+      <ProvideSelectedExecutionRoute initialValue={initialSelectedRouteId}>
+        {children}
+      </ProvideSelectedExecutionRoute>
     </ExecutionRoutesContext.Provider>
   )
 }
