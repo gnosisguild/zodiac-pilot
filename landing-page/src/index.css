@@ -1,33 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Roboto Mono';
-  font-style: normal;
-  font-weight: 400;
-  src:
-    url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff) format('woff2'),
-    url(./fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2) format('woff');
-}
-
-html {
-  background: rgb(14 14 10);
-}
-#root {
-  background: rgba(22, 19, 11, 0.5);
-  backdrop-filter: blur(2px);
-}
-a {
-  color: white;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-a:hover {
-  color: rgba(252, 248, 217, 0.8);
-}
-
-* {
-  box-sizing: border-box;
-}
