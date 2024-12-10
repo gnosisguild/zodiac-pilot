@@ -1,9 +1,6 @@
-node_modules
-public/build
 public/_metadata
-*.log
+
 zodiac-pilot.zip
-.env
 
 /test-results/
 /playwright-report/
@@ -11,4 +8,3 @@ zodiac-pilot.zip
 /playwright/.cache/
 
 walletconnect.db
-/coverage

@@ -113,10 +113,5 @@
     "react-router-dom": "7.0.2",
     "react-stick": "^5.0.6",
     "zod": "^3.23.8"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "vitest-chrome": "patches/vitest-chrome.patch"
-    }
   }
 }
