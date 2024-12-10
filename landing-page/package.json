@@ -1,30 +1,31 @@
 {
-  "name": "zodiac-pilot-landing-page",
-  "version": "0.1.0",
+  "name": "@zodiac-os/pilot-landing-page",
+  "version": "0.0.0-development",
   "private": true,
   "dependencies": {
-    "@gnosis.pm/safe-react-components": "^1.1.2",
-    "@material-ui/core": "^4.12.4",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.4.1",
-    "@types/node": "^16.11.27",
+    "@icons-pack/react-simple-icons": "^10.2.0",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
-    "@types/styled-components": "^5.1.25",
+    "lucide-react": "^0.468.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-scripts": "5.0.1",
-    "styled-components": "^5.3.5",
-    "typescript": "^4.6.3",
-    "web-vitals": "^2.1.4",
-    "zodiac-ui-components": "^0.0.28"
+    "web-vitals": "2.1.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "tailwindcss": "^3.4.14",
+    "typescript": "5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-open-graph": "^2.0.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "vite build"
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +44,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "packageManager": "pnpm@9.15.0"
 }
