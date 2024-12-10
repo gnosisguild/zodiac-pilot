@@ -5,9 +5,9 @@ import {
   mockRoutes,
   render,
 } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { ListRoutes } from './ListRoutes'
 
 describe('List routes', () => {
@@ -34,5 +34,26 @@ describe('List routes', () => {
     await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
 
     await expectRouteToBe('/routes/testRoute')
+  })
+
+  it('should not warn about clearing transactions when there are none', async () => {
+    mockRoutes(
+      { id: 'firstRoute', label: 'First route' },
+      { id: 'secondRoute', label: 'Second route' }
+    )
+
+    await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
+      initialSelectedRouteId: 'firstRoute',
+    })
+
+    const { getByRole } = within(
+      screen.getByRole('region', { name: 'Second route' })
+    )
+
+    await userEvent.click(getByRole('button', { name: 'Launch' }))
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Clear transactions' })
+    ).not.toBeInTheDocument()
   })
 })
