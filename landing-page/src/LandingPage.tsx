@@ -1,4 +1,8 @@
-import { SiDiscord, SiGithub } from '@icons-pack/react-simple-icons'
+import {
+  SiChromewebstore,
+  SiDiscord,
+  SiGithub,
+} from '@icons-pack/react-simple-icons'
 import { PilotType, ZodiacOsPlain } from './logos'
 
 export const LandingPage = () => (
@@ -49,10 +53,22 @@ export const LandingPage = () => (
           />
         </div>
 
-        <div className="flex flex-col gap-4 text-2xl font-extralight text-zinc-500 dark:text-zinc-300">
-          <p>Trusted by institutions.</p>
-          <p>Flexible enough for individuals.</p>
-          <p>Let Pilot guide your transactions.</p>
+        <div className="flex flex-col gap-14">
+          <div className="flex flex-col gap-4 text-2xl font-extralight text-zinc-500 dark:text-zinc-300">
+            <p>Trusted by institutions.</p>
+            <p>Flexible enough for individuals.</p>
+            <p>Let Pilot guide your transactions.</p>
+          </div>
+
+          <a
+            href="https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex cursor-pointer items-center justify-center gap-4 whitespace-nowrap rounded-md border border-transparent bg-zinc-900 px-4 py-2 text-sm font-bold text-zinc-50 transition-all hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-500 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+          >
+            <SiChromewebstore />
+            Add to Chrome
+          </a>
         </div>
       </section>
     </main>
