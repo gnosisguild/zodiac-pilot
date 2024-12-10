@@ -18,7 +18,7 @@ export const maskMetaMaskAnnouncement = (provider: InjectedProvider) => {
             info: {
               ...ev.detail.info,
               name: 'Zodiac Pilot',
-              icon: '//pilot.gnosisguild.org/pilot48.png',
+              icon: '//pilot.gnosisguild.org/zodiac48.png',
             },
             provider,
           }),
