@@ -61,7 +61,6 @@ esbuild
     },
     plugins: [
       plugin(stdLibBrowser),
-      // cssModulesPlugin(),
       postCssPlugin({
         postcss: { plugins: [tailwindcss, autoprefixer] },
       }),
