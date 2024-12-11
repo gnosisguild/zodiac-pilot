@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useFunctionRef } from './useFunctionRef'
 
 /**
  * Read and write a value to extension sync storage under the given `key`.
@@ -20,13 +21,16 @@ export function useStorage<T>(key: string, initialValue?: T) {
   }, [key, initialValue])
 
   // referentially stable set callback
-  const setRef = useRef<(value: T) => Promise<void>>()
-  setRef.current = async (value: T) => {
+  const setRef = useFunctionRef(async (value: T) => {
     await chrome.storage.sync.set({ [key]: value })
-  }
-  const set = useCallback(async (value: T) => {
-    setRef.current?.(value)
-  }, [])
+  })
+
+  const set = useCallback(
+    async (value: T) => {
+      setRef.current?.(value)
+    },
+    [setRef],
+  )
 
   return [value, set] as const
 }
