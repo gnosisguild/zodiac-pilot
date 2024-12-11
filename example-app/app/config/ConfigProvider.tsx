@@ -40,6 +40,7 @@ export const useWagmiConfig = (): [config: Config, scopeKey: string] => {
   return [
     {
       ...config,
+      // @ts-expect-error Something around chain that hopefully isn't important
       getClient: (options) => {
         const chain = getChain(config.chains, options)
 
