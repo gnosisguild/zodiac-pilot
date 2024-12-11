@@ -19,7 +19,7 @@ export const useGloballyApplicableTranslation = () => {
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
-  const [_, avatarAddress] = parsePrefixedAddress(avatar)
+  const avatarAddress = parsePrefixedAddress(avatar)
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {

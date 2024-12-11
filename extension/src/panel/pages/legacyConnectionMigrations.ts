@@ -4,15 +4,15 @@ import {
   ProviderType,
 } from '@/types'
 import { MULTISEND, MULTISEND_CALL_ONLY } from '@/zodiac'
+import { invariant } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
   AccountType,
   ConnectionType,
-  type Delay,
   formatPrefixedAddress,
   parsePrefixedAddress,
-  type Roles,
+  splitPrefixedAddress,
   type Waypoint,
 } from 'ser-kit'
 
@@ -49,7 +49,7 @@ export function fromLegacyConnection(
       prefixedAddress: modulePrefixedAddress,
       address: connection.moduleAddress,
       chain: chainId,
-    } as Delay,
+    },
 
     connection: {
       type: ConnectionType.IS_ENABLED,
@@ -68,7 +68,7 @@ export function fromLegacyConnection(
       multisend: [connection.multisend, connection.multisendCallOnly].filter(
         Boolean,
       ) as `0x${string}`[],
-    } as Roles,
+    },
     connection: pilotPrefixedAddress
       ? {
           type: ConnectionType.IS_MEMBER,
@@ -135,11 +135,10 @@ export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
     throw new Error('Not representable as legacy connection')
   }
 
-  const [chainId, avatarAddressChecksummed] = parsePrefixedAddress(route.avatar)
+  const [chainId, avatarAddressChecksummed] = splitPrefixedAddress(route.avatar)
   const avatarAddress = avatarAddressChecksummed.toLowerCase()
-  if (!chainId) {
-    throw new Error('chainId is empty')
-  }
+
+  invariant(chainId != null, 'chainId is empty')
 
   const pilotAddress =
     (route.initiator &&

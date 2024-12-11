@@ -21,7 +21,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
-  const [_, avatarAddress] = parsePrefixedAddress(avatar)
+  const avatarAddress = parsePrefixedAddress(avatar)
 
   const [translation, setTranslation] = useState<
     ApplicableTranslation | undefined
