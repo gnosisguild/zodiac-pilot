@@ -1,7 +1,7 @@
 import {
+  ProviderType,
   type ExecutionRoute,
   type LegacyConnection,
-  ProviderType,
 } from '@/types'
 import { MULTISEND, MULTISEND_CALL_ONLY } from '@/zodiac'
 import { invariant } from '@epic-web/invariant'
@@ -13,6 +13,7 @@ import {
   formatPrefixedAddress,
   parsePrefixedAddress,
   splitPrefixedAddress,
+  type PrefixedAddress,
   type Waypoint,
 } from 'ser-kit'
 
@@ -46,14 +47,14 @@ export function fromLegacyConnection(
   const delayModuleWaypoint = moduleType === KnownContracts.DELAY && {
     account: {
       type: AccountType.DELAY,
-      prefixedAddress: modulePrefixedAddress,
+      prefixedAddress: modulePrefixedAddress?.toLowerCase(),
       address: connection.moduleAddress,
       chain: chainId,
     },
 
     connection: {
       type: ConnectionType.IS_ENABLED,
-      from: pilotPrefixedAddress,
+      from: pilotPrefixedAddress.toLowerCase(),
     },
   }
 
@@ -61,7 +62,7 @@ export function fromLegacyConnection(
     moduleType === KnownContracts.ROLES_V2) && {
     account: {
       type: AccountType.ROLES,
-      prefixedAddress: modulePrefixedAddress,
+      prefixedAddress: modulePrefixedAddress?.toLowerCase(),
       address: connection.moduleAddress,
       chain: chainId,
       version: moduleType === KnownContracts.ROLES_V1 ? 1 : 2,
@@ -72,7 +73,7 @@ export function fromLegacyConnection(
     connection: pilotPrefixedAddress
       ? {
           type: ConnectionType.IS_MEMBER,
-          from: pilotPrefixedAddress,
+          from: pilotPrefixedAddress.toLowerCase(),
           roles: [connection.roleId].filter(Boolean) as string[],
         }
       : undefined,
@@ -85,12 +86,12 @@ export function fromLegacyConnection(
       account: isEoa
         ? ({
             type: AccountType.EOA,
-            prefixedAddress: pilotPrefixedAddress,
+            prefixedAddress: pilotPrefixedAddress.toLowerCase(),
             address: pilotAddress,
           } as const)
         : ({
             type: AccountType.SAFE,
-            prefixedAddress: pilotPrefixedAddress,
+            prefixedAddress: pilotPrefixedAddress.toLowerCase(),
             address: pilotAddress,
             chain: chainId,
             threshold: NaN, // we don't know the threshold
@@ -102,7 +103,7 @@ export function fromLegacyConnection(
     {
       account: {
         type: AccountType.SAFE,
-        prefixedAddress: avatarPrefixedAddress,
+        prefixedAddress: avatarPrefixedAddress.toLowerCase(),
         address: avatarAddress,
         chain: chainId,
         threshold: NaN, // we don't know the threshold
@@ -110,11 +111,11 @@ export function fromLegacyConnection(
       connection: modulePrefixedAddress
         ? {
             type: ConnectionType.IS_ENABLED,
-            from: modulePrefixedAddress,
+            from: modulePrefixedAddress.toLowerCase(),
           }
         : {
             type: ConnectionType.OWNS,
-            from: pilotPrefixedAddress,
+            from: pilotPrefixedAddress.toLowerCase(),
           },
     } as Waypoint,
   ]
@@ -125,8 +126,10 @@ export function fromLegacyConnection(
     lastUsed: connection.lastUsed,
     providerType,
     waypoints: waypoints as ExecutionRoute['waypoints'],
-    initiator: pilotAddress ? pilotPrefixedAddress : undefined,
-    avatar: avatarPrefixedAddress,
+    initiator: pilotAddress
+      ? (pilotPrefixedAddress.toLowerCase() as PrefixedAddress)
+      : undefined,
+    avatar: avatarPrefixedAddress.toLowerCase() as PrefixedAddress,
   }
 }
 

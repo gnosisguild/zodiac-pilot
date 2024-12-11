@@ -49,7 +49,7 @@ describe('karpatkey bridge aware translations', () => {
       {
         to: bridgeAwareContract.address,
         data: '0x56aa9cae000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-        value: '0',
+        value: 0n,
       },
     ])
   })
