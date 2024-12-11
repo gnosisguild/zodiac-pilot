@@ -100,7 +100,7 @@
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.460.0",
+    "lucide-react": "^0.468.0",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "7.0.2",
     "react-stick": "^5.0.6",
