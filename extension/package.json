@@ -23,7 +23,6 @@
     "check-cycles": "madge -c --warning --ts-config tsconfig.json ./src/panel/app.tsx ./src/background/index.ts",
     "lint": "eslint . --max-warnings=0",
     "fix": "pnpm fix:format && pnpm fix:lint",
-    "fix:format": "prettier \"src/**/*.(ts|tsx)\" --write",
     "fix:lint": "pnpm check:lint --fix"
   },
   "devDependencies": {
