@@ -37,14 +37,14 @@ export const translateSignSnapshotVote = (params: {
       // multiple choice / array vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotArrayVote',
-        [message, domain]
+        [message, domain],
       )
       break
     case 'string':
       // string vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotStringVote',
-        [message, domain]
+        [message, domain],
       )
       break
     default:

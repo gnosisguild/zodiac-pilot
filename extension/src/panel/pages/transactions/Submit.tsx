@@ -82,7 +82,7 @@ export const Submit = () => {
     const { txHash, safeTxHash } = result
     if (txHash) {
       console.debug(
-        `Transaction batch has been submitted with transaction hash ${txHash}`
+        `Transaction batch has been submitted with transaction hash ${txHash}`,
       )
       const receipt =
         await getReadOnlyProvider(chainId).waitForTransaction(txHash)
@@ -105,7 +105,7 @@ export const Submit = () => {
 
     if (safeTxHash) {
       console.debug(
-        `Transaction batch has been proposed with safeTxHash ${safeTxHash}`
+        `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
       )
       const [, avatarAddress] = parsePrefixedAddress(avatar)
       successToast({
@@ -125,7 +125,7 @@ export const Submit = () => {
       // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
       const txHash = await waitForMultisigExecution(chainId, safeTxHash)
       console.debug(
-        `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`
+        `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`,
       )
       successToast({
         title: 'Proposed Safe transaction has been confirmed and executed',

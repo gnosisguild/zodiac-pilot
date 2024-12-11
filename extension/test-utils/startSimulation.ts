@@ -22,5 +22,5 @@ export const startSimulation = ({
       rpcUrl,
     } satisfies SimulationMessage,
     { id: chrome.runtime.id },
-    () => {}
+    () => {},
   )

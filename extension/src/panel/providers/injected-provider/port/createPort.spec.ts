@@ -12,7 +12,7 @@ describe('Create port', () => {
     'does nothing for URL "%s',
     async (url) => {
       await expect(createPort(1, url)).resolves.toBeNull()
-    }
+    },
   )
 
   it('resolves to the port when it received the initialize message', async () => {
@@ -34,7 +34,7 @@ describe('Create port', () => {
       {
         type: ConnectedWalletMessageType.CONNECTED_WALLET_CONNECTED,
       } satisfies ConnectedWalletMessage,
-      port
+      port,
     )
 
     await vi.runAllTimersAsync()
@@ -43,7 +43,7 @@ describe('Create port', () => {
       {
         type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
       } satisfies ConnectedWalletMessage,
-      port
+      port,
     )
 
     vi.useRealTimers()
@@ -57,7 +57,7 @@ describe('Create port', () => {
     let portNumber = 1
 
     const portRef = mockTabConnect(() =>
-      createMockPort({ name: `port-${portNumber++}` })
+      createMockPort({ name: `port-${portNumber++}` }),
     )
 
     const { promise, resolve } = Promise.withResolvers<void>()
@@ -78,7 +78,7 @@ describe('Create port', () => {
       {
         type: ConnectedWalletMessageType.CONNECTED_WALLET_CONNECTED,
       } satisfies ConnectedWalletMessage,
-      port
+      port,
     )
 
     await vi.runAllTimersAsync()
@@ -87,7 +87,7 @@ describe('Create port', () => {
       {
         type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
       } satisfies ConnectedWalletMessage,
-      port
+      port,
     )
 
     vi.useRealTimers()

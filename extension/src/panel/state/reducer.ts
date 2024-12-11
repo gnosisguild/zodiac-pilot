@@ -14,7 +14,7 @@ export interface TransactionState {
 
 export const rootReducer = (
   state: TransactionState[],
-  action: Action
+  action: Action,
 ): TransactionState[] => {
   switch (action.type) {
     case 'APPEND_TRANSACTION': {
@@ -25,14 +25,14 @@ export const rootReducer = (
     case 'DECODE_TRANSACTION': {
       const { id, contractInfo } = action.payload
       return state.map((item) =>
-        item.id === id ? { ...item, contractInfo } : item
+        item.id === id ? { ...item, contractInfo } : item,
       )
     }
 
     case 'CONFIRM_TRANSACTION': {
       const { id, snapshotId, transactionHash } = action.payload
       return state.map((item) =>
-        item.id === id ? { ...item, snapshotId, transactionHash } : item
+        item.id === id ? { ...item, snapshotId, transactionHash } : item,
       )
     }
 
@@ -45,14 +45,14 @@ export const rootReducer = (
       const { id } = action.payload
       return state.slice(
         0,
-        state.findIndex((item) => item.id === id)
+        state.findIndex((item) => item.id === id),
       )
     }
 
     case 'CLEAR_TRANSACTIONS': {
       const { lastTransactionId } = action.payload
       return state.slice(
-        state.findIndex((item) => item.id === lastTransactionId) + 1
+        state.findIndex((item) => item.id === lastTransactionId) + 1,
       )
     }
   }

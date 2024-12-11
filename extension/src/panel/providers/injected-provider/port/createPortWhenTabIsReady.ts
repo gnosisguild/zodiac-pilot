@@ -15,13 +15,13 @@ export const createPortWhenTabIsReady = async (tab: chrome.tabs.Tab) => {
 
     const handleTabWhenReady = async (
       tabId: number,
-      info: chrome.tabs.TabChangeInfo
+      info: chrome.tabs.TabChangeInfo,
     ) => {
       if (tab.id === tabId && info.status === 'complete') {
         chrome.tabs.onUpdated.removeListener(handleTabWhenReady)
 
         console.debug(
-          `Tab (id: "${tab.id}", url: "${tab.url}") became ready. Trying to open port.`
+          `Tab (id: "${tab.id}", url: "${tab.url}") became ready. Trying to open port.`,
         )
 
         const port = await createPort(tabId, tab.url)
@@ -30,7 +30,7 @@ export const createPortWhenTabIsReady = async (tab: chrome.tabs.Tab) => {
           console.debug(`Could not create port to Tab (id: "${tab.id})`)
         } else {
           console.debug(
-            `Port to Tab (id: "${tab.id}", url: "${tab.url}") created.`
+            `Port to Tab (id: "${tab.id}", url: "${tab.url}") created.`,
           )
         }
 
@@ -44,7 +44,7 @@ export const createPortWhenTabIsReady = async (tab: chrome.tabs.Tab) => {
   }
 
   console.debug(
-    `Tab (id: "${tab.id}", url: "${tab.url}") was already loaded. Trying to create port.`
+    `Tab (id: "${tab.id}", url: "${tab.url}") was already loaded. Trying to create port.`,
   )
 
   const port = await createPort(tabId, tab.url)

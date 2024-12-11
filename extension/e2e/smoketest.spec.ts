@@ -12,6 +12,6 @@ test('possibility to open the panel', async ({ page }) => {
   await expect(
     extension.getByRole('heading', {
       name: 'Recording Transactions',
-    })
+    }),
   ).toBeInViewport()
 })

@@ -33,7 +33,7 @@ function renderToShadow(hint: string) {
 
   invariant(
     reloadButton != null,
-    'Could not find reload button in rendered HTML'
+    'Could not find reload button in rendered HTML',
   )
 
   reloadButton.addEventListener('click', (event) => {
@@ -48,7 +48,7 @@ function renderToShadow(hint: string) {
 
   invariant(
     dismissButton != null,
-    'Could not find dismiss button in rendered HTML'
+    'Could not find dismiss button in rendered HTML',
   )
 
   dismissButton.addEventListener('click', () => {

@@ -38,10 +38,10 @@ export const ZodiacMod = ({
   const { delegates } = useSafeDelegates(avatarAddress, routeId)
 
   const pilotIsOwner = safes.some(
-    (safe) => safe.toLowerCase() === avatarAddress.toLowerCase()
+    (safe) => safe.toLowerCase() === avatarAddress.toLowerCase(),
   )
   const pilotIsDelegate = delegates.some(
-    (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase()
+    (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase(),
   )
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
@@ -72,7 +72,7 @@ export const ZodiacMod = ({
           }
 
           const module = modules.find(
-            ({ moduleAddress }) => moduleAddress === selected.value
+            ({ moduleAddress }) => moduleAddress === selected.value,
           )
 
           if (module == null) {

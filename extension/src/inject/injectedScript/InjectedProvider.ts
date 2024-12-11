@@ -71,7 +71,7 @@ export class InjectedProvider extends EventEmitter {
           requestId,
           request,
         } satisfies InjectedProviderMessage,
-        '*'
+        '*',
       )
 
       // wait for response...
@@ -86,7 +86,7 @@ export class InjectedProvider extends EventEmitter {
         ) {
           console.debug(
             'Received response from connected wallet',
-            message.response
+            message.response,
           )
           window.removeEventListener('message', handleMessage)
           resolve(message.response)
@@ -98,7 +98,7 @@ export class InjectedProvider extends EventEmitter {
         ) {
           window.removeEventListener('message', handleMessage)
           reject(
-            new InjectedWalletError(message.error.message, message.error.code)
+            new InjectedWalletError(message.error.message, message.error.code),
           )
         }
       }
@@ -109,7 +109,7 @@ export class InjectedProvider extends EventEmitter {
   // Legacy API (still used by some Dapps)
   send = async (
     method: string,
-    params?: Array<any>
+    params?: Array<any>,
   ): Promise<JsonRpcResponse> => {
     try {
       const result = await this.request({ method, params })
@@ -122,7 +122,7 @@ export class InjectedProvider extends EventEmitter {
   // Legacy API (still used by some Dapps)
   sendAsync = async (
     request: JsonRpcRequest,
-    callback: (error: Error | undefined, response: JsonRpcResponse) => unknown
+    callback: (error: Error | undefined, response: JsonRpcResponse) => unknown,
   ) => {
     try {
       const result = await this.request(request)

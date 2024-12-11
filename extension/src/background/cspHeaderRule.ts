@@ -16,7 +16,7 @@ export const removeCSPHeaderRule = () => {
       } else {
         console.debug('CSP rule removed successfully')
       }
-    }
+    },
   )
 }
 
@@ -66,6 +66,6 @@ export const updateCSPHeaderRule = (tabIds: Set<number>) => {
       } else {
         console.debug('Headers rule update successful', tabIds)
       }
-    }
+    },
   )
 }

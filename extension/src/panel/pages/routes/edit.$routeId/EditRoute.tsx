@@ -56,7 +56,7 @@ export const EditRoute = () => {
 
   const prefixedAvatarAddress = formatPrefixedAddress(
     chainId,
-    avatarAddress as HexAddress
+    avatarAddress as HexAddress,
   )
   // TODO modules is a nested list, but we currently only render the top-level items
   const { modules } = useZodiacModules(prefixedAvatarAddress)
@@ -71,7 +71,7 @@ export const EditRoute = () => {
   const updateRoute = (patch: ConnectionPatch) => {
     console.debug('updateRoute', patch)
     setRoute((route) =>
-      fromLegacyConnection({ ...asLegacyConnection(route), ...patch })
+      fromLegacyConnection({ ...asLegacyConnection(route), ...patch }),
     )
   }
 
@@ -188,7 +188,7 @@ export const EditRoute = () => {
                     ...value,
                     multisend: await queryRolesV1MultiSend(
                       chainId,
-                      value.moduleAddress
+                      value.moduleAddress,
                     ),
                   })
 
@@ -200,7 +200,7 @@ export const EditRoute = () => {
                     ...value,
                     ...(await queryRolesV2MultiSend(
                       chainId,
-                      value.moduleAddress
+                      value.moduleAddress,
                     )),
                   })
 

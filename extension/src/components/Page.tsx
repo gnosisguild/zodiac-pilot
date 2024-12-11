@@ -17,7 +17,7 @@ Page.Header = Header
 
 const Content = (
   { children }: PropsWithChildren,
-  ref: ForwardedRef<HTMLDivElement>
+  ref: ForwardedRef<HTMLDivElement>,
 ) => (
   <div ref={ref} className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
     {children}

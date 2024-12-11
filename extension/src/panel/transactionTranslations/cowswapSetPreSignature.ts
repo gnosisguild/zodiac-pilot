@@ -54,7 +54,7 @@ export const cowswapSetPreSignature = {
     try {
       const result = GPv2SettlementInterface.decodeFunctionData(
         'setPreSignature',
-        transaction.data
+        transaction.data,
       )
       orderUid = result[0]
     } catch (e) {
@@ -65,12 +65,12 @@ export const cowswapSetPreSignature = {
     // fetch order info from CowSwap API
     const COW_SWAP_URL = `https://api.cow.fi/${COWSWAP_SUPPORTED_NETWORK[chainId]}/api/v1/orders`
     const order: CowswapOrder = await fetch(`${COW_SWAP_URL}/${orderUid}`).then(
-      (response) => response.json()
+      (response) => response.json(),
     )
 
     const validDuration = order.validTo - Math.floor(Date.now() / 1000)
     const feeAmountBP = Math.ceil(
-      (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000
+      (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000,
     )
 
     let data = ''

@@ -17,7 +17,7 @@ import {
 } from 'ser-kit'
 
 export function fromLegacyConnection(
-  connection: LegacyConnection
+  connection: LegacyConnection,
 ): ExecutionRoute {
   const { chainId, providerType, moduleType } = connection
 
@@ -32,14 +32,14 @@ export function fromLegacyConnection(
 
   const pilotPrefixedAddress = formatPrefixedAddress(
     isEoa ? undefined : chainId,
-    pilotAddress
+    pilotAddress,
   )
 
   const modulePrefixedAddress =
     moduleType && connection.moduleAddress
       ? formatPrefixedAddress(
           chainId,
-          connection.moduleAddress as `0x${string}`
+          connection.moduleAddress as `0x${string}`,
         )
       : undefined
 
@@ -66,7 +66,7 @@ export function fromLegacyConnection(
       chain: chainId,
       version: moduleType === KnownContracts.ROLES_V1 ? 1 : 2,
       multisend: [connection.multisend, connection.multisendCallOnly].filter(
-        Boolean
+        Boolean,
       ) as `0x${string}`[],
     } as Roles,
     connection: pilotPrefixedAddress
@@ -149,7 +149,7 @@ export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
   const moduleWaypoint = route.waypoints?.find(
     (w) =>
       w.account.type === AccountType.ROLES ||
-      w.account.type === AccountType.DELAY
+      w.account.type === AccountType.DELAY,
   )
   const moduleType = moduleWaypoint?.account.type
 

@@ -3,7 +3,7 @@ import { initSafeApiKit } from './kits'
 
 export function waitForMultisigExecution(
   chainId: number,
-  safeTxHash: string
+  safeTxHash: string,
 ): Promise<string> {
   const safeService = initSafeApiKit(chainId as ChainId)
 
@@ -38,7 +38,7 @@ export function waitForMultisigExecution(
         safeTxHash,
         isExecuted,
         isSuccessful,
-        transactionHash
+        transactionHash,
       )
 
       if (isExecuted) {

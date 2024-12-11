@@ -31,7 +31,7 @@ export const ConnectWallet = ({
   const chainId = getChainId(route.avatar)
 
   const isConnected = (
-    provider: InjectedWalletContextT | WalletConnectResult
+    provider: InjectedWalletContextT | WalletConnectResult,
   ) =>
     route.initiator != null &&
     isConnectedBase(provider, route.initiator, chainId)

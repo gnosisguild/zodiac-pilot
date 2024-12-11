@@ -20,7 +20,7 @@ type GetTrackedRpcUrlsForChainIdOptions = {
 
 export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
-    options: GetTrackedRpcUrlsForChainIdOptions
+    options: GetTrackedRpcUrlsForChainIdOptions,
   ) => Map<number, string[]>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
@@ -51,7 +51,7 @@ export const trackRequests = (): TrackRequestsResult => {
       urls: ['<all_urls>'],
       types: ['xmlhttprequest'],
     },
-    ['requestBody']
+    ['requestBody'],
   )
 
   chrome.tabs.onRemoved.addListener((tabId) => {
@@ -78,7 +78,7 @@ type TrackRequestResult = {
 
 const trackRequest = async (
   state: TrackingState,
-  { tabId, url, method, requestBody }: chrome.webRequest.WebRequestBodyDetails
+  { tabId, url, method, requestBody }: chrome.webRequest.WebRequestBodyDetails,
 ): Promise<TrackRequestResult> => {
   const hasActiveSession = state.trackedTabs.has(tabId)
 
@@ -111,12 +111,12 @@ type GetRpcUrlsOptions = {
 
 const getRpcUrlsByTabId = (
   { rpcUrlsByTabId, chainIdByRpcUrl }: TrackingState,
-  { chainId }: GetRpcUrlsOptions
+  { chainId }: GetRpcUrlsOptions,
 ) => {
   return rpcUrlsByTabId.entries().reduce((result, [tabId, urls]) => {
     result.set(
       tabId,
-      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === chainId)
+      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === chainId),
     )
 
     return result
@@ -130,14 +130,14 @@ type DetectNetworkOfRpcOptions = {
 
 const detectNetworkOfRpcUrl = async (
   state: TrackingState,
-  { url, tabId }: DetectNetworkOfRpcOptions
+  { url, tabId }: DetectNetworkOfRpcOptions,
 ): Promise<TrackRequestResult> => {
   const { chainIdPromiseByRpcUrl, chainIdByRpcUrl } = state
 
   if (!chainIdPromiseByRpcUrl.has(url)) {
     chainIdPromiseByRpcUrl.set(
       url,
-      sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url })
+      sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
     )
   }
 
@@ -145,7 +145,7 @@ const detectNetworkOfRpcUrl = async (
 
   if (result == null || chainIdByRpcUrl.has(url)) {
     console.debug(
-      `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
+      `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
     )
 
     return { newEndpoint: false }
@@ -156,7 +156,7 @@ const detectNetworkOfRpcUrl = async (
   chainIdByRpcUrl.set(url, result)
 
   console.debug(
-    `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`
+    `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
   )
 
   return { newEndpoint: true }
@@ -169,7 +169,7 @@ type TrackRpcUrlOptions = {
 
 const trackRpcUrl = (
   { rpcUrlsByTabId }: TrackingState,
-  { tabId, url }: TrackRpcUrlOptions
+  { tabId, url }: TrackRpcUrlOptions,
 ) => {
   const urls = rpcUrlsByTabId.get(tabId)
 

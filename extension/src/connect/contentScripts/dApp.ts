@@ -6,7 +6,7 @@ import { invariant } from '@epic-web/invariant'
 
 function ensureIframe() {
   let node: HTMLIFrameElement | null = document.querySelector(
-    'iframe[src="https://connect.pilot.gnosisguild.org/"]'
+    'iframe[src="https://connect.pilot.gnosisguild.org/"]',
   )
 
   if (!node) {
@@ -34,12 +34,12 @@ chrome.runtime.onConnect.addListener((port) => {
     // relay user wallet request to connect iframe so the connectInjection can receive it
     invariant(
       iframe.contentWindow != null,
-      'cannot access connect iframe window'
+      'cannot access connect iframe window',
     )
 
     iframe.contentWindow.postMessage(
       message,
-      'https://connect.pilot.gnosisguild.org/'
+      'https://connect.pilot.gnosisguild.org/',
     )
 
     // wait for response

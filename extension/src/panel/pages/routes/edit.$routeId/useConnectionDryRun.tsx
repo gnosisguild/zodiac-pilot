@@ -100,7 +100,7 @@ const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
 
       case 'NoMembership()':
         return `The Pilot account is not a member of role ${decodeRoleKey(
-          roleKey
+          roleKey,
         )}.`
 
       default:
@@ -139,7 +139,7 @@ async function dryRun(connection: LegacyConnection) {
       from: connection.avatarAddress,
     },
     connection,
-    false
+    false,
   )
 
   // TODO enable this once we can query role members from ser

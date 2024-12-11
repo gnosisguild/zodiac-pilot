@@ -18,14 +18,14 @@ export const Tag = ({ head, children, color }: Props) => (
       color === 'warning' &&
         'border-yellow-400/80 bg-yellow-50/80 text-yellow-600 dark:border-yellow-800/80 dark:bg-yellow-900/10 dark:text-yellow-500/80',
       color === 'info' &&
-        'border-blue-400/80 bg-blue-50/80 text-blue-600 dark:border-blue-800/80 dark:bg-blue-900/10 dark:text-blue-400/80'
+        'border-blue-400/80 bg-blue-50/80 text-blue-600 dark:border-blue-800/80 dark:bg-blue-900/10 dark:text-blue-400/80',
     )}
   >
     {head && (
       <div
         className={classNames(
           'flex size-4 items-center justify-center rounded-full',
-          children ? 'my-1 ml-2' : 'm-1'
+          children ? 'my-1 ml-2' : 'm-1',
         )}
       >
         {head}

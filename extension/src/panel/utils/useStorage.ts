@@ -81,14 +81,14 @@ export function useStorageEntries<T>(collection: string) {
     async (key: string, value: T) => {
       await chrome.storage.sync.set({ [`${collection}[${key}]`]: value })
     },
-    [collection]
+    [collection],
   )
 
   const remove = useCallback(
     async (key: string) => {
       await chrome.storage.sync.remove(`${collection}[${key}]`)
     },
-    [collection]
+    [collection],
   )
 
   return [entries, set, remove] as const

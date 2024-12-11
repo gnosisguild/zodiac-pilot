@@ -18,7 +18,7 @@ export const BaseAlert = ({ children, className }: BaseAlertProps) => {
         aria-describedby={descriptionId}
         className={classNames(
           'px flex flex-col gap-2 text-balance rounded border px-4 py-2 text-sm shadow-md',
-          className
+          className,
         )}
       >
         {children}

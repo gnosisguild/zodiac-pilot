@@ -3,7 +3,7 @@ import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { createMockEvent } from './createMockEvent'
 
 export const createMockPort = (
-  port: Partial<Runtime.Port> = {}
+  port: Partial<Runtime.Port> = {},
 ): Runtime.Port => ({
   disconnect: vi.fn(),
   name: 'test-port',

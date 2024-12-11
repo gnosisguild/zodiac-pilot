@@ -35,7 +35,10 @@ export const Root = () => {
   useDisconnectWalletConnectIfNeeded(route, {
     onDisconnect: () =>
       saveRoute(
-        fromLegacyConnection({ ...asLegacyConnection(route), pilotAddress: '' })
+        fromLegacyConnection({
+          ...asLegacyConnection(route),
+          pilotAddress: '',
+        }),
       ),
   })
 

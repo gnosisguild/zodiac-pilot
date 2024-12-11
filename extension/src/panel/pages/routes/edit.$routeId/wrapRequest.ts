@@ -11,7 +11,7 @@ const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 export function wrapRequest(
   request: MetaTransactionData | TransactionData,
   connection: LegacyConnection,
-  revertOnError = true
+  revertOnError = true,
 ): TransactionData {
   if (!connection.moduleAddress) {
     throw new Error('No wrapping should be applied for direct execution')

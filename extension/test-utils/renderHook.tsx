@@ -27,7 +27,7 @@ export const renderHook = async <Result, Props>(
     port,
     wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
     ...options
-  }: RenderHookOptions<Props> & ExtendedOptions = {}
+  }: RenderHookOptions<Props> & ExtendedOptions = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = mockTabConnect(createMockPort(port))

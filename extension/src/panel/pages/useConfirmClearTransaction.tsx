@@ -57,7 +57,7 @@ export const useConfirmClearTransactions = () => {
     }
 
     const confirmation = await getConfirmation(
-      'Switching the Piloted Safe will empty your current transaction bundle.'
+      'Switching the Piloted Safe will empty your current transaction bundle.',
     )
 
     if (!confirmation) {

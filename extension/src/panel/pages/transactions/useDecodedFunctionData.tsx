@@ -25,7 +25,7 @@ export const useDecodedFunctionData = (transactionState: TransactionState) => {
         functionFragment,
         data: contractInterface.decodeFunctionData(
           functionFragment,
-          transaction.data
+          transaction.data,
         ),
       }
     } catch (e) {

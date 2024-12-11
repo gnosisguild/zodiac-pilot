@@ -44,7 +44,7 @@ export function decodeGenericError(error: JsonRpcError) {
     try {
       const [reason] = AbiCoder.defaultAbiCoder().decode(
         ['string'],
-        '0x' + revertData.slice(10) // skip over selector
+        '0x' + revertData.slice(10), // skip over selector
       )
       return reason as string
     } catch (e) {

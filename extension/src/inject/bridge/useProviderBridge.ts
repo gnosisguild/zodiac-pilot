@@ -74,7 +74,7 @@ const useHandleProviderRequests = (provider: Eip1193Provider) => {
     (
       message: InjectedProviderMessage,
       sender: chrome.runtime.MessageSender,
-      sendResponse: ResponseFn
+      sendResponse: ResponseFn,
     ) => {
       // only handle messages from our extension
       if (sender.id !== chrome.runtime.id) {
@@ -115,7 +115,7 @@ const useHandleProviderRequests = (provider: Eip1193Provider) => {
       // without this the response won't be sent
       return true
     },
-    [provider, windowId]
+    [provider, windowId],
   )
 
   useEffect(() => {

@@ -16,7 +16,7 @@ type ConnectOptions = {
 
 export const useConnect = (
   provider: ConnectProvider,
-  { onBeforeConnect, onConnect, onError }: ConnectOptions
+  { onBeforeConnect, onConnect, onError }: ConnectOptions,
 ) => {
   const onConnectRef = useRef(onConnect)
   const onErrorRef = useRef(onError)
@@ -45,7 +45,7 @@ export const useConnect = (
       try {
         const { accounts, chainId } = await connectInjectedWallet(
           { force },
-          provider
+          provider,
         )
 
         if (onConnectRef.current) {
@@ -59,7 +59,7 @@ export const useConnect = (
         }
       }
     },
-    [provider]
+    [provider],
   )
 
   return connect
@@ -98,5 +98,5 @@ const connectInjectedWallet = memoWhilePending(
     ])
 
     return { accounts, chainId: Number(chainIdBigInt) as unknown as ChainId }
-  }
+  },
 )

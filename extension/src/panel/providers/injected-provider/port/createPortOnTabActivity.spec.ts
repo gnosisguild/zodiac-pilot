@@ -70,7 +70,7 @@ describe('createPortOnTabActivity', () => {
       chromeMock.tabs.onUpdated,
       tab.id,
       { url: 'http://new-url.com' },
-      tab
+      tab,
     )
 
     expect(callback).toHaveBeenCalledWith(tab.id, expect.anything())
@@ -89,7 +89,7 @@ describe('createPortOnTabActivity', () => {
       chromeMock.tabs.onUpdated,
       newTab.id,
       { url: 'http://new-url.com' },
-      newTab
+      newTab,
     )
 
     expect(callback).not.toHaveBeenCalledWith(newTab.id, expect.anything())

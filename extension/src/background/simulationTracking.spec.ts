@@ -30,7 +30,7 @@ describe('Simulation tracking', () => {
       await startSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
@@ -50,7 +50,7 @@ describe('Simulation tracking', () => {
               },
             },
           ],
-        })
+        }),
       )
     })
 
@@ -63,7 +63,7 @@ describe('Simulation tracking', () => {
       await stopSimulation({ windowId: 1 })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).toHaveBeenLastCalledWith({
         removeRuleIds: [2],
       })
@@ -81,7 +81,7 @@ describe('Simulation tracking', () => {
       await stopPilotSession()
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).toHaveBeenLastCalledWith({
         removeRuleIds: [2],
       })
@@ -94,7 +94,7 @@ describe('Simulation tracking', () => {
       await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
@@ -114,7 +114,7 @@ describe('Simulation tracking', () => {
               },
             },
           ],
-        })
+        }),
       )
     })
 
@@ -127,7 +127,7 @@ describe('Simulation tracking', () => {
       await updateSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
@@ -147,7 +147,7 @@ describe('Simulation tracking', () => {
               },
             },
           ],
-        })
+        }),
       )
     })
 
@@ -159,7 +159,7 @@ describe('Simulation tracking', () => {
       await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).not.toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
@@ -179,7 +179,7 @@ describe('Simulation tracking', () => {
               },
             },
           ],
-        })
+        }),
       )
     })
 
@@ -195,7 +195,7 @@ describe('Simulation tracking', () => {
       await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
 
       expect(
-        chromeMock.declarativeNetRequest.updateSessionRules
+        chromeMock.declarativeNetRequest.updateSessionRules,
       ).not.toHaveBeenCalledWith(
         expect.objectContaining({
           addRules: [
@@ -215,7 +215,7 @@ describe('Simulation tracking', () => {
               },
             },
           ],
-        })
+        }),
       )
     })
   })

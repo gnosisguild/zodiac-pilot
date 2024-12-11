@@ -47,11 +47,11 @@ describe('Edit Zodiac route', () => {
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Route label' }),
-        'Test route'
+        'Test route',
       )
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Launch' })
+        screen.getByRole('button', { name: 'Save & Launch' }),
       )
 
       expect(chrome.storage.sync.set).toHaveBeenCalledWith({
@@ -72,17 +72,17 @@ describe('Edit Zodiac route', () => {
       ])
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Remove route' })
+        screen.getByRole('button', { name: 'Remove route' }),
       )
 
       const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Remove route' })
+        screen.getByRole('dialog', { name: 'Remove route' }),
       )
 
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
       expect(chromeMock.storage.sync.remove).toHaveBeenCalledWith(
-        'routes[route-id]'
+        'routes[route-id]',
       )
     })
 
@@ -97,11 +97,11 @@ describe('Edit Zodiac route', () => {
       ])
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Remove route' })
+        screen.getByRole('button', { name: 'Remove route' }),
       )
 
       const { getAllByRole } = within(
-        screen.getByRole('dialog', { name: 'Remove route' })
+        screen.getByRole('dialog', { name: 'Remove route' }),
       )
 
       await userEvent.click(getAllByRole('button', { name: 'Cancel' })[0])
@@ -120,15 +120,15 @@ describe('Edit Zodiac route', () => {
             Component: EditRoute,
           },
         ],
-        { inspectRoutes: ['/routes'] }
+        { inspectRoutes: ['/routes'] },
       )
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Remove route' })
+        screen.getByRole('button', { name: 'Remove route' }),
       )
 
       const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Remove route' })
+        screen.getByRole('dialog', { name: 'Remove route' }),
       )
 
       await userEvent.click(getByRole('button', { name: 'Remove' }))
@@ -144,7 +144,7 @@ describe('Edit Zodiac route', () => {
         providerType: ProviderType.InjectedWallet,
         initiator: formatPrefixedAddress(
           1,
-          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
         ),
         avatar: formatPrefixedAddress(10, ZERO_ADDRESS),
       })
@@ -166,7 +166,7 @@ describe('Edit Zodiac route', () => {
       ])
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'Switch wallet to Optimism' })
+        screen.getByRole('button', { name: 'Switch wallet to Optimism' }),
       )
 
       expect(switchChain).toHaveBeenCalledWith(10)
@@ -186,12 +186,12 @@ describe('Edit Zodiac route', () => {
 
       await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
       await userEvent.click(
-        screen.getByRole('option', { name: 'Arbitrum One' })
+        screen.getByRole('option', { name: 'Arbitrum One' }),
       )
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Piloted Safe' }),
-        '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb'
+        '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb',
       )
 
       expect(mockGetReadOnlyProvider).toHaveBeenCalledWith(42161)

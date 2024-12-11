@@ -52,7 +52,7 @@ export class TenderlyProvider extends EventEmitter {
       // We have not spawned a fork currently, so we can just use the provider to get the latest on-chain state
       return await getReadOnlyProvider(this.chainId as ChainId).send(
         request.method,
-        request.params || []
+        request.params || [],
       )
     }
 
@@ -64,7 +64,7 @@ export class TenderlyProvider extends EventEmitter {
       if ((e as any).error?.code === -32603) {
         console.error(
           'Tenderly vnet RPC has an issue (probably due to rate limiting)',
-          e
+          e,
         )
         throw new Error('Error sending request to Tenderly')
       } else {
@@ -103,7 +103,7 @@ export class TenderlyProvider extends EventEmitter {
 
   private async createFork(
     chainId: number,
-    blockNumber?: number
+    blockNumber?: number,
   ): Promise<JsonRpcProvider> {
     const res = await fetch(this.tenderlyVnetApi, {
       method: 'POST',

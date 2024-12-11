@@ -3,7 +3,7 @@ import { PilotSession, type Sessions } from './PilotSession'
 
 export const getPilotSession = (
   sessions: Sessions,
-  windowId: number
+  windowId: number,
 ): PilotSession => {
   const session = sessions.get(windowId)
 

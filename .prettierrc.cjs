@@ -3,7 +3,7 @@
 module.exports = {
   semi: false,
   singleQuote: true,
-  trailingComma: 'es5',
+  trailingComma: 'all',
   plugins: [
     // eslint-disable-next-line no-undef
     require.resolve('prettier-plugin-organize-imports'),

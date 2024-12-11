@@ -7,7 +7,7 @@ import { isValidTab } from '@/utils'
 export const createPort = async (tabId: number, url: string | undefined) => {
   if (!isValidTab(url)) {
     console.debug(
-      `Tab (id: "${tabId}", url: "${url}") does not meet connect criteria.`
+      `Tab (id: "${tabId}", url: "${url}") does not meet connect criteria.`,
     )
 
     return null

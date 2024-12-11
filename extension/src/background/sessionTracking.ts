@@ -18,7 +18,7 @@ export type TrackSessionsResult = {
 }
 
 export const trackSessions = (
-  trackRequests: TrackRequestsResult
+  trackRequests: TrackRequestsResult,
 ): TrackSessionsResult => {
   /** maps `windowId` to pilot session */
   const sessions = new Map<number, PilotSession>()
@@ -134,7 +134,7 @@ type StartPilotSessionOptions = {
 const startPilotSession = (
   sessions: Sessions,
   trackRequests: TrackRequestsResult,
-  { windowId, tabId }: StartPilotSessionOptions
+  { windowId, tabId }: StartPilotSessionOptions,
 ) => {
   console.debug('start pilot session', { windowId })
 

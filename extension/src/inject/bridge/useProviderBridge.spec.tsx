@@ -46,7 +46,7 @@ describe('Bridge', () => {
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
         { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        vi.fn()
+        vi.fn(),
       )
 
       expect(provider.request).toHaveBeenCalledWith(request)
@@ -76,7 +76,7 @@ describe('Bridge', () => {
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
         { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        sendMessage
+        sendMessage,
       )
 
       expect(sendMessage).toHaveBeenCalledWith({
@@ -110,7 +110,7 @@ describe('Bridge', () => {
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
         { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        sendMessage
+        sendMessage,
       )
 
       expect(sendMessage).toHaveBeenCalledWith({
@@ -133,7 +133,7 @@ describe('Bridge', () => {
           initialProps: { provider: providerA },
           wrapper: Wrapper,
           activeTab: mockActiveTab({ windowId: 1 }),
-        }
+        },
       )
 
       rerender({ provider: providerB })
@@ -146,7 +146,7 @@ describe('Bridge', () => {
           requestId: 'test-id',
         } satisfies InjectedProviderMessage,
         { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        vi.fn()
+        vi.fn(),
       )
 
       expect(providerA.request).not.toHaveBeenCalled()
@@ -162,7 +162,7 @@ describe('Bridge', () => {
 
       await renderHook(
         () => useProviderBridge({ provider, account: ZERO_ADDRESS }),
-        { wrapper: Wrapper, activeTab: tab }
+        { wrapper: Wrapper, activeTab: tab },
       )
 
       await waitFor(() => {
@@ -231,7 +231,7 @@ describe('Bridge', () => {
 
       const { rerender } = await renderHook<void, { chainId: ChainId }>(
         ({ chainId }) => useProviderBridge({ provider, chainId }),
-        { initialProps: { chainId: 1 }, wrapper: Wrapper, activeTab: tab }
+        { initialProps: { chainId: 1 }, wrapper: Wrapper, activeTab: tab },
       )
 
       rerender({ chainId: 10 })

@@ -1,0 +1,5 @@
+playwright-report
+
+*.zip
+*.toml
+*.patch

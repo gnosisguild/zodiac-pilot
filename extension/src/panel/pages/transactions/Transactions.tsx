@@ -32,7 +32,7 @@ export const Transactions = () => {
 
     invariant(
       provider instanceof ForkProvider,
-      'This is only supported when using ForkProvider'
+      'This is only supported when using ForkProvider',
     )
 
     await provider.deleteFork()
@@ -125,7 +125,7 @@ const useScrollIntoView = () => {
 
       if (scrollContainerRef.current != null) {
         const element = scrollContainerRef.current.querySelector(
-          `#t-${lastTransaction.id}`
+          `#t-${lastTransaction.id}`,
         )
 
         if (element != null) {

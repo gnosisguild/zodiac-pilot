@@ -22,7 +22,7 @@ export const maskMetaMaskAnnouncement = (provider: InjectedProvider) => {
             },
             provider,
           }),
-        })
+        }),
       )
     }
 

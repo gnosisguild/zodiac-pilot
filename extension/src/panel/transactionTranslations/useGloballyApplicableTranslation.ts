@@ -25,14 +25,14 @@ export const useGloballyApplicableTranslation = () => {
     async (translation: ApplicableTranslation) => {
       if (!(provider instanceof ForkProvider)) {
         throw new Error(
-          'Transaction translation is only supported when using ForkProvider'
+          'Transaction translation is only supported when using ForkProvider',
         )
       }
 
       const newTransactions = translation.result
       const firstDifferenceIndex = transactions.findIndex(
         (tx, index) =>
-          !transactionsEqual(tx.transaction, newTransactions[index])
+          !transactionsEqual(tx.transaction, newTransactions[index]),
       )
 
       if (
@@ -40,7 +40,7 @@ export const useGloballyApplicableTranslation = () => {
         newTransactions.length === transactions.length
       ) {
         console.warn(
-          'Global translations returned the original set of transactions. It should return undefined in that case.'
+          'Global translations returned the original set of transactions. It should return undefined in that case.',
         )
         return
       }
@@ -66,7 +66,7 @@ export const useGloballyApplicableTranslation = () => {
         provider.sendMetaTransaction(tx)
       }
     },
-    [provider, dispatch, transactions]
+    [provider, dispatch, transactions],
   )
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export const useGloballyApplicableTranslation = () => {
       const translation = await findGloballyApplicableTranslation(
         transactions,
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       if (canceled) {
         return
@@ -101,7 +101,7 @@ export const useGloballyApplicableTranslation = () => {
 const findGloballyApplicableTranslation = async (
   transactions: TransactionState[],
   chainId: ChainId,
-  avatarAddress: `0x${string}`
+  avatarAddress: `0x${string}`,
 ): Promise<ApplicableTranslation | undefined> => {
   if (transactions.length === 0) return undefined
 
@@ -120,7 +120,7 @@ const findGloballyApplicableTranslation = async (
       const result = await translation.translateGlobal(
         transactions.map((txState) => txState.transaction),
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       if (result) {
         return {
@@ -141,7 +141,7 @@ const findGloballyApplicableTranslation = async (
 const cacheKeyGlobal = (
   transactions: TransactionState[],
   chainId: ChainId,
-  avatarAddress: `0x${string}`
+  avatarAddress: `0x${string}`,
 ) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`
 
 const transactionsEqual = (a: MetaTransactionData, b: MetaTransactionData) =>

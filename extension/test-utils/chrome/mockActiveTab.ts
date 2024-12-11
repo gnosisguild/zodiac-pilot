@@ -15,7 +15,7 @@ export const mockActiveTab = (tab: Partial<chrome.tabs.Tab> = {}) => {
       }
 
       return Promise.resolve([activeTab])
-    }
+    },
   )
 
   const currentGet = chromeMock.tabs.get.getMockImplementation()
@@ -32,11 +32,11 @@ export const mockActiveTab = (tab: Partial<chrome.tabs.Tab> = {}) => {
 
       invariant(
         currentGet != null,
-        'chrome.tabs.get has no implementation in this test'
+        'chrome.tabs.get has no implementation in this test',
       )
 
       return currentGet(id)
-    }
+    },
   )
 
   return activeTab

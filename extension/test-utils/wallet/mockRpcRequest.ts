@@ -34,6 +34,6 @@ export const mockRpcRequest = async ({
       method: 'POST',
       url,
       requestBody: { jsonrpc: '2.0' },
-    })
+    }),
   )
 }

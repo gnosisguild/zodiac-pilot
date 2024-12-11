@@ -49,7 +49,7 @@ describe('usePilotPort', () => {
       chromeMock.tabs.onUpdated,
       tab.id,
       { status: 'complete' },
-      tab
+      tab,
     )
 
     await waitFor(() => {
@@ -108,7 +108,7 @@ describe('usePilotPort', () => {
       {
         url: 'http://test.com',
       },
-      tab
+      tab,
     )
 
     await sleepTillIdle()

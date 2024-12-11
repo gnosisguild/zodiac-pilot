@@ -63,7 +63,7 @@ if (process.env.LIVE_RELOAD) {
     const { added, removed, updated } = JSON.parse(ev.data)
     if (
       [...added, ...removed, ...updated].some((path) =>
-        path.startsWith('/build/build/panel/')
+        path.startsWith('/build/build/panel/'),
       )
     ) {
       console.debug('🔄 detected change, reloading panel...')

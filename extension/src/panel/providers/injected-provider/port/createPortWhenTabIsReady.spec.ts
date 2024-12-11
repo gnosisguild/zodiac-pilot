@@ -45,7 +45,7 @@ describe('createPortWhenTabIsReady', () => {
       chromeMock.tabs.onUpdated,
       tab.id,
       { status: 'complete' },
-      tab
+      tab,
     )
 
     await promise

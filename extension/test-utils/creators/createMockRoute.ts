@@ -5,7 +5,7 @@ import { AccountType, formatPrefixedAddress } from 'ser-kit'
 import { randomHex } from './randomHex'
 
 export const createMockRoute = (
-  route: Partial<ExecutionRoute> = {}
+  route: Partial<ExecutionRoute> = {},
 ): ExecutionRoute => ({
   id: randomUUID(),
   avatar: formatPrefixedAddress(1, randomHex(40)),

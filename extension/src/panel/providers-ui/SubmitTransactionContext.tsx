@@ -36,7 +36,7 @@ export const ProvideSubmitTransactionContext = ({
       transactions.length === 1
         ? 'submitting transaction...'
         : `submitting ${transactions.length} transactions as multi-send batch...`,
-      transactions
+      transactions,
     )
 
     if (!route.initiator) {
@@ -59,13 +59,13 @@ export const ProvideSubmitTransactionContext = ({
       state[
         plan.findLastIndex(
           (action) =>
-            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION
+            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION,
         )
       ]
     const txHash =
       state[
         plan.findLastIndex(
-          (action) => action.type === ExecutionActionType.EXECUTE_TRANSACTION
+          (action) => action.type === ExecutionActionType.EXECUTE_TRANSACTION,
         )
       ]
     return { safeTxHash, txHash: !safeTxHash ? txHash : undefined }

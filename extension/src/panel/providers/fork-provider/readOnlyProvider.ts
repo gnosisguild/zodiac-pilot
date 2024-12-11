@@ -27,7 +27,7 @@ export const getReadOnlyProvider = (chainId: ChainId): JsonRpcProvider => {
  * @throws if used for wallet RPC calls
  **/
 export const getEip1193ReadOnlyProvider = (
-  chainId: ChainId
+  chainId: ChainId,
 ): Eip1193JsonRpcProvider => {
   const cacheKey = `${chainId}`
   if (eip1193ProviderCache.has(cacheKey)) {
@@ -56,7 +56,7 @@ export class Eip1193JsonRpcProvider extends EventEmitter {
       request.method,
       !request.params || Array.isArray(request.params)
         ? request.params
-        : [request.params]
+        : [request.params],
     )
   }
 

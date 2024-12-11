@@ -16,11 +16,11 @@ export const isRabbyDetected = () => window.rabbyWalletRouter != null
 export const rabbyTakeOver = (provider: InjectedProvider) => {
   invariant(
     window.rabbyWalletRouter,
-    'Cannot take over Rabby because Rabby is not present.'
+    'Cannot take over Rabby because Rabby is not present.',
   )
 
   console.debug(
-    '🧑‍✈️ Rabby detected, setting Pilot as default provider in Rabby Wallet Router'
+    '🧑‍✈️ Rabby detected, setting Pilot as default provider in Rabby Wallet Router',
   )
 
   const { rabbyWalletRouter } = window
