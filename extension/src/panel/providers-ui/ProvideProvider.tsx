@@ -28,17 +28,17 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   const dispatch = useDispatch()
 
-  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const avatarAddress = parsePrefixedAddress(route.avatar)
   const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
   const connectionType =
     avatarWaypoint &&
     'connection' in avatarWaypoint &&
     avatarWaypoint.connection.type
-  const [, connectedFrom] =
+  const connectedFrom =
     (avatarWaypoint &&
       'connection' in avatarWaypoint &&
       parsePrefixedAddress(avatarWaypoint.connection.from)) ||
-    []
+    ''
 
   const moduleAddress =
     connectionType === ConnectionType.IS_ENABLED ? connectedFrom : undefined

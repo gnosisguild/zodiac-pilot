@@ -96,7 +96,7 @@ const getPilotAddress = (route: ExecutionRoute) => {
     return null
   }
 
-  const address = parsePrefixedAddress(route.initiator)[1].toLowerCase()
+  const address = parsePrefixedAddress(route.initiator).toLowerCase()
 
   if (address === ZeroAddress) {
     return null

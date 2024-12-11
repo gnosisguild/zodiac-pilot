@@ -40,7 +40,7 @@ const simulateRolesTransaction = async (
     throw new Error('Only transaction execution is currently supported')
   }
 
-  const [, from] = parsePrefixedAddress(plan[0].from)
+  const from = parsePrefixedAddress(plan[0].from)
   const tx = {
     ...plan[0].transaction,
     from,

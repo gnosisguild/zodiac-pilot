@@ -63,7 +63,7 @@ const useCanEstablishConnection = (route: ExecutionRoute) => {
 
   const pilotAddress =
     route.initiator && route.initiator !== `eoa:` + ZeroAddress
-      ? parsePrefixedAddress(route.initiator)[1].toLowerCase()
+      ? parsePrefixedAddress(route.initiator).toLowerCase()
       : undefined
 
   if (pilotAddress == null) {

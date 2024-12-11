@@ -141,8 +141,7 @@ export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
   invariant(chainId != null, 'chainId is empty')
 
   const pilotAddress =
-    (route.initiator &&
-      parsePrefixedAddress(route.initiator)[1].toLowerCase()) ||
+    (route.initiator && parsePrefixedAddress(route.initiator).toLowerCase()) ||
     ''
 
   const moduleWaypoint = route.waypoints?.find(
