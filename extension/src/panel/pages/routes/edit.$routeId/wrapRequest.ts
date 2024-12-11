@@ -1,6 +1,7 @@
 import type { HexAddress, LegacyConnection, TransactionData } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import { toQuantity } from 'ethers'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -56,6 +57,6 @@ export function wrapRequest(
     from: connection.pilotAddress as HexAddress,
     to: connection.moduleAddress as HexAddress,
     data: data as HexAddress,
-    value: 0n,
+    value: toQuantity(0n),
   }
 }
