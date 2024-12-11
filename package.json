@@ -10,9 +10,11 @@
   "scripts": {
     "check-types": "turbo check-types",
     "check-format": "prettier ./**/* --list-different",
+    "check-spelling": "cspell \"**\"",
     "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {
+    "cspell": "^5.21.2",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.8",
