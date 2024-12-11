@@ -58,8 +58,7 @@ export const ProvideSubmitTransactionContext = ({
     const safeTxHash =
       state[
         plan.findLastIndex(
-          (action) =>
-            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION,
+          (action) => action.type === ExecutionActionType.PROPOSE_TRANSACTION,
         )
       ]
     const txHash =
