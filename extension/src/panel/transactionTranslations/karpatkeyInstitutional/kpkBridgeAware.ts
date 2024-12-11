@@ -1,7 +1,8 @@
+import type { HexAddress } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { Interface } from 'ethers'
 import { BetweenHorizontalStart } from 'lucide-react'
+import type { MetaTransactionRequest } from 'ser-kit'
 import type { TransactionTranslation } from '../types'
 import { extractBridgedTokenAddress } from './bridges'
 
@@ -42,7 +43,7 @@ export const BRIDGE_AWARE_CONTRACT_ADDRESSES = [
     chainId: 11155111,
     address: '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4',
   },
-]
+] as const
 
 const BridgeAwareInterface: Interface = new Interface([
   `function bridgeStart(address asset)`,
@@ -85,12 +86,12 @@ export const kpkBridgeAware = {
             to: foundAddress.address,
             data: BridgeAwareInterface.encodeFunctionData('bridgeStart', [
               tokenAddress,
-            ]),
-            value: '0',
+            ]) as HexAddress,
+            value: 0n,
           },
         ]
       },
-      [] as MetaTransactionData[],
+      [] as MetaTransactionRequest[],
     )
 
     const callsToAdd = bridgeStartCalls.filter(

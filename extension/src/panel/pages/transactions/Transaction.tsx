@@ -154,7 +154,7 @@ const TransactionStatus = ({
   </>
 )
 
-type EtherValueProps = { value: string }
+type EtherValueProps = { value: bigint }
 
 const EtherValue = ({ value }: EtherValueProps) => {
   const { avatar } = useExecutionRoute()

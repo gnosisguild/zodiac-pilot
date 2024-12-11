@@ -1,4 +1,4 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { ExecutionStatus } from './executionStatus'
 
@@ -6,7 +6,7 @@ interface AppendTransactionAction {
   type: 'APPEND_TRANSACTION'
   payload: {
     id: string
-    transaction: MetaTransactionData
+    transaction: MetaTransactionRequest
   }
 }
 

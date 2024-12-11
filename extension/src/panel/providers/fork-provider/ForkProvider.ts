@@ -7,15 +7,14 @@ import {
   signTypedData,
   typedDataHash,
 } from '@/safe'
-import type { Eip1193Provider, TransactionData } from '@/types'
+import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
-import type { ChainId } from 'ser-kit'
+import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 import { TenderlyProvider } from './TenderlyProvider'
 import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 
@@ -24,7 +23,7 @@ class UnsupportedMethodError extends Error {
 }
 
 interface Handlers {
-  onBeforeTransactionSend(id: string, metaTx: MetaTransactionData): void
+  onBeforeTransactionSend(id: string, metaTx: MetaTransactionRequest): void
   onTransactionSent(
     id: string,
     checkpointId: string,
@@ -39,9 +38,9 @@ export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
 
   private chainId: ChainId
-  private avatarAddress: string
-  private moduleAddress: string | undefined
-  private ownerAddress: string | undefined
+  private avatarAddress: HexAddress
+  private moduleAddress: HexAddress | undefined
+  private ownerAddress: HexAddress | undefined
 
   private handlers: Handlers
 
@@ -60,11 +59,11 @@ export class ForkProvider extends EventEmitter {
     ...handlers
   }: {
     chainId: ChainId
-    avatarAddress: string
+    avatarAddress: HexAddress
     /** If set, will simulate transactions using respective `execTransactionFromModule` calls */
-    moduleAddress?: string
+    moduleAddress?: HexAddress
     /** If set, will enable the the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
-    ownerAddress?: string
+    ownerAddress?: HexAddress
   } & Handlers) {
     super()
     this.chainId = chainId
@@ -170,8 +169,8 @@ export class ForkProvider extends EventEmitter {
         const txData = params[0] as TransactionData
         return await this.sendMetaTransaction({
           to: txData.to || ZERO_ADDRESS,
-          value: `${txData.value || 0}`,
-          data: txData.data || '',
+          value: txData.value || 0n,
+          data: txData.data || '0x',
           operation: 0,
         })
       }
@@ -191,7 +190,7 @@ export class ForkProvider extends EventEmitter {
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
   async sendMetaTransaction(
-    metaTx: MetaTransactionData,
+    metaTx: MetaTransactionRequest,
   ): Promise<string | null> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
@@ -219,7 +218,7 @@ export class ForkProvider extends EventEmitter {
   }
 
   private async sendMetaTransactionInSeries(
-    metaTx: MetaTransactionData,
+    metaTx: MetaTransactionRequest,
     id: string,
   ): Promise<string> {
     if (!this.isInitialized) {
@@ -272,7 +271,7 @@ export class ForkProvider extends EventEmitter {
       // for EOA, we can just send the transaction directly
       tx = {
         to: metaTx.to,
-        value: toQuantity(metaTx.value || 0),
+        value: metaTx.value || 0n,
         data: metaTx.data || '0x',
         from: this.avatarAddress,
       }
@@ -346,9 +345,9 @@ export class ForkProvider extends EventEmitter {
 
 /** Encode an execTransactionFromModule call with the given meta transaction data */
 const execTransactionFromModule = (
-  metaTx: MetaTransactionData,
-  avatarAddress: string,
-  moduleAddress: string,
+  metaTx: MetaTransactionRequest,
+  avatarAddress: HexAddress,
+  moduleAddress: HexAddress,
   blockGasLimit: bigint,
 ): TransactionData & { gas?: string } => {
   // we use the Delay mod interface, but any IAvatar interface would do
@@ -359,12 +358,12 @@ const execTransactionFromModule = (
     metaTx.value || 0,
     metaTx.data || '0x00',
     metaTx.operation || 0,
-  ])
+  ]) as HexAddress
 
   return {
     to: avatarAddress,
     data,
-    value: '0x0',
+    value: 0n,
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
     gas: toQuantity(blockGasLimit), // Tenderly errors if the hex value has leading zeros

@@ -9,7 +9,6 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '@/utils'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity, ZeroAddress } from 'ethers'
 import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -17,12 +16,13 @@ import {
   ExecutionActionType,
   parsePrefixedAddress,
   planExecution,
+  type MetaTransactionRequest,
   type Route as SerRoute,
 } from 'ser-kit'
 import { Translate } from './Translate'
 
 const simulateRolesTransaction = async (
-  encodedTransaction: MetaTransactionData,
+  encodedTransaction: MetaTransactionRequest,
   route: ExecutionRoute,
   provider: Eip1193Provider,
 ) => {

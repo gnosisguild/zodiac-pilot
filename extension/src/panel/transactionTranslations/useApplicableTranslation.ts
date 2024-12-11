@@ -4,9 +4,12 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
-import { type ChainId, parsePrefixedAddress } from 'ser-kit'
+import {
+  type ChainId,
+  type MetaTransactionRequest,
+  parsePrefixedAddress,
+} from 'ser-kit'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,
@@ -94,7 +97,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 }
 
 const findApplicableTranslation = async (
-  metaTransaction: MetaTransactionData,
+  metaTransaction: MetaTransactionRequest,
   chainId: ChainId,
   avatarAddress: `0x${string}`,
 ): Promise<ApplicableTranslation | undefined> => {
@@ -130,7 +133,7 @@ const findApplicableTranslation = async (
 }
 
 const cacheKey = (
-  transaction: MetaTransactionData,
+  transaction: MetaTransactionRequest,
   chainId: ChainId,
   avatarAddress: `0x${string}`,
 ) =>

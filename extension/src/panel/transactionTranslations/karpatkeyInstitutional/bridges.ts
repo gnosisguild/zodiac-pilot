@@ -1,9 +1,9 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { HexAddress } from '@/types'
 import { FunctionFragment, Interface } from 'ethers'
-import type { ChainId } from 'ser-kit'
+import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 
 export function extractBridgedTokenAddress(
-  { to, data }: MetaTransactionData,
+  { to, data }: MetaTransactionRequest,
   chainId: ChainId,
 ): undefined | `0x${string}` {
   const bridge = allBridges.find(
@@ -33,7 +33,7 @@ export function extractBridgedTokenAddress(
 }
 
 type BridgeData = {
-  address: string
+  address: HexAddress
   interface: Interface
   sourceChainId: ChainId
   /** takes precedence of `token` */

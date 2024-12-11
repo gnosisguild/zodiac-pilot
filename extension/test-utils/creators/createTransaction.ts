@@ -9,9 +9,9 @@ export const createTransaction = (
   contractInfo: { address: ZERO_ADDRESS, verified: true },
   status: ExecutionStatus.PENDING,
   transaction: {
-    data: '',
+    data: '0x0',
     to: ZERO_ADDRESS,
-    value: '',
+    value: 0n,
   },
 
   ...transaction,

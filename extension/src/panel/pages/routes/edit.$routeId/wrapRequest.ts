@@ -1,4 +1,4 @@
-import type { LegacyConnection, TransactionData } from '@/types'
+import type { HexAddress, LegacyConnection, TransactionData } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 
@@ -53,9 +53,9 @@ export function wrapRequest(
   }
 
   return {
-    from: connection.pilotAddress,
-    to: connection.moduleAddress,
-    data: data,
-    value: '0x0',
+    from: connection.pilotAddress as HexAddress,
+    to: connection.moduleAddress as HexAddress,
+    data: data as HexAddress,
+    value: 0n,
   }
 }

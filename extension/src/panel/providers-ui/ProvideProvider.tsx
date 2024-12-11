@@ -3,17 +3,20 @@ import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   createContext,
-  type PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
   useState,
+  type PropsWithChildren,
 } from 'react'
-import { ConnectionType, parsePrefixedAddress } from 'ser-kit'
+import {
+  ConnectionType,
+  parsePrefixedAddress,
+  type MetaTransactionRequest,
+} from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ProvideSubmitTransactionContext } from './SubmitTransactionContext'
@@ -35,10 +38,9 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     'connection' in avatarWaypoint &&
     avatarWaypoint.connection.type
   const connectedFrom =
-    (avatarWaypoint &&
-      'connection' in avatarWaypoint &&
-      parsePrefixedAddress(avatarWaypoint.connection.from)) ||
-    ''
+    avatarWaypoint && 'connection' in avatarWaypoint
+      ? parsePrefixedAddress(avatarWaypoint.connection.from)
+      : undefined
 
   const moduleAddress =
     connectionType === ConnectionType.IS_ENABLED ? connectedFrom : undefined
@@ -46,7 +48,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     connectionType === ConnectionType.OWNS ? connectedFrom : undefined
 
   const onBeforeTransactionSend = useCallback(
-    async (id: string, transaction: MetaTransactionData) => {
+    async (id: string, transaction: MetaTransactionRequest) => {
       // Immediately update the state with the transaction so that the UI can show it as pending.
       dispatch({
         type: 'APPEND_TRANSACTION',
