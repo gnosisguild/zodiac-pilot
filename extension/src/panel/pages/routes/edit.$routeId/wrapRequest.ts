@@ -1,7 +1,7 @@
 import type { HexAddress, LegacyConnection, TransactionData } from '@/types'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { toQuantity } from 'ethers'
+import type { MetaTransactionRequest } from 'ser-kit'
 
 const RolesV1Interface =
   ContractFactories[KnownContracts.ROLES_V1].createInterface()
@@ -10,7 +10,7 @@ const RolesV2Interface =
 const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
 
 export function wrapRequest(
-  request: MetaTransactionData | TransactionData,
+  request: MetaTransactionRequest | TransactionData,
   connection: LegacyConnection,
   revertOnError = true,
 ): TransactionData {

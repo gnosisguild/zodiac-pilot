@@ -165,9 +165,6 @@ importers:
       '@safe-global/safe-apps-sdk':
         specifier: ^9.1.0
         version: 9.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
-      '@safe-global/safe-core-sdk-types':
-        specifier: ^5.0.2
-        version: 5.1.0(typescript@5.7.2)(zod@3.24.1)
       '@safe-global/safe-gateway-typescript-sdk':
         specifier: ^3.21.10
         version: 3.22.4
@@ -2225,10 +2222,6 @@ packages:
 
   '@safe-global/safe-apps-sdk@9.1.0':
     resolution: {integrity: sha512-N5p/ulfnnA2Pi2M3YeWjULeWbjo7ei22JwU/IXnhoHzKq3pYCN6ynL9mJBOlvDVv892EgLPCWCOwQk/uBT2v0Q==}
-
-  '@safe-global/safe-core-sdk-types@5.1.0':
-    resolution: {integrity: sha512-UzXR4zWmVzux25FcIm4H049QhZZpVpIBL5HE+V0p5gHpArZROL+t24fZmsKUf403CtBxIJM5zZSVQL0nFJi+IQ==}
-    deprecated: 'WARNING: This project has been renamed to @safe-global/types-kit. Please, migrate from @safe-global/safe-core-sdk-types@5.1.0 to @safe-global/types-kit@1.0.0.'
 
   '@safe-global/safe-deployments@1.37.21':
     resolution: {integrity: sha512-Q5qvcxXjAIcKOO8e3uQ/iNOSE5vRI+5jCO6JW/id5tEwMBtfyj5Ec2Vkk6nz0AM0uo2pyGROYjNTTuefoTthvQ==}
@@ -9401,13 +9394,6 @@ snapshots:
       - bufferutil
       - typescript
       - utf-8-validate
-      - zod
-
-  '@safe-global/safe-core-sdk-types@5.1.0(typescript@5.7.2)(zod@3.24.1)':
-    dependencies:
-      abitype: 1.0.7(typescript@5.7.2)(zod@3.24.1)
-    transitivePeerDependencies:
-      - typescript
       - zod
 
   '@safe-global/safe-deployments@1.37.21':
