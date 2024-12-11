@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
