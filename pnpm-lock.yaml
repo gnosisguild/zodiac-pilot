@@ -246,9 +246,6 @@ importers:
       esbuild:
         specifier: ^0.24.0
         version: 0.24.0
-      esbuild-css-modules-plugin:
-        specifier: ^2.7.1
-        version: 2.7.1(esbuild@0.24.0)
       esbuild-style-plugin:
         specifier: ^1.6.3
         version: 1.6.3
@@ -3734,12 +3731,6 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
-  esbuild-css-modules-plugin@2.7.1:
-    resolution: {integrity: sha512-lyz7oztJaqkSzXFTnMBW4nOqiXdw28DIpSZyOf73n9kxe3W5NV9VP/bJfg9ceX80B2xGhLYicb/n0oiGi0Mfnw==}
-    engines: {node: '>= 16'}
-    peerDependencies:
-      esbuild: '*'
-
   esbuild-plugins-node-modules-polyfill@1.6.8:
     resolution: {integrity: sha512-bRB4qbgUDWrdY1eMk123KiaCSW9VzQ+QLZrmU7D//cCFkmksPd9mUMpmWoFK/rxjIeTfTSOpKCoGoimlvI+AWw==}
     engines: {node: '>=14.0.0'}
@@ -6704,10 +6695,6 @@ packages:
   tinyspy@3.0.2:
     resolution: {integrity: sha512-n1cw8k1k0x4pgA2+9XrOkFydTerNcJ1zWCO5Nn9scWHTD+5tp8dghT2x1uduQePZTZgd3Tupf+x9BxJjeJi77Q==}
     engines: {node: '>=14.0.0'}
-
-  tmp@0.2.3:
-    resolution: {integrity: sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==}
-    engines: {node: '>=14.14'}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -11786,16 +11773,6 @@ snapshots:
       is-date-object: 1.0.5
       is-symbol: 1.1.0
 
-  esbuild-css-modules-plugin@2.7.1(esbuild@0.24.0):
-    dependencies:
-      esbuild: 0.24.0
-      fs-extra: 10.1.0
-      lightningcss: 1.28.2
-      lodash: 4.17.21
-      postcss: 8.4.49
-      postcss-modules: 6.0.1(postcss@8.4.49)
-      tmp: 0.2.3
-
   esbuild-plugins-node-modules-polyfill@1.6.8(esbuild@0.17.6):
     dependencies:
       '@jspm/core': 2.0.1
@@ -13147,6 +13124,7 @@ snapshots:
       lightningcss-linux-x64-musl: 1.28.2
       lightningcss-win32-arm64-msvc: 1.28.2
       lightningcss-win32-x64-msvc: 1.28.2
+    optional: true
 
   lilconfig@2.1.0: {}
 
@@ -15330,8 +15308,6 @@ snapshots:
   tinyrainbow@1.2.0: {}
 
   tinyspy@3.0.2: {}
-
-  tmp@0.2.3: {}
 
   to-regex-range@5.0.1:
     dependencies:
