@@ -340,8 +340,8 @@ importers:
   fork-api:
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^3.16.0
-        version: 3.19.0
+        specifier: ^4.0.0
+        version: 4.20241205.0
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
@@ -401,8 +401,8 @@ importers:
   vnet-api:
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^3.16.0
-        version: 3.19.0
+        specifier: ^4.0.0
+        version: 4.20241205.0
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
@@ -588,8 +588,8 @@ packages:
   '@cloudflare/kv-asset-handler@0.2.0':
     resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
 
-  '@cloudflare/workers-types@3.19.0':
-    resolution: {integrity: sha512-0FRcsz7Ea3jT+gc5gKPIYciykm1bbAaTpygdzpCwGt0RL+V83zWnYN30NWDW4rIHj/FHtz+MIuBKS61C8l7AzQ==}
+  '@cloudflare/workers-types@4.20241205.0':
+    resolution: {integrity: sha512-pj1VKRHT/ScQbHOIMFODZaNAlJHQHdBSZXNIdr9ebJzwBff9Qz8VdqhbhggV7f+aUEh8WSbrsPIo4a+WtgjUvw==}
 
   '@coinbase/wallet-sdk@3.9.3':
     resolution: {integrity: sha512-N/A2DRIf0Y3PHc1XAMvbBUu4zisna6qAdqABMZwBMNEfWrXpAwx16pZGkYCLGE+Rvv1edbcB2LYDRnACNcmCiw==}
@@ -7754,7 +7754,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/workers-types@3.19.0': {}
+  '@cloudflare/workers-types@4.20241205.0': {}
 
   '@coinbase/wallet-sdk@3.9.3':
     dependencies:
