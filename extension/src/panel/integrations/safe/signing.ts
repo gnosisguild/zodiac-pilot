@@ -35,13 +35,15 @@ export const typedDataHash = (data: EIP712TypedData): string => {
   return TypedDataEncoder.hash(data.domain as any, types, data.message)
 }
 
-export const signTypedData = (data: EIP712TypedData) => {
+export const signTypedData = (
+  data: EIP712TypedData,
+): MetaTransactionRequest => {
   return {
     to: SIGN_MESSAGE_LIB_ADDRESS,
     data: signMessageLib.interface.encodeFunctionData('signMessage', [
       typedDataHash(data),
-    ]),
-    value: '0',
+    ]) as HexAddress,
+    value: 0n,
     operation: 1,
   }
 }
