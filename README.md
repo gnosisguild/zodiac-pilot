@@ -18,10 +18,11 @@ To run a development version of the extension from a branch:
 
 ```bash
 cd extension
-yarn dev
+pnpm i
+pnpm dev
 ```
 
-The build output is written to public/build.
+The build output is written to extension/public/build.
 The `dev` script will watch for changes and automatically rebuild.
 
 To enable the extension in Chrome, follow these steps:
