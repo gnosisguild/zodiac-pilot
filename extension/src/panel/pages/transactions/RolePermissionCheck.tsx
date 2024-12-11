@@ -9,6 +9,7 @@ import {
   decodeRolesV1Error,
   decodeRolesV2Error,
 } from '@/utils'
+import { invariant } from '@epic-web/invariant'
 import { toQuantity, ZeroAddress } from 'ethers'
 import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -32,19 +33,20 @@ const simulateRolesTransaction = async (
   const plan = await planExecution([encodedTransaction], routeWithInitiator)
 
   // TODO generalize permission checking logic (ser-kit)
-  if (plan.length > 1) {
-    throw new Error('Multi-step execution not yet supported')
-  }
+  invariant(plan.length <= 1, 'Multi-step execution not yet supported')
 
-  if (plan[0]?.type !== ExecutionActionType.EXECUTE_TRANSACTION) {
-    throw new Error('Only transaction execution is currently supported')
-  }
+  const [action] = plan
 
-  const from = parsePrefixedAddress(plan[0].from)
+  invariant(
+    action != null && action.type === ExecutionActionType.EXECUTE_TRANSACTION,
+    'Only transaction execution is currently supported',
+  )
+
+  const from = parsePrefixedAddress(action.from)
   const tx = {
-    ...plan[0].transaction,
+    ...action.transaction,
     from,
-    value: toQuantity(BigInt(plan[0].transaction.value || 0)),
+    value: toQuantity(BigInt(action.transaction.value || 0)),
   }
 
   try {
@@ -66,11 +68,11 @@ const simulateRolesTransaction = async (
         return RolesV2Status[decodedError.args.status]
       }
       return decodedError.name
-    } else {
-      const genericError = decodeGenericError(e as JsonRpcError)
-      if (genericError === 'Module not authorized') {
-        return 'Not a member of any role'
-      }
+    }
+
+    const genericError = decodeGenericError(e as JsonRpcError)
+    if (genericError === 'Module not authorized') {
+      return 'Not a member of any role'
     }
   }
 
