@@ -3,7 +3,7 @@ name: Deploy Fork API
 on:
   push:
     branches: main
-    paths: "fork-api/**"
+    paths: 'fork-api/**'
 
 defaults:
   run:
@@ -19,8 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-          cache: "pnpm"
-          cache-dependency-path: "fork-api/pnpm-lock.yaml"
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
