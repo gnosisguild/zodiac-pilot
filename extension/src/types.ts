@@ -62,7 +62,7 @@ export interface Eip1193Provider {
 
 export interface TransactionData {
   to?: HexAddress
-  value?: bigint
+  value?: string
   data?: HexAddress
   from?: HexAddress
 }

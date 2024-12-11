@@ -11,7 +11,7 @@ import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
-import { BrowserProvider, toQuantity, ZeroAddress } from 'ethers'
+import { BrowserProvider, toBigInt, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
@@ -169,7 +169,7 @@ export class ForkProvider extends EventEmitter {
         const txData = params[0] as TransactionData
         return await this.sendMetaTransaction({
           to: txData.to || ZERO_ADDRESS,
-          value: txData.value || 0n,
+          value: txData.value ? toBigInt(txData.value) : 0n,
           data: txData.data || '0x',
           operation: 0,
         })
@@ -271,7 +271,7 @@ export class ForkProvider extends EventEmitter {
       // for EOA, we can just send the transaction directly
       tx = {
         to: metaTx.to,
-        value: metaTx.value || 0n,
+        value: toQuantity(metaTx.value),
         data: metaTx.data || '0x',
         from: this.avatarAddress,
       }
@@ -363,7 +363,7 @@ const execTransactionFromModule = (
   return {
     to: avatarAddress,
     data,
-    value: 0n,
+    value: toQuantity(0n),
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
     gas: toQuantity(blockGasLimit), // Tenderly errors if the hex value has leading zeros
