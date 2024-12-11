@@ -1,8 +1,9 @@
 # Zodiac Pilot
+
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/gnosiguild/CODE_OF_CONDUCT)
-[![Static Checks](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/static-checks.yml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/static-checks.yml)
-[![Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/tests.yml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/tests.yml)
-[![Live Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/live-tests.yml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/live-tests.yml)
+[![Static Checks](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/static-checks.yaml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/static-checks.yaml)
+[![Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/tests.yaml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/tests.yaml)
+[![Live Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/live-tests.yaml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/live-tests.yaml)
 
 Chrome extension to simulate Dapp interactions and record transactions. [Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb?hl=en&authuser=0)
 
