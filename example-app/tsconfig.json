@@ -3,6 +3,7 @@
     "strict": true,
     "module": "ES2022",
     "moduleResolution": "Bundler",
+    "skipLibCheck": true,
     "jsx": "react-jsx",
     "paths": {
       "@/transfer": ["./app/transfer"],
@@ -10,5 +11,7 @@
       "@/clients": ["./app/clients"],
       "@/config": ["./app/config"]
     }
-  }
+  },
+  "include": ["./app/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -20,10 +20,10 @@ export const Connect = () => {
             <Input
               disabled
               label="Wallet"
-              defaultValue={account.connector.name}
+              defaultValue={account.connector?.name}
             />
 
-            <Input disabled label="Chain" defaultValue={account.chain.name} />
+            <Input disabled label="Chain" defaultValue={account.chain?.name} />
 
             <Input disabled defaultValue={account.address} label="Account" />
 

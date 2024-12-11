@@ -12,7 +12,8 @@
   "scripts": {
     "start": "env-cmd wrangler dev",
     "deploy": "wrangler publish",
-    "format": "prettier --write  '*.{json,js}' 'src/**/*.ts'"
+    "format": "prettier --write  '*.{json,js}' 'src/**/*.ts'",
+    "check-types": "tsc --noEmit"
   },
   "packageManager": "pnpm@9.15.0"
 }
