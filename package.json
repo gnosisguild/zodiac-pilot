@@ -11,6 +11,8 @@
     "check-types": "turbo check-types",
     "check-format": "prettier ./**/* --list-different",
     "check-spelling": "cspell \"**\"",
+    "check-cycles": "turbo check-cycles",
+    "lint": "turbo lint",
     "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {
