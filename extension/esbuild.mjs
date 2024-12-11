@@ -49,7 +49,7 @@ esbuild
     publicPath: '/build',
     inject: [
       fileURLToPath(
-        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim'),
+        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim')
       ),
     ],
     define: {
@@ -61,7 +61,6 @@ esbuild
     },
     plugins: [
       plugin(stdLibBrowser),
-      // cssModulesPlugin(),
       postCssPlugin({
         postcss: { plugins: [tailwindcss, autoprefixer] },
       }),
