@@ -45,7 +45,7 @@ if (
         const requestIndex = requestId.split('_').pop()
         console.debug(
           `🧑‍✈️ request #${requestIndex}: \x1B[34m${request.method}\x1B[m %O`,
-          logDetails
+          logDetails,
         )
 
         const responseMessage: InjectedProviderResponse | undefined =
@@ -59,7 +59,7 @@ if (
 
         window.postMessage(responseMessage, '*')
       }
-    }
+    },
   )
 
   // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
@@ -67,7 +67,7 @@ if (
     (
       message: InjectedProviderMessage | RpcMessage | Message,
       sender,
-      respond
+      respond,
     ) => {
       if (sender.id !== chrome.runtime.id) {
         return
@@ -88,7 +88,7 @@ if (
                 },
               },
             } as InjectedProviderMessage,
-            '*'
+            '*',
           )
 
           break
@@ -97,7 +97,7 @@ if (
         case InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT: {
           console.debug(
             `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
-            message.eventData
+            message.eventData,
           )
           window.postMessage(message, '*')
 
@@ -113,6 +113,6 @@ if (
           return true
         }
       }
-    }
+    },
   )
 }

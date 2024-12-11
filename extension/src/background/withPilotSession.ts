@@ -6,7 +6,7 @@ export type CallbackFn = (session: PublicPilotSession) => void
 export const withPilotSession = (
   sessions: Sessions,
   windowId: number,
-  callback: CallbackFn
+  callback: CallbackFn,
 ): Promise<void> => {
   const session = sessions.get(windowId)
 

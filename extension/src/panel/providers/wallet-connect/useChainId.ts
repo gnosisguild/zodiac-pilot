@@ -3,7 +3,7 @@ import type { ChainId } from 'ser-kit'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 
 export const useChainId = (
-  provider: WalletConnectEthereumMultiProvider | null
+  provider: WalletConnectEthereumMultiProvider | null,
 ) => {
   const [chainId, setChainId] = useState<ChainId | null>(null)
 

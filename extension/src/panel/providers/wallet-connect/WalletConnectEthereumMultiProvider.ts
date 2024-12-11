@@ -25,7 +25,7 @@ export class WalletConnectEthereumMultiProvider extends WalletConnectEthereumPro
   }
 
   static override async init(
-    opts: EthereumProviderOptions & { routeId: string }
+    opts: EthereumProviderOptions & { routeId: string },
   ) {
     const provider = new WalletConnectEthereumMultiProvider(opts.routeId)
     await provider.initialize(opts)

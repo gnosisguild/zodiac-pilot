@@ -15,7 +15,7 @@ const SelectedRouteContext = createContext<Context>({
   selectedRouteId: undefined,
   setSelectedRouteId() {
     throw new Error(
-      '"setSelectedRouteId" cannot be used outside <ProvideSelectedExecutionRoute /> context.'
+      '"setSelectedRouteId" cannot be used outside <ProvideSelectedExecutionRoute /> context.',
     )
   },
 })
@@ -30,7 +30,7 @@ export const ProvideSelectedExecutionRoute = ({
 }: ProvideSelectedExecutionRouteProps) => {
   const [selectedRouteId, setSelectedRouteId] = useStorage<string>(
     'selectedRoute',
-    initialValue
+    initialValue,
   )
 
   return (

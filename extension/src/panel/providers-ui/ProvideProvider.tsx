@@ -56,7 +56,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       // Now we can take some time decoding the transaction and we update the state once that's done.
       const contractInfo = await fetchContractInfo(
         transaction.to as `0x${string}`,
-        chainId
+        chainId,
       )
       dispatch({
         type: 'DECODE_TRANSACTION',
@@ -66,7 +66,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
         },
       })
     },
-    [chainId, dispatch]
+    [chainId, dispatch],
   )
 
   const onTransactionSent = useCallback(
@@ -74,7 +74,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       id: string,
       snapshotId: string,
       transactionHash: string,
-      provider: Eip1193Provider
+      provider: Eip1193Provider,
     ) => {
       dispatch({
         type: 'CONFIRM_TRANSACTION',
@@ -86,7 +86,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       })
 
       const receipt = await new BrowserProvider(provider).getTransactionReceipt(
-        transactionHash
+        transactionHash,
       )
       if (!receipt?.status) {
         dispatch({
@@ -120,7 +120,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
         })
       }
     },
-    [dispatch, avatarAddress, moduleAddress]
+    [dispatch, avatarAddress, moduleAddress],
   )
 
   const onTransactionError = useCallback(
@@ -135,7 +135,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
       console.debug(`Transaction ${id} failed`, { error })
     },
-    [dispatch]
+    [dispatch],
   )
 
   const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
@@ -185,7 +185,7 @@ export const useProvider = () => {
 
   invariant(
     provider != null,
-    'useProvider() must be used within a <ProvideProvider/>'
+    'useProvider() must be used within a <ProvideProvider/>',
   )
 
   return provider
@@ -194,7 +194,7 @@ export const useProvider = () => {
 const isExecutionFailure = (
   log: TransactionReceipt['logs'][0],
   avatarAddress: string,
-  moduleAddress?: string
+  moduleAddress?: string,
 ) => {
   if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) {
     return false

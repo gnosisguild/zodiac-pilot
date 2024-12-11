@@ -19,12 +19,12 @@ const avatarAddress = '0x846e7f810e08f1e2af2c5afd06847cc95f5cae1b'
 describe('karpatkey bridge aware translations', () => {
   const getBridgeAwareContract = (sourceChainId: number) => {
     const bridgeAwareContract = BRIDGE_AWARE_CONTRACT_ADDRESSES.find(
-      (contract) => contract.chainId === sourceChainId
+      (contract) => contract.chainId === sourceChainId,
     )
 
     invariant(
       bridgeAwareContract != null,
-      'Could not find bridge aware contract'
+      'Could not find bridge aware contract',
     )
 
     return bridgeAwareContract
@@ -40,7 +40,7 @@ describe('karpatkey bridge aware translations', () => {
     }
     const result = await kpkBridgeAware.translateGlobal([tx], 1, avatarAddress)
     const bridgeAwareContract = getBridgeAwareContract(
-      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId
+      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId,
     )
 
     expect(result).toEqual([
@@ -60,7 +60,7 @@ describe('karpatkey bridge aware translations', () => {
       value: '0',
     }
     const bridgeAwareContract = getBridgeAwareContract(
-      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId
+      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId,
     )
 
     const result = await kpkBridgeAware.translateGlobal(
@@ -73,7 +73,7 @@ describe('karpatkey bridge aware translations', () => {
         },
       ],
       1,
-      avatarAddress
+      avatarAddress,
     )
     expect(result).toBe(undefined)
 
@@ -87,7 +87,7 @@ describe('karpatkey bridge aware translations', () => {
         tx,
       ],
       1,
-      avatarAddress
+      avatarAddress,
     )
     expect(resultDifferentOrder).toBe(undefined)
   })
@@ -99,7 +99,7 @@ describe('karpatkey bridge aware translations', () => {
       value: '0',
     }
     const bridgeAwareContract = getBridgeAwareContract(
-      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId
+      ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId,
     )
 
     const result = await kpkBridgeAware.translateGlobal(
@@ -112,7 +112,7 @@ describe('karpatkey bridge aware translations', () => {
         },
       ],
       1,
-      avatarAddress
+      avatarAddress,
     )
     expect(result).toEqual([
       tx,
@@ -139,13 +139,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId
+        ETH_CIRCLE_TOKEN_MESSENGER.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,
@@ -164,13 +164,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        ETH_GNO_XDAI_BRIDGE.sourceChainId
+        ETH_GNO_XDAI_BRIDGE.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,
@@ -189,13 +189,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        ETH_HOP_DAI_BRIDGE.sourceChainId
+        ETH_HOP_DAI_BRIDGE.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,
@@ -218,13 +218,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        ARB1_GATEWAY_ROUTER.sourceChainId
+        ARB1_GATEWAY_ROUTER.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         {
@@ -251,13 +251,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        BASE_CIRCLE_TOKEN_MESSENGER.sourceChainId
+        BASE_CIRCLE_TOKEN_MESSENGER.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,
@@ -280,13 +280,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        GNOSIS_XDAI_BRIDGE_2.sourceChainId
+        GNOSIS_XDAI_BRIDGE_2.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,
@@ -309,13 +309,13 @@ describe('karpatkey bridge aware translations', () => {
         value: '0',
       }
       const bridgeAwareContract = getBridgeAwareContract(
-        OPTIMISM_L2_HOP_CCTP.sourceChainId
+        OPTIMISM_L2_HOP_CCTP.sourceChainId,
       )
 
       const result = await kpkBridgeAware.translateGlobal(
         [tx],
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       expect(result).toEqual([
         tx,

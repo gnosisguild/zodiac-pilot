@@ -9,13 +9,13 @@ import type { Page } from '@playwright/test'
 
 const openConfiguration = async (
   page: Page,
-  account: `0x${string}` = defaultMockAccount
+  account: `0x${string}` = defaultMockAccount,
 ) => {
   await page.getByRole('link', { name: 'Configure routes' }).click()
   await page.getByRole('button', { name: 'Add Route' }).click()
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
   await expect(
-    page.getByRole('textbox', { name: 'Pilot Account' })
+    page.getByRole('textbox', { name: 'Pilot Account' }),
   ).toHaveValue(account)
 }
 
@@ -29,16 +29,16 @@ test.describe('Account unavailable', () => {
 
     await openConfiguration(
       extension,
-      '0x1000000000000000000000000000000000000000'
+      '0x1000000000000000000000000000000000000000',
     )
     await loadAccounts(['0x2000000000000000000000000000000000000000'])
 
     await expect(
       extension.getByRole('alert', {
         name: `Account is not connected`,
-      })
+      }),
     ).toHaveAccessibleDescription(
-      'Switch your wallet to this account in order to use Pilot.'
+      'Switch your wallet to this account in order to use Pilot.',
     )
   })
 })

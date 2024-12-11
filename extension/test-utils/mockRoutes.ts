@@ -10,8 +10,8 @@ export const mockRoutes = (...routes: Partial<ExecutionRoute>[]) => {
       return callback(
         mockedRoutes.reduce(
           (result, route) => ({ ...result, [`routes[${route.id}]`]: route }),
-          {}
-        )
+          {},
+        ),
       )
     }
 

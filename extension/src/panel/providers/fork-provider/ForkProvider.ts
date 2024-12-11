@@ -29,7 +29,7 @@ interface Handlers {
     id: string,
     checkpointId: string,
     hash: string,
-    provider: Eip1193Provider
+    provider: Eip1193Provider,
   ): void
   onTransactionError: (id: string, error: unknown) => void
 }
@@ -130,7 +130,7 @@ export class ForkProvider extends EventEmitter {
         const [from, dataString] = params
         if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
           throw new Error(
-            'eth_signTypedData_v4 only supported for the avatar address'
+            'eth_signTypedData_v4 only supported for the avatar address',
           )
         }
         const data = JSON.parse(dataString)
@@ -138,7 +138,7 @@ export class ForkProvider extends EventEmitter {
         const dataHash = typedDataHash(data)
         const safeMessageHash = await safeInterface.encodeFunctionData(
           'getMessageHashForSafe',
-          [this.avatarAddress, dataHash]
+          [this.avatarAddress, dataHash],
         )
 
         // special handling for Snapshot vote signatures
@@ -191,7 +191,7 @@ export class ForkProvider extends EventEmitter {
    * @param metaTx A MetaTransaction object, can be operation: 1 (delegatecall)
    */
   async sendMetaTransaction(
-    metaTx: MetaTransactionData
+    metaTx: MetaTransactionData,
   ): Promise<string | null> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
@@ -220,7 +220,7 @@ export class ForkProvider extends EventEmitter {
 
   private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionData,
-    id: string
+    id: string,
   ): Promise<string> {
     if (!this.isInitialized) {
       // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
@@ -233,18 +233,18 @@ export class ForkProvider extends EventEmitter {
 
     invariant(
       isSafe || (this.moduleAddress == null && ownerAddress == null),
-      'moduleAddress or ownerAddress is only supported for Safes as avatar'
+      'moduleAddress or ownerAddress is only supported for Safes as avatar',
     )
 
     const isDelegateCall = metaTx.operation === 1
 
     invariant(
       isSafe || !isDelegateCall,
-      'delegatecall is only supported for Safes as avatar'
+      'delegatecall is only supported for Safes as avatar',
     )
     invariant(
       !isDelegateCall || this.moduleAddress != null || ownerAddress != null,
-      'delegatecall requires moduleAddress or ownerAddress'
+      'delegatecall requires moduleAddress or ownerAddress',
     )
 
     // take a snapshot and record the meta transaction
@@ -266,7 +266,7 @@ export class ForkProvider extends EventEmitter {
         metaTx,
         this.avatarAddress,
         from,
-        await this.blockGasLimitPromise
+        await this.blockGasLimitPromise,
       )
     } else {
       // for EOA, we can just send the transaction directly
@@ -298,7 +298,7 @@ export class ForkProvider extends EventEmitter {
           moduleAddress: this.moduleAddress,
           ownerAddress: this.ownerAddress,
         },
-        this.provider
+        this.provider,
       )
     }
 
@@ -349,7 +349,7 @@ const execTransactionFromModule = (
   metaTx: MetaTransactionData,
   avatarAddress: string,
   moduleAddress: string,
-  blockGasLimit: bigint
+  blockGasLimit: bigint,
 ): TransactionData & { gas?: string } => {
   // we use the Delay mod interface, but any IAvatar interface would do
   const delayInterface =
@@ -406,7 +406,7 @@ async function prepareSafeForSimulation(
     moduleAddress?: string
     ownerAddress?: string
   },
-  provider: TenderlyProvider
+  provider: TenderlyProvider,
 ) {
   const safe = await initSafeProtocolKit(chainId, avatarAddress)
 

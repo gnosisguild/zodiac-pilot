@@ -17,7 +17,7 @@ export const BaseToast = ({ children, className, visible }: BaseToastProps) => (
     <div
       className={classNames(
         'flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
-        className
+        className,
       )}
     >
       {children}

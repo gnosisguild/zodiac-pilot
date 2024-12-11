@@ -86,7 +86,7 @@ export class PilotSession {
       this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
-      })
+      }),
     )
   }
 
@@ -98,11 +98,11 @@ export class PilotSession {
     await addRpcRedirectRules(
       this.getTabs(),
       this.getFork(),
-      this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId })
+      this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId }),
     )
 
     this.rpcTracking.onNewRpcEndpointDetected.addListener(
-      this.handleNewRpcEndpoint
+      this.handleNewRpcEndpoint,
     )
   }
 
@@ -117,7 +117,7 @@ export class PilotSession {
       this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
-      })
+      }),
     )
   }
 
@@ -131,7 +131,7 @@ export class PilotSession {
     await removeAllRpcRedirectRules(this.getTabs())
 
     this.rpcTracking.onNewRpcEndpointDetected.removeListener(
-      this.handleNewRpcEndpoint
+      this.handleNewRpcEndpoint,
     )
   }
 }

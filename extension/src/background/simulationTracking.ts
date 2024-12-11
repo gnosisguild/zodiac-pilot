@@ -23,7 +23,7 @@ export const trackSimulations = ({
 
           console.debug(
             `start intercepting JSON RPC requests in window #${message.windowId}`,
-            fork
+            fork,
           )
 
           // TODO use a different icon while simulating to make this more beautiful
@@ -54,7 +54,7 @@ export const trackSimulations = ({
             await session.clearFork()
 
             console.debug(
-              `stop intercepting JSON RPC requests in window #${message.windowId}`
+              `stop intercepting JSON RPC requests in window #${message.windowId}`,
             )
 
             updateBadge({
@@ -66,7 +66,7 @@ export const trackSimulations = ({
           break
         }
       }
-    }
+    },
   )
 
   onDeleted.addListener((windowId) => updateBadge({ windowId, text: '' }))

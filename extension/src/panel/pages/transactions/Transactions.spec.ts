@@ -13,7 +13,7 @@ describe('Transactions', () => {
       })
 
       expect(
-        screen.getByRole('region', { name: 'Raw transaction' })
+        screen.getByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
     })
   })

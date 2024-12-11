@@ -36,7 +36,7 @@ type Options = Parameters<typeof baseRender>[1] & {
 export const render = async (
   currentPath: string,
   routes: Route[],
-  { activeTab, inspectRoutes = [], initialState, ...options }: Options = {}
+  { activeTab, inspectRoutes = [], initialState, ...options }: Options = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = createMockPort()
@@ -59,7 +59,7 @@ export const render = async (
         </Routes>
       </MemoryRouter>
     </RenderWrapper>,
-    options
+    options,
   )
 
   await waitForTestElement()
@@ -83,6 +83,6 @@ export const expectRouteToBe = (path: string) =>
   waitFor(() =>
     expect(screen.getByTestId('test-route-element-id')).toHaveAttribute(
       'data-pathname',
-      path
-    )
+      path,
+    ),
   )

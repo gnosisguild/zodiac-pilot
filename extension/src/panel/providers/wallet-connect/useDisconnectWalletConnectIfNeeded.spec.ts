@@ -19,7 +19,7 @@ describe('Disconnect Wallet Connect if needed', () => {
       () => useDisconnectWalletConnectIfNeeded(route, { onDisconnect }),
       {
         routes: [route],
-      }
+      },
     )
 
     const provider = await getWalletConnectProvider(route.id)
@@ -45,7 +45,7 @@ describe('Disconnect Wallet Connect if needed', () => {
       () => useDisconnectWalletConnectIfNeeded(route, { onDisconnect }),
       {
         routes: [route],
-      }
+      },
     )
 
     const provider = await getWalletConnectProvider(route.id)
@@ -78,7 +78,7 @@ describe('Disconnect Wallet Connect if needed', () => {
         initialProps: {
           onDisconnect: firstOnDisconnect,
         },
-      }
+      },
     )
 
     const provider = await getWalletConnectProvider(route.id)

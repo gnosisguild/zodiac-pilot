@@ -22,12 +22,12 @@ function check() {
 
   if (pilotConnected && !providerInjected) {
     console.debug(
-      '🕵 Zodiac Pilot is open but the provider is not injected. Please reload the page.'
+      '🕵 Zodiac Pilot is open but the provider is not injected. Please reload the page.',
     )
     renderConnectHint()
   } else if (!pilotConnected && providerInjected) {
     console.debug(
-      '🕵 Zodiac Pilot is closed but the provider is still injected. Please reload the page.'
+      '🕵 Zodiac Pilot is closed but the provider is still injected. Please reload the page.',
     )
     renderDisconnectHint()
   } else {
@@ -67,7 +67,7 @@ const handleLoad = () => {
 
     invariant(
       typeof extensionId === 'string',
-      'Could not find zodiac extension id'
+      'Could not find zodiac extension id',
     )
 
     chrome.runtime.sendMessage(extensionId, {

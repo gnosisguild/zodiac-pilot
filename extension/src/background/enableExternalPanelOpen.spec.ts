@@ -13,7 +13,7 @@ describe('External panel open', () => {
       chromeMock.runtime.onMessageExternal,
       { type: PilotMessageType.PILOT_OPEN_SIDEPANEL },
       { tab },
-      () => {}
+      () => {},
     )
 
     expect(chromeMock.sidePanel.open).toHaveBeenCalledWith({
@@ -31,7 +31,7 @@ describe('External panel open', () => {
       chromeMock.runtime.onMessageExternal,
       { type: 'some-other-event' },
       { tab },
-      () => {}
+      () => {},
     )
 
     expect(chromeMock.sidePanel.open).not.toHaveBeenCalled()

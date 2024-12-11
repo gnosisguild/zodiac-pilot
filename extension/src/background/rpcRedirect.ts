@@ -17,7 +17,7 @@ export const removeAllRpcRedirectRules = async (tabIds: number[]) => {
 export const addRpcRedirectRules = async (
   tabIds: number[],
   fork: Fork,
-  trackedRPCUrlsByTabId: Map<number, string[]>
+  trackedRPCUrlsByTabId: Map<number, string[]>,
 ) => {
   const addRules = tabIds
     .map((tabId) => ({
@@ -27,7 +27,7 @@ export const addRpcRedirectRules = async (
     }))
     .filter(
       ({ regexFilter, redirectUrl }) =>
-        regexFilter != null && redirectUrl != null
+        regexFilter != null && redirectUrl != null,
     )
     .map(({ tabId, redirectUrl, regexFilter }) => ({
       id: tabId,
@@ -73,7 +73,7 @@ const makeUrlRegex = (rpcUrls: string[]) => {
 
   if (regex.length > 1500) {
     console.warn(
-      'Regex longer than 1500 chars. Running in danger of exceeding 2kb rule size limit'
+      'Regex longer than 1500 chars. Running in danger of exceeding 2kb rule size limit',
     )
   }
 
@@ -92,7 +92,7 @@ export const enableRpcDebugLogging = () => {
       console.debug(
         'rule matched on request',
         details.request.url,
-        details.rule.ruleId
+        details.rule.ruleId,
       )
     }
   })

@@ -24,12 +24,12 @@ const ExecutionRoutesContext = createContext<Context>({
   routes: [],
   saveRoute() {
     throw new Error(
-      '"saveRoute" is not available outside of `<ProvideExecutionRoutes />` context.'
+      '"saveRoute" is not available outside of `<ProvideExecutionRoutes />` context.',
     )
   },
   removeRoute() {
     throw new Error(
-      '"removeRoute" is not available outside of `<ProvideExecutionRoutes /> context.'
+      '"removeRoute" is not available outside of `<ProvideExecutionRoutes /> context.',
     )
   },
 })
@@ -51,12 +51,12 @@ export const ProvideExecutionRoutes = ({
     (route: ExecutionRoute) => {
       setRoute(route.id, route)
     },
-    [setRoute]
+    [setRoute],
   )
 
   const routesList = useMemo(
     () => (routes == null ? [] : Object.values(routes)),
-    [routes]
+    [routes],
   )
 
   // wait for routes to be loaded from storage

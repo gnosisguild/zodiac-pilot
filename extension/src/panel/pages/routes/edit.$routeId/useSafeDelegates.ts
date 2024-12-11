@@ -7,7 +7,7 @@ import type { ChainId } from 'ser-kit'
 
 export const useSafeDelegates = (
   safeAddress: string,
-  connectionId?: string
+  connectionId?: string,
 ) => {
   const route = useExecutionRoute(connectionId)
   const chainId = getChainId(route.avatar)

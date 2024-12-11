@@ -24,7 +24,7 @@ export const startPilotSession = async ({
 
     invariant(
       tab != null,
-      `Tab with id "${tabId}" not tracked in this test case`
+      `Tab with id "${tabId}" not tracked in this test case`,
     )
 
     return Promise.resolve(tab)
@@ -45,7 +45,7 @@ export const startPilotSession = async ({
       windowId,
       tabId,
     } satisfies Message,
-    port
+    port,
   )
 
   return {
@@ -61,7 +61,7 @@ export const startPilotSession = async ({
           windowId,
           tabId,
         } satisfies Message,
-        port
+        port,
       )
     },
   }

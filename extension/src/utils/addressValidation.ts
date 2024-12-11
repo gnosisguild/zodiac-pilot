@@ -10,7 +10,7 @@ export const validateAddress = (address: string) => {
 
 export async function isSmartContractAddress(
   address: string,
-  provider: Provider
+  provider: Provider,
 ): Promise<boolean> {
   const code = await provider.getCode(address)
   return code !== '0x'

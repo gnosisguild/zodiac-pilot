@@ -13,7 +13,7 @@ describe('Send tab message', () => {
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(
       tab.id,
-      'test-message'
+      'test-message',
     )
   })
 
@@ -36,12 +36,12 @@ describe('Send tab message', () => {
       chromeMock.tabs.onUpdated,
       tab.id,
       { status: 'complete' },
-      tab
+      tab,
     )
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(
       tab.id,
-      'test-message'
+      'test-message',
     )
 
     return promise
@@ -73,7 +73,7 @@ describe('Send tab message', () => {
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(
       regularTab.id,
-      'test-message'
+      'test-message',
     )
 
     return promise
@@ -100,12 +100,12 @@ describe('Send tab message', () => {
       {
         url: 'http://test.com',
       },
-      tab
+      tab,
     )
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(
       tab.id,
-      'test-message'
+      'test-message',
     )
 
     return promise
@@ -116,7 +116,7 @@ describe('Send tab message', () => {
 
     chromeMock.tabs.get.mockResolvedValue(tab)
     chromeMock.tabs.sendMessage.mockRejectedValue(
-      'Receiving end does not exist.'
+      'Receiving end does not exist.',
     )
 
     const { promise, resolve } = Promise.withResolvers()
@@ -132,7 +132,7 @@ describe('Send tab message', () => {
         url: 'http://a-page-that-works.com',
         status: 'loading',
       },
-      tab
+      tab,
     )
 
     chromeMock.tabs.sendMessage.mockResolvedValue('Worked!')
@@ -143,13 +143,13 @@ describe('Send tab message', () => {
       {
         status: 'complete',
       },
-      tab
+      tab,
     )
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenNthCalledWith(
       2,
       tab.id,
-      'test-message'
+      'test-message',
     )
 
     return promise

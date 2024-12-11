@@ -9,7 +9,8 @@
   },
   "scripts": {
     "check-types": "turbo check-types",
-    "check-format": "prettier ./**/* --list-different"
+    "check-format": "prettier ./**/* --list-different",
+    "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

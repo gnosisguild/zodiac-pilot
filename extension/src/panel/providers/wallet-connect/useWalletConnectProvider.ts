@@ -56,7 +56,7 @@ export const getWalletConnectProvider = (routeId: string) => {
 
   invariant(
     provider != null,
-    `No provider for route id "${routeId}" has been registered`
+    `No provider for route id "${routeId}" has been registered`,
   )
 
   return provider

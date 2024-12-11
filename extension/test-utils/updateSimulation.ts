@@ -18,5 +18,5 @@ export const updateSimulation = ({
       rpcUrl,
     } satisfies SimulationMessage,
     { id: chrome.runtime.id },
-    () => {}
+    () => {},
   )

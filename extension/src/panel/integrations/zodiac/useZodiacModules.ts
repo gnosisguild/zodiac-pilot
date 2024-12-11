@@ -30,7 +30,7 @@ interface Module {
 }
 
 export const useZodiacModules = (
-  safeAddress: PrefixedAddress
+  safeAddress: PrefixedAddress,
 ): { loading: boolean; isValidSafe: boolean; modules: Module[] } => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
@@ -60,7 +60,7 @@ export const useZodiacModules = (
 async function fetchModules(
   safeOrModifierAddress: HexAddress,
   chainId: ChainId,
-  previous: Set<string> = new Set()
+  previous: Set<string> = new Set(),
 ): Promise<Module[]> {
   if (safeOrModifierAddress === ZeroAddress) {
     return []
@@ -79,7 +79,7 @@ async function fetchModules(
   const contract = new Contract(
     safeOrModifierAddress,
     AvatarInterface,
-    provider
+    provider,
   )
   const moduleAddresses = (
     await contract.getModulesPaginated(ADDRESS_ONE, 100)
@@ -92,12 +92,12 @@ async function fetchModules(
 
       const result = await detectProxyTarget(
         moduleAddress as `0x${string}`,
-        ({ method, params }) => provider.send(method, params)
+        ({ method, params }) => provider.send(method, params),
       )
       const mastercopyAddress = result?.target.toLowerCase()
 
       let [type] = (Object.entries(mastercopyAddresses).find(
-        ([, address]) => address === mastercopyAddress
+        ([, address]) => address === mastercopyAddress,
       ) || []) as [KnownContracts | undefined, string]
 
       const implementationAddress = mastercopyAddress || moduleAddress
@@ -109,7 +109,9 @@ async function fetchModules(
         const selectors = selectorsFromBytecode(code)
 
         const match = Object.entries(ContractAbis).find(([, abi]) =>
-          functionSelectors(abi).every((sighash) => selectors.includes(sighash))
+          functionSelectors(abi).every((sighash) =>
+            selectors.includes(sighash),
+          ),
         ) as [KnownContracts | undefined, string[]]
 
         if (match) {
@@ -132,7 +134,7 @@ async function fetchModules(
         } catch (e) {
           console.error(
             `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
-            e
+            e,
           )
           modules = []
         }
@@ -144,7 +146,7 @@ async function fetchModules(
         type,
         modules,
       }
-    }
+    },
   )
 
   const result = await Promise.all(enabledAndSupportedModules)

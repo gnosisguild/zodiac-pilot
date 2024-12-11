@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { WalletConnectEthereumMultiProvider } from './WalletConnectEthereumMultiProvider'
 
 export const useAccounts = (
-  provider: WalletConnectEthereumMultiProvider | null
+  provider: WalletConnectEthereumMultiProvider | null,
 ) => {
   const [accounts, setAccounts] = useState<string[] | undefined>(
-    provider ? provider.accounts : undefined
+    provider ? provider.accounts : undefined,
   )
 
   useEffect(() => {

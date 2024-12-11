@@ -25,7 +25,7 @@ export const useInjectedWallet = () => {
 
   invariant(
     context != null,
-    'useInjectedWalletProvider must be used within a <ProvideInjectedWallet>'
+    'useInjectedWalletProvider must be used within a <ProvideInjectedWallet>',
   )
 
   return context

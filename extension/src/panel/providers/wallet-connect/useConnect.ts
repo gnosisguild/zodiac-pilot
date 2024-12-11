@@ -11,7 +11,7 @@ type UseConnectOptions = {
 
 export const useConnect = (
   provider: WalletConnectEthereumMultiProvider | null,
-  { onBeforeConnect, onConnect, onError }: UseConnectOptions
+  { onBeforeConnect, onConnect, onError }: UseConnectOptions,
 ) => {
   const onBeforeConnectRef = useRef(onBeforeConnect)
   const onConnectRef = useRef(onConnect)

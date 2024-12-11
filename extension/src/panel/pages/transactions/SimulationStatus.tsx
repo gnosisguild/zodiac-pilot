@@ -68,7 +68,7 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
               size="small"
               icon={SquareArrowOutUpRight}
               to={provider?.getTransactionLink(
-                transactionState.transactionHash
+                transactionState.transactionHash,
               )}
             >
               View in Tenderly

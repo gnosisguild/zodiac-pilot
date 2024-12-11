@@ -15,7 +15,7 @@ const SIGN_MESSAGE_LIB_ABI = [
 
 const signMessageLib = new Contract(
   SIGN_MESSAGE_LIB_ADDRESS,
-  SIGN_MESSAGE_LIB_ABI
+  SIGN_MESSAGE_LIB_ABI,
 )
 
 export const signMessage = (message: string): MetaTransactionData => ({

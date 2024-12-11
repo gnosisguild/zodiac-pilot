@@ -46,5 +46,5 @@ export default tsEslint.config(
   {
     files: ['esbuild.mjs', 'manifest-util.js'],
     languageOptions: { globals: { process: true } },
-  }
+  },
 )

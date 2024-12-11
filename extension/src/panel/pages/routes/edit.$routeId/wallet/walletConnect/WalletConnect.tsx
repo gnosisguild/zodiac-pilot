@@ -59,7 +59,7 @@ export const WalletConnect = ({
   }
 
   const knownAccount = walletConnect.accounts.some(
-    (acc) => acc.toLowerCase() === pilotAddress
+    (acc) => acc.toLowerCase() === pilotAddress,
   )
 
   if (knownAccount === false) {

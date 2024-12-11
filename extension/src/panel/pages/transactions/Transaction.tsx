@@ -172,5 +172,5 @@ const EtherValue = ({ value }: EtherValueProps) => {
 
 const routeGoesThroughRoles = (route: ExecutionRoute) =>
   route.waypoints?.some(
-    (waypoint) => waypoint.account.type === AccountType.ROLES
+    (waypoint) => waypoint.account.type === AccountType.ROLES,
   )

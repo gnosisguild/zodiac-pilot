@@ -10,7 +10,7 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
     ...result,
     [key]: fileURLToPath(new URL(value[0], import.meta.url)),
   }),
-  {}
+  {},
 )
 
 const { CI } = process.env

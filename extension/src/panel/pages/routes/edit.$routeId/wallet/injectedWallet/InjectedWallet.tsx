@@ -65,7 +65,7 @@ export const InjectedWallet = ({
   }
 
   const accountInWallet = injectedWallet.accounts.some(
-    (acc) => acc.toLowerCase() === pilotAddress
+    (acc) => acc.toLowerCase() === pilotAddress,
   )
 
   // Wrong account

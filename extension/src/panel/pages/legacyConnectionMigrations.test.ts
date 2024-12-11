@@ -221,7 +221,7 @@ describe('legacy connection migrations', () => {
         chainId: 1,
         providerType: 1,
         moduleType: KnownContracts.ROLES_V2,
-      })
+      }),
     ).toMatchInlineSnapshot(`
       {
         "avatar": "eth:0xd0ca2a7ed8aee7972750b085b27350f1cd387f9b",

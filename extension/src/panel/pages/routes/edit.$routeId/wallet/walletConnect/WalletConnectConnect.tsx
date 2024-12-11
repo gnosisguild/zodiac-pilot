@@ -25,7 +25,7 @@ export const WalletConnectConnect = ({
       onClick={async () => {
         invariant(
           walletConnect != null,
-          'walletConnect provider is not available'
+          'walletConnect provider is not available',
         )
 
         const connectResult = await walletConnect.connect()

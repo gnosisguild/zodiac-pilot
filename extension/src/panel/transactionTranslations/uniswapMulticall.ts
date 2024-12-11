@@ -32,7 +32,7 @@ export const uniswapMulticall = {
       try {
         functionCalls = uniswapMulticallInterface.decodeFunctionData(
           fragment as FunctionFragment,
-          data
+          data,
         ).data as string[]
         break
       } catch (e) {

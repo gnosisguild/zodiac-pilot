@@ -9,7 +9,7 @@ type CreatePortOnTabActivityOptions = {
 
 export const createPortOnTabActivity = async (
   fn: PortCallbackFn,
-  { windowId }: CreatePortOnTabActivityOptions
+  { windowId }: CreatePortOnTabActivityOptions,
 ) => {
   chrome.tabs.onActivated.addListener(async (activeInfo) => {
     if (activeInfo.windowId !== windowId) {
@@ -19,7 +19,7 @@ export const createPortOnTabActivity = async (
     const tab = await chrome.tabs.get(activeInfo.tabId)
 
     console.debug(
-      `Tab (id: "${activeInfo.tabId}", url: "${tab.url}") became active.`
+      `Tab (id: "${activeInfo.tabId}", url: "${tab.url}") became active.`,
     )
 
     const port = await createPortWhenTabIsReady(tab)
@@ -40,7 +40,7 @@ export const createPortOnTabActivity = async (
 
     if (info.url == null && info.status == null) {
       console.debug(
-        `Tab (id: "${tabId}", url: "${tab.url}") has no changes that require a new port.`
+        `Tab (id: "${tabId}", url: "${tab.url}") has no changes that require a new port.`,
       )
 
       return

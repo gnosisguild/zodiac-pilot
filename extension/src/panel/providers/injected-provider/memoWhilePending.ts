@@ -10,7 +10,7 @@ type Fn<T extends (...args: any) => Promise<Awaited<ReturnType<T>>>> = (
 export const memoWhilePending = <
   T extends (...args: any) => Promise<Awaited<ReturnType<T>>>,
 >(
-  callback: T
+  callback: T,
 ): Fn<T> => {
   let pendingPromise: Promise<Awaited<ReturnType<T>>> | null = null
 

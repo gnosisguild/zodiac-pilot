@@ -17,7 +17,7 @@ export type TransactionTranslation = {
       translate: (
         transaction: MetaTransactionData,
         chainId: ChainId,
-        avatarAddress: `0x${string}`
+        avatarAddress: `0x${string}`,
       ) => Promise<MetaTransactionData[] | undefined>
     }
   | {
@@ -25,7 +25,7 @@ export type TransactionTranslation = {
       translateGlobal: (
         allTransactions: MetaTransactionData[],
         chainId: ChainId,
-        avatarAddress: `0x${string}`
+        avatarAddress: `0x${string}`,
       ) => Promise<MetaTransactionData[] | undefined>
     }
 )

@@ -51,7 +51,7 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
           this.setupPort(port)
         }
       },
-      { windowId }
+      { windowId },
     ).then(resolve)
   }
 
@@ -81,13 +81,13 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
 
   async waitForPort(
     maxWait: number = 1000,
-    waited: number = 0
+    waited: number = 0,
   ): Promise<chrome.runtime.Port> {
     const waitTime = 10
 
     invariant(
       waited <= maxWait,
-      `Port did not open in time. Waited ${maxWait}ms.`
+      `Port did not open in time. Waited ${maxWait}ms.`,
     )
 
     if (this.port == null) {
@@ -120,7 +120,7 @@ export class ConnectProvider extends EventEmitter implements Eip1193Provider {
         case ConnectedWalletMessageType.CONNECTED_WALLET_ERROR: {
           throw new InjectedWalletError(
             responseMessage.error.message,
-            responseMessage.error.code
+            responseMessage.error.code,
           )
         }
 

@@ -13,7 +13,7 @@ export interface ContractInfo {
 
 export const fetchContractInfo = async (
   address: `0x${string}`,
-  chainId: ChainId
+  chainId: ChainId,
 ): Promise<ContractInfo> => {
   const url = `https://api.abi.pub/v1/chains/${chainId}/accounts/${address.toLowerCase()}`
   const result = (await memoizedFetchJson(url)) || {

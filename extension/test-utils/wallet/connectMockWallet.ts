@@ -13,14 +13,14 @@ type ConnectMockWalletOptions = {
 
 export const connectMockWallet = async (
   mockPort: Runtime.Port,
-  { accounts, chainId }: ConnectMockWalletOptions
+  { accounts, chainId }: ConnectMockWalletOptions,
 ) => {
   await callListeners(
     mockPort.onMessage,
     {
       type: ConnectedWalletMessageType.CONNECTED_WALLET_CONNECTED,
     } satisfies ConnectedWalletMessage,
-    mockPort
+    mockPort,
   )
 
   await callListeners(
@@ -28,7 +28,7 @@ export const connectMockWallet = async (
     {
       type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
     } satisfies ConnectedWalletMessage,
-    mockPort
+    mockPort,
   )
 
   await callListeners(
@@ -38,7 +38,7 @@ export const connectMockWallet = async (
       eventName: 'chainChanged',
       eventData: chainId,
     } satisfies ConnectedWalletMessage,
-    mockPort
+    mockPort,
   )
 
   await callListeners(
@@ -48,6 +48,6 @@ export const connectMockWallet = async (
       eventName: 'accountsChanged',
       eventData: accounts,
     } satisfies ConnectedWalletMessage,
-    mockPort
+    mockPort,
   )
 }

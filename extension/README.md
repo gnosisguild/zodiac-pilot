@@ -120,7 +120,7 @@ const { mockedTab, mockedPort } = await render(
   ],
   // You can pass any subset of attributes for a tab
   // and `render` fills in the other ones with defaults
-  { activeTab: { id: 'tab-id' } }
+  { activeTab: { id: 'tab-id' } },
 )
 
 // Rendering only finishes when there is actual UI visible

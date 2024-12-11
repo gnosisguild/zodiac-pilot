@@ -8,7 +8,7 @@ type Options = {
 
 export const useDisconnectWalletConnectIfNeeded = (
   route: ExecutionRoute,
-  { onDisconnect }: Options
+  { onDisconnect }: Options,
 ) => {
   const provider = useWalletConnectProvider(route.id)
   const onDisconnectRef = useRef(onDisconnect)

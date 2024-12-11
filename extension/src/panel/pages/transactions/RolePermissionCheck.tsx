@@ -24,7 +24,7 @@ import { Translate } from './Translate'
 const simulateRolesTransaction = async (
   encodedTransaction: MetaTransactionData,
   route: ExecutionRoute,
-  provider: Eip1193Provider
+  provider: Eip1193Provider,
 ) => {
   const routeWithInitiator = (
     route.initiator ? route : { ...route, initiator: ZeroAddress }
@@ -99,7 +99,7 @@ export const RolePermissionCheck = ({
     simulateRolesTransaction(
       transactionState.transaction,
       route,
-      provider
+      provider,
     ).then((error) => {
       if (!canceled) setError(error)
     })

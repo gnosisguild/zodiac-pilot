@@ -68,7 +68,7 @@ describe('Session tracking', () => {
         {
           windowId: 1,
           tabId: 1,
-        }
+        },
       )
       await startAnotherSession({ tabId: 2 })
 
@@ -185,7 +185,7 @@ describe('Session tracking', () => {
           chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
-          createMockTab({ windowId: 1 })
+          createMockTab({ windowId: 1 }),
         )
 
         expect(chromeMock.scripting.executeScript).toHaveBeenCalledWith({
@@ -202,7 +202,7 @@ describe('Session tracking', () => {
           chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
-          createMockTab({ windowId: 1 })
+          createMockTab({ windowId: 1 }),
         )
 
         expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
@@ -213,7 +213,7 @@ describe('Session tracking', () => {
           chromeMock.tabs.onUpdated,
           1,
           { status: 'loading' },
-          createMockTab({ windowId: 1 })
+          createMockTab({ windowId: 1 }),
         )
 
         expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
@@ -229,11 +229,11 @@ describe('Session tracking', () => {
             chromeMock.tabs.onUpdated,
             tab.id,
             { status },
-            tab
+            tab,
           )
 
           expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
-        }
+        },
       )
     })
   })
@@ -248,7 +248,7 @@ describe('Session tracking', () => {
         await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             addRules: [
@@ -274,7 +274,7 @@ describe('Session tracking', () => {
               }),
             ],
           }),
-          expect.anything()
+          expect.anything(),
         )
       })
 
@@ -282,7 +282,7 @@ describe('Session tracking', () => {
         await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             addRules: [
@@ -296,7 +296,7 @@ describe('Session tracking', () => {
               }),
             ],
           }),
-          expect.anything()
+          expect.anything(),
         )
       })
 
@@ -304,7 +304,7 @@ describe('Session tracking', () => {
         await startPilotSession({ windowId: 1, tabId: 1 })
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             addRules: [
@@ -315,7 +315,7 @@ describe('Session tracking', () => {
               }),
             ],
           }),
-          expect.anything()
+          expect.anything(),
         )
       })
     })
@@ -326,12 +326,12 @@ describe('Session tracking', () => {
         await stopPilotSession()
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenCalledWith(
           {
             removeRuleIds: [1],
           },
-          expect.anything()
+          expect.anything(),
         )
       })
     })
@@ -346,7 +346,7 @@ describe('Session tracking', () => {
         })
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenLastCalledWith(
           expect.objectContaining({
             addRules: [
@@ -357,7 +357,7 @@ describe('Session tracking', () => {
               }),
             ],
           }),
-          expect.anything()
+          expect.anything(),
         )
       })
     })
@@ -376,7 +376,7 @@ describe('Session tracking', () => {
         })
 
         expect(
-          chromeMock.declarativeNetRequest.updateSessionRules
+          chromeMock.declarativeNetRequest.updateSessionRules,
         ).toHaveBeenLastCalledWith(
           expect.objectContaining({
             addRules: [
@@ -387,7 +387,7 @@ describe('Session tracking', () => {
               }),
             ],
           }),
-          expect.anything()
+          expect.anything(),
         )
       })
     })

@@ -79,6 +79,6 @@ const useCanEstablishConnection = (route: ExecutionRoute) => {
   }
 
   return injectedWallet.accounts.some(
-    (acc) => acc.toLowerCase() === pilotAddress
+    (acc) => acc.toLowerCase() === pilotAddress,
   )
 }

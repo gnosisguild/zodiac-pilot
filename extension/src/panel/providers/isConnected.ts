@@ -8,7 +8,7 @@ import type { ConnectionProvider } from './connectTypes'
 export const isConnected = (
   connection: ConnectionProvider,
   account: PrefixedAddress,
-  chainId: ChainId
+  chainId: ChainId,
 ) => {
   if (connection.ready === false) {
     return false
@@ -21,6 +21,6 @@ export const isConnected = (
   const [, accountAddress] = parsePrefixedAddress(account)
 
   return connection.accounts.some(
-    (account) => account.toLowerCase() === accountAddress.toLowerCase()
+    (account) => account.toLowerCase() === accountAddress.toLowerCase(),
   )
 }

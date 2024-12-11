@@ -10,7 +10,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 export async function queryRolesV1MultiSend(
   chainId: ChainId,
-  modAddress: string
+  modAddress: string,
 ) {
   const address = await ContractFactories[KnownContracts.ROLES_V1]
     .connect(modAddress, getReadOnlyProvider(chainId))
@@ -23,7 +23,7 @@ const MULTISEND_SELECTOR = '0x8d80ff0a' // multiSend(bytes)
 const ROLES_MULTISEND_UNWRAPPER = '0x93b7fcbc63ed8a3a24b59e1c3e6649d50b7427c0'
 export async function queryRolesV2MultiSend(
   chainId: ChainId,
-  modAddress: string
+  modAddress: string,
 ) {
   if (!(chainId in rolesV2Chains)) {
     return {}
@@ -57,7 +57,7 @@ export async function queryRolesV2MultiSend(
   }
 
   const addresses = data.unwrapAdapters.map((a: any) =>
-    a.targetAddress.toLowerCase()
+    a.targetAddress.toLowerCase(),
   ) as `0x${string}`[]
 
   return {

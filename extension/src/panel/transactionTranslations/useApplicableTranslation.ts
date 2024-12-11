@@ -37,7 +37,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 
       invariant(
         provider instanceof ForkProvider,
-        'Transaction translation is only supported when using ForkProvider'
+        'Transaction translation is only supported when using ForkProvider',
       )
 
       // remove the transaction and all later ones from the store
@@ -56,7 +56,7 @@ export const useApplicableTranslation = (transactionId: string) => {
         provider.sendMetaTransaction(tx)
       }
     },
-    [transactions, transactionId, provider, dispatch]
+    [transactions, transactionId, provider, dispatch],
   )
 
   const chainId = getChainId(avatar)
@@ -67,7 +67,7 @@ export const useApplicableTranslation = (transactionId: string) => {
       const translation = await findApplicableTranslation(
         metaTransaction,
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       if (canceled) return
 
@@ -96,7 +96,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 const findApplicableTranslation = async (
   metaTransaction: MetaTransactionData,
   chainId: ChainId,
-  avatarAddress: `0x${string}`
+  avatarAddress: `0x${string}`,
 ): Promise<ApplicableTranslation | undefined> => {
   // we cache the result of the translation to avoid test-running translation functions over and over again
   const key = cacheKey(metaTransaction, chainId, avatarAddress)
@@ -110,7 +110,7 @@ const findApplicableTranslation = async (
       const result = await translation.translate(
         metaTransaction,
         chainId,
-        avatarAddress
+        avatarAddress,
       )
       if (result) {
         return {
@@ -132,7 +132,7 @@ const findApplicableTranslation = async (
 const cacheKey = (
   transaction: MetaTransactionData,
   chainId: ChainId,
-  avatarAddress: `0x${string}`
+  avatarAddress: `0x${string}`,
 ) =>
   `${chainId}:${avatarAddress}:${transaction.to}:${transaction.value}:${transaction.data}:${
     transaction.operation || 0
@@ -140,13 +140,13 @@ const cacheKey = (
 
 const getTransaction = (
   transactions: TransactionState[],
-  transactionId: string
+  transactionId: string,
 ) => {
   const transaction = transactions.find(({ id }) => id === transactionId)
 
   invariant(
     transaction != null,
-    `Could not find transaction with id "${transactionId}"`
+    `Could not find transaction with id "${transactionId}"`,
   )
 
   return transaction

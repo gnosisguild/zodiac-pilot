@@ -72,7 +72,7 @@ export const kpkBridgeAware = {
     const bridgeStartCalls = bridgedTokenAddresses.reduce(
       (result, tokenAddress) => {
         const foundAddress = BRIDGE_AWARE_CONTRACT_ADDRESSES.find(
-          (item) => item.chainId === chainId
+          (item) => item.chainId === chainId,
         )
 
         if (!foundAddress) {
@@ -90,7 +90,7 @@ export const kpkBridgeAware = {
           },
         ]
       },
-      [] as MetaTransactionData[]
+      [] as MetaTransactionData[],
     )
 
     const callsToAdd = bridgeStartCalls.filter(
@@ -98,8 +98,8 @@ export const kpkBridgeAware = {
         !allTransactions.some(
           (tx) =>
             tx.to.toLowerCase() === bridgeStartCall.to.toLowerCase() &&
-            tx.data === bridgeStartCall.data
-        )
+            tx.data === bridgeStartCall.data,
+        ),
     )
 
     if (callsToAdd.length === 0) {

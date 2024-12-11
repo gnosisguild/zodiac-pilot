@@ -30,7 +30,7 @@ export const BaseButton = ({
       'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
-      className
+      className,
     )}
   >
     {Icon && <Icon size={size === 'base' ? 20 : 16} />}
@@ -64,7 +64,7 @@ export const BaseLinkButton = ({
       'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
-      className
+      className,
     )}
   >
     {Icon && <Icon size={size === 'base' ? 20 : 16} />}

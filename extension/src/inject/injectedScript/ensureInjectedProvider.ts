@@ -33,7 +33,7 @@ export const ensureInjectedProvider = () => {
 
     console.debug(
       '🧑‍✈️ Zodiac Pilot injected as `window.ethereum`',
-      window.location.href
+      window.location.href,
     )
 
     return { provider: pilotProvider, initial: true }
@@ -47,10 +47,10 @@ export const ensureInjectedProvider = () => {
   } else {
     // If it's not Rabby, we have to alert the user
     console.error(
-      'Zodiac Pilot is unable to connect because of another wallet extension. Disable the other extension and reload the page.'
+      'Zodiac Pilot is unable to connect because of another wallet extension. Disable the other extension and reload the page.',
     )
     alert(
-      'Zodiac Pilot is unable to connect because of another wallet extension. Disable the other extension and reload the page.'
+      'Zodiac Pilot is unable to connect because of another wallet extension. Disable the other extension and reload the page.',
     )
   }
 

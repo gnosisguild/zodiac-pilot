@@ -4,12 +4,12 @@ import type { ChainId } from 'ser-kit'
 
 export function extractBridgedTokenAddress(
   { to, data }: MetaTransactionData,
-  chainId: ChainId
+  chainId: ChainId,
 ): undefined | `0x${string}` {
   const bridge = allBridges.find(
     (bridge) =>
       to.toLowerCase() === bridge.address.toLowerCase() &&
-      chainId === bridge.sourceChainId
+      chainId === bridge.sourceChainId,
   )
   if (!bridge) return undefined
 
@@ -25,7 +25,7 @@ export function extractBridgedTokenAddress(
 
   const decodedData = bridge.interface.decodeFunctionData(
     fragment as FunctionFragment,
-    data
+    data,
   )
   return bridge.tokenArgument !== undefined
     ? decodedData[bridge.tokenArgument]

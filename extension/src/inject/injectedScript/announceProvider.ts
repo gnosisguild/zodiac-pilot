@@ -15,6 +15,6 @@ export const announceEip6963Provider = (provider: InjectedProvider) => {
   window.dispatchEvent(
     new CustomEvent('eip6963:announceProvider', {
       detail: Object.freeze({ info, provider }),
-    })
+    }),
   )
 }

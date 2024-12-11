@@ -22,7 +22,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
 
     const handleUpdate = (
       updatedTabId: number,
-      changeInfo: chrome.tabs.TabChangeInfo
+      changeInfo: chrome.tabs.TabChangeInfo,
     ) => {
       if (updatedTabId !== tabId) {
         return
@@ -67,7 +67,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
 
   const handleUpdate = (
     updatedTabId: number,
-    changeInfo: chrome.tabs.TabChangeInfo
+    changeInfo: chrome.tabs.TabChangeInfo,
   ) => {
     if (updatedTabId !== tabId) {
       return

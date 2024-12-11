@@ -25,7 +25,7 @@ window.addEventListener(
       const logDetails = { request, response: '⏳' } as any
       console.debug(
         `🧑‍✈️ connect request: \x1B[34m${request.method}\x1B[m %O`,
-        logDetails
+        logDetails,
       )
 
       try {
@@ -37,7 +37,7 @@ window.addEventListener(
             requestId: message.requestId,
             response,
           } satisfies ConnectedWalletMessage,
-          '*'
+          '*',
         )
       } catch (err) {
         console.error('Error sending request to window.ethereum', message, err)
@@ -50,11 +50,11 @@ window.addEventListener(
               code: (err as any).code,
             },
           } satisfies ConnectedWalletMessage,
-          '*'
+          '*',
         )
       }
     }
-  }
+  },
 )
 
 // relay the relevant events from the injected provider to the parent window
@@ -70,7 +70,7 @@ const relayEvent = (eventName: string) => {
         eventName,
         eventData,
       } satisfies ConnectedWalletMessage,
-      '*'
+      '*',
     )
   })
 }
@@ -87,7 +87,7 @@ const initProvider = () => {
       {
         type: ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED,
       } satisfies ConnectedWalletMessage,
-      '*'
+      '*',
     )
   }, 500)
 }

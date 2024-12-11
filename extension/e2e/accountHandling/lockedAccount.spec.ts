@@ -9,7 +9,7 @@ import type { Page } from '@playwright/test'
 
 const openConfiguration = async (
   page: Page,
-  account: `0x${string}` = defaultMockAccount
+  account: `0x${string}` = defaultMockAccount,
 ) => {
   await page.getByRole('link', { name: 'Configure routes' }).click()
   await page.getByRole('button', { name: 'Add Route' }).click()
@@ -17,7 +17,7 @@ const openConfiguration = async (
   // MONDAY PHIL: This button is not being enabled
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
   await expect(
-    page.getByRole('textbox', { name: 'Pilot Account' })
+    page.getByRole('textbox', { name: 'Pilot Account' }),
   ).toHaveValue(account)
 }
 
@@ -33,7 +33,7 @@ test.describe('Locked account', () => {
     await lockWallet()
 
     await expect(
-      extension.getByRole('alert', { name: 'Wallet disconnected' })
+      extension.getByRole('alert', { name: 'Wallet disconnected' }),
     ).toBeInViewport()
   })
 
@@ -52,7 +52,7 @@ test.describe('Locked account', () => {
       .click()
 
     await expect(
-      extension.getByRole('textbox', { name: 'Pilot Account' })
+      extension.getByRole('textbox', { name: 'Pilot Account' }),
     ).toHaveValue(account)
   })
 
@@ -67,7 +67,7 @@ test.describe('Locked account', () => {
     await extension.getByRole('button', { name: 'Disconnect' }).click()
 
     await expect(
-      extension.getByRole('button', { name: 'Connect with MetaMask' })
+      extension.getByRole('button', { name: 'Connect with MetaMask' }),
     ).toBeInViewport()
   })
 })
