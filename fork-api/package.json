@@ -14,5 +14,5 @@
     "deploy": "wrangler publish",
     "format": "prettier --write  '*.{json,js}' 'src/**/*.ts'"
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.15.0"
 }
