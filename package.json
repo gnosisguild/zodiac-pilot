@@ -8,9 +8,13 @@
     }
   },
   "scripts": {
-    "check-types": "turbo check-types"
+    "check-types": "turbo check-types",
+    "check-format": "prettier ./**/* --list-different"
   },
   "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.8",
     "turbo": "^2.3.3",
     "typescript": "5.7.2"
   }
