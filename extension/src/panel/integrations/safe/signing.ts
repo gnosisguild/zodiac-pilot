@@ -1,4 +1,4 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { HexAddress } from '@/types'
 import type { EIP712TypedData } from '@safe-global/safe-gateway-typescript-sdk'
 import {
   Contract,
@@ -6,6 +6,7 @@ import {
   toUtf8String,
   TypedDataEncoder,
 } from 'ethers'
+import type { MetaTransactionRequest } from 'ser-kit'
 
 const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0aB83D845Ac265BE939c57F53AD838012c9'
 const SIGN_MESSAGE_LIB_ABI = [
@@ -18,12 +19,12 @@ const signMessageLib = new Contract(
   SIGN_MESSAGE_LIB_ABI,
 )
 
-export const signMessage = (message: string): MetaTransactionData => ({
+export const signMessage = (message: string): MetaTransactionRequest => ({
   to: SIGN_MESSAGE_LIB_ADDRESS,
   data: signMessageLib.interface.encodeFunctionData('signMessage', [
     hashMessage(message),
-  ]),
-  value: '0',
+  ]) as HexAddress,
+  value: 0n,
   operation: 1,
 })
 
@@ -34,13 +35,15 @@ export const typedDataHash = (data: EIP712TypedData): string => {
   return TypedDataEncoder.hash(data.domain as any, types, data.message)
 }
 
-export const signTypedData = (data: EIP712TypedData) => {
+export const signTypedData = (
+  data: EIP712TypedData,
+): MetaTransactionRequest => {
   return {
     to: SIGN_MESSAGE_LIB_ADDRESS,
     data: signMessageLib.interface.encodeFunctionData('signMessage', [
       typedDataHash(data),
-    ]),
-    value: '0',
+    ]) as HexAddress,
+    value: 0n,
     operation: 1,
   }
 }

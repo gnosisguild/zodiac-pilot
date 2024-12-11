@@ -107,7 +107,7 @@ export const Submit = () => {
       console.debug(
         `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
       )
-      const [, avatarAddress] = parsePrefixedAddress(avatar)
+      const avatarAddress = parsePrefixedAddress(avatar)
       successToast({
         title: 'Transaction batch has been proposed for execution',
         message: (

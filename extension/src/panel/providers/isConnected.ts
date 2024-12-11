@@ -18,7 +18,7 @@ export const isConnected = (
     return false
   }
 
-  const [, accountAddress] = parsePrefixedAddress(account)
+  const accountAddress = parsePrefixedAddress(account)
 
   return connection.accounts.some(
     (account) => account.toLowerCase() === accountAddress.toLowerCase(),

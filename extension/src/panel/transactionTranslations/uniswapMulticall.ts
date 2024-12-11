@@ -1,3 +1,4 @@
+import type { HexAddress } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { FunctionFragment, Interface } from 'ethers'
 import { UnfoldVertical } from 'lucide-react'
@@ -21,19 +22,19 @@ export const uniswapMulticall = {
       return undefined
     }
 
-    if (parseInt(value) > 0) {
+    if (value > 0) {
       // We don't support unfolding of transactions with value since it's hard to tell which individual calls are supposed to receive the value
       return undefined
     }
 
-    let functionCalls: string[] = []
+    let functionCalls: HexAddress[] = []
     for (const fragment of uniswapMulticallInterface.fragments) {
       if (fragment.type !== 'function') continue
       try {
         functionCalls = uniswapMulticallInterface.decodeFunctionData(
           fragment as FunctionFragment,
           data,
-        ).data as string[]
+        ).data as HexAddress[]
         break
       } catch (e) {
         continue
@@ -44,6 +45,6 @@ export const uniswapMulticall = {
       return undefined
     }
 
-    return functionCalls.map((data) => ({ to, data, value: '0' }))
+    return functionCalls.map((data) => ({ to, data, value: 0n }))
   },
 } satisfies TransactionTranslation

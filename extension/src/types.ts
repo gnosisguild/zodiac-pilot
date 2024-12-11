@@ -61,10 +61,10 @@ export interface Eip1193Provider {
 }
 
 export interface TransactionData {
-  to?: string
-  value?: number | string
-  data?: string
-  from?: string
+  to?: HexAddress
+  value?: string
+  data?: HexAddress
+  from?: HexAddress
 }
 
 export type HexAddress = `0x${string}`

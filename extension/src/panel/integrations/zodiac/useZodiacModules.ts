@@ -36,7 +36,7 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
   const chainId = getChainId(safeAddress)
-  const [, address] = parsePrefixedAddress(safeAddress)
+  const address = parsePrefixedAddress(safeAddress)
 
   useEffect(() => {
     setLoading(true)

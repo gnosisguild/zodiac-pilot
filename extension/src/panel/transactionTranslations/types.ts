@@ -1,6 +1,5 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import type { LucideIcon } from 'lucide-react'
-import type { ChainId } from 'ser-kit'
+import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 import type { SupportedModuleType } from '../integrations/zodiac/types'
 
 export type TransactionTranslation = {
@@ -15,17 +14,17 @@ export type TransactionTranslation = {
   | {
       /** The translation function. For transactions that shall not be translated it must return undefined */
       translate: (
-        transaction: MetaTransactionData,
+        transaction: MetaTransactionRequest,
         chainId: ChainId,
         avatarAddress: `0x${string}`,
-      ) => Promise<MetaTransactionData[] | undefined>
+      ) => Promise<MetaTransactionRequest[] | undefined>
     }
   | {
       /** The translation function. For transactions that shall not be translated it must return undefined */
       translateGlobal: (
-        allTransactions: MetaTransactionData[],
+        allTransactions: MetaTransactionRequest[],
         chainId: ChainId,
         avatarAddress: `0x${string}`,
-      ) => Promise<MetaTransactionData[] | undefined>
+      ) => Promise<MetaTransactionRequest[] | undefined>
     }
 )

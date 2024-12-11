@@ -1,5 +1,5 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import type { LucideIcon } from 'lucide-react'
+import type { MetaTransactionRequest } from 'ser-kit'
 
 export interface ApplicableTranslation {
   /** Title of the applied translation (TransactionTranslation.title) */
@@ -8,7 +8,7 @@ export interface ApplicableTranslation {
   autoApply?: boolean
   icon: LucideIcon
   /** The translation result (return value of TransactionTranslation.translate) */
-  result: MetaTransactionData[]
+  result: MetaTransactionRequest[]
 }
 
 export const applicableTranslationsCache = new Map<

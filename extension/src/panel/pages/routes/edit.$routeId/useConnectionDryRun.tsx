@@ -1,6 +1,6 @@
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
-import type { JsonRpcError, LegacyConnection } from '@/types'
+import type { HexAddress, JsonRpcError, LegacyConnection } from '@/types'
 import {
   decodeGenericError,
   decodeRoleKey,
@@ -136,7 +136,7 @@ async function dryRun(connection: LegacyConnection) {
     {
       to: '0x0000000000000000000000000000000000000000',
       data: '0x00000000',
-      from: connection.avatarAddress,
+      from: connection.avatarAddress as HexAddress,
     },
     connection,
     false,

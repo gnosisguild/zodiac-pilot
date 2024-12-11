@@ -3,9 +3,12 @@ import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect } from 'react'
-import { type ChainId, parsePrefixedAddress } from 'ser-kit'
+import {
+  type ChainId,
+  type MetaTransactionRequest,
+  parsePrefixedAddress,
+} from 'ser-kit'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,
@@ -19,7 +22,7 @@ export const useGloballyApplicableTranslation = () => {
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
-  const [_, avatarAddress] = parsePrefixedAddress(avatar)
+  const avatarAddress = parsePrefixedAddress(avatar)
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
@@ -144,8 +147,11 @@ const cacheKeyGlobal = (
   avatarAddress: `0x${string}`,
 ) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`
 
-const transactionsEqual = (a: MetaTransactionData, b: MetaTransactionData) =>
+const transactionsEqual = (
+  a: MetaTransactionRequest,
+  b: MetaTransactionRequest,
+) =>
   a.to.toLowerCase() === b.to.toLowerCase() &&
-  (a.value || '0' === b.value || '0') &&
+  (a.value || 0n === b.value || 0n) &&
   a.data === b.data &&
   (a.operation || 0 === b.operation || 0)

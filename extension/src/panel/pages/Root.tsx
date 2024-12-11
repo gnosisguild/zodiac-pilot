@@ -25,12 +25,13 @@ export const Root = () => {
   // make sure the injected provider stays updated on every relevant route change
   const route = useExecutionRoute()
 
-  const chainId = getChainId(route.avatar)
-  const provider = useProvider()
-  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
   const saveRoute = useSaveExecutionRoute()
 
-  useProviderBridge({ provider, chainId, account: avatarAddress })
+  useProviderBridge({
+    provider: useProvider(),
+    chainId: getChainId(route.avatar),
+    account: parsePrefixedAddress(route.avatar),
+  })
   useConnectInjectedWalletIfNeeded(route)
   useDisconnectWalletConnectIfNeeded(route, {
     onDisconnect: () =>

@@ -1,3 +1,4 @@
+import type { HexAddress } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { id, Interface } from 'ethers'
 import { Waypoints } from 'lucide-react'
@@ -93,8 +94,8 @@ export const cowswapSetPreSignature = {
     return [
       {
         to: COWSWAP_ORDER_SIGNER_ADDRESS,
-        value: '0',
-        data,
+        value: 0n,
+        data: data as HexAddress,
         operation: 1,
       },
     ]

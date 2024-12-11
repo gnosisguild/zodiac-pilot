@@ -1,5 +1,6 @@
-import type { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
+import type { HexAddress } from '@/types'
 import { Interface } from 'ethers'
+import type { MetaTransactionRequest } from 'ser-kit'
 
 // https://github.com/gnosisguild/snapshot-signer
 const SNAPSHOT_SIGNER_ADDRESS = '0xa58Cf66d0f14AEFb2389c6998f6ad219dd4885c1'
@@ -17,35 +18,35 @@ export const translateSignSnapshotVote = (params: {
   message?: any
   types?: Record<string, Type[]>
   primaryType?: string
-}): MetaTransactionData | undefined => {
+}): MetaTransactionRequest | undefined => {
   const { domain, message, types, primaryType } = params
   if (domain?.name !== 'snapshot') return undefined
   if (primaryType !== 'Vote' || !types?.Vote) return undefined
 
   const choiceType = types.Vote?.find((t) => t.name === 'choice')?.type
 
-  let data: string
+  let data: HexAddress
   switch (choiceType) {
     case 'uint32':
       // default single choice vote
       data = SnapshotSignerInterface.encodeFunctionData('signSnapshotVote', [
         message,
         domain,
-      ])
+      ]) as HexAddress
       break
     case 'uint32[]':
       // multiple choice / array vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotArrayVote',
         [message, domain],
-      )
+      ) as HexAddress
       break
     case 'string':
       // string vote
       data = SnapshotSignerInterface.encodeFunctionData(
         'signSnapshotStringVote',
         [message, domain],
-      )
+      ) as HexAddress
       break
     default:
       console.warn(`Unsupported vote choice type: ${choiceType}`)
@@ -54,7 +55,7 @@ export const translateSignSnapshotVote = (params: {
 
   return {
     to: SNAPSHOT_SIGNER_ADDRESS,
-    value: '0',
+    value: 0n,
     data,
     operation: 1,
   }
