@@ -49,7 +49,7 @@ esbuild
     publicPath: '/build',
     inject: [
       fileURLToPath(
-        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim')
+        import.meta.resolve('node-stdlib-browser/helpers/esbuild/shim'),
       ),
     ],
     define: {
