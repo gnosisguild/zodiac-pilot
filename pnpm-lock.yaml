@@ -313,8 +313,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       ser-kit:
-        specifier: ^1.0.1
-        version: 1.0.1(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: ^1.0.2
+        version: 1.0.2(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       tailwindcss:
         specifier: ^3.4.14
         version: 3.4.16
@@ -6324,8 +6324,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@1.0.1:
-    resolution: {integrity: sha512-W0oxHYklElvGM3IcbLIpFuCQLsYwcjejiT0UHUS243yUoddpEQuboYXhaqZ1ryEQRcAY3FPo0ygngkxy1ft/WA==}
+  ser-kit@1.0.2:
+    resolution: {integrity: sha512-gH0ojiva38ZIOBXSlpjUCy5hcN1Xrd04POashFg41NMbQ6vzimCo2do70k36E6IWGdDIlLo6tjskxL7bwBzVdQ==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -14732,7 +14732,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@1.0.1(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1):
+  ser-kit@1.0.2(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1):
     dependencies:
       '@safe-global/api-kit': 2.5.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/protocol-kit': 5.1.0(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
