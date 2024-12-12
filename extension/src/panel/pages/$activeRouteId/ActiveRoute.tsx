@@ -12,7 +12,7 @@ import {
 import { ProvideProvider } from '@/providers-ui'
 import { invariant } from '@epic-web/invariant'
 import { Outlet, useLoaderData, type LoaderFunctionArgs } from 'react-router'
-import { useStorage } from '../../utils'
+import { saveStorageEntry } from '../../utils/saveStorageEntry'
 import { getActiveRouteId } from './getActiveRouteId'
 import {
   asLegacyConnection,
@@ -27,6 +27,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const route = routes.find((route) => route.id === activeRouteId)
 
   invariant(route != null, `Could not find route with id "${activeRouteId}"`)
+
+  await saveStorageEntry({ key: 'lastUsedRoute', value: route.id })
 
   return { route: await markRouteAsUsed(route) }
 }
@@ -47,8 +49,6 @@ export const ActiveRoute = () => {
         }),
       ),
   })
-
-  useStorage('lastUsedRoute', route.id)
 
   return (
     <ProvideExecutionRoute route={route}>

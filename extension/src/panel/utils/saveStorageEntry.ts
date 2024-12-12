@@ -1,5 +1,5 @@
 type SaveStorageEntryOptions<T> = {
-  collection: string
+  collection?: string
   key: string
   value: T
 }
@@ -9,7 +9,9 @@ export async function saveStorageEntry<T>({
   key,
   value,
 }: SaveStorageEntryOptions<T>) {
-  await chrome.storage.sync.set({ [`${collection}[${key}]`]: value })
+  await chrome.storage.sync.set({
+    [collection != null ? `${collection}[${key}]` : key]: value,
+  })
 
   return value
 }
