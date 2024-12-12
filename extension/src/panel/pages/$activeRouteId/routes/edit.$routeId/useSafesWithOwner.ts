@@ -1,15 +1,14 @@
 import { getChainId } from '@/chains'
-import { useExecutionRoute } from '@/execution-routes'
 import { initSafeApiKit } from '@/safe'
+import type { ExecutionRoute } from '@/types'
 import { validateAddress } from '@/utils'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 
 export const useSafesWithOwner = (
+  route: ExecutionRoute,
   ownerAddress: string,
-  connectionId?: string,
 ) => {
-  const route = useExecutionRoute(connectionId)
   const chainId = getChainId(route.avatar)
 
   const [loading, setLoading] = useState(false)

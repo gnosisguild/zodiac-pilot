@@ -47,17 +47,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     id: routeId,
   }
 
-  return { initialRouteState, routeId }
+  return { initialRouteState }
 }
 
 export const EditRoute = () => {
-  const { initialRouteState, routeId } = useLoaderData<typeof loader>()
+  const { initialRouteState } = useLoaderData<typeof loader>()
   const [currentRouteState, setRoute] = useState(initialRouteState)
 
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =
     asLegacyConnection(currentRouteState)
 
-  const { safes } = useSafesWithOwner(pilotAddress, routeId)
+  const { safes } = useSafesWithOwner(initialRouteState, pilotAddress)
 
   const decodedRoleKey = roleId && decodeRoleKey(roleId)
 
@@ -82,7 +82,10 @@ export const EditRoute = () => {
     )
   }
 
-  const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
+  const error = useConnectionDryRun({
+    currentRoute: initialRouteState,
+    futureRoute: currentRouteState,
+  })
 
   const [roleIdError, setRoleIdError] = useState<string | null>(null)
 
@@ -169,6 +172,7 @@ export const EditRoute = () => {
           />
 
           <ZodiacMod
+            route={initialRouteState}
             avatarAddress={prefixedAvatarAddress}
             pilotAddress={pilotAddress}
             value={

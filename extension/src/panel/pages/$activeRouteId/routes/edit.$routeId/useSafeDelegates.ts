@@ -1,15 +1,15 @@
 import { getChainId } from '@/chains'
-import { useExecutionRoute, useRouteProvider } from '@/execution-routes'
+import { useRouteProvider } from '@/execution-routes'
 import { initSafeApiKit } from '@/safe'
+import type { ExecutionRoute } from '@/types'
 import { validateAddress } from '@/utils'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 
 export const useSafeDelegates = (
+  route: ExecutionRoute,
   safeAddress: string,
-  connectionId?: string,
 ) => {
-  const route = useExecutionRoute(connectionId)
   const chainId = getChainId(route.avatar)
   const provider = useRouteProvider(route)
 

@@ -1,6 +1,11 @@
-import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
-import type { HexAddress, JsonRpcError, LegacyConnection } from '@/types'
+import type {
+  ExecutionRoute,
+  HexAddress,
+  JsonRpcError,
+  LegacyConnection,
+} from '@/types'
 import {
   decodeGenericError,
   decodeRoleKey,
@@ -11,14 +16,24 @@ import {
 } from '@/utils'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { useEffect, useState } from 'react'
+import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { wrapRequest } from './wrapRequest'
 
-export const useConnectionDryRun = (connection: LegacyConnection) => {
+type DryRunOptions = {
+  currentRoute: ExecutionRoute
+  futureRoute: ExecutionRoute
+}
+
+export const useConnectionDryRun = ({
+  currentRoute,
+  futureRoute,
+}: DryRunOptions) => {
   const [error, setError] = useState<string | null>(null)
-  const route = useExecutionRoute(connection.id)
-  const [connected] = useRouteConnect(route)
+
+  const [connected] = useRouteConnect(currentRoute)
 
   useEffect(() => {
+    const connection = asLegacyConnection(futureRoute)
     const { pilotAddress, avatarAddress, moduleAddress, moduleType, roleId } =
       connection
 
@@ -57,7 +72,7 @@ export const useConnectionDryRun = (connection: LegacyConnection) => {
           }
         })
     }
-  }, [connection, connected])
+  }, [connected, futureRoute])
 
   return error
 }
