@@ -37,8 +37,8 @@ export const NoRoutes = () => {
   return (
     <Page>
       <Page.Content>
-        <div className="flex flex-1 flex-col items-center">
-          <h2 className="mt-1 text-xl">Zodiac Pilot</h2>
+        <div className="relative top-1/4 flex flex-1 flex-col items-center gap-8">
+          <h2 className="mt-1 text-2xl font-light">Welcome to Zodiac Pilot</h2>
 
           <Info>
             You haven't created any routes, yet. Click the button below to

@@ -7,7 +7,12 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { getRoutes, removeRoute } from '@/execution-routes'
+import {
+  getLastUsedRouteId,
+  getRoutes,
+  removeRoute,
+  saveLastUsedRouteId,
+} from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -57,8 +62,19 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export const action = async ({ params }: ActionFunctionArgs) => {
   const routeId = getRouteId(params)
+  const lastUsedRouteId = await getLastUsedRouteId()
 
   await removeRoute(routeId)
+
+  if (lastUsedRouteId === routeId) {
+    await saveLastUsedRouteId(null)
+  }
+
+  const routes = await getRoutes()
+
+  if (routes.length === 0) {
+    return redirect('/')
+  }
 
   return redirect('/routes')
 }
