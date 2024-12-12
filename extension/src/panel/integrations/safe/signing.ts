@@ -58,7 +58,7 @@ const decode = (message: string): string => {
 
   try {
     return toUtf8String(message)
-  } catch (e) {
+  } catch {
     return message
   }
 }

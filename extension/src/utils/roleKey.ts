@@ -17,8 +17,8 @@ export const decodeRoleKey = (key: string) => {
   if (key.length === 66 && key.startsWith('0x')) {
     try {
       return decodeBytes32String(key)
-    } catch (e) {
-      return
+    } catch {
+      // ignore
     }
   }
 }

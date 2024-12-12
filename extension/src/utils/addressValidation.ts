@@ -3,7 +3,7 @@ import { getAddress, type Provider } from 'ethers'
 export const validateAddress = (address: string) => {
   try {
     return getAddress(address)
-  } catch (e) {
+  } catch {
     return ''
   }
 }

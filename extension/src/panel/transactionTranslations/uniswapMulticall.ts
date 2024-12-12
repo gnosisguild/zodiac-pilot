@@ -36,7 +36,7 @@ export const uniswapMulticall = {
           data,
         ).data as HexAddress[]
         break
-      } catch (e) {
+      } catch {
         continue
       }
     }
