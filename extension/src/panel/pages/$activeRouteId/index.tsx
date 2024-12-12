@@ -1,4 +1,4 @@
-import { redirect, type RouteObject } from 'react-router-dom'
+import { redirect, type RouteObject } from 'react-router'
 import { ActiveRoute as Component, loader } from './ActiveRoute'
 import { routes } from './routes'
 import { Transactions } from './transactions'

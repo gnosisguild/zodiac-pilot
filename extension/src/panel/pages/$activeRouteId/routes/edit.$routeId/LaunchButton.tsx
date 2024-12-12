@@ -2,7 +2,7 @@ import { PrimaryButton } from '@/components'
 import { useExecutionRoute, useSaveExecutionRoute } from '@/execution-routes'
 import type { ExecutionRoute } from '@/types'
 import { Rocket } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 type LaunchButtonProps = {
   disabled: boolean

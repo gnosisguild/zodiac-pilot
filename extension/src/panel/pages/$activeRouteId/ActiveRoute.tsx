@@ -11,11 +11,7 @@ import {
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { invariant } from '@epic-web/invariant'
-import {
-  Outlet,
-  useLoaderData,
-  type LoaderFunctionArgs,
-} from 'react-router-dom'
+import { Outlet, useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import { useStorage } from '../../utils'
 import { getActiveRouteId } from './getActiveRouteId'
 import {

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import type { LucideIcon } from 'lucide-react'
 import type { ComponentPropsWithoutRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 type SharedButtonProps = {
   fluid?: boolean

@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 
 export const useRouteId = () => {
   const { routeId } = useParams()

@@ -19,7 +19,7 @@ import {
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
-import { useLoaderData, type LoaderFunctionArgs } from 'react-router-dom'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import { formatPrefixedAddress } from 'ser-kit'
 import {
   asLegacyConnection,

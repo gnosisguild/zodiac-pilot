@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { type Params } from 'react-router-dom'
+import { type Params } from 'react-router'
 
 export const getRouteId = (params: Params) => {
   const { routeId } = params

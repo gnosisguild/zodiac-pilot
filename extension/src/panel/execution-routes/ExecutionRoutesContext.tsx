@@ -28,9 +28,7 @@ const ExecutionRoutesContext = createContext<Context>({
   },
 })
 
-type ProvideExecutionRoutesProps = PropsWithChildren<{
-  initialSelectedRouteId?: string
-}>
+type ProvideExecutionRoutesProps = PropsWithChildren
 
 export const ProvideExecutionRoutes = ({
   children,

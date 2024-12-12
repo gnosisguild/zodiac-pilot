@@ -2,7 +2,7 @@ import { Breadcrumbs, Page, PrimaryButton } from '@/components'
 import { getRoutes } from '@/execution-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router'
 import { Route } from './Route'
 
 export const loader = async () => {

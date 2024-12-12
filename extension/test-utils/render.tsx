@@ -1,8 +1,14 @@
 import type { TransactionState } from '@/state'
+import type { ExecutionRoute } from '@/types'
 import { sleepTillIdle } from '@/utils'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import type { ComponentType } from 'react'
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
+import {
+  createMemoryRouter,
+  RouterProvider,
+  useLocation,
+  type LoaderFunction,
+} from 'react-router'
 import { expect } from 'vitest'
 import { mockActiveTab, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
@@ -12,6 +18,7 @@ import { TestElement, waitForTestElement } from './TestElement'
 type Route = {
   path: string
   Component: ComponentType
+  loader?: LoaderFunction
 }
 
 type Options = Parameters<typeof baseRender>[1] & {
@@ -30,34 +37,50 @@ type Options = Parameters<typeof baseRender>[1] & {
   /**
    * Pass a route id here to define the currently launched route
    */
-  initialSelectedRouteId?: string
+  initialSelectedRoute?: ExecutionRoute
 }
 
 export const render = async (
   currentPath: string,
   routes: Route[],
-  { activeTab, inspectRoutes = [], initialState, ...options }: Options = {},
+  {
+    activeTab,
+    inspectRoutes = [],
+    initialState,
+    initialSelectedRoute,
+    ...options
+  }: Options = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = createMockPort()
 
   mockTabConnect(mockedPort)
 
-  const result = baseRender(
-    <RenderWrapper initialState={initialState}>
-      <MemoryRouter initialEntries={[currentPath]}>
-        <Routes>
-          <Route path="/" element={<TestElement />}>
-            {routes.map(({ path, Component }) => (
-              <Route key={path} path={path} element={<Component />} />
-            ))}
+  const router = createMemoryRouter(
+    [
+      {
+        path: '/',
+        element: <TestElement />,
+        children: [
+          ...routes.map(({ Component, path, loader }) => ({
+            path,
+            loader,
+            element: <Component />,
+          })),
+          ...inspectRoutes.map((path) => ({ path, element: <InspectRoute /> })),
+        ],
+      },
+    ],
 
-            {inspectRoutes.map((route) => (
-              <Route key={route} path={route} element={<InspectRoute />} />
-            ))}
-          </Route>
-        </Routes>
-      </MemoryRouter>
+    { initialEntries: [currentPath] },
+  )
+
+  const result = baseRender(
+    <RenderWrapper
+      initialState={initialState}
+      initialSelectedRoute={initialSelectedRoute}
+    >
+      <RouterProvider router={router} />
     </RenderWrapper>,
     options,
   )

@@ -21,7 +21,7 @@ import {
 import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
