@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 import { ListRoutes, loader } from './ListRoutes'
 
 describe('List routes', () => {
-  it.only('is possible to modify an existing route', async () => {
+  it('is possible to modify an existing route', async () => {
     mockRoutes({
       id: 'testRoute',
       label: 'Test route',
