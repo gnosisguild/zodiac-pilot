@@ -4,14 +4,10 @@ import {
   type PropsWithChildren,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
 } from 'react'
-import { useFunctionRef, useStorageEntries } from '../utils'
-import {
-  ProvideSelectedExecutionRoute,
-  useSelectedRouteId,
-} from './SelectedRouteContext'
+import { useStorageEntries } from '../utils'
+import { ProvideSelectedExecutionRoute } from './SelectedRouteContext'
 
 type Context = {
   routes: ExecutionRoute[]
@@ -94,29 +90,4 @@ export const useRemoveExecutionRoute = () => {
   const { removeRoute } = useContext(ExecutionRoutesContext)
 
   return removeRoute
-}
-
-export const useMarkRouteAsUsed = () => {
-  const [selectedRouteId] = useSelectedRouteId()
-  const routes = useExecutionRoutes()
-  const saveRoute = useSaveExecutionRoute()
-
-  const updateRef = useFunctionRef((routeId) => {
-    if (routeId == null) {
-      return
-    }
-
-    const route = routes.find((route) => route.id === routeId)
-
-    if (route == null) {
-      return
-    }
-
-    saveRoute({ ...route, lastUsed: Date.now() })
-  })
-
-  useEffect(() => {
-    console.debug('update last used timestamp for route', selectedRouteId)
-    updateRef.current!(selectedRouteId)
-  }, [selectedRouteId, updateRef])
 }

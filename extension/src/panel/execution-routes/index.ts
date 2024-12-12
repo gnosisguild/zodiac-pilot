@@ -4,7 +4,6 @@ export {
 } from './ExecutionRouteContext'
 export {
   ProvideExecutionRoutes,
-  useMarkRouteAsUsed,
   useRemoveExecutionRoute,
   useSaveExecutionRoute,
 } from './ExecutionRoutesContext'
