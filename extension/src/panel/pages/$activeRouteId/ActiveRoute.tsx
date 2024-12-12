@@ -1,6 +1,7 @@
 import { getChainId } from '@/chains'
 import {
   getRoutes,
+  ProvideExecutionRoute,
   useMarkRouteAsUsed,
   useSaveExecutionRoute,
 } from '@/execution-routes'
@@ -63,5 +64,9 @@ export const ActiveRoute = () => {
 
   useStorage('lastUsedRoute', route.id)
 
-  return <Outlet />
+  return (
+    <ProvideExecutionRoute route={route}>
+      <Outlet />
+    </ProvideExecutionRoute>
+  )
 }
