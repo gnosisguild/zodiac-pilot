@@ -1,22 +1,34 @@
 import { TextInput } from '@/components'
 import { FunctionFragment, Result } from 'ethers'
+import type { PropsWithChildren } from 'react'
 
-interface Props {
+type Props = PropsWithChildren<{
   functionFragment: FunctionFragment
   data: Result
-}
-export const DecodedTransaction = ({ functionFragment, data }: Props) => {
+}>
+
+export const DecodedTransaction = ({
+  functionFragment,
+  data,
+  children,
+}: Props) => {
   if (functionFragment.inputs.length === 0) {
     return null
   }
 
-  return functionFragment.inputs.map((input, i) => (
-    <TextInput
-      readOnly
-      key={`${input.name}-${i}`}
-      defaultValue={data[i].toString()}
-      label={input.name}
-      description={input.type}
-    />
-  ))
+  return (
+    <>
+      {children}
+
+      {functionFragment.inputs.map((input, i) => (
+        <TextInput
+          readOnly
+          key={`${input.name}-${i}`}
+          defaultValue={data[i].toString()}
+          label={input.name}
+          description={input.type}
+        />
+      ))}
+    </>
+  )
 }
