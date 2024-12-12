@@ -1,4 +1,4 @@
-import { BaseToast, toast } from './BaseToast'
+import { Toast, toast } from './Toast'
 import type { ToastProps } from './ToastProps'
 
 export const infoToast = ({ title, message }: ToastProps) =>
@@ -7,12 +7,12 @@ export const infoToast = ({ title, message }: ToastProps) =>
       <>
         <div className="flex items-center justify-between gap-4">
           {title && (
-            <BaseToast.Title className="text-zinc-50 dark:text-zinc-900">
+            <Toast.Title className="text-zinc-50 dark:text-zinc-900">
               {title}
-            </BaseToast.Title>
+            </Toast.Title>
           )}
 
-          <BaseToast.Dismiss
+          <Toast.Dismiss
             className="text-zinc-50 hover:bg-white/20 dark:text-zinc-900 dark:hover:bg-zinc-900/10"
             onDismiss={dismiss}
           />
