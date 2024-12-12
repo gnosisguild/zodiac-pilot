@@ -1,5 +1,5 @@
 import { Breadcrumbs, Page, PrimaryButton } from '@/components'
-import { getRoutes, useSelectedRouteId } from '@/execution-routes'
+import { getRoutes } from '@/execution-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -12,7 +12,6 @@ export const loader = async () => {
 }
 
 export const ListRoutes = () => {
-  const [, selectRoute] = useSelectedRouteId()
   const navigate = useNavigate()
   const { routes } = useLoaderData<typeof loader>()
 
@@ -31,11 +30,7 @@ export const ListRoutes = () => {
           <Route
             key={route.id}
             route={route}
-            onLaunch={(routeId) => {
-              selectRoute(routeId)
-
-              navigate('/')
-            }}
+            onLaunch={(routeId) => navigate(`/${routeId}`)}
           />
         ))}
       </Page.Content>
@@ -46,7 +41,7 @@ export const ListRoutes = () => {
           icon={Plus}
           onClick={() => {
             const newRouteId = nanoid()
-            navigate('/routes/' + newRouteId)
+            navigate('routes/' + newRouteId)
           }}
         >
           Add Route

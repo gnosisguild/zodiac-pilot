@@ -1,9 +1,5 @@
 import { PrimaryButton } from '@/components'
-import {
-  useExecutionRoute,
-  useSaveExecutionRoute,
-  useSelectedRouteId,
-} from '@/execution-routes'
+import { useExecutionRoute, useSaveExecutionRoute } from '@/execution-routes'
 import type { ExecutionRoute } from '@/types'
 import { Rocket } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -24,7 +20,6 @@ export const LaunchButton = ({
 
   onNeedConfirmationToClearTransactions,
 }: LaunchButtonProps) => {
-  const [, setSelectedRouteId] = useSelectedRouteId()
   const currentExecutionRoute = useExecutionRoute()
   const saveRoute = useSaveExecutionRoute()
 
@@ -51,8 +46,7 @@ export const LaunchButton = ({
           return
         }
 
-        setSelectedRouteId(currentRouteState.id)
-        navigate('/')
+        navigate(`/${currentRouteState.id}`)
       }}
     >
       {currentRouteState !== initialRouteState ? 'Save & Launch' : 'Launch'}

@@ -7,7 +7,6 @@ import {
   useMemo,
 } from 'react'
 import { useStorageEntries } from '../utils'
-import { ProvideSelectedExecutionRoute } from './SelectedRouteContext'
 
 type Context = {
   routes: ExecutionRoute[]
@@ -35,7 +34,6 @@ type ProvideExecutionRoutesProps = PropsWithChildren<{
 
 export const ProvideExecutionRoutes = ({
   children,
-  initialSelectedRouteId,
 }: ProvideExecutionRoutesProps) => {
   // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
   // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
@@ -67,9 +65,7 @@ export const ProvideExecutionRoutes = ({
         removeRoute,
       }}
     >
-      <ProvideSelectedExecutionRoute initialValue={initialSelectedRouteId}>
-        {children}
-      </ProvideSelectedExecutionRoute>
+      {children}
     </ExecutionRoutesContext.Provider>
   )
 }

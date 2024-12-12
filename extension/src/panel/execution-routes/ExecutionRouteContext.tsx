@@ -22,3 +22,9 @@ export const useExecutionRoute = () => {
 
   return route
 }
+
+export const useSelectedRouteId = () => {
+  const route = useExecutionRoute()
+
+  return route.id
+}
