@@ -7,7 +7,7 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { getRoutes } from '@/execution-routes'
+import { getRoutes, removeRoute } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -20,7 +20,12 @@ import { invariant } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
-import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import {
+  redirect,
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from 'react-router'
 import { formatPrefixedAddress } from 'ser-kit'
 import {
   asLegacyConnection,
@@ -48,6 +53,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   invariant(route != null, `Route with id "${routeId}" does not exist`)
 
   return { initialRouteState: route }
+}
+
+export const action = async ({ params }: ActionFunctionArgs) => {
+  const routeId = getRouteId(params)
+
+  await removeRoute(routeId)
+
+  return redirect('/routes')
 }
 
 export const EditRoute = () => {

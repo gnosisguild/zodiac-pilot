@@ -36,15 +36,15 @@ export const action = async () => {
 export const NoRoutes = () => {
   return (
     <Page>
-      <Page.Header>
-        <h2 className="mt-1 text-xl">Zodiac Pilot</h2>
-      </Page.Header>
-
       <Page.Content>
-        <Info>
-          You haven't created any routes, yet. Click the button below to create
-          your first route.
-        </Info>
+        <div className="flex flex-1 flex-col items-center">
+          <h2 className="mt-1 text-xl">Zodiac Pilot</h2>
+
+          <Info>
+            You haven't created any routes, yet. Click the button below to
+            create your first route.
+          </Info>
+        </div>
       </Page.Content>
 
       <Page.Footer>

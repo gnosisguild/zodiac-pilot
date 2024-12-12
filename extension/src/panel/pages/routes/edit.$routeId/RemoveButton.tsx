@@ -1,14 +1,9 @@
 import { GhostButton, Modal, PrimaryButton } from '@/components'
-import { useRemoveExecutionRoute } from '@/execution-routes'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { useRouteId } from './useRouteId'
+import { Form } from 'react-router'
 
 export const RemoveButton = () => {
-  const navigate = useNavigate()
-  const removeRouteById = useRemoveExecutionRoute()
-  const routeId = useRouteId()
   const [confirmRemove, setConfirmRemove] = useState(false)
 
   return (
@@ -34,15 +29,11 @@ export const RemoveButton = () => {
             Cancel
           </GhostButton>
 
-          <PrimaryButton
-            style="contrast"
-            onClick={() => {
-              removeRouteById(routeId)
-              navigate('/routes')
-            }}
-          >
-            Remove
-          </PrimaryButton>
+          <Form method="post">
+            <PrimaryButton submit style="contrast">
+              Remove
+            </PrimaryButton>
+          </Form>
         </Modal.Actions>
       </Modal>
     </>

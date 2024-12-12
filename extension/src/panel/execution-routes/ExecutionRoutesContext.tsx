@@ -9,18 +9,12 @@ import { useStorageEntries } from '../utils'
 
 type Context = {
   saveRoute: (route: ExecutionRoute) => void
-  removeRoute: (routeId: string) => void
 }
 
 const ExecutionRoutesContext = createContext<Context>({
   saveRoute() {
     throw new Error(
       '"saveRoute" is not available outside of `<ProvideExecutionRoutes />` context.',
-    )
-  },
-  removeRoute() {
-    throw new Error(
-      '"removeRoute" is not available outside of `<ProvideExecutionRoutes /> context.',
     )
   },
 })
@@ -32,7 +26,7 @@ export const ProvideExecutionRoutes = ({
 }: ProvideExecutionRoutesProps) => {
   // we store routes as individual storage entries to alleviate concurrent write issues and to avoid running into the 8kb storage entry limit
   // (see: https://developer.chrome.com/docs/extensions/reference/api/storage#property-sync)
-  const [, setRoute, removeRoute] = useStorageEntries<ExecutionRoute>('routes')
+  const [, setRoute] = useStorageEntries<ExecutionRoute>('routes')
 
   const saveRoute = useCallback(
     (route: ExecutionRoute) => {
@@ -45,7 +39,6 @@ export const ProvideExecutionRoutes = ({
     <ExecutionRoutesContext.Provider
       value={{
         saveRoute,
-        removeRoute,
       }}
     >
       {children}
@@ -57,10 +50,4 @@ export const useSaveExecutionRoute = () => {
   const { saveRoute } = useContext(ExecutionRoutesContext)
 
   return saveRoute
-}
-
-export const useRemoveExecutionRoute = () => {
-  const { removeRoute } = useContext(ExecutionRoutesContext)
-
-  return removeRoute
 }
