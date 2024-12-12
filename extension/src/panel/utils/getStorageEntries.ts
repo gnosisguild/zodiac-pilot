@@ -4,7 +4,7 @@ export function getStorageEntries<T>(collection: string) {
   chrome.storage.sync.get((allEntries) => {
     const matchingEntries = Object.entries(allEntries)
       .map(([itemKey, value]) => {
-        const match = itemKey.match(new RegExp(`${collection}\\[(\\w+)\\]`))
+        const match = itemKey.match(new RegExp(`${collection}\\[(.+)\\]`))
 
         if (!match) return null
         return [match[1], value]
