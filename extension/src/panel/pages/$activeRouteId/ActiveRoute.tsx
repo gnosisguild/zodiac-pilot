@@ -13,11 +13,11 @@ import { ProvideProvider } from '@/providers-ui'
 import { invariant } from '@epic-web/invariant'
 import { Outlet, useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import { saveStorageEntry } from '../../utils/saveStorageEntry'
-import { getActiveRouteId } from './getActiveRouteId'
 import {
   asLegacyConnection,
   fromLegacyConnection,
-} from './legacyConnectionMigrations'
+} from '../legacyConnectionMigrations'
+import { getActiveRouteId } from './getActiveRouteId'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const activeRouteId = getActiveRouteId(params)

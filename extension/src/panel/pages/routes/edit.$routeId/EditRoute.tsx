@@ -25,7 +25,6 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
-import { useActiveRouteId } from '../../useActiveRouteId'
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
@@ -100,17 +99,13 @@ export const EditRoute = () => {
     onDisconnect: () => updateRoute({ pilotAddress: '' }),
   })
 
-  const activeRouteId = useActiveRouteId()
-
   return (
     <>
       <Page>
         <Page.Header>
           <Breadcrumbs>
             <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
-            <Breadcrumbs.Entry to={`/${activeRouteId}/routes`}>
-              All routes
-            </Breadcrumbs.Entry>
+            <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
           </Breadcrumbs>
 
           <h2 className="mt-1 text-xl">

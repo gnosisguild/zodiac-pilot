@@ -1,6 +1,5 @@
 import { redirect, type RouteObject } from 'react-router'
 import { ActiveRoute as Component, loader } from './ActiveRoute'
-import { routes } from './routes'
 import { Transactions } from './transactions'
 
 export const ActiveRoute: RouteObject = {
@@ -10,6 +9,5 @@ export const ActiveRoute: RouteObject = {
   children: [
     { path: '', loader: () => redirect('transactions') },
     Transactions,
-    routes,
   ],
 }

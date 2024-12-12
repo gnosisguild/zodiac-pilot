@@ -5,8 +5,8 @@ import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import Stick from 'react-stick'
-import { ConnectionStack } from '../../ConnectionStack'
-import { asLegacyConnection } from '../../legacyConnectionMigrations'
+import { ConnectionStack } from '../../../ConnectionStack'
+import { asLegacyConnection } from '../../../legacyConnectionMigrations'
 
 export const RouteBubble = () => {
   const route = useExecutionRoute()
