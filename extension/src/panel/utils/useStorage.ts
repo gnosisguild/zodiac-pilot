@@ -1,39 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useFunctionRef } from './useFunctionRef'
-
-/**
- * Read and write a value to extension sync storage under the given `key`.
- */
-export function useStorage<T>(key: string, initialValue?: T) {
-  const [value, setValue] = useState<T>()
-
-  // keep state in sync with storage
-  useEffect(() => {
-    chrome.storage.sync
-      .get(key)
-      .then((res) => setValue(res ? res[key] : initialValue))
-
-    chrome.storage.sync.onChanged.addListener((changes) => {
-      if (key in changes) {
-        if (changes[key].newValue) setValue(changes[key].newValue)
-      }
-    })
-  }, [key, initialValue])
-
-  // referentially stable set callback
-  const setRef = useFunctionRef(async (value: T) => {
-    await chrome.storage.sync.set({ [key]: value })
-  })
-
-  const set = useCallback(
-    async (value: T) => {
-      setRef.current?.(value)
-    },
-    [setRef],
-  )
-
-  return [value, set] as const
-}
 
 /**
  * Retrieve multiple storage entries for the given keys at once.
@@ -88,14 +53,7 @@ export function useStorageEntries<T>(collection: string) {
     [collection],
   )
 
-  const remove = useCallback(
-    async (key: string) => {
-      await chrome.storage.sync.remove(`${collection}[${key}]`)
-    },
-    [collection],
-  )
-
-  return [entries, set, remove] as const
+  return [entries, set] as const
 }
 
 /**

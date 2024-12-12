@@ -1,6 +1,6 @@
+import type { LegacyConnection } from '@/types'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { describe, expect, it } from 'vitest'
-import type { LegacyConnection } from '../../types'
 import {
   asLegacyConnection,
   fromLegacyConnection,

@@ -1,5 +1,5 @@
 import { Children, type ComponentProps, type PropsWithChildren } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export const Breadcrumbs = ({ children }: PropsWithChildren) => (
   <div className="flex items-center gap-2 font-mono text-xs uppercase opacity-75">

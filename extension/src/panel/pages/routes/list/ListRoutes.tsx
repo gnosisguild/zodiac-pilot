@@ -1,14 +1,26 @@
 import { Breadcrumbs, Page, PrimaryButton } from '@/components'
-import { useExecutionRoutes, useSelectedRouteId } from '@/execution-routes'
+import { createRoute, getRoutes, saveLastUsedRouteId } from '@/execution-routes'
 import { Plus } from 'lucide-react'
-import { nanoid } from 'nanoid'
-import { useNavigate } from 'react-router-dom'
+import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
 import { Route } from './Route'
 
+export const loader = async () => {
+  return {
+    routes: await getRoutes(),
+  }
+}
+
+export const action = async () => {
+  const route = await createRoute()
+
+  await saveLastUsedRouteId(route.id)
+
+  return redirect(`/routes/edit/${route.id}`)
+}
+
 export const ListRoutes = () => {
-  const [, selectRoute] = useSelectedRouteId()
-  const routes = useExecutionRoutes()
   const navigate = useNavigate()
+  const { routes } = useLoaderData<typeof loader>()
 
   return (
     <Page>
@@ -25,26 +37,17 @@ export const ListRoutes = () => {
           <Route
             key={route.id}
             route={route}
-            onLaunch={(routeId) => {
-              selectRoute(routeId)
-
-              navigate('/')
-            }}
+            onLaunch={(routeId) => navigate(`/${routeId}`)}
           />
         ))}
       </Page.Content>
 
       <Page.Footer>
-        <PrimaryButton
-          fluid
-          icon={Plus}
-          onClick={() => {
-            const newRouteId = nanoid()
-            navigate('/routes/' + newRouteId)
-          }}
-        >
-          Add Route
-        </PrimaryButton>
+        <Form className="flex flex-col" method="post">
+          <PrimaryButton fluid submit icon={Plus}>
+            Add Route
+          </PrimaryButton>
+        </Form>
       </Page.Footer>
     </Page>
   )

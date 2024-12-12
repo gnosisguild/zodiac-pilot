@@ -11,7 +11,6 @@ const openConfiguration = async (
   page: Page,
   account: `0x${string}` = defaultMockAccount,
 ) => {
-  await page.getByRole('link', { name: 'Configure routes' }).click()
   await page.getByRole('button', { name: 'Add Route' }).click()
   await page.getByRole('button', { name: 'Connect with MetaMask' }).click()
   await expect(

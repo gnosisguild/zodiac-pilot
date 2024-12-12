@@ -1,16 +1,17 @@
 import classNames from 'classnames'
 import type { LucideIcon } from 'lucide-react'
 import type { ComponentPropsWithoutRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 type SharedButtonProps = {
   fluid?: boolean
   iconOnly?: boolean
   icon?: LucideIcon
   size?: 'small' | 'base'
+  submit?: boolean
 }
 
-export type BaseButtonProps = ComponentPropsWithoutRef<'button'> &
+export type BaseButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'type'> &
   SharedButtonProps
 
 export const BaseButton = ({
@@ -21,10 +22,12 @@ export const BaseButton = ({
   size = 'base',
   children,
   title,
+  submit = false,
   ...props
 }: BaseButtonProps) => (
   <button
     {...props}
+    type={submit ? 'submit' : undefined}
     title={title ? title : typeof children === 'string' ? children : undefined}
     className={classNames(
       'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',

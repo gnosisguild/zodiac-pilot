@@ -13,7 +13,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { formatPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { EditRoute } from './EditRoute'
+import { action, EditRoute, loader } from './EditRoute'
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
@@ -42,6 +42,8 @@ describe('Edit Zodiac route', () => {
         {
           path: '/routes/:routeId',
           Component: EditRoute,
+          loader,
+          action,
         },
       ])
 
@@ -68,6 +70,8 @@ describe('Edit Zodiac route', () => {
         {
           path: '/routes/:routeId',
           Component: EditRoute,
+          loader,
+          action,
         },
       ])
 
@@ -93,6 +97,8 @@ describe('Edit Zodiac route', () => {
         {
           path: '/routes/:routeId',
           Component: EditRoute,
+          loader,
+          action,
         },
       ])
 
@@ -118,6 +124,8 @@ describe('Edit Zodiac route', () => {
           {
             path: '/routes/:routeId',
             Component: EditRoute,
+            loader,
+            action,
           },
         ],
         { inspectRoutes: ['/routes'] },
@@ -162,7 +170,12 @@ describe('Edit Zodiac route', () => {
       })
 
       await render('/routes/routeId', [
-        { path: '/routes/:routeId', Component: EditRoute },
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
       ])
 
       await userEvent.click(
@@ -175,12 +188,14 @@ describe('Edit Zodiac route', () => {
 
   describe('New route', () => {
     it('uses the correct chain to fetch zodiac modules', async () => {
-      mockRoutes()
+      mockRoutes({ id: 'new-route' })
 
-      await render('/routes/route-id', [
+      await render('/routes/new-route', [
         {
           path: '/routes/:routeId',
           Component: EditRoute,
+          loader,
+          action,
         },
       ])
 
@@ -190,7 +205,7 @@ describe('Edit Zodiac route', () => {
       )
 
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
+        screen.getByRole('combobox', { name: 'Piloted Safe' }),
         '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb',
       )
 

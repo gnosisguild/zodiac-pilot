@@ -1,9 +1,9 @@
 import { Warning } from '@/components'
 import { MODULE_NAMES } from '@/const'
+import type { ExecutionRoute } from '@/types'
 import { type SupportedModuleType, useZodiacModules } from '@/zodiac'
 import type { PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
-import { useRouteId } from './useRouteId'
 import { useSafeDelegates } from './useSafeDelegates'
 import { useSafesWithOwner } from './useSafesWithOwner'
 
@@ -15,6 +15,7 @@ type Value = {
 type ZodiacModProps = {
   avatarAddress: PrefixedAddress
   pilotAddress: string
+  route: ExecutionRoute
 
   value: Value | null
 
@@ -25,17 +26,17 @@ export const ZodiacMod = ({
   avatarAddress,
   pilotAddress,
   value,
+  route,
   onSelect,
 }: ZodiacModProps) => {
-  const routeId = useRouteId()
   const {
     loading: loadingMods,
     isValidSafe,
     modules,
   } = useZodiacModules(avatarAddress)
 
-  const { safes } = useSafesWithOwner(pilotAddress, routeId)
-  const { delegates } = useSafeDelegates(avatarAddress, routeId)
+  const { safes } = useSafesWithOwner(route, pilotAddress)
+  const { delegates } = useSafeDelegates(route, avatarAddress)
 
   const pilotIsOwner = safes.some(
     (safe) => safe.toLowerCase() === avatarAddress.toLowerCase(),

@@ -7,7 +7,12 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
+import {
+  getLastUsedRouteId,
+  getRoutes,
+  removeRoute,
+  saveLastUsedRouteId,
+} from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -16,9 +21,16 @@ import {
   queryRolesV2MultiSend,
   useZodiacModules,
 } from '@/zodiac'
+import { invariant } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
+import {
+  redirect,
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from 'react-router'
 import { formatPrefixedAddress } from 'ser-kit'
 import {
   asLegacyConnection,
@@ -27,30 +39,54 @@ import {
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
+import { getRouteId } from './getRouteId'
 import { LaunchButton } from './LaunchButton'
 import { RemoveButton } from './RemoveButton'
 import { useConnectionDryRun } from './useConnectionDryRun'
-import { useRouteId } from './useRouteId'
 import { useSafesWithOwner } from './useSafesWithOwner'
 import { ConnectWallet } from './wallet'
 import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
-export const EditRoute = () => {
-  const routes = useExecutionRoutes()
-  const routeId = useRouteId()
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const routes = await getRoutes()
+  const routeId = getRouteId(params)
 
-  const initialRouteState = routes.find((r) => r.id === routeId) || {
-    ...INITIAL_DEFAULT_ROUTE,
-    id: routeId,
+  const route = routes.find(({ id }) => id === routeId)
+
+  invariant(route != null, `Route with id "${routeId}" does not exist`)
+
+  return { initialRouteState: route }
+}
+
+export const action = async ({ params }: ActionFunctionArgs) => {
+  const routeId = getRouteId(params)
+  const lastUsedRouteId = await getLastUsedRouteId()
+
+  await removeRoute(routeId)
+
+  if (lastUsedRouteId === routeId) {
+    await saveLastUsedRouteId(null)
   }
+
+  const routes = await getRoutes()
+
+  if (routes.length === 0) {
+    return redirect('/')
+  }
+
+  return redirect('/routes')
+}
+
+export const EditRoute = () => {
+  const { initialRouteState } = useLoaderData<typeof loader>()
   const [currentRouteState, setRoute] = useState(initialRouteState)
 
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =
     asLegacyConnection(currentRouteState)
 
-  const { safes } = useSafesWithOwner(pilotAddress, routeId)
+  const { safes } = useSafesWithOwner(initialRouteState, pilotAddress)
 
   const decodedRoleKey = roleId && decodeRoleKey(roleId)
 
@@ -75,7 +111,10 @@ export const EditRoute = () => {
     )
   }
 
-  const error = useConnectionDryRun(asLegacyConnection(currentRouteState))
+  const error = useConnectionDryRun({
+    currentRoute: initialRouteState,
+    futureRoute: currentRouteState,
+  })
 
   const [roleIdError, setRoleIdError] = useState<string | null>(null)
 
@@ -162,6 +201,7 @@ export const EditRoute = () => {
           />
 
           <ZodiacMod
+            route={initialRouteState}
             avatarAddress={prefixedAvatarAddress}
             pilotAddress={pilotAddress}
             value={

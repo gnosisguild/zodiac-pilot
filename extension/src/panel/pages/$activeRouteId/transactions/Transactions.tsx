@@ -1,5 +1,7 @@
+import { getChainId } from '@/chains'
 import { CopyToClipboard, GhostButton, Info, Page } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
+import { useProviderBridge } from '@/inject-bridge'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -7,6 +9,7 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { parsePrefixedAddress } from 'ser-kit'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
@@ -17,6 +20,12 @@ export const Transactions = () => {
   const dispatch = useDispatch()
   const provider = useProvider()
   const route = useExecutionRoute()
+
+  useProviderBridge({
+    provider,
+    chainId: getChainId(route.avatar),
+    account: parsePrefixedAddress(route.avatar),
+  })
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()
