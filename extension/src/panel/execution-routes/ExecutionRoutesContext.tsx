@@ -6,9 +6,8 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
 } from 'react'
-import { useStorageEntries } from '../utils'
+import { useFunctionRef, useStorageEntries } from '../utils'
 import {
   ProvideSelectedExecutionRoute,
   useSelectedRouteId,
@@ -102,8 +101,7 @@ export const useMarkRouteAsUsed = () => {
   const routes = useExecutionRoutes()
   const saveRoute = useSaveExecutionRoute()
 
-  const updateRef = useRef<(routeId: string | undefined) => void>()
-  updateRef.current = (routeId) => {
+  const updateRef = useFunctionRef((routeId) => {
     if (routeId == null) {
       return
     }
@@ -115,10 +113,10 @@ export const useMarkRouteAsUsed = () => {
     }
 
     saveRoute({ ...route, lastUsed: Date.now() })
-  }
+  })
 
   useEffect(() => {
     console.debug('update last used timestamp for route', selectedRouteId)
     updateRef.current!(selectedRouteId)
-  }, [selectedRouteId])
+  }, [selectedRouteId, updateRef])
 }
