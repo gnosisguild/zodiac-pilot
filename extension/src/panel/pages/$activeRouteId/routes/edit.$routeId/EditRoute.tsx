@@ -25,6 +25,7 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
+import { useActiveRouteId } from '../../useActiveRouteId'
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
@@ -42,12 +43,18 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   const routes = await getRoutes()
   const routeId = getRouteId(params)
 
-  const initialRouteState = routes.find((r) => r.id === routeId) || {
-    ...INITIAL_DEFAULT_ROUTE,
-    id: routeId,
+  const route = routes.find(({ id }) => id === routeId)
+
+  if (route != null) {
+    return { initialRouteState: route }
   }
 
-  return { initialRouteState }
+  return {
+    initialRouteState: {
+      ...INITIAL_DEFAULT_ROUTE,
+      id: routeId,
+    },
+  }
 }
 
 export const EditRoute = () => {
@@ -93,13 +100,17 @@ export const EditRoute = () => {
     onDisconnect: () => updateRoute({ pilotAddress: '' }),
   })
 
+  const activeRouteId = useActiveRouteId()
+
   return (
     <>
       <Page>
         <Page.Header>
           <Breadcrumbs>
             <Breadcrumbs.Entry to="/">Transactions</Breadcrumbs.Entry>
-            <Breadcrumbs.Entry to="/routes">All routes</Breadcrumbs.Entry>
+            <Breadcrumbs.Entry to={`/${activeRouteId}/routes`}>
+              All routes
+            </Breadcrumbs.Entry>
           </Breadcrumbs>
 
           <h2 className="mt-1 text-xl">

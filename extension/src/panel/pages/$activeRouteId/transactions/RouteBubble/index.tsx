@@ -52,7 +52,7 @@ export const RouteBubble = () => {
 
       <div className="flex flex-shrink-0">
         <Link
-          to={`/${route.id}/routes/${route.id}`}
+          to={`/${route.id}/routes/edit/${route.id}`}
           className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
         >
           <span className="sr-only">Configure {connection.label}</span>
