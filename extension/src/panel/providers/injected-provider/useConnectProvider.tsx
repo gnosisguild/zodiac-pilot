@@ -3,7 +3,6 @@ import { infoToast } from '@/components'
 import { useWindowId } from '@/inject-bridge'
 import type { Eip1193Provider } from '@/types'
 import { type MutableRefObject, useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import type { ChainId } from 'ser-kit'
 import type { ConnectionStatus } from '../connectTypes'
 import { ConnectProvider } from './ConnectProvider'
@@ -112,13 +111,13 @@ const switchChain = async (provider: Eip1193Provider, chainId: ChainId) => {
       // another wallet_switchEthereumChain request is already pending
       const { promise, resolve } = Promise.withResolvers<void>()
 
-      const toastId = infoToast({
+      const { dismiss } = infoToast({
         title: 'Chain',
         message: 'Check your wallet to confirm switching the network',
       })
 
       const handleChainChanged = (): void => {
-        toast.dismiss(toastId)
+        dismiss()
         provider.removeListener('chainChanged', handleChainChanged)
 
         resolve()
