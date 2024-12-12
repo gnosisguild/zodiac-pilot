@@ -41,7 +41,7 @@ export const ListRoutes = () => {
           icon={Plus}
           onClick={() => {
             const newRouteId = nanoid()
-            navigate('routes/' + newRouteId)
+            navigate(`../routes/${newRouteId}`)
           }}
         >
           Add Route

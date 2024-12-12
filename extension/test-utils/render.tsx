@@ -59,7 +59,7 @@ export const render = async (
   const router = createMemoryRouter(
     [
       {
-        path: '/',
+        path: '',
         element: <TestElement />,
         children: [
           ...routes.map(({ Component, path, loader }) => ({
@@ -67,9 +67,9 @@ export const render = async (
             loader,
             element: <Component />,
           })),
-          ...inspectRoutes.map((path) => ({ path, element: <InspectRoute /> })),
         ],
       },
+      ...inspectRoutes.map((path) => ({ path, element: <InspectRoute /> })),
     ],
 
     { initialEntries: [currentPath] },
