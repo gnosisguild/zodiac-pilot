@@ -7,8 +7,8 @@ import { ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Toaster } from 'react-hot-toast'
 import { createHashRouter, RouterProvider } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 import '../global.css'
 import { pages } from './pages'
 import { ProvideProvider } from './providers-ui'
@@ -42,7 +42,7 @@ const Root = () => {
                   <RouterProvider router={router} />
                 </div>
 
-                <Toaster position="top-center" />
+                <ToastContainer position="top-center" />
               </ProvideProvider>
             </ProvideInjectedWallet>
           </ProvideExecutionRoutes>

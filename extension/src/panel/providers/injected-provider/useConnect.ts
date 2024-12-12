@@ -1,7 +1,6 @@
 import { infoToast } from '@/components'
 import { BrowserProvider } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
-import toast from 'react-hot-toast'
 import type { ChainId } from 'ser-kit'
 import type { ConnectResult } from '../connectTypes'
 import { ConnectProvider } from './ConnectProvider'
@@ -74,14 +73,14 @@ const connectInjectedWallet = memoWhilePending(
       .catch((err: any) => {
         if ((err as InjectedWalletError).code === -32002) {
           return new Promise((resolve: (value: string[]) => void) => {
-            const toastId = infoToast({
+            const { dismiss } = infoToast({
               title: 'Connection',
               message: 'Check your wallet to confirm connection',
             })
 
             const handleAccountsChanged = (accounts: string[]) => {
               resolve(accounts)
-              toast.dismiss(toastId)
+              dismiss()
               provider.removeListener('accountsChanged', handleAccountsChanged)
             }
 

@@ -3,12 +3,12 @@ import classNames from 'classnames'
 import { X } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 
-type BaseToastProps = PropsWithChildren<{ className: string; visible: boolean }>
+type BaseToastProps = PropsWithChildren<{ className: string }>
 
-export const BaseToast = ({ children, className, visible }: BaseToastProps) => (
+export const BaseToast = ({ children, className }: BaseToastProps) => (
   <Transition
     appear
-    show={visible}
+    show
     enter="transition-all"
     enterFrom="opacity-0 -translate-y-full"
     leave="transition-all"
