@@ -2,6 +2,7 @@ import {
   getRoutes,
   markRouteAsUsed,
   ProvideExecutionRoute,
+  saveLastUsedRouteId,
   useSaveExecutionRoute,
 } from '@/execution-routes'
 import { ProviderBridge } from '@/inject-bridge'
@@ -10,8 +11,12 @@ import {
   useDisconnectWalletConnectIfNeeded,
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
-import { invariant } from '@epic-web/invariant'
-import { Outlet, useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router'
 import { saveStorageEntry } from '../../utils/saveStorageEntry'
 import {
   asLegacyConnection,
@@ -26,7 +31,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const route = routes.find((route) => route.id === activeRouteId)
 
-  invariant(route != null, `Could not find route with id "${activeRouteId}"`)
+  if (route == null) {
+    await saveLastUsedRouteId(null)
+
+    throw redirect('/')
+  }
 
   await saveStorageEntry({ key: 'lastUsedRoute', value: route.id })
 
