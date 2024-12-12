@@ -7,7 +7,7 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { INITIAL_DEFAULT_ROUTE, useExecutionRoutes } from '@/execution-routes'
+import { getRoutes, INITIAL_DEFAULT_ROUTE } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -19,6 +19,7 @@ import {
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router-dom'
 import { formatPrefixedAddress } from 'ser-kit'
 import {
   asLegacyConnection,
@@ -27,24 +28,30 @@ import {
 import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
+import { getRouteId } from './getRouteId'
 import { LaunchButton } from './LaunchButton'
 import { RemoveButton } from './RemoveButton'
 import { useConnectionDryRun } from './useConnectionDryRun'
-import { useRouteId } from './useRouteId'
 import { useSafesWithOwner } from './useSafesWithOwner'
 import { ConnectWallet } from './wallet'
 import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
-export const EditRoute = () => {
-  const routes = useExecutionRoutes()
-  const routeId = useRouteId()
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const routes = await getRoutes()
+  const routeId = getRouteId(params)
 
   const initialRouteState = routes.find((r) => r.id === routeId) || {
     ...INITIAL_DEFAULT_ROUTE,
     id: routeId,
   }
+
+  return { initialRouteState, routeId }
+}
+
+export const EditRoute = () => {
+  const { initialRouteState, routeId } = useLoaderData<typeof loader>()
   const [currentRouteState, setRoute] = useState(initialRouteState)
 
   const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =

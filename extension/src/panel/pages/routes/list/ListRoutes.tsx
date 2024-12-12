@@ -1,14 +1,20 @@
 import { Breadcrumbs, Page, PrimaryButton } from '@/components'
-import { useExecutionRoutes, useSelectedRouteId } from '@/execution-routes'
+import { getRoutes, useSelectedRouteId } from '@/execution-routes'
 import { Plus } from 'lucide-react'
 import { nanoid } from 'nanoid'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { Route } from './Route'
+
+export const loader = async () => {
+  return {
+    routes: await getRoutes(),
+  }
+}
 
 export const ListRoutes = () => {
   const [, selectRoute] = useSelectedRouteId()
-  const routes = useExecutionRoutes()
   const navigate = useNavigate()
+  const { routes } = useLoaderData<typeof loader>()
 
   return (
     <Page>
