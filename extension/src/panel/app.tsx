@@ -12,7 +12,6 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
 import '../global.css'
 import { pages } from './pages'
-import { ProvideProvider } from './providers-ui'
 import { ProvideState } from './state'
 import { usePilotPort } from './usePilotPort'
 
@@ -38,13 +37,11 @@ const Root = () => {
         <ProvideState>
           <ProvideExecutionRoutes>
             <ProvideInjectedWallet>
-              <ProvideProvider>
-                <div className="flex h-full flex-1 flex-col">
-                  <RouterProvider router={router} />
-                </div>
+              <div className="flex h-full flex-1 flex-col">
+                <RouterProvider router={router} />
+              </div>
 
-                <ToastContainer position="top-center" />
-              </ProvideProvider>
+              <ToastContainer position="top-center" />
             </ProvideInjectedWallet>
           </ProvideExecutionRoutes>
         </ProvideState>

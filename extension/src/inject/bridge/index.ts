@@ -1,2 +1,2 @@
 export { ProvideBridgeContext, useWindowId } from './BridgeContext'
-export { useProviderBridge } from './useProviderBridge'
+export { ProviderBridge } from './ProviderBridge'
