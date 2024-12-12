@@ -60,7 +60,9 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
         <ConnectionStack connection={asLegacyConnection(route)} />
 
         <div className="flex justify-end gap-2">
-          <SecondaryLinkButton to={route.id}>Edit</SecondaryLinkButton>
+          <SecondaryLinkButton relative="path" to={`../edit/${route.id}`}>
+            Edit
+          </SecondaryLinkButton>
 
           <SecondaryButton
             onClick={async () => {

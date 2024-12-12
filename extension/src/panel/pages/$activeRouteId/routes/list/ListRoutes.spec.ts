@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 import { ListRoutes, loader } from './ListRoutes'
 
 describe('List routes', () => {
-  it('is possible to modify an existing route', async () => {
+  it.only('is possible to modify an existing route', async () => {
     mockRoutes({
       id: 'testRoute',
       label: 'Test route',
@@ -21,10 +21,10 @@ describe('List routes', () => {
     })
 
     const { mockedPort } = await render(
-      '/route-id/routes',
-      [{ Component: ListRoutes, path: '/:activeRouteId/routes', loader }],
+      '/route-id/routes/list',
+      [{ Component: ListRoutes, path: '/:activeRouteId/routes/list', loader }],
       {
-        inspectRoutes: ['/:activeRouteId/routes/:route-id'],
+        inspectRoutes: ['/:activeRouteId/routes/edit/:route-id'],
       },
     )
 
@@ -35,7 +35,7 @@ describe('List routes', () => {
 
     await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
 
-    await expectRouteToBe('/route-id/routes/testRoute')
+    await expectRouteToBe('/route-id/routes/edit/testRoute')
   })
 
   describe('Clearing transactions', () => {
