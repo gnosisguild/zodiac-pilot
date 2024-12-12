@@ -9,6 +9,7 @@ export {
   useSaveExecutionRoute,
 } from './ExecutionRoutesContext'
 export { getLastUsedRouteId } from './getLastUsedRouteId'
+export { getRoute } from './getRoute'
 export { getRoutes } from './getRoutes'
 export { markRouteAsUsed } from './markRouteAsUsed'
 export { saveLastUsedRouteId } from './saveLastUsedRouteId'

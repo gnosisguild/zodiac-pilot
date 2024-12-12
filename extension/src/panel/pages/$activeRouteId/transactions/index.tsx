@@ -1,6 +1,7 @@
-import { Transactions as Component } from './Transactions'
+import { Transactions as Component, loader } from './Transactions'
 
 export const Transactions = {
   path: 'transactions',
   element: <Component />,
+  loader,
 }
