@@ -3,6 +3,7 @@ import {
   getLastUsedRouteId,
   getRoutes,
   INITIAL_DEFAULT_ROUTE,
+  saveLastUsedRouteId,
   saveRoute,
 } from '@/execution-routes'
 import { Plus } from 'lucide-react'
@@ -25,6 +26,9 @@ export const loader = async () => {
 
 export const action = async () => {
   const route = await saveRoute({ ...INITIAL_DEFAULT_ROUTE, id: nanoid() })
+
+  await saveRoute(route)
+  await saveLastUsedRouteId(route.id)
 
   return redirect(`/routes/edit/${route.id}`)
 }
