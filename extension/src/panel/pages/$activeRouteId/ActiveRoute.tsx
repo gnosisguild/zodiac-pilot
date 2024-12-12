@@ -5,7 +5,6 @@ import {
   saveLastUsedRouteId,
   useSaveExecutionRoute,
 } from '@/execution-routes'
-import { ProviderBridge } from '@/inject-bridge'
 import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
@@ -60,9 +59,7 @@ export const ActiveRoute = () => {
   return (
     <ProvideExecutionRoute route={route}>
       <ProvideProvider>
-        <ProviderBridge avatar={route.avatar}>
-          <Outlet />
-        </ProviderBridge>
+        <Outlet />
       </ProvideProvider>
     </ProvideExecutionRoute>
   )
