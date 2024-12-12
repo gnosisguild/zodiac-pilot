@@ -7,7 +7,7 @@ import {
   Section,
   TextInput,
 } from '@/components'
-import { getRoutes, INITIAL_DEFAULT_ROUTE } from '@/execution-routes'
+import { getRoutes } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import type { HexAddress, LegacyConnection } from '@/types'
 import { decodeRoleKey, encodeRoleKey } from '@/utils'
@@ -16,6 +16,7 @@ import {
   queryRolesV2MultiSend,
   useZodiacModules,
 } from '@/zodiac'
+import { invariant } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import { useState } from 'react'
@@ -44,16 +45,9 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const route = routes.find(({ id }) => id === routeId)
 
-  if (route != null) {
-    return { initialRouteState: route }
-  }
+  invariant(route != null, `Route with id "${routeId}" does not exist`)
 
-  return {
-    initialRouteState: {
-      ...INITIAL_DEFAULT_ROUTE,
-      id: routeId,
-    },
-  }
+  return { initialRouteState: route }
 }
 
 export const EditRoute = () => {
