@@ -1,13 +1,11 @@
 import { Info, Page, PrimaryButton } from '@/components'
 import {
+  createRoute,
   getLastUsedRouteId,
   getRoutes,
-  INITIAL_DEFAULT_ROUTE,
   saveLastUsedRouteId,
-  saveRoute,
 } from '@/execution-routes'
 import { Plus } from 'lucide-react'
-import { nanoid } from 'nanoid'
 import { Form, redirect } from 'react-router'
 
 export const loader = async () => {
@@ -25,9 +23,8 @@ export const loader = async () => {
 }
 
 export const action = async () => {
-  const route = await saveRoute({ ...INITIAL_DEFAULT_ROUTE, id: nanoid() })
+  const route = await createRoute()
 
-  await saveRoute(route)
   await saveLastUsedRouteId(route.id)
 
   return redirect(`/routes/edit/${route.id}`)

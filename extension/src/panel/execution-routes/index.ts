@@ -1,3 +1,4 @@
+export { createRoute } from './createRoute'
 export {
   ProvideExecutionRoute,
   useExecutionRoute,
@@ -14,6 +15,5 @@ export { markRouteAsUsed } from './markRouteAsUsed'
 export { removeRoute } from './removeRoute'
 export { saveLastUsedRouteId } from './saveLastUsedRouteId'
 export { saveRoute } from './saveRoute'
-export { INITIAL_DEFAULT_ROUTE } from './useExecutionRoute'
 export { useRouteConnect } from './useRouteConnect'
 export { useRouteProvider } from './useRouteProvider'
