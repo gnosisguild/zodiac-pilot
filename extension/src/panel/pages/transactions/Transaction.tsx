@@ -51,12 +51,16 @@ export const Transaction = ({ transactionState }: Props) => {
 
           <EtherValue value={transactionState.transaction.value} />
 
-          <Divider />
-
           {decoded ? (
-            <DecodedTransaction {...decoded} />
+            <DecodedTransaction {...decoded}>
+              <Divider />
+            </DecodedTransaction>
           ) : (
-            <RawTransaction data={transactionState.transaction.data} />
+            <>
+              <Divider />
+
+              <RawTransaction data={transactionState.transaction.data} />
+            </>
           )}
 
           <Divider />
