@@ -1,5 +1,5 @@
 import { CopyToClipboard, GhostButton, Info, Page } from '@/components'
-import { getRoute } from '@/execution-routes'
+import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -7,24 +7,16 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
-import { getActiveRouteId } from '../getActiveRouteId'
 import { RecordingIcon } from './RecordingIcon'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const route = await getRoute(getActiveRouteId(params))
-
-  return { route }
-}
-
 export const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
-  const { route } = useLoaderData<typeof loader>()
+  const route = useExecutionRoute()
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()

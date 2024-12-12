@@ -1,5 +1,5 @@
 import {
-  getRoutes,
+  getRoute,
   markRouteAsUsed,
   ProvideExecutionRoute,
   saveLastUsedRouteId,
@@ -27,19 +27,17 @@ import { getActiveRouteId } from './getActiveRouteId'
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const activeRouteId = getActiveRouteId(params)
 
-  const routes = await getRoutes()
+  try {
+    const route = await getRoute(activeRouteId)
 
-  const route = routes.find((route) => route.id === activeRouteId)
+    await saveStorageEntry({ key: 'lastUsedRoute', value: route.id })
 
-  if (route == null) {
+    return { route: await markRouteAsUsed(route) }
+  } catch {
     await saveLastUsedRouteId(null)
 
     throw redirect('/')
   }
-
-  await saveStorageEntry({ key: 'lastUsedRoute', value: route.id })
-
-  return { route: await markRouteAsUsed(route) }
 }
 
 export const ActiveRoute = () => {
