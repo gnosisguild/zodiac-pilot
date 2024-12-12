@@ -1,7 +1,12 @@
 import { Transition } from '@headlessui/react'
 import classNames from 'classnames'
 import { X } from 'lucide-react'
-import type { PropsWithChildren } from 'react'
+import { nanoid } from 'nanoid'
+import type { PropsWithChildren, ReactNode } from 'react'
+import {
+  toast as baseToast,
+  type ToastOptions as BaseToastOptions,
+} from 'react-toastify'
 
 type BaseToastProps = PropsWithChildren<{ className: string }>
 
@@ -16,7 +21,7 @@ export const BaseToast = ({ children, className }: BaseToastProps) => (
   >
     <div
       className={classNames(
-        'flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
+        'mx-2 flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
         className,
       )}
     >
@@ -51,3 +56,34 @@ const Dismiss = ({
 )
 
 BaseToast.Dismiss = Dismiss
+
+type ToastRenderProps = {
+  dismiss: () => void
+}
+
+type ToastRenderFn = (props: ToastRenderProps) => ReactNode
+
+type ToastOptions = Omit<
+  BaseToastOptions,
+  'toastId' | 'closeButton' | 'hideProgressBar'
+>
+
+export const toast = (
+  renderFn: ToastRenderFn,
+  { className, ...options }: ToastOptions = {},
+) => {
+  const id = nanoid()
+
+  const dismiss = () => baseToast.dismiss(id)
+
+  baseToast(renderFn({ dismiss }), {
+    toastId: id,
+    closeButton: false,
+    hideProgressBar: true,
+    className: `mx-4 mt-2 flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg ${className}`,
+
+    ...options,
+  })
+
+  return { dismiss }
+}
