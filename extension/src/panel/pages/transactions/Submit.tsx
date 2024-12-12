@@ -1,6 +1,5 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import {
-  Address,
   errorToast,
   Modal,
   PrimaryButton,
@@ -73,7 +72,7 @@ export const Submit = () => {
         decodeRolesV2Error(err) || { name: decodeGenericError(err) }
       errorToast({
         title: 'Submitting the transaction batch failed',
-        message: <Address>{name}</Address>,
+        message: name,
       })
       return
     }
