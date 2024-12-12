@@ -53,7 +53,7 @@ export const useConnect = (
         }
 
         return { accounts, chainId }
-      } catch (e) {
+      } catch {
         if (onErrorRef.current) {
           onErrorRef.current()
         }

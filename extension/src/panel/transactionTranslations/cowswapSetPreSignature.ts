@@ -58,7 +58,7 @@ export const cowswapSetPreSignature = {
         transaction.data,
       )
       orderUid = result[0]
-    } catch (e) {
+    } catch {
       // not a call to setPreSignature()
       return undefined
     }

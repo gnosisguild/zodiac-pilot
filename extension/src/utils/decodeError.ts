@@ -47,7 +47,7 @@ export function decodeGenericError(error: JsonRpcError) {
         '0x' + revertData.slice(10), // skip over selector
       )
       return reason as string
-    } catch (e) {
+    } catch {
       return revertData
     }
   }
@@ -63,7 +63,7 @@ export function decodeRolesV1Error(error: JsonRpcError) {
         RolesV1Interface.parseError(revertData) ||
         RolesV1PermissionsInterface.parseError(revertData)
       )
-    } catch (e) {
+    } catch {
       // ignore
     }
   }
@@ -76,7 +76,7 @@ export function decodeRolesV2Error(error: JsonRpcError) {
   if (revertData.startsWith('0x')) {
     try {
       return RolesV2Interface.parseError(revertData)
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

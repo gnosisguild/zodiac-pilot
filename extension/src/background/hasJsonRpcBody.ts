@@ -32,7 +32,7 @@ export const hasJsonRpcBody = (
     schema.parse(json)
 
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }

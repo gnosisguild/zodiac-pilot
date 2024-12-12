@@ -58,7 +58,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
       console.debug(`Received response from tab`, { response })
 
       return response
-    } catch (e) {
+    } catch {
       console.debug('Could not send message to tab. Waiting for tab to reload.')
     }
   }
