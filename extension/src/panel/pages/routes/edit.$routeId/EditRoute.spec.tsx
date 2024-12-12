@@ -13,7 +13,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { formatPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { EditRoute, loader } from './EditRoute'
+import { action, EditRoute, loader } from './EditRoute'
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
@@ -43,6 +43,7 @@ describe('Edit Zodiac route', () => {
           path: '/routes/:routeId',
           Component: EditRoute,
           loader,
+          action,
         },
       ])
 
@@ -70,6 +71,7 @@ describe('Edit Zodiac route', () => {
           path: '/routes/:routeId',
           Component: EditRoute,
           loader,
+          action,
         },
       ])
 
@@ -96,6 +98,7 @@ describe('Edit Zodiac route', () => {
           path: '/routes/:routeId',
           Component: EditRoute,
           loader,
+          action,
         },
       ])
 
@@ -122,6 +125,7 @@ describe('Edit Zodiac route', () => {
             path: '/routes/:routeId',
             Component: EditRoute,
             loader,
+            action,
           },
         ],
         { inspectRoutes: ['/routes'] },
@@ -170,6 +174,7 @@ describe('Edit Zodiac route', () => {
           path: '/routes/:routeId',
           Component: EditRoute,
           loader,
+          action,
         },
       ])
 
@@ -190,6 +195,7 @@ describe('Edit Zodiac route', () => {
           path: '/routes/:routeId',
           Component: EditRoute,
           loader,
+          action,
         },
       ])
 

@@ -7,6 +7,7 @@ import {
   createMemoryRouter,
   RouterProvider,
   useLocation,
+  type ActionFunction,
   type LoaderFunction,
 } from 'react-router'
 import { expect } from 'vitest'
@@ -19,6 +20,7 @@ type Route = {
   path: string
   Component: ComponentType
   loader?: LoaderFunction
+  action?: ActionFunction
 }
 
 type Options = Parameters<typeof baseRender>[1] & {
@@ -62,9 +64,10 @@ export const render = async (
         path: '',
         element: <TestElement />,
         children: [
-          ...routes.map(({ Component, path, loader }) => ({
+          ...routes.map(({ Component, path, loader, action }) => ({
             path,
             loader,
+            action,
             element: <Component />,
           })),
         ],
