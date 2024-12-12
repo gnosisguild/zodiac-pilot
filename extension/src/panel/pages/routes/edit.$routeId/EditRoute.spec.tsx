@@ -38,9 +38,9 @@ describe('Edit Zodiac route', () => {
     it('is possible to rename a route', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/testRoute/routes/route-id', [
+      await render('/routes/route-id', [
         {
-          path: '/:activeRouteId/routes/:routeId',
+          path: '/routes/:routeId',
           Component: EditRoute,
           loader,
         },
@@ -65,9 +65,9 @@ describe('Edit Zodiac route', () => {
     it('is possible to remove a route', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/testRoute/routes/route-id', [
+      await render('/routes/route-id', [
         {
-          path: '/:activeRouteId/routes/:routeId',
+          path: '/routes/:routeId',
           Component: EditRoute,
           loader,
         },
@@ -91,9 +91,9 @@ describe('Edit Zodiac route', () => {
     it('does not remove the route if the user cancels', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/testRoute/routes/route-id', [
+      await render('/routes/route-id', [
         {
-          path: '/:activeRouteId/routes/:routeId',
+          path: '/routes/:routeId',
           Component: EditRoute,
           loader,
         },
@@ -116,10 +116,10 @@ describe('Edit Zodiac route', () => {
       mockRoute({ id: 'route-id' })
 
       await render(
-        '/testRoute/routes/route-id',
+        '/routes/route-id',
         [
           {
-            path: '/:activeRouteId/routes/:routeId',
+            path: '/routes/:routeId',
             Component: EditRoute,
             loader,
           },
@@ -165,9 +165,9 @@ describe('Edit Zodiac route', () => {
         provider: new MockProvider(),
       })
 
-      await render('/testRoute/routes/routeId', [
+      await render('/routes/routeId', [
         {
-          path: '/:activeRouteId/routes/:routeId',
+          path: '/routes/:routeId',
           Component: EditRoute,
           loader,
         },
@@ -183,11 +183,11 @@ describe('Edit Zodiac route', () => {
 
   describe('New route', () => {
     it('uses the correct chain to fetch zodiac modules', async () => {
-      mockRoutes()
+      mockRoutes({ id: 'new-route' })
 
-      await render('/testRoute/routes/route-id', [
+      await render('/routes/new-route', [
         {
-          path: '/:activeRouteId/routes/:routeId',
+          path: '/routes/:routeId',
           Component: EditRoute,
           loader,
         },
@@ -199,7 +199,7 @@ describe('Edit Zodiac route', () => {
       )
 
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
+        screen.getByRole('combobox', { name: 'Piloted Safe' }),
         '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb',
       )
 

@@ -21,10 +21,10 @@ describe('List routes', () => {
     })
 
     const { mockedPort } = await render(
-      '/route-id/routes/list',
-      [{ Component: ListRoutes, path: '/:activeRouteId/routes/list', loader }],
+      '/routes/list',
+      [{ Component: ListRoutes, path: '/routes/list', loader }],
       {
-        inspectRoutes: ['/:activeRouteId/routes/edit/:route-id'],
+        inspectRoutes: ['/routes/edit/:route-id'],
       },
     )
 
@@ -35,7 +35,7 @@ describe('List routes', () => {
 
     await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
 
-    await expectRouteToBe('/route-id/routes/edit/testRoute')
+    await expectRouteToBe('/routes/edit/testRoute')
   })
 
   describe('Clearing transactions', () => {
@@ -48,8 +48,8 @@ describe('List routes', () => {
       mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
 
       await render(
-        '/firstRoute/routes',
-        [{ path: '/:activeRouteId/routes', Component: ListRoutes, loader }],
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
         {
           initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
@@ -81,8 +81,8 @@ describe('List routes', () => {
       })
 
       await render(
-        '/firstRoute/routes',
-        [{ path: '/:activeRouteId/routes', Component: ListRoutes, loader }],
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
         {
           initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
@@ -109,8 +109,8 @@ describe('List routes', () => {
       mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
 
       await render(
-        '/firstRoute/routes',
-        [{ path: '/:activeRouteId/routes', Component: ListRoutes, loader }],
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
         {
           initialSelectedRoute: selectedRoute,
         },
