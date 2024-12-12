@@ -1,8 +1,6 @@
 import { getRoutes } from '@/execution-routes'
 import { redirect, type RouteObject } from 'react-router-dom'
-import { loader, Root } from './Root'
-import { routes } from './routes'
-import { Transactions } from './transactions'
+import { ActiveRoute } from './$activeRouteId'
 
 export const pages: RouteObject[] = [
   {
@@ -15,19 +13,5 @@ export const pages: RouteObject[] = [
       }
     },
   },
-  {
-    path: '/:activeRouteId',
-    element: <Root />,
-    loader,
-    children: [
-      {
-        path: '',
-        element: <Transactions />,
-      },
-      {
-        path: 'routes',
-        children: routes,
-      },
-    ],
-  },
+  ActiveRoute,
 ]

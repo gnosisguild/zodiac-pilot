@@ -17,7 +17,7 @@ import {
   type LoaderFunctionArgs,
 } from 'react-router-dom'
 import { parsePrefixedAddress } from 'ser-kit'
-import { useStorage } from '../utils'
+import { useStorage } from '../../utils'
 import { getActiveRouteId } from './getActiveRouteId'
 import {
   asLegacyConnection,
@@ -36,7 +36,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   return { route }
 }
 
-export const Root = () => {
+export const ActiveRoute = () => {
   // update the last used timestamp for the current route
   useMarkRouteAsUsed()
 

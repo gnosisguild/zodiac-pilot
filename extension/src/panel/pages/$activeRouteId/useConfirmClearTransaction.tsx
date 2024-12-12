@@ -4,7 +4,7 @@ import {
   PrimaryButton,
   useConfirmationModal,
 } from '@/components'
-import { useClearTransactions } from '../state/transactionHooks'
+import { useClearTransactions } from '@/state'
 
 type ClearTransactionsModalProps = {
   open: boolean
