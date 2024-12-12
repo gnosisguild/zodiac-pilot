@@ -1,4 +1,4 @@
-/* eslint-disable no-empty-pattern */
+/* eslint-disable no-empty-pattern, react-hooks/rules-of-hooks */
 import { test as base, chromium, type BrowserContext } from '@playwright/test'
 import { fileURLToPath } from 'url'
 
