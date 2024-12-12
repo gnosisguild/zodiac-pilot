@@ -1,6 +1,7 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
 import {
   connectMockWallet,
+  createMockRoute,
   createTransaction,
   expectRouteToBe,
   mockRoutes,
@@ -9,7 +10,7 @@ import {
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { ListRoutes } from './ListRoutes'
+import { ListRoutes, loader } from './ListRoutes'
 
 describe('List routes', () => {
   it('is possible to modify an existing route', async () => {
@@ -21,7 +22,7 @@ describe('List routes', () => {
 
     const { mockedPort } = await render(
       '/routes',
-      [{ Component: ListRoutes, path: '/routes' }],
+      [{ Component: ListRoutes, path: 'routes', loader }],
       {
         inspectRoutes: ['/routes/:route-id'],
       },
@@ -39,15 +40,21 @@ describe('List routes', () => {
 
   describe('Clearing transactions', () => {
     it('warns about clearing transactions when the avatars differ', async () => {
-      mockRoutes(
-        { id: 'firstRoute', label: 'First route' },
-        { id: 'secondRoute', label: 'Second route' },
-      )
-
-      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
-        initialSelectedRouteId: 'firstRoute',
-        initialState: [createTransaction()],
+      const selectedRoute = createMockRoute({
+        id: 'firstRoute',
+        label: 'First route',
       })
+
+      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+
+      await render(
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
+        {
+          initialSelectedRoute: selectedRoute,
+          initialState: [createTransaction()],
+        },
+      )
 
       const { getByRole } = within(
         screen.getByRole('region', { name: 'Second route' }),
@@ -61,15 +68,26 @@ describe('List routes', () => {
     })
 
     it('warns about clearing transactions when the avatars differ', async () => {
-      mockRoutes(
-        { id: 'firstRoute', label: 'First route', avatar: ETH_ZERO_ADDRESS },
-        { id: 'secondRoute', label: 'Second route', avatar: ETH_ZERO_ADDRESS },
-      )
-
-      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
-        initialSelectedRouteId: 'firstRoute',
-        initialState: [createTransaction()],
+      const selectedRoute = createMockRoute({
+        id: 'firstRoute',
+        label: 'First route',
+        avatar: ETH_ZERO_ADDRESS,
       })
+
+      mockRoutes(selectedRoute, {
+        id: 'secondRoute',
+        label: 'Second route',
+        avatar: ETH_ZERO_ADDRESS,
+      })
+
+      await render(
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
+        {
+          initialSelectedRoute: selectedRoute,
+          initialState: [createTransaction()],
+        },
+      )
 
       const { getByRole } = within(
         screen.getByRole('region', { name: 'Second route' }),
@@ -83,14 +101,20 @@ describe('List routes', () => {
     })
 
     it('should not warn about clearing transactions when there are none', async () => {
-      mockRoutes(
-        { id: 'firstRoute', label: 'First route' },
-        { id: 'secondRoute', label: 'Second route' },
-      )
-
-      await render('/routes', [{ path: '/routes', Component: ListRoutes }], {
-        initialSelectedRouteId: 'firstRoute',
+      const selectedRoute = createMockRoute({
+        id: 'firstRoute',
+        label: 'First route',
       })
+
+      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+
+      await render(
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader }],
+        {
+          initialSelectedRoute: selectedRoute,
+        },
+      )
 
       const { getByRole } = within(
         screen.getByRole('region', { name: 'Second route' }),
