@@ -1,13 +1,4 @@
-import {
-  CopyToClipboard,
-  errorToast,
-  GhostButton,
-  Info,
-  infoToast,
-  Page,
-  PrimaryButton,
-  successToast,
-} from '@/components'
+import { CopyToClipboard, GhostButton, Info, Page } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
@@ -93,40 +84,6 @@ export const Transactions = () => {
             <Transaction transactionState={transactionState} />
           </div>
         ))}
-
-        <PrimaryButton
-          onClick={() =>
-            infoToast({
-              title: 'Title',
-              message:
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-            })
-          }
-        >
-          Info
-        </PrimaryButton>
-        <PrimaryButton
-          onClick={() =>
-            successToast({
-              title: 'Success',
-              message:
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-            })
-          }
-        >
-          Success
-        </PrimaryButton>
-        <PrimaryButton
-          onClick={() =>
-            errorToast({
-              title: 'Error',
-              message:
-                'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-            })
-          }
-        >
-          Error
-        </PrimaryButton>
 
         {transactions.length === 0 && (
           <div className="mt-32 flex flex-col gap-32">
