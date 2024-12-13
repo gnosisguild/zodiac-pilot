@@ -1,17 +1,17 @@
-import { ZERO_ADDRESS } from '@/chains'
-import { getRoutes } from '@/execution-routes'
+import { getRoute, getRoutes } from '@/execution-routes'
 import { getReadOnlyProvider, useInjectedWallet } from '@/providers'
 import {
   expectRouteToBe,
   MockProvider,
   mockRoute,
   mockRoutes,
+  randomAddress,
+  randomPrefixedAddress,
   render,
 } from '@/test-utils'
 import { ProviderType } from '@/types'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { formatPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, EditRoute, loader } from './EditRoute'
 
@@ -56,9 +56,10 @@ describe('Edit Zodiac route', () => {
         screen.getByRole('button', { name: 'Save & Launch' }),
       )
 
-      expect(chrome.storage.sync.set).toHaveBeenCalledWith({
-        'routes[route-id]': expect.objectContaining({ label: 'Test route' }),
-      })
+      await expect(getRoute('route-id')).resolves.toHaveProperty(
+        'label',
+        'Test route',
+      )
     })
   })
 
@@ -180,11 +181,8 @@ describe('Edit Zodiac route', () => {
       mockRoute({
         id: 'routeId',
         providerType: ProviderType.InjectedWallet,
-        initiator: formatPrefixedAddress(
-          1,
-          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-        ),
-        avatar: formatPrefixedAddress(10, ZERO_ADDRESS),
+        initiator: randomPrefixedAddress({ chainId: 1 }),
+        avatar: randomPrefixedAddress({ chainId: 10 }),
       })
 
       const switchChain = vi.fn()
@@ -236,7 +234,7 @@ describe('Edit Zodiac route', () => {
 
       await userEvent.type(
         screen.getByRole('combobox', { name: 'Piloted Safe' }),
-        '0x5a064eC22bf46dfFAb8a23b52a442FC98bBBD0Fb',
+        randomAddress(),
       )
 
       expect(mockGetReadOnlyProvider).toHaveBeenCalledWith(42161)
