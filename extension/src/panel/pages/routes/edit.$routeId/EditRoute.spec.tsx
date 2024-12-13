@@ -190,7 +190,7 @@ describe('Edit Zodiac route', () => {
   })
 
   describe('Zodiac modules', () => {
-    it.only('is possible to select a zodiac mod', async () => {
+    it('is possible to select a zodiac mod', async () => {
       mockRoute({ id: 'route-id', avatar: randomPrefixedAddress() })
 
       const moduleAddress = randomAddress()
