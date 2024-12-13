@@ -1,7 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { Info } from '@/components'
-import { ProvideExecutionRoutes } from '@/execution-routes'
 import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
@@ -35,15 +34,13 @@ const Root = () => {
     <StrictMode>
       <ProvideBridgeContext windowId={activeWindowId}>
         <ProvideState>
-          <ProvideExecutionRoutes>
-            <ProvideInjectedWallet>
-              <div className="flex h-full flex-1 flex-col">
-                <RouterProvider router={router} />
-              </div>
+          <ProvideInjectedWallet>
+            <div className="flex h-full flex-1 flex-col">
+              <RouterProvider router={router} />
+            </div>
 
-              <ToastContainer position="top-center" />
-            </ProvideInjectedWallet>
-          </ProvideExecutionRoutes>
+            <ToastContainer position="top-center" />
+          </ProvideInjectedWallet>
         </ProvideState>
       </ProvideBridgeContext>
     </StrictMode>

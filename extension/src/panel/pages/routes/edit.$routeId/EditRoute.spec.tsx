@@ -409,4 +409,29 @@ describe('Edit Zodiac route', () => {
       expect(mockGetReadOnlyProvider).toHaveBeenCalledWith(42161)
     })
   })
+
+  describe('Launch', () => {
+    it('launches the route upon save', async () => {
+      mockRoute({ id: 'route-id' })
+
+      await render(
+        '/routes/route-id',
+        [
+          {
+            path: '/routes/:routeId',
+            Component: EditRoute,
+            loader,
+            action,
+          },
+        ],
+        { inspectRoutes: ['/:activeRouteId'] },
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' }),
+      )
+
+      await expectRouteToBe('/route-id')
+    })
+  })
 })

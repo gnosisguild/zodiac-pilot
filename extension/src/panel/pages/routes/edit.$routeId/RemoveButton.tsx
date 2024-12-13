@@ -1,6 +1,7 @@
 import { GhostButton, InlineForm, Modal, PrimaryButton } from '@/components'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { Intent } from './intents'
 
 export const RemoveButton = () => {
   const [confirmRemove, setConfirmRemove] = useState(false)
@@ -29,7 +30,7 @@ export const RemoveButton = () => {
           </GhostButton>
 
           <InlineForm>
-            <PrimaryButton submit style="contrast">
+            <PrimaryButton submit style="contrast" intent={Intent.removeRoute}>
               Remove
             </PrimaryButton>
           </InlineForm>

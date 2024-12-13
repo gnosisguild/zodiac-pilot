@@ -29,7 +29,7 @@ export const BaseButton = ({
 }: BaseButtonProps) => (
   <button
     {...props}
-    type={submit ? 'submit' : undefined}
+    type={submit ? 'submit' : 'button'}
     title={title ? title : typeof children === 'string' ? children : undefined}
     name={intent != null ? 'intent' : props.name}
     value={intent != null ? intent : props.value}
