@@ -12,6 +12,7 @@ import {
 import { ProviderType } from '@/types'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { formatPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, EditRoute, loader } from './EditRoute'
 
@@ -61,6 +62,34 @@ describe('Edit Zodiac route', () => {
         'Test route',
       )
     })
+  })
+
+  it('is possible to switch the chain of a route', async () => {
+    const avatarAddress = randomAddress()
+
+    mockRoute({
+      id: 'route-id',
+      avatar: formatPrefixedAddress(1, avatarAddress),
+    })
+
+    await render('/routes/route-id', [
+      {
+        path: '/routes/:routeId',
+        Component: EditRoute,
+        loader,
+        action,
+      },
+    ])
+
+    await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+    await userEvent.click(screen.getByRole('option', { name: 'Arbitrum One' }))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save & Launch' }))
+
+    await expect(getRoute('route-id')).resolves.toHaveProperty(
+      'avatar',
+      formatPrefixedAddress(42161, avatarAddress).toLowerCase(),
+    )
   })
 
   describe('Remove', () => {
