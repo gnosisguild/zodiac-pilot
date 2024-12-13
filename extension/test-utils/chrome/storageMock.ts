@@ -20,4 +20,10 @@ export const createStorageMock = () => {
       data.set(key, value)
     })
   })
+
+  chromeMock.storage.sync.remove.mockImplementation((key) => {
+    if (typeof key === 'string') {
+      data.delete(key)
+    }
+  })
 }

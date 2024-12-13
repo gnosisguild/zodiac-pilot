@@ -1,7 +1,7 @@
 import { ZERO_ADDRESS } from '@/chains'
+import { getRoutes } from '@/execution-routes'
 import { getReadOnlyProvider, useInjectedWallet } from '@/providers'
 import {
-  chromeMock,
   expectRouteToBe,
   MockProvider,
   mockRoute,
@@ -85,13 +85,11 @@ describe('Edit Zodiac route', () => {
 
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
-      expect(chromeMock.storage.sync.remove).toHaveBeenCalledWith(
-        'routes[route-id]',
-      )
+      await expect(getRoutes()).resolves.toEqual([])
     })
 
     it('does not remove the route if the user cancels', async () => {
-      mockRoute({ id: 'route-id' })
+      const route = await mockRoute({ id: 'route-id' })
 
       await render('/routes/route-id', [
         {
@@ -112,11 +110,14 @@ describe('Edit Zodiac route', () => {
 
       await userEvent.click(getAllByRole('button', { name: 'Cancel' })[0])
 
-      expect(chromeMock.storage.sync.remove).not.toHaveBeenCalledWith()
+      await expect(getRoutes()).resolves.toEqual([route])
     })
 
     it('navigates back to all routes after remove', async () => {
-      mockRoute({ id: 'route-id' })
+      await mockRoutes(
+        { id: 'route-id', label: 'First route' },
+        { label: 'Second route' },
+      )
 
       await render(
         '/routes/route-id',
@@ -142,6 +143,35 @@ describe('Edit Zodiac route', () => {
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
       await expectRouteToBe('/routes')
+    })
+
+    it('navigates back to the root when the last route is removed', async () => {
+      await mockRoutes({ id: 'route-id' })
+
+      await render(
+        '/routes/route-id',
+        [
+          {
+            path: '/routes/:routeId',
+            Component: EditRoute,
+            loader,
+            action,
+          },
+        ],
+        { inspectRoutes: ['/'] },
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Remove route' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Remove' }))
+
+      await expectRouteToBe('/')
     })
   })
 
