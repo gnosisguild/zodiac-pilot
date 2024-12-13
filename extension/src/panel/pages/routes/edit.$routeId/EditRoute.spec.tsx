@@ -10,8 +10,11 @@ import {
   render,
 } from '@/test-utils'
 import { ProviderType } from '@/types'
+import { queryRolesV2MultiSend, useZodiacModules } from '@/zodiac'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { getAddress } from 'ethers'
 import { formatPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, EditRoute, loader } from './EditRoute'
@@ -30,9 +33,24 @@ vi.mock('@/providers', async (importOriginal) => {
 const mockGetReadOnlyProvider = vi.mocked(getReadOnlyProvider)
 const mockUseInjectedWallet = vi.mocked(useInjectedWallet)
 
+vi.mock('@/zodiac', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/zodiac')>()
+
+  return {
+    ...module,
+
+    useZodiacModules: vi.fn(module.useZodiacModules),
+    queryRolesV2MultiSend: vi.fn(module.queryRolesV2MultiSend),
+  }
+})
+
+const mockUseZodiacModules = vi.mocked(useZodiacModules)
+const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
+
 describe('Edit Zodiac route', () => {
   beforeEach(() => {
     mockUseInjectedWallet.mockRestore()
+    mockUseZodiacModules.mockRestore()
   })
 
   describe('Label', () => {
@@ -168,6 +186,49 @@ describe('Edit Zodiac route', () => {
         'avatar',
         formatPrefixedAddress(1, address).toLowerCase(),
       )
+    })
+  })
+
+  describe('Zodiac modules', () => {
+    it.only('is possible to select a zodiac mod', async () => {
+      mockRoute({ id: 'route-id', avatar: randomPrefixedAddress() })
+
+      const moduleAddress = randomAddress()
+
+      mockUseZodiacModules.mockReturnValue({
+        isValidSafe: true,
+        loading: false,
+        modules: [{ moduleAddress, type: KnownContracts.ROLES_V2 }],
+      })
+
+      mockQueryRolesV2MultiSend.mockResolvedValue({})
+
+      await render('/routes/route-id', [
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+      )
+      await userEvent.click(
+        screen.getByRole('option', {
+          name: `Roles v2 ${getAddress(moduleAddress)}`,
+        }),
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' }),
+      )
+
+      const route = await getRoute('route-id')
+      const [, roleWaypoint] = route.waypoints || []
+
+      expect(roleWaypoint?.account).toHaveProperty('address', moduleAddress)
     })
   })
 
