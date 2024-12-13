@@ -47,7 +47,7 @@ export const NoRoutes = () => {
       <Page.Footer>
         <Form method="post" className="flex flex-col">
           <PrimaryButton submit icon={Plus}>
-            Add Route
+            Add route
           </PrimaryButton>
         </Form>
       </Page.Footer>
