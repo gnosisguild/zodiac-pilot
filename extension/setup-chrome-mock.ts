@@ -1,16 +1,10 @@
-import { afterEach, beforeEach, vi } from 'vitest'
-import { chrome as chromeMock } from 'vitest-chrome'
+import { afterEach, beforeEach } from 'vitest'
+import { chromeMock } from './test-utils/chrome/chromeMock'
+import { createStorageMock } from './test-utils/chrome/storageMock'
 
-const setPanelBehavior = vi.fn()
-
-Object.assign(chromeMock, {
-  ...chromeMock,
-  sidePanel: {
-    setPanelBehavior,
-  },
+beforeEach(() => {
+  createStorageMock()
 })
-
-beforeEach(() => setPanelBehavior.mockResolvedValue(null))
 
 afterEach(() => {
   clearAllListeners()
