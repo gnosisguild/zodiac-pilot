@@ -64,32 +64,111 @@ describe('Edit Zodiac route', () => {
     })
   })
 
-  it('is possible to switch the chain of a route', async () => {
-    const avatarAddress = randomAddress()
+  describe('Chain', () => {
+    it('is possible to switch the chain of a route', async () => {
+      const avatarAddress = randomAddress()
 
-    mockRoute({
-      id: 'route-id',
-      avatar: formatPrefixedAddress(1, avatarAddress),
+      mockRoute({
+        id: 'route-id',
+        avatar: formatPrefixedAddress(1, avatarAddress),
+      })
+
+      await render('/routes/route-id', [
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(
+        screen.getByRole('option', { name: 'Arbitrum One' }),
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' }),
+      )
+
+      await expect(getRoute('route-id')).resolves.toHaveProperty(
+        'avatar',
+        formatPrefixedAddress(42161, avatarAddress).toLowerCase(),
+      )
     })
+  })
 
-    await render('/routes/route-id', [
-      {
-        path: '/routes/:routeId',
-        Component: EditRoute,
-        loader,
-        action,
-      },
-    ])
+  describe('Pilot Account', () => {
+    describe('MetaMask', () => {
+      it('is possible to connect an account', async () => {
+        const account = randomAddress()
 
-    await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
-    await userEvent.click(screen.getByRole('option', { name: 'Arbitrum One' }))
+        mockUseInjectedWallet.mockReturnValue({
+          accounts: [account],
+          chainId: 1,
+          connect: vi
+            .fn()
+            .mockResolvedValue({ chainId: 1, accounts: [account] }),
+          connectionStatus: 'disconnected',
+          provider: new MockProvider(),
+          ready: true,
+          switchChain: vi.fn(),
+        })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save & Launch' }))
+        mockRoute({ id: 'route-id' })
 
-    await expect(getRoute('route-id')).resolves.toHaveProperty(
-      'avatar',
-      formatPrefixedAddress(42161, avatarAddress).toLowerCase(),
-    )
+        await render('/routes/route-id', [
+          {
+            path: '/routes/:routeId',
+            Component: EditRoute,
+            loader,
+            action,
+          },
+        ])
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Connect with MetaMask' }),
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Launch' }),
+        )
+
+        await expect(getRoute('route-id')).resolves.toHaveProperty(
+          'initiator',
+          `eoa:${account}`,
+        )
+      })
+    })
+  })
+
+  describe('Piloted Safe', () => {
+    it('is possible to define a safe', async () => {
+      mockRoute({ id: 'route-id' })
+
+      await render('/routes/route-id', [
+        {
+          path: '/routes/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
+      ])
+
+      const address = randomAddress()
+
+      await userEvent.type(
+        screen.getByRole('combobox', { name: 'Piloted Safe' }),
+        `${address}[enter]`,
+      )
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Launch' }),
+      )
+
+      await expect(getRoute('route-id')).resolves.toHaveProperty(
+        'avatar',
+        formatPrefixedAddress(1, address).toLowerCase(),
+      )
+    })
   })
 
   describe('Remove', () => {
