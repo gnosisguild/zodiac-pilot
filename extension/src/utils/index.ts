@@ -1,5 +1,6 @@
 export * from './addressValidation'
 export * from './decodeError'
+export { formData } from './formData'
 export { getActiveTab, useActiveTab } from './getActiveTab'
 export { getInt } from './getInt'
 export { getOptionalString } from './getOptionalString'

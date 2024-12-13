@@ -3,17 +3,20 @@ import {
   markRouteAsUsed,
   ProvideExecutionRoute,
   saveLastUsedRouteId,
-  useSaveExecutionRoute,
+  saveRoute,
 } from '@/execution-routes'
 import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
+import { formData, getString } from '@/utils'
 import {
   Outlet,
   redirect,
   useLoaderData,
+  useSubmit,
+  type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
 import { saveStorageEntry } from '../../utils/saveStorageEntry'
@@ -22,6 +25,7 @@ import {
   fromLegacyConnection,
 } from '../legacyConnectionMigrations'
 import { getActiveRouteId } from './getActiveRouteId'
+import { Intent } from './intents'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const activeRouteId = getActiveRouteId(params)
@@ -39,21 +43,37 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   }
 }
 
-export const ActiveRoute = () => {
-  // make sure the injected provider stays updated on every relevant route change
-  const { route } = useLoaderData<typeof loader>()
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const data = await request.formData()
 
-  const saveRoute = useSaveExecutionRoute()
+  switch (getString(data, 'intent')) {
+    case Intent.disconnectProvider: {
+      const routeId = getActiveRouteId(params)
+      const route = await getRoute(routeId)
 
-  useConnectInjectedWalletIfNeeded(route)
-  useDisconnectWalletConnectIfNeeded(route, {
-    onDisconnect: () =>
-      saveRoute(
+      await saveRoute(
         fromLegacyConnection({
           ...asLegacyConnection(route),
           pilotAddress: '',
         }),
-      ),
+      )
+
+      return null
+    }
+  }
+}
+
+export const ActiveRoute = () => {
+  const { route } = useLoaderData<typeof loader>()
+
+  const submit = useSubmit()
+
+  useConnectInjectedWalletIfNeeded(route)
+  useDisconnectWalletConnectIfNeeded(route, {
+    onDisconnect: () =>
+      submit(formData({ intent: Intent.disconnectProvider }), {
+        method: 'post',
+      }),
   })
 
   return (
