@@ -1,8 +1,10 @@
-import { Breadcrumbs, Page, PrimaryButton } from '@/components'
+import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@/components'
 import { createRoute, getRoutes } from '@/execution-routes'
+import { getString } from '@/utils'
 import { Plus } from 'lucide-react'
-import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
+import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { Route } from './Route'
+import { Intent } from './intents'
 
 export const loader = async () => {
   return {
@@ -10,14 +12,25 @@ export const loader = async () => {
   }
 }
 
-export const action = async () => {
-  const route = await createRoute()
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const data = await request.formData()
 
-  return redirect(`/routes/edit/${route.id}`)
+  switch (getString(data, 'intent')) {
+    case Intent.addRoute: {
+      const route = await createRoute()
+
+      return redirect(`/routes/edit/${route.id}`)
+    }
+
+    case Intent.launchRoute: {
+      const routeId = getString(data, 'routeId')
+
+      return redirect(`/${routeId}`)
+    }
+  }
 }
 
 export const ListRoutes = () => {
-  const navigate = useNavigate()
   const { routes } = useLoaderData<typeof loader>()
 
   return (
@@ -32,20 +45,16 @@ export const ListRoutes = () => {
 
       <Page.Content>
         {routes.map((route) => (
-          <Route
-            key={route.id}
-            route={route}
-            onLaunch={(routeId) => navigate(`/${routeId}`)}
-          />
+          <Route key={route.id} route={route} />
         ))}
       </Page.Content>
 
       <Page.Footer>
-        <Form className="flex flex-col" method="post">
-          <PrimaryButton fluid submit icon={Plus}>
+        <InlineForm className="flex flex-col">
+          <PrimaryButton submit icon={Plus} intent={Intent.addRoute}>
             Add route
           </PrimaryButton>
-        </Form>
+        </InlineForm>
       </Page.Footer>
     </Page>
   )

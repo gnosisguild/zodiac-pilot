@@ -1,6 +1,7 @@
 export * from './addressValidation'
 export * from './decodeError'
 export { getActiveTab, useActiveTab } from './getActiveTab'
+export { getString } from './getString'
 export { injectScript } from './injectScript'
 export { isValidTab } from './isValidTab'
 export { reloadActiveTab } from './reloadActiveTab'

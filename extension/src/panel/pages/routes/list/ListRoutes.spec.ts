@@ -56,6 +56,36 @@ describe('List routes', () => {
 
       await expectRouteToBe('/test-route')
     })
+
+    it('is possible to launch a new route and clear transactions', async () => {
+      const selectedRoute = createMockRoute({
+        id: 'firstRoute',
+        label: 'First route',
+      })
+
+      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+
+      await render(
+        '/routes',
+        [{ path: '/routes', Component: ListRoutes, loader, action }],
+        {
+          initialSelectedRoute: selectedRoute,
+          initialState: [createTransaction()],
+          inspectRoutes: ['/:activeRouteId'],
+        },
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('region', { name: 'Second route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Launch' }))
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Clear transactions' }),
+      )
+
+      await expectRouteToBe('/secondRoute')
+    })
   })
 
   describe('Clearing transactions', () => {

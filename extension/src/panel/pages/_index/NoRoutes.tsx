@@ -1,4 +1,4 @@
-import { Info, Page, PrimaryButton } from '@/components'
+import { Info, InlineForm, Page, PrimaryButton } from '@/components'
 import {
   createRoute,
   getLastUsedRouteId,
@@ -6,7 +6,7 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { Plus } from 'lucide-react'
-import { Form, redirect } from 'react-router'
+import { redirect } from 'react-router'
 
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
@@ -45,11 +45,11 @@ export const NoRoutes = () => {
       </Page.Content>
 
       <Page.Footer>
-        <Form method="post" className="flex flex-col">
+        <InlineForm className="flex flex-col">
           <PrimaryButton submit icon={Plus}>
             Add route
           </PrimaryButton>
-        </Form>
+        </InlineForm>
       </Page.Footer>
     </Page>
   )

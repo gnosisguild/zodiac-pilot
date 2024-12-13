@@ -9,6 +9,7 @@ type SharedButtonProps = {
   icon?: LucideIcon
   size?: 'small' | 'base'
   submit?: boolean
+  intent?: string
 }
 
 export type BaseButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'type'> &
@@ -23,12 +24,15 @@ export const BaseButton = ({
   children,
   title,
   submit = false,
+  intent,
   ...props
 }: BaseButtonProps) => (
   <button
     {...props}
     type={submit ? 'submit' : undefined}
     title={title ? title : typeof children === 'string' ? children : undefined}
+    name={intent != null ? 'intent' : props.name}
+    value={intent != null ? intent : props.value}
     className={classNames(
       'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',

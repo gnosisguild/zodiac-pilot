@@ -1,25 +1,33 @@
-import { SecondaryButton, SecondaryLinkButton, Tag } from '@/components'
+import {
+  InlineForm,
+  SecondaryButton,
+  SecondaryLinkButton,
+  Tag,
+} from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { useSubmit } from 'react-router'
 import { ConnectionStack } from '../../ConnectionStack'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { ClearTransactionsModal } from '../../useConfirmClearTransaction'
+import { Intent } from './intents'
 
 interface RouteProps {
   route: ExecutionRoute
-  onLaunch: (routeId: string) => void
 }
 
-export const Route = ({ onLaunch, route }: RouteProps) => {
+export const Route = ({ route }: RouteProps) => {
   const [connected, connect] = useRouteConnect(route)
   const currentlySelectedRoute = useExecutionRoute()
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
   const transactions = useTransactions()
+  const submit = useSubmit()
+  const formRef = useRef(null)
 
   return (
     <>
@@ -64,33 +72,39 @@ export const Route = ({ onLaunch, route }: RouteProps) => {
             Edit
           </SecondaryLinkButton>
 
-          <SecondaryButton
-            onClick={async () => {
-              if (transactions.length > 0) {
+          <InlineForm ref={formRef} context={{ routeId: route.id }}>
+            <SecondaryButton
+              submit
+              intent={Intent.launchRoute}
+              onClick={(event) => {
+                if (transactions.length === 0) {
+                  return
+                }
                 // we continue working with the same avatar, so don't have to clear the recorded transaction
                 const keepTransactionBundle =
                   currentlySelectedRoute &&
                   currentlySelectedRoute.avatar === route.avatar
 
-                if (!keepTransactionBundle) {
-                  setConfirmClearTransactions(true)
-
+                if (keepTransactionBundle) {
                   return
                 }
-              }
 
-              onLaunch(route.id)
-            }}
-          >
-            Launch
-          </SecondaryButton>
+                setConfirmClearTransactions(true)
+
+                event.preventDefault()
+                event.stopPropagation()
+              }}
+            >
+              Launch
+            </SecondaryButton>
+          </InlineForm>
         </div>
       </section>
 
       <ClearTransactionsModal
         open={confirmClearTransactions}
         onClose={() => setConfirmClearTransactions(false)}
-        onConfirm={() => onLaunch(route.id)}
+        onConfirm={() => submit(formRef.current, { method: 'post' })}
       />
     </>
   )
