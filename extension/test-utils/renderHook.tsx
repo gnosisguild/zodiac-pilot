@@ -8,7 +8,7 @@ import type { PropsWithChildren } from 'react'
 import type { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
 import { mockActiveTab, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
-import { mockRoutes } from './mockRoutes'
+import { mockRoutes } from './executionRoutes'
 import { TestElement, waitForTestElement } from './TestElement'
 
 type Fn<Result, Props> = (props: Props) => Result
