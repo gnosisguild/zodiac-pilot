@@ -1,7 +1,6 @@
 export * from './chrome'
 export * from './creators'
-export { mockRoute } from './mockRoute'
-export { mockRoutes } from './mockRoutes'
+export * from './executionRoutes'
 export { expectRouteToBe, render } from './render'
 export { renderHook } from './renderHook'
 export { RenderWrapper } from './RenderWrapper'
