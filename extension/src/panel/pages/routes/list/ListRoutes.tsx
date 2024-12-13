@@ -1,5 +1,5 @@
 import { Breadcrumbs, Page, PrimaryButton } from '@/components'
-import { createRoute, getRoutes, saveLastUsedRouteId } from '@/execution-routes'
+import { createRoute, getRoutes } from '@/execution-routes'
 import { Plus } from 'lucide-react'
 import { Form, redirect, useLoaderData, useNavigate } from 'react-router'
 import { Route } from './Route'
@@ -12,8 +12,6 @@ export const loader = async () => {
 
 export const action = async () => {
   const route = await createRoute()
-
-  await saveLastUsedRouteId(route.id)
 
   return redirect(`/routes/edit/${route.id}`)
 }
@@ -45,7 +43,7 @@ export const ListRoutes = () => {
       <Page.Footer>
         <Form className="flex flex-col" method="post">
           <PrimaryButton fluid submit icon={Plus}>
-            Add Route
+            Add route
           </PrimaryButton>
         </Form>
       </Page.Footer>
