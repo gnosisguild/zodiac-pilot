@@ -117,7 +117,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         }),
       )
 
-      return null
+      return redirect(`/${routeId}`)
     }
   }
 }
