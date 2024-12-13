@@ -2,7 +2,6 @@ export { createRoute } from './createRoute'
 export {
   ProvideExecutionRoute,
   useExecutionRoute,
-  useSelectedRouteId,
 } from './ExecutionRouteContext'
 export { getLastUsedRouteId } from './getLastUsedRouteId'
 export { getRoute } from './getRoute'
