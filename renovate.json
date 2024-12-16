@@ -8,7 +8,8 @@
     },
     {
       "matchPackageNames": ["/^@walletconnect/"],
-      "automerge": false
+      "automerge": false,
+      "groupName": "Wallet Connect"
     }
   ]
 }
