@@ -1,3 +1,4 @@
+export { fetchZodiacModules, type ZodiacModule } from './fetchZodiacModules'
 export {
   MULTISEND,
   MULTISEND_CALL_ONLY,
@@ -5,4 +6,3 @@ export {
   queryRolesV2MultiSend,
 } from './rolesMultisend'
 export type { SupportedModuleType } from './types'
-export { useZodiacModules } from './useZodiacModules'

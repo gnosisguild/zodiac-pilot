@@ -7,7 +7,9 @@ import {
   Page,
   PrimaryButton,
   Section,
+  Select,
   TextInput,
+  Warning,
 } from '@/components'
 import {
   getLastUsedRouteId,
@@ -22,28 +24,35 @@ import type { HexAddress, LegacyConnection } from '@/types'
 import {
   decodeRoleKey,
   encodeRoleKey,
+  formData,
   getInt,
   getOptionalString,
   getString,
 } from '@/utils'
 import {
+  fetchZodiacModules,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
-  useZodiacModules,
   type SupportedModuleType,
 } from '@/zodiac'
+import { invariantResponse } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { ZeroAddress } from 'ethers'
+import { getAddress, ZeroAddress } from 'ethers'
 import { Rocket } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import {
+  Await,
   redirect,
   useLoaderData,
   useSubmit,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { formatPrefixedAddress, type ChainId } from 'ser-kit'
+import {
+  formatPrefixedAddress,
+  splitPrefixedAddress,
+  type ChainId,
+} from 'ser-kit'
 import {
   asLegacyConnection,
   fromLegacyConnection,
@@ -61,16 +70,50 @@ import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url)
   const lastUsedRouteId = await getLastUsedRouteId()
   const routeId = getRouteId(params)
 
   const route = await getRoute(routeId)
 
+  const preliminaryAvatarAddress = getPreliminaryAvatarAddress(
+    url.searchParams.get('avatarAddress'),
+  )
+  const preliminaryChainId = url.searchParams.get('chainId')
+  const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
+
+  invariantResponse(
+    chainId != null,
+    `Could not parse chain ID from address "${route.avatar}"`,
+  )
+
+  const zodiacModules = fetchZodiacModules(
+    preliminaryAvatarAddress != null ? preliminaryAvatarAddress : avatarAddress,
+    preliminaryChainId != null
+      ? (parseInt(preliminaryChainId) as ChainId)
+      : chainId,
+  )
+
   return {
     initialRouteState: route,
     currentExecutionRoute:
       lastUsedRouteId != null ? await getRoute(lastUsedRouteId) : null,
+    zodiacModules,
+  }
+}
+
+const getPreliminaryAvatarAddress = (
+  address: string | null,
+): HexAddress | null => {
+  if (address == null) {
+    return null
+  }
+
+  try {
+    return getAddress(address) as HexAddress
+  } catch {
+    return null
   }
 }
 
@@ -123,12 +166,12 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 }
 
 export const EditRoute = () => {
-  const { initialRouteState, currentExecutionRoute } =
+  const { initialRouteState, currentExecutionRoute, zodiacModules } =
     useLoaderData<typeof loader>()
   const [currentRouteState, setCurrentRouteState] = useState(initialRouteState)
 
   const legacyConnection = asLegacyConnection(currentRouteState)
-  const { label, avatarAddress, pilotAddress, moduleAddress, roleId, chainId } =
+  const { label, avatarAddress, pilotAddress, roleId, chainId, moduleAddress } =
     legacyConnection
 
   const { safes } = useSafesWithOwner(initialRouteState, pilotAddress)
@@ -137,15 +180,9 @@ export const EditRoute = () => {
     chainId,
     avatarAddress as HexAddress,
   )
-  // TODO modules is a nested list, but we currently only render the top-level items
-  const { modules } = useZodiacModules(prefixedAvatarAddress)
 
   const [confirmClearTransactions, ConfirmationModal] =
     useConfirmClearTransactions()
-
-  const selectedModule = moduleAddress
-    ? modules.find((mod) => mod.moduleAddress === moduleAddress)
-    : undefined
 
   const updateRoute = (patch: ConnectionPatch) => {
     console.debug('updateRoute', patch)
@@ -167,6 +204,10 @@ export const EditRoute = () => {
 
   const formRef = useRef(null)
   const submit = useSubmit()
+
+  useEffect(() => {
+    submit(formData({ avatarAddress, chainId }), { method: 'get' })
+  }, [chainId, avatarAddress, submit])
 
   return (
     <>
@@ -249,87 +290,120 @@ export const EditRoute = () => {
               }}
             />
 
-            <ZodiacMod
-              route={initialRouteState}
-              avatarAddress={prefixedAvatarAddress}
-              pilotAddress={pilotAddress}
-              value={
-                selectedModule
-                  ? {
-                      moduleAddress: selectedModule.moduleAddress,
-                      moduleType: selectedModule.type,
-                    }
-                  : null
+            <Suspense
+              fallback={
+                <Select
+                  isDisabled
+                  label="Zodiac Mod"
+                  placeholder="Loading modules..."
+                />
               }
-              onSelect={async (value) => {
-                if (value == null) {
-                  updateRoute({
-                    moduleAddress: undefined,
-                    moduleType: undefined,
-                  })
-
-                  return
+            >
+              <Await
+                resolve={zodiacModules}
+                errorElement={
+                  <Warning title="Selected safe is not valid">
+                    Please select a valid safe to be able to select a mod.
+                  </Warning>
                 }
+              >
+                {(modules) => {
+                  const selectedModule = modules.find(
+                    (module) => module.moduleAddress === moduleAddress,
+                  )
 
-                switch (value.moduleType) {
-                  case KnownContracts.ROLES_V1: {
-                    updateRoute({
-                      ...value,
-                      multisend: await queryRolesV1MultiSend(
-                        chainId,
-                        value.moduleAddress,
-                      ),
-                    })
+                  return (
+                    <>
+                      <ZodiacMod
+                        modules={modules}
+                        route={initialRouteState}
+                        avatarAddress={prefixedAvatarAddress}
+                        pilotAddress={pilotAddress}
+                        value={
+                          selectedModule
+                            ? {
+                                moduleAddress: selectedModule.moduleAddress,
+                                moduleType: selectedModule.type,
+                              }
+                            : null
+                        }
+                        onSelect={async (value) => {
+                          if (value == null) {
+                            updateRoute({
+                              moduleAddress: undefined,
+                              moduleType: undefined,
+                            })
 
-                    break
-                  }
+                            return
+                          }
 
-                  case KnownContracts.ROLES_V2: {
-                    updateRoute({
-                      ...value,
-                      ...(await queryRolesV2MultiSend(
-                        chainId,
-                        value.moduleAddress,
-                      )),
-                    })
+                          switch (value.moduleType) {
+                            case KnownContracts.ROLES_V1: {
+                              updateRoute({
+                                ...value,
+                                multisend: await queryRolesV1MultiSend(
+                                  chainId,
+                                  value.moduleAddress,
+                                ),
+                              })
 
-                    break
-                  }
-                }
-              }}
-            />
+                              break
+                            }
 
-            {selectedModule?.type === KnownContracts.ROLES_V1 && (
-              <TextInput
-                label="Role ID"
-                value={roleId}
-                onChange={(ev) => {
-                  updateRoute({ roleId: ev.target.value })
+                            case KnownContracts.ROLES_V2: {
+                              updateRoute({
+                                ...value,
+                                ...(await queryRolesV2MultiSend(
+                                  chainId,
+                                  value.moduleAddress,
+                                )),
+                              })
+
+                              break
+                            }
+                          }
+                        }}
+                      />
+
+                      {selectedModule?.type === KnownContracts.ROLES_V1 && (
+                        <TextInput
+                          label="Role ID"
+                          value={roleId}
+                          onChange={(ev) => {
+                            updateRoute({ roleId: ev.target.value })
+                          }}
+                          placeholder="0"
+                        />
+                      )}
+
+                      {selectedModule?.type === KnownContracts.ROLES_V2 && (
+                        <TextInput
+                          label="Role Key"
+                          key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
+                          error={roleIdError}
+                          defaultValue={
+                            roleId != null
+                              ? decodeRoleKey(roleId) || roleId
+                              : roleId
+                          }
+                          onChange={(ev) => {
+                            try {
+                              const roleId = encodeRoleKey(ev.target.value)
+                              setRoleIdError(null)
+                              updateRoute({ roleId })
+                            } catch (e) {
+                              updateRoute({ roleId: '' })
+                              setRoleIdError((e as Error).message)
+                            }
+                          }}
+                          placeholder="Enter key as bytes32 hex string or in human-readable decoding"
+                        />
+                      )}
+                    </>
+                  )
                 }}
-                placeholder="0"
-              />
-            )}
-            {selectedModule?.type === KnownContracts.ROLES_V2 && (
-              <TextInput
-                label="Role Key"
-                key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections
-                error={roleIdError}
-                defaultValue={
-                  roleId != null ? decodeRoleKey(roleId) || roleId : roleId
-                }
-                onChange={(ev) => {
-                  try {
-                    const roleId = encodeRoleKey(ev.target.value)
-                    setRoleIdError(null)
-                    updateRoute({ roleId })
-                  } catch (e) {
-                    updateRoute({ roleId: '' })
-                    setRoleIdError((e as Error).message)
-                  }
-                }}
-                placeholder="Enter key as bytes32 hex string or in human-readable decoding"
-              />
-            )}
+              </Await>
+            </Suspense>
           </InlineForm>
         </Page.Content>
 
