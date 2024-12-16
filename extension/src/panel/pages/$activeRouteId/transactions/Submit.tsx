@@ -87,6 +87,7 @@ export const Submit = () => {
         message: (
           <a
             href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+            className="inline-flex items-center gap-1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -106,7 +107,8 @@ export const Submit = () => {
         title: 'Transaction batch has been proposed for execution',
         message: (
           <a
-            href={`//app.safe.global/transactions/tx?safe=${avatar}&id=multisig_${avatarAddress}_${safeTxHash}`}
+            href={`https://app.safe.global/transactions/tx?safe=${avatar}&id=multisig_${avatarAddress}_${safeTxHash}`}
+            className="inline-flex items-center gap-1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -126,6 +128,7 @@ export const Submit = () => {
         message: (
           <a
             href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+            className="inline-flex items-center gap-1"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -183,7 +186,7 @@ const AwaitingSignatureModal = ({
     closeLabel="Abort transaction"
     onClose={onClose}
   >
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 gap-2">
       <Spinner /> Awaiting your signature ...
     </div>
     {usesWalletConnect && (
