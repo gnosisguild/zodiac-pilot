@@ -1,4 +1,4 @@
-import { getRoute, getRoutes } from '@/execution-routes'
+import { getLastUsedRouteId, getRoute, getRoutes } from '@/execution-routes'
 import { useInjectedWallet } from '@/providers'
 import {
   expectRouteToBe,
@@ -339,6 +339,35 @@ describe('Edit Zodiac route', () => {
       await userEvent.click(getByRole('button', { name: 'Remove' }))
 
       await expectRouteToBe('/')
+    })
+
+    it('sets another route as active, when the the deleted route is currently active', async () => {
+      await mockRoutes({ id: 'first-route' }, { id: 'second-route' })
+
+      await render(
+        '/routes/edit/first-route',
+        [
+          {
+            path: '/routes/edit/:routeId',
+            Component: EditRoute,
+            loader,
+            action,
+          },
+        ],
+        { inspectRoutes: ['/routes'] },
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Remove route' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Remove' }))
+
+      await expect(getLastUsedRouteId()).resolves.toEqual('second-route')
     })
   })
 

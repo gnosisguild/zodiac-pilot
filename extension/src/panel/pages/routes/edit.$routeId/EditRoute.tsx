@@ -137,6 +137,10 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
         return redirect('/')
       }
 
+      const [newActiveRoute] = routes
+
+      await saveLastUsedRouteId(newActiveRoute.id)
+
       return redirect('/routes')
     }
 
