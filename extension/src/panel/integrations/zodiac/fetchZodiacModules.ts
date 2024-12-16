@@ -1,4 +1,3 @@
-import { getChainId } from '@/chains'
 import { getReadOnlyProvider } from '@/providers'
 import type { HexAddress } from '@/types'
 import {
@@ -9,12 +8,7 @@ import {
 import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
-import { useEffect, useState } from 'react'
-import {
-  type ChainId,
-  parsePrefixedAddress,
-  type PrefixedAddress,
-} from 'ser-kit'
+import { type ChainId } from 'ser-kit'
 import type { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
@@ -27,34 +21,6 @@ export interface ZodiacModule {
   mastercopyAddress?: string // if empty, it's a custom non-proxied deployment
   type: SupportedModuleType
   modules?: ZodiacModule[]
-}
-
-export const useZodiacModules = (
-  safeAddress: PrefixedAddress,
-): { loading: boolean; isValidSafe: boolean; modules: ZodiacModule[] } => {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
-  const [modules, setModules] = useState<ZodiacModule[]>([])
-  const chainId = getChainId(safeAddress)
-  const address = parsePrefixedAddress(safeAddress)
-
-  useEffect(() => {
-    setLoading(true)
-    setError(false)
-    fetchZodiacModules(address, chainId)
-      .then((modules) => setModules(modules))
-      .catch((e) => {
-        console.error(`Could not fetch modules of Safe ${address}`, e)
-        setError(true)
-      })
-      .finally(() => setLoading(false))
-  }, [address, chainId])
-
-  if (error) {
-    return { isValidSafe: false, loading, modules: [] }
-  }
-
-  return { loading, isValidSafe: true, modules }
 }
 
 export async function fetchZodiacModules(

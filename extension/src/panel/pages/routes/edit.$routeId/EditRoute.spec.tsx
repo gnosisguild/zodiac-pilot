@@ -10,16 +10,12 @@ import {
   render,
 } from '@/test-utils'
 import { ProviderType } from '@/types'
-import {
-  fetchZodiacModules,
-  queryRolesV2MultiSend,
-  useZodiacModules,
-} from '@/zodiac'
+import { fetchZodiacModules, queryRolesV2MultiSend } from '@/zodiac'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getAddress } from 'ethers'
-import { formatPrefixedAddress } from 'ser-kit'
+import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, EditRoute, loader } from './EditRoute'
 
@@ -44,19 +40,16 @@ vi.mock('@/zodiac', async (importOriginal) => {
     ...module,
 
     fetchZodiacModules: vi.fn(module.fetchZodiacModules),
-    useZodiacModules: vi.fn(module.useZodiacModules),
     queryRolesV2MultiSend: vi.fn(module.queryRolesV2MultiSend),
   }
 })
 
-const mockUseZodiacModules = vi.mocked(useZodiacModules)
 const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
 describe('Edit Zodiac route', () => {
   beforeEach(() => {
     mockUseInjectedWallet.mockRestore()
-    mockUseZodiacModules.mockRestore()
 
     mockFetchZodiacModules.mockResolvedValue([])
   })
@@ -206,12 +199,6 @@ describe('Edit Zodiac route', () => {
       mockFetchZodiacModules.mockResolvedValue([
         { moduleAddress, type: KnownContracts.ROLES_V2 },
       ])
-
-      mockUseZodiacModules.mockReturnValue({
-        isValidSafe: true,
-        loading: false,
-        modules: [{ moduleAddress, type: KnownContracts.ROLES_V2 }],
-      })
 
       mockQueryRolesV2MultiSend.mockResolvedValue({})
 
@@ -397,7 +384,7 @@ describe('Edit Zodiac route', () => {
 
   describe('New route', () => {
     it('uses the correct chain to fetch zodiac modules', async () => {
-      mockRoutes({ id: 'new-route' })
+      const route = await mockRoute({ id: 'new-route' })
 
       await render('/routes/new-route', [
         {
@@ -418,7 +405,9 @@ describe('Edit Zodiac route', () => {
         randomAddress(),
       )
 
-      expect(mockGetReadOnlyProvider).toHaveBeenCalledWith(42161)
+      const [, avatarAddress] = splitPrefixedAddress(route.avatar)
+
+      expect(mockFetchZodiacModules).toHaveBeenCalledWith(avatarAddress, 42161)
     })
   })
 
