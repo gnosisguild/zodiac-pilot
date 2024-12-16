@@ -1,5 +1,5 @@
 import { getRoute, getRoutes } from '@/execution-routes'
-import { getReadOnlyProvider, useInjectedWallet } from '@/providers'
+import { useInjectedWallet } from '@/providers'
 import {
   expectRouteToBe,
   MockProvider,
@@ -25,12 +25,10 @@ vi.mock('@/providers', async (importOriginal) => {
   return {
     ...module,
 
-    getReadOnlyProvider: vi.fn(module.getReadOnlyProvider),
     useInjectedWallet: vi.fn(module.useInjectedWallet),
   }
 })
 
-const mockGetReadOnlyProvider = vi.mocked(getReadOnlyProvider)
 const mockUseInjectedWallet = vi.mocked(useInjectedWallet)
 
 vi.mock('@/zodiac', async (importOriginal) => {
