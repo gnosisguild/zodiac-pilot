@@ -1,4 +1,5 @@
 import { infoToast } from '@/components'
+import { invariant } from '@epic-web/invariant'
 import { BrowserProvider } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
@@ -14,7 +15,7 @@ type ConnectOptions = {
 }
 
 export const useConnect = (
-  provider: ConnectProvider,
+  provider: ConnectProvider | null,
   { onBeforeConnect, onConnect, onError }: ConnectOptions,
 ) => {
   const onConnectRef = useRef(onConnect)
@@ -37,6 +38,11 @@ export const useConnect = (
     async ({ force }: { force?: boolean } = {}): Promise<
       ConnectResult | undefined
     > => {
+      invariant(
+        provider != null,
+        'Cannot connect because the provider has not been set up, yet.',
+      )
+
       if (onBeforeConnectRef.current) {
         onBeforeConnectRef.current()
       }

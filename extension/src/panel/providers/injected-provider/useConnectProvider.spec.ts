@@ -1,4 +1,5 @@
 import { renderHook, RenderWrapper } from '@/test-utils'
+import { invariant } from '@epic-web/invariant'
 import { waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { useConnectProvider } from './useConnectProvider'
@@ -9,6 +10,11 @@ describe('useConnectProvider', () => {
       const { result } = await renderHook(() => useConnectProvider(), {
         wrapper: RenderWrapper,
       })
+
+      invariant(
+        result.current.provider != null,
+        'Provider did not connect, yet.',
+      )
 
       vi.spyOn(result.current.provider, 'request').mockRejectedValue({
         message: 'Error',

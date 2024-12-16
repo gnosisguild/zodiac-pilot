@@ -2,7 +2,7 @@
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { Info } from '@/components'
 import { ProvideBridgeContext } from '@/inject-bridge'
-import { ProvideInjectedWallet } from '@/providers'
+import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -34,13 +34,15 @@ const Root = () => {
     <StrictMode>
       <ProvideBridgeContext windowId={activeWindowId}>
         <ProvideState>
-          <ProvideInjectedWallet>
-            <div className="flex h-full flex-1 flex-col">
-              <RouterProvider router={router} />
-            </div>
+          <ProvideConnectProvider windowId={activeWindowId}>
+            <ProvideInjectedWallet>
+              <div className="flex h-full flex-1 flex-col">
+                <RouterProvider router={router} />
+              </div>
 
-            <ToastContainer position="top-center" />
-          </ProvideInjectedWallet>
+              <ToastContainer position="top-center" />
+            </ProvideInjectedWallet>
+          </ProvideConnectProvider>
         </ProvideState>
       </ProvideBridgeContext>
     </StrictMode>
