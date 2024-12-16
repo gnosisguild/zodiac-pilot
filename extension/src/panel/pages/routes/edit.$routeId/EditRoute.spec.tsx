@@ -56,9 +56,9 @@ describe('Edit Zodiac route', () => {
     it('is possible to rename a route', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -90,9 +90,9 @@ describe('Edit Zodiac route', () => {
         avatar: formatPrefixedAddress(1, avatarAddress),
       })
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -134,9 +134,9 @@ describe('Edit Zodiac route', () => {
 
         mockRoute({ id: 'route-id' })
 
-        await render('/routes/route-id', [
+        await render('/routes/edit/route-id', [
           {
-            path: '/routes/:routeId',
+            path: '/routes/edit/:routeId',
             Component: EditRoute,
             loader,
             action,
@@ -162,9 +162,9 @@ describe('Edit Zodiac route', () => {
     it('is possible to define a safe', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -200,9 +200,9 @@ describe('Edit Zodiac route', () => {
 
       mockQueryRolesV2MultiSend.mockResolvedValue({})
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -233,9 +233,9 @@ describe('Edit Zodiac route', () => {
     it('is possible to remove a route', async () => {
       mockRoute({ id: 'route-id' })
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -258,9 +258,9 @@ describe('Edit Zodiac route', () => {
     it('does not remove the route if the user cancels', async () => {
       const route = await mockRoute({ id: 'route-id' })
 
-      await render('/routes/route-id', [
+      await render('/routes/edit/route-id', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -287,10 +287,10 @@ describe('Edit Zodiac route', () => {
       )
 
       await render(
-        '/routes/route-id',
+        '/routes/edit/route-id',
         [
           {
-            path: '/routes/:routeId',
+            path: '/routes/edit/:routeId',
             Component: EditRoute,
             loader,
             action,
@@ -316,10 +316,10 @@ describe('Edit Zodiac route', () => {
       await mockRoutes({ id: 'route-id' })
 
       await render(
-        '/routes/route-id',
+        '/routes/edit/route-id',
         [
           {
-            path: '/routes/:routeId',
+            path: '/routes/edit/:routeId',
             Component: EditRoute,
             loader,
             action,
@@ -363,9 +363,9 @@ describe('Edit Zodiac route', () => {
         provider: new MockProvider(),
       })
 
-      await render('/routes/routeId', [
+      await render('/routes/edit/routeId', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -384,9 +384,9 @@ describe('Edit Zodiac route', () => {
     it('uses the correct chain to fetch zodiac modules', async () => {
       const route = await mockRoute({ id: 'new-route' })
 
-      await render('/routes/new-route', [
+      await render('/routes/edit/new-route', [
         {
-          path: '/routes/:routeId',
+          path: '/routes/edit/:routeId',
           Component: EditRoute,
           loader,
           action,
@@ -414,10 +414,10 @@ describe('Edit Zodiac route', () => {
       mockRoute({ id: 'route-id' })
 
       await render(
-        '/routes/route-id',
+        '/routes/edit/route-id',
         [
           {
-            path: '/routes/:routeId',
+            path: '/routes/edit/:routeId',
             Component: EditRoute,
             loader,
             action,
