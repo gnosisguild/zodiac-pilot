@@ -3,6 +3,8 @@ import {
   SiDiscord,
   SiGithub,
 } from '@icons-pack/react-simple-icons'
+import darkScreenshot from './extension-dark.png'
+import lightScreenshot from './extension-light.png'
 import { PilotType, ZodiacOsPlain } from './logos'
 
 export const LandingPage = () => (
@@ -41,13 +43,13 @@ export const LandingPage = () => (
       <section className="flex flex-col-reverse items-center justify-around gap-32 lg:flex-row">
         <div className="w-96 rounded-xl border border-gray-300/80 p-4 shadow-2xl dark:border-gray-700/80 dark:shadow-zinc-800">
           <img
-            src="/extension-dark.png"
+            src={darkScreenshot}
             className="hidden w-fit dark:block"
             alt="Zodiac browser extension"
           />
 
           <img
-            src="/extension-light.png"
+            src={lightScreenshot}
             className="w-fit dark:hidden"
             alt="Zodiac browser extension"
           />
