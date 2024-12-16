@@ -310,8 +310,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       ser-kit:
-        specifier: 1.0.4
-        version: 1.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 1.0.5
+        version: 1.0.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       tailwindcss:
         specifier: ^3.4.14
         version: 3.4.16
@@ -6298,8 +6298,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@1.0.4:
-    resolution: {integrity: sha512-eEfjSKuCMXFy5w9k0ZHpiVk6+9Gtx1mTkKDzgrEPb8tj8DfzPU8cXU5x9P9nsG5sf0FwTHQ6Unrtf/atMNVabQ==}
+  ser-kit@1.0.5:
+    resolution: {integrity: sha512-UZLLOn6mc2f6dtyZU19pSSgY2xEiIRtZ4dP49XQac1ghTBHSbkIpJS9Jok7bJ4hxCG5dlElGxyiLinIa78nG/A==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -9832,7 +9832,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.1.0
       '@vanilla-extract/css': 1.16.1(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -14690,7 +14690,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@1.0.4(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1):
+  ser-kit@1.0.5(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1):
     dependencies:
       '@safe-global/api-kit': 2.5.6(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/protocol-kit': 5.1.1(bufferutil@4.0.8)(typescript@5.7.2)(utf-8-validate@5.0.10)(zod@3.24.1)
