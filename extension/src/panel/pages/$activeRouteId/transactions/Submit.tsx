@@ -186,7 +186,7 @@ const AwaitingSignatureModal = ({
     closeLabel="Abort transaction"
     onClose={onClose}
   >
-    <div className="flex items-center gap-1 gap-2">
+    <div className="flex items-center gap-2">
       <Spinner /> Awaiting your signature ...
     </div>
     {usesWalletConnect && (
