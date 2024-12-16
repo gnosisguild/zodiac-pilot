@@ -52,7 +52,7 @@
     "@typescript-eslint/parser": "^8.0.0",
     "@vitest/coverage-v8": "2.1.8",
     "@walletconnect/core": "2.17.2",
-    "@walletconnect/ethereum-provider": "2.17.2",
+    "@walletconnect/ethereum-provider": "2.17.3",
     "@walletconnect/keyvaluestorage": "^1.1.1",
     "@walletconnect/modal": "2.7.0",
     "@walletconnect/sign-client": "2.17.2",
