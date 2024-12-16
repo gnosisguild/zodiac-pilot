@@ -3,6 +3,7 @@ import {
   errorToast,
   Modal,
   PrimaryButton,
+  PrimaryLinkButton,
   SecondaryLinkButton,
   Spinner,
   successToast,
@@ -21,7 +22,6 @@ import {
 import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
@@ -29,15 +29,10 @@ export const Submit = () => {
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const { initiator, providerType, avatar } = route
-  const navigate = useNavigate()
 
   const transactions = useTransactions()
   const submitTransactions = useSubmitTransactions()
   const [signaturePending, setSignaturePending] = useState(false)
-
-  const connectWallet = () => {
-    navigate('/routes/' + route.id)
-  }
 
   const submit = async () => {
     if (!connected) {
@@ -153,13 +148,9 @@ export const Submit = () => {
           Submit
         </PrimaryButton>
       ) : (
-        <PrimaryButton
-          fluid
-          onClick={connectWallet}
-          disabled={!submitTransactions || transactions.length === 0}
-        >
+        <PrimaryLinkButton fluid to={`/routes/edit/${route.id}`}>
           Connect wallet to submit
-        </PrimaryButton>
+        </PrimaryLinkButton>
       )}
 
       {initiator && (
