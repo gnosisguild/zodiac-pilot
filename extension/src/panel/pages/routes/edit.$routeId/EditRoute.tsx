@@ -8,6 +8,7 @@ import {
   PrimaryButton,
   Section,
   TextInput,
+  Warning,
 } from '@/components'
 import {
   getLastUsedRouteId,
@@ -22,28 +23,36 @@ import type { HexAddress, LegacyConnection } from '@/types'
 import {
   decodeRoleKey,
   encodeRoleKey,
+  formData,
   getInt,
   getOptionalString,
   getString,
 } from '@/utils'
 import {
+  fetchZodiacModules,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   useZodiacModules,
   type SupportedModuleType,
 } from '@/zodiac'
+import { invariantResponse } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { ZeroAddress } from 'ethers'
+import { getAddress, ZeroAddress } from 'ethers'
 import { Rocket } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import {
+  Await,
   redirect,
   useLoaderData,
   useSubmit,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { formatPrefixedAddress, type ChainId } from 'ser-kit'
+import {
+  formatPrefixedAddress,
+  splitPrefixedAddress,
+  type ChainId,
+} from 'ser-kit'
 import {
   asLegacyConnection,
   fromLegacyConnection,
@@ -61,16 +70,47 @@ import { ZodiacMod } from './ZodiacMod'
 
 type ConnectionPatch = Omit<Partial<LegacyConnection>, 'id' | 'lastUsed'>
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url)
   const lastUsedRouteId = await getLastUsedRouteId()
   const routeId = getRouteId(params)
 
   const route = await getRoute(routeId)
 
+  const preliminaryAvatarAddress = getPreliminaryAvatarAddress(
+    url.searchParams.get('avatarAddress'),
+  )
+  const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
+
+  invariantResponse(
+    chainId != null,
+    `Could not parse chain ID from address "${route.avatar}"`,
+  )
+
   return {
     initialRouteState: route,
     currentExecutionRoute:
       lastUsedRouteId != null ? await getRoute(lastUsedRouteId) : null,
+    zodiacModules: fetchZodiacModules(
+      preliminaryAvatarAddress != null
+        ? preliminaryAvatarAddress
+        : avatarAddress,
+      chainId,
+    ),
+  }
+}
+
+const getPreliminaryAvatarAddress = (
+  address: string | null,
+): HexAddress | null => {
+  if (address == null) {
+    return null
+  }
+
+  try {
+    return getAddress(address) as HexAddress
+  } catch {
+    return null
   }
 }
 
@@ -123,7 +163,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 }
 
 export const EditRoute = () => {
-  const { initialRouteState, currentExecutionRoute } =
+  const { initialRouteState, currentExecutionRoute, zodiacModules } =
     useLoaderData<typeof loader>()
   const [currentRouteState, setCurrentRouteState] = useState(initialRouteState)
 
@@ -239,6 +279,8 @@ export const EditRoute = () => {
                 const confirmed =
                   keepTransactionBundle || (await confirmClearTransactions())
 
+                submit(formData({ avatarAddress: address }), { method: 'get' })
+
                 if (confirmed) {
                   updateRoute({
                     avatarAddress: address || undefined,
@@ -249,55 +291,69 @@ export const EditRoute = () => {
               }}
             />
 
-            <ZodiacMod
-              route={initialRouteState}
-              avatarAddress={prefixedAvatarAddress}
-              pilotAddress={pilotAddress}
-              value={
-                selectedModule
-                  ? {
-                      moduleAddress: selectedModule.moduleAddress,
-                      moduleType: selectedModule.type,
+            <Suspense>
+              <Await
+                resolve={zodiacModules}
+                errorElement={
+                  <Warning title="Selected safe is not valid">
+                    Please select a valid safe to be able to select a mod.
+                  </Warning>
+                }
+              >
+                {(modules) => (
+                  <ZodiacMod
+                    modules={modules}
+                    route={initialRouteState}
+                    avatarAddress={prefixedAvatarAddress}
+                    pilotAddress={pilotAddress}
+                    value={
+                      selectedModule
+                        ? {
+                            moduleAddress: selectedModule.moduleAddress,
+                            moduleType: selectedModule.type,
+                          }
+                        : null
                     }
-                  : null
-              }
-              onSelect={async (value) => {
-                if (value == null) {
-                  updateRoute({
-                    moduleAddress: undefined,
-                    moduleType: undefined,
-                  })
+                    onSelect={async (value) => {
+                      if (value == null) {
+                        updateRoute({
+                          moduleAddress: undefined,
+                          moduleType: undefined,
+                        })
 
-                  return
-                }
+                        return
+                      }
 
-                switch (value.moduleType) {
-                  case KnownContracts.ROLES_V1: {
-                    updateRoute({
-                      ...value,
-                      multisend: await queryRolesV1MultiSend(
-                        chainId,
-                        value.moduleAddress,
-                      ),
-                    })
+                      switch (value.moduleType) {
+                        case KnownContracts.ROLES_V1: {
+                          updateRoute({
+                            ...value,
+                            multisend: await queryRolesV1MultiSend(
+                              chainId,
+                              value.moduleAddress,
+                            ),
+                          })
 
-                    break
-                  }
+                          break
+                        }
 
-                  case KnownContracts.ROLES_V2: {
-                    updateRoute({
-                      ...value,
-                      ...(await queryRolesV2MultiSend(
-                        chainId,
-                        value.moduleAddress,
-                      )),
-                    })
+                        case KnownContracts.ROLES_V2: {
+                          updateRoute({
+                            ...value,
+                            ...(await queryRolesV2MultiSend(
+                              chainId,
+                              value.moduleAddress,
+                            )),
+                          })
 
-                    break
-                  }
-                }
-              }}
-            />
+                          break
+                        }
+                      }
+                    }}
+                  />
+                )}
+              </Await>
+            </Suspense>
 
             {selectedModule?.type === KnownContracts.ROLES_V1 && (
               <TextInput

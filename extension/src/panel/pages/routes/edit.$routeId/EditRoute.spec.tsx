@@ -10,7 +10,11 @@ import {
   render,
 } from '@/test-utils'
 import { ProviderType } from '@/types'
-import { queryRolesV2MultiSend, useZodiacModules } from '@/zodiac'
+import {
+  fetchZodiacModules,
+  queryRolesV2MultiSend,
+  useZodiacModules,
+} from '@/zodiac'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -39,18 +43,22 @@ vi.mock('@/zodiac', async (importOriginal) => {
   return {
     ...module,
 
+    fetchZodiacModules: vi.fn(module.fetchZodiacModules),
     useZodiacModules: vi.fn(module.useZodiacModules),
     queryRolesV2MultiSend: vi.fn(module.queryRolesV2MultiSend),
   }
 })
 
 const mockUseZodiacModules = vi.mocked(useZodiacModules)
+const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
 describe('Edit Zodiac route', () => {
   beforeEach(() => {
     mockUseInjectedWallet.mockRestore()
     mockUseZodiacModules.mockRestore()
+
+    mockFetchZodiacModules.mockResolvedValue([])
   })
 
   describe('Label', () => {
@@ -194,6 +202,10 @@ describe('Edit Zodiac route', () => {
       mockRoute({ id: 'route-id', avatar: randomPrefixedAddress() })
 
       const moduleAddress = randomAddress()
+
+      mockFetchZodiacModules.mockResolvedValue([
+        { moduleAddress, type: KnownContracts.ROLES_V2 },
+      ])
 
       mockUseZodiacModules.mockReturnValue({
         isValidSafe: true,

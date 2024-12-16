@@ -22,26 +22,26 @@ const SUPPORTED_MODULES = [
   KnownContracts.ROLES_V1,
   KnownContracts.ROLES_V2,
 ]
-interface Module {
+export interface ZodiacModule {
   moduleAddress: string
   mastercopyAddress?: string // if empty, it's a custom non-proxied deployment
   type: SupportedModuleType
-  modules?: Module[]
+  modules?: ZodiacModule[]
 }
 
 export const useZodiacModules = (
   safeAddress: PrefixedAddress,
-): { loading: boolean; isValidSafe: boolean; modules: Module[] } => {
+): { loading: boolean; isValidSafe: boolean; modules: ZodiacModule[] } => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
-  const [modules, setModules] = useState<Module[]>([])
+  const [modules, setModules] = useState<ZodiacModule[]>([])
   const chainId = getChainId(safeAddress)
   const address = parsePrefixedAddress(safeAddress)
 
   useEffect(() => {
     setLoading(true)
     setError(false)
-    fetchModules(address, chainId)
+    fetchZodiacModules(address, chainId)
       .then((modules) => setModules(modules))
       .catch((e) => {
         console.error(`Could not fetch modules of Safe ${address}`, e)
@@ -57,11 +57,11 @@ export const useZodiacModules = (
   return { loading, isValidSafe: true, modules }
 }
 
-async function fetchModules(
+export async function fetchZodiacModules(
   safeOrModifierAddress: HexAddress,
   chainId: ChainId,
   previous: Set<string> = new Set(),
-): Promise<Module[]> {
+): Promise<ZodiacModule[]> {
   if (safeOrModifierAddress === ZeroAddress) {
     return []
   }
@@ -126,11 +126,11 @@ async function fetchModules(
         return undefined
       }
 
-      let modules: Module[] | null = null
+      let modules: ZodiacModule[] | null = null
       if (MODIFIERS.includes(type)) {
         // recursively fetch modules from modifier
         try {
-          modules = await fetchModules(moduleAddress, chainId, previous)
+          modules = await fetchZodiacModules(moduleAddress, chainId, previous)
         } catch (e) {
           console.error(
             `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
@@ -150,7 +150,7 @@ async function fetchModules(
   )
 
   const result = await Promise.all(enabledAndSupportedModules)
-  return result.filter((module) => !!module) as Module[]
+  return result.filter((module) => !!module) as ZodiacModule[]
 }
 
 const functionSelectors = (abi: string[]) => {

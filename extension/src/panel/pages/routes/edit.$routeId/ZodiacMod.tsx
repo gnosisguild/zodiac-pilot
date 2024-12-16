@@ -1,7 +1,6 @@
-import { Warning } from '@/components'
 import { MODULE_NAMES } from '@/const'
 import type { ExecutionRoute } from '@/types'
-import { type SupportedModuleType, useZodiacModules } from '@/zodiac'
+import { type SupportedModuleType, type ZodiacModule } from '@/zodiac'
 import type { PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { useSafeDelegates } from './useSafeDelegates'
@@ -16,7 +15,8 @@ type ZodiacModProps = {
   avatarAddress: PrefixedAddress
   pilotAddress: string
   route: ExecutionRoute
-
+  modules: ZodiacModule[]
+  disabled?: boolean
   value: Value | null
 
   onSelect: (value: Value | null) => void
@@ -27,14 +27,10 @@ export const ZodiacMod = ({
   pilotAddress,
   value,
   route,
+  modules,
+  disabled,
   onSelect,
 }: ZodiacModProps) => {
-  const {
-    loading: loadingMods,
-    isValidSafe,
-    modules,
-  } = useZodiacModules(avatarAddress)
-
   const { safes } = useSafesWithOwner(route, pilotAddress)
   const { delegates } = useSafeDelegates(route, avatarAddress)
 
@@ -49,12 +45,6 @@ export const ZodiacMod = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {!isValidSafe && (
-        <Warning title="Selected safe is not valid">
-          Please select a valid safe to be able to select a mod.
-        </Warning>
-      )}
-
       <ModSelect
         isMulti={false}
         // disabled={modules.length === 0}
@@ -95,14 +85,8 @@ export const ZodiacMod = ({
               }
             : defaultModOption
         }
-        isDisabled={loadingMods || !isValidSafe}
-        placeholder={
-          loadingMods
-            ? 'Loading modules...'
-            : isValidSafe
-              ? 'Select a module'
-              : ''
-        }
+        isDisabled={disabled}
+        placeholder="Select a module"
         avatarAddress={avatarAddress}
       />
     </div>

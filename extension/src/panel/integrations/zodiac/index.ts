@@ -5,4 +5,8 @@ export {
   queryRolesV2MultiSend,
 } from './rolesMultisend'
 export type { SupportedModuleType } from './types'
-export { useZodiacModules } from './useZodiacModules'
+export {
+  fetchZodiacModules,
+  useZodiacModules,
+  type ZodiacModule,
+} from './useZodiacModules'
