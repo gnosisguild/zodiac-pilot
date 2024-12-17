@@ -1,24 +1,26 @@
 import { type Message, PilotMessageType } from '@/messages'
 import { isValidTab, useActiveTab } from '@/utils'
 import { useEffect, useState } from 'react'
-import { PILOT_PANEL_PORT } from '../const'
+
+// we use a port to communicate between the panel app and the background script as this allows us to track when the panel is closed
+export const PILOT_PANEL_PORT = 'PILOT_PANEL_PORT'
 
 // notify the background script that the panel has been opened
 export const usePilotPort = () => {
   const activeTab = useActiveTab()
-  const [portIsActive, setPortIsActive] = useState(false)
+  const [port, setPort] = useState<chrome.runtime.Port | null>(null)
   const [activeWindowId, setActiveWindowId] = useState<number | null>(null)
 
   useEffect(() => {
-    if (portIsActive) {
-      return
-    }
-
     if (activeTab == null) {
+      setPort(null)
+
       return
     }
 
     if (!isValidTab(activeTab.url)) {
+      setPort(null)
+
       return
     }
 
@@ -26,13 +28,37 @@ export const usePilotPort = () => {
       return
     }
 
-    connectPort({ windowId: activeTab.windowId, tabId: activeTab.id })
+    if (port != null) {
+      return
+    }
+
+    setPort(
+      connectPort({
+        windowId: activeTab.windowId,
+        tabId: activeTab.id,
+      }),
+    )
 
     setActiveWindowId(activeTab.windowId)
-    setPortIsActive(true)
-  }, [activeTab, portIsActive])
+  }, [activeTab, port])
 
-  return { activeWindowId, portIsActive }
+  useEffect(() => {
+    if (port == null) {
+      return
+    }
+
+    const handleDisconnect = () => {
+      setPort(null)
+    }
+
+    port.onDisconnect.addListener(handleDisconnect)
+
+    return () => {
+      port.onDisconnect.removeListener(handleDisconnect)
+    }
+  }, [port])
+
+  return { activeWindowId, portIsActive: port != null }
 }
 
 type ConnectPortOptions = {
@@ -48,4 +74,6 @@ const connectPort = ({ tabId, windowId }: ConnectPortOptions) => {
     windowId,
     tabId,
   } satisfies Message)
+
+  return port
 }

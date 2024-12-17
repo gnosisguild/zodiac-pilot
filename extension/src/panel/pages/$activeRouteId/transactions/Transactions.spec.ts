@@ -1,12 +1,7 @@
 import {
-  callListeners,
-  createMockPort,
   createTransaction,
-  MockProvider,
-  mockRoute,
   mockRoutes,
-  mockRuntimeConnect,
-  randomPrefixedAddress,
+  mockTabSwitch,
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
@@ -14,6 +9,30 @@ import { describe, expect, it } from 'vitest'
 import { Transactions } from './Transactions'
 
 describe('Transactions', () => {
+  describe('Recording state', () => {
+    it('hides the info when Pilot is ready', async () => {
+      await render('/test-route', [
+        { path: '/:activeRouteId', Component: Transactions },
+      ])
+
+      expect(
+        screen.getByRole('heading', { name: 'Recording transactions' }),
+      ).not.toHaveAccessibleDescription()
+    })
+
+    it('shows that transactions cannot be recorded when Pilot is not ready, yet', async () => {
+      await render('/test-route', [
+        { path: '/:activeRouteId', Component: Transactions },
+      ])
+
+      await mockTabSwitch({ url: 'chrome://extensions' })
+
+      expect(
+        screen.getByRole('heading', { name: 'Not recording transactions' }),
+      ).toHaveAccessibleDescription('Recording starts when Pilot connects')
+    })
+  })
+
   describe('List', () => {
     it('lists transactions', async () => {
       await mockRoutes()
@@ -29,32 +48,16 @@ describe('Transactions', () => {
   })
 
   describe('Submit', () => {
-    it('disables the submit button when the runtime port disconnects', async () => {
-      const initiator = randomPrefixedAddress()
-      const route = await mockRoute({
-        id: 'test-route',
-        initiator,
-      })
-
-      const runtimePort = createMockPort()
-
-      mockRuntimeConnect(runtimePort)
-
-      const provider = new MockProvider()
-
+    it('disables the submit button when the current tab goes into a state where submit is not possible', async () => {
       await render(
         '/test-route',
         [{ path: '/:activeRouteId', Component: Transactions }],
         {
           initialState: [createTransaction()],
-          initialSelectedRoute: route,
-          initialProvider: provider,
         },
       )
 
-      provider.makeReady(initiator)
-
-      await callListeners(runtimePort.onDisconnect, runtimePort)
+      await mockTabSwitch({ url: 'chrome://extensions' })
 
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
     })

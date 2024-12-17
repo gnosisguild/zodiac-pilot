@@ -10,7 +10,7 @@ import { invariant } from '@epic-web/invariant'
 import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
-import { RecordingIcon } from './RecordingIcon'
+import { RecordingIndicator } from './RecordingIndicator'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
@@ -58,11 +58,7 @@ export const Transactions = () => {
         <RouteBubble />
 
         <div className="mt-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <RecordingIcon />
-
-            <h4>Recording Transactions</h4>
-          </div>
+          <RecordingIndicator />
 
           <div className="flex gap-1">
             <CopyToClipboard

@@ -4,6 +4,7 @@ import { toBeHex } from 'ethers'
 import EventEmitter from 'events'
 import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 import { vi, type MockedFunction } from 'vitest'
+import { randomPrefixedAddress } from '../creators'
 
 export class MockProvider extends EventEmitter implements Eip1193Provider {
   request: MockedFunction<Eip1193Provider['request']>
@@ -14,7 +15,7 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
     this.request = vi.fn().mockResolvedValue(null)
   }
 
-  makeReady(account: PrefixedAddress) {
+  makeReady(account: PrefixedAddress = randomPrefixedAddress()) {
     const [chainId, acccountAddress] = splitPrefixedAddress(account)
 
     invariant(chainId != null, `Could not parse chain ID from "${account}".`)

@@ -11,7 +11,7 @@ import {
   type LoaderFunction,
 } from 'react-router'
 import { expect } from 'vitest'
-import { mockActiveTab, mockTabConnect } from './chrome'
+import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { RenderWrapper } from './RenderWrapper'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -60,7 +60,9 @@ export const render = async (
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = createMockPort()
+  const mockedRuntimePort = createMockPort()
 
+  mockRuntimeConnect(mockedRuntimePort)
   mockTabConnect(mockedPort)
 
   const router = createMemoryRouter(
@@ -98,7 +100,7 @@ export const render = async (
   await waitForTestElement()
   await sleepTillIdle()
 
-  return { ...result, mockedTab, mockedPort }
+  return { ...result, mockedTab, mockedPort, mockedRuntimePort }
 }
 
 const InspectRoute = () => {

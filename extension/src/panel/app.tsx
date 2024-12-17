@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
 import '../global.css'
 import { pages } from './pages'
-import { ProvidePort } from './PortContext'
+import { ProvidePort } from './port-handling'
 import { ProvideState } from './state'
 
 const router = createHashRouter(pages)

@@ -9,6 +9,7 @@ import {
   successToast,
 } from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { usePilotIsReady } from '@/port-handling'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { waitForMultisigExecution } from '@/safe'
@@ -23,7 +24,6 @@ import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
-import { usePilotIsReady } from '../../../PortContext'
 
 export const Submit = () => {
   const route = useExecutionRoute()
@@ -51,7 +51,8 @@ export const Submit = () => {
       }
     }
 
-    if (!submitTransactions) throw new Error('invariant violation')
+    invariant(submitTransactions != null, 'Cannot submit transactions')
+
     setSignaturePending(true)
 
     let result: {
@@ -142,15 +143,21 @@ export const Submit = () => {
     }
   }
 
+  if (!pilotReady) {
+    return (
+      <PrimaryButton fluid disabled>
+        Submit
+      </PrimaryButton>
+    )
+  }
+
   return (
     <>
       {connected || connect ? (
         <PrimaryButton
           fluid
           onClick={submit}
-          disabled={
-            !pilotReady || !submitTransactions || transactions.length === 0
-          }
+          disabled={!submitTransactions || transactions.length === 0}
         >
           Submit
         </PrimaryButton>

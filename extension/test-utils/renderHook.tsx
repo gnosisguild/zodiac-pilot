@@ -6,7 +6,7 @@ import {
 } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import type { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
-import { mockActiveTab, mockTabConnect } from './chrome'
+import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { mockRoutes } from './executionRoutes'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -30,7 +30,10 @@ export const renderHook = async <Result, Props>(
   }: RenderHookOptions<Props> & ExtendedOptions = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
+
+  const mockedRuntimePort = mockRuntimeConnect()
   const mockedPort = mockTabConnect(createMockPort(port))
+
   mockRoutes(...routes)
 
   const wrapper = ({ children }: PropsWithChildren) => (
@@ -45,5 +48,5 @@ export const renderHook = async <Result, Props>(
 
   await sleepTillIdle()
 
-  return { ...result, mockedTab, mockedPort }
+  return { ...result, mockedTab, mockedPort, mockedRuntimePort }
 }
