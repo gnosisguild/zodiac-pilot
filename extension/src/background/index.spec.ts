@@ -18,7 +18,8 @@ vi.mock('./simulationTracking', () => ({
 }))
 
 describe('Background script', () => {
-  const importModule = () => import(`./index?bust=${randomUUID()}`)
+  const importModule = () =>
+    vi.importActual<typeof import('./index')>(`./index?bust=${randomUUID()}`)
 
   beforeEach(() => {
     chromeMock.sidePanel.setPanelBehavior.mockResolvedValue()
