@@ -9,6 +9,7 @@ import {
   successToast,
 } from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { usePilotIsReady } from '@/port-handling'
 import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { waitForMultisigExecution } from '@/safe'
@@ -29,6 +30,7 @@ export const Submit = () => {
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const { initiator, providerType, avatar } = route
+  const pilotReady = usePilotIsReady()
 
   const transactions = useTransactions()
   const submitTransactions = useSubmitTransactions()
@@ -49,7 +51,8 @@ export const Submit = () => {
       }
     }
 
-    if (!submitTransactions) throw new Error('invariant violation')
+    invariant(submitTransactions != null, 'Cannot submit transactions')
+
     setSignaturePending(true)
 
     let result: {
@@ -138,6 +141,14 @@ export const Submit = () => {
         ),
       })
     }
+  }
+
+  if (!pilotReady) {
+    return (
+      <PrimaryButton fluid disabled>
+        Submit
+      </PrimaryButton>
+    )
   }
 
   return (

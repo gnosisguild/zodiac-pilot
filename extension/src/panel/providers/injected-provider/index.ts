@@ -1,3 +1,4 @@
+export { ProvideConnectProvider } from './ConnectProviderContext'
 export {
   ProvideInjectedWallet,
   useInjectedWallet,

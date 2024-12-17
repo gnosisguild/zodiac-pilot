@@ -1,9 +1,10 @@
 import { infoToast } from '@/components'
+import type { Eip1193Provider } from '@/types'
+import { invariant } from '@epic-web/invariant'
 import { BrowserProvider } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
 import type { ConnectResult } from '../connectTypes'
-import { ConnectProvider } from './ConnectProvider'
 import type { InjectedWalletError } from './InjectedWalletError'
 import { memoWhilePending } from './memoWhilePending'
 
@@ -14,7 +15,7 @@ type ConnectOptions = {
 }
 
 export const useConnect = (
-  provider: ConnectProvider,
+  provider: Eip1193Provider | null,
   { onBeforeConnect, onConnect, onError }: ConnectOptions,
 ) => {
   const onConnectRef = useRef(onConnect)
@@ -37,6 +38,11 @@ export const useConnect = (
     async ({ force }: { force?: boolean } = {}): Promise<
       ConnectResult | undefined
     > => {
+      invariant(
+        provider != null,
+        'Cannot connect because the provider has not been set up, yet.',
+      )
+
       if (onBeforeConnectRef.current) {
         onBeforeConnectRef.current()
       }
@@ -65,7 +71,7 @@ export const useConnect = (
 }
 
 const connectInjectedWallet = memoWhilePending(
-  async (provider: ConnectProvider): Promise<ConnectResult> => {
+  async (provider: Eip1193Provider): Promise<ConnectResult> => {
     const browserProvider = new BrowserProvider(provider)
 
     const accountsPromise = browserProvider

@@ -1,5 +1,5 @@
 import type { TransactionState } from '@/state'
-import type { ExecutionRoute } from '@/types'
+import type { Eip1193Provider, ExecutionRoute } from '@/types'
 import { sleepTillIdle } from '@/utils'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import type { ComponentType } from 'react'
@@ -11,7 +11,7 @@ import {
   type LoaderFunction,
 } from 'react-router'
 import { expect } from 'vitest'
-import { mockActiveTab, mockTabConnect } from './chrome'
+import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { RenderWrapper } from './RenderWrapper'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -40,6 +40,10 @@ type Options = Parameters<typeof baseRender>[1] & {
    * Pass a route id here to define the currently launched route
    */
   initialSelectedRoute?: ExecutionRoute
+  /**
+   * Pass a custom provider instance to be used as the connect provider
+   */
+  initialProvider?: Eip1193Provider
 }
 
 export const render = async (
@@ -50,12 +54,15 @@ export const render = async (
     inspectRoutes = [],
     initialState,
     initialSelectedRoute,
+    initialProvider,
     ...options
   }: Options = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
   const mockedPort = createMockPort()
+  const mockedRuntimePort = createMockPort()
 
+  mockRuntimeConnect(mockedRuntimePort)
   mockTabConnect(mockedPort)
 
   const router = createMemoryRouter(
@@ -83,6 +90,7 @@ export const render = async (
     <RenderWrapper
       initialState={initialState}
       initialSelectedRoute={initialSelectedRoute}
+      initialProvider={initialProvider}
     >
       <RouterProvider router={router} />
     </RenderWrapper>,
@@ -92,7 +100,7 @@ export const render = async (
   await waitForTestElement()
   await sleepTillIdle()
 
-  return { ...result, mockedTab, mockedPort }
+  return { ...result, mockedTab, mockedPort, mockedRuntimePort }
 }
 
 const InspectRoute = () => {

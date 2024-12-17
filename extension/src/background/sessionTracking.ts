@@ -1,7 +1,7 @@
 import { type Message, PilotMessageType } from '@/messages'
+import { PILOT_PANEL_PORT } from '@/port-handling'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
-import type { MutableRefObject } from 'react'
-import { PILOT_PANEL_PORT } from '../const'
+import type { RefObject } from 'react'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession, type Sessions } from './PilotSession'
@@ -28,7 +28,7 @@ export const trackSessions = (
   // all messages from the panel app are received here
   // (the port is opened from panel/port.ts)
   chrome.runtime.onConnect.addListener((port) => {
-    const windowIdRef: MutableRefObject<number | null> = { current: null }
+    const windowIdRef: RefObject<number | null> = { current: null }
 
     if (port.name !== PILOT_PANEL_PORT) {
       return

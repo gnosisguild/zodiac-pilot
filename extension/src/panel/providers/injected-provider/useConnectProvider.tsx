@@ -1,35 +1,34 @@
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
 import { infoToast } from '@/components'
-import { useWindowId } from '@/inject-bridge'
 import type { Eip1193Provider } from '@/types'
-import { type MutableRefObject, useEffect, useState } from 'react'
+import { invariant } from '@epic-web/invariant'
+import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 import type { ConnectionStatus } from '../connectTypes'
-import { ConnectProvider } from './ConnectProvider'
+import {
+  useConnectProviderInstance,
+  useConnectProviderReady,
+} from './ConnectProviderContext'
 import type { InjectedWalletError } from './InjectedWalletError'
 import { useConnect } from './useConnect'
 
 // Wallet extensions won't inject connectProvider to the extension panel, so we've built ConnectProvider.
 // connectProvider can be used just like window.ethereum
 
-const providerRef: MutableRefObject<ConnectProvider | null> = { current: null }
-const getProvider = (windowId: number) => {
-  if (providerRef.current == null) {
-    providerRef.current = new ConnectProvider(windowId)
-  }
-
-  return providerRef.current
-}
-
 export const useConnectProvider = () => {
-  const provider = getProvider(useWindowId())
+  const provider = useConnectProviderInstance()
+  const ready = useConnectProviderReady()
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<ChainId | null>(null)
-  const [ready, setReady] = useState(false)
+
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('disconnected')
 
   useEffect(() => {
+    if (provider == null) {
+      return
+    }
+
     let canceled = false
     const ifNotCanceled =
       <Args extends any[]>(callback: (...operationParameters: Args) => void) =>
@@ -58,19 +57,13 @@ export const useConnectProvider = () => {
     provider.on('accountsChanged', handleAccountsChanged)
     provider.on('chainChanged', handleChainChanged)
     provider.on('disconnect', handleDisconnect)
-    provider.on('readyChanged', ifNotCanceled(setReady))
 
     return () => {
-      if (!provider) {
-        return
-      }
-
       canceled = true
 
       provider.removeListener('accountsChanged', handleAccountsChanged)
       provider.removeListener('chainChanged', handleChainChanged)
       provider.removeListener('disconnect', handleDisconnect)
-      provider.removeListener('readyChanged', setReady)
     }
   }, [provider])
 
@@ -94,7 +87,14 @@ export const useConnectProvider = () => {
     ready,
     connect,
     connectionStatus,
-    switchChain: (chainId: ChainId) => switchChain(provider, chainId),
+    switchChain: (chainId: ChainId) => {
+      invariant(
+        provider != null,
+        'Cannot switch chain because the provider has not been set up, yet.',
+      )
+
+      return switchChain(provider, chainId)
+    },
     accounts,
     chainId,
   }

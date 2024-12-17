@@ -3,11 +3,11 @@ import {
   type ConnectedWalletMessage,
   ConnectedWalletMessageType,
 } from '@/messages'
+import { createPortOnTabActivity } from '@/port-handling'
 import type { Eip1193Provider } from '@/types'
 import { sleep } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { EventEmitter } from 'events'
-import { createPortOnTabActivity } from './port'
 
 interface JsonRpcRequest {
   method: string

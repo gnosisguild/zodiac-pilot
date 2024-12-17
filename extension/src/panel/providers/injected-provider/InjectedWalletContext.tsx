@@ -6,7 +6,7 @@ import type { ConnectionProvider, ConnectionStatus } from '../connectTypes'
 import { useConnectProvider } from './useConnectProvider'
 
 export type InjectedWalletContextT = ConnectionProvider & {
-  provider: Eip1193Provider
+  provider: Eip1193Provider | null
   switchChain: (chainId: ChainId) => Promise<void>
   connectionStatus: ConnectionStatus
 }

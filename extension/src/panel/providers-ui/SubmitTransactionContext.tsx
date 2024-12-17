@@ -1,5 +1,6 @@
 import { useExecutionRoute, useRouteProvider } from '@/execution-routes'
 import { useDispatch, useTransactions } from '@/state'
+import { invariant } from '@epic-web/invariant'
 import {
   createContext,
   type PropsWithChildren,
@@ -39,9 +40,11 @@ export const ProvideSubmitTransactionContext = ({
       transactions,
     )
 
-    if (!route.initiator) {
-      throw new Error('Cannot execute without a connected Pilot wallet')
-    }
+    invariant(
+      route.initiator != null,
+      'Cannot execute without a connected Pilot wallet',
+    )
+    invariant(provider != null, 'Cannot execute without a connected provider')
 
     const plan = await planExecution(metaTransactions, route as Route)
     console.debug('Execution plan:', plan)

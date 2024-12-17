@@ -1,11 +1,10 @@
-import { invariant } from '@epic-web/invariant'
 import { createContext, type PropsWithChildren, useContext } from 'react'
 
 const BridgeContext = createContext<{ windowId: number | null }>({
   windowId: null,
 })
 
-type ProvideBridgeContextProps = PropsWithChildren<{ windowId: number }>
+type ProvideBridgeContextProps = PropsWithChildren<{ windowId: number | null }>
 
 export const ProvideBridgeContext = ({
   children,
@@ -18,8 +17,6 @@ export const ProvideBridgeContext = ({
 
 export const useWindowId = () => {
   const { windowId } = useContext(BridgeContext)
-
-  invariant(windowId != null, '"windowId" not set on BridgeContext')
 
   return windowId
 }
