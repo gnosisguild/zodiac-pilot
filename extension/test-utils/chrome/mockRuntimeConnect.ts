@@ -3,7 +3,7 @@ import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
 import { createMockPort } from '../creators'
 import { chromeMock } from './chromeMock'
 
-type PortCreateFn = () => Runtime.Port
+type PortCreateFn = () => Partial<Runtime.Port>
 
 export const mockRuntimeConnect = (
   port: Partial<Runtime.Port> | PortCreateFn = {},
@@ -14,7 +14,8 @@ export const mockRuntimeConnect = (
   // that can be part of the result are not compatible.
   // we ignore this fact for now
   chromeMock.runtime.connect.mockImplementation(() => {
-    const mockPort = typeof port === 'function' ? port() : createMockPort(port)
+    const mockPort =
+      typeof port === 'function' ? createMockPort(port()) : createMockPort(port)
 
     portRef.current = mockPort
 
