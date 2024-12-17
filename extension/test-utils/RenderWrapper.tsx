@@ -1,6 +1,6 @@
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideBridgeContext } from '@/inject-bridge'
-import { ProvideInjectedWallet } from '@/providers'
+import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { ProvideState, type TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'
@@ -21,11 +21,13 @@ export const RenderWrapper = ({
 }: RenderWraperProps) => (
   <ProvideBridgeContext windowId={windowId}>
     <ProvideState initialState={initialState}>
-      <ProvideInjectedWallet>
-        <ProvideExecutionRoute route={initialSelectedRoute}>
-          <ProvideProvider>{children}</ProvideProvider>
-        </ProvideExecutionRoute>
-      </ProvideInjectedWallet>
+      <ProvideConnectProvider>
+        <ProvideInjectedWallet>
+          <ProvideExecutionRoute route={initialSelectedRoute}>
+            <ProvideProvider>{children}</ProvideProvider>
+          </ProvideExecutionRoute>
+        </ProvideInjectedWallet>
+      </ProvideConnectProvider>
     </ProvideState>
   </ProvideBridgeContext>
 )
