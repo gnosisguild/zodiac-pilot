@@ -1,13 +1,11 @@
 import { PilotMessageType } from '@/messages'
 import {
-  callListeners,
-  chromeMock,
   createMockTab,
   mockActiveTab,
   mockTabSwitch,
+  mockTabUpdate,
   renderHook,
 } from '@/test-utils'
-import { sleepTillIdle } from '@/utils'
 import { cleanup, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { usePilotPort } from './usePilotPort'
@@ -40,14 +38,7 @@ describe('usePilotPort', () => {
 
     expect(mockedRuntimePort.current).toBeNull()
 
-    mockActiveTab({ ...tab, status: 'complete' })
-
-    await callListeners(
-      chromeMock.tabs.onUpdated,
-      tab.id,
-      { status: 'complete' },
-      tab,
-    )
+    await mockTabUpdate({ status: 'complete' })
 
     await waitFor(() => {
       expect(mockedRuntimePort.current?.postMessage).toHaveBeenCalledWith({
@@ -68,14 +59,7 @@ describe('usePilotPort', () => {
 
     expect(mockedRuntimePort.current).toBeNull()
 
-    mockActiveTab(regularTab)
-
-    await callListeners(chromeMock.tabs.onActivated, {
-      tabId: regularTab.id,
-      windowId: regularTab.windowId,
-    })
-
-    await sleepTillIdle()
+    await mockTabSwitch(regularTab)
 
     expect(mockedRuntimePort.current?.postMessage).toHaveBeenCalledWith({
       type: PilotMessageType.PILOT_PANEL_OPENED,
@@ -93,18 +77,7 @@ describe('usePilotPort', () => {
 
     expect(mockedRuntimePort.current).toBeNull()
 
-    mockActiveTab({ ...tab, url: 'http://test.com' })
-
-    await callListeners(
-      chromeMock.tabs.onUpdated,
-      tab.id,
-      {
-        url: 'http://test.com',
-      },
-      tab,
-    )
-
-    await sleepTillIdle()
+    await mockTabUpdate({ url: 'http://test.com' })
 
     expect(mockedRuntimePort.current?.postMessage).toHaveBeenCalledWith({
       type: PilotMessageType.PILOT_PANEL_OPENED,
