@@ -15,9 +15,10 @@ import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
   ExecutionActionType,
-  parsePrefixedAddress,
   planExecution,
+  PrefixedAddress,
   Route as SerRoute,
+  splitPrefixedAddress,
 } from 'ser-kit'
 import { Translate } from './Translate'
 
@@ -29,7 +30,17 @@ const simulateRolesTransaction = async (
   const routeWithInitiator = (
     route.initiator ? route : { ...route, initiator: ZeroAddress }
   ) as SerRoute
-  const plan = await planExecution([encodedTransaction], routeWithInitiator)
+  const plan = await planExecution(
+    [
+      {
+        to: encodedTransaction.to as `0x${string}`,
+        data: encodedTransaction.to as `0x${string}`,
+        operation: encodedTransaction.operation,
+        value: BigInt(encodedTransaction.value),
+      },
+    ],
+    routeWithInitiator
+  )
 
   // TODO generalize permission checking logic (ser-kit)
   if (plan.length > 1) {
@@ -40,7 +51,7 @@ const simulateRolesTransaction = async (
     throw new Error('Only transaction execution is currently supported')
   }
 
-  const [, from] = parsePrefixedAddress(plan[0].from)
+  const [, from] = splitPrefixedAddress(plan[0].from as PrefixedAddress)
   const tx = {
     ...plan[0].transaction,
     from,

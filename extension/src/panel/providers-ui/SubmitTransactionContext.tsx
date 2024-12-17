@@ -43,7 +43,15 @@ export const ProvideSubmitTransactionContext = ({
       throw new Error('Cannot execute without a connected Pilot wallet')
     }
 
-    const plan = await planExecution(metaTransactions, route as Route)
+    const plan = await planExecution(
+      metaTransactions.map((tx) => ({
+        to: tx.to as `0x${string}`,
+        data: tx.to as `0x${string}`,
+        operation: tx.operation,
+        value: BigInt(tx.value),
+      })),
+      route as Route
+    )
     console.debug('Execution plan:', plan)
 
     const state = [] as ExecutionState
@@ -58,8 +66,7 @@ export const ProvideSubmitTransactionContext = ({
     const safeTxHash =
       state[
         plan.findLastIndex(
-          (action) =>
-            action.type === ExecutionActionType.PROPOSE_SAFE_TRANSACTION
+          (action) => action.type === ExecutionActionType.PROPOSE_TRANSACTION
         )
       ]
     const txHash =

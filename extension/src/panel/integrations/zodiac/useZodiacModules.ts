@@ -10,7 +10,7 @@ import { selectorsFromBytecode } from '@shazow/whatsabi'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { useEffect, useState } from 'react'
-import { ChainId, parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { ChainId, PrefixedAddress, splitPrefixedAddress } from 'ser-kit'
 import { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
@@ -32,7 +32,7 @@ export const useZodiacModules = (
   const [error, setError] = useState(false)
   const [modules, setModules] = useState<Module[]>([])
   const chainId = getChainId(safeAddress)
-  const [, address] = parsePrefixedAddress(safeAddress)
+  const [, address] = splitPrefixedAddress(safeAddress)
 
   useEffect(() => {
     setLoading(true)

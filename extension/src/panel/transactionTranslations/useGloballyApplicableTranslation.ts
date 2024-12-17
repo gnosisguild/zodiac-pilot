@@ -5,7 +5,7 @@ import { useProvider } from '@/providers-ui'
 import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect } from 'react'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { ChainId, splitPrefixedAddress } from 'ser-kit'
 import {
   ApplicableTranslation,
   applicableTranslationsCache,
@@ -19,7 +19,7 @@ export const useGloballyApplicableTranslation = () => {
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
-  const [_, avatarAddress] = parsePrefixedAddress(avatar)
+  const [_, avatarAddress] = splitPrefixedAddress(avatar)
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {

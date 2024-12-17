@@ -11,7 +11,7 @@ import {
 } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { Outlet } from 'react-router-dom'
-import { parsePrefixedAddress } from 'ser-kit'
+import { splitPrefixedAddress } from 'ser-kit'
 import { useStorage } from '../utils'
 import {
   asLegacyConnection,
@@ -27,7 +27,7 @@ export const Root = () => {
 
   const chainId = getChainId(route.avatar)
   const provider = useProvider()
-  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const [, avatarAddress] = splitPrefixedAddress(route.avatar)
   const saveRoute = useSaveExecutionRoute()
 
   useProviderBridge({ provider, chainId, account: avatarAddress })

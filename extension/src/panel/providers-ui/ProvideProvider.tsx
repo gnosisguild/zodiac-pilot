@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { ConnectionType, parsePrefixedAddress } from 'ser-kit'
+import { ConnectionType, splitPrefixedAddress } from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
 import { fetchContractInfo } from '../utils/abi'
 import { ProvideSubmitTransactionContext } from './SubmitTransactionContext'
@@ -28,7 +28,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   const dispatch = useDispatch()
 
-  const [, avatarAddress] = parsePrefixedAddress(route.avatar)
+  const [, avatarAddress] = splitPrefixedAddress(route.avatar)
   const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
   const connectionType =
     avatarWaypoint &&
@@ -37,7 +37,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const [, connectedFrom] =
     (avatarWaypoint &&
       'connection' in avatarWaypoint &&
-      parsePrefixedAddress(avatarWaypoint.connection.from)) ||
+      splitPrefixedAddress(avatarWaypoint.connection.from)) ||
     []
 
   const moduleAddress =

@@ -3,7 +3,7 @@ import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
 import { ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
 import { useCallback } from 'react'
-import { parsePrefixedAddress } from 'ser-kit'
+import { splitPrefixedAddress } from 'ser-kit'
 import { useProviderChainId } from './useProviderChainId'
 
 export const useRouteConnect = (route: ExecutionRoute) => {
@@ -63,7 +63,7 @@ const useCanEstablishConnection = (route: ExecutionRoute) => {
 
   const pilotAddress =
     route.initiator && route.initiator !== `eoa:` + ZeroAddress
-      ? parsePrefixedAddress(route.initiator)[1].toLowerCase()
+      ? splitPrefixedAddress(route.initiator)[1].toLowerCase()
       : undefined
 
   if (pilotAddress == null) {

@@ -23,7 +23,7 @@ import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { parsePrefixedAddress, PrefixedAddress } from 'ser-kit'
+import { PrefixedAddress, splitPrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
   const route = useExecutionRoute()
@@ -107,7 +107,7 @@ export const Submit = () => {
       console.debug(
         `Transaction batch has been proposed with safeTxHash ${safeTxHash}`
       )
-      const [, avatarAddress] = parsePrefixedAddress(avatar)
+      const [, avatarAddress] = splitPrefixedAddress(avatar)
       successToast({
         title: 'Transaction batch has been proposed for execution',
         message: (

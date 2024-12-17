@@ -6,7 +6,7 @@ import {
 } from '@/providers'
 import { ExecutionRoute, ProviderType } from '@/types'
 import { ZeroAddress } from 'ethers'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { ChainId, splitPrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'
 import { WalletConnect, WalletConnectConnect } from './walletConnect'
 
@@ -96,7 +96,7 @@ const getPilotAddress = (route: ExecutionRoute) => {
     return null
   }
 
-  const address = parsePrefixedAddress(route.initiator)[1].toLowerCase()
+  const address = splitPrefixedAddress(route.initiator)[1].toLowerCase()
 
   if (address === ZeroAddress) {
     return null

@@ -6,7 +6,7 @@ import { TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types'
 import { useCallback, useEffect, useState } from 'react'
-import { ChainId, parsePrefixedAddress } from 'ser-kit'
+import { ChainId, splitPrefixedAddress } from 'ser-kit'
 import {
   ApplicableTranslation,
   applicableTranslationsCache,
@@ -21,7 +21,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
-  const [_, avatarAddress] = parsePrefixedAddress(avatar)
+  const [_, avatarAddress] = splitPrefixedAddress(avatar)
 
   const [translation, setTranslation] = useState<
     ApplicableTranslation | undefined
