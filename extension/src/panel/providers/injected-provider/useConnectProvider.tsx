@@ -5,7 +5,10 @@ import { invariant } from '@epic-web/invariant'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 import type { ConnectionStatus } from '../connectTypes'
-import { useConnectProviderInstance } from './ConnectProviderContext'
+import {
+  useConnectProviderInstance,
+  useConnectProviderReady,
+} from './ConnectProviderContext'
 import type { InjectedWalletError } from './InjectedWalletError'
 import { useConnect } from './useConnect'
 
@@ -14,9 +17,10 @@ import { useConnect } from './useConnect'
 
 export const useConnectProvider = () => {
   const provider = useConnectProviderInstance()
+  const ready = useConnectProviderReady()
   const [accounts, setAccounts] = useState<string[]>([])
   const [chainId, setChainId] = useState<ChainId | null>(null)
-  const [ready, setReady] = useState(false)
+
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('disconnected')
 
@@ -50,14 +54,9 @@ export const useConnectProvider = () => {
       setAccounts([])
     })
 
-    const handleReadyChanged = ifNotCanceled((ready: boolean) => {
-      setReady(ready)
-    })
-
     provider.on('accountsChanged', handleAccountsChanged)
     provider.on('chainChanged', handleChainChanged)
     provider.on('disconnect', handleDisconnect)
-    provider.on('readyChanged', handleReadyChanged)
 
     return () => {
       canceled = true
@@ -65,7 +64,6 @@ export const useConnectProvider = () => {
       provider.removeListener('accountsChanged', handleAccountsChanged)
       provider.removeListener('chainChanged', handleChainChanged)
       provider.removeListener('disconnect', handleDisconnect)
-      provider.removeListener('readyChanged', handleReadyChanged)
     }
   }, [provider])
 

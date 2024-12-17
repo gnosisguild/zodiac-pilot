@@ -10,7 +10,10 @@ import {
 } from 'react'
 import { ConnectProvider } from './ConnectProvider'
 
-const ConnectProviderContext = createContext<Eip1193Provider | null>(null)
+const ConnectProviderContext = createContext<{
+  provider: Eip1193Provider | null
+  ready: boolean
+}>({ provider: null, ready: false })
 
 type ProvideConnectProviderProps = PropsWithChildren<{
   /**
@@ -39,6 +42,7 @@ export const ProvideConnectProvider = ({
 
     return new ConnectProvider(windowId)
   })
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     if (windowIdRef.current === windowId) {
@@ -50,10 +54,33 @@ export const ProvideConnectProvider = ({
     setProvider(windowId == null ? null : new ConnectProvider(windowId))
   }, [windowId])
 
+  useEffect(() => {
+    if (provider == null) {
+      return
+    }
+
+    provider.on('readyChanged', setReady)
+
+    return () => {
+      provider.removeListener('readyChanged', setReady)
+    }
+  }, [provider])
+
   return (
-    <ConnectProviderContext value={provider}>{children}</ConnectProviderContext>
+    <ConnectProviderContext value={{ provider, ready }}>
+      {children}
+    </ConnectProviderContext>
   )
 }
 
-export const useConnectProviderInstance = () =>
-  useContext(ConnectProviderContext)
+export const useConnectProviderInstance = () => {
+  const { provider } = useContext(ConnectProviderContext)
+
+  return provider
+}
+
+export const useConnectProviderReady = () => {
+  const { ready } = useContext(ConnectProviderContext)
+
+  return ready
+}
