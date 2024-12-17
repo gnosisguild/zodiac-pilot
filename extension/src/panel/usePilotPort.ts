@@ -32,7 +32,7 @@ export const usePilotPort = () => {
     setPortIsActive(true)
   }, [activeTab, portIsActive])
 
-  return { activeWindowId }
+  return { activeWindowId, portIsActive }
 }
 
 type ConnectPortOptions = {

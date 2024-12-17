@@ -1,3 +1,4 @@
+import { useWindowId } from '@/inject-bridge'
 import {
   createContext,
   useContext,
@@ -9,10 +10,8 @@ import { ConnectProvider } from './ConnectProvider'
 
 const ConnectProviderContext = createContext<ConnectProvider | null>(null)
 
-export const ProvideConnectProvider = ({
-  children,
-  windowId,
-}: PropsWithChildren<{ windowId?: number }>) => {
+export const ProvideConnectProvider = ({ children }: PropsWithChildren) => {
+  const windowId = useWindowId()
   const [provider, setProvider] = useState<ConnectProvider | null>(null)
 
   useEffect(() => {

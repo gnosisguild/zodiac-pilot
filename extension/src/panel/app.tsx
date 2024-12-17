@@ -1,7 +1,5 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import { Info } from '@/components'
-import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
 import { StrictMode } from 'react'
@@ -11,30 +9,17 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
 import '../global.css'
 import { pages } from './pages'
+import { ProvidePort } from './PortContext'
 import { ProvideState } from './state'
-import { usePilotPort } from './usePilotPort'
 
 const router = createHashRouter(pages)
 
 const Root = () => {
-  const { activeWindowId } = usePilotPort()
-
-  if (activeWindowId == null) {
-    return (
-      <div className="relative top-32 flex h-full flex-col items-center gap-32 px-4">
-        <Info title="Current tab is incompatible">
-          Pilot is waiting to connect to a dApp. Open the dApp you want to
-          simulate and Pilot will automatically connect to it.
-        </Info>
-      </div>
-    )
-  }
-
   return (
     <StrictMode>
-      <ProvideBridgeContext windowId={activeWindowId}>
+      <ProvidePort>
         <ProvideState>
-          <ProvideConnectProvider windowId={activeWindowId}>
+          <ProvideConnectProvider>
             <ProvideInjectedWallet>
               <div className="flex h-full flex-1 flex-col">
                 <RouterProvider router={router} />
@@ -44,7 +29,7 @@ const Root = () => {
             </ProvideInjectedWallet>
           </ProvideConnectProvider>
         </ProvideState>
-      </ProvideBridgeContext>
+      </ProvidePort>
     </StrictMode>
   )
 }
