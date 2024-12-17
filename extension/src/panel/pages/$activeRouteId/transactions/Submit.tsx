@@ -23,12 +23,14 @@ import { invariant } from '@epic-web/invariant'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { usePilotIsReady } from '../../../PortContext'
 
 export const Submit = () => {
   const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
   const { initiator, providerType, avatar } = route
+  const pilotReady = usePilotIsReady()
 
   const transactions = useTransactions()
   const submitTransactions = useSubmitTransactions()
@@ -146,7 +148,9 @@ export const Submit = () => {
         <PrimaryButton
           fluid
           onClick={submit}
-          disabled={!submitTransactions || transactions.length === 0}
+          disabled={
+            !pilotReady || !submitTransactions || transactions.length === 0
+          }
         >
           Submit
         </PrimaryButton>
