@@ -3,7 +3,7 @@ import { ProvideBridgeContext } from '@/inject-bridge'
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { ProvideState, type TransactionState } from '@/state'
-import type { ExecutionRoute } from '@/types'
+import type { Eip1193Provider, ExecutionRoute } from '@/types'
 import type { PropsWithChildren } from 'react'
 import { createMockRoute } from './creators'
 
@@ -11,6 +11,7 @@ type RenderWraperProps = PropsWithChildren<{
   windowId?: number
   initialState?: TransactionState[]
   initialSelectedRoute?: ExecutionRoute
+  initialProvider?: Eip1193Provider
 }>
 
 export const RenderWrapper = ({
@@ -18,10 +19,11 @@ export const RenderWrapper = ({
   windowId = 1,
   initialState,
   initialSelectedRoute = createMockRoute(),
+  initialProvider,
 }: RenderWraperProps) => (
   <ProvideBridgeContext windowId={windowId}>
     <ProvideState initialState={initialState}>
-      <ProvideConnectProvider>
+      <ProvideConnectProvider initialProvider={initialProvider}>
         <ProvideInjectedWallet>
           <ProvideExecutionRoute route={initialSelectedRoute}>
             <ProvideProvider>{children}</ProvideProvider>

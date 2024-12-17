@@ -50,10 +50,14 @@ export const useConnectProvider = () => {
       setAccounts([])
     })
 
+    const handleReadyChanged = ifNotCanceled((ready: boolean) => {
+      setReady(ready)
+    })
+
     provider.on('accountsChanged', handleAccountsChanged)
     provider.on('chainChanged', handleChainChanged)
     provider.on('disconnect', handleDisconnect)
-    provider.on('readyChanged', ifNotCanceled(setReady))
+    provider.on('readyChanged', handleReadyChanged)
 
     return () => {
       canceled = true
@@ -61,7 +65,7 @@ export const useConnectProvider = () => {
       provider.removeListener('accountsChanged', handleAccountsChanged)
       provider.removeListener('chainChanged', handleChainChanged)
       provider.removeListener('disconnect', handleDisconnect)
-      provider.removeListener('readyChanged', setReady)
+      provider.removeListener('readyChanged', handleReadyChanged)
     }
   }, [provider])
 
