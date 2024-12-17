@@ -25,6 +25,11 @@ export const usePilotPort = () => {
     }
 
     if (activeTab.status !== 'complete') {
+      // do not reset the port here because
+      // a tab might go into the loading state
+      // multiple times during its lifecycle.
+      // This, however, does not mean that our
+      // port has disconnected and needs to be reset.
       return
     }
 
