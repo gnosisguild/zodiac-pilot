@@ -1,5 +1,10 @@
 import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@/components'
-import { createRoute, getLastUsedRouteId, getRoutes } from '@/execution-routes'
+import {
+  createRoute,
+  getLastUsedRouteId,
+  getRoute,
+  getRoutes,
+} from '@/execution-routes'
 import { getString } from '@/utils'
 import { Plus } from 'lucide-react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
@@ -7,8 +12,21 @@ import { Route } from './Route'
 import { Intent } from './intents'
 
 export const loader = async () => {
+  const routes = await getRoutes()
+  const activeRouteId = await getLastUsedRouteId()
+
+  if (activeRouteId != null) {
+    const { avatar } = await getRoute(activeRouteId)
+
+    return {
+      routes,
+      currentlyActiveAvatar: avatar,
+    }
+  }
+
   return {
-    routes: await getRoutes(),
+    routes,
+    currentlyActiveAvatar: null,
   }
 }
 
@@ -41,7 +59,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 export const ListRoutes = () => {
-  const { routes } = useLoaderData<typeof loader>()
+  const { routes, currentlyActiveAvatar } = useLoaderData<typeof loader>()
 
   return (
     <Page>
@@ -55,7 +73,11 @@ export const ListRoutes = () => {
 
       <Page.Content>
         {routes.map((route) => (
-          <Route key={route.id} route={route} />
+          <Route
+            key={route.id}
+            route={route}
+            currentlyActiveAvatar={currentlyActiveAvatar}
+          />
         ))}
       </Page.Content>
 

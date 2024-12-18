@@ -90,6 +90,20 @@ describe('List routes', () => {
 
       await expectRouteToBe('/firstRoute/clear-transactions/secondRoute')
     })
+
+    it('works without an active route', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await render(
+        '/routes/list',
+        [{ path: '/routes/list', Component: ListRoutes, loader, action }],
+        { inspectRoutes: ['/:activeRouteId'], initialSelectedRoute: null },
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
+
+      await expectRouteToBe('/test-route')
+    })
   })
 
   describe('Clearing transactions', () => {

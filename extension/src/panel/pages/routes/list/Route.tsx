@@ -4,24 +4,25 @@ import {
   SecondaryLinkButton,
   Tag,
 } from '@/components'
-import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
+import { useRouteConnect } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useRef, useState } from 'react'
+import type { PrefixedAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { Intent } from './intents'
 
 interface RouteProps {
+  currentlyActiveAvatar: PrefixedAddress | null
   route: ExecutionRoute
 }
 
-export const Route = ({ route }: RouteProps) => {
+export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
   const [connected, connect] = useRouteConnect(route)
-  const currentlySelectedRoute = useExecutionRoute()
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
   const transactions = useTransactions()
@@ -80,8 +81,7 @@ export const Route = ({ route }: RouteProps) => {
                 }
                 // we continue working with the same avatar, so don't have to clear the recorded transaction
                 const keepTransactionBundle =
-                  currentlySelectedRoute &&
-                  currentlySelectedRoute.avatar === route.avatar
+                  currentlyActiveAvatar === route.avatar
 
                 if (keepTransactionBundle) {
                   return
