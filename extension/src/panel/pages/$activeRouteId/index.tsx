@@ -8,7 +8,7 @@ export const ActiveRoute: RouteObject = {
   element: <Component />,
   loader,
   children: [
-    { path: '', loader: () => redirect('transactions') },
+    { index: true, loader: () => redirect('transactions') },
     Transactions,
     ClearTransactions,
   ],
