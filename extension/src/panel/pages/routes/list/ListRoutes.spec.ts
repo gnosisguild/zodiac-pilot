@@ -117,7 +117,7 @@ describe('List routes', () => {
       ).toBeInTheDocument()
     })
 
-    it('warns about clearing transactions when the avatars differ', async () => {
+    it('does not warn about clearing transactions when the avatars stay the same', async () => {
       const selectedRoute = createMockRoute({
         id: 'firstRoute',
         label: 'First route',

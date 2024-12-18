@@ -1,7 +1,15 @@
-import { Blockie, Input, selectStyles, TextInput } from '@/components'
+import {
+  Blockie,
+  GhostButton,
+  Input,
+  selectStyles,
+  TextInput,
+} from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
+import { ChevronDown, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import type { CommonProps, GroupBase } from 'react-select'
 import CreatableSelect from 'react-select/creatable'
 import type { Option } from './ModSelect'
 
@@ -34,6 +42,7 @@ export const AvatarInput = ({
               inputId={inputId}
               blurInputOnSelect
               isClearable
+              components={{ ClearIndicator, DropdownIndicator }}
               formatOptionLabel={SafeOptionLabel}
               placeholder="Paste an address or select from the list"
               classNames={selectStyles<{ value: string; label: string }>()}
@@ -97,3 +106,17 @@ const SafeOptionLabel = (option: Option) => {
     </div>
   )
 }
+
+const ClearIndicator = ({
+  clearValue,
+}: CommonProps<Option, false, GroupBase<Option>>) => (
+  <GhostButton iconOnly icon={X} size="small" onClick={clearValue}>
+    Clear piloted Safe
+  </GhostButton>
+)
+
+const DropdownIndicator = () => (
+  <GhostButton iconOnly icon={ChevronDown} size="small">
+    View available Safes
+  </GhostButton>
+)
