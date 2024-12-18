@@ -598,6 +598,57 @@ describe('Edit Zodiac route', () => {
           screen.queryByRole('dialog', { name: 'Clear transactions' }),
         ).not.toBeInTheDocument()
       })
+
+      it('is possible to launch a new route and clear transactions', async () => {
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          label: 'First route',
+          avatar: randomPrefixedAddress(),
+        })
+
+        await mockRoutes(selectedRoute, {
+          id: 'another-route',
+          avatar: randomPrefixedAddress(),
+        })
+        await saveLastUsedRouteId('another-route')
+
+        await render(
+          '/routes/edit/firstRoute',
+          [
+            {
+              path: '/routes/edit/:routeId',
+              Component: EditRoute,
+              loader,
+              action,
+            },
+          ],
+          {
+            initialState: [createTransaction()],
+            inspectRoutes: [
+              '/:activeRouteId/clear-transactions/:newActiveRouteId',
+            ],
+          },
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          randomAddress(),
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Launch' }),
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear transactions' }),
+        )
+
+        await expectRouteToBe('/another-route/clear-transactions/firstRoute')
+      })
     })
   })
 })
