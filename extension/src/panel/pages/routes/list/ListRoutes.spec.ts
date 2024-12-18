@@ -142,17 +142,17 @@ describe('List routes', () => {
         avatar: ETH_ZERO_ADDRESS,
       })
 
-      mockRoutes(selectedRoute, {
+      await mockRoutes(selectedRoute, {
         id: 'secondRoute',
         label: 'Second route',
         avatar: ETH_ZERO_ADDRESS,
       })
+      await saveLastUsedRouteId(selectedRoute.id)
 
       await render(
         '/routes',
         [{ path: '/routes', Component: ListRoutes, loader, action }],
         {
-          initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
         },
       )
