@@ -1,6 +1,13 @@
-import { getLastUsedRouteId, getRoute, getRoutes } from '@/execution-routes'
+import {
+  getLastUsedRouteId,
+  getRoute,
+  getRoutes,
+  saveLastUsedRouteId,
+} from '@/execution-routes'
 import { useInjectedWallet } from '@/providers'
 import {
+  createMockRoute,
+  createTransaction,
   expectRouteToBe,
   MockProvider,
   mockRoute,
@@ -15,7 +22,11 @@ import { KnownContracts } from '@gnosis.pm/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getAddress } from 'ethers'
-import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
+import {
+  formatPrefixedAddress,
+  parsePrefixedAddress,
+  splitPrefixedAddress,
+} from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, EditRoute, loader } from './EditRoute'
 
@@ -460,6 +471,133 @@ describe('Edit Zodiac route', () => {
       )
 
       await expectRouteToBe('/route-id')
+    })
+
+    describe('Clearing transactions', () => {
+      it('warns about clearing transactions when the avatars differ', async () => {
+        const currentAvatar = randomPrefixedAddress()
+        const newAvatar = randomAddress()
+
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          avatar: currentAvatar,
+        })
+
+        await mockRoutes(selectedRoute)
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render(
+          '/routes/edit/firstRoute',
+          [
+            {
+              path: '/routes/edit/:routeId',
+              Component: EditRoute,
+              loader,
+              action,
+            },
+          ],
+          {
+            initialState: [createTransaction()],
+          },
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          newAvatar,
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Launch' }),
+        )
+
+        expect(
+          screen.getByRole('dialog', { name: 'Clear transactions' }),
+        ).toBeInTheDocument()
+      })
+
+      it('does not warn about clearing transactions when the avatars stay the same', async () => {
+        const avatar = randomPrefixedAddress()
+
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          label: 'First route',
+          avatar,
+        })
+
+        await mockRoutes(selectedRoute)
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render(
+          '/routes/edit/firstRoute',
+          [
+            {
+              path: '/routes/edit/:routeId',
+              Component: EditRoute,
+              loader,
+              action,
+            },
+          ],
+          {
+            initialState: [createTransaction()],
+          },
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          parsePrefixedAddress(avatar),
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Launch' }),
+        )
+
+        expect(
+          screen.queryByRole('dialog', { name: 'Clear transactions' }),
+        ).not.toBeInTheDocument()
+      })
+
+      it('should not warn about clearing transactions when there are none', async () => {
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          label: 'First route',
+        })
+
+        await mockRoutes(selectedRoute)
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render('/routes/edit/firstRoute', [
+          {
+            path: '/routes/edit/:routeId',
+            Component: EditRoute,
+            loader,
+            action,
+          },
+        ])
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          randomAddress(),
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Launch' }),
+        )
+
+        expect(
+          screen.queryByRole('dialog', { name: 'Clear transactions' }),
+        ).not.toBeInTheDocument()
+      })
     })
   })
 })

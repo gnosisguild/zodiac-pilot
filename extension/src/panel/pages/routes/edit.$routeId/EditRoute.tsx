@@ -20,6 +20,7 @@ import {
   saveRoute,
 } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
+import { useTransactions } from '@/state'
 import type { HexAddress, LegacyConnection } from '@/types'
 import {
   decodeRoleKey,
@@ -53,11 +54,11 @@ import {
   splitPrefixedAddress,
   type ChainId,
 } from 'ser-kit'
+import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
-import { useConfirmClearTransactions } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { getRouteId } from './getRouteId'
@@ -173,6 +174,9 @@ export const EditRoute = () => {
   const { initialRouteState, currentExecutionRoute, zodiacModules } =
     useLoaderData<typeof loader>()
   const [currentRouteState, setCurrentRouteState] = useState(initialRouteState)
+  const [confirmClearTransactions, setConfirmClearTransactions] =
+    useState(false)
+  const transactions = useTransactions()
 
   const legacyConnection = asLegacyConnection(currentRouteState)
   const { label, avatarAddress, pilotAddress, roleId, chainId, moduleAddress } =
@@ -184,9 +188,6 @@ export const EditRoute = () => {
     chainId,
     avatarAddress as HexAddress,
   )
-
-  const [confirmClearTransactions, ConfirmationModal] =
-    useConfirmClearTransactions()
 
   const updateRoute = (patch: ConnectionPatch) => {
     console.debug('updateRoute', patch)
@@ -278,19 +279,12 @@ export const EditRoute = () => {
             <AvatarInput
               availableSafes={safes}
               value={avatarAddress === ZeroAddress ? '' : avatarAddress || ''}
-              onChange={async (address) => {
-                const keepTransactionBundle =
-                  address.toLowerCase() === avatarAddress.toLowerCase()
-                const confirmed =
-                  keepTransactionBundle || (await confirmClearTransactions())
-
-                if (confirmed) {
-                  updateRoute({
-                    avatarAddress: address || undefined,
-                    moduleAddress: '',
-                    moduleType: undefined,
-                  })
-                }
+              onChange={(address) => {
+                updateRoute({
+                  avatarAddress: address || undefined,
+                  moduleAddress: '',
+                  moduleType: undefined,
+                })
               }}
             />
 
@@ -428,16 +422,17 @@ export const EditRoute = () => {
                 // we continue working with the same avatar, so don't have to clear the recorded transaction
                 const keepTransactionBundle =
                   currentExecutionRoute == null ||
-                  currentExecutionRoute.avatar === currentRouteState.avatar
+                  currentExecutionRoute.avatar.toLowerCase() ===
+                    currentRouteState.avatar.toLowerCase() ||
+                  transactions.length === 0
 
-                const confirmed =
-                  keepTransactionBundle || (await confirmClearTransactions())
+                if (keepTransactionBundle) {
+                  submit(formRef.current, { method: 'post' })
 
-                if (!confirmed) {
                   return
                 }
 
-                submit(formRef.current, { method: 'post' })
+                setConfirmClearTransactions(true)
               }}
             >
               Save & Launch
@@ -446,7 +441,11 @@ export const EditRoute = () => {
         </Page.Footer>
       </Page>
 
-      <ConfirmationModal />
+      <ClearTransactionsModal
+        open={confirmClearTransactions}
+        onClose={() => setConfirmClearTransactions(false)}
+        onConfirm={() => submit(formRef.current, { method: 'post' })}
+      />
     </>
   )
 }

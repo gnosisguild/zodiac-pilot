@@ -1,4 +1,4 @@
-import { Blockie, Input, selectStyles, TextInput } from '@/components'
+import { Blockie, Input, Select, selectStyles, TextInput } from '@/components'
 import { validateAddress } from '@/utils'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -27,13 +27,21 @@ export const AvatarInput = ({
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
-        <Input label="Piloted Safe">
+        <Input
+          label="Piloted Safe"
+          clearLabel="Clear piloted Safe"
+          dropdownLabel="View all available Safes"
+        >
           {({ inputId }) => (
             <CreatableSelect
               unstyled
               inputId={inputId}
               blurInputOnSelect
               isClearable
+              components={{
+                ClearIndicator: Select.ClearIndicator<Option, false>,
+                DropdownIndicator: Select.DropdownIndicator,
+              }}
               formatOptionLabel={SafeOptionLabel}
               placeholder="Paste an address or select from the list"
               classNames={selectStyles<{ value: string; label: string }>()}
