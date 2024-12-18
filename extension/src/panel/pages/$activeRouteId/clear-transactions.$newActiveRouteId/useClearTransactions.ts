@@ -8,8 +8,7 @@ export const useClearTransactions = () => {
   const provider = useProvider()
   const dispatch = useDispatch()
 
-  const hasTransactions = transactions.length > 0
-  const clearTransactions = useCallback(async () => {
+  return useCallback(async () => {
     if (transactions.length === 0) {
       return
     }
@@ -22,7 +21,5 @@ export const useClearTransactions = () => {
     if (provider instanceof ForkProvider) {
       await provider.deleteFork()
     }
-  }, [provider, transactions, dispatch])
-
-  return { hasTransactions, clearTransactions }
+  }, [dispatch, transactions, provider])
 }

@@ -167,6 +167,31 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
 
       return redirect(`/${routeId}`)
     }
+
+    case Intent.clearTransactions: {
+      const lastUsedRouteId = await getLastUsedRouteId()
+
+      await saveRoute(
+        fromLegacyConnection({
+          id: routeId,
+          label: getString(data, 'label'),
+          chainId: getInt(data, 'chainId') as ChainId,
+          avatarAddress: getString(data, 'avatarAddress'),
+          moduleAddress: getString(data, 'moduleAddress'),
+          pilotAddress: getString(data, 'pilotAddress'),
+          providerType: getInt(data, 'providerType'),
+          moduleType: getOptionalString(
+            data,
+            'moduleType',
+          ) as SupportedModuleType,
+          multisend: getOptionalString(data, 'multisend'),
+          multisendCallOnly: getOptionalString(data, 'multisendCallOnly'),
+          roleId: getOptionalString(data, 'roleId'),
+        }),
+      )
+
+      return redirect(`/${lastUsedRouteId}/clear-transactions/${routeId}`)
+    }
   }
 }
 
@@ -442,9 +467,11 @@ export const EditRoute = () => {
       </Page>
 
       <ClearTransactionsModal
+        newActiveRouteId={initialRouteState.id}
+        additionalContext={{ ...legacyConnection }}
         open={confirmClearTransactions}
+        intent={Intent.clearTransactions}
         onClose={() => setConfirmClearTransactions(false)}
-        onConfirm={() => submit(formRef.current, { method: 'post' })}
       />
     </>
   )

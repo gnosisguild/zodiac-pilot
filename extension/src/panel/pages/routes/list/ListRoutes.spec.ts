@@ -1,5 +1,5 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
-import { getRoutes } from '@/execution-routes'
+import { getRoutes, saveLastUsedRouteId } from '@/execution-routes'
 import {
   connectMockWallet,
   createMockRoute,
@@ -63,6 +63,8 @@ describe('List routes', () => {
         label: 'First route',
       })
 
+      await saveLastUsedRouteId('firstRoute')
+
       mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
 
       await render(
@@ -71,7 +73,9 @@ describe('List routes', () => {
         {
           initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
-          inspectRoutes: ['/:activeRouteId'],
+          inspectRoutes: [
+            '/:activeRouteId/clear-transactions/:newActiveRouteId',
+          ],
         },
       )
 
@@ -84,7 +88,7 @@ describe('List routes', () => {
         screen.getByRole('button', { name: 'Clear transactions' }),
       )
 
-      await expectRouteToBe('/secondRoute')
+      await expectRouteToBe('/firstRoute/clear-transactions/secondRoute')
     })
   })
 

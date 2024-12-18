@@ -1,8 +1,10 @@
 import type { ComponentPropsWithRef } from 'react'
 import { Form } from 'react-router'
 
+export type InlineFormContext = Record<string, string | number | undefined>
+
 type InlineFormProps = ComponentPropsWithRef<typeof Form> & {
-  context?: Record<string, string | number | undefined>
+  context?: InlineFormContext
   intent?: string
 }
 

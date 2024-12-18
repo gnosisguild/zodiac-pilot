@@ -1,5 +1,5 @@
 import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@/components'
-import { createRoute, getRoutes } from '@/execution-routes'
+import { createRoute, getLastUsedRouteId, getRoutes } from '@/execution-routes'
 import { getString } from '@/utils'
 import { Plus } from 'lucide-react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
@@ -26,6 +26,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const routeId = getString(data, 'routeId')
 
       return redirect(`/${routeId}`)
+    }
+
+    case Intent.clearTransactions: {
+      const currentlyActiveRouteId = await getLastUsedRouteId()
+
+      const newActiveRouteId = getString(data, 'newActiveRouteId')
+
+      return redirect(
+        `/${currentlyActiveRouteId}/clear-transactions/${newActiveRouteId}`,
+      )
     }
   }
 }
