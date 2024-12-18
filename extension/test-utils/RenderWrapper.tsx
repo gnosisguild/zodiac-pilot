@@ -5,7 +5,6 @@ import { ProvideProvider } from '@/providers-ui'
 import { ProvideState, type TransactionState } from '@/state'
 import type { Eip1193Provider, ExecutionRoute } from '@/types'
 import { type PropsWithChildren } from 'react'
-import { createMockRoute } from './creators'
 
 type RenderWraperProps = PropsWithChildren<{
   initialState?: TransactionState[]
@@ -16,7 +15,7 @@ type RenderWraperProps = PropsWithChildren<{
 export const RenderWrapper = ({
   children,
   initialState,
-  initialSelectedRoute = createMockRoute(),
+  initialSelectedRoute = null,
   initialProvider,
 }: RenderWraperProps) => (
   <ProvidePort>
