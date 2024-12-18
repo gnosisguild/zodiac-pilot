@@ -129,8 +129,8 @@ importers:
         specifier: ^5.0.6
         version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify:
-        specifier: 11.0.0
-        version: 11.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 11.0.1
+        version: 11.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       zod:
         specifier: ^3.23.8
         version: 3.24.1
@@ -6032,8 +6032,8 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  react-toastify@11.0.0:
-    resolution: {integrity: sha512-NLTt0hNNlVZPLnY+uzUvmE2H2jRHUpaPi7H3+84+3fMjZSpfngyL/r+2VcaepNItWuN0BCBiZdVluXixXYSFmw==}
+  react-toastify@11.0.1:
+    resolution: {integrity: sha512-ZALj1xpjOVlPPDKvdksGLemF9mM6FRltsykvv+JQpW9mildnBiy6nGz0685vo4+W8WitParsUfGk9qACArkZPA==}
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
@@ -7252,6 +7252,7 @@ packages:
   wrangler@3.97.0:
     resolution: {integrity: sha512-NkFAigqZWe4NOK0gYROcpvdugaYJE/JRFrIZ+c5Q5/uie+25WH8OVbRvvmiXhWVhso56cZs2W2TPmAxT/sgHkw==}
     engines: {node: '>=16.17.0'}
+    deprecated: Downgrade to 3.96.0
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20241205.0
@@ -9837,7 +9838,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.1.0
       '@vanilla-extract/css': 1.16.1(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -14395,7 +14396,7 @@ snapshots:
       requestidlecallback: 0.3.0
       substyle: 9.4.1(react@19.0.0)
 
-  react-toastify@11.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-toastify@11.0.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       clsx: 2.1.1
       react: 19.0.0
