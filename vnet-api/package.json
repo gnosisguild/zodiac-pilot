@@ -5,7 +5,7 @@
     "@cloudflare/workers-types": "^4.0.0",
     "env-cmd": "^10.1.0",
     "typescript": "^5.0.0",
-    "wrangler": "3.96.0"
+    "wrangler": "3.97.0"
   },
   "private": true,
   "scripts": {
