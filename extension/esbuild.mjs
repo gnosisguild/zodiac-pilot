@@ -33,7 +33,8 @@ esbuild
       './src/panel/app.tsx',
     ],
     bundle: true,
-    format: 'esm',
+    /** IMPORTANT: For scripts that are injected into other apps, it's crucial we build to IIFE format to avoid global scope clashes. */
+    format: 'iife',
     treeShaking: true,
     minify: process.env.NODE_ENV === 'production',
     sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
