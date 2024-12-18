@@ -6,7 +6,7 @@ import BaseSelect, {
   type Props,
 } from 'react-select'
 import { GhostButton } from '../buttons'
-import { Input } from './Input'
+import { Input, useClearLabel, useDropdownLabel } from './Input'
 
 export const selectStyles = <
   Option = unknown,
@@ -55,7 +55,7 @@ function ClearIndicator<Option, IsMulti extends boolean>({
 }: CommonProps<Option, IsMulti, GroupBase<Option>>) {
   return (
     <GhostButton iconOnly icon={X} size="small" onClick={clearValue}>
-      Clear piloted Safe
+      {useClearLabel()}
     </GhostButton>
   )
 }
@@ -64,7 +64,7 @@ Select.ClearIndicator = ClearIndicator
 
 const DropdownIndicator = () => (
   <GhostButton iconOnly icon={ChevronDown} size="small">
-    View available Safes
+    {useDropdownLabel()}
   </GhostButton>
 )
 

@@ -27,7 +27,11 @@ export const AvatarInput = ({
   return (
     <>
       {availableSafes.length > 0 || checksumAvatarAddress ? (
-        <Input label="Piloted Safe">
+        <Input
+          label="Piloted Safe"
+          clearLabel="Clear piloted Safe"
+          dropdownLabel="View all available Safes"
+        >
           {({ inputId }) => (
             <CreatableSelect
               unstyled

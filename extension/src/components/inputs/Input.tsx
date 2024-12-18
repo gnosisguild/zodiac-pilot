@@ -1,5 +1,12 @@
-import { type ReactNode, useId } from 'react'
+import { createContext, type ReactNode, useContext, useId } from 'react'
 import { Label } from './Label'
+
+type InputContextOptions = {
+  clearLabel?: string
+  dropdownLabel?: string
+}
+
+const InputContext = createContext<InputContextOptions>({})
 
 type RenderProps = {
   inputId: string
@@ -13,7 +20,7 @@ type InputProps = {
   before?: ReactNode
   after?: ReactNode
   children: (props: RenderProps) => ReactNode
-}
+} & InputContextOptions
 
 export type ComposableInputProps = Omit<
   InputProps,
@@ -27,6 +34,8 @@ export const Input = ({
   label,
   description,
   error,
+  clearLabel,
+  dropdownLabel,
 }: InputProps) => {
   const inputId = useId()
   const descriptionId = useId()
@@ -43,15 +52,29 @@ export const Input = ({
         )}
       </div>
 
-      <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
-        {before}
+      <InputContext value={{ clearLabel, dropdownLabel }}>
+        <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
+          {before}
 
-        <div className="flex-1">{children({ inputId, descriptionId })}</div>
+          <div className="flex-1">{children({ inputId, descriptionId })}</div>
 
-        {after}
-      </div>
+          {after}
+        </div>
+      </InputContext>
 
       {error && <div className="text-sm font-bold text-red-600">{error}</div>}
     </div>
   )
+}
+
+export const useClearLabel = () => {
+  const { clearLabel } = useContext(InputContext)
+
+  return clearLabel
+}
+
+export const useDropdownLabel = () => {
+  const { dropdownLabel } = useContext(InputContext)
+
+  return dropdownLabel
 }
