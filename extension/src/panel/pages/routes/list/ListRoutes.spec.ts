@@ -71,7 +71,6 @@ describe('List routes', () => {
         '/routes',
         [{ path: '/routes', Component: ListRoutes, loader, action }],
         {
-          initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
           inspectRoutes: [
             '/:activeRouteId/clear-transactions/:newActiveRouteId',
@@ -90,20 +89,6 @@ describe('List routes', () => {
 
       await expectRouteToBe('/firstRoute/clear-transactions/secondRoute')
     })
-
-    it('works without an active route', async () => {
-      await mockRoute({ id: 'test-route' })
-
-      await render(
-        '/routes/list',
-        [{ path: '/routes/list', Component: ListRoutes, loader, action }],
-        { inspectRoutes: ['/:activeRouteId'], initialSelectedRoute: null },
-      )
-
-      await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
-
-      await expectRouteToBe('/test-route')
-    })
   })
 
   describe('Clearing transactions', () => {
@@ -113,13 +98,16 @@ describe('List routes', () => {
         label: 'First route',
       })
 
-      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+      await mockRoutes(selectedRoute, {
+        id: 'secondRoute',
+        label: 'Second route',
+      })
+      await saveLastUsedRouteId(selectedRoute.id)
 
       await render(
         '/routes',
         [{ path: '/routes', Component: ListRoutes, loader, action }],
         {
-          initialSelectedRoute: selectedRoute,
           initialState: [createTransaction()],
         },
       )
@@ -174,15 +162,15 @@ describe('List routes', () => {
         label: 'First route',
       })
 
-      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+      await mockRoutes(selectedRoute, {
+        id: 'secondRoute',
+        label: 'Second route',
+      })
+      await saveLastUsedRouteId(selectedRoute.id)
 
-      await render(
-        '/routes',
-        [{ path: '/routes', Component: ListRoutes, loader, action }],
-        {
-          initialSelectedRoute: selectedRoute,
-        },
-      )
+      await render('/routes', [
+        { path: '/routes', Component: ListRoutes, loader, action },
+      ])
 
       const { getByRole } = within(
         screen.getByRole('region', { name: 'Second route' }),
