@@ -39,7 +39,7 @@ type Options = Parameters<typeof baseRender>[1] & {
   /**
    * Pass a route id here to define the currently launched route
    */
-  initialSelectedRoute?: ExecutionRoute
+  initialSelectedRoute?: ExecutionRoute | null
   /**
    * Pass a custom provider instance to be used as the connect provider
    */
