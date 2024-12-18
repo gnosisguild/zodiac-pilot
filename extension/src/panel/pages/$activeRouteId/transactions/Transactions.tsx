@@ -2,6 +2,7 @@ import { getChainId } from '@/chains'
 import { CopyToClipboard, GhostButton, Info, Page } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
+import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
@@ -20,6 +21,7 @@ export const Transactions = () => {
   const dispatch = useDispatch()
   const provider = useProvider()
   const route = useExecutionRoute()
+  const pilotIsReady = usePilotIsReady()
 
   useProviderBridge({
     provider,
@@ -101,7 +103,7 @@ export const Transactions = () => {
       </Page.Content>
 
       <Page.Footer>
-        {!route.initiator && (
+        {!route.initiator && pilotIsReady && (
           <CopyToClipboard
             data={transactions.map((txState) => txState.transaction)}
             disabled={transactions.length === 0}

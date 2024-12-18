@@ -6,33 +6,47 @@ import {
   toast as baseToast,
   Slide,
   type ToastOptions as BaseToastOptions,
+  type ToastContent,
+  type ToastContentProps,
 } from 'react-toastify'
 
-type ToastRenderProps = {
-  dismiss: () => void
-}
+type ToastData = { message: ReactNode; title: string }
 
-type ToastRenderFn = (props: ToastRenderProps) => ReactNode
+export type DerivedToastProps = ToastContentProps<ToastData>
+
+export const Toast = ({
+  children,
+  className,
+}: PropsWithChildren<{ className: string }>) => (
+  <div
+    className={classNames(
+      'flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
+      className,
+    )}
+  >
+    {children}
+  </div>
+)
 
 type ToastOptions = Omit<
   BaseToastOptions,
-  'toastId' | 'closeButton' | 'hideProgressBar' | 'transition'
->
+  'toastId' | 'closeButton' | 'hideProgressBar' | 'transition' | 'className'
+> & { data: ToastData }
 
 export const toast = (
-  renderFn: ToastRenderFn,
-  { className, ...options }: ToastOptions = {},
+  ToastComponent: ToastContent<ToastData>,
+  options: ToastOptions,
 ) => {
   const id = nanoid()
 
   const dismiss = () => baseToast.dismiss(id)
 
-  baseToast(renderFn({ dismiss }), {
+  baseToast(ToastComponent, {
     toastId: id,
     closeButton: false,
     hideProgressBar: true,
     transition: Slide,
-    className: `mx-4 mt-2 flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg ${className}`,
+    className: `p-0 m-4 `,
 
     ...options,
   })
@@ -46,6 +60,8 @@ const Title = ({
 }: PropsWithChildren<{ className: string }>) => (
   <h2 className={classNames('font-semibold', className)}>{children}</h2>
 )
+
+Toast.Title = Title
 
 const Dismiss = ({
   children,
@@ -63,4 +79,4 @@ const Dismiss = ({
   </button>
 )
 
-export const Toast = { Title, Dismiss }
+Toast.Dismiss = Dismiss
