@@ -1,19 +1,18 @@
-import { GhostButton, Modal, PrimaryButton } from '@/components'
-import { useClearTransactions } from './useClearTransactions'
+import { GhostButton, InlineForm, Modal, PrimaryButton } from '@/components'
 
 type ClearTransactionsModalProps = {
   open: boolean
+  newActiveRouteId: string
+  intent: string
   onClose: () => void
-  onConfirm: () => void
 }
 
 export const ClearTransactionsModal = ({
   open,
+  newActiveRouteId,
+  intent,
   onClose,
-  onConfirm,
 }: ClearTransactionsModalProps) => {
-  const { clearTransactions } = useClearTransactions()
-
   return (
     <Modal
       open={open}
@@ -27,16 +26,11 @@ export const ClearTransactionsModal = ({
           Cancel
         </GhostButton>
 
-        <PrimaryButton
-          style="contrast"
-          onClick={() => {
-            clearTransactions()
-            onClose()
-            onConfirm()
-          }}
-        >
-          Clear transactions
-        </PrimaryButton>
+        <InlineForm context={{ newActiveRouteId }}>
+          <PrimaryButton submit intent={intent} style="contrast">
+            Clear transactions
+          </PrimaryButton>
+        </InlineForm>
       </Modal.Actions>
     </Modal>
   )

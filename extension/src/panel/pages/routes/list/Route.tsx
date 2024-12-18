@@ -10,7 +10,6 @@ import type { ExecutionRoute } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { useSubmit } from 'react-router'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
@@ -26,7 +25,6 @@ export const Route = ({ route }: RouteProps) => {
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
   const transactions = useTransactions()
-  const submit = useSubmit()
   const formRef = useRef(null)
 
   return (
@@ -102,9 +100,10 @@ export const Route = ({ route }: RouteProps) => {
       </section>
 
       <ClearTransactionsModal
+        newActiveRouteId={route.id}
+        intent={Intent.clearTransactions}
         open={confirmClearTransactions}
         onClose={() => setConfirmClearTransactions(false)}
-        onConfirm={() => submit(formRef.current, { method: 'post' })}
       />
     </>
   )
