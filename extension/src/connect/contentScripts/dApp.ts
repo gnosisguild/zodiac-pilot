@@ -4,25 +4,31 @@ import {
 } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 
-function ensureIframe() {
-  let node: HTMLIFrameElement | null = document.querySelector(
-    'iframe[src="https://connect.pilot.gnosisguild.org/"]',
-  )
-
-  if (!node) {
-    node = document.createElement('iframe')
-    node.src = 'https://connect.pilot.gnosisguild.org/'
-    node.style.display = 'none'
-
-    const parent = document.body || document.documentElement
-    parent.append(node)
-  }
-
-  return node
-}
-
 // wait for connection from ConnectProvider (running in extension page), then inject iframe to establish a bridge to the user's injected wallet
 chrome.runtime.onConnect.addListener((port) => {
+  // DO NOT MOVE THIS OUT OF THIS SCOPE!
+  // Apparently when building for production this
+  // method might receive a name that clashes with
+  // another variable on the global scope. This results
+  // in the extension not being able to create a port
+  // to a DApp and, therefore, not working. Crazy, right?
+  const ensureIframe = () => {
+    let node: HTMLIFrameElement | null = document.querySelector(
+      'iframe[src="https://connect.pilot.gnosisguild.org/"]',
+    )
+
+    if (!node) {
+      node = document.createElement('iframe')
+      node.src = 'https://connect.pilot.gnosisguild.org/'
+      node.style.display = 'none'
+
+      const parent = document.body || document.documentElement
+      parent.append(node)
+    }
+
+    return node
+  }
+
   const iframe = ensureIframe()
 
   // relay requests from the panel to the connect iframe
