@@ -1,8 +1,11 @@
+import { ChevronDown, X } from 'lucide-react'
 import BaseSelect, {
   type ClassNamesConfig,
+  type CommonProps,
   type GroupBase,
   type Props,
 } from 'react-select'
+import { GhostButton } from '../buttons'
 import { Input } from './Input'
 
 export const selectStyles = <
@@ -36,9 +39,33 @@ export function Select<Option = unknown, Multi extends boolean = boolean>({
           {...props}
           unstyled
           inputId={inputId}
+          components={{
+            ClearIndicator: ClearIndicator<Option, Multi>,
+            DropdownIndicator,
+          }}
           classNames={selectStyles<Option, Multi>()}
         />
       )}
     </Input>
   )
 }
+
+function ClearIndicator<Option, IsMulti extends boolean>({
+  clearValue,
+}: CommonProps<Option, IsMulti, GroupBase<Option>>) {
+  return (
+    <GhostButton iconOnly icon={X} size="small" onClick={clearValue}>
+      Clear piloted Safe
+    </GhostButton>
+  )
+}
+
+Select.ClearIndicator = ClearIndicator
+
+const DropdownIndicator = () => (
+  <GhostButton iconOnly icon={ChevronDown} size="small">
+    View available Safes
+  </GhostButton>
+)
+
+Select.DropdownIndicator = DropdownIndicator
