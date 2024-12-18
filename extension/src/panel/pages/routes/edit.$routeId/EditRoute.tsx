@@ -54,11 +54,11 @@ import {
   splitPrefixedAddress,
   type ChainId,
 } from 'ser-kit'
+import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
-import { ClearTransactionsModal } from '../../useConfirmClearTransaction'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { getRouteId } from './getRouteId'

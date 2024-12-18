@@ -11,9 +11,9 @@ import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useSubmit } from 'react-router'
+import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
-import { ClearTransactionsModal } from '../../useConfirmClearTransaction'
 import { Intent } from './intents'
 
 interface RouteProps {
