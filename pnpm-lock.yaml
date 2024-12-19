@@ -85,7 +85,7 @@ importers:
     devDependencies:
       '@remix-run/dev':
         specifier: ^2.12.1
-        version: 2.15.1(@remix-run/react@2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2))(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(vite@6.0.3(@types/node@22.10.2)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1))(wrangler@3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        version: 2.15.1(@remix-run/react@2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2))(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(vite@6.0.3(@types/node@22.10.2)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1))(wrangler@3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@types/chrome':
         specifier: ^0.0.287
         version: 0.0.287
@@ -346,8 +346,8 @@ importers:
         specifier: ^5.0.0
         version: 5.7.2
       wrangler:
-        specifier: 3.97.0
-        version: 3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 3.98.0
+        version: 3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   landing-page:
     dependencies:
@@ -404,8 +404,8 @@ importers:
         specifier: ^5.0.0
         version: 5.7.2
       wrangler:
-        specifier: 3.97.0
-        version: 3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: 3.98.0
+        version: 3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
 packages:
 
@@ -6829,8 +6829,8 @@ packages:
     resolution: {integrity: sha512-BUgJXc752Kou3oOIuU1i+yZZypyZRqNPW0vqoMPl8VaoalSfeR0D8/t4iAS3yirs79SSMTxTag+ZC86uswv+Cw==}
     engines: {node: '>=18.17'}
 
-  unenv-nightly@2.0.0-20241212-153011-af71c96:
-    resolution: {integrity: sha512-Yugb9yPs/EZsPOY+IHloqVVEcZeJ0uwwViTedsZjOtVeYO8I29B1rzU/p84FMT0R1Ht3bHsKkNV/rzrjSd07QA==}
+  unenv-nightly@2.0.0-20241204-140205-a5d5190:
+    resolution: {integrity: sha512-jpmAytLeiiW01pl5bhVn9wYJ4vtiLdhGe10oXlJBuQEX8mxjxO8BlEXGHU4vr4yEikjFP1wsomTHt/CLU8kUwg==}
 
   unenv@1.10.0:
     resolution: {integrity: sha512-wY5bskBQFL9n3Eca5XnhH6KbUo/tfvkwm9OpcdCvLaeA7piBNbavbOKJySEwQ1V0RH6HvNlSAFRTpvTqgKRQXQ==}
@@ -7249,10 +7249,9 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  wrangler@3.97.0:
-    resolution: {integrity: sha512-NkFAigqZWe4NOK0gYROcpvdugaYJE/JRFrIZ+c5Q5/uie+25WH8OVbRvvmiXhWVhso56cZs2W2TPmAxT/sgHkw==}
+  wrangler@3.98.0:
+    resolution: {integrity: sha512-s3R2Jdai+sIAQ1Fd+WzEK5fVxYHxAN7qbjYPXGx75dxM9/O2p+CT666PYLROGIk4sfAeLU4eVp9iqfVDuiQESw==}
     engines: {node: '>=16.17.0'}
-    deprecated: Downgrade to 3.96.0
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20241205.0
@@ -9120,7 +9119,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@remix-run/dev@2.15.1(@remix-run/react@2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2))(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(vite@6.0.3(@types/node@22.10.2)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1))(wrangler@3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@remix-run/dev@2.15.1(@remix-run/react@2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2))(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(vite@6.0.3(@types/node@22.10.2)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1))(wrangler@3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/generator': 7.26.3
@@ -9181,7 +9180,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.7.2
       vite: 6.0.3(@types/node@22.10.2)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1)
-      wrangler: 3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      wrangler: 3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -9838,7 +9837,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.1.0
       '@vanilla-extract/css': 1.16.1(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -15321,10 +15320,9 @@ snapshots:
 
   undici@6.21.0: {}
 
-  unenv-nightly@2.0.0-20241212-153011-af71c96:
+  unenv-nightly@2.0.0-20241204-140205-a5d5190:
     dependencies:
       defu: 6.1.4
-      mlly: 1.7.3
       ohash: 1.1.4
       pathe: 1.1.2
       ufo: 1.5.4
@@ -15773,7 +15771,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20241205.0
       '@cloudflare/workerd-windows-64': 1.20241205.0
 
-  wrangler@3.97.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+  wrangler@3.98.0(@cloudflare/workers-types@4.20241218.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
@@ -15789,7 +15787,7 @@ snapshots:
       resolve: 1.22.9
       selfsigned: 2.4.1
       source-map: 0.6.1
-      unenv: unenv-nightly@2.0.0-20241212-153011-af71c96
+      unenv: unenv-nightly@2.0.0-20241204-140205-a5d5190
       workerd: 1.20241205.0
       xxhash-wasm: 1.1.0
     optionalDependencies:
