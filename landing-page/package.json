@@ -6,7 +6,7 @@
     "@icons-pack/react-simple-icons": "^10.2.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "lucide-react": "^0.468.0",
+    "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
