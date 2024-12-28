@@ -1,6 +1,6 @@
 {
   "name": "example-app",
-  "packageManager": "pnpm@9.15.1",
+  "packageManager": "pnpm@9.15.2",
   "private": true,
   "type": "module",
   "scripts": {
