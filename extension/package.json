@@ -93,7 +93,7 @@
     "vitest-chrome": "0.1.0",
     "zodiac-roles-deployments": "^2.2.2"
   },
-  "packageManager": "pnpm@9.15.1",
+  "packageManager": "pnpm@9.15.2",
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
