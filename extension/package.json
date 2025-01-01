@@ -73,7 +73,7 @@
     "events": "^3.3.0",
     "evm-proxy-detection": "^2.0.1",
     "globals": "^15.8.0",
-    "happy-dom": "^15.7.4",
+    "happy-dom": "^16.0.0",
     "isomorphic-fetch": "^3.0.0",
     "jsdom-testing-mocks": "^1.13.1",
     "madge": "^8.0.0",
