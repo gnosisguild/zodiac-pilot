@@ -87,8 +87,8 @@ importers:
         specifier: ^2.12.1
         version: 2.15.2(@remix-run/react@2.15.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.2))(@types/node@22.10.3)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.2)(utf-8-validate@5.0.10)(vite@6.0.6(@types/node@22.10.3)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.6.1))(wrangler@3.99.0(@cloudflare/workers-types@4.20241230.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@types/chrome':
-        specifier: ^0.0.288
-        version: 0.0.288
+        specifier: ^0.0.289
+        version: 0.0.289
       '@types/react':
         specifier: ^19.0.0
         version: 19.0.2
@@ -184,8 +184,8 @@ importers:
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: ^0.0.288
-        version: 0.0.288
+        specifier: ^0.0.289
+        version: 0.0.289
       '@types/eslint__js':
         specifier: ^8.42.3
         version: 8.42.3
@@ -2405,8 +2405,8 @@ packages:
   '@types/chrome@0.0.114':
     resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
 
-  '@types/chrome@0.0.288':
-    resolution: {integrity: sha512-u0TTY/WlSpI4+pos3jNash4vmoIvK50WFgzoXwWWrFKhPn9ZBmb1qdjUrwXaa8Dq6NXOMBkGIcjYbjK4pNYiEQ==}
+  '@types/chrome@0.0.289':
+    resolution: {integrity: sha512-JQifH2d4TFeIZ+ySBSQxCd4D+J6W0jIAyQipAzG1up4O7WApTYrBqnmpNbMqFR5f70wJ1FE6+axqtpfTtPzy/g==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -9718,7 +9718,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@types/chrome@0.0.288':
+  '@types/chrome@0.0.289':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
