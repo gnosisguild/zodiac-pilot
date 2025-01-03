@@ -102,8 +102,11 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       }
 
       if (
-        receipt.logs.length === 1 &&
-        isExecutionFailure(receipt.logs[0], avatarAddress, moduleAddress)
+        isExecutionFailure(
+          receipt.logs[receipt.logs.length - 1],
+          avatarAddress,
+          moduleAddress,
+        )
       ) {
         dispatch({
           type: 'UPDATE_TRANSACTION_STATUS',
