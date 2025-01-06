@@ -6,6 +6,8 @@ import {
 import { useEffect, useId } from 'react'
 import { useWindowId } from './BridgeContext'
 
+type ResponseFn = (response: InjectedProviderMessage) => void
+
 export const useBridgeError = () => {
   const windowId = useWindowId()
   const toastId = useId()
@@ -14,6 +16,7 @@ export const useBridgeError = () => {
     const handleMessage = (
       message: InjectedProviderMessage,
       sender: chrome.runtime.MessageSender,
+      sendResponse: ResponseFn,
     ) => {
       // only handle messages from our extension
       if (sender.id !== chrome.runtime.id) {
@@ -37,6 +40,14 @@ export const useBridgeError = () => {
         message:
           'In order to connect Zodiac Pilot to a dApp you first need to create a route.',
       })
+
+      sendResponse({
+        type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
+        error: { code: 4100, message: 'No active route' },
+        requestId: message.requestId,
+      } satisfies InjectedProviderMessage)
+
+      return true
     }
 
     chrome.runtime.onMessage.addListener(handleMessage)
@@ -44,5 +55,5 @@ export const useBridgeError = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage)
     }
-  }, [windowId])
+  }, [toastId, windowId])
 }
