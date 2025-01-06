@@ -13,7 +13,19 @@ export const CopyToClipboard = ({ data, ...props }: CopyToClipboardProps) => (
     {...props}
     icon={Copy}
     onClick={() => {
-      navigator.clipboard.writeText(JSON.stringify(data, undefined, 2))
+      navigator.clipboard.writeText(
+        JSON.stringify(
+          data,
+          (_, value) => {
+            if (typeof value === 'bigint') {
+              return value.toString()
+            }
+
+            return value
+          },
+          2,
+        ),
+      )
 
       infoToast({
         title: 'Copied!',
