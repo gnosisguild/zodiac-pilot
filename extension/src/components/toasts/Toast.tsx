@@ -46,7 +46,7 @@ export const toast = (
     closeButton: false,
     hideProgressBar: true,
     transition: Slide,
-    className: `p-0 m-4 `,
+    className: `p-0 m-4 w-auto`,
 
     ...options,
   })
