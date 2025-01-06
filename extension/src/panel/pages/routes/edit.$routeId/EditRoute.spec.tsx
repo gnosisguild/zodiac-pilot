@@ -23,6 +23,8 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getAddress } from 'ethers'
 import {
+  AccountType,
+  ConnectionType,
   formatPrefixedAddress,
   parsePrefixedAddress,
   splitPrefixedAddress,
@@ -171,7 +173,7 @@ describe('Edit Zodiac route', () => {
 
   describe('Piloted Safe', () => {
     it('is possible to define a safe', async () => {
-      mockRoute({ id: 'route-id' })
+      await mockRoute({ id: 'route-id' })
 
       await render('/routes/edit/route-id', [
         {
@@ -196,6 +198,60 @@ describe('Edit Zodiac route', () => {
         'avatar',
         formatPrefixedAddress(1, address).toLowerCase(),
       )
+    })
+
+    it('clears the module when the piloted safe changes', async () => {
+      const moduleAddress = randomAddress()
+
+      await mockRoute({
+        id: 'route-id',
+        avatar: randomPrefixedAddress(),
+        waypoints: [
+          {
+            account: {
+              address: randomAddress(),
+              prefixedAddress: randomPrefixedAddress(),
+              type: AccountType.EOA,
+            },
+          },
+          {
+            account: {
+              type: AccountType.ROLES,
+              address: moduleAddress,
+              prefixedAddress: formatPrefixedAddress(1, moduleAddress),
+              chain: 1,
+              multisend: [],
+              version: 2,
+            },
+            connection: {
+              from: randomPrefixedAddress(),
+              type: ConnectionType.IS_MEMBER,
+              roles: [],
+            },
+          },
+        ],
+      })
+
+      mockFetchZodiacModules.mockResolvedValue([
+        { moduleAddress, type: KnownContracts.ROLES_V2 },
+      ])
+
+      mockQueryRolesV2MultiSend.mockResolvedValue({})
+
+      await render('/routes/edit/route-id', [
+        {
+          path: '/routes/edit/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Clear piloted Safe' }),
+      )
+
+      expect(screen.queryByText('Roles v2')).not.toBeInTheDocument()
     })
   })
 

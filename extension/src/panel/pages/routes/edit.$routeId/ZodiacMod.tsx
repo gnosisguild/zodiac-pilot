@@ -83,7 +83,9 @@ export const ZodiacMod = ({
                 value: value.moduleAddress,
                 label: MODULE_NAMES[value.moduleType],
               }
-            : defaultModOption
+            : defaultModOption != null
+              ? defaultModOption
+              : null
         }
         isDisabled={disabled}
         placeholder="Select a module"
