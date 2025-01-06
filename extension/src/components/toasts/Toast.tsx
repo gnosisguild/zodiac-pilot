@@ -94,7 +94,6 @@ const Dismiss = ({
     <X size={16} />
 
     <span className="sr-only">{children}</span>
-    {children}
   </button>
 )
 
