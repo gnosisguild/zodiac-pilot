@@ -6,16 +6,16 @@ const ErrorToast = ({
   closeToast,
 }: DerivedToastProps) => (
   <Toast className="border-red-500/60 bg-red-500 dark:border-red-700">
-    <div className="flex items-center justify-between gap-4">
-      {title && <Toast.Title className="text-white">{title}</Toast.Title>}
+    <Toast.Header>
+      <Toast.Title className="text-white">{title}</Toast.Title>
 
       <Toast.Dismiss
         className="text-white hover:bg-white/20"
         onDismiss={closeToast}
       />
-    </div>
+    </Toast.Header>
 
-    <div className="text-red-50">{message}</div>
+    <Toast.Message className="text-red-50">{message}</Toast.Message>
   </Toast>
 )
 

@@ -6,20 +6,20 @@ const InfoToast = ({
   closeToast,
 }: DerivedToastProps) => (
   <Toast className="border-zinc-800/80 bg-zinc-900 dark:border-zinc-300/80 dark:bg-zinc-100">
-    <div className="flex items-center justify-between gap-4">
-      {title && (
-        <Toast.Title className="text-zinc-50 dark:text-zinc-900">
-          {title}
-        </Toast.Title>
-      )}
+    <Toast.Header>
+      <Toast.Title className="text-zinc-50 dark:text-zinc-900">
+        {title}
+      </Toast.Title>
 
       <Toast.Dismiss
         className="text-zinc-50 hover:bg-white/20 dark:text-zinc-900 dark:hover:bg-zinc-900/10"
         onDismiss={closeToast}
       />
-    </div>
+    </Toast.Header>
 
-    <div className="text-zinc-200 dark:text-zinc-700">{message}</div>
+    <Toast.Message className="text-zinc-200 dark:text-zinc-700">
+      {message}
+    </Toast.Message>
   </Toast>
 )
 

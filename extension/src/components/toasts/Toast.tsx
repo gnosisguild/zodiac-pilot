@@ -20,7 +20,7 @@ export const Toast = ({
 }: PropsWithChildren<{ className: string }>) => (
   <div
     className={classNames(
-      'flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
+      'flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
       className,
     )}
   >
@@ -46,13 +46,21 @@ export const toast = (
     closeButton: false,
     hideProgressBar: true,
     transition: Slide,
-    className: `p-0 m-4 `,
+    className: `p-0 mx-4 mb-4 w-auto first:mt-4`,
 
     ...options,
   })
 
   return { dismiss }
 }
+
+const Header = ({ children }: PropsWithChildren) => (
+  <div className="flex items-center justify-between gap-4 px-2 pt-2">
+    {children}
+  </div>
+)
+
+Toast.Header = Header
 
 const Title = ({
   children,
@@ -62,6 +70,17 @@ const Title = ({
 )
 
 Toast.Title = Title
+
+const Message = ({
+  className,
+  children,
+}: PropsWithChildren<{ className: string }>) => (
+  <div className={classNames('max-h-40 overflow-y-auto px-2 pb-2', className)}>
+    {children}
+  </div>
+)
+
+Toast.Message = Message
 
 const Dismiss = ({
   children,
@@ -75,7 +94,6 @@ const Dismiss = ({
     <X size={16} />
 
     <span className="sr-only">{children}</span>
-    {children}
   </button>
 )
 
