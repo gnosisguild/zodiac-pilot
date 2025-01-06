@@ -15,7 +15,7 @@ const ErrorToast = ({
       />
     </div>
 
-    <div className="text-red-50">{message}</div>
+    <Toast.Message className="text-red-50">{message}</Toast.Message>
   </Toast>
 )
 

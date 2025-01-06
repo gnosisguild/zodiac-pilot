@@ -19,7 +19,9 @@ const InfoToast = ({
       />
     </div>
 
-    <div className="text-zinc-200 dark:text-zinc-700">{message}</div>
+    <Toast.Message className="text-zinc-200 dark:text-zinc-700">
+      {message}
+    </Toast.Message>
   </Toast>
 )
 

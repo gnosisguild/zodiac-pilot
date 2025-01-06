@@ -19,7 +19,9 @@ const SuccessToast = ({
       />
     </div>
 
-    <div className="text-green-700 dark:text-green-50">{message}</div>
+    <Toast.Message className="text-green-700 dark:text-green-50">
+      {message}
+    </Toast.Message>
   </Toast>
 )
 

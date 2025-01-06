@@ -63,6 +63,17 @@ const Title = ({
 
 Toast.Title = Title
 
+const Message = ({
+  className,
+  children,
+}: PropsWithChildren<{ className: string }>) => (
+  <div className={classNames('max-h-40 overflow-y-auto', className)}>
+    {children}
+  </div>
+)
+
+Toast.Message = Message
+
 const Dismiss = ({
   children,
   className,
