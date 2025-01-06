@@ -10,6 +10,7 @@ import {
   type ActionFunction,
   type LoaderFunction,
 } from 'react-router'
+import { ToastContainer } from 'react-toastify'
 import { expect } from 'vitest'
 import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
@@ -93,6 +94,7 @@ export const render = async (
       initialProvider={initialProvider}
     >
       <RouterProvider router={router} />
+      <ToastContainer />
     </RenderWrapper>,
     options,
   )

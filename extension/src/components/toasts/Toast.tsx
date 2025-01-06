@@ -1,7 +1,9 @@
+import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
 import { X } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import type { PropsWithChildren, ReactNode } from 'react'
+import { createContext, useContext, useId } from 'react'
 import {
   toast as baseToast,
   Slide,
@@ -17,27 +19,36 @@ export type DerivedToastProps = ToastContentProps<ToastData>
 export const Toast = ({
   children,
   className,
-}: PropsWithChildren<{ className: string }>) => (
-  <div
-    className={classNames(
-      'flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
-      className,
-    )}
-  >
-    {children}
-  </div>
-)
+}: PropsWithChildren<{ className: string }>) => {
+  const id = useId()
+
+  return (
+    <ToastContext value={id}>
+      <div
+        role="alert"
+        aria-labelledby={`${id}-label`}
+        aria-describedby={`${id}-description`}
+        className={classNames(
+          'flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </ToastContext>
+  )
+}
 
 type ToastOptions = Omit<
   BaseToastOptions,
-  'toastId' | 'closeButton' | 'hideProgressBar' | 'transition' | 'className'
+  'closeButton' | 'hideProgressBar' | 'transition' | 'className'
 > & { data: ToastData }
 
 export const toast = (
   ToastComponent: ToastContent<ToastData>,
-  options: ToastOptions,
+  { toastId, ...options }: ToastOptions,
 ) => {
-  const id = nanoid()
+  const id = toastId || nanoid()
 
   const dismiss = () => baseToast.dismiss(id)
 
@@ -46,7 +57,7 @@ export const toast = (
     closeButton: false,
     hideProgressBar: true,
     transition: Slide,
-    className: `p-0 mx-4 mb-4 w-auto first:mt-4`,
+    className: `p-0 mx-4 mb-4 w-auto first:mt-4 min-h-0`,
 
     ...options,
   })
@@ -66,7 +77,12 @@ const Title = ({
   children,
   className,
 }: PropsWithChildren<{ className: string }>) => (
-  <h2 className={classNames('font-semibold', className)}>{children}</h2>
+  <h2
+    id={`${useToastId()}-label`}
+    className={classNames('font-semibold', className)}
+  >
+    {children}
+  </h2>
 )
 
 Toast.Title = Title
@@ -75,7 +91,10 @@ const Message = ({
   className,
   children,
 }: PropsWithChildren<{ className: string }>) => (
-  <div className={classNames('max-h-40 overflow-y-auto px-2 pb-2', className)}>
+  <div
+    id={`${useToastId()}-description`}
+    className={classNames('max-h-40 overflow-y-auto px-2 pb-2', className)}
+  >
     {children}
   </div>
 )
@@ -98,3 +117,13 @@ const Dismiss = ({
 )
 
 Toast.Dismiss = Dismiss
+
+const ToastContext = createContext<string | null>(null)
+
+const useToastId = () => {
+  const id = useContext(ToastContext)
+
+  invariant(id != null, 'Toast ID missing on context')
+
+  return id
+}

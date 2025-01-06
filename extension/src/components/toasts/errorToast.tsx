@@ -19,8 +19,9 @@ const ErrorToast = ({
   </Toast>
 )
 
-export const errorToast = ({ title, message }: ToastProps) =>
+export const errorToast = ({ id, title, message }: ToastProps) =>
   toast(ErrorToast, {
+    toastId: id,
     data: { title, message },
     autoClose: false,
   })
