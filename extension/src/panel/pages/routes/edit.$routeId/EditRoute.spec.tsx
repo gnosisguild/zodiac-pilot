@@ -7,6 +7,8 @@ import {
 import { useInjectedWallet } from '@/providers'
 import {
   createMockRoute,
+  createRoleWaypoint,
+  createStartingWaypoint,
   createTransaction,
   expectRouteToBe,
   MockProvider,
@@ -171,7 +173,7 @@ describe('Edit Zodiac route', () => {
 
   describe('Piloted Safe', () => {
     it('is possible to define a safe', async () => {
-      mockRoute({ id: 'route-id' })
+      await mockRoute({ id: 'route-id' })
 
       await render('/routes/edit/route-id', [
         {
@@ -196,6 +198,40 @@ describe('Edit Zodiac route', () => {
         'avatar',
         formatPrefixedAddress(1, address).toLowerCase(),
       )
+    })
+
+    it('clears the module when the piloted safe changes', async () => {
+      const moduleAddress = randomAddress()
+
+      await mockRoute({
+        id: 'route-id',
+        avatar: randomPrefixedAddress(),
+        waypoints: [
+          createStartingWaypoint(),
+          createRoleWaypoint({ moduleAddress }),
+        ],
+      })
+
+      mockFetchZodiacModules.mockResolvedValue([
+        { moduleAddress, type: KnownContracts.ROLES_V2 },
+      ])
+
+      mockQueryRolesV2MultiSend.mockResolvedValue({})
+
+      await render('/routes/edit/route-id', [
+        {
+          path: '/routes/edit/:routeId',
+          Component: EditRoute,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Clear piloted Safe' }),
+      )
+
+      expect(screen.queryByText('Roles v2')).not.toBeInTheDocument()
     })
   })
 
