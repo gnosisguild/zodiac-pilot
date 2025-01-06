@@ -7,6 +7,8 @@ import {
 import { useInjectedWallet } from '@/providers'
 import {
   createMockRoute,
+  createRoleWaypoint,
+  createStartingWaypoint,
   createTransaction,
   expectRouteToBe,
   MockProvider,
@@ -23,8 +25,6 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getAddress } from 'ethers'
 import {
-  AccountType,
-  ConnectionType,
   formatPrefixedAddress,
   parsePrefixedAddress,
   splitPrefixedAddress,
@@ -207,28 +207,8 @@ describe('Edit Zodiac route', () => {
         id: 'route-id',
         avatar: randomPrefixedAddress(),
         waypoints: [
-          {
-            account: {
-              address: randomAddress(),
-              prefixedAddress: randomPrefixedAddress(),
-              type: AccountType.EOA,
-            },
-          },
-          {
-            account: {
-              type: AccountType.ROLES,
-              address: moduleAddress,
-              prefixedAddress: formatPrefixedAddress(1, moduleAddress),
-              chain: 1,
-              multisend: [],
-              version: 2,
-            },
-            connection: {
-              from: randomPrefixedAddress(),
-              type: ConnectionType.IS_MEMBER,
-              roles: [],
-            },
-          },
+          createStartingWaypoint(),
+          createRoleWaypoint({ moduleAddress }),
         ],
       })
 
