@@ -20,7 +20,7 @@ export const Toast = ({
 }: PropsWithChildren<{ className: string }>) => (
   <div
     className={classNames(
-      'flex max-w-full flex-col gap-1 rounded-md border p-2 text-sm shadow-lg',
+      'flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
       className,
     )}
   >
@@ -54,6 +54,14 @@ export const toast = (
   return { dismiss }
 }
 
+const Header = ({ children }: PropsWithChildren) => (
+  <div className="flex items-center justify-between gap-4 px-2 pt-2">
+    {children}
+  </div>
+)
+
+Toast.Header = Header
+
 const Title = ({
   children,
   className,
@@ -67,7 +75,7 @@ const Message = ({
   className,
   children,
 }: PropsWithChildren<{ className: string }>) => (
-  <div className={classNames('max-h-40 overflow-y-auto', className)}>
+  <div className={classNames('max-h-40 overflow-y-auto px-2 pb-2', className)}>
     {children}
   </div>
 )
