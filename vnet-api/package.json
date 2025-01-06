@@ -13,5 +13,5 @@
     "deploy": "wrangler publish",
     "check-types": "tsc --noEmit"
   },
-  "packageManager": "pnpm@9.15.2"
+  "packageManager": "pnpm@9.15.3"
 }
