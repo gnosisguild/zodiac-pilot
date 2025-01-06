@@ -3,10 +3,21 @@ import {
   getRoutes,
   saveLastUsedRouteId,
 } from '@/execution-routes'
-import { expectRouteToBe, mockRoutes, render } from '@/test-utils'
+import {
+  InjectedProviderMessageTyp,
+  type InjectedProviderMessage,
+} from '@/messages'
+import {
+  callListeners,
+  chromeMock,
+  createMockTab,
+  expectRouteToBe,
+  mockRoutes,
+  render,
+} from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { action, loader, NoRoutes } from './NoRoutes'
 
 describe('No routes', () => {
@@ -55,6 +66,27 @@ describe('No routes', () => {
       const [newRoute] = await getRoutes()
 
       await expect(getLastUsedRouteId()).resolves.toEqual(newRoute.id)
+    })
+
+    it('shows an error when the user tries to connect a dApp', async () => {
+      await render('/', [{ path: '/', Component: NoRoutes, loader, action }])
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
+          request: { method: 'eth_accounts' },
+          requestId: '1',
+        } satisfies InjectedProviderMessage,
+        { id: chromeMock.runtime.id, tab: createMockTab() },
+        vi.fn(),
+      )
+
+      expect(
+        screen.getByRole('alert', { name: 'No active route' }),
+      ).toHaveAccessibleDescription(
+        'In order to connect Zodiac Pilot to a dApp you first need to create a route.',
+      )
     })
   })
 })

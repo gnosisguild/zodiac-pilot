@@ -5,6 +5,7 @@ import {
   getRoutes,
   saveLastUsedRouteId,
 } from '@/execution-routes'
+import { useBridgeError } from '@/inject-bridge'
 import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
@@ -31,6 +32,8 @@ export const action = async () => {
 }
 
 export const NoRoutes = () => {
+  useBridgeError()
+
   return (
     <Page>
       <Page.Content>
