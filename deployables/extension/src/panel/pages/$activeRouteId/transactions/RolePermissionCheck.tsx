@@ -1,4 +1,3 @@
-import { CopyToClipboard, Tag } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProvider } from '@/providers-ui'
 import type { TransactionState } from '@/state'
@@ -10,6 +9,7 @@ import {
   decodeRolesV2Error,
 } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import { CopyToClipboard, Tag } from '@zodiac/ui'
 import { toQuantity, ZeroAddress } from 'ethers'
 import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'

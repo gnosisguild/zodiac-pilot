@@ -1,12 +1,12 @@
+import { useRouteConnect } from '@/execution-routes'
+import { useTransactions } from '@/state'
+import type { ExecutionRoute } from '@/types'
 import {
   InlineForm,
   SecondaryButton,
   SecondaryLinkButton,
   Tag,
-} from '@/components'
-import { useRouteConnect } from '@/execution-routes'
-import { useTransactions } from '@/state'
-import type { ExecutionRoute } from '@/types'
+} from '@zodiac/ui'
 import { formatDistanceToNow } from 'date-fns'
 import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useRef, useState } from 'react'

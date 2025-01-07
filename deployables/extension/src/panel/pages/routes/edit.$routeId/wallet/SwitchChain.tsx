@@ -1,5 +1,5 @@
 import { CHAIN_NAME } from '@/chains'
-import { SecondaryButton, Warning } from '@/components'
+import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
 import { Section } from './Section'

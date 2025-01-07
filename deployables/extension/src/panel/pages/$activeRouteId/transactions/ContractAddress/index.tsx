@@ -1,5 +1,5 @@
 import { EXPLORER_URL } from '@/chains'
-import { AddressInput, GhostLinkButton } from '@/components'
+import { AddressInput, GhostLinkButton } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import type { ChainId } from 'ser-kit'

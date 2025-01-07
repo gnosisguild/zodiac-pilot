@@ -1,4 +1,4 @@
-import { TextInput } from '@/components'
+import { TextInput } from '@zodiac/ui'
 import { FunctionFragment, Result } from 'ethers'
 import type { PropsWithChildren } from 'react'
 

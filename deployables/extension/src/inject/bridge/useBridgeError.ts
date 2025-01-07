@@ -1,8 +1,8 @@
-import { errorToast } from '@/components'
 import {
   InjectedProviderMessageTyp,
   type InjectedProviderMessage,
 } from '@/messages'
+import { errorToast } from '@zodiac/ui'
 import { useEffect, useId } from 'react'
 import { useWindowId } from './BridgeContext'
 

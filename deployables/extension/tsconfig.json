@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
@@ -19,7 +19,6 @@
     "downlevelIteration": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "paths": {
-      "@/components": ["./src/components/index.ts"],
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
       "@/const": ["./src/const.ts"],

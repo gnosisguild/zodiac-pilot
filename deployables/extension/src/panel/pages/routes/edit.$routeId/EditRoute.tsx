@@ -1,17 +1,5 @@
 import { EOA_ZERO_ADDRESS } from '@/chains'
 import {
-  Breadcrumbs,
-  Error,
-  errorToast,
-  InlineForm,
-  Page,
-  PrimaryButton,
-  Section,
-  Select,
-  TextInput,
-  Warning,
-} from '@/components'
-import {
   getLastUsedRouteId,
   getRoute,
   getRoutes,
@@ -38,6 +26,18 @@ import {
 } from '@/zodiac'
 import { invariantResponse } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import {
+  Breadcrumbs,
+  Error,
+  errorToast,
+  InlineForm,
+  Page,
+  PrimaryButton,
+  Section,
+  Select,
+  TextInput,
+  Warning,
+} from '@zodiac/ui'
 import { getAddress, ZeroAddress } from 'ethers'
 import { Rocket } from 'lucide-react'
 import { Suspense, useEffect, useRef, useState } from 'react'

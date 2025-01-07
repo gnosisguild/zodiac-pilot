@@ -1,7 +1,7 @@
 import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
-import { infoToast } from '@/components'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { infoToast } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 import type { ConnectionStatus } from '../connectTypes'

@@ -1,7 +1,7 @@
-import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
+import { GhostButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 
 type Props = {

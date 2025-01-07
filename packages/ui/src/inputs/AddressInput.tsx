@@ -1,4 +1,3 @@
-import { ZERO_ADDRESS } from '@/chains'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Blockie } from '../Blockie'
 import { type ComposableInputProps, Input } from './Input'
@@ -26,7 +25,7 @@ export const AddressInput = ({
     after={action && <div className="mr-2">{action}</div>}
     before={
       <Blockie
-        address={props.value || ZERO_ADDRESS}
+        address={props.value || '0x0000000000000000000000000000000000000000'}
         className="ml-4 size-5 shrink-0"
       />
     }

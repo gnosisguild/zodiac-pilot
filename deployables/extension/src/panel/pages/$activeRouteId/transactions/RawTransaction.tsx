@@ -1,4 +1,4 @@
-import { TextInput } from '@/components'
+import { TextInput } from '@zodiac/ui'
 
 interface Props {
   data: string

@@ -1,6 +1,6 @@
-import { SecondaryButton } from '@/components'
 import { useWalletConnect, type WalletConnectResult } from '@/providers'
 import { ProviderType } from '@/types'
+import { SecondaryButton } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'

@@ -5,7 +5,7 @@ import {
   type RenderHookOptions,
 } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
-import type { VitestChromeNamespace } from 'vitest-chrome/types/vitest-chrome'
+import type { VitestChromeNamespace } from 'vitest-chrome/types'
 import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { mockRoutes } from './executionRoutes'

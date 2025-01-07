@@ -1,5 +1,5 @@
-import { SecondaryButton, Warning } from '@/components'
 import { useInjectedWallet } from '@/providers'
+import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
 

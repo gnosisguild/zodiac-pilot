@@ -1,4 +1,3 @@
-import { Info, InlineForm, Page, PrimaryButton } from '@/components'
 import {
   createRoute,
   getLastUsedRouteId,
@@ -6,6 +5,7 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { useBridgeError } from '@/inject-bridge'
+import { Info, InlineForm, Page, PrimaryButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
