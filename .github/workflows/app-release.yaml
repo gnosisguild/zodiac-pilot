@@ -21,8 +21,10 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
+      - run: pnpm build
       - name: Deploy
         uses: cloudflare/wrangler-action@v3.13.0
         with:
           workingDirectory: app
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
