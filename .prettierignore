@@ -1,6 +1,7 @@
 playwright-report
 package.json
 
+*.db
 *.zip
 *.toml
 *.patch

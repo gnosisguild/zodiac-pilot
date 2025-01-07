@@ -1,19 +1,19 @@
-import type { AppLoadContext, EntryContext } from "react-router";
-import { ServerRouter } from "react-router";
-import { isbot } from "isbot";
-import { renderToReadableStream } from "react-dom/server";
+import { isbot } from 'isbot'
+import { renderToReadableStream } from 'react-dom/server'
+import type { AppLoadContext, EntryContext } from 'react-router'
+import { ServerRouter } from 'react-router'
 
-const ABORT_DELAY = 5_000;
+const ABORT_DELAY = 5_000
 
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  _loadContext: AppLoadContext
+  _loadContext: AppLoadContext,
 ) {
-  let shellRendered = false;
-  const userAgent = request.headers.get("user-agent");
+  let shellRendered = false
+  const userAgent = request.headers.get('user-agent')
 
   const body = await renderToReadableStream(
     <ServerRouter
@@ -23,27 +23,27 @@ export default async function handleRequest(
     />,
     {
       onError(error: unknown) {
-        responseStatusCode = 500;
+        responseStatusCode = 500
         // Log streaming rendering errors from inside the shell.  Don't log
         // errors encountered during initial shell rendering since they'll
         // reject and get logged in handleDocumentRequest.
         if (shellRendered) {
-          console.error(error);
+          console.error(error)
         }
       },
-    }
-  );
-  shellRendered = true;
+    },
+  )
+  shellRendered = true
 
   // Ensure requests from bots and SPA Mode renders wait for all content to load before responding
   // https://react.dev/reference/react-dom/server/renderToPipeableStream#waiting-for-all-content-to-load-for-crawlers-and-static-generation
   if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
-    await body.allReady;
+    await body.allReady
   }
 
-  responseHeaders.set("Content-Type", "text/html");
+  responseHeaders.set('Content-Type', 'text/html')
   return new Response(body, {
     headers: responseHeaders,
     status: responseStatusCode,
-  });
+  })
 }
