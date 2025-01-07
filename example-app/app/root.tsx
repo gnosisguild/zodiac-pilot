@@ -30,6 +30,7 @@ export default function App() {
     <html className="h-full w-full">
       <head>
         <link rel="icon" href="data:image/x-icon;base64,AA" />
+        <title>Zodiac Pilot companion app</title>
         <Meta />
         <Links />
       </head>
