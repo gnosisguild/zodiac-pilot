@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   vitest-chrome:
-    hash: l4etrojdobvol77xirlnubm2eq
+    hash: fdaw4hoeqovzhwxyfu42zc636a
     path: patches/vitest-chrome.patch
 
 importers:
@@ -393,7 +393,7 @@ importers:
         version: 2.1.8(@types/node@22.10.5)(happy-dom@16.3.0)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
       vitest-chrome:
         specifier: 0.1.0
-        version: 0.1.0(patch_hash=l4etrojdobvol77xirlnubm2eq)
+        version: 0.1.0(patch_hash=fdaw4hoeqovzhwxyfu42zc636a)
       zodiac-roles-deployments:
         specifier: ^2.2.2
         version: 2.3.4
@@ -16296,7 +16296,7 @@ snapshots:
       stylus: 0.62.0
       yaml: 2.6.1
 
-  vitest-chrome@0.1.0(patch_hash=l4etrojdobvol77xirlnubm2eq):
+  vitest-chrome@0.1.0(patch_hash=fdaw4hoeqovzhwxyfu42zc636a):
     dependencies:
       '@types/chrome': 0.0.114
 

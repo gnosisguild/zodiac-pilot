@@ -1,5 +1,5 @@
 import type { RefObject } from 'react'
-import type { Runtime } from 'vitest-chrome/types/vitest-chrome'
+import type { Runtime } from 'vitest-chrome/types'
 import { createMockPort } from '../creators'
 import { chromeMock } from './chromeMock'
 

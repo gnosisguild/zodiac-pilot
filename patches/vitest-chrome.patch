@@ -1,16 +1,24 @@
 diff --git a/package.json b/package.json
-index 7851237425be569a2acdaf3cd3b16fc1be67ff6d..4215791da33b6c3f5d1ba8e254441edd7b803f99 100644
+index 7851237425be569a2acdaf3cd3b16fc1be67ff6d..0a238ca097c8638330cb715c3631ad5f3c844f16 100644
 --- a/package.json
 +++ b/package.json
-@@ -25,6 +25,11 @@
-     "vitest-chrome-schema.json",
-     "vitest-chrome.d.ts"
+@@ -12,6 +12,19 @@
+     "test",
+     "typescript"
    ],
 +  "exports": {
-+    "types": "./types/index.d.ts",
-+    "require": "./lib/index.cjs.js",
-+    "import": "./lib/index.esm.js"
++    ".": {
++      "types": "./types/index.d.ts",
++      "import": "./lib/index.esm.js",
++      "require": "./lib/index.cjs.js"
++    },
++    "./types": {
++      "types": "./types/vitest-chrome.d.ts"
++    },
++    "./event-types": {
++      "types": "./types/create-event.d.ts"
++    }
 +  },
-   "scripts": {
-     "build": "run-s build:clean build:pro build:types build:copy",
-     "build:clean": "rm -rf lib types",
+   "repository": "github:probil/vitest-chrome",
+   "bugs": "https://github.com/probil/vitest-chrome/issues",
+   "license": "MIT",

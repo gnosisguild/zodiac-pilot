@@ -1,6 +1,6 @@
 import { sleepTillIdle } from '@/utils'
-import type { EventCallback } from 'vitest-chrome/types/create-event'
-import type { Events } from 'vitest-chrome/types/vitest-chrome'
+import type { EventCallback } from 'vitest-chrome/event-types'
+import type { Events } from 'vitest-chrome/types'
 
 export const callListeners = async <
   C extends EventCallback,
