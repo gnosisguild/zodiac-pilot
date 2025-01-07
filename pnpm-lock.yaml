@@ -424,6 +424,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.0.2(@types/react@19.0.3)
+      '@zodiac/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       lucide-react:
         specifier: ^0.469.0
         version: 0.469.0(react@19.0.0)
@@ -433,6 +436,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-router:
+        specifier: ^7.1.1
+        version: 7.1.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
