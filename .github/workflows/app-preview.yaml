@@ -5,7 +5,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./app
+    working-directory: ./deployables/app
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
       - name: Deploy
         uses: cloudflare/wrangler-action@v3.13.0
         with:
-          workingDirectory: app
+          workingDirectory: deployables/app
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload

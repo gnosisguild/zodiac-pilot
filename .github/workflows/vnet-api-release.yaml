@@ -3,11 +3,11 @@ name: Deploy Vnet API
 on:
   push:
     branches: main
-    paths: ['vnet-api/**', '**/vnet-api-release.yaml']
+    paths: ['deployables/vnet-api/**', '**/vnet-api-release.yaml']
 
 defaults:
   run:
-    working-directory: ./vnet-api
+    working-directory: ./deployables/vnet-api
 
 jobs:
   deploy:
@@ -25,7 +25,7 @@ jobs:
       - name: Publish
         uses: cloudflare/wrangler-action@v3.13.0
         with:
-          workingDirectory: vnet-api
+          workingDirectory: deployables/vnet-api
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
             TENDERLY_ACCESS_KEY

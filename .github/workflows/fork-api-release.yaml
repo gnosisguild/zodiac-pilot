@@ -3,11 +3,11 @@ name: Deploy Fork API
 on:
   push:
     branches: main
-    paths: ['fork-api/**', '**/fork-api-release.yaml']
+    paths: ['deployables/fork-api/**', '**/fork-api-release.yaml']
 
 defaults:
   run:
-    working-directory: ./fork-api
+    working-directory: ./deployables/fork-api
 
 jobs:
   deploy:
@@ -25,7 +25,7 @@ jobs:
       - name: Publish
         uses: cloudflare/wrangler-action@v3.13.0
         with:
-          workingDirectory: fork-api
+          workingDirectory: deployables/fork-api
           apiToken: ${{ secrets.CF_API_TOKEN }}
           secrets: |
             TENDERLY_ACCESS_KEY

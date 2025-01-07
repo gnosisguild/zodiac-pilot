@@ -25,6 +25,7 @@
     "Delegatecall",
     "delegatecalls",
     "depay",
+    "deployables",
     "esbuild",
     "ethersproject",
     "extralight",

@@ -11,8 +11,8 @@ Chrome extension to simulate Dapp interactions and record transactions. [Availab
 
 ### Overview
 
-The [extension](./extension/) folder hosts the code of the browser extension.
-The included [README](./extension/README.md) documents the most important concepts.
+The [extension](./deployables/extension/) folder hosts the code of the browser extension.
+The included [README](./deployables/extension/README.md) documents the most important concepts.
 
 To run a development version of the extension from a branch:
 
