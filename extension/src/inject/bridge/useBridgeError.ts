@@ -8,7 +8,7 @@ import { useWindowId } from './BridgeContext'
 
 type ResponseFn = (response: InjectedProviderMessage) => void
 
-export const useBridgeError = () => {
+export const useBridgeError = (errorMessage: string) => {
   const windowId = useWindowId()
   const toastId = useId()
 
@@ -37,8 +37,7 @@ export const useBridgeError = () => {
       errorToast({
         id: toastId,
         title: 'No active route',
-        message:
-          'In order to connect Zodiac Pilot to a dApp you first need to create a route.',
+        message: errorMessage,
       })
 
       sendResponse({
@@ -55,5 +54,5 @@ export const useBridgeError = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage)
     }
-  }, [toastId, windowId])
+  }, [errorMessage, toastId, windowId])
 }
