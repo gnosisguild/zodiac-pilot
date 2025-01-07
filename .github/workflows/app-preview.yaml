@@ -26,4 +26,5 @@ jobs:
         with:
           workingDirectory: app
           apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload
