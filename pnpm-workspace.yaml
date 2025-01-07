@@ -4,3 +4,4 @@ packages:
   - fork-api
   - landing-page
   - vnet-api
+  - connect
