@@ -1,4 +1,3 @@
-import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@/components'
 import {
   createRoute,
   getLastUsedRouteId,
@@ -6,6 +5,7 @@ import {
   getRoutes,
 } from '@/execution-routes'
 import { getString } from '@/utils'
+import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { Route } from './Route'

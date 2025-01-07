@@ -1,4 +1,4 @@
-import { SecondaryButton, Warning } from '@/components'
+import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
 

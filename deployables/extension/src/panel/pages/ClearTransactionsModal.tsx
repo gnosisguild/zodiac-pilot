@@ -4,7 +4,7 @@ import {
   Modal,
   PrimaryButton,
   type InlineFormContext,
-} from '@/components'
+} from '@zodiac/ui'
 
 type ClearTransactionsModalProps = {
   open: boolean

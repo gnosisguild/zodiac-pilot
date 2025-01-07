@@ -19,7 +19,6 @@
     "downlevelIteration": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "paths": {
-      "@/components": ["./src/components/index.ts"],
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
       "@/const": ["./src/const.ts"],

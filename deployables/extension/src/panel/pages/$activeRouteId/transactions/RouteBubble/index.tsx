@@ -1,6 +1,6 @@
-import { Blockie } from '@/components'
 import { useExecutionRoute } from '@/execution-routes'
 import { Transition } from '@headlessui/react'
+import { Blockie } from '@zodiac/ui'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'

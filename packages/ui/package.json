@@ -7,12 +7,19 @@
   "scripts": {
     "test": "vitest"
   },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
+    "@headlessui/react": "^2.2.0",
     "classnames": "2.5.1",
     "ethereum-blockies-base64": "1.0.2",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.0.0",
+    "react-select": "5.9.0",
     "react-toastify": "11.0.2"
   },
   "devDependencies": {

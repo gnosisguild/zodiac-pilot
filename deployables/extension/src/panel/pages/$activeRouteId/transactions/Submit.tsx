@@ -1,13 +1,4 @@
 import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
-import {
-  errorToast,
-  Modal,
-  PrimaryButton,
-  PrimaryLinkButton,
-  SecondaryLinkButton,
-  Spinner,
-  successToast,
-} from '@/components'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import { getReadOnlyProvider } from '@/providers'
@@ -21,6 +12,15 @@ import {
   decodeRolesV2Error,
 } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import {
+  errorToast,
+  Modal,
+  PrimaryButton,
+  PrimaryLinkButton,
+  SecondaryLinkButton,
+  Spinner,
+  successToast,
+} from '@zodiac/ui'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'

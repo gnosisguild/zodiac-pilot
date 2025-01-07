@@ -1,6 +1,6 @@
-import { SecondaryButton } from '@/components'
 import { useInjectedWallet } from '@/providers'
 import { ProviderType } from '@/types'
+import { SecondaryButton } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { ProviderLogo } from '../providerLogo'
 

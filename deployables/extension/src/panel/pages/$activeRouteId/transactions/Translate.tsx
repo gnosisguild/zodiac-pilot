@@ -1,7 +1,7 @@
-import { GhostButton } from '@/components'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useApplicableTranslation } from '@/transaction-translation'
+import { GhostButton } from '@zodiac/ui'
 
 type Props = {
   transactionId: string

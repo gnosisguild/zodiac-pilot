@@ -1,7 +1,7 @@
-import { SecondaryButton } from '@/components'
 import { useWalletConnect } from '@/providers'
 import { ProviderType } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { SecondaryButton } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { ProviderLogo } from '../providerLogo'
 

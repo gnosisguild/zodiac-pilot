@@ -1,6 +1,6 @@
-import { AddressInput, CopyToClipboard } from '@/components'
 import { ProviderType } from '@/types'
 import { validateAddress } from '@/utils'
+import { AddressInput, CopyToClipboard } from '@zodiac/ui'
 
 type AccountProps = {
   type: ProviderType

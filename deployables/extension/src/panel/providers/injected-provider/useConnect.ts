@@ -1,6 +1,6 @@
-import { infoToast } from '@/components'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { infoToast } from '@zodiac/ui'
 import { BrowserProvider } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'

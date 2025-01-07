@@ -1,6 +1,6 @@
 import { CHAIN_NAME } from '@/chains'
-import { Select } from '@/components'
 import { invariant } from '@epic-web/invariant'
+import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 
 export interface Props {

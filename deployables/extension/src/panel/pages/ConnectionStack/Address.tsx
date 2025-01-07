@@ -1,5 +1,5 @@
-import { Address as BaseAddress, Blockie, Tag } from '@/components'
 import { shortenAddress, validateAddress } from '@/utils'
+import { Address as BaseAddress, Blockie, Tag } from '@zodiac/ui'
 import { Unlink } from 'lucide-react'
 
 interface Props {

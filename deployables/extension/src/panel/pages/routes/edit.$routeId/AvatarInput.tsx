@@ -1,5 +1,5 @@
-import { Blockie, Input, Select, selectStyles, TextInput } from '@/components'
 import { validateAddress } from '@/utils'
+import { Blockie, Input, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'

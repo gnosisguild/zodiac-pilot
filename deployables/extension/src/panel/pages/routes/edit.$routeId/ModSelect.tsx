@@ -1,4 +1,4 @@
-import { Blockie, Select } from '@/components'
+import { Blockie, Select } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import type { PropsWithChildren } from 'react'
 import type { Props as SelectProps } from 'react-select'

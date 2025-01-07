@@ -1,6 +1,6 @@
-import { GhostLinkButton, Spinner, Tag } from '@/components'
 import { useProvider } from '@/providers-ui'
 import { ExecutionStatus, type TransactionState } from '@/state'
+import { GhostLinkButton, Spinner, Tag } from '@zodiac/ui'
 import {
   Check,
   Compass,

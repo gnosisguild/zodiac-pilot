@@ -1,4 +1,4 @@
-import { GhostButton, InlineForm, Modal, PrimaryButton } from '@/components'
+import { GhostButton, InlineForm, Modal, PrimaryButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Intent } from './intents'
