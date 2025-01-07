@@ -12,7 +12,7 @@ describe('Routes', () => {
     expect(
       screen.getByRole('alert', { name: 'No active route' }),
     ).toHaveAccessibleDescription(
-      'In order to connect Zodiac Pilot to a dApp you need to launch a route.',
+      'To use Zodiac Pilot with a dApp you need to launch a route.',
     )
   })
 })

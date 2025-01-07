@@ -32,9 +32,7 @@ export const action = async () => {
 }
 
 export const NoRoutes = () => {
-  useBridgeError(
-    'In order to connect Zodiac Pilot to a dApp you first need to create a route.',
-  )
+  useBridgeError('To use Zodiac Pilot with a dApp you need to create a route.')
 
   return (
     <Page>
