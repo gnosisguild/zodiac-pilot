@@ -1,0 +1,32 @@
+{
+  "name": "@zodiac/ui",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@epic-web/invariant": "^1.0.0",
+    "classnames": "2.5.1",
+    "ethereum-blockies-base64": "1.0.2",
+    "lucide-react": "^0.469.0",
+    "nanoid": "^5.0.0",
+    "react-toastify": "11.0.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "14.5.2",
+    "@types/react": "^19.0.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.1.1",
+    "vitest": "2.1.8"
+  },
+  "peerDependencies": {
+    "react": "19.0.0",
+    "react-router": "7.1.1"
+  }
+}
