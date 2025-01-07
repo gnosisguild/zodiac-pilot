@@ -16,11 +16,7 @@ export default async function handleRequest(
   const userAgent = request.headers.get('user-agent')
 
   const body = await renderToReadableStream(
-    <ServerRouter
-      context={routerContext}
-      url={request.url}
-      abortDelay={ABORT_DELAY}
-    />,
+    <ServerRouter context={routerContext} url={request.url} />,
     {
       onError(error: unknown) {
         responseStatusCode = 500
