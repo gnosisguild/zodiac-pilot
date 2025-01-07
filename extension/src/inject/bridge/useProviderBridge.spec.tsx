@@ -1,14 +1,11 @@
 import { ZERO_ADDRESS } from '@/chains'
+import { InjectedProviderMessageTyp } from '@/messages'
 import {
-  type InjectedProviderMessage,
-  InjectedProviderMessageTyp,
-} from '@/messages'
-import {
-  callListeners,
   chromeMock,
   createMockTab,
   mockActiveTab,
   MockProvider,
+  mockProviderRequest,
   renderHook,
 } from '@/test-utils'
 import type { Eip1193Provider } from '@/types'
@@ -38,16 +35,10 @@ describe('Bridge', () => {
 
       const request = { method: 'eth_chainId' }
 
-      await callListeners(
-        chromeMock.runtime.onMessage,
-        {
-          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-          request,
-          requestId: 'test-id',
-        } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        vi.fn(),
-      )
+      await mockProviderRequest({
+        request,
+        tab: createMockTab({ windowId: 1 }),
+      })
 
       expect(provider.request).toHaveBeenCalledWith(request)
     })
@@ -68,22 +59,18 @@ describe('Bridge', () => {
 
       const sendMessage = vi.fn()
 
-      await callListeners(
-        chromeMock.runtime.onMessage,
-        {
-          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-          request,
-          requestId: 'test-id',
-        } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        sendMessage,
-      )
-
-      expect(sendMessage).toHaveBeenCalledWith({
-        type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE,
-        response,
-        requestId: 'test-id',
+      await mockProviderRequest({
+        request,
+        tab: createMockTab({ windowId: 1 }),
+        callback: sendMessage,
       })
+
+      expect(sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE,
+          response,
+        }),
+      )
     })
 
     it('catches and forwards errors from the provider', async () => {
@@ -102,22 +89,18 @@ describe('Bridge', () => {
 
       const sendMessage = vi.fn()
 
-      await callListeners(
-        chromeMock.runtime.onMessage,
-        {
-          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-          request,
-          requestId: 'test-id',
-        } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        sendMessage,
-      )
-
-      expect(sendMessage).toHaveBeenCalledWith({
-        type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
-        requestId: 'test-id',
-        error,
+      await mockProviderRequest({
+        request,
+        tab: createMockTab({ windowId: 1 }),
+        callback: sendMessage,
       })
+
+      expect(sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
+          error,
+        }),
+      )
     })
 
     it('only calls the current provider', async () => {
@@ -138,16 +121,10 @@ describe('Bridge', () => {
 
       rerender({ provider: providerB })
 
-      await callListeners(
-        chromeMock.runtime.onMessage,
-        {
-          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-          request,
-          requestId: 'test-id',
-        } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id, tab: createMockTab({ windowId: 1 }) },
-        vi.fn(),
-      )
+      await mockProviderRequest({
+        request,
+        tab: createMockTab({ windowId: 1 }),
+      })
 
       expect(providerA.request).not.toHaveBeenCalled()
       expect(providerB.request).toHaveBeenCalledWith(request)

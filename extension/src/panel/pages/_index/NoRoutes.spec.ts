@@ -4,20 +4,14 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import {
-  InjectedProviderMessageTyp,
-  type InjectedProviderMessage,
-} from '@/messages'
-import {
-  callListeners,
-  chromeMock,
-  createMockTab,
   expectRouteToBe,
+  mockProviderRequest,
   mockRoutes,
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { action, loader, NoRoutes } from './NoRoutes'
 
 describe('No routes', () => {
@@ -71,16 +65,7 @@ describe('No routes', () => {
     it('shows an error when the user tries to connect a dApp', async () => {
       await render('/', [{ path: '/', Component: NoRoutes, loader, action }])
 
-      await callListeners(
-        chromeMock.runtime.onMessage,
-        {
-          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-          request: { method: 'eth_accounts' },
-          requestId: '1',
-        } satisfies InjectedProviderMessage,
-        { id: chromeMock.runtime.id, tab: createMockTab() },
-        vi.fn(),
-      )
+      await mockProviderRequest()
 
       expect(
         screen.getByRole('alert', { name: 'No active route' }),
