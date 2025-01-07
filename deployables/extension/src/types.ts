@@ -1,4 +1,4 @@
-import type { ChainId, Route as CompleteRoute, PrefixedAddress } from 'ser-kit'
+import type { ChainId, Route as CompleteRoute } from 'ser-kit'
 import type { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export enum ProviderType {
@@ -29,9 +29,9 @@ export interface LegacyConnection {
 
 interface PartialExecutionRoute {
   id: string
-  initiator: PrefixedAddress | undefined
-  avatar: PrefixedAddress
-  waypoints: CompleteRoute['waypoints'] | undefined
+  initiator?: CompleteRoute['initiator']
+  avatar: CompleteRoute['avatar']
+  waypoints?: CompleteRoute['waypoints']
 }
 
 export type ExecutionRoute = PartialExecutionRoute & {
