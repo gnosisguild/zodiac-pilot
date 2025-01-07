@@ -3,7 +3,12 @@ import {
   getRoutes,
   saveLastUsedRouteId,
 } from '@/execution-routes'
-import { expectRouteToBe, mockRoutes, render } from '@/test-utils'
+import {
+  expectRouteToBe,
+  mockProviderRequest,
+  mockRoutes,
+  render,
+} from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
@@ -55,6 +60,18 @@ describe('No routes', () => {
       const [newRoute] = await getRoutes()
 
       await expect(getLastUsedRouteId()).resolves.toEqual(newRoute.id)
+    })
+
+    it('shows an error when the user tries to connect a dApp', async () => {
+      await render('/', [{ path: '/', Component: NoRoutes, loader, action }])
+
+      await mockProviderRequest()
+
+      expect(
+        screen.getByRole('alert', { name: 'No active route' }),
+      ).toHaveAccessibleDescription(
+        'To use Zodiac Pilot with a dApp you need to create a route.',
+      )
     })
   })
 })
