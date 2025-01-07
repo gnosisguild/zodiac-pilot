@@ -104,6 +104,8 @@
     "**/esbuild.js",
     "**/tailwind.config.js",
     "**/tailwind.config.ts",
+    "**/vite.config.ts",
+    "**/entry.server.tsx",
     "**/dist/**",
     "**/public/build/**",
     "**/public/_metadata/**",
@@ -111,6 +113,8 @@
     "**/*.svg",
     "**/patches/**",
     "**/test-utils/**",
-    "**/*.sh"
+    "**/*.sh",
+    "**/*.tsbuildinfo",
+    "**/build/**"
   ]
 }
