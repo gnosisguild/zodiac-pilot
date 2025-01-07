@@ -5,7 +5,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./app
+    working-directory: ./deployables/app
 
 jobs:
   deploy:

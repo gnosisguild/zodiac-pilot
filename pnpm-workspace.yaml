@@ -1,8 +1,2 @@
 packages:
-  - example-app
-  - extension
-  - fork-api
-  - landing-page
-  - vnet-api
-  - connect
-  - app
+  - deployables/**

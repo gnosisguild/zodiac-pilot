@@ -10,15 +10,15 @@ jobs:
     name: Build Extension
     defaults:
       run:
-        working-directory: ./extension
+        working-directory: ./deployables/extension
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-          cache: "pnpm"
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install deps and build
         run: |
@@ -36,12 +36,12 @@ jobs:
       - name: Add zip to Github release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./extension/zodiac-pilot.zip
+          files: ./deployables/extension/zodiac-pilot.zip
 
       - name: Upload & release to Chrome Webstore
         uses: mnao305/chrome-extension-upload@v5.0.0
         with:
-          file-path: ./extension/zodiac-pilot.zip
+          file-path: ./deployables/extension/zodiac-pilot.zip
           extension-id: jklckajipokenkbbodifahogmidkekcb
           client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
@@ -50,38 +50,3 @@ jobs:
 
       - run: mkdir ./release
       - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
-
-      # - name: Pin to IPFS
-      #   id: upload
-      #   uses: anantaramdas/ipfs-pinata-deploy-action@39bbda1ce1fe24c69c6f57861b8038278d53688d
-      #   with:
-      #     pin-name: Zodiac Pilot Chrome Extension ${{ github.event.release.tag_name }}
-      #     path: "./extension/release"
-      #     pinata-api-key: ${{ secrets.PINATA_API_KEY }}
-      #     pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
-
-      # - name: Convert CIDv0 to CIDv1
-      #   id: convert_cidv0
-      #   uses: uniswap/convert-cidv0-cidv1@v1.0.0
-      #   with:
-      #     cidv0: ${{ steps.upload.outputs.hash }}
-
-      # - name: Add IPFS links to Github release notes
-      #   id: update_release
-      #   uses: tubone24/update_release@v1.3.1
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #   with:
-      #     is_append_body: true
-      #     body: |
-      #       <br />
-      #       This extension will be available in the Chrome Extension store, or you can download it from IPFS, extract it and run it as an unpacked extension.
-
-      #       IPFS hash of the extension zip file:
-      #       - CIDv0: `${{ steps.upload.outputs.hash }}`
-      #       - CIDv1: `${{ steps.convert_cidv0.outputs.cidv1 }}`
-
-      #       IPFS gateways:
-      #         - https://gnosis.mypinata.cloud/ipfs/${{ steps.upload.outputs.hash }}
-      #         - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.dweb.link/
-      #         - https://${{ steps.convert_cidv0.outputs.cidv1 }}.ipfs.cf-ipfs.com/

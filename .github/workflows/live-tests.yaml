@@ -10,7 +10,7 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     defaults:
       run:
-        working-directory: ./extension
+        working-directory: ./deployables/extension
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
