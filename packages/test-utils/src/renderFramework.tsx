@@ -14,7 +14,7 @@ import { TestElement, waitForTestElement } from './TestElement'
 
 type Func = (...args: any[]) => unknown
 
-type RouteModule = {
+export type RouteModule = {
   meta?: Func
   links?: Func
   headers?: Func

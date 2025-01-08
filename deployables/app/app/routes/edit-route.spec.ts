@@ -1,5 +1,6 @@
+import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import { createMockExecutionRoute, render } from '@zodiac/test-utils'
+import { createMockExecutionRoute } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import EditRoute, { loader } from './edit-route'
 
@@ -9,7 +10,7 @@ describe('Edit route', () => {
 
     await render(
       '/edit-route',
-      [{ path: '/edit-route', Component: EditRoute, loader }],
+      { path: '/edit-route', Component: EditRoute, loader },
       { searchParams: { route: btoa(JSON.stringify(route)) } },
     )
 
