@@ -1,7 +1,7 @@
 export * from './chrome'
 export * from './creators'
 export * from './executionRoutes'
-export { expectRouteToBe, render } from './render'
+export { render } from './render'
 export { renderHook } from './renderHook'
 export { RenderWrapper } from './RenderWrapper'
 export { startPilotSession } from './startPilotSession'

@@ -10,7 +10,6 @@ import {
   createRoleWaypoint,
   createStartingWaypoint,
   createTransaction,
-  expectRouteToBe,
   MockProvider,
   mockRoute,
   mockRoutes,
@@ -23,6 +22,7 @@ import { fetchZodiacModules, queryRolesV2MultiSend } from '@/zodiac'
 import { KnownContracts } from '@gnosis.pm/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { getAddress } from 'ethers'
 import {
   formatPrefixedAddress,

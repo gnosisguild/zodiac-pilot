@@ -1,4 +1,5 @@
-import { expectRouteToBe, render } from '@/test-utils'
+import { render } from '@/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, ClearTransactions } from './ClearTransactions'
 

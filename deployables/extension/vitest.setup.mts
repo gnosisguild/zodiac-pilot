@@ -1,6 +1,6 @@
-import { sleepTillIdle } from '@/utils'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, vi } from 'vitest'
 
