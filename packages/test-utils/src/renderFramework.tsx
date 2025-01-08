@@ -7,6 +7,7 @@ import type {
   CreateLoaderData,
   CreateServerLoaderArgs,
 } from 'react-router/route-module'
+import { getCurrentPath } from './getCurrentPath'
 import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
 import { sleepTillIdle } from './sleepTillIdle'
@@ -64,7 +65,7 @@ export type FrameworkRoute<
 export async function renderFramework<Module extends RouteModule>(
   currentPath: string,
   route: FrameworkRoute<Module>,
-  { inspectRoutes = [], ...options }: RenderOptions,
+  { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions,
 ): Promise<RenderResult> {
   const Stub = createRoutesStub([
     {
@@ -73,6 +74,8 @@ export async function renderFramework<Module extends RouteModule>(
       children: [
         {
           path: route.path,
+          // @ts-expect-error
+          loader: route.loader,
           Component() {
             const loaderData = useLoaderData<typeof route.loader>()
             const params = useParams()
@@ -92,7 +95,10 @@ export async function renderFramework<Module extends RouteModule>(
     },
   ])
 
-  const result = render(<Stub initialEntries={[currentPath]} />, options)
+  const result = render(
+    <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
+    options,
+  )
 
   await waitForTestElement()
   await sleepTillIdle()
