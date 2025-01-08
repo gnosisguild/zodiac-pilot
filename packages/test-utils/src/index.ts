@@ -1,3 +1,4 @@
+export * from './creators'
 export { expectRouteToBe, render } from './render'
 export type { RenderOptions, Route } from './render'
 export { renderHook } from './renderHook'

@@ -1,20 +1,41 @@
+import { chains, type ChainId, type PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 
-const chainIdSchema = z.union([
-  z.literal(1),
-  z.literal(10),
-  z.literal(100),
-  z.literal(11155111),
-  z.literal(137),
-  z.literal(42161),
-  z.literal(43114),
-  z.literal(8453),
-])
+const chainIdSchema = z
+  .union([
+    z.literal(chains[0].chainId),
+    z.literal(chains[1].chainId),
+    z.literal(chains[2].chainId),
+    z.literal(chains[3].chainId),
+    z.literal(chains[4].chainId),
+    z.literal(chains[5].chainId),
+    z.literal(chains[6].chainId),
+    z.literal(chains[7].chainId),
+  ])
+  .brand<ChainId>()
 
-const addressSchema = z.string().regex(/0x\w+/)
-const prefixedAddressSchema = z
-  .string()
-  .regex(/eth|oeth|gno|sep|matic|arb1|avax|base:0x\w+/)
+export type HexAddress = `0x${string}`
+
+const isHexAddress = (value: string): value is HexAddress =>
+  value.startsWith('0x') && value.length > 2
+
+const addressSchema = z.custom<HexAddress>(
+  (value) => typeof value === 'string' && isHexAddress(value),
+)
+
+const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
+  if (typeof value !== 'string') {
+    return false
+  }
+
+  const [prefix, address] = value.split(':')
+
+  if (!isHexAddress(address)) {
+    return false
+  }
+
+  return chains.some(({ shortName }) => prefix === shortName)
+})
 
 const safeSchema = z.object({
   type: z.literal('SAFE'),
@@ -87,10 +108,23 @@ const startingPointSchema = z.object({
   ]),
 })
 
-export const routeSchema = z.object({
+export enum ProviderType {
+  WalletConnect,
+  InjectedWallet,
+}
+
+const walletConnectType = z.literal(ProviderType.WalletConnect)
+const injectedProviderType = z.literal(ProviderType.InjectedWallet)
+
+const providerTypeSchema = z.union([walletConnectType, injectedProviderType])
+
+export const executionRouteSchema = z.object({
   id: z.string(),
   label: z.string(),
+  providerType: providerTypeSchema,
   avatar: prefixedAddressSchema,
   initiator: prefixedAddressSchema.optional(),
-  waypoints: z.tuple([startingPointSchema]).rest(waypointSchema),
+  waypoints: z.tuple([startingPointSchema]).rest(waypointSchema).optional(),
 })
+
+export type ExecutionRoute = z.infer<typeof executionRouteSchema>

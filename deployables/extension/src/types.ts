@@ -1,10 +1,13 @@
-import type { ChainId, Route as CompleteRoute } from 'ser-kit'
+import type {
+  ExecutionRoute as BaseExecutionRoute,
+  HexAddress,
+  ProviderType,
+} from '@zodiac/schema'
+import type { ChainId } from 'ser-kit'
 import type { SupportedModuleType } from './panel/integrations/zodiac/types'
 
-export enum ProviderType {
-  WalletConnect,
-  InjectedWallet,
-}
+export { ProviderType } from '@zodiac/schema'
+export type { HexAddress } from '@zodiac/schema'
 
 export interface LegacyConnection {
   id: string
@@ -27,16 +30,7 @@ export interface LegacyConnection {
   lastUsed?: number
 }
 
-interface PartialExecutionRoute {
-  id: string
-  initiator?: CompleteRoute['initiator']
-  avatar: CompleteRoute['avatar']
-  waypoints?: CompleteRoute['waypoints']
-}
-
-export type ExecutionRoute = PartialExecutionRoute & {
-  providerType: ProviderType
-  label: string
+export type ExecutionRoute = BaseExecutionRoute & {
   lastUsed?: number
 }
 
@@ -66,5 +60,3 @@ export interface TransactionData {
   data?: HexAddress
   from?: HexAddress
 }
-
-export type HexAddress = `0x${string}`

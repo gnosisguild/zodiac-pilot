@@ -1,0 +1,18 @@
+{
+  "name": "@zodiac/schema",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.3",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "ser-kit": "1.0.7",
+    "zod": "^3.23.8"
+  }
+}
