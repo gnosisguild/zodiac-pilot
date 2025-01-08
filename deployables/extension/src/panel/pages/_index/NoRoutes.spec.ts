@@ -3,14 +3,10 @@ import {
   getRoutes,
   saveLastUsedRouteId,
 } from '@/execution-routes'
-import {
-  expectRouteToBe,
-  mockProviderRequest,
-  mockRoutes,
-  render,
-} from '@/test-utils'
+import { mockProviderRequest, mockRoutes, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { action, loader, NoRoutes } from './NoRoutes'
 

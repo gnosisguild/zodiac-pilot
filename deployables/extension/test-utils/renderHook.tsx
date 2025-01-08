@@ -1,15 +1,12 @@
 import type { ExecutionRoute } from '@/types'
-import { sleepTillIdle } from '@/utils'
 import {
   renderHook as renderHookBase,
   type RenderHookOptions,
-} from '@testing-library/react'
-import type { PropsWithChildren } from 'react'
+} from '@zodiac/test-utils'
 import type { VitestChromeNamespace } from 'vitest-chrome/types'
 import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
 import { createMockPort } from './creators'
 import { mockRoutes } from './executionRoutes'
-import { TestElement, waitForTestElement } from './TestElement'
 
 type Fn<Result, Props> = (props: Props) => Result
 
@@ -25,7 +22,6 @@ export const renderHook = async <Result, Props>(
     routes = [],
     activeTab,
     port,
-    wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
     ...options
   }: RenderHookOptions<Props> & ExtendedOptions = {},
 ) => {
@@ -36,17 +32,7 @@ export const renderHook = async <Result, Props>(
 
   mockRoutes(...routes)
 
-  const wrapper = ({ children }: PropsWithChildren) => (
-    <Wrapper>
-      <TestElement>{children}</TestElement>
-    </Wrapper>
-  )
-
-  const result = renderHookBase<Result, Props>(fn, { ...options, wrapper })
-
-  await waitForTestElement()
-
-  await sleepTillIdle()
+  const result = await renderHookBase<Result, Props>(fn, options)
 
   return { ...result, mockedTab, mockedPort, mockedRuntimePort }
 }

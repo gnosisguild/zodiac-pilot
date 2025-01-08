@@ -1,4 +1,4 @@
-import { sleepTillIdle } from '@/utils'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import type { EventCallback } from 'vitest-chrome/event-types'
 import type { Events } from 'vitest-chrome/types'
 

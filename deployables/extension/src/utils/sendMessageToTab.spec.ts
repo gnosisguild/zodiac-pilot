@@ -1,7 +1,7 @@
 import { callListeners, chromeMock, createMockTab } from '@/test-utils'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { sendMessageToTab } from './sendMessageToTab'
-import { sleepTillIdle } from './sleep'
 
 describe('Send tab message', () => {
   it('sends the message to the specified tab', async () => {

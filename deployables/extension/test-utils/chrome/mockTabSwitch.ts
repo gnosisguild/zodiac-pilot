@@ -1,4 +1,4 @@
-import { sleepTillIdle } from '@/utils'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import { callListeners } from './callListeners'
 import { chromeMock } from './chromeMock'
 import { mockActiveTab } from './mockActiveTab'
