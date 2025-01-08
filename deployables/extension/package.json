@@ -105,6 +105,7 @@
     "react-stick": "^5.0.6",
     "zod": "^3.23.8",
     "@zodiac/ui": "workspace:*",
-    "@zodiac/schema": "workspace:*"
+    "@zodiac/schema": "workspace:*",
+    "@zodiac/chains": "workspace:*"
   }
 }

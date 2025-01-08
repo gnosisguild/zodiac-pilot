@@ -1,5 +1,5 @@
-import { ETH_ZERO_ADDRESS } from '@/chains'
 import { ProviderType } from '@/types'
+import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import { nanoid } from 'nanoid'
 import { saveRoute } from './saveRoute'
 

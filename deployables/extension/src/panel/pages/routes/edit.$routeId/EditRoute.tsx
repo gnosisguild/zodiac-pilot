@@ -1,4 +1,3 @@
-import { EOA_ZERO_ADDRESS } from '@/chains'
 import {
   getLastUsedRouteId,
   getRoute,
@@ -26,6 +25,7 @@ import {
 } from '@/zodiac'
 import { invariantResponse } from '@epic-web/invariant'
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import {
   Breadcrumbs,
   Error,

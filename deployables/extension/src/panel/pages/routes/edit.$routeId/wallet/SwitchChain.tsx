@@ -1,4 +1,4 @@
-import { CHAIN_NAME } from '@/chains'
+import { CHAIN_NAME } from '@zodiac/chains'
 import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'

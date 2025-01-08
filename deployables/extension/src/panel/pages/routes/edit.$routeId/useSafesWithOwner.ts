@@ -1,7 +1,7 @@
-import { getChainId } from '@/chains'
 import { initSafeApiKit } from '@/safe'
 import type { ExecutionRoute } from '@/types'
 import { validateAddress } from '@/utils'
+import { getChainId } from '@zodiac/chains'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'
 

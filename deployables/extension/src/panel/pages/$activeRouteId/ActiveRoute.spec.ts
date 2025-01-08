@@ -1,8 +1,8 @@
-import { EOA_ZERO_ADDRESS } from '@/chains'
 import { getRoute } from '@/execution-routes'
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { mockRoute, randomAddress, render } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
+import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import { describe, expect, it, vi } from 'vitest'
 import { action, ActiveRoute, loader } from './ActiveRoute'
 

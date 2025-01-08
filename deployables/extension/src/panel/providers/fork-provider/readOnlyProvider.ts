@@ -1,5 +1,5 @@
-import { RPC } from '@/chains'
 import type { JsonRpcRequest } from '@/types'
+import { RPC } from '@zodiac/chains'
 import { JsonRpcProvider, toQuantity } from 'ethers'
 import EventEmitter from 'events'
 import type { ChainId } from 'ser-kit'

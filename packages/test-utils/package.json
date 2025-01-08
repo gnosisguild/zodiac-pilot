@@ -16,6 +16,7 @@
     "@epic-web/invariant": "^1.0.0",
     "@testing-library/react": "^16.0.1",
     "@zodiac/schema": "workspace:*",
+    "@zodiac/chains": "workspace:*",
     "vitest": "2.1.8"
   },
   "peerDependencies": {

@@ -1,7 +1,7 @@
-import { CHAIN_CURRENCY, getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import type { TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'
+import { CHAIN_CURRENCY, getChainId } from '@zodiac/chains'
 import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
 import { useState } from 'react'

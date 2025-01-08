@@ -1,4 +1,4 @@
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
+import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
 import { ProviderType, type ExecutionRoute } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { AccountType, formatPrefixedAddress } from 'ser-kit'

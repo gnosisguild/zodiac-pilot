@@ -201,6 +201,9 @@ importers:
       '@headlessui/react':
         specifier: ^2.2.0
         version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@zodiac/chains':
+        specifier: workspace:*
+        version: link:../../packages/chains
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -507,6 +510,19 @@ importers:
         specifier: 3.100.0
         version: 3.100.0(@cloudflare/workers-types@4.20241230.0)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
+  packages/chains:
+    dependencies:
+      '@epic-web/invariant':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@zodiac/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      ser-kit:
+        specifier: 1.0.7
+        version: 1.0.7(bufferutil@4.0.8)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+
   packages/schema:
     dependencies:
       ser-kit:
@@ -524,6 +540,9 @@ importers:
       '@testing-library/react':
         specifier: ^16.0.1
         version: 16.1.0(@testing-library/dom@10.4.0)(@types/react-dom@19.0.2(@types/react@19.0.4))(@types/react@19.0.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@zodiac/chains':
+        specifier: workspace:*
+        version: link:../chains
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema

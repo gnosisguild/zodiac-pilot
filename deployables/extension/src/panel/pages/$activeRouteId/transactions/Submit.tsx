@@ -1,4 +1,3 @@
-import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@/chains'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import { getReadOnlyProvider } from '@/providers'
@@ -12,6 +11,7 @@ import {
   decodeRolesV2Error,
 } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@zodiac/chains'
 import {
   errorToast,
   Modal,
