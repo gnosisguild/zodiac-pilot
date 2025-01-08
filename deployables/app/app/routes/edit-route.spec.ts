@@ -8,7 +8,7 @@ describe('Edit route', () => {
   it('shows the name of a route', async () => {
     const route = createMockExecutionRoute({ label: 'Test route' })
 
-    await render(
+    await render<typeof import('./edit-route')>(
       '/edit-route',
       { path: '/edit-route', Component: EditRoute, loader },
       { searchParams: { route: btoa(JSON.stringify(route)) } },

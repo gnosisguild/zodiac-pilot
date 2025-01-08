@@ -5,13 +5,14 @@
     { "path": "./tsconfig.cloudflare.json" }
   ],
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
     "checkJs": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-    "paths": {
-      "@/test-utils": ["./test-utils/index.ts"]
-    }
+    "moduleResolution": "bundler",
+    "types": ["@testing-library/jest-dom"]
   }
 }

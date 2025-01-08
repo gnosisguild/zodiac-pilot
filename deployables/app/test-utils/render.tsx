@@ -1,8 +1,8 @@
 import {
-  FrameworkRoute,
   renderFramework,
-  RenderOptions,
-  RouteModule,
+  type FrameworkRoute,
+  type RenderOptions,
+  type RouteModule,
 } from '@zodiac/test-utils'
 
 export function render<Module extends RouteModule>(

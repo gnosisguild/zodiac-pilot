@@ -2,7 +2,7 @@
 
 import { fileURLToPath } from 'url'
 import { defineConfig } from 'vitest/config'
-import tsConfig from './tsconfig.json'
+import tsConfig from './tsconfig.node.json'
 
 const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
   (result, [key, value]) => ({
@@ -18,7 +18,7 @@ export default defineConfig({
   test: {
     alias,
     environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.mts'],
+    setupFiles: ['./vitest.setup.ts'],
     include: ['./app/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,

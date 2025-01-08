@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
 import { createRoutesStub, useLoaderData, useParams } from 'react-router'
 import type {
@@ -29,10 +29,21 @@ export type RouteModule = {
 }
 
 type Info<Module extends RouteModule> = {
-  parents: []
-  id: 'routes/test-route'
-  file: 'routes/test-route-not-real.tsx'
-  path: '/test-route-not-real'
+  parents: [
+    {
+      parents: []
+      id: 'root'
+      file: 'root.tsx'
+      path: ''
+      params: {} & { [key: string]: string | undefined }
+      module: Module
+      loaderData: CreateLoaderData<{}>
+      actionData: CreateActionData<{}>
+    },
+  ]
+  id: any
+  file: any
+  path: any
   params: {} & { [key: string]: string | undefined }
   module: Module
   loaderData: CreateLoaderData<Module>
@@ -54,7 +65,7 @@ export async function renderFramework<Module extends RouteModule>(
   currentPath: string,
   route: FrameworkRoute<Module>,
   { inspectRoutes = [], ...options }: RenderOptions,
-) {
+): Promise<RenderResult> {
   const Stub = createRoutesStub([
     {
       path: '/',

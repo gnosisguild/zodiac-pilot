@@ -2,24 +2,23 @@
   "extends": "./tsconfig.json",
   "include": [
     ".react-router/types/**/*",
+    "vitest.setup.ts",
     "app/**/*",
     "app/**/.server/**/*",
     "app/**/.client/**/*",
-    "workers/**/*"
+    "workers/**/*",
+    "test-utils/**/*"
   ],
   "compilerOptions": {
     "composite": true,
-    "strict": true,
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "types": ["@cloudflare/workers-types", "vite/client"],
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@/test-utils": ["./test-utils/index.ts"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true
