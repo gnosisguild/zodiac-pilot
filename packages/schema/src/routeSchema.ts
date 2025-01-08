@@ -1,18 +1,16 @@
-import { chains, type ChainId, type PrefixedAddress } from 'ser-kit'
+import { chains, type PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 
-const chainIdSchema = z
-  .union([
-    z.literal(chains[0].chainId),
-    z.literal(chains[1].chainId),
-    z.literal(chains[2].chainId),
-    z.literal(chains[3].chainId),
-    z.literal(chains[4].chainId),
-    z.literal(chains[5].chainId),
-    z.literal(chains[6].chainId),
-    z.literal(chains[7].chainId),
-  ])
-  .brand<ChainId>()
+const chainIdSchema = z.union([
+  z.literal(chains[0].chainId),
+  z.literal(chains[1].chainId),
+  z.literal(chains[2].chainId),
+  z.literal(chains[3].chainId),
+  z.literal(chains[4].chainId),
+  z.literal(chains[5].chainId),
+  z.literal(chains[6].chainId),
+  z.literal(chains[7].chainId),
+])
 
 export type HexAddress = `0x${string}`
 

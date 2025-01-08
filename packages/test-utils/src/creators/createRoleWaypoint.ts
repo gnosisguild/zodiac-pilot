@@ -1,4 +1,4 @@
-import type { HexAddress } from '@/types'
+import type { HexAddress } from '@zodiac/schema'
 import {
   AccountType,
   ConnectionType,
