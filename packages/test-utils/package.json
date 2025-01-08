@@ -5,6 +5,7 @@
   "license": "UNLICENSED",
   "sideEffects": false,
   "packageManager": "pnpm@9.15.3",
+  "scripts": {"test": "vitest"},
   "exports": {
     ".": {
       "types": "./src/index.ts",

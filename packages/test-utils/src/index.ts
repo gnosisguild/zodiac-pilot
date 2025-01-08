@@ -1,6 +1,7 @@
 export * from './creators'
 export { expectRouteToBe, render } from './render'
 export type { RenderOptions, Route } from './render'
+export { renderFramework } from './renderFramework'
 export { renderHook } from './renderHook'
 export type { RenderHookOptions } from './renderHook'
 export { sleepTillIdle } from './sleepTillIdle'

@@ -1,4 +1,4 @@
-name: Deploy Pilot App
+name: Pilot App
 
 on:
   pull_request:

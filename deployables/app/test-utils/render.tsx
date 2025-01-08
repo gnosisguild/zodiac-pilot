@@ -1,11 +1,7 @@
-import type { ComponentType } from 'react'
-import type { ActionFunction, LoaderFunction } from 'react-router'
+import { renderFramework, RenderOptions, Route } from '@zodiac/test-utils'
 
-type Route = {
-  path: string
-  Component: ComponentType
-  loader?: LoaderFunction
-  action?: ActionFunction
-}
-
-export const render = () => {}
+export const render = (
+  currentPath: string,
+  routes: Route[],
+  options: RenderOptions,
+) => renderFramework(currentPath, routes, options)
