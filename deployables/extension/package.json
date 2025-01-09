@@ -1,5 +1,5 @@
 {
-  "name": "zodiac-pilot",
+  "name": "@zodiac/pilot-extension",
   "version": "0.0.0",
   "description": "Chrome extension to simulate dApp interactions and record transactions",
   "type": "module",

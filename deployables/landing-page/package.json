@@ -1,5 +1,5 @@
 {
-  "name": "@zodiac-os/pilot-landing-page",
+  "name": "@zodiac/pilot-landing-page",
   "version": "0.0.0-development",
   "private": true,
   "dependencies": {
