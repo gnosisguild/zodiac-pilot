@@ -596,6 +596,12 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.0.2(@types/react@19.0.4)
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      eslint:
+        specifier: ^9.7.0
+        version: 9.17.0(jiti@2.4.1)
       ser-kit:
         specifier: 1.0.7
         version: 1.0.7(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)

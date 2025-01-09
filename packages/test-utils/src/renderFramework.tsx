@@ -38,7 +38,9 @@ type Info<Module extends RouteModule> = {
       path: ''
       params: {} & { [key: string]: string | undefined }
       module: Module
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       loaderData: CreateLoaderData<{}>
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       actionData: CreateActionData<{}>
     },
   ]
@@ -74,7 +76,8 @@ export async function renderFramework<Module extends RouteModule>(
       children: [
         {
           path: route.path,
-          // @ts-expect-error
+          // @ts-expect-error this is not 100% correct but good enough for the current state of tests
+          // we might need to adjust this in the future
           loader: route.loader,
           Component() {
             const loaderData = useLoaderData<typeof route.loader>()
@@ -82,7 +85,8 @@ export async function renderFramework<Module extends RouteModule>(
 
             return (
               <route.Component
-                // @ts-expect-error
+                // @ts-expect-error this is not 100% correct but good enough for the current state of tests
+                // we might need to adjust this in the future
                 loaderData={loaderData}
                 params={params}
               />
