@@ -4,7 +4,7 @@ import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 
 export interface Props {
-  value: ChainId
+  value: ChainId | null | undefined
   onChange(chainId: ChainId): void
 }
 
@@ -23,13 +23,13 @@ export const ChainSelect = ({ value, onChange }: Props) => (
     label="Chain"
     isMulti={false}
     options={options}
-    value={options.find((op) => op.value === value)}
+    defaultValue={options.find((op) => op.value === value)}
     onChange={(option) => {
       invariant(option != null, 'Empty value selected as chain')
 
       onChange(option.value)
     }}
-    formatOptionLabel={ChainOptionLabel}
+    formatOptionLabel={ChainOptionLabel as any}
   />
 )
 

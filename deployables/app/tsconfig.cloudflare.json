@@ -21,8 +21,8 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "~/*": ["./app/*"],
-      "@/test-utils": ["./test-utils/index.ts"]
+      "@/test-utils": ["./test-utils/index.ts"],
+      "@/components": ["./app/components/index.ts"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true
