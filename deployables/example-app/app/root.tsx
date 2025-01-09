@@ -27,7 +27,7 @@ export default function App() {
   const [batch, setBatch] = useState(true)
 
   return (
-    <html className="h-full w-full">
+    <html lang="en" className="h-full w-full">
       <head>
         <link rel="icon" href="data:image/x-icon;base64,AA" />
         <title>Zodiac Pilot companion app</title>

@@ -210,9 +210,18 @@ importers:
       '@types/react':
         specifier: ^19.0.0
         version: 19.0.4
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
+      eslint:
+        specifier: ^9.7.0
+        version: 9.17.0(jiti@2.4.1)
+      globals:
+        specifier: ^15.8.0
+        version: 15.14.0
       postcss:
         specifier: ^8.4.47
         version: 8.4.49
