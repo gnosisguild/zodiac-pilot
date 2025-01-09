@@ -18,6 +18,9 @@ export default defineConfig(({ isSsrBuild }) => ({
       plugins: [tailwindcss, autoprefixer],
     },
   },
+  define: {
+    'process.env': {},
+  },
   ssr: {
     target: 'webworker',
     // noExternal: true,
@@ -35,16 +38,5 @@ export default defineConfig(({ isSsrBuild }) => ({
       ],
     },
   },
-  plugins: [
-    cloudflareDevProxy(),
-    // vitePluginViteNodeMiniflare({
-    //   entry: './workers/app.ts',
-    //   miniflareOptions: (options) => {
-    //     options.compatibilityDate = '2024-11-18'
-    //     options.compatibilityFlags = ['nodejs_compat']
-    //   },
-    // }),
-    reactRouter(),
-    tsconfigPaths(),
-  ],
+  plugins: [cloudflareDevProxy(), reactRouter(), tsconfigPaths()],
 }))
