@@ -3,8 +3,6 @@ import { renderToReadableStream } from 'react-dom/server'
 import type { AppLoadContext, EntryContext } from 'react-router'
 import { ServerRouter } from 'react-router'
 
-const ABORT_DELAY = 5_000
-
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
