@@ -644,6 +644,9 @@ importers:
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
       eslint:
         specifier: ^9.7.0
         version: 9.17.0(jiti@2.4.1)
