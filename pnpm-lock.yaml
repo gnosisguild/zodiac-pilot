@@ -137,6 +137,9 @@ importers:
       '@zodiac/test-utils':
         specifier: workspace:*
         version: link:../../packages/test-utils
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
