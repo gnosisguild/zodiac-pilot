@@ -1,0 +1,16 @@
+{
+  "name": "@zodiac/typescript-config",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.3",
+  "exports": {
+    ".": {
+      "default": "./tsconfig.json"
+    }
+  },
+  "peerDependencies": {
+    "typescript": "5.7.3"
+  }
+}

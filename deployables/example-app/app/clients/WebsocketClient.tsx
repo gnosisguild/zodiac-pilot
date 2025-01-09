@@ -1,6 +1,6 @@
 import { Section } from '@/components'
 import { ProvideConfig } from '@/config'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { createPublicClient, webSocket } from 'viem'
 import { Connected } from '../Connect'
 

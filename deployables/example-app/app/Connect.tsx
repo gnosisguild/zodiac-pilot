@@ -1,6 +1,6 @@
 import { Button, Input, Section } from '@/components'
 import { ConnectKitButton } from 'connectkit'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { ClientOnly } from 'remix-utils/client-only'
 import { useAccount, useDisconnect } from 'wagmi'
 

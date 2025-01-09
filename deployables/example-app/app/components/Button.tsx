@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ComponentPropsWithRef } from 'react'
+import type { ComponentPropsWithRef } from 'react'
 
 type ButtonProps = Omit<
   ComponentPropsWithRef<'button'>,

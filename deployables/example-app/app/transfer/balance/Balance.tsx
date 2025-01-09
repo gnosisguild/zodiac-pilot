@@ -1,5 +1,5 @@
 import { Value } from '@/components'
-import { Address } from 'viem'
+import type { Address } from 'viem'
 import { ER20Balance } from './ERC20Balance'
 
 type BalanceProps = {

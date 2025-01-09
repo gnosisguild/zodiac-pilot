@@ -1,22 +1,7 @@
 {
+  "extends": "@zodiac/typescript-config",
   "compilerOptions": {
-    "target": "ES2023",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "downlevelIteration": true
+    "lib": ["dom", "dom.iterable", "esnext"]
   },
   "include": ["./src/**/*"]
 }

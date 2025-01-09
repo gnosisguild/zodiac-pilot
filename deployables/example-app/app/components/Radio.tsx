@@ -1,7 +1,7 @@
 import {
-  ComponentPropsWithoutRef,
+  type ComponentPropsWithoutRef,
   createContext,
-  PropsWithChildren,
+  type PropsWithChildren,
   useContext,
   useId,
 } from 'react'

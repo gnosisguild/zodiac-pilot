@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ComponentPropsWithoutRef, useId } from 'react'
+import { type ComponentPropsWithoutRef, useId } from 'react'
 
 type InputProps = Omit<ComponentPropsWithoutRef<'input'>, 'id'> & {
   label: string
