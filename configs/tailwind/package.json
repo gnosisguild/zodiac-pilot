@@ -1,0 +1,19 @@
+{
+  "name": "@zodiac/tailwind-config",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.3",
+  "main": "./tailwind.config.mjs",
+  "exports": {
+    ".": {
+      "import": "./tailwind.config.mjs",
+      "default": "./tailwind.config.mjs"
+    }
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

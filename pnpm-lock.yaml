@@ -56,6 +56,12 @@ importers:
         specifier: ^8.0.0
         version: 8.19.1(eslint@9.17.0(jiti@2.4.1))(typescript@5.7.3)
 
+  configs/tailwind:
+    dependencies:
+      tailwindcss:
+        specifier: 3.4.17
+        version: 3.4.17
+
   deployables/app:
     dependencies:
       '@epic-web/invariant':
@@ -349,6 +355,9 @@ importers:
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
+      '@zodiac/tailwind-config':
+        specifier: workspace:*
+        version: link:../../configs/tailwind
       '@zodiac/test-utils':
         specifier: workspace:*
         version: link:../../packages/test-utils
