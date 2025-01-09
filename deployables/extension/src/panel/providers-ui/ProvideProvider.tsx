@@ -1,8 +1,8 @@
-import { getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { getChainId } from '@zodiac/chains'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   createContext,

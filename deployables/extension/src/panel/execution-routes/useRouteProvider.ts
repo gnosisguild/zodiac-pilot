@@ -1,10 +1,10 @@
-import { getChainId } from '@/chains'
 import {
   getEip1193ReadOnlyProvider,
   useInjectedWallet,
   useWalletConnect,
 } from '@/providers'
 import { type ExecutionRoute, ProviderType } from '@/types'
+import { getChainId } from '@zodiac/chains'
 
 export const useRouteProvider = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()

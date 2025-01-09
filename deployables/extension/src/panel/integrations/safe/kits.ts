@@ -1,6 +1,6 @@
-import { RPC } from '@/chains'
 import SafeApiKit from '@safe-global/api-kit'
 import Safe from '@safe-global/protocol-kit'
+import { RPC } from '@zodiac/chains'
 import type { ChainId } from 'ser-kit'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {

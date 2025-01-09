@@ -1,10 +1,10 @@
-import { getChainId } from '@/chains'
 import {
   type InjectedWalletContextT,
   type WalletConnectResult,
   isConnected as isConnectedBase,
 } from '@/providers'
 import { type ExecutionRoute, ProviderType } from '@/types'
+import { getChainId } from '@zodiac/chains'
 import { ZeroAddress } from 'ethers'
 import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet, InjectedWalletConnect } from './injectedWallet'

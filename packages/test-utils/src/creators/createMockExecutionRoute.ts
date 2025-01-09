@@ -1,10 +1,10 @@
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
-import { type ExecutionRoute, ProviderType } from '@/types'
+import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
+import { ProviderType, type ExecutionRoute } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { AccountType, formatPrefixedAddress } from 'ser-kit'
 import { randomHex } from './randomHex'
 
-export const createMockRoute = (
+export const createMockExecutionRoute = (
   route: Partial<ExecutionRoute> = {},
 ): ExecutionRoute => ({
   id: randomUUID(),

@@ -1,4 +1,4 @@
-import type { HexAddress } from '@/types'
+import type { HexAddress } from '@zodiac/schema'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 
 export const randomHex = (size: number): HexAddress => {

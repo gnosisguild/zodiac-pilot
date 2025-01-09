@@ -1,6 +1,6 @@
-import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@/chains'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { CHAIN_CURRENCY, CHAIN_NAME, EXPLORER_URL, RPC } from '@zodiac/chains'
 import { infoToast } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import type { ChainId } from 'ser-kit'

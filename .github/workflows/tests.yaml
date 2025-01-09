@@ -45,10 +45,35 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
       - run: pnpm test
-      - name: 'Report Coverage'
-        # Set if: always() to also generate the report if tests are failing
-        # Only works if you set `reportOnFailure: true` in your vite config as specified above
-        if: always()
-        uses: davelosert/vitest-coverage-report-action@v2
+
+  test-utils:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/test-utils
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          working-directory: packages/ui
+          node-version: latest
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+      - run: pnpm install --prefer-offline
+      - run: pnpm test
+
+  pilot-app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./deployables/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+      - run: pnpm install --prefer-offline
+      - run: pnpm test

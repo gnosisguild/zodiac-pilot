@@ -1,4 +1,3 @@
-import { ZERO_ADDRESS } from '@/chains'
 import { InjectedProviderMessageTyp } from '@/messages'
 import {
   chromeMock,
@@ -10,6 +9,7 @@ import {
 } from '@/test-utils'
 import type { Eip1193Provider } from '@/types'
 import { cleanup, waitFor } from '@testing-library/react'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import { toQuantity } from 'ethers'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'

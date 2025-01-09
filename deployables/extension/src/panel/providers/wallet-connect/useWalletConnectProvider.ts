@@ -1,5 +1,5 @@
-import { RPC } from '@/chains'
 import { invariant } from '@epic-web/invariant'
+import { RPC } from '@zodiac/chains'
 import { useEffect, useState } from 'react'
 import {
   WALLETCONNECT_PROJECT_ID,

@@ -1,5 +1,5 @@
-import { CHAIN_NAME } from '@/chains'
 import { invariant } from '@epic-web/invariant'
+import { CHAIN_NAME } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 

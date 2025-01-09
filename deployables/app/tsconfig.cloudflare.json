@@ -2,10 +2,12 @@
   "extends": "./tsconfig.json",
   "include": [
     ".react-router/types/**/*",
+    "vitest.setup.ts",
     "app/**/*",
     "app/**/.server/**/*",
     "app/**/.client/**/*",
-    "workers/**/*"
+    "workers/**/*",
+    "test-utils/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -19,7 +21,8 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@/test-utils": ["./test-utils/index.ts"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true

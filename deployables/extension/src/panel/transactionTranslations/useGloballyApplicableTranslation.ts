@@ -1,8 +1,8 @@
-import { getChainId } from '@/chains'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
+import { getChainId } from '@zodiac/chains'
 import { useCallback, useEffect } from 'react'
 import {
   type ChainId,

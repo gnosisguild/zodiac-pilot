@@ -1,6 +1,6 @@
-import { ETH_ZERO_ADDRESS } from '@/chains'
 import { createMockRoute, renderHook } from '@/test-utils'
 import { ProviderType } from '@/types'
+import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import { sleepTillIdle } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { useDisconnectWalletConnectIfNeeded } from './useDisconnectWalletConnectIfNeeded'

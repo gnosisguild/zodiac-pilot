@@ -11,14 +11,14 @@ import './app.css'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full overflow-hidden">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-full bg-gradient-to-b from-white to-zinc-50 text-base text-zinc-900 dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900 dark:text-white">
         {children}
         <ScrollRestoration />
         <Scripts />

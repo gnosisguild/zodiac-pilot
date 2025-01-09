@@ -1,4 +1,3 @@
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@/chains'
 import { getRoutes, saveLastUsedRouteId } from '@/execution-routes'
 import {
   connectMockWallet,
@@ -10,6 +9,7 @@ import {
 } from '@/test-utils'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { action, ListRoutes, loader } from './ListRoutes'

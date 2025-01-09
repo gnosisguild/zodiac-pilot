@@ -5,6 +5,7 @@
   "license": "UNLICENSED",
   "sideEffects": false,
   "packageManager": "pnpm@9.15.3",
+  "scripts": {"test": "vitest"},
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -14,14 +15,19 @@
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@testing-library/react": "^16.0.1",
+    "@zodiac/schema": "workspace:*",
+    "@zodiac/chains": "workspace:*",
     "vitest": "2.1.8"
   },
   "peerDependencies": {
     "react": "19.0.0",
-    "react-router": "7.1.1"
+    "react-router": "7.1.1",
+    "ser-kit": "1.0.7"
   },
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "@types/react": "^19.0.3",
-    "@types/react-dom": "^19.0.2"
+    "@types/react-dom": "^19.0.2",
+    "ser-kit": "1.0.7"
   }
 }
