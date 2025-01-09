@@ -92,6 +92,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.1
         version: 19.0.2(@types/react@19.0.4)
+      '@vitest/coverage-v8':
+        specifier: 2.1.8
+        version: 2.1.8(vitest@2.1.8(@types/node@22.10.5)(happy-dom@16.5.3)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
       '@zodiac/test-utils':
         specifier: workspace:*
         version: link:../../packages/test-utils
