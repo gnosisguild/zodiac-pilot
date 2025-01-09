@@ -9,6 +9,9 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@/test-utils": ["./test-utils/index.ts"]
+    }
   }
 }
