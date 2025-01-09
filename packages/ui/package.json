@@ -6,7 +6,8 @@
   "sideEffects": false,
   "packageManager": "pnpm@9.15.3",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint . --max-warnings=0"
   },
   "exports": {
     ".": {
@@ -30,6 +31,8 @@
     "@testing-library/user-event": "14.5.2",
     "@types/react": "^19.0.3",
     "@vitest/coverage-v8": "2.1.8",
+    "@zodiac/eslint-config": "workspace:*",
+    "eslint": "^9.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.1",
