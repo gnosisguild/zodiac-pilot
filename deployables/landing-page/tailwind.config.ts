@@ -3,7 +3,6 @@ import type { Config } from 'tailwindcss'
 
 const tailwindConfig = {
   ...zodiacTailwindConfig,
-  important: true,
   content: [...zodiacTailwindConfig.content, './index.html'],
 } satisfies Config
 
