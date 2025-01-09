@@ -32,6 +32,30 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
+  configs/eslint:
+    dependencies:
+      '@eslint/compat':
+        specifier: ^1.1.1
+        version: 1.2.4(eslint@9.17.0(jiti@2.4.1))
+      '@eslint/js':
+        specifier: ^9.7.0
+        version: 9.17.0
+      eslint:
+        specifier: 9.17.0
+        version: 9.17.0(jiti@2.4.1)
+      eslint-plugin-jsx-a11y:
+        specifier: ^6.9.0
+        version: 6.10.2(eslint@9.17.0(jiti@2.4.1))
+      eslint-plugin-react:
+        specifier: ^7.34.4
+        version: 7.37.3(eslint@9.17.0(jiti@2.4.1))
+      eslint-plugin-react-hooks:
+        specifier: 5.1.0
+        version: 5.1.0(eslint@9.17.0(jiti@2.4.1))
+      typescript-eslint:
+        specifier: ^8.0.0
+        version: 8.19.1(eslint@9.17.0(jiti@2.4.1))(typescript@5.7.3)
+
   deployables/app:
     dependencies:
       '@epic-web/invariant':
@@ -331,6 +355,9 @@ importers:
       '@walletconnect/universal-provider':
         specifier: 2.17.3
         version: 2.17.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
       '@zodiac/test-utils':
         specifier: workspace:*
         version: link:../../packages/test-utils
