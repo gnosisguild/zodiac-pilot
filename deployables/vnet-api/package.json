@@ -1,5 +1,5 @@
 {
-  "name": "zodiac-pilot-vnet-api",
+  "name": "@zodiac/vnet-api",
   "version": "1.0.0",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",
