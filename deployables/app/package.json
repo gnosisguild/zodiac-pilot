@@ -22,7 +22,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20241230.0",
+    "@cloudflare/workers-types": "4.20250109.0",
     "@hiogawa/vite-node-miniflare": "0.1.1",
     "@react-router/dev": "^7.1.1",
     "@testing-library/jest-dom": "^6.4.6",
