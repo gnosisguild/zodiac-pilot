@@ -7,7 +7,8 @@
   "packageManager": "pnpm@9.15.3",
   "scripts": {
     "test": "vitest",
-    "lint": "eslint . --max-warnings=0"
+    "lint": "eslint . --max-warnings=0",
+    "check-types": "tsc"
   },
   "exports": {
     ".": {
@@ -32,6 +33,7 @@
     "@types/react": "^19.0.3",
     "@vitest/coverage-v8": "2.1.8",
     "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/typescript-config": "workspace:*",
     "eslint": "^9.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
