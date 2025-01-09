@@ -506,6 +506,9 @@ importers:
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
+      '@zodiac/tailwind-config':
+        specifier: workspace:*
+        version: link:../../configs/tailwind
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)

@@ -15,6 +15,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/tailwind-config": "workspace:*",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.7.0",
     "postcss": "^8.4.47",
