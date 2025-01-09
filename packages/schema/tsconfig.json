@@ -1,0 +1,4 @@
+{
+  "extends": "@zodiac/typescript-config",
+  "include": ["./src/**/*"]
+}
