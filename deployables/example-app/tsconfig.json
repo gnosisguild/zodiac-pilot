@@ -1,10 +1,6 @@
 {
+  "extends": "@zodiac/typescript-config",
   "compilerOptions": {
-    "strict": true,
-    "module": "ES2022",
-    "moduleResolution": "Bundler",
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
     "paths": {
       "@/transfer": ["./app/transfer"],
       "@/components": ["./app/components"],

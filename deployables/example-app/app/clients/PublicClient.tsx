@@ -1,9 +1,9 @@
 import { Section } from '@/components'
 import { ProvideConfig } from '@/config'
-import { PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
 import { createPublicClient, http } from 'viem'
 import { Connected } from '../Connect'
-import { ClientProps } from './ClientProps'
+import type { ClientProps } from './ClientProps'
 
 export const PublicClient = ({
   children,

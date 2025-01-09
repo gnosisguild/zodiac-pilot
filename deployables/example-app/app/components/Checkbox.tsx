@@ -1,4 +1,8 @@
-import { ComponentPropsWithoutRef, PropsWithChildren, useId } from 'react'
+import {
+  type ComponentPropsWithoutRef,
+  type PropsWithChildren,
+  useId,
+} from 'react'
 
 type CheckboxProps = PropsWithChildren<
   Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'id'>

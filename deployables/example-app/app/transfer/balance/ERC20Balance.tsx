@@ -1,7 +1,7 @@
 import { useWagmiConfig } from '@/config'
-import { Address, formatUnits } from 'viem'
+import { type Address, formatUnits } from 'viem'
 import { useBalance } from 'wagmi'
-import { BalanceValue } from './BalanceValue'
+import type { BalanceValue } from './BalanceValue'
 import { Symbol } from './Symbol'
 
 type ER20BalanceProps = {

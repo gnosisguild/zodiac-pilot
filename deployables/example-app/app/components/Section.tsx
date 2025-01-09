@@ -1,4 +1,4 @@
-import { PropsWithChildren, useId } from 'react'
+import { type PropsWithChildren, useId } from 'react'
 
 type SectionProps = PropsWithChildren<{
   title?: string

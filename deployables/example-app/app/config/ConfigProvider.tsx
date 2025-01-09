@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
-import { createContext, PropsWithChildren, useContext } from 'react'
-import { Chain, PublicClient, WalletClient } from 'viem'
-import { Config, useConfig } from 'wagmi'
+import { createContext, type PropsWithChildren, useContext } from 'react'
+import type { Chain, PublicClient, WalletClient } from 'viem'
+import { type Config, useConfig } from 'wagmi'
 
 type ClientFnOptions = { chain: Chain }
 type ClientFn = (options: ClientFnOptions) => PublicClient | WalletClient
