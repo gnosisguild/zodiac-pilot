@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    './src/**/*.tsx',
+    './src/**/*.{tsx,html}',
+    './app/**/*.tsx',
     './public/*.html',
-    './src/**/*.html',
     './node_modules/@zodiac/ui/**/*.tsx',
   ],
   theme: {
