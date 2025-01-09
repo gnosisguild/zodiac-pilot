@@ -296,8 +296,8 @@ importers:
         specifier: ^3.21.10
         version: 3.22.4
       '@shazow/whatsabi':
-        specifier: ^0.18.0
-        version: 0.18.0(@noble/hashes@1.7.0)(typescript@5.7.3)(zod@3.24.1)
+        specifier: ^0.19.0
+        version: 0.19.0(@noble/hashes@1.7.0)(typescript@5.7.3)(zod@3.24.1)
       '@testing-library/dom':
         specifier: ^10.4.0
         version: 10.4.0
@@ -2633,8 +2633,8 @@ packages:
   '@scure/bip39@1.5.1':
     resolution: {integrity: sha512-GnlufVSP9UdAo/H2Patfv22VTtpNTyfi+I3qCKpvuB5l1KWzEYx+l2TNpBy9Ksh4xTs3Rn06tBlpWCi/1Vz8gw==}
 
-  '@shazow/whatsabi@0.18.0':
-    resolution: {integrity: sha512-CAM3ORys1LG1D+C65xp2nzvnFVwvXYtH2XfkL1HAmo4/74UfugUadCFkKHZgC1TDyo2rpgnJsX/mSpPN2YJDpA==}
+  '@shazow/whatsabi@0.19.0':
+    resolution: {integrity: sha512-18LfRRaTrn58mFUgCFvShiYqVuiDkx8TJWHzVcpaQu5O8+H8u9Pe+I3xlZeUTrGq6XQepPF7C8Uf9Sv7o26j0Q==}
     peerDependencies:
       '@noble/hashes': ^1
 
@@ -10059,7 +10059,7 @@ snapshots:
       '@noble/hashes': 1.7.0
       '@scure/base': 1.2.1
 
-  '@shazow/whatsabi@0.18.0(@noble/hashes@1.7.0)(typescript@5.7.3)(zod@3.24.1)':
+  '@shazow/whatsabi@0.19.0(@noble/hashes@1.7.0)(typescript@5.7.3)(zod@3.24.1)':
     dependencies:
       '@noble/hashes': 1.7.0
       ox: 0.2.2(typescript@5.7.3)(zod@3.24.1)
@@ -10469,7 +10469,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.2.0
       '@vanilla-extract/css': 1.17.0(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
