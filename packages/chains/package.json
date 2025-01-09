@@ -1,24 +1,29 @@
 {
- "name": "@zodiac/chains",
- "private": true,
- "type": "module",
- "license": "UNLICENSED",
- "sideEffects": false,
- "packageManager": "pnpm@9.15.3",
- "exports": {
-  ".": {
-   "types": "./src/index.ts",
-   "import": "./src/index.ts"
+  "name": "@zodiac/chains",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.3",
+  "scripts": {
+    "lint": "eslint . --max-warnings=0"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@epic-web/invariant": "^1.0.0",
+    "@zodiac/schema": "workspace:*"
+  },
+  "peerDependencies": {
+    "ser-kit": "1.0.7"
+  },
+  "devDependencies": {
+    "@zodiac/eslint-config": "workspace:*",
+    "eslint": "^9.7.0",
+    "ser-kit": "1.0.7"
   }
- },
- "dependencies": {
-  "@epic-web/invariant": "^1.0.0",
-  "@zodiac/schema": "workspace:*"
- },
- "peerDependencies": {
-  "ser-kit": "1.0.7"
- },
- "devDependencies": {
-  "ser-kit": "1.0.7"
- }
 }
