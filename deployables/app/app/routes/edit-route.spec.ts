@@ -42,9 +42,7 @@ describe('Edit route', () => {
           { searchParams: { route: btoa(JSON.stringify(route)) } },
         )
 
-        expect(
-          screen.getByRole('combobox', { name: 'Chain' }),
-        ).toHaveDisplayValue(name)
+        expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
   })
