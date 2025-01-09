@@ -104,6 +104,7 @@
     "**/renovate.json",
     "**/esbuild.js",
     "**/tailwind.config.js",
+    "**/tailwind.config.mjs",
     "**/tailwind.config.ts",
     "**/vite.config.ts",
     "**/entry.server.tsx",
