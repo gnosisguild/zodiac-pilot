@@ -1,16 +1,9 @@
+import zodiacTailwindConfig from '@zodiac/tailwind-config'
 import type { Config } from 'tailwindcss'
 
 const tailwindConfig = {
-  important: true,
-  content: ['./src/**/*.tsx', './index.html', '../../packages/ui/**/*.tsx'],
-  theme: {
-    extend: {
-      fontFamily: {
-        mono: '"Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-      },
-    },
-  },
-  plugins: [],
+  ...zodiacTailwindConfig,
+  content: [...zodiacTailwindConfig.content, './index.html'],
 } satisfies Config
 
 export default tailwindConfig
