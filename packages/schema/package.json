@@ -16,7 +16,7 @@
     }
   },
   "dependencies": {
-    "ser-kit": "1.0.7",
+    "ser-kit": "1.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
