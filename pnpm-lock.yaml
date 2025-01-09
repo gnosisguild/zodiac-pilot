@@ -518,6 +518,9 @@ importers:
       '@zodiac/tailwind-config':
         specifier: workspace:*
         version: link:../../configs/tailwind
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.49)
