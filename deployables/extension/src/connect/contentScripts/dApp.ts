@@ -4,14 +4,18 @@ import {
 } from '@/messages'
 import { invariant } from '@epic-web/invariant'
 
+const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL
+
+invariant(CONNECT_IFRAME_URL != null, 'CONNECT_IFRAME_URL is required')
+
 const ensureIframe = () => {
   let node: HTMLIFrameElement | null = document.querySelector(
-    `iframe[src="https://connect.pilot.gnosisguild.org/"]`,
+    `iframe[src="${CONNECT_IFRAME_URL}"]`,
   )
 
   if (!node) {
     node = document.createElement('iframe')
-    node.src = 'https://connect.pilot.gnosisguild.org/'
+    node.src = CONNECT_IFRAME_URL
     node.style.display = 'none'
 
     const parent = document.body || document.documentElement
@@ -37,10 +41,7 @@ chrome.runtime.onConnect.addListener((port) => {
       'cannot access connect iframe window',
     )
 
-    iframe.contentWindow.postMessage(
-      message,
-      'https://connect.pilot.gnosisguild.org/',
-    )
+    iframe.contentWindow.postMessage(message, CONNECT_IFRAME_URL)
 
     // wait for response
     const handleResponse = (event: MessageEvent<ConnectedWalletMessage>) => {

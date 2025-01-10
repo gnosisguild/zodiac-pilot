@@ -60,7 +60,7 @@ esbuild
           ? `"http://127.0.0.1:${SERVE_PORT}/esbuild"`
           : 'false',
       global: 'window',
-      'process.env.CONNECT_IFRAME_URL': process.env.CONNECT_IFRAME_URL,
+      'process.env.CONNECT_IFRAME_URL': `"${process.env.CONNECT_IFRAME_URL}"`,
     },
     plugins: [
       plugin(stdLibBrowser),
