@@ -1,6 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { CHAIN_NAME } from '@zodiac/chains'
+import { ProviderType } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   randomAddress,
@@ -46,6 +47,24 @@ describe('Edit route', () => {
         expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
+  })
+
+  describe('Pilot Account', () => {
+    it('shows the provider of a route', async () => {
+      const route = createMockExecutionRoute({
+        providerType: ProviderType.InjectedWallet,
+      })
+
+      await render<typeof import('./edit-route')>(
+        '/edit-route',
+        { path: '/edit-route', Component: EditRoute, loader },
+        { searchParams: { route: btoa(JSON.stringify(route)) } },
+      )
+
+      expect(
+        screen.getByRole('textbox', { name: 'Pilot Account' }),
+      ).toHaveAccessibleDescription('MetaMask')
+    })
   })
 
   describe('Avatar', () => {
