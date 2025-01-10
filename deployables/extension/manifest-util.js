@@ -17,6 +17,11 @@ const updateManifest = (templateFileName, outFileName, version) => {
   invariant(iframeUrl != null, 'CONNECT_IFRAME_URL is missing')
 
   try {
+    console.log(
+      'Reading manifest from:',
+      new URL(templateFileName, import.meta.url).toString(),
+    )
+
     const data = fs
       .readFileSync(templateFileName)
       .toString()
@@ -24,6 +29,11 @@ const updateManifest = (templateFileName, outFileName, version) => {
 
     const manifest = JSON.parse(data)
     manifest['version'] = version.replace('v', '')
+
+    console.log(
+      'Writing manifest to:',
+      new URL(outFileName, import.meta.url).toString(),
+    )
 
     fs.writeFileSync(outFileName, JSON.stringify(manifest, undefined, 2))
   } catch (error) {
