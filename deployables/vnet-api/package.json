@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.0.0",
+    "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "env-cmd": "^10.1.0",
+    "eslint": "^9.7.0",
     "typescript": "^5.0.0",
     "wrangler": "3.101.0"
   },
@@ -12,7 +14,8 @@
   "scripts": {
     "start": "env-cmd wrangler dev",
     "deploy": "wrangler publish",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0"
   },
   "packageManager": "pnpm@9.15.3"
 }
