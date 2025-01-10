@@ -63,7 +63,9 @@ enum ResourceType {
   PING = 'ping',
   CSP_REPORT = 'csp_report',
   MEDIA = 'media',
+  WEBBUNDLE = 'webbundle',
   WEBSOCKET = 'websocket',
+  WEBTRANSPORT = 'webtransport',
   OTHER = 'other',
 }
 
