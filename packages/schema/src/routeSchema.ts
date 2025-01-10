@@ -123,7 +123,7 @@ export type Waypoints = z.infer<typeof waypointsSchema>
 export const executionRouteSchema = z.object({
   id: z.string(),
   label: z.string(),
-  providerType: providerTypeSchema,
+  providerType: providerTypeSchema.optional(),
   avatar: prefixedAddressSchema,
   initiator: prefixedAddressSchema.optional(),
   waypoints: waypointsSchema.optional(),

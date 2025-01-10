@@ -12,7 +12,7 @@ interface Props {
   routeId: string
   pilotAddress: HexAddress | null
   chainId?: ChainId
-  providerType: ProviderType
+  providerType?: ProviderType
   onConnect(args: {
     providerType: ProviderType
     chainId: ChainId

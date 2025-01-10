@@ -1,5 +1,5 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
-import { ProviderType, type ExecutionRoute } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { AccountType, formatPrefixedAddress } from 'ser-kit'
 import { randomHex } from './randomHex'
@@ -11,7 +11,6 @@ export const createMockExecutionRoute = (
   avatar: formatPrefixedAddress(1, randomHex(40)),
   label: '',
   initiator: undefined,
-  providerType: ProviderType.InjectedWallet,
   waypoints: [
     {
       account: {
