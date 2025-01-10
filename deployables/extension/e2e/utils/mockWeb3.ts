@@ -55,7 +55,7 @@ export const mockWeb3 = async (
 
 const getConnectFrame = (page: Page) => {
   const frame = page.frame({
-    url: 'https://connect.pilot.gnosisguild.org/',
+    url: process.env.CONNECT_IFRAME_URL,
   })
 
   invariant(frame != null, 'Connect iframe not found')
