@@ -107,5 +107,9 @@ describe('Edit route', () => {
 
       expect(screen.getByText(avatar)).toBeInTheDocument()
     })
+
+    it('offers safes that are owned by the user', async () => {
+      throw new Error('Not implemented')
+    })
   })
 })
