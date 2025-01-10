@@ -569,12 +569,18 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.0.0
         version: 4.20250109.0
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
       '@zodiac/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
       env-cmd:
         specifier: ^10.1.0
         version: 10.1.0
+      eslint:
+        specifier: ^9.7.0
+        version: 9.17.0(jiti@2.4.1)
       typescript:
         specifier: ^5.0.0
         version: 5.7.3
