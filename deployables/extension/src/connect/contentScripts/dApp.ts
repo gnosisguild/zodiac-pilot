@@ -6,7 +6,7 @@ import { invariant } from '@epic-web/invariant'
 
 const ensureIframe = () => {
   let node: HTMLIFrameElement | null = document.querySelector(
-    'iframe[src="https://connect.pilot.gnosisguild.org/"]',
+    `iframe[src="https://connect.pilot.gnosisguild.org/"]`,
   )
 
   if (!node) {

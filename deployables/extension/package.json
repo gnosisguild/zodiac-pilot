@@ -11,6 +11,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf public/build",
+    "update-manifest": "node manifest-util.js -t ./src/manifest.template.json -o ./public/manifest.json",
     "prebuild": "pnpm clean",
     "build": "NODE_ENV=production node esbuild.mjs",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
@@ -89,14 +90,14 @@
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
+    "@zodiac/chains": "workspace:*",
+    "@zodiac/schema": "workspace:*",
+    "@zodiac/ui": "workspace:*",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.470.0",
-    "react-toastify": "11.0.2",
     "react-router": "7.1.1",
     "react-stick": "^5.0.6",
-    "zod": "^3.23.8",
-    "@zodiac/ui": "workspace:*",
-    "@zodiac/schema": "workspace:*",
-    "@zodiac/chains": "workspace:*"
+    "react-toastify": "11.0.2",
+    "zod": "^3.23.8"
   }
 }

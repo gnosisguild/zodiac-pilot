@@ -1,7 +1,7 @@
 {
   "name": "Zodiac Pilot",
   "description": "Simulate dApp interactions and record transactions",
-  "version": "0.0.0",
+  "version": "<VERSION>",
   "manifest_version": 3,
   "icons": {
     "16": "zodiac16.png",
@@ -16,9 +16,7 @@
     "default_path": "sidepanel.html"
   },
   "externally_connectable": {
-    "matches": [
-      "<all_urls>"
-    ]
+    "matches": ["<all_urls>"]
   },
   "permissions": [
     "sidePanel",
@@ -32,57 +30,31 @@
   "background": {
     "service_worker": "build/background/index.js"
   },
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "exclude_globs": [
-        "http://localhost:3040/",
-        "about:*",
-        "chrome:*"
-      ],
+      "matches": ["<all_urls>"],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>", "about:*", "chrome:*"],
       "run_at": "document_start",
-      "js": [
-        "build/connect/contentScripts/dApp.js"
-      ]
+      "js": ["build/connect/contentScripts/dApp.js"]
     },
     {
-      "matches": [
-        "http://localhost:3040/"
-      ],
+      "matches": ["<CONNECT_IFRAME_URL>"],
       "run_at": "document_start",
       "all_frames": true,
-      "js": [
-        "build/connect/contentScripts/connectIframe.js"
-      ]
+      "js": ["build/connect/contentScripts/connectIframe.js"]
     },
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "exclude_globs": [
-        "http://localhost:3040/",
-        "about:*",
-        "chrome:*"
-      ],
+      "matches": ["<all_urls>"],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>", "about:*", "chrome:*"],
       "run_at": "document_start",
-      "js": [
-        "build/monitor/contentScript/main.js"
-      ]
+      "js": ["build/monitor/contentScript/main.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["*"],
+      "matches": ["<all_urls>"]
     }
   ]
 }
