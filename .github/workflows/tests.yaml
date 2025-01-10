@@ -9,6 +9,8 @@ on:
 jobs:
   extension:
     runs-on: ubuntu-latest
+    env:
+      CONNECT_IFRAME_URL: http://localhost
     defaults:
       run:
         working-directory: ./deployables/extension
