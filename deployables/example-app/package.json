@@ -19,7 +19,7 @@
     "cross-env": "^7.0.3",
     "express": "^4.21.0",
     "isbot": "^5.0.0",
-    "lucide-react": "^0.469.0",
+    "lucide-react": "^0.470.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "remix-utils": "^8.0.0",
