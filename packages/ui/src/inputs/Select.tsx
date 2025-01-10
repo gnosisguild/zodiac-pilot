@@ -5,6 +5,7 @@ import BaseSelect, {
   type GroupBase,
   type Props,
 } from 'react-select'
+import Creatable, { type CreatableProps } from 'react-select/creatable'
 import { GhostButton } from '../buttons'
 import { Input, useClearLabel, useDropdownLabel } from './Input'
 
@@ -28,14 +29,32 @@ export const selectStyles = <
   noOptionsMessage: () => 'p-4 italic opacity-75',
 })
 
-export function Select<Option = unknown, Multi extends boolean = boolean>({
+type SelectProps<Creatable extends boolean> = {
+  label: string
+  clearLabel?: string
+  dropdownLabel?: string
+  allowCreate?: Creatable
+}
+
+export function Select<
+  Creatable extends boolean = false,
+  Option = unknown,
+  Multi extends boolean = boolean,
+>({
   label,
+  clearLabel,
+  dropdownLabel,
+  allowCreate,
   ...props
-}: Props<Option, Multi> & { label: string }) {
+}: Creatable extends true
+  ? CreatableProps<Option, Multi, GroupBase<Option>> & SelectProps<Creatable>
+  : Props<Option, Multi> & SelectProps<Creatable>) {
+  const Component = allowCreate ? Creatable : BaseSelect
+
   return (
-    <Input label={label}>
+    <Input label={label} clearLabel={clearLabel} dropdownLabel={dropdownLabel}>
       {({ inputId }) => (
-        <BaseSelect
+        <Component
           {...props}
           unstyled
           inputId={inputId}

@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react'
 import { CHAIN_NAME } from '@zodiac/chains'
 import {
   createMockExecutionRoute,
+  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import type { ChainId } from 'ser-kit'
@@ -45,5 +46,23 @@ describe('Edit route', () => {
         expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
+  })
+
+  describe('Avatar', () => {
+    it('shows the avatar of a route', async () => {
+      const avatar = randomAddress()
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ address: avatar }),
+      })
+
+      await render<typeof import('./edit-route')>(
+        '/edit-route',
+        { path: '/edit-route', Component: EditRoute, loader },
+        { searchParams: { route: btoa(JSON.stringify(route)) } },
+      )
+
+      expect(screen.getByText(avatar)).toBeInTheDocument()
+    })
   })
 })

@@ -1,4 +1,4 @@
-import { ChainSelect } from '@/components'
+import { AvatarInput, ChainSelect } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { executionRouteSchema } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
@@ -20,9 +20,9 @@ export const loader = ({ request }: Route.LoaderArgs) => {
     const rawJson = JSON.parse(decodedData.toString())
     const route = executionRouteSchema.parse(rawJson)
 
-    const [chainId] = splitPrefixedAddress(route.avatar)
+    const [chainId, avatar] = splitPrefixedAddress(route.avatar)
 
-    return { label: route.label, chainId }
+    return { label: route.label, chainId, avatar }
   } catch {
     throw new Response(null, { status: 400 })
   }
@@ -33,6 +33,7 @@ const EditRoute = ({ loaderData }: Route.ComponentProps) => {
     <>
       <TextInput label="Label" defaultValue={loaderData.label} />
       <ChainSelect value={loaderData.chainId} onChange={() => {}} />
+      <AvatarInput value={loaderData.avatar} onChange={() => {}} />
     </>
   )
 }
