@@ -1,7 +1,7 @@
 {
   "name": "Zodiac Pilot",
   "description": "Simulate dApp interactions and record transactions",
-  "version": "0.0.0",
+  "version": "<VERSION>",
   "manifest_version": 3,
   "icons": {
     "16": "zodiac16.png",
@@ -34,27 +34,19 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": [
-        "https://connect.pilot.gnosisguild.org/",
-        "about:*",
-        "chrome:*"
-      ],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>/", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/connect/contentScripts/dApp.js"]
     },
     {
-      "matches": ["https://connect.pilot.gnosisguild.org/"],
+      "matches": ["<CONNECT_IFRAME_URL>/"],
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/connect/contentScripts/connectIframe.js"]
     },
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": [
-        "https://connect.pilot.gnosisguild.org/",
-        "about:*",
-        "chrome:*"
-      ],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>/", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/monitor/contentScript/main.js"]
     }

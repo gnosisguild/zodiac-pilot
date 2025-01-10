@@ -7,6 +7,8 @@ jobs:
   playwright-e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      CONNECT_IFRAME_URL: https://connect.pilot.gnosisguild.org
     if: github.event.deployment_status.state == 'success'
     defaults:
       run:

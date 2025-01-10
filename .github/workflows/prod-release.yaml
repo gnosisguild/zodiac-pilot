@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build Extension
+    env:
+      CONNECT_IFRAME_URL: https://connect.pilot.gnosisguild.org
     defaults:
       run:
         working-directory: ./deployables/extension
@@ -26,9 +28,7 @@ jobs:
           pnpm build
 
       - name: Update manifest.json with release tag
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: node ./manifest-util.js ./public/manifest.json
+        run: pnpm update-manifest -v ${{ github.event.release.tag_name }}
 
       - name: Create extension zip file
         run: pnpm zip

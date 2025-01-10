@@ -11,11 +11,12 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf public/build",
-    "prebuild": "pnpm clean",
-    "build": "NODE_ENV=production node esbuild.mjs",
+    "update-manifest": "node manifest-util.js -t ./src/manifest.template.json -o ./public/manifest.json",
+    "prebuild": "pnpm clean && pnpm update-manifest",
+    "build": "node esbuild.mjs",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",
     "predev": "pnpm clean",
-    "dev": "NODE_ENV=development node esbuild.mjs",
+    "dev": "NODE_ENV=development pnpm build",
     "test:unit": "vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",
     "test:e2e:ui": "pnpm test:e2e --ui",
@@ -56,6 +57,7 @@
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "^10.4.20",
+    "chalk": "^5.4.1",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "dotenv": "^16.0.1",
@@ -89,14 +91,14 @@
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
+    "@zodiac/chains": "workspace:*",
+    "@zodiac/schema": "workspace:*",
+    "@zodiac/ui": "workspace:*",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.470.0",
-    "react-toastify": "11.0.2",
     "react-router": "7.1.1",
     "react-stick": "^5.0.6",
-    "zod": "^3.23.8",
-    "@zodiac/ui": "workspace:*",
-    "@zodiac/schema": "workspace:*",
-    "@zodiac/chains": "workspace:*"
+    "react-toastify": "11.0.2",
+    "zod": "^3.23.8"
   }
 }
