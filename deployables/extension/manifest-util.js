@@ -57,6 +57,4 @@ const {
 invariant(template != null, 'Path to template file missing')
 invariant(outFile != null, 'Path to output file missing')
 
-// const releaseTag = process.env.RELEASE_TAG
-
 updateManifest(template, outFile, version)
