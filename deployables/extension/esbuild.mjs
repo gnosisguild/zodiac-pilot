@@ -37,7 +37,7 @@ esbuild
     format: 'iife',
     treeShaking: true,
     minify: process.env.NODE_ENV !== 'development',
-    sourcemap: process.env.NODE_ENV !== 'production' ? 'inline' : 'linked',
+    sourcemap: process.env.NODE_ENV === 'development' ? 'inline' : 'linked',
     loader: {
       '.svg': 'file',
       '.woff': 'file',
