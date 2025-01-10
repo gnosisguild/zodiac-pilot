@@ -1,4 +1,5 @@
 import { invariant } from '@epic-web/invariant'
+import chalk from 'chalk'
 import { config } from 'dotenv'
 import fs from 'fs'
 import { parseArgs } from 'node:util'
@@ -17,10 +18,8 @@ const updateManifest = (templateFileName, outFileName, version) => {
   invariant(iframeUrl != null, 'CONNECT_IFRAME_URL is missing')
 
   try {
-    console.log(
-      'Reading manifest from:',
-      new URL(templateFileName, import.meta.url).toString(),
-    )
+    console.log(chalk.white.bold('Manifest template file:'))
+    console.log(new URL(templateFileName, import.meta.url).pathname)
 
     const data = fs
       .readFileSync(templateFileName)
@@ -30,10 +29,8 @@ const updateManifest = (templateFileName, outFileName, version) => {
     const manifest = JSON.parse(data)
     manifest['version'] = version.replace('v', '')
 
-    console.log(
-      'Writing manifest to:',
-      new URL(outFileName, import.meta.url).toString(),
-    )
+    console.log(chalk.white.bold('\nWriting manifest to:'))
+    console.log(new URL(outFileName, import.meta.url).pathname)
 
     fs.writeFileSync(outFileName, JSON.stringify(manifest, undefined, 2))
   } catch (error) {

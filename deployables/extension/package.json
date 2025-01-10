@@ -57,6 +57,7 @@
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "^10.4.20",
+    "chalk": "^5.4.1",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
     "dotenv": "^16.0.1",
