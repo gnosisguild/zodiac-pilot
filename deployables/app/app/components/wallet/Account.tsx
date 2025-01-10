@@ -16,7 +16,7 @@ export const Account = ({ children, type }: AccountProps) => {
       value={address}
       label="Pilot Account"
       description={
-        type === ProviderType.InjectedWallet ? 'Meta Mask' : 'Wallet Connect'
+        type === ProviderType.InjectedWallet ? 'MetaMask' : 'Wallet Connect'
       }
       action={
         <CopyToClipboard iconOnly size="small" data={address}>

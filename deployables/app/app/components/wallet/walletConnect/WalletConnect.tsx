@@ -1,12 +1,7 @@
-import { useWalletConnect, type WalletConnectResult } from '@/providers'
-import { ProviderType } from '@/types'
-import { SecondaryButton } from '@zodiac/ui'
+import { ProviderType } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
-import { Section } from '../Section'
-import { SwitchChain } from '../SwitchChain'
-import { WalletDisconnected } from '../WalletDisconnected'
 
 type WalletConnectProps = {
   routeId: string
@@ -14,7 +9,7 @@ type WalletConnectProps = {
   chainId: ChainId
   onDisconnect: () => void
   onError: () => void
-  isConnected: (provider: WalletConnectResult) => boolean
+  // isConnected: (provider: WalletConnectResult) => boolean
 }
 
 export const WalletConnect = ({
@@ -23,59 +18,59 @@ export const WalletConnect = ({
   chainId,
   onDisconnect,
   onError,
-  isConnected,
+  // isConnected,
 }: WalletConnectProps) => {
-  const walletConnect = useWalletConnect(routeId)
+  // const walletConnect = useWalletConnect(routeId)
 
   const disconnect = () => {
     onDisconnect()
 
-    walletConnect.disconnect()
+    // walletConnect.disconnect()
   }
 
-  if (isConnected(walletConnect)) {
-    return (
-      <Connected onDisconnect={disconnect}>
-        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
-      </Connected>
-    )
-  }
-
-  if (walletConnect.accounts.length === 0) {
-    return (
-      <WalletDisconnected
-        onDisconnect={onDisconnect}
-        onReconnect={async () => {
-          const result = await walletConnect.connect()
-
-          if (result == null) {
-            onError()
-          }
-        }}
-      >
-        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
-      </WalletDisconnected>
-    )
-  }
-
-  const knownAccount = walletConnect.accounts.some(
-    (acc) => acc.toLowerCase() === pilotAddress,
+  // if (isConnected(walletConnect)) {
+  return (
+    <Connected onDisconnect={disconnect}>
+      <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
+    </Connected>
   )
+  // }
 
-  if (knownAccount === false) {
-    return (
-      <Section>
-        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
-        <SecondaryButton onClick={disconnect}>Disconnect</SecondaryButton>
-      </Section>
-    )
-  }
+  // if (walletConnect.accounts.length === 0) {
+  //   return (
+  //     <WalletDisconnected
+  //       onDisconnect={onDisconnect}
+  //       onReconnect={async () => {
+  //         const result = await walletConnect.connect()
 
-  if (walletConnect.chainId !== chainId) {
-    return (
-      <SwitchChain chainId={chainId} onDisconnect={disconnect}>
-        <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
-      </SwitchChain>
-    )
-  }
+  //         if (result == null) {
+  //           onError()
+  //         }
+  //       }}
+  //     >
+  //       <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
+  //     </WalletDisconnected>
+  //   )
+  // }
+
+  // const knownAccount = walletConnect.accounts.some(
+  //   (acc) => acc.toLowerCase() === pilotAddress,
+  // )
+
+  // if (knownAccount === false) {
+  //   return (
+  //     <Section>
+  //       <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
+  //       <SecondaryButton onClick={disconnect}>Disconnect</SecondaryButton>
+  //     </Section>
+  //   )
+  // }
+
+  // if (walletConnect.chainId !== chainId) {
+  //   return (
+  //     <SwitchChain chainId={chainId} onDisconnect={disconnect}>
+  //       <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
+  //     </SwitchChain>
+  //   )
+  // }
 }

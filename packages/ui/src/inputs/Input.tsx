@@ -46,8 +46,8 @@ export const Input = ({
         <Label htmlFor={inputId}>{label}</Label>
 
         {description && (
-          <span className="text-sm opacity-70" id={descriptionId}>
-            ({description})
+          <span className="text-sm opacity-70">
+            (<span id={descriptionId}>{description}</span>)
           </span>
         )}
       </div>

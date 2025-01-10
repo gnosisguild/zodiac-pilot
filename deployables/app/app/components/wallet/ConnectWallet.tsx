@@ -1,11 +1,18 @@
-import { getChainId } from '@zodiac/chains'
-import { type ExecutionRoute, ProviderType } from '@zodiac/schema'
+import {
+  type ExecutionRoute,
+  type HexAddress,
+  ProviderType,
+} from '@zodiac/schema'
 import { ZeroAddress } from 'ethers'
 import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import { InjectedWallet } from './injectedWallet'
+import { WalletConnect } from './walletConnect'
 
 interface Props {
-  route: ExecutionRoute
+  routeId: string
+  pilotAddress: HexAddress | null
+  chainId?: ChainId
+  providerType: ProviderType
   onConnect(args: {
     providerType: ProviderType
     chainId: ChainId
@@ -16,14 +23,14 @@ interface Props {
 }
 
 export const ConnectWallet = ({
-  route,
+  routeId,
+  pilotAddress,
+  chainId,
+  providerType,
   onConnect,
   onDisconnect,
   onError,
 }: Props) => {
-  const pilotAddress = getPilotAddress(route)
-  const chainId = getChainId(route.avatar)
-
   // const isConnected = (
   //   provider: InjectedWalletContextT | WalletConnectResult,
   // ) =>
@@ -60,7 +67,7 @@ export const ConnectWallet = ({
     )
   }
 
-  switch (route.providerType) {
+  switch (providerType) {
     case ProviderType.InjectedWallet:
       return (
         <InjectedWallet
@@ -71,17 +78,16 @@ export const ConnectWallet = ({
         />
       )
     case ProviderType.WalletConnect:
-      return null
-    // return (
-    //   <WalletConnect
-    //     chainId={chainId}
-    //     pilotAddress={pilotAddress}
-    //     routeId={route.id}
-    //     isConnected={() => true}
-    //     onDisconnect={onDisconnect}
-    //     onError={onError}
-    //   />
-    // )
+      return (
+        <WalletConnect
+          chainId={chainId}
+          pilotAddress={pilotAddress}
+          routeId={routeId}
+          isConnected={() => true}
+          onDisconnect={onDisconnect}
+          onError={onError}
+        />
+      )
   }
 }
 

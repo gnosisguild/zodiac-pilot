@@ -50,20 +50,40 @@ describe('Edit route', () => {
   })
 
   describe('Pilot Account', () => {
-    it('shows the provider of a route', async () => {
-      const route = createMockExecutionRoute({
-        providerType: ProviderType.InjectedWallet,
+    describe('MetaMask', () => {
+      it('shows MetaMask as the provider of a route', async () => {
+        const route = createMockExecutionRoute({
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render<typeof import('./edit-route')>(
+          '/edit-route',
+          { path: '/edit-route', Component: EditRoute, loader },
+          { searchParams: { route: btoa(JSON.stringify(route)) } },
+        )
+
+        expect(
+          screen.getByRole('textbox', { name: 'Pilot Account' }),
+        ).toHaveAccessibleDescription('MetaMask')
       })
+    })
 
-      await render<typeof import('./edit-route')>(
-        '/edit-route',
-        { path: '/edit-route', Component: EditRoute, loader },
-        { searchParams: { route: btoa(JSON.stringify(route)) } },
-      )
+    describe('Wallet Connect', () => {
+      it('shows Wallet Connect as the provider of a route', async () => {
+        const route = createMockExecutionRoute({
+          providerType: ProviderType.WalletConnect,
+        })
 
-      expect(
-        screen.getByRole('textbox', { name: 'Pilot Account' }),
-      ).toHaveAccessibleDescription('MetaMask')
+        await render<typeof import('./edit-route')>(
+          '/edit-route',
+          { path: '/edit-route', Component: EditRoute, loader },
+          { searchParams: { route: btoa(JSON.stringify(route)) } },
+        )
+
+        expect(
+          screen.getByRole('textbox', { name: 'Pilot Account' }),
+        ).toHaveAccessibleDescription('Wallet Connect')
+      })
     })
   })
 

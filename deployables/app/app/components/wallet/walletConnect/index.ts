@@ -1,2 +1,2 @@
 export { WalletConnect } from './WalletConnect'
-export { WalletConnectConnect } from './WalletConnectConnect'
+// export { WalletConnectConnect } from './WalletConnectConnect'
