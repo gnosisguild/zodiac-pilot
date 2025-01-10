@@ -1,12 +1,30 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   type ExecutionRoute,
   type HexAddress,
   ProviderType,
 } from '@zodiac/schema'
+import {
+  ConnectKitButton,
+  ConnectKitProvider,
+  getDefaultConfig,
+} from 'connectkit'
 import { ZeroAddress } from 'ethers'
 import { type ChainId, parsePrefixedAddress } from 'ser-kit'
+import { createConfig, WagmiProvider } from 'wagmi'
 import { InjectedWallet } from './injectedWallet'
 import { WalletConnect } from './walletConnect'
+
+const queryClient = new QueryClient()
+
+const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
+
+const wagmiConfig = createConfig(
+  getDefaultConfig({
+    appName: 'Zodiac Pilot',
+    walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
+  }),
+)
 
 interface Props {
   routeId: string
@@ -38,31 +56,16 @@ export const ConnectWallet = ({
   //   isConnectedBase(provider, route.initiator, chainId)
 
   // not connected
-  if (pilotAddress == null) {
+  if (pilotAddress == null |) {
     return (
       <div className="flex flex-col gap-2">
-        {/* <WalletConnectConnect
-          routeId={route.id}
-          onConnect={(chainId, account) =>
-            onConnect({
-              providerType: ProviderType.WalletConnect,
-              chainId,
-              account,
-            })
-          }
-          onError={onError}
-        /> */}
-
-        {/* <InjectedWalletConnect
-          onConnect={(chainId, account) =>
-            onConnect({
-              providerType: ProviderType.InjectedWallet,
-              chainId,
-              account,
-            })
-          }
-          onError={onError}
-        /> */}
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <ConnectKitProvider>
+              <ConnectKitButton />
+            </ConnectKitProvider>
+          </WagmiProvider>
+        </QueryClientProvider>
       </div>
     )
   }

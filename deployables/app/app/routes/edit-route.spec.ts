@@ -50,6 +50,20 @@ describe('Edit route', () => {
   })
 
   describe('Pilot Account', () => {
+    it.only('offers a button to connect', async () => {
+      const route = createMockExecutionRoute()
+
+      await render<typeof import('./edit-route')>(
+        '/edit-route',
+        { path: '/edit-route', Component: EditRoute, loader },
+        { searchParams: { route: btoa(JSON.stringify(route)) } },
+      )
+
+      expect(
+        screen.getByRole('button', { name: 'Connect' }),
+      ).toBeInTheDocument()
+    })
+
     describe('MetaMask', () => {
       it('shows MetaMask as the provider of a route', async () => {
         const route = createMockExecutionRoute({
