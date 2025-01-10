@@ -30,11 +30,13 @@ export const loader = ({ request }: Route.LoaderArgs) => {
 
 const EditRoute = ({ loaderData }: Route.ComponentProps) => {
   return (
-    <>
+    <main className="mx-auto flex max-w-3xl flex-col gap-4">
+      <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
+
       <TextInput label="Label" defaultValue={loaderData.label} />
       <ChainSelect value={loaderData.chainId} onChange={() => {}} />
       <AvatarInput value={loaderData.avatar} onChange={() => {}} />
-    </>
+    </main>
   )
 }
 
