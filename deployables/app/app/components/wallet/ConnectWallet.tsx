@@ -4,6 +4,7 @@ import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { getDefaultConfig } from 'connectkit'
 import { type ChainId } from 'ser-kit'
 import { createConfig, WagmiProvider } from 'wagmi'
+import { injected, metaMask, walletConnect } from 'wagmi/connectors'
 import { Connect } from './Connect'
 import { Wallet } from './Wallet'
 
@@ -15,6 +16,11 @@ const wagmiConfig = createConfig(
   getDefaultConfig({
     appName: 'Zodiac Pilot',
     walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
+    connectors: [
+      injected(),
+      metaMask(),
+      walletConnect({ projectId: WALLETCONNECT_PROJECT_ID }),
+    ],
   }),
 )
 

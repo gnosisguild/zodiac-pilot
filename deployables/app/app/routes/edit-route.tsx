@@ -45,13 +45,11 @@ const EditRoute = ({
       <TextInput label="Label" defaultValue={label} />
       <ChainSelect value={chainId} onChange={() => {}} />
       <ConnectWallet
-        routeId={id}
         chainId={chainId}
         pilotAddress={pilotAddress}
         providerType={providerType}
         onConnect={() => {}}
         onDisconnect={() => {}}
-        onError={() => {}}
       />
       <AvatarInput value={avatar} onChange={() => {}} />
     </main>
