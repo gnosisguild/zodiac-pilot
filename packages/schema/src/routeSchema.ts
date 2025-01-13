@@ -1,7 +1,7 @@
 import { chains, type PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 
-const chainIdSchema = z.union([
+export const chainIdSchema = z.union([
   z.literal(chains[0].chainId),
   z.literal(chains[1].chainId),
   z.literal(chains[2].chainId),

@@ -1,3 +1,4 @@
+import { verifyChainId } from '@zodiac/chains'
 import { ProviderType } from '@zodiac/schema'
 import { Labeled, PrimaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
@@ -17,7 +18,7 @@ export const Connect = ({ onConnect }: ConnectProps) => {
     onConnect({ address, chainId, connector }) {
       onConnect({
         account: address,
-        chainId,
+        chainId: verifyChainId(chainId),
         providerType:
           connector.type === 'injected'
             ? ProviderType.InjectedWallet
