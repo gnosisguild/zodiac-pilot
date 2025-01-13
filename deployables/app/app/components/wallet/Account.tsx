@@ -1,23 +1,15 @@
-import { validateAddress } from '@/utils'
-import { ProviderType } from '@zodiac/schema'
 import { AddressInput, CopyToClipboard } from '@zodiac/ui'
+import { useAccount } from 'wagmi'
 
-type AccountProps = {
-  type: ProviderType
-  children: string
-}
-
-export const Account = ({ children, type }: AccountProps) => {
-  const address = validateAddress(children)
+export const Account = () => {
+  const { address, connector } = useAccount()
 
   return (
     <AddressInput
       readOnly
       value={address}
       label="Pilot Account"
-      description={
-        type === ProviderType.InjectedWallet ? 'MetaMask' : 'Wallet Connect'
-      }
+      description={connector?.name}
       action={
         <CopyToClipboard iconOnly size="small" data={address}>
           Copy address

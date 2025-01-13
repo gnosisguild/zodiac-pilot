@@ -60,7 +60,7 @@ describe('Edit route', () => {
       )
 
       expect(
-        screen.getByRole('button', { name: 'Connect' }),
+        screen.getByRole('button', { name: 'Connect wallet' }),
       ).toBeInTheDocument()
     })
 

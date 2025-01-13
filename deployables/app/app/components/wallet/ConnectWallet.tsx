@@ -4,14 +4,11 @@ import {
   type HexAddress,
   ProviderType,
 } from '@zodiac/schema'
-import {
-  ConnectKitButton,
-  ConnectKitProvider,
-  getDefaultConfig,
-} from 'connectkit'
+import { getDefaultConfig } from 'connectkit'
 import { ZeroAddress } from 'ethers'
 import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import { createConfig, WagmiProvider } from 'wagmi'
+import { Connected } from './Connected'
 import { InjectedWallet } from './injectedWallet'
 import { WalletConnect } from './walletConnect'
 
@@ -61,9 +58,7 @@ export const ConnectWallet = ({
       <div className="flex flex-col gap-2">
         <QueryClientProvider client={queryClient}>
           <WagmiProvider config={wagmiConfig}>
-            <ConnectKitProvider>
-              <ConnectKitButton />
-            </ConnectKitProvider>
+            <Connected onDisconnect={onDisconnect} onConnect={onConnect} />
           </WagmiProvider>
         </QueryClientProvider>
       </div>
