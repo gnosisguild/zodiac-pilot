@@ -167,7 +167,7 @@ export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
     pilotAddress:
       pilotAddress && pilotAddress !== ZeroAddress ? pilotAddress : '',
     chainId,
-    providerType: route.providerType,
+    providerType: route.providerType ?? ProviderType.InjectedWallet,
     moduleType:
       moduleType === AccountType.DELAY
         ? KnownContracts.DELAY
