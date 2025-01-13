@@ -56,7 +56,7 @@ export const ConnectWallet = ({
   //   isConnectedBase(provider, route.initiator, chainId)
 
   // not connected
-  if (pilotAddress == null |) {
+  if (pilotAddress == null) {
     return (
       <div className="flex flex-col gap-2">
         <QueryClientProvider client={queryClient}>
