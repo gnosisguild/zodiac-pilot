@@ -23,7 +23,6 @@ export const loader = ({ request }: Route.LoaderArgs) => {
     const [chainId, avatar] = splitPrefixedAddress(route.avatar)
 
     return {
-      id: route.id,
       label: route.label,
       chainId,
       avatar,
@@ -36,7 +35,7 @@ export const loader = ({ request }: Route.LoaderArgs) => {
 }
 
 const EditRoute = ({
-  loaderData: { id, chainId, label, avatar, pilotAddress, providerType },
+  loaderData: { chainId, label, avatar, pilotAddress, providerType },
 }: Route.ComponentProps) => {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-4">
