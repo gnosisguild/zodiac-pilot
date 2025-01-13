@@ -120,5 +120,13 @@ describe('Edit route', () => {
 
       expect(screen.getByText(avatar)).toBeInTheDocument()
     })
+
+    it('loads available safes for an avatar', async () => {
+      const avatar = randomAddress()
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ address: avatar }),
+      })
+    })
   })
 })
