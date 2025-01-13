@@ -8,7 +8,7 @@ import { getDefaultConfig } from 'connectkit'
 import { ZeroAddress } from 'ethers'
 import { type ChainId, parsePrefixedAddress } from 'ser-kit'
 import { createConfig, WagmiProvider } from 'wagmi'
-import { Connected } from './Connected'
+import { Connect } from './Connect'
 import { InjectedWallet } from './injectedWallet'
 import { WalletConnect } from './walletConnect'
 
@@ -55,13 +55,11 @@ export const ConnectWallet = ({
   // not connected
   if (pilotAddress == null) {
     return (
-      <div className="flex flex-col gap-2">
-        <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={wagmiConfig}>
-            <Connected onDisconnect={onDisconnect} onConnect={onConnect} />
-          </WagmiProvider>
-        </QueryClientProvider>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>
+          <Connect onConnect={onConnect} />
+        </WagmiProvider>
+      </QueryClientProvider>
     )
   }
 
