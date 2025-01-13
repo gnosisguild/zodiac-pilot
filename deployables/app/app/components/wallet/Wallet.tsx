@@ -64,6 +64,10 @@ export const Wallet = ({
   }
 
   if (address != null) {
-    return <Connected type={providerType} onDisconnect={onDisconnect} />
+    return (
+      <Connected onDisconnect={onDisconnect}>
+        <Account type={providerType}>{pilotAddress}</Account>
+      </Connected>
+    )
   }
 }

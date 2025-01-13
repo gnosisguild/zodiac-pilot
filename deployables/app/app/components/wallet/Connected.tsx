@@ -1,48 +1,17 @@
-import type { ProviderType } from '@zodiac/schema'
-import { Labeled, PrimaryButton, SecondaryButton } from '@zodiac/ui'
-import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
-import { useAccount, useDisconnect } from 'wagmi'
-import { Account } from './Account'
+import { SecondaryButton } from '@zodiac/ui'
+import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
 
-type ConnectedProps = {
-  type: ProviderType
+type ConnectedProps = PropsWithChildren<{
   onDisconnect: () => void
-}
+}>
 
-export const Connected = ({ type, onDisconnect }: ConnectedProps) => {
-  const { address } = useAccount()
+export const Connected = ({ children, onDisconnect }: ConnectedProps) => (
+  <Section>
+    {children}
 
-  const { disconnect } = useDisconnect()
-
-  if (address == null) {
-    return (
-      <ConnectKitProvider>
-        <ConnectKitButton.Custom>
-          {({ show }) => (
-            <Labeled label="Pilot Account">
-              <PrimaryButton onClick={show}>Connect wallet</PrimaryButton>
-            </Labeled>
-          )}
-        </ConnectKitButton.Custom>
-      </ConnectKitProvider>
-    )
-  }
-
-  return (
-    <Section>
-      <Account type={type}>{address}</Account>
-
-      <SecondaryButton
-        fluid
-        onClick={() => {
-          disconnect()
-
-          onDisconnect()
-        }}
-      >
-        Disconnect
-      </SecondaryButton>
-    </Section>
-  )
-}
+    <SecondaryButton fluid onClick={onDisconnect}>
+      Disconnect
+    </SecondaryButton>
+  </Section>
+)
