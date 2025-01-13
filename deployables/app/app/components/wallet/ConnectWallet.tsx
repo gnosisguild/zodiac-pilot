@@ -1,16 +1,11 @@
+import { invariant } from '@epic-web/invariant'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  type ExecutionRoute,
-  type HexAddress,
-  ProviderType,
-} from '@zodiac/schema'
+import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { getDefaultConfig } from 'connectkit'
-import { ZeroAddress } from 'ethers'
-import { type ChainId, parsePrefixedAddress } from 'ser-kit'
+import { type ChainId } from 'ser-kit'
 import { createConfig, WagmiProvider } from 'wagmi'
 import { Connect } from './Connect'
-import { InjectedWallet } from './injectedWallet'
-import { WalletConnect } from './walletConnect'
+import { Wallet } from './Wallet'
 
 const queryClient = new QueryClient()
 
@@ -24,7 +19,6 @@ const wagmiConfig = createConfig(
 )
 
 interface Props {
-  routeId: string
   pilotAddress: HexAddress | null
   chainId?: ChainId
   providerType?: ProviderType
@@ -34,26 +28,15 @@ interface Props {
     account: string
   }): void
   onDisconnect(): void
-  onError: () => void
 }
 
 export const ConnectWallet = ({
-  routeId,
   pilotAddress,
   chainId,
   providerType,
   onConnect,
   onDisconnect,
-  onError,
 }: Props) => {
-  // const isConnected = (
-  //   provider: InjectedWalletContextT | WalletConnectResult,
-  // ) =>
-  //   route.initiator != null &&
-  //   isConnectedBase(provider, route.initiator, chainId)
-
-  // not connected
-
   if (pilotAddress == null) {
     return (
       <QueryClientProvider client={queryClient}>
@@ -64,44 +47,21 @@ export const ConnectWallet = ({
     )
   }
 
-  switch (providerType) {
-    case ProviderType.InjectedWallet:
-      return (
-        <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={wagmiConfig}>
-            <InjectedWallet
-              chainId={chainId}
-              pilotAddress={pilotAddress}
-              onDisconnect={onDisconnect}
-              onError={onError}
-            />
-          </WagmiProvider>
-        </QueryClientProvider>
-      )
-    case ProviderType.WalletConnect:
-      return (
-        <WalletConnect
+  invariant(
+    providerType != null,
+    'providerType is required when pilotAddress is set',
+  )
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <Wallet
           chainId={chainId}
+          providerType={providerType}
           pilotAddress={pilotAddress}
-          routeId={routeId}
-          isConnected={() => true}
           onDisconnect={onDisconnect}
-          onError={onError}
         />
-      )
-  }
-}
-
-const getPilotAddress = (route: ExecutionRoute) => {
-  if (route.initiator == null) {
-    return null
-  }
-
-  const address = parsePrefixedAddress(route.initiator).toLowerCase()
-
-  if (address === ZeroAddress) {
-    return null
-  }
-
-  return address
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
 }

@@ -66,7 +66,7 @@ describe('Edit route', () => {
     })
 
     describe('MetaMask', () => {
-      it.only('shows MetaMask as the provider of a route', async () => {
+      it('shows MetaMask as the provider of a route', async () => {
         const route = createMockExecutionRoute({
           waypoints: [createStartingWaypoint()],
           providerType: ProviderType.InjectedWallet,
@@ -85,8 +85,9 @@ describe('Edit route', () => {
     })
 
     describe('Wallet Connect', () => {
-      it('shows Wallet Connect as the provider of a route', async () => {
+      it.only('shows Wallet Connect as the provider of a route', async () => {
         const route = createMockExecutionRoute({
+          waypoints: [createStartingWaypoint()],
           providerType: ProviderType.WalletConnect,
         })
 

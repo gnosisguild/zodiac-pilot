@@ -1,6 +1,5 @@
 import { ProviderType } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
-import { Account } from '../Account'
 import { Connected } from '../Connected'
 
 type WalletConnectProps = {
@@ -30,9 +29,7 @@ export const WalletConnect = ({
 
   // if (isConnected(walletConnect)) {
   return (
-    <Connected onDisconnect={disconnect}>
-      <Account type={ProviderType.WalletConnect}>{pilotAddress}</Account>
-    </Connected>
+    <Connected type={ProviderType.WalletConnect} onDisconnect={disconnect} />
   )
   // }
 

@@ -1,3 +1,4 @@
+import type { ProviderType } from '@zodiac/schema'
 import { Labeled, PrimaryButton, SecondaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
 import { useAccount, useDisconnect } from 'wagmi'
@@ -5,10 +6,11 @@ import { Account } from './Account'
 import { Section } from './Section'
 
 type ConnectedProps = {
+  type: ProviderType
   onDisconnect: () => void
 }
 
-export const Connected = ({ onDisconnect }: ConnectedProps) => {
+export const Connected = ({ type, onDisconnect }: ConnectedProps) => {
   const { address } = useAccount()
 
   const { disconnect } = useDisconnect()
@@ -29,7 +31,7 @@ export const Connected = ({ onDisconnect }: ConnectedProps) => {
 
   return (
     <Section>
-      <Account>{address}</Account>
+      <Account type={type}>{address}</Account>
 
       <SecondaryButton
         fluid

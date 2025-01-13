@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250109.0",
+    "@depay/web3-mock": "^14.19.1",
     "@hiogawa/vite-node-miniflare": "0.1.1",
     "@react-router/dev": "^7.1.1",
     "@testing-library/jest-dom": "^6.4.6",

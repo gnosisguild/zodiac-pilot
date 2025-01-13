@@ -1,14 +1,8 @@
-import { AccountType, type StartingPoint } from 'ser-kit'
-import { randomAddress, randomPrefixedAddress } from './randomHex'
+import { type Account, type StartingPoint } from 'ser-kit'
+import { createEoaAccount } from './createEoaAccount'
 
-export const createStartingWaypoint = ({
+export const createStartingWaypoint = (
+  account: Account = createEoaAccount(),
+): StartingPoint => ({
   account,
-}: Partial<StartingPoint> = {}): StartingPoint => ({
-  account: {
-    address: randomAddress(),
-    prefixedAddress: randomPrefixedAddress(),
-    type: AccountType.EOA,
-
-    ...account,
-  },
 })
