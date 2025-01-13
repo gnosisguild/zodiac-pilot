@@ -1,14 +1,7 @@
-import {
-  renderFramework,
-  type FrameworkRoute,
-  type RenderOptions,
-  type RouteModule,
-} from '@zodiac/test-utils'
+import { createRenderFramework } from '@zodiac/test-utils'
+import { default as routes } from '../app/routes'
 
-export function render<Module extends RouteModule>(
-  currentPath: string,
-  route: FrameworkRoute<Module>,
-  options: RenderOptions = {},
-) {
-  return renderFramework(currentPath, route, options)
-}
+export const render = await createRenderFramework(
+  new URL('../app', import.meta.url),
+  routes,
+)

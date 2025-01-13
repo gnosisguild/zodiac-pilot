@@ -10,18 +10,15 @@ import {
 } from '@zodiac/test-utils'
 import type { ChainId } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
-import EditRoute, { loader } from './edit-route'
 
 describe('Edit route', () => {
   describe('Label', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render<typeof import('./edit-route')>(
-        '/edit-route',
-        { path: '/edit-route', Component: EditRoute, loader },
-        { searchParams: { route: btoa(JSON.stringify(route)) } },
-      )
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -39,11 +36,9 @@ describe('Edit route', () => {
           }),
         })
 
-        await render<typeof import('./edit-route')>(
-          '/edit-route',
-          { path: '/edit-route', Component: EditRoute, loader },
-          { searchParams: { route: btoa(JSON.stringify(route)) } },
-        )
+        await render('/edit-route', {
+          searchParams: { route: btoa(JSON.stringify(route)) },
+        })
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -54,11 +49,9 @@ describe('Edit route', () => {
     it('offers a button to connect', async () => {
       const route = createMockExecutionRoute()
 
-      await render<typeof import('./edit-route')>(
-        '/edit-route',
-        { path: '/edit-route', Component: EditRoute, loader },
-        { searchParams: { route: btoa(JSON.stringify(route)) } },
-      )
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
 
       expect(
         screen.getByRole('button', { name: 'Connect wallet' }),
@@ -72,11 +65,9 @@ describe('Edit route', () => {
           providerType: ProviderType.InjectedWallet,
         })
 
-        await render<typeof import('./edit-route')>(
-          '/edit-route',
-          { path: '/edit-route', Component: EditRoute, loader },
-          { searchParams: { route: btoa(JSON.stringify(route)) } },
-        )
+        await render('/edit-route', {
+          searchParams: { route: btoa(JSON.stringify(route)) },
+        })
 
         expect(
           screen.getByRole('textbox', { name: 'Pilot Account' }),
@@ -91,11 +82,9 @@ describe('Edit route', () => {
           providerType: ProviderType.WalletConnect,
         })
 
-        await render<typeof import('./edit-route')>(
-          '/edit-route',
-          { path: '/edit-route', Component: EditRoute, loader },
-          { searchParams: { route: btoa(JSON.stringify(route)) } },
-        )
+        await render('/edit-route', {
+          searchParams: { route: btoa(JSON.stringify(route)) },
+        })
 
         expect(
           screen.getByRole('textbox', { name: 'Pilot Account' }),
@@ -112,11 +101,9 @@ describe('Edit route', () => {
         avatar: randomPrefixedAddress({ address: avatar }),
       })
 
-      await render<typeof import('./edit-route')>(
-        '/edit-route',
-        { path: '/edit-route', Component: EditRoute, loader },
-        { searchParams: { route: btoa(JSON.stringify(route)) } },
-      )
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
 
       expect(screen.getByText(avatar)).toBeInTheDocument()
     })

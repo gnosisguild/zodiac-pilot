@@ -1,3 +1,4 @@
+import { type RouteConfig } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
 import { createRoutesStub, useLoaderData, useParams } from 'react-router'
@@ -64,48 +65,63 @@ export type FrameworkRoute<
     : never
 }
 
-export async function renderFramework<Module extends RouteModule>(
-  currentPath: string,
-  route: FrameworkRoute<Module>,
-  { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions,
-): Promise<RenderResult> {
-  const Stub = createRoutesStub([
-    {
-      path: '/',
-      Component: TestElement,
-      children: [
-        {
-          path: route.path,
-          // @ts-expect-error this is not 100% correct but good enough for the current state of tests
-          // we might need to adjust this in the future
-          loader: route.loader,
-          Component() {
-            const loaderData = useLoaderData<typeof route.loader>()
-            const params = useParams()
+export async function createRenderFramework<Config extends RouteConfig>(
+  basePath: URL,
+  routeConfig: Config,
+) {
+  const routes = await Promise.resolve(routeConfig)
 
-            return (
-              <route.Component
-                // @ts-expect-error this is not 100% correct but good enough for the current state of tests
-                // we might need to adjust this in the future
-                loaderData={loaderData}
-                params={params}
-              />
-            )
-          },
+  const stubRoutes = await Promise.all(
+    routes.map(async (route) => {
+      const { loader, default: RouteComponent }: RouteModule = await import(
+        new URL(route.file, `${basePath}/`).pathname
+      )
+
+      const Component = RouteComponent as ComponentType<
+        CreateComponentProps<Info<RouteModule>>
+      >
+
+      return {
+        path: route.path,
+        loader,
+        Component() {
+          const loaderData = useLoaderData<typeof loader>()
+          const params = useParams()
+
+          // @ts-expect-error we're not yet suppliying all required props
+          return <Component loaderData={loaderData} params={params} />
         },
-
-        ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
-      ],
-    },
-  ])
-
-  const result = render(
-    <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
-    options,
+      }
+    }),
   )
 
-  await waitForTestElement()
-  await sleepTillIdle()
+  return async function renderFramework<
+    Paths extends Awaited<RouteConfig>[number]['path'],
+  >(
+    currentPath: NonNullable<Paths>,
+    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions,
+  ): Promise<RenderResult> {
+    const Stub = createRoutesStub([
+      {
+        path: '/',
+        Component: TestElement,
+        // @ts-expect-error the real types and the stub types aren't nicely aligned
+        children: [
+          ...stubRoutes,
 
-  return result
+          ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
+        ],
+      },
+    ])
+
+    const result = render(
+      <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
+      options,
+    )
+
+    await waitForTestElement()
+    await sleepTillIdle()
+
+    return result
+  }
 }
