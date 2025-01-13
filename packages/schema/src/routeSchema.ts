@@ -1,7 +1,7 @@
 import { chains, type PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 
-const chainIdSchema = z.union([
+export const chainIdSchema = z.union([
   z.literal(chains[0].chainId),
   z.literal(chains[1].chainId),
   z.literal(chains[2].chainId),
@@ -116,13 +116,17 @@ const injectedProviderType = z.literal(ProviderType.InjectedWallet)
 
 const providerTypeSchema = z.union([walletConnectType, injectedProviderType])
 
+const waypointsSchema = z.tuple([startingPointSchema]).rest(waypointSchema)
+
+export type Waypoints = z.infer<typeof waypointsSchema>
+
 export const executionRouteSchema = z.object({
   id: z.string(),
   label: z.string(),
-  providerType: providerTypeSchema,
+  providerType: providerTypeSchema.optional(),
   avatar: prefixedAddressSchema,
   initiator: prefixedAddressSchema.optional(),
-  waypoints: z.tuple([startingPointSchema]).rest(waypointSchema).optional(),
+  waypoints: waypointsSchema.optional(),
 })
 
 export type ExecutionRoute = z.infer<typeof executionRouteSchema>

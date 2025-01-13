@@ -1,8 +1,10 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { CHAIN_NAME } from '@zodiac/chains'
+import { ProviderType } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
+  createStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -46,6 +48,60 @@ describe('Edit route', () => {
         expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
+  })
+
+  describe('Pilot Account', () => {
+    it('offers a button to connect', async () => {
+      const route = createMockExecutionRoute()
+
+      await render<typeof import('./edit-route')>(
+        '/edit-route',
+        { path: '/edit-route', Component: EditRoute, loader },
+        { searchParams: { route: btoa(JSON.stringify(route)) } },
+      )
+
+      expect(
+        screen.getByRole('button', { name: 'Connect wallet' }),
+      ).toBeInTheDocument()
+    })
+
+    describe('MetaMask', () => {
+      it('shows MetaMask as the provider of a route', async () => {
+        const route = createMockExecutionRoute({
+          waypoints: [createStartingWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render<typeof import('./edit-route')>(
+          '/edit-route',
+          { path: '/edit-route', Component: EditRoute, loader },
+          { searchParams: { route: btoa(JSON.stringify(route)) } },
+        )
+
+        expect(
+          screen.getByRole('textbox', { name: 'Pilot Account' }),
+        ).toHaveAccessibleDescription('MetaMask')
+      })
+    })
+
+    describe('Wallet Connect', () => {
+      it('shows Wallet Connect as the provider of a route', async () => {
+        const route = createMockExecutionRoute({
+          waypoints: [createStartingWaypoint()],
+          providerType: ProviderType.WalletConnect,
+        })
+
+        await render<typeof import('./edit-route')>(
+          '/edit-route',
+          { path: '/edit-route', Component: EditRoute, loader },
+          { searchParams: { route: btoa(JSON.stringify(route)) } },
+        )
+
+        expect(
+          screen.getByRole('textbox', { name: 'Pilot Account' }),
+        ).toHaveAccessibleDescription('Wallet Connect')
+      })
+    })
   })
 
   describe('Avatar', () => {

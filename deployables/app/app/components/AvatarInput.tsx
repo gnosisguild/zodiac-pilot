@@ -1,3 +1,4 @@
+import { validateAddress } from '@/utils'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -98,12 +99,4 @@ const SafeOptionLabel = (option: Option) => {
       </code>
     </div>
   )
-}
-
-const validateAddress = (address: string) => {
-  try {
-    return getAddress(address).toLowerCase()
-  } catch {
-    return ''
-  }
 }

@@ -1,5 +1,5 @@
-import { createContext, type ReactNode, useContext, useId } from 'react'
-import { Label } from './Label'
+import { createContext, type ReactNode, useContext } from 'react'
+import { Labeled, type LabeledRenderProps } from './Labeled'
 
 type InputContextOptions = {
   clearLabel?: string
@@ -8,18 +8,13 @@ type InputContextOptions = {
 
 const InputContext = createContext<InputContextOptions>({})
 
-type RenderProps = {
-  inputId: string
-  descriptionId: string
-}
-
 type InputProps = {
   label: string
   description?: string
   error?: string | null
   before?: ReactNode
   after?: ReactNode
-  children: (props: RenderProps) => ReactNode
+  children: (props: LabeledRenderProps) => ReactNode
 } & InputContextOptions
 
 export type ComposableInputProps = Omit<
@@ -36,36 +31,25 @@ export const Input = ({
   error,
   clearLabel,
   dropdownLabel,
-}: InputProps) => {
-  const inputId = useId()
-  const descriptionId = useId()
+}: InputProps) => (
+  <Labeled label={label} description={description}>
+    {({ inputId, descriptionId }) => (
+      <>
+        <InputContext value={{ clearLabel, dropdownLabel }}>
+          <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
+            {before}
 
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1">
-        <Label htmlFor={inputId}>{label}</Label>
+            <div className="flex-1">{children({ inputId, descriptionId })}</div>
 
-        {description && (
-          <span className="text-sm opacity-70" id={descriptionId}>
-            ({description})
-          </span>
-        )}
-      </div>
+            {after}
+          </div>
+        </InputContext>
 
-      <InputContext value={{ clearLabel, dropdownLabel }}>
-        <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
-          {before}
-
-          <div className="flex-1">{children({ inputId, descriptionId })}</div>
-
-          {after}
-        </div>
-      </InputContext>
-
-      {error && <div className="text-sm font-bold text-red-600">{error}</div>}
-    </div>
-  )
-}
+        {error && <div className="text-sm font-bold text-red-600">{error}</div>}
+      </>
+    )}
+  </Labeled>
+)
 
 export const useClearLabel = () => {
   const { clearLabel } = useContext(InputContext)
