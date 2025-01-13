@@ -53,6 +53,7 @@ export const ConnectWallet = ({
   //   isConnectedBase(provider, route.initiator, chainId)
 
   // not connected
+
   if (pilotAddress == null) {
     return (
       <QueryClientProvider client={queryClient}>
@@ -66,12 +67,16 @@ export const ConnectWallet = ({
   switch (providerType) {
     case ProviderType.InjectedWallet:
       return (
-        <InjectedWallet
-          chainId={chainId}
-          pilotAddress={pilotAddress}
-          onDisconnect={onDisconnect}
-          onError={onError}
-        />
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <InjectedWallet
+              chainId={chainId}
+              pilotAddress={pilotAddress}
+              onDisconnect={onDisconnect}
+              onError={onError}
+            />
+          </WagmiProvider>
+        </QueryClientProvider>
       )
     case ProviderType.WalletConnect:
       return (

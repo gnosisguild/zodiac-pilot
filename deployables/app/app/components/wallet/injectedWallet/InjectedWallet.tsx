@@ -1,7 +1,10 @@
-import { ProviderType } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
+import { useAccount } from 'wagmi'
 import { Account } from '../Account'
 import { Connected } from '../Connected'
+import { SwitchChain } from '../SwitchChain'
+import { WalletDisconnected } from '../WalletDisconnected'
+import { WrongAccount } from '../WrongAccount'
 
 type InjectedWalletProps = {
   pilotAddress: string
@@ -9,7 +12,6 @@ type InjectedWalletProps = {
 
   onDisconnect: () => void
   onError: () => void
-  // isConnected: (provider: InjectedWalletContextT) => boolean
 }
 
 export const InjectedWallet = ({
@@ -18,57 +20,53 @@ export const InjectedWallet = ({
   onDisconnect,
   onError,
 }: InjectedWalletProps) => {
-  // const injectedWallet = useInjectedWallet()
-
-  // if (isConnected(injectedWallet)) {
-  return (
-    <Connected onDisconnect={onDisconnect}>
-      <Account type={ProviderType.InjectedWallet}>{pilotAddress}</Account>
-    </Connected>
-  )
-  // }
+  const { address, chainId: accountChainId, addresses } = useAccount()
 
   // Wallet disconnected
-  // if (injectedWallet.accounts.length === 0) {
-  //   return (
-  //     <WalletDisconnected
-  //       onDisconnect={onDisconnect}
-  //       onReconnect={async () => {
-  //         const result = await injectedWallet.connect()
+  if (addresses == null || addresses.length === 0) {
+    return (
+      <WalletDisconnected
+        onDisconnect={onDisconnect}
+        onReconnect={async () => {
+          const result = await injectedWallet.connect()
 
-  //         if (result == null) {
-  //           onError()
-  //         }
-  //       }}
-  //     >
-  //       <Account type={ProviderType.InjectedWallet}>{pilotAddress}</Account>
-  //     </WalletDisconnected>
-  //   )
-  // }
+          if (result == null) {
+            onError()
+          }
+        }}
+      >
+        <Account>{pilotAddress}</Account>
+      </WalletDisconnected>
+    )
+  }
 
-  // // Injected wallet: right account, wrong chain
-  // if (injectedWallet.chainId !== chainId) {
-  //   return (
-  //     <SwitchChain
-  //       chainId={chainId}
-  //       onSwitch={() => injectedWallet.switchChain(chainId)}
-  //       onDisconnect={onDisconnect}
-  //     >
-  //       <Account type={ProviderType.InjectedWallet}>{pilotAddress}</Account>
-  //     </SwitchChain>
-  //   )
-  // }
+  // Injected wallet: right account, wrong chain
+  if (accountChainId !== chainId) {
+    return (
+      <SwitchChain
+        chainId={chainId}
+        onSwitch={() => injectedWallet.switchChain(chainId)}
+        onDisconnect={onDisconnect}
+      >
+        <Account>{pilotAddress}</Account>
+      </SwitchChain>
+    )
+  }
 
-  // const accountInWallet = injectedWallet.accounts.some(
-  //   (acc) => acc.toLowerCase() === pilotAddress,
-  // )
+  const accountInWallet = addresses.some(
+    (address) => address.toLowerCase() === pilotAddress,
+  )
 
-  // // Wrong account
-  // if (!accountInWallet) {
-  //   return (
-  //     <WrongAccount onDisconnect={onDisconnect}>
-  //       <Account type={ProviderType.InjectedWallet}>{pilotAddress}</Account>
-  //     </WrongAccount>
-  //   )
-  // }
+  // Wrong account
+  if (!accountInWallet) {
+    return (
+      <WrongAccount onDisconnect={onDisconnect}>
+        <Account>{pilotAddress}</Account>
+      </WrongAccount>
+    )
+  }
+
+  if (address != null) {
+    return <Connected onDisconnect={onDisconnect} />
+  }
 }

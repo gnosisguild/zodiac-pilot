@@ -1,10 +1,8 @@
-import { invariant } from '@epic-web/invariant'
 import { ProviderType } from '@zodiac/schema'
 import { Labeled, PrimaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
-import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
-import { useAccount } from 'wagmi'
+import { useAccountEffect } from 'wagmi'
 
 type ConnectProps = {
   onConnect(args: {
@@ -15,26 +13,18 @@ type ConnectProps = {
 }
 
 export const Connect = ({ onConnect }: ConnectProps) => {
-  const { address, chainId, connector } = useAccount()
-  const addressRef = useRef(address)
-
-  useEffect(() => {
-    if (addressRef.current !== address) {
-      if (address != null) {
-        invariant(chainId != null, 'Chain ID must be set')
-        invariant(connector != null, 'Connector must be set')
-
-        onConnect({
-          account: address,
-          chainId,
-          providerType:
-            connector.type === 'injected'
-              ? ProviderType.InjectedWallet
-              : ProviderType.WalletConnect,
-        })
-      }
-    }
-  }, [address, chainId, onConnect])
+  useAccountEffect({
+    onConnect({ address, chainId, connector }) {
+      onConnect({
+        account: address,
+        chainId,
+        providerType:
+          connector.type === 'injected'
+            ? ProviderType.InjectedWallet
+            : ProviderType.WalletConnect,
+      })
+    },
+  })
 
   return (
     <ConnectKitProvider>

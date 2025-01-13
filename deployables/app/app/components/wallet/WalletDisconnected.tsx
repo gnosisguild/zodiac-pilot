@@ -1,4 +1,3 @@
-import { useInjectedWallet } from '@/providers'
 import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import { Section } from './Section'
@@ -12,31 +11,23 @@ export const WalletDisconnected = ({
   children,
   onReconnect,
   onDisconnect,
-}: WalletDisconnectedProps) => {
-  const injectedWallet = useInjectedWallet()
+}: WalletDisconnectedProps) => (
+  <Section>
+    {children}
 
-  return (
-    <Section>
-      {children}
+    <Warning title="Wallet disconnected">
+      Your wallet is disconnected from Pilot. Reconnect it to use the selected
+      account with Pilot.
+    </Warning>
 
-      <Warning title="Wallet disconnected">
-        Your wallet is disconnected from Pilot. Reconnect it to use the selected
-        account with Pilot.
-      </Warning>
+    <Section.Actions>
+      <SecondaryButton fluid onClick={onReconnect}>
+        Connect
+      </SecondaryButton>
 
-      <Section.Actions>
-        <SecondaryButton
-          fluid
-          disabled={!injectedWallet.ready}
-          onClick={onReconnect}
-        >
-          Connect
-        </SecondaryButton>
-
-        <SecondaryButton fluid onClick={onDisconnect}>
-          Disconnect
-        </SecondaryButton>
-      </Section.Actions>
-    </Section>
-  )
-}
+      <SecondaryButton fluid onClick={onDisconnect}>
+        Disconnect
+      </SecondaryButton>
+    </Section.Actions>
+  </Section>
+)

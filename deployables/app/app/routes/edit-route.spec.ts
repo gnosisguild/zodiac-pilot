@@ -4,6 +4,7 @@ import { CHAIN_NAME } from '@zodiac/chains'
 import { ProviderType } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
+  createStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -50,7 +51,7 @@ describe('Edit route', () => {
   })
 
   describe('Pilot Account', () => {
-    it.only('offers a button to connect', async () => {
+    it('offers a button to connect', async () => {
       const route = createMockExecutionRoute()
 
       await render<typeof import('./edit-route')>(
@@ -65,8 +66,9 @@ describe('Edit route', () => {
     })
 
     describe('MetaMask', () => {
-      it('shows MetaMask as the provider of a route', async () => {
+      it.only('shows MetaMask as the provider of a route', async () => {
         const route = createMockExecutionRoute({
+          waypoints: [createStartingWaypoint()],
           providerType: ProviderType.InjectedWallet,
         })
 

@@ -1,6 +1,5 @@
 import { Labeled, PrimaryButton, SecondaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
-import { useRef } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 import { Account } from './Account'
 import { Section } from './Section'
@@ -10,8 +9,8 @@ type ConnectedProps = {
 }
 
 export const Connected = ({ onDisconnect }: ConnectedProps) => {
-  const { address, chainId, connector } = useAccount()
-  const addressRef = useRef(address)
+  const { address } = useAccount()
+
   const { disconnect } = useDisconnect()
 
   if (address == null) {
@@ -30,7 +29,7 @@ export const Connected = ({ onDisconnect }: ConnectedProps) => {
 
   return (
     <Section>
-      <Account />
+      <Account>{address}</Account>
 
       <SecondaryButton
         fluid

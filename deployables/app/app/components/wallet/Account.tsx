@@ -1,8 +1,10 @@
+import { validateAddress } from '@/utils'
 import { AddressInput, CopyToClipboard } from '@zodiac/ui'
 import { useAccount } from 'wagmi'
 
-export const Account = () => {
-  const { address, connector } = useAccount()
+export const Account = ({ children }: { children: string }) => {
+  const { connector } = useAccount()
+  const address = validateAddress(children)
 
   return (
     <AddressInput
