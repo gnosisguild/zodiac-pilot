@@ -167,7 +167,7 @@ describe('Edit route', () => {
   })
 
   describe('Role', () => {
-    it.only('shows the role of a route', async () => {
+    it('shows the role of a route', async () => {
       const moduleAddress = randomAddress()
 
       mockFetchZodiacModules.mockResolvedValue([
