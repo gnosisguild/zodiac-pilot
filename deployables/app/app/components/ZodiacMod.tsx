@@ -1,4 +1,8 @@
-import { ZODIAC_MODULE_NAMES, type SupportedModuleType } from '@zodiac/modules'
+import {
+  SupportedZodiacModuleType,
+  ZODIAC_MODULE_NAMES,
+  type ZodiacModule,
+} from '@zodiac/modules'
 import type { HexAddress } from '@zodiac/schema'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
@@ -6,7 +10,7 @@ import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 
 type Value = {
-  moduleType: SupportedModuleType
+  moduleType: SupportedZodiacModuleType
   moduleAddress: string
 }
 
@@ -32,12 +36,25 @@ export const ZodiacMod = ({
   const { load: loadDelegates, data: delegates = [] } = useFetcher<string[]>({
     key: 'delegates',
   })
+  const { load: loadModules, data: modules = [] } = useFetcher<ZodiacModule[]>({
+    key: 'modules',
+  })
   const [chainId] = splitPrefixedAddress(avatar)
 
   useEffect(() => {
+    if (pilotAddress == null) {
+      return
+    }
+
     loadSafes(`/${pilotAddress}/${chainId}/available-safes`)
     loadDelegates(`/${pilotAddress}/${chainId}/delegates`)
   }, [chainId, loadDelegates, loadSafes, pilotAddress])
+
+  useEffect(() => {
+    const [, address] = splitPrefixedAddress(avatar)
+
+    loadModules(`/${address}/${chainId}/modules`)
+  }, [avatar, chainId, loadModules])
 
   const pilotIsOwner = safes.some(
     (safe) => safe.toLowerCase() === avatar.toLowerCase(),
@@ -49,8 +66,6 @@ export const ZodiacMod = ({
     )
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
-
-  const modules = []
 
   return (
     <div className="flex flex-col gap-4">

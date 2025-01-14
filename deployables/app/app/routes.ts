@@ -12,4 +12,5 @@ export default [
     route('available-safes', 'routes/$account.$chainId/available-safes.ts'),
     route('delegates', 'routes/$account.$chainId/delegates.ts'),
   ]),
+  route('/:avatar/:chainId/modules', 'routes/$avatar.$chainId/modules.ts'),
 ] satisfies RouteConfig

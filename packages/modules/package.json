@@ -16,6 +16,7 @@
     }
   },
   "dependencies": {
+    "@epic-web/invariant": "^1.0.0",
     "@gnosis.pm/zodiac": "^4.0.3",
     "@shazow/whatsabi": "^0.19.0",
     "@zodiac/schema": "workspace:*",

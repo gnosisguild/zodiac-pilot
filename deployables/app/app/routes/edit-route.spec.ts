@@ -1,7 +1,8 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CHAIN_NAME } from '@zodiac/chains'
+import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { fetchZodiacModules, SupportedZodiacModuleType } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
 import {
@@ -11,7 +12,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import type { ChainId } from 'ser-kit'
+import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
 const { mockGetSafesByOwner } = vi.hoisted(() => ({
@@ -33,6 +34,18 @@ vi.mock('@zodiac/safe', async (importOriginal) => {
     },
   }
 })
+
+vi.mock('@zodiac/modules', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/modules')>()
+
+  return {
+    ...module,
+
+    fetchZodiacModules: vi.fn(),
+  }
+})
+
+const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 
 describe('Edit route', () => {
   describe('Label', () => {
@@ -155,7 +168,20 @@ describe('Edit route', () => {
 
   describe('Role', () => {
     it.only('shows the role of a route', async () => {
+      const moduleAddress = randomAddress()
+
+      mockFetchZodiacModules.mockResolvedValue([
+        {
+          type: SupportedZodiacModuleType.ROLES_V2,
+          moduleAddress,
+        },
+      ])
+
       const route = createMockExecutionRoute({
+        avatar: formatPrefixedAddress(
+          Chain.ETH,
+          '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
+        ),
         waypoints: [createStartingWaypoint(), createRoleWaypoint()],
         providerType: ProviderType.InjectedWallet,
       })
@@ -164,7 +190,7 @@ describe('Edit route', () => {
         searchParams: { route: btoa(JSON.stringify(route)) },
       })
 
-      expect(screen.getByText('Roles V2')).toBeInTheDocument()
+      expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
   })
 })

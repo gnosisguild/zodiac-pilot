@@ -9,7 +9,7 @@ import type { JsonRpcProvider } from 'ethers'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { type ChainId } from 'ser-kit'
-import { SUPPORTED_ZODIAC_MODULES, type ZodiacModule } from './ZodiacModule'
+import { isValidZodiacModuleType, type ZodiacModule } from './ZodiacModule'
 
 type FetchZodiacModulesOptions = {
   safeOrModifierAddress: HexAddress
@@ -89,30 +89,24 @@ export async function fetchZodiacModules(
         type = KnownContracts.ROLES_V1
       }
 
-      const supportedType = SUPPORTED_ZODIAC_MODULES.some(
-        (supportedType) => supportedType === type,
-      )
-
-      if (!supportedType) {
+      if (!isValidZodiacModuleType(type)) {
         return
       }
 
-      let modules: ZodiacModule[] | null = null
-      if (MODIFIERS.includes(type)) {
-        // recursively fetch modules from modifier
-        try {
-          modules = await fetchZodiacModules(provider, {
-            safeOrModifierAddress: moduleAddress,
-            chainId,
-            previous,
-          })
-        } catch (e) {
-          console.error(
-            `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
-            e,
-          )
-          modules = []
-        }
+      let modules: ZodiacModule[] = []
+
+      // recursively fetch modules from modifier
+      try {
+        modules = await fetchZodiacModules(provider, {
+          safeOrModifierAddress: moduleAddress,
+          chainId,
+          previous,
+        })
+      } catch (e) {
+        console.error(
+          `Could not fetch sub modules of ${type} modifier ${moduleAddress}`,
+          e,
+        )
       }
 
       return {
@@ -134,12 +128,6 @@ const functionSelectors = (abi: string[]) => {
     .filter((f) => f.type === 'function')
     .map((f) => id(f.format('sighash')).substring(0, 10))
 }
-
-const MODIFIERS = [
-  KnownContracts.ROLES_V1,
-  KnownContracts.ROLES_V2,
-  KnownContracts.DELAY,
-]
 
 export const AvatarInterface = new Interface([
   'function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) returns (bool success)',

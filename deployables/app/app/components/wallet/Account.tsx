@@ -8,7 +8,7 @@ type AccountProps = {
 }
 
 export const Account = ({ children, type }: AccountProps) => {
-  const address = validateAddress(children)
+  const address = validateAddress(children) ?? ''
 
   return (
     <AddressInput
