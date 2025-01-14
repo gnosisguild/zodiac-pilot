@@ -1,5 +1,5 @@
 import { validateAddress } from '@/utils'
-import type { HexAddress } from '@zodiac/schema'
+import type { StartingWaypoint } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -8,7 +8,7 @@ import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 type Props = {
   value: PrefixedAddress
-  pilotAddress: HexAddress | null
+  startingWaypoint?: StartingWaypoint
   onChange(value: string): void
 }
 
@@ -17,7 +17,7 @@ type Option = {
   label: string
 }
 
-export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
+export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
   const [chainId, address] = splitPrefixedAddress(value)
   const [pendingValue, setPendingValue] = useState<string>(address)
 
@@ -28,7 +28,7 @@ export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
   const { load, state, data } = useFetcher<string[]>({ key: 'available-safes' })
 
   useEffect(() => {
-    if (pilotAddress == null) {
+    if (startingWaypoint == null) {
       return
     }
 
@@ -36,8 +36,8 @@ export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
       return
     }
 
-    load(`/${pilotAddress}/${chainId}/available-safes`)
-  }, [chainId, load, pilotAddress])
+    load(`/${startingWaypoint.account.address}/${chainId}/available-safes`)
+  }, [chainId, load, startingWaypoint])
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 

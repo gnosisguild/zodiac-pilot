@@ -106,6 +106,8 @@ const startingPointSchema = z.object({
   ]),
 })
 
+export type StartingWaypoint = z.infer<typeof startingPointSchema>
+
 export enum ProviderType {
   WalletConnect,
   InjectedWallet,

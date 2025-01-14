@@ -195,5 +195,37 @@ describe('Edit route', () => {
 
       expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
+
+    it('shows the v1 role config when the v1 route mod is used', async () => {
+      const moduleAddress = randomAddress()
+      const roleId = randomAddress()
+
+      mockFetchZodiacModules.mockResolvedValue([
+        {
+          type: SupportedZodiacModuleType.ROLES_V1,
+          moduleAddress,
+        },
+      ])
+
+      const route = createMockExecutionRoute({
+        avatar: formatPrefixedAddress(
+          Chain.ETH,
+          '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
+        ),
+        waypoints: [
+          createStartingWaypoint(),
+          createRoleWaypoint({ moduleAddress, roleId, version: 1 }),
+        ],
+        providerType: ProviderType.InjectedWallet,
+      })
+
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
+
+      expect(screen.getByRole('textbox', { name: 'Role ID' })).toHaveValue(
+        roleId,
+      )
+    })
   })
 })
