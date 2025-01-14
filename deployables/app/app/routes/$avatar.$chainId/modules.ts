@@ -14,8 +14,6 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   invariantResponse(validatedAddress != null, `Invalid address: ${avatar}`)
 
   try {
-    console.log({ validatedAddress, verifiedChainId })
-
     return await fetchZodiacModules(
       new JsonRpcProvider(RPC[verifiedChainId], verifiedChainId, {
         staticNetwork: true,

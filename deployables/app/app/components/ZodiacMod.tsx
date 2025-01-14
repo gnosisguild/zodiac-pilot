@@ -18,7 +18,7 @@ type ZodiacModProps = {
   avatar: PrefixedAddress
   pilotAddress: HexAddress | null
   disabled?: boolean
-  value: Value | null
+  value: HexAddress | null
 
   onSelect: (value: Value | null) => void
 }
@@ -67,6 +67,10 @@ export const ZodiacMod = ({
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
+  const selectedModule = modules.find(
+    (module) => module.moduleAddress === value,
+  )
+
   return (
     <div className="flex flex-col gap-4">
       <ModSelect
@@ -102,10 +106,10 @@ export const ZodiacMod = ({
           })
         }}
         value={
-          value
+          selectedModule != null
             ? {
-                value: value.moduleAddress,
-                label: ZODIAC_MODULE_NAMES[value.moduleType],
+                value: selectedModule.moduleAddress,
+                label: ZODIAC_MODULE_NAMES[selectedModule.type],
               }
             : defaultModOption != null
               ? defaultModOption
