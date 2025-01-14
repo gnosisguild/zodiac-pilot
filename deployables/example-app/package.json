@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
-    "@types/chrome": "^0.0.295",
+    "@types/chrome": "^0.0.296",
     "@types/react": "^19.0.0",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/tailwind-config": "workspace:*",
