@@ -3,10 +3,16 @@ import {
   ZODIAC_MODULE_NAMES,
   type ZodiacModule,
 } from '@zodiac/modules'
-import type { HexAddress } from '@zodiac/schema'
+import type { Waypoints } from '@zodiac/schema'
+import { TextInput } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
-import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import {
+  AccountType,
+  ConnectionType,
+  splitPrefixedAddress,
+  type PrefixedAddress,
+} from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 
 type Value = {
@@ -15,19 +21,17 @@ type Value = {
 }
 
 type ZodiacModProps = {
+  waypoints: Waypoints | undefined
   avatar: PrefixedAddress
-  pilotAddress: HexAddress | null
   disabled?: boolean
-  value: HexAddress | null
 
   onSelect: (value: Value | null) => void
 }
 
 export const ZodiacMod = ({
   avatar,
-  pilotAddress,
-  value,
   disabled,
+  waypoints,
   onSelect,
 }: ZodiacModProps) => {
   const {
@@ -52,6 +56,7 @@ export const ZodiacMod = ({
     key: 'modules',
   })
   const [chainId] = splitPrefixedAddress(avatar)
+  const pilotAddress = getPilotAddress(waypoints)
 
   useEffect(() => {
     if (pilotAddress == null) {
@@ -79,8 +84,10 @@ export const ZodiacMod = ({
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
+  const moduleAddress = getModuleAddress(waypoints)
+
   const selectedModule = modules.find(
-    (module) => module.moduleAddress === value,
+    (module) => module.moduleAddress === moduleAddress,
   )
 
   const isLoading =
@@ -89,51 +96,115 @@ export const ZodiacMod = ({
     modulesState === 'loading'
 
   return (
-    <ModSelect
-      isMulti={false}
-      label="Zodiac Mod"
-      options={[
-        ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
-        ...modules.map((mod) => ({
-          value: mod.moduleAddress,
-          label: ZODIAC_MODULE_NAMES[mod.type],
-        })),
-      ]}
-      onChange={async (selected) => {
-        if (selected == null) {
-          onSelect(null)
+    <>
+      <ModSelect
+        isMulti={false}
+        label="Zodiac Mod"
+        options={[
+          ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
+          ...modules.map((mod) => ({
+            value: mod.moduleAddress,
+            label: ZODIAC_MODULE_NAMES[mod.type],
+          })),
+        ]}
+        onChange={async (selected) => {
+          if (selected == null) {
+            onSelect(null)
 
-          return
+            return
+          }
+
+          const module = modules.find(
+            ({ moduleAddress }) => moduleAddress === selected.value,
+          )
+
+          if (module == null) {
+            onSelect(null)
+
+            return
+          }
+
+          onSelect({
+            moduleAddress: module.moduleAddress,
+            moduleType: module.type,
+          })
+        }}
+        value={
+          selectedModule != null
+            ? {
+                value: selectedModule.moduleAddress,
+                label: ZODIAC_MODULE_NAMES[selectedModule.type],
+              }
+            : defaultModOption != null
+              ? defaultModOption
+              : null
         }
+        isDisabled={disabled || isLoading}
+        placeholder={isLoading ? 'Loading modules...' : 'Select a module'}
+        avatarAddress={avatar}
+      />
 
-        const module = modules.find(
-          ({ moduleAddress }) => moduleAddress === selected.value,
-        )
-
-        if (module == null) {
-          onSelect(null)
-
-          return
-        }
-
-        onSelect({
-          moduleAddress: module.moduleAddress,
-          moduleType: module.type,
-        })
-      }}
-      value={
-        selectedModule != null
-          ? {
-              value: selectedModule.moduleAddress,
-              label: ZODIAC_MODULE_NAMES[selectedModule.type],
-            }
-          : defaultModOption != null
-            ? defaultModOption
-            : null
-      }
-      isDisabled={disabled || isLoading}
-      placeholder={isLoading ? 'Loading modules...' : 'Select a module'}
-      avatarAddress={avatar}
-    />
+      {selectedModule?.type === SupportedZodiacModuleType.ROLES_V1 && (
+        <TextInput
+          label="Role ID"
+          value={getRoleId(waypoints) ?? ''}
+          placeholder="0"
+        />
+      )}
+    </>
   )
+}
+
+const getModuleAddress = (waypoints?: Waypoints) => {
+  const moduleWaypoint = getModuleWaypoint(waypoints)
+
+  if (moduleWaypoint == null) {
+    return null
+  }
+
+  return moduleWaypoint.account.address
+}
+
+const getRoleId = (waypoints?: Waypoints) => {
+  const moduleWaypoint = getModuleWaypoint(waypoints)
+
+  if (moduleWaypoint == null) {
+    return null
+  }
+
+  if (moduleWaypoint.connection.type !== ConnectionType.IS_MEMBER) {
+    return null
+  }
+
+  return moduleWaypoint.connection.roles[0]
+}
+
+const getModuleWaypoint = (waypoints?: Waypoints) => {
+  if (waypoints == null) {
+    return null
+  }
+
+  const [, ...waypointsToConsider] = waypoints
+
+  const moduleWaypoint = waypointsToConsider.find(
+    (waypoint) =>
+      waypoint.account.type === AccountType.ROLES ||
+      waypoint.account.type === AccountType.DELAY,
+  )
+
+  if (moduleWaypoint == null) {
+    return null
+  }
+
+  return moduleWaypoint
+}
+
+const getPilotAddress = (waypoints?: Waypoints) => {
+  if (waypoints == null) {
+    return null
+  }
+
+  const [startingPoint] = waypoints
+
+  return startingPoint.account.address
 }
