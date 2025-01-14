@@ -2,6 +2,8 @@
 import type { HexAddress } from '@zodiac/schema'
 import type { ChainId, PrefixedAddress } from 'ser-kit'
 
+export type { ChainId } from 'ser-kit'
+
 export const ZERO_ADDRESS: HexAddress =
   '0x0000000000000000000000000000000000000000'
 export const ETH_ZERO_ADDRESS: PrefixedAddress =
@@ -9,7 +11,7 @@ export const ETH_ZERO_ADDRESS: PrefixedAddress =
 export const EOA_ZERO_ADDRESS: PrefixedAddress =
   'eoa:0x0000000000000000000000000000000000000000'
 
-enum Chain {
+export enum Chain {
   ETH = 1,
   OETH = 10,
   GNO = 100,

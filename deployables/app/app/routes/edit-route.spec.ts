@@ -1,6 +1,8 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { CHAIN_NAME } from '@zodiac/chains'
+import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
@@ -9,7 +11,27 @@ import {
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import type { ChainId } from 'ser-kit'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const { mockGetSafesByOwner } = vi.hoisted(() => ({
+  mockGetSafesByOwner:
+    vi.fn<ReturnType<typeof initSafeApiKit>['getSafesByOwner']>(),
+}))
+
+vi.mock('@zodiac/safe', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/safe')>()
+
+  return {
+    ...module,
+
+    initSafeApiKit: (chainId: ChainId) => {
+      return {
+        ...module.initSafeApiKit(chainId),
+        getSafesByOwner: mockGetSafesByOwner,
+      }
+    },
+  }
+})
 
 describe('Edit route', () => {
   describe('Label', () => {
@@ -109,7 +131,24 @@ describe('Edit route', () => {
     })
 
     it('offers safes that are owned by the user', async () => {
-      throw new Error('Not implemented')
+      const safe = randomAddress()
+
+      mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
+
+      const route = createMockExecutionRoute({
+        waypoints: [createStartingWaypoint()],
+        providerType: ProviderType.InjectedWallet,
+      })
+
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'View all available Safes' }),
+      )
+
+      expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
     })
   })
 })

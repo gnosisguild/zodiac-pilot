@@ -85,6 +85,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
+      '@zodiac/safe':
+        specifier: workspace:*
+        version: link:../../packages/safe
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -152,6 +155,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 2.1.8
         version: 2.1.8(vitest@2.1.8(@types/node@22.10.6)(happy-dom@16.5.3)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
       '@zodiac/tailwind-config':
         specifier: workspace:*
         version: link:../../configs/tailwind
@@ -291,6 +297,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
+      '@zodiac/safe':
+        specifier: workspace:*
+        version: link:../../packages/safe
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../../packages/schema
@@ -624,6 +633,28 @@ importers:
       ser-kit:
         specifier: 1.1.0
         version: 1.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+
+  packages/safe:
+    dependencies:
+      '@safe-global/api-kit':
+        specifier: ^2.4.2
+        version: 2.5.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+      '@safe-global/protocol-kit':
+        specifier: ^5.0.1
+        version: 5.1.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+      '@zodiac/chains':
+        specifier: workspace:*
+        version: link:../chains
+    devDependencies:
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
+      eslint:
+        specifier: ^9.7.0
+        version: 9.18.0(jiti@2.4.1)
 
   packages/schema:
     dependencies:
@@ -11809,7 +11840,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.2.0
       '@vanilla-extract/css': 1.17.0(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -14935,7 +14966,7 @@ snapshots:
 
   isomorphic-timers-promises@1.0.1: {}
 
-  isows@1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.6(ws@8.18.0):
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -17708,7 +17739,7 @@ snapshots:
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
       abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
-      isows: 1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.6(ws@8.18.0)
       ox: 0.6.0(typescript@5.7.3)(zod@3.24.1)
       webauthn-p256: 0.0.10
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -17726,7 +17757,7 @@ snapshots:
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
       abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
-      isows: 1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.6(ws@8.18.0)
       ox: 0.6.0(typescript@5.7.3)(zod@3.24.1)
       webauthn-p256: 0.0.10
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
