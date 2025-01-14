@@ -1,5 +1,5 @@
 import type { HexAddress } from '@/types'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { Interface } from 'ethers'
 import { BetweenHorizontalStart } from 'lucide-react'
 import type { MetaTransactionRequest } from 'ser-kit'
@@ -52,7 +52,7 @@ const BridgeAwareInterface: Interface = new Interface([
 export const kpkBridgeAware = {
   title: 'Add bridgeStart call',
   icon: BetweenHorizontalStart,
-  recommendedFor: [KnownContracts.ROLES_V2],
+  recommendedFor: [SupportedZodiacModuleType.ROLES_V2],
   autoApply: true,
 
   translateGlobal: async (allTransactions, chainId, avatarAddress) => {

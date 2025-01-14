@@ -14,7 +14,7 @@ import {
   isSmartContractAddress,
   validateAddress,
 } from '@/utils'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { useEffect, useState } from 'react'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { wrapRequest } from './wrapRequest'
@@ -38,7 +38,7 @@ export const useConnectionDryRun = ({
       connection
 
     const configurationComplete =
-      moduleType === KnownContracts.DELAY || !!roleId
+      moduleType === SupportedZodiacModuleType.DELAY || !!roleId
 
     if (
       connected &&
@@ -57,11 +57,11 @@ export const useConnectionDryRun = ({
           // In case we see any other error, we try to help the user identify the problem.
 
           switch (moduleType) {
-            case KnownContracts.ROLES_V1: {
+            case SupportedZodiacModuleType.ROLES_V1: {
               setError(handleRolesV1Error(e, roleId || '0'))
               return
             }
-            case KnownContracts.ROLES_V2: {
+            case SupportedZodiacModuleType.ROLES_V2: {
               setError(handleRolesV2Error(e, roleId || '0'))
               return
             }

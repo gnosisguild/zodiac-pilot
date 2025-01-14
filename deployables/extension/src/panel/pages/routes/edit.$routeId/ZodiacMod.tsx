@@ -1,13 +1,13 @@
 import type { ExecutionRoute } from '@/types'
-import { type SupportedModuleType, type ZodiacModule } from '@/zodiac'
-import { ZODIAC_MODULE_NAMES } from '@zodiac/modules'
+import { type ZodiacModule } from '@/zodiac'
+import { SupportedZodiacModuleType, ZODIAC_MODULE_NAMES } from '@zodiac/modules'
 import type { PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { useSafeDelegates } from './useSafeDelegates'
 import { useSafesWithOwner } from './useSafesWithOwner'
 
 type Value = {
-  moduleType: SupportedModuleType
+  moduleType: SupportedZodiacModuleType
   moduleAddress: string
 }
 

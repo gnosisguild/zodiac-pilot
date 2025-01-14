@@ -18,8 +18,11 @@ import {
   render,
 } from '@/test-utils'
 import { ProviderType } from '@/types'
-import { fetchZodiacModules, queryRolesV2MultiSend } from '@/zodiac'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import {
+  fetchZodiacModules,
+  queryRolesV2MultiSend,
+  SupportedZodiacModuleType,
+} from '@/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expectRouteToBe } from '@zodiac/test-utils'
@@ -213,7 +216,7 @@ describe('Edit Zodiac route', () => {
       })
 
       mockFetchZodiacModules.mockResolvedValue([
-        { moduleAddress, type: KnownContracts.ROLES_V2 },
+        { moduleAddress, type: SupportedZodiacModuleType.ROLES_V2 },
       ])
 
       mockQueryRolesV2MultiSend.mockResolvedValue({})
@@ -242,7 +245,7 @@ describe('Edit Zodiac route', () => {
       const moduleAddress = randomAddress()
 
       mockFetchZodiacModules.mockResolvedValue([
-        { moduleAddress, type: KnownContracts.ROLES_V2 },
+        { moduleAddress, type: SupportedZodiacModuleType.ROLES_V2 },
       ])
 
       mockQueryRolesV2MultiSend.mockResolvedValue({})

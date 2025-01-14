@@ -1,10 +1,10 @@
+import { getReadOnlyProvider } from '@/providers'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 import type { ChainId } from 'ser-kit'
 import {
   type ChainId as RolesV2ChainId,
   chains as rolesV2Chains,
 } from 'zodiac-roles-deployments'
-import { getReadOnlyProvider } from '../../providers'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 

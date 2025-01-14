@@ -1,3 +1,4 @@
+export { SupportedZodiacModuleType } from '@zodiac/modules'
 export type { ZodiacModule } from '@zodiac/modules'
 export { fetchZodiacModules } from './fetchZodiacModules'
 export {
@@ -6,4 +7,3 @@ export {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
 } from './rolesMultisend'
-export type { SupportedModuleType } from './types'

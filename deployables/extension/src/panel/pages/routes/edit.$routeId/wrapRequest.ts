@@ -1,13 +1,15 @@
 import type { HexAddress, LegacyConnection, TransactionData } from '@/types'
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { ContractFactories } from '@gnosis.pm/zodiac'
+import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { toQuantity } from 'ethers'
 import type { MetaTransactionRequest } from 'ser-kit'
 
 const RolesV1Interface =
-  ContractFactories[KnownContracts.ROLES_V1].createInterface()
+  ContractFactories[SupportedZodiacModuleType.ROLES_V1].createInterface()
 const RolesV2Interface =
-  ContractFactories[KnownContracts.ROLES_V2].createInterface()
-const DelayInterface = ContractFactories[KnownContracts.DELAY].createInterface()
+  ContractFactories[SupportedZodiacModuleType.ROLES_V2].createInterface()
+const DelayInterface =
+  ContractFactories[SupportedZodiacModuleType.DELAY].createInterface()
 
 export function wrapRequest(
   request: MetaTransactionRequest | TransactionData,
@@ -20,7 +22,7 @@ export function wrapRequest(
 
   let data: string
   switch (connection.moduleType) {
-    case KnownContracts.ROLES_V1:
+    case SupportedZodiacModuleType.ROLES_V1:
       data = RolesV1Interface.encodeFunctionData('execTransactionWithRole', [
         request.to || '',
         request.value || 0,
@@ -30,7 +32,7 @@ export function wrapRequest(
         revertOnError,
       ])
       break
-    case KnownContracts.ROLES_V2:
+    case SupportedZodiacModuleType.ROLES_V2:
       data = RolesV2Interface.encodeFunctionData('execTransactionWithRole', [
         request.to || '',
         request.value || 0,
@@ -41,7 +43,7 @@ export function wrapRequest(
         revertOnError,
       ])
       break
-    case KnownContracts.DELAY:
+    case SupportedZodiacModuleType.DELAY:
       data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
         request.to || '',
         request.value || 0,

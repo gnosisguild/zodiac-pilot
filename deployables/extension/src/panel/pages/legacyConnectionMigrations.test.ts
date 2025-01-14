@@ -1,5 +1,5 @@
 import type { LegacyConnection } from '@/types'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { describe, expect, it } from 'vitest'
 import {
   asLegacyConnection,
@@ -16,7 +16,7 @@ describe('legacy connection migrations', () => {
       avatarAddress: '0x58e6c7ab55aa9012eacca16d1ed4c15795669e1c',
       pilotAddress: '0xe697903dc6ca014d3e17ba61f4daf657afd51561',
       providerType: 0,
-      moduleType: KnownContracts.ROLES_V2,
+      moduleType: SupportedZodiacModuleType.ROLES_V2,
       roleId:
         '0x4d414e4147455200000000000000000000000000000000000000000000000000',
       lastUsed: 1717492134,
@@ -88,7 +88,7 @@ describe('legacy connection migrations', () => {
       providerType: 0,
       roleId: '1',
       lastUsed: 1719582404,
-      moduleType: KnownContracts.ROLES_V1,
+      moduleType: SupportedZodiacModuleType.ROLES_V1,
       multisend: '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761',
     }
     const noPilotMigrated = fromLegacyConnection(noPilot)!
@@ -220,7 +220,7 @@ describe('legacy connection migrations', () => {
         pilotAddress: '',
         chainId: 1,
         providerType: 1,
-        moduleType: KnownContracts.ROLES_V2,
+        moduleType: SupportedZodiacModuleType.ROLES_V2,
       }),
     ).toMatchInlineSnapshot(`
       {
