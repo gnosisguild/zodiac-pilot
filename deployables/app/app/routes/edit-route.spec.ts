@@ -164,9 +164,7 @@ describe('Edit route', () => {
         searchParams: { route: btoa(JSON.stringify(route)) },
       })
 
-      expect(
-        screen.getByRole('combobox', { name: 'Zodiac mod' }),
-      ).toBeInTheDocument()
+      expect(screen.getByText('Roles V2')).toBeInTheDocument()
     })
   })
 })

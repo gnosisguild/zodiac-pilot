@@ -1,8 +1,4 @@
-import {
-  ZODIAC_MODULE_NAMES,
-  type SupportedModuleType,
-  type ZodiacModule,
-} from '@zodiac/modules'
+import { ZODIAC_MODULE_NAMES, type SupportedModuleType } from '@zodiac/modules'
 import type { HexAddress } from '@zodiac/schema'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
@@ -15,9 +11,8 @@ type Value = {
 }
 
 type ZodiacModProps = {
-  avatarAddress: PrefixedAddress
-  pilotAddress: HexAddress
-  modules: ZodiacModule[]
+  avatar: PrefixedAddress
+  pilotAddress: HexAddress | null
   disabled?: boolean
   value: Value | null
 
@@ -25,10 +20,9 @@ type ZodiacModProps = {
 }
 
 export const ZodiacMod = ({
-  avatarAddress,
+  avatar,
   pilotAddress,
   value,
-  modules,
   disabled,
   onSelect,
 }: ZodiacModProps) => {
@@ -38,7 +32,7 @@ export const ZodiacMod = ({
   const { load: loadDelegates, data: delegates = [] } = useFetcher<string[]>({
     key: 'delegates',
   })
-  const [chainId] = splitPrefixedAddress(avatarAddress)
+  const [chainId] = splitPrefixedAddress(avatar)
 
   useEffect(() => {
     loadSafes(`/${pilotAddress}/${chainId}/available-safes`)
@@ -46,13 +40,17 @@ export const ZodiacMod = ({
   }, [chainId, loadDelegates, loadSafes, pilotAddress])
 
   const pilotIsOwner = safes.some(
-    (safe) => safe.toLowerCase() === avatarAddress.toLowerCase(),
+    (safe) => safe.toLowerCase() === avatar.toLowerCase(),
   )
-  const pilotIsDelegate = delegates.some(
-    (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase(),
-  )
+  const pilotIsDelegate =
+    pilotAddress != null &&
+    delegates.some(
+      (delegate) => delegate.toLowerCase() === pilotAddress.toLowerCase(),
+    )
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
+
+  const modules = []
 
   return (
     <div className="flex flex-col gap-4">
@@ -100,7 +98,7 @@ export const ZodiacMod = ({
         }
         isDisabled={disabled}
         placeholder="Select a module"
-        avatarAddress={avatarAddress}
+        avatarAddress={avatar}
       />
     </div>
   )

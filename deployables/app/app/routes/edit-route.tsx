@@ -1,4 +1,9 @@
-import { AvatarInput, ChainSelect, ConnectWallet } from '@/components'
+import {
+  AvatarInput,
+  ChainSelect,
+  ConnectWallet,
+  ZodiacMod,
+} from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { executionRouteSchema, type Waypoints } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
@@ -54,6 +59,12 @@ const EditRoute = ({
         value={avatar}
         pilotAddress={pilotAddress}
         onChange={() => {}}
+      />
+      <ZodiacMod
+        avatar={avatar}
+        pilotAddress={pilotAddress}
+        value={null}
+        onSelect={() => {}}
       />
     </main>
   )
