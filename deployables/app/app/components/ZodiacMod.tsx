@@ -30,13 +30,25 @@ export const ZodiacMod = ({
   disabled,
   onSelect,
 }: ZodiacModProps) => {
-  const { load: loadSafes, data: safes = [] } = useFetcher<string[]>({
+  const {
+    load: loadSafes,
+    state: safesState,
+    data: safes = [],
+  } = useFetcher<string[]>({
     key: 'available-safes',
   })
-  const { load: loadDelegates, data: delegates = [] } = useFetcher<string[]>({
+  const {
+    load: loadDelegates,
+    state: delegatesState,
+    data: delegates = [],
+  } = useFetcher<string[]>({
     key: 'delegates',
   })
-  const { load: loadModules, data: modules = [] } = useFetcher<ZodiacModule[]>({
+  const {
+    load: loadModules,
+    state: modulesState,
+    data: modules = [],
+  } = useFetcher<ZodiacModule[]>({
     key: 'modules',
   })
   const [chainId] = splitPrefixedAddress(avatar)
@@ -71,54 +83,57 @@ export const ZodiacMod = ({
     (module) => module.moduleAddress === value,
   )
 
+  const isLoading =
+    safesState === 'loading' ||
+    delegatesState === 'loading' ||
+    modulesState === 'loading'
+
   return (
-    <div className="flex flex-col gap-4">
-      <ModSelect
-        isMulti={false}
-        label="Zodiac Mod"
-        options={[
-          ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
-          ...modules.map((mod) => ({
-            value: mod.moduleAddress,
-            label: ZODIAC_MODULE_NAMES[mod.type],
-          })),
-        ]}
-        onChange={async (selected) => {
-          if (selected == null) {
-            onSelect(null)
+    <ModSelect
+      isMulti={false}
+      label="Zodiac Mod"
+      options={[
+        ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
+        ...modules.map((mod) => ({
+          value: mod.moduleAddress,
+          label: ZODIAC_MODULE_NAMES[mod.type],
+        })),
+      ]}
+      onChange={async (selected) => {
+        if (selected == null) {
+          onSelect(null)
 
-            return
-          }
-
-          const module = modules.find(
-            ({ moduleAddress }) => moduleAddress === selected.value,
-          )
-
-          if (module == null) {
-            onSelect(null)
-
-            return
-          }
-
-          onSelect({
-            moduleAddress: module.moduleAddress,
-            moduleType: module.type,
-          })
-        }}
-        value={
-          selectedModule != null
-            ? {
-                value: selectedModule.moduleAddress,
-                label: ZODIAC_MODULE_NAMES[selectedModule.type],
-              }
-            : defaultModOption != null
-              ? defaultModOption
-              : null
+          return
         }
-        isDisabled={disabled}
-        placeholder="Select a module"
-        avatarAddress={avatar}
-      />
-    </div>
+
+        const module = modules.find(
+          ({ moduleAddress }) => moduleAddress === selected.value,
+        )
+
+        if (module == null) {
+          onSelect(null)
+
+          return
+        }
+
+        onSelect({
+          moduleAddress: module.moduleAddress,
+          moduleType: module.type,
+        })
+      }}
+      value={
+        selectedModule != null
+          ? {
+              value: selectedModule.moduleAddress,
+              label: ZODIAC_MODULE_NAMES[selectedModule.type],
+            }
+          : defaultModOption != null
+            ? defaultModOption
+            : null
+      }
+      isDisabled={disabled || isLoading}
+      placeholder={isLoading ? 'Loading modules...' : 'Select a module'}
+      avatarAddress={avatar}
+    />
   )
 }
