@@ -1,4 +1,5 @@
 export { fetchZodiacModules } from './fetchZodiacModules'
+export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,

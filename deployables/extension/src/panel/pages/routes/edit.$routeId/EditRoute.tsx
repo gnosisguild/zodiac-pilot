@@ -9,14 +9,7 @@ import {
 import { useDisconnectWalletConnectIfNeeded } from '@/providers'
 import { useTransactions } from '@/state'
 import type { HexAddress, LegacyConnection } from '@/types'
-import {
-  decodeRoleKey,
-  encodeRoleKey,
-  formData,
-  getInt,
-  getOptionalString,
-  getString,
-} from '@/utils'
+import { formData, getInt, getOptionalString, getString } from '@/utils'
 import {
   fetchZodiacModules,
   queryRolesV1MultiSend,
@@ -25,6 +18,7 @@ import {
 } from '@/zodiac'
 import { invariantResponse } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
+import { decodeRoleKey, encodeRoleKey } from '@zodiac/modules'
 import {
   Breadcrumbs,
   Error,
