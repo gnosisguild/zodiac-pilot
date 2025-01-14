@@ -3,12 +3,11 @@ import {
   type SupportedModuleType,
   type ZodiacModule,
 } from '@zodiac/modules'
-import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
+import type { HexAddress } from '@zodiac/schema'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
 import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
-import { useSafeDelegates } from './useSafeDelegates'
 
 type Value = {
   moduleType: SupportedModuleType
@@ -18,7 +17,6 @@ type Value = {
 type ZodiacModProps = {
   avatarAddress: PrefixedAddress
   pilotAddress: HexAddress
-  route: ExecutionRoute
   modules: ZodiacModule[]
   disabled?: boolean
   value: Value | null
@@ -30,7 +28,6 @@ export const ZodiacMod = ({
   avatarAddress,
   pilotAddress,
   value,
-  route,
   modules,
   disabled,
   onSelect,
@@ -38,13 +35,15 @@ export const ZodiacMod = ({
   const { load: loadSafes, data: safes = [] } = useFetcher<string[]>({
     key: 'available-safes',
   })
+  const { load: loadDelegates, data: delegates = [] } = useFetcher<string[]>({
+    key: 'delegates',
+  })
   const [chainId] = splitPrefixedAddress(avatarAddress)
 
   useEffect(() => {
     loadSafes(`/${pilotAddress}/${chainId}/available-safes`)
-  }, [chainId, loadSafes, pilotAddress])
-
-  const { delegates } = useSafeDelegates(route, avatarAddress)
+    loadDelegates(`/${pilotAddress}/${chainId}/delegates`)
+  }, [chainId, loadDelegates, loadSafes, pilotAddress])
 
   const pilotIsOwner = safes.some(
     (safe) => safe.toLowerCase() === avatarAddress.toLowerCase(),

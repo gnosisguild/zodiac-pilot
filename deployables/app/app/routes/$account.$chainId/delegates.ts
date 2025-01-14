@@ -1,7 +1,7 @@
 import { validateAddress } from '@/utils'
 import { verifyChainId } from '@zodiac/chains'
 import { initSafeApiKit } from '@zodiac/safe'
-import type { Route } from './+types/$account.$chainId.available-safes'
+import type { Route } from './+types/delegates'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const { chainId, account } = params
@@ -9,11 +9,11 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   const safeService = initSafeApiKit(verifyChainId(parseInt(chainId)))
 
   try {
-    const { safes } = await safeService.getSafesByOwner(
-      validateAddress(account),
-    )
+    const { results } = await safeService.getSafeDelegates({
+      safeAddress: validateAddress(account),
+    })
 
-    return safes
+    return results.map((delegate) => delegate.delegate)
   } catch {
     return []
   }
