@@ -16,7 +16,12 @@
     }
   },
   "dependencies": {
-    "@gnosis.pm/zodiac": "^4.0.3"
+    "@gnosis.pm/zodiac": "^4.0.3",
+    "@shazow/whatsabi": "^0.19.0",
+    "@zodiac/schema": "workspace:*",
+    "ethers": "6.13.5",
+    "evm-proxy-detection": "^2.0.1",
+    "ser-kit": "1.1.0"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
