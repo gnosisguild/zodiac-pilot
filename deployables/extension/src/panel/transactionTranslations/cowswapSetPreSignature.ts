@@ -1,5 +1,5 @@
 import type { HexAddress } from '@/types'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { id, Interface } from 'ethers'
 import { Waypoints } from 'lucide-react'
 import type { TransactionTranslation } from './types'
@@ -36,7 +36,10 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
 export const cowswapSetPreSignature = {
   title: 'Route through CowswapOrderSigner',
   icon: Waypoints,
-  recommendedFor: [KnownContracts.ROLES_V1, KnownContracts.ROLES_V2],
+  recommendedFor: [
+    SupportedZodiacModuleType.ROLES_V1,
+    SupportedZodiacModuleType.ROLES_V2,
+  ],
 
   translate: async (transaction, chainId) => {
     if (!COWSWAP_SUPPORTED_NETWORK[chainId]) {

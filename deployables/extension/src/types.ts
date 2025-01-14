@@ -1,10 +1,10 @@
+import type { SupportedZodiacModuleType } from '@zodiac/modules'
 import type {
   ExecutionRoute as BaseExecutionRoute,
   HexAddress,
   ProviderType,
 } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
-import type { SupportedModuleType } from './panel/integrations/zodiac/types'
 
 export { ProviderType } from '@zodiac/schema'
 export type { HexAddress } from '@zodiac/schema'
@@ -19,7 +19,7 @@ export interface LegacyConnection {
 
   chainId: ChainId
   providerType: ProviderType
-  moduleType?: SupportedModuleType
+  moduleType?: SupportedZodiacModuleType
 
   multisend?: string | undefined
   multisendCallOnly?: string | undefined

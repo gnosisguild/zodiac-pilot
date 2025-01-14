@@ -21,10 +21,9 @@ import {
   fetchZodiacModules,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
-  type SupportedModuleType,
+  SupportedZodiacModuleType,
 } from '@/zodiac'
 import { invariantResponse } from '@epic-web/invariant'
-import { KnownContracts } from '@gnosis.pm/zodiac'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import {
   Breadcrumbs,
@@ -158,7 +157,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
           moduleType: getOptionalString(
             data,
             'moduleType',
-          ) as SupportedModuleType,
+          ) as SupportedZodiacModuleType,
           multisend: getOptionalString(data, 'multisend'),
           multisendCallOnly: getOptionalString(data, 'multisendCallOnly'),
           roleId: getOptionalString(data, 'roleId'),
@@ -183,7 +182,7 @@ export const action = async ({ params, request }: ActionFunctionArgs) => {
           moduleType: getOptionalString(
             data,
             'moduleType',
-          ) as SupportedModuleType,
+          ) as SupportedZodiacModuleType,
           multisend: getOptionalString(data, 'multisend'),
           multisendCallOnly: getOptionalString(data, 'multisendCallOnly'),
           roleId: getOptionalString(data, 'roleId'),
@@ -361,7 +360,7 @@ export const EditRoute = () => {
                           }
 
                           switch (value.moduleType) {
-                            case KnownContracts.ROLES_V1: {
+                            case SupportedZodiacModuleType.ROLES_V1: {
                               updateRoute({
                                 ...value,
                                 multisend: await queryRolesV1MultiSend(
@@ -373,7 +372,7 @@ export const EditRoute = () => {
                               break
                             }
 
-                            case KnownContracts.ROLES_V2: {
+                            case SupportedZodiacModuleType.ROLES_V2: {
                               updateRoute({
                                 ...value,
                                 ...(await queryRolesV2MultiSend(
@@ -388,7 +387,8 @@ export const EditRoute = () => {
                         }}
                       />
 
-                      {selectedModule?.type === KnownContracts.ROLES_V1 && (
+                      {selectedModule?.type ===
+                        SupportedZodiacModuleType.ROLES_V1 && (
                         <TextInput
                           label="Role ID"
                           value={roleId}
@@ -399,7 +399,8 @@ export const EditRoute = () => {
                         />
                       )}
 
-                      {selectedModule?.type === KnownContracts.ROLES_V2 && (
+                      {selectedModule?.type ===
+                        SupportedZodiacModuleType.ROLES_V2 && (
                         <TextInput
                           label="Role Key"
                           key={currentRouteState.id} // makes sure the defaultValue is reset when switching connections

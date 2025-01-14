@@ -1,8 +1,13 @@
-import { AvatarInput, ChainSelect, ConnectWallet } from '@/components'
+import {
+  AvatarInput,
+  ChainSelect,
+  ConnectWallet,
+  ZodiacMod,
+} from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { executionRouteSchema, type Waypoints } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
-import { splitPrefixedAddress } from 'ser-kit'
+import { AccountType, splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route'
 
 export const loader = ({ request }: Route.LoaderArgs) => {
@@ -27,6 +32,7 @@ export const loader = ({ request }: Route.LoaderArgs) => {
       chainId,
       avatar: route.avatar,
       pilotAddress: getPilotAddress(route.waypoints),
+      moduleAddress: getModuleAddress(route.waypoints),
       providerType: route.providerType,
     }
   } catch {
@@ -35,7 +41,14 @@ export const loader = ({ request }: Route.LoaderArgs) => {
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, pilotAddress, providerType },
+  loaderData: {
+    chainId,
+    label,
+    avatar,
+    pilotAddress,
+    providerType,
+    moduleAddress,
+  },
 }: Route.ComponentProps) => {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-4">
@@ -54,6 +67,12 @@ const EditRoute = ({
         value={avatar}
         pilotAddress={pilotAddress}
         onChange={() => {}}
+      />
+      <ZodiacMod
+        avatar={avatar}
+        pilotAddress={pilotAddress}
+        value={moduleAddress}
+        onSelect={() => {}}
       />
     </main>
   )
@@ -77,4 +96,22 @@ const getPilotAddress = (waypoints?: Waypoints) => {
   }
 
   return null
+}
+
+const getModuleAddress = (waypoints?: Waypoints) => {
+  if (waypoints == null) {
+    return null
+  }
+
+  const moduleWaypoint = waypoints.find(
+    (waypoint) =>
+      waypoint.account.type === AccountType.ROLES ||
+      waypoint.account.type === AccountType.DELAY,
+  )
+
+  if (moduleWaypoint == null) {
+    return null
+  }
+
+  return moduleWaypoint.account.address
 }

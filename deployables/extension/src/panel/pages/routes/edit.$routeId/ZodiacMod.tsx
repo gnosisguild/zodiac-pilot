@@ -1,13 +1,13 @@
-import { MODULE_NAMES } from '@/const'
 import type { ExecutionRoute } from '@/types'
-import { type SupportedModuleType, type ZodiacModule } from '@/zodiac'
+import { type ZodiacModule } from '@/zodiac'
+import { SupportedZodiacModuleType, ZODIAC_MODULE_NAMES } from '@zodiac/modules'
 import type { PrefixedAddress } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 import { useSafeDelegates } from './useSafeDelegates'
 import { useSafesWithOwner } from './useSafesWithOwner'
 
 type Value = {
-  moduleType: SupportedModuleType
+  moduleType: SupportedZodiacModuleType
   moduleAddress: string
 }
 
@@ -52,7 +52,7 @@ export const ZodiacMod = ({
           ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
           ...modules.map((mod) => ({
             value: mod.moduleAddress,
-            label: MODULE_NAMES[mod.type],
+            label: ZODIAC_MODULE_NAMES[mod.type],
           })),
         ]}
         onChange={async (selected) => {
@@ -81,7 +81,7 @@ export const ZodiacMod = ({
           value
             ? {
                 value: value.moduleAddress,
-                label: MODULE_NAMES[value.moduleType],
+                label: ZODIAC_MODULE_NAMES[value.moduleType],
               }
             : defaultModOption != null
               ? defaultModOption

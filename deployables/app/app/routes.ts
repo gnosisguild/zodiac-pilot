@@ -1,10 +1,16 @@
-import { type RouteConfig, index, route } from '@react-router/dev/routes'
+import {
+  type RouteConfig,
+  index,
+  prefix,
+  route,
+} from '@react-router/dev/routes'
 
 export default [
   index('routes/index.tsx'),
   route('/edit-route', 'routes/edit-route.tsx'),
-  route(
-    '/:account/:chainId/available-safes',
-    'routes/$account.$chainId.available-safes.ts',
-  ),
+  ...prefix('/:account/:chainId', [
+    route('available-safes', 'routes/$account.$chainId/available-safes.ts'),
+    route('delegates', 'routes/$account.$chainId/delegates.ts'),
+  ]),
+  route('/:avatar/:chainId/modules', 'routes/$avatar.$chainId/modules.ts'),
 ] satisfies RouteConfig

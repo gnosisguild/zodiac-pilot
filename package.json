@@ -4,7 +4,9 @@
   "packageManager": "pnpm@9.15.4",
   "pnpm": {
     "patchedDependencies": {
-      "vitest-chrome": "patches/vitest-chrome.patch"
+      "vitest-chrome": "patches/vitest-chrome.patch",
+      "@gnosis.pm/zodiac": "patches/@gnosis.pm__zodiac.patch",
+      "evm-proxy-detection": "patches/evm-proxy-detection.patch"
     }
   },
   "scripts": {

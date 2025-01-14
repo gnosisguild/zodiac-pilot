@@ -1,6 +1,6 @@
+import type { SupportedZodiacModuleType } from '@zodiac/modules'
 import type { LucideIcon } from 'lucide-react'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
-import type { SupportedModuleType } from '../integrations/zodiac/types'
 
 export type TransactionTranslation = {
   /** A descriptive title of the translation, will be displayed as a tooltip of the translate button */
@@ -9,7 +9,7 @@ export type TransactionTranslation = {
   autoApply?: boolean
   icon: LucideIcon
   /** A list of zodiac modules for which using this translation is recommended */
-  recommendedFor: SupportedModuleType[]
+  recommendedFor: SupportedZodiacModuleType[]
 } & (
   | {
       /** The translation function. For transactions that shall not be translated it must return undefined */

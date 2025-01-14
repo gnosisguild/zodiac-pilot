@@ -5,7 +5,6 @@
     "paths": {
       "@/utils": ["./src/utils/index.ts"],
       "@/types": ["./src/types.ts"],
-      "@/const": ["./src/const.ts"],
       "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
       "@/state": ["./src/panel/state/index.tsx"],
       "@/providers": ["./src/panel/providers/index.ts"],

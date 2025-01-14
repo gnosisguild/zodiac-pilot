@@ -1,0 +1,17 @@
+diff --git a/package.json b/package.json
+index 5614014cd204527de05de6e29663182be280b1f3..1b7e4142cc5d6531092fb6791666714a34492b1c 100644
+--- a/package.json
++++ b/package.json
+@@ -13,6 +13,12 @@
+     "LICENSE",
+     "README.md"
+   ],
++"exports": {
++  ".": {
++    "types": "./build/cjs/index.d.ts",
++    "import": "./build/esm/index.js",
++    "require": "./build/cjs/index.js"
++  }},  
+   "scripts": {
+     "prepack": "yarn build",
+     "build": "rimraf build && yarn build:cjs && yarn build:esm",

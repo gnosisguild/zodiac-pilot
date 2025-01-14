@@ -3,9 +3,12 @@ import {
   type ExecutionRoute,
   type LegacyConnection,
 } from '@/types'
-import { MULTISEND, MULTISEND_CALL_ONLY } from '@/zodiac'
+import {
+  MULTISEND,
+  MULTISEND_CALL_ONLY,
+  SupportedZodiacModuleType,
+} from '@/zodiac'
 import { invariant } from '@epic-web/invariant'
-import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZeroAddress } from 'ethers'
 import {
   AccountType,
@@ -44,7 +47,8 @@ export function fromLegacyConnection(
         )
       : undefined
 
-  const delayModuleWaypoint = moduleType === KnownContracts.DELAY && {
+  const delayModuleWaypoint = moduleType ===
+    SupportedZodiacModuleType.DELAY && {
     account: {
       type: AccountType.DELAY,
       prefixedAddress: modulePrefixedAddress?.toLowerCase(),
@@ -58,14 +62,15 @@ export function fromLegacyConnection(
     },
   }
 
-  const rolesModuleWaypoint = (moduleType === KnownContracts.ROLES_V1 ||
-    moduleType === KnownContracts.ROLES_V2) && {
+  const rolesModuleWaypoint = (moduleType ===
+    SupportedZodiacModuleType.ROLES_V1 ||
+    moduleType === SupportedZodiacModuleType.ROLES_V2) && {
     account: {
       type: AccountType.ROLES,
       prefixedAddress: modulePrefixedAddress?.toLowerCase(),
       address: connection.moduleAddress,
       chain: chainId,
-      version: moduleType === KnownContracts.ROLES_V1 ? 1 : 2,
+      version: moduleType === SupportedZodiacModuleType.ROLES_V1 ? 1 : 2,
       multisend: [connection.multisend, connection.multisendCallOnly].filter(
         Boolean,
       ) as `0x${string}`[],
@@ -170,11 +175,11 @@ export function asLegacyConnection(route: ExecutionRoute): LegacyConnection {
     providerType: route.providerType ?? ProviderType.InjectedWallet,
     moduleType:
       moduleType === AccountType.DELAY
-        ? KnownContracts.DELAY
+        ? SupportedZodiacModuleType.DELAY
         : moduleType === AccountType.ROLES
           ? moduleWaypoint?.account.version === 1
-            ? KnownContracts.ROLES_V1
-            : KnownContracts.ROLES_V2
+            ? SupportedZodiacModuleType.ROLES_V1
+            : SupportedZodiacModuleType.ROLES_V2
           : undefined,
     multisend: multisend.find((a) => MULTISEND.includes(a)),
     multisendCallOnly: multisend.find((a) => MULTISEND_CALL_ONLY.includes(a)),

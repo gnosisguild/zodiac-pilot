@@ -25,7 +25,7 @@ export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
     setPendingValue(address)
   }, [address])
 
-  const { load, state, data } = useFetcher<string[]>()
+  const { load, state, data } = useFetcher<string[]>({ key: 'available-safes' })
 
   useEffect(() => {
     if (pilotAddress == null) {
@@ -58,7 +58,7 @@ export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
         placeholder="Paste an address or select from the list"
         classNames={selectStyles<Option>()}
         value={
-          checksumAvatarAddress !== ''
+          checksumAvatarAddress != null
             ? {
                 value: checksumAvatarAddress,
                 label: checksumAvatarAddress,
