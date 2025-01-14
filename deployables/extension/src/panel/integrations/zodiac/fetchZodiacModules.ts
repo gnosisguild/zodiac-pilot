@@ -6,22 +6,16 @@ import {
   KnownContracts,
 } from '@gnosis.pm/zodiac'
 import { selectorsFromBytecode } from '@shazow/whatsabi'
+import type { ZodiacModule } from '@zodiac/modules'
 import { Contract, id, Interface, ZeroAddress } from 'ethers'
 import detectProxyTarget from 'evm-proxy-detection'
 import { type ChainId } from 'ser-kit'
-import type { SupportedModuleType } from './types'
 
 const SUPPORTED_MODULES = [
   KnownContracts.DELAY,
   KnownContracts.ROLES_V1,
   KnownContracts.ROLES_V2,
 ]
-export interface ZodiacModule {
-  moduleAddress: string
-  mastercopyAddress?: string // if empty, it's a custom non-proxied deployment
-  type: SupportedModuleType
-  modules?: ZodiacModule[]
-}
 
 export async function fetchZodiacModules(
   safeOrModifierAddress: HexAddress,

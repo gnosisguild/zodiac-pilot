@@ -29,12 +29,21 @@ export const selectStyles = <
   noOptionsMessage: () => 'p-4 italic opacity-75',
 })
 
-type SelectProps<Creatable extends boolean> = {
+type SelectBaseProps<Creatable extends boolean> = {
   label: string
   clearLabel?: string
   dropdownLabel?: string
   allowCreate?: Creatable
 }
+
+export type SelectProps<
+  Creatable extends boolean,
+  Option,
+  Multi extends boolean,
+> = Creatable extends true
+  ? CreatableProps<Option, Multi, GroupBase<Option>> &
+      SelectBaseProps<Creatable>
+  : Props<Option, Multi> & SelectBaseProps<Creatable>
 
 export function Select<
   Creatable extends boolean = false,
@@ -46,9 +55,7 @@ export function Select<
   dropdownLabel,
   allowCreate,
   ...props
-}: Creatable extends true
-  ? CreatableProps<Option, Multi, GroupBase<Option>> & SelectProps<Creatable>
-  : Props<Option, Multi> & SelectProps<Creatable>) {
+}: SelectProps<Creatable, Option, Multi>) {
   const Component = allowCreate ? Creatable : BaseSelect
 
   return (

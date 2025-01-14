@@ -1,4 +1,5 @@
-export { fetchZodiacModules, type ZodiacModule } from './fetchZodiacModules'
+export type { ZodiacModule } from '@zodiac/modules'
+export { fetchZodiacModules } from './fetchZodiacModules'
 export {
   MULTISEND,
   MULTISEND_CALL_ONLY,

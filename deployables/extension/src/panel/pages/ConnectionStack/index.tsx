@@ -1,5 +1,5 @@
-import { MODULE_NAMES } from '@/const'
 import type { LegacyConnection } from '@/types'
+import { ZODIAC_MODULE_NAMES } from '@zodiac/modules'
 import { Address } from './Address'
 
 interface Props {
@@ -19,7 +19,7 @@ export const ConnectionStack = ({ connection }: Props) => {
       {moduleAddress && (
         <div className="flex items-center justify-between">
           <div className="text-sm">
-            {(moduleType && MODULE_NAMES[moduleType]) || 'Zodiac'} Mod
+            {(moduleType && ZODIAC_MODULE_NAMES[moduleType]) || 'Zodiac'} Mod
           </div>
 
           <Address address={moduleAddress} />

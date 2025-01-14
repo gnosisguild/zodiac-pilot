@@ -25,7 +25,7 @@ export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
     setPendingValue(address)
   }, [address])
 
-  const { load, state, data } = useFetcher<string[]>()
+  const { load, state, data } = useFetcher<string[]>({ key: 'available-safes' })
 
   useEffect(() => {
     if (pilotAddress == null) {

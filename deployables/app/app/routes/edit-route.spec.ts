@@ -6,6 +6,7 @@ import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
+  createRoleWaypoint,
   createStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
@@ -149,6 +150,23 @@ describe('Edit route', () => {
       )
 
       expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
+    })
+  })
+
+  describe('Role', () => {
+    it.only('shows the role of a route', async () => {
+      const route = createMockExecutionRoute({
+        waypoints: [createStartingWaypoint(), createRoleWaypoint()],
+        providerType: ProviderType.InjectedWallet,
+      })
+
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
+
+      expect(
+        screen.getByRole('combobox', { name: 'Zodiac mod' }),
+      ).toBeInTheDocument()
     })
   })
 })
