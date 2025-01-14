@@ -91,6 +91,8 @@ const waypointSchema = z.object({
   ]),
 })
 
+export type Waypoint = z.infer<typeof waypointSchema>
+
 const eoaSchema = z.object({
   type: z.literal('EOA'),
   address: addressSchema,

@@ -200,6 +200,32 @@ describe('Edit route', () => {
       expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
 
+    it('is possible to change the mod of a route', async () => {
+      mockFetchZodiacModules.mockResolvedValue([
+        {
+          type: SupportedZodiacModuleType.ROLES_V2,
+          moduleAddress: randomAddress(),
+        },
+      ])
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress(),
+        waypoints: [createStartingWaypoint()],
+        providerType: ProviderType.InjectedWallet,
+      })
+
+      await render('/edit-route', {
+        searchParams: { route: btoa(JSON.stringify(route)) },
+      })
+
+      await userEvent.click(
+        screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+      )
+      await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
+
+      expect(screen.getByText('Roles v2')).toBeInTheDocument()
+    })
+
     it('shows the v1 role config when the v1 route mod is used', async () => {
       const moduleAddress = randomAddress()
       const roleId = randomAddress()

@@ -16,17 +16,12 @@ import {
 } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 
-type Value = {
-  moduleType: SupportedZodiacModuleType
-  moduleAddress: string
-}
-
 type ZodiacModProps = {
-  waypoints: Waypoints | undefined
+  waypoints: Waypoints
   avatar: PrefixedAddress
   disabled?: boolean
 
-  onSelect: (value: Value | null) => void
+  onSelect: (module: ZodiacModule | null) => void
 }
 
 export const ZodiacMod = ({
@@ -125,10 +120,7 @@ export const ZodiacMod = ({
             return
           }
 
-          onSelect({
-            moduleAddress: module.moduleAddress,
-            moduleType: module.type,
-          })
+          onSelect(module)
         }}
         value={
           selectedModule != null
