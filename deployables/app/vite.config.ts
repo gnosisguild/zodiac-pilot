@@ -40,6 +40,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         'react-router',
       ],
     },
+    noExternal: ['@gnosis.pm/zodiac'],
   },
   plugins: [cloudflareDevProxy(), reactRouter(), tsconfigPaths()],
 }))
