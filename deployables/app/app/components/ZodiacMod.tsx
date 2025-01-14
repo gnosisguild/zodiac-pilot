@@ -17,7 +17,7 @@ import {
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
 
 type ZodiacModProps = {
-  waypoints: Waypoints
+  waypoints?: Waypoints
   avatar: PrefixedAddress
   disabled?: boolean
 

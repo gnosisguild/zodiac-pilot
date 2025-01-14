@@ -39,6 +39,11 @@ export const loader = ({ request }: Route.LoaderArgs) => {
   }
 }
 
+export const action = ({ params }: Route.ActionArgs) => {
+  // TODO: intent to update role, then encode into current route and redirect
+  // so that new param becomes active and the view refreshes with proper values
+}
+
 const EditRoute = ({
   loaderData: { chainId, label, avatar, providerType, waypoints },
 }: Route.ComponentProps) => {
