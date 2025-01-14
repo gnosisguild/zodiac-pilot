@@ -156,7 +156,6 @@ export const ZodiacMod = ({
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V2 && (
         <TextInput
           label="Role Key"
-          // error={roleIdError}
           defaultValue={getRoleKey(waypoints) ?? ''}
           placeholder="Enter key as bytes32 hex string or in human-readable decoding"
         />
