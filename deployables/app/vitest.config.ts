@@ -15,6 +15,10 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
 const { CI } = process.env
 
 export default defineConfig({
+  ssr: {
+    noExternal: ['@gnosis.pm/zodiac'],
+  },
+
   test: {
     alias,
     environment: 'happy-dom',
