@@ -8,13 +8,12 @@ import type {
 } from '@/types'
 import {
   decodeGenericError,
-  decodeRoleKey,
   decodeRolesV1Error,
   decodeRolesV2Error,
   isSmartContractAddress,
   validateAddress,
 } from '@/utils'
-import { SupportedZodiacModuleType } from '@zodiac/modules'
+import { decodeRoleKey, SupportedZodiacModuleType } from '@zodiac/modules'
 import { useEffect, useState } from 'react'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { wrapRequest } from './wrapRequest'
