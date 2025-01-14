@@ -1,5 +1,5 @@
+import { initSafeApiKit } from '@zodiac/safe'
 import type { ChainId } from 'ser-kit'
-import { initSafeApiKit } from './kits'
 
 export function waitForMultisigExecution(
   chainId: number,

@@ -1,11 +1,14 @@
 import { validateAddress } from '@/utils'
+import type { HexAddress } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
+import { useFetcher } from 'react-router'
+import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 type Props = {
-  value: string
-  availableSafes?: string[]
+  value: PrefixedAddress
+  pilotAddress: HexAddress | null
   onChange(value: string): void
 }
 
@@ -14,18 +17,31 @@ type Option = {
   label: string
 }
 
-export const AvatarInput = ({
-  value,
-  onChange,
-  availableSafes = [],
-}: Props) => {
-  const [pendingValue, setPendingValue] = useState(value)
+export const AvatarInput = ({ value, pilotAddress, onChange }: Props) => {
+  const [chainId, address] = splitPrefixedAddress(value)
+  const [pendingValue, setPendingValue] = useState<string>(address)
 
   useEffect(() => {
-    setPendingValue(value)
-  }, [value])
+    setPendingValue(address)
+  }, [address])
+
+  const { load, state, data } = useFetcher<string[]>()
+
+  useEffect(() => {
+    if (pilotAddress == null) {
+      return
+    }
+
+    if (chainId == null) {
+      return
+    }
+
+    load(`/${pilotAddress}/${chainId}/available-safes`)
+  }, [chainId, load, pilotAddress])
 
   const checksumAvatarAddress = validateAddress(pendingValue)
+
+  const availableSafes = data ?? []
 
   if (availableSafes.length > 0 || checksumAvatarAddress) {
     return (
@@ -33,12 +49,14 @@ export const AvatarInput = ({
         allowCreate
         blurInputOnSelect
         isClearable
+        isMulti={false}
+        isDisabled={state === 'loading'}
         label="Piloted Safe"
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
         formatOptionLabel={SafeOptionLabel}
         placeholder="Paste an address or select from the list"
-        classNames={selectStyles<{ value: string; label: string }>()}
+        classNames={selectStyles<Option>()}
         value={
           checksumAvatarAddress !== ''
             ? {
@@ -53,9 +71,7 @@ export const AvatarInput = ({
         }))}
         onChange={(option) => {
           if (option) {
-            const sanitized = (option as Option).value
-              .trim()
-              .replace(/^[a-z]{3}:/g, '')
+            const sanitized = option.value.trim().replace(/^[a-z]{3}:/g, '')
 
             if (validateAddress(sanitized)) {
               onChange(sanitized.toLowerCase())
@@ -74,6 +90,7 @@ export const AvatarInput = ({
   return (
     <TextInput
       label="Piloted Safe"
+      disabled={state === 'loading'}
       value={pendingValue}
       placeholder="Paste in Safe address"
       onChange={(ev) => {

@@ -20,12 +20,12 @@ export const loader = ({ request }: Route.LoaderArgs) => {
     const rawJson = JSON.parse(decodedData.toString())
     const route = executionRouteSchema.parse(rawJson)
 
-    const [chainId, avatar] = splitPrefixedAddress(route.avatar)
+    const [chainId] = splitPrefixedAddress(route.avatar)
 
     return {
       label: route.label,
       chainId,
-      avatar,
+      avatar: route.avatar,
       pilotAddress: getPilotAddress(route.waypoints),
       providerType: route.providerType,
     }
@@ -50,7 +50,11 @@ const EditRoute = ({
         onConnect={() => {}}
         onDisconnect={() => {}}
       />
-      <AvatarInput value={avatar} onChange={() => {}} />
+      <AvatarInput
+        value={avatar}
+        pilotAddress={pilotAddress}
+        onChange={() => {}}
+      />
     </main>
   )
 }

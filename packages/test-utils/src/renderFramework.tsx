@@ -84,13 +84,16 @@ export async function createRenderFramework<Config extends RouteConfig>(
       return {
         path: route.path,
         loader,
-        Component() {
-          const loaderData = useLoaderData<typeof loader>()
-          const params = useParams()
+        Component:
+          Component == null
+            ? undefined
+            : () => {
+                const loaderData = useLoaderData<typeof loader>()
+                const params = useParams()
 
-          // @ts-expect-error we're not yet suppliying all required props
-          return <Component loaderData={loaderData} params={params} />
-        },
+                // @ts-expect-error we're not yet suppliying all required props
+                return <Component loaderData={loaderData} params={params} />
+              },
       }
     }),
   )

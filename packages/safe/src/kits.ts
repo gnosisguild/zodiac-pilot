@@ -1,21 +1,20 @@
 import SafeApiKit from '@safe-global/api-kit'
 import Safe from '@safe-global/protocol-kit'
-import { RPC } from '@zodiac/chains'
-import type { ChainId } from 'ser-kit'
+import { Chain, RPC, type ChainId } from '@zodiac/chains'
 
 export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
-  [1]: 'https://safe-transaction-mainnet.safe.global/api',
-  [10]: 'https://safe-transaction-optimism.safe.global/api',
+  [Chain.ETH]: 'https://safe-transaction-mainnet.safe.global/api',
+  [Chain.OETH]: 'https://safe-transaction-optimism.safe.global/api',
   // [56]: 'https://safe-transaction-bsc.safe.global',
-  [100]: 'https://safe-transaction-gnosis-chain.safe.global/api',
-  [137]: 'https://safe-transaction-polygon.safe.global/api',
+  [Chain.GNO]: 'https://safe-transaction-gnosis-chain.safe.global/api',
+  [Chain.MATIC]: 'https://safe-transaction-polygon.safe.global/api',
   // [246]: 'https://safe-transaction-ewc.safe.global',
-  [8453]: 'https://safe-transaction-base.safe.global/api',
-  [42161]: 'https://safe-transaction-arbitrum.safe.global/api',
-  [43114]: 'https://safe-transaction-avalanche.safe.global/api',
+  [Chain.BASE]: 'https://safe-transaction-base.safe.global/api',
+  [Chain.ARB1]: 'https://safe-transaction-arbitrum.safe.global/api',
+  [Chain.AVAX]: 'https://safe-transaction-avalanche.safe.global/api',
   // [42220]: 'https://safe-transaction-celo.safe.global',
   // [73799]: 'https://safe-transaction-volta.safe.global',
-  [11155111]: 'https://safe-transaction-sepolia.safe.global/api',
+  [Chain.SEP]: 'https://safe-transaction-sepolia.safe.global/api',
 }
 
 export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {

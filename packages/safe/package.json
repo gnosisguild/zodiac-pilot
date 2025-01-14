@@ -1,0 +1,28 @@
+{
+  "name": "@zodiac/safe",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.3",
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "check-types": "tsc"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@safe-global/api-kit": "^2.4.2",
+    "@safe-global/protocol-kit": "^5.0.1",
+    "@zodiac/chains": "workspace:*"
+  },
+  "devDependencies": {
+    "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/typescript-config": "workspace:*",
+    "eslint": "^9.7.0"
+  }
+}

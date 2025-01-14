@@ -7,7 +7,8 @@
     "dev": "react-router dev",
     "start": "wrangler dev",
     "check-types": "react-router typegen && tsc -b",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
@@ -15,6 +16,7 @@
     "@react-router/serve": "^7.1.1",
     "@tanstack/react-query": "^5.56.2",
     "@zodiac/chains": "workspace:*",
+    "@zodiac/safe": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "@zodiac/ui": "workspace:*",
     "connectkit": "^1.8.2",
@@ -39,6 +41,7 @@
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "@vitest/coverage-v8": "2.1.8",
+    "@zodiac/eslint-config": "workspace:*",
     "@zodiac/tailwind-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
