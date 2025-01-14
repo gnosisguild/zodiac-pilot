@@ -1,4 +1,5 @@
 import {
+  decodeRoleKey,
   SupportedZodiacModuleType,
   ZODIAC_MODULE_NAMES,
   type ZodiacModule,
@@ -151,6 +152,14 @@ export const ZodiacMod = ({
           placeholder="0"
         />
       )}
+
+      {selectedModule?.type === SupportedZodiacModuleType.ROLES_V2 && (
+        <TextInput
+          label="Role Key"
+          defaultValue={getRoleKey(waypoints) ?? ''}
+          placeholder="Enter key as bytes32 hex string or in human-readable decoding"
+        />
+      )}
     </>
   )
 }
@@ -177,6 +186,16 @@ const getRoleId = (waypoints?: Waypoints) => {
   }
 
   return moduleWaypoint.connection.roles[0]
+}
+
+const getRoleKey = (waypoints?: Waypoints) => {
+  const roleId = getRoleId(waypoints)
+
+  if (roleId == null) {
+    return null
+  }
+
+  return decodeRoleKey(roleId)
 }
 
 const getModuleWaypoint = (waypoints?: Waypoints) => {
