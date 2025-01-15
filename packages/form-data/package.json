@@ -1,0 +1,26 @@
+{
+  "name": "@zodiac/form-data",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "check-types": "tsc"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@epic-web/invariant": "^1.0.0"
+  },
+  "devDependencies": {
+    "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/typescript-config": "workspace:*",
+    "eslint": "^9.7.0"
+  }
+}
