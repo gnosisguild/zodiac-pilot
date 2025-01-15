@@ -140,7 +140,8 @@ export const ZodiacMod = ({
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V1 && (
         <TextInput
           label="Role ID"
-          value={getRoleId(waypoints) ?? ''}
+          name="roleId"
+          defaultValue={getRoleId(waypoints) ?? ''}
           placeholder="0"
         />
       )}

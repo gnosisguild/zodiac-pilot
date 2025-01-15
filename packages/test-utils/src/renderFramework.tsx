@@ -1,6 +1,7 @@
 import { type RouteConfig } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
+import type { ActionFunctionArgs } from 'react-router'
 import { createRoutesStub, useLoaderData, useParams } from 'react-router'
 import type {
   CreateActionData,
@@ -91,8 +92,29 @@ export async function createRenderFramework<Config extends RouteConfig>(
         path: route.path,
         clientLoader,
         loader,
-        clientAction,
-        action,
+        // the test stub from react-router unfortunately
+        // doesn't handle the clientAction/action hierarchy
+        // so we built it ouselves.
+        action(actionArgs: ActionFunctionArgs) {
+          if (clientAction != null) {
+            return clientAction({
+              ...actionArgs,
+              serverAction: action
+                ? () =>
+                    action({
+                      ...actionArgs,
+                      request: new Request(actionArgs.request),
+                    })
+                : undefined,
+            })
+          }
+
+          if (action != null) {
+            return action(actionArgs)
+          }
+
+          return null
+        },
         Component:
           Component == null
             ? undefined

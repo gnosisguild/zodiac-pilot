@@ -8,6 +8,7 @@ import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   SupportedZodiacModuleType,
+  updateRoleId,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
@@ -19,6 +20,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
+import { chromeMock } from '@zodiac/test-utils/chrome'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -309,7 +311,10 @@ describe('Edit route', () => {
 
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-          throw new Error('Assert chrome call')
+          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+            expect.anything(),
+            updateRoleId(route, roleId),
+          )
         })
       })
     })

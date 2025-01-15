@@ -7,6 +7,7 @@ export {
   queryRolesV2MultiSend,
 } from './queryRolesV2MultiSend'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
+export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
 export {
   SUPPORTED_ZODIAC_MODULES,
