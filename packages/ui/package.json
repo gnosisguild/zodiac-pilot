@@ -24,7 +24,7 @@
     "lucide-react": "^0.470.0",
     "nanoid": "^5.0.0",
     "react-select": "5.9.0",
-    "react-toastify": "11.0.2"
+    "react-toastify": "11.0.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.6",
