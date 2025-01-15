@@ -697,6 +697,9 @@ importers:
       zod:
         specifier: ^3.23.8
         version: 3.24.1
+      zodiac-roles-deployments:
+        specifier: ^2.2.2
+        version: 2.3.4
     devDependencies:
       '@zodiac/eslint-config':
         specifier: workspace:*

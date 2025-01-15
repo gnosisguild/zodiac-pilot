@@ -9,6 +9,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { formData, getString } from '@zodiac/form-data'
 import {
   queryRolesV1MultiSend,
+  queryRolesV2MultiSend,
   SupportedZodiacModuleType,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -48,13 +49,36 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
         `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
       )
 
-      const updatedRoute = await updateRolesWaypoint(route, {
+      const updatedRoute = updateRolesWaypoint(route, {
         moduleAddress: module.moduleAddress,
         version: 1,
         multisend: await queryRolesV1MultiSend(
           jsonRpcProvider(chainId),
           module.moduleAddress,
         ),
+      })
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
+          url.origin,
+        ),
+      )
+    }
+    case SupportedZodiacModuleType.ROLES_V2: {
+      const [chainId] = splitPrefixedAddress(route.avatar)
+
+      invariantResponse(
+        chainId != null,
+        `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
+      )
+
+      const updatedRoute = updateRolesWaypoint(route, {
+        moduleAddress: module.moduleAddress,
+        version: 2,
+        multisend: await queryRolesV2MultiSend(chainId, module.moduleAddress),
       })
 
       const url = new URL(request.url)

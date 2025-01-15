@@ -1,5 +1,10 @@
 export { fetchZodiacModules } from './fetchZodiacModules'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
+export {
+  MULTISEND,
+  MULTISEND_CALL_ONLY,
+  queryRolesV2MultiSend,
+} from './queryRolesV2MultiSend'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
 export {

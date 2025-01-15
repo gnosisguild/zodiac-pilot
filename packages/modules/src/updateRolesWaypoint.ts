@@ -9,7 +9,7 @@ type RoleUpdatePayload = {
   version: 1 | 2
 }
 
-export const updateRolesWaypoint = async (
+export const updateRolesWaypoint = (
   route: ExecutionRoute,
   { moduleAddress, multisend, version }: RoleUpdatePayload,
 ) => {

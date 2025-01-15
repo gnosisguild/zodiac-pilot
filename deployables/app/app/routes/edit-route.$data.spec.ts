@@ -6,6 +6,7 @@ import {
   encodeRoleKey,
   fetchZodiacModules,
   queryRolesV1MultiSend,
+  queryRolesV2MultiSend,
   SupportedZodiacModuleType,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
@@ -49,11 +50,13 @@ vi.mock('@zodiac/modules', async (importOriginal) => {
 
     fetchZodiacModules: vi.fn(),
     queryRolesV1MultiSend: vi.fn(),
+    queryRolesV2MultiSend: vi.fn(),
   }
 })
 
 const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 const mockQueryRolesV1MultiSend = vi.mocked(queryRolesV1MultiSend)
+const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
 describe('Edit route', () => {
   describe('Label', () => {
@@ -188,59 +191,63 @@ describe('Edit route', () => {
       expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
 
-    it('is possible to select the v1 roles mod', async () => {
-      mockFetchZodiacModules.mockResolvedValue([
-        {
-          type: SupportedZodiacModuleType.ROLES_V1,
-          moduleAddress: randomAddress(),
-        },
-      ])
+    describe('Edit', () => {
+      it('is possible to select the v1 roles mod', async () => {
+        mockFetchZodiacModules.mockResolvedValue([
+          {
+            type: SupportedZodiacModuleType.ROLES_V1,
+            moduleAddress: randomAddress(),
+          },
+        ])
 
-      mockQueryRolesV1MultiSend.mockResolvedValue([])
+        mockQueryRolesV1MultiSend.mockResolvedValue([])
 
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-        waypoints: [
-          createStartingWaypoint(),
-          createEndWaypoint({
-            address: '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
-          }),
-        ],
-        providerType: ProviderType.InjectedWallet,
+        const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
+          waypoints: [
+            createStartingWaypoint(),
+            createEndWaypoint({
+              address: '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
+            }),
+          ],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+        )
+        await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
+
+        expect(await screen.findByText('Roles v1')).toBeInTheDocument()
       })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      it('is possible to select the v2 roles mod', async () => {
+        mockFetchZodiacModules.mockResolvedValue([
+          {
+            type: SupportedZodiacModuleType.ROLES_V2,
+            moduleAddress: randomAddress(),
+          },
+        ])
 
-      await userEvent.click(
-        screen.getByRole('combobox', { name: 'Zodiac Mod' }),
-      )
-      await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
+        mockQueryRolesV2MultiSend.mockResolvedValue([])
 
-      expect(await screen.findByText('Roles v1')).toBeInTheDocument()
-    })
+        const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
+          waypoints: [createStartingWaypoint(), createEndWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
 
-    it.todo('is possible to select the v2 roles mod', async () => {
-      mockFetchZodiacModules.mockResolvedValue([
-        {
-          type: SupportedZodiacModuleType.ROLES_V1,
-          moduleAddress: randomAddress(),
-        },
-      ])
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-        waypoints: [createStartingWaypoint()],
-        providerType: ProviderType.InjectedWallet,
+        await userEvent.click(
+          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+        )
+        await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
+
+        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
       })
-
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
-
-      await userEvent.click(
-        screen.getByRole('combobox', { name: 'Zodiac Mod' }),
-      )
-      await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
-
-      expect(screen.getByText('Roles v1')).toBeInTheDocument()
     })
 
     it('shows the v1 role config when the v1 route mod is used', async () => {
