@@ -7,8 +7,12 @@ import {
 } from '@zodiac/test-utils'
 import { type PropsWithChildren } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
-import { createMockPort } from './creators'
+import {
+  createMockPort,
+  mockActiveTab,
+  mockRuntimeConnect,
+  mockTabConnect,
+} from './chrome'
 import { RenderWrapper } from './RenderWrapper'
 
 type Options = RenderOptions & {

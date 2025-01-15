@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from 'vitest'
-import { chromeMock } from './test-utils/chrome/chromeMock'
-import { createStorageMock } from './test-utils/chrome/storageMock'
+import { chromeMock } from './src/chrome/chromeMock'
+import { createStorageMock } from './src/chrome/storageMock'
 
 beforeEach(() => {
   createStorageMock()

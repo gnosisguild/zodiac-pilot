@@ -22,7 +22,7 @@ export default defineConfig({
   test: {
     alias,
     environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.mts', './setup-chrome-mock.ts'],
+    setupFiles: ['./vitest.setup.mts', '@zodiac/test-utils/setup-chrome-mock'],
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,
@@ -33,7 +33,7 @@ export default defineConfig({
       reportOnFailure: CI != null,
       reporter: CI ? ['json', 'json-summary'] : undefined,
       include: ['**/src/**/*.{ts,tsx}'],
-      exclude: ['./setup-chrome-mock.ts', '**/src/**/*.spec.{ts,tsx}'],
+      exclude: ['**/src/**/*.spec.{ts,tsx}'],
     },
   },
 })

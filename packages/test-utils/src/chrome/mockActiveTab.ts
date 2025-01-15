@@ -1,6 +1,6 @@
 import { invariant } from '@epic-web/invariant'
-import { createMockTab } from '../creators'
 import { chromeMock } from './chromeMock'
+import { createMockTab } from './creators'
 
 type ResultFn = (tabs: chrome.tabs.Tab[]) => void
 type GetResultFn = (tab: chrome.tabs.Tab) => void

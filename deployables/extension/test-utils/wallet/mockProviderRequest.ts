@@ -3,10 +3,10 @@ import {
   type InjectedProviderMessage,
 } from '@/messages'
 import type { JsonRpcRequest } from '@/types'
+import type { MockTab } from '@zodiac/test-utils/chrome'
 import { nanoid } from 'nanoid'
 import { vi } from 'vitest'
-import { callListeners, chromeMock } from '../chrome'
-import { createMockTab, type MockTab } from '../creators'
+import { callListeners, chromeMock, createMockTab } from '../chrome'
 
 type MockProviderRequestOptions = {
   request?: JsonRpcRequest
