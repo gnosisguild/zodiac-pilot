@@ -13,7 +13,7 @@ type CreateRoleWaypointOptions = {
   roleId?: string
 }
 
-export const createRoleWaypoint = ({
+export const createMockRoleWaypoint = ({
   moduleAddress = randomAddress(),
   version = 2,
   roleId,

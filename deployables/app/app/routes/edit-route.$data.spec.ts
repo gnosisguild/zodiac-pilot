@@ -14,7 +14,7 @@ import { ProviderType } from '@zodiac/schema'
 import {
   createEndWaypoint,
   createMockExecutionRoute,
-  createRoleWaypoint,
+  createMockRoleWaypoint,
   createStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
@@ -181,7 +181,7 @@ describe('Edit route', () => {
         ),
         waypoints: [
           createStartingWaypoint(),
-          createRoleWaypoint({ moduleAddress }),
+          createMockRoleWaypoint({ moduleAddress }),
         ],
         providerType: ProviderType.InjectedWallet,
       })
@@ -204,12 +204,7 @@ describe('Edit route', () => {
 
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress(),
-          waypoints: [
-            createStartingWaypoint(),
-            createEndWaypoint({
-              address: '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
-            }),
-          ],
+          waypoints: [createStartingWaypoint(), createEndWaypoint()],
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -248,6 +243,42 @@ describe('Edit route', () => {
 
         expect(await screen.findByText('Roles v2')).toBeInTheDocument()
       })
+
+      it('is possible to update the roles mod', async () => {
+        const selectedMod = randomAddress()
+
+        mockFetchZodiacModules.mockResolvedValue([
+          {
+            type: SupportedZodiacModuleType.ROLES_V1,
+            moduleAddress: selectedMod,
+          },
+          {
+            type: SupportedZodiacModuleType.ROLES_V2,
+            moduleAddress: randomAddress(),
+          },
+        ])
+
+        mockQueryRolesV2MultiSend.mockResolvedValue([])
+
+        const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
+          waypoints: [
+            createStartingWaypoint(),
+            createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
+            createEndWaypoint(),
+          ],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+        )
+        await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
+
+        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+      })
     })
 
     it('shows the v1 role config when the v1 route mod is used', async () => {
@@ -268,7 +299,7 @@ describe('Edit route', () => {
         ),
         waypoints: [
           createStartingWaypoint(),
-          createRoleWaypoint({ moduleAddress, roleId, version: 1 }),
+          createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
         ],
         providerType: ProviderType.InjectedWallet,
       })
@@ -297,7 +328,7 @@ describe('Edit route', () => {
         ),
         waypoints: [
           createStartingWaypoint(),
-          createRoleWaypoint({
+          createMockRoleWaypoint({
             moduleAddress,
             roleId: encodeRoleKey('TEST-KEY'),
             version: 2,
