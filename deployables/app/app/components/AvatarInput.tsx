@@ -1,4 +1,5 @@
 import { validateAddress } from '@/utils'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, StartingWaypoint } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
@@ -19,10 +20,12 @@ type Option = {
 
 export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
   const [chainId, address] = splitPrefixedAddress(value)
-  const [pendingValue, setPendingValue] = useState<string>(address)
+  const [pendingValue, setPendingValue] = useState<string>(
+    address === ZERO_ADDRESS ? '' : address,
+  )
 
   useEffect(() => {
-    setPendingValue(address)
+    setPendingValue(address === ZERO_ADDRESS ? '' : address)
   }, [address])
 
   const { load, state, data } = useFetcher<HexAddress[]>({
@@ -97,7 +100,11 @@ export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
         const sanitized = ev.target.value.trim().replace(/^[a-z]{3}:/g, '')
         setPendingValue(sanitized)
 
-        onChange(validateAddress(sanitized))
+        const validatedAddress = validateAddress(sanitized)
+
+        if (validatedAddress != null) {
+          onChange(validatedAddress)
+        }
       }}
     />
   )

@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { Chain, CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   encodeRoleKey,
   fetchZodiacModules,
@@ -192,7 +192,30 @@ describe('Edit route', () => {
         )
       })
 
-      it.todo('is possible to type in an address')
+      it('is possible to type in an address', async () => {
+        const safe = randomAddress()
+
+        mockGetSafesByOwner.mockResolvedValue({ safes: [] })
+
+        const route = createMockExecutionRoute({
+          avatar: formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+          waypoints: [createStartingWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          safe,
+        )
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          updateSafe(route, { safe }),
+        )
+      })
     })
   })
 
