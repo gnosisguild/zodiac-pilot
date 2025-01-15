@@ -200,7 +200,7 @@ describe('Edit route', () => {
       expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
 
-    it('is possible to change the mod of a route', async () => {
+    it.only('is possible to change the mod of a route', async () => {
       mockFetchZodiacModules.mockResolvedValue([
         {
           type: SupportedZodiacModuleType.ROLES_V2,

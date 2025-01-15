@@ -1,7 +1,10 @@
 export {
   ProviderType,
+  addressSchema,
   chainIdSchema,
+  contractSchema,
   executionRouteSchema,
+  isHexAddress,
 } from './routeSchema'
 export type {
   ExecutionRoute,

@@ -355,12 +355,14 @@ export const EditRoute = () => {
 
                           switch (value.moduleType) {
                             case SupportedZodiacModuleType.ROLES_V1: {
+                              const multisend = await queryRolesV1MultiSend(
+                                chainId,
+                                value.moduleAddress,
+                              )
+
                               updateRoute({
                                 ...value,
-                                multisend: await queryRolesV1MultiSend(
-                                  chainId,
-                                  value.moduleAddress,
-                                ),
+                                multisend: multisend[0],
                               })
 
                               break

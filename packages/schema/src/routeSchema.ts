@@ -14,10 +14,10 @@ export const chainIdSchema = z.union([
 
 export type HexAddress = `0x${string}`
 
-const isHexAddress = (value: string): value is HexAddress =>
+export const isHexAddress = (value: string): value is HexAddress =>
   value.startsWith('0x') && value.length > 2
 
-const addressSchema = z.custom<HexAddress>(
+export const addressSchema = z.custom<HexAddress>(
   (value) => typeof value === 'string' && isHexAddress(value),
 )
 
@@ -76,19 +76,21 @@ const isMemberConnectionSchema = z.object({
   from: prefixedAddressSchema,
 })
 
-const contractSchema = z.discriminatedUnion('type', [
+export const contractSchema = z.discriminatedUnion('type', [
   safeSchema,
   rolesSchema,
   delaySchema,
 ])
 
+const connectionSchema = z.discriminatedUnion('type', [
+  ownConnectionSchema,
+  isEnabledConnectionSchema,
+  isMemberConnectionSchema,
+])
+
 const waypointSchema = z.object({
   account: contractSchema,
-  connection: z.discriminatedUnion('type', [
-    ownConnectionSchema,
-    isEnabledConnectionSchema,
-    isMemberConnectionSchema,
-  ]),
+  connection: connectionSchema,
 })
 
 export type Waypoint = z.infer<typeof waypointSchema>

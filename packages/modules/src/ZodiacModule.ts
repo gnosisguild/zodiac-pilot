@@ -1,4 +1,6 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
+import { addressSchema } from '@zodiac/schema'
+import { z } from 'zod'
 
 export const SUPPORTED_ZODIAC_MODULES = [
   KnownContracts.DELAY,
@@ -18,6 +20,16 @@ export type ZodiacModule = {
   type: SupportedZodiacModuleType
   modules?: ZodiacModule[]
 }
+
+export const zodiacModuleSchema = z.object({
+  moduleAddress: addressSchema,
+  mastercopyAddress: addressSchema.optional(),
+  type: z.union([
+    z.literal(SupportedZodiacModuleType.DELAY),
+    z.literal(SupportedZodiacModuleType.ROLES_V1),
+    z.literal(SupportedZodiacModuleType.ROLES_V2),
+  ]),
+})
 
 export const ZODIAC_MODULE_NAMES: Record<SupportedZodiacModuleType, string> = {
   [KnownContracts.DELAY]: 'Delay',

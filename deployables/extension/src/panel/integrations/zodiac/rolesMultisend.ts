@@ -1,23 +1,13 @@
 import { getReadOnlyProvider } from '@/providers'
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { queryRolesV1MultiSend as baseQueryRolesV1MultiSend } from '@zodiac/modules'
 import type { ChainId } from 'ser-kit'
 import {
   type ChainId as RolesV2ChainId,
   chains as rolesV2Chains,
 } from 'zodiac-roles-deployments'
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export async function queryRolesV1MultiSend(
-  chainId: ChainId,
-  modAddress: string,
-) {
-  const address = await ContractFactories[KnownContracts.ROLES_V1]
-    .connect(modAddress, getReadOnlyProvider(chainId))
-    .multisend()
-
-  return address === ZERO_ADDRESS ? undefined : address.toLowerCase()
-}
+export const queryRolesV1MultiSend = (chainId: ChainId, modAddress: string) =>
+  baseQueryRolesV1MultiSend(getReadOnlyProvider(chainId), modAddress)
 
 const MULTISEND_SELECTOR = '0x8d80ff0a' // multiSend(bytes)
 const ROLES_MULTISEND_UNWRAPPER = '0x93b7fcbc63ed8a3a24b59e1c3e6649d50b7427c0'

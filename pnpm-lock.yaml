@@ -91,6 +91,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
+      '@zodiac/form-data':
+        specifier: workspace:*
+        version: link:../../packages/form-data
       '@zodiac/modules':
         specifier: workspace:*
         version: link:../../packages/modules
@@ -676,6 +679,9 @@ importers:
       '@shazow/whatsabi':
         specifier: ^0.19.0
         version: 0.19.0(@noble/hashes@1.7.0)(typescript@5.7.3)(zod@3.24.1)
+      '@zodiac/chains':
+        specifier: workspace:*
+        version: link:../chains
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
@@ -688,6 +694,9 @@ importers:
       ser-kit:
         specifier: 1.1.0
         version: 1.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+      zod:
+        specifier: ^3.23.8
+        version: 3.24.1
     devDependencies:
       '@zodiac/eslint-config':
         specifier: workspace:*
