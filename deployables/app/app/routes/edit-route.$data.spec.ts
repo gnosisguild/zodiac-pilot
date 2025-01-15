@@ -7,6 +7,7 @@ import {
   fetchZodiacModules,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
+  removeAvatar,
   SupportedZodiacModuleType,
   updateRoleId,
   updateSafe,
@@ -214,6 +215,31 @@ describe('Edit route', () => {
         expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
           expect.anything(),
           updateSafe(route, { safe }),
+        )
+      })
+
+      it('is possible to remove the avatar', async () => {
+        const safe = randomAddress()
+
+        const route = createMockExecutionRoute({
+          avatar: formatPrefixedAddress(Chain.ETH, safe),
+          waypoints: [
+            createStartingWaypoint(),
+            createEndWaypoint({ address: safe }),
+          ],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          removeAvatar(route),
         )
       })
     })

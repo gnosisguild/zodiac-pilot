@@ -7,6 +7,7 @@ export {
   MULTISEND_CALL_ONLY,
   queryRolesV2MultiSend,
 } from './queryRolesV2MultiSend'
+export { removeAvatar } from './removeAvatar'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'

@@ -18,6 +18,7 @@ import {
   getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
+  removeAvatar,
   SupportedZodiacModuleType,
   updateRoleId,
   updateRolesWaypoint,
@@ -121,6 +122,18 @@ export const clientAction = async ({
         ),
       )
     }
+    case Intent.RemoveAvatar: {
+      const route = parseRouteData(params.data)
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(removeAvatar(route)))}`,
+          url.origin,
+        ),
+      )
+    }
     default:
       return serverAction()
   }
@@ -161,6 +174,10 @@ const EditRoute = ({
               submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
                 method: 'POST',
               })
+            } else {
+              submit(formData({ intent: Intent.RemoveAvatar }), {
+                method: 'POST',
+              })
             }
           }}
         />
@@ -190,6 +207,7 @@ enum Intent {
   Save = 'Save',
   UpdateChain = 'UpdateChain',
   UpdateAvatar = 'UpdateAvatar',
+  RemoveAvatar = 'RemoveAvatar',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {
