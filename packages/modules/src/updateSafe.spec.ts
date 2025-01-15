@@ -14,6 +14,29 @@ import { getWaypoints } from './getWaypoints'
 import { updateSafe } from './updateSafe'
 
 describe('updateSafe', () => {
+  describe('Avatar', () => {
+    it('updates the avatar prop on the route', () => {
+      const currentSafe = randomAddress()
+
+      const route = createMockExecutionRoute({
+        avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
+        waypoints: [
+          createStartingWaypoint(),
+          createEndWaypoint({ address: currentSafe, chain: Chain.ETH }),
+        ],
+      })
+
+      const safe = randomAddress()
+
+      const updatedRoute = updateSafe(route, { safe })
+
+      expect(updatedRoute).toHaveProperty(
+        'avatar',
+        formatPrefixedAddress(Chain.ETH, safe),
+      )
+    })
+  })
+
   describe('Account', () => {
     it('updates an existing safe endpoint', () => {
       const currentSafe = randomAddress()

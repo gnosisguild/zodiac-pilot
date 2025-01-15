@@ -51,6 +51,7 @@ export const updateSafe = (
   if (hasSafeWaypoint(waypoints)) {
     return {
       ...route,
+      avatar: formatPrefixedAddress(chainId, safe),
       waypoints: [
         startingPoint,
         ...waypoints.map((waypoint) => {
@@ -66,6 +67,7 @@ export const updateSafe = (
 
   return {
     ...route,
+    avatar: formatPrefixedAddress(chainId, safe),
     waypoints: [startingPoint, updatedWaypoint],
   }
 }
