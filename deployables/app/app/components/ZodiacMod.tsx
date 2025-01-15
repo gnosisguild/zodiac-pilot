@@ -1,12 +1,13 @@
 import {
   decodeRoleKey,
+  encodeRoleKey,
   SupportedZodiacModuleType,
   ZODIAC_MODULE_NAMES,
   type ZodiacModule,
 } from '@zodiac/modules'
 import type { Waypoints } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
 import {
   AccountType,
@@ -147,12 +148,29 @@ export const ZodiacMod = ({
       )}
 
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V2 && (
-        <TextInput
-          label="Role Key"
-          defaultValue={getRoleKey(waypoints) ?? ''}
-          placeholder="Enter key as bytes32 hex string or in human-readable decoding"
-        />
+        <RoleKey waypoints={waypoints} />
       )}
+    </>
+  )
+}
+
+type RoleKeyProps = {
+  waypoints?: Waypoints
+}
+
+const RoleKey = ({ waypoints }: RoleKeyProps) => {
+  const [value, setValue] = useState(getRoleKey(waypoints) ?? '')
+
+  return (
+    <>
+      <input type="hidden" name="roleId" value={encodeRoleKey(value)} />
+
+      <TextInput
+        label="Role Key"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        placeholder="Enter key as bytes32 hex string or in human-readable decoding"
+      />
     </>
   )
 }
