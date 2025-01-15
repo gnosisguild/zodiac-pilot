@@ -74,7 +74,9 @@ export async function createRenderFramework<Config extends RouteConfig>(
   const stubRoutes = await Promise.all(
     routes.map(async (route) => {
       const {
+        clientLoader,
         loader,
+        clientAction,
         action,
         default: RouteComponent,
       }: RouteModule = await import(
@@ -87,7 +89,9 @@ export async function createRenderFramework<Config extends RouteConfig>(
 
       return {
         path: route.path,
+        clientLoader,
         loader,
+        clientAction,
         action,
         Component:
           Component == null
