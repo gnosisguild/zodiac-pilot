@@ -60,9 +60,7 @@ describe('Edit route', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -80,9 +78,7 @@ describe('Edit route', () => {
           }),
         })
 
-        await render('/edit-route', {
-          searchParams: { route: btoa(JSON.stringify(route)) },
-        })
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -93,9 +89,7 @@ describe('Edit route', () => {
     it('offers a button to connect', async () => {
       const route = createMockExecutionRoute()
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(
         screen.getByRole('button', { name: 'Connect wallet' }),
@@ -109,9 +103,7 @@ describe('Edit route', () => {
           providerType: ProviderType.InjectedWallet,
         })
 
-        await render('/edit-route', {
-          searchParams: { route: btoa(JSON.stringify(route)) },
-        })
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         expect(
           screen.getByRole('textbox', { name: 'Pilot Account' }),
@@ -126,9 +118,7 @@ describe('Edit route', () => {
           providerType: ProviderType.WalletConnect,
         })
 
-        await render('/edit-route', {
-          searchParams: { route: btoa(JSON.stringify(route)) },
-        })
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         expect(
           screen.getByRole('textbox', { name: 'Pilot Account' }),
@@ -145,9 +135,7 @@ describe('Edit route', () => {
         avatar: randomPrefixedAddress({ address: avatar }),
       })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(screen.getByText(avatar)).toBeInTheDocument()
     })
@@ -162,9 +150,7 @@ describe('Edit route', () => {
         providerType: ProviderType.InjectedWallet,
       })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       await userEvent.click(
         screen.getByRole('button', { name: 'View all available Safes' }),
@@ -197,14 +183,12 @@ describe('Edit route', () => {
         providerType: ProviderType.InjectedWallet,
       })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(screen.getByText('Roles v2')).toBeInTheDocument()
     })
 
-    it.only('is possible to select the v1 roles mod', async () => {
+    it('is possible to select the v1 roles mod', async () => {
       mockFetchZodiacModules.mockResolvedValue([
         {
           type: SupportedZodiacModuleType.ROLES_V1,
@@ -282,9 +266,7 @@ describe('Edit route', () => {
         providerType: ProviderType.InjectedWallet,
       })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(screen.getByRole('textbox', { name: 'Role ID' })).toHaveValue(
         roleId,
@@ -317,9 +299,7 @@ describe('Edit route', () => {
         providerType: ProviderType.InjectedWallet,
       })
 
-      await render('/edit-route', {
-        searchParams: { route: btoa(JSON.stringify(route)) },
-      })
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(screen.getByRole('textbox', { name: 'Role Key' })).toHaveValue(
         'TEST-KEY',
