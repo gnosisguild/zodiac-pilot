@@ -1,5 +1,5 @@
 import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import {
@@ -200,6 +200,28 @@ describe('Edit route', () => {
       await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
       expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+    })
+
+    it('reloads the modules when the chain changes', async () => {
+      mockFetchZodiacModules.mockResolvedValue([])
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
+        providerType: ProviderType.InjectedWallet,
+        waypoints: [createStartingWaypoint(), createEndWaypoint()],
+      })
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
+
+      await waitFor(() => {
+        expect(mockFetchZodiacModules).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({ chainId: Chain.GNO }),
+        )
+      })
     })
 
     describe('V1', () => {
