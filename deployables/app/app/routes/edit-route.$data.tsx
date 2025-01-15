@@ -8,13 +8,19 @@ import { jsonRpcProvider } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { formData, getString } from '@zodiac/form-data'
 import {
+  getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   SupportedZodiacModuleType,
   updateRolesWaypoint,
   zodiacModuleSchema,
+  type ZodiacModule,
 } from '@zodiac/modules'
-import { executionRouteSchema, type Waypoints } from '@zodiac/schema'
+import {
+  executionRouteSchema,
+  type ExecutionRoute,
+  type Waypoints,
+} from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
 import { useSubmit } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
@@ -40,59 +46,17 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
 
   const module = zodiacModuleSchema.parse(JSON.parse(getString(data, 'module')))
 
-  switch (module.type) {
-    case SupportedZodiacModuleType.ROLES_V1: {
-      const [chainId] = splitPrefixedAddress(route.avatar)
+  const updatedRoute = updateRolesWaypoint(route, {
+    moduleAddress: module.moduleAddress,
+    version: getRolesVersion(module.type),
+    multisend: await getMultisend(route, module),
+  })
 
-      invariantResponse(
-        chainId != null,
-        `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
-      )
+  const url = new URL(request.url)
 
-      const updatedRoute = updateRolesWaypoint(route, {
-        moduleAddress: module.moduleAddress,
-        version: 1,
-        multisend: await queryRolesV1MultiSend(
-          jsonRpcProvider(chainId),
-          module.moduleAddress,
-        ),
-      })
-
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
-          url.origin,
-        ),
-      )
-    }
-    case SupportedZodiacModuleType.ROLES_V2: {
-      const [chainId] = splitPrefixedAddress(route.avatar)
-
-      invariantResponse(
-        chainId != null,
-        `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
-      )
-
-      const updatedRoute = updateRolesWaypoint(route, {
-        moduleAddress: module.moduleAddress,
-        version: 2,
-        multisend: await queryRolesV2MultiSend(chainId, module.moduleAddress),
-      })
-
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
-          url.origin,
-        ),
-      )
-    }
-  }
-
-  return null
+  return Response.redirect(
+    new URL(`/edit-route/${btoa(JSON.stringify(updatedRoute))}`, url.origin),
+  )
 }
 
 const EditRoute = ({
@@ -158,6 +122,27 @@ const parseRouteData = (routeData: string) => {
   } catch (error) {
     console.error('Error parsing the route from the URL', { error })
 
-    throw new Response(null, { status: 400 })
+    throw new Response(JSON.stringify(error), { status: 400 })
   }
+}
+
+const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
+  const [chainId] = splitPrefixedAddress(route.avatar)
+
+  invariantResponse(
+    chainId != null,
+    `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
+  )
+
+  switch (module.type) {
+    case SupportedZodiacModuleType.ROLES_V1:
+      return queryRolesV1MultiSend(
+        jsonRpcProvider(chainId),
+        module.moduleAddress,
+      )
+    case SupportedZodiacModuleType.ROLES_V2:
+      return queryRolesV2MultiSend(chainId, module.moduleAddress)
+  }
+
+  throw new Error(`Cannot get multisend for module type "${module.type}"`)
 }

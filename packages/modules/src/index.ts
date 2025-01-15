@@ -1,4 +1,5 @@
 export { fetchZodiacModules } from './fetchZodiacModules'
+export { getRolesVersion } from './getRolesVersion'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
   MULTISEND,
