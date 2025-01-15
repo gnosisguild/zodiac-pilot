@@ -94,7 +94,7 @@ const EditRoute = ({
     <main className="mx-auto flex max-w-3xl flex-col gap-4">
       <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
 
-      <Form method="POST">
+      <Form method="POST" className="flex flex-col gap-4">
         <TextInput label="Label" defaultValue={label} />
         <ChainSelect value={chainId} onChange={() => {}} />
         <ConnectWallet
@@ -119,9 +119,11 @@ const EditRoute = ({
           }}
         />
 
-        <PrimaryButton submit intent="save">
-          Save
-        </PrimaryButton>
+        <div className="mt-8 flex justify-end">
+          <PrimaryButton submit intent="save">
+            Save
+          </PrimaryButton>
+        </div>
       </Form>
     </main>
   )
