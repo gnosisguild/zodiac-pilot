@@ -146,7 +146,7 @@ const parseRouteData = (routeData: string) => {
 
   invariantResponse(routeData != null, 'Missing "route" parameter')
 
-  const decodedData = Buffer.from(routeData, 'base64')
+  const decodedData = atob(routeData)
 
   try {
     const rawJson = JSON.parse(decodedData.toString())
