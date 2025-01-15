@@ -30,7 +30,11 @@ import {
 } from '@zodiac/schema'
 import { PrimaryButton, TextInput } from '@zodiac/ui'
 import { Form, useSubmit } from 'react-router'
-import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
+import {
+  formatPrefixedAddress,
+  splitPrefixedAddress,
+  type ChainId,
+} from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -93,18 +97,11 @@ export const clientAction = async ({
       const route = parseRouteData(params.data)
       const chainId = verifyChainId(getInt(data, 'chainId'))
 
-      const [, address] = splitPrefixedAddress(route.avatar)
-
-      const updatedRoute = {
-        ...route,
-        avatar: formatPrefixedAddress(chainId, address),
-      }
-
       const url = new URL(request.url)
 
       return Response.redirect(
         new URL(
-          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
+          `/edit-route/${btoa(JSON.stringify(updateChainId(route, chainId)))}`,
           url.origin,
         ),
       )
@@ -220,4 +217,16 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
   }
 
   throw new Error(`Cannot get multisend for module type "${module.type}"`)
+}
+
+const updateChainId = (
+  route: ExecutionRoute,
+  chainId: ChainId,
+): ExecutionRoute => {
+  const [, address] = splitPrefixedAddress(route.avatar)
+
+  return {
+    ...route,
+    avatar: formatPrefixedAddress(chainId, address),
+  }
 }
