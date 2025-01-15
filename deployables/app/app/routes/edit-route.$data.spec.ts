@@ -403,6 +403,40 @@ describe('Edit route', () => {
             'TEST-KEY',
           )
         })
+
+        it('is possible to update the role key', async () => {
+          const moduleAddress = randomAddress()
+
+          mockFetchZodiacModules.mockResolvedValue([
+            {
+              type: SupportedZodiacModuleType.ROLES_V2,
+              moduleAddress,
+            },
+          ])
+
+          const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
+            providerType: ProviderType.InjectedWallet,
+            waypoints: [
+              createStartingWaypoint(),
+              createMockRoleWaypoint({ moduleAddress, version: 2 }),
+            ],
+          })
+
+          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+          await userEvent.type(
+            screen.getByRole('textbox', { name: 'Role Key' }),
+            'MANAGER',
+          )
+
+          await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+            expect.anything(),
+            updateRoleId(route, encodeRoleKey('MANAGER')),
+          )
+        })
       })
     })
   })
