@@ -158,9 +158,6 @@ importers:
       '@types/chrome':
         specifier: ^0.0.296
         version: 0.0.296
-      '@types/node':
-        specifier: ^22.0.0
-        version: 22.10.6
       '@types/react':
         specifier: ^19.0.1
         version: 19.0.7
@@ -794,9 +791,6 @@ importers:
       '@types/chrome':
         specifier: ^0.0.296
         version: 0.0.296
-      '@types/node':
-        specifier: ^22.10.5
-        version: 22.10.6
       '@types/react':
         specifier: ^19.0.3
         version: 19.0.7

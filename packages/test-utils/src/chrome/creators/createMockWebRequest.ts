@@ -19,9 +19,11 @@ export const createMockWebRequest = ({
   url: 'https://any-other-url.com',
 
   requestBody: {
-    // @ts-expect-error The type is not 100% matching but should be fine
-    // for a test utility
-    raw: [{ bytes: encoder.encode(JSON.stringify(requestBody)) }],
+    raw: [
+      {
+        bytes: Buffer.from(encoder.encode(JSON.stringify(requestBody))).buffer,
+      },
+    ],
   },
 
   ...request,
