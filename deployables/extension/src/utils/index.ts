@@ -1,10 +1,12 @@
+export {
+  formData,
+  getInt,
+  getOptionalString,
+  getString,
+} from '@zodiac/form-data'
 export * from './addressValidation'
 export * from './decodeError'
-export { formData } from './formData'
 export { getActiveTab, useActiveTab } from './getActiveTab'
-export { getInt } from './getInt'
-export { getOptionalString } from './getOptionalString'
-export { getString } from './getString'
 export { injectScript } from './injectScript'
 export { isValidTab } from './isValidTab'
 export { reloadActiveTab } from './reloadActiveTab'

@@ -6,8 +6,8 @@ import {
 } from '@/execution-routes'
 import { useInjectedWallet } from '@/providers'
 import {
+  createMockRoleWaypoint,
   createMockRoute,
-  createRoleWaypoint,
   createStartingWaypoint,
   createTransaction,
   MockProvider,
@@ -211,7 +211,7 @@ describe('Edit Zodiac route', () => {
         avatar: randomPrefixedAddress(),
         waypoints: [
           createStartingWaypoint(),
-          createRoleWaypoint({ moduleAddress }),
+          createMockRoleWaypoint({ moduleAddress }),
         ],
       })
 
@@ -219,7 +219,7 @@ describe('Edit Zodiac route', () => {
         { moduleAddress, type: SupportedZodiacModuleType.ROLES_V2 },
       ])
 
-      mockQueryRolesV2MultiSend.mockResolvedValue({})
+      mockQueryRolesV2MultiSend.mockResolvedValue([])
 
       await render('/routes/edit/route-id', [
         {
@@ -248,7 +248,7 @@ describe('Edit Zodiac route', () => {
         { moduleAddress, type: SupportedZodiacModuleType.ROLES_V2 },
       ])
 
-      mockQueryRolesV2MultiSend.mockResolvedValue({})
+      mockQueryRolesV2MultiSend.mockResolvedValue([])
 
       await render('/routes/edit/route-id', [
         {

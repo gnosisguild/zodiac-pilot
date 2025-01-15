@@ -1,8 +1,7 @@
-import { validateAddress } from '@/utils'
+import { jsonRpcProvider, validateAddress } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { RPC, verifyChainId } from '@zodiac/chains'
+import { verifyChainId } from '@zodiac/chains'
 import { fetchZodiacModules } from '@zodiac/modules'
-import { JsonRpcProvider } from 'ethers'
 import type { Route } from './+types/modules'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -14,15 +13,10 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   invariantResponse(validatedAddress != null, `Invalid address: ${avatar}`)
 
   try {
-    return await fetchZodiacModules(
-      new JsonRpcProvider(RPC[verifiedChainId], verifiedChainId, {
-        staticNetwork: true,
-      }),
-      {
-        safeOrModifierAddress: validatedAddress,
-        chainId: verifiedChainId,
-      },
-    )
+    return await fetchZodiacModules(jsonRpcProvider(verifiedChainId), {
+      safeOrModifierAddress: validatedAddress,
+      chainId: verifiedChainId,
+    })
   } catch (e) {
     console.log(e)
     return []

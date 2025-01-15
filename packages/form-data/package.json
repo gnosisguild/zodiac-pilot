@@ -1,5 +1,5 @@
 {
-  "name": "@zodiac/modules",
+  "name": "@zodiac/form-data",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
@@ -16,16 +16,7 @@
     }
   },
   "dependencies": {
-    "@epic-web/invariant": "^1.0.0",
-    "@gnosis.pm/zodiac": "^4.0.3",
-    "@shazow/whatsabi": "^0.19.0",
-    "@zodiac/chains": "workspace:*",
-    "@zodiac/schema": "workspace:*",
-    "ethers": "6.13.5",
-    "evm-proxy-detection": "^2.0.1",
-    "ser-kit": "1.1.0",
-    "zod": "^3.23.8",
-    "zodiac-roles-deployments": "^2.2.2"
+    "@epic-web/invariant": "^1.0.0"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",

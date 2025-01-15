@@ -1,6 +1,6 @@
 export {
+  createMockRoleWaypoint,
   createMockExecutionRoute as createMockRoute,
-  createRoleWaypoint,
   createStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,

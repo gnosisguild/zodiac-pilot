@@ -1,5 +1,6 @@
+export { createEndWaypoint } from './createEndWaypoint'
 export { createEoaAccount } from './createEoaAccount'
 export { createMockExecutionRoute } from './createMockExecutionRoute'
-export { createRoleWaypoint } from './createRoleWaypoint'
+export { createMockRoleWaypoint } from './createMockRoleWaypoint'
 export { createStartingWaypoint } from './createStartingWaypoint'
 export { randomAddress, randomHex, randomPrefixedAddress } from './randomHex'

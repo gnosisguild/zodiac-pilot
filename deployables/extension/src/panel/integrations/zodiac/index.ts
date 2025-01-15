@@ -1,9 +1,9 @@
-export { SupportedZodiacModuleType } from '@zodiac/modules'
-export type { ZodiacModule } from '@zodiac/modules'
-export { fetchZodiacModules } from './fetchZodiacModules'
 export {
   MULTISEND,
   MULTISEND_CALL_ONLY,
-  queryRolesV1MultiSend,
+  SupportedZodiacModuleType,
   queryRolesV2MultiSend,
-} from './rolesMultisend'
+} from '@zodiac/modules'
+export type { ZodiacModule } from '@zodiac/modules'
+export { fetchZodiacModules } from './fetchZodiacModules'
+export { queryRolesV1MultiSend } from './rolesMultisend'

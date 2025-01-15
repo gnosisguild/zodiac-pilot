@@ -54,7 +54,10 @@ const Value = ({ label, address, children }: ValueProps) => (
 
     <div className="flex items-center gap-2 overflow-hidden">
       <span className="whitespace-nowrap font-semibold">{label}</span>
-      <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono opacity-75">
+      <code
+        aria-hidden
+        className="overflow-hidden text-ellipsis whitespace-nowrap font-mono opacity-75"
+      >
         {children}
       </code>
     </div>

@@ -73,7 +73,11 @@ export async function createRenderFramework<Config extends RouteConfig>(
 
   const stubRoutes = await Promise.all(
     routes.map(async (route) => {
-      const { loader, default: RouteComponent }: RouteModule = await import(
+      const {
+        loader,
+        action,
+        default: RouteComponent,
+      }: RouteModule = await import(
         new URL(route.file, `${basePath}/`).pathname
       )
 
@@ -84,6 +88,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
       return {
         path: route.path,
         loader,
+        action,
         Component:
           Component == null
             ? undefined
@@ -102,7 +107,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
     Paths extends Awaited<RouteConfig>[number]['path'],
   >(
     currentPath: NonNullable<Paths>,
-    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions,
+    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
   ): Promise<RenderResult> {
     const Stub = createRoutesStub([
       {
