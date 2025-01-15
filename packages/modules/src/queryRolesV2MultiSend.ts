@@ -1,5 +1,6 @@
 import type { ChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
+import { z } from 'zod'
 import {
   type ChainId as RolesV2ChainId,
   chains as rolesV2Chains,
@@ -22,6 +23,20 @@ export const MULTISEND_CALL_ONLY = [
   '0xa1dabef33b3b82c7814b6d82a79e50f4ac44102b',
   '0xf220d3b4dfb23c4ade8c88e526c1353abacbc38f',
 ]
+
+const multisendAdaptersSchema = z.object({
+  error: z.string().optional(),
+  errors: z.string().array().optional(),
+  data: z
+    .object({
+      unwrapAdapters: z
+        .object({
+          targetAddress: z.string(),
+        })
+        .array(),
+    })
+    .optional(),
+})
 
 export async function queryRolesV2MultiSend(
   chainId: ChainId,
@@ -48,10 +63,12 @@ export async function queryRolesV2MultiSend(
       operationName: 'MultiSendAdapters',
     }),
   })
-  const { data, error, errors } = await res.json()
+  const { data, error, errors } = multisendAdaptersSchema.parse(
+    await res.json(),
+  )
 
   if (error || (errors && errors[0])) {
-    throw new Error(error || errors[0])
+    throw new Error(error || (errors && errors[0]))
   }
 
   if (!data || !data.unwrapAdapters) {
