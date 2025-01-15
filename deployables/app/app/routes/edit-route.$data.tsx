@@ -21,7 +21,7 @@ import {
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
-import { TextInput } from '@zodiac/ui'
+import { PrimaryButton, TextInput } from '@zodiac/ui'
 import { useSubmit } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
@@ -59,6 +59,10 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   )
 }
 
+export const clientAction = ({ serverAction }: Route.ClientActionArgs) => {
+  return serverAction()
+}
+
 const EditRoute = ({
   loaderData: { chainId, label, avatar, providerType, waypoints },
 }: Route.ComponentProps) => {
@@ -92,6 +96,8 @@ const EditRoute = ({
           })
         }}
       />
+
+      <PrimaryButton>Save</PrimaryButton>
     </main>
   )
 }

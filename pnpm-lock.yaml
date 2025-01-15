@@ -155,6 +155,9 @@ importers:
       '@testing-library/user-event':
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.0)
+      '@types/chrome':
+        specifier: ^0.0.296
+        version: 0.0.296
       '@types/node':
         specifier: ^22.0.0
         version: 22.10.6
