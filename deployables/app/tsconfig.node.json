@@ -4,7 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["chrome"],
     "lib": ["ES2022"],
     "target": "ES2022",
     "module": "ES2022",

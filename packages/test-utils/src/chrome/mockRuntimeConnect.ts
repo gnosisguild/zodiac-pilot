@@ -1,7 +1,7 @@
 import type { RefObject } from 'react'
 import type { Runtime } from 'vitest-chrome/types'
-import { createMockPort } from '../creators'
 import { chromeMock } from './chromeMock'
+import { createMockPort } from './creators'
 
 type PortCreateFn = () => Partial<Runtime.Port>
 

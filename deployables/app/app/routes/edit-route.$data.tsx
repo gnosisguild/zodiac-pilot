@@ -6,12 +6,13 @@ import {
 } from '@/components'
 import { jsonRpcProvider } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { formData, getString } from '@zodiac/form-data'
+import { formData, getOptionalString, getString } from '@zodiac/form-data'
 import {
   getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   SupportedZodiacModuleType,
+  updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
   type ZodiacModule,
@@ -21,8 +22,8 @@ import {
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
-import { TextInput } from '@zodiac/ui'
-import { useSubmit } from 'react-router'
+import { PrimaryButton, TextInput } from '@zodiac/ui'
+import { Form, useSubmit } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
@@ -59,6 +60,30 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
   )
 }
 
+export const clientAction = async ({
+  serverAction,
+  request,
+  params,
+}: Route.ClientActionArgs) => {
+  const data = await request.formData()
+
+  const intent = getOptionalString(data, 'intent')
+
+  if (intent === 'save') {
+    let route = parseRouteData(params.data)
+
+    const roleId = getOptionalString(data, 'roleId')
+
+    if (roleId != null) {
+      route = updateRoleId(route, roleId)
+    }
+
+    chrome.runtime.sendMessage('', route)
+  } else {
+    return serverAction()
+  }
+}
+
 const EditRoute = ({
   loaderData: { chainId, label, avatar, providerType, waypoints },
 }: Route.ComponentProps) => {
@@ -69,29 +94,37 @@ const EditRoute = ({
     <main className="mx-auto flex max-w-3xl flex-col gap-4">
       <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
 
-      <TextInput label="Label" defaultValue={label} />
-      <ChainSelect value={chainId} onChange={() => {}} />
-      <ConnectWallet
-        chainId={chainId}
-        pilotAddress={getPilotAddress(waypoints)}
-        providerType={providerType}
-        onConnect={() => {}}
-        onDisconnect={() => {}}
-      />
-      <AvatarInput
-        value={avatar}
-        startingWaypoint={startingWaypoint}
-        onChange={() => {}}
-      />
-      <ZodiacMod
-        avatar={avatar}
-        waypoints={waypoints}
-        onSelect={(module) => {
-          submit(formData({ module: JSON.stringify(module) }), {
-            method: 'POST',
-          })
-        }}
-      />
+      <Form method="POST" className="flex flex-col gap-4">
+        <TextInput label="Label" defaultValue={label} />
+        <ChainSelect value={chainId} onChange={() => {}} />
+        <ConnectWallet
+          chainId={chainId}
+          pilotAddress={getPilotAddress(waypoints)}
+          providerType={providerType}
+          onConnect={() => {}}
+          onDisconnect={() => {}}
+        />
+        <AvatarInput
+          value={avatar}
+          startingWaypoint={startingWaypoint}
+          onChange={() => {}}
+        />
+        <ZodiacMod
+          avatar={avatar}
+          waypoints={waypoints}
+          onSelect={(module) => {
+            submit(formData({ module: JSON.stringify(module) }), {
+              method: 'POST',
+            })
+          }}
+        />
+
+        <div className="mt-8 flex justify-end">
+          <PrimaryButton submit intent="save">
+            Save
+          </PrimaryButton>
+        </div>
+      </Form>
     </main>
   )
 }
@@ -113,7 +146,7 @@ const parseRouteData = (routeData: string) => {
 
   invariantResponse(routeData != null, 'Missing "route" parameter')
 
-  const decodedData = Buffer.from(routeData, 'base64')
+  const decodedData = atob(routeData)
 
   try {
     const rawJson = JSON.parse(decodedData.toString())

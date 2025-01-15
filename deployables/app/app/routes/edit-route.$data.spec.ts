@@ -8,6 +8,7 @@ import {
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   SupportedZodiacModuleType,
+  updateRoleId,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
@@ -19,6 +20,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
+import { chromeMock } from '@zodiac/test-utils/chrome'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -264,21 +266,54 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
-            avatar: formatPrefixedAddress(
-              Chain.ETH,
-              '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
-            ),
+            avatar: randomPrefixedAddress(),
+            providerType: ProviderType.InjectedWallet,
             waypoints: [
               createStartingWaypoint(),
               createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
             ],
-            providerType: ProviderType.InjectedWallet,
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
           expect(screen.getByRole('textbox', { name: 'Role ID' })).toHaveValue(
             roleId,
+          )
+        })
+
+        it('is possible to update the role ID', async () => {
+          const moduleAddress = randomAddress()
+
+          mockFetchZodiacModules.mockResolvedValue([
+            {
+              type: SupportedZodiacModuleType.ROLES_V1,
+              moduleAddress,
+            },
+          ])
+
+          const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
+            providerType: ProviderType.InjectedWallet,
+            waypoints: [
+              createStartingWaypoint(),
+              createMockRoleWaypoint({ moduleAddress, version: 1 }),
+            ],
+          })
+
+          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+          const roleId = randomAddress()
+
+          await userEvent.type(
+            screen.getByRole('textbox', { name: 'Role ID' }),
+            roleId,
+          )
+
+          await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+            expect.anything(),
+            updateRoleId(route, roleId),
           )
         })
       })

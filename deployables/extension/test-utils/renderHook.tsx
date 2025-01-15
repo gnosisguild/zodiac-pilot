@@ -4,8 +4,12 @@ import {
   type RenderHookOptions,
 } from '@zodiac/test-utils'
 import type { VitestChromeNamespace } from 'vitest-chrome/types'
-import { mockActiveTab, mockRuntimeConnect, mockTabConnect } from './chrome'
-import { createMockPort } from './creators'
+import {
+  createMockPort,
+  mockActiveTab,
+  mockRuntimeConnect,
+  mockTabConnect,
+} from './chrome'
 import { mockRoutes } from './executionRoutes'
 
 type Fn<Result, Props> = (props: Props) => Result

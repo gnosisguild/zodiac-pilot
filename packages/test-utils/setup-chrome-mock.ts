@@ -1,6 +1,6 @@
 import { afterEach, beforeEach } from 'vitest'
-import { chromeMock } from './test-utils/chrome/chromeMock'
-import { createStorageMock } from './test-utils/chrome/storageMock'
+import { chromeMock } from './src/chrome/chromeMock'
+import { createStorageMock } from './src/chrome/storageMock'
 
 beforeEach(() => {
   createStorageMock()
@@ -16,6 +16,7 @@ const propertyDenyList = ['prototype', 'mock']
 
 const clearAllListeners = (parent = chromeMock) => {
   Object.getOwnPropertyNames(parent).forEach((propertyName) => {
+    // @ts-expect-error we're a bit generic here but that's fine
     const property = parent[propertyName]
 
     if (propertyDenyList.includes(propertyName)) {
