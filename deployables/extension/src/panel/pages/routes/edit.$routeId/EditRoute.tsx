@@ -369,12 +369,16 @@ export const EditRoute = () => {
                             }
 
                             case SupportedZodiacModuleType.ROLES_V2: {
-                              updateRoute({
-                                ...value,
-                                ...(await queryRolesV2MultiSend(
+                              const [multisend, multisendCallOnly] =
+                                await queryRolesV2MultiSend(
                                   chainId,
                                   value.moduleAddress,
-                                )),
+                                )
+
+                              updateRoute({
+                                ...value,
+                                multisend,
+                                multisendCallOnly,
                               })
 
                               break
