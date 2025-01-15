@@ -202,6 +202,26 @@ describe('Edit route', () => {
       expect(await screen.findByText('Roles v2')).toBeInTheDocument()
     })
 
+    it('reloads the modules when the chain changes', async () => {
+      mockFetchZodiacModules.mockResolvedValue([])
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
+        providerType: ProviderType.InjectedWallet,
+        waypoints: [createStartingWaypoint(), createEndWaypoint()],
+      })
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
+
+      expect(mockFetchZodiacModules).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ chainId: Chain.GNO }),
+      )
+    })
+
     describe('V1', () => {
       it('shows the when the v1 role mod is selected', async () => {
         const moduleAddress = randomAddress()

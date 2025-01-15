@@ -6,7 +6,13 @@ import {
 } from '@/components'
 import { jsonRpcProvider } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { formData, getOptionalString, getString } from '@zodiac/form-data'
+import { verifyChainId } from '@zodiac/chains'
+import {
+  formData,
+  getInt,
+  getOptionalString,
+  getString,
+} from '@zodiac/form-data'
 import {
   getRolesVersion,
   queryRolesV1MultiSend,
@@ -24,7 +30,7 @@ import {
 } from '@zodiac/schema'
 import { PrimaryButton, TextInput } from '@zodiac/ui'
 import { Form, useSubmit } from 'react-router'
-import { splitPrefixedAddress } from 'ser-kit'
+import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -69,18 +75,42 @@ export const clientAction = async ({
 
   const intent = getOptionalString(data, 'intent')
 
-  if (intent === 'save') {
-    let route = parseRouteData(params.data)
+  switch (intent) {
+    case Intent.Save: {
+      let route = parseRouteData(params.data)
 
-    const roleId = getOptionalString(data, 'roleId')
+      const roleId = getOptionalString(data, 'roleId')
 
-    if (roleId != null) {
-      route = updateRoleId(route, roleId)
+      if (roleId != null) {
+        route = updateRoleId(route, roleId)
+      }
+
+      chrome.runtime.sendMessage('', route)
+
+      return null
     }
+    case Intent.UpdateChain: {
+      const route = parseRouteData(params.data)
+      const chainId = verifyChainId(getInt(data, 'chainId'))
 
-    chrome.runtime.sendMessage('', route)
-  } else {
-    return serverAction()
+      const [, address] = splitPrefixedAddress(route.avatar)
+
+      const updatedRoute = {
+        ...route,
+        avatar: formatPrefixedAddress(chainId, address),
+      }
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
+          url.origin,
+        ),
+      )
+    }
+    default:
+      return serverAction()
   }
 }
 
@@ -96,7 +126,14 @@ const EditRoute = ({
 
       <Form method="POST" className="flex flex-col gap-4">
         <TextInput label="Label" defaultValue={label} />
-        <ChainSelect value={chainId} onChange={() => {}} />
+        <ChainSelect
+          value={chainId}
+          onChange={(chainId) => {
+            submit(formData({ intent: Intent.UpdateChain, chainId }), {
+              method: 'POST',
+            })
+          }}
+        />
         <ConnectWallet
           chainId={chainId}
           pilotAddress={getPilotAddress(waypoints)}
@@ -120,7 +157,7 @@ const EditRoute = ({
         />
 
         <div className="mt-8 flex justify-end">
-          <PrimaryButton submit intent="save">
+          <PrimaryButton submit intent={Intent.Save}>
             Save
           </PrimaryButton>
         </div>
@@ -130,6 +167,11 @@ const EditRoute = ({
 }
 
 export default EditRoute
+
+enum Intent {
+  Save = 'Save',
+  UpdateChain = 'UpdateChain',
+}
 
 const getPilotAddress = (waypoints?: Waypoints) => {
   if (waypoints == null) {
