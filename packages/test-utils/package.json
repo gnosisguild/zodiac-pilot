@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.1",
+    "@types/chrome": "^0.0.296",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.3",
     "@types/react-dom": "^19.0.2",
