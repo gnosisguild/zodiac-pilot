@@ -107,7 +107,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
     Paths extends Awaited<RouteConfig>[number]['path'],
   >(
     currentPath: NonNullable<Paths>,
-    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions,
+    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
   ): Promise<RenderResult> {
     const Stub = createRoutesStub([
       {

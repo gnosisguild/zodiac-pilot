@@ -82,6 +82,8 @@ export const contractSchema = z.discriminatedUnion('type', [
   delaySchema,
 ])
 
+export type Contract = z.infer<typeof contractSchema>
+
 const connectionSchema = z.discriminatedUnion('type', [
   ownConnectionSchema,
   isEnabledConnectionSchema,

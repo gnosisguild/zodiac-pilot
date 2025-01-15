@@ -7,6 +7,7 @@ export {
   isHexAddress,
 } from './routeSchema'
 export type {
+  Contract,
   ExecutionRoute,
   HexAddress,
   StartingWaypoint,

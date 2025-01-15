@@ -8,6 +8,7 @@ import { jsonRpcProvider } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { formData, getString } from '@zodiac/form-data'
 import {
+  queryRolesV1MultiSend,
   SupportedZodiacModuleType,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -16,10 +17,10 @@ import { executionRouteSchema, type Waypoints } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
 import { useSubmit } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
-import type { Route } from './+types/edit-route'
+import type { Route } from './+types/edit-route.$data'
 
-export const loader = ({ request }: Route.LoaderArgs) => {
-  const route = getRouteFromRequest(request)
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const route = parseRouteData(params.data)
 
   const [chainId] = splitPrefixedAddress(route.avatar)
 
@@ -32,8 +33,8 @@ export const loader = ({ request }: Route.LoaderArgs) => {
   }
 }
 
-export const action = async ({ request }: Route.ActionArgs) => {
-  const route = getRouteFromRequest(request)
+export const action = async ({ request, params }: Route.ActionArgs) => {
+  const route = parseRouteData(params.data)
   const data = await request.formData()
 
   const module = zodiacModuleSchema.parse(JSON.parse(getString(data, 'module')))
@@ -47,23 +48,26 @@ export const action = async ({ request }: Route.ActionArgs) => {
         `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
       )
 
-      const updatedRoute = updateRolesWaypoint(
-        jsonRpcProvider(chainId),
-        route,
-        module,
-      )
+      const updatedRoute = await updateRolesWaypoint(route, {
+        ...module,
+        multisend: await queryRolesV1MultiSend(
+          jsonRpcProvider(chainId),
+          module.moduleAddress,
+        ),
+      })
 
       const url = new URL(request.url)
 
-      url.searchParams.set('route', btoa(JSON.stringify(updatedRoute)))
-
-      return Response.redirect(`${url.pathname}?${url.search}`)
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(updatedRoute))}`,
+          url.origin,
+        ),
+      )
     }
   }
 
   return null
-  // TODO: intent to update role, then encode into current route and redirect
-  // so that new param becomes active and the view refreshes with proper values
 }
 
 const EditRoute = ({
@@ -115,11 +119,7 @@ const getPilotAddress = (waypoints?: Waypoints) => {
   return startingPoint.account.address
 }
 
-const getRouteFromRequest = (request: Request) => {
-  const url = new URL(request.url)
-
-  const routeData = url.searchParams.get('route')
-
+const parseRouteData = (routeData: string) => {
   console.log({ routeData })
 
   invariantResponse(routeData != null, 'Missing "route" parameter')

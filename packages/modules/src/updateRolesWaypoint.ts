@@ -1,20 +1,18 @@
 import { invariant } from '@epic-web/invariant'
 import type { ExecutionRoute, HexAddress, Waypoints } from '@zodiac/schema'
-import type { JsonRpcProvider } from 'ethers'
 import { AccountType, splitPrefixedAddress } from 'ser-kit'
 import { createRolesWaypoint } from './createRolesWaypoint'
-import { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 import { SupportedZodiacModuleType } from './ZodiacModule'
 
 type RoleUpdatePayload = {
   moduleAddress: HexAddress
+  multisend: HexAddress[]
   type: SupportedZodiacModuleType
 }
 
 export const updateRolesWaypoint = async (
-  provider: JsonRpcProvider,
   route: ExecutionRoute,
-  { moduleAddress, type }: RoleUpdatePayload,
+  { moduleAddress, type, multisend }: RoleUpdatePayload,
 ) => {
   switch (type) {
     case SupportedZodiacModuleType.ROLES_V1: {
@@ -34,8 +32,6 @@ export const updateRolesWaypoint = async (
         route.waypoints.length >= 2,
         'The route needs at least a start and an end waypoint to define a mod in between.',
       )
-
-      const multisend = await queryRolesV1MultiSend(provider, moduleAddress)
 
       const [startingPoint] = route.waypoints
 

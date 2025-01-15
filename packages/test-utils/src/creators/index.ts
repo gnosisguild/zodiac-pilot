@@ -1,3 +1,4 @@
+export { createEndWaypoint } from './createEndWaypoint'
 export { createEoaAccount } from './createEoaAccount'
 export { createMockExecutionRoute } from './createMockExecutionRoute'
 export { createRoleWaypoint } from './createRoleWaypoint'

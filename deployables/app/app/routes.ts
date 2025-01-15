@@ -7,7 +7,7 @@ import {
 
 export default [
   index('routes/index.tsx'),
-  route('/edit-route', 'routes/edit-route.tsx'),
+  route('/edit-route/:data', 'routes/edit-route.$data.tsx'),
   ...prefix('/:account/:chainId', [
     route('available-safes', 'routes/$account.$chainId/available-safes.ts'),
     route('delegates', 'routes/$account.$chainId/delegates.ts'),
