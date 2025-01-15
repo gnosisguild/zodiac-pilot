@@ -9,6 +9,7 @@ import {
   queryRolesV2MultiSend,
   SupportedZodiacModuleType,
   updateRoleId,
+  updateSafe,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
@@ -162,6 +163,36 @@ describe('Edit route', () => {
       )
 
       expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
+    })
+
+    describe('Edit', () => {
+      it('is possible to select a safe from the list', async () => {
+        const safe = randomAddress()
+
+        mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
+
+        const route = createMockExecutionRoute({
+          waypoints: [createStartingWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'View all available Safes' }),
+        )
+
+        await userEvent.click(screen.getByRole('option', { name: safe }))
+
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          updateSafe(route, { safe }),
+        )
+      })
+
+      it.todo('is possible to type in an address')
     })
   })
 

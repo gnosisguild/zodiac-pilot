@@ -9,6 +9,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import {
   formData,
+  getHexString,
   getInt,
   getOptionalString,
   getString,
@@ -20,6 +21,7 @@ import {
   SupportedZodiacModuleType,
   updateRoleId,
   updateRolesWaypoint,
+  updateSafe,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
@@ -106,6 +108,19 @@ export const clientAction = async ({
         ),
       )
     }
+    case Intent.UpdateAvatar: {
+      const route = parseRouteData(params.data)
+      const avatar = getHexString(data, 'avatar')
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(updateSafe(route, { safe: avatar })))}`,
+          url.origin,
+        ),
+      )
+    }
     default:
       return serverAction()
   }
@@ -141,7 +156,13 @@ const EditRoute = ({
         <AvatarInput
           value={avatar}
           startingWaypoint={startingWaypoint}
-          onChange={() => {}}
+          onChange={(avatar) => {
+            if (avatar != null) {
+              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+                method: 'POST',
+              })
+            }
+          }}
         />
         <ZodiacMod
           avatar={avatar}
@@ -168,6 +189,7 @@ export default EditRoute
 enum Intent {
   Save = 'Save',
   UpdateChain = 'UpdateChain',
+  UpdateAvatar = 'UpdateAvatar',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {

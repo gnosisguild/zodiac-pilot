@@ -1,4 +1,5 @@
 export { fetchZodiacModules } from './fetchZodiacModules'
+export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
@@ -9,6 +10,7 @@ export {
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
+export { updateSafe } from './updateSafe'
 export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,
