@@ -21,7 +21,10 @@ export const createMockWebRequest = ({
   requestBody: {
     raw: [
       {
-        bytes: Buffer.from(encoder.encode(JSON.stringify(requestBody))).buffer,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore The type is not 100% matching but should be fine
+        // for a test utility
+        bytes: encoder.encode(JSON.stringify(requestBody)),
       },
     ],
   },
