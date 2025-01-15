@@ -16,6 +16,7 @@ const propertyDenyList = ['prototype', 'mock']
 
 const clearAllListeners = (parent = chromeMock) => {
   Object.getOwnPropertyNames(parent).forEach((propertyName) => {
+    // @ts-expect-error we're a bit generic here but that's fine
     const property = parent[propertyName]
 
     if (propertyDenyList.includes(propertyName)) {
