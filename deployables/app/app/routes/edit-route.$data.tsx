@@ -49,7 +49,8 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
       )
 
       const updatedRoute = await updateRolesWaypoint(route, {
-        ...module,
+        moduleAddress: module.moduleAddress,
+        version: 1,
         multisend: await queryRolesV1MultiSend(
           jsonRpcProvider(chainId),
           module.moduleAddress,
