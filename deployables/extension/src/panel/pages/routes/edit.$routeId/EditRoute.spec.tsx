@@ -8,7 +8,7 @@ import { useInjectedWallet } from '@/providers'
 import {
   createMockRoleWaypoint,
   createMockRoute,
-  createStartingWaypoint,
+  createMockStartingWaypoint,
   createTransaction,
   MockProvider,
   mockRoute,
@@ -210,7 +210,7 @@ describe('Edit Zodiac route', () => {
         id: 'route-id',
         avatar: randomPrefixedAddress(),
         waypoints: [
-          createStartingWaypoint(),
+          createMockStartingWaypoint(),
           createMockRoleWaypoint({ moduleAddress }),
         ],
       })
