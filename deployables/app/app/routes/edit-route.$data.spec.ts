@@ -204,7 +204,9 @@ describe('Edit route', () => {
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         await userEvent.click(
-          screen.getByRole('button', { name: 'View all available Safes' }),
+          await screen.findByRole('button', {
+            name: 'View all available Safes',
+          }),
         )
 
         await userEvent.click(screen.getByRole('option', { name: safe }))
@@ -388,11 +390,9 @@ describe('Edit route', () => {
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-          await waitFor(() => {
-            expect(
-              screen.getByRole('textbox', { name: 'Role ID' }),
-            ).toHaveValue(roleId)
-          })
+          expect(
+            await screen.findByRole('textbox', { name: 'Role ID' }),
+          ).toHaveValue(roleId)
         })
 
         it('is possible to update the role ID', async () => {
