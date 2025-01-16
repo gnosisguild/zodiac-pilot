@@ -11,14 +11,13 @@ type Eoa = Extract<Account, { type: AccountType.EOA }>
 
 type CreateMockEoaAccountOptions = {
   chainId?: ChainId
-  address: HexAddress
+  address?: HexAddress
 }
 
-export const createMockEoaAccount = (
-  { address, chainId = Chain.ETH }: CreateMockEoaAccountOptions = {
-    address: ZERO_ADDRESS,
-  },
-): Eoa => ({
+export const createMockEoaAccount = ({
+  address = ZERO_ADDRESS,
+  chainId = Chain.ETH,
+}: CreateMockEoaAccountOptions = {}): Eoa => ({
   type: AccountType.EOA,
   address,
   prefixedAddress: formatPrefixedAddress(chainId, address),
