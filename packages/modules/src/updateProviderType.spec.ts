@@ -17,6 +17,17 @@ import { getWaypoints } from './getWaypoints'
 import { updateProviderType } from './updateProviderType'
 
 describe('updateProviderType', () => {
+  it.each([ProviderType.InjectedWallet, ProviderType.WalletConnect])(
+    'updates the property on the route to "%s"',
+    (providerType) => {
+      const route = createMockExecutionRoute()
+
+      const updatedRoute = updateProviderType(route, providerType)
+
+      expect(updatedRoute).toHaveProperty('providerType', providerType)
+    },
+  )
+
   describe('SAFE -> EOA', () => {
     it('updates the starting point to EOA when an injected provider is used', () => {
       const route = createMockExecutionRoute({

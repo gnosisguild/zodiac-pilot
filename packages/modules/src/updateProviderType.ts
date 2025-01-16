@@ -19,6 +19,7 @@ export const updateProviderType = (
     case ProviderType.InjectedWallet: {
       return {
         ...route,
+        providerType: ProviderType.InjectedWallet,
         waypoints: [
           createEoaWaypoint({
             chainId,
@@ -29,9 +30,10 @@ export const updateProviderType = (
       }
     }
 
-    default: {
+    case ProviderType.WalletConnect: {
       return {
         ...route,
+        providerType: ProviderType.WalletConnect,
         waypoints: [
           createSafeStartingPoint({
             chainId,

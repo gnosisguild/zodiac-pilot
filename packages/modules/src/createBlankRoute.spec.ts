@@ -1,7 +1,8 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
-import { splitPrefixedAddress } from 'ser-kit'
+import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createBlankRoute } from './createBlankRoute'
+import { getStartingWaypoint } from './getStartingWaypoint'
 
 describe('createBlankRoute', () => {
   describe('Label', () => {
@@ -27,6 +28,20 @@ describe('createBlankRoute', () => {
       const [, address] = splitPrefixedAddress(avatar)
 
       expect(address).toEqual(ZERO_ADDRESS)
+    })
+  })
+
+  describe('Starting point', () => {
+    it('creates a blank starting point', () => {
+      const route = createBlankRoute()
+
+      const startingPoint = getStartingWaypoint(route.waypoints)
+
+      expect(startingPoint.account).toHaveProperty('address', ZERO_ADDRESS)
+      expect(startingPoint.account).toHaveProperty(
+        'prefixedAddress',
+        formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+      )
     })
   })
 })
