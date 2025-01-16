@@ -1,17 +1,17 @@
 import type { ChainId } from '@zodiac/chains'
-import type { Connection, ExecutionRoute, Waypoint } from '@zodiac/schema'
+import type { ExecutionRoute, Waypoint } from '@zodiac/schema'
 import {
   AccountType,
   formatPrefixedAddress,
-  parsePrefixedAddress,
   splitPrefixedAddress,
-  type PrefixedAddress,
 } from 'ser-kit'
 import { createDelayWaypoint } from './createDelayWaypoint'
 import { createRolesWaypoint } from './createRolesWaypoint'
 import { createSafeWaypoint } from './createSafeWaypoint'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
+import { updateConnection } from './updateConnection'
+import { updatePrefixedAddress } from './updatePrefixedAddress'
 import { updateStartingWaypoint } from './updateStartingWaypoint'
 
 export const updateChainId = (
@@ -39,7 +39,7 @@ const updateWaypoint = (
   switch (account.type) {
     case AccountType.ROLES: {
       return createRolesWaypoint({
-        from: updatePrefixedAddress(connection.from, chainId),
+        from: updatePrefixedAddress(connection.from, { chainId }),
         multisend: account.multisend,
         version: account.version,
         address: account.address,
@@ -49,7 +49,7 @@ const updateWaypoint = (
     case AccountType.SAFE: {
       return createSafeWaypoint({
         chainId,
-        connection: updateConnection(connection, chainId),
+        connection: updateConnection(connection, { chainId }),
         safe: account.address,
       })
     }
@@ -57,7 +57,7 @@ const updateWaypoint = (
       return createDelayWaypoint({
         chainId,
         moduleAddress: account.address,
-        connection: updateConnection(connection, chainId),
+        connection: updateConnection(connection, { chainId }),
       })
     }
 
@@ -66,21 +66,3 @@ const updateWaypoint = (
     }
   }
 }
-
-const updatePrefixedAddress = (
-  prefixedAddress: PrefixedAddress,
-  chainId: ChainId,
-) => {
-  const address = parsePrefixedAddress(prefixedAddress)
-
-  return formatPrefixedAddress(chainId, address)
-}
-
-const updateConnection = <T extends Connection>(
-  connection: T,
-  chainId: ChainId,
-): T => ({
-  ...connection,
-
-  from: updatePrefixedAddress(connection.from, chainId),
-})

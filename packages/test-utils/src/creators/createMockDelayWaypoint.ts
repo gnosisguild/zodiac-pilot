@@ -1,4 +1,4 @@
-import { ZERO_ADDRESS } from '@zodiac/chains'
+import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, Waypoint } from '@zodiac/schema'
 import { ConnectionType, formatPrefixedAddress } from 'ser-kit'
 import {
@@ -12,7 +12,7 @@ type CreateDelayWaypointOptions = CreateDelayAccountOptions & {
 
 export const createMockDelayWaypoint = ({
   pilotAddress = ZERO_ADDRESS,
-  chainId,
+  chainId = Chain.ETH,
   address,
 }: CreateDelayWaypointOptions = {}): Waypoint => ({
   account: createMockDelayAccount({ chainId, address }),
