@@ -11,7 +11,9 @@ export {
 export { removeAvatar } from './removeAvatar'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export { updateAvatar } from './updateAvatar'
+export { updateChainId } from './updateChainId'
 export { updateLabel } from './updateLabel'
+export { updatePilotAddress } from './updatePilotAddress'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
 export {

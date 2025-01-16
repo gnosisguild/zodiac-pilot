@@ -21,6 +21,7 @@ import {
   removeAvatar,
   SupportedZodiacModuleType,
   updateAvatar,
+  updateChainId,
   updateLabel,
   updateRoleId,
   updateRolesWaypoint,
@@ -34,11 +35,7 @@ import {
 } from '@zodiac/schema'
 import { PrimaryButton, TextInput } from '@zodiac/ui'
 import { Form, useSubmit } from 'react-router'
-import {
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-  type ChainId,
-} from 'ser-kit'
+import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -239,16 +236,4 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
   }
 
   throw new Error(`Cannot get multisend for module type "${module.type}"`)
-}
-
-const updateChainId = (
-  route: ExecutionRoute,
-  chainId: ChainId,
-): ExecutionRoute => {
-  const [, address] = splitPrefixedAddress(route.avatar)
-
-  return {
-    ...route,
-    avatar: formatPrefixedAddress(chainId, address),
-  }
 }
