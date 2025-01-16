@@ -1,10 +1,10 @@
 import { Chain } from '@zodiac/chains'
 import {
-  createEndWaypoint,
-  createEoaAccount,
+  createMockEndWaypoint,
+  createMockEoaAccount,
   createMockExecutionRoute,
   createMockRoleWaypoint,
-  createStartingWaypoint,
+  createMockStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -21,8 +21,8 @@ describe('updateAvatar', () => {
       const route = createMockExecutionRoute({
         avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
         waypoints: [
-          createStartingWaypoint(),
-          createEndWaypoint({ address: currentSafe, chain: Chain.ETH }),
+          createMockStartingWaypoint(),
+          createMockEndWaypoint({ address: currentSafe, chain: Chain.ETH }),
         ],
       })
 
@@ -44,8 +44,8 @@ describe('updateAvatar', () => {
       const route = createMockExecutionRoute({
         avatar: formatPrefixedAddress(Chain.GNO, currentSafe),
         waypoints: [
-          createStartingWaypoint(),
-          createEndWaypoint({ address: currentSafe, chain: Chain.GNO }),
+          createMockStartingWaypoint(),
+          createMockEndWaypoint({ address: currentSafe, chain: Chain.GNO }),
         ],
       })
 
@@ -65,7 +65,7 @@ describe('updateAvatar', () => {
     it('adds an endpoint if none exists', () => {
       const route = createMockExecutionRoute({
         avatar: randomPrefixedAddress({ chainId: Chain.GNO }),
-        waypoints: [createStartingWaypoint()],
+        waypoints: [createMockStartingWaypoint()],
       })
 
       const safe = randomAddress()
@@ -88,7 +88,9 @@ describe('updateAvatar', () => {
 
       const route = createMockExecutionRoute({
         waypoints: [
-          createStartingWaypoint(createEoaAccount({ address: pilotAddress })),
+          createMockStartingWaypoint(
+            createMockEoaAccount({ address: pilotAddress }),
+          ),
         ],
       })
 
@@ -109,7 +111,7 @@ describe('updateAvatar', () => {
 
       const route = createMockExecutionRoute({
         waypoints: [
-          createStartingWaypoint(),
+          createMockStartingWaypoint(),
           createMockRoleWaypoint({ chainId: Chain.GNO, moduleAddress }),
         ],
       })

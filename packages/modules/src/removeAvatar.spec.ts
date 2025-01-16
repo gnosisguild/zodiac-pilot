@@ -1,8 +1,8 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import {
-  createEndWaypoint,
+  createMockEndWaypoint,
   createMockExecutionRoute,
-  createStartingWaypoint,
+  createMockStartingWaypoint,
   randomAddress,
 } from '@zodiac/test-utils'
 import { formatPrefixedAddress } from 'ser-kit'
@@ -11,10 +11,10 @@ import { removeAvatar } from './removeAvatar'
 
 describe('removeAvatar', () => {
   it('removes the last waypoint', () => {
-    const startingPoint = createStartingWaypoint()
+    const startingPoint = createMockStartingWaypoint()
 
     const route = createMockExecutionRoute({
-      waypoints: [startingPoint, createEndWaypoint()],
+      waypoints: [startingPoint, createMockEndWaypoint()],
     })
 
     const updatedRoute = removeAvatar(route)
