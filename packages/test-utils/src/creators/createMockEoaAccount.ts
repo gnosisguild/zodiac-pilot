@@ -1,12 +1,25 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
-import { AccountType, formatPrefixedAddress, type Account } from 'ser-kit'
+import type { HexAddress } from '@zodiac/schema'
+import {
+  AccountType,
+  formatPrefixedAddress,
+  type Account,
+  type ChainId,
+} from 'ser-kit'
 
 type Eoa = Extract<Account, { type: AccountType.EOA }>
 
-export const createMockEoaAccount = (eoa: Partial<Eoa> = {}): Eoa => ({
-  type: AccountType.EOA,
-  address: ZERO_ADDRESS,
-  prefixedAddress: formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+type CreateMockEoaAccountOptions = {
+  chainId?: ChainId
+  address: HexAddress
+}
 
-  ...eoa,
+export const createMockEoaAccount = (
+  { address, chainId = Chain.ETH }: CreateMockEoaAccountOptions = {
+    address: ZERO_ADDRESS,
+  },
+): Eoa => ({
+  type: AccountType.EOA,
+  address,
+  prefixedAddress: formatPrefixedAddress(chainId, address),
 })

@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
+import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import {
   encodeRoleKey,
   fetchZodiacModules,
@@ -16,9 +16,11 @@ import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
+  createMockEoaAccount,
   createMockExecutionRoute,
   createMockRoleWaypoint,
   createMockStartingWaypoint,
+  createMockWaypoints,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -106,7 +108,11 @@ describe('Edit route', () => {
     describe('MetaMask', () => {
       it('shows MetaMask as the provider of a route', async () => {
         const route = createMockExecutionRoute({
-          waypoints: [createMockStartingWaypoint()],
+          waypoints: createMockWaypoints({
+            start: createMockStartingWaypoint(
+              createMockEoaAccount({ address: randomAddress() }),
+            ),
+          }),
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -121,7 +127,11 @@ describe('Edit route', () => {
     describe('Wallet Connect', () => {
       it('shows Wallet Connect as the provider of a route', async () => {
         const route = createMockExecutionRoute({
-          waypoints: [createMockStartingWaypoint()],
+          waypoints: createMockWaypoints({
+            start: createMockStartingWaypoint(
+              createMockEoaAccount({ address: randomAddress() }),
+            ),
+          }),
           providerType: ProviderType.WalletConnect,
         })
 
@@ -154,7 +164,6 @@ describe('Edit route', () => {
 
       const route = createMockExecutionRoute({
         waypoints: [createMockStartingWaypoint()],
-        providerType: ProviderType.InjectedWallet,
       })
 
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -172,10 +181,7 @@ describe('Edit route', () => {
 
         mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
-        const route = createMockExecutionRoute({
-          waypoints: [createMockStartingWaypoint()],
-          providerType: ProviderType.InjectedWallet,
-        })
+        const route = createMockExecutionRoute()
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
@@ -198,11 +204,7 @@ describe('Edit route', () => {
 
         mockGetSafesByOwner.mockResolvedValue({ safes: [] })
 
-        const route = createMockExecutionRoute({
-          avatar: formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
-          waypoints: [createMockStartingWaypoint()],
-          providerType: ProviderType.InjectedWallet,
-        })
+        const route = createMockExecutionRoute()
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
@@ -223,11 +225,9 @@ describe('Edit route', () => {
 
         const route = createMockExecutionRoute({
           avatar: formatPrefixedAddress(Chain.ETH, safe),
-          waypoints: [
-            createMockStartingWaypoint(),
-            createMockEndWaypoint({ address: safe }),
-          ],
-          providerType: ProviderType.InjectedWallet,
+          waypoints: createMockWaypoints({
+            end: createMockEndWaypoint({ address: safe }),
+          }),
         })
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -263,13 +263,12 @@ describe('Edit route', () => {
       mockQueryRolesV2MultiSend.mockResolvedValue([])
 
       const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-        waypoints: [
-          createMockStartingWaypoint(),
-          createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
-          createMockEndWaypoint(),
-        ],
-        providerType: ProviderType.InjectedWallet,
+        waypoints: createMockWaypoints({
+          waypoints: [
+            createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
+          ],
+          end: true,
+        }),
       })
 
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -286,9 +285,7 @@ describe('Edit route', () => {
       mockFetchZodiacModules.mockResolvedValue([])
 
       const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
-        providerType: ProviderType.InjectedWallet,
-        waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
+        waypoints: createMockWaypoints({ end: true }),
       })
 
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -316,11 +313,9 @@ describe('Edit route', () => {
         ])
 
         const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: [
-            createMockStartingWaypoint(),
-            createMockRoleWaypoint({ moduleAddress, version: 1 }),
-          ],
+          waypoints: createMockWaypoints({
+            waypoints: [createMockRoleWaypoint({ moduleAddress, version: 1 })],
+          }),
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -340,9 +335,7 @@ describe('Edit route', () => {
         mockQueryRolesV1MultiSend.mockResolvedValue([])
 
         const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
-          providerType: ProviderType.InjectedWallet,
+          waypoints: createMockWaypoints({ end: true }),
         })
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -368,19 +361,20 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            providerType: ProviderType.InjectedWallet,
-            waypoints: [
-              createMockStartingWaypoint(),
-              createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
-            ],
+            waypoints: createMockWaypoints({
+              waypoints: [
+                createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
+              ],
+            }),
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-          expect(screen.getByRole('textbox', { name: 'Role ID' })).toHaveValue(
-            roleId,
-          )
+          await waitFor(() => {
+            expect(
+              screen.getByRole('textbox', { name: 'Role ID' }),
+            ).toHaveValue(roleId)
+          })
         })
 
         it('is possible to update the role ID', async () => {
@@ -394,12 +388,11 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            providerType: ProviderType.InjectedWallet,
-            waypoints: [
-              createMockStartingWaypoint(),
-              createMockRoleWaypoint({ moduleAddress, version: 1 }),
-            ],
+            waypoints: createMockWaypoints({
+              waypoints: [
+                createMockRoleWaypoint({ moduleAddress, version: 1 }),
+              ],
+            }),
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -433,12 +426,9 @@ describe('Edit route', () => {
         ])
 
         const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: [
-            createMockStartingWaypoint(),
-            createMockRoleWaypoint({ moduleAddress, version: 2 }),
-          ],
-          providerType: ProviderType.InjectedWallet,
+          waypoints: createMockWaypoints({
+            waypoints: [createMockRoleWaypoint({ moduleAddress, version: 2 })],
+          }),
         })
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -457,9 +447,7 @@ describe('Edit route', () => {
         mockQueryRolesV2MultiSend.mockResolvedValue([])
 
         const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
-          providerType: ProviderType.InjectedWallet,
+          waypoints: createMockWaypoints({ end: true }),
         })
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -484,19 +472,15 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
-            avatar: formatPrefixedAddress(
-              Chain.ETH,
-              '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
-            ),
-            waypoints: [
-              createMockStartingWaypoint(),
-              createMockRoleWaypoint({
-                moduleAddress,
-                roleId: encodeRoleKey('TEST-KEY'),
-                version: 2,
-              }),
-            ],
-            providerType: ProviderType.InjectedWallet,
+            waypoints: createMockWaypoints({
+              waypoints: [
+                createMockRoleWaypoint({
+                  moduleAddress,
+                  roleId: encodeRoleKey('TEST-KEY'),
+                  version: 2,
+                }),
+              ],
+            }),
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -517,12 +501,11 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            providerType: ProviderType.InjectedWallet,
-            waypoints: [
-              createMockStartingWaypoint(),
-              createMockRoleWaypoint({ moduleAddress, version: 2 }),
-            ],
+            waypoints: createMockWaypoints({
+              waypoints: [
+                createMockRoleWaypoint({ moduleAddress, version: 2 }),
+              ],
+            }),
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
