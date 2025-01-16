@@ -75,6 +75,24 @@ describe('Edit route', () => {
         'Test route',
       )
     })
+
+    it('is possible to change the label of a route', async () => {
+      const route = createMockExecutionRoute()
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Label' }),
+        'New route label',
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ label: 'New route label' }),
+      )
+    })
   })
 
   describe('Chain', () => {

@@ -92,7 +92,10 @@ export const clientAction = async ({
         route = updateRoleId(route, roleId)
       }
 
-      chrome.runtime.sendMessage('', route)
+      chrome.runtime.sendMessage('', {
+        ...route,
+        label: getString(data, 'label'),
+      })
 
       return null
     }
@@ -150,7 +153,8 @@ const EditRoute = ({
       <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
 
       <Form method="POST" className="flex flex-col gap-4">
-        <TextInput label="Label" defaultValue={label} />
+        <TextInput label="Label" name="label" defaultValue={label} />
+
         <ChainSelect
           value={chainId}
           onChange={(chainId) => {
@@ -159,6 +163,7 @@ const EditRoute = ({
             })
           }}
         />
+
         <ConnectWallet
           chainId={chainId}
           pilotAddress={getPilotAddress(waypoints)}
@@ -166,6 +171,7 @@ const EditRoute = ({
           onConnect={() => {}}
           onDisconnect={() => {}}
         />
+
         <AvatarInput
           value={avatar}
           startingWaypoint={startingWaypoint}
@@ -181,6 +187,7 @@ const EditRoute = ({
             }
           }}
         />
+
         <ZodiacMod
           avatar={avatar}
           waypoints={waypoints}
