@@ -34,6 +34,23 @@ describe('updateChainId', () => {
     })
   })
 
+  describe('Initiator', () => {
+    it('updates the chain of the initiator', () => {
+      const address = randomAddress()
+
+      const route = createMockExecutionRoute({
+        initiator: formatPrefixedAddress(Chain.ETH, address),
+      })
+
+      const updatedRoute = updateChainId(route, Chain.GNO)
+
+      expect(updatedRoute).toHaveProperty(
+        'initiator',
+        formatPrefixedAddress(Chain.GNO, address),
+      )
+    })
+  })
+
   describe('Waypoints', () => {
     describe('Starting point', () => {
       it('updates the chain of the starting point prefixed address', () => {
