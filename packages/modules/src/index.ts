@@ -1,3 +1,4 @@
+export { createBlankRoute } from './createBlankRoute'
 export { fetchZodiacModules } from './fetchZodiacModules'
 export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'

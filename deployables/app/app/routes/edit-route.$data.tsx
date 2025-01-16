@@ -4,7 +4,7 @@ import {
   ConnectWallet,
   ZodiacMod,
 } from '@/components'
-import { jsonRpcProvider } from '@/utils'
+import { editRoute, jsonRpcProvider } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import {
@@ -67,7 +67,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     multisend: await getMultisend(route, module),
   })
 
-  return saveRouteState(request.url, updatedRoute)
+  return editRoute(request.url, updatedRoute)
 }
 
 export const clientAction = async ({
@@ -93,24 +93,24 @@ export const clientAction = async ({
 
       chrome.runtime.sendMessage('', route)
 
-      return saveRouteState(request.url, route)
+      return editRoute(request.url, route)
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)
       const chainId = verifyChainId(getInt(data, 'chainId'))
 
-      return saveRouteState(request.url, updateChainId(route, chainId))
+      return editRoute(request.url, updateChainId(route, chainId))
     }
     case Intent.UpdateAvatar: {
       const route = parseRouteData(params.data)
       const avatar = getHexString(data, 'avatar')
 
-      return saveRouteState(request.url, updateAvatar(route, { safe: avatar }))
+      return editRoute(request.url, updateAvatar(route, { safe: avatar }))
     }
     case Intent.RemoveAvatar: {
       const route = parseRouteData(params.data)
 
-      return saveRouteState(request.url, removeAvatar(route))
+      return editRoute(request.url, removeAvatar(route))
     }
     default:
       return serverAction()
@@ -251,12 +251,4 @@ const updateChainId = (
     ...route,
     avatar: formatPrefixedAddress(chainId, address),
   }
-}
-
-const saveRouteState = (currentUrl: string, route: ExecutionRoute) => {
-  const url = new URL(currentUrl)
-
-  return Response.redirect(
-    new URL(`/edit-route/${btoa(JSON.stringify(route))}`, url.origin),
-  )
 }
