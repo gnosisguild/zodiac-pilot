@@ -2,9 +2,10 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  DebugRouteData,
   ZodiacMod,
 } from '@/components'
-import { editRoute, jsonRpcProvider } from '@/utils'
+import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import {
@@ -21,24 +22,24 @@ import {
   removeAvatar,
   SupportedZodiacModuleType,
   updateAvatar,
+  updateChainId,
   updateLabel,
+  updatePilotAddress,
+  updateProviderType,
   updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
 import {
-  executionRouteSchema,
+  ProviderType,
+  providerTypeSchema,
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
 import { PrimaryButton, TextInput } from '@zodiac/ui'
 import { Form, useSubmit } from 'react-router'
-import {
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-  type ChainId,
-} from 'ser-kit'
+import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
@@ -52,6 +53,8 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     avatar: route.avatar,
     providerType: route.providerType,
     waypoints: route.waypoints,
+
+    isDev: process.env.NODE_ENV !== 'production',
   }
 }
 
@@ -112,13 +115,28 @@ export const clientAction = async ({
 
       return editRoute(request.url, removeAvatar(route))
     }
+    case Intent.ConnectWallet: {
+      const route = parseRouteData(params.data)
+
+      const account = getHexString(data, 'account')
+      const chainId = verifyChainId(getInt(data, 'chainId'))
+      const providerType = verifyProviderType(getInt(data, 'providerType'))
+
+      return editRoute(
+        request.url,
+        updatePilotAddress(
+          updateChainId(updateProviderType(route, providerType), chainId),
+          account,
+        ),
+      )
+    }
     default:
       return serverAction()
   }
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, providerType, waypoints },
+  loaderData: { chainId, label, avatar, providerType, waypoints, isDev },
 }: Route.ComponentProps) => {
   const startingWaypoint = (waypoints || []).at(0)
   const submit = useSubmit()
@@ -143,7 +161,17 @@ const EditRoute = ({
           chainId={chainId}
           pilotAddress={getPilotAddress(waypoints)}
           providerType={providerType}
-          onConnect={() => {}}
+          onConnect={({ account, chainId, providerType }) => {
+            submit(
+              formData({
+                intent: Intent.ConnectWallet,
+                account,
+                chainId,
+                providerType,
+              }),
+              { method: 'POST' },
+            )
+          }}
           onDisconnect={() => {}}
         />
 
@@ -179,6 +207,8 @@ const EditRoute = ({
           </PrimaryButton>
         </div>
       </Form>
+
+      {isDev && <DebugRouteData />}
     </main>
   )
 }
@@ -190,6 +220,7 @@ enum Intent {
   UpdateChain = 'UpdateChain',
   UpdateAvatar = 'UpdateAvatar',
   RemoveAvatar = 'RemoveAvatar',
+  ConnectWallet = 'ConnectWallet',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {
@@ -200,24 +231,6 @@ const getPilotAddress = (waypoints?: Waypoints) => {
   const [startingPoint] = waypoints
 
   return startingPoint.account.address
-}
-
-const parseRouteData = (routeData: string) => {
-  console.log({ routeData })
-
-  invariantResponse(routeData != null, 'Missing "route" parameter')
-
-  const decodedData = atob(routeData)
-
-  try {
-    const rawJson = JSON.parse(decodedData.toString())
-
-    return executionRouteSchema.parse(rawJson)
-  } catch (error) {
-    console.error('Error parsing the route from the URL', { error })
-
-    throw new Response(JSON.stringify(error), { status: 400 })
-  }
 }
 
 const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
@@ -241,14 +254,5 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
   throw new Error(`Cannot get multisend for module type "${module.type}"`)
 }
 
-const updateChainId = (
-  route: ExecutionRoute,
-  chainId: ChainId,
-): ExecutionRoute => {
-  const [, address] = splitPrefixedAddress(route.avatar)
-
-  return {
-    ...route,
-    avatar: formatPrefixedAddress(chainId, address),
-  }
-}
+const verifyProviderType = (value: number): ProviderType =>
+  providerTypeSchema.parse(value)

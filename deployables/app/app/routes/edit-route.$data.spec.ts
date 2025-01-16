@@ -246,7 +246,7 @@ describe('Edit route', () => {
         const route = createMockExecutionRoute({
           avatar: formatPrefixedAddress(Chain.ETH, safe),
           waypoints: createMockWaypoints({
-            end: createMockEndWaypoint({ address: safe }),
+            end: createMockEndWaypoint({ account: { address: safe } }),
           }),
         })
 

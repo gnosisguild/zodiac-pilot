@@ -7,18 +7,19 @@ import {
   type ChainId,
 } from 'ser-kit'
 
-type Eoa = Extract<Account, { type: AccountType.EOA }>
+type Delay = Extract<Account, { type: AccountType.DELAY }>
 
-type CreateMockEoaAccountOptions = {
-  chainId?: ChainId
+export type CreateDelayAccountOptions = {
   address?: HexAddress
+  chainId?: ChainId
 }
 
-export const createMockEoaAccount = ({
+export const createMockDelayAccount = ({
   address = ZERO_ADDRESS,
   chainId = Chain.ETH,
-}: CreateMockEoaAccountOptions = {}): Eoa => ({
-  type: AccountType.EOA,
+}: CreateDelayAccountOptions = {}): Delay => ({
+  type: AccountType.DELAY,
   address,
+  chain: chainId,
   prefixedAddress: formatPrefixedAddress(chainId, address),
 })

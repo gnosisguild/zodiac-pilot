@@ -98,6 +98,8 @@ const connectionSchema = z.discriminatedUnion('type', [
   isMemberConnectionSchema,
 ])
 
+export type Connection = z.infer<typeof connectionSchema>
+
 const waypointSchema = z.object({
   account: contractSchema,
   connection: connectionSchema,
@@ -130,7 +132,10 @@ export enum ProviderType {
 const walletConnectType = z.literal(ProviderType.WalletConnect)
 const injectedProviderType = z.literal(ProviderType.InjectedWallet)
 
-const providerTypeSchema = z.union([walletConnectType, injectedProviderType])
+export const providerTypeSchema = z.union([
+  walletConnectType,
+  injectedProviderType,
+])
 
 const waypointsSchema = z.tuple([startingPointSchema]).rest(waypointSchema)
 
