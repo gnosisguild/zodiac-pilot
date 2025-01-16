@@ -1,14 +1,11 @@
 import { invariant } from '@epic-web/invariant'
+import { getChainId } from '@zodiac/chains'
 import {
   type ExecutionRoute,
   type HexAddress,
   type Waypoint,
 } from '@zodiac/schema'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-} from 'ser-kit'
+import { AccountType, formatPrefixedAddress } from 'ser-kit'
 import { createSafeWaypoint } from './createSafeWaypoint'
 
 type UpdateAvatarOptions = {
@@ -17,14 +14,14 @@ type UpdateAvatarOptions = {
 
 export const updateAvatar = (
   route: ExecutionRoute,
+  options: UpdateAvatarOptions,
+) => updateAvatarProperty(updateEndWaypoint(route, options), options)
+
+const updateEndWaypoint = (
+  route: ExecutionRoute,
   { safe }: UpdateAvatarOptions,
 ): ExecutionRoute => {
-  const [chainId] = splitPrefixedAddress(route.avatar)
-
-  invariant(
-    chainId != null,
-    `Could not retrieve chain from route avatar "${route.avatar}"`,
-  )
+  const chainId = getChainId(route.avatar)
 
   invariant(
     route.waypoints,
@@ -51,7 +48,6 @@ export const updateAvatar = (
   if (hasSafeWaypoint(waypoints)) {
     return {
       ...route,
-      avatar: formatPrefixedAddress(chainId, safe),
       waypoints: [
         startingPoint,
         ...waypoints.map((waypoint) => {
@@ -67,8 +63,19 @@ export const updateAvatar = (
 
   return {
     ...route,
-    avatar: formatPrefixedAddress(chainId, safe),
     waypoints: [startingPoint, updatedWaypoint],
+  }
+}
+
+const updateAvatarProperty = (
+  route: ExecutionRoute,
+  { safe }: UpdateAvatarOptions,
+): ExecutionRoute => {
+  const chainId = getChainId(route.avatar)
+
+  return {
+    ...route,
+    avatar: formatPrefixedAddress(chainId, safe),
   }
 }
 
