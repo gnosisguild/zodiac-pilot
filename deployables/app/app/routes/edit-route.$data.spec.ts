@@ -9,8 +9,8 @@ import {
   queryRolesV2MultiSend,
   removeAvatar,
   SupportedZodiacModuleType,
+  updateAvatar,
   updateRoleId,
-  updateSafe,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
@@ -189,7 +189,7 @@ describe('Edit route', () => {
 
         expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
           expect.anything(),
-          updateSafe(route, { safe }),
+          updateAvatar(route, { safe }),
         )
       })
 
@@ -214,7 +214,7 @@ describe('Edit route', () => {
 
         expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
           expect.anything(),
-          updateSafe(route, { safe }),
+          updateAvatar(route, { safe }),
         )
       })
 

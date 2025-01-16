@@ -11,9 +11,9 @@ import {
 import { ConnectionType, formatPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getWaypoints } from './getWaypoints'
-import { updateSafe } from './updateSafe'
+import { updateAvatar } from './updateAvatar'
 
-describe('updateSafe', () => {
+describe('updateAvatar', () => {
   describe('Avatar', () => {
     it('updates the avatar prop on the route', () => {
       const currentSafe = randomAddress()
@@ -28,7 +28,7 @@ describe('updateSafe', () => {
 
       const safe = randomAddress()
 
-      const updatedRoute = updateSafe(route, { safe })
+      const updatedRoute = updateAvatar(route, { safe })
 
       expect(updatedRoute).toHaveProperty(
         'avatar',
@@ -51,7 +51,7 @@ describe('updateSafe', () => {
 
       const safe = randomAddress()
 
-      const updatedRoute = updateSafe(route, { safe })
+      const updatedRoute = updateAvatar(route, { safe })
 
       const [updatedWaypoint] = getWaypoints(updatedRoute)
 
@@ -70,7 +70,7 @@ describe('updateSafe', () => {
 
       const safe = randomAddress()
 
-      const updatedRoute = updateSafe(route, { safe })
+      const updatedRoute = updateAvatar(route, { safe })
 
       const [updatedWaypoint] = getWaypoints(updatedRoute)
 
@@ -94,7 +94,7 @@ describe('updateSafe', () => {
 
       const safe = randomAddress()
 
-      const updatedRoute = updateSafe(route, { safe })
+      const updatedRoute = updateAvatar(route, { safe })
 
       const [updatedWaypoint] = getWaypoints(updatedRoute)
 
@@ -116,7 +116,7 @@ describe('updateSafe', () => {
 
       const safe = randomAddress()
 
-      const updatedRoute = updateSafe(route, { safe })
+      const updatedRoute = updateAvatar(route, { safe })
 
       const [updatedWaypoint] = getWaypoints(updatedRoute)
 

@@ -9,9 +9,9 @@ export {
 } from './queryRolesV2MultiSend'
 export { removeAvatar } from './removeAvatar'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
+export { updateAvatar } from './updateAvatar'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
-export { updateSafe } from './updateSafe'
 export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,

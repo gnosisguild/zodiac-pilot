@@ -20,9 +20,9 @@ import {
   queryRolesV2MultiSend,
   removeAvatar,
   SupportedZodiacModuleType,
+  updateAvatar,
   updateRoleId,
   updateRolesWaypoint,
-  updateSafe,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
@@ -117,7 +117,7 @@ export const clientAction = async ({
 
       return Response.redirect(
         new URL(
-          `/edit-route/${btoa(JSON.stringify(updateSafe(route, { safe: avatar })))}`,
+          `/edit-route/${btoa(JSON.stringify(updateAvatar(route, { safe: avatar })))}`,
           url.origin,
         ),
       )

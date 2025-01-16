@@ -11,13 +11,13 @@ import {
 } from 'ser-kit'
 import { createSafeWaypoint } from './createSafeWaypoint'
 
-type UpdateSafeOptions = {
+type UpdateAvatarOptions = {
   safe: HexAddress
 }
 
-export const updateSafe = (
+export const updateAvatar = (
   route: ExecutionRoute,
-  { safe }: UpdateSafeOptions,
+  { safe }: UpdateAvatarOptions,
 ): ExecutionRoute => {
   const [chainId] = splitPrefixedAddress(route.avatar)
 
