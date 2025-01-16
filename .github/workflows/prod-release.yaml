@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Extension
     env:
-      CONNECT_IFRAME_URL: https://connect.pilot.gnosisguild.org
+      CONNECT_IFRAME_URL: https://app.pilot.gnosisguild.org
     defaults:
       run:
         working-directory: ./deployables/extension
