@@ -1,10 +1,5 @@
 import type { ChainId } from '@zodiac/chains'
-import type {
-  Connection,
-  ExecutionRoute,
-  StartingWaypoint,
-  Waypoint,
-} from '@zodiac/schema'
+import type { Connection, ExecutionRoute, Waypoint } from '@zodiac/schema'
 import {
   AccountType,
   formatPrefixedAddress,
@@ -13,12 +8,11 @@ import {
   type PrefixedAddress,
 } from 'ser-kit'
 import { createDelayWaypoint } from './createDelayWaypoint'
-import { createEoaWaypoint } from './createEoaWaypoint'
 import { createRolesWaypoint } from './createRolesWaypoint'
-import { createSafeStartingPoint } from './createSafeStartingPoint'
 import { createSafeWaypoint } from './createSafeWaypoint'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
+import { updateStartingWaypoint } from './updateStartingWaypoint'
 
 export const updateChainId = (
   route: ExecutionRoute,
@@ -32,24 +26,9 @@ export const updateChainId = (
     ...route,
     avatar: formatPrefixedAddress(chainId, address),
     waypoints: [
-      updateStartingWaypoint(startingPoint, chainId),
+      updateStartingWaypoint(startingPoint, { chainId }),
       ...waypoints.map((waypoint) => updateWaypoint(waypoint, chainId)),
     ],
-  }
-}
-
-const updateStartingWaypoint = (
-  { account }: StartingWaypoint,
-  chainId: ChainId,
-): StartingWaypoint => {
-  switch (account.type) {
-    case AccountType.EOA: {
-      return createEoaWaypoint({ address: account.address, chainId })
-    }
-
-    default: {
-      return createSafeStartingPoint({ address: account.address, chainId })
-    }
   }
 }
 
