@@ -44,7 +44,11 @@ const safeSchema = z.object({
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
   chain: chainIdSchema,
-  threshold: z.number(),
+  threshold: z
+    .number()
+    .or(z.nan())
+    .nullable()
+    .transform((value) => (value == null ? NaN : value)),
 })
 
 const rolesSchema = z.object({

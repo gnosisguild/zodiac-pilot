@@ -26,7 +26,7 @@ export const createSafeWaypoint = ({
     address: safe,
     chain: chainId,
     prefixedAddress: formatPrefixedAddress(chainId, safe),
-    threshold: 0,
+    threshold: NaN,
   },
   connection:
     moduleAddress != null
