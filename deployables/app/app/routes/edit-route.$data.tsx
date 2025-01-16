@@ -2,9 +2,10 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  DebugRouteData,
   ZodiacMod,
 } from '@/components'
-import { editRoute, jsonRpcProvider } from '@/utils'
+import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import {
@@ -31,7 +32,6 @@ import {
   type ZodiacModule,
 } from '@zodiac/modules'
 import {
-  executionRouteSchema,
   ProviderType,
   providerTypeSchema,
   type ExecutionRoute,
@@ -53,6 +53,8 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     avatar: route.avatar,
     providerType: route.providerType,
     waypoints: route.waypoints,
+
+    isDev: process.env.NODE_ENV !== 'production',
   }
 }
 
@@ -134,7 +136,7 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, providerType, waypoints },
+  loaderData: { chainId, label, avatar, providerType, waypoints, isDev },
 }: Route.ComponentProps) => {
   const startingWaypoint = (waypoints || []).at(0)
   const submit = useSubmit()
@@ -205,6 +207,8 @@ const EditRoute = ({
           </PrimaryButton>
         </div>
       </Form>
+
+      {isDev && <DebugRouteData />}
     </main>
   )
 }
@@ -227,22 +231,6 @@ const getPilotAddress = (waypoints?: Waypoints) => {
   const [startingPoint] = waypoints
 
   return startingPoint.account.address
-}
-
-const parseRouteData = (routeData: string) => {
-  invariantResponse(routeData != null, 'Missing "route" parameter')
-
-  const decodedData = atob(routeData)
-
-  try {
-    const rawJson = JSON.parse(decodedData.toString())
-
-    return executionRouteSchema.parse(rawJson)
-  } catch (error) {
-    console.error('Error parsing the route from the URL', { error })
-
-    throw new Response(JSON.stringify(error), { status: 400 })
-  }
 }
 
 const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
