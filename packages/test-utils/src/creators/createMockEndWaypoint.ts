@@ -1,10 +1,12 @@
 import type { Waypoint } from '@zodiac/schema'
 import { ConnectionType } from 'ser-kit'
-import { createSafeAccount, type Safe } from './createSafeAccount'
+import { createMockSafeAccount, type Safe } from './createMockSafeAccount'
 import { randomPrefixedAddress } from './randomHex'
 
-export const createEndWaypoint = (account: Partial<Safe> = {}): Waypoint => ({
-  account: createSafeAccount(account),
+export const createMockEndWaypoint = (
+  account: Partial<Safe> = {},
+): Waypoint => ({
+  account: createMockSafeAccount(account),
   connection: {
     type: ConnectionType.IS_ENABLED,
     from: randomPrefixedAddress(),

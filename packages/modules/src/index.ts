@@ -1,4 +1,5 @@
 export { fetchZodiacModules } from './fetchZodiacModules'
+export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
@@ -6,7 +7,9 @@ export {
   MULTISEND_CALL_ONLY,
   queryRolesV2MultiSend,
 } from './queryRolesV2MultiSend'
+export { removeAvatar } from './removeAvatar'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
+export { updateAvatar } from './updateAvatar'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
 export {

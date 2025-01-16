@@ -16,7 +16,8 @@
     }
   },
   "dependencies": {
-    "@epic-web/invariant": "^1.0.0"
+    "@epic-web/invariant": "^1.0.0",
+    "@zodiac/schema": "workspace:*"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",

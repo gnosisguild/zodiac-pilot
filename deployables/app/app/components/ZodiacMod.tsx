@@ -1,6 +1,7 @@
 import {
   decodeRoleKey,
   encodeRoleKey,
+  getPilotAddress,
   SupportedZodiacModuleType,
   ZODIAC_MODULE_NAMES,
   type ZodiacModule,
@@ -53,7 +54,7 @@ export const ZodiacMod = ({
     key: 'modules',
   })
   const [chainId] = splitPrefixedAddress(avatar)
-  const pilotAddress = getPilotAddress(waypoints)
+  const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
 
   useEffect(() => {
     if (pilotAddress == null) {
@@ -227,14 +228,4 @@ const getModuleWaypoint = (waypoints?: Waypoints) => {
   }
 
   return moduleWaypoint
-}
-
-const getPilotAddress = (waypoints?: Waypoints) => {
-  if (waypoints == null) {
-    return null
-  }
-
-  const [startingPoint] = waypoints
-
-  return startingPoint.account.address
 }

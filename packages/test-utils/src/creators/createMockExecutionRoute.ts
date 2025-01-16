@@ -1,3 +1,4 @@
+import { Chain } from '@zodiac/chains'
 import { type ExecutionRoute } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { formatPrefixedAddress } from 'ser-kit'
@@ -7,7 +8,7 @@ export const createMockExecutionRoute = (
   route: Partial<ExecutionRoute> = {},
 ): ExecutionRoute => ({
   id: randomUUID(),
-  avatar: formatPrefixedAddress(1, randomHex(40)),
+  avatar: formatPrefixedAddress(Chain.ETH, randomHex(40)),
   label: '',
   initiator: undefined,
 

@@ -1,14 +1,17 @@
+import { Chain } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import {
   AccountType,
   ConnectionType,
   formatPrefixedAddress,
+  type ChainId,
   type Waypoint,
 } from 'ser-kit'
 import { randomAddress, randomPrefixedAddress } from './randomHex'
 
 type CreateRoleWaypointOptions = {
   moduleAddress?: HexAddress
+  chainId?: ChainId
   version?: 1 | 2
   roleId?: string
 }
@@ -16,13 +19,14 @@ type CreateRoleWaypointOptions = {
 export const createMockRoleWaypoint = ({
   moduleAddress = randomAddress(),
   version = 2,
+  chainId = Chain.ETH,
   roleId,
 }: CreateRoleWaypointOptions = {}): Waypoint => ({
   account: {
     type: AccountType.ROLES,
     address: moduleAddress,
-    prefixedAddress: formatPrefixedAddress(1, moduleAddress),
-    chain: 1,
+    prefixedAddress: formatPrefixedAddress(chainId, moduleAddress),
+    chain: chainId,
     multisend: [],
     version,
   },

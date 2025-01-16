@@ -9,6 +9,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import {
   formData,
+  getHexString,
   getInt,
   getOptionalString,
   getString,
@@ -17,7 +18,9 @@ import {
   getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
+  removeAvatar,
   SupportedZodiacModuleType,
+  updateAvatar,
   updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -106,6 +109,31 @@ export const clientAction = async ({
         ),
       )
     }
+    case Intent.UpdateAvatar: {
+      const route = parseRouteData(params.data)
+      const avatar = getHexString(data, 'avatar')
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(updateAvatar(route, { safe: avatar })))}`,
+          url.origin,
+        ),
+      )
+    }
+    case Intent.RemoveAvatar: {
+      const route = parseRouteData(params.data)
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(
+          `/edit-route/${btoa(JSON.stringify(removeAvatar(route)))}`,
+          url.origin,
+        ),
+      )
+    }
     default:
       return serverAction()
   }
@@ -141,7 +169,17 @@ const EditRoute = ({
         <AvatarInput
           value={avatar}
           startingWaypoint={startingWaypoint}
-          onChange={() => {}}
+          onChange={(avatar) => {
+            if (avatar != null) {
+              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+                method: 'POST',
+              })
+            } else {
+              submit(formData({ intent: Intent.RemoveAvatar }), {
+                method: 'POST',
+              })
+            }
+          }}
         />
         <ZodiacMod
           avatar={avatar}
@@ -168,6 +206,8 @@ export default EditRoute
 enum Intent {
   Save = 'Save',
   UpdateChain = 'UpdateChain',
+  UpdateAvatar = 'UpdateAvatar',
+  RemoveAvatar = 'RemoveAvatar',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {

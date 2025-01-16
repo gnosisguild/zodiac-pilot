@@ -32,6 +32,10 @@ const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
     return false
   }
 
+  if (prefix === 'eoa') {
+    return true
+  }
+
   return chains.some(({ shortName }) => prefix === shortName)
 })
 

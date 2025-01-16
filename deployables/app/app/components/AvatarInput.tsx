@@ -1,5 +1,6 @@
 import { validateAddress } from '@/utils'
-import type { StartingWaypoint } from '@zodiac/schema'
+import { ZERO_ADDRESS } from '@zodiac/chains'
+import type { HexAddress, StartingWaypoint } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
@@ -9,23 +10,27 @@ import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 type Props = {
   value: PrefixedAddress
   startingWaypoint?: StartingWaypoint
-  onChange(value: string): void
+  onChange(value: HexAddress | null): void
 }
 
 type Option = {
-  value: string
+  value: HexAddress
   label: string
 }
 
 export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
   const [chainId, address] = splitPrefixedAddress(value)
-  const [pendingValue, setPendingValue] = useState<string>(address)
+  const [pendingValue, setPendingValue] = useState<string>(
+    address === ZERO_ADDRESS ? '' : address,
+  )
 
   useEffect(() => {
-    setPendingValue(address)
+    setPendingValue(address === ZERO_ADDRESS ? '' : address)
   }, [address])
 
-  const { load, state, data } = useFetcher<string[]>({ key: 'available-safes' })
+  const { load, state, data } = useFetcher<HexAddress[]>({
+    key: 'available-safes',
+  })
 
   useEffect(() => {
     if (startingWaypoint == null) {
@@ -73,11 +78,9 @@ export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
           if (option) {
             const sanitized = option.value.trim().replace(/^[a-z]{3}:/g, '')
 
-            if (validateAddress(sanitized)) {
-              onChange(sanitized.toLowerCase())
-            }
+            onChange(validateAddress(sanitized))
           } else {
-            onChange('')
+            onChange(null)
           }
         }}
         isValidNewOption={(option) => {
@@ -96,8 +99,11 @@ export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
       onChange={(ev) => {
         const sanitized = ev.target.value.trim().replace(/^[a-z]{3}:/g, '')
         setPendingValue(sanitized)
-        if (validateAddress(sanitized)) {
-          onChange(sanitized.toLowerCase())
+
+        const validatedAddress = validateAddress(sanitized)
+
+        if (validatedAddress != null) {
+          onChange(validatedAddress)
         }
       }}
     />

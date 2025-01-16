@@ -1,22 +1,24 @@
 import { render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { Chain, CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   encodeRoleKey,
   fetchZodiacModules,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
+  removeAvatar,
   SupportedZodiacModuleType,
+  updateAvatar,
   updateRoleId,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
 import { ProviderType } from '@zodiac/schema'
 import {
-  createEndWaypoint,
+  createMockEndWaypoint,
   createMockExecutionRoute,
   createMockRoleWaypoint,
-  createStartingWaypoint,
+  createMockStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -104,7 +106,7 @@ describe('Edit route', () => {
     describe('MetaMask', () => {
       it('shows MetaMask as the provider of a route', async () => {
         const route = createMockExecutionRoute({
-          waypoints: [createStartingWaypoint()],
+          waypoints: [createMockStartingWaypoint()],
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -119,7 +121,7 @@ describe('Edit route', () => {
     describe('Wallet Connect', () => {
       it('shows Wallet Connect as the provider of a route', async () => {
         const route = createMockExecutionRoute({
-          waypoints: [createStartingWaypoint()],
+          waypoints: [createMockStartingWaypoint()],
           providerType: ProviderType.WalletConnect,
         })
 
@@ -151,7 +153,7 @@ describe('Edit route', () => {
       mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
       const route = createMockExecutionRoute({
-        waypoints: [createStartingWaypoint()],
+        waypoints: [createMockStartingWaypoint()],
         providerType: ProviderType.InjectedWallet,
       })
 
@@ -162,6 +164,84 @@ describe('Edit route', () => {
       )
 
       expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
+    })
+
+    describe('Edit', () => {
+      it('is possible to select a safe from the list', async () => {
+        const safe = randomAddress()
+
+        mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
+
+        const route = createMockExecutionRoute({
+          waypoints: [createMockStartingWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'View all available Safes' }),
+        )
+
+        await userEvent.click(screen.getByRole('option', { name: safe }))
+
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          updateAvatar(route, { safe }),
+        )
+      })
+
+      it('is possible to type in an address', async () => {
+        const safe = randomAddress()
+
+        mockGetSafesByOwner.mockResolvedValue({ safes: [] })
+
+        const route = createMockExecutionRoute({
+          avatar: formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+          waypoints: [createMockStartingWaypoint()],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.type(
+          screen.getByRole('textbox', { name: 'Piloted Safe' }),
+          safe,
+        )
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          updateAvatar(route, { safe }),
+        )
+      })
+
+      it('is possible to remove the avatar', async () => {
+        const safe = randomAddress()
+
+        const route = createMockExecutionRoute({
+          avatar: formatPrefixedAddress(Chain.ETH, safe),
+          waypoints: [
+            createMockStartingWaypoint(),
+            createMockEndWaypoint({ address: safe }),
+          ],
+          providerType: ProviderType.InjectedWallet,
+        })
+
+        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Clear piloted Safe' }),
+        )
+        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect.anything(),
+          removeAvatar(route),
+        )
+      })
     })
   })
 
@@ -185,9 +265,9 @@ describe('Edit route', () => {
       const route = createMockExecutionRoute({
         avatar: randomPrefixedAddress(),
         waypoints: [
-          createStartingWaypoint(),
+          createMockStartingWaypoint(),
           createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
-          createEndWaypoint(),
+          createMockEndWaypoint(),
         ],
         providerType: ProviderType.InjectedWallet,
       })
@@ -208,7 +288,7 @@ describe('Edit route', () => {
       const route = createMockExecutionRoute({
         avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
         providerType: ProviderType.InjectedWallet,
-        waypoints: [createStartingWaypoint(), createEndWaypoint()],
+        waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
       })
 
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -238,7 +318,7 @@ describe('Edit route', () => {
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress(),
           waypoints: [
-            createStartingWaypoint(),
+            createMockStartingWaypoint(),
             createMockRoleWaypoint({ moduleAddress, version: 1 }),
           ],
           providerType: ProviderType.InjectedWallet,
@@ -261,7 +341,7 @@ describe('Edit route', () => {
 
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress(),
-          waypoints: [createStartingWaypoint(), createEndWaypoint()],
+          waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -291,7 +371,7 @@ describe('Edit route', () => {
             avatar: randomPrefixedAddress(),
             providerType: ProviderType.InjectedWallet,
             waypoints: [
-              createStartingWaypoint(),
+              createMockStartingWaypoint(),
               createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
             ],
           })
@@ -317,7 +397,7 @@ describe('Edit route', () => {
             avatar: randomPrefixedAddress(),
             providerType: ProviderType.InjectedWallet,
             waypoints: [
-              createStartingWaypoint(),
+              createMockStartingWaypoint(),
               createMockRoleWaypoint({ moduleAddress, version: 1 }),
             ],
           })
@@ -355,7 +435,7 @@ describe('Edit route', () => {
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress(),
           waypoints: [
-            createStartingWaypoint(),
+            createMockStartingWaypoint(),
             createMockRoleWaypoint({ moduleAddress, version: 2 }),
           ],
           providerType: ProviderType.InjectedWallet,
@@ -378,7 +458,7 @@ describe('Edit route', () => {
 
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress(),
-          waypoints: [createStartingWaypoint(), createEndWaypoint()],
+          waypoints: [createMockStartingWaypoint(), createMockEndWaypoint()],
           providerType: ProviderType.InjectedWallet,
         })
 
@@ -409,7 +489,7 @@ describe('Edit route', () => {
               '0x58e6c7ab55Aa9012eAccA16d1ED4c15795669E1C',
             ),
             waypoints: [
-              createStartingWaypoint(),
+              createMockStartingWaypoint(),
               createMockRoleWaypoint({
                 moduleAddress,
                 roleId: encodeRoleKey('TEST-KEY'),
@@ -440,7 +520,7 @@ describe('Edit route', () => {
             avatar: randomPrefixedAddress(),
             providerType: ProviderType.InjectedWallet,
             waypoints: [
-              createStartingWaypoint(),
+              createMockStartingWaypoint(),
               createMockRoleWaypoint({ moduleAddress, version: 2 }),
             ],
           })

@@ -3,7 +3,7 @@ import { randomAddress, randomPrefixedAddress } from './randomHex'
 
 export type Safe = Extract<Account, { type: AccountType.SAFE }>
 
-export const createSafeAccount = (safe: Partial<Safe> = {}): Safe => ({
+export const createMockSafeAccount = (safe: Partial<Safe> = {}): Safe => ({
   type: AccountType.SAFE,
   address: randomAddress(),
   prefixedAddress: randomPrefixedAddress(),

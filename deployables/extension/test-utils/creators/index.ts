@@ -1,7 +1,7 @@
 export {
   createMockRoleWaypoint,
   createMockExecutionRoute as createMockRoute,
-  createStartingWaypoint,
+  createMockStartingWaypoint,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
