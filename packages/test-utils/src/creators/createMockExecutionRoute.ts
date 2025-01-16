@@ -1,16 +1,19 @@
-import { Chain } from '@zodiac/chains'
+import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import { type ExecutionRoute } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { formatPrefixedAddress } from 'ser-kit'
-import { randomHex } from './randomHex'
+import { createMockWaypoints } from './createMockWaypoints'
 
-export const createMockExecutionRoute = (
-  route: Partial<ExecutionRoute> = {},
-): ExecutionRoute => ({
+export const createMockExecutionRoute = ({
+  avatar = formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+  waypoints = createMockWaypoints(),
+  ...route
+}: Partial<ExecutionRoute> = {}): ExecutionRoute => ({
   id: randomUUID(),
-  avatar: formatPrefixedAddress(Chain.ETH, randomHex(40)),
+  avatar,
   label: '',
   initiator: undefined,
+  waypoints,
 
   ...route,
 })

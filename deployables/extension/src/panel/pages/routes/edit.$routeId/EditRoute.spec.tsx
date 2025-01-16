@@ -25,6 +25,7 @@ import {
 } from '@/zodiac'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Chain } from '@zodiac/chains'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { getAddress } from 'ethers'
 import {
@@ -190,7 +191,7 @@ describe('Edit Zodiac route', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Piloted Safe' }),
+        screen.getByRole('textbox', { name: 'Piloted Safe' }),
         `${address}[enter]`,
       )
       await userEvent.click(
@@ -478,13 +479,16 @@ describe('Edit Zodiac route', () => {
       )
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Piloted Safe' }),
+        screen.getByRole('textbox', { name: 'Piloted Safe' }),
         randomAddress(),
       )
 
       const [, avatarAddress] = splitPrefixedAddress(route.avatar)
 
-      expect(mockFetchZodiacModules).toHaveBeenCalledWith(avatarAddress, 42161)
+      expect(mockFetchZodiacModules).toHaveBeenCalledWith(
+        avatarAddress,
+        Chain.ARB1,
+      )
     })
   })
 
@@ -606,6 +610,7 @@ describe('Edit Zodiac route', () => {
         const selectedRoute = createMockRoute({
           id: 'firstRoute',
           label: 'First route',
+          avatar: randomPrefixedAddress(),
         })
 
         await mockRoutes(selectedRoute)

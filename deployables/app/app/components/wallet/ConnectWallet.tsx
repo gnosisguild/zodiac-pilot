@@ -1,5 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { getDefaultConfig } from 'connectkit'
 import { type ChainId } from 'ser-kit'
@@ -43,7 +44,7 @@ export const ConnectWallet = ({
   onConnect,
   onDisconnect,
 }: Props) => {
-  if (pilotAddress == null) {
+  if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
     return (
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig}>

@@ -21,6 +21,7 @@ import {
   removeAvatar,
   SupportedZodiacModuleType,
   updateAvatar,
+  updateLabel,
   updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -66,11 +67,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     multisend: await getMultisend(route, module),
   })
 
-  const url = new URL(request.url)
-
-  return Response.redirect(
-    new URL(`/edit-route/${btoa(JSON.stringify(updatedRoute))}`, url.origin),
-  )
+  return saveRouteState(request.url, updatedRoute)
 }
 
 export const clientAction = async ({
@@ -92,47 +89,28 @@ export const clientAction = async ({
         route = updateRoleId(route, roleId)
       }
 
+      route = updateLabel(route, getString(data, 'label'))
+
       chrome.runtime.sendMessage('', route)
 
-      return null
+      return saveRouteState(request.url, route)
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)
       const chainId = verifyChainId(getInt(data, 'chainId'))
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updateChainId(route, chainId)))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, updateChainId(route, chainId))
     }
     case Intent.UpdateAvatar: {
       const route = parseRouteData(params.data)
       const avatar = getHexString(data, 'avatar')
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updateAvatar(route, { safe: avatar })))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, updateAvatar(route, { safe: avatar }))
     }
     case Intent.RemoveAvatar: {
       const route = parseRouteData(params.data)
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(removeAvatar(route)))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, removeAvatar(route))
     }
     default:
       return serverAction()
@@ -150,7 +128,8 @@ const EditRoute = ({
       <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
 
       <Form method="POST" className="flex flex-col gap-4">
-        <TextInput label="Label" defaultValue={label} />
+        <TextInput label="Label" name="label" defaultValue={label} />
+
         <ChainSelect
           value={chainId}
           onChange={(chainId) => {
@@ -159,6 +138,7 @@ const EditRoute = ({
             })
           }}
         />
+
         <ConnectWallet
           chainId={chainId}
           pilotAddress={getPilotAddress(waypoints)}
@@ -166,6 +146,7 @@ const EditRoute = ({
           onConnect={() => {}}
           onDisconnect={() => {}}
         />
+
         <AvatarInput
           value={avatar}
           startingWaypoint={startingWaypoint}
@@ -181,6 +162,7 @@ const EditRoute = ({
             }
           }}
         />
+
         <ZodiacMod
           avatar={avatar}
           waypoints={waypoints}
@@ -269,4 +251,12 @@ const updateChainId = (
     ...route,
     avatar: formatPrefixedAddress(chainId, address),
   }
+}
+
+const saveRouteState = (currentUrl: string, route: ExecutionRoute) => {
+  const url = new URL(currentUrl)
+
+  return Response.redirect(
+    new URL(`/edit-route/${btoa(JSON.stringify(route))}`, url.origin),
+  )
 }

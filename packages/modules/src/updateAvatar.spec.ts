@@ -5,6 +5,7 @@ import {
   createMockExecutionRoute,
   createMockRoleWaypoint,
   createMockStartingWaypoint,
+  createMockWaypoints,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -20,10 +21,12 @@ describe('updateAvatar', () => {
 
       const route = createMockExecutionRoute({
         avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
-        waypoints: [
-          createMockStartingWaypoint(),
-          createMockEndWaypoint({ address: currentSafe, chain: Chain.ETH }),
-        ],
+        waypoints: createMockWaypoints({
+          end: createMockEndWaypoint({
+            address: currentSafe,
+            chain: Chain.ETH,
+          }),
+        }),
       })
 
       const safe = randomAddress()
@@ -65,10 +68,12 @@ describe('updateAvatar', () => {
 
       const route = createMockExecutionRoute({
         avatar: formatPrefixedAddress(Chain.GNO, currentSafe),
-        waypoints: [
-          createMockStartingWaypoint(),
-          createMockEndWaypoint({ address: currentSafe, chain: Chain.GNO }),
-        ],
+        waypoints: createMockWaypoints({
+          end: createMockEndWaypoint({
+            address: currentSafe,
+            chain: Chain.GNO,
+          }),
+        }),
       })
 
       const safe = randomAddress()
@@ -87,7 +92,6 @@ describe('updateAvatar', () => {
     it('adds an endpoint if none exists', () => {
       const route = createMockExecutionRoute({
         avatar: randomPrefixedAddress({ chainId: Chain.GNO }),
-        waypoints: [createMockStartingWaypoint()],
       })
 
       const safe = randomAddress()
@@ -132,10 +136,11 @@ describe('updateAvatar', () => {
       const moduleAddress = randomAddress()
 
       const route = createMockExecutionRoute({
-        waypoints: [
-          createMockStartingWaypoint(),
-          createMockRoleWaypoint({ chainId: Chain.GNO, moduleAddress }),
-        ],
+        waypoints: createMockWaypoints({
+          waypoints: [
+            createMockRoleWaypoint({ chainId: Chain.GNO, moduleAddress }),
+          ],
+        }),
       })
 
       const safe = randomAddress()
