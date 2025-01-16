@@ -341,7 +341,7 @@ describe('Edit route', () => {
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-        expect(screen.getByText('Roles v1')).toBeInTheDocument()
+        expect(await screen.findByText('Roles v1')).toBeInTheDocument()
       })
 
       it('is possible to select the v1 roles mod', async () => {
@@ -451,7 +451,7 @@ describe('Edit route', () => {
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-        expect(screen.getByText('Roles v2')).toBeInTheDocument()
+        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
       })
 
       it('is possible to select the v2 roles mod', async () => {
@@ -529,7 +529,7 @@ describe('Edit route', () => {
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
           await userEvent.type(
-            screen.getByRole('textbox', { name: 'Role Key' }),
+            await screen.findByRole('textbox', { name: 'Role Key' }),
             'MANAGER',
           )
 

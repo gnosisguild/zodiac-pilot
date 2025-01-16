@@ -3,11 +3,12 @@ import {
   ChainSelect,
   ConnectWallet,
   DebugRouteData,
+  WalletProvider,
   ZodiacMod,
 } from '@/components'
 import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { verifyChainId } from '@zodiac/chains'
+import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
   getHexString,
@@ -130,6 +131,11 @@ export const clientAction = async ({
         ),
       )
     }
+    case Intent.DisconnectWallet: {
+      const route = parseRouteData(params.data)
+
+      return editRoute(request.url, updatePilotAddress(route, ZERO_ADDRESS))
+    }
     default:
       return serverAction()
   }
@@ -157,23 +163,29 @@ const EditRoute = ({
           }}
         />
 
-        <ConnectWallet
-          chainId={chainId}
-          pilotAddress={getPilotAddress(waypoints)}
-          providerType={providerType}
-          onConnect={({ account, chainId, providerType }) => {
-            submit(
-              formData({
-                intent: Intent.ConnectWallet,
-                account,
-                chainId,
-                providerType,
-              }),
-              { method: 'POST' },
-            )
-          }}
-          onDisconnect={() => {}}
-        />
+        <WalletProvider>
+          <ConnectWallet
+            chainId={chainId}
+            pilotAddress={getPilotAddress(waypoints)}
+            providerType={providerType}
+            onConnect={({ account, chainId, providerType }) => {
+              submit(
+                formData({
+                  intent: Intent.ConnectWallet,
+                  account,
+                  chainId,
+                  providerType,
+                }),
+                { method: 'POST' },
+              )
+            }}
+            onDisconnect={() => {
+              submit(formData({ intent: Intent.DisconnectWallet }), {
+                method: 'POST',
+              })
+            }}
+          />
+        </WalletProvider>
 
         <AvatarInput
           value={avatar}
@@ -221,6 +233,7 @@ enum Intent {
   UpdateAvatar = 'UpdateAvatar',
   RemoveAvatar = 'RemoveAvatar',
   ConnectWallet = 'ConnectWallet',
+  DisconnectWallet = 'DisconnectWallet',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {
