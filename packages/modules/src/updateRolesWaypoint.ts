@@ -12,7 +12,7 @@ type RoleUpdatePayload = {
 export const updateRolesWaypoint = (
   route: ExecutionRoute,
   { moduleAddress, multisend, version }: RoleUpdatePayload,
-) => {
+): ExecutionRoute => {
   const [chainId] = splitPrefixedAddress(route.avatar)
 
   invariant(
@@ -30,10 +30,10 @@ export const updateRolesWaypoint = (
     'The route needs at least a start and an end waypoint to define a mod in between.',
   )
 
-  const [startingPoint] = route.waypoints
+  const [startingPoint, ...waypoints] = route.waypoints
 
   if (hasRolesWaypoint(route.waypoints)) {
-    const newWaypoints = route.waypoints.map((waypoint) => {
+    const newWaypoints = waypoints.map((waypoint) => {
       if (waypoint.account.type !== AccountType.ROLES) {
         return waypoint
       }
@@ -49,7 +49,7 @@ export const updateRolesWaypoint = (
 
     return {
       ...route,
-      waypoints: newWaypoints,
+      waypoints: [startingPoint, ...newWaypoints],
     }
   }
 
@@ -64,7 +64,7 @@ export const updateRolesWaypoint = (
         version,
         from: startingPoint.account.prefixedAddress,
       }),
-      ...route.waypoints.slice(1),
+      ...waypoints,
     ],
   }
 }

@@ -67,11 +67,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     multisend: await getMultisend(route, module),
   })
 
-  const url = new URL(request.url)
-
-  return Response.redirect(
-    new URL(`/edit-route/${btoa(JSON.stringify(updatedRoute))}`, url.origin),
-  )
+  return saveRouteState(request.url, updatedRoute)
 }
 
 export const clientAction = async ({
@@ -97,49 +93,24 @@ export const clientAction = async ({
 
       chrome.runtime.sendMessage('', route)
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(`/edit-route/${btoa(JSON.stringify(route))}`, url.origin),
-      )
+      return saveRouteState(request.url, route)
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)
       const chainId = verifyChainId(getInt(data, 'chainId'))
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updateChainId(route, chainId)))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, updateChainId(route, chainId))
     }
     case Intent.UpdateAvatar: {
       const route = parseRouteData(params.data)
       const avatar = getHexString(data, 'avatar')
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(updateAvatar(route, { safe: avatar })))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, updateAvatar(route, { safe: avatar }))
     }
     case Intent.RemoveAvatar: {
       const route = parseRouteData(params.data)
 
-      const url = new URL(request.url)
-
-      return Response.redirect(
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(removeAvatar(route)))}`,
-          url.origin,
-        ),
-      )
+      return saveRouteState(request.url, removeAvatar(route))
     }
     default:
       return serverAction()
@@ -280,4 +251,12 @@ const updateChainId = (
     ...route,
     avatar: formatPrefixedAddress(chainId, address),
   }
+}
+
+const saveRouteState = (currentUrl: string, route: ExecutionRoute) => {
+  const url = new URL(currentUrl)
+
+  return Response.redirect(
+    new URL(`/edit-route/${btoa(JSON.stringify(route))}`, url.origin),
+  )
 }
