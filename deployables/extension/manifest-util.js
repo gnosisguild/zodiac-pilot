@@ -13,10 +13,6 @@ config()
 // node manifest-util.js ./public/manifest.json
 
 const updateManifest = (templateFileName, outFileName, version) => {
-  const iframeUrl = process.env.CONNECT_IFRAME_URL
-
-  invariant(iframeUrl != null, 'CONNECT_IFRAME_URL is missing')
-
   try {
     console.log(chalk.white.bold('Manifest template file:'))
     console.log(new URL(templateFileName, import.meta.url).pathname)
@@ -24,7 +20,7 @@ const updateManifest = (templateFileName, outFileName, version) => {
     const data = fs
       .readFileSync(templateFileName)
       .toString()
-      .replaceAll('<CONNECT_IFRAME_URL>', iframeUrl)
+      .replaceAll('<CONNECT_IFRAME_URL>', getIframeUrl())
 
     const manifest = JSON.parse(data)
     manifest['version'] = version.replace('v', '')
@@ -65,3 +61,15 @@ invariant(template != null, 'Path to template file missing')
 invariant(outFile != null, 'Path to output file missing')
 
 updateManifest(template, outFile, version)
+
+const getIframeUrl = () => {
+  const iframeUrl = process.env.CONNECT_IFRAME_URL
+
+  invariant(iframeUrl != null, 'CONNECT_IFRAME_URL is missing')
+
+  if (iframeUrl.endsWith('/')) {
+    return iframeUrl
+  }
+
+  return `${iframeUrl}/`
+}
