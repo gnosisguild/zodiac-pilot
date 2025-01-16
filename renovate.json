@@ -10,6 +10,11 @@
       "matchPackageNames": ["/^@walletconnect/"],
       "automerge": false,
       "groupName": "Wallet Connect"
+    },
+    {
+      "matchPackageNames": ["/^@testing-library/"],
+      "automerge": true,
+      "groupName": "Testing Library"
     }
   ]
 }
