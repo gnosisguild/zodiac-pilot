@@ -21,6 +21,7 @@ import {
   removeAvatar,
   SupportedZodiacModuleType,
   updateAvatar,
+  updateLabel,
   updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -92,12 +93,15 @@ export const clientAction = async ({
         route = updateRoleId(route, roleId)
       }
 
-      chrome.runtime.sendMessage('', {
-        ...route,
-        label: getString(data, 'label'),
-      })
+      route = updateLabel(route, getString(data, 'label'))
 
-      return null
+      chrome.runtime.sendMessage('', route)
+
+      const url = new URL(request.url)
+
+      return Response.redirect(
+        new URL(`/edit-route/${btoa(JSON.stringify(route))}`, url.origin),
+      )
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)

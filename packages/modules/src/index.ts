@@ -10,6 +10,7 @@ export {
 export { removeAvatar } from './removeAvatar'
 export { decodeRoleKey, encodeRoleKey } from './roleKey'
 export { updateAvatar } from './updateAvatar'
+export { updateLabel } from './updateLabel'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
 export {
