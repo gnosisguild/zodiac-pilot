@@ -38,6 +38,28 @@ describe('updateAvatar', () => {
   })
 
   describe('Account', () => {
+    it('keeps existing waypoints', () => {
+      const currentSafe = randomAddress()
+
+      const startingPoint = createMockStartingWaypoint()
+      const roleWaypoint = createMockRoleWaypoint()
+
+      const route = createMockExecutionRoute({
+        avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
+        waypoints: [startingPoint, roleWaypoint],
+      })
+
+      const safe = randomAddress()
+
+      const updatedRoute = updateAvatar(route, { safe })
+
+      expect(updatedRoute.waypoints).toEqual([
+        startingPoint,
+        roleWaypoint,
+        expect.anything(),
+      ])
+    })
+
     it('updates an existing safe endpoint', () => {
       const currentSafe = randomAddress()
 
@@ -120,7 +142,7 @@ describe('updateAvatar', () => {
 
       const updatedRoute = updateAvatar(route, { safe })
 
-      const [updatedWaypoint] = getWaypoints(updatedRoute)
+      const [, updatedWaypoint] = getWaypoints(updatedRoute)
 
       expect(updatedWaypoint.connection).toEqual({
         from: formatPrefixedAddress(Chain.GNO, moduleAddress),

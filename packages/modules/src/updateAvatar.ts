@@ -63,7 +63,7 @@ const updateEndWaypoint = (
 
   return {
     ...route,
-    waypoints: [startingPoint, updatedWaypoint],
+    waypoints: [startingPoint, ...waypoints, updatedWaypoint],
   }
 }
 
