@@ -21,6 +21,7 @@
     "@zodiac/safe": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "@zodiac/ui": "workspace:*",
+    "classnames": "^2.5.1",
     "connectkit": "^1.8.2",
     "ethers": "6.13.5",
     "isbot": "^5.1.17",

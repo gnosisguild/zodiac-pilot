@@ -1,3 +1,4 @@
+import { getChainId } from '@zodiac/chains'
 import {
   decodeRoleKey,
   encodeRoleKey,
@@ -13,7 +14,7 @@ import { useFetcher } from 'react-router'
 import {
   AccountType,
   ConnectionType,
-  splitPrefixedAddress,
+  parsePrefixedAddress,
   type PrefixedAddress,
 } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
@@ -53,7 +54,7 @@ export const ZodiacMod = ({
   } = useFetcher<ZodiacModule[]>({
     key: 'modules',
   })
-  const [chainId] = splitPrefixedAddress(avatar)
+  const chainId = getChainId(avatar)
   const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
 
   useEffect(() => {
@@ -66,7 +67,7 @@ export const ZodiacMod = ({
   }, [chainId, loadDelegates, loadSafes, pilotAddress])
 
   useEffect(() => {
-    const [, address] = splitPrefixedAddress(avatar)
+    const address = parsePrefixedAddress(avatar)
 
     loadModules(`/${address}/${chainId}/modules`)
   }, [avatar, chainId, loadModules])

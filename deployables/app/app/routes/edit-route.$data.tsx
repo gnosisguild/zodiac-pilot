@@ -39,6 +39,7 @@ import {
   type Waypoints,
 } from '@zodiac/schema'
 import { PrimaryButton, TextInput } from '@zodiac/ui'
+import classNames from 'classnames'
 import { Form, useSubmit } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
@@ -148,80 +149,82 @@ const EditRoute = ({
   const submit = useSubmit()
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-4">
-      <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
+    <div className={classNames('grid', isDev && 'grid-cols-2')}>
+      <main className="mx-auto flex max-w-3xl flex-col gap-4">
+        <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
 
-      <Form method="POST" className="flex flex-col gap-4">
-        <TextInput label="Label" name="label" defaultValue={label} />
+        <Form method="POST" className="flex flex-col gap-4">
+          <TextInput label="Label" name="label" defaultValue={label} />
 
-        <ChainSelect
-          value={chainId}
-          onChange={(chainId) => {
-            submit(formData({ intent: Intent.UpdateChain, chainId }), {
-              method: 'POST',
-            })
-          }}
-        />
-
-        <WalletProvider>
-          <ConnectWallet
-            chainId={chainId}
-            pilotAddress={getPilotAddress(waypoints)}
-            providerType={providerType}
-            onConnect={({ account, chainId, providerType }) => {
-              submit(
-                formData({
-                  intent: Intent.ConnectWallet,
-                  account,
-                  chainId,
-                  providerType,
-                }),
-                { method: 'POST' },
-              )
-            }}
-            onDisconnect={() => {
-              submit(formData({ intent: Intent.DisconnectWallet }), {
+          <ChainSelect
+            value={chainId}
+            onChange={(chainId) => {
+              submit(formData({ intent: Intent.UpdateChain, chainId }), {
                 method: 'POST',
               })
             }}
           />
-        </WalletProvider>
 
-        <AvatarInput
-          value={avatar}
-          startingWaypoint={startingWaypoint}
-          onChange={(avatar) => {
-            if (avatar != null) {
-              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+          <WalletProvider>
+            <ConnectWallet
+              chainId={chainId}
+              pilotAddress={getPilotAddress(waypoints)}
+              providerType={providerType}
+              onConnect={({ account, chainId, providerType }) => {
+                submit(
+                  formData({
+                    intent: Intent.ConnectWallet,
+                    account,
+                    chainId,
+                    providerType,
+                  }),
+                  { method: 'POST' },
+                )
+              }}
+              onDisconnect={() => {
+                submit(formData({ intent: Intent.DisconnectWallet }), {
+                  method: 'POST',
+                })
+              }}
+            />
+          </WalletProvider>
+
+          <AvatarInput
+            value={avatar}
+            startingWaypoint={startingWaypoint}
+            onChange={(avatar) => {
+              if (avatar != null) {
+                submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+                  method: 'POST',
+                })
+              } else {
+                submit(formData({ intent: Intent.RemoveAvatar }), {
+                  method: 'POST',
+                })
+              }
+            }}
+          />
+
+          <ZodiacMod
+            avatar={avatar}
+            waypoints={waypoints}
+            onSelect={(module) => {
+              submit(formData({ module: JSON.stringify(module) }), {
                 method: 'POST',
               })
-            } else {
-              submit(formData({ intent: Intent.RemoveAvatar }), {
-                method: 'POST',
-              })
-            }
-          }}
-        />
+            }}
+          />
 
-        <ZodiacMod
-          avatar={avatar}
-          waypoints={waypoints}
-          onSelect={(module) => {
-            submit(formData({ module: JSON.stringify(module) }), {
-              method: 'POST',
-            })
-          }}
-        />
-
-        <div className="mt-8 flex justify-end">
-          <PrimaryButton submit intent={Intent.Save}>
-            Save
-          </PrimaryButton>
-        </div>
-      </Form>
+          <div className="mt-8 flex justify-end">
+            <PrimaryButton submit intent={Intent.Save}>
+              Save
+            </PrimaryButton>
+          </div>
+        </Form>
+      </main>
 
       {isDev && <DebugRouteData />}
-    </main>
+    </div>
   )
 }
 
