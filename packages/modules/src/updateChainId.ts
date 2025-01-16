@@ -12,6 +12,7 @@ import {
   splitPrefixedAddress,
   type PrefixedAddress,
 } from 'ser-kit'
+import { createDelayWaypoint } from './createDelayWaypoint'
 import { createEoaWaypoint } from './createEoaWaypoint'
 import { createRolesWaypoint } from './createRolesWaypoint'
 import { createSafeStartingPoint } from './createSafeStartingPoint'
@@ -72,6 +73,17 @@ const updateWaypoint = (
         connection: updateConnection(connection, chainId),
         safe: account.address,
       })
+    }
+    case AccountType.DELAY: {
+      return createDelayWaypoint({
+        chainId,
+        moduleAddress: account.address,
+        connection: updateConnection(connection, chainId),
+      })
+    }
+
+    default: {
+      throw new Error(`Cannot update waypoint of type "${account.type}"`)
     }
   }
 }

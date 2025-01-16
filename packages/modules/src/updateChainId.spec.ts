@@ -1,5 +1,6 @@
 import { Chain, getChainId } from '@zodiac/chains'
 import {
+  createMockDelayWaypoint,
   createMockEndWaypoint,
   createMockEoaAccount,
   createMockExecutionRoute,
@@ -76,6 +77,7 @@ describe('updateChainId', () => {
         AccountType.SAFE,
         createMockEndWaypoint(createMockSafeAccount({ chainId: Chain.ETH })),
       ],
+      [AccountType.DELAY, createMockDelayWaypoint({ chainId: Chain.ETH })],
     ])('Waypoint with account type: "%s"', (_, waypoint) => {
       it('updates the prefixed address of roles modules', () => {
         const route = createMockExecutionRoute({
