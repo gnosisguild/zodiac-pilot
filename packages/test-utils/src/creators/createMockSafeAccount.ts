@@ -8,7 +8,7 @@ export const createMockSafeAccount = (safe: Partial<Safe> = {}): Safe => ({
   address: randomAddress(),
   prefixedAddress: randomPrefixedAddress(),
   chain: 1,
-  threshold: 0,
+  threshold: NaN,
 
   ...safe,
 })

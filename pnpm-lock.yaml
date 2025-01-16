@@ -694,6 +694,9 @@ importers:
       evm-proxy-detection:
         specifier: ^2.0.1
         version: 2.0.1(patch_hash=6vcbqkl2il57qcqj5fdd3rom54)
+      nanoid:
+        specifier: ^5.0.0
+        version: 5.0.9
       ser-kit:
         specifier: 1.1.0
         version: 1.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
