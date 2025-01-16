@@ -98,6 +98,8 @@ const connectionSchema = z.discriminatedUnion('type', [
   isMemberConnectionSchema,
 ])
 
+export type Connection = z.infer<typeof connectionSchema>
+
 const waypointSchema = z.object({
   account: contractSchema,
   connection: connectionSchema,

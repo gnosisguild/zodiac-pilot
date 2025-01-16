@@ -6,6 +6,8 @@ import {
   type Waypoint,
 } from '@zodiac/schema'
 import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import { createEnabledConnection } from './createEnabledConnection'
+import { createOwnsConnection } from './createOwnsConnection'
 import { createSafeWaypoint } from './createSafeWaypoint'
 
 type UpdateAvatarOptions = {
@@ -34,15 +36,18 @@ const updateEndWaypoint = (
     (waypoint) => waypoint.account.type === AccountType.ROLES,
   )
 
+  const pilotAddress = formatPrefixedAddress(
+    startingPoint.account.type === AccountType.EOA ? undefined : chainId,
+    startingPoint.account.address,
+  )
+
   const updatedWaypoint = createSafeWaypoint({
     chainId,
     safe,
-    pilotAddress: formatPrefixedAddress(
-      startingPoint.account.type === AccountType.EOA ? undefined : chainId,
-      startingPoint.account.address,
-    ),
-    moduleAddress:
-      roleWaypoint != null ? roleWaypoint.account.prefixedAddress : undefined,
+    connection:
+      roleWaypoint == null
+        ? createOwnsConnection(pilotAddress)
+        : createEnabledConnection(roleWaypoint.account.prefixedAddress),
   })
 
   if (hasSafeWaypoint(waypoints)) {

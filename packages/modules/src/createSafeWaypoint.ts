@@ -1,25 +1,16 @@
-import type { HexAddress } from '@zodiac/schema'
-import {
-  AccountType,
-  ConnectionType,
-  formatPrefixedAddress,
-  type ChainId,
-  type PrefixedAddress,
-  type Waypoint,
-} from 'ser-kit'
+import type { Connection, HexAddress, Waypoint } from '@zodiac/schema'
+import { AccountType, formatPrefixedAddress, type ChainId } from 'ser-kit'
 
 type CreateSafeWaypointOptions = {
   safe: HexAddress
   chainId: ChainId
-  pilotAddress: PrefixedAddress
-  moduleAddress?: PrefixedAddress
+  connection: Connection
 }
 
 export const createSafeWaypoint = ({
   chainId,
   safe,
-  moduleAddress,
-  pilotAddress,
+  connection,
 }: CreateSafeWaypointOptions): Waypoint => ({
   account: {
     type: AccountType.SAFE,
@@ -28,8 +19,5 @@ export const createSafeWaypoint = ({
     prefixedAddress: formatPrefixedAddress(chainId, safe),
     threshold: NaN,
   },
-  connection:
-    moduleAddress != null
-      ? { type: ConnectionType.IS_ENABLED, from: moduleAddress }
-      : { type: ConnectionType.OWNS, from: pilotAddress },
+  connection,
 })

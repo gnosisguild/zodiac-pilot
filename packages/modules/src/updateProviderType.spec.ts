@@ -5,13 +5,13 @@ import {
   createMockEoaAccount,
   createMockExecutionRoute,
   createMockRoleWaypoint,
+  createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
 import { AccountType } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
-import { createMockSafeAccount } from '../../test-utils/src/creators/createMockSafeAccount'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
 import { updateProviderType } from './updateProviderType'
