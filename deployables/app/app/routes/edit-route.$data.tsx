@@ -23,6 +23,8 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
+  updatePilotAddress,
+  updateProviderType,
   updateRoleId,
   updateRolesWaypoint,
   zodiacModuleSchema,
@@ -30,6 +32,8 @@ import {
 } from '@zodiac/modules'
 import {
   executionRouteSchema,
+  ProviderType,
+  providerTypeSchema,
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
@@ -109,6 +113,21 @@ export const clientAction = async ({
 
       return editRoute(request.url, removeAvatar(route))
     }
+    case Intent.ConnectWallet: {
+      const route = parseRouteData(params.data)
+
+      const account = getHexString(data, 'account')
+      const chainId = verifyChainId(getInt(data, 'chainId'))
+      const providerType = verifyProviderType(getInt(data, 'providerType'))
+
+      return editRoute(
+        request.url,
+        updatePilotAddress(
+          updateChainId(updateProviderType(route, providerType), chainId),
+          account,
+        ),
+      )
+    }
     default:
       return serverAction()
   }
@@ -140,7 +159,17 @@ const EditRoute = ({
           chainId={chainId}
           pilotAddress={getPilotAddress(waypoints)}
           providerType={providerType}
-          onConnect={() => {}}
+          onConnect={({ account, chainId, providerType }) => {
+            submit(
+              formData({
+                intent: Intent.ConnectWallet,
+                account,
+                chainId,
+                providerType,
+              }),
+              { method: 'POST' },
+            )
+          }}
           onDisconnect={() => {}}
         />
 
@@ -187,6 +216,7 @@ enum Intent {
   UpdateChain = 'UpdateChain',
   UpdateAvatar = 'UpdateAvatar',
   RemoveAvatar = 'RemoveAvatar',
+  ConnectWallet = 'ConnectWallet',
 }
 
 const getPilotAddress = (waypoints?: Waypoints) => {
@@ -200,8 +230,6 @@ const getPilotAddress = (waypoints?: Waypoints) => {
 }
 
 const parseRouteData = (routeData: string) => {
-  console.log({ routeData })
-
   invariantResponse(routeData != null, 'Missing "route" parameter')
 
   const decodedData = atob(routeData)
@@ -237,3 +265,6 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
 
   throw new Error(`Cannot get multisend for module type "${module.type}"`)
 }
+
+const verifyProviderType = (value: number): ProviderType =>
+  providerTypeSchema.parse(value)

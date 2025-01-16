@@ -75,7 +75,9 @@ describe('updateChainId', () => {
       [AccountType.ROLES, createMockRoleWaypoint({ chainId: Chain.ETH })],
       [
         AccountType.SAFE,
-        createMockEndWaypoint(createMockSafeAccount({ chainId: Chain.ETH })),
+        createMockEndWaypoint({
+          account: createMockSafeAccount({ chainId: Chain.ETH }),
+        }),
       ],
       [AccountType.DELAY, createMockDelayWaypoint({ chainId: Chain.ETH })],
     ])('Waypoint with account type: "%s"', (_, waypoint) => {

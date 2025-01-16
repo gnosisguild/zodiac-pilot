@@ -132,7 +132,10 @@ export enum ProviderType {
 const walletConnectType = z.literal(ProviderType.WalletConnect)
 const injectedProviderType = z.literal(ProviderType.InjectedWallet)
 
-const providerTypeSchema = z.union([walletConnectType, injectedProviderType])
+export const providerTypeSchema = z.union([
+  walletConnectType,
+  injectedProviderType,
+])
 
 const waypointsSchema = z.tuple([startingPointSchema]).rest(waypointSchema)
 

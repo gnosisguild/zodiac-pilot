@@ -23,8 +23,10 @@ describe('updateAvatar', () => {
         avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
         waypoints: createMockWaypoints({
           end: createMockEndWaypoint({
-            address: currentSafe,
-            chain: Chain.ETH,
+            account: {
+              address: currentSafe,
+              chain: Chain.ETH,
+            },
           }),
         }),
       })
@@ -70,8 +72,10 @@ describe('updateAvatar', () => {
         avatar: formatPrefixedAddress(Chain.GNO, currentSafe),
         waypoints: createMockWaypoints({
           end: createMockEndWaypoint({
-            address: currentSafe,
-            chain: Chain.GNO,
+            account: {
+              address: currentSafe,
+              chain: Chain.GNO,
+            },
           }),
         }),
       })
