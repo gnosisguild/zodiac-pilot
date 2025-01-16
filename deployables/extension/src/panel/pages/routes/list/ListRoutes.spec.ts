@@ -10,7 +10,7 @@ import {
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
-import { expectRouteToBe } from '@zodiac/test-utils'
+import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { action, ListRoutes, loader } from './ListRoutes'
 
@@ -59,13 +59,18 @@ describe('List routes', () => {
 
     it('is possible to launch a new route and clear transactions', async () => {
       const selectedRoute = createMockRoute({
+        avatar: randomPrefixedAddress(),
         id: 'firstRoute',
         label: 'First route',
       })
 
       await saveLastUsedRouteId('firstRoute')
 
-      mockRoutes(selectedRoute, { id: 'secondRoute', label: 'Second route' })
+      mockRoutes(selectedRoute, {
+        id: 'secondRoute',
+        label: 'Second route',
+        avatar: randomPrefixedAddress(),
+      })
 
       await render(
         '/routes',
@@ -94,11 +99,13 @@ describe('List routes', () => {
   describe('Clearing transactions', () => {
     it('warns about clearing transactions when the avatars differ', async () => {
       const selectedRoute = createMockRoute({
+        avatar: randomPrefixedAddress(),
         id: 'firstRoute',
         label: 'First route',
       })
 
       await mockRoutes(selectedRoute, {
+        avatar: randomPrefixedAddress(),
         id: 'secondRoute',
         label: 'Second route',
       })
