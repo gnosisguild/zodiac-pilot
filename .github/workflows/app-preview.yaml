@@ -11,6 +11,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy & Test
+    defaults:
+      run:
+        working-directory: ./deployables/app
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
