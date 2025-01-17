@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, type Page } from '@playwright/test'
 import { defaultMockAccount } from '@zodiac/test-utils/e2e'
 
 export const connectWallet = async (
