@@ -3,9 +3,6 @@ public/manifest.json
 
 zodiac-pilot.zip
 
-/test-results/
-/playwright-report/
 /blob-report/
-/playwright/.cache/
 
 walletconnect.db
