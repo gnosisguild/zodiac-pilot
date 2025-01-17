@@ -127,6 +127,8 @@ export const clientAction = async ({
       const chainId = verifyChainId(getInt(data, 'chainId'))
       const providerType = verifyProviderType(getInt(data, 'providerType'))
 
+      console.log({ account, chainId, providerType })
+
       return editRoute(
         request.url,
         updatePilotAddress(
