@@ -15,7 +15,10 @@ const wagmiConfig = createConfig(
     connectors: [
       injected(),
       metaMask(),
-      walletConnect({ projectId: WALLETCONNECT_PROJECT_ID }),
+      walletConnect({
+        projectId: WALLETCONNECT_PROJECT_ID,
+        showQrModal: false,
+      }),
     ],
   }),
 )
