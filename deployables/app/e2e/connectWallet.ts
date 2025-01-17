@@ -6,7 +6,7 @@ export const connectWallet = async (
   account: `0x${string}` = defaultMockAccount,
 ) => {
   await page.getByRole('button', { name: 'Connect wallet' }).click()
-  await page.getByRole('button', { name: 'MetaMask' }).click()
+  await page.getByRole('button', { name: 'Browser Wallet' }).click()
   await expect(
     page.getByRole('textbox', { name: 'Pilot Account' }),
   ).toHaveValue(account)

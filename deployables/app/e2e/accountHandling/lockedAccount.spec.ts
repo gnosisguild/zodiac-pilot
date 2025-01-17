@@ -6,9 +6,9 @@ test.describe('Locked account', () => {
   const account = '0x1000000000000000000000000000000000000000'
 
   test('handles wallet disconnect gracefully', async ({ page }) => {
-    await page.goto('/new-route')
-
     const { lockWallet } = await mockWeb3(page)
+
+    await page.goto('/new-route')
 
     await connectWallet(page)
     await lockWallet()
@@ -19,11 +19,11 @@ test.describe('Locked account', () => {
   })
 
   test('it is possible to reconnect an account', async ({ page }) => {
-    await page.goto('/new-route')
-
     const { lockWallet } = await mockWeb3(page, {
       accounts: [account],
     })
+
+    await page.goto('/new-route')
 
     await connectWallet(page, account)
     await lockWallet()
@@ -36,9 +36,9 @@ test.describe('Locked account', () => {
   })
 
   test('it is possible to disconnect a locked account', async ({ page }) => {
-    await page.goto('/new-route')
-
     const { lockWallet } = await mockWeb3(page)
+
+    await page.goto('/new-route')
 
     await connectWallet(page)
     await lockWallet()

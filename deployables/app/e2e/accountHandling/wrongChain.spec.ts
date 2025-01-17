@@ -4,9 +4,9 @@ import { connectWallet } from '../connectWallet'
 
 test.describe('Wrong chain selected', () => {
   test('it is possible to switch to the correct chain', async ({ page }) => {
-    await page.goto('/new-route')
-
     const { switchChain } = await mockWeb3(page)
+
+    await page.goto('/new-route')
 
     await connectWallet(page)
     await switchChain(10)
@@ -20,6 +20,8 @@ test.describe('Wrong chain selected', () => {
     page,
   }) => {
     const { switchChain } = await mockWeb3(page)
+
+    await page.goto('/new-route')
 
     await connectWallet(page)
     await switchChain(10)

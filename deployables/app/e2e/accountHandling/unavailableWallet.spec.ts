@@ -4,11 +4,11 @@ import { connectWallet } from '../connectWallet'
 
 test.describe('Account unavailable', () => {
   test('handles unavailable accounts gracefully', async ({ page }) => {
-    await page.goto('/new-route')
-
     const { loadAccounts } = await mockWeb3(page, {
       accounts: ['0x1000000000000000000000000000000000000000'],
     })
+
+    await page.goto('/new-route')
 
     await connectWallet(page, '0x1000000000000000000000000000000000000000')
     await loadAccounts(['0x2000000000000000000000000000000000000000'])
