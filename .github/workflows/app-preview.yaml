@@ -40,7 +40,7 @@ jobs:
       # Check https://github.com/cloudflare/wrangler-action/issues/343
       # and we can just use the deployment-url output of
       # the deploy action
-      - uses: actions-ecosystem/action-regex-match@v2
+      - uses: kaisugi/action-regex-match@v1.0.1
         id: regex
         with:
           text: ${{ steps.deploy.outputs.command-output }}
