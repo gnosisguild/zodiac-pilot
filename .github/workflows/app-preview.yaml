@@ -44,7 +44,7 @@ jobs:
         id: regex
         with:
           text: ${{ steps.deploy.outputs.command-output }}
-          regex: https?:\/\/[a-zA-Z0-9-./]+
+          regex: "https?:\/\/[a-zA-Z0-9-./]+"
 
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
