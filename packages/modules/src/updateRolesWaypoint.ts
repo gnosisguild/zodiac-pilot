@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
+import { getChainId } from '@zodiac/chains'
 import type { ExecutionRoute, HexAddress, Waypoints } from '@zodiac/schema'
-import { AccountType, splitPrefixedAddress } from 'ser-kit'
+import { AccountType } from 'ser-kit'
 import { createRolesWaypoint } from './createRolesWaypoint'
 
 type RoleUpdatePayload = {
@@ -13,12 +14,7 @@ export const updateRolesWaypoint = (
   route: ExecutionRoute,
   { moduleAddress, multisend, version }: RoleUpdatePayload,
 ): ExecutionRoute => {
-  const [chainId] = splitPrefixedAddress(route.avatar)
-
-  invariant(
-    chainId != null,
-    `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
-  )
+  const chainId = getChainId(route.avatar)
 
   invariant(
     route.waypoints,

@@ -99,13 +99,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
           if (clientAction != null) {
             return clientAction({
               ...actionArgs,
-              serverAction: action
-                ? () =>
-                    action({
-                      ...actionArgs,
-                      request: new Request(actionArgs.request),
-                    })
-                : undefined,
+              serverAction: action ? () => action(actionArgs) : undefined,
             })
           }
 

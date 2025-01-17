@@ -9,7 +9,7 @@ export const DebugRouteData = () => {
   }
 
   return (
-    <code>
+    <code className="overflow-y-auto text-sm">
       <pre>{JSON.stringify(parseRouteData(data), undefined, 2)}</pre>
     </code>
   )

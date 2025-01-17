@@ -34,19 +34,19 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": ["<CONNECT_IFRAME_URL>/", "about:*", "chrome:*"],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/connect/contentScripts/dApp.js"]
     },
     {
-      "matches": ["<CONNECT_IFRAME_URL>/"],
+      "matches": ["<CONNECT_IFRAME_URL>"],
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/connect/contentScripts/connectIframe.js"]
     },
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": ["<CONNECT_IFRAME_URL>/", "about:*", "chrome:*"],
+      "exclude_globs": ["<CONNECT_IFRAME_URL>", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/monitor/contentScript/main.js"]
     }

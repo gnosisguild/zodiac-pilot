@@ -18,7 +18,7 @@ const alreadyInjected =
 
 if (
   !alreadyInjected &&
-  window.location.origin !== 'https://connect.pilot.gnosisguild.org' &&
+  window.location.origin !== process.env.CONNECT_IFRAME_URL &&
   isValidTab(window.location.href)
 ) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
