@@ -1,13 +1,13 @@
-import { type Message, PilotMessageType } from '@/messages'
 import { PILOT_PANEL_PORT } from '@/port-handling'
 import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
+import { PilotMessageType, type Message } from '@zodiac/messages'
 import type { RefObject } from 'react'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession, type Sessions } from './PilotSession'
 import type { TrackRequestsResult } from './rpcTracking'
 import type { Event } from './types'
-import { type CallbackFn, withPilotSession } from './withPilotSession'
+import { withPilotSession, type CallbackFn } from './withPilotSession'
 
 type SessionDeletedEventListener = (windowId: number) => void
 

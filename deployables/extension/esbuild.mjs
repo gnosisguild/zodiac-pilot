@@ -29,6 +29,9 @@ esbuild
       './src/monitor/contentScript/main.ts',
       './src/monitor/injectedScript/main.ts',
 
+      // COMPANION APP TO EDIT ROUTES
+      './src/companion/contentScripts/main.ts',
+
       // SIDEPANEL APP
       './src/panel/app.tsx',
     ],

@@ -1,8 +1,8 @@
+import type { JsonRpcRequest } from '@/types'
 import {
   InjectedProviderMessageTyp,
   type InjectedProviderMessage,
-} from '@/messages'
-import type { JsonRpcRequest } from '@/types'
+} from '@zodiac/messages'
 import type { MockTab } from '@zodiac/test-utils/chrome'
 import { nanoid } from 'nanoid'
 import { vi } from 'vitest'

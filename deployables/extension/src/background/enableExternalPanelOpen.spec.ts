@@ -1,5 +1,5 @@
-import { PilotMessageType } from '@/messages'
 import { callListeners, chromeMock, createMockTab } from '@/test-utils'
+import { PilotMessageType } from '@zodiac/messages'
 import { describe, expect, it } from 'vitest'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
 

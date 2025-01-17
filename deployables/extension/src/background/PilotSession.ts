@@ -1,6 +1,6 @@
-import { type Message, PilotMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import { PilotMessageType, type Message } from '@zodiac/messages'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import type { TrackRequestsResult } from './rpcTracking'

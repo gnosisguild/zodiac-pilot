@@ -1,9 +1,9 @@
+import { createMockPort, mockTabConnect } from '@/test-utils'
+import { invariant } from '@epic-web/invariant'
 import {
   type ConnectedWalletMessage,
   ConnectedWalletMessageType,
-} from '@/messages'
-import { createMockPort, mockTabConnect } from '@/test-utils'
-import { invariant } from '@epic-web/invariant'
+} from '@zodiac/messages'
 import { describe, expect, it, vi } from 'vitest'
 import { createPort } from './createPort'
 

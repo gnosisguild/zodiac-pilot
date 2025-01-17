@@ -2,9 +2,9 @@
 // It tracks if the Pilot panel is connected and if the Pilot provider is injected.
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
-import { PilotMessageType } from '@/messages'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { PilotMessageType } from '@zodiac/messages'
 import {
   dismissHint,
   renderConnectHint,

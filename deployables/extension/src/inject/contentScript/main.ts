@@ -1,13 +1,13 @@
+import { injectScript, isValidTab } from '@/utils'
 import {
-  type InjectedProviderMessage,
   InjectedProviderMessageTyp,
+  PilotMessageType,
+  RpcMessageType,
+  type InjectedProviderMessage,
   type InjectedProviderResponse,
   type Message,
-  PilotMessageType,
   type RpcMessage,
-  RpcMessageType,
-} from '@/messages'
-import { injectScript, isValidTab } from '@/utils'
+} from '@zodiac/messages'
 import { probeChainId } from './probeChainId'
 
 // The content script is injected on tab update events, which can be triggered multiple times for the same page load.

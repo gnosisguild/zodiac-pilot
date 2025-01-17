@@ -1,7 +1,7 @@
 // injects a minimal script into the page to hint the user to reload the page when the panel is toggled
 
-import { type Message, PilotMessageType } from '@/messages'
 import { injectScript } from '@/utils'
+import { type Message, PilotMessageType } from '@zodiac/messages'
 
 window.document.documentElement.dataset.__zodiacPilotBasePath =
   chrome.runtime.getURL('/')

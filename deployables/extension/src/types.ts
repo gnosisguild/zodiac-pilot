@@ -1,3 +1,4 @@
+import type { JsonRpcRequest } from '@zodiac/messages'
 import type { SupportedZodiacModuleType } from '@zodiac/modules'
 import type {
   ExecutionRoute as BaseExecutionRoute,
@@ -6,6 +7,7 @@ import type {
 } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
 
+export type { JsonRpcRequest } from '@zodiac/messages'
 export { ProviderType } from '@zodiac/schema'
 export type { HexAddress } from '@zodiac/schema'
 
@@ -32,11 +34,6 @@ export interface LegacyConnection {
 
 export type ExecutionRoute = BaseExecutionRoute & {
   lastUsed?: number
-}
-
-export interface JsonRpcRequest {
-  method: string
-  params?: readonly unknown[] | object
 }
 
 export interface JsonRpcError extends Error {

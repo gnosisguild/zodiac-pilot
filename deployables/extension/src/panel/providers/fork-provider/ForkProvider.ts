@@ -1,4 +1,3 @@
-import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
 import {
   hashMessage,
   initSafeProtocolKit,
@@ -11,6 +10,10 @@ import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import {
+  PilotSimulationMessageType,
+  type SimulationMessage,
+} from '@zodiac/messages'
 import { BrowserProvider, toBigInt, toQuantity, ZeroAddress } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'

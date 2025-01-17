@@ -1,5 +1,5 @@
-import { RpcMessageType } from '@/messages'
 import { sendMessageToTab } from '@/utils'
+import { RpcMessageType } from '@zodiac/messages'
 import type { ChainId } from 'ser-kit'
 import { createEventListener } from './createEventListener'
 import { hasJsonRpcBody } from './hasJsonRpcBody'

@@ -2,6 +2,7 @@ import { render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   encodeRoleKey,
   fetchZodiacModules,
@@ -24,7 +25,6 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { chromeMock } from '@zodiac/test-utils/chrome'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -64,6 +64,8 @@ const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 const mockQueryRolesV1MultiSend = vi.mocked(queryRolesV1MultiSend)
 const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
+const mockPostMessage = vi.spyOn(window, 'postMessage')
+
 describe('Edit route', () => {
   describe('Label', () => {
     it('shows the name of a route', async () => {
@@ -88,9 +90,12 @@ describe('Edit route', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.SAVE_ROUTE,
+          data: expect.objectContaining({ label: 'New route label' }),
+        },
         expect.anything(),
-        expect.objectContaining({ label: 'New route label' }),
       )
     })
   })
@@ -213,9 +218,12 @@ describe('Edit route', () => {
 
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: updateAvatar(route, { safe }),
+          },
           expect.anything(),
-          updateAvatar(route, { safe }),
         )
       })
 
@@ -234,9 +242,12 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: updateAvatar(route, { safe }),
+          },
           expect.anything(),
-          updateAvatar(route, { safe }),
         )
       })
 
@@ -257,9 +268,12 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: removeAvatar(route),
+          },
           expect.anything(),
-          removeAvatar(route),
         )
       })
     })
@@ -424,9 +438,12 @@ describe('Edit route', () => {
 
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect(mockPostMessage).toHaveBeenCalledWith(
+            {
+              type: CompanionAppMessageType.SAVE_ROUTE,
+              data: updateRoleId(route, roleId),
+            },
             expect.anything(),
-            updateRoleId(route, roleId),
           )
         })
       })
@@ -535,9 +552,12 @@ describe('Edit route', () => {
 
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect(mockPostMessage).toHaveBeenCalledWith(
+            {
+              type: CompanionAppMessageType.SAVE_ROUTE,
+              data: updateRoleId(route, encodeRoleKey('MANAGER')),
+            },
             expect.anything(),
-            updateRoleId(route, encodeRoleKey('MANAGER')),
           )
         })
       })

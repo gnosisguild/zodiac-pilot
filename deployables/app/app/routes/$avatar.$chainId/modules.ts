@@ -18,7 +18,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
       chainId: verifiedChainId,
     })
   } catch (e) {
-    console.log(e)
+    console.error(e)
     return []
   }
 }

@@ -94,6 +94,9 @@ importers:
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
+      '@zodiac/messages':
+        specifier: workspace:*
+        version: link:../../packages/messages
       '@zodiac/modules':
         specifier: workspace:*
         version: link:../../packages/modules
@@ -315,6 +318,9 @@ importers:
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
+      '@zodiac/messages':
+        specifier: workspace:*
+        version: link:../../packages/messages
       '@zodiac/modules':
         specifier: workspace:*
         version: link:../../packages/modules
@@ -660,6 +666,25 @@ importers:
       '@epic-web/invariant':
         specifier: ^1.0.0
         version: 1.0.0
+      '@zodiac/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
+      eslint:
+        specifier: ^9.7.0
+        version: 9.18.0(jiti@2.4.1)
+
+  packages/messages:
+    dependencies:
+      '@zodiac/chains':
+        specifier: workspace:*
+        version: link:../chains
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
@@ -15009,8 +15034,8 @@ snapshots:
   ox@0.6.0(typescript@5.7.3)(zod@3.24.1):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.1
+      '@noble/curves': 1.8.0
+      '@noble/hashes': 1.7.0
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
       abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
@@ -15023,8 +15048,8 @@ snapshots:
   ox@0.6.5(typescript@5.7.3)(zod@3.24.1):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.1
+      '@noble/curves': 1.8.0
+      '@noble/hashes': 1.7.0
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
       abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
@@ -16938,8 +16963,8 @@ snapshots:
 
   webauthn-p256@0.0.10:
     dependencies:
-      '@noble/curves': 1.7.0
-      '@noble/hashes': 1.6.1
+      '@noble/curves': 1.8.0
+      '@noble/hashes': 1.7.0
 
   webextension-polyfill@0.10.0: {}
 
