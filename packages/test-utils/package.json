@@ -22,10 +22,16 @@
     "./setup-chrome-mock": {
       "types": "./setup-chrome-mock.ts",
       "import": "./setup-chrome-mock.ts"
+    },
+    "./e2e": {
+      "types": "./src/e2e/index.ts",
+      "import": "./src/e2e/index.ts"
     }
   },
   "dependencies": {
+    "@depay/web3-mock": "^14.19.1",
     "@epic-web/invariant": "^1.0.0",
+    "@playwright/test": "^1.48.1",
     "@testing-library/react": "^16.0.1",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",

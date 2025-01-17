@@ -1,4 +1,4 @@
-name: Pilot App
+name: Companion App
 
 on:
   pull_request:
@@ -10,7 +10,10 @@ defaults:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy & Test
+    defaults:
+      run:
+        working-directory: ./deployables/app
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -19,12 +22,41 @@ jobs:
           node-version: latest
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
+
       - run: pnpm install --prefer-offline
+
       - run: pnpm build
+
       - name: Deploy
+        id: deploy
         uses: cloudflare/wrangler-action@v3.13.1
         with:
           workingDirectory: deployables/app
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload
+
+      # If you think this sucks, you are right.
+      # Check https://github.com/cloudflare/wrangler-action/issues/343
+      # and we can just use the deployment-url output of
+      # the deploy action
+      - uses: kaisugi/action-regex-match@v1.0.1
+        id: regex
+        with:
+          text: ${{ steps.deploy.outputs.command-output }}
+          regex: 'https:\/\/.+\.gnosisguild\.workers\.dev'
+
+      - name: Install Playwright Browsers
+        run: pnpm playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: xvfb-run pnpm playwright test
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.regex.outputs.match }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
