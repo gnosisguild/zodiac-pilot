@@ -432,7 +432,7 @@ describe('Edit route', () => {
           const roleId = randomAddress()
 
           await userEvent.type(
-            screen.getByRole('textbox', { name: 'Role ID' }),
+            await screen.findByRole('textbox', { name: 'Role ID' }),
             roleId,
           )
 
@@ -520,9 +520,9 @@ describe('Edit route', () => {
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
-          expect(screen.getByRole('textbox', { name: 'Role Key' })).toHaveValue(
-            'TEST-KEY',
-          )
+          expect(
+            await screen.findByRole('textbox', { name: 'Role Key' }),
+          ).toHaveValue('TEST-KEY')
         })
 
         it('is possible to update the role key', async () => {
