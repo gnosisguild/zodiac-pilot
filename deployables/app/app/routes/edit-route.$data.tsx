@@ -94,7 +94,8 @@ export const clientAction = async ({
 
       route = updateLabel(route, getString(data, 'label'))
 
-      chrome.runtime.sendMessage('', route)
+      window.postMessage({ type: 'SAVE_ROUTE', data: route }, '*')
+      // chrome.runtime.sendMessage('', route)
 
       return editRoute(request.url, route)
     }

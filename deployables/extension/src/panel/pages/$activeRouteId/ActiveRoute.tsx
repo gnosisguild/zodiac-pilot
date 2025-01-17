@@ -5,12 +5,14 @@ import {
   saveLastUsedRouteId,
   saveRoute,
 } from '@/execution-routes'
+import type { CompanionAppMessage } from '@/messages'
 import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { formData, getString } from '@/utils'
+import { useEffect } from 'react'
 import {
   Outlet,
   redirect,
@@ -75,6 +77,17 @@ export const ActiveRoute = () => {
         method: 'post',
       }),
   })
+
+  useEffect(() => {
+    const handleSaveRoute = (message: CompanionAppMessage) =>
+      console.log({ message })
+
+    chrome.runtime.onMessage.addListener(handleSaveRoute)
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleSaveRoute)
+    }
+  }, [])
 
   return (
     <ProvideExecutionRoute route={route}>

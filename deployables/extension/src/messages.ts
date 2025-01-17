@@ -1,4 +1,5 @@
 import type { JsonRpcRequest } from '@/types'
+import type { ExecutionRoute } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
 
 export enum PilotMessageType {
@@ -163,3 +164,14 @@ export type ConnectedWalletMessage =
   | UserWalletError
   | UserWalletResponse
   | UserWalletEvent
+
+export enum CompanionAppMessageType {
+  SAVE_ROUTE = 'SAVE_ROUTE',
+}
+
+type CompanionAppSaveRouteMessage = {
+  type: CompanionAppMessageType.SAVE_ROUTE
+  data: ExecutionRoute
+}
+
+export type CompanionAppMessage = CompanionAppSaveRouteMessage
