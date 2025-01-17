@@ -1,6 +1,6 @@
-import { type Message, PilotMessageType } from '@/messages'
 import { PILOT_PANEL_PORT } from '@/port-handling'
 import { invariant } from '@epic-web/invariant'
+import { type Message, PilotMessageType } from '@zodiac/messages'
 import type { MockTab } from '@zodiac/test-utils/chrome'
 import {
   callListeners,

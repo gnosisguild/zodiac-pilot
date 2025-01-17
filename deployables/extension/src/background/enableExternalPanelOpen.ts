@@ -1,5 +1,5 @@
-import { PilotMessageType } from '@/messages'
 import { invariant } from '@epic-web/invariant'
+import { PilotMessageType } from '@zodiac/messages'
 import { resolve } from 'path'
 
 export const enableExternalPanelOpen = () => {

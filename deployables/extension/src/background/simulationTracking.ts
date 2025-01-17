@@ -1,4 +1,7 @@
-import { PilotSimulationMessageType, type SimulationMessage } from '@/messages'
+import {
+  PilotSimulationMessageType,
+  type SimulationMessage,
+} from '@zodiac/messages'
 import type { TrackSessionsResult } from './sessionTracking'
 import { updateBadge } from './updateBadge'
 

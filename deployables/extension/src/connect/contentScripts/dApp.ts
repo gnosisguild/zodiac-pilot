@@ -1,8 +1,8 @@
-import {
-  type ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/messages'
 import { invariant } from '@epic-web/invariant'
+import {
+  ConnectedWalletMessageType,
+  type ConnectedWalletMessage,
+} from '@zodiac/messages'
 
 const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL
 

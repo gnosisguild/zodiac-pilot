@@ -1,12 +1,12 @@
 // this will be bundled in the panel app
-import {
-  type ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/messages'
 import { createPortOnTabActivity } from '@/port-handling'
 import type { Eip1193Provider } from '@/types'
 import { sleep } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import {
+  type ConnectedWalletMessage,
+  ConnectedWalletMessageType,
+} from '@zodiac/messages'
 import { EventEmitter } from 'events'
 
 interface JsonRpcRequest {

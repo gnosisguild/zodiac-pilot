@@ -24,7 +24,6 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { chromeMock } from '@zodiac/test-utils/chrome'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -64,6 +63,8 @@ const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
 const mockQueryRolesV1MultiSend = vi.mocked(queryRolesV1MultiSend)
 const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
+const mockPostMessage = vi.spyOn(window, 'postMessage')
+
 describe('Edit route', () => {
   describe('Label', () => {
     it('shows the name of a route', async () => {
@@ -88,7 +89,7 @@ describe('Edit route', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+      expect(mockPostMessage).toHaveBeenCalledWith(
         expect.anything(),
         expect.objectContaining({ label: 'New route label' }),
       )
@@ -213,7 +214,7 @@ describe('Edit route', () => {
 
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
           expect.anything(),
           updateAvatar(route, { safe }),
         )
@@ -234,7 +235,7 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
           expect.anything(),
           updateAvatar(route, { safe }),
         )
@@ -257,7 +258,7 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-        expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+        expect(mockPostMessage).toHaveBeenCalledWith(
           expect.anything(),
           removeAvatar(route),
         )
@@ -424,7 +425,7 @@ describe('Edit route', () => {
 
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
+          expect(mockPostMessage).toHaveBeenCalledWith(
             expect.anything(),
             updateRoleId(route, roleId),
           )
@@ -535,8 +536,7 @@ describe('Edit route', () => {
 
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-          expect(chromeMock.runtime.sendMessage).toHaveBeenCalledWith(
-            expect.anything(),
+          expect(mockPostMessage).toHaveBeenCalledWith(
             updateRoleId(route, encodeRoleKey('MANAGER')),
           )
         })

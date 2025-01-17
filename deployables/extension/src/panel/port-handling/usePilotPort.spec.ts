@@ -1,4 +1,3 @@
-import { PilotMessageType } from '@/messages'
 import {
   createMockTab,
   mockActiveTab,
@@ -7,6 +6,7 @@ import {
   renderHook,
 } from '@/test-utils'
 import { cleanup, waitFor } from '@testing-library/react'
+import { PilotMessageType } from '@zodiac/messages'
 import { afterEach, describe, expect, it } from 'vitest'
 import { usePilotPort } from './usePilotPort'
 

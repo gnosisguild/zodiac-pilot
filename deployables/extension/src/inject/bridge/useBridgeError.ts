@@ -1,7 +1,7 @@
 import {
   InjectedProviderMessageTyp,
   type InjectedProviderMessage,
-} from '@/messages'
+} from '@zodiac/messages'
 import { errorToast } from '@zodiac/ui'
 import { useEffect, useId } from 'react'
 import { useWindowId } from './BridgeContext'

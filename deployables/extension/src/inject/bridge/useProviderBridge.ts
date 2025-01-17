@@ -1,11 +1,10 @@
-// this will be bundled in the panel app
-import {
-  type InjectedProviderMessage,
-  InjectedProviderMessageTyp,
-} from '@/messages'
 import type { Eip1193Provider } from '@/types'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
+import {
+  InjectedProviderMessageTyp,
+  type InjectedProviderMessage,
+} from '@zodiac/messages'
 import { toQuantity } from 'ethers'
 import { useCallback, useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'

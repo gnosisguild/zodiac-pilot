@@ -1,9 +1,9 @@
-import {
-  type ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/messages'
 import { chromeMock, createMockPort } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
+import {
+  ConnectedWalletMessageType,
+  type ConnectedWalletMessage,
+} from '@zodiac/messages'
 import { describe, expect, it } from 'vitest'
 
 describe('Connect Pilot to DApp', () => {

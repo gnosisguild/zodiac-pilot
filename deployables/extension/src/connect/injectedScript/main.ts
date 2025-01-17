@@ -1,8 +1,8 @@
-import {
-  type ConnectedWalletMessage,
-  ConnectedWalletMessageType,
-} from '@/messages'
 import type { Eip1193Provider } from '@/types'
+import {
+  ConnectedWalletMessageType,
+  type ConnectedWalletMessage,
+} from '@zodiac/messages'
 
 declare global {
   interface Window {

@@ -1,5 +1,5 @@
-import { type Message, PilotMessageType } from '@/messages'
 import { isValidTab, useActiveTab } from '@/utils'
+import { type Message, PilotMessageType } from '@zodiac/messages'
 import { useEffect, useState } from 'react'
 
 // we use a port to communicate between the panel app and the background script as this allows us to track when the panel is closed

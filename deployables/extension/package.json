@@ -93,6 +93,7 @@
     "@headlessui/react": "^2.2.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/form-data": "workspace:*",
+    "@zodiac/messages": "workspace:*",
     "@zodiac/modules": "workspace:*",
     "@zodiac/safe": "workspace:*",
     "@zodiac/schema": "workspace:*",

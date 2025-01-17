@@ -1,4 +1,7 @@
-import { CompanionAppMessageType, type CompanionAppMessage } from '@/messages'
+import {
+  CompanionAppMessageType,
+  type CompanionAppMessage,
+} from '@zodiac/messages'
 
 window.addEventListener(
   'message',

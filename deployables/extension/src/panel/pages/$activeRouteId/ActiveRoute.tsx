@@ -5,13 +5,13 @@ import {
   saveLastUsedRouteId,
   saveRoute,
 } from '@/execution-routes'
-import type { CompanionAppMessage } from '@/messages'
 import {
   useConnectInjectedWalletIfNeeded,
   useDisconnectWalletConnectIfNeeded,
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { formData, getString } from '@/utils'
+import type { CompanionAppMessage } from '@zodiac/messages'
 import { useEffect } from 'react'
 import {
   Outlet,

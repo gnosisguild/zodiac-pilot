@@ -1,8 +1,8 @@
+import { isValidTab } from '@/utils'
 import {
   type ConnectedWalletMessage,
   ConnectedWalletMessageType,
-} from '@/messages'
-import { isValidTab } from '@/utils'
+} from '@zodiac/messages'
 
 export const createPort = async (tabId: number, url: string | undefined) => {
   if (!isValidTab(url)) {

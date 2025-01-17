@@ -1,7 +1,7 @@
 import {
   type InjectedProviderMessage,
   InjectedProviderMessageTyp,
-} from '@/messages'
+} from '@zodiac/messages'
 import { EventEmitter } from 'events'
 import { nanoid } from 'nanoid'
 

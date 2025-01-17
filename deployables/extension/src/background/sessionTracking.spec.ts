@@ -1,4 +1,3 @@
-import { PilotMessageType } from '@/messages'
 import {
   callListeners,
   chromeMock,
@@ -6,6 +5,7 @@ import {
   mockActiveTab,
   startPilotSession,
 } from '@/test-utils'
+import { PilotMessageType } from '@zodiac/messages'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
