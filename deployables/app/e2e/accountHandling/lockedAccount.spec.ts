@@ -46,7 +46,7 @@ test.describe('Locked account', () => {
     await page.getByRole('button', { name: 'Disconnect' }).click()
 
     await expect(
-      page.getByRole('button', { name: 'Connect with MetaMask' }),
+      page.getByRole('button', { name: 'Connect wallet' }),
     ).toBeInViewport()
   })
 })
