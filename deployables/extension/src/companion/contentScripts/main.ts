@@ -9,7 +9,6 @@ window.addEventListener(
     if (event.data.type !== CompanionAppMessageType.SAVE_ROUTE) {
       return
     }
-    console.log({ event })
 
     chrome.runtime.sendMessage(event.data)
   },
