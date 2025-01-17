@@ -51,7 +51,7 @@ export const Wallet = ({
   }
 
   const accountInWallet = addresses.some(
-    (address) => address.toLowerCase() === pilotAddress,
+    (address) => address.toLowerCase() === pilotAddress.toLowerCase(),
   )
 
   // Wrong account
