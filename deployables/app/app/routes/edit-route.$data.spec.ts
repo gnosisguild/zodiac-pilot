@@ -2,6 +2,7 @@ import { render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   encodeRoleKey,
   fetchZodiacModules,
@@ -90,8 +91,11 @@ describe('Edit route', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(mockPostMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.SAVE_ROUTE,
+          data: expect.objectContaining({ label: 'New route label' }),
+        },
         expect.anything(),
-        expect.objectContaining({ label: 'New route label' }),
       )
     })
   })
@@ -215,8 +219,11 @@ describe('Edit route', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
         expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: updateAvatar(route, { safe }),
+          },
           expect.anything(),
-          updateAvatar(route, { safe }),
         )
       })
 
@@ -236,8 +243,11 @@ describe('Edit route', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
         expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: updateAvatar(route, { safe }),
+          },
           expect.anything(),
-          updateAvatar(route, { safe }),
         )
       })
 
@@ -259,8 +269,11 @@ describe('Edit route', () => {
         await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
         expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: removeAvatar(route),
+          },
           expect.anything(),
-          removeAvatar(route),
         )
       })
     })
@@ -426,8 +439,11 @@ describe('Edit route', () => {
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
           expect(mockPostMessage).toHaveBeenCalledWith(
+            {
+              type: CompanionAppMessageType.SAVE_ROUTE,
+              data: updateRoleId(route, roleId),
+            },
             expect.anything(),
-            updateRoleId(route, roleId),
           )
         })
       })
@@ -537,7 +553,11 @@ describe('Edit route', () => {
           await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
           expect(mockPostMessage).toHaveBeenCalledWith(
-            updateRoleId(route, encodeRoleKey('MANAGER')),
+            {
+              type: CompanionAppMessageType.SAVE_ROUTE,
+              data: updateRoleId(route, encodeRoleKey('MANAGER')),
+            },
+            expect.anything(),
           )
         })
       })

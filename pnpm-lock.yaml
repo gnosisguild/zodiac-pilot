@@ -94,6 +94,9 @@ importers:
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
+      '@zodiac/messages':
+        specifier: workspace:*
+        version: link:../../packages/messages
       '@zodiac/modules':
         specifier: workspace:*
         version: link:../../packages/modules

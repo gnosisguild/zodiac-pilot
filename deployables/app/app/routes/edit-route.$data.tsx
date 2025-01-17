@@ -15,6 +15,7 @@ import {
   getOptionalString,
   getString,
 } from '@zodiac/form-data'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   getRolesVersion,
   queryRolesV1MultiSend,
@@ -94,7 +95,10 @@ export const clientAction = async ({
 
       route = updateLabel(route, getString(data, 'label'))
 
-      window.postMessage({ type: 'SAVE_ROUTE', data: route }, '*')
+      window.postMessage(
+        { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
+        '*',
+      )
       // chrome.runtime.sendMessage('', route)
 
       return editRoute(request.url, route)
