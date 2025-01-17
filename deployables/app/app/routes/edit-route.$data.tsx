@@ -7,8 +7,7 @@ import {
   ZodiacMod,
 } from '@/components'
 import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
-import { invariantResponse } from '@epic-web/invariant'
-import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
   getHexString,
@@ -41,13 +40,12 @@ import {
 import { PrimaryButton, TextInput } from '@zodiac/ui'
 import classNames from 'classnames'
 import { Form, useSubmit } from 'react-router'
-import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const route = parseRouteData(params.data)
 
-  const [chainId] = splitPrefixedAddress(route.avatar)
+  const chainId = getChainId(route.avatar)
 
   return {
     label: route.label,
@@ -80,7 +78,7 @@ export const clientAction = async ({
   request,
   params,
 }: Route.ClientActionArgs) => {
-  const data = await request.formData()
+  const data = await request.clone().formData()
 
   const intent = getOptionalString(data, 'intent')
 
@@ -250,12 +248,7 @@ const getPilotAddress = (waypoints?: Waypoints) => {
 }
 
 const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
-  const [chainId] = splitPrefixedAddress(route.avatar)
-
-  invariantResponse(
-    chainId != null,
-    `chainId is required but could not be retrieved from avatar "${route.avatar}"`,
-  )
+  const chainId = getChainId(route.avatar)
 
   switch (module.type) {
     case SupportedZodiacModuleType.ROLES_V1:
