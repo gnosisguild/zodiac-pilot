@@ -40,8 +40,6 @@ jobs:
         run: xvfb-run pnpm playwright test
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.deploy.outputs.deployment-url }}
-          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
-          PW_CHROMIUM_ATTACH_TO_OTHER: 1
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
