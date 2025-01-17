@@ -52,7 +52,7 @@ jobs:
       - name: Run Playwright tests
         run: xvfb-run pnpm playwright test
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.regex.outputs.group1 }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.regex.outputs.match }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
