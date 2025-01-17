@@ -11,8 +11,6 @@ import {
 } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import { formData, getString } from '@/utils'
-import type { CompanionAppMessage } from '@zodiac/messages'
-import { useEffect } from 'react'
 import {
   Outlet,
   redirect,
@@ -77,17 +75,6 @@ export const ActiveRoute = () => {
         method: 'post',
       }),
   })
-
-  useEffect(() => {
-    const handleSaveRoute = (message: CompanionAppMessage) =>
-      console.log({ message })
-
-    chrome.runtime.onMessage.addListener(handleSaveRoute)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleSaveRoute)
-    }
-  }, [])
 
   return (
     <ProvideExecutionRoute route={route}>
