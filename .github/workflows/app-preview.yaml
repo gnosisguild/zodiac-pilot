@@ -43,7 +43,7 @@ jobs:
       - uses: actions-ecosystem/action-regex-match@v2
         id: regex
         with:
-          text: ${{ steps.deploy.outputs.deployment-url }}
+          text: ${{ steps.deploy.outputs.command-output }}
           regex: https?:\/\/[a-zA-Z0-9-./]+
 
       - name: Install Playwright Browsers
