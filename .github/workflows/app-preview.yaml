@@ -36,13 +36,23 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: versions upload
 
+      # If you think this sucks, you are right.
+      # Check https://github.com/cloudflare/wrangler-action/issues/343
+      # and we can just use the deployment-url output of
+      # the deploy action
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex
+        with:
+          text: ${{ steps.deploy.outputs.deployment-url }}
+          regex: https?:\/\/[a-zA-Z0-9-./]+
+
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
 
       - name: Run Playwright tests
         run: xvfb-run pnpm playwright test
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.deploy.outputs.deployment-url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.regex.outputs.group1 }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
