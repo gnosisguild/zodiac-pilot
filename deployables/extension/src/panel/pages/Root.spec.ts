@@ -11,16 +11,11 @@ import type { ExecutionRoute } from '@/types'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CompanionAppMessageType } from '@zodiac/messages'
-import {
-  expectRouteToBe,
-  randomAddress,
-  randomPrefixedAddress,
-} from '@zodiac/test-utils'
-import { parsePrefixedAddress } from 'ser-kit'
+import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { loader, Root } from './Root'
 
-const mockSave = async (route: ExecutionRoute) => {
+const mockIncomingRouteUpdate = async (route: ExecutionRoute) => {
   await callListeners(
     chromeMock.runtime.onMessage,
     {
@@ -38,29 +33,28 @@ describe('Root', () => {
 
     const route = createMockRoute()
 
-    await mockSave(route)
+    await mockIncomingRouteUpdate(route)
 
     await expect(getRoute(route.id)).resolves.toEqual(route)
   })
 
-  describe.skip('Clearing transactions', () => {
+  describe('Clearing transactions', () => {
     it('warns about clearing transactions when the avatars differ', async () => {
       const currentAvatar = randomPrefixedAddress()
-      const newAvatar = randomAddress()
 
-      const selectedRoute = createMockRoute({
+      const currentRoute = createMockRoute({
         id: 'firstRoute',
         avatar: currentAvatar,
       })
 
-      await mockRoutes(selectedRoute)
-      await saveLastUsedRouteId(selectedRoute.id)
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
 
       await render(
-        '/routes/edit/firstRoute',
+        '/',
         [
           {
-            path: '/routes/edit/:routeId',
+            path: '/',
             Component: Root,
             loader,
           },
@@ -70,40 +64,30 @@ describe('Root', () => {
         },
       )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Clear piloted Safe' }),
-      )
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
-        newAvatar,
-      )
-
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Launch' }),
-      )
+      await mockIncomingRouteUpdate({
+        ...currentRoute,
+        avatar: randomPrefixedAddress(),
+      })
 
       expect(
-        screen.getByRole('dialog', { name: 'Clear transactions' }),
+        await screen.findByRole('dialog', { name: 'Clear transactions' }),
       ).toBeInTheDocument()
     })
 
     it('does not warn about clearing transactions when the avatars stay the same', async () => {
-      const avatar = randomPrefixedAddress()
-
-      const selectedRoute = createMockRoute({
+      const currentRoute = createMockRoute({
         id: 'firstRoute',
-        label: 'First route',
-        avatar,
+        avatar: randomPrefixedAddress(),
       })
 
-      await mockRoutes(selectedRoute)
-      await saveLastUsedRouteId(selectedRoute.id)
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
 
       await render(
-        '/routes/edit/firstRoute',
+        '/',
         [
           {
-            path: '/routes/edit/:routeId',
+            path: '/',
             Component: Root,
             loader,
           },
@@ -113,17 +97,73 @@ describe('Root', () => {
         },
       )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Clear piloted Safe' }),
+      await mockIncomingRouteUpdate({
+        ...currentRoute,
+        label: 'New label',
+      })
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Clear transactions' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('does not warn when the route differs from the currently active one', async () => {
+      const currentRoute = createMockRoute({
+        id: 'firstRoute',
+        avatar: randomPrefixedAddress(),
+      })
+
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
+
+      await render(
+        '/',
+        [
+          {
+            path: '/',
+            Component: Root,
+            loader,
+          },
+        ],
+        {
+          initialState: [createTransaction()],
+        },
       )
 
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
-        parsePrefixedAddress(avatar),
+      await mockIncomingRouteUpdate(
+        createMockRoute({
+          id: 'another-route',
+          avatar: randomPrefixedAddress(),
+        }),
       )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Launch' }),
+      expect(
+        screen.queryByRole('dialog', { name: 'Clear transactions' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('does not warn when no route is currently selected', async () => {
+      await saveLastUsedRouteId(null)
+
+      await render(
+        '/',
+        [
+          {
+            path: '/',
+            Component: Root,
+            loader,
+          },
+        ],
+        {
+          initialState: [createTransaction()],
+        },
+      )
+
+      await mockIncomingRouteUpdate(
+        createMockRoute({
+          id: 'another-route',
+          avatar: randomPrefixedAddress(),
+        }),
       )
 
       expect(
@@ -132,59 +172,43 @@ describe('Root', () => {
     })
 
     it('should not warn about clearing transactions when there are none', async () => {
-      const selectedRoute = createMockRoute({
+      const currentRoute = createMockRoute({
         id: 'firstRoute',
-        label: 'First route',
         avatar: randomPrefixedAddress(),
       })
 
-      await mockRoutes(selectedRoute)
-      await saveLastUsedRouteId(selectedRoute.id)
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
 
-      await render('/routes/edit/firstRoute', [
+      await render('/', [
         {
-          path: '/routes/edit/:routeId',
+          path: '/',
           Component: Root,
           loader,
         },
       ])
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Clear piloted Safe' }),
-      )
-
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
-        randomAddress(),
-      )
-
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Launch' }),
-      )
+      await mockIncomingRouteUpdate({
+        ...currentRoute,
+        avatar: randomPrefixedAddress(),
+      })
 
       expect(
         screen.queryByRole('dialog', { name: 'Clear transactions' }),
       ).not.toBeInTheDocument()
     })
 
-    it('is possible to launch a new route and clear transactions', async () => {
-      const selectedRoute = createMockRoute({
-        id: 'firstRoute',
-        label: 'First route',
-        avatar: randomPrefixedAddress(),
-      })
+    it('is saves the incoming route when the user accepts to clear transactions', async () => {
+      const currentRoute = createMockRoute()
 
-      await mockRoutes(selectedRoute, {
-        id: 'another-route',
-        avatar: randomPrefixedAddress(),
-      })
-      await saveLastUsedRouteId('another-route')
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
 
       await render(
-        '/routes/edit/firstRoute',
+        '/',
         [
           {
-            path: '/routes/edit/:routeId',
+            path: '/',
             Component: Root,
             loader,
           },
@@ -197,24 +221,51 @@ describe('Root', () => {
         },
       )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Clear piloted Safe' }),
-      )
+      const updatedRoute = { ...currentRoute, avatar: randomPrefixedAddress() }
 
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Piloted Safe' }),
-        randomAddress(),
-      )
-
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Launch' }),
-      )
+      await mockIncomingRouteUpdate(updatedRoute)
 
       await userEvent.click(
         screen.getByRole('button', { name: 'Clear transactions' }),
       )
 
-      await expectRouteToBe('/another-route/clear-transactions/firstRoute')
+      await expect(getRoute(currentRoute.id)).resolves.toEqual(updatedRoute)
+    })
+
+    it('clears transactions', async () => {
+      const currentRoute = createMockRoute()
+
+      await mockRoutes(currentRoute)
+      await saveLastUsedRouteId(currentRoute.id)
+
+      await render(
+        '/',
+        [
+          {
+            path: '/',
+            Component: Root,
+            loader,
+          },
+        ],
+        {
+          initialState: [createTransaction()],
+          inspectRoutes: [
+            '/:activeRouteId/clear-transactions/:newActiveRouteId',
+          ],
+        },
+      )
+
+      const updatedRoute = { ...currentRoute, avatar: randomPrefixedAddress() }
+
+      await mockIncomingRouteUpdate(updatedRoute)
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Clear transactions' }),
+      )
+
+      await expectRouteToBe(
+        `/${currentRoute.id}/clear-transactions/${currentRoute.id}`,
+      )
     })
   })
 })
