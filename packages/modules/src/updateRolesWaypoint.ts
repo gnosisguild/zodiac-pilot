@@ -1,8 +1,15 @@
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
-import type { ExecutionRoute, HexAddress, Waypoints } from '@zodiac/schema'
-import { AccountType } from 'ser-kit'
+import type {
+  ExecutionRoute,
+  HexAddress,
+  Waypoint,
+  Waypoints,
+} from '@zodiac/schema'
+import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import { createEnabledConnection } from './createEnabledConnection'
 import { createRolesWaypoint } from './createRolesWaypoint'
+import { createSafeWaypoint } from './createSafeWaypoint'
 
 type RoleUpdatePayload = {
   moduleAddress: HexAddress
@@ -31,7 +38,7 @@ export const updateRolesWaypoint = (
   if (hasRolesWaypoint(route.waypoints)) {
     const newWaypoints = waypoints.map((waypoint) => {
       if (waypoint.account.type !== AccountType.ROLES) {
-        return waypoint
+        return updateSafeConnection(waypoint, moduleAddress)
       }
 
       return createRolesWaypoint({
@@ -60,10 +67,31 @@ export const updateRolesWaypoint = (
         version,
         from: startingPoint.account.prefixedAddress,
       }),
-      ...waypoints,
+      ...waypoints.map((waypoint) =>
+        updateSafeConnection(waypoint, moduleAddress),
+      ),
     ],
   }
 }
 
 const hasRolesWaypoint = (waypoints: Waypoints) =>
   waypoints.some((waypoint) => waypoint.account.type === AccountType.ROLES)
+
+const updateSafeConnection = (
+  waypoint: Waypoint,
+  moduleAddress: HexAddress,
+): Waypoint => {
+  const { account } = waypoint
+
+  if (account.type !== AccountType.SAFE) {
+    return waypoint
+  }
+
+  return createSafeWaypoint({
+    chainId: account.chain,
+    safe: account.address,
+    connection: createEnabledConnection(
+      formatPrefixedAddress(account.chain, moduleAddress),
+    ),
+  })
+}
