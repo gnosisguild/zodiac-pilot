@@ -1,4 +1,4 @@
-import { getChainId, type ChainId } from '@zodiac/chains'
+import { type ChainId } from '@zodiac/chains'
 import type { Connection, HexAddress } from '@zodiac/schema'
 import { parsePrefixedAddress } from 'ser-kit'
 import { updatePrefixedAddress } from './updatePrefixedAddress'
@@ -12,7 +12,7 @@ export const updateConnection = <T extends Connection>(
   connection: T,
   {
     from = parsePrefixedAddress(connection.from),
-    chainId = getChainId(connection.from),
+    chainId,
   }: UpdateConnectionOptions,
 ): T => ({
   ...connection,

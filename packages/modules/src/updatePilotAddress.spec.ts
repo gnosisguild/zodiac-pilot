@@ -6,6 +6,8 @@ import {
   createMockExecutionRoute,
   createMockOwnsConnection,
   createMockRoleWaypoint,
+  createMockSafeAccount,
+  createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
@@ -43,7 +45,7 @@ describe('updatePilotAddress', () => {
 
     expect(updatedRoute).toHaveProperty(
       'initiator',
-      formatPrefixedAddress(Chain.ETH, newAddress),
+      formatPrefixedAddress(undefined, newAddress),
     )
   })
 
@@ -56,7 +58,10 @@ describe('updatePilotAddress', () => {
     ],
   ])('it updates the connection for "%s" waypoints', (_, waypoint) => {
     const route = createMockExecutionRoute({
-      waypoints: createMockWaypoints({ waypoints: [waypoint] }),
+      waypoints: createMockWaypoints({
+        start: createMockStartingWaypoint(createMockSafeAccount()),
+        waypoints: [waypoint],
+      }),
     })
 
     const newAddress = randomAddress()
@@ -93,5 +98,29 @@ describe('updatePilotAddress', () => {
       'from',
       roleWaypoint.account.prefixedAddress,
     )
+  })
+
+  describe('EOA', () => {
+    it('handles EOA addresses in the safe endpoint', () => {
+      const route = createMockExecutionRoute({
+        waypoints: createMockWaypoints({
+          end: createMockEndWaypoint({
+            connection: createMockOwnsConnection(
+              formatPrefixedAddress(undefined, randomAddress()),
+            ),
+          }),
+        }),
+      })
+
+      const address = randomAddress()
+
+      const updatedRoute = updatePilotAddress(route, address)
+      const [endPoint] = getWaypoints(updatedRoute)
+
+      expect(endPoint.connection).toHaveProperty(
+        'from',
+        formatPrefixedAddress(undefined, address),
+      )
+    })
   })
 })

@@ -15,7 +15,11 @@ type ConnectProps = {
 
 export const Connect = ({ onConnect }: ConnectProps) => {
   useAccountEffect({
-    onConnect({ address, chainId, connector }) {
+    onConnect({ address, chainId, connector, isReconnected }) {
+      if (isReconnected) {
+        return
+      }
+
       onConnect({
         account: address,
         chainId: verifyChainId(chainId),

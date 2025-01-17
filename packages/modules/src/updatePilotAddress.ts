@@ -11,7 +11,10 @@ export const updatePilotAddress = (
   address: HexAddress,
 ): ExecutionRoute => {
   const startingPoint = getStartingWaypoint(route.waypoints)
-  const chainId = getChainId(route.avatar)
+  const chainId =
+    startingPoint.account.type === AccountType.EOA
+      ? undefined
+      : getChainId(route.avatar)
   const waypoints = getWaypoints(route)
 
   return {
