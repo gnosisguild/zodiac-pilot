@@ -6,7 +6,7 @@ import {
   ZodiacMod,
 } from '@/components'
 import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
-import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { Chain, getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
   getHexString,
@@ -38,7 +38,7 @@ import {
   type Waypoints,
 } from '@zodiac/schema'
 import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
-import { lazy } from 'react'
+import { lazy, useState } from 'react'
 import { Form, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 
@@ -155,6 +155,12 @@ const EditRoute = ({
 }: Route.ComponentProps) => {
   const submit = useSubmit()
 
+  const [optimisticConnection, setOptimisticConnection] = useState({
+    pilotAddress: getPilotAddress(waypoints),
+    chainId,
+    providerType,
+  })
+
   return (
     <div className="flex h-full flex-col gap-4">
       <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
@@ -172,10 +178,16 @@ const EditRoute = ({
 
           <WalletProvider>
             <ConnectWallet
-              chainId={chainId}
-              pilotAddress={getPilotAddress(waypoints)}
-              providerType={providerType}
+              chainId={optimisticConnection.chainId}
+              pilotAddress={optimisticConnection.pilotAddress}
+              providerType={optimisticConnection.providerType}
               onConnect={({ account, chainId, providerType }) => {
+                setOptimisticConnection({
+                  pilotAddress: account,
+                  chainId,
+                  providerType,
+                })
+
                 submit(
                   formData({
                     intent: Intent.ConnectWallet,
@@ -187,6 +199,12 @@ const EditRoute = ({
                 )
               }}
               onDisconnect={() => {
+                setOptimisticConnection({
+                  pilotAddress: ZERO_ADDRESS,
+                  chainId: Chain.ETH,
+                  providerType: undefined,
+                })
+
                 submit(formData({ intent: Intent.DisconnectWallet }), {
                   method: 'POST',
                 })
