@@ -321,6 +321,9 @@ importers:
       '@headlessui/react':
         specifier: ^2.2.0
         version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@sentry/react':
+        specifier: ^8.50.0
+        version: 8.50.0(react@19.0.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
@@ -2935,6 +2938,36 @@ packages:
 
   '@scure/bip39@1.5.4':
     resolution: {integrity: sha512-TFM4ni0vKvCfBpohoh+/lY05i9gRbSwXWngAsF4CABQxoaOHijxuaZ2R6cStDQ5CHtHO9aGJTr4ksVJASRRyMA==}
+
+  '@sentry-internal/browser-utils@8.50.0':
+    resolution: {integrity: sha512-hZm6ngWTEzZhaMHpLIKB4wWp0Od1MdCZdvR5FRdIThUMLa1P8rXeolovTRfOE81NE755EiwJHzj4O7rq3EjA+A==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/feedback@8.50.0':
+    resolution: {integrity: sha512-79WlvSJYCXL/D0PBC8AIT4JbyS44AE3h6lP05IESXMqzTZl3KeSqCx317rwJw1KaxzeFd/JQwkFq95jaKAcLhg==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/replay-canvas@8.50.0':
+    resolution: {integrity: sha512-Hv1bBaPpe62xFPLpuaUxVBUHd/Ed9bnGndeqN4hueeEGDT9T6NyVokgm35O5xE9/op6Yodm/3NfUkEg8oE++Aw==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/replay@8.50.0':
+    resolution: {integrity: sha512-mhRPujzO6n+mb6ZR+wQNkSpjqIqDriR0hZEvdzHQdyXu9zVdCHUJ3sINkzpT1XwiypQVCEfxB6Oh9y/NmcQfGg==}
+    engines: {node: '>=14.18'}
+
+  '@sentry/browser@8.50.0':
+    resolution: {integrity: sha512-aGJSpuKiHVKkLvd1VklJSZ2oCsl4wcKUVxKIa8dhJC8KjDY0vREQCywrlWuS5KYP0xFy4k28pg6PPR3HKkUlNw==}
+    engines: {node: '>=14.18'}
+
+  '@sentry/core@8.50.0':
+    resolution: {integrity: sha512-q71m8Ha9YGwqn4Gd7sWvcFTRgbHXxEfU4QeIFtwMBpwHfq2Q+9koiF8DOoOHqIEOsnlvZWRQgGggIOdHzajnVw==}
+    engines: {node: '>=14.18'}
+
+  '@sentry/react@8.50.0':
+    resolution: {integrity: sha512-qkDW5dieROPDf0uk1usXib/SLZTEveN5jvKgBFd+HKWz5JNu+M7L53t9KdZ7ryn4T68utI/LWs4qR3QhmXzUbQ==}
+    engines: {node: '>=14.18'}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
 
   '@shazow/whatsabi@0.19.0':
     resolution: {integrity: sha512-18LfRRaTrn58mFUgCFvShiYqVuiDkx8TJWHzVcpaQu5O8+H8u9Pe+I3xlZeUTrGq6XQepPF7C8Uf9Sv7o26j0Q==}
@@ -10504,6 +10537,41 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.7.1
       '@scure/base': 1.2.4
+
+  '@sentry-internal/browser-utils@8.50.0':
+    dependencies:
+      '@sentry/core': 8.50.0
+
+  '@sentry-internal/feedback@8.50.0':
+    dependencies:
+      '@sentry/core': 8.50.0
+
+  '@sentry-internal/replay-canvas@8.50.0':
+    dependencies:
+      '@sentry-internal/replay': 8.50.0
+      '@sentry/core': 8.50.0
+
+  '@sentry-internal/replay@8.50.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 8.50.0
+      '@sentry/core': 8.50.0
+
+  '@sentry/browser@8.50.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 8.50.0
+      '@sentry-internal/feedback': 8.50.0
+      '@sentry-internal/replay': 8.50.0
+      '@sentry-internal/replay-canvas': 8.50.0
+      '@sentry/core': 8.50.0
+
+  '@sentry/core@8.50.0': {}
+
+  '@sentry/react@8.50.0(react@19.0.0)':
+    dependencies:
+      '@sentry/browser': 8.50.0
+      '@sentry/core': 8.50.0
+      hoist-non-react-statics: 3.3.2
+      react: 19.0.0
 
   '@shazow/whatsabi@0.19.0(@noble/hashes@1.7.1)(typescript@5.7.3)(zod@3.24.1)':
     dependencies:
