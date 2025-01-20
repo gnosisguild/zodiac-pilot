@@ -297,6 +297,7 @@ describe('Edit route', () => {
       mockQueryRolesV2MultiSend.mockResolvedValue([])
 
       const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress(),
         waypoints: createMockWaypoints({
           waypoints: [
             createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
@@ -319,6 +320,7 @@ describe('Edit route', () => {
       mockFetchZodiacModules.mockResolvedValue([])
 
       const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress(),
         waypoints: createMockWaypoints({ end: true }),
       })
 
@@ -347,6 +349,7 @@ describe('Edit route', () => {
         ])
 
         const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
           waypoints: createMockWaypoints({
             waypoints: [createMockRoleWaypoint({ moduleAddress, version: 1 })],
           }),
@@ -369,6 +372,7 @@ describe('Edit route', () => {
         mockQueryRolesV1MultiSend.mockResolvedValue([])
 
         const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
           waypoints: createMockWaypoints({ end: true }),
         })
 
@@ -395,6 +399,7 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
             waypoints: createMockWaypoints({
               waypoints: [
                 createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
@@ -420,6 +425,7 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
             waypoints: createMockWaypoints({
               waypoints: [
                 createMockRoleWaypoint({ moduleAddress, version: 1 }),
@@ -461,6 +467,7 @@ describe('Edit route', () => {
         ])
 
         const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
           waypoints: createMockWaypoints({
             waypoints: [createMockRoleWaypoint({ moduleAddress, version: 2 })],
           }),
@@ -482,6 +489,7 @@ describe('Edit route', () => {
         mockQueryRolesV2MultiSend.mockResolvedValue([])
 
         const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
           waypoints: createMockWaypoints({ end: true }),
         })
 
@@ -507,6 +515,7 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
             waypoints: createMockWaypoints({
               waypoints: [
                 createMockRoleWaypoint({
@@ -536,6 +545,7 @@ describe('Edit route', () => {
           ])
 
           const route = createMockExecutionRoute({
+            avatar: randomPrefixedAddress(),
             waypoints: createMockWaypoints({
               waypoints: [
                 createMockRoleWaypoint({ moduleAddress, version: 2 }),
