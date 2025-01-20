@@ -1,5 +1,4 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
 import autoprefixer from 'autoprefixer'
 import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
@@ -25,22 +24,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     'process.env': {},
   },
   ssr: {
-    target: 'webworker',
-    // noExternal: true,
-    resolve: {
-      conditions: ['workerd', 'browser'],
-    },
-    optimizeDeps: {
-      include: [
-        'react',
-        'react/jsx-runtime',
-        'react/jsx-dev-runtime',
-        'react-dom',
-        'react-dom/server',
-        'react-router',
-      ],
-    },
     noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
-  plugins: [cloudflareDevProxy(), reactRouter(), tsconfigPaths()],
+  plugins: [reactRouter(), tsconfigPaths()],
 }))
