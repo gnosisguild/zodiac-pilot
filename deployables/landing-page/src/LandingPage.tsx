@@ -3,10 +3,9 @@ import {
   SiDiscord,
   SiGithub,
 } from '@icons-pack/react-simple-icons'
-import { PrimaryLinkButton } from '@zodiac/ui'
+import { PilotType, PrimaryLinkButton, ZodiacOsPlain } from '@zodiac/ui'
 import darkScreenshot from './extension-dark.png'
 import lightScreenshot from './extension-light.png'
-import { PilotType, ZodiacOsPlain } from './logos'
 
 export const LandingPage = () => (
   <div className="mx-8 my-8 flex flex-col justify-between lg:mx-auto lg:w-2/3">

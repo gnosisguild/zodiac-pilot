@@ -1,8 +1,9 @@
 import { invariant } from '@epic-web/invariant'
-import { ZERO_ADDRESS } from '@zodiac/chains'
+import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
+import { useEffect, useState } from 'react'
 import { type ChainId } from 'ser-kit'
-import { useDisconnect } from 'wagmi'
+import { useAccountEffect, useDisconnect } from 'wagmi'
 import { Connect } from './Connect'
 import { Wallet } from './Wallet'
 
@@ -13,7 +14,7 @@ interface Props {
   onConnect(args: {
     providerType: ProviderType
     chainId: ChainId
-    account: string
+    account: HexAddress
   }): void
   onDisconnect(): void
 }
@@ -27,7 +28,45 @@ export const ConnectWallet = ({
 }: Props) => {
   const { disconnect } = useDisconnect()
 
-  if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
+  const [isConnecting, setIsConnecting] = useState(false)
+
+  const accountNotConnected =
+    pilotAddress == null || pilotAddress === ZERO_ADDRESS
+
+  useEffect(() => {
+    if (!isConnecting) {
+      return
+    }
+
+    if (accountNotConnected) {
+      return
+    }
+
+    setIsConnecting(false)
+  }, [accountNotConnected, isConnecting])
+
+  useAccountEffect({
+    onConnect({ isReconnected, address, chainId, connector }) {
+      if (isConnecting) {
+        return
+      }
+
+      if (accountNotConnected && isReconnected) {
+        setIsConnecting(true)
+
+        onConnect({
+          account: address,
+          chainId: verifyChainId(chainId),
+          providerType:
+            connector.type === 'injected'
+              ? ProviderType.InjectedWallet
+              : ProviderType.WalletConnect,
+        })
+      }
+    },
+  })
+
+  if (accountNotConnected) {
     return <Connect onConnect={onConnect} />
   }
 
@@ -42,9 +81,9 @@ export const ConnectWallet = ({
       providerType={providerType}
       pilotAddress={pilotAddress}
       onDisconnect={() => {
-        disconnect()
-
         onDisconnect()
+
+        disconnect()
       }}
     />
   )

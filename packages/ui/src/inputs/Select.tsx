@@ -54,16 +54,23 @@ export function Select<
   clearLabel,
   dropdownLabel,
   allowCreate,
+  isDisabled,
   ...props
 }: SelectProps<Creatable, Option, Multi>) {
   const Component = allowCreate ? Creatable : BaseSelect
 
   return (
-    <Input label={label} clearLabel={clearLabel} dropdownLabel={dropdownLabel}>
+    <Input
+      label={label}
+      clearLabel={clearLabel}
+      dropdownLabel={dropdownLabel}
+      disabled={isDisabled}
+    >
       {({ inputId }) => (
         <Component
           {...props}
           unstyled
+          isDisabled={isDisabled}
           inputId={inputId}
           components={{
             ClearIndicator: ClearIndicator<Option, Multi>,

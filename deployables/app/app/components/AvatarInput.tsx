@@ -1,15 +1,16 @@
 import { validateAddress } from '@/utils'
-import { ZERO_ADDRESS } from '@zodiac/chains'
-import type { HexAddress, StartingWaypoint } from '@zodiac/schema'
+import { getChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { getPilotAddress } from '@zodiac/modules'
+import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
-import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 type Props = {
   value: PrefixedAddress
-  startingWaypoint?: StartingWaypoint
+  waypoints?: Waypoints
   onChange(value: HexAddress | null): void
 }
 
@@ -18,8 +19,9 @@ type Option = {
   label: string
 }
 
-export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
-  const [chainId, address] = splitPrefixedAddress(value)
+export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
+  const address = parsePrefixedAddress(value)
+  const chainId = getChainId(value)
   const [pendingValue, setPendingValue] = useState<string>(
     address === ZERO_ADDRESS ? '' : address,
   )
@@ -28,12 +30,12 @@ export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
     setPendingValue(address === ZERO_ADDRESS ? '' : address)
   }, [address])
 
-  const { load, state, data } = useFetcher<HexAddress[]>({
-    key: 'available-safes',
-  })
+  const { load, state, data } = useFetcher<HexAddress[]>()
+
+  const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
 
   useEffect(() => {
-    if (startingWaypoint == null) {
+    if (pilotAddress == ZERO_ADDRESS) {
       return
     }
 
@@ -41,8 +43,8 @@ export const AvatarInput = ({ value, startingWaypoint, onChange }: Props) => {
       return
     }
 
-    load(`/${startingWaypoint.account.address}/${chainId}/available-safes`)
-  }, [chainId, load, startingWaypoint])
+    load(`/${pilotAddress}/${chainId}/available-safes`)
+  }, [chainId, load, pilotAddress])
 
   const checksumAvatarAddress = validateAddress(pendingValue)
 

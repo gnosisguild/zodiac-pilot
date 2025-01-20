@@ -42,7 +42,9 @@ export const Wallet = ({
     return (
       <SwitchChain
         chainId={chainId}
-        onSwitch={() => switchChain({ chainId })}
+        onSwitch={() => {
+          switchChain({ chainId })
+        }}
         onDisconnect={onDisconnect}
       >
         <Account type={providerType}>{pilotAddress}</Account>

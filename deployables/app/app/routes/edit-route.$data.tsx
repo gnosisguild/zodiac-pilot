@@ -2,12 +2,11 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
-  DebugRouteData,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
 import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
-import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { Chain, getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
   getHexString,
@@ -38,10 +37,21 @@ import {
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
-import { PrimaryButton, TextInput } from '@zodiac/ui'
-import classNames from 'classnames'
-import { Form, useSubmit } from 'react-router'
+import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
+import { useState } from 'react'
+import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
+import { Intent } from './intents'
+
+// const DebugRouteData = lazy(async () => {
+//   const { DebugRouteData } = await import('./DebugRouteData')
+
+//   return { default: DebugRouteData }
+// })
+
+export const meta: Route.MetaFunction = () => [
+  { title: 'Pilot | Route configuration' },
+]
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const route = parseRouteData(params.data)
@@ -54,8 +64,6 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     avatar: route.avatar,
     providerType: route.providerType,
     waypoints: route.waypoints,
-
-    isDev: process.env.NODE_ENV !== 'production',
   }
 }
 
@@ -146,34 +154,45 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, providerType, waypoints, isDev },
+  loaderData: { chainId, label, avatar, providerType, waypoints },
 }: Route.ComponentProps) => {
-  const startingWaypoint = (waypoints || []).at(0)
   const submit = useSubmit()
 
+  const [optimisticConnection, setOptimisticConnection] = useState({
+    pilotAddress: getPilotAddress(waypoints),
+    chainId,
+    providerType,
+  })
+
+  const { state } = useNavigation()
+
   return (
-    <div className={classNames('grid', isDev && 'grid-cols-2')}>
-      <main className="mx-auto flex max-w-3xl flex-col gap-4">
-        <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
+    <div className="flex h-full flex-col gap-4">
+      <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <ZodiacOsPlain className="h-6 lg:h-8" />
+            <PilotType className="h-8 lg:h-10 dark:invert" />
+          </div>
+
+          <h1 className="my-8 text-3xl font-extralight">Route configuration</h1>
+        </div>
 
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
 
-          <ChainSelect
-            value={chainId}
-            onChange={(chainId) => {
-              submit(formData({ intent: Intent.UpdateChain, chainId }), {
-                method: 'POST',
-              })
-            }}
-          />
-
           <WalletProvider>
             <ConnectWallet
-              chainId={chainId}
-              pilotAddress={getPilotAddress(waypoints)}
-              providerType={providerType}
+              chainId={optimisticConnection.chainId}
+              pilotAddress={optimisticConnection.pilotAddress}
+              providerType={optimisticConnection.providerType}
               onConnect={({ account, chainId, providerType }) => {
+                setOptimisticConnection({
+                  pilotAddress: account,
+                  chainId,
+                  providerType,
+                })
+
                 submit(
                   formData({
                     intent: Intent.ConnectWallet,
@@ -185,6 +204,12 @@ const EditRoute = ({
                 )
               }}
               onDisconnect={() => {
+                setOptimisticConnection({
+                  pilotAddress: ZERO_ADDRESS,
+                  chainId: Chain.ETH,
+                  providerType: undefined,
+                })
+
                 submit(formData({ intent: Intent.DisconnectWallet }), {
                   method: 'POST',
                 })
@@ -192,9 +217,18 @@ const EditRoute = ({
             />
           </WalletProvider>
 
+          <ChainSelect
+            value={chainId}
+            onChange={(chainId) => {
+              submit(formData({ intent: Intent.UpdateChain, chainId }), {
+                method: 'POST',
+              })
+            }}
+          />
+
           <AvatarInput
             value={avatar}
-            startingWaypoint={startingWaypoint}
+            waypoints={waypoints}
             onChange={(avatar) => {
               if (avatar != null) {
                 submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
@@ -218,29 +252,28 @@ const EditRoute = ({
             }}
           />
 
-          <div className="mt-8 flex justify-end">
-            <PrimaryButton submit intent={Intent.Save}>
+          <div className="mt-8 flex items-center justify-between">
+            <div className="text-xs opacity-75">
+              The Pilot extension must be open to save.
+            </div>
+
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              disabled={state !== 'idle'}
+            >
               Save
             </PrimaryButton>
           </div>
         </Form>
       </main>
 
-      {isDev && <DebugRouteData />}
+      {/* {process.env.NODE_ENV !== 'production' && <DebugRouteData />} */}
     </div>
   )
 }
 
 export default EditRoute
-
-enum Intent {
-  Save = 'Save',
-  UpdateChain = 'UpdateChain',
-  UpdateAvatar = 'UpdateAvatar',
-  RemoveAvatar = 'RemoveAvatar',
-  ConnectWallet = 'ConnectWallet',
-  DisconnectWallet = 'DisconnectWallet',
-}
 
 const getPilotAddress = (waypoints?: Waypoints) => {
   if (waypoints == null) {
