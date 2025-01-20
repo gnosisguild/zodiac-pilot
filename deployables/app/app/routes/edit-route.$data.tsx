@@ -49,6 +49,10 @@ const DebugRouteData = lazy(async () => {
   return { default: DebugRouteData }
 })
 
+export const meta: Route.MetaFunction = () => [
+  { title: 'Pilot | Route configuration' },
+]
+
 export const loader = ({ params }: Route.LoaderArgs) => {
   const route = parseRouteData(params.data)
 
