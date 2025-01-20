@@ -1,12 +1,12 @@
 import { validateAddress } from '@/utils'
-import { ZERO_ADDRESS } from '@zodiac/chains'
+import { getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getPilotAddress } from '@zodiac/modules'
 import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
-import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
 
 type Props = {
   value: PrefixedAddress
@@ -20,7 +20,8 @@ type Option = {
 }
 
 export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
-  const [chainId, address] = splitPrefixedAddress(value)
+  const address = parsePrefixedAddress(value)
+  const chainId = getChainId(value)
   const [pendingValue, setPendingValue] = useState<string>(
     address === ZERO_ADDRESS ? '' : address,
   )

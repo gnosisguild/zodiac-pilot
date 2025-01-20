@@ -186,7 +186,12 @@ describe('Edit route', () => {
       mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
       const route = createMockExecutionRoute({
-        waypoints: [createMockStartingWaypoint()],
+        waypoints: [
+          createMockStartingWaypoint(
+            createMockEoaAccount({ address: randomAddress() }),
+          ),
+        ],
+        providerType: ProviderType.InjectedWallet,
       })
 
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
@@ -204,7 +209,14 @@ describe('Edit route', () => {
 
         mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
-        const route = createMockExecutionRoute()
+        const route = createMockExecutionRoute({
+          waypoints: createMockWaypoints({
+            start: createMockStartingWaypoint(
+              createMockEoaAccount({ address: randomAddress() }),
+            ),
+          }),
+          providerType: ProviderType.InjectedWallet,
+        })
 
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
