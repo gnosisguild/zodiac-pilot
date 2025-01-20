@@ -23,7 +23,7 @@ export const ChainSelect = ({ value, onChange }: Props) => (
     label="Chain"
     isMulti={false}
     options={options}
-    defaultValue={options.find((op) => op.value === value)}
+    value={options.find((op) => op.value === value)}
     onChange={(option) => {
       invariant(option != null, 'Empty value selected as chain')
 

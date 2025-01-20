@@ -171,15 +171,6 @@ const EditRoute = ({
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
 
-          <ChainSelect
-            value={chainId}
-            onChange={(chainId) => {
-              submit(formData({ intent: Intent.UpdateChain, chainId }), {
-                method: 'POST',
-              })
-            }}
-          />
-
           <WalletProvider>
             <ConnectWallet
               chainId={chainId}
@@ -203,6 +194,15 @@ const EditRoute = ({
               }}
             />
           </WalletProvider>
+
+          <ChainSelect
+            value={chainId}
+            onChange={(chainId) => {
+              submit(formData({ intent: Intent.UpdateChain, chainId }), {
+                method: 'POST',
+              })
+            }}
+          />
 
           <AvatarInput
             value={avatar}

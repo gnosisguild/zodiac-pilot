@@ -1,4 +1,4 @@
-import { getChainId } from '@zodiac/chains'
+import { getChainId, ZERO_ADDRESS, type ChainId } from '@zodiac/chains'
 import {
   decodeRoleKey,
   encodeRoleKey,
@@ -7,7 +7,7 @@ import {
   ZODIAC_MODULE_NAMES,
   type ZodiacModule,
 } from '@zodiac/modules'
-import type { Waypoints } from '@zodiac/schema'
+import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
@@ -33,44 +33,18 @@ export const ZodiacMod = ({
   waypoints,
   onSelect,
 }: ZodiacModProps) => {
-  const {
-    load: loadSafes,
-    state: safesState,
-    data: safes = [],
-  } = useFetcher<string[]>({
-    key: 'available-safes',
-  })
-  const {
-    load: loadDelegates,
-    state: delegatesState,
-    data: delegates = [],
-  } = useFetcher<string[]>({
-    key: 'delegates',
-  })
-  const {
-    load: loadModules,
-    state: modulesState,
-    data: modules = [],
-  } = useFetcher<ZodiacModule[]>({
-    key: 'modules',
-  })
   const chainId = getChainId(avatar)
   const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
 
-  useEffect(() => {
-    if (pilotAddress == null) {
-      return
-    }
+  const hasAvatar = parsePrefixedAddress(avatar) !== ZERO_ADDRESS
 
-    loadSafes(`/${pilotAddress}/${chainId}/available-safes`)
-    loadDelegates(`/${pilotAddress}/${chainId}/delegates`)
-  }, [chainId, loadDelegates, loadSafes, pilotAddress])
+  const [isLoadingSafes, safes] = useSafes(chainId, pilotAddress)
+  const [isLoadingDelegates, delegates] = useDelegates(chainId, pilotAddress)
+  const [isLoadingModules, modules] = useModules(chainId, avatar)
 
-  useEffect(() => {
-    const address = parsePrefixedAddress(avatar)
-
-    loadModules(`/${address}/${chainId}/modules`)
-  }, [avatar, chainId, loadModules])
+  if (!hasAvatar) {
+    return null
+  }
 
   const pilotIsOwner = safes.some(
     (safe) => safe.toLowerCase() === avatar.toLowerCase(),
@@ -89,10 +63,7 @@ export const ZodiacMod = ({
     (module) => module.moduleAddress === moduleAddress,
   )
 
-  const isLoading =
-    safesState === 'loading' ||
-    delegatesState === 'loading' ||
-    modulesState === 'loading'
+  const isLoading = isLoadingSafes || isLoadingDelegates || isLoadingModules
 
   return (
     <>
@@ -154,6 +125,68 @@ export const ZodiacMod = ({
       )}
     </>
   )
+}
+
+const useSafes = (chainId: ChainId, pilotAddress: HexAddress | null) => {
+  const {
+    load,
+    state,
+    data = [],
+  } = useFetcher<string[]>({
+    key: 'available-safes',
+  })
+
+  useEffect(() => {
+    if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
+      return
+    }
+
+    load(`/${pilotAddress}/${chainId}/available-safes`)
+  }, [chainId, load, pilotAddress])
+
+  return [state === 'loading', data] as const
+}
+
+const useDelegates = (chainId: ChainId, pilotAddress: HexAddress | null) => {
+  const {
+    load,
+    state,
+    data = [],
+  } = useFetcher<string[]>({
+    key: 'delegates',
+  })
+
+  useEffect(() => {
+    if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
+      return
+    }
+
+    load(`/${pilotAddress}/${chainId}/delegates`)
+  }, [chainId, load, pilotAddress])
+
+  return [state === 'loading', data] as const
+}
+
+const useModules = (chainId: ChainId, avatar: PrefixedAddress) => {
+  const {
+    load,
+    state,
+    data = [],
+  } = useFetcher<ZodiacModule[]>({
+    key: 'modules',
+  })
+
+  useEffect(() => {
+    const address = parsePrefixedAddress(avatar)
+
+    if (address === ZERO_ADDRESS) {
+      return
+    }
+
+    load(`/${address}/${chainId}/modules`)
+  }, [avatar, chainId, load])
+
+  return [state === 'loading', data] as const
 }
 
 type RoleKeyProps = {
