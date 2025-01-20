@@ -137,13 +137,7 @@ export const ZodiacMod = ({
 }
 
 const useSafes = (chainId: ChainId, pilotAddress: HexAddress | null) => {
-  const {
-    load,
-    state,
-    data = [],
-  } = useFetcher<string[]>({
-    key: 'available-safes',
-  })
+  const { load, state, data = [] } = useFetcher<string[]>()
 
   useEffect(() => {
     if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
@@ -157,13 +151,7 @@ const useSafes = (chainId: ChainId, pilotAddress: HexAddress | null) => {
 }
 
 const useDelegates = (chainId: ChainId, pilotAddress: HexAddress | null) => {
-  const {
-    load,
-    state,
-    data = [],
-  } = useFetcher<string[]>({
-    key: 'delegates',
-  })
+  const { load, state, data = [] } = useFetcher<string[]>()
 
   useEffect(() => {
     if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
@@ -177,13 +165,7 @@ const useDelegates = (chainId: ChainId, pilotAddress: HexAddress | null) => {
 }
 
 const useModules = (chainId: ChainId, avatar: PrefixedAddress) => {
-  const {
-    load,
-    state,
-    data = [],
-  } = useFetcher<ZodiacModule[]>({
-    key: 'modules',
-  })
+  const { load, state, data = [] } = useFetcher<ZodiacModule[]>()
 
   useEffect(() => {
     const address = parsePrefixedAddress(avatar)

@@ -153,7 +153,6 @@ export const clientAction = async ({
 const EditRoute = ({
   loaderData: { chainId, label, avatar, providerType, waypoints, isDev },
 }: Route.ComponentProps) => {
-  const startingWaypoint = (waypoints || []).at(0)
   const submit = useSubmit()
 
   return (
@@ -206,7 +205,7 @@ const EditRoute = ({
 
           <AvatarInput
             value={avatar}
-            startingWaypoint={startingWaypoint}
+            waypoints={waypoints}
             onChange={(avatar) => {
               if (avatar != null) {
                 submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
