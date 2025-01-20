@@ -1,5 +1,6 @@
 import { useRouteConnect } from '@/execution-routes'
 import { getReadOnlyProvider } from '@/providers'
+import { sentry } from '@/sentry'
 import type {
   ExecutionRoute,
   HexAddress,
@@ -66,6 +67,8 @@ export const useConnectionDryRun = ({
             }
             default: {
               setError(decodeGenericError(e))
+
+              sentry.captureException(e)
               console.warn('Unexpected dry run error', e)
             }
           }

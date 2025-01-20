@@ -17,7 +17,8 @@
         "./src/panel/transactionTranslations/index.ts"
       ],
       "@/safe": ["./src/panel/integrations/safe/index.ts"],
-      "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"]
+      "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"],
+      "@/sentry": ["./src/sentry/index.ts"]
     }
   },
   "include": [

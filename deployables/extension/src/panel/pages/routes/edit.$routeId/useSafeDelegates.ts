@@ -1,5 +1,6 @@
 import { useRouteProvider } from '@/execution-routes'
 import { initSafeApiKit } from '@/safe'
+import { sentry } from '@/sentry'
 import type { ExecutionRoute } from '@/types'
 import { validateAddress } from '@/utils'
 import { getChainId } from '@zodiac/chains'
@@ -34,6 +35,7 @@ export const useSafeDelegates = (
         }
       })
       .catch((e) => {
+        sentry.captureException(e)
         console.error(`Error fetching delegates for ${checksumSafeAddress}`, e)
       })
       .finally(() => {

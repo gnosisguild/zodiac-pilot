@@ -321,12 +321,12 @@ importers:
       '@headlessui/react':
         specifier: ^2.2.0
         version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@sentry/browser':
+        specifier: ^8.50.0
+        version: 8.50.0
       '@sentry/esbuild-plugin':
         specifier: ^3.0.0
         version: 3.0.0
-      '@sentry/react':
-        specifier: ^8.50.0
-        version: 8.50.0(react@19.0.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
@@ -3023,12 +3023,6 @@ packages:
   '@sentry/esbuild-plugin@3.0.0':
     resolution: {integrity: sha512-8Ga7gMjlmZrTBq6CIxa1fcFZtvxLSb40qsYAjxFH2njoAr5PplfnYRD0H2i/AhdOld2dsJNanuv65OW2DZTdiQ==}
     engines: {node: '>= 14'}
-
-  '@sentry/react@8.50.0':
-    resolution: {integrity: sha512-qkDW5dieROPDf0uk1usXib/SLZTEveN5jvKgBFd+HKWz5JNu+M7L53t9KdZ7ryn4T68utI/LWs4qR3QhmXzUbQ==}
-    engines: {node: '>=14.18'}
-    peerDependencies:
-      react: ^16.14.0 || 17.x || 18.x || 19.x
 
   '@shazow/whatsabi@0.19.0':
     resolution: {integrity: sha512-18LfRRaTrn58mFUgCFvShiYqVuiDkx8TJWHzVcpaQu5O8+H8u9Pe+I3xlZeUTrGq6XQepPF7C8Uf9Sv7o26j0Q==}
@@ -10732,13 +10726,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
-
-  '@sentry/react@8.50.0(react@19.0.0)':
-    dependencies:
-      '@sentry/browser': 8.50.0
-      '@sentry/core': 8.50.0
-      hoist-non-react-statics: 3.3.2
-      react: 19.0.0
 
   '@shazow/whatsabi@0.19.0(@noble/hashes@1.7.1)(typescript@5.7.3)(zod@3.24.1)':
     dependencies:
