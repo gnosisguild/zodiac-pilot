@@ -15,6 +15,11 @@
       "matchPackageNames": ["/^@testing-library/"],
       "automerge": true,
       "groupName": "Testing Library"
+    },
+    {
+      "matchPackageNames": ["/^@safe-global/"],
+      "automerge": true,
+      "groupName": "Safe"
     }
   ]
 }
