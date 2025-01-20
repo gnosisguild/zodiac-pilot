@@ -1,4 +1,3 @@
-import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin'
 import autoprefixer from 'autoprefixer'
 import { config } from 'dotenv'
 import esbuild from 'esbuild'
@@ -71,12 +70,13 @@ esbuild
       postCssPlugin({
         postcss: { plugins: [tailwindcss, autoprefixer] },
       }),
-      process.env.NODE_ENV !== 'development' &&
-        sentryEsbuildPlugin({
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-          org: 'gnosis-guild',
-          project: 'pilot-extension',
-        }),
+      // process.env.NODE_ENV !== 'development' &&
+      //   sentryEsbuildPlugin({
+      //     authToken: process.env.SENTRY_AUTH_TOKEN,
+      //     org: 'gnosis-guild',
+      //     project: 'pilot-extension',
+
+      //   }),
     ].filter(Boolean),
     logLevel: 'info',
   })
