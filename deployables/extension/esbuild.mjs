@@ -71,12 +71,13 @@ esbuild
       postCssPlugin({
         postcss: { plugins: [tailwindcss, autoprefixer] },
       }),
-      sentryEsbuildPlugin({
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        org: 'gnosis-guild',
-        project: 'pilot-extension',
-      }),
-    ],
+      process.env.NODE_ENV !== 'development' &&
+        sentryEsbuildPlugin({
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          org: 'gnosis-guild',
+          project: 'pilot-extension',
+        }),
+    ].filter(Boolean),
     logLevel: 'info',
   })
   .then(async (ctx) => {
