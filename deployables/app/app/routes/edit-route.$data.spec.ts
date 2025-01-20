@@ -54,7 +54,7 @@ vi.mock('@zodiac/modules', async (importOriginal) => {
   return {
     ...module,
 
-    fetchZodiacModules: vi.fn(),
+    fetchZodiacModules: vi.fn().mockResolvedValue([]),
     queryRolesV1MultiSend: vi.fn(),
     queryRolesV2MultiSend: vi.fn(),
   }

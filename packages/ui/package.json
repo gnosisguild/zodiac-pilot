@@ -31,14 +31,14 @@
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "14.6.0",
     "@types/react": "^19.0.3",
-    "@vitest/coverage-v8": "2.1.8",
+    "@vitest/coverage-v8": "3.0.2",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "^9.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.1",
-    "vitest": "2.1.8"
+    "vitest": "3.0.2"
   },
   "peerDependencies": {
     "react": "19.0.0",
