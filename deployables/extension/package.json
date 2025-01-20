@@ -45,7 +45,7 @@
     "@types/node": "^22.7.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitest/coverage-v8": "2.1.8",
+    "@vitest/coverage-v8": "3.0.2",
     "@walletconnect/core": "2.17.3",
     "@walletconnect/ethereum-provider": "2.17.3",
     "@walletconnect/keyvaluestorage": "^1.1.1",
@@ -83,7 +83,7 @@
     "ser-kit": "1.1.0",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.5.4",
-    "vitest": "2.1.8",
+    "vitest": "3.0.2",
     "vitest-chrome": "0.1.0",
     "zodiac-roles-deployments": "^2.2.2"
   },
