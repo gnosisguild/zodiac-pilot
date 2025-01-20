@@ -16,12 +16,14 @@ export const AddressInput = ({
   description,
   error,
   action,
+  disabled,
   ...props
 }: AddressInputProps) => (
   <Input
     label={label}
     description={description}
     error={error}
+    disabled={disabled}
     after={action && <div className="mr-2">{action}</div>}
     before={
       <Blockie
@@ -34,6 +36,7 @@ export const AddressInput = ({
       <input
         {...props}
         id={inputId}
+        disabled={disabled}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
         className="w-full border-none bg-transparent px-4 py-2 font-mono text-sm outline-none"

@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { createContext, type ReactNode, useContext } from 'react'
 import { Labeled, type LabeledRenderProps } from './Labeled'
 
@@ -10,6 +11,7 @@ const InputContext = createContext<InputContextOptions>({})
 
 type InputProps = {
   label: string
+  disabled?: boolean
   description?: string
   error?: string | null
   before?: ReactNode
@@ -29,6 +31,7 @@ export const Input = ({
   label,
   description,
   error,
+  disabled,
   clearLabel,
   dropdownLabel,
 }: InputProps) => (
@@ -36,7 +39,12 @@ export const Input = ({
     {({ inputId, descriptionId }) => (
       <>
         <InputContext value={{ clearLabel, dropdownLabel }}>
-          <div className="flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500">
+          <div
+            className={classNames(
+              'flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-sm transition-all transition-opacity dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500',
+              disabled && 'opacity-50',
+            )}
+          >
             {before}
 
             <div className="flex-1">{children({ inputId, descriptionId })}</div>

@@ -124,13 +124,14 @@ export const ZodiacMod = ({
         <TextInput
           label="Role ID"
           name="roleId"
+          disabled={isLoadingModules}
           defaultValue={getRoleId(waypoints) ?? ''}
           placeholder="0"
         />
       )}
 
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V2 && (
-        <RoleKey waypoints={waypoints} />
+        <RoleKey waypoints={waypoints} disabled={isLoadingModules} />
       )}
     </>
   )
@@ -181,10 +182,11 @@ const useModules = (chainId: ChainId, avatar: PrefixedAddress) => {
 }
 
 type RoleKeyProps = {
+  disabled?: boolean
   waypoints?: Waypoints
 }
 
-const RoleKey = ({ waypoints }: RoleKeyProps) => {
+const RoleKey = ({ waypoints, disabled }: RoleKeyProps) => {
   const [value, setValue] = useState(getRoleKey(waypoints) ?? '')
 
   return (
@@ -194,6 +196,7 @@ const RoleKey = ({ waypoints }: RoleKeyProps) => {
       <TextInput
         label="Role Key"
         value={value}
+        disabled={disabled}
         onChange={(event) => setValue(event.target.value)}
         placeholder="Enter key as bytes32 hex string or in human-readable decoding"
       />
