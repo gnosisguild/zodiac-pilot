@@ -1,5 +1,5 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { addressSchema } from '@zodiac/schema'
+import { addressSchema, type HexAddress } from '@zodiac/schema'
 import { z } from 'zod'
 
 export const SUPPORTED_ZODIAC_MODULES = [
@@ -15,7 +15,7 @@ export enum SupportedZodiacModuleType {
 }
 
 export type ZodiacModule = {
-  moduleAddress: string
+  moduleAddress: HexAddress
   mastercopyAddress?: string // if empty, it's a custom non-proxied deployment
   type: SupportedZodiacModuleType
   modules?: ZodiacModule[]

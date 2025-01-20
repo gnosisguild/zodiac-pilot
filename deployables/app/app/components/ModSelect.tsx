@@ -1,11 +1,13 @@
+import { ZERO_ADDRESS } from '@zodiac/chains'
+import type { HexAddress } from '@zodiac/schema'
 import { Blockie, Select, type SelectProps } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import type { PropsWithChildren } from 'react'
 
-export const NO_MODULE_OPTION = { value: '', label: '' }
+export const NO_MODULE_OPTION = { value: ZERO_ADDRESS, label: '' }
 
 export interface Option {
-  value: string
+  value: HexAddress
   label: string
 }
 

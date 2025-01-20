@@ -42,6 +42,14 @@ export const ZodiacMod = ({
   const [isLoadingDelegates, delegates] = useDelegates(chainId, pilotAddress)
   const [isLoadingModules, modules] = useModules(chainId, avatar)
 
+  const [optimisticModuleAddress, setOptimisticModuleAddress] = useState(
+    getModuleAddress(waypoints),
+  )
+
+  useEffect(() => {
+    setOptimisticModuleAddress(getModuleAddress(waypoints))
+  }, [waypoints])
+
   if (!hasAvatar) {
     return null
   }
@@ -57,10 +65,8 @@ export const ZodiacMod = ({
   const defaultModOption =
     pilotIsOwner || pilotIsDelegate ? NO_MODULE_OPTION : undefined
 
-  const moduleAddress = getModuleAddress(waypoints)
-
   const selectedModule = modules.find(
-    (module) => module.moduleAddress === moduleAddress,
+    (module) => module.moduleAddress === optimisticModuleAddress,
   )
 
   const isLoading = isLoadingSafes || isLoadingDelegates || isLoadingModules
@@ -79,6 +85,7 @@ export const ZodiacMod = ({
         ]}
         onChange={async (selected) => {
           if (selected == null) {
+            setOptimisticModuleAddress(null)
             onSelect(null)
 
             return
@@ -89,11 +96,13 @@ export const ZodiacMod = ({
           )
 
           if (module == null) {
+            setOptimisticModuleAddress(null)
             onSelect(null)
 
             return
           }
 
+          setOptimisticModuleAddress(module.moduleAddress)
           onSelect(module)
         }}
         value={
