@@ -38,16 +38,16 @@ import {
   type Waypoints,
 } from '@zodiac/schema'
 import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
-import { lazy, useState } from 'react'
+import { useState } from 'react'
 import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
-const DebugRouteData = lazy(async () => {
-  const { DebugRouteData } = await import('./DebugRouteData')
+// const DebugRouteData = lazy(async () => {
+//   const { DebugRouteData } = await import('./DebugRouteData')
 
-  return { default: DebugRouteData }
-})
+//   return { default: DebugRouteData }
+// })
 
 export const meta: Route.MetaFunction = () => [
   { title: 'Pilot | Route configuration' },
@@ -268,7 +268,7 @@ const EditRoute = ({
         </Form>
       </main>
 
-      {process.env.NODE_ENV !== 'production' && <DebugRouteData />}
+      {/* {process.env.NODE_ENV !== 'production' && <DebugRouteData />} */}
     </div>
   )
 }
