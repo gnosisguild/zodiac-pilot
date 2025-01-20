@@ -17,6 +17,7 @@ import { metaMask, walletConnect } from 'wagmi/connectors'
 const queryClient = new QueryClient()
 
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
+const isServer = typeof document === 'undefined'
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
@@ -32,14 +33,16 @@ const wagmiConfig = createConfig(
       arbitrum,
       avalanche,
     ],
-    connectors: [
-      injected(),
-      metaMask(),
-      walletConnect({
-        projectId: WALLETCONNECT_PROJECT_ID,
-        showQrModal: false,
-      }),
-    ],
+    connectors: isServer
+      ? []
+      : [
+          injected(),
+          metaMask(),
+          walletConnect({
+            projectId: WALLETCONNECT_PROJECT_ID,
+            showQrModal: false,
+          }),
+        ],
   }),
 )
 

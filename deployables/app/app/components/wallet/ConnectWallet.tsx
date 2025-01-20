@@ -29,7 +29,6 @@ export const ConnectWallet = ({
   const { disconnect } = useDisconnect()
 
   const [isConnecting, setIsConnecting] = useState(false)
-  const isServer = typeof document === 'undefined'
 
   const accountNotConnected =
     pilotAddress == null || pilotAddress === ZERO_ADDRESS
@@ -48,7 +47,7 @@ export const ConnectWallet = ({
 
   useAccountEffect({
     onConnect({ isReconnected, address, chainId, connector }) {
-      if (isConnecting || isServer) {
+      if (isConnecting) {
         return
       }
 
