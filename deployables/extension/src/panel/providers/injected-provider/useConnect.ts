@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { infoToast } from '@zodiac/ui'
@@ -93,6 +94,8 @@ const connectInjectedWallet = memoWhilePending(
             provider.on('accountsChanged', handleAccountsChanged)
           })
         }
+
+        sentry.captureException(err)
 
         throw err
       })

@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
@@ -11,4 +12,4 @@ enableExternalPanelOpen()
 
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error))
+  .catch((error) => sentry.captureException(error))

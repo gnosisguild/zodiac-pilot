@@ -1,8 +1,9 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
+import { sentry } from '@/sentry'
 import { invariant } from '@epic-web/invariant'
-import { StrictMode } from 'react'
+import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router'
 import { ToastContainer } from 'react-toastify'
@@ -14,6 +15,17 @@ import { ProvideState } from './state'
 const router = createHashRouter(pages)
 
 const Root = () => {
+  useEffect(() => {
+    const trackErrors = ({ error }: ErrorEvent) =>
+      sentry.captureException(error)
+
+    window.addEventListener('error', trackErrors)
+
+    return () => {
+      window.removeEventListener('error', trackErrors)
+    }
+  }, [])
+
   return (
     <StrictMode>
       <ProvidePort>

@@ -26,6 +26,8 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium

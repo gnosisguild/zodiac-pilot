@@ -40,7 +40,7 @@ esbuild
     format: 'iife',
     treeShaking: true,
     minify: process.env.NODE_ENV !== 'development',
-    sourcemap: process.env.NODE_ENV === 'development' ? 'inline' : 'linked',
+    sourcemap: process.env.NODE_ENV === 'development' ? 'inline' : true,
     loader: {
       '.svg': 'file',
       '.woff': 'file',
@@ -70,7 +70,14 @@ esbuild
       postCssPlugin({
         postcss: { plugins: [tailwindcss, autoprefixer] },
       }),
-    ],
+      // process.env.NODE_ENV !== 'development' &&
+      //   sentryEsbuildPlugin({
+      //     authToken: process.env.SENTRY_AUTH_TOKEN,
+      //     org: 'gnosis-guild',
+      //     project: 'pilot-extension',
+
+      //   }),
+    ].filter(Boolean),
     logLevel: 'info',
   })
   .then(async (ctx) => {
