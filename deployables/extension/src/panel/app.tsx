@@ -2,16 +2,9 @@
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
-import { StrictMode, useEffect } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {
-  createHashRouter,
-  createRoutesFromChildren,
-  matchRoutes,
-  RouterProvider,
-  useLocation,
-  useNavigationType,
-} from 'react-router'
+import { createHashRouter, RouterProvider } from 'react-router'
 import { ToastContainer } from 'react-toastify'
 import '../global.css'
 import { pages } from './pages'
@@ -23,13 +16,7 @@ import * as Sentry from '@sentry/react'
 Sentry.init({
   dsn: 'https://92eff3b9c50f79131ca0cb813f4b9304@o4508675621912576.ingest.us.sentry.io/4508676512677888',
   integrations: [
-    Sentry.reactRouterV7BrowserTracingIntegration({
-      createRoutesFromChildren,
-      useEffect,
-      matchRoutes,
-      useLocation,
-      useNavigationType,
-    }),
+    Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
   // Tracing
@@ -51,6 +38,14 @@ const Root = () => {
           <ProvideConnectProvider>
             <ProvideInjectedWallet>
               <div className="flex h-full flex-1 flex-col">
+                <button
+                  onClick={() => {
+                    throw new Error('This is your first error!')
+                  }}
+                >
+                  Break the world
+                </button>
+                ;
                 <RouterProvider router={router} />
               </div>
 

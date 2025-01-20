@@ -91,6 +91,7 @@
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
+    "@sentry/esbuild-plugin": "^3.0.0",
     "@sentry/react": "^8.50.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/form-data": "workspace:*",

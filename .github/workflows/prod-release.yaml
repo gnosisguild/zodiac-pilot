@@ -26,6 +26,8 @@ jobs:
         run: |
           pnpm install --prefer-offline
           pnpm build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Update manifest.json with release tag
         run: pnpm update-manifest -v ${{ github.event.release.tag_name }}
@@ -48,5 +50,11 @@ jobs:
           refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
           publish: false
 
-      - run: mkdir ./release
-      - run: mv ./zodiac-pilot.zip ./release/zodiac-pilot.zip
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: gnosis-guild
+          SENTRY_PROJECT: pilot-extension
+        with:
+          environment: production
