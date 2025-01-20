@@ -2,6 +2,7 @@
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { invariant } from '@epic-web/invariant'
+import * as Sentry from '@sentry/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router'
@@ -10,8 +11,6 @@ import '../global.css'
 import { pages } from './pages'
 import { ProvidePort } from './port-handling'
 import { ProvideState } from './state'
-
-import * as Sentry from '@sentry/react'
 
 Sentry.init({
   dsn: 'https://92eff3b9c50f79131ca0cb813f4b9304@o4508675621912576.ingest.us.sentry.io/4508676512677888',
@@ -45,7 +44,7 @@ const Root = () => {
                 >
                   Break the world
                 </button>
-                ;
+
                 <RouterProvider router={router} />
               </div>
 
