@@ -390,7 +390,7 @@ importers:
         version: 9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/safe-gateway-typescript-sdk':
         specifier: ^3.21.10
-        version: 3.22.6
+        version: 3.22.7
       '@shazow/whatsabi':
         specifier: ^0.19.0
         version: 0.19.0(@noble/hashes@1.7.1)(typescript@5.7.3)(zod@3.24.1)
@@ -2908,8 +2908,8 @@ packages:
   '@safe-global/safe-deployments@1.37.24':
     resolution: {integrity: sha512-jBbPRi/qimF70Zi9Ri49aEOMEO+J8KNvohzs4gs90YF9LH6GraylVDMrqi5i3gQIyyICkQbjYYsS/Ax+Po7sDw==}
 
-  '@safe-global/safe-gateway-typescript-sdk@3.22.6':
-    resolution: {integrity: sha512-R0Ck7n8fj7KtFUpbsGi0j3e2t0/bhpHTY/U8P8315vQ8aT/sfZrWMcfFcD5I9Kw8TEU7rvKY0+sngT1lCptJmQ==}
+  '@safe-global/safe-gateway-typescript-sdk@3.22.7':
+    resolution: {integrity: sha512-r1OML6y1oBL6E5ZADg9smzvVzOOgsTLfRXYuT/7fW1Eqg2nJKcALoLLfH6sJAcHvobHUZXcjxKPINDwNJq0N9g==}
     engines: {node: '>=16'}
 
   '@safe-global/safe-modules-deployments@2.2.4':
@@ -10570,7 +10570,7 @@ snapshots:
 
   '@safe-global/safe-apps-sdk@9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)':
     dependencies:
-      '@safe-global/safe-gateway-typescript-sdk': 3.22.6
+      '@safe-global/safe-gateway-typescript-sdk': 3.22.7
       viem: 2.22.10(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
     transitivePeerDependencies:
       - bufferutil
@@ -10586,7 +10586,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  '@safe-global/safe-gateway-typescript-sdk@3.22.6': {}
+  '@safe-global/safe-gateway-typescript-sdk@3.22.7': {}
 
   '@safe-global/safe-modules-deployments@2.2.4': {}
 
