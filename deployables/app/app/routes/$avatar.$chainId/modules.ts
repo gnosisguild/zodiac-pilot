@@ -4,6 +4,7 @@ import { verifyChainId } from '@zodiac/chains'
 import { getOptionalString } from '@zodiac/form-data'
 import { fetchZodiacModules } from '@zodiac/modules'
 import type { ShouldRevalidateFunction } from 'react-router'
+import { Intent } from '../intents'
 import type { Route } from './+types/modules'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -36,5 +37,5 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({ formData }) => {
     return false
   }
 
-  return intent === 'UpdateAvatar' || intent === 'RemoveAvatar'
+  return intent === Intent.UpdateAvatar || intent === Intent.RemoveAvatar
 }

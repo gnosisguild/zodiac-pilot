@@ -41,6 +41,7 @@ import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
 import { lazy, useState } from 'react'
 import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
+import { Intent } from './intents'
 
 const DebugRouteData = lazy(async () => {
   const { DebugRouteData } = await import('./DebugRouteData')
@@ -271,15 +272,6 @@ const EditRoute = ({
 }
 
 export default EditRoute
-
-enum Intent {
-  Save = 'Save',
-  UpdateChain = 'UpdateChain',
-  UpdateAvatar = 'UpdateAvatar',
-  RemoveAvatar = 'RemoveAvatar',
-  ConnectWallet = 'ConnectWallet',
-  DisconnectWallet = 'DisconnectWallet',
-}
 
 const getPilotAddress = (waypoints?: Waypoints) => {
   if (waypoints == null) {

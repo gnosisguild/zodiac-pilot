@@ -4,6 +4,7 @@ import { verifyChainId } from '@zodiac/chains'
 import { getOptionalString } from '@zodiac/form-data'
 import { initSafeApiKit } from '@zodiac/safe'
 import type { ShouldRevalidateFunctionArgs } from 'react-router'
+import { Intent } from '../intents'
 import type { Route } from './+types/available-safes'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -36,7 +37,5 @@ export const shouldRevalidate = ({
     return false
   }
 
-  if (intent === 'ConnectWallet' || intent === 'DisconnectWallet') {
-    return true
-  }
+  return intent === Intent.ConnectWallet || intent === Intent.DisconnectWallet
 }
