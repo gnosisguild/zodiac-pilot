@@ -20,8 +20,6 @@ export const DebugRouteData = () => {
     },
   )
 
-  console.log({ json })
-
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-hidden bg-slate-800 p-4 text-sm">
       <h2 className="uppercase opacity-80">Raw route data</h2>

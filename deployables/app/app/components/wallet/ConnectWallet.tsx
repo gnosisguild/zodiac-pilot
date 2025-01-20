@@ -1,8 +1,8 @@
 import { invariant } from '@epic-web/invariant'
-import { ZERO_ADDRESS } from '@zodiac/chains'
+import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { type ChainId } from 'ser-kit'
-import { useDisconnect } from 'wagmi'
+import { useAccountEffect, useDisconnect } from 'wagmi'
 import { Connect } from './Connect'
 import { Wallet } from './Wallet'
 
@@ -27,7 +27,25 @@ export const ConnectWallet = ({
 }: Props) => {
   const { disconnect } = useDisconnect()
 
-  if (pilotAddress == null || pilotAddress === ZERO_ADDRESS) {
+  const accountNotConnected =
+    pilotAddress == null || pilotAddress === ZERO_ADDRESS
+
+  useAccountEffect({
+    onConnect({ isReconnected, address, chainId, connector }) {
+      if (accountNotConnected && isReconnected) {
+        onConnect({
+          account: address,
+          chainId: verifyChainId(chainId),
+          providerType:
+            connector.type === 'injected'
+              ? ProviderType.InjectedWallet
+              : ProviderType.WalletConnect,
+        })
+      }
+    },
+  })
+
+  if (accountNotConnected) {
     return <Connect onConnect={onConnect} />
   }
 
