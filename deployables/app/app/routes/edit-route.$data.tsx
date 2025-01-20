@@ -39,7 +39,7 @@ import {
 } from '@zodiac/schema'
 import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
 import { lazy, useState } from 'react'
-import { Form, useSubmit } from 'react-router'
+import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 
 const DebugRouteData = lazy(async () => {
@@ -161,6 +161,8 @@ const EditRoute = ({
     providerType,
   })
 
+  const { state } = useNavigation()
+
   return (
     <div className="flex h-full flex-col gap-4">
       <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
@@ -247,8 +249,16 @@ const EditRoute = ({
             }}
           />
 
-          <div className="mt-8 flex justify-end">
-            <PrimaryButton submit intent={Intent.Save}>
+          <div className="mt-8 flex items-center justify-between">
+            <div className="text-xs opacity-75">
+              The Pilot extension must be open to save.
+            </div>
+
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              disabled={state !== 'idle'}
+            >
               Save
             </PrimaryButton>
           </div>
