@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
+    "@react-router/express": "^7.1.3",
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
     "@tanstack/react-query": "^5.56.2",
@@ -38,7 +39,6 @@
     "@depay/web3-mock": "^14.19.1",
     "@playwright/test": "^1.48.1",
     "@react-router/dev": "^7.1.1",
-    "@react-router/express": "^7.1.3",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "14.6.0",
