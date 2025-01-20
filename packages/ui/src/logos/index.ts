@@ -1,2 +1,2 @@
-export { PilotLogo } from './PilotLogo'
-export { ZodiacOsLogo } from './ZodiacOsLogo'
+export { PilotType } from './PilotType'
+export { ZodiacOsPlain } from './ZodiacOsPlain'

@@ -2,7 +2,6 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
-  DebugRouteData,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -38,10 +37,16 @@ import {
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
-import { PrimaryButton, TextInput } from '@zodiac/ui'
-import classNames from 'classnames'
+import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
+import { lazy } from 'react'
 import { Form, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
+
+const DebugRouteData = lazy(async () => {
+  const { DebugRouteData } = await import('./DebugRouteData')
+
+  return { default: DebugRouteData }
+})
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const route = parseRouteData(params.data)
@@ -152,9 +157,16 @@ const EditRoute = ({
   const submit = useSubmit()
 
   return (
-    <div className={classNames('grid', isDev && 'grid-cols-2')}>
-      <main className="mx-auto flex max-w-3xl flex-col gap-4">
-        <h1 className="my-8 text-3xl font-semibold">Route configuration</h1>
+    <div className="flex h-full flex-col gap-4">
+      <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <ZodiacOsPlain className="h-6 lg:h-8" />
+            <PilotType className="h-8 lg:h-10 dark:invert" />
+          </div>
+
+          <h1 className="my-8 text-3xl font-extralight">Route configuration</h1>
+        </div>
 
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
