@@ -60,8 +60,6 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     avatar: route.avatar,
     providerType: route.providerType,
     waypoints: route.waypoints,
-
-    isDev: process.env.NODE_ENV !== 'production',
   }
 }
 
@@ -152,7 +150,7 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, providerType, waypoints, isDev },
+  loaderData: { chainId, label, avatar, providerType, waypoints },
 }: Route.ComponentProps) => {
   const submit = useSubmit()
 
@@ -266,7 +264,7 @@ const EditRoute = ({
         </Form>
       </main>
 
-      {isDev && <DebugRouteData />}
+      {process.env.NODE_ENV !== 'production' && <DebugRouteData />}
     </div>
   )
 }
