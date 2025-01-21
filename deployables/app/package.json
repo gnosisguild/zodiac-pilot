@@ -16,6 +16,7 @@
     "@epic-web/invariant": "^1.0.0",
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
+    "@sentry/react": "^8.50.0",
     "@tanstack/react-query": "^5.56.2",
     "@zodiac/chains": "workspace:*",
     "@zodiac/form-data": "workspace:*",
