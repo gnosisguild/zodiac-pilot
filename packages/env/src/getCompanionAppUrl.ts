@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 
 export const getCompanionAppUrl = () => {
-  const { COMPANION_APP_URL } = process.env
+  const COMPANION_APP_URL = process.env.COMPANION_APP_URL
 
   invariant(
     COMPANION_APP_URL != null,
