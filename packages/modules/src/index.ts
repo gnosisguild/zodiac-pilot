@@ -2,6 +2,7 @@ export { createBlankRoute } from './createBlankRoute'
 export { fetchZodiacModules } from './fetchZodiacModules'
 export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
+export { getRolesWaypoint } from './getRolesWaypoint'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
   MULTISEND,

@@ -1,4 +1,5 @@
 import { render } from '@/test-utils'
+import { dryRun } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
@@ -65,6 +66,17 @@ const mockQueryRolesV1MultiSend = vi.mocked(queryRolesV1MultiSend)
 const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
+
+vi.mock('@/utils', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/utils')>()
+
+  return {
+    ...module,
+    dryRun: vi.fn(),
+  }
+})
+
+const mockDryRun = vi.mocked(dryRun)
 
 describe('Edit route', () => {
   describe('Label', () => {
@@ -583,6 +595,35 @@ describe('Edit route', () => {
           )
         })
       })
+    })
+  })
+
+  describe('Dry run', () => {
+    it('is possible to test a route before saving', async () => {
+      const route = createMockExecutionRoute()
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      expect(
+        screen.getByRole('button', { name: 'Test route' }),
+      ).toBeInTheDocument()
+    })
+
+    it('shows errors returned by dry run', async () => {
+      const route = createMockExecutionRoute()
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      mockDryRun.mockResolvedValue({
+        error: true,
+        message: 'Something went wrong',
+      })
+
+      await userEvent.click(screen.getByRole('button', { name: 'Test route' }))
+
+      expect(
+        await screen.findByRole('alert', { name: 'Dry run failed' }),
+      ).toHaveAccessibleDescription('Something went wrong')
     })
   })
 })

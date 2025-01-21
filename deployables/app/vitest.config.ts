@@ -21,7 +21,7 @@ export default defineConfig({
 
   test: {
     alias,
-    environment: 'happy-dom',
+    environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts', '@zodiac/test-utils/setup-chrome-mock'],
     include: ['./app/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,

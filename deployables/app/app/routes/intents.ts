@@ -5,4 +5,5 @@ export enum Intent {
   RemoveAvatar = 'RemoveAvatar',
   ConnectWallet = 'ConnectWallet',
   DisconnectWallet = 'DisconnectWallet',
+  DryRun = 'DryRun',
 }
