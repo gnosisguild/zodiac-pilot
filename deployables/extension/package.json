@@ -11,7 +11,7 @@
   "sideEffects": false,
   "scripts": {
     "clean": "rimraf public/build",
-    "update-manifest": "node manifest-util.js -t ./src/manifest.template.json -o ./public/manifest.json",
+    "update-manifest": "node --experimental-strip-types manifest-util.ts -t ./src/manifest.template.json -o ./public/manifest.json",
     "prebuild": "pnpm clean && pnpm update-manifest",
     "build": "node esbuild.mjs",
     "zip": "mv public zodiac-pilot && zip -vr zodiac-pilot.zip zodiac-pilot/ -x \"*.DS_Store\" && mv zodiac-pilot public",

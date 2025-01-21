@@ -1,1 +1,1 @@
-export { getCompanionAppUrl } from './getCompanionAppUrl'
+export { getCompanionAppUrl } from './getCompanionAppUrl.ts'
