@@ -52,11 +52,11 @@ import {
   asLegacyConnection,
   fromLegacyConnection,
 } from '../../legacyConnectionMigrations'
+import { RemoveButton } from '../RemoveButton'
 import { AvatarInput } from './AvatarInput'
 import { ChainSelect } from './ChainSelect'
 import { getRouteId } from './getRouteId'
 import { Intent } from './intents'
-import { RemoveButton } from './RemoveButton'
 import { useConnectionDryRun } from './useConnectionDryRun'
 import { useSafesWithOwner } from './useSafesWithOwner'
 import { ConnectWallet } from './wallet'
@@ -439,7 +439,10 @@ export const EditRoute = () => {
           )}
 
           <div className="flex items-center justify-between gap-4">
-            <RemoveButton />
+            <RemoveButton
+              routeId={legacyConnection.id}
+              intent={Intent.removeRoute}
+            />
 
             <PrimaryButton
               disabled={!avatarAddress}

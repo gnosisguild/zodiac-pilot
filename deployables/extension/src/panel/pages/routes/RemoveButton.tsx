@@ -1,9 +1,13 @@
 import { GhostButton, InlineForm, Modal, PrimaryButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { Intent } from './intents'
 
-export const RemoveButton = () => {
+type RemoveButtonProps = {
+  routeId: string
+  intent: string
+}
+
+export const RemoveButton = ({ intent, routeId }: RemoveButtonProps) => {
   const [confirmRemove, setConfirmRemove] = useState(false)
 
   return (
@@ -29,8 +33,8 @@ export const RemoveButton = () => {
             Cancel
           </GhostButton>
 
-          <InlineForm>
-            <PrimaryButton submit style="contrast" intent={Intent.removeRoute}>
+          <InlineForm context={{ routeId }}>
+            <PrimaryButton submit style="contrast" intent={intent}>
               Remove
             </PrimaryButton>
           </InlineForm>

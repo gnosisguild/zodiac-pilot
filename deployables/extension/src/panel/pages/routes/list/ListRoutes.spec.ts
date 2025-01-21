@@ -1,4 +1,8 @@
-import { getRoutes, saveLastUsedRouteId } from '@/execution-routes'
+import {
+  getLastUsedRouteId,
+  getRoutes,
+  saveLastUsedRouteId,
+} from '@/execution-routes'
 import {
   connectMockWallet,
   createMockRoute,
@@ -204,6 +208,123 @@ describe('List routes', () => {
       const [newRoute] = await getRoutes()
 
       await expectRouteToBe(`/routes/edit/${newRoute.id}`)
+    })
+  })
+
+  describe('Remove', () => {
+    it('is possible to remove a route', async () => {
+      mockRoute({ id: 'route-id' })
+
+      await render('/routes', [
+        {
+          path: '/routes',
+          Component: ListRoutes,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Remove route' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Remove' }))
+
+      await expect(getRoutes()).resolves.toEqual([])
+    })
+
+    it('does not remove the route if the user cancels', async () => {
+      const route = await mockRoute({ id: 'route-id' })
+
+      await render('/routes', [
+        {
+          path: '/routes',
+          Component: ListRoutes,
+          loader,
+          action,
+        },
+      ])
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Remove route' }),
+      )
+
+      const { getAllByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getAllByRole('button', { name: 'Cancel' })[0])
+
+      await expect(getRoutes()).resolves.toEqual([route])
+    })
+
+    it('navigates back to the root when the last route is removed', async () => {
+      await mockRoutes({ id: 'route-id' })
+
+      await render(
+        '/routes',
+        [
+          {
+            path: '/routes',
+            Component: ListRoutes,
+            loader,
+            action,
+          },
+        ],
+        { inspectRoutes: ['/'] },
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Remove route' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Remove' }))
+
+      await expectRouteToBe('/')
+    })
+
+    it('sets another route as active, when the the deleted route is currently active', async () => {
+      await mockRoutes(
+        { id: 'first-route', label: 'First route' },
+        { id: 'second-route' },
+      )
+
+      await render(
+        '/routes',
+        [
+          {
+            path: '/routes',
+            Component: ListRoutes,
+            loader,
+            action,
+          },
+        ],
+        { inspectRoutes: ['/routes'] },
+      )
+
+      const { getByRole: getByRoleInRoute } = within(
+        screen.getByRole('region', { name: 'First route' }),
+      )
+
+      await userEvent.click(
+        getByRoleInRoute('button', { name: 'Remove route' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Remove route' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Remove' }))
+
+      await expect(getLastUsedRouteId()).resolves.toEqual('second-route')
     })
   })
 })

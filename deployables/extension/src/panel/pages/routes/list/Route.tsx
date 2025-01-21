@@ -14,6 +14,7 @@ import type { PrefixedAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
 import { asLegacyConnection } from '../../legacyConnectionMigrations'
+import { RemoveButton } from '../RemoveButton'
 import { Intent } from './intents'
 
 interface RouteProps {
@@ -66,36 +67,40 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
 
         <ConnectionStack connection={asLegacyConnection(route)} />
 
-        <div className="flex justify-end gap-2">
-          <SecondaryLinkButton relative="path" to={`../edit/${route.id}`}>
-            Edit
-          </SecondaryLinkButton>
+        <div className="flex justify-between">
+          <RemoveButton routeId={route.id} intent={Intent.removeRoute} />
 
-          <InlineForm ref={formRef} context={{ routeId: route.id }}>
-            <SecondaryButton
-              submit
-              intent={Intent.launchRoute}
-              onClick={(event) => {
-                if (transactions.length === 0) {
-                  return
-                }
-                // we continue working with the same avatar, so don't have to clear the recorded transaction
-                const keepTransactionBundle =
-                  currentlyActiveAvatar === route.avatar
+          <div className="flex gap-2">
+            <SecondaryLinkButton relative="path" to={`../edit/${route.id}`}>
+              Edit
+            </SecondaryLinkButton>
 
-                if (keepTransactionBundle) {
-                  return
-                }
+            <InlineForm ref={formRef} context={{ routeId: route.id }}>
+              <SecondaryButton
+                submit
+                intent={Intent.launchRoute}
+                onClick={(event) => {
+                  if (transactions.length === 0) {
+                    return
+                  }
+                  // we continue working with the same avatar, so don't have to clear the recorded transaction
+                  const keepTransactionBundle =
+                    currentlyActiveAvatar === route.avatar
 
-                setConfirmClearTransactions(true)
+                  if (keepTransactionBundle) {
+                    return
+                  }
 
-                event.preventDefault()
-                event.stopPropagation()
-              }}
-            >
-              Launch
-            </SecondaryButton>
-          </InlineForm>
+                  setConfirmClearTransactions(true)
+
+                  event.preventDefault()
+                  event.stopPropagation()
+                }}
+              >
+                Launch
+              </SecondaryButton>
+            </InlineForm>
+          </div>
         </div>
       </section>
 
