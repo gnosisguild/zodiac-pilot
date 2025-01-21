@@ -1,3 +1,4 @@
+import { ProvideCompanionAppContext } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvidePort } from '@/port-handling'
 import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
@@ -10,6 +11,7 @@ type RenderWraperProps = PropsWithChildren<{
   initialState?: TransactionState[]
   initialSelectedRoute?: ExecutionRoute | null
   initialProvider?: Eip1193Provider
+  companionAppUrl?: string
 }>
 
 export const RenderWrapper = ({
@@ -17,20 +19,23 @@ export const RenderWrapper = ({
   initialState,
   initialSelectedRoute = null,
   initialProvider,
+  companionAppUrl = 'http://localhost:3040',
 }: RenderWraperProps) => (
-  <ProvidePort>
-    <ProvideState initialState={initialState}>
-      <ProvideConnectProvider initialProvider={initialProvider}>
-        <ProvideInjectedWallet>
-          {initialSelectedRoute == null ? (
-            children
-          ) : (
-            <ProvideExecutionRoute route={initialSelectedRoute}>
-              <ProvideProvider>{children}</ProvideProvider>
-            </ProvideExecutionRoute>
-          )}
-        </ProvideInjectedWallet>
-      </ProvideConnectProvider>
-    </ProvideState>
-  </ProvidePort>
+  <ProvideCompanionAppContext url={companionAppUrl}>
+    <ProvidePort>
+      <ProvideState initialState={initialState}>
+        <ProvideConnectProvider initialProvider={initialProvider}>
+          <ProvideInjectedWallet>
+            {initialSelectedRoute == null ? (
+              children
+            ) : (
+              <ProvideExecutionRoute route={initialSelectedRoute}>
+                <ProvideProvider>{children}</ProvideProvider>
+              </ProvideExecutionRoute>
+            )}
+          </ProvideInjectedWallet>
+        </ProvideConnectProvider>
+      </ProvideState>
+    </ProvidePort>
+  </ProvideCompanionAppContext>
 )

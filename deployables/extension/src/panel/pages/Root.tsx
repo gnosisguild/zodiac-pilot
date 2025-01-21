@@ -1,6 +1,8 @@
+import { ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId, getRoute, saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -13,11 +15,11 @@ import { FutureClearTransactionsModal } from './ClearTransactionsModal'
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
-  return { lastUsedRouteId }
+  return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
 }
 
 export const Root = () => {
-  const { lastUsedRouteId } = useLoaderData<typeof loader>()
+  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
 
   const [pendingRouteUpdate, setPendingRouteUpdate] =
     useState<ExecutionRoute | null>(null)
@@ -67,7 +69,7 @@ export const Root = () => {
   }, [lastUsedRouteId, transactions.length])
 
   return (
-    <>
+    <ProvideCompanionAppContext url={companionAppUrl}>
       <Outlet />
 
       <FutureClearTransactionsModal
@@ -88,6 +90,6 @@ export const Root = () => {
           })
         }}
       />
-    </>
+    </ProvideCompanionAppContext>
   )
 }

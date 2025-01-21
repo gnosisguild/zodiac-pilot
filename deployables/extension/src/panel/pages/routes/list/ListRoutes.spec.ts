@@ -13,7 +13,6 @@ import {
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
-import { getCompanionAppUrl } from '@zodiac/env'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { action, ListRoutes, loader } from './ListRoutes'
@@ -27,16 +26,15 @@ describe('List routes', () => {
         initiator: ETH_ZERO_ADDRESS,
       })
 
-      await render('/routes/list', [
-        { Component: ListRoutes, path: '/routes/list', loader, action },
-      ])
+      await render(
+        '/routes/list',
+        [{ Component: ListRoutes, path: '/routes/list', loader, action }],
+        { companionAppUrl: 'http://localhost' },
+      )
 
       expect(screen.getByRole('link', { name: 'Edit' })).toHaveAttribute(
         'href',
-        new URL(
-          `/edit-route/${btoa(JSON.stringify(route))}`,
-          getCompanionAppUrl(),
-        ),
+        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
       )
     })
   })
