@@ -48,7 +48,8 @@ const safeSchema = z.object({
     .number()
     .or(z.nan())
     .nullable()
-    .transform((value) => (value == null ? NaN : value)),
+    .transform((value) => (value == null ? NaN : value))
+    .optional(),
 })
 
 const rolesSchema = z.object({
