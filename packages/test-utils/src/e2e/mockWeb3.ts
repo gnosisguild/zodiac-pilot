@@ -54,12 +54,12 @@ export const mockWeb3 = async (
 }
 
 const getConnectFrame = (page: Page) => {
-  if (process.env.CONNECT_IFRAME_URL == null) {
+  if (process.env.COMPANION_APP_URL == null) {
     return page
   }
 
   const frame = page.frame({
-    url: process.env.CONNECT_IFRAME_URL,
+    url: process.env.COMPANION_APP_URL,
   })
 
   invariant(frame != null, 'Connect iframe not found')

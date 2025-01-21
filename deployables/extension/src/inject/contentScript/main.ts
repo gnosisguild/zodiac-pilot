@@ -1,4 +1,5 @@
 import { injectScript, isValidTab } from '@/utils'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   InjectedProviderMessageTyp,
   PilotMessageType,
@@ -18,7 +19,7 @@ const alreadyInjected =
 
 if (
   !alreadyInjected &&
-  window.location.origin !== process.env.CONNECT_IFRAME_URL &&
+  window.location.origin !== getCompanionAppUrl() &&
   isValidTab(window.location.href)
 ) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
