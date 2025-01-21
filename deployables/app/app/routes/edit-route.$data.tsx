@@ -79,7 +79,7 @@ export const action = async ({ request, params }: Route.ActionArgs) => {
     multisend: await getMultisend(route, module),
   })
 
-  return editRoute(request.url, updatedRoute)
+  return editRoute(updatedRoute)
 }
 
 export const clientAction = async ({
@@ -107,26 +107,25 @@ export const clientAction = async ({
         { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
         '*',
       )
-      // chrome.runtime.sendMessage('', route)
 
-      return editRoute(request.url, route)
+      return editRoute(route)
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)
       const chainId = verifyChainId(getInt(data, 'chainId'))
 
-      return editRoute(request.url, updateChainId(route, chainId))
+      return editRoute(updateChainId(route, chainId))
     }
     case Intent.UpdateAvatar: {
       const route = parseRouteData(params.data)
       const avatar = getHexString(data, 'avatar')
 
-      return editRoute(request.url, updateAvatar(route, { safe: avatar }))
+      return editRoute(updateAvatar(route, { safe: avatar }))
     }
     case Intent.RemoveAvatar: {
       const route = parseRouteData(params.data)
 
-      return editRoute(request.url, removeAvatar(route))
+      return editRoute(removeAvatar(route))
     }
     case Intent.ConnectWallet: {
       const route = parseRouteData(params.data)
@@ -136,7 +135,6 @@ export const clientAction = async ({
       const providerType = verifyProviderType(getInt(data, 'providerType'))
 
       return editRoute(
-        request.url,
         updatePilotAddress(
           updateChainId(updateProviderType(route, providerType), chainId),
           account,
@@ -146,7 +144,7 @@ export const clientAction = async ({
     case Intent.DisconnectWallet: {
       const route = parseRouteData(params.data)
 
-      return editRoute(request.url, updatePilotAddress(route, ZERO_ADDRESS))
+      return editRoute(updatePilotAddress(route, ZERO_ADDRESS))
     }
     default:
       return serverAction()
