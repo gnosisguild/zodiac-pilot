@@ -585,4 +585,16 @@ describe('Edit route', () => {
       })
     })
   })
+
+  describe('Dry run', () => {
+    it('is possible to test a route before saving', async () => {
+      const route = createMockExecutionRoute()
+
+      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+      expect(
+        screen.getByRole('button', { name: 'Test route' }),
+      ).toBeInTheDocument()
+    })
+  })
 })

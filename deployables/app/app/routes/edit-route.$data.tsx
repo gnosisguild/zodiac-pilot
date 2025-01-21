@@ -37,7 +37,13 @@ import {
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
-import { PilotType, PrimaryButton, TextInput, ZodiacOsPlain } from '@zodiac/ui'
+import {
+  PilotType,
+  PrimaryButton,
+  SecondaryButton,
+  TextInput,
+  ZodiacOsPlain,
+} from '@zodiac/ui'
 import { useState } from 'react'
 import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
@@ -90,6 +96,8 @@ export const clientAction = async ({
   const data = await request.clone().formData()
 
   const intent = getOptionalString(data, 'intent')
+
+  console.log({ intent })
 
   switch (intent) {
     case Intent.Save: {
@@ -145,6 +153,9 @@ export const clientAction = async ({
       const route = parseRouteData(params.data)
 
       return editRoute(updatePilotAddress(route, ZERO_ADDRESS))
+    }
+    case Intent.DryRun: {
+      return null
     }
     default:
       return serverAction()
@@ -255,13 +266,23 @@ const EditRoute = ({
               The Pilot extension must be open to save.
             </div>
 
-            <PrimaryButton
-              submit
-              intent={Intent.Save}
-              disabled={state !== 'idle'}
-            >
-              Save
-            </PrimaryButton>
+            <div className="flex gap-2">
+              <SecondaryButton
+                submit
+                intent={Intent.DryRun}
+                disabled={state !== 'idle'}
+              >
+                Test route
+              </SecondaryButton>
+
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                disabled={state !== 'idle'}
+              >
+                Save
+              </PrimaryButton>
+            </div>
           </div>
         </Form>
       </main>
