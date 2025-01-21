@@ -1,3 +1,4 @@
+import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { Transition } from '@headlessui/react'
 import { Blockie } from '@zodiac/ui'
@@ -52,10 +53,12 @@ export const RouteBubble = () => {
 
       <div className="flex flex-shrink-0">
         <Link
-          to={`/routes/edit/${route.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          to={`${useCompanionAppUrl()}/edit-route/${btoa(JSON.stringify(route))}`}
           className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
         >
-          <span className="sr-only">Configure {connection.label}</span>
+          <span className="sr-only">Edit route</span>
           <Cog size={20} />
         </Link>
 

@@ -1,6 +1,7 @@
 import {
   createMockRoute,
   createTransaction,
+  mockRoute,
   mockTabSwitch,
   render,
 } from '@/test-utils'
@@ -68,6 +69,27 @@ describe('Transactions', () => {
       await mockTabSwitch({ url: 'chrome://extensions' })
 
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    })
+  })
+
+  describe('Edit', () => {
+    it('is possible to edit the current route', async () => {
+      const route = await mockRoute({ id: 'test-route' })
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [createTransaction()],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
+        'href',
+        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
+      )
     })
   })
 })
