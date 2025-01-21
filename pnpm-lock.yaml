@@ -174,8 +174,8 @@ importers:
         specifier: 14.6.0
         version: 14.6.0(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: ^0.0.297
-        version: 0.0.297
+        specifier: ^0.0.299
+        version: 0.0.299
       '@types/react':
         specifier: ^19.0.1
         version: 19.0.7
@@ -283,8 +283,8 @@ importers:
         specifier: ^2.12.1
         version: 2.15.2(@remix-run/react@2.15.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@types/node@22.10.7)(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(vite@6.0.10(@types/node@22.10.7)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.103.2(@cloudflare/workers-types@4.20250121.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@types/chrome':
-        specifier: ^0.0.297
-        version: 0.0.297
+        specifier: ^0.0.299
+        version: 0.0.299
       '@types/react':
         specifier: ^19.0.0
         version: 19.0.7
@@ -413,8 +413,8 @@ importers:
         specifier: 14.6.0
         version: 14.6.0(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: ^0.0.297
-        version: 0.0.297
+        specifier: ^0.0.299
+        version: 0.0.299
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3
@@ -850,8 +850,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.3(@react-router/serve@7.1.3(react-router@7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.3))(@types/node@22.10.7)(babel-plugin-macros@3.1.0)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(react-router@7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.3)(vite@6.0.10(@types/node@22.10.7)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.103.2(@cloudflare/workers-types@4.20250121.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
       '@types/chrome':
-        specifier: ^0.0.297
-        version: 0.0.297
+        specifier: ^0.0.299
+        version: 0.0.299
       '@types/react':
         specifier: ^19.0.3
         version: 19.0.7
@@ -3188,8 +3188,8 @@ packages:
   '@types/chrome@0.0.114':
     resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
 
-  '@types/chrome@0.0.297':
-    resolution: {integrity: sha512-e7HM20aH/0Ate5zEP00il2Dzlt8HvO6nXGgxiXKuc1E5cVsNvcykBiTyrSvmWPPDzdZRC5QZvVDYXTihiF1Jfw==}
+  '@types/chrome@0.0.299':
+    resolution: {integrity: sha512-hPoHmFWUaKw2s3wDjUtMsvZqeh9lKL7nFQx6yaAYt7RxBKv/V3rDUaA4BgUR145nnpF6hpNhHaxhtcCSFJ5b7w==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -10946,7 +10946,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@types/chrome@0.0.297':
+  '@types/chrome@0.0.299':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
