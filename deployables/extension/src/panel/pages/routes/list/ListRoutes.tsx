@@ -3,6 +3,8 @@ import {
   getLastUsedRouteId,
   getRoute,
   getRoutes,
+  removeRoute,
+  saveLastUsedRouteId,
 } from '@/execution-routes'
 import { getString } from '@/utils'
 import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@zodiac/ui'
@@ -54,6 +56,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       return redirect(
         `/${currentlyActiveRouteId}/clear-transactions/${newActiveRouteId}`,
       )
+    }
+
+    case Intent.removeRoute: {
+      const lastUsedRouteId = await getLastUsedRouteId()
+      const routeId = getString(data, 'routeId')
+
+      await removeRoute(routeId)
+
+      if (lastUsedRouteId === routeId) {
+        await saveLastUsedRouteId(null)
+      }
+
+      const routes = await getRoutes()
+
+      if (routes.length === 0) {
+        return redirect('/')
+      }
+
+      const [newActiveRoute] = routes
+
+      await saveLastUsedRouteId(newActiveRoute.id)
+
+      return null
     }
   }
 }
