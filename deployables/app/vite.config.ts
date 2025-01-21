@@ -1,5 +1,6 @@
 import { reactRouter } from '@react-router/dev/vite'
 import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import autoprefixer from 'autoprefixer'
 import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
@@ -12,6 +13,7 @@ export default defineConfig(({ isSsrBuild }) => ({
           input: './workers/app.ts',
         }
       : undefined,
+    sourcemap: true,
   },
   server: {
     port: 3040,
@@ -26,7 +28,6 @@ export default defineConfig(({ isSsrBuild }) => ({
   },
   ssr: {
     target: 'webworker',
-    // noExternal: true,
     resolve: {
       conditions: ['workerd', 'browser'],
     },
@@ -42,5 +43,14 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
     noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
-  plugins: [cloudflareDevProxy(), reactRouter(), tsconfigPaths()],
+  plugins: [
+    cloudflareDevProxy(),
+    reactRouter(),
+    tsconfigPaths(),
+    sentryVitePlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: 'gnosis-guild',
+      project: 'pilot-companion-app',
+    }),
+  ],
 }))

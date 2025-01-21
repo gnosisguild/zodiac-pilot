@@ -85,6 +85,9 @@ importers:
       '@react-router/serve':
         specifier: ^7.1.1
         version: 7.1.3(react-router@7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.3)
+      '@sentry/react':
+        specifier: ^8.50.0
+        version: 8.50.0(react@19.0.0)
       '@tanstack/react-query':
         specifier: ^5.56.2
         version: 5.64.2(react@19.0.0)
@@ -158,6 +161,9 @@ importers:
       '@react-router/dev':
         specifier: ^7.1.1
         version: 7.1.3(@react-router/serve@7.1.3(react-router@7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.3))(@types/node@22.10.7)(babel-plugin-macros@3.1.0)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(react-router@7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.3)(vite@6.0.10(@types/node@22.10.7)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.103.2(@cloudflare/workers-types@4.20250109.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
+      '@sentry/vite-plugin':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@testing-library/jest-dom':
         specifier: ^6.4.6
         version: 6.6.3
@@ -3025,6 +3031,16 @@ packages:
 
   '@sentry/esbuild-plugin@3.0.0':
     resolution: {integrity: sha512-8Ga7gMjlmZrTBq6CIxa1fcFZtvxLSb40qsYAjxFH2njoAr5PplfnYRD0H2i/AhdOld2dsJNanuv65OW2DZTdiQ==}
+    engines: {node: '>= 14'}
+
+  '@sentry/react@8.50.0':
+    resolution: {integrity: sha512-qkDW5dieROPDf0uk1usXib/SLZTEveN5jvKgBFd+HKWz5JNu+M7L53t9KdZ7ryn4T68utI/LWs4qR3QhmXzUbQ==}
+    engines: {node: '>=14.18'}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
+
+  '@sentry/vite-plugin@3.0.0':
+    resolution: {integrity: sha512-E2elyHjP3Wqnk2uXr9C17jHRQBKX8jEOpzOnEOiXYDI2FBfehs9ttj9yX1I7H8ofCiqO2EsTu5r2a0C26ZWi+w==}
     engines: {node: '>= 14'}
 
   '@shazow/whatsabi@0.19.0':
@@ -6088,9 +6104,6 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
-
-  mlly@1.7.3:
-    resolution: {integrity: sha512-xUsx5n/mN0uQf4V548PKQ+YShA4/IW0KI1dZhrNrPCLG+xizETbHTkOa1f8/xut9JRPp8kQuMnz0oqwkTiLo/A==}
 
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
@@ -10785,6 +10798,21 @@ snapshots:
       - encoding
       - supports-color
 
+  '@sentry/react@8.50.0(react@19.0.0)':
+    dependencies:
+      '@sentry/browser': 8.50.0
+      '@sentry/core': 8.50.0
+      hoist-non-react-statics: 3.3.2
+      react: 19.0.0
+
+  '@sentry/vite-plugin@3.0.0':
+    dependencies:
+      '@sentry/bundler-plugin-core': 3.0.0
+      unplugin: 1.0.1
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
   '@shazow/whatsabi@0.19.0(@noble/hashes@1.7.1)(typescript@5.7.3)(zod@3.24.1)':
     dependencies:
       '@noble/hashes': 1.7.1
@@ -11183,12 +11211,12 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.2.0
       '@vanilla-extract/css': 1.17.0(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.6
+      esbuild: 0.17.19
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
       lodash: 4.17.21
-      mlly: 1.7.3
+      mlly: 1.7.4
       outdent: 0.8.0
       vite: 5.4.13(@types/node@22.10.7)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
       vite-node: 1.6.0(@types/node@22.10.7)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
@@ -15135,13 +15163,6 @@ snapshots:
   mkdirp-classic@0.5.3: {}
 
   mkdirp@1.0.4: {}
-
-  mlly@1.7.3:
-    dependencies:
-      acorn: 8.14.0
-      pathe: 1.1.2
-      pkg-types: 1.3.1
-      ufo: 1.5.4
 
   mlly@1.7.4:
     dependencies:
