@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
+    "@gnosis.pm/zodiac": "^4.0.3",
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
     "@sentry/react": "^8.50.0",

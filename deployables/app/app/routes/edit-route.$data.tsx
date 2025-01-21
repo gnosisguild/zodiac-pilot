@@ -5,7 +5,8 @@ import {
   WalletProvider,
   ZodiacMod,
 } from '@/components'
-import { editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
+import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
+import { invariant } from '@epic-web/invariant'
 import { Chain, getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
@@ -38,6 +39,7 @@ import {
   type Waypoints,
 } from '@zodiac/schema'
 import {
+  Error,
   PilotType,
   PrimaryButton,
   SecondaryButton,
@@ -97,9 +99,8 @@ export const clientAction = async ({
 
   const intent = getOptionalString(data, 'intent')
 
-  console.log({ intent })
-
   switch (intent) {
+    case Intent.DryRun:
     case Intent.Save: {
       let route = parseRouteData(params.data)
 
@@ -111,12 +112,18 @@ export const clientAction = async ({
 
       route = updateLabel(route, getString(data, 'label'))
 
-      window.postMessage(
-        { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
-        '*',
-      )
+      if (intent === Intent.Save) {
+        window.postMessage(
+          { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
+          '*',
+        )
 
-      return editRoute(route)
+        return editRoute(route)
+      }
+
+      const chainId = getChainId(route.avatar)
+
+      return dryRun(jsonRpcProvider(chainId), route)
     }
     case Intent.UpdateChain: {
       const route = parseRouteData(params.data)
@@ -154,9 +161,7 @@ export const clientAction = async ({
 
       return editRoute(updatePilotAddress(route, ZERO_ADDRESS))
     }
-    case Intent.DryRun: {
-      return null
-    }
+
     default:
       return serverAction()
   }
@@ -164,6 +169,7 @@ export const clientAction = async ({
 
 const EditRoute = ({
   loaderData: { chainId, label, avatar, providerType, waypoints },
+  actionData,
 }: Route.ComponentProps) => {
   const submit = useSubmit()
 
@@ -261,8 +267,8 @@ const EditRoute = ({
             }}
           />
 
-          <div className="mt-8 flex items-center justify-between">
-            <div className="text-xs opacity-75">
+          <div className="mt-8 flex items-center justify-between gap-8">
+            <div className="text-balance text-xs opacity-75">
               The Pilot extension must be open to save.
             </div>
 
@@ -284,6 +290,12 @@ const EditRoute = ({
               </PrimaryButton>
             </div>
           </div>
+
+          {actionData != null && actionData.error === true && (
+            <div className="mt-8">
+              <Error title="Dry run failed">{actionData.message}</Error>
+            </div>
+          )}
         </Form>
       </main>
 
@@ -317,7 +329,7 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
       return queryRolesV2MultiSend(chainId, module.moduleAddress)
   }
 
-  throw new Error(`Cannot get multisend for module type "${module.type}"`)
+  invariant(false, `Cannot get multisend for module type "${module.type}"`)
 }
 
 const verifyProviderType = (value: number): ProviderType =>

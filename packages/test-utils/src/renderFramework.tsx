@@ -2,7 +2,12 @@ import { type RouteConfig } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
 import type { ActionFunctionArgs } from 'react-router'
-import { createRoutesStub, useLoaderData, useParams } from 'react-router'
+import {
+  createRoutesStub,
+  useActionData,
+  useLoaderData,
+  useParams,
+} from 'react-router'
 import type {
   CreateActionData,
   CreateComponentProps,
@@ -114,10 +119,17 @@ export async function createRenderFramework<Config extends RouteConfig>(
             ? undefined
             : () => {
                 const loaderData = useLoaderData<typeof loader>()
+                const actionData = useActionData<typeof action>()
                 const params = useParams()
 
-                // @ts-expect-error we're not yet suppliying all required props
-                return <Component loaderData={loaderData} params={params} />
+                return (
+                  // @ts-expect-error we're not yet suppliying all required props
+                  <Component
+                    loaderData={loaderData}
+                    actionData={actionData}
+                    params={params}
+                  />
+                )
               },
       }
     }),
