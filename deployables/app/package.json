@@ -38,7 +38,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250109.0",
+    "@cloudflare/workers-types": "4.20250121.0",
     "@depay/web3-mock": "^14.19.1",
     "@hiogawa/vite-node-miniflare": "0.1.1",
     "@playwright/test": "^1.48.1",
