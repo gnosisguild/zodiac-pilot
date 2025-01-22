@@ -17,8 +17,8 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
       safeAddress: validatedAddress,
     })
 
-    return results.map((delegate) => delegate.delegate)
+    return Response.json(results.map((delegate) => delegate.delegate))
   } catch {
-    return []
+    return Response.json([])
   }
 }

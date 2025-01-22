@@ -16,13 +16,15 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   invariantResponse(validatedAddress != null, `Invalid address: ${avatar}`)
 
   try {
-    return await fetchZodiacModules(jsonRpcProvider(verifiedChainId), {
+    const modules = await fetchZodiacModules(jsonRpcProvider(verifiedChainId), {
       safeOrModifierAddress: validatedAddress,
       chainId: verifiedChainId,
     })
+
+    return Response.json(modules)
   } catch (e) {
     console.error(e)
-    return []
+    return Response.json([])
   }
 }
 
