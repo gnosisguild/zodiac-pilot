@@ -193,14 +193,13 @@ describe('List routes', () => {
       await render(
         '/routes',
         [{ path: '/routes', Component: ListRoutes, loader, action }],
-        { inspectRoutes: ['/routes/edit/:routeId'] },
+        { companionAppUrl: 'http://localhost' },
       )
 
-      await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
-
-      const [newRoute] = await getRoutes()
-
-      await expectRouteToBe(`/routes/edit/${newRoute.id}`)
+      expect(screen.getByRole('link', { name: 'Add route' })).toHaveAttribute(
+        'href',
+        'http://localhost/new-route',
+      )
     })
   })
 
