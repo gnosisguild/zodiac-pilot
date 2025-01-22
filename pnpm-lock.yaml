@@ -395,16 +395,16 @@ importers:
         specifier: ^1.48.1
         version: 1.49.1
       '@safe-global/api-kit':
-        specifier: ^2.4.2
+        specifier: 2.5.7
         version: 2.5.7(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/protocol-kit':
-        specifier: ^5.0.1
+        specifier: 5.2.0
         version: 5.2.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/safe-apps-sdk':
-        specifier: ^9.1.0
+        specifier: 9.1.0
         version: 9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/safe-gateway-typescript-sdk':
-        specifier: ^3.21.10
+        specifier: 3.22.7
         version: 3.22.7
       '@shazow/whatsabi':
         specifier: ^0.19.0
@@ -803,10 +803,10 @@ importers:
   packages/safe:
     dependencies:
       '@safe-global/api-kit':
-        specifier: ^2.4.2
+        specifier: 2.5.7
         version: 2.5.7(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/protocol-kit':
-        specifier: ^5.0.1
+        specifier: 5.2.0
         version: 5.2.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@zodiac/chains':
         specifier: workspace:*
@@ -10692,7 +10692,7 @@ snapshots:
 
   '@safe-global/api-kit@2.5.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)':
     dependencies:
-      '@safe-global/protocol-kit': 5.1.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+      '@safe-global/protocol-kit': 5.2.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       '@safe-global/types-kit': 1.0.1(typescript@5.7.3)(zod@3.24.1)
       node-fetch: 2.7.0
       viem: 2.22.8(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
@@ -15653,11 +15653,11 @@ snapshots:
   ox@0.6.0(typescript@5.7.3)(zod@3.24.1):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
-      '@noble/curves': 1.7.0
+      '@noble/curves': 1.8.1
       '@noble/hashes': 1.6.1
       '@scure/bip32': 1.6.0
       '@scure/bip39': 1.5.0
-      abitype: 1.0.7(typescript@5.7.3)(zod@3.24.1)
+      abitype: 1.0.8(typescript@5.7.3)(zod@3.24.1)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.7.3
@@ -17624,7 +17624,7 @@ snapshots:
 
   webauthn-p256@0.0.10:
     dependencies:
-      '@noble/curves': 1.7.0
+      '@noble/curves': 1.8.1
       '@noble/hashes': 1.6.1
 
   webextension-polyfill@0.10.0: {}
