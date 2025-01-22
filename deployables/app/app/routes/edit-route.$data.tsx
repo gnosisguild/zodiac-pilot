@@ -43,10 +43,11 @@ import {
   PilotType,
   PrimaryButton,
   SecondaryButton,
+  Section,
   TextInput,
   ZodiacOsPlain,
 } from '@zodiac/ui'
-import { lazy, useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { Form, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
@@ -196,41 +197,49 @@ const EditRoute = ({
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
 
-          <WalletProvider>
-            <ConnectWallet
-              chainId={optimisticConnection.chainId}
-              pilotAddress={optimisticConnection.pilotAddress}
-              providerType={optimisticConnection.providerType}
-              onConnect={({ account, chainId, providerType }) => {
-                setOptimisticConnection({
-                  pilotAddress: account,
-                  chainId,
-                  providerType,
-                })
-
-                submit(
-                  formData({
-                    intent: Intent.ConnectWallet,
-                    account,
+          <Suspense
+            fallback={
+              <Section title="Pilot Account">
+                <PrimaryButton disabled>Connect wallet</PrimaryButton>
+              </Section>
+            }
+          >
+            <WalletProvider>
+              <ConnectWallet
+                chainId={optimisticConnection.chainId}
+                pilotAddress={optimisticConnection.pilotAddress}
+                providerType={optimisticConnection.providerType}
+                onConnect={({ account, chainId, providerType }) => {
+                  setOptimisticConnection({
+                    pilotAddress: account,
                     chainId,
                     providerType,
-                  }),
-                  { method: 'POST' },
-                )
-              }}
-              onDisconnect={() => {
-                setOptimisticConnection({
-                  pilotAddress: ZERO_ADDRESS,
-                  chainId: Chain.ETH,
-                  providerType: undefined,
-                })
+                  })
 
-                submit(formData({ intent: Intent.DisconnectWallet }), {
-                  method: 'POST',
-                })
-              }}
-            />
-          </WalletProvider>
+                  submit(
+                    formData({
+                      intent: Intent.ConnectWallet,
+                      account,
+                      chainId,
+                      providerType,
+                    }),
+                    { method: 'POST' },
+                  )
+                }}
+                onDisconnect={() => {
+                  setOptimisticConnection({
+                    pilotAddress: ZERO_ADDRESS,
+                    chainId: Chain.ETH,
+                    providerType: undefined,
+                  })
+
+                  submit(formData({ intent: Intent.DisconnectWallet }), {
+                    method: 'POST',
+                  })
+                }}
+              />
+            </WalletProvider>
+          </Suspense>
 
           <ChainSelect
             value={chainId}

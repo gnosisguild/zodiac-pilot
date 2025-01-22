@@ -46,7 +46,9 @@ const wagmiConfig = createConfig(
   }),
 )
 
-export const WalletProvider = ({ children }: PropsWithChildren) => (
+export type WalletProviderProps = PropsWithChildren
+
+export const WalletProvider = ({ children }: WalletProviderProps) => (
   <QueryClientProvider client={queryClient}>
     <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>
   </QueryClientProvider>
