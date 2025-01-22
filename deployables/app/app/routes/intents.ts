@@ -1,5 +1,6 @@
 export enum Intent {
   Save = 'Save',
+  UpdateModule = 'UpdateModule',
   UpdateChain = 'UpdateChain',
   UpdateAvatar = 'UpdateAvatar',
   RemoveAvatar = 'RemoveAvatar',

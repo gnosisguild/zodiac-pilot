@@ -7,7 +7,7 @@ import {
   ZodiacMod,
 } from '@/components'
 import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
-import { invariant } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import { Chain, getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
@@ -79,6 +79,13 @@ export const loader = ({ params }: Route.LoaderArgs) => {
 export const action = async ({ request, params }: Route.ActionArgs) => {
   const route = parseRouteData(params.data)
   const data = await request.formData()
+
+  const intent = getString(data, 'intent')
+
+  invariantResponse(
+    intent === Intent.UpdateModule,
+    `Invalid intent "${intent}" received in server action`,
+  )
 
   const module = zodiacModuleSchema.parse(JSON.parse(getString(data, 'module')))
 
@@ -247,9 +254,15 @@ const EditRoute = ({
             avatar={avatar}
             waypoints={waypoints}
             onSelect={(module) => {
-              submit(formData({ module: JSON.stringify(module) }), {
-                method: 'POST',
-              })
+              submit(
+                formData({
+                  intent: Intent.UpdateModule,
+                  module: JSON.stringify(module),
+                }),
+                {
+                  method: 'POST',
+                },
+              )
             }}
           />
 
