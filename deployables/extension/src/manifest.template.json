@@ -34,22 +34,26 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": ["<COMPANION_APP_URL>*", "about:*", "chrome:*"],
+      "exclude_globs": ["<COMPANION_APP_URL>/*", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/connect/contentScripts/dApp.js"]
     },
     {
-      "matches": ["<COMPANION_APP_URL>*"],
+      "matches": ["<COMPANION_APP_URL>/connect"],
       "run_at": "document_start",
       "all_frames": true,
-      "js": [
-        "build/connect/contentScripts/connectIframe.js",
-        "build/companion/contentScripts/main.js"
-      ]
+      "js": ["build/connect/contentScripts/connectIframe.js"]
+    },
+    {
+      "matches": ["<COMPANION_APP_URL>/*"],
+      "exclude_globs": ["<COMPANION_APP_URL>/connect"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": ["build/companion/contentScripts/main.js"]
     },
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": ["<COMPANION_APP_URL>", "about:*", "chrome:*"],
+      "exclude_globs": ["<COMPANION_APP_URL>/*", "about:*", "chrome:*"],
       "run_at": "document_start",
       "js": ["build/monitor/contentScript/main.js"]
     }

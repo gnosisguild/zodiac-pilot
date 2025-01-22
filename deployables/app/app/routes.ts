@@ -7,6 +7,7 @@ import {
 
 export default [
   index('routes/index.tsx'),
+  route('/connect', 'routes/connect.tsx'),
   route('/new-route', 'routes/new-route.ts'),
   route('/edit-route/:data', 'routes/edit-route.$data.tsx'),
   ...prefix('/:account/:chainId', [

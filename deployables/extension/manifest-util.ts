@@ -13,10 +13,6 @@ config()
 //
 // node manifest-util.js ./public/manifest.json
 
-const getIframeUrl = () => {
-  return `${getCompanionAppUrl()}/`
-}
-
 const updateManifest = (templateFileName, outFileName, version) => {
   try {
     console.log(chalk.white.bold('Manifest template file:'))
@@ -25,7 +21,7 @@ const updateManifest = (templateFileName, outFileName, version) => {
     const data = fs
       .readFileSync(templateFileName)
       .toString()
-      .replaceAll('<COMPANION_APP_URL>', getIframeUrl())
+      .replaceAll('<COMPANION_APP_URL>', getCompanionAppUrl())
 
     const manifest = JSON.parse(data)
     manifest['version'] = version.replace('v', '')
