@@ -136,7 +136,7 @@ describe('Edit route', () => {
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       expect(
-        screen.getByRole('button', { name: 'Connect wallet' }),
+        await screen.findByRole('button', { name: 'Connect wallet' }),
       ).toBeInTheDocument()
     })
 
@@ -209,7 +209,7 @@ describe('Edit route', () => {
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       await userEvent.click(
-        screen.getByRole('button', { name: 'View all available Safes' }),
+        await screen.findByRole('button', { name: 'View all available Safes' }),
       )
 
       expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
