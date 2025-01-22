@@ -1,5 +1,6 @@
 import { KnownContracts } from '@gnosis.pm/zodiac'
-import { addressSchema, type HexAddress } from '@zodiac/schema'
+import { addressSchema, type Contract, type HexAddress } from '@zodiac/schema'
+import { AccountType } from 'ser-kit'
 import { z } from 'zod'
 
 export const SUPPORTED_ZODIAC_MODULES = [
@@ -35,6 +36,17 @@ export const ZODIAC_MODULE_NAMES: Record<SupportedZodiacModuleType, string> = {
   [KnownContracts.DELAY]: 'Delay',
   [KnownContracts.ROLES_V1]: 'Roles v1',
   [KnownContracts.ROLES_V2]: 'Roles v2',
+}
+
+export const getModuleName = (account: Contract) => {
+  switch (account.type) {
+    case AccountType.DELAY: {
+      return 'Delay'
+    }
+    case AccountType.ROLES: {
+      return `Roles v${account.version}`
+    }
+  }
 }
 
 export const isValidZodiacModuleType = (

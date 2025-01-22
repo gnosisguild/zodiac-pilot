@@ -14,7 +14,6 @@ import { useRef, useState } from 'react'
 import type { PrefixedAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
-import { asLegacyConnection } from '../../legacyConnectionMigrations'
 import { RemoveButton } from '../RemoveButton'
 import { Intent } from './intents'
 
@@ -66,7 +65,7 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
           </div>
         </div>
 
-        <ConnectionStack connection={asLegacyConnection(route)} />
+        <ConnectionStack route={route} />
 
         <div className="flex justify-between">
           <RemoveButton routeId={route.id} intent={Intent.removeRoute} />

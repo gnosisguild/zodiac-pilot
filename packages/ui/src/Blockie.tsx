@@ -1,9 +1,10 @@
+import type { HexAddress } from '@zodiac/schema'
 import classNames from 'classnames'
 import makeBlockie from 'ethereum-blockies-base64'
 import { useMemo } from 'react'
 
 interface Props {
-  address: string
+  address: HexAddress
   className?: string
 }
 

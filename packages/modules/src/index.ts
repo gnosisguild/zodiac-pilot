@@ -3,6 +3,7 @@ export { fetchZodiacModules } from './fetchZodiacModules'
 export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
 export { getRolesWaypoint } from './getRolesWaypoint'
+export { getStartingWaypoint } from './getStartingWaypoint'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
   MULTISEND,
@@ -22,6 +23,7 @@ export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,
   ZODIAC_MODULE_NAMES,
+  getModuleName,
   zodiacModuleSchema,
 } from './ZodiacModule'
 export type { ZodiacModule } from './ZodiacModule'
