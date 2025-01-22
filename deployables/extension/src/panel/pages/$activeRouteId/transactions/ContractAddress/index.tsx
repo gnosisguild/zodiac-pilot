@@ -1,4 +1,5 @@
 import { EXPLORER_URL } from '@zodiac/chains'
+import type { HexAddress } from '@zodiac/schema'
 import { AddressInput, GhostLinkButton } from '@zodiac/ui'
 import { getAddress } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -7,7 +8,7 @@ import type { ContractInfo } from '../../../../utils/abi'
 
 interface Props {
   chainId: ChainId
-  address: string
+  address: HexAddress
   contractInfo?: ContractInfo
 }
 
@@ -21,7 +22,7 @@ export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
       readOnly
       label="Contract"
       description={contractInfo?.name}
-      value={checksumAddress}
+      value={checksumAddress as HexAddress}
       action={
         <GhostLinkButton
           openInNewWindow

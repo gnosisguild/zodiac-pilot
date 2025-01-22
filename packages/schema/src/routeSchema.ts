@@ -1,4 +1,9 @@
-import { chains, type PrefixedAddress } from 'ser-kit'
+import {
+  AccountType,
+  chains,
+  ConnectionType,
+  type PrefixedAddress,
+} from 'ser-kit'
 import { z } from 'zod'
 
 export const chainIdSchema = z.union([
@@ -40,7 +45,7 @@ const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
 })
 
 const safeSchema = z.object({
-  type: z.literal('SAFE'),
+  type: z.literal(AccountType.SAFE),
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
   chain: chainIdSchema,
@@ -53,7 +58,7 @@ const safeSchema = z.object({
 })
 
 const rolesSchema = z.object({
-  type: z.literal('ROLES'),
+  type: z.literal(AccountType.ROLES),
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
   chain: chainIdSchema,
@@ -62,24 +67,24 @@ const rolesSchema = z.object({
 })
 
 const delaySchema = z.object({
-  type: z.literal('DELAY'),
+  type: z.literal(AccountType.DELAY),
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
   chain: chainIdSchema,
 })
 
 const ownConnectionSchema = z.object({
-  type: z.literal('OWNS'),
+  type: z.literal(ConnectionType.OWNS),
   from: prefixedAddressSchema,
 })
 
 const isEnabledConnectionSchema = z.object({
-  type: z.literal('IS_ENABLED'),
+  type: z.literal(ConnectionType.IS_ENABLED),
   from: prefixedAddressSchema,
 })
 
 const isMemberConnectionSchema = z.object({
-  type: z.literal('IS_MEMBER'),
+  type: z.literal(ConnectionType.IS_MEMBER),
   roles: z.string().array(),
   defaultRole: z.string().optional(),
   from: prefixedAddressSchema,

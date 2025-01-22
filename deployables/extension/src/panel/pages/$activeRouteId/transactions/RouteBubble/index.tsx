@@ -1,18 +1,26 @@
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { Transition } from '@headlessui/react'
+import {
+  getPilotAddress,
+  getRolesWaypoint,
+  getStartingWaypoint,
+} from '@zodiac/modules'
+import type { HexAddress } from '@zodiac/schema'
 import { Blockie } from '@zodiac/ui'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import Stick from 'react-stick'
+import { parsePrefixedAddress } from 'ser-kit'
 import { ConnectionStack } from '../../../ConnectionStack'
-import { asLegacyConnection } from '../../../legacyConnectionMigrations'
 
 export const RouteBubble = () => {
   const route = useExecutionRoute()
-  const connection = asLegacyConnection(route)
   const [hover, setHover] = useState(false)
+
+  const pilotAddress = getPilotAddress([getStartingWaypoint(route.waypoints)])
+  const rolesWaypoint = getRolesWaypoint(route)
 
   return (
     <Stick
@@ -33,7 +41,7 @@ export const RouteBubble = () => {
         >
           <div className="isolate z-10 pt-2">
             <div className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-4 py-2 shadow-lg backdrop-blur-sm dark:border-zinc-500/80 dark:bg-zinc-900/80">
-              <ConnectionStack connection={connection} />
+              <ConnectionStack route={route} />
             </div>
           </div>
         </Transition>
@@ -41,13 +49,15 @@ export const RouteBubble = () => {
     >
       <div className="flex items-center gap-2 overflow-hidden">
         <Blockies
-          avatarAddress={connection.avatarAddress}
-          moduleAddress={connection.moduleAddress}
-          pilotAddress={connection.pilotAddress}
+          avatarAddress={parsePrefixedAddress(route.avatar)}
+          moduleAddress={
+            rolesWaypoint == null ? undefined : rolesWaypoint.account.address
+          }
+          pilotAddress={pilotAddress}
         />
 
         <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {connection.label || <span className="italic">Unnamed route</span>}
+          {route.label || <span className="italic">Unnamed route</span>}
         </p>
       </div>
 
@@ -75,9 +85,9 @@ export const RouteBubble = () => {
 }
 
 type BlockiesProps = {
-  avatarAddress: string
-  pilotAddress?: string
-  moduleAddress?: string
+  avatarAddress: HexAddress
+  pilotAddress?: HexAddress
+  moduleAddress?: HexAddress
 }
 
 const Blockies = ({

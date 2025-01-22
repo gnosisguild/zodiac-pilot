@@ -13,7 +13,7 @@ export interface Option {
 
 interface Props<Option = unknown, Multi extends boolean = boolean>
   extends SelectProps<false, Option, Multi> {
-  avatarAddress: string
+  avatarAddress: HexAddress
 }
 
 export function ModSelect<Multi extends boolean = boolean>({
@@ -47,7 +47,7 @@ export function ModSelect<Multi extends boolean = boolean>({
 
 type ValueProps = PropsWithChildren<{
   label: string
-  address: string
+  address: HexAddress
 }>
 
 const Value = ({ label, address, children }: ValueProps) => (

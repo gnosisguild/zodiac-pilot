@@ -5,8 +5,8 @@ import {
   type RenderOptions,
   type Route,
 } from '@zodiac/test-utils'
+import { ToastContainer } from '@zodiac/ui'
 import { type PropsWithChildren } from 'react'
-import { ToastContainer } from 'react-toastify'
 import {
   createMockPort,
   mockActiveTab,
