@@ -1,4 +1,5 @@
 export { createBlankRoute } from './createBlankRoute'
+export { createEoaStartingPoint } from './createEoaStartingPoint'
 export { fetchZodiacModules } from './fetchZodiacModules'
 export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
