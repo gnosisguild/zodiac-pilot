@@ -117,7 +117,7 @@ export const ZodiacMod = ({
         }
         isDisabled={disabled || isLoading}
         placeholder={isLoading ? 'Loading modules...' : 'Select a module'}
-        avatarAddress={avatar}
+        avatarAddress={parsePrefixedAddress(avatar)}
       />
 
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V1 && (

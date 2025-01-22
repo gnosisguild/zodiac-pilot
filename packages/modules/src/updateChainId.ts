@@ -59,9 +59,5 @@ const updateWaypoint = (
         connection: updateConnection(connection, { chainId }),
       })
     }
-
-    default: {
-      throw new Error(`Cannot update waypoint of type "${account.type}"`)
-    }
   }
 }

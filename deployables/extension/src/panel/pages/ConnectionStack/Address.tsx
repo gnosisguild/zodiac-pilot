@@ -1,9 +1,10 @@
 import { shortenAddress, validateAddress } from '@/utils'
+import type { HexAddress } from '@zodiac/schema'
 import { Address as BaseAddress, Blockie, Tag } from '@zodiac/ui'
 import { Unlink } from 'lucide-react'
 
 interface Props {
-  address: string
+  address: HexAddress
 }
 
 export const Address = ({ address }: Props) => {

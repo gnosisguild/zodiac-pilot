@@ -19,6 +19,7 @@
   "dependencies": {
     "@epic-web/invariant": "^1.0.0",
     "@headlessui/react": "^2.2.0",
+    "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
     "ethereum-blockies-base64": "1.0.2",
