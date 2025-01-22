@@ -7,3 +7,6 @@ assets = { directory = "./build/client/" }
 
 [observability.logs]
 enabled = true
+
+[limits]
+cpu_ms = 30000
