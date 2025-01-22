@@ -69,7 +69,7 @@
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
     "@headlessui/react": "2.2.0",
-    "@sentry/browser": "8.50.0",
+    "@sentry/browser": "8.51.0",
     "@walletconnect/core": "2.17.3",
     "@walletconnect/ethereum-provider": "2.17.3",
     "@walletconnect/keyvaluestorage": "^1.1.1",
