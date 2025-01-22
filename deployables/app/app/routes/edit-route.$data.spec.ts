@@ -408,7 +408,7 @@ describe('Edit route', () => {
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         await userEvent.click(
-          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
 
@@ -525,7 +525,7 @@ describe('Edit route', () => {
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         await userEvent.click(
-          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
