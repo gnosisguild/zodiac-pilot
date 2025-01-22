@@ -24,7 +24,7 @@
     "react-dom": "19.0.0",
     "remix-utils": "8.1.0",
     "viem": "2.22.11",
-    "wagmi": "2.14.8"
+    "wagmi": "2.14.9"
   },
   "devDependencies": {
     "@remix-run/dev": "2.15.2",
