@@ -82,6 +82,7 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
 
             onChange(validateAddress(sanitized))
           } else {
+            setPendingValue('')
             onChange(null)
           }
         }}
