@@ -180,10 +180,10 @@ importers:
         specifier: ^0.0.299
         version: 0.0.299
       '@types/react':
-        specifier: ^19.0.1
+        specifier: 19.0.7
         version: 19.0.7
       '@types/react-dom':
-        specifier: ^19.0.1
+        specifier: 19.0.3
         version: 19.0.3(@types/react@19.0.7)
       '@vitest/coverage-v8':
         specifier: 2.1.8
@@ -292,7 +292,7 @@ importers:
         specifier: ^0.0.299
         version: 0.0.299
       '@types/react':
-        specifier: ^19.0.0
+        specifier: 19.0.7
         version: 19.0.7
       '@zodiac/eslint-config':
         specifier: workspace:*
@@ -431,10 +431,10 @@ importers:
         specifier: ^22.7.5
         version: 22.10.7
       '@types/react':
-        specifier: ^19.0.0
+        specifier: 19.0.7
         version: 19.0.7
       '@types/react-dom':
-        specifier: ^19.0.0
+        specifier: 19.0.3
         version: 19.0.3(@types/react@19.0.7)
       '@vitest/coverage-v8':
         specifier: 2.1.8
@@ -590,10 +590,10 @@ importers:
         specifier: ^11.0.0
         version: 11.1.0(react@19.0.0)
       '@types/react':
-        specifier: ^19.0.0
+        specifier: 19.0.7
         version: 19.0.7
       '@types/react-dom':
-        specifier: ^19.0.0
+        specifier: 19.0.3
         version: 19.0.3(@types/react@19.0.7)
       '@zodiac/ui':
         specifier: workspace:*
@@ -881,10 +881,10 @@ importers:
         specifier: ^0.0.299
         version: 0.0.299
       '@types/react':
-        specifier: ^19.0.3
+        specifier: 19.0.7
         version: 19.0.7
       '@types/react-dom':
-        specifier: ^19.0.2
+        specifier: 19.0.3
         version: 19.0.3(@types/react@19.0.7)
       '@zodiac/eslint-config':
         specifier: workspace:*
@@ -936,7 +936,7 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/react':
-        specifier: ^19.0.3
+        specifier: 19.0.7
         version: 19.0.7
       '@vitest/coverage-v8':
         specifier: 2.1.8
