@@ -4,6 +4,7 @@
 
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import { PilotMessageType } from '@zodiac/messages'
 import {
   dismissHint,
@@ -16,6 +17,10 @@ declare let window: Window & {
 }
 
 function check() {
+  if (window.location.origin === getCompanionAppUrl()) {
+    return
+  }
+
   const pilotConnected =
     document.documentElement.dataset.__zodiacPilotConnected === 'true'
   const providerInjected = window.zodiacPilot != null

@@ -30,6 +30,13 @@ type Options = RenderOptions & {
    * Pass a custom provider instance to be used as the connect provider
    */
   initialProvider?: Eip1193Provider
+  /**
+   * URL of the companion app that extends certain features
+   * like route editing
+   *
+   * @default http://localhost:3040
+   */
+  companionAppUrl?: string
 }
 
 export const render = async (
@@ -41,6 +48,7 @@ export const render = async (
     initialSelectedRoute,
     initialProvider,
     wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
+    companionAppUrl = 'http://localhost:3040',
     ...options
   }: Options = {},
 ) => {
@@ -57,6 +65,7 @@ export const render = async (
         initialProvider={initialProvider}
         initialSelectedRoute={initialSelectedRoute}
         initialState={initialState}
+        companionAppUrl={companionAppUrl}
       >
         {children}
         <ToastContainer />

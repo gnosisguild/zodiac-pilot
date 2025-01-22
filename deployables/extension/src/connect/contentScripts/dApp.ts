@@ -1,21 +1,20 @@
 import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   ConnectedWalletMessageType,
   type ConnectedWalletMessage,
 } from '@zodiac/messages'
 
-const CONNECT_IFRAME_URL = process.env.CONNECT_IFRAME_URL
-
-invariant(CONNECT_IFRAME_URL != null, 'CONNECT_IFRAME_URL is required')
+const companionAppUrl = getCompanionAppUrl()
 
 const ensureIframe = () => {
   let node: HTMLIFrameElement | null = document.querySelector(
-    `iframe[src="${CONNECT_IFRAME_URL}"]`,
+    `iframe[src="${companionAppUrl}"]`,
   )
 
   if (!node) {
     node = document.createElement('iframe')
-    node.src = CONNECT_IFRAME_URL
+    node.src = companionAppUrl
     node.style.display = 'none'
 
     const parent = document.body || document.documentElement
@@ -41,7 +40,7 @@ chrome.runtime.onConnect.addListener((port) => {
       'cannot access connect iframe window',
     )
 
-    iframe.contentWindow.postMessage(message, CONNECT_IFRAME_URL)
+    iframe.contentWindow.postMessage(message, companionAppUrl)
 
     // wait for response
     const handleResponse = (event: MessageEvent<ConnectedWalletMessage>) => {

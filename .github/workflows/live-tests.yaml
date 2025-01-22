@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      CONNECT_IFRAME_URL: https://app.pilot.gnosisguild.org
+      COMPANION_APP_URL: https://app.pilot.gnosisguild.org
     if: github.event.deployment_status.state == 'success'
     defaults:
       run:

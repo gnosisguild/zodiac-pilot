@@ -1,3 +1,4 @@
+import { useCompanionAppUrl } from '@/companion'
 import { useRouteConnect } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
@@ -71,7 +72,10 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
           <RemoveButton routeId={route.id} intent={Intent.removeRoute} />
 
           <div className="flex gap-2">
-            <SecondaryLinkButton relative="path" to={`../edit/${route.id}`}>
+            <SecondaryLinkButton
+              openInNewWindow
+              to={`${useCompanionAppUrl()}/edit-route/${btoa(JSON.stringify(route))}`}
+            >
               Edit
             </SecondaryLinkButton>
 

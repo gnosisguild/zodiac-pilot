@@ -1,29 +1,37 @@
+import { ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId, getRoute, saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import { useEffect, useState } from 'react'
-import { Outlet, useLoaderData, useNavigate } from 'react-router'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+} from 'react-router'
 import { FutureClearTransactionsModal } from './ClearTransactionsModal'
 
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
-  return { lastUsedRouteId }
+  return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
 }
 
 export const Root = () => {
-  const { lastUsedRouteId } = useLoaderData<typeof loader>()
+  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
 
   const [pendingRouteUpdate, setPendingRouteUpdate] =
     useState<ExecutionRoute | null>(null)
 
   const transactions = useTransactions()
   const navigate = useNavigate()
+  const { revalidate } = useRevalidator()
 
   useEffect(() => {
     const handleSaveRoute = async (message: CompanionAppMessage) => {
@@ -46,7 +54,7 @@ export const Root = () => {
         lastUsedRouteId !== incomingRoute.id ||
         transactions.length === 0
       ) {
-        saveRoute(incomingRoute)
+        saveRoute(incomingRoute).then(() => revalidate())
       } else {
         const currentRoute = await getRoute(lastUsedRouteId)
 
@@ -64,10 +72,10 @@ export const Root = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleSaveRoute)
     }
-  }, [lastUsedRouteId, transactions.length])
+  }, [lastUsedRouteId, revalidate, transactions.length])
 
   return (
-    <>
+    <ProvideCompanionAppContext url={companionAppUrl}>
       <Outlet />
 
       <FutureClearTransactionsModal
@@ -88,6 +96,6 @@ export const Root = () => {
           })
         }}
       />
-    </>
+    </ProvideCompanionAppContext>
   )
 }

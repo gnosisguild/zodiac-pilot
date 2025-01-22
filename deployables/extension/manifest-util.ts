@@ -1,4 +1,5 @@
 import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import chalk from 'chalk'
 import { config } from 'dotenv'
 import fs from 'fs'
@@ -13,15 +14,7 @@ config()
 // node manifest-util.js ./public/manifest.json
 
 const getIframeUrl = () => {
-  const iframeUrl = process.env.CONNECT_IFRAME_URL
-
-  invariant(iframeUrl != null, 'CONNECT_IFRAME_URL is missing')
-
-  if (iframeUrl.endsWith('/')) {
-    return iframeUrl
-  }
-
-  return `${iframeUrl}/`
+  return `${getCompanionAppUrl()}/`
 }
 
 const updateManifest = (templateFileName, outFileName, version) => {
@@ -32,7 +25,7 @@ const updateManifest = (templateFileName, outFileName, version) => {
     const data = fs
       .readFileSync(templateFileName)
       .toString()
-      .replaceAll('<CONNECT_IFRAME_URL>', getIframeUrl())
+      .replaceAll('<COMPANION_APP_URL>', getIframeUrl())
 
     const manifest = JSON.parse(data)
     manifest['version'] = version.replace('v', '')

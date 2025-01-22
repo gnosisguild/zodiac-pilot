@@ -4,7 +4,6 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import {
-  connectMockWallet,
   createMockRoute,
   createTransaction,
   mockRoute,
@@ -13,7 +12,7 @@ import {
 } from '@/test-utils'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
+import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import { action, ListRoutes, loader } from './ListRoutes'
@@ -21,28 +20,22 @@ import { action, ListRoutes, loader } from './ListRoutes'
 describe('List routes', () => {
   describe('Edit', () => {
     it('is possible to modify an existing route', async () => {
-      mockRoutes({
+      const route = await mockRoute({
         id: 'testRoute',
         label: 'Test route',
         initiator: ETH_ZERO_ADDRESS,
       })
 
-      const { mockedPort } = await render(
+      await render(
         '/routes/list',
         [{ Component: ListRoutes, path: '/routes/list', loader, action }],
-        {
-          inspectRoutes: ['/routes/edit/:route-id'],
-        },
+        { companionAppUrl: 'http://localhost' },
       )
 
-      await connectMockWallet(mockedPort, {
-        accounts: [ZERO_ADDRESS],
-        chainId: '0x1',
-      })
-
-      await userEvent.click(screen.getByRole('link', { name: 'Edit' }))
-
-      await expectRouteToBe('/routes/edit/testRoute')
+      expect(screen.getByRole('link', { name: 'Edit' })).toHaveAttribute(
+        'href',
+        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
+      )
     })
   })
 
