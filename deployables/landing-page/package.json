@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "@icons-pack/react-simple-icons": "^11.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
     "@zodiac/ui": "workspace:*",
     "lucide-react": "^0.470.0",
     "react": "^19.0.0",
