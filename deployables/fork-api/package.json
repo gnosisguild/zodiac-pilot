@@ -2,12 +2,12 @@
   "name": "@zodiac/fork-api",
   "version": "1.0.0",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.0.0",
+    "@cloudflare/workers-types": "4.20250121.0",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "env-cmd": "^10.1.0",
-    "eslint": "^9.7.0",
-    "typescript": "^5.0.0",
+    "env-cmd": "10.1.0",
+    "eslint": "9.18.0",
+    "typescript": "5.7.3",
     "wrangler": "3.103.2"
   },
   "private": true,
