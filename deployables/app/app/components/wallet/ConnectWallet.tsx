@@ -7,7 +7,7 @@ import { useAccountEffect, useDisconnect } from 'wagmi'
 import { Connect } from './Connect'
 import { Wallet } from './Wallet'
 
-interface Props {
+export type ConnectWalletProps = {
   pilotAddress: HexAddress | null
   chainId?: ChainId
   providerType?: ProviderType
@@ -25,7 +25,7 @@ export const ConnectWallet = ({
   providerType,
   onConnect,
   onDisconnect,
-}: Props) => {
+}: ConnectWalletProps) => {
   const { disconnect } = useDisconnect()
 
   const [isConnecting, setIsConnecting] = useState(false)
