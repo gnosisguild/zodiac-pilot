@@ -1,13 +1,7 @@
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { AbiCoder } from 'ethers'
 import type { JsonRpcError } from './JsonRpcError'
-
-const RolesV1Interface =
-  ContractFactories[KnownContracts.ROLES_V1].createInterface()
-const RolesV1PermissionsInterface =
-  ContractFactories[KnownContracts.PERMISSIONS].createInterface()
-const RolesV2Interface =
-  ContractFactories[KnownContracts.ROLES_V2].createInterface()
+import { getInterface } from './getInterface'
 
 export function getRevertData(error: JsonRpcError) {
   // The errors thrown when a transaction is reverted use different formats, depending on:
@@ -60,8 +54,8 @@ export function decodeRolesV1Error(error: JsonRpcError) {
   if (revertData.startsWith('0x')) {
     try {
       return (
-        RolesV1Interface.parseError(revertData) ||
-        RolesV1PermissionsInterface.parseError(revertData)
+        getInterface(KnownContracts.ROLES_V1).parseError(revertData) ||
+        getInterface(KnownContracts.PERMISSIONS).parseError(revertData)
       )
     } catch {
       // ignore
@@ -75,7 +69,7 @@ export function decodeRolesV2Error(error: JsonRpcError) {
 
   if (revertData.startsWith('0x')) {
     try {
-      return RolesV2Interface.parseError(revertData)
+      return getInterface(KnownContracts.ROLES_V2).parseError(revertData)
     } catch {
       // ignore
     }

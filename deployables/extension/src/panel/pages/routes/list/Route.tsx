@@ -14,7 +14,7 @@ import { useRef, useState } from 'react'
 import type { PrefixedAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { ConnectionStack } from '../../ConnectionStack'
-import { RemoveButton } from '../RemoveButton'
+import { RemoveButton } from './RemoveButton'
 import { Intent } from './intents'
 
 interface RouteProps {

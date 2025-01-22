@@ -18,9 +18,9 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   try {
     const { safes } = await safeService.getSafesByOwner(validatedAddress)
 
-    return safes
+    return Response.json(safes)
   } catch {
-    return []
+    return Response.json([])
   }
 }
 

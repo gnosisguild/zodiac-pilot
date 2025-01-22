@@ -1,11 +1,7 @@
-import {
-  createRoute,
-  getLastUsedRouteId,
-  getRoutes,
-  saveLastUsedRouteId,
-} from '@/execution-routes'
+import { useCompanionAppUrl } from '@/companion'
+import { getLastUsedRouteId, getRoutes } from '@/execution-routes'
 import { useBridgeError } from '@/inject-bridge'
-import { Info, InlineForm, Page, PrimaryButton } from '@zodiac/ui'
+import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
@@ -21,14 +17,6 @@ export const loader = async () => {
   if (route != null) {
     return redirect(`/${route.id}`)
   }
-}
-
-export const action = async () => {
-  const route = await createRoute()
-
-  await saveLastUsedRouteId(route.id)
-
-  return redirect(`/routes/edit/${route.id}`)
 }
 
 export const NoRoutes = () => {
@@ -48,11 +36,13 @@ export const NoRoutes = () => {
       </Page.Content>
 
       <Page.Footer>
-        <InlineForm className="flex flex-col">
-          <PrimaryButton submit icon={Plus}>
-            Add route
-          </PrimaryButton>
-        </InlineForm>
+        <PrimaryLinkButton
+          openInNewWindow
+          icon={Plus}
+          to={`${useCompanionAppUrl()}/new-route`}
+        >
+          Add route
+        </PrimaryLinkButton>
       </Page.Footer>
     </Page>
   )

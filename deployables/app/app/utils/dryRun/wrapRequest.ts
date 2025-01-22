@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
-import { ContractFactories } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis.pm/zodiac'
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import { getRolesWaypoint, SupportedZodiacModuleType } from '@zodiac/modules'
+import { getRolesWaypoint } from '@zodiac/modules'
 import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import {
@@ -9,6 +9,7 @@ import {
   parsePrefixedAddress,
   type MetaTransactionRequest,
 } from 'ser-kit'
+import { getInterface } from './getInterface'
 import { maybeGetRoleId } from './maybeGetRoleId'
 
 type TransactionData = {
@@ -17,13 +18,6 @@ type TransactionData = {
   data?: HexAddress
   from?: HexAddress
 }
-
-const RolesV1Interface =
-  ContractFactories[SupportedZodiacModuleType.ROLES_V1].createInterface()
-const RolesV2Interface =
-  ContractFactories[SupportedZodiacModuleType.ROLES_V2].createInterface()
-const DelayInterface =
-  ContractFactories[SupportedZodiacModuleType.DELAY].createInterface()
 
 type WrapRequestOptions = {
   request: MetaTransactionRequest | TransactionData
@@ -47,34 +41,43 @@ export function wrapRequest({
   switch (rolesWaypoint.account.type) {
     case AccountType.ROLES: {
       if (rolesWaypoint.account.version === 1) {
-        data = RolesV1Interface.encodeFunctionData('execTransactionWithRole', [
-          request.to || '',
-          request.value || 0,
-          request.data || '0x',
-          ('operation' in request && request.operation) || 0,
-          maybeGetRoleId(rolesWaypoint) ?? 0,
-          revertOnError,
-        ])
+        data = getInterface(KnownContracts.ROLES_V1).encodeFunctionData(
+          'execTransactionWithRole',
+          [
+            request.to || '',
+            request.value || 0,
+            request.data || '0x',
+            ('operation' in request && request.operation) || 0,
+            maybeGetRoleId(rolesWaypoint) ?? 0,
+            revertOnError,
+          ],
+        )
       } else {
-        data = RolesV2Interface.encodeFunctionData('execTransactionWithRole', [
-          request.to || '',
-          request.value || 0,
-          request.data || '0x',
-          ('operation' in request && request.operation) || 0,
-          maybeGetRoleId(rolesWaypoint) ?? ZERO_ADDRESS,
-          revertOnError,
-        ])
+        data = getInterface(KnownContracts.ROLES_V2).encodeFunctionData(
+          'execTransactionWithRole',
+          [
+            request.to || '',
+            request.value || 0,
+            request.data || '0x',
+            ('operation' in request && request.operation) || 0,
+            maybeGetRoleId(rolesWaypoint) ?? ZERO_ADDRESS,
+            revertOnError,
+          ],
+        )
       }
       break
     }
 
     case AccountType.DELAY:
-      data = DelayInterface.encodeFunctionData('execTransactionFromModule', [
-        request.to || '',
-        request.value || 0,
-        request.data || '0x',
-        ('operation' in request && request.operation) || 0,
-      ])
+      data = getInterface(KnownContracts.DELAY).encodeFunctionData(
+        'execTransactionFromModule',
+        [
+          request.to || '',
+          request.value || 0,
+          request.data || '0x',
+          ('operation' in request && request.operation) || 0,
+        ],
+      )
       break
     default:
       throw new Error(`Unsupported module type: ${rolesWaypoint.account.type}`)

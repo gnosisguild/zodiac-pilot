@@ -1,5 +1,5 @@
+import { useCompanionAppUrl } from '@/companion'
 import {
-  createRoute,
   getLastUsedRouteId,
   getRoute,
   getRoutes,
@@ -7,7 +7,7 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { getString } from '@/utils'
-import { Breadcrumbs, InlineForm, Page, PrimaryButton } from '@zodiac/ui'
+import { Breadcrumbs, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { Route } from './Route'
@@ -36,12 +36,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
 
   switch (getString(data, 'intent')) {
-    case Intent.addRoute: {
-      const route = await createRoute()
-
-      return redirect(`/routes/edit/${route.id}`)
-    }
-
     case Intent.launchRoute: {
       const routeId = getString(data, 'routeId')
 
@@ -107,11 +101,13 @@ export const ListRoutes = () => {
       </Page.Content>
 
       <Page.Footer>
-        <InlineForm className="flex flex-col">
-          <PrimaryButton submit icon={Plus} intent={Intent.addRoute}>
-            Add route
-          </PrimaryButton>
-        </InlineForm>
+        <PrimaryLinkButton
+          openInNewWindow
+          icon={Plus}
+          to={`${useCompanionAppUrl()}/new-route`}
+        >
+          Add route
+        </PrimaryLinkButton>
       </Page.Footer>
     </Page>
   )

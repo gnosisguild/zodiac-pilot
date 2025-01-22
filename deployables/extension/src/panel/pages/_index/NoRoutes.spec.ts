@@ -1,21 +1,16 @@
-import {
-  getLastUsedRouteId,
-  getRoutes,
-  saveLastUsedRouteId,
-} from '@/execution-routes'
+import { saveLastUsedRouteId } from '@/execution-routes'
 import { mockProviderRequest, mockRoutes, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
-import { action, loader, NoRoutes } from './NoRoutes'
+import { loader, NoRoutes } from './NoRoutes'
 
 describe('No routes', () => {
   describe('Default redirects', () => {
     it('redirects to the last used route if one is present', async () => {
       await saveLastUsedRouteId('test-route')
 
-      await render('/', [{ path: '/', Component: NoRoutes, loader, action }], {
+      await render('/', [{ path: '/', Component: NoRoutes, loader }], {
         inspectRoutes: ['/:activeRouteId'],
       })
 
@@ -25,7 +20,7 @@ describe('No routes', () => {
     it('redirects to the first route if no route was last used', async () => {
       await mockRoutes({ id: 'first-route' }, { id: 'second-route' })
 
-      await render('/', [{ path: '/', Component: NoRoutes, loader, action }], {
+      await render('/', [{ path: '/', Component: NoRoutes, loader }], {
         inspectRoutes: ['/:activeRouteId'],
       })
 
@@ -35,31 +30,18 @@ describe('No routes', () => {
 
   describe('No routes available', () => {
     it('allows to create a new route', async () => {
-      await render('/', [{ path: '/', Component: NoRoutes, loader, action }], {
-        inspectRoutes: ['/routes/edit/:routeId'],
+      await render('/', [{ path: '/', Component: NoRoutes, loader }], {
+        companionAppUrl: 'http://localhost',
       })
 
-      await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
-
-      const [newRoute] = await getRoutes()
-
-      await expectRouteToBe(`/routes/edit/${newRoute.id}`)
-    })
-
-    it('marks the new route as the last used one', async () => {
-      await render('/', [{ path: '/', Component: NoRoutes, loader, action }], {
-        inspectRoutes: ['/routes/edit/:routeId'],
-      })
-
-      await userEvent.click(screen.getByRole('button', { name: 'Add route' }))
-
-      const [newRoute] = await getRoutes()
-
-      await expect(getLastUsedRouteId()).resolves.toEqual(newRoute.id)
+      expect(screen.getByRole('link', { name: 'Add route' })).toHaveAttribute(
+        'href',
+        'http://localhost/new-route',
+      )
     })
 
     it('shows an error when the user tries to connect a dApp', async () => {
-      await render('/', [{ path: '/', Component: NoRoutes, loader, action }])
+      await render('/', [{ path: '/', Component: NoRoutes, loader }])
 
       await mockProviderRequest()
 
