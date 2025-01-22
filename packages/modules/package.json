@@ -17,23 +17,23 @@
     }
   },
   "dependencies": {
-    "@epic-web/invariant": "^1.0.0",
-    "@gnosis.pm/zodiac": "^4.0.3",
-    "@shazow/whatsabi": "^0.19.0",
+    "@epic-web/invariant": "1.0.0",
+    "@gnosis.pm/zodiac": "4.0.3",
+    "@shazow/whatsabi": "0.19.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "ethers": "6.13.5",
-    "evm-proxy-detection": "^2.0.1",
-    "nanoid": "^5.0.0",
+    "evm-proxy-detection": "2.0.1",
+    "nanoid": "5.0.9",
     "ser-kit": "1.1.0",
-    "zod": "^3.23.8",
-    "zodiac-roles-deployments": "^2.2.2"
+    "zod": "3.24.1",
+    "zodiac-roles-deployments": "2.3.4"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "^9.7.0",
+    "eslint": "9.18.0",
     "vitest": "2.1.8"
   }
 }

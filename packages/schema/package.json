@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "ser-kit": "1.1.0",
-    "zod": "^3.23.8"
+    "zod": "3.24.1"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "^9.7.0"
+    "eslint": "9.18.0"
   }
 }
