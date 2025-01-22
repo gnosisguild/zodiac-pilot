@@ -16,8 +16,8 @@
     }
   },
   "dependencies": {
-    "@safe-global/api-kit": "^2.4.2",
-    "@safe-global/protocol-kit": "^5.0.1",
+    "@safe-global/api-kit": "2.5.7",
+    "@safe-global/protocol-kit": "5.2.0",
     "@zodiac/chains": "workspace:*"
   },
   "devDependencies": {
