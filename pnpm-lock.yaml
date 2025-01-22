@@ -187,7 +187,7 @@ importers:
         version: 19.0.3(@types/react@19.0.7)
       '@vitest/coverage-v8':
         specifier: 2.1.8
-        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
+        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -229,7 +229,7 @@ importers:
         version: 5.1.4(typescript@5.7.3)(vite@6.0.11(@types/node@22.10.7)(jiti@2.4.1)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
       wrangler:
         specifier: ^3.87.0
         version: 3.103.2(@cloudflare/workers-types@4.20250121.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -438,7 +438,7 @@ importers:
         version: 19.0.3(@types/react@19.0.7)
       '@vitest/coverage-v8':
         specifier: 2.1.8
-        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
+        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
       '@walletconnect/core':
         specifier: 2.17.3
         version: 2.17.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -510,7 +510,7 @@ importers:
         version: 15.14.0
       happy-dom:
         specifier: ^16.0.0
-        version: 16.7.1
+        version: 16.7.2
       isomorphic-fetch:
         specifier: ^3.0.0
         version: 3.0.0
@@ -552,7 +552,7 @@ importers:
         version: 5.7.3
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
       vitest-chrome:
         specifier: 0.1.0
         version: 0.1.0(patch_hash=fdaw4hoeqovzhwxyfu42zc636a)
@@ -798,7 +798,7 @@ importers:
         version: 9.18.0(jiti@2.4.1)
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
 
   packages/safe:
     dependencies:
@@ -869,7 +869,7 @@ importers:
         version: 7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
       vitest-chrome:
         specifier: 0.1.0
         version: 0.1.0(patch_hash=fdaw4hoeqovzhwxyfu42zc636a)
@@ -940,7 +940,7 @@ importers:
         version: 19.0.7
       '@vitest/coverage-v8':
         specifier: 2.1.8
-        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
+        version: 2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -961,7 +961,7 @@ importers:
         version: 7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       vitest:
         specifier: 2.1.8
-        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+        version: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
 
 packages:
 
@@ -5193,8 +5193,8 @@ packages:
   h3@1.13.0:
     resolution: {integrity: sha512-vFEAu/yf8UMUcB4s43OaDaigcqpQd14yanmOsn+NcRX3/guSKncyE2rOYhq8RIchgJrPSs/QiIddnTTR1ddiAg==}
 
-  happy-dom@16.7.1:
-    resolution: {integrity: sha512-VdkAsz+en07rDTepV6HmcL4sBR+86S9HNZ+nsbxsFsOOZ6mgErOMMnONGwRW8Kwg3ozeshktvAP8yp7Ol7hPIA==}
+  happy-dom@16.7.2:
+    resolution: {integrity: sha512-zOzw0xyYlDaF/ylwbAsduYZZVRTd5u7IwlFkGbEathIeJMLp3vrN3cHm3RS7PZpD9gr/IO16bHEswcgNyWTsqw==}
     engines: {node: '>=18.0.0'}
 
   has-bigints@1.1.0:
@@ -11332,7 +11332,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@vanilla-extract/babel-plugin-debug-ids': 1.2.0
       '@vanilla-extract/css': 1.17.0(babel-plugin-macros@3.1.0)
-      esbuild: 0.17.19
+      esbuild: 0.17.6
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -11366,7 +11366,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))':
+  '@vitest/coverage-v8@2.1.8(vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -11380,7 +11380,7 @@ snapshots:
       std-env: 3.8.0
       test-exclude: 7.0.1
       tinyrainbow: 1.2.0
-      vitest: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
+      vitest: 2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -14148,7 +14148,7 @@ snapshots:
       uncrypto: 0.1.3
       unenv: 1.10.0
 
-  happy-dom@16.7.1:
+  happy-dom@16.7.2:
     dependencies:
       webidl-conversions: 7.0.0
       whatwg-mimetype: 3.0.0
@@ -17528,7 +17528,7 @@ snapshots:
     dependencies:
       '@types/chrome': 0.0.114
 
-  vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.1)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0):
+  vitest@2.1.8(@types/node@22.10.7)(happy-dom@16.7.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0):
     dependencies:
       '@vitest/expect': 2.1.8
       '@vitest/mocker': 2.1.8(vite@5.4.14(@types/node@22.10.7)(less@4.2.1)(lightningcss@1.28.2)(sass@1.82.0)(stylus@0.62.0))
@@ -17552,7 +17552,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.10.7
-      happy-dom: 16.7.1
+      happy-dom: 16.7.2
       jsdom: 26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - less
