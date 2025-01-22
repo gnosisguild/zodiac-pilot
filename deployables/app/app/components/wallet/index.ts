@@ -17,3 +17,5 @@ export const WalletProvider: ComponentType<WalletProviderProps> = lazy(
     return { default: WalletProvider }
   },
 )
+
+export { ConnectWalletFallback } from './ConnectWalletFallback'

@@ -2,6 +2,7 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  ConnectWalletFallback,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -43,12 +44,11 @@ import {
   PilotType,
   PrimaryButton,
   SecondaryButton,
-  Section,
   TextInput,
   ZodiacOsPlain,
 } from '@zodiac/ui'
-import { lazy, Suspense, useState } from 'react'
-import { Form, useNavigation, useSubmit } from 'react-router'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { Form, useLoaderData, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
@@ -169,21 +169,16 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, providerType, waypoints },
+  loaderData: { chainId, label, avatar, waypoints },
   actionData,
 }: Route.ComponentProps) => {
   const submit = useSubmit()
-
-  const [optimisticConnection, setOptimisticConnection] = useState({
-    pilotAddress: getPilotAddress(waypoints),
-    chainId,
-    providerType,
-  })
+  const optimisticRoute = useOptimisticRoute()
 
   const { state } = useNavigation()
 
   return (
-    <div className="flex h-full flex-col gap-4">
+    <div className="flex h-full flex-col gap-8">
       <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -197,25 +192,13 @@ const EditRoute = ({
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
 
-          <Suspense
-            fallback={
-              <Section title="Pilot Account">
-                <PrimaryButton disabled>Connect wallet</PrimaryButton>
-              </Section>
-            }
-          >
-            <WalletProvider>
+          <Suspense fallback={<ConnectWalletFallback />}>
+            <WalletProvider fallback={<ConnectWalletFallback />}>
               <ConnectWallet
-                chainId={optimisticConnection.chainId}
-                pilotAddress={optimisticConnection.pilotAddress}
-                providerType={optimisticConnection.providerType}
+                chainId={optimisticRoute.chainId}
+                pilotAddress={optimisticRoute.pilotAddress}
+                providerType={optimisticRoute.providerType}
                 onConnect={({ account, chainId, providerType }) => {
-                  setOptimisticConnection({
-                    pilotAddress: account,
-                    chainId,
-                    providerType,
-                  })
-
                   submit(
                     formData({
                       intent: Intent.ConnectWallet,
@@ -227,12 +210,6 @@ const EditRoute = ({
                   )
                 }}
                 onDisconnect={() => {
-                  setOptimisticConnection({
-                    pilotAddress: ZERO_ADDRESS,
-                    chainId: Chain.ETH,
-                    providerType: undefined,
-                  })
-
                   submit(formData({ intent: Intent.DisconnectWallet }), {
                     method: 'POST',
                   })
@@ -314,6 +291,57 @@ const EditRoute = ({
 }
 
 export default EditRoute
+
+const useOptimisticRoute = () => {
+  const { waypoints, chainId, providerType } = useLoaderData<typeof loader>()
+  const pilotAddress = getPilotAddress(waypoints)
+
+  const { formData } = useNavigation()
+
+  const [optimisticConnection, setOptimisticConnection] = useState({
+    pilotAddress,
+    chainId,
+    providerType,
+  })
+
+  useEffect(() => {
+    setOptimisticConnection({ pilotAddress, chainId, providerType })
+  }, [chainId, pilotAddress, providerType])
+
+  useEffect(() => {
+    if (formData == null) {
+      return
+    }
+
+    const intent = getOptionalString(formData, 'intent')
+
+    if (intent == null) {
+      return
+    }
+
+    switch (intent) {
+      case Intent.DisconnectWallet: {
+        setOptimisticConnection({
+          pilotAddress: ZERO_ADDRESS,
+          chainId: Chain.ETH,
+          providerType: undefined,
+        })
+
+        break
+      }
+
+      case Intent.ConnectWallet: {
+        setOptimisticConnection({
+          pilotAddress: getHexString(formData, 'account'),
+          chainId: verifyChainId(getInt(formData, 'chainId')),
+          providerType: verifyProviderType(getInt(formData, 'providerType')),
+        })
+      }
+    }
+  }, [formData])
+
+  return optimisticConnection
+}
 
 const getPilotAddress = (waypoints?: Waypoints) => {
   if (waypoints == null) {
