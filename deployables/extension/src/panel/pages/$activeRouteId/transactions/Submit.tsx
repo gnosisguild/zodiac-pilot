@@ -1,3 +1,4 @@
+import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import { getReadOnlyProvider } from '@/providers'
@@ -35,6 +36,8 @@ export const Submit = () => {
   const transactions = useTransactions()
   const submitTransactions = useSubmitTransactions()
   const [signaturePending, setSignaturePending] = useState(false)
+
+  const companionAppUrl = useCompanionAppUrl()
 
   const submit = async () => {
     if (!connected) {
@@ -162,7 +165,11 @@ export const Submit = () => {
           Submit
         </PrimaryButton>
       ) : (
-        <PrimaryLinkButton fluid to={`/routes/edit/${route.id}`}>
+        <PrimaryLinkButton
+          openInNewWindow
+          fluid
+          to={`${companionAppUrl}/edit-route/${btoa(JSON.stringify(route))}`}
+        >
           Connect wallet to submit
         </PrimaryLinkButton>
       )}
