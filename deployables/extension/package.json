@@ -43,7 +43,6 @@
     "@types/react-dom": "19.0.3",
     "@vitest/coverage-v8": "2.1.8",
     "@zodiac/eslint-config": "workspace:*",
-    "@zodiac/tailwind-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.20",

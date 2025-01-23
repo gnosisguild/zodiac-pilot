@@ -32,7 +32,6 @@
     "@types/chrome": "0.0.299",
     "@types/react": "19.0.8",
     "@zodiac/eslint-config": "workspace:*",
-    "@zodiac/tailwind-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.20",
     "eslint": "9.18.0",
