@@ -1,11 +1,6 @@
 import type { ChainId } from '@zodiac/chains'
 import type { ExecutionRoute, Waypoint } from '@zodiac/schema'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-  type PrefixedAddress,
-} from 'ser-kit'
+import { AccountType, type PrefixedAddress } from 'ser-kit'
 import { createDelayWaypoint } from './createDelayWaypoint'
 import { createRolesWaypoint } from './createRolesWaypoint'
 import { createSafeWaypoint } from './createSafeWaypoint'
@@ -41,13 +36,7 @@ const updateInitiator = (
     return
   }
 
-  const [currentChainId, address] = splitPrefixedAddress(initiator)
-
-  if (currentChainId == null) {
-    return initiator
-  }
-
-  return formatPrefixedAddress(chainId, address)
+  return updatePrefixedAddress(initiator, { chainId })
 }
 
 const updateWaypoint = (
