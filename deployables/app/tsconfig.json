@@ -1,15 +1,22 @@
 {
   "extends": "@zodiac/typescript-config",
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.cloudflare.json" }
-  ],
   "compilerOptions": {
+    "composite": true,
+    "types": ["vite/client", "node"],
+    "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/test-utils": ["./test-utils/index.ts"],
       "@/components": ["./app/components/index.ts"],
       "@/utils": ["./app/utils/index.ts"]
     }
-  }
+  },
+  "include": [
+    ".react-router/types/**/*",
+    "vitest.setup.ts",
+    "app/**/*",
+    "app/**/.server/**/*",
+    "app/**/.client/**/*",
+    "server/**/*",
+    "test-utils/**/*"
+  ]
 }

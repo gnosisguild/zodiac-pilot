@@ -1,6 +1,13 @@
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
 
-const interfaces = {
+type Interfaces = {
+  [KnownContracts.DELAY]: (typeof ContractFactories)[KnownContracts.DELAY]
+  [KnownContracts.ROLES_V1]: (typeof ContractFactories)[KnownContracts.ROLES_V1]
+  [KnownContracts.ROLES_V2]: (typeof ContractFactories)[KnownContracts.ROLES_V2]
+  [KnownContracts.PERMISSIONS]: (typeof ContractFactories)[KnownContracts.PERMISSIONS]
+}
+
+const interfaces: Interfaces = {
   [KnownContracts.DELAY]: ContractFactories[KnownContracts.DELAY],
   [KnownContracts.ROLES_V1]: ContractFactories[KnownContracts.ROLES_V1],
   [KnownContracts.ROLES_V2]: ContractFactories[KnownContracts.ROLES_V2],
