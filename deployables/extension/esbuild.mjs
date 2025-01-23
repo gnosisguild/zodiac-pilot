@@ -1,10 +1,9 @@
-import autoprefixer from 'autoprefixer'
+import tailwindcss from '@tailwindcss/postcss'
 import { config } from 'dotenv'
 import esbuild from 'esbuild'
 import postCssPlugin from 'esbuild-style-plugin'
 import stdLibBrowser from 'node-stdlib-browser'
 import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
-import tailwindcss from 'tailwindcss'
 import { fileURLToPath } from 'url'
 
 config()
@@ -68,7 +67,7 @@ esbuild
     plugins: [
       plugin(stdLibBrowser),
       postCssPlugin({
-        postcss: { plugins: [tailwindcss, autoprefixer] },
+        postcss: { plugins: [tailwindcss] },
       }),
       // process.env.NODE_ENV !== 'development' &&
       //   sentryEsbuildPlugin({

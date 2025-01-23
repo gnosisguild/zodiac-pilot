@@ -40,7 +40,7 @@ export const RouteBubble = () => {
           leave="transition-opacity"
         >
           <div className="isolate z-10 pt-2">
-            <div className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-4 py-2 shadow-lg backdrop-blur-sm dark:border-zinc-500/80 dark:bg-zinc-900/80">
+            <div className="rounded-md border border-zinc-200/80 bg-zinc-100/80 px-4 py-2 shadow-lg backdrop-blur-xs dark:border-zinc-500/80 dark:bg-zinc-900/80">
               <ConnectionStack route={route} />
             </div>
           </div>
@@ -61,7 +61,7 @@ export const RouteBubble = () => {
         </p>
       </div>
 
-      <div className="flex flex-shrink-0">
+      <div className="flex shrink-0">
         <Link
           target="_blank"
           rel="noopener noreferrer"
@@ -95,7 +95,7 @@ const Blockies = ({
   moduleAddress,
   avatarAddress,
 }: BlockiesProps) => (
-  <div className="flex h-10 flex-shrink-0 p-1">
+  <div className="flex h-10 shrink-0 p-1">
     {pilotAddress && (
       <div className="rounded-full border-2 border-slate-500 dark:border-slate-900">
         <Blockie address={pilotAddress} className="h-full" />

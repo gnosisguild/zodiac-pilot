@@ -19,7 +19,7 @@ export const Input = ({ label, children, disabled, ...props }: InputProps) => {
         id={id}
         disabled={disabled}
         className={classNames(
-          'w-full rounded border border-gray-200 bg-gray-100 px-4 py-2 outline-none ring-2 ring-transparent focus:border-blue-600 focus:ring-blue-300',
+          'w-full rounded-sm border border-gray-200 bg-gray-100 px-4 py-2 outline-hidden ring-2 ring-transparent focus:border-blue-600 focus:ring-blue-300',
           disabled && 'opacity-50',
         )}
       />

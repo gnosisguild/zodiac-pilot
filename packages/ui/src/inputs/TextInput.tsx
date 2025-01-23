@@ -29,7 +29,7 @@ export const TextInput = ({
         disabled={disabled}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
-        className="w-full border-none bg-transparent px-4 py-2 text-sm outline-none"
+        className="w-full border-none bg-transparent px-4 py-2 text-sm outline-hidden"
       />
     )}
   </Input>
