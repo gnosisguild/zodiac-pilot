@@ -37,7 +37,7 @@ export default function App() {
       <body className="flex h-full w-full flex-col items-center bg-white text-sm">
         <div className="mx-8 flex h-full flex-1 flex-col gap-8 py-12 xl:w-2/3">
           <h1 className="flex items-center justify-between text-2xl font-bold">
-            <span className="bg-gradient-to-r from-purple-500 to-teal-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-purple-500 to-teal-500 bg-clip-text text-transparent">
               zodiac pilot
             </span>
             <span className="text-sm font-semibold uppercase text-gray-500">

@@ -30,12 +30,12 @@ export const Modal = ({
       transition
       open={open}
       onClose={onClose}
-      className="absolute inset-0 z-50 bg-zinc-200/20 backdrop-blur transition-all duration-300 ease-out data-[closed]:backdrop-blur-0 dark:bg-slate-900/20"
+      className="backdrop-blur-xs data-closed:backdrop-blur-0 absolute inset-0 z-50 bg-zinc-200/20 transition-all duration-300 ease-out dark:bg-slate-900/20"
     >
       <div className="fixed inset-0 flex h-full w-screen flex-col items-center justify-end px-4">
         <DialogPanel
           transition
-          className="w-full space-y-4 rounded-t-xl border-x border-t border-zinc-200/80 bg-zinc-900 px-2 pb-4 pt-2 text-sm shadow-lg transition-all data-[closed]:translate-y-full data-[closed]:opacity-0 dark:border-zinc-900/80 dark:bg-zinc-100"
+          className="data-closed:translate-y-full data-closed:opacity-0 w-full space-y-4 rounded-t-xl border-x border-t border-zinc-200/80 bg-zinc-900 px-2 pb-4 pt-2 text-sm shadow-lg transition-all dark:border-zinc-900/80 dark:bg-zinc-100"
         >
           <div className="flex items-center justify-between gap-4 text-zinc-50 dark:text-zinc-800">
             <DialogTitle className="pl-2 font-bold">{title}</DialogTitle>

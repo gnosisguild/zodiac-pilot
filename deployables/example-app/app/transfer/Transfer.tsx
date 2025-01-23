@@ -81,7 +81,7 @@ export const Transfer = () => {
         <div className="flex items-center justify-center">
           <button
             type="button"
-            className="rounded p-2 hover:bg-gray-100"
+            className="rounded-sm p-2 hover:bg-gray-100"
             onClick={() => setTarget(target === 'ETH' ? 'WETH' : 'ETH')}
           >
             {target === 'WETH' ? (

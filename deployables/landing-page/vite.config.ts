@@ -1,12 +1,12 @@
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import autoprefixer from 'autoprefixer'
-import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
 import openGraph from 'vite-plugin-open-graph'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react(),
     openGraph({
       basic: {
@@ -24,12 +24,10 @@ export default defineConfig({
   server: {
     port: 3050,
   },
-  css: {
-    postcss: {
-      plugins: [tailwindcss, autoprefixer],
-    },
-  },
   build: {
     manifest: true,
+  },
+  define: {
+    'process.env': {},
   },
 })

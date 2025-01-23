@@ -17,7 +17,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="h-full bg-gradient-to-b from-white to-zinc-50 text-base text-zinc-900 dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900 dark:text-white">
+      <body className="bg-linear-to-b h-full from-white to-zinc-50 text-base text-zinc-900 dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900 dark:text-white">
         {children}
         <ScrollRestoration />
         <Scripts />

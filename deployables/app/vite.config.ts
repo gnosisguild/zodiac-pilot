@@ -1,7 +1,6 @@
 import { reactRouter } from '@react-router/dev/vite'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
-import autoprefixer from 'autoprefixer'
-import tailwindcss from 'tailwindcss'
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
@@ -14,11 +13,7 @@ export default defineConfig(({ isSsrBuild, command }) => ({
       : undefined,
     sourcemap: true,
   },
-  css: {
-    postcss: {
-      plugins: [tailwindcss, autoprefixer],
-    },
-  },
+
   define: {
     'process.env': {},
   },
@@ -27,6 +22,7 @@ export default defineConfig(({ isSsrBuild, command }) => ({
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
+    tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
     sentryVitePlugin({
