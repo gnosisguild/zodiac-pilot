@@ -1,6 +1,10 @@
-import { getChainId } from '@zodiac/chains'
 import type { ExecutionRoute, HexAddress, Waypoint } from '@zodiac/schema'
-import { AccountType, ConnectionType, formatPrefixedAddress } from 'ser-kit'
+import {
+  AccountType,
+  ConnectionType,
+  formatPrefixedAddress,
+  splitPrefixedAddress,
+} from 'ser-kit'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
 import { updateConnection } from './updateConnection'
@@ -11,10 +15,7 @@ export const updatePilotAddress = (
   address: HexAddress,
 ): ExecutionRoute => {
   const startingPoint = getStartingWaypoint(route.waypoints)
-  const chainId =
-    startingPoint.account.type === AccountType.EOA
-      ? undefined
-      : getChainId(route.avatar)
+  const [chainId] = splitPrefixedAddress(startingPoint.account.prefixedAddress)
   const waypoints = getWaypoints(route)
 
   return {
