@@ -1,4 +1,3 @@
-import { invariant } from '@epic-web/invariant'
 import type { Page } from '@playwright/test'
 import { readFileSync } from 'fs'
 import type { Ref } from 'react'
@@ -30,12 +29,12 @@ export const mockWeb3 = async (
 
   return {
     lockWallet() {
-      return getConnectFrame(page).evaluate(() => {
+      return page.evaluate(() => {
         Web3Mock.trigger('accountsChanged', [])
       })
     },
     loadAccounts(accounts: string[]) {
-      return getConnectFrame(page).evaluate(
+      return page.evaluate(
         ([accounts]) => {
           Web3Mock.trigger('accountsChanged', accounts)
         },
@@ -43,7 +42,7 @@ export const mockWeb3 = async (
       )
     },
     switchChain(chainId: ChainId) {
-      return getConnectFrame(page).evaluate(
+      return page.evaluate(
         ([chainId]) => {
           Web3Mock.trigger('chainChanged', `0x${chainId}`)
         },
@@ -51,20 +50,6 @@ export const mockWeb3 = async (
       )
     },
   }
-}
-
-const getConnectFrame = (page: Page) => {
-  if (process.env.COMPANION_APP_URL == null) {
-    return page
-  }
-
-  const frame = page.frame({
-    url: process.env.COMPANION_APP_URL,
-  })
-
-  invariant(frame != null, 'Connect iframe not found')
-
-  return frame
 }
 
 const getLibraryCode = () => {

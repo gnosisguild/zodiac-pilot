@@ -5,16 +5,16 @@ import {
   type ConnectedWalletMessage,
 } from '@zodiac/messages'
 
-const companionAppUrl = getCompanionAppUrl()
+const connectUrl = `${getCompanionAppUrl()}/connect`
 
 const ensureIframe = () => {
   let node: HTMLIFrameElement | null = document.querySelector(
-    `iframe[src="${companionAppUrl}"]`,
+    `iframe[src="${connectUrl}"]`,
   )
 
   if (!node) {
     node = document.createElement('iframe')
-    node.src = companionAppUrl
+    node.src = connectUrl
     node.style.display = 'none'
 
     const parent = document.body || document.documentElement
@@ -40,7 +40,7 @@ chrome.runtime.onConnect.addListener((port) => {
       'cannot access connect iframe window',
     )
 
-    iframe.contentWindow.postMessage(message, companionAppUrl)
+    iframe.contentWindow.postMessage(message, connectUrl)
 
     // wait for response
     const handleResponse = (event: MessageEvent<ConnectedWalletMessage>) => {

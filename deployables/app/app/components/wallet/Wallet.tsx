@@ -21,12 +21,12 @@ export const Wallet = ({
   chainId,
   onDisconnect,
 }: WalletProps) => {
-  const { address, chainId: accountChainId, addresses } = useAccount()
+  const { address, chainId: accountChainId, addresses = [] } = useAccount()
   const { switchChain } = useSwitchChain()
   const { reconnect } = useReconnect()
 
   // Wallet disconnected
-  if (addresses == null || addresses.length === 0) {
+  if (address == null || addresses.length === 0) {
     return (
       <WalletDisconnected
         onDisconnect={onDisconnect}
@@ -56,8 +56,10 @@ export const Wallet = ({
     (address) => address.toLowerCase() === pilotAddress.toLowerCase(),
   )
 
-  // Wrong account
-  if (!accountInWallet) {
+  if (
+    !accountInWallet ||
+    pilotAddress.toLowerCase() !== address.toLowerCase()
+  ) {
     return (
       <WrongAccount onDisconnect={onDisconnect}>
         <Account type={providerType}>{pilotAddress}</Account>

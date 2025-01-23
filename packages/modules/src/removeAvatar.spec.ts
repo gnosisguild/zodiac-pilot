@@ -2,7 +2,9 @@ import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   createMockEndWaypoint,
   createMockExecutionRoute,
+  createMockRoleWaypoint,
   createMockStartingWaypoint,
+  createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
 import { formatPrefixedAddress } from 'ser-kit'
@@ -33,5 +35,18 @@ describe('removeAvatar', () => {
       'avatar',
       formatPrefixedAddress(Chain.GNO, ZERO_ADDRESS),
     )
+  })
+
+  it('removes the role waypoint', () => {
+    const rolesWaypoint = createMockRoleWaypoint()
+
+    const route = createMockExecutionRoute({
+      avatar: formatPrefixedAddress(Chain.GNO, randomAddress()),
+      waypoints: createMockWaypoints({ waypoints: [rolesWaypoint] }),
+    })
+
+    const updatedRoute = removeAvatar(route)
+
+    expect(updatedRoute.waypoints).not.toContain(rolesWaypoint)
   })
 })

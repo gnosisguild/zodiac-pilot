@@ -27,11 +27,12 @@ import {
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { formatPrefixedAddress, type ChainId } from 'ser-kit'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { mockGetSafesByOwner } = vi.hoisted(() => ({
-  mockGetSafesByOwner:
-    vi.fn<ReturnType<typeof initSafeApiKit>['getSafesByOwner']>(),
+  mockGetSafesByOwner: vi
+    .fn<ReturnType<typeof initSafeApiKit>['getSafesByOwner']>()
+    .mockResolvedValue({ safes: [] }),
 }))
 
 vi.mock('@zodiac/safe', async (importOriginal) => {
@@ -79,6 +80,10 @@ vi.mock('@/utils', async (importOriginal) => {
 const mockDryRun = vi.mocked(dryRun)
 
 describe('Edit route', () => {
+  beforeEach(() => {
+    mockFetchZodiacModules.mockResolvedValue([])
+  })
+
   describe('Label', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
@@ -333,7 +338,7 @@ describe('Edit route', () => {
       await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
       await userEvent.click(
-        screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+        await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
       )
       await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
@@ -403,7 +408,7 @@ describe('Edit route', () => {
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         await userEvent.click(
-          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
 
@@ -460,6 +465,12 @@ describe('Edit route', () => {
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
           const roleId = randomAddress()
+
+          await waitFor(async () =>
+            expect(
+              await screen.findByRole('textbox', { name: 'Role ID' }),
+            ).not.toBeDisabled(),
+          )
 
           await userEvent.type(
             await screen.findByRole('textbox', { name: 'Role ID' }),
@@ -520,7 +531,7 @@ describe('Edit route', () => {
         await render(`/edit-route/${btoa(JSON.stringify(route))}`)
 
         await userEvent.click(
-          screen.getByRole('combobox', { name: 'Zodiac Mod' }),
+          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
@@ -578,6 +589,12 @@ describe('Edit route', () => {
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+          await waitFor(async () =>
+            expect(
+              await screen.findByRole('textbox', { name: 'Role Key' }),
+            ).not.toBeDisabled(),
+          )
 
           await userEvent.type(
             await screen.findByRole('textbox', { name: 'Role Key' }),

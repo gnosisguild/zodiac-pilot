@@ -1,6 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { getDefaultConfig } from 'connectkit'
-import { useEffect, useState, type PropsWithChildren } from 'react'
+import {
+  useEffect,
+  useState,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react'
 import { createConfig, injected, WagmiProvider, type Config } from 'wagmi'
 import {
   arbitrum,
@@ -19,13 +24,16 @@ const queryClient = new QueryClient()
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
 const isServer = typeof document === 'undefined'
 
-export type WalletProviderProps = PropsWithChildren
+export type WalletProviderProps = PropsWithChildren<{ fallback?: ReactNode }>
 
-export const WalletProvider = ({ children }: WalletProviderProps) => {
+export const WalletProvider = ({
+  children,
+  fallback = null,
+}: WalletProviderProps) => {
   const config = useConfig()
 
   if (config == null) {
-    return null
+    return fallback
   }
 
   return (
