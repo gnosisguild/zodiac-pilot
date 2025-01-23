@@ -57,24 +57,6 @@ describe('updateChainId', () => {
 
   describe('Waypoints', () => {
     describe('Starting point', () => {
-      it('does not update the starting waypoint of EOA accounts', () => {
-        const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(createMockEoaAccount()),
-          }),
-        })
-
-        const updatedRoute = updateChainId(route, Chain.GNO)
-
-        const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
-
-        const [chainId] = splitPrefixedAddress(
-          startingPoint.account.prefixedAddress,
-        )
-
-        expect(chainId).not.toBeDefined()
-      })
-
       it('updates the chain property of SAFE starting points', () => {
         const route = createMockExecutionRoute({
           waypoints: createMockWaypoints({
@@ -145,6 +127,54 @@ describe('updateChainId', () => {
 
         expect(getChainId(updatedWaypoint.connection.from)).toEqual(Chain.GNO)
       })
+    })
+  })
+
+  describe('EOA Accounts', () => {
+    it('does not update the starting waypoint of EOA accounts', () => {
+      const route = createMockExecutionRoute({
+        waypoints: createMockWaypoints({
+          start: createMockStartingWaypoint(createMockEoaAccount()),
+        }),
+      })
+
+      const updatedRoute = updateChainId(route, Chain.GNO)
+
+      const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
+
+      const [chainId] = splitPrefixedAddress(
+        startingPoint.account.prefixedAddress,
+      )
+
+      expect(chainId).not.toBeDefined()
+    })
+
+    it('does not update the initiator field when it is an EOA account', () => {
+      const initiator = formatPrefixedAddress(undefined, randomAddress())
+
+      const route = createMockExecutionRoute({
+        initiator,
+      })
+
+      const updatedRoute = updateChainId(route, Chain.GNO)
+
+      expect(updatedRoute).toHaveProperty('initiator', initiator)
+    })
+
+    it('does not update the from field of a roles waypoint when it is an EOA account', () => {
+      const from = formatPrefixedAddress(undefined, randomAddress())
+
+      const route = createMockExecutionRoute({
+        waypoints: createMockWaypoints({
+          waypoints: [createMockRoleWaypoint({ from })],
+        }),
+      })
+
+      const updatedRoute = updateChainId(route, Chain.GNO)
+
+      const [rolesWaypoint] = getWaypoints(updatedRoute)
+
+      expect(rolesWaypoint.connection).toHaveProperty('from', from)
     })
   })
 })
