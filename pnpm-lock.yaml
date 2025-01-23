@@ -162,7 +162,7 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@tailwindcss/vite':
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
       '@testing-library/jest-dom':
         specifier: 6.6.3
@@ -294,7 +294,7 @@ importers:
         specifier: 2.15.2
         version: 2.15.2(@remix-run/react@2.15.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@types/node@22.10.9)(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.105.0(@cloudflare/workers-types@4.20250121.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@tailwindcss/vite':
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
       '@types/chrome':
         specifier: 0.0.299
@@ -433,7 +433,7 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@tailwindcss/postcss':
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       '@testing-library/dom':
         specifier: 10.4.0
@@ -581,7 +581,7 @@ importers:
         version: 7.1.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@tailwindcss/vite':
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0(vite@6.0.11(@types/node@22.10.9)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
       '@vitejs/plugin-react':
         specifier: 4.3.4
@@ -4582,10 +4582,6 @@ packages:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
     engines: {node: '>=10.0.0'}
 
-  enhanced-resolve@5.17.1:
-    resolution: {integrity: sha512-LMHl3dXhTcfv8gM4kEzIUeTQ+7fpdA0l2tUf34BddXPkz2A5xJ5L/Pchd5BL6rdccM9QGvu0sWZzK1Z1t4wwyg==}
-    engines: {node: '>=10.13.0'}
-
   enhanced-resolve@5.18.0:
     resolution: {integrity: sha512-0/r0MySGYG8YqlayBZ6MuCfECmHFdJ5qyPh8s8wa5Hnm6SaFLSK1VYCbj+NKp090Nm1caZhD+QTnmxO7esYGyQ==}
     engines: {node: '>=10.13.0'}
@@ -5606,10 +5602,6 @@ packages:
   javascript-stringify@2.1.0:
     resolution: {integrity: sha512-JVAfqNPTvNq3sB/VHQJAFxN/sPgKnsKrCwyRt15zwNCdrMMJDdcEOdubuy+DuJYYdm0ox1J4uzEuYKkN+9yhVg==}
 
-  jiti@2.4.1:
-    resolution: {integrity: sha512-yPBThwecp1wS9DmoA4x4KR2h3QoslacnDR8ypuFM962kI4/456Iy1oHx2RAgh4jfZNdn0bctsdadceiBUgpU1g==}
-    hasBin: true
-
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
@@ -5815,6 +5807,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -13030,11 +13023,6 @@ snapshots:
 
   engine.io-parser@5.2.3: {}
 
-  enhanced-resolve@5.17.1:
-    dependencies:
-      graceful-fs: 4.2.11
-      tapable: 2.2.1
-
   enhanced-resolve@5.18.0:
     dependencies:
       graceful-fs: 4.2.11
@@ -13670,7 +13658,7 @@ snapshots:
     dependencies:
       app-module-path: 2.2.0
       commander: 12.1.0
-      enhanced-resolve: 5.17.1
+      enhanced-resolve: 5.18.0
       module-definition: 6.0.0
       module-lookup-amd: 9.0.2
       resolve: 1.22.10
@@ -14382,8 +14370,6 @@ snapshots:
 
   javascript-stringify@2.1.0: {}
 
-  jiti@2.4.1: {}
-
   jiti@2.4.2: {}
 
   js-sha3@0.8.0: {}
@@ -14562,7 +14548,7 @@ snapshots:
       get-port-please: 3.1.2
       h3: 1.13.0
       http-shutdown: 1.2.2
-      jiti: 2.4.1
+      jiti: 2.4.2
       mlly: 1.7.4
       node-forge: 1.3.1
       pathe: 1.1.2
