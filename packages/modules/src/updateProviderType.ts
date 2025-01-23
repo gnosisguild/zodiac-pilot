@@ -1,5 +1,15 @@
 import { getChainId } from '@zodiac/chains'
-import { ProviderType, type ExecutionRoute } from '@zodiac/schema'
+import {
+  ProviderType,
+  type ExecutionRoute,
+  type Waypoint,
+} from '@zodiac/schema'
+import {
+  AccountType,
+  ConnectionType,
+  formatPrefixedAddress,
+  type PrefixedAddress,
+} from 'ser-kit'
 import { createEoaWaypoint } from './createEoaWaypoint'
 import { createSafeStartingPoint } from './createSafeStartingPoint'
 import { getStartingWaypoint } from './getStartingWaypoint'
@@ -16,14 +26,17 @@ export const updateProviderType = (
 
   switch (providerType) {
     case ProviderType.InjectedWallet: {
+      const initiator = formatPrefixedAddress(undefined, address)
+
       return {
         ...route,
+        initiator,
         providerType: ProviderType.InjectedWallet,
         waypoints: [
           createEoaWaypoint({
             address,
           }),
-          ...waypoints,
+          ...waypoints.map((waypoint) => updateWaypoint(waypoint, initiator)),
         ],
       }
     }
@@ -31,17 +44,37 @@ export const updateProviderType = (
     case ProviderType.WalletConnect: {
       const chainId = getChainId(route.avatar)
 
+      const initiator = formatPrefixedAddress(chainId, address)
+
       return {
         ...route,
+        initiator,
         providerType: ProviderType.WalletConnect,
         waypoints: [
           createSafeStartingPoint({
             chainId,
             address,
           }),
-          ...waypoints,
+          ...waypoints.map((waypoint) => updateWaypoint(waypoint, initiator)),
         ],
       }
     }
   }
+}
+
+const updateWaypoint = (
+  { account, connection }: Waypoint,
+  from: PrefixedAddress,
+): Waypoint => {
+  if (account.type === AccountType.ROLES) {
+    return { account, connection: { ...connection, from } }
+  }
+
+  if (account.type === AccountType.SAFE) {
+    if (connection.type === ConnectionType.OWNS) {
+      return { account, connection: { ...connection, from } }
+    }
+  }
+
+  return { account, connection }
 }

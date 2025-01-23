@@ -1,6 +1,6 @@
 import type { ChainId } from '@zodiac/chains'
 import type { ExecutionRoute, Waypoint } from '@zodiac/schema'
-import { AccountType } from 'ser-kit'
+import { AccountType, type PrefixedAddress } from 'ser-kit'
 import { createDelayWaypoint } from './createDelayWaypoint'
 import { createRolesWaypoint } from './createRolesWaypoint'
 import { createSafeWaypoint } from './createSafeWaypoint'
@@ -20,15 +20,23 @@ export const updateChainId = (
   return {
     ...route,
     avatar: updatePrefixedAddress(route.avatar, { chainId }),
-    initiator:
-      route.initiator == null
-        ? undefined
-        : updatePrefixedAddress(route.initiator, { chainId }),
+    initiator: updateInitiator(route.initiator, chainId),
     waypoints: [
       updateStartingWaypoint(startingPoint, { chainId }),
       ...waypoints.map((waypoint) => updateWaypoint(waypoint, chainId)),
     ],
   }
+}
+
+const updateInitiator = (
+  initiator: PrefixedAddress | undefined,
+  chainId: ChainId,
+) => {
+  if (initiator == null) {
+    return
+  }
+
+  return updatePrefixedAddress(initiator, { chainId })
 }
 
 const updateWaypoint = (

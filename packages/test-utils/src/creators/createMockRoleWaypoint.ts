@@ -5,6 +5,7 @@ import {
   ConnectionType,
   formatPrefixedAddress,
   type ChainId,
+  type PrefixedAddress,
   type Waypoint,
 } from 'ser-kit'
 import { randomAddress } from './randomHex'
@@ -14,7 +15,7 @@ type CreateRoleWaypointOptions = {
   chainId?: ChainId
   version?: 1 | 2
   roleId?: string
-  from?: HexAddress
+  from?: PrefixedAddress
 }
 
 export const createMockRoleWaypoint = ({
@@ -22,7 +23,7 @@ export const createMockRoleWaypoint = ({
   version = 2,
   chainId = Chain.ETH,
   roleId,
-  from = randomAddress(),
+  from,
 }: CreateRoleWaypointOptions = {}): Waypoint => ({
   account: {
     type: AccountType.ROLES,
@@ -33,7 +34,7 @@ export const createMockRoleWaypoint = ({
     version,
   },
   connection: {
-    from: formatPrefixedAddress(chainId, from),
+    from: from != null ? from : formatPrefixedAddress(chainId, randomAddress()),
     type: ConnectionType.IS_MEMBER,
     roles: roleId != null ? [roleId] : [],
   },

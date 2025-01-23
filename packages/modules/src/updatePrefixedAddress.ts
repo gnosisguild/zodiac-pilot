@@ -19,11 +19,15 @@ export const updatePrefixedAddress = (
     address = parsePrefixedAddress(prefixedAddress),
   }: UpdatePrefixedAddressOptions,
 ) => {
+  const [defaultChainId] = splitPrefixedAddress(prefixedAddress)
+
+  if (defaultChainId == null) {
+    return formatPrefixedAddress(undefined, address)
+  }
+
   if (chainId != null) {
     return formatPrefixedAddress(chainId, address)
   }
-
-  const [defaultChainId] = splitPrefixedAddress(prefixedAddress)
 
   return formatPrefixedAddress(defaultChainId, address)
 }
