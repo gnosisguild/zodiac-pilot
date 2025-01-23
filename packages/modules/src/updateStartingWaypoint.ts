@@ -1,6 +1,7 @@
-import { getChainId, type ChainId } from '@zodiac/chains'
+import { invariant } from '@epic-web/invariant'
+import { type ChainId } from '@zodiac/chains'
 import type { HexAddress, StartingWaypoint } from '@zodiac/schema'
-import { AccountType } from 'ser-kit'
+import { AccountType, splitPrefixedAddress } from 'ser-kit'
 import { createEoaWaypoint } from './createEoaWaypoint'
 import { createSafeStartingPoint } from './createSafeStartingPoint'
 
@@ -11,18 +12,24 @@ type UpdateStartingWaypointOptions = {
 
 export const updateStartingWaypoint = (
   { account }: StartingWaypoint,
-  {
-    chainId = getChainId(account.prefixedAddress),
-    address = account.address,
-  }: UpdateStartingWaypointOptions,
+  { chainId, address = account.address }: UpdateStartingWaypointOptions,
 ): StartingWaypoint => {
   switch (account.type) {
     case AccountType.EOA: {
-      return createEoaWaypoint({ address, chainId })
+      return createEoaWaypoint({ address })
     }
 
     default: {
-      return createSafeStartingPoint({ address, chainId })
+      const [defaultChainId] = splitPrefixedAddress(account.prefixedAddress)
+
+      const finalChainId = chainId || defaultChainId
+
+      invariant(
+        finalChainId != null,
+        `A chain ID is needed to create a Safe starting point`,
+      )
+
+      return createSafeStartingPoint({ address, chainId: finalChainId })
     }
   }
 }

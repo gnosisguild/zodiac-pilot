@@ -1,4 +1,4 @@
-import { Chain, getChainId } from '@zodiac/chains'
+import { Chain } from '@zodiac/chains'
 import {
   createMockDelayWaypoint,
   createMockEnabledConnection,
@@ -29,10 +29,7 @@ describe('updatePilotAddress', () => {
     expect(startingPoint.account).toHaveProperty('address', newAddress)
     expect(startingPoint.account).toHaveProperty(
       'prefixedAddress',
-      formatPrefixedAddress(
-        getChainId(startingPoint.account.prefixedAddress),
-        newAddress,
-      ),
+      formatPrefixedAddress(undefined, newAddress),
     )
   })
 

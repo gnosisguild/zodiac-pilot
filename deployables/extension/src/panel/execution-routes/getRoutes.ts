@@ -1,5 +1,5 @@
 import type { ExecutionRoute } from '@/types'
-import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import { createEoaStartingPoint } from '@zodiac/modules'
 import { getStorageEntries } from '../utils'
 
@@ -12,7 +12,6 @@ export const getRoutes = async (): Promise<ExecutionRoute[]> => {
           ...route,
           waypoints: [
             createEoaStartingPoint({
-              chainId: Chain.ETH,
               address: ZERO_ADDRESS,
             }),
           ],

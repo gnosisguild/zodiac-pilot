@@ -8,7 +8,5 @@ export const createBlankRoute = (): ExecutionRoute => ({
   id: nanoid(),
   avatar: formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
   label: '',
-  waypoints: [
-    createEoaStartingPoint({ chainId: Chain.ETH, address: ZERO_ADDRESS }),
-  ],
+  waypoints: [createEoaStartingPoint({ address: ZERO_ADDRESS })],
 })
