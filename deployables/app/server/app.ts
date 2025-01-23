@@ -1,5 +1,5 @@
 import { createRequestHandler } from '@react-router/express'
-import express from 'express'
+import express, { type Application } from 'express'
 import 'react-router'
 
 declare module 'react-router' {
@@ -8,7 +8,7 @@ declare module 'react-router' {
   }
 }
 
-const app = express()
+const app: Application = express()
 
 app.use(
   createRequestHandler({
