@@ -10,7 +10,11 @@ import {
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
-import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import {
+  AccountType,
+  formatPrefixedAddress,
+  splitPrefixedAddress,
+} from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
@@ -53,12 +57,10 @@ describe('updateChainId', () => {
 
   describe('Waypoints', () => {
     describe('Starting point', () => {
-      it('updates the chain of the starting point prefixed address', () => {
+      it('does not update the starting waypoint of EOA accounts', () => {
         const route = createMockExecutionRoute({
           waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ chainId: Chain.ETH }),
-            ),
+            start: createMockStartingWaypoint(createMockEoaAccount()),
           }),
         })
 
@@ -66,9 +68,11 @@ describe('updateChainId', () => {
 
         const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
 
-        expect(getChainId(startingPoint.account.prefixedAddress)).toEqual(
-          Chain.GNO,
+        const [chainId] = splitPrefixedAddress(
+          startingPoint.account.prefixedAddress,
         )
+
+        expect(chainId).not.toBeDefined()
       })
 
       it('updates the chain property of SAFE starting points', () => {

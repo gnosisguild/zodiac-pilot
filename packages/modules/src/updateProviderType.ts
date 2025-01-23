@@ -10,10 +10,9 @@ export const updateProviderType = (
   providerType: ProviderType,
 ): ExecutionRoute => {
   const {
-    account: { address, prefixedAddress },
+    account: { address },
   } = getStartingWaypoint(route.waypoints)
   const waypoints = getWaypoints(route)
-  const chainId = getChainId(prefixedAddress)
 
   switch (providerType) {
     case ProviderType.InjectedWallet: {
@@ -22,7 +21,6 @@ export const updateProviderType = (
         providerType: ProviderType.InjectedWallet,
         waypoints: [
           createEoaWaypoint({
-            chainId,
             address,
           }),
           ...waypoints,
@@ -31,6 +29,8 @@ export const updateProviderType = (
     }
 
     case ProviderType.WalletConnect: {
+      const chainId = getChainId(route.avatar)
+
       return {
         ...route,
         providerType: ProviderType.WalletConnect,

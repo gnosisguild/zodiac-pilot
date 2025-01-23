@@ -40,7 +40,7 @@ describe('createBlankRoute', () => {
       expect(startingPoint.account).toHaveProperty('address', ZERO_ADDRESS)
       expect(startingPoint.account).toHaveProperty(
         'prefixedAddress',
-        formatPrefixedAddress(Chain.ETH, ZERO_ADDRESS),
+        formatPrefixedAddress(undefined, ZERO_ADDRESS),
       )
     })
   })

@@ -9,8 +9,9 @@ import {
   createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
+  randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { AccountType } from 'ser-kit'
+import { AccountType, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
@@ -65,7 +66,7 @@ describe('updateProviderType', () => {
       expect(startingPoint.account).toHaveProperty('address', address)
     })
 
-    it('keeps the chain of the current starting point', () => {
+    it('switches the starting point to an EOA without chain', () => {
       const route = createMockExecutionRoute({
         waypoints: createMockWaypoints({
           start: createMockStartingWaypoint(
@@ -81,9 +82,11 @@ describe('updateProviderType', () => {
 
       const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
 
-      expect(getChainId(startingPoint.account.prefixedAddress)).toEqual(
-        Chain.GNO,
+      const [chainId] = splitPrefixedAddress(
+        startingPoint.account.prefixedAddress,
       )
+
+      expect(chainId).not.toBeDefined()
     })
 
     it('keeps the other waypoints untouched', () => {
@@ -129,10 +132,7 @@ describe('updateProviderType', () => {
         }),
       })
 
-      const updatedRoute = updateProviderType(
-        route,
-        ProviderType.InjectedWallet,
-      )
+      const updatedRoute = updateProviderType(route, ProviderType.WalletConnect)
 
       const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
 
@@ -141,17 +141,13 @@ describe('updateProviderType', () => {
 
     it('keeps the chain of the current starting point', () => {
       const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ chainId: Chain.GNO }),
         waypoints: createMockWaypoints({
-          start: createMockStartingWaypoint(
-            createMockEoaAccount({ chainId: Chain.GNO }),
-          ),
+          start: createMockStartingWaypoint(createMockEoaAccount()),
         }),
       })
 
-      const updatedRoute = updateProviderType(
-        route,
-        ProviderType.InjectedWallet,
-      )
+      const updatedRoute = updateProviderType(route, ProviderType.WalletConnect)
 
       const startingPoint = getStartingWaypoint(updatedRoute.waypoints)
 
