@@ -10,7 +10,7 @@ jobs:
     if: github.event.deployment_status.state == 'success'
     defaults:
       run:
-        working-directory: ${{ contains(github.event.deployment_status.target_url,'zodiac-pilot-example') && './deployables/extension' || './deployables/app' }}
+        working-directory: ./deployables/app
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -24,17 +24,8 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
 
-      - name: Extension E2E
-        run: xvfb-run pnpm playwright test
-        if: ${{ contains(github.event.deployment_status.target_url,'zodiac-pilot-example')}}
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
-          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
-          PW_CHROMIUM_ATTACH_TO_OTHER: 1
-
       - name: Companion E2E
         run: xvfb-run pnpm playwright test
-        if: ${{ contains(github.event.deployment_status.target_url,'zodiac-pilot-companion')}}
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
