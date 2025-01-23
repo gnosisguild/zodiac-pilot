@@ -466,6 +466,12 @@ describe('Edit route', () => {
 
           const roleId = randomAddress()
 
+          await waitFor(async () =>
+            expect(
+              await screen.findByRole('textbox', { name: 'Role ID' }),
+            ).not.toBeDisabled(),
+          )
+
           await userEvent.type(
             await screen.findByRole('textbox', { name: 'Role ID' }),
             roleId,
@@ -583,6 +589,12 @@ describe('Edit route', () => {
           })
 
           await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+
+          await waitFor(async () =>
+            expect(
+              await screen.findByRole('textbox', { name: 'Role Key' }),
+            ).not.toBeDisabled(),
+          )
 
           await userEvent.type(
             await screen.findByRole('textbox', { name: 'Role Key' }),
