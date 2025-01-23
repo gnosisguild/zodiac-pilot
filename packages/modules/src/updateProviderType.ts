@@ -6,6 +6,7 @@ import {
 } from '@zodiac/schema'
 import {
   AccountType,
+  ConnectionType,
   formatPrefixedAddress,
   type PrefixedAddress,
 } from 'ser-kit'
@@ -62,19 +63,18 @@ export const updateProviderType = (
 }
 
 const updateWaypoint = (
-  waypoint: Waypoint,
+  { account, connection }: Waypoint,
   from: PrefixedAddress,
 ): Waypoint => {
-  if (waypoint.account.type === AccountType.ROLES) {
-    return {
-      ...waypoint,
+  if (account.type === AccountType.ROLES) {
+    return { account, connection: { ...connection, from } }
+  }
 
-      connection: {
-        ...waypoint.connection,
-        from,
-      },
+  if (account.type === AccountType.SAFE) {
+    if (connection.type === ConnectionType.OWNS) {
+      return { account, connection: { ...connection, from } }
     }
   }
 
-  return waypoint
+  return { account, connection }
 }

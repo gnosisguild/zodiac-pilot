@@ -1,6 +1,7 @@
 import { Chain, getChainId } from '@zodiac/chains'
 import { ProviderType } from '@zodiac/schema'
 import {
+  createMockEndWaypoint,
   createMockEoaAccount,
   createMockExecutionRoute,
   createMockRoleWaypoint,
@@ -16,6 +17,7 @@ import {
   splitPrefixedAddress,
 } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
+import { createOwnsConnection } from './createOwnsConnection'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
 import { updateProviderType } from './updateProviderType'
@@ -137,6 +139,31 @@ describe('updateProviderType', () => {
         formatPrefixedAddress(undefined, safeAccount.address),
       )
     })
+
+    it('updates the safe endpoint to use the EOA address when no roles are in between', () => {
+      const safeAccount = createMockSafeAccount()
+
+      const route = createMockExecutionRoute({
+        waypoints: createMockWaypoints({
+          start: createMockStartingWaypoint(safeAccount),
+          end: createMockEndWaypoint({
+            connection: createOwnsConnection(safeAccount.prefixedAddress),
+          }),
+        }),
+      })
+
+      const updatedRoute = updateProviderType(
+        route,
+        ProviderType.InjectedWallet,
+      )
+
+      const [endPoint] = getWaypoints(updatedRoute)
+
+      expect(endPoint.connection).toHaveProperty(
+        'from',
+        formatPrefixedAddress(undefined, safeAccount.address),
+      )
+    })
   })
 
   describe('EOA -> SAFE', () => {
@@ -224,6 +251,29 @@ describe('updateProviderType', () => {
       const [rolesWaypoint] = getWaypoints(updatedRoute)
 
       expect(rolesWaypoint.connection).toHaveProperty(
+        'from',
+        formatPrefixedAddress(Chain.GNO, eoaAccount.address),
+      )
+    })
+
+    it('updates the safe endpoint to use an address with a chain when no roles are in between', () => {
+      const eoaAccount = createMockEoaAccount()
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ chainId: Chain.GNO }),
+        waypoints: createMockWaypoints({
+          start: createMockStartingWaypoint(eoaAccount),
+          end: createMockEndWaypoint({
+            connection: createOwnsConnection(eoaAccount.prefixedAddress),
+          }),
+        }),
+      })
+
+      const updatedRoute = updateProviderType(route, ProviderType.WalletConnect)
+
+      const [endPoint] = getWaypoints(updatedRoute)
+
+      expect(endPoint.connection).toHaveProperty(
         'from',
         formatPrefixedAddress(Chain.GNO, eoaAccount.address),
       )
