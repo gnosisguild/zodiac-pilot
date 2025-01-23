@@ -26,22 +26,8 @@ export default defineConfig(({ isSsrBuild, command }) => ({
     'process.env': {},
   },
   ssr: {
-    target: 'webworker',
-    resolve: {
-      conditions: ['workerd', 'browser'],
-    },
-    optimizeDeps: {
-      include: [
-        'react',
-        'react/jsx-runtime',
-        'react/jsx-dev-runtime',
-        'react-dom',
-        'react-dom/server',
-        'react-router',
-      ],
-    },
-    noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
-    // noExternal: command === 'build' ? true : undefined,
+    // noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
+    noExternal: command === 'build' ? true : undefined,
   },
   plugins: [
     reactRouter(),
