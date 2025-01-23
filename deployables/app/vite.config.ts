@@ -1,5 +1,4 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import autoprefixer from 'autoprefixer'
 import tailwindcss from 'tailwindcss'
@@ -10,7 +9,7 @@ export default defineConfig(({ isSsrBuild }) => ({
   build: {
     rollupOptions: isSsrBuild
       ? {
-          input: './workers/app.ts',
+          input: './server/app.ts',
         }
       : undefined,
     sourcemap: true,
@@ -41,10 +40,10 @@ export default defineConfig(({ isSsrBuild }) => ({
         'react-router',
       ],
     },
-    noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
+    // noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
+    noExternal: true,
   },
   plugins: [
-    cloudflareDevProxy(),
     reactRouter(),
     tsconfigPaths(),
     sentryVitePlugin({
