@@ -218,6 +218,9 @@ importers:
       eslint:
         specifier: 9.18.0
         version: 9.18.0(jiti@2.4.1)
+      globals:
+        specifier: 15.14.0
+        version: 15.14.0
       jsdom:
         specifier: 26.0.0
         version: 26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)

@@ -9,7 +9,7 @@ export default tsEslint.config(
   ...tsEslint.configs.recommended,
   jsxA11y.flatConfigs.recommended,
 
-  { files: ['**/*.{ts,tsx}'] },
+  { files: ['**/*.{ts,tsx,js}'] },
 
   {
     plugins: {
