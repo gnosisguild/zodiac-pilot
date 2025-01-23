@@ -41,7 +41,7 @@ export const Input = ({
         <InputContext value={{ clearLabel, dropdownLabel }}>
           <div
             className={classNames(
-              'flex items-center rounded-md border border-zinc-300 bg-zinc-100 shadow-2xs transition-all transition-opacity dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500',
+              'shadow-2xs flex items-center rounded-md border border-zinc-300 bg-zinc-100 transition-all transition-opacity dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:hover:border-zinc-500',
               disabled && 'opacity-50',
             )}
           >

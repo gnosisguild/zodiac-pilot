@@ -43,7 +43,7 @@ export const AddressInput = ({
         value={value ?? ''}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
-        className="w-full border-none bg-transparent px-4 py-2 font-mono text-sm outline-hidden"
+        className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
       />
     )}
   </Input>

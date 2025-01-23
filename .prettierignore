@@ -1,5 +1,6 @@
 playwright-report
 .react-router
+.vercel
 
 *.db
 *.zip
