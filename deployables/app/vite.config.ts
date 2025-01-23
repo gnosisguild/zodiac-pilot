@@ -14,9 +14,6 @@ export default defineConfig(({ isSsrBuild, command }) => ({
       : undefined,
     sourcemap: true,
   },
-  server: {
-    port: 3040,
-  },
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],
@@ -26,8 +23,8 @@ export default defineConfig(({ isSsrBuild, command }) => ({
     'process.env': {},
   },
   ssr: {
-    // noExternal: ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
-    noExternal: command === 'build' ? true : undefined,
+    noExternal:
+      command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
     reactRouter(),

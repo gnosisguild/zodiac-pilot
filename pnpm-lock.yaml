@@ -209,6 +209,9 @@ importers:
       autoprefixer:
         specifier: 10.4.20
         version: 10.4.20(postcss@8.5.1)
+      cross-env:
+        specifier: 7.0.3
+        version: 7.0.3
       dotenv:
         specifier: 16.4.7
         version: 16.4.7
