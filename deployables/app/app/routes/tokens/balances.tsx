@@ -1,6 +1,9 @@
 import { Page } from '@/components'
 import { formatUnits } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
+import type { Route } from './+types/balances'
+
+export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
   return (

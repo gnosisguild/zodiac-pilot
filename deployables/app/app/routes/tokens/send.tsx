@@ -5,7 +5,10 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { parseEther } from 'viem'
 import { useSendTransaction } from 'wagmi'
+import type { Route } from './+types/send'
 import { TokenValueInput } from './TokenValueInput'
+
+export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Send tokens' }]
 
 const Send = () => {
   const { sendTransaction, isPending, error, isSuccess } = useSendTransaction()
