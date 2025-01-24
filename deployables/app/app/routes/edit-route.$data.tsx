@@ -185,20 +185,20 @@ const EditRoute = ({
   const { state } = useNavigation()
 
   return (
-    <div className="flex h-full flex-col gap-8">
-      <main
-        role="main"
-        className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <ZodiacOsPlain className="h-6 lg:h-8" />
-            <PilotType className="h-8 lg:h-10 dark:invert" />
-          </div>
-
-          <h1 className="my-8 text-3xl font-extralight">Route configuration</h1>
+    <div className="flex h-full flex-col">
+      <header className="mx-auto my-16 flex w-3/4 items-center justify-between gap-4 md:w-1/2 2xl:w-1/4">
+        <div className="flex items-center gap-4">
+          <ZodiacOsPlain className="h-6 lg:h-8" />
+          <PilotType className="h-8 lg:h-10 dark:invert" />
         </div>
 
+        <h1 className="text-3xl font-extralight">Route configuration</h1>
+      </header>
+
+      <main
+        role="main"
+        className="mx-auto flex w-3/4 flex-1 flex-col gap-4 md:w-1/2 2xl:w-1/4"
+      >
         <Form method="POST" className="flex flex-col gap-4">
           <TextInput label="Label" name="label" defaultValue={label} />
 
@@ -301,7 +301,11 @@ const EditRoute = ({
         </Form>
       </main>
 
-      {isDev && <DebugRouteData />}
+      {isDev && (
+        <div className="mt-16 flex overflow-hidden">
+          <DebugRouteData />
+        </div>
+      )}
     </div>
   )
 }
