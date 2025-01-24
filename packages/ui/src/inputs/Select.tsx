@@ -23,7 +23,7 @@ export const selectStyles = <
     'bg-zinc-100/80 dark:bg-zinc-800/80 backdrop-blur-xs border border-zinc-300/50 dark:border-zinc-600/50 rounded-md mt-1 shadow-lg text-sm',
   placeholder: () => 'text-zinc-500 dark:text-zinc-400 py-2',
   option: () =>
-    'text-sm hover:bg-zinc-200 dark:hover:bg-zinc-700 px-4 cursor-pointer',
+    'text-sm hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50 px-4 cursor-pointer',
   indicatorsContainer: () => 'shrink-0 flex gap-1 mr-2',
   indicatorSeparator: () => 'hidden',
   noOptionsMessage: () => 'p-4 italic opacity-75',

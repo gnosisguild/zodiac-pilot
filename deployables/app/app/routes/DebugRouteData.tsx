@@ -21,9 +21,9 @@ export const DebugRouteData = () => {
   )
 
   return (
-    <div className="flex flex-1 flex-col gap-4 overflow-hidden bg-slate-800 p-4 text-sm">
-      <h2 className="uppercase opacity-80">Raw route data</h2>
-      <pre className="overflow-y-auto">
+    <div className="flex flex-1 flex-col gap-4 overflow-hidden bg-slate-800 pt-4 text-sm">
+      <h2 className="px-4 uppercase opacity-80">Raw route data</h2>
+      <pre className="overflow-y-auto px-4 pb-4">
         <code dangerouslySetInnerHTML={{ __html: json.value }} />
       </pre>
     </div>
