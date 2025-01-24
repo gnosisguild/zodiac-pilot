@@ -64,7 +64,6 @@ export const meta: Route.MetaFunction = () => [
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const route = parseRouteData(params.data)
-
   const chainId = getChainId(route.avatar)
 
   return {
@@ -73,6 +72,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     avatar: route.avatar,
     providerType: route.providerType,
     waypoints: route.waypoints,
+    isDev: process.env.NODE_ENV === 'development',
   }
 }
 
@@ -176,7 +176,7 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints },
+  loaderData: { chainId, label, avatar, waypoints, isDev },
   actionData,
 }: Route.ComponentProps) => {
   const submit = useSubmit()
@@ -298,7 +298,7 @@ const EditRoute = ({
         </Form>
       </main>
 
-      {process.env.NODE_ENV !== 'production' && <DebugRouteData />}
+      {isDev && <DebugRouteData />}
     </div>
   )
 }

@@ -15,7 +15,7 @@ export default defineConfig(({ isSsrBuild, command }) => ({
   },
 
   define: {
-    'process.env': {},
+    'process.env': { NODE_ENV: process.env.NODE_ENV },
   },
   ssr: {
     noExternal:
