@@ -1,4 +1,5 @@
 export { AvatarInput } from './AvatarInput'
 export { ChainSelect } from './ChainSelect'
+export { Page } from './Page'
 export * from './wallet'
 export { ZodiacMod } from './ZodiacMod'

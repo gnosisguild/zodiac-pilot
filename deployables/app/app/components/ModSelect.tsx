@@ -1,8 +1,8 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { Blockie, Select, type SelectProps } from '@zodiac/ui'
-import { getAddress } from 'ethers'
 import type { PropsWithChildren } from 'react'
+import { getAddress } from 'viem'
 
 export const NO_MODULE_OPTION = { value: ZERO_ADDRESS, label: '' }
 

@@ -13,7 +13,7 @@ export const Account = ({ children, type }: AccountProps) => {
   return (
     <AddressInput
       readOnly
-      value={address}
+      value={address ?? undefined}
       label="Pilot Account"
       description={
         type === ProviderType.InjectedWallet ? 'MetaMask' : 'Wallet Connect'

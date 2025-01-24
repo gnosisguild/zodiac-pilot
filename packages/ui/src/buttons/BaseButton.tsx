@@ -7,7 +7,7 @@ type SharedButtonProps = {
   fluid?: boolean
   iconOnly?: boolean
   icon?: LucideIcon
-  size?: 'small' | 'base'
+  size?: 'tiny' | 'small' | 'base'
   submit?: boolean
   intent?: string
 }
@@ -34,7 +34,7 @@ export const BaseButton = ({
     name={intent != null ? 'intent' : props.name}
     value={intent != null ? intent : props.value}
     className={classNames(
-      'outline-hidden flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
+      'outline-hidden flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,
@@ -68,7 +68,7 @@ export const BaseLinkButton = ({
     target={openInNewWindow ? '_blank' : props.target}
     rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
     className={classNames(
-      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all',
+      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,
@@ -86,10 +86,13 @@ const getPadding = ({
 }: Pick<SharedButtonProps, 'iconOnly' | 'size'>) => {
   switch (size) {
     case 'base': {
-      return iconOnly ? 'p-2' : 'px-4 py-2'
+      return classNames('text-sm', iconOnly ? 'p-2' : 'px-4 py-2')
     }
     case 'small': {
-      return iconOnly ? 'p-1' : 'px-2 py-1'
+      return classNames('text-sm', iconOnly ? 'p-1' : 'px-2 py-1')
+    }
+    case 'tiny': {
+      return classNames(iconOnly ? 'p-1' : 'px-2 py-1 text-xs')
     }
   }
 }

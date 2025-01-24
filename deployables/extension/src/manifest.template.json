@@ -34,7 +34,12 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "exclude_globs": ["<COMPANION_APP_URL>/*", "about:*", "chrome:*"],
+      "exclude_globs": [
+        "<COMPANION_APP_URL>/edit-route/*",
+        "<COMPANION_APP_URL>/connect",
+        "about:*",
+        "chrome:*"
+      ],
       "run_at": "document_start",
       "js": ["build/connect/contentScripts/dApp.js"]
     },
