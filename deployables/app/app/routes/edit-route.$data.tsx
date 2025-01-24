@@ -186,7 +186,10 @@ const EditRoute = ({
 
   return (
     <div className="flex h-full flex-col gap-8">
-      <main className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4">
+      <main
+        role="main"
+        className="mx-auto flex w-3/4 flex-col gap-4 md:w-1/2 2xl:w-1/4"
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <ZodiacOsPlain className="h-6 lg:h-8" />
