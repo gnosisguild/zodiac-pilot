@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react'
 export const Page = ({ children }: PropsWithChildren) => {
   return (
     <div className="bg-linear-to-b flex flex-1 flex-shrink-0 from-white to-zinc-50 dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900">
-      <div className="mx-auto flex w-3/4 flex-col overflow-y-auto md:w-1/2 2xl:w-1/4">
+      <div className="mx-auto flex w-3/4 flex-col overflow-y-auto md:w-1/2 2xl:w-2/5">
         {children}
       </div>
     </div>
