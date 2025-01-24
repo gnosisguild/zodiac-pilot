@@ -6,10 +6,11 @@ import { type ComposableInputProps, Input } from './Input'
 
 type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
-  'id' | 'type' | 'className' | 'value'
+  'id' | 'type' | 'className' | 'value' | 'defaultValue'
 > &
   Omit<ComposableInputProps, 'before' | 'after'> & {
-    value?: HexAddress | null
+    value?: HexAddress
+    defaultValue?: HexAddress
     action?: ReactNode
   }
 
@@ -20,6 +21,7 @@ export const AddressInput = ({
   action,
   disabled,
   value,
+  defaultValue,
   placeholder = ZERO_ADDRESS,
   ...props
 }: AddressInputProps) => (
@@ -31,7 +33,7 @@ export const AddressInput = ({
     after={action && <div className="mr-2">{action}</div>}
     before={
       <Blockie
-        address={value || ZERO_ADDRESS}
+        address={value || defaultValue || ZERO_ADDRESS}
         className="ml-4 size-5 shrink-0"
       />
     }
@@ -43,7 +45,8 @@ export const AddressInput = ({
         pattern="0x\w+"
         id={inputId}
         disabled={disabled}
-        defaultValue={value ?? ''}
+        value={value}
+        defaultValue={defaultValue}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
         placeholder={placeholder}
