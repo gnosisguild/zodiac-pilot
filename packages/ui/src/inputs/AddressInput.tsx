@@ -8,7 +8,7 @@ type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
   'id' | 'type' | 'className' | 'value'
 > &
-  ComposableInputProps & {
+  Omit<ComposableInputProps, 'before' | 'after'> & {
     value?: HexAddress | null
     action?: ReactNode
   }
@@ -20,6 +20,7 @@ export const AddressInput = ({
   action,
   disabled,
   value,
+  placeholder = ZERO_ADDRESS,
   ...props
 }: AddressInputProps) => (
   <Input
@@ -43,6 +44,7 @@ export const AddressInput = ({
         defaultValue={value ?? ''}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
+        placeholder={placeholder}
         className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
       />
     )}

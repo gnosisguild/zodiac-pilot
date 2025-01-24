@@ -2,22 +2,23 @@ import type { ComponentPropsWithoutRef } from 'react'
 import { BareInput } from './BareInput'
 import { type ComposableInputProps, Input } from './Input'
 
-type TextInputProps = Omit<
+export type NumberInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
   'id' | 'type' | 'className'
 > &
   ComposableInputProps
 
-export const TextInput = ({
+export const NumberInput = ({
   label,
   description,
   error,
   disabled,
   after,
   before,
+  placeholder = '0',
 
   ...props
-}: TextInputProps) => (
+}: NumberInputProps) => (
   <Input
     label={label}
     description={description}
@@ -29,11 +30,12 @@ export const TextInput = ({
     {({ inputId, descriptionId }) => (
       <BareInput
         {...props}
-        type="text"
+        type="number"
         id={inputId}
         disabled={disabled}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
+        placeholder={placeholder}
       />
     )}
   </Input>
