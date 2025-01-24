@@ -5,6 +5,6 @@ export const BareInput = (
 ) => (
   <input
     {...props}
-    className="outline-hidden w-full border-none bg-transparent px-4 py-2 text-sm"
+    className="outline-hidden w-full appearance-none border-none bg-transparent px-4 py-2 text-sm"
   />
 )
