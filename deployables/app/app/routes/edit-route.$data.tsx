@@ -3,6 +3,7 @@ import {
   ChainSelect,
   ConnectWallet,
   ConnectWalletFallback,
+  Page,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -42,11 +43,9 @@ import {
 import {
   Error,
   Form,
-  PilotType,
   PrimaryButton,
   SecondaryButton,
   TextInput,
-  ZodiacOsPlain,
 } from '@zodiac/ui'
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { useLoaderData, useNavigation, useSubmit } from 'react-router'
@@ -186,128 +185,120 @@ const EditRoute = ({
   const { state } = useNavigation()
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="mx-auto my-16 flex w-3/4 items-center justify-between gap-4 md:w-1/2 2xl:w-1/4">
-        <div className="flex items-center gap-4">
-          <ZodiacOsPlain className="h-6 lg:h-8" />
-          <PilotType className="h-8 lg:h-10 dark:invert" />
-        </div>
+    <>
+      <Page>
+        <Page.Header>Route configuration</Page.Header>
 
-        <h1 className="text-3xl font-extralight">Route configuration</h1>
-      </header>
+        <Page.Main>
+          <Form>
+            <TextInput label="Label" name="label" defaultValue={label} />
 
-      <main
-        role="main"
-        className="mx-auto flex w-3/4 flex-1 flex-col gap-4 md:w-1/2 2xl:w-1/4"
-      >
-        <Form>
-          <TextInput label="Label" name="label" defaultValue={label} />
+            <Suspense fallback={<ConnectWalletFallback />}>
+              <WalletProvider fallback={<ConnectWalletFallback />}>
+                <ConnectWallet
+                  chainId={optimisticRoute.chainId}
+                  pilotAddress={optimisticRoute.pilotAddress}
+                  providerType={optimisticRoute.providerType}
+                  onConnect={({ account, chainId, providerType }) => {
+                    submit(
+                      formData({
+                        intent: Intent.ConnectWallet,
+                        account,
+                        chainId,
+                        providerType,
+                      }),
+                      { method: 'POST' },
+                    )
+                  }}
+                  onDisconnect={() => {
+                    submit(formData({ intent: Intent.DisconnectWallet }), {
+                      method: 'POST',
+                    })
+                  }}
+                />
+              </WalletProvider>
+            </Suspense>
 
-          <Suspense fallback={<ConnectWalletFallback />}>
-            <WalletProvider fallback={<ConnectWalletFallback />}>
-              <ConnectWallet
-                chainId={optimisticRoute.chainId}
-                pilotAddress={optimisticRoute.pilotAddress}
-                providerType={optimisticRoute.providerType}
-                onConnect={({ account, chainId, providerType }) => {
-                  submit(
-                    formData({
-                      intent: Intent.ConnectWallet,
-                      account,
-                      chainId,
-                      providerType,
-                    }),
-                    { method: 'POST' },
-                  )
-                }}
-                onDisconnect={() => {
-                  submit(formData({ intent: Intent.DisconnectWallet }), {
+            <ChainSelect
+              value={chainId}
+              onChange={(chainId) => {
+                submit(formData({ intent: Intent.UpdateChain, chainId }), {
+                  method: 'POST',
+                })
+              }}
+            />
+
+            <AvatarInput
+              value={avatar}
+              waypoints={waypoints}
+              onChange={(avatar) => {
+                if (avatar != null) {
+                  submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
                     method: 'POST',
                   })
-                }}
-              />
-            </WalletProvider>
-          </Suspense>
+                } else {
+                  submit(formData({ intent: Intent.RemoveAvatar }), {
+                    method: 'POST',
+                  })
+                }
+              }}
+            />
 
-          <ChainSelect
-            value={chainId}
-            onChange={(chainId) => {
-              submit(formData({ intent: Intent.UpdateChain, chainId }), {
-                method: 'POST',
-              })
-            }}
-          />
+            <ZodiacMod
+              avatar={avatar}
+              waypoints={waypoints}
+              onSelect={(module) => {
+                submit(
+                  formData({
+                    intent: Intent.UpdateModule,
+                    module: JSON.stringify(module),
+                  }),
+                  {
+                    method: 'POST',
+                  },
+                )
+              }}
+            />
 
-          <AvatarInput
-            value={avatar}
-            waypoints={waypoints}
-            onChange={(avatar) => {
-              if (avatar != null) {
-                submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
-                  method: 'POST',
-                })
-              } else {
-                submit(formData({ intent: Intent.RemoveAvatar }), {
-                  method: 'POST',
-                })
-              }
-            }}
-          />
+            <Form.Actions>
+              <div className="text-balance text-xs opacity-75">
+                The Pilot extension must be open to save.
+              </div>
 
-          <ZodiacMod
-            avatar={avatar}
-            waypoints={waypoints}
-            onSelect={(module) => {
-              submit(
-                formData({
-                  intent: Intent.UpdateModule,
-                  module: JSON.stringify(module),
-                }),
-                {
-                  method: 'POST',
-                },
-              )
-            }}
-          />
+              <div className="flex gap-2">
+                <SecondaryButton
+                  submit
+                  intent={Intent.DryRun}
+                  disabled={state !== 'idle'}
+                >
+                  Test route
+                </SecondaryButton>
 
-          <Form.Actions>
-            <div className="text-balance text-xs opacity-75">
-              The Pilot extension must be open to save.
-            </div>
+                <PrimaryButton
+                  submit
+                  intent={Intent.Save}
+                  disabled={state !== 'idle'}
+                >
+                  Save
+                </PrimaryButton>
+              </div>
+            </Form.Actions>
 
-            <div className="flex gap-2">
-              <SecondaryButton
-                submit
-                intent={Intent.DryRun}
-                disabled={state !== 'idle'}
-              >
-                Test route
-              </SecondaryButton>
-
-              <PrimaryButton
-                submit
-                intent={Intent.Save}
-                disabled={state !== 'idle'}
-              >
-                Save
-              </PrimaryButton>
-            </div>
-          </Form.Actions>
-
-          {actionData != null && actionData.error === true && (
-            <div className="mt-8">
-              <Error title="Dry run failed">{actionData.message}</Error>
-            </div>
-          )}
-        </Form>
-      </main>
+            {actionData != null && actionData.error === true && (
+              <div className="mt-8">
+                <Error title="Dry run failed">{actionData.message}</Error>
+              </div>
+            )}
+          </Form>
+        </Page.Main>
+      </Page>
 
       {isDev && (
-        <div className="mt-16 flex overflow-hidden">
+        <div className="flex overflow-hidden">
           <DebugRouteData />
         </div>
       )}
-    </div>
+    </>
   )
 }
 
