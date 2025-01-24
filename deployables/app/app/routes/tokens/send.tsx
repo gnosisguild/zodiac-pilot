@@ -1,11 +1,11 @@
 import { getHexString, getString } from '@zodiac/form-data'
 import {
   AddressInput,
+  Form,
   PilotType,
   PrimaryButton,
   ZodiacOsPlain,
 } from '@zodiac/ui'
-import { Form } from 'react-router'
 import { parseEther } from 'viem'
 import { useSendTransaction } from 'wagmi'
 import { TokenValueInput } from './TokenValueInput'
@@ -29,8 +29,6 @@ const Send = () => {
         className="mx-auto flex w-3/4 flex-1 flex-col gap-4 md:w-1/2 2xl:w-1/4"
       >
         <Form
-          method="POST"
-          className="flex flex-col gap-4"
           onSubmit={(ev) => {
             const data = new FormData(ev.currentTarget)
             sendTransaction({
@@ -46,9 +44,11 @@ const Send = () => {
 
           <TokenValueInput required label="Amount" name="amount" />
 
-          <PrimaryButton submit disabled={isPending}>
-            Send
-          </PrimaryButton>
+          <Form.Actions>
+            <PrimaryButton fluid submit disabled={isPending}>
+              Send
+            </PrimaryButton>
+          </Form.Actions>
         </Form>
       </main>
     </div>

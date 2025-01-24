@@ -41,6 +41,7 @@ import {
 } from '@zodiac/schema'
 import {
   Error,
+  Form,
   PilotType,
   PrimaryButton,
   SecondaryButton,
@@ -48,7 +49,7 @@ import {
   ZodiacOsPlain,
 } from '@zodiac/ui'
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Form, useLoaderData, useNavigation, useSubmit } from 'react-router'
+import { useLoaderData, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
@@ -199,7 +200,7 @@ const EditRoute = ({
         role="main"
         className="mx-auto flex w-3/4 flex-1 flex-col gap-4 md:w-1/2 2xl:w-1/4"
       >
-        <Form method="POST" className="flex flex-col gap-4">
+        <Form>
           <TextInput label="Label" name="label" defaultValue={label} />
 
           <Suspense fallback={<ConnectWalletFallback />}>
@@ -269,7 +270,7 @@ const EditRoute = ({
             }}
           />
 
-          <div className="mt-8 flex items-center justify-between gap-8">
+          <Form.Actions>
             <div className="text-balance text-xs opacity-75">
               The Pilot extension must be open to save.
             </div>
@@ -291,7 +292,7 @@ const EditRoute = ({
                 Save
               </PrimaryButton>
             </div>
-          </div>
+          </Form.Actions>
 
           {actionData != null && actionData.error === true && (
             <div className="mt-8">

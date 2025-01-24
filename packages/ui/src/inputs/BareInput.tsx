@@ -5,8 +5,6 @@ export const BareInput = (
 ) => (
   <input
     {...props}
-    {...props}
-    type="text"
     className="outline-hidden w-full border-none bg-transparent px-4 py-2 text-sm"
   />
 )

@@ -20,17 +20,25 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
       {...props}
       value={amount}
       onChange={(ev) => setAmount(ev.target.value)}
+      min={0}
+      max={
+        balance == null
+          ? undefined
+          : parseFloat(formatUnits(balance.value, balance.decimals))
+      }
       after={
-        <GhostButton
-          size="tiny"
-          disabled={balance == null}
-          onClick={() => {
-            invariant(balance != null, 'Balance is not loaded')
-            setAmount(formatUnits(balance.value, balance.decimals))
-          }}
-        >
-          Max
-        </GhostButton>
+        <div className="mr-1">
+          <GhostButton
+            size="tiny"
+            disabled={balance == null}
+            onClick={() => {
+              invariant(balance != null, 'Balance is not loaded')
+              setAmount(formatUnits(balance.value, balance.decimals))
+            }}
+          >
+            Max
+          </GhostButton>
+        </div>
       }
     />
   )

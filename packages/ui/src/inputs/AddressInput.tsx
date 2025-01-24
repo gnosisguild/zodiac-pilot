@@ -39,6 +39,8 @@ export const AddressInput = ({
     {({ inputId, descriptionId }) => (
       <input
         {...props}
+        type="text"
+        pattern="0x\w+"
         id={inputId}
         disabled={disabled}
         defaultValue={value ?? ''}
