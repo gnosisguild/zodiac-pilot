@@ -34,7 +34,7 @@ export const BaseButton = ({
     name={intent != null ? 'intent' : props.name}
     value={intent != null ? intent : props.value}
     className={classNames(
-      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
+      'outline-hidden flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border text-sm transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,
