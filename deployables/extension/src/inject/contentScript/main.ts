@@ -17,9 +17,14 @@ import { probeChainId } from './probeChainId'
 const alreadyInjected =
   '__zodiacPilotInjected' in document.documentElement.dataset
 
+const isCompanionConnect =
+  window.location.origin === getCompanionAppUrl() &&
+  (window.location.pathname.startsWith('/connect') ||
+    window.location.pathname.startsWith('/edit-route/'))
+
 if (
   !alreadyInjected &&
-  window.location.origin !== getCompanionAppUrl() &&
+  !isCompanionConnect &&
   isValidTab(window.location.href)
 ) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'

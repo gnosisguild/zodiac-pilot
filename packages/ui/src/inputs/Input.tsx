@@ -19,10 +19,7 @@ type InputProps = {
   children: (props: LabeledRenderProps) => ReactNode
 } & InputContextOptions
 
-export type ComposableInputProps = Omit<
-  InputProps,
-  'children' | 'after' | 'before'
->
+export type ComposableInputProps = Omit<InputProps, 'children'>
 
 export const Input = ({
   children,

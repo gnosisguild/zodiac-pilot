@@ -1,6 +1,7 @@
 import { lazy, type ComponentType } from 'react'
 import type { ConnectWalletProps } from './ConnectWallet'
 import type { WalletProviderProps } from './WalletProvider'
+export { getWagmiConfig } from './WalletProvider'
 
 export const ConnectWallet: ComponentType<ConnectWalletProps> = lazy(
   async () => {

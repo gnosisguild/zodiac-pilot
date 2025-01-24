@@ -3,10 +3,10 @@ import { getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getPilotAddress } from '@zodiac/modules'
 import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
-import { getAddress } from 'ethers'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
 import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { getAddress } from 'viem'
 
 type Props = {
   value: PrefixedAddress

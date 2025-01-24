@@ -12,6 +12,8 @@ export const TextInput = ({
   description,
   error,
   disabled,
+  after,
+  before,
 
   ...props
 }: TextInputProps) => (
@@ -20,6 +22,8 @@ export const TextInput = ({
     description={description}
     error={error}
     disabled={disabled}
+    before={before}
+    after={after}
   >
     {({ inputId, descriptionId }) => (
       <input

@@ -40,7 +40,7 @@ export const AddressInput = ({
         {...props}
         id={inputId}
         disabled={disabled}
-        value={value ?? ''}
+        defaultValue={value ?? ''}
         aria-describedby={descriptionId}
         aria-errormessage={error ?? undefined}
         className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"

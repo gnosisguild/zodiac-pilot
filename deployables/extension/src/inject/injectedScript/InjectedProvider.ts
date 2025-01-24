@@ -84,10 +84,7 @@ export class InjectedProvider extends EventEmitter {
             InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE &&
           message.requestId == requestId
         ) {
-          console.debug(
-            'Received response from connected wallet',
-            message.response,
-          )
+          console.debug('Received response from Pilot', message.response)
           window.removeEventListener('message', handleMessage)
           resolve(message.response)
         }
