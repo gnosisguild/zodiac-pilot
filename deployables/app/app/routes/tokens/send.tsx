@@ -7,12 +7,21 @@ import {
   PrimaryButton,
   ZodiacOsPlain,
 } from '@zodiac/ui'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { parseEther } from 'viem'
 import { useSendTransaction } from 'wagmi'
 import { TokenValueInput } from './TokenValueInput'
 
 const Send = () => {
-  const { sendTransaction, isPending, error } = useSendTransaction()
+  const { sendTransaction, isPending, error, isSuccess } = useSendTransaction()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('../balances')
+    }
+  }, [isSuccess, navigate])
 
   return (
     <div className="flex h-full flex-col overflow-y-auto pb-16">
@@ -47,7 +56,7 @@ const Send = () => {
 
           <Form.Actions>
             <PrimaryButton fluid submit disabled={isPending}>
-              Send
+              {isPending ? 'Sending...' : 'Send'}
             </PrimaryButton>
           </Form.Actions>
 
