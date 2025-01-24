@@ -20,6 +20,7 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
       {...props}
       value={amount}
       onChange={(ev) => setAmount(ev.target.value)}
+      step="any"
       min={0}
       max={
         balance == null
