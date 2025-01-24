@@ -24,7 +24,7 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
       max={
         balance == null
           ? undefined
-          : parseFloat(formatUnits(balance.value, balance.decimals))
+          : formatUnits(balance.value, balance.decimals)
       }
       after={
         <div className="mr-1">
