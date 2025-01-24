@@ -76,6 +76,7 @@ export const ZodiacMod = ({
       <ModSelect
         isMulti={false}
         label="Zodiac Mod"
+        dropdownLabel="Select a zodiac mod"
         options={[
           ...(pilotIsOwner || pilotIsDelegate ? [NO_MODULE_OPTION] : []),
           ...modules.map((mod) => ({
