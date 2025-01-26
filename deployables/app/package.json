@@ -61,7 +61,7 @@
     "autoprefixer": "10.4.20",
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
-    "eslint": "9.18.0",
+    "eslint": "9.19.0",
     "globals": "15.14.0",
     "jsdom": "26.0.0",
     "postcss": "8.5.1",
