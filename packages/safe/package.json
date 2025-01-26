@@ -23,6 +23,6 @@
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.18.0"
+    "eslint": "9.19.0"
   }
 }

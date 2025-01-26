@@ -50,7 +50,7 @@
     "dotenv": "16.4.7",
     "esbuild": "0.24.2",
     "esbuild-style-plugin": "1.6.3",
-    "eslint": "9.18.0",
+    "eslint": "9.19.0",
     "ethers": "6.13.5",
     "events": "3.3.0",
     "globals": "15.14.0",
