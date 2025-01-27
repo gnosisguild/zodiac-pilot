@@ -33,8 +33,11 @@ export async function dryRun(
 
   const rolesWaypoint = getRolesWaypoint(route)
 
+  if (rolesWaypoint == null) {
+    return { error: false }
+  }
+
   if (
-    rolesWaypoint != null &&
     !(await isSmartContractAddress(rolesWaypoint.account.address, provider))
   ) {
     return { error: true, message: 'Module address is not a smart contract.' }
@@ -74,10 +77,7 @@ export async function dryRun(
       return { error: true, message: 'Unknown dry run error.' }
     }
 
-    if (
-      rolesWaypoint == null ||
-      rolesWaypoint.account.type !== AccountType.ROLES
-    ) {
+    if (rolesWaypoint.account.type !== AccountType.ROLES) {
       return { error: true, message: decodeGenericError(error) }
     }
     // For the Roles mod, we actually expect the dry run to fail with TargetAddressNotAllowed()

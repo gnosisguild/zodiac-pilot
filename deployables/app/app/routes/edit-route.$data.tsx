@@ -45,6 +45,7 @@ import {
   Form,
   PrimaryButton,
   SecondaryButton,
+  Success,
   TextInput,
 } from '@zodiac/ui'
 import { lazy, Suspense, useEffect, useState } from 'react'
@@ -284,9 +285,17 @@ const EditRoute = ({
               </div>
             </Form.Actions>
 
-            {actionData != null && actionData.error === true && (
+            {actionData != null && (
               <div className="mt-8">
-                <Error title="Dry run failed">{actionData.message}</Error>
+                {actionData.error === true && (
+                  <Error title="Dry run failed">{actionData.message}</Error>
+                )}
+
+                {actionData.error === false && (
+                  <Success title="Dry run succeeded">
+                    Your route seems to be ready for execution!
+                  </Success>
+                )}
               </div>
             )}
           </Form>
