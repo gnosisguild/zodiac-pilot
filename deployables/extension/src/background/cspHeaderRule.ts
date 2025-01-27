@@ -2,6 +2,8 @@
 // (Unfortunately, redirect targets are subject to the page's CSPs.)
 // So we keep declarativeNetRequest rule in sync wth activeExtensionTabs.
 
+import { captureLastError } from '@/sentry'
+
 // This rule removes CSP headers for extension tabs and must be kept in sync with activeExtensionTabs.
 export const REMOVE_CSP_RULE_ID = 1
 
@@ -11,6 +13,8 @@ export const removeCSPHeaderRule = () => {
       removeRuleIds: [REMOVE_CSP_RULE_ID],
     },
     () => {
+      captureLastError()
+
       if (chrome.runtime.lastError) {
         console.error('CSP rule could not be removed', chrome.runtime.lastError)
       } else {
@@ -61,6 +65,8 @@ export const updateCSPHeaderRule = (tabIds: Set<number>) => {
       removeRuleIds: [REMOVE_CSP_RULE_ID],
     },
     () => {
+      captureLastError()
+
       if (chrome.runtime.lastError) {
         console.error('Headers rule update failed', chrome.runtime.lastError)
       } else {
