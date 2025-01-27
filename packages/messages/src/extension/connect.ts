@@ -1,8 +1,6 @@
 export enum PilotMessageType {
   /**  sent when the panel is toggled */
   PILOT_PANEL_OPENED = 'PILOT_PANEL_OPENED',
-  /** can be sent to open the panel from within an application */
-  PILOT_OPEN_SIDEPANEL = 'PILOT_OPEN_SIDEPANEL',
   /** sent the first time a tab is activated after the panel has been opened */
   PILOT_CONNECT = 'PILOT_CONNECT',
   /** sent when the panel is closed */
