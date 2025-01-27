@@ -25,6 +25,12 @@ export const Wallet = ({
   const { switchChain } = useSwitchChain()
   const { reconnect } = useReconnect()
 
+  const isServer = typeof document === 'undefined'
+
+  if (isServer) {
+    return <Account type={providerType}>{pilotAddress}</Account>
+  }
+
   // Wallet disconnected
   if (address == null || addresses.length === 0) {
     return (
