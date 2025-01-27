@@ -51,6 +51,7 @@ describe('Simulation tracking', () => {
             },
           ],
         }),
+        expect.anything(),
       )
     })
 
@@ -64,9 +65,12 @@ describe('Simulation tracking', () => {
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenLastCalledWith({
-        removeRuleIds: [2],
-      })
+      ).toHaveBeenLastCalledWith(
+        {
+          removeRuleIds: [2],
+        },
+        expect.anything(),
+      )
     })
 
     it('removes redirect rules when the pilot session ends', async () => {
@@ -82,9 +86,12 @@ describe('Simulation tracking', () => {
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenLastCalledWith({
-        removeRuleIds: [2],
-      })
+      ).toHaveBeenLastCalledWith(
+        {
+          removeRuleIds: [2],
+        },
+        expect.anything(),
+      )
     })
 
     it('updates the redirect rules when a new RPC endpoint is detected during simulation', async () => {
@@ -115,6 +122,7 @@ describe('Simulation tracking', () => {
             },
           ],
         }),
+        expect.anything(),
       )
     })
 
@@ -148,6 +156,7 @@ describe('Simulation tracking', () => {
             },
           ],
         }),
+        expect.anything(),
       )
     })
 

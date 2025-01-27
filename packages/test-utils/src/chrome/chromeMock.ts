@@ -77,8 +77,18 @@ const vitestChromeWithMissingMethods = Object.assign(vitestChrome, {
     HeaderOperation,
     ResourceType,
 
-    updateSessionRules: vi.fn(),
-    getSessionRules: vi.fn(),
+    updateSessionRules: vi.fn((_, callback: unknown): void => {
+      if (typeof callback === 'function') {
+        callback()
+      }
+
+      return
+    }),
+    getSessionRules: vi.fn((callback) => {
+      if (typeof callback === 'function') {
+        callback()
+      }
+    }),
   },
 
   scripting: {
