@@ -20,11 +20,12 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
       {...props}
       value={amount}
       onChange={(ev) => setAmount(ev.target.value)}
+      step="any"
       min={0}
       max={
         balance == null
           ? undefined
-          : parseFloat(formatUnits(balance.value, balance.decimals))
+          : formatUnits(balance.value, balance.decimals)
       }
       after={
         <div className="mr-1">
