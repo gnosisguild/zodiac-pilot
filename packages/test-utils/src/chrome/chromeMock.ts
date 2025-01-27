@@ -29,6 +29,10 @@ type ChromeMock = typeof vitestChrome & {
   action: {
     setBadgeText: MockedFunction<(typeof chrome.action)['setBadgeText']>
   }
+
+  tabs: {
+    remove: MockedFunction<(typeof chrome.tabs)['remove']>
+  }
 }
 
 Object.assign(vitestChrome.storage.sync, {
@@ -111,6 +115,12 @@ const vitestChromeWithMissingMethods = Object.assign(vitestChrome, {
 
   action: {
     setBadgeText: vi.fn(),
+  },
+
+  tabs: {
+    ...vitestChrome.tabs,
+
+    remove: vi.fn(),
   },
 })
 

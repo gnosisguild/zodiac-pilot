@@ -1,21 +1,9 @@
 import { ProvideCompanionAppContext } from '@/companion'
-import { getLastUsedRouteId, getRoute, saveRoute } from '@/execution-routes'
-import { useTransactions } from '@/state'
-import { invariant } from '@epic-web/invariant'
+import { getLastUsedRouteId } from '@/execution-routes'
 import { getCompanionAppUrl } from '@zodiac/env'
-import {
-  CompanionAppMessageType,
-  type CompanionAppMessage,
-} from '@zodiac/messages'
-import type { ExecutionRoute } from '@zodiac/schema'
-import { useEffect, useState } from 'react'
-import {
-  Outlet,
-  useLoaderData,
-  useNavigate,
-  useRevalidator,
-} from 'react-router'
+import { Outlet, useLoaderData, useNavigate } from 'react-router'
 import { FutureClearTransactionsModal } from './ClearTransactionsModal'
+import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
@@ -25,73 +13,22 @@ export const loader = async () => {
 
 export const Root = () => {
   const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
+  const { isUpdatePending, cancelUpdate, saveUpdate } =
+    useSaveRoute(lastUsedRouteId)
 
-  const [pendingRouteUpdate, setPendingRouteUpdate] =
-    useState<ExecutionRoute | null>(null)
-
-  const transactions = useTransactions()
   const navigate = useNavigate()
-  const { revalidate } = useRevalidator()
-
-  useEffect(() => {
-    const handleSaveRoute = async (message: CompanionAppMessage) => {
-      if (
-        typeof message !== 'object' ||
-        message == null ||
-        !('type' in message)
-      ) {
-        return
-      }
-
-      if (message.type !== CompanionAppMessageType.SAVE_ROUTE) {
-        return
-      }
-
-      const incomingRoute = message.data
-
-      if (
-        lastUsedRouteId == null ||
-        lastUsedRouteId !== incomingRoute.id ||
-        transactions.length === 0
-      ) {
-        saveRoute(incomingRoute).then(() => revalidate())
-      } else {
-        const currentRoute = await getRoute(lastUsedRouteId)
-
-        if (
-          currentRoute.avatar.toLowerCase() !==
-          incomingRoute.avatar.toLowerCase()
-        ) {
-          setPendingRouteUpdate(incomingRoute)
-        }
-      }
-    }
-
-    chrome.runtime.onMessage.addListener(handleSaveRoute)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleSaveRoute)
-    }
-  }, [lastUsedRouteId, revalidate, transactions.length])
 
   return (
     <ProvideCompanionAppContext url={companionAppUrl}>
       <Outlet />
 
       <FutureClearTransactionsModal
-        open={pendingRouteUpdate != null}
-        onCancel={() => setPendingRouteUpdate(null)}
+        open={isUpdatePending}
+        onCancel={cancelUpdate}
         onAccept={() => {
-          invariant(
-            pendingRouteUpdate != null,
-            'Tried to save a route when no save was pending',
-          )
-
-          saveRoute(pendingRouteUpdate).then(() => {
-            setPendingRouteUpdate(null)
-
+          saveUpdate().then((updatedRoute) => {
             navigate(
-              `/${pendingRouteUpdate.id}/clear-transactions/${pendingRouteUpdate.id}`,
+              `/${updatedRoute.id}/clear-transactions/${updatedRoute.id}`,
             )
           })
         }}

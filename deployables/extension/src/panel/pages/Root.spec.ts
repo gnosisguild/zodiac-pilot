@@ -3,6 +3,7 @@ import {
   callListeners,
   chromeMock,
   createMockRoute,
+  createMockTab,
   createTransaction,
   mockRoutes,
   render,
@@ -12,17 +13,21 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
+import type { MockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 import { loader, Root } from './Root'
 
-const mockIncomingRouteUpdate = async (route: ExecutionRoute) => {
+const mockIncomingRouteUpdate = async (
+  route: ExecutionRoute,
+  tab: MockTab = createMockTab(),
+) => {
   await callListeners(
     chromeMock.runtime.onMessage,
     {
       type: CompanionAppMessageType.SAVE_ROUTE,
       data: route,
     },
-    { id: chromeMock.runtime.id },
+    { id: chromeMock.runtime.id, tab },
     vi.fn(),
   )
 }
@@ -36,6 +41,21 @@ describe('Root', () => {
     await mockIncomingRouteUpdate(route)
 
     await expect(getRoute(route.id)).resolves.toEqual(route)
+  })
+
+  it('closes the origin tab of the update', async () => {
+    const tab = createMockTab()
+
+    await render('/', [{ path: '/', Component: Root, loader }])
+
+    const route = createMockRoute()
+
+    await mockIncomingRouteUpdate(route, tab)
+
+    expect(chromeMock.tabs.remove).toHaveBeenCalledWith(
+      tab.id,
+      expect.anything(),
+    )
   })
 
   describe('Clearing transactions', () => {
