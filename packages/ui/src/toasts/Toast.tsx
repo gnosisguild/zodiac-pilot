@@ -29,7 +29,7 @@ export const Toast = ({
         aria-labelledby={`${id}-label`}
         aria-describedby={`${id}-description`}
         className={classNames(
-          'flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
+          'min-w-1/2 flex max-w-full flex-col gap-1 rounded-md border text-sm shadow-lg',
           className,
         )}
       >
@@ -57,7 +57,7 @@ export const toast = (
     closeButton: false,
     hideProgressBar: true,
     transition: Slide,
-    className: `p-0 mx-4 mb-4 w-auto first:mt-4 min-h-0`,
+    className: `p-0 mx-4 mb-4 w-auto first:mt-4 min-h-0 !bg-transparent justify-center`,
 
     ...options,
   })
