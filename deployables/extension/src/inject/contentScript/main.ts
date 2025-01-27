@@ -1,5 +1,4 @@
 import { injectScript, isValidTab } from '@/utils'
-import { getCompanionAppUrl } from '@zodiac/env'
 import {
   InjectedProviderMessageTyp,
   PilotMessageType,
@@ -17,16 +16,7 @@ import { probeChainId } from './probeChainId'
 const alreadyInjected =
   '__zodiacPilotInjected' in document.documentElement.dataset
 
-const isCompanionConnect =
-  window.location.origin === getCompanionAppUrl() &&
-  (window.location.pathname.startsWith('/connect') ||
-    window.location.pathname.startsWith('/edit-route/'))
-
-if (
-  !alreadyInjected &&
-  !isCompanionConnect &&
-  isValidTab(window.location.href)
-) {
+if (!alreadyInjected && isValidTab(window.location.href)) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
   document.documentElement.dataset.__zodiacPilotConnected = 'true'
 
