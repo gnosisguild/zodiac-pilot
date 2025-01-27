@@ -1,14 +1,26 @@
+import { captureLastError } from '@/sentry'
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 import type { Fork } from './types'
 
 export const removeAllRpcRedirectRules = async (tabIds: number[]) => {
-  await chrome.declarativeNetRequest.updateSessionRules({
-    removeRuleIds: tabIds,
-  })
+  const { promise, resolve } = Promise.withResolvers<void>()
 
-  chrome.declarativeNetRequest.getSessionRules((rules) => {
-    console.debug('RPC redirect rules updated', rules)
-  })
+  chrome.declarativeNetRequest.updateSessionRules(
+    {
+      removeRuleIds: tabIds,
+    },
+    () => {
+      captureLastError()
+
+      chrome.declarativeNetRequest.getSessionRules((rules) => {
+        console.debug('RPC redirect rules updated', rules)
+
+        resolve()
+      })
+    },
+  )
+
+  return promise
 }
 
 /**
@@ -45,15 +57,24 @@ export const addRpcRedirectRules = async (
       },
     }))
 
-  await chrome.declarativeNetRequest.updateSessionRules({
-    addRules,
-  })
+  const { promise, resolve } = Promise.withResolvers()
 
-  chrome.declarativeNetRequest.getSessionRules((rules) => {
-    console.debug('RPC redirect rules updated', rules)
-  })
+  chrome.declarativeNetRequest.updateSessionRules(
+    {
+      addRules,
+    },
+    () => {
+      captureLastError()
 
-  return new Set(addRules.map(({ id }) => id))
+      chrome.declarativeNetRequest.getSessionRules((rules) => {
+        console.debug('RPC redirect rules updated', rules)
+      })
+
+      resolve(new Set(addRules.map(({ id }) => id)))
+    },
+  )
+
+  return promise
 }
 
 /**

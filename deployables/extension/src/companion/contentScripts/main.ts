@@ -1,3 +1,4 @@
+import { captureLastError } from '@/sentry'
 import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
@@ -14,7 +15,9 @@ window.addEventListener(
       return
     }
 
-    chrome.runtime.sendMessage(event.data)
+    chrome.runtime.sendMessage(event.data, () => {
+      captureLastError()
+    })
   },
 )
 

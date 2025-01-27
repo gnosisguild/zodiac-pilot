@@ -1,3 +1,4 @@
+import { captureLastError } from '@/sentry'
 import { isValidTab, useActiveTab } from '@/utils'
 import { type Message, PilotMessageType } from '@zodiac/messages'
 import { useEffect, useState } from 'react'
@@ -74,11 +75,15 @@ type ConnectPortOptions = {
 const connectPort = ({ tabId, windowId }: ConnectPortOptions) => {
   const port = chrome.runtime.connect({ name: PILOT_PANEL_PORT })
 
+  captureLastError()
+
   port.postMessage({
     type: PilotMessageType.PILOT_PANEL_OPENED,
     windowId,
     tabId,
   } satisfies Message)
+
+  captureLastError()
 
   return port
 }
