@@ -1,12 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { getDefaultConfig } from 'connectkit'
-import {
-  useEffect,
-  useState,
-  type PropsWithChildren,
-  type ReactNode,
-} from 'react'
-import { createConfig, injected, WagmiProvider, type Config } from 'wagmi'
+import { useMemo, type PropsWithChildren } from 'react'
+import { createConfig, injected, WagmiProvider } from 'wagmi'
 import {
   arbitrum,
   avalanche,
@@ -22,29 +17,20 @@ import { metaMask, walletConnect } from 'wagmi/connectors'
 const queryClient = new QueryClient()
 
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
-const isServer = typeof document === 'undefined'
 
 export type WalletProviderProps = PropsWithChildren<{
-  fallback?: ReactNode
   injectedOnly?: boolean
 }>
 
 export const WalletProvider = ({
   children,
-  fallback = null,
   injectedOnly = false,
 }: WalletProviderProps) => {
-  const config = useConfig(injectedOnly)
-
-  if (config == null) {
-    return fallback
-  }
+  const config = useMemo(() => getWagmiConfig(injectedOnly), [injectedOnly])
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProvider reconnectOnMount config={config}>
-        {children}
-      </WagmiProvider>
+      <WagmiProvider config={config}>{children}</WagmiProvider>
     </QueryClientProvider>
   )
 }
@@ -53,6 +39,7 @@ export const getWagmiConfig = (injectedOnly: boolean) =>
   createConfig(
     getDefaultConfig({
       appName: 'Zodiac Pilot',
+      ssr: true,
       walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
       chains: [
         mainnet,
@@ -64,27 +51,15 @@ export const getWagmiConfig = (injectedOnly: boolean) =>
         arbitrum,
         avalanche,
       ],
-      connectors: isServer
-        ? []
-        : injectedOnly
-          ? [injected()]
-          : [
-              injected(),
-              metaMask(),
-              walletConnect({
-                projectId: WALLETCONNECT_PROJECT_ID,
-                showQrModal: false,
-              }),
-            ],
+      connectors: injectedOnly
+        ? [injected()]
+        : [
+            injected(),
+            metaMask(),
+            walletConnect({
+              projectId: WALLETCONNECT_PROJECT_ID,
+              showQrModal: false,
+            }),
+          ],
     }),
   )
-
-const useConfig = (injectedOnly: boolean) => {
-  const [config, setConfig] = useState<Config | null>(null)
-
-  useEffect(() => {
-    setConfig(getWagmiConfig(injectedOnly))
-  }, [injectedOnly])
-
-  return config
-}

@@ -1,18 +1,16 @@
 import { Page, WalletProvider } from '@/components'
 import { Info, PrimaryButton } from '@zodiac/ui'
-import { Suspense, type PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
 import { useAccount } from 'wagmi'
 
 const Tokens = () => {
   return (
-    <Suspense>
-      <WalletProvider injectedOnly>
-        <Connected>
-          <Outlet />
-        </Connected>
-      </WalletProvider>
-    </Suspense>
+    <WalletProvider injectedOnly>
+      <Connected>
+        <Outlet />
+      </Connected>
+    </WalletProvider>
   )
 }
 

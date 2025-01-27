@@ -2,7 +2,6 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
-  ConnectWalletFallback,
   Page,
   WalletProvider,
   ZodiacMod,
@@ -48,7 +47,7 @@ import {
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, useEffect, useState } from 'react'
 import { useLoaderData, useNavigation, useSubmit } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
@@ -194,31 +193,29 @@ const EditRoute = ({
           <Form>
             <TextInput label="Label" name="label" defaultValue={label} />
 
-            <Suspense fallback={<ConnectWalletFallback />}>
-              <WalletProvider fallback={<ConnectWalletFallback />}>
-                <ConnectWallet
-                  chainId={optimisticRoute.chainId}
-                  pilotAddress={optimisticRoute.pilotAddress}
-                  providerType={optimisticRoute.providerType}
-                  onConnect={({ account, chainId, providerType }) => {
-                    submit(
-                      formData({
-                        intent: Intent.ConnectWallet,
-                        account,
-                        chainId,
-                        providerType,
-                      }),
-                      { method: 'POST' },
-                    )
-                  }}
-                  onDisconnect={() => {
-                    submit(formData({ intent: Intent.DisconnectWallet }), {
-                      method: 'POST',
-                    })
-                  }}
-                />
-              </WalletProvider>
-            </Suspense>
+            <WalletProvider>
+              <ConnectWallet
+                chainId={optimisticRoute.chainId}
+                pilotAddress={optimisticRoute.pilotAddress}
+                providerType={optimisticRoute.providerType}
+                onConnect={({ account, chainId, providerType }) => {
+                  submit(
+                    formData({
+                      intent: Intent.ConnectWallet,
+                      account,
+                      chainId,
+                      providerType,
+                    }),
+                    { method: 'POST' },
+                  )
+                }}
+                onDisconnect={() => {
+                  submit(formData({ intent: Intent.DisconnectWallet }), {
+                    method: 'POST',
+                  })
+                }}
+              />
+            </WalletProvider>
 
             <ChainSelect
               value={chainId}
