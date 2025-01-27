@@ -8,12 +8,12 @@ import { Intent } from '../intents'
 import type { Route } from './+types/modules'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
-  const { avatar, chainId } = params
+  const { address, chainId } = params
 
   const verifiedChainId = verifyChainId(parseInt(chainId))
-  const validatedAddress = validateAddress(avatar)
+  const validatedAddress = validateAddress(address)
 
-  invariantResponse(validatedAddress != null, `Invalid address: ${avatar}`)
+  invariantResponse(validatedAddress != null, `Invalid address: ${address}`)
 
   try {
     const modules = await fetchZodiacModules(jsonRpcProvider(verifiedChainId), {

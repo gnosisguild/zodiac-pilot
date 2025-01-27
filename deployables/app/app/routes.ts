@@ -14,9 +14,11 @@ export default [
   ]),
   route('/new-route', 'routes/new-route.ts'),
   route('/edit-route/:data', 'routes/edit-route.$data.tsx'),
-  ...prefix('/:account/:chainId', [
-    route('available-safes', 'routes/$account.$chainId/available-safes.ts'),
-    route('delegates', 'routes/$account.$chainId/delegates.ts'),
+
+  ...prefix('/:address/:chainId', [
+    route('modules', 'routes/$address.$chainId/modules.ts'),
+    route('available-safes', 'routes/$address.$chainId/available-safes.ts'),
+    route('delegates', 'routes/$address.$chainId/delegates.ts'),
+    route('balances', 'routes/$address.$chainId/balances.ts'),
   ]),
-  route('/:avatar/:chainId/modules', 'routes/$avatar.$chainId/modules.ts'),
 ] satisfies RouteConfig
