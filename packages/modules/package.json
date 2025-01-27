@@ -27,7 +27,7 @@
     "nanoid": "5.0.9",
     "ser-kit": "1.1.0",
     "zod": "3.24.1",
-    "zodiac-roles-deployments": "2.3.4"
+    "zodiac-roles-deployments": "2.4.0"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
