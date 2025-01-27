@@ -4,6 +4,7 @@ import esbuild from 'esbuild'
 import postCssPlugin from 'esbuild-style-plugin'
 import stdLibBrowser from 'node-stdlib-browser'
 import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
+import replace from 'postcss-replace'
 import { fileURLToPath } from 'url'
 
 config()
@@ -68,8 +69,14 @@ esbuild
     plugins: [
       plugin(stdLibBrowser),
       postCssPlugin({
-        postcss: { plugins: [tailwindcss] },
+        postcss: {
+          plugins: [
+            tailwindcss,
+            replace({ pattern: /:root/, data: { replaceAll: ':root, :host' } }),
+          ],
+        },
       }),
+
       // process.env.NODE_ENV !== 'development' &&
       //   sentryEsbuildPlugin({
       //     authToken: process.env.SENTRY_AUTH_TOKEN,
