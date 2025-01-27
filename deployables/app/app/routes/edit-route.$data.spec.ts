@@ -105,7 +105,9 @@ describe('Edit route', () => {
         'New route label',
       )
 
-      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Save & Close' }),
+      )
 
       expect(mockPostMessage).toHaveBeenCalledWith(
         {
@@ -245,7 +247,9 @@ describe('Edit route', () => {
 
         await userEvent.click(screen.getByRole('option', { name: safe }))
 
-        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Close' }),
+        )
 
         expect(mockPostMessage).toHaveBeenCalledWith(
           {
@@ -269,7 +273,9 @@ describe('Edit route', () => {
           screen.getByRole('textbox', { name: 'Piloted Safe' }),
           safe,
         )
-        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Close' }),
+        )
 
         expect(mockPostMessage).toHaveBeenCalledWith(
           {
@@ -295,7 +301,9 @@ describe('Edit route', () => {
         await userEvent.click(
           screen.getByRole('button', { name: 'Clear piloted Safe' }),
         )
-        await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Save & Close' }),
+        )
 
         expect(mockPostMessage).toHaveBeenCalledWith(
           {
@@ -477,7 +485,9 @@ describe('Edit route', () => {
             roleId,
           )
 
-          await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Save & Close' }),
+          )
 
           expect(mockPostMessage).toHaveBeenCalledWith(
             {
@@ -601,7 +611,9 @@ describe('Edit route', () => {
             'MANAGER',
           )
 
-          await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Save & Close' }),
+          )
 
           expect(mockPostMessage).toHaveBeenCalledWith(
             {
