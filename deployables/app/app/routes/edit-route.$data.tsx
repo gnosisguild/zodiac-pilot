@@ -277,7 +277,7 @@ const EditRoute = ({
                   intent={Intent.Save}
                   disabled={state !== 'idle'}
                 >
-                  Save
+                  Save & Close
                 </PrimaryButton>
               </div>
             </Form.Actions>
