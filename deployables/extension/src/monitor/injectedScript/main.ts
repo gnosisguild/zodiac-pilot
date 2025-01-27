@@ -3,7 +3,6 @@
 // Shows a reload hint if either connected+!injected or !connected+injected.
 
 import type { Eip1193Provider } from '@/types'
-import { invariant } from '@epic-web/invariant'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { PilotMessageType } from '@zodiac/messages'
 import {
@@ -53,32 +52,3 @@ window.addEventListener('message', (event: MessageEvent) => {
     check()
   }
 })
-
-const handleLoad = () => {
-  window.removeEventListener('load', handleLoad)
-
-  const button = document.getElementById('ZODIAC-PILOT::open-panel-button')
-
-  if (button == null) {
-    return
-  }
-
-  button.addEventListener('click', (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const extensionId =
-      window.document.documentElement.dataset['__zodiacExtensionId']
-
-    invariant(
-      typeof extensionId === 'string',
-      'Could not find zodiac extension id',
-    )
-
-    chrome.runtime.sendMessage(extensionId, {
-      type: PilotMessageType.PILOT_OPEN_SIDEPANEL,
-    })
-  })
-}
-
-window.addEventListener('load', handleLoad)

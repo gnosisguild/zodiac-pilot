@@ -30,6 +30,7 @@ esbuild
 
       // COMPANION APP TO EDIT ROUTES
       './src/companion/contentScripts/main.ts',
+      './src/companion/injectedScripts/main.ts',
 
       // SIDEPANEL APP
       './src/panel/app.tsx',

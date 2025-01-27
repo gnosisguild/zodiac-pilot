@@ -1,5 +1,5 @@
 import { callListeners, chromeMock, createMockTab } from '@/test-utils'
-import { PilotMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import { describe, expect, it } from 'vitest'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
 
@@ -10,8 +10,8 @@ describe('External panel open', () => {
     const tab = createMockTab({ id: 1, windowId: 2 })
 
     await callListeners(
-      chromeMock.runtime.onMessageExternal,
-      { type: PilotMessageType.PILOT_OPEN_SIDEPANEL },
+      chromeMock.runtime.onMessage,
+      { type: CompanionAppMessageType.OPEN_PILOT },
       { tab },
       () => {},
     )
