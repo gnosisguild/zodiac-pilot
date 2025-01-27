@@ -10,7 +10,7 @@ describe('External panel open', () => {
     const tab = createMockTab({ id: 1, windowId: 2 })
 
     await callListeners(
-      chromeMock.runtime.onMessageExternal,
+      chromeMock.runtime.onMessage,
       { type: CompanionAppMessageType.OPEN_PILOT },
       { tab },
       () => {},
