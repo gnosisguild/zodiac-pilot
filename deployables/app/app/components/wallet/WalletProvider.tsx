@@ -17,7 +17,6 @@ import { metaMask, walletConnect } from 'wagmi/connectors'
 const queryClient = new QueryClient()
 
 const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
-const isServer = typeof document === 'undefined'
 
 export type WalletProviderProps = PropsWithChildren<{
   injectedOnly?: boolean
@@ -40,6 +39,7 @@ export const getWagmiConfig = (injectedOnly: boolean) =>
   createConfig(
     getDefaultConfig({
       appName: 'Zodiac Pilot',
+      ssr: true,
       walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
       chains: [
         mainnet,
@@ -51,17 +51,15 @@ export const getWagmiConfig = (injectedOnly: boolean) =>
         arbitrum,
         avalanche,
       ],
-      connectors: isServer
-        ? []
-        : injectedOnly
-          ? [injected()]
-          : [
-              injected(),
-              metaMask(),
-              walletConnect({
-                projectId: WALLETCONNECT_PROJECT_ID,
-                showQrModal: false,
-              }),
-            ],
+      connectors: injectedOnly
+        ? [injected()]
+        : [
+            injected(),
+            metaMask(),
+            walletConnect({
+              projectId: WALLETCONNECT_PROJECT_ID,
+              showQrModal: false,
+            }),
+          ],
     }),
   )
