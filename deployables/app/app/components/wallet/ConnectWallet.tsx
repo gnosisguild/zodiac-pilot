@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
@@ -9,7 +9,6 @@ import { Wallet } from './Wallet'
 
 type OnConnectArgs = {
   providerType: ProviderType
-  chainId: ChainId
   account: HexAddress
 }
 
@@ -90,7 +89,7 @@ const useAutoReconnect = ({
   currentConnectedAddress,
   onConnect,
 }: UseAutoReconnectOptions) => {
-  const { address, chainId, connector } = useAccount()
+  const { address, connector } = useAccount()
 
   const accountConnected =
     currentConnectedAddress != null && currentConnectedAddress !== ZERO_ADDRESS
@@ -102,7 +101,7 @@ const useAutoReconnect = ({
   }, [onConnect])
 
   useEffect(() => {
-    if (address == null || chainId == null || connector == null) {
+    if (address == null || connector == null) {
       return
     }
 
@@ -112,11 +111,10 @@ const useAutoReconnect = ({
 
     onConnectRef.current({
       account: address,
-      chainId: verifyChainId(chainId),
       providerType:
         connector.type === 'injected'
           ? ProviderType.InjectedWallet
           : ProviderType.WalletConnect,
     })
-  }, [accountConnected, address, chainId, connector])
+  }, [accountConnected, address, connector])
 }

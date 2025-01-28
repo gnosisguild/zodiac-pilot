@@ -1,28 +1,21 @@
-import { verifyChainId } from '@zodiac/chains'
-import { ProviderType } from '@zodiac/schema'
+import { ProviderType, type HexAddress } from '@zodiac/schema'
 import { Labeled, PrimaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
-import type { ChainId } from 'ser-kit'
 import { useAccountEffect } from 'wagmi'
 
 type ConnectProps = {
-  onConnect(args: {
-    providerType: ProviderType
-    chainId: ChainId
-    account: string
-  }): void
+  onConnect(args: { providerType: ProviderType; account: HexAddress }): void
 }
 
 export const Connect = ({ onConnect }: ConnectProps) => {
   useAccountEffect({
-    onConnect({ address, chainId, connector, isReconnected }) {
+    onConnect({ address, connector, isReconnected }) {
       if (isReconnected) {
         return
       }
 
       onConnect({
         account: address,
-        chainId: verifyChainId(chainId),
         providerType:
           connector.type === 'injected'
             ? ProviderType.InjectedWallet
