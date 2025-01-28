@@ -19,10 +19,21 @@ export const loader = async ({
     })
   }
 
-  const response = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
-    chain: chainId,
-    address,
-  })
+  try {
+    const response = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
+      chain: chainId,
+      address,
+    })
 
-  return response.result.filter((result) => !result.possibleSpam)
+    return {
+      error: null,
+      data: response.result.filter((result) => !result.possibleSpam),
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message }
+    }
+
+    return { error: 'Unexpected error fetching balances' }
+  }
 }

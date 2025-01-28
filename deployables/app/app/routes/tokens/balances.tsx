@@ -1,5 +1,5 @@
 import { Page } from '@/components'
-import { Table } from '@zodiac/ui'
+import { Error, SkeletonText, Table } from '@zodiac/ui'
 import { CircleDollarSign } from 'lucide-react'
 import { useEffect, type PropsWithChildren } from 'react'
 import { useFetcher } from 'react-router'
@@ -11,7 +11,7 @@ export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
   const { address, chainId } = useAccount()
-  const { load, data = [] } = useFetcher<BalanceResult>()
+  const { load, data, state } = useFetcher<BalanceResult>()
 
   useEffect(() => {
     if (address == null || chainId == null) {
@@ -20,6 +20,57 @@ const Balances = () => {
 
     load(`/${address}/${chainId}/balances`)
   }, [address, chainId, load])
+
+  if (data == null || state === 'loading') {
+    return (
+      <Page fullWidth>
+        <Page.Header>Balances</Page.Header>
+
+        <Page.Main>
+          <Table>
+            <Table.THead>
+              <Table.Tr>
+                <Table.Th>
+                  <span className="pl-6">Token</span>
+                </Table.Th>
+                <Table.Th align="right">Balance</Table.Th>
+                <Table.Th align="right">USD</Table.Th>
+              </Table.Tr>
+            </Table.THead>
+            <Table.TBody>
+              {Array.from({ length: 10 }).map((_, index) => (
+                <Table.Tr key={index}>
+                  <Table.Td>
+                    <SkeletonText />
+                  </Table.Td>
+                  <Table.Td align="right">
+                    <SkeletonText />
+                  </Table.Td>
+                  <Table.Td align="right">
+                    <SkeletonText />
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.TBody>
+          </Table>
+        </Page.Main>
+      </Page>
+    )
+  }
+
+  if (data.error != null) {
+    return (
+      <Page fullWidth>
+        <Page.Header>Balances</Page.Header>
+
+        <Page.Main>
+          <Error title="Could not load balances">{data.error}</Error>
+        </Page.Main>
+      </Page>
+    )
+  }
+
+  const { data: balances } = data
 
   return (
     <Page fullWidth>
@@ -37,14 +88,14 @@ const Balances = () => {
             </Table.Tr>
           </Table.THead>
           <Table.TBody>
-            {data.map((result) => (
-              <Table.Tr key={result.name}>
+            {balances.map(({ logo, name, balanceFormatted, usdValue }) => (
+              <Table.Tr key={name}>
                 <Table.Td noWrap>
                   <div className="flex items-center gap-2">
-                    {result.logo ? (
+                    {logo ? (
                       <img
-                        src={result.logo}
-                        alt={result.name}
+                        src={logo}
+                        alt={name}
                         className="size-4 rounded-full"
                       />
                     ) : (
@@ -52,14 +103,14 @@ const Balances = () => {
                         <CircleDollarSign size={16} className="opacity-50" />
                       </div>
                     )}
-                    {result.name}
+                    {name}
                   </div>
                 </Table.Td>
                 <Table.Td align="right">
-                  <Token>{result.balanceFormatted}</Token>
+                  <Token>{balanceFormatted}</Token>
                 </Table.Td>
                 <Table.Td align="right">
-                  <USD>{result.usdValue}</USD>
+                  <USD>{usdValue}</USD>
                 </Table.Td>
               </Table.Tr>
             ))}
