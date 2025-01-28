@@ -22,7 +22,7 @@ const Balances = () => {
   }, [address, chainId, load])
 
   return (
-    <Page>
+    <Page fullWidth>
       <Page.Header>Balances</Page.Header>
 
       <Page.Main>
