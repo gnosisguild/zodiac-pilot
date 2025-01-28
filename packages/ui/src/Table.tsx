@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import type { PropsWithChildren } from 'react'
 
 export const Table = ({ children }: PropsWithChildren) => (
-  <table className="w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-md border border-zinc-700">
+  <table className="w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-700">
     {children}
   </table>
 )
@@ -28,7 +28,7 @@ type ThProps = PropsWithChildren<{ align?: Align }>
 const Th = ({ children, align = 'left' }: ThProps) => (
   <th
     className={classNames(
-      'border-b-2 border-zinc-700 px-2',
+      'border-b-2 border-zinc-300 px-2 text-zinc-600 dark:border-zinc-700 dark:text-white',
       align === 'left' && 'text-left',
       align === 'right' && 'text-right',
       align === 'center' && 'text-center',
@@ -48,7 +48,7 @@ type TdProps = PropsWithChildren<{
 const Td = ({ children, align = 'left', noWrap = false }: TdProps) => (
   <td
     className={classNames(
-      'border-b border-zinc-700 px-2 py-1 text-sm text-white/75 transition-all group-last:border-b-0 group-hover:bg-zinc-900 group-hover:text-white',
+      'border-b border-zinc-300 px-2 py-1 text-sm text-zinc-900/75 transition-all group-last:border-b-0 group-hover:bg-zinc-200 group-hover:text-zinc-900 dark:border-zinc-700 dark:text-white/75 dark:group-hover:bg-zinc-900 dark:group-hover:text-white',
       align === 'left' && 'text-left',
       align === 'right' && 'text-right',
       align === 'center' && 'text-center',
