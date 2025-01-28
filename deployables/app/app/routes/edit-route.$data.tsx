@@ -300,7 +300,7 @@ const EditRoute = ({
       </Page>
 
       {isDev && (
-        <div className="flex overflow-hidden">
+        <div className="max-h-1/3 flex overflow-hidden">
           <DebugRouteData />
         </div>
       )}

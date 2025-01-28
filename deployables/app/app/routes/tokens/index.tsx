@@ -37,7 +37,7 @@ const Connected = ({ children }: PropsWithChildren) => {
           </Info>
         </div>
 
-        <div className="mx-auto flex w-1/3">
+        <div className="mx-auto flex gap-2">
           <PrimaryButton fluid id="ZODIAC-PILOT::open-panel-button">
             Open Pilot
           </PrimaryButton>

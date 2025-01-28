@@ -1,4 +1,7 @@
+import { config } from 'dotenv'
 import express from 'express'
+
+config()
 
 const PORT = Number.parseInt(process.env.PORT || '3040')
 
