@@ -142,6 +142,7 @@ const detectNetworkOfRpcUrl = async (
       url,
       timeout(
         sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
+        `Could not probe chain ID for url "${url}".`,
       ),
     )
   }
@@ -185,8 +186,10 @@ const trackRpcUrl = (
   }
 }
 
-const timeout = <T>(promise: Promise<T>) =>
+const timeout = <T>(promise: Promise<T>, errorMessage: string) =>
   Promise.race([
     promise,
-    new Promise<T>((_, reject) => setTimeout(() => reject(), 10_000)),
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(errorMessage), 10_000),
+    ),
   ])
