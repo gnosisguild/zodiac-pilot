@@ -26,6 +26,7 @@
     "./src/**/*",
     "./e2e/**/*",
     "./test-utils/**/*",
-    "./vitest.setup.mts"
+    "./vitest.setup.mts",
+    "abitype.d.ts"
   ]
 }

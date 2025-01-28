@@ -13,6 +13,7 @@
   "include": [
     ".react-router/types/**/*",
     "vitest.setup.ts",
+    "abitype.d.ts",
     "e2e/**/*",
     "app/**/*",
     "app/**/.server/**/*",
