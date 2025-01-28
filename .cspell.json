@@ -120,6 +120,7 @@
     "**/test-utils/**",
     "**/*.sh",
     "**/*.tsbuildinfo",
-    "**/build/**"
+    "**/build/**",
+    "**/*.d.ts"
   ]
 }
