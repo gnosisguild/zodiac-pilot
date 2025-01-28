@@ -8,7 +8,7 @@ import {
 } from '@/components'
 import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
-import { Chain, getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   formData,
   getHexString,
@@ -154,14 +154,10 @@ export const clientAction = async ({
       const route = parseRouteData(params.data)
 
       const account = getHexString(data, 'account')
-      const chainId = verifyChainId(getInt(data, 'chainId'))
       const providerType = verifyProviderType(getInt(data, 'providerType'))
 
       return editRoute(
-        updatePilotAddress(
-          updateChainId(updateProviderType(route, providerType), chainId),
-          account,
-        ),
+        updatePilotAddress(updateProviderType(route, providerType), account),
       )
     }
     case Intent.DisconnectWallet: {
@@ -195,15 +191,14 @@ const EditRoute = ({
 
             <WalletProvider>
               <ConnectWallet
-                chainId={optimisticRoute.chainId}
+                chainId={chainId}
                 pilotAddress={optimisticRoute.pilotAddress}
                 providerType={optimisticRoute.providerType}
-                onConnect={({ account, chainId, providerType }) => {
+                onConnect={({ account, providerType }) => {
                   submit(
                     formData({
                       intent: Intent.ConnectWallet,
                       account,
-                      chainId,
                       providerType,
                     }),
                     { method: 'POST' },
@@ -318,12 +313,11 @@ const useOptimisticRoute = () => {
 
   const [optimisticConnection, setOptimisticConnection] = useState({
     pilotAddress,
-    chainId,
     providerType,
   })
 
   useEffect(() => {
-    setOptimisticConnection({ pilotAddress, chainId, providerType })
+    setOptimisticConnection({ pilotAddress, providerType })
   }, [chainId, pilotAddress, providerType])
 
   useEffect(() => {
@@ -341,7 +335,6 @@ const useOptimisticRoute = () => {
       case Intent.DisconnectWallet: {
         setOptimisticConnection({
           pilotAddress: ZERO_ADDRESS,
-          chainId: Chain.ETH,
           providerType: undefined,
         })
 
@@ -351,7 +344,6 @@ const useOptimisticRoute = () => {
       case Intent.ConnectWallet: {
         setOptimisticConnection({
           pilotAddress: getHexString(formData, 'account'),
-          chainId: verifyChainId(getInt(formData, 'chainId')),
           providerType: verifyProviderType(getInt(formData, 'providerType')),
         })
       }
