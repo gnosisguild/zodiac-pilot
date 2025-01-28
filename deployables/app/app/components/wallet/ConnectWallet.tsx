@@ -58,6 +58,12 @@ export const ConnectWallet = ({
         if (address == null) {
           onDisconnect()
         } else {
+          // Do not call the `onDisconnect` handler directly because
+          // this could lead to an immediate reconnect because of a
+          // race condition. Instead, we're using the `onDisconnect`
+          // handler of `useAccountEffect` to tell our app only when
+          // we can be sure that wagmi has disconnected from the
+          // provider.
           disconnect()
         }
       }}
