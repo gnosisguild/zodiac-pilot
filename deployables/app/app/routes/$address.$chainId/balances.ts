@@ -1,16 +1,28 @@
-import { validateAddress } from '@/utils'
-import { invariantResponse } from '@epic-web/invariant'
-import { verifyChainId } from '@zodiac/chains'
+import { getMoralisApiKey } from '@zodiac/env'
+import Moralis from 'moralis'
+import type { Ref } from 'react'
+import type { BalanceResult } from '../types.server'
 import type { Route } from './+types/balances'
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+const startedRef: Ref<boolean> = { current: false }
+
+export const loader = async ({
+  params,
+}: Route.LoaderArgs): Promise<BalanceResult> => {
   const { chainId, address } = params
 
-  const validatedAddress = validateAddress(address)
+  if (startedRef.current === false) {
+    startedRef.current = true
 
-  invariantResponse(validatedAddress != null, `Invalid address: ${address}`)
+    await Moralis.start({
+      apiKey: getMoralisApiKey(),
+    })
+  }
 
-  return fetch(
-    `https://airlock.gnosisguild.org/api/v1/${verifyChainId(parseInt(chainId))}/moralis/wallets/${validatedAddress}/tokens`,
-  )
+  const response = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
+    chain: chainId,
+    address,
+  })
+
+  return response.result
 }

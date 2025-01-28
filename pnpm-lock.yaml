@@ -94,6 +94,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
+      '@zodiac/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
