@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { sendMessageToTab } from '@/utils'
 import { RpcMessageType } from '@zodiac/messages'
 import type { ChainId } from 'ser-kit'
@@ -41,11 +42,13 @@ export const trackRequests = (): TrackRequestsResult => {
 
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
-      trackRequest(state, details).then(({ newEndpoint }) => {
-        if (newEndpoint) {
-          onNewRpcEndpointDetected.callListeners()
-        }
-      })
+      trackRequest(state, details)
+        .then(({ newEndpoint }) => {
+          if (newEndpoint) {
+            onNewRpcEndpointDetected.callListeners()
+          }
+        })
+        .catch((error) => sentry.captureException(error))
     },
     {
       urls: ['<all_urls>'],
@@ -137,7 +140,9 @@ const detectNetworkOfRpcUrl = async (
   if (!chainIdPromiseByRpcUrl.has(url)) {
     chainIdPromiseByRpcUrl.set(
       url,
-      sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
+      timeout(
+        sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
+      ),
     )
   }
 
@@ -179,3 +184,9 @@ const trackRpcUrl = (
     urls.add(url)
   }
 }
+
+const timeout = <T>(promise: Promise<T>) =>
+  Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(), 10_000)),
+  ])
