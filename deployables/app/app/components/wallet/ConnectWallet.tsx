@@ -36,8 +36,16 @@ export const ConnectWallet = ({
   const accountNotConnected =
     pilotAddress == null || pilotAddress === ZERO_ADDRESS
 
+  const disconnectRequestRef = useRef(false)
+
   useAccountEffect({
-    onDisconnect,
+    onDisconnect() {
+      if (disconnectRequestRef.current) {
+        disconnectRequestRef.current = false
+
+        onDisconnect()
+      }
+    },
   })
 
   if (accountNotConnected) {
@@ -58,6 +66,8 @@ export const ConnectWallet = ({
         if (address == null) {
           onDisconnect()
         } else {
+          disconnectRequestRef.current = true
+
           // Do not call the `onDisconnect` handler directly because
           // this could lead to an immediate reconnect because of a
           // race condition. Instead, we're using the `onDisconnect`
