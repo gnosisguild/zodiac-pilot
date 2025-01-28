@@ -1,6 +1,7 @@
 import {
   type RouteConfig,
   index,
+  layout,
   prefix,
   route,
 } from '@react-router/dev/routes'
@@ -9,7 +10,9 @@ export default [
   index('routes/index.tsx'),
   route('/connect', 'routes/connect.tsx'),
   route('/tokens', 'routes/tokens/index.tsx', [
-    route('balances', 'routes/tokens/balances.tsx'),
+    layout('routes/tokens/balances/layout.tsx', [
+      route('balances', 'routes/tokens/balances/balances.tsx'),
+    ]),
     route('send', 'routes/tokens/send.tsx'),
   ]),
   route('/new-route', 'routes/new-route.ts'),
