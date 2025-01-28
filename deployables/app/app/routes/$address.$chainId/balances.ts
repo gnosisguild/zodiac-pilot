@@ -24,5 +24,5 @@ export const loader = async ({
     address,
   })
 
-  return response.result
+  return response.result.filter((result) => !result.possibleSpam)
 }

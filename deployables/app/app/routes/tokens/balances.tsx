@@ -1,4 +1,5 @@
 import { Page } from '@/components'
+import { CircleDollarSign } from 'lucide-react'
 import { useEffect, type PropsWithChildren } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
@@ -47,10 +48,12 @@ const Balances = () => {
                       <img
                         src={result.logo}
                         alt={result.name}
-                        className="size-4"
+                        className="size-4 rounded-full"
                       />
                     ) : (
-                      <div className="size-4" />
+                      <div className="flex size-4 items-center justify-center">
+                        <CircleDollarSign size={16} className="opacity-50" />
+                      </div>
                     )}
                     {result.name}
                   </div>

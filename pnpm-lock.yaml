@@ -133,6 +133,9 @@ importers:
       isbot:
         specifier: 5.1.21
         version: 5.1.21
+      lucide-react:
+        specifier: 0.474.0
+        version: 0.474.0(react@19.0.0)
       moralis:
         specifier: ^2.27.2
         version: 2.27.2
