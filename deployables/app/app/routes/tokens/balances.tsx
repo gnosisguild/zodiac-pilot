@@ -1,4 +1,5 @@
 import { Page } from '@/components'
+import { Table } from '@zodiac/ui'
 import { CircleDollarSign } from 'lucide-react'
 import { useEffect, type PropsWithChildren } from 'react'
 import { useFetcher } from 'react-router'
@@ -25,25 +26,21 @@ const Balances = () => {
       <Page.Header>Balances</Page.Header>
 
       <Page.Main>
-        <table className="w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-md border border-zinc-700">
-          <thead>
-            <tr>
-              <th className="w-2/3 border-b-2 border-zinc-700 py-2 pl-8 text-left">
-                Token
-              </th>
-              <th className="border-b-2 border-zinc-700 px-2 text-right">
-                Balance
-              </th>
-              <th className="border-b-2 border-zinc-700 px-2 text-right">
-                USD
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <Table.THead>
+            <Table.Tr>
+              <Table.Th>
+                <span className="pl-6">Token</span>
+              </Table.Th>
+              <Table.Th align="right">Balance</Table.Th>
+              <Table.Th align="right">USD</Table.Th>
+            </Table.Tr>
+          </Table.THead>
+          <Table.TBody>
             {data.map((result) => (
-              <tr key={result.name} className="group">
-                <td className="whitespace-nowrap border-b border-zinc-700 px-2 text-sm text-white/75 transition-all group-last:border-b-0 group-hover:bg-zinc-900 group-hover:text-white">
-                  <div className="flex items-center gap-2 py-1">
+              <Table.Tr key={result.name}>
+                <Table.Td noWrap>
+                  <div className="flex items-center gap-2">
                     {result.logo ? (
                       <img
                         src={result.logo}
@@ -57,17 +54,17 @@ const Balances = () => {
                     )}
                     {result.name}
                   </div>
-                </td>
-                <td className="border-b border-zinc-700 px-2 text-right text-sm text-white/75 transition-all group-last:border-b-0 group-hover:bg-zinc-900 group-hover:text-white">
+                </Table.Td>
+                <Table.Td align="right">
                   <Token>{result.balanceFormatted}</Token>
-                </td>
-                <td className="border-b border-zinc-700 px-2 text-right text-sm text-white/75 transition-all group-last:border-b-0 group-hover:bg-zinc-900 group-hover:text-white">
+                </Table.Td>
+                <Table.Td align="right">
                   <USD>{result.usdValue}</USD>
-                </td>
-              </tr>
+                </Table.Td>
+              </Table.Tr>
             ))}
-          </tbody>
-        </table>
+          </Table.TBody>
+        </Table>
       </Page.Main>
     </Page>
   )
