@@ -55,6 +55,12 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           incomingRoute.avatar.toLowerCase()
         ) {
           setPendingRouteUpdate({ routeUpdate: incomingRoute, sender })
+        } else {
+          saveRoute(incomingRoute).then(() => {
+            revalidate()
+
+            closeTabAfterSafe(sender)
+          })
         }
       }
     }
