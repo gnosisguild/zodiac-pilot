@@ -38,16 +38,10 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
       const incomingRoute = message.data
 
       if (
-        lastUsedRouteId == null ||
-        lastUsedRouteId !== incomingRoute.id ||
-        transactions.length === 0
+        lastUsedRouteId != null &&
+        lastUsedRouteId === incomingRoute.id &&
+        transactions.length > 0
       ) {
-        saveRoute(incomingRoute).then(() => {
-          revalidate()
-
-          closeTabAfterSafe(sender)
-        })
-      } else {
         const currentRoute = await getRoute(lastUsedRouteId)
 
         if (
@@ -55,8 +49,16 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           incomingRoute.avatar.toLowerCase()
         ) {
           setPendingRouteUpdate({ routeUpdate: incomingRoute, sender })
+
+          return
         }
       }
+
+      saveRoute(incomingRoute).then(() => {
+        revalidate()
+
+        closeTabAfterSafe(sender)
+      })
     }
 
     chrome.runtime.onMessage.addListener(handleSaveRoute)

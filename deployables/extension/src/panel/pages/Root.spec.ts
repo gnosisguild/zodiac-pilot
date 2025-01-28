@@ -5,6 +5,7 @@ import {
   createMockRoute,
   createMockTab,
   createTransaction,
+  mockRoute,
   mockRoutes,
   render,
 } from '@/test-utils'
@@ -56,6 +57,21 @@ describe('Root', () => {
       tab.id,
       expect.anything(),
     )
+  })
+
+  it('saves the route when there are transactions but the route stays the same and the avatar has not changed', async () => {
+    const route = await mockRoute()
+    await saveLastUsedRouteId(route.id)
+
+    await render('/', [{ path: '/', Component: Root, loader }], {
+      initialState: [createTransaction()],
+    })
+
+    const updatedRoute = { ...route, label: 'Changed label' }
+
+    await mockIncomingRouteUpdate(updatedRoute)
+
+    await expect(getRoute(route.id)).resolves.toEqual(updatedRoute)
   })
 
   describe('Clearing transactions', () => {
