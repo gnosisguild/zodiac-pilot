@@ -1,21 +1,23 @@
 import { invariant } from '@epic-web/invariant'
 import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
-import { useAccountEffect, useDisconnect } from 'wagmi'
+import { useAccount, useAccountEffect, useDisconnect } from 'wagmi'
 import { Connect } from './Connect'
 import { Wallet } from './Wallet'
+
+type OnConnectArgs = {
+  providerType: ProviderType
+  chainId: ChainId
+  account: HexAddress
+}
 
 export type ConnectWalletProps = {
   pilotAddress: HexAddress | null
   chainId?: ChainId
   providerType?: ProviderType
-  onConnect(args: {
-    providerType: ProviderType
-    chainId: ChainId
-    account: HexAddress
-  }): void
+  onConnect(args: OnConnectArgs): void
   onDisconnect(): void
 }
 
@@ -27,41 +29,21 @@ export const ConnectWallet = ({
   onDisconnect,
 }: ConnectWalletProps) => {
   const { disconnect } = useDisconnect()
+  const { address } = useAccount()
 
-  const [isConnecting, setIsConnecting] = useState(false)
+  useAutoReconnect({ currentConnectedAddress: pilotAddress, onConnect })
 
   const accountNotConnected =
     pilotAddress == null || pilotAddress === ZERO_ADDRESS
 
-  useEffect(() => {
-    if (!isConnecting) {
-      return
-    }
-
-    if (accountNotConnected) {
-      return
-    }
-
-    setIsConnecting(false)
-  }, [accountNotConnected, isConnecting])
+  const disconnectRequestRef = useRef(false)
 
   useAccountEffect({
-    onConnect({ isReconnected, address, chainId, connector }) {
-      if (isConnecting) {
-        return
-      }
+    onDisconnect() {
+      if (disconnectRequestRef.current) {
+        disconnectRequestRef.current = false
 
-      if (accountNotConnected && isReconnected) {
-        setIsConnecting(true)
-
-        onConnect({
-          account: address,
-          chainId: verifyChainId(chainId),
-          providerType:
-            connector.type === 'injected'
-              ? ProviderType.InjectedWallet
-              : ProviderType.WalletConnect,
-        })
+        onDisconnect()
       }
     },
   })
@@ -81,10 +63,60 @@ export const ConnectWallet = ({
       providerType={providerType}
       pilotAddress={pilotAddress}
       onDisconnect={() => {
-        onDisconnect()
+        if (address == null) {
+          onDisconnect()
+        } else {
+          disconnectRequestRef.current = true
 
-        disconnect()
+          // Do not call the `onDisconnect` handler directly because
+          // this could lead to an immediate reconnect because of a
+          // race condition. Instead, we're using the `onDisconnect`
+          // handler of `useAccountEffect` to tell our app only when
+          // we can be sure that wagmi has disconnected from the
+          // provider.
+          disconnect()
+        }
       }}
     />
   )
+}
+
+type UseAutoReconnectOptions = {
+  currentConnectedAddress: HexAddress | null
+  onConnect: (args: OnConnectArgs) => void
+}
+
+const useAutoReconnect = ({
+  currentConnectedAddress,
+  onConnect,
+}: UseAutoReconnectOptions) => {
+  const { address, chainId, connector } = useAccount()
+
+  const accountConnected =
+    currentConnectedAddress != null && currentConnectedAddress !== ZERO_ADDRESS
+
+  const onConnectRef = useRef(onConnect)
+
+  useEffect(() => {
+    onConnectRef.current = onConnect
+  }, [onConnect])
+
+  useEffect(() => {
+    if (address == null || chainId == null || connector == null) {
+      return
+    }
+
+    if (accountConnected) {
+      return
+    }
+
+    onConnectRef.current({
+      account: address,
+      chainId: verifyChainId(chainId),
+      providerType:
+        connector.type === 'injected'
+          ? ProviderType.InjectedWallet
+          : ProviderType.WalletConnect,
+    })
+  }, [accountConnected, address, chainId, connector])
 }
