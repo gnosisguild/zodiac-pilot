@@ -348,8 +348,8 @@ importers:
         specifier: 1.50.0
         version: 1.50.0
       '@safe-global/safe-gateway-typescript-sdk':
-        specifier: 3.22.8
-        version: 3.22.8
+        specifier: 3.22.9
+        version: 3.22.9
       '@sentry/esbuild-plugin':
         specifier: 3.1.0
         version: 3.1.0
@@ -2431,8 +2431,8 @@ packages:
   '@safe-global/safe-deployments@1.37.24':
     resolution: {integrity: sha512-jBbPRi/qimF70Zi9Ri49aEOMEO+J8KNvohzs4gs90YF9LH6GraylVDMrqi5i3gQIyyICkQbjYYsS/Ax+Po7sDw==}
 
-  '@safe-global/safe-gateway-typescript-sdk@3.22.8':
-    resolution: {integrity: sha512-4J98MEar6qahXQ0aHD+zc3u4ZBnPdble7wIo7aaqxk9U8n96NvMiiDccPr68GwqFqZHkMP9FVrhIiJ5mN+UgoQ==}
+  '@safe-global/safe-gateway-typescript-sdk@3.22.9':
+    resolution: {integrity: sha512-7ojVK/crhOaGowEO8uYWaopZzcr5rR76emgllGIfjCLR70aY4PbASpi9Pbs+7jIRzPDBBkM0RBo+zYx5UduX8Q==}
     engines: {node: '>=16'}
 
   '@safe-global/safe-modules-deployments@2.2.4':
@@ -9283,7 +9283,7 @@ snapshots:
 
   '@safe-global/safe-apps-sdk@9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)':
     dependencies:
-      '@safe-global/safe-gateway-typescript-sdk': 3.22.8
+      '@safe-global/safe-gateway-typescript-sdk': 3.22.9
       viem: 2.22.16(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
     transitivePeerDependencies:
       - bufferutil
@@ -9299,7 +9299,7 @@ snapshots:
     dependencies:
       semver: 7.6.3
 
-  '@safe-global/safe-gateway-typescript-sdk@3.22.8': {}
+  '@safe-global/safe-gateway-typescript-sdk@3.22.9': {}
 
   '@safe-global/safe-modules-deployments@2.2.4': {}
 
