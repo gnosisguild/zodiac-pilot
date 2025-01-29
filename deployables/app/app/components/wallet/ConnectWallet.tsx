@@ -1,4 +1,3 @@
-import { invariant } from '@epic-web/invariant'
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
@@ -51,15 +50,10 @@ export const ConnectWallet = ({
     return <Connect onConnect={onConnect} />
   }
 
-  invariant(
-    providerType != null,
-    'providerType is required when pilotAddress is set',
-  )
-
   return (
     <Wallet
       chainId={chainId}
-      providerType={providerType}
+      providerType={providerType || ProviderType.InjectedWallet}
       pilotAddress={pilotAddress}
       onDisconnect={() => {
         if (address == null) {
