@@ -42,12 +42,7 @@ const SubmitPage = ({
 
       <Page.Main>
         <WalletProvider>
-          <ConnectWallet
-            chainId={chainId}
-            pilotAddress={initiator}
-            onConnect={() => {}}
-            onDisconnect={() => {}}
-          />
+          <ConnectWallet chainId={chainId} pilotAddress={initiator} />
 
           <SubmitTransaction />
         </WalletProvider>
@@ -65,17 +60,17 @@ const SubmitTransaction = () => {
 
   const submit = async () => {
     invariant(connectorClient != null, 'Client must be ready')
-    const state = [] as ExecutionState
+
     await execute(
       plan as ExecutionPlan,
-      state,
+      [] as ExecutionState,
       connectorClient as Eip1193Provider,
       { origin: 'Zodiac Pilot' },
     )
   }
 
   return (
-    <PrimaryButton disabled={!connectorClient} onClick={submit}>
+    <PrimaryButton disabled={connectorClient == null} onClick={submit}>
       Sign
     </PrimaryButton>
   )
