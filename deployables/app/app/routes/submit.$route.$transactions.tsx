@@ -74,5 +74,9 @@ const SubmitTransaction = () => {
     )
   }
 
-  return <PrimaryButton disabled={!connectorClient} onClick={submit} />
+  return (
+    <PrimaryButton disabled={!connectorClient} onClick={submit}>
+      Sign
+    </PrimaryButton>
+  )
 }
