@@ -1,9 +1,9 @@
+import type { BalanceResult } from '@/balances'
 import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
 import { CircleDollarSign } from 'lucide-react'
 import { useEffect, type PropsWithChildren } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
-import type { BalanceResult } from '../../types.server'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]

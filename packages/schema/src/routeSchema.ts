@@ -22,6 +22,8 @@ export type HexAddress = Hex
 export const isHexAddress = isHex
 export const addressSchema = hexSchema
 
+export const verifyHexAddress = (value: string) => addressSchema.parse(value)
+
 const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   if (typeof value !== 'string') {
     return false

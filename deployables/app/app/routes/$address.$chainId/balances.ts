@@ -1,28 +1,15 @@
-import { getMoralisApiKey } from '@zodiac/env'
-import Moralis from 'moralis'
-import type { Ref } from 'react'
-import type { BalanceResult } from '../types.server'
+import { getTokenBalances, type BalanceResult } from '@/balances'
+import { verifyChainId } from '@zodiac/chains'
+import { verifyHexAddress } from '@zodiac/schema'
 import type { Route } from './+types/balances'
-
-const startedRef: Ref<boolean> = { current: false }
 
 export const loader = async ({
   params,
 }: Route.LoaderArgs): Promise<BalanceResult> => {
   const { chainId, address } = params
 
-  if (startedRef.current === false) {
-    startedRef.current = true
-
-    await Moralis.start({
-      apiKey: getMoralisApiKey(),
-    })
-  }
-
-  const response = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
-    chain: chainId,
-    address,
-  })
-
-  return response.result.filter((result) => !result.possibleSpam)
+  return getTokenBalances(
+    verifyChainId(parseInt(chainId)),
+    verifyHexAddress(address),
+  )
 }

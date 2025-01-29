@@ -1,5 +1,5 @@
-import { addressSchema } from '@zodiac/schema'
+import { verifyHexAddress } from '@zodiac/schema'
 import { getString } from './getString'
 
 export const getHexString = (data: FormData, key: string) =>
-  addressSchema.parse(getString(data, key))
+  verifyHexAddress(getString(data, key))
