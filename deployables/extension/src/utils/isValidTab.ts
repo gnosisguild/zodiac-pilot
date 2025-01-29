@@ -8,4 +8,5 @@ const isValidProtocol = (url: string) =>
 
 const isValidPage = (url: string) =>
   !url.startsWith(`${getCompanionAppUrl()}/edit-route`) &&
+  !url.startsWith(`${getCompanionAppUrl()}/submit`) &&
   !url.startsWith(`${getCompanionAppUrl()}/connect`)
