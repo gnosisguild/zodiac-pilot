@@ -46,19 +46,11 @@ export const BaseButton = ({
   </button>
 )
 
-type EnabledLinkProps = ComponentPropsWithoutRef<typeof Link> &
+export type BaseLinkButtonProps = ComponentPropsWithoutRef<typeof Link> &
   SharedButtonProps & {
     openInNewWindow?: boolean
-    disabled?: false
+    disabled?: boolean
   }
-
-type DisabledLinkProps = BaseButtonProps & {
-  to: string
-  openInNewWindow?: boolean
-  disabled: true
-}
-
-export type BaseLinkButtonProps = EnabledLinkProps | DisabledLinkProps
 
 export const BaseLinkButton = ({
   fluid = false,
@@ -74,13 +66,13 @@ export const BaseLinkButton = ({
   if ('disabled' in props && props.disabled) {
     return (
       <BaseButton
+        disabled
         fluid={fluid}
         className={className}
         icon={Icon}
         iconOnly={iconOnly}
         size={size}
         title={title}
-        {...props}
       >
         {children}
       </BaseButton>
