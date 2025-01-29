@@ -1,5 +1,5 @@
-import { isConnected, useInjectedWallet, useWalletConnect } from '@/providers'
-import { type ExecutionRoute, ProviderType } from '@/types'
+import { isConnected, useInjectedWallet } from '@/providers'
+import { type ExecutionRoute } from '@/types'
 import { getChainId } from '@zodiac/chains'
 import { ZeroAddress } from 'ethers'
 import { useCallback } from 'react'
@@ -9,7 +9,7 @@ import { useProviderChainId } from './useProviderChainId'
 export const useRouteConnect = (route: ExecutionRoute) => {
   const { switchChain } = useInjectedWallet()
   const connected = useConnected(route)
-  const providerChainId = useProviderChainId(route)
+  const providerChainId = useProviderChainId()
   const canEstablishConnection = useCanEstablishConnection(route)
 
   const requiredChainId = getChainId(route.avatar)
@@ -37,7 +37,6 @@ export const useRouteConnect = (route: ExecutionRoute) => {
 
 const useConnected = (route: ExecutionRoute) => {
   const injectedWallet = useInjectedWallet()
-  const walletConnect = useWalletConnect(route.id)
 
   if (route.initiator == null) {
     return false
@@ -45,12 +44,7 @@ const useConnected = (route: ExecutionRoute) => {
 
   const chainId = getChainId(route.avatar)
 
-  switch (route.providerType) {
-    case ProviderType.InjectedWallet:
-      return isConnected(injectedWallet, route.initiator, chainId)
-    case ProviderType.WalletConnect:
-      return isConnected(walletConnect, route.initiator, chainId)
-  }
+  return isConnected(injectedWallet, route.initiator, chainId)
 }
 
 const useCanEstablishConnection = (route: ExecutionRoute) => {
@@ -67,10 +61,6 @@ const useCanEstablishConnection = (route: ExecutionRoute) => {
       : undefined
 
   if (pilotAddress == null) {
-    return false
-  }
-
-  if (route.providerType !== ProviderType.InjectedWallet) {
     return false
   }
 

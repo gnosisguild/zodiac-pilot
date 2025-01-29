@@ -4,7 +4,6 @@ import {
   renderHook,
   RenderWrapper,
 } from '@/test-utils'
-import { ProviderType } from '@/types'
 import { describe, expect, it, vi } from 'vitest'
 import { useInjectedWallet } from './InjectedWalletContext'
 import { useConnectInjectedWalletIfNeeded } from './useConnectInjectedWalletIfNeeded'
@@ -25,7 +24,7 @@ describe('Connect injected wallet if needed', async () => {
   it('does not connect the injected wallet when the connection status is "error"', async () => {
     const connect = vi.fn()
 
-    const route = createMockRoute({ providerType: ProviderType.InjectedWallet })
+    const route = createMockRoute()
 
     mockUseInjectedWallet.mockReturnValue({
       accounts: [],
@@ -37,7 +36,7 @@ describe('Connect injected wallet if needed', async () => {
       connectionStatus: 'error',
     })
 
-    await renderHook(() => useConnectInjectedWalletIfNeeded(route), {
+    await renderHook(() => useConnectInjectedWalletIfNeeded(), {
       wrapper: RenderWrapper,
       routes: [route],
     })
@@ -48,7 +47,7 @@ describe('Connect injected wallet if needed', async () => {
   it('does not connect the injected wallet when the connection is not ready', async () => {
     const connect = vi.fn()
 
-    const route = createMockRoute({ providerType: ProviderType.InjectedWallet })
+    const route = createMockRoute()
 
     mockUseInjectedWallet.mockReturnValue({
       accounts: [],
@@ -60,7 +59,7 @@ describe('Connect injected wallet if needed', async () => {
       connectionStatus: 'disconnected',
     })
 
-    await renderHook(() => useConnectInjectedWalletIfNeeded(route), {
+    await renderHook(() => useConnectInjectedWalletIfNeeded(), {
       wrapper: RenderWrapper,
       routes: [route],
     })
@@ -71,7 +70,7 @@ describe('Connect injected wallet if needed', async () => {
   it('does not connect the injected wallet when it is already connected', async () => {
     const connect = vi.fn()
 
-    const route = createMockRoute({ providerType: ProviderType.InjectedWallet })
+    const route = createMockRoute()
 
     mockUseInjectedWallet.mockReturnValue({
       accounts: [],
@@ -83,7 +82,7 @@ describe('Connect injected wallet if needed', async () => {
       connectionStatus: 'connected',
     })
 
-    await renderHook(() => useConnectInjectedWalletIfNeeded(route), {
+    await renderHook(() => useConnectInjectedWalletIfNeeded(), {
       wrapper: RenderWrapper,
       routes: [route],
     })
@@ -94,7 +93,7 @@ describe('Connect injected wallet if needed', async () => {
   it('does not connect the injected wallet when it is already connecting', async () => {
     const connect = vi.fn()
 
-    const route = createMockRoute({ providerType: ProviderType.InjectedWallet })
+    const route = createMockRoute()
 
     mockUseInjectedWallet.mockReturnValue({
       accounts: [],
@@ -106,7 +105,7 @@ describe('Connect injected wallet if needed', async () => {
       connectionStatus: 'connecting',
     })
 
-    await renderHook(() => useConnectInjectedWalletIfNeeded(route), {
+    await renderHook(() => useConnectInjectedWalletIfNeeded(), {
       wrapper: RenderWrapper,
       routes: [route],
     })

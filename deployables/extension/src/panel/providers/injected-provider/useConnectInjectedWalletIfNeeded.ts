@@ -1,15 +1,11 @@
-import { type ExecutionRoute, ProviderType } from '@/types'
 import { useEffect } from 'react'
 import { useInjectedWallet } from './InjectedWalletContext'
 
-export const useConnectInjectedWalletIfNeeded = (route: ExecutionRoute) => {
+export const useConnectInjectedWalletIfNeeded = () => {
   const { chainId, connect, connectionStatus, ready } = useInjectedWallet()
 
   const mustConnectInjectedWallet =
-    route.providerType === ProviderType.InjectedWallet &&
-    !chainId &&
-    ready &&
-    connectionStatus === 'disconnected'
+    !chainId && ready && connectionStatus === 'disconnected'
 
   // only use computed properties in here
   // otherwise, the effect will synchronize too often and

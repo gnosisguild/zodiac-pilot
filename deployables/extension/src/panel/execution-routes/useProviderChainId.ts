@@ -1,15 +1,7 @@
-import { useInjectedWallet, useWalletConnect } from '@/providers'
-import { type ExecutionRoute, ProviderType } from '@/types'
+import { useInjectedWallet } from '@/providers'
 
-/** The chain ID the `provider` is currently connected to. */
-export const useProviderChainId = (route: ExecutionRoute) => {
+/** The chain ID the injected provider is currently connected to. */
+export const useProviderChainId = () => {
   const injectedWallet = useInjectedWallet()
-  const walletConnect = useWalletConnect(route.id)
-
-  switch (route.providerType) {
-    case ProviderType.InjectedWallet:
-      return injectedWallet.chainId
-    case ProviderType.WalletConnect:
-      return walletConnect?.chainId || null
-  }
+  return injectedWallet.chainId
 }

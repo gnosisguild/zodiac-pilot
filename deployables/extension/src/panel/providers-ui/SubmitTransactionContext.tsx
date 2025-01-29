@@ -25,7 +25,7 @@ export const ProvideSubmitTransactionContext = ({
   children,
 }: PropsWithChildren) => {
   const route = useExecutionRoute()
-  const provider = useRouteProvider(route)
+  const provider = useRouteProvider()
   const transactions = useTransactions()
   const dispatch = useDispatch()
 
