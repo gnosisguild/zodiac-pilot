@@ -19,7 +19,6 @@ import {
 } from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
 import { fetchContractInfo } from '../utils/abi'
-import { ProvideSubmitTransactionContext } from './SubmitTransactionContext'
 
 const ProviderContext = createContext<
   (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
@@ -178,9 +177,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <ProviderContext.Provider value={forkProvider}>
-      <ProvideSubmitTransactionContext>
-        {children}
-      </ProvideSubmitTransactionContext>
+      {children}
     </ProviderContext.Provider>
   )
 }
