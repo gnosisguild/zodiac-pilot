@@ -16,31 +16,7 @@ export const createPort = async (tabId: number, url: string | undefined) => {
 
   console.debug(`Connecting to Tab (id: "${tabId}")`)
 
-  return connectToIframe(tabId)
-}
-
-const connectToIframe = async (tabId: number) => {
-  const port = await connectToDApp(tabId)
-
-  const { promise, resolve } = Promise.withResolvers<chrome.runtime.Port>()
-
-  const handleInitMessage = (message: ConnectedWalletMessage) => {
-    if (
-      message.type !== ConnectedWalletMessageType.CONNECTED_WALLET_INITIALIZED
-    ) {
-      return
-    }
-
-    port.onMessage.removeListener(handleInitMessage)
-
-    console.debug(`Connected to injected iframe in Tab (id: "${tabId}").`)
-
-    resolve(port)
-  }
-
-  port.onMessage.addListener(handleInitMessage)
-
-  return promise
+  return connectToDApp(tabId)
 }
 
 const connectToDApp = (tabId: number): Promise<chrome.runtime.Port> => {
