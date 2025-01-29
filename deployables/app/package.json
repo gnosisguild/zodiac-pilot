@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@depay/web3-mock": "14.19.1",
+    "@moralisweb3/common-evm-utils": "^2.27.2",
     "@playwright/test": "1.50.1",
     "@react-router/dev": "7.1.5",
     "@sentry/vite-plugin": "3.1.1",
