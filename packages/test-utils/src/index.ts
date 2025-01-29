@@ -1,4 +1,5 @@
 export * from './creators'
+export { mockWeb3 } from './mockWeb3'
 export { expectRouteToBe, render } from './render'
 export type { RenderOptions, Route } from './render'
 export { createRenderFramework } from './renderFramework'

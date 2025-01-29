@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { getDefaultConfig } from 'connectkit'
 import { useMemo, type PropsWithChildren } from 'react'
-import { createConfig, injected, WagmiProvider } from 'wagmi'
+import { createConfig, WagmiProvider } from 'wagmi'
 import {
   arbitrum,
   avalanche,
@@ -12,7 +12,7 @@ import {
   polygon,
   sepolia,
 } from 'wagmi/chains'
-import { metaMask, walletConnect } from 'wagmi/connectors'
+import { injected, metaMask, mock, walletConnect } from 'wagmi/connectors'
 
 const queryClient = new QueryClient()
 
@@ -52,7 +52,13 @@ export const getWagmiConfig = (injectedOnly: boolean) =>
         avalanche,
       ],
       connectors: injectedOnly
-        ? [injected()]
+        ? [
+            injected(),
+            process.env.NODE_ENV === 'test' &&
+              mock({
+                accounts: ['0x1000000000000000000000000000000000000000'],
+              }),
+          ].filter(Boolean)
         : [
             injected(),
             metaMask(),

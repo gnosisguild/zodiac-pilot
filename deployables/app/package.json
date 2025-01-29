@@ -6,7 +6,7 @@
     "build": "react-router build && node vercel/prepare.js",
     "dev": "cross-env NODE_ENV=development node ./dev-server.js",
     "check-types": "react-router typegen && tsc -b",
-    "test": "vitest",
+    "test": "cross-env NODE_ENV=test vitest",
     "test:e2e": "playwright test --headed",
     "test:e2e:ui": "pnpm test:e2e --ui",
     "lint": "eslint . --max-warnings=0"
