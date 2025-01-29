@@ -1,3 +1,4 @@
+import { ToastContainer } from '@zodiac/ui'
 import {
   isRouteErrorResponse,
   Links,
@@ -19,6 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex h-full flex-col text-base text-zinc-900 dark:text-white">
         {children}
+        <ToastContainer />
         <ScrollRestoration />
         <Scripts />
       </body>
