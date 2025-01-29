@@ -49,7 +49,9 @@ const SubmitPage = ({
         <WalletProvider>
           <ConnectWallet chainId={chainId} pilotAddress={initiator} />
 
-          <SubmitTransaction />
+          <div className="mt-8 flex">
+            <SubmitTransaction />
+          </div>
         </WalletProvider>
       </Page.Main>
     </Page>
@@ -65,6 +67,7 @@ const SubmitTransaction = () => {
 
   return (
     <PrimaryButton
+      fluid
       disabled={connectorClient == null || submitPending}
       onClick={async () => {
         invariant(connectorClient != null, 'Client must be ready')
