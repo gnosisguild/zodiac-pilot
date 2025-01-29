@@ -2,6 +2,10 @@ import { ConnectWallet, Page, WalletProvider } from '@/components'
 import { jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
+import {
+  CompanionAppMessageType,
+  type CompanionAppMessage,
+} from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
 import type { Eip1193Provider } from 'ethers'
@@ -172,6 +176,10 @@ const SubmitTransaction = () => {
               ),
             })
           }
+
+          window.postMessage({
+            type: CompanionAppMessageType.SUBMIT_SUCCESS,
+          } satisfies CompanionAppMessage)
         } catch {
           errorToast({
             title: 'Error',
