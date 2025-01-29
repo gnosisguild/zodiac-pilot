@@ -5,6 +5,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { encode } from '@zodiac/schema'
 import { Modal, PrimaryLinkButton, Spinner } from '@zodiac/ui'
 import { useState } from 'react'
 
@@ -142,15 +143,7 @@ export const Submit = () => {
       <PrimaryLinkButton
         fluid
         openInNewWindow
-        to={`${companionAppUrl}/submit/${btoa(JSON.stringify(route))}/${btoa(
-          JSON.stringify(metaTransactions, (_, value) => {
-            if (typeof value === 'bigint') {
-              return value.toString()
-            }
-
-            return value
-          }),
-        )}`}
+        to={`${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`}
         disabled={transactions.length === 0}
         onClick={waitForSubmit}
       >

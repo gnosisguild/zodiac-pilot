@@ -6,6 +6,7 @@ import {
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import { encode } from '@zodiac/schema'
 import { describe, expect, it } from 'vitest'
 import { Transactions } from './Transactions'
 
@@ -68,9 +69,26 @@ describe('Transactions', () => {
 
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
     })
-    it.todo(
-      'encodes the route and transaction state into the target of the submit button',
-    )
+
+    it('encodes the route and transaction state into the target of the submit button', async () => {
+      const route = createMockRoute({ id: 'test-route' })
+      const transaction = createTransaction()
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [transaction],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
+        'href',
+        `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
+      )
+    })
     it.todo(
       'indicates when the extension waits for transactions to be submitted',
     )
@@ -97,7 +115,7 @@ describe('Transactions', () => {
 
       expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
         'href',
-        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
+        `http://localhost/edit-route/${encode(route)}`,
       )
     })
   })
