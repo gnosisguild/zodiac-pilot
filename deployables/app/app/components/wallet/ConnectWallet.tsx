@@ -1,6 +1,5 @@
-import { invariant } from '@epic-web/invariant'
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import { type HexAddress, ProviderType } from '@zodiac/schema'
+import { type HexAddress } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
 import { useAccount, useAccountEffect, useDisconnect } from 'wagmi'
@@ -8,14 +7,12 @@ import { Connect } from './Connect'
 import { Wallet } from './Wallet'
 
 type OnConnectArgs = {
-  providerType: ProviderType
   account: HexAddress
 }
 
 export type ConnectWalletProps = {
   pilotAddress: HexAddress | null
   chainId?: ChainId
-  providerType?: ProviderType
   onConnect(args: OnConnectArgs): void
   onDisconnect(): void
 }
@@ -23,7 +20,6 @@ export type ConnectWalletProps = {
 export const ConnectWallet = ({
   pilotAddress,
   chainId,
-  providerType,
   onConnect,
   onDisconnect,
 }: ConnectWalletProps) => {
@@ -51,15 +47,9 @@ export const ConnectWallet = ({
     return <Connect onConnect={onConnect} />
   }
 
-  invariant(
-    providerType != null,
-    'providerType is required when pilotAddress is set',
-  )
-
   return (
     <Wallet
       chainId={chainId}
-      providerType={providerType}
       pilotAddress={pilotAddress}
       onDisconnect={() => {
         if (address == null) {
@@ -89,7 +79,7 @@ const useAutoReconnect = ({
   currentConnectedAddress,
   onConnect,
 }: UseAutoReconnectOptions) => {
-  const { address, connector } = useAccount()
+  const { address } = useAccount()
 
   const accountConnected =
     currentConnectedAddress != null && currentConnectedAddress !== ZERO_ADDRESS
@@ -101,7 +91,7 @@ const useAutoReconnect = ({
   }, [onConnect])
 
   useEffect(() => {
-    if (address == null || connector == null) {
+    if (address == null) {
       return
     }
 
@@ -111,10 +101,6 @@ const useAutoReconnect = ({
 
     onConnectRef.current({
       account: address,
-      providerType:
-        connector.type === 'injected'
-          ? ProviderType.InjectedWallet
-          : ProviderType.WalletConnect,
     })
-  }, [accountConnected, address, connector])
+  }, [accountConnected, address])
 }

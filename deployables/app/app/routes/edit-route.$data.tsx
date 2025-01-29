@@ -34,12 +34,7 @@ import {
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
-import {
-  ProviderType,
-  providerTypeSchema,
-  type ExecutionRoute,
-  type Waypoints,
-} from '@zodiac/schema'
+import { type ExecutionRoute, type Waypoints } from '@zodiac/schema'
 import {
   Error,
   Form,
@@ -71,7 +66,6 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     label: route.label,
     chainId,
     avatar: route.avatar,
-    providerType: route.providerType,
     waypoints: route.waypoints,
     isDev: process.env.NODE_ENV === 'development',
   }
@@ -197,13 +191,11 @@ const EditRoute = ({
               <ConnectWallet
                 chainId={chainId}
                 pilotAddress={optimisticRoute.pilotAddress}
-                providerType={optimisticRoute.providerType}
-                onConnect={({ account, providerType }) => {
+                onConnect={({ account }) => {
                   submit(
                     formData({
                       intent: Intent.ConnectWallet,
                       account,
-                      providerType,
                     }),
                     { method: 'POST' },
                   )
@@ -310,19 +302,18 @@ const EditRoute = ({
 export default EditRoute
 
 const useOptimisticRoute = () => {
-  const { waypoints, chainId, providerType } = useLoaderData<typeof loader>()
+  const { waypoints, chainId } = useLoaderData<typeof loader>()
   const pilotAddress = getPilotAddress(waypoints)
 
   const { formData } = useNavigation()
 
   const [optimisticConnection, setOptimisticConnection] = useState({
     pilotAddress,
-    providerType,
   })
 
   useEffect(() => {
-    setOptimisticConnection({ pilotAddress, providerType })
-  }, [chainId, pilotAddress, providerType])
+    setOptimisticConnection({ pilotAddress })
+  }, [chainId, pilotAddress])
 
   useEffect(() => {
     if (formData == null) {
@@ -339,7 +330,6 @@ const useOptimisticRoute = () => {
       case Intent.DisconnectWallet: {
         setOptimisticConnection({
           pilotAddress: ZERO_ADDRESS,
-          providerType: undefined,
         })
 
         break
@@ -348,7 +338,6 @@ const useOptimisticRoute = () => {
       case Intent.ConnectWallet: {
         setOptimisticConnection({
           pilotAddress: getHexString(formData, 'account'),
-          providerType: verifyProviderType(getInt(formData, 'providerType')),
         })
       }
     }
@@ -382,6 +371,3 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
 
   invariant(false, `Cannot get multisend for module type "${module.type}"`)
 }
-
-const verifyProviderType = (value: number): ProviderType =>
-  providerTypeSchema.parse(value)
