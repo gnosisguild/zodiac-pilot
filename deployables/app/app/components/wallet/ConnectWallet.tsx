@@ -9,7 +9,6 @@ import { Wallet } from './Wallet'
 export type ConnectWalletProps = {
   pilotAddress: HexAddress | null
   chainId?: ChainId
-  providerType?: ProviderType
   onConnect?: (args: OnConnectArgs) => void
   onDisconnect?: () => void
 }
@@ -17,7 +16,6 @@ export type ConnectWalletProps = {
 export const ConnectWallet = ({
   pilotAddress,
   chainId,
-  providerType,
   onConnect,
   onDisconnect,
 }: ConnectWalletProps) => {
@@ -50,7 +48,6 @@ export const ConnectWallet = ({
   return (
     <Wallet
       chainId={chainId}
-      providerType={providerType || ProviderType.InjectedWallet}
       pilotAddress={pilotAddress}
       onDisconnect={() => {
         if (address == null) {

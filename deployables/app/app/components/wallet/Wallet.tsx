@@ -1,4 +1,3 @@
-import { ProviderType } from '@zodiac/schema'
 import type { ChainId } from 'ser-kit'
 import { useAccount, useReconnect, useSwitchChain } from 'wagmi'
 import { Account } from './Account'
@@ -9,7 +8,6 @@ import { WrongAccount } from './WrongAccount'
 
 type WalletProps = {
   pilotAddress: string
-  providerType: ProviderType
   chainId?: ChainId
 
   onDisconnect: () => void
@@ -17,7 +15,6 @@ type WalletProps = {
 
 export const Wallet = ({
   pilotAddress,
-  providerType,
   chainId,
   onDisconnect,
 }: WalletProps) => {
@@ -28,7 +25,7 @@ export const Wallet = ({
   const isServer = typeof document === 'undefined'
 
   if (isServer) {
-    return <Account type={providerType}>{pilotAddress}</Account>
+    return <Account>{pilotAddress}</Account>
   }
 
   // Wallet disconnected
@@ -38,7 +35,7 @@ export const Wallet = ({
         onDisconnect={onDisconnect}
         onReconnect={() => reconnect()}
       >
-        <Account type={providerType}>{pilotAddress}</Account>
+        <Account>{pilotAddress}</Account>
       </WalletDisconnected>
     )
   }
@@ -53,7 +50,7 @@ export const Wallet = ({
         }}
         onDisconnect={onDisconnect}
       >
-        <Account type={providerType}>{pilotAddress}</Account>
+        <Account>{pilotAddress}</Account>
       </SwitchChain>
     )
   }
@@ -68,7 +65,7 @@ export const Wallet = ({
   ) {
     return (
       <WrongAccount onDisconnect={onDisconnect}>
-        <Account type={providerType}>{pilotAddress}</Account>
+        <Account>{pilotAddress}</Account>
       </WrongAccount>
     )
   }
@@ -76,7 +73,7 @@ export const Wallet = ({
   if (address != null) {
     return (
       <Connected onDisconnect={onDisconnect}>
-        <Account type={providerType}>{pilotAddress}</Account>
+        <Account>{pilotAddress}</Account>
       </Connected>
     )
   }

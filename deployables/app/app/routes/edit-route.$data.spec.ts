@@ -146,44 +146,6 @@ describe('Edit route', () => {
         await screen.findByRole('button', { name: 'Connect wallet' }),
       ).toBeInTheDocument()
     })
-
-    describe('MetaMask', () => {
-      it('shows MetaMask as the provider of a route', async () => {
-        const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ address: randomAddress() }),
-            ),
-          }),
-          providerType: ProviderType.InjectedWallet,
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        expect(
-          screen.getByRole('textbox', { name: 'Pilot Account' }),
-        ).toHaveAccessibleDescription('MetaMask')
-      })
-    })
-
-    describe('Wallet Connect', () => {
-      it('shows Wallet Connect as the provider of a route', async () => {
-        const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ address: randomAddress() }),
-            ),
-          }),
-          providerType: ProviderType.WalletConnect,
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        expect(
-          screen.getByRole('textbox', { name: 'Pilot Account' }),
-        ).toHaveAccessibleDescription('Wallet Connect')
-      })
-    })
   })
 
   describe('Avatar', () => {
