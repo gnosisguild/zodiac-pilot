@@ -1,5 +1,8 @@
+export { decode } from './decode'
 export { encode } from './encode'
 export { jsonStringify } from './jsonStringify'
+export { metaTransactionRequestSchema } from './metaTransactionRequestSchema'
+export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
 export {
   ProviderType,
   addressSchema,

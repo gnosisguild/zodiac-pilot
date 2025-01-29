@@ -5,6 +5,7 @@ import {
   type PrefixedAddress,
 } from 'ser-kit'
 import { z } from 'zod'
+import { hexSchema, isHex, type Hex } from './hex'
 
 export const chainIdSchema = z.union([
   z.literal(chains[0].chainId),
@@ -17,14 +18,9 @@ export const chainIdSchema = z.union([
   z.literal(chains[7].chainId),
 ])
 
-export type HexAddress = `0x${string}`
-
-export const isHexAddress = (value: string): value is HexAddress =>
-  value.startsWith('0x') && value.length > 2
-
-export const addressSchema = z.custom<HexAddress>(
-  (value) => typeof value === 'string' && isHexAddress(value),
-)
+export type HexAddress = Hex
+export const isHexAddress = isHex
+export const addressSchema = hexSchema
 
 const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   if (typeof value !== 'string') {

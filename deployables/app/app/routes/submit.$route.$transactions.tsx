@@ -1,5 +1,5 @@
 import { ConnectWallet, Page, WalletProvider } from '@/components'
-import { jsonRpcProvider, parseRouteData } from '@/utils'
+import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
 import {
@@ -19,15 +19,12 @@ import {
   planExecution,
   type ExecutionPlan,
   type ExecutionState,
-  type MetaTransactionRequest,
 } from 'ser-kit'
 import { useConnectorClient } from 'wagmi'
 import type { Route } from './+types/submit.$route.$transactions'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
-  const metaTransactions = JSON.parse(
-    atob(params.transactions),
-  ) as MetaTransactionRequest[]
+  const metaTransactions = parseTransactionData(params.transactions)
   const route = parseRouteData(params.route)
 
   invariantResponse(route.initiator != null, 'Route needs an initiator')
