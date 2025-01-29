@@ -18,6 +18,8 @@ import {
 } from '@zodiac/form-data'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import {
+  createAccount,
+  createEoaAccount,
   getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -26,10 +28,9 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
-  updatePilotAddress,
-  updateProviderType,
   updateRoleId,
   updateRolesWaypoint,
+  updateStartingPoint,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
@@ -153,17 +154,20 @@ export const clientAction = async ({
     case Intent.ConnectWallet: {
       const route = parseRouteData(params.data)
 
-      const account = getHexString(data, 'account')
-      const providerType = verifyProviderType(getInt(data, 'providerType'))
-
-      return editRoute(
-        updatePilotAddress(updateProviderType(route, providerType), account),
+      const address = getHexString(data, 'account')
+      const account = await createAccount(
+        jsonRpcProvider(getChainId(route.avatar)),
+        address,
       )
+
+      return editRoute(updateStartingPoint(route, account))
     }
     case Intent.DisconnectWallet: {
       const route = parseRouteData(params.data)
 
-      return editRoute(updatePilotAddress(route, ZERO_ADDRESS))
+      return editRoute(
+        updateStartingPoint(route, createEoaAccount({ address: ZERO_ADDRESS })),
+      )
     }
 
     default:

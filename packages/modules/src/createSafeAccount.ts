@@ -4,6 +4,7 @@ import {
   formatPrefixedAddress,
   type Account,
   type ChainId,
+  type PrefixedAddress,
 } from 'ser-kit'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
@@ -21,5 +22,8 @@ export const createSafeAccount = ({
   threshold: NaN,
   address,
   chain: chainId,
-  prefixedAddress: formatPrefixedAddress(chainId, address),
+  prefixedAddress: formatPrefixedAddress(
+    chainId,
+    address,
+  ).toLowerCase() as PrefixedAddress,
 })

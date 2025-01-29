@@ -20,7 +20,7 @@ export const chainIdSchema = z.union([
 export type HexAddress = `0x${string}`
 
 export const isHexAddress = (value: string): value is HexAddress =>
-  value.startsWith('0x') && value.length > 2
+  value.startsWith('0x') && value.length > 2 // value.match(/0x[0-9a-f]{40}/) != null
 
 export const addressSchema = z.custom<HexAddress>(
   (value) => typeof value === 'string' && isHexAddress(value),
