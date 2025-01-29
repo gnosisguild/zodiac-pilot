@@ -16,11 +16,6 @@ esbuild
     entryPoints: [
       './src/background/index.ts',
 
-      // ALLOW PILOT TO CONNECT TO USER'S BROWSER WALLET
-      './src/connect/contentScripts/dApp.ts',
-      './src/connect/contentScripts/connectIframe.ts',
-      './src/connect/injectedScript/main.ts',
-
       // INJECT EIP-1193 PROVIDER TO DAPPS TO RECORD TRANSACTIONS
       './src/inject/contentScript/main.ts',
       './src/inject/injectedScript/main.ts',

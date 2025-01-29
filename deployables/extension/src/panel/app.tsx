@@ -1,6 +1,5 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
-import { ProvideConnectProvider, ProvideInjectedWallet } from '@/providers'
 import { sentry } from '@/sentry'
 import { invariant } from '@epic-web/invariant'
 import { ToastContainer } from '@zodiac/ui'
@@ -30,15 +29,11 @@ const Root = () => {
     <StrictMode>
       <ProvidePort>
         <ProvideState>
-          <ProvideConnectProvider>
-            <ProvideInjectedWallet>
-              <div className="flex h-full flex-1 flex-col">
-                <RouterProvider router={router} />
-              </div>
+          <div className="flex h-full flex-1 flex-col">
+            <RouterProvider router={router} />
+          </div>
 
-              <ToastContainer position="top-center" />
-            </ProvideInjectedWallet>
-          </ProvideConnectProvider>
+          <ToastContainer position="top-center" />
         </ProvideState>
       </ProvidePort>
     </StrictMode>

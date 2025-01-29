@@ -1,5 +1,5 @@
 import type { TransactionState } from '@/state'
-import type { Eip1193Provider, ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import {
   render as baseRender,
   type RenderOptions,
@@ -27,10 +27,6 @@ type Options = RenderOptions & {
    */
   initialSelectedRoute?: ExecutionRoute | null
   /**
-   * Pass a custom provider instance to be used as the connect provider
-   */
-  initialProvider?: Eip1193Provider
-  /**
    * URL of the companion app that extends certain features
    * like route editing
    *
@@ -46,7 +42,6 @@ export const render = async (
     activeTab,
     initialState,
     initialSelectedRoute,
-    initialProvider,
     wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
     companionAppUrl = 'http://localhost:3040',
     ...options
@@ -62,7 +57,6 @@ export const render = async (
   const FinalRenderWrapper = ({ children }: PropsWithChildren) => (
     <Wrapper>
       <RenderWrapper
-        initialProvider={initialProvider}
         initialSelectedRoute={initialSelectedRoute}
         initialState={initialState}
         companionAppUrl={companionAppUrl}
