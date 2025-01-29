@@ -34,6 +34,7 @@ import {
   type ZodiacModule,
 } from '@zodiac/modules'
 import {
+  jsonStringify,
   ProviderType,
   providerTypeSchema,
   type ExecutionRoute,
@@ -244,7 +245,7 @@ const EditRoute = ({
                 submit(
                   formData({
                     intent: Intent.UpdateModule,
-                    module: JSON.stringify(module),
+                    module: jsonStringify(module),
                   }),
                   {
                     method: 'POST',

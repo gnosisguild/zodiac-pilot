@@ -2,6 +2,7 @@ import { useCompanionAppUrl } from '@/companion'
 import { useRouteConnect } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
+import { encode } from '@zodiac/schema'
 import {
   InlineForm,
   SecondaryButton,
@@ -73,7 +74,7 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
           <div className="flex gap-2">
             <SecondaryLinkButton
               openInNewWindow
-              to={`${useCompanionAppUrl()}/edit-route/${btoa(JSON.stringify(route))}`}
+              to={`${useCompanionAppUrl()}/edit-route/${encode(route)}`}
             >
               Edit
             </SecondaryLinkButton>

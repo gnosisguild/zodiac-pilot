@@ -1,3 +1,5 @@
+export { encode } from './encode'
+export { jsonStringify } from './jsonStringify'
 export {
   ProviderType,
   addressSchema,

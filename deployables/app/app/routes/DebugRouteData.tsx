@@ -1,4 +1,5 @@
 import { parseRouteData } from '@/utils'
+import { jsonStringify } from '@zodiac/schema'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
 import 'highlight.js/styles/atom-one-dark.min.css'
@@ -13,12 +14,9 @@ export const DebugRouteData = () => {
     return null
   }
 
-  const json = hljs.highlight(
-    JSON.stringify(parseRouteData(data), undefined, 2),
-    {
-      language: 'json',
-    },
-  )
+  const json = hljs.highlight(jsonStringify(parseRouteData(data), 2), {
+    language: 'json',
+  })
 
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-hidden bg-slate-800 pt-4 text-sm">
