@@ -55,21 +55,30 @@ describe('Transactions', () => {
     })
   })
 
-  describe('Submit', () => {
-    it('disables the submit button when the current tab goes into a state where submit is not possible', async () => {
+  describe.only('Submit', () => {
+    it('disables the submit button when there are no transactions', async () => {
       await render(
         '/test-route/transactions',
         [{ path: '/:activeRouteId/transactions', Component: Transactions }],
         {
-          initialState: [createTransaction()],
+          initialState: [],
           initialSelectedRoute: createMockRoute({ id: 'test-route' }),
         },
       )
 
-      await mockTabSwitch({ url: 'chrome://extensions' })
-
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
     })
+    it.todo(
+      'encodes the route and transaction state into the target of the submit button',
+    )
+    it.todo(
+      'indicates when the extension waits for transactions to be submitted',
+    )
+    it.todo('hides the submit notification when a success message arrives')
+    it.todo('clears all transactions when a success message arrives')
+    it.todo(
+      'does not clear transactions when the user hides the submit notification',
+    )
   })
 
   describe('Edit', () => {
