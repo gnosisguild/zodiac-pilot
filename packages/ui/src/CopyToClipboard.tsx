@@ -1,3 +1,4 @@
+import { jsonStringify } from '@zodiac/schema'
 import { Copy } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import { type BaseButtonProps, GhostButton } from './buttons'
@@ -13,19 +14,7 @@ export const CopyToClipboard = ({ data, ...props }: CopyToClipboardProps) => (
     {...props}
     icon={Copy}
     onClick={() => {
-      navigator.clipboard.writeText(
-        JSON.stringify(
-          data,
-          (_, value) => {
-            if (typeof value === 'bigint') {
-              return value.toString()
-            }
-
-            return value
-          },
-          2,
-        ),
-      )
+      navigator.clipboard.writeText(jsonStringify(data, 2))
 
       infoToast({
         title: 'Copied!',

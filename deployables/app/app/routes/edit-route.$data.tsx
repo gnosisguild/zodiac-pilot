@@ -34,6 +34,7 @@ import {
   type ZodiacModule,
 } from '@zodiac/modules'
 import {
+  jsonStringify,
   ProviderType,
   providerTypeSchema,
   type ExecutionRoute,
@@ -193,7 +194,6 @@ const EditRoute = ({
               <ConnectWallet
                 chainId={chainId}
                 pilotAddress={optimisticRoute.pilotAddress}
-                providerType={optimisticRoute.providerType}
                 onConnect={({ account, providerType }) => {
                   submit(
                     formData({
@@ -244,7 +244,7 @@ const EditRoute = ({
                 submit(
                   formData({
                     intent: Intent.UpdateModule,
-                    module: JSON.stringify(module),
+                    module: jsonStringify(module),
                   }),
                   {
                     method: 'POST',
@@ -306,19 +306,18 @@ const EditRoute = ({
 export default EditRoute
 
 const useOptimisticRoute = () => {
-  const { waypoints, chainId, providerType } = useLoaderData<typeof loader>()
+  const { waypoints, chainId } = useLoaderData<typeof loader>()
   const pilotAddress = getPilotAddress(waypoints)
 
   const { formData } = useNavigation()
 
   const [optimisticConnection, setOptimisticConnection] = useState({
     pilotAddress,
-    providerType,
   })
 
   useEffect(() => {
-    setOptimisticConnection({ pilotAddress, providerType })
-  }, [chainId, pilotAddress, providerType])
+    setOptimisticConnection({ pilotAddress })
+  }, [chainId, pilotAddress])
 
   useEffect(() => {
     if (formData == null) {
@@ -335,7 +334,6 @@ const useOptimisticRoute = () => {
       case Intent.DisconnectWallet: {
         setOptimisticConnection({
           pilotAddress: ZERO_ADDRESS,
-          providerType: undefined,
         })
 
         break
@@ -344,7 +342,6 @@ const useOptimisticRoute = () => {
       case Intent.ConnectWallet: {
         setOptimisticConnection({
           pilotAddress: getHexString(formData, 'account'),
-          providerType: verifyProviderType(getInt(formData, 'providerType')),
         })
       }
     }

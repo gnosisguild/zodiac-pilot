@@ -50,10 +50,7 @@ export const rootReducer = (
     }
 
     case 'CLEAR_TRANSACTIONS': {
-      const { lastTransactionId } = action.payload
-      return state.slice(
-        state.findIndex((item) => item.id === lastTransactionId) + 1,
-      )
+      return []
     }
   }
 }

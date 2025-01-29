@@ -15,7 +15,7 @@ import {
   updateRoleId,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
-import { ProviderType } from '@zodiac/schema'
+import { encode, ProviderType } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -88,7 +88,7 @@ describe('Edit route', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -98,7 +98,7 @@ describe('Edit route', () => {
     it('is possible to change the label of a route', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Label' }),
@@ -129,7 +129,7 @@ describe('Edit route', () => {
           }),
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -140,49 +140,11 @@ describe('Edit route', () => {
     it('offers a button to connect', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       expect(
         await screen.findByRole('button', { name: 'Connect wallet' }),
       ).toBeInTheDocument()
-    })
-
-    describe('MetaMask', () => {
-      it('shows MetaMask as the provider of a route', async () => {
-        const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ address: randomAddress() }),
-            ),
-          }),
-          providerType: ProviderType.InjectedWallet,
-        })
-
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
-
-        expect(
-          screen.getByRole('textbox', { name: 'Pilot Account' }),
-        ).toHaveAccessibleDescription('MetaMask')
-      })
-    })
-
-    describe('Wallet Connect', () => {
-      it('shows Wallet Connect as the provider of a route', async () => {
-        const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ address: randomAddress() }),
-            ),
-          }),
-          providerType: ProviderType.WalletConnect,
-        })
-
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
-
-        expect(
-          screen.getByRole('textbox', { name: 'Pilot Account' }),
-        ).toHaveAccessibleDescription('Wallet Connect')
-      })
     })
   })
 
@@ -194,7 +156,7 @@ describe('Edit route', () => {
         avatar: randomPrefixedAddress({ address: avatar }),
       })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       expect(screen.getByText(avatar)).toBeInTheDocument()
     })
@@ -213,7 +175,7 @@ describe('Edit route', () => {
         providerType: ProviderType.InjectedWallet,
       })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'View all available Safes' }),
@@ -237,7 +199,7 @@ describe('Edit route', () => {
           providerType: ProviderType.InjectedWallet,
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         await userEvent.click(
           await screen.findByRole('button', {
@@ -267,7 +229,7 @@ describe('Edit route', () => {
 
         const route = createMockExecutionRoute()
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         await userEvent.type(
           screen.getByRole('textbox', { name: 'Piloted Safe' }),
@@ -296,7 +258,7 @@ describe('Edit route', () => {
           }),
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         await userEvent.click(
           screen.getByRole('button', { name: 'Clear piloted Safe' }),
@@ -343,7 +305,7 @@ describe('Edit route', () => {
         }),
       })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       await userEvent.click(
         await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
@@ -361,7 +323,7 @@ describe('Edit route', () => {
         waypoints: createMockWaypoints({ end: true }),
       })
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
       await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
@@ -393,7 +355,7 @@ describe('Edit route', () => {
           providerType: ProviderType.InjectedWallet,
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         expect(await screen.findByText('Roles v1')).toBeInTheDocument()
       })
@@ -413,7 +375,7 @@ describe('Edit route', () => {
           waypoints: createMockWaypoints({ end: true }),
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         await userEvent.click(
           await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
@@ -444,7 +406,7 @@ describe('Edit route', () => {
             }),
           })
 
-          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+          await render(`/edit-route/${encode(route)}`)
 
           expect(
             await screen.findByRole('textbox', { name: 'Role ID' }),
@@ -470,7 +432,7 @@ describe('Edit route', () => {
             }),
           })
 
-          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+          await render(`/edit-route/${encode(route)}`)
 
           const roleId = randomAddress()
 
@@ -518,7 +480,7 @@ describe('Edit route', () => {
           }),
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         expect(await screen.findByText('Roles v2')).toBeInTheDocument()
       })
@@ -538,7 +500,7 @@ describe('Edit route', () => {
           waypoints: createMockWaypoints({ end: true }),
         })
 
-        await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+        await render(`/edit-route/${encode(route)}`)
 
         await userEvent.click(
           await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
@@ -572,7 +534,7 @@ describe('Edit route', () => {
             }),
           })
 
-          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+          await render(`/edit-route/${encode(route)}`)
 
           expect(
             await screen.findByRole('textbox', { name: 'Role Key' }),
@@ -598,7 +560,7 @@ describe('Edit route', () => {
             }),
           })
 
-          await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+          await render(`/edit-route/${encode(route)}`)
 
           await waitFor(async () =>
             expect(
@@ -631,7 +593,7 @@ describe('Edit route', () => {
     it('is possible to test a route before saving', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       expect(
         screen.getByRole('button', { name: 'Test route' }),
@@ -641,7 +603,7 @@ describe('Edit route', () => {
     it('shows errors returned by dry run', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${btoa(JSON.stringify(route))}`)
+      await render(`/edit-route/${encode(route)}`)
 
       mockDryRun.mockResolvedValue({
         error: true,

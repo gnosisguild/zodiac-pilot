@@ -3,14 +3,23 @@ import { Labeled, PrimaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
+export type OnConnectArgs = {
+  providerType: ProviderType
+  account: HexAddress
+}
+
 type ConnectProps = {
-  onConnect(args: { providerType: ProviderType; account: HexAddress }): void
+  onConnect?: (args: OnConnectArgs) => void
 }
 
 export const Connect = ({ onConnect }: ConnectProps) => {
   useAccountEffect({
     onConnect({ address, connector, isReconnected }) {
       if (isReconnected) {
+        return
+      }
+
+      if (onConnect == null) {
         return
       }
 

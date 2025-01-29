@@ -6,6 +6,7 @@ import {
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import { encode } from '@zodiac/schema'
 import { describe, expect, it } from 'vitest'
 import { Transactions } from './Transactions'
 
@@ -56,19 +57,37 @@ describe('Transactions', () => {
   })
 
   describe('Submit', () => {
-    it('disables the submit button when the current tab goes into a state where submit is not possible', async () => {
+    it('disables the submit button when there are no transactions', async () => {
       await render(
         '/test-route/transactions',
         [{ path: '/:activeRouteId/transactions', Component: Transactions }],
         {
-          initialState: [createTransaction()],
+          initialState: [],
           initialSelectedRoute: createMockRoute({ id: 'test-route' }),
         },
       )
 
-      await mockTabSwitch({ url: 'chrome://extensions' })
-
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    })
+
+    it('encodes the route and transaction state into the target of the submit button', async () => {
+      const route = createMockRoute({ id: 'test-route' })
+      const transaction = createTransaction()
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [transaction],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
+        'href',
+        `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
+      )
     })
   })
 
@@ -88,7 +107,7 @@ describe('Transactions', () => {
 
       expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
         'href',
-        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
+        `http://localhost/edit-route/${encode(route)}`,
       )
     })
   })

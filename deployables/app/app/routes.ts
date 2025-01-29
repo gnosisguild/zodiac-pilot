@@ -18,6 +18,11 @@ export default [
   route('/new-route', 'routes/new-route.ts'),
   route('/edit-route/:data', 'routes/edit-route.$data.tsx'),
 
+  route(
+    '/submit/:route/:transactions',
+    'routes/submit.$route.$transactions.tsx',
+  ),
+
   ...prefix('/:address/:chainId', [
     route('modules', 'routes/$address.$chainId/modules.ts'),
     route('available-safes', 'routes/$address.$chainId/available-safes.ts'),

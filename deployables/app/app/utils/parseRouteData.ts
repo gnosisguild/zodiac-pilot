@@ -1,10 +1,8 @@
-import { executionRouteSchema } from '@zodiac/schema'
+import { decode, executionRouteSchema } from '@zodiac/schema'
 
 export const parseRouteData = (routeData: string) => {
-  const decodedData = atob(routeData)
-
   try {
-    const rawJson = JSON.parse(decodedData.toString())
+    const rawJson = decode(routeData)
 
     return executionRouteSchema.parse(rawJson)
   } catch (error) {

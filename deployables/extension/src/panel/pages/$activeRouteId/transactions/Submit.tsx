@@ -1,182 +1,65 @@
 import { useCompanionAppUrl } from '@/companion'
-import { useExecutionRoute, useRouteConnect } from '@/execution-routes'
-import { usePilotIsReady } from '@/port-handling'
-import { getReadOnlyProvider } from '@/providers'
-import { useSubmitTransactions } from '@/providers-ui'
-import { waitForMultisigExecution } from '@/safe'
-import { useTransactions } from '@/state'
-import { type JsonRpcError } from '@/types'
+import { useExecutionRoute } from '@/execution-routes'
+import { useDispatch, useTransactions } from '@/state'
 import {
-  decodeGenericError,
-  decodeRolesV1Error,
-  decodeRolesV2Error,
-} from '@/utils'
-import { invariant } from '@epic-web/invariant'
-import { CHAIN_NAME, EXPLORER_URL, getChainId } from '@zodiac/chains'
-import {
-  errorToast,
-  Modal,
-  PrimaryButton,
-  PrimaryLinkButton,
-  Spinner,
-  successToast,
-} from '@zodiac/ui'
-import { SquareArrowOutUpRight } from 'lucide-react'
-import { useState } from 'react'
-import { parsePrefixedAddress } from 'ser-kit'
+  CompanionAppMessageType,
+  type CompanionAppMessage,
+} from '@zodiac/messages'
+import { encode } from '@zodiac/schema'
+import { Modal, PrimaryLinkButton, Spinner } from '@zodiac/ui'
+import { useEffect, useState } from 'react'
 
 export const Submit = () => {
   const route = useExecutionRoute()
-  const chainId = getChainId(route.avatar)
-  const [connected, connect] = useRouteConnect(route)
-  const { initiator, avatar } = route
-  const pilotReady = usePilotIsReady()
+  const dispatch = useDispatch()
+  const { initiator } = route
 
   const transactions = useTransactions()
-  const submitTransactions = useSubmitTransactions()
-  const [signaturePending, setSignaturePending] = useState(false)
+  const metaTransactions = transactions.map((tx) => tx.transaction)
+  const [submitPending, setSubmitPending] = useState(false)
 
   const companionAppUrl = useCompanionAppUrl()
 
-  const submit = async () => {
-    if (!connected) {
-      invariant(connect != null, 'No connect method present')
-
-      const success = await connect()
-      if (!success) {
-        const chainName = CHAIN_NAME[chainId] || `#${chainId}`
-        errorToast({
-          title: 'Error',
-          message: `Switch your wallet to ${chainName} to submit the transactions`,
-        })
-        return
-      }
-    }
-
-    invariant(submitTransactions != null, 'Cannot submit transactions')
-
-    setSignaturePending(true)
-
-    let result: {
-      txHash?: `0x${string}`
-      safeTxHash?: `0x${string}`
-    }
-    try {
-      result = await submitTransactions()
-    } catch (e) {
-      console.warn(e)
-      setSignaturePending(false)
-      const err = e as JsonRpcError
-
-      const { name } = decodeRolesV1Error(err) ||
-        decodeRolesV2Error(err) || { name: decodeGenericError(err) }
-      errorToast({
-        title: 'Submitting the transaction batch failed',
-        message: name,
-      })
+  useEffect(() => {
+    if (submitPending === false) {
       return
     }
-    setSignaturePending(false)
 
-    const { txHash, safeTxHash } = result
-    if (txHash) {
-      console.debug(
-        `Transaction batch has been submitted with transaction hash ${txHash}`,
-      )
-      const receipt =
-        await getReadOnlyProvider(chainId).waitForTransaction(txHash)
-      console.debug(`Transaction ${txHash} has been executed`, receipt)
+    const handleSubmitSuccess = (message: CompanionAppMessage) => {
+      if (message.type !== CompanionAppMessageType.SUBMIT_SUCCESS) {
+        return
+      }
 
-      successToast({
-        title: 'Transaction batch has been executed',
-        message: (
-          <a
-            href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-            className="inline-flex items-center gap-1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SquareArrowOutUpRight size={16} />
-            View in block explorer
-          </a>
-        ),
+      setSubmitPending(false)
+
+      dispatch({
+        type: 'CLEAR_TRANSACTIONS',
       })
     }
 
-    if (safeTxHash) {
-      console.debug(
-        `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
-      )
-      const avatarAddress = parsePrefixedAddress(avatar)
-      successToast({
-        title: 'Transaction batch has been proposed for execution',
-        message: (
-          <a
-            href={`https://app.safe.global/transactions/tx?safe=${avatar}&id=multisig_${avatarAddress}_${safeTxHash}`}
-            className="inline-flex items-center gap-1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SquareArrowOutUpRight size={16} />
-            {'View in Safe{Wallet}'}
-          </a>
-        ),
-      })
+    chrome.runtime.onMessage.addListener(handleSubmitSuccess)
 
-      // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
-      const txHash = await waitForMultisigExecution(chainId, safeTxHash)
-      console.debug(
-        `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`,
-      )
-      successToast({
-        title: 'Proposed Safe transaction has been confirmed and executed',
-        message: (
-          <a
-            href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-            className="inline-flex items-center gap-1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <SquareArrowOutUpRight size={16} />
-            View in block explorer
-          </a>
-        ),
-      })
+    return () => {
+      chrome.runtime.onMessage.removeListener(handleSubmitSuccess)
     }
-  }
-
-  if (!pilotReady) {
-    return (
-      <PrimaryButton fluid disabled>
-        Submit
-      </PrimaryButton>
-    )
-  }
+  }, [dispatch, submitPending])
 
   return (
     <>
-      {connected || connect ? (
-        <PrimaryButton
-          fluid
-          onClick={submit}
-          disabled={!submitTransactions || transactions.length === 0}
-        >
-          Submit
-        </PrimaryButton>
-      ) : (
-        <PrimaryLinkButton
-          openInNewWindow
-          fluid
-          to={`${companionAppUrl}/edit-route/${btoa(JSON.stringify(route))}`}
-        >
-          Connect wallet to submit
-        </PrimaryLinkButton>
-      )}
+      <PrimaryLinkButton
+        fluid
+        openInNewWindow
+        to={`${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`}
+        disabled={transactions.length === 0}
+        onClick={() => setSubmitPending(true)}
+      >
+        Submit
+      </PrimaryLinkButton>
 
       {initiator && (
         <AwaitingSignatureModal
-          isOpen={signaturePending}
-          onClose={() => setSignaturePending(false)}
+          isOpen={submitPending}
+          onClose={() => setSubmitPending(false)}
         />
       )}
     </>
