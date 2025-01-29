@@ -1,4 +1,7 @@
-import { type RouteConfig } from '@react-router/dev/routes'
+import {
+  type RouteConfig,
+  type RouteConfigEntry,
+} from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
 import type { ActionFunctionArgs } from 'react-router'
@@ -77,7 +80,52 @@ export async function createRenderFramework<Config extends RouteConfig>(
 ) {
   const routes = await Promise.resolve(routeConfig)
 
-  const stubRoutes = await Promise.all(
+  const stubbedRoutes = await stubRoutes(basePath, routes)
+
+  return async function renderFramework<
+    Paths extends Awaited<RouteConfig>[number]['path'],
+  >(
+    currentPath: NonNullable<Paths>,
+    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
+  ): Promise<RenderResult> {
+    const Stub = createRoutesStub([
+      {
+        path: '/',
+        Component: TestElement,
+        // @ts-expect-error the real types and the stub types aren't nicely aligned
+        children: [
+          ...stubbedRoutes,
+
+          ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
+        ],
+      },
+    ])
+
+    const result = render(
+      <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
+      options,
+    )
+
+    await waitForTestElement()
+    await sleepTillIdle()
+
+    return result
+  }
+}
+
+type StubRoute = {
+  path?: string
+  clientLoader?: Func
+  loader?: Func
+  action?: Func
+  Component?: ComponentType
+}
+
+function stubRoutes(
+  basePath: URL,
+  routes: RouteConfigEntry[],
+): Promise<StubRoute[]> {
+  return Promise.all(
     routes.map(async (route) => {
       const {
         clientLoader,
@@ -131,37 +179,12 @@ export async function createRenderFramework<Config extends RouteConfig>(
                   />
                 )
               },
+
+        children:
+          route.children != null
+            ? await stubRoutes(basePath, route.children)
+            : [],
       }
     }),
   )
-
-  return async function renderFramework<
-    Paths extends Awaited<RouteConfig>[number]['path'],
-  >(
-    currentPath: NonNullable<Paths>,
-    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
-  ): Promise<RenderResult> {
-    const Stub = createRoutesStub([
-      {
-        path: '/',
-        Component: TestElement,
-        // @ts-expect-error the real types and the stub types aren't nicely aligned
-        children: [
-          ...stubRoutes,
-
-          ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
-        ],
-      },
-    ])
-
-    const result = render(
-      <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
-      options,
-    )
-
-    await waitForTestElement()
-    await sleepTillIdle()
-
-    return result
-  }
 }
