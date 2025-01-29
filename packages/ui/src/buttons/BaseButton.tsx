@@ -46,10 +46,19 @@ export const BaseButton = ({
   </button>
 )
 
-export type BaseLinkButtonProps = ComponentPropsWithoutRef<typeof Link> &
+type EnabledLinkProps = ComponentPropsWithoutRef<typeof Link> &
   SharedButtonProps & {
     openInNewWindow?: boolean
+    disabled?: false
   }
+
+type DisabledLinkProps = BaseButtonProps & {
+  to: string
+  openInNewWindow?: boolean
+  disabled: true
+}
+
+export type BaseLinkButtonProps = EnabledLinkProps | DisabledLinkProps
 
 export const BaseLinkButton = ({
   fluid = false,
@@ -61,24 +70,44 @@ export const BaseLinkButton = ({
   children,
   title,
   ...props
-}: BaseLinkButtonProps) => (
-  <Link
-    {...props}
-    title={title ? title : typeof children === 'string' ? children : undefined}
-    target={openInNewWindow ? '_blank' : props.target}
-    rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
-    className={classNames(
-      'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
-      fluid && 'flex-1',
-      getPadding({ iconOnly, size }),
-      className,
-    )}
-  >
-    {Icon && <Icon size={size === 'base' ? 20 : 16} />}
+}: BaseLinkButtonProps) => {
+  if ('disabled' in props && props.disabled) {
+    return (
+      <BaseButton
+        fluid={fluid}
+        className={className}
+        icon={Icon}
+        iconOnly={iconOnly}
+        size={size}
+        title={title}
+        {...props}
+      >
+        {children}
+      </BaseButton>
+    )
+  }
 
-    {iconOnly ? <span className="sr-only">{children}</span> : children}
-  </Link>
-)
+  return (
+    <Link
+      {...props}
+      title={
+        title ? title : typeof children === 'string' ? children : undefined
+      }
+      target={openInNewWindow ? '_blank' : props.target}
+      rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
+      className={classNames(
+        'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
+        fluid && 'flex-1',
+        getPadding({ iconOnly, size }),
+        className,
+      )}
+    >
+      {Icon && <Icon size={size === 'base' ? 20 : 16} />}
+
+      {iconOnly ? <span className="sr-only">{children}</span> : children}
+    </Link>
+  )
+}
 
 const getPadding = ({
   iconOnly = false,
