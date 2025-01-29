@@ -56,7 +56,7 @@ describe('Transactions', () => {
     })
   })
 
-  describe.only('Submit', () => {
+  describe('Submit', () => {
     it('disables the submit button when there are no transactions', async () => {
       await render(
         '/test-route/transactions',
@@ -89,14 +89,6 @@ describe('Transactions', () => {
         `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
       )
     })
-    it.todo(
-      'indicates when the extension waits for transactions to be submitted',
-    )
-    it.todo('hides the submit notification when a success message arrives')
-    it.todo('clears all transactions when a success message arrives')
-    it.todo(
-      'does not clear transactions when the user hides the submit notification',
-    )
   })
 
   describe('Edit', () => {
