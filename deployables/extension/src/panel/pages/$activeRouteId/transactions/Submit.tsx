@@ -5,7 +5,7 @@ import { getReadOnlyProvider } from '@/providers'
 import { useSubmitTransactions } from '@/providers-ui'
 import { waitForMultisigExecution } from '@/safe'
 import { useTransactions } from '@/state'
-import { type JsonRpcError, ProviderType } from '@/types'
+import { type JsonRpcError } from '@/types'
 import {
   decodeGenericError,
   decodeRolesV1Error,
@@ -18,19 +18,18 @@ import {
   Modal,
   PrimaryButton,
   PrimaryLinkButton,
-  SecondaryLinkButton,
   Spinner,
   successToast,
 } from '@zodiac/ui'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { parsePrefixedAddress } from 'ser-kit'
 
 export const Submit = () => {
   const route = useExecutionRoute()
   const chainId = getChainId(route.avatar)
   const [connected, connect] = useRouteConnect(route)
-  const { initiator, providerType, avatar } = route
+  const { initiator, avatar } = route
   const pilotReady = usePilotIsReady()
 
   const transactions = useTransactions()
@@ -178,8 +177,6 @@ export const Submit = () => {
         <AwaitingSignatureModal
           isOpen={signaturePending}
           onClose={() => setSignaturePending(false)}
-          usesWalletConnect={providerType === ProviderType.WalletConnect}
-          account={initiator}
         />
       )}
     </>
@@ -189,15 +186,8 @@ export const Submit = () => {
 type Props = {
   isOpen: boolean
   onClose(): void
-  usesWalletConnect: boolean // for now we assume that a walletconnect'ed wallet is generally a Safe
-  account: PrefixedAddress
 }
-const AwaitingSignatureModal = ({
-  isOpen,
-  onClose,
-  usesWalletConnect,
-  account,
-}: Props) => (
+const AwaitingSignatureModal = ({ isOpen, onClose }: Props) => (
   <Modal
     open={isOpen}
     title="Sign the batch transaction"
@@ -207,17 +197,5 @@ const AwaitingSignatureModal = ({
     <div className="flex items-center gap-2">
       <Spinner /> Awaiting your signature ...
     </div>
-    {usesWalletConnect && (
-      <Modal.Actions>
-        <SecondaryLinkButton
-          openInNewWindow
-          style="contrast"
-          icon={SquareArrowOutUpRight}
-          to={`https://app.safe.global/${account}`}
-        >
-          Open Pilot Safe
-        </SecondaryLinkButton>
-      </Modal.Actions>
-    )}
   </Modal>
 )

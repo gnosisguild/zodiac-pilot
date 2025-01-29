@@ -29,8 +29,3 @@
     url(./assets/fonts/RobotoMono/roboto-mono-v13-latin-regular.woff2)
       format('woff');
 }
-
-.walletconnect-modal__base a {
-  color: black;
-  text-decoration: none;
-}
