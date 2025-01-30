@@ -17,7 +17,7 @@ type TokenValueInputProps = Omit<
 
 export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
   const [maxBalance, setMaxBalance] = useState<string | null>(null)
-  const [tokenBalances] = useTokenBalances()
+  const [tokenBalances, state] = useTokenBalances()
   const [selectedTokenAddress, setSelectedTokenAddress] = useState<
     string | null
   >(null)
@@ -84,6 +84,8 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
             <Select
               inline
               isMulti={false}
+              isSearchable={false}
+              isDisabled={state === 'loading'}
               label="Available tokens"
               placeholder="Select token"
               value={
@@ -111,7 +113,11 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
             >
               {({ data: { value } }) => {
                 const { logo, name } = tokens[value]
-                return <Token logo={logo}>{name}</Token>
+                return (
+                  <div className="text-xs">
+                    <Token logo={logo}>{name}</Token>
+                  </div>
+                )
               }}
             </Select>
           </div>
