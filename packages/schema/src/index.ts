@@ -4,13 +4,11 @@ export { jsonStringify } from './jsonStringify'
 export { metaTransactionRequestSchema } from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
 export {
-  ProviderType,
   addressSchema,
   chainIdSchema,
   contractSchema,
   executionRouteSchema,
   isHexAddress,
-  providerTypeSchema,
 } from './routeSchema'
 export type {
   Connection,
