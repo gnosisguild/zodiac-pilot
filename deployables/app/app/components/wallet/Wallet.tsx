@@ -1,5 +1,5 @@
 import type { ChainId } from 'ser-kit'
-import { useAccount, useReconnect, useSwitchChain } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 import { Account } from './Account'
 import { Connected } from './Connected'
 import { SwitchChain } from './SwitchChain'
@@ -20,7 +20,6 @@ export const Wallet = ({
 }: WalletProps) => {
   const { address, chainId: accountChainId, addresses = [] } = useAccount()
   const { switchChain } = useSwitchChain()
-  const { reconnect } = useReconnect()
 
   const isServer = typeof document === 'undefined'
 
@@ -31,10 +30,7 @@ export const Wallet = ({
   // Wallet disconnected
   if (address == null || addresses.length === 0) {
     return (
-      <WalletDisconnected
-        onDisconnect={onDisconnect}
-        onReconnect={() => reconnect()}
-      >
+      <WalletDisconnected>
         <Account>{pilotAddress}</Account>
       </WalletDisconnected>
     )
