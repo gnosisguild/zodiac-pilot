@@ -52,9 +52,10 @@ export const selectStyles = <
     ),
   option: ({ isSelected }) =>
     classNames(
-      'text-sm px-4 py-2',
+      'text-sm',
       isSelected != null &&
         'hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50 cursor-pointer',
+      inline ? 'px-2 py-1 whitespace-nowrap' : 'px-4 py-2',
     ),
   indicatorsContainer: () =>
     classNames('shrink-0 flex gap-1', !inline && 'mr-2'),

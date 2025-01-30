@@ -6,7 +6,7 @@ import {
   Select,
   type NumberInputProps,
 } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { formatUnits, parseUnits } from 'viem'
 import { Token } from './Token'
 
@@ -18,7 +18,24 @@ type TokenValueInputProps = Omit<
 export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
   const [maxBalance, setMaxBalance] = useState<string | null>(null)
   const [tokenBalances] = useTokenBalances()
-  const [selectedToken, setSelectedToken] = useState<TokenBalance | null>(null)
+  const [selectedTokenAddress, setSelectedTokenAddress] = useState<
+    string | null
+  >(null)
+
+  const tokens = useMemo(
+    () =>
+      tokenBalances.reduce(
+        (result, token) =>
+          token.token_address == null
+            ? result
+            : { ...result, [token.token_address]: token },
+        {} as Record<string, TokenBalance>,
+      ),
+    [tokenBalances],
+  )
+
+  const selectedToken =
+    selectedTokenAddress == null ? null : tokens[selectedTokenAddress]
 
   const [amount, setAmount] = useState('')
 
@@ -69,29 +86,33 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
               isMulti={false}
               label="Available tokens"
               placeholder="Select token"
+              value={
+                selectedTokenAddress == null
+                  ? undefined
+                  : { value: selectedTokenAddress }
+              }
               onChange={(value) => {
                 if (value == null) {
                   return
                 }
 
-                const token = tokenBalances.find(
-                  ({ name }) => name === value.value,
-                )
-
-                invariant(
-                  token != null,
-                  `Could not find a token for "${value.value}"`,
-                )
-
-                setSelectedToken(token)
+                setSelectedTokenAddress(value.value)
               }}
-              options={tokenBalances.map(({ name, token_address, logo }) => ({
-                value: token_address,
-                logo,
-                name,
-              }))}
+              options={tokenBalances
+                .filter(({ token_address }) => token_address != null)
+                .map(({ token_address }) => {
+                  invariant(
+                    token_address != null,
+                    'Empty token address was not filtered out',
+                  )
+
+                  return { value: token_address }
+                })}
             >
-              {({ data: { logo, name } }) => <Token logo={logo}>{name}</Token>}
+              {({ data: { value } }) => {
+                const { logo, name } = tokens[value]
+                return <Token logo={logo}>{name}</Token>
+              }}
             </Select>
           </div>
         }
