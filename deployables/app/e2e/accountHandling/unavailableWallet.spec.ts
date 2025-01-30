@@ -15,7 +15,7 @@ test.describe('Account unavailable', () => {
 
     await expect(
       page.getByRole('alert', {
-        name: `Account is not connected`,
+        name: `Wallet is set to a different account`,
       }),
     ).toHaveAccessibleDescription(
       'Switch your wallet to this account in order to use Pilot.',
