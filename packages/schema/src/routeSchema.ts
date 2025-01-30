@@ -126,19 +126,6 @@ const startingPointSchema = z.object({
 
 export type StartingWaypoint = z.infer<typeof startingPointSchema>
 
-export enum ProviderType {
-  WalletConnect,
-  InjectedWallet,
-}
-
-const walletConnectType = z.literal(ProviderType.WalletConnect)
-const injectedProviderType = z.literal(ProviderType.InjectedWallet)
-
-export const providerTypeSchema = z.union([
-  walletConnectType,
-  injectedProviderType,
-])
-
 const waypointsSchema = z.tuple([startingPointSchema]).rest(waypointSchema)
 
 export type Waypoints = z.infer<typeof waypointsSchema>
@@ -146,7 +133,6 @@ export type Waypoints = z.infer<typeof waypointsSchema>
 export const executionRouteSchema = z.object({
   id: z.string(),
   label: z.string(),
-  providerType: providerTypeSchema.optional(),
   avatar: prefixedAddressSchema,
   initiator: prefixedAddressSchema.optional(),
   waypoints: waypointsSchema.optional(),

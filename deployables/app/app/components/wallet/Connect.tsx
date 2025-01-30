@@ -1,10 +1,9 @@
-import { ProviderType, type HexAddress } from '@zodiac/schema'
+import { type HexAddress } from '@zodiac/schema'
 import { Labeled, PrimaryButton } from '@zodiac/ui'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
 export type OnConnectArgs = {
-  providerType: ProviderType
   address: HexAddress
 }
 
@@ -14,7 +13,7 @@ type ConnectProps = {
 
 export const Connect = ({ onConnect }: ConnectProps) => {
   useAccountEffect({
-    onConnect({ address, connector, isReconnected }) {
+    onConnect({ address, isReconnected }) {
       if (isReconnected) {
         return
       }
@@ -25,10 +24,6 @@ export const Connect = ({ onConnect }: ConnectProps) => {
 
       onConnect({
         address,
-        providerType:
-          connector.type === 'injected'
-            ? ProviderType.InjectedWallet
-            : ProviderType.WalletConnect,
       })
     },
   })
