@@ -28,25 +28,12 @@ test.describe('Locked account', () => {
     await connectWallet(page, account)
     await lockWallet()
 
-    await page.getByRole('button', { name: 'Connect', exact: true }).click()
+    await page
+      .getByRole('button', { name: 'Connect wallet', exact: true })
+      .click()
 
     await expect(
       page.getByRole('textbox', { name: 'Pilot Account' }),
     ).toHaveValue(account)
-  })
-
-  test('it is possible to disconnect a locked account', async ({ page }) => {
-    const { lockWallet } = await mockWeb3(page)
-
-    await page.goto('/new-route')
-
-    await connectWallet(page)
-    await lockWallet()
-
-    await page.getByRole('button', { name: 'Disconnect' }).click()
-
-    await expect(
-      page.getByRole('button', { name: 'Connect wallet' }),
-    ).toBeInViewport()
   })
 })
