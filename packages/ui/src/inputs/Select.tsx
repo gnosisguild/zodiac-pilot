@@ -46,8 +46,8 @@ export type SelectProps<
   : Props<Option, Multi> & SelectBaseProps<Creatable>
 
 export function Select<
-  Creatable extends boolean = false,
   Option = unknown,
+  Creatable extends boolean = false,
   Multi extends boolean = boolean,
 >({
   label,

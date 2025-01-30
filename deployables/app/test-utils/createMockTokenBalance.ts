@@ -1,6 +1,5 @@
 import type { TokenBalance } from '@/balances-server'
 import {
-  EvmErc20TokenBalanceWithPrice,
   EvmNative,
   type EvmErc20TokenBalanceWithPriceJSON,
 } from '@moralisweb3/common-evm-utils'
@@ -13,7 +12,7 @@ export const createMockTokenBalance = ({
 }: Partial<EvmErc20TokenBalanceWithPriceJSON> = {}): TokenBalance => {
   const evmNativeBalance = EvmNative.fromJSON(balance)
 
-  return EvmErc20TokenBalanceWithPrice.fromJSON({
+  return {
     name: 'Test token',
     symbol: 'T€5T',
     decimals,
@@ -28,5 +27,5 @@ export const createMockTokenBalance = ({
     usd_value: 0,
 
     ...tokenBalance,
-  })
+  }
 }

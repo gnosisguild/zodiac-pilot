@@ -1,8 +1,13 @@
 import { getTokenBalances } from '@/balances-server'
-import { connectWallet, createMockTokenBalance, render } from '@/test-utils'
+import {
+  connectWallet,
+  createMockTokenBalance,
+  disconnectWallet,
+  render,
+} from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
   const { mock, custom, createConfig } =
@@ -45,6 +50,8 @@ vi.mock('@/balances-server', async (importOriginal) => {
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
 describe('Send Tokens', () => {
+  afterEach(() => disconnectWallet())
+
   it('is possible to select the token you want to send', async () => {
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({ name: 'Test token' }),
@@ -61,5 +68,33 @@ describe('Send Tokens', () => {
     expect(
       await screen.findByRole('option', { name: 'Test token' }),
     ).toBeInTheDocument()
+  })
+
+  it('uses the balance of the selected token for the "Max" button', async () => {
+    mockGetTokenBalances.mockResolvedValue([
+      createMockTokenBalance({
+        name: 'Test token',
+        balance: '1234',
+        decimals: 2,
+      }),
+    ])
+
+    await render('/tokens/send')
+
+    await connectWallet()
+
+    await userEvent.click(
+      await screen.findByRole('combobox', { name: 'Available tokens' }),
+    )
+
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Test token' }),
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Max' }))
+
+    expect(screen.getByRole('spinbutton', { name: 'Amount' })).toHaveValue(
+      12.34,
+    )
   })
 })

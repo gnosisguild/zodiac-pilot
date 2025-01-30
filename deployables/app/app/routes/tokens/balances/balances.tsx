@@ -21,7 +21,7 @@ const Balances = () => {
         </Table.Tr>
       </Table.THead>
       <Table.TBody>
-        {data.map(({ logo, name, balanceFormatted, usdValue }) => (
+        {data.map(({ logo, name, balance_formatted, usd_value }) => (
           <Table.Tr key={name}>
             <Table.Td noWrap>
               <div className="flex items-center gap-2">
@@ -36,10 +36,10 @@ const Balances = () => {
               </div>
             </Table.Td>
             <Table.Td align="right">
-              <Token>{balanceFormatted}</Token>
+              <Token>{balance_formatted}</Token>
             </Table.Td>
             <Table.Td align="right">
-              <USD>{usdValue}</USD>
+              <USD>{usd_value}</USD>
             </Table.Td>
           </Table.Tr>
         ))}

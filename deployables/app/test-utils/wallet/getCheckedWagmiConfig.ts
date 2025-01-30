@@ -1,8 +1,7 @@
 import { getWagmiConfig } from '@/wagmi'
-import { connect } from '@wagmi/core'
 import { vi } from 'vitest'
 
-export const connectWallet = async () => {
+export const getCheckedWagmiConfig = async () => {
   const { getWagmiConfig: originalGetWagmiConfig } =
     await vi.importActual<typeof import('@/wagmi')>('@/wagmi')
 
@@ -14,15 +13,5 @@ export const connectWallet = async () => {
     )
   }
 
-  const config = getWagmiConfig(true)
-
-  const [connector] = config.connectors
-
-  if (connector.type !== 'mock') {
-    console.warn(
-      "You're not using a mock connector for wagmi. This is probably not what you want.",
-    )
-  }
-
-  await connect(config, { connector })
+  return getWagmiConfig(true)
 }

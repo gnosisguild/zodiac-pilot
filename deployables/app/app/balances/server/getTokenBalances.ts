@@ -24,5 +24,7 @@ export const getTokenBalances = async (
     address,
   })
 
-  return response.result.filter((result) => !result.possibleSpam)
+  return response.result
+    .filter((result) => !result.possibleSpam)
+    .map((result) => result.toJSON())
 }

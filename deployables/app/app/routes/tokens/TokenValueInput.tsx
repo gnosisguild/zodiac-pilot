@@ -8,7 +8,6 @@ import {
 } from '@zodiac/ui'
 import { useState } from 'react'
 import { formatUnits } from 'viem'
-import { useAccount, useBalance } from 'wagmi'
 
 type TokenValueInputProps = Omit<
   NumberInputProps,
@@ -16,8 +15,7 @@ type TokenValueInputProps = Omit<
 >
 
 export const TokenValueInput = (props: TokenValueInputProps) => {
-  const { address } = useAccount()
-  const { data: balance } = useBalance({ address })
+  const [maxBalance, setMaxBalance] = useState<string | null>(null)
   const [tokenBalances] = useTokenBalances()
 
   const [amount, setAmount] = useState('')
@@ -29,28 +27,44 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
       onChange={(ev) => setAmount(ev.target.value)}
       step="any"
       min={0}
-      max={
-        balance == null
-          ? undefined
-          : formatUnits(balance.value, balance.decimals)
-      }
+      max={maxBalance == null ? undefined : maxBalance}
       after={
         <div className="mr-1">
           <GhostButton
             size="tiny"
-            disabled={balance == null}
+            disabled={maxBalance == null}
             onClick={() => {
-              invariant(balance != null, 'Balance is not loaded')
-              setAmount(formatUnits(balance.value, balance.decimals))
+              invariant(maxBalance != null, 'Balance is not loaded')
+              setAmount(maxBalance)
             }}
           >
             Max
           </GhostButton>
 
           <Select
+            isMulti={false}
             label="Available tokens"
+            onChange={(value) => {
+              if (value == null) {
+                return
+              }
+
+              const balance = tokenBalances.find(
+                ({ name }) => name === value.value,
+              )
+
+              invariant(
+                balance != null,
+                `Could not find a token balance for "${value.value}"`,
+              )
+
+              setMaxBalance(
+                formatUnits(BigInt(balance.balance), balance.decimals),
+              )
+            }}
             options={tokenBalances.map(({ name }) => ({
               value: name,
+              label: name,
             }))}
           />
         </div>

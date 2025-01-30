@@ -1,7 +1,9 @@
 import type Moralis from 'moralis'
 
-export type BalanceResult = Awaited<
-  ReturnType<(typeof Moralis.EvmApi.wallets)['getWalletTokenBalancesPrice']>
->['result']
+export type BalanceResult = ReturnType<
+  Awaited<
+    ReturnType<(typeof Moralis.EvmApi.wallets)['getWalletTokenBalancesPrice']>
+  >['result'][number]['toJSON']
+>[]
 
 export type TokenBalance = BalanceResult[number]
