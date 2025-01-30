@@ -86,7 +86,7 @@
     "node-stdlib-browser": "1.3.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-router": "7.1.3",
+    "react-router": "7.1.4",
     "react-stick": "5.0.6",
     "ser-kit": "1.1.0",
     "zod": "3.24.1"
