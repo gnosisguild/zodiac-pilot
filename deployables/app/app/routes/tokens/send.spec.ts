@@ -7,10 +7,12 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { randomAddress } from '@zodiac/test-utils'
+import { getAddress, numberToHex } from 'viem'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
-  const { mock, custom, createConfig } =
+  const { mock, http, createConfig } =
     await vi.importActual<typeof import('wagmi')>('wagmi')
   const { mainnet } =
     await vi.importActual<typeof import('wagmi/chains')>('wagmi/chains')
@@ -19,7 +21,7 @@ vi.mock('@/wagmi', async () => {
     chains: [mainnet],
     storage: null,
     transports: {
-      [mainnet.id]: custom(window.ethereum),
+      [mainnet.id]: http(),
     },
     connectors: [
       mock({
@@ -95,6 +97,61 @@ describe('Send Tokens', () => {
 
     expect(screen.getByRole('spinbutton', { name: 'Amount' })).toHaveValue(
       12.34,
+    )
+  })
+
+  it('uses sends funds to the selected token', async () => {
+    const tokenAddress = randomAddress()
+
+    mockGetTokenBalances.mockResolvedValue([
+      createMockTokenBalance({
+        token_address: tokenAddress,
+        name: 'Test token',
+        balance: '1234',
+        decimals: 2,
+      }),
+    ])
+    await connectWallet()
+
+    await render('/tokens/send')
+
+    const recipient = randomAddress()
+
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Recipient' }),
+      recipient,
+    )
+
+    await userEvent.click(
+      await screen.findByRole('combobox', { name: 'Available tokens' }),
+    )
+
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Test token' }),
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Max' }))
+
+    const fetch = vi.spyOn(window, 'fetch')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }))
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'eth_sendTransaction',
+          params: [
+            {
+              from: getAddress('0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'),
+              to: recipient,
+              value: numberToHex(1234),
+            },
+          ],
+        }),
+      }),
     )
   })
 })

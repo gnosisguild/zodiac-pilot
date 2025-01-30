@@ -3,7 +3,6 @@ import { getHexString, getString } from '@zodiac/form-data'
 import { AddressInput, Error, Form, PrimaryButton } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { parseEther } from 'viem'
 import { useSendTransaction } from 'wagmi'
 import type { Route } from './+types/send'
 import { TokenValueInput } from './TokenValueInput'
@@ -28,9 +27,10 @@ const Send = () => {
         <Form
           onSubmit={(ev) => {
             const data = new FormData(ev.currentTarget)
+
             sendTransaction({
               to: getHexString(data, 'recipient'),
-              value: parseEther(getString(data, 'amount')),
+              value: BigInt(getString(data, 'amount')),
             })
 
             ev.preventDefault()
