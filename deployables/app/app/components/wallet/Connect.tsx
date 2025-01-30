@@ -5,7 +5,7 @@ import { useAccountEffect } from 'wagmi'
 
 export type OnConnectArgs = {
   providerType: ProviderType
-  account: HexAddress
+  address: HexAddress
 }
 
 type ConnectProps = {
@@ -24,7 +24,7 @@ export const Connect = ({ onConnect }: ConnectProps) => {
       }
 
       onConnect({
-        account: address,
+        address,
         providerType:
           connector.type === 'injected'
             ? ProviderType.InjectedWallet

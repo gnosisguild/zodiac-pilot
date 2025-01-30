@@ -104,7 +104,7 @@ const useAutoReconnect = ({
     }
 
     onConnectRef.current({
-      account: address,
+      address,
       providerType:
         connector.type === 'injected'
           ? ProviderType.InjectedWallet

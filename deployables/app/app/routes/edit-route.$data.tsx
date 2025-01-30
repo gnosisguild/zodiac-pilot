@@ -18,6 +18,8 @@ import {
 } from '@zodiac/form-data'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import {
+  createAccount,
+  createEoaAccount,
   getRolesVersion,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -26,10 +28,10 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
-  updatePilotAddress,
   updateProviderType,
   updateRoleId,
   updateRolesWaypoint,
+  updateStartingPoint,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
@@ -154,17 +156,23 @@ export const clientAction = async ({
     case Intent.ConnectWallet: {
       const route = parseRouteData(params.data)
 
-      const account = getHexString(data, 'account')
+      const address = getHexString(data, 'address')
       const providerType = verifyProviderType(getInt(data, 'providerType'))
+      const account = await createAccount(
+        jsonRpcProvider(getChainId(route.avatar)),
+        address,
+      )
 
       return editRoute(
-        updatePilotAddress(updateProviderType(route, providerType), account),
+        updateStartingPoint(updateProviderType(route, providerType), account),
       )
     }
     case Intent.DisconnectWallet: {
       const route = parseRouteData(params.data)
 
-      return editRoute(updatePilotAddress(route, ZERO_ADDRESS))
+      return editRoute(
+        updateStartingPoint(route, createEoaAccount({ address: ZERO_ADDRESS })),
+      )
     }
 
     default:
@@ -194,11 +202,11 @@ const EditRoute = ({
               <ConnectWallet
                 chainId={chainId}
                 pilotAddress={optimisticRoute.pilotAddress}
-                onConnect={({ account, providerType }) => {
+                onConnect={({ address, providerType }) => {
                   submit(
                     formData({
                       intent: Intent.ConnectWallet,
-                      account,
+                      address,
                       providerType,
                     }),
                     { method: 'POST' },
@@ -341,7 +349,7 @@ const useOptimisticRoute = () => {
 
       case Intent.ConnectWallet: {
         setOptimisticConnection({
-          pilotAddress: getHexString(formData, 'account'),
+          pilotAddress: getHexString(formData, 'address'),
         })
       }
     }
