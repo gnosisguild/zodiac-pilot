@@ -1,6 +1,10 @@
 import { ProviderType, type HexAddress } from '@zodiac/schema'
 import { Labeled, PrimaryButton } from '@zodiac/ui'
-import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
+import {
+  ConnectKitButton,
+  ConnectKitProvider,
+  Types as ConnectKitTypes,
+} from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
 export type OnConnectArgs = {
@@ -10,6 +14,12 @@ export type OnConnectArgs = {
 
 type ConnectProps = {
   onConnect?: (args: OnConnectArgs) => void
+}
+
+const connectKitOptions: ConnectKitTypes.ConnectKitOptions = {
+  initialChainId: 0,
+  hideNoWalletCTA: true,
+  hideQuestionMarkCTA: true,
 }
 
 export const Connect = ({ onConnect }: ConnectProps) => {
@@ -34,7 +44,7 @@ export const Connect = ({ onConnect }: ConnectProps) => {
   })
 
   return (
-    <ConnectKitProvider>
+    <ConnectKitProvider options={connectKitOptions}>
       <ConnectKitButton.Custom>
         {({ show }) => (
           <Labeled label="Pilot Account">
