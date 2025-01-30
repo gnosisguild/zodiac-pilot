@@ -13,7 +13,9 @@ export default [
     layout('routes/tokens/balances/layout.tsx', [
       route('balances', 'routes/tokens/balances/balances.tsx'),
     ]),
-    route('send', 'routes/tokens/send.tsx'),
+    layout('routes/tokens/send/layout.tsx', [
+      route('send', 'routes/tokens/send/send.tsx'),
+    ]),
   ]),
   route('/new-route', 'routes/new-route.ts'),
   route('/edit-route/:data', 'routes/edit-route.$data.tsx'),

@@ -8,7 +8,7 @@ import {
 } from '@zodiac/ui'
 import { useEffect, useMemo, useState } from 'react'
 import { formatUnits, parseUnits } from 'viem'
-import { Token } from './Token'
+import { Token } from '../Token'
 
 type TokenValueInputProps = Omit<
   NumberInputProps,
