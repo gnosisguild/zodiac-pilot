@@ -1,17 +1,11 @@
 import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
+import { LaunchConnectKit } from './LaunchConnectKit'
 import { Section } from './Section'
 
-type WalletDisconnectedProps = PropsWithChildren<{
-  onReconnect: () => void
-  onDisconnect: () => void
-}>
+type WalletDisconnectedProps = PropsWithChildren
 
-export const WalletDisconnected = ({
-  children,
-  onReconnect,
-  onDisconnect,
-}: WalletDisconnectedProps) => (
+export const WalletDisconnected = ({ children }: WalletDisconnectedProps) => (
   <Section>
     {children}
 
@@ -21,13 +15,13 @@ export const WalletDisconnected = ({
     </Warning>
 
     <Section.Actions>
-      <SecondaryButton fluid onClick={onReconnect}>
-        Connect
-      </SecondaryButton>
-
-      <SecondaryButton fluid onClick={onDisconnect}>
-        Disconnect
-      </SecondaryButton>
+      <LaunchConnectKit>
+        {({ show }) => (
+          <SecondaryButton fluid onClick={show}>
+            Connect wallet
+          </SecondaryButton>
+        )}
+      </LaunchConnectKit>
     </Section.Actions>
   </Section>
 )

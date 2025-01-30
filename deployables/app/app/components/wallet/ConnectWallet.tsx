@@ -3,7 +3,8 @@ import { type HexAddress, ProviderType } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
 import { useAccount, useAccountEffect, useDisconnect } from 'wagmi'
-import { Connect, type OnConnectArgs } from './Connect'
+import { EmptyAccount } from './EmptyAccount'
+import type { OnConnectArgs } from './LaunchConnectKit'
 import { Wallet } from './Wallet'
 
 export type ConnectWalletProps = {
@@ -24,7 +25,7 @@ export const ConnectWallet = ({
 
   useAutoReconnect({ currentConnectedAddress: pilotAddress, onConnect })
 
-  const accountNotConnected =
+  const pilotAccountIsEmpty =
     pilotAddress == null || pilotAddress === ZERO_ADDRESS
 
   const disconnectRequestRef = useRef(false)
@@ -41,8 +42,8 @@ export const ConnectWallet = ({
     },
   })
 
-  if (accountNotConnected) {
-    return <Connect onConnect={onConnect} />
+  if (pilotAccountIsEmpty) {
+    return <EmptyAccount onConnect={onConnect} />
   }
 
   return (

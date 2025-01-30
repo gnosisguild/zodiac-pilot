@@ -1,6 +1,9 @@
+import type { ChainId } from '@zodiac/chains'
 import { ProviderType, type HexAddress } from '@zodiac/schema'
-import { Labeled, PrimaryButton } from '@zodiac/ui'
-import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
+import {
+  ConnectKitButton as ConnectKitButtonBase,
+  ConnectKitProvider,
+} from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
 export type OnConnectArgs = {
@@ -9,10 +12,16 @@ export type OnConnectArgs = {
 }
 
 type ConnectProps = {
+  children: (props: { show?: () => void }) => React.ReactNode
   onConnect?: (args: OnConnectArgs) => void
+  initialChainId?: ChainId
 }
 
-export const Connect = ({ onConnect }: ConnectProps) => {
+export const LaunchConnectKit = ({
+  initialChainId,
+  onConnect,
+  children,
+}: ConnectProps) => {
   useAccountEffect({
     onConnect({ address, connector, isReconnected }) {
       if (isReconnected) {
@@ -34,14 +43,16 @@ export const Connect = ({ onConnect }: ConnectProps) => {
   })
 
   return (
-    <ConnectKitProvider>
-      <ConnectKitButton.Custom>
-        {({ show }) => (
-          <Labeled label="Pilot Account">
-            <PrimaryButton onClick={show}>Connect wallet</PrimaryButton>
-          </Labeled>
-        )}
-      </ConnectKitButton.Custom>
+    <ConnectKitProvider
+      options={{
+        initialChainId: initialChainId ?? 0,
+        hideNoWalletCTA: true,
+        hideQuestionMarkCTA: true,
+      }}
+    >
+      <ConnectKitButtonBase.Custom>
+        {({ show }) => children({ show })}
+      </ConnectKitButtonBase.Custom>
     </ConnectKitProvider>
   )
 }

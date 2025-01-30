@@ -10,7 +10,7 @@ export const WrongAccount = ({ children, onDisconnect }: WrongAccountProps) => (
   <Section>
     {children}
 
-    <Warning title="Account is not connected">
+    <Warning title="Wallet is set to a different account">
       Switch your wallet to this account in order to use Pilot.
     </Warning>
 

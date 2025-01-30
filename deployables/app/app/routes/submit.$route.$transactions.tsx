@@ -20,7 +20,7 @@ import {
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
-import { useConnectorClient } from 'wagmi'
+import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route } from './+types/submit.$route.$transactions'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -62,14 +62,20 @@ const SubmitPage = ({
 export default SubmitPage
 
 const SubmitTransaction = () => {
-  const { plan, chainId, avatar } = useLoaderData<typeof loader>()
+  const { plan, chainId, avatar, initiator } = useLoaderData<typeof loader>()
+  const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
   const [submitPending, setSubmitPending] = useState(false)
 
   return (
     <PrimaryButton
       fluid
-      disabled={connectorClient == null || submitPending}
+      disabled={
+        walletAccount.chainId !== chainId ||
+        walletAccount.address?.toLowerCase() !== initiator ||
+        connectorClient == null ||
+        submitPending
+      }
       onClick={async () => {
         invariant(connectorClient != null, 'Client must be ready')
 
