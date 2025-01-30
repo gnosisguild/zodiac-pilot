@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
-import type { BalanceResult } from './types.server'
+import type { BalanceResult } from '../types'
 
 export const useTokenBalances = () => {
   const { address, chainId } = useAccount()

@@ -1,4 +1,4 @@
-import { getTokenBalances } from '@/balances'
+import { getTokenBalances } from '@/balances-server'
 import { connectWallet, createMockTokenBalance, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -32,8 +32,8 @@ vi.mock('@/wagmi', async () => {
   }
 })
 
-vi.mock('@/balances', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/balances')>()
+vi.mock('@/balances-server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/balances-server')>()
 
   return {
     ...module,

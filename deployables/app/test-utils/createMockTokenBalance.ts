@@ -1,4 +1,4 @@
-import type { TokenBalance } from '@/balances'
+import type { TokenBalance } from '@/balances-server'
 import {
   EvmErc20TokenBalanceWithPrice,
   EvmNative,

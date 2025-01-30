@@ -1,4 +1,4 @@
-import { getTokenBalances, type BalanceResult } from '@/balances'
+import { getTokenBalances, type BalanceResult } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
 import type { Route } from './+types/balances'

@@ -1,4 +1,4 @@
-import { useTokenBalances } from '@/balances'
+import { useTokenBalances } from '@/balances-client'
 import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
 import { CircleDollarSign } from 'lucide-react'
 import { type PropsWithChildren } from 'react'

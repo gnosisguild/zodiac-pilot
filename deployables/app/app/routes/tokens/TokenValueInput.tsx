@@ -1,4 +1,4 @@
-import { useTokenBalances } from '@/balances'
+import { useTokenBalances } from '@/balances-client'
 import { invariant } from '@epic-web/invariant'
 import {
   GhostButton,
@@ -49,7 +49,7 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
 
           <Select
             label="Available tokens"
-            options={tokenBalances.map(({ name, balanceFormatted }) => ({
+            options={tokenBalances.map(({ name }) => ({
               value: name,
             }))}
           />

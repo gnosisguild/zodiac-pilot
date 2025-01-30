@@ -3,7 +3,7 @@ import { getMoralisApiKey } from '@zodiac/env'
 import type { HexAddress } from '@zodiac/schema'
 import Moralis from 'moralis'
 import type { Ref } from 'react'
-import type { BalanceResult } from './types.server'
+import type { BalanceResult } from '../types'
 
 const startedRef: Ref<boolean> = { current: false }
 
