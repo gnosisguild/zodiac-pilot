@@ -1,3 +1,4 @@
+export { createAccount } from './createAccount'
 export { createBlankRoute } from './createBlankRoute'
 export { createEoaStartingPoint } from './createEoaStartingPoint'
 export { fetchZodiacModules } from './fetchZodiacModules'
@@ -20,6 +21,7 @@ export { updatePilotAddress } from './updatePilotAddress'
 export { updateProviderType } from './updateProviderType'
 export { updateRoleId } from './updateRoleId'
 export { updateRolesWaypoint } from './updateRolesWaypoint'
+export { updateStartingPoint } from './updateStartingPoint'
 export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,
