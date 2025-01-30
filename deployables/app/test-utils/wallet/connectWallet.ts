@@ -4,6 +4,9 @@ import { getCheckedWagmiConfig } from './getCheckedWagmiConfig'
 
 export const connectWallet = async () => {
   const config = await getCheckedWagmiConfig()
+  const connector = getCheckedConnector(config)
 
-  await connect(config, { connector: getCheckedConnector(config) })
+  const connectResult = await connect(config, { connector })
+
+  return { ...connectResult, connector, config }
 }
