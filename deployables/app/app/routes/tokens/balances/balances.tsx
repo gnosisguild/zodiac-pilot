@@ -1,24 +1,13 @@
-import type { BalanceResult } from '@/balances'
+import { useTokenBalances } from '@/balances'
 import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
 import { CircleDollarSign } from 'lucide-react'
-import { useEffect, type PropsWithChildren } from 'react'
-import { useFetcher } from 'react-router'
-import { useAccount } from 'wagmi'
+import { type PropsWithChildren } from 'react'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
-  const { address, chainId } = useAccount()
-  const { load, data = [], state } = useFetcher<BalanceResult>()
-
-  useEffect(() => {
-    if (address == null || chainId == null) {
-      return
-    }
-
-    load(`/${address}/${chainId}/balances`)
-  }, [address, chainId, load])
+  const [data, state] = useTokenBalances()
 
   return (
     <Table>

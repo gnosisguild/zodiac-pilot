@@ -1,5 +1,11 @@
+import { useTokenBalances } from '@/balances'
 import { invariant } from '@epic-web/invariant'
-import { GhostButton, NumberInput, type NumberInputProps } from '@zodiac/ui'
+import {
+  GhostButton,
+  NumberInput,
+  Select,
+  type NumberInputProps,
+} from '@zodiac/ui'
 import { useState } from 'react'
 import { formatUnits } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
@@ -12,6 +18,7 @@ type TokenValueInputProps = Omit<
 export const TokenValueInput = (props: TokenValueInputProps) => {
   const { address } = useAccount()
   const { data: balance } = useBalance({ address })
+  const [tokenBalances] = useTokenBalances()
 
   const [amount, setAmount] = useState('')
 
@@ -39,6 +46,13 @@ export const TokenValueInput = (props: TokenValueInputProps) => {
           >
             Max
           </GhostButton>
+
+          <Select
+            label="Available tokens"
+            options={tokenBalances.map(({ name, balanceFormatted }) => ({
+              value: name,
+            }))}
+          />
         </div>
       }
     />

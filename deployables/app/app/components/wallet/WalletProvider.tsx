@@ -17,9 +17,7 @@ export const WalletProvider = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={config} reconnectOnMount>
-        {children}
-      </WagmiProvider>
+      <WagmiProvider config={config}>{children}</WagmiProvider>
     </QueryClientProvider>
   )
 }
