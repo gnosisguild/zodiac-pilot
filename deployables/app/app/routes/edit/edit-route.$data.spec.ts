@@ -15,7 +15,7 @@ import {
   updateRoleId,
 } from '@zodiac/modules'
 import type { initSafeApiKit } from '@zodiac/safe'
-import { encode, ProviderType } from '@zodiac/schema'
+import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -172,7 +172,6 @@ describe('Edit route', () => {
             createMockEoaAccount({ address: randomAddress() }),
           ),
         ],
-        providerType: ProviderType.InjectedWallet,
       })
 
       await render(`/edit-route/${encode(route)}`)
@@ -196,7 +195,6 @@ describe('Edit route', () => {
               createMockEoaAccount({ address: randomAddress() }),
             ),
           }),
-          providerType: ProviderType.InjectedWallet,
         })
 
         await render(`/edit-route/${encode(route)}`)
@@ -354,7 +352,6 @@ describe('Edit route', () => {
           waypoints: createMockWaypoints({
             waypoints: [createMockRoleWaypoint({ moduleAddress, version: 1 })],
           }),
-          providerType: ProviderType.InjectedWallet,
         })
 
         await render(`/edit-route/${encode(route)}`)

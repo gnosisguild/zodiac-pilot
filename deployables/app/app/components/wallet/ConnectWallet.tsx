@@ -1,5 +1,5 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import { type HexAddress, ProviderType } from '@zodiac/schema'
+import { type HexAddress } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
 import { useAccount, useAccountEffect, useDisconnect } from 'wagmi'
@@ -80,7 +80,7 @@ const useAutoReconnect = ({
   currentConnectedAddress,
   onConnect,
 }: UseAutoReconnectOptions) => {
-  const { address, connector } = useAccount()
+  const { address } = useAccount()
 
   const accountConnected =
     currentConnectedAddress != null && currentConnectedAddress !== ZERO_ADDRESS
@@ -92,7 +92,7 @@ const useAutoReconnect = ({
   }, [onConnect])
 
   useEffect(() => {
-    if (address == null || connector == null) {
+    if (address == null) {
       return
     }
 
@@ -106,10 +106,6 @@ const useAutoReconnect = ({
 
     onConnectRef.current({
       address,
-      providerType:
-        connector.type === 'injected'
-          ? ProviderType.InjectedWallet
-          : ProviderType.WalletConnect,
     })
-  }, [accountConnected, address, connector])
+  }, [accountConnected, address])
 }

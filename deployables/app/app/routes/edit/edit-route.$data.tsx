@@ -28,7 +28,6 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
-  updateProviderType,
   updateRoleId,
   updateRolesWaypoint,
   updateStartingPoint,
@@ -37,8 +36,6 @@ import {
 } from '@zodiac/modules'
 import {
   jsonStringify,
-  ProviderType,
-  providerTypeSchema,
   type ExecutionRoute,
   type Waypoints,
 } from '@zodiac/schema'
@@ -73,7 +70,6 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     label: route.label,
     chainId,
     avatar: route.avatar,
-    providerType: route.providerType,
     waypoints: route.waypoints,
     isDev: process.env.NODE_ENV === 'development',
   }
@@ -157,15 +153,12 @@ export const clientAction = async ({
       const route = parseRouteData(params.data)
 
       const address = getHexString(data, 'address')
-      const providerType = verifyProviderType(getInt(data, 'providerType'))
       const account = await createAccount(
         jsonRpcProvider(getChainId(route.avatar)),
         address,
       )
 
-      return editRoute(
-        updateStartingPoint(updateProviderType(route, providerType), account),
-      )
+      return editRoute(updateStartingPoint(route, account))
     }
     case Intent.DisconnectWallet: {
       const route = parseRouteData(params.data)
@@ -196,12 +189,11 @@ const EditRoute = ({
           <ConnectWallet
             chainId={chainId}
             pilotAddress={optimisticRoute.pilotAddress}
-            onConnect={({ address, providerType }) => {
+            onConnect={({ address }) => {
               submit(
                 formData({
                   intent: Intent.ConnectWallet,
                   address,
-                  providerType,
                 }),
                 { method: 'POST' },
               )
@@ -371,9 +363,6 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
 
   invariant(false, `Cannot get multisend for module type "${module.type}"`)
 }
-
-const verifyProviderType = (value: number): ProviderType =>
-  providerTypeSchema.parse(value)
 
 const DebugRouteData = () => {
   const { data } = useParams()
