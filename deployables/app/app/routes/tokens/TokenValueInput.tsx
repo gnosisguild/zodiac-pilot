@@ -8,6 +8,7 @@ import {
 } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { formatUnits, parseUnits } from 'viem'
+import { Token } from './Token'
 
 type TokenValueInputProps = Omit<
   NumberInputProps,
@@ -51,7 +52,7 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
         min={0}
         max={maxBalance == null ? undefined : maxBalance}
         after={
-          <div className="mr-1">
+          <div className="mr-1 flex items-center gap-2">
             <GhostButton
               size="tiny"
               disabled={maxBalance == null}
@@ -64,8 +65,10 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
             </GhostButton>
 
             <Select
+              inline
               isMulti={false}
               label="Available tokens"
+              placeholder="Select token"
               onChange={(value) => {
                 if (value == null) {
                   return
@@ -82,11 +85,14 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
 
                 setSelectedToken(token)
               }}
-              options={tokenBalances.map(({ name }) => ({
-                value: name,
-                label: name,
+              options={tokenBalances.map(({ name, token_address, logo }) => ({
+                value: token_address,
+                logo,
+                name,
               }))}
-            />
+            >
+              {({ data: { logo, name } }) => <Token logo={logo}>{name}</Token>}
+            </Select>
           </div>
         }
       />

@@ -3,6 +3,7 @@ import type { HexAddress } from '@zodiac/schema'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Blockie } from '../Blockie'
 import { type ComposableInputProps, Input } from './Input'
+import { InputLayout } from './InputLayout'
 
 type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
@@ -25,33 +26,32 @@ export const AddressInput = ({
   placeholder = ZERO_ADDRESS,
   ...props
 }: AddressInputProps) => (
-  <Input
-    label={label}
-    description={description}
-    error={error}
-    disabled={disabled}
-    after={action && <div className="mr-2">{action}</div>}
-    before={
-      <Blockie
-        address={value || defaultValue || ZERO_ADDRESS}
-        className="ml-4 size-5 shrink-0"
-      />
-    }
-  >
+  <Input label={label} description={description} error={error}>
     {({ inputId, descriptionId }) => (
-      <input
-        {...props}
-        type="text"
-        pattern="0x\w+"
-        id={inputId}
+      <InputLayout
         disabled={disabled}
-        value={value}
-        defaultValue={defaultValue}
-        aria-describedby={descriptionId}
-        aria-errormessage={error ?? undefined}
-        placeholder={placeholder}
-        className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
-      />
+        before={
+          <Blockie
+            address={value || defaultValue || ZERO_ADDRESS}
+            className="ml-4 size-5 shrink-0"
+          />
+        }
+        after={action && <div className="mr-2">{action}</div>}
+      >
+        <input
+          {...props}
+          type="text"
+          pattern="0x\w+"
+          id={inputId}
+          disabled={disabled}
+          value={value}
+          defaultValue={defaultValue}
+          aria-describedby={descriptionId}
+          aria-errormessage={error ?? undefined}
+          placeholder={placeholder}
+          className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
+        />
+      </InputLayout>
     )}
   </Input>
 )

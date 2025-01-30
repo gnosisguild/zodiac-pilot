@@ -61,7 +61,6 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
         label="Piloted Safe"
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
-        formatOptionLabel={SafeOptionLabel}
         placeholder="Paste an address or select from the list"
         classNames={selectStyles<Option>()}
         value={
@@ -89,7 +88,17 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
         isValidNewOption={(option) => {
           return !!validateAddress(option)
         }}
-      />
+      >
+        {({ data: { value } }) => (
+          <div className="flex items-center gap-4">
+            <Blockie address={value} className="size-5 shrink-0" />
+
+            <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono">
+              {getAddress(value).toLowerCase()}
+            </code>
+          </div>
+        )}
+      </Select>
     )
   }
 
@@ -110,19 +119,5 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
         }
       }}
     />
-  )
-}
-
-const SafeOptionLabel = (option: Option) => {
-  const checksumAddress = getAddress(option.value).toLowerCase()
-
-  return (
-    <div className="flex items-center gap-4 py-2">
-      <Blockie address={option.value} className="size-5 shrink-0" />
-
-      <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono">
-        {checksumAddress}
-      </code>
-    </div>
   )
 }

@@ -6,15 +6,44 @@ export type LabeledRenderProps = {
   descriptionId: string
 }
 
-type LabeledProps = {
+export type ComposableLabeledProps = {
   label: string
+  hideLabel?: boolean
   description?: string
+}
+
+type LabeledProps = ComposableLabeledProps & {
   children: ReactNode | ((props: LabeledRenderProps) => ReactNode)
 }
 
-export const Labeled = ({ children, label, description }: LabeledProps) => {
+export const Labeled = ({
+  children,
+  hideLabel = false,
+  label,
+  description,
+}: LabeledProps) => {
   const inputId = useId()
   const descriptionId = useId()
+
+  if (hideLabel) {
+    return (
+      <>
+        <label htmlFor={inputId} className="sr-only">
+          {label}
+        </label>
+
+        {description && (
+          <span id={descriptionId} className="sr-only">
+            {description}
+          </span>
+        )}
+
+        {typeof children === 'function'
+          ? children({ inputId, descriptionId })
+          : children}
+      </>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-2">

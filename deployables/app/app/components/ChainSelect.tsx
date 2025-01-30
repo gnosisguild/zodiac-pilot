@@ -8,11 +8,6 @@ export interface Props {
   onChange(chainId: ChainId): void
 }
 
-interface Option {
-  value: ChainId
-  label: string
-}
-
 const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
   value: parseInt(chainId) as ChainId,
   label: name,
@@ -30,12 +25,11 @@ export const ChainSelect = ({ value, onChange }: Props) => (
 
       onChange(option.value)
     }}
-    formatOptionLabel={ChainOptionLabel as any}
-  />
-)
-
-const ChainOptionLabel = ({ value, label }: Option) => (
-  <div className="flex items-center gap-4 py-2">
-    <div className="pl-1">{label || `#${value}`}</div>
-  </div>
+  >
+    {({ data: { label, value } }) => (
+      <div className="flex items-center gap-4">
+        <div className="pl-1">{label || `#${value}`}</div>
+      </div>
+    )}
+  </Select>
 )

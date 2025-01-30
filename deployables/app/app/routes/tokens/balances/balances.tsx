@@ -1,7 +1,7 @@
 import { useTokenBalances } from '@/balances-client'
 import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
-import { CircleDollarSign } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
+import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
@@ -24,19 +24,10 @@ const Balances = () => {
         {data.map(({ logo, name, balance_formatted, usd_value }) => (
           <Table.Tr key={name}>
             <Table.Td noWrap>
-              <div className="flex items-center gap-2">
-                {logo ? (
-                  <img src={logo} alt={name} className="size-4 rounded-full" />
-                ) : (
-                  <div className="flex size-4 items-center justify-center">
-                    <CircleDollarSign size={16} className="opacity-50" />
-                  </div>
-                )}
-                {name}
-              </div>
+              <Token logo={logo}>{name}</Token>
             </Table.Td>
             <Table.Td align="right">
-              <Token>{balance_formatted}</Token>
+              <TokenValue>{balance_formatted}</TokenValue>
             </Table.Td>
             <Table.Td align="right">
               <USD>{usd_value}</USD>
@@ -85,9 +76,9 @@ const USD = ({ children }: { children: number }) => (
   </span>
 )
 
-type TokenProps = PropsWithChildren
+type TokenValueProps = PropsWithChildren
 
-const Token = ({ children }: TokenProps) => (
+const TokenValue = ({ children }: TokenValueProps) => (
   <div className="flex items-center justify-end gap-2 text-sm">
     <span className="slashed-zero tabular-nums">{children}</span>
   </div>
