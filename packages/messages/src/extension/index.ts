@@ -1,9 +1,5 @@
 export { PilotMessageType, type Message } from './connect'
 export {
-  ConnectedWalletMessageType,
-  type ConnectedWalletMessage,
-} from './connectedWallet'
-export {
   InjectedProviderMessageTyp,
   type InjectedProviderMessage,
   type InjectedProviderResponse,

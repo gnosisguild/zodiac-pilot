@@ -33,26 +33,7 @@
   "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "exclude_globs": [
-        "<COMPANION_APP_URL>/edit-route/*",
-        "<COMPANION_APP_URL>/submit/*",
-        "<COMPANION_APP_URL>/connect",
-        "about:*",
-        "chrome:*"
-      ],
-      "run_at": "document_start",
-      "js": ["build/connect/contentScripts/dApp.js"]
-    },
-    {
-      "matches": ["<COMPANION_APP_URL>/connect"],
-      "run_at": "document_start",
-      "all_frames": true,
-      "js": ["build/connect/contentScripts/connectIframe.js"]
-    },
-    {
       "matches": ["<COMPANION_APP_URL>/*"],
-      "exclude_globs": ["<COMPANION_APP_URL>/connect"],
       "run_at": "document_start",
       "all_frames": true,
       "js": ["build/companion/contentScripts/main.js"]

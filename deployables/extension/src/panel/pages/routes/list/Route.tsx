@@ -1,16 +1,9 @@
 import { useCompanionAppUrl } from '@/companion'
-import { useRouteConnect } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { encode } from '@zodiac/schema'
-import {
-  InlineForm,
-  SecondaryButton,
-  SecondaryLinkButton,
-  Tag,
-} from '@zodiac/ui'
+import { InlineForm, SecondaryButton, SecondaryLinkButton } from '@zodiac/ui'
 import { formatDistanceToNow } from 'date-fns'
-import { Cable, PlugZap, Unplug } from 'lucide-react'
 import { useRef, useState } from 'react'
 import type { PrefixedAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
@@ -24,7 +17,6 @@ interface RouteProps {
 }
 
 export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
-  const [connected, connect] = useRouteConnect(route)
   const [confirmClearTransactions, setConfirmClearTransactions] =
     useState(false)
   const transactions = useTransactions()
@@ -44,14 +36,6 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
             >
               {route.label || <em>Unnamed route</em>}
             </h3>
-
-            {connected ? (
-              <Tag color="success" head={<Cable size={16} />} />
-            ) : connect ? (
-              <Tag color="warning" head={<PlugZap size={16} />} />
-            ) : (
-              <Tag color="danger" head={<Unplug size={16} />} />
-            )}
           </div>
 
           <div className="flex items-center gap-2 text-xs">

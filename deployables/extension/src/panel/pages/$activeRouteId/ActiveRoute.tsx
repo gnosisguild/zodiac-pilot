@@ -4,7 +4,6 @@ import {
   ProvideExecutionRoute,
   saveLastUsedRouteId,
 } from '@/execution-routes'
-import { useConnectInjectedWalletIfNeeded } from '@/providers'
 import { ProvideProvider } from '@/providers-ui'
 import {
   Outlet,
@@ -33,8 +32,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
-
-  useConnectInjectedWalletIfNeeded()
 
   return (
     <ProvideExecutionRoute route={route}>
