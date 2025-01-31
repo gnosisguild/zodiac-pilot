@@ -72,7 +72,7 @@ const SubmitTransaction = () => {
       fluid
       disabled={
         walletAccount.chainId !== chainId ||
-        walletAccount.address?.toLowerCase() !== initiator ||
+        walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
         connectorClient == null ||
         submitPending
       }
