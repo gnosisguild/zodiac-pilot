@@ -14,7 +14,7 @@ import { useFetcher } from 'react-router'
 import {
   AccountType,
   ConnectionType,
-  parsePrefixedAddress,
+  unprefixAddress,
   type PrefixedAddress,
 } from 'ser-kit'
 import { ModSelect, NO_MODULE_OPTION } from './ModSelect'
@@ -36,7 +36,7 @@ export const ZodiacMod = ({
   const chainId = getChainId(avatar)
   const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
 
-  const hasAvatar = parsePrefixedAddress(avatar) !== ZERO_ADDRESS
+  const hasAvatar = unprefixAddress(avatar) !== ZERO_ADDRESS
 
   const [isLoadingSafes, safes] = useSafes(chainId, pilotAddress)
   const [isLoadingDelegates, delegates] = useDelegates(chainId, pilotAddress)
@@ -118,7 +118,7 @@ export const ZodiacMod = ({
         }
         isDisabled={disabled || isLoading}
         placeholder={isLoading ? 'Loading modules...' : 'Select a module'}
-        avatarAddress={parsePrefixedAddress(avatar)}
+        avatarAddress={unprefixAddress(avatar)}
       />
 
       {selectedModule?.type === SupportedZodiacModuleType.ROLES_V1 && (
@@ -170,7 +170,7 @@ const useModules = (chainId: ChainId, avatar: PrefixedAddress) => {
   const { load, state, data = [] } = useFetcher<ZodiacModule[]>()
 
   useEffect(() => {
-    const address = parsePrefixedAddress(avatar)
+    const address = unprefixAddress(avatar)
 
     if (address === ZERO_ADDRESS) {
       return

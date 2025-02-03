@@ -2,7 +2,7 @@ import { ZERO_ADDRESS } from '@zodiac/chains'
 import { getRolesWaypoint } from '@zodiac/modules'
 import type { ExecutionRoute } from '@zodiac/schema'
 import type { JsonRpcProvider } from 'ethers'
-import { AccountType, parsePrefixedAddress } from 'ser-kit'
+import { AccountType, unprefixAddress } from 'ser-kit'
 import { decodeGenericError } from './decodeError'
 import { handleRolesV1Error } from './handleRolesV1Error'
 import { handleRolesV2Error } from './handleRolesV2Error'
@@ -22,12 +22,12 @@ export async function dryRun(
 ): Promise<Result> {
   if (
     route.initiator == null ||
-    parsePrefixedAddress(route.initiator) === ZERO_ADDRESS
+    unprefixAddress(route.initiator) === ZERO_ADDRESS
   ) {
     return { error: true, message: 'This route is not connected to a wallet.' }
   }
 
-  if (parsePrefixedAddress(route.avatar) === ZERO_ADDRESS) {
+  if (unprefixAddress(route.avatar) === ZERO_ADDRESS) {
     return { error: true, message: 'This route has no target.' }
   }
 
@@ -44,10 +44,7 @@ export async function dryRun(
   }
 
   if (
-    !(await isSmartContractAddress(
-      parsePrefixedAddress(route.avatar),
-      provider,
-    ))
+    !(await isSmartContractAddress(unprefixAddress(route.avatar), provider))
   ) {
     return { error: true, message: 'Avatar is not a smart contract.' }
   }
@@ -56,7 +53,7 @@ export async function dryRun(
     request: {
       to: ZERO_ADDRESS,
       data: '0x00000000',
-      from: parsePrefixedAddress(route.avatar),
+      from: unprefixAddress(route.avatar),
     },
     route,
     revertOnError: false,

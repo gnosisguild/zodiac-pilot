@@ -15,8 +15,8 @@ import { Check, TriangleAlert, UsersRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
   ExecutionActionType,
-  parsePrefixedAddress,
   planExecution,
+  unprefixAddress,
   type MetaTransactionRequest,
   type Route as SerRoute,
 } from 'ser-kit'
@@ -42,7 +42,7 @@ const simulateRolesTransaction = async (
     'Only transaction execution is currently supported',
   )
 
-  const from = parsePrefixedAddress(action.from)
+  const from = unprefixAddress(action.from)
   const tx = {
     ...action.transaction,
     from,

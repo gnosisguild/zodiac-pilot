@@ -17,7 +17,7 @@ import {
 } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { parsePrefixedAddress } from 'ser-kit'
+import { unprefixAddress } from 'ser-kit'
 import { RecordingIndicator } from './RecordingIndicator'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
@@ -33,7 +33,7 @@ export const Transactions = () => {
   useProviderBridge({
     provider,
     chainId: getChainId(route.avatar),
-    account: parsePrefixedAddress(route.avatar),
+    account: unprefixAddress(route.avatar),
   })
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them

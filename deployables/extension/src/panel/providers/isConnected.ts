@@ -1,8 +1,4 @@
-import {
-  type ChainId,
-  parsePrefixedAddress,
-  type PrefixedAddress,
-} from 'ser-kit'
+import { unprefixAddress, type ChainId, type PrefixedAddress } from 'ser-kit'
 import type { ConnectionProvider } from './connectTypes'
 
 export const isConnected = (
@@ -18,7 +14,7 @@ export const isConnected = (
     return false
   }
 
-  const accountAddress = parsePrefixedAddress(account)
+  const accountAddress = unprefixAddress(account)
 
   return connection.accounts.some(
     (account) => account.toLowerCase() === accountAddress.toLowerCase(),

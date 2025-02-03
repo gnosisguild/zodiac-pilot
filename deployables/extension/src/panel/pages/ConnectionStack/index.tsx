@@ -5,7 +5,7 @@ import {
   getPilotAddress,
   getRolesWaypoint,
 } from '@zodiac/modules'
-import { parsePrefixedAddress } from 'ser-kit'
+import { unprefixAddress } from 'ser-kit'
 import { Address } from './Address'
 
 interface Props {
@@ -16,7 +16,7 @@ export const ConnectionStack = ({ route }: Props) => {
   invariant(route.waypoints != null, 'Cannot render route without waypoints')
 
   const pilotAddress = getPilotAddress(route.waypoints)
-  const avatarAddress = parsePrefixedAddress(route.avatar)
+  const avatarAddress = unprefixAddress(route.avatar)
 
   const rolesWaypoint = getRolesWaypoint(route)
 
