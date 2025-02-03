@@ -11,7 +11,7 @@ export async function queryRolesV1MultiSend(
     .connect(modAddress, provider)
     .multisend()
 
-  const lowerCasedAddress = address.toLowerCase()
+  const lowerCasedAddress = address.toLowerCase() as HexAddress
 
   if (!isHexAddress(lowerCasedAddress) || lowerCasedAddress === ZERO_ADDRESS) {
     return []

@@ -41,7 +41,7 @@ export const BRIDGE_AWARE_CONTRACT_ADDRESSES = [
   //Sepolia
   {
     chainId: 11155111,
-    address: '0x36B2a59f3CDa3db1283FEBc7c228E89ecE7Db6f4',
+    address: '0x36b2a59f3cda3db1283febc7c228e89ece7db6f4',
   },
 ] as const
 

@@ -8,7 +8,7 @@ import {
 } from 'ethers'
 import type { MetaTransactionRequest } from 'ser-kit'
 
-const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0aB83D845Ac265BE939c57F53AD838012c9'
+const SIGN_MESSAGE_LIB_ADDRESS = '0xd53cd0ab83d845ac265be939c57f53ad838012c9'
 const SIGN_MESSAGE_LIB_ABI = [
   'function signMessage(bytes calldata _data)',
   'function getMessageHash(bytes memory message) public view returns (bytes32)',
