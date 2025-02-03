@@ -54,7 +54,7 @@
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.0.300",
     "@types/express": "5.0.0",
-    "@types/node": "22.12.0",
+    "@types/node": "22.13.0",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitest/coverage-v8": "3.0.4",
