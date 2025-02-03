@@ -7,6 +7,8 @@ export const connectWallet = async () => {
   const config = await getCheckedWagmiConfig()
   const connector = getCheckedConnector(config)
 
+  connector.uid = 'test-id'
+
   const connectResult = await connect(config, { connector })
 
   console.log('AFTER CONNET', config.state)

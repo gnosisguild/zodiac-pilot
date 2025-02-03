@@ -7,13 +7,13 @@ import { getCheckedWagmiConfig } from './getCheckedWagmiConfig'
 export const disconnectWallet = async () => {
   const config = await getCheckedWagmiConfig()
 
-  console.log('ON', config.state)
+  console.log('BEFORE DISCONNECT', config.state)
 
   await disconnect(getWagmiConfig(true), {
     connector: getCheckedConnector(config),
   })
 
-  console.log('OFF', config.state)
+  console.log('AFTER DISCONNECT', config.state)
 
   await sleepTillIdle()
 }
