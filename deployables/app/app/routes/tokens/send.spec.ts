@@ -12,7 +12,7 @@ import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
-  const { mock, http, createConfig } =
+  const { mock, custom, createConfig } =
     await vi.importActual<typeof import('wagmi')>('wagmi')
   const { mainnet } =
     await vi.importActual<typeof import('wagmi/chains')>('wagmi/chains')
@@ -21,7 +21,11 @@ vi.mock('@/wagmi', async () => {
     chains: [mainnet],
     storage: null,
     transports: {
-      [mainnet.id]: http(),
+      [mainnet.id]: custom({
+        request() {
+          return Promise.resolve(null)
+        },
+      }),
     },
     connectors: [
       mock({
