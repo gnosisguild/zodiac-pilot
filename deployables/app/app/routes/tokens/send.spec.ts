@@ -8,7 +8,7 @@ import {
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
-import { getAddress, numberToHex } from 'viem'
+import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
@@ -143,9 +143,13 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
           method: 'eth_sendTransaction',
           params: [
             {
+              data: encodeFunctionData({
+                abi: erc20Abi,
+                functionName: 'transfer',
+                args: [recipient, 1234n],
+              }),
               from: getAddress('0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'),
-              to: recipient,
-              value: numberToHex(1234),
+              to: tokenAddress,
             },
           ],
         }),
