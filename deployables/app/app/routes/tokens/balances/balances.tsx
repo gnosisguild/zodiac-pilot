@@ -1,11 +1,13 @@
 import { useTokenBalances } from '@/balances-client'
 import {
   Error as ErrorAlert,
+  GhostLinkButton,
   SkeletonText,
   Table,
   TokenValue,
   UsdValue,
 } from '@zodiac/ui'
+import { Upload } from 'lucide-react'
 import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
@@ -26,19 +28,34 @@ const Balances = () => {
         </Table.Tr>
       </Table.THead>
       <Table.TBody>
-        {data.map(({ logo, name, balance_formatted, usd_value }) => (
-          <Table.Tr key={name}>
-            <Table.Td noWrap>
-              <Token logo={logo}>{name}</Token>
-            </Table.Td>
-            <Table.Td align="right">
-              <TokenValue>{balance_formatted}</TokenValue>
-            </Table.Td>
-            <Table.Td align="right">
-              <UsdValue>{usd_value}</UsdValue>
-            </Table.Td>
-          </Table.Tr>
-        ))}
+        {data.map(
+          ({ logo, name, token_address, balance_formatted, usd_value }) => (
+            <Table.Tr key={name}>
+              <Table.Td noWrap>
+                <Token logo={logo}>{name}</Token>
+              </Table.Td>
+              <Table.Td align="right">
+                <TokenValue
+                  action={
+                    <GhostLinkButton
+                      iconOnly
+                      icon={Upload}
+                      size="tiny"
+                      to={`/tokens/send/${token_address}`}
+                    >
+                      Send
+                    </GhostLinkButton>
+                  }
+                >
+                  {balance_formatted}
+                </TokenValue>
+              </Table.Td>
+              <Table.Td align="right">
+                <UsdValue>{usd_value}</UsdValue>
+              </Table.Td>
+            </Table.Tr>
+          ),
+        )}
 
         {state === 'loading' &&
           data.length === 0 &&
