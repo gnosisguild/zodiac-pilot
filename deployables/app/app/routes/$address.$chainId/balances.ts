@@ -19,6 +19,8 @@ export const loader = async ({
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
 
+    console.log({ fork })
+
     invariantResponse(fork != null, `Fork param was no URL`)
 
     const client = createPublicClient({
