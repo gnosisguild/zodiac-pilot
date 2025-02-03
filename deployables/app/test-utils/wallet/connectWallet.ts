@@ -9,6 +9,8 @@ export const connectWallet = async () => {
 
   const connectResult = await connect(config, { connector })
 
+  console.log('AFTER CONNET', config.state)
+
   await sleepTillIdle()
 
   return { ...connectResult, connector, config }
