@@ -14,7 +14,7 @@ export default [
       route('balances', 'routes/tokens/balances/balances.tsx'),
     ]),
     layout('routes/tokens/send/layout.tsx', [
-      route('send', 'routes/tokens/send/send.tsx'),
+      route('send/:token?', 'routes/tokens/send/send.tsx'),
     ]),
   ]),
   route('/new-route', 'routes/new-route.ts'),

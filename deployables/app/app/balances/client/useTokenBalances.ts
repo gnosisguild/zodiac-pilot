@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
-import type { BalanceResult } from '../types'
+import type { BalanceResult, StrictTokenBalance } from '../types'
 
 export const useTokenBalances = () => {
   const { address, chainId } = useAccount()
@@ -15,5 +15,23 @@ export const useTokenBalances = () => {
     load(`/${address}/${chainId}/balances`)
   }, [address, chainId, load])
 
-  return [data, state] as const
+  const tokenBalanceByAddress = useMemo(
+    () =>
+      data.reduce(
+        (result, token) => {
+          if (token.token_address == null) {
+            return result
+          }
+
+          return {
+            ...result,
+            [token.token_address]: token as StrictTokenBalance,
+          }
+        },
+        {} as Record<string, StrictTokenBalance>,
+      ),
+    [data],
+  )
+
+  return [{ data, tokenBalanceByAddress }, state] as const
 }

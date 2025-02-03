@@ -1,7 +1,11 @@
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 
-type TokenValueProps = PropsWithChildren
+type TokenValueProps = PropsWithChildren<{ action?: ReactNode }>
 
-export const TokenValue = ({ children }: TokenValueProps) => (
-  <span className="slashed-zero tabular-nums">{children}</span>
+export const TokenValue = ({ children, action }: TokenValueProps) => (
+  <span className="inline-flex items-center gap-2 slashed-zero tabular-nums">
+    {children}
+
+    {action}
+  </span>
 )
