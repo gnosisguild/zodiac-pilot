@@ -5,7 +5,7 @@ import {
   disconnectWallet,
   render,
 } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
 import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
@@ -135,27 +135,29 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Send' }))
 
-    expect(fetch).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'eth_sendTransaction',
-          params: [
-            {
-              data: encodeFunctionData({
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [recipient, 1234n],
-              }),
-              from: getAddress('0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'),
-              to: tokenAddress,
-            },
-          ],
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'eth_sendTransaction',
+            params: [
+              {
+                data: encodeFunctionData({
+                  abi: erc20Abi,
+                  functionName: 'transfer',
+                  args: [recipient, 1234n],
+                }),
+                from: getAddress('0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'),
+                to: tokenAddress,
+              },
+            ],
+          }),
         }),
-      }),
-    )
+      )
+    })
   })
 
   it('displays how many tokens are available', async () => {
