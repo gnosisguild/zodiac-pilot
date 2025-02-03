@@ -3,6 +3,7 @@ import {
   EvmNative,
   type EvmErc20TokenBalanceWithPriceJSON,
 } from '@moralisweb3/common-evm-utils'
+import { randomAddress } from '@zodiac/test-utils'
 import { formatUnits } from 'viem'
 
 export const createMockTokenBalance = ({
@@ -25,6 +26,7 @@ export const createMockTokenBalance = ({
     usd_price_24hr_percent_change: '0',
     usd_price_24hr_usd_change: '0',
     usd_value: 0,
+    token_address: randomAddress(),
 
     ...tokenBalance,
   }

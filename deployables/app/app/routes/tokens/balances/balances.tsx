@@ -1,6 +1,11 @@
 import { useTokenBalances } from '@/balances-client'
-import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
-import { type PropsWithChildren } from 'react'
+import {
+  Error as ErrorAlert,
+  SkeletonText,
+  Table,
+  TokenValue,
+  UsdValue,
+} from '@zodiac/ui'
 import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
@@ -30,7 +35,7 @@ const Balances = () => {
               <TokenValue>{balance_formatted}</TokenValue>
             </Table.Td>
             <Table.Td align="right">
-              <USD>{usd_value}</USD>
+              <UsdValue>{usd_value}</UsdValue>
             </Table.Td>
           </Table.Tr>
         ))}
@@ -64,22 +69,3 @@ export const ErrorBoundary = ({ error }: Route.ErrorBoundaryProps) => {
     )
   }
 }
-
-const usdFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  style: 'currency',
-})
-
-const USD = ({ children }: { children: number }) => (
-  <span className="text-sm slashed-zero tabular-nums">
-    {usdFormatter.format(children)}
-  </span>
-)
-
-type TokenValueProps = PropsWithChildren
-
-const TokenValue = ({ children }: TokenValueProps) => (
-  <div className="flex items-center justify-end gap-2 text-sm">
-    <span className="slashed-zero tabular-nums">{children}</span>
-  </div>
-)

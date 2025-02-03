@@ -51,7 +51,7 @@ vi.mock('@/balances-server', async (importOriginal) => {
 
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
-describe('Send Tokens', () => {
+describe('Send Tokens', { concurrent: false, sequential: true }, () => {
   afterEach(() => disconnectWallet())
 
   it('is possible to select the token you want to send', async () => {
@@ -59,8 +59,8 @@ describe('Send Tokens', () => {
       createMockTokenBalance({ name: 'Test token' }),
     ])
 
-    await connectWallet()
     await render('/tokens/send')
+    await connectWallet()
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -80,8 +80,8 @@ describe('Send Tokens', () => {
       }),
     ])
 
-    await connectWallet()
     await render('/tokens/send')
+    await connectWallet()
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -109,9 +109,9 @@ describe('Send Tokens', () => {
         decimals: 2,
       }),
     ])
-    await connectWallet()
 
     await render('/tokens/send')
+    await connectWallet()
 
     const recipient = randomAddress()
 
@@ -151,5 +151,30 @@ describe('Send Tokens', () => {
         }),
       }),
     )
+  })
+
+  it('displays how many tokens are available', async () => {
+    mockGetTokenBalances.mockResolvedValue([
+      createMockTokenBalance({
+        name: 'Test token',
+        balance_formatted: '1234',
+        symbol: 'T€$T',
+      }),
+    ])
+
+    await render('/tokens/send')
+    await connectWallet()
+
+    await userEvent.click(
+      await screen.findByRole('combobox', { name: 'Available tokens' }),
+    )
+
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Test token' }),
+    )
+
+    expect(
+      screen.getByRole('spinbutton', { name: 'Amount' }),
+    ).toHaveAccessibleDescription(`Max: 1234 T€$T`)
   })
 })

@@ -64,6 +64,11 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
       <NumberInput
         {...props}
         value={amount}
+        description={
+          selectedToken == null
+            ? undefined
+            : `Max: ${selectedToken.balance_formatted} ${selectedToken.symbol}`
+        }
         onChange={(ev) => setAmount(ev.target.value)}
         step="any"
         min={0}
