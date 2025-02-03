@@ -9,7 +9,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
 import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
   const { mock, http, createConfig } =
@@ -52,6 +52,7 @@ vi.mock('@/balances-server', async (importOriginal) => {
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
 describe('Send Tokens', { concurrent: false, sequential: true }, () => {
+  beforeEach(() => connectWallet())
   afterEach(() => disconnectWallet())
 
   it('is possible to select the token you want to send', async () => {
@@ -60,7 +61,6 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
     ])
 
     await render('/tokens/send')
-    await connectWallet()
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -81,7 +81,6 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
     ])
 
     await render('/tokens/send')
-    await connectWallet()
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -98,7 +97,7 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
     )
   })
 
-  it('uses sends funds to the selected token', async () => {
+  it('sends funds to the selected token', async () => {
     const tokenAddress = randomAddress()
 
     mockGetTokenBalances.mockResolvedValue([
@@ -111,7 +110,6 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
     ])
 
     await render('/tokens/send')
-    await connectWallet()
 
     const recipient = randomAddress()
 
@@ -167,7 +165,6 @@ describe('Send Tokens', { concurrent: false, sequential: true }, () => {
     ])
 
     await render('/tokens/send')
-    await connectWallet()
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
