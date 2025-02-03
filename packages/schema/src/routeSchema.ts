@@ -18,9 +18,11 @@ export const chainIdSchema = z.union([
   z.literal(chains[7].chainId),
 ])
 
-export type HexAddress = Hex
+export type HexAddress = Lowercase<Hex>
 export const isHexAddress = isHex
-export const addressSchema = hexSchema
+export const addressSchema = hexSchema.transform<HexAddress>(
+  (data) => data.toLowerCase() as HexAddress,
+)
 
 export const verifyHexAddress = (value: string) => addressSchema.parse(value)
 

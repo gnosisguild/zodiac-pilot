@@ -6,7 +6,7 @@ export const randomHex = (size: number): HexAddress => {
     .map(() => Math.floor(Math.random() * 16).toString(16))
     .join('')
 
-  return `0x${hex}`
+  return `0x${hex}` as HexAddress
 }
 
 export const randomAddress = (size: number = 40) => randomHex(size)
