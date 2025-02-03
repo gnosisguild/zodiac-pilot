@@ -1,6 +1,6 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, Waypoint } from '@zodiac/schema'
-import { ConnectionType, formatPrefixedAddress } from 'ser-kit'
+import { ConnectionType, prefixAddress } from 'ser-kit'
 import {
   createMockDelayAccount,
   type CreateDelayAccountOptions,
@@ -18,6 +18,6 @@ export const createMockDelayWaypoint = ({
   account: createMockDelayAccount({ chainId, address }),
   connection: {
     type: ConnectionType.IS_ENABLED,
-    from: formatPrefixedAddress(chainId, pilotAddress),
+    from: prefixAddress(chainId, pilotAddress),
   },
 })

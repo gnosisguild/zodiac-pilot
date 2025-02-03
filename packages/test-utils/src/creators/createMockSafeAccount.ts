@@ -1,11 +1,6 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  type Account,
-  type ChainId,
-} from 'ser-kit'
+import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
 
 export type Safe = Extract<Account, { type: AccountType.SAFE }>
 
@@ -20,7 +15,7 @@ export const createMockSafeAccount = ({
 }: CreateMockSafeAccountOptions = {}): Safe => ({
   type: AccountType.SAFE,
   address,
-  prefixedAddress: formatPrefixedAddress(chainId, address),
+  prefixedAddress: prefixAddress(chainId, address),
   chain: chainId,
   threshold: NaN,
 })

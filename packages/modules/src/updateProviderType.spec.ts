@@ -11,11 +11,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-} from 'ser-kit'
+import { AccountType, prefixAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createOwnsConnection } from './createOwnsConnection'
 import { getStartingWaypoint } from './getStartingWaypoint'
@@ -111,7 +107,7 @@ describe('updateProviderType', () => {
 
       expect(updatedRoute).toHaveProperty(
         'initiator',
-        formatPrefixedAddress(undefined, safeAccount.address),
+        prefixAddress(undefined, safeAccount.address),
       )
     })
 
@@ -136,7 +132,7 @@ describe('updateProviderType', () => {
 
       expect(rolesWaypoint.connection).toHaveProperty(
         'from',
-        formatPrefixedAddress(undefined, safeAccount.address),
+        prefixAddress(undefined, safeAccount.address),
       )
     })
 
@@ -161,7 +157,7 @@ describe('updateProviderType', () => {
 
       expect(endPoint.connection).toHaveProperty(
         'from',
-        formatPrefixedAddress(undefined, safeAccount.address),
+        prefixAddress(undefined, safeAccount.address),
       )
     })
   })
@@ -229,7 +225,7 @@ describe('updateProviderType', () => {
 
       expect(updatedRoute).toHaveProperty(
         'initiator',
-        formatPrefixedAddress(Chain.GNO, eoaAccount.address),
+        prefixAddress(Chain.GNO, eoaAccount.address),
       )
     })
 
@@ -252,7 +248,7 @@ describe('updateProviderType', () => {
 
       expect(rolesWaypoint.connection).toHaveProperty(
         'from',
-        formatPrefixedAddress(Chain.GNO, eoaAccount.address),
+        prefixAddress(Chain.GNO, eoaAccount.address),
       )
     })
 
@@ -275,7 +271,7 @@ describe('updateProviderType', () => {
 
       expect(endPoint.connection).toHaveProperty(
         'from',
-        formatPrefixedAddress(Chain.GNO, eoaAccount.address),
+        prefixAddress(Chain.GNO, eoaAccount.address),
       )
     })
   })

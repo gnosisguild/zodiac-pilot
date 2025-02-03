@@ -2,7 +2,7 @@ import type { HexAddress, Waypoint } from '@zodiac/schema'
 import {
   AccountType,
   ConnectionType,
-  formatPrefixedAddress,
+  prefixAddress,
   type ChainId,
   type PrefixedAddress,
 } from 'ser-kit'
@@ -25,7 +25,7 @@ export const createRolesWaypoint = ({
   account: {
     type: AccountType.ROLES,
     address,
-    prefixedAddress: formatPrefixedAddress(chainId, address),
+    prefixedAddress: prefixAddress(chainId, address),
     multisend,
     chain: chainId,
     version,
