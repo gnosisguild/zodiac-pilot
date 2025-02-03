@@ -17,7 +17,7 @@
     "@react-router/express": "7.1.5",
     "@react-router/node": "7.1.5",
     "@react-router/serve": "7.1.5",
-    "@sentry/react": "8.52.1",
+    "@sentry/react": "8.53.0",
     "@tanstack/react-query": "5.66.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/env": "workspace:*",
