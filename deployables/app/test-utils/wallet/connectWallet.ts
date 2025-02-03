@@ -9,6 +9,8 @@ export const connectWallet = async () => {
 
   connector.uid = 'test-id'
 
+  connector.emitter.on('disconnect', () => console.log('DISCONNECT EVENT'))
+
   const connectResult = await connect(config, { connector })
 
   console.log('AFTER CONNET', config.state)
