@@ -7,14 +7,15 @@ import {
 } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { useSendTransaction } from 'wagmi'
+import { erc20Abi } from 'viem'
+import { useWriteContract } from 'wagmi'
 import type { Route } from './+types/send'
 import { TokenValueInput } from './TokenValueInput'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Send tokens' }]
 
 const Send = () => {
-  const { sendTransaction, isPending, error, isSuccess } = useSendTransaction()
+  const { writeContract, isPending, error, isSuccess } = useWriteContract()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -28,9 +29,14 @@ const Send = () => {
       onSubmit={(ev) => {
         const data = new FormData(ev.currentTarget)
 
-        sendTransaction({
-          to: getHexString(data, 'recipient'),
-          value: BigInt(getString(data, 'amount')),
+        const recipient = getHexString(data, 'recipient')
+        const value = BigInt(getString(data, 'amount'))
+
+        writeContract({
+          abi: erc20Abi,
+          address: getHexString(data, 'token'),
+          functionName: 'transfer',
+          args: [recipient, value],
         })
 
         ev.preventDefault()

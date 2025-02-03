@@ -49,6 +49,14 @@ export const AddressInput = ({
           aria-describedby={descriptionId}
           aria-errormessage={error ?? undefined}
           placeholder={placeholder}
+          onInvalid={(e) => {
+            if (e.currentTarget.validity.patternMismatch) {
+              e.currentTarget.setCustomValidity(
+                'Please use a 40 character hex address',
+              )
+            }
+          }}
+          onInput={(e) => e.currentTarget.setCustomValidity('')}
           className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
         />
       </InputLayout>

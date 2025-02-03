@@ -15,7 +15,11 @@ type TokenValueInputProps = Omit<
   'value' | 'onChange' | 'defaultValue' | 'after'
 >
 
-export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
+export const TokenValueInput = ({
+  name,
+  required,
+  ...props
+}: TokenValueInputProps) => {
   const [maxBalance, setMaxBalance] = useState<string | null>(null)
   const [tokenBalances, state] = useTokenBalances()
   const [selectedTokenAddress, setSelectedTokenAddress] = useState<
@@ -61,8 +65,15 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
         }
       />
 
+      <input
+        type="hidden"
+        name="token"
+        value={selectedToken == null ? '' : selectedToken.token_address}
+      />
+
       <NumberInput
         {...props}
+        required={required}
         value={amount}
         description={
           selectedToken == null
@@ -88,6 +99,7 @@ export const TokenValueInput = ({ name, ...props }: TokenValueInputProps) => {
 
             <Select
               inline
+              required={required}
               isMulti={false}
               isSearchable={false}
               isDisabled={state === 'loading'}
