@@ -52,7 +52,7 @@
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.2.0",
     "@testing-library/user-event": "14.6.1",
-    "@types/chrome": "0.0.300",
+    "@types/chrome": "0.0.301",
     "@types/express": "5.0.0",
     "@types/node": "22.13.0",
     "@types/react": "19.0.8",
