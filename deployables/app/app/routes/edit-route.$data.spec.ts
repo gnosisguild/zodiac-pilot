@@ -312,7 +312,9 @@ describe('Edit route', () => {
       )
       await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
-      expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+      await waitFor(async () => {
+        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+      })
     })
 
     it('reloads the modules when the chain changes', async () => {
@@ -384,7 +386,9 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
 
-        expect(await screen.findByText('Roles v1')).toBeInTheDocument()
+        await waitFor(async () => {
+          expect(await screen.findByText('Roles v1')).toBeInTheDocument()
+        })
       })
 
       describe('Config', () => {
@@ -511,7 +515,9 @@ describe('Edit route', () => {
         )
         await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
 
-        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+        await waitFor(async () => {
+          expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+        })
       })
 
       describe('Config', () => {
