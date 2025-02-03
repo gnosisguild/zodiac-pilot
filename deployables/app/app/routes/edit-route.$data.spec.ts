@@ -357,7 +357,9 @@ describe('Edit route', () => {
 
         await render(`/edit-route/${encode(route)}`)
 
-        expect(await screen.findByText('Roles v1')).toBeInTheDocument()
+        await waitFor(async () => {
+          expect(await screen.findByText('Roles v1')).toBeInTheDocument()
+        })
       })
 
       it('is possible to select the v1 roles mod', async () => {
@@ -482,7 +484,9 @@ describe('Edit route', () => {
 
         await render(`/edit-route/${encode(route)}`)
 
-        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+        await waitFor(async () => {
+          expect(await screen.findByText('Roles v2')).toBeInTheDocument()
+        })
       })
 
       it('is possible to select the v2 roles mod', async () => {
