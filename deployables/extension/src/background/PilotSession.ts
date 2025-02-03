@@ -1,6 +1,11 @@
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
-import { PilotMessageType, type Message } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  PilotMessageType,
+  type CompanionAppMessage,
+  type Message,
+} from '@zodiac/messages'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import type { TrackRequestsResult } from './rpcTracking'
@@ -101,6 +106,8 @@ export class PilotSession {
       this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId }),
     )
 
+    await this.updateForkInTabs()
+
     this.rpcTracking.onNewRpcEndpointDetected.addListener(
       this.handleNewRpcEndpoint,
     )
@@ -119,6 +126,19 @@ export class PilotSession {
         chainId: this.fork.chainId,
       }),
     )
+
+    await this.updateForkInTabs()
+  }
+
+  updateForkInTabs() {
+    return Promise.all(
+      this.getTabs().map((tabId) =>
+        chrome.tabs.sendMessage(tabId, {
+          type: CompanionAppMessageType.FORK_UPDATED,
+          forkUrl: this.getFork().rpcUrl ?? null,
+        } satisfies CompanionAppMessage),
+      ),
+    )
   }
 
   async clearFork() {
@@ -133,5 +153,7 @@ export class PilotSession {
     this.rpcTracking.onNewRpcEndpointDetected.removeListener(
       this.handleNewRpcEndpoint,
     )
+
+    await this.updateForkInTabs()
   }
 }

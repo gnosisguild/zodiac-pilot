@@ -22,4 +22,12 @@ window.addEventListener(
   },
 )
 
+chrome.runtime.onMessage.addListener((message: CompanionAppMessage) => {
+  if (message.type !== CompanionAppMessageType.FORK_UPDATED) {
+    return
+  }
+
+  window.postMessage(message)
+})
+
 injectScript('./build/companion/injectedScripts/main.js')
