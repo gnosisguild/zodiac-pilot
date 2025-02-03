@@ -14,7 +14,7 @@ import type { Route } from './+types/balances'
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
-  const [data, state] = useTokenBalances()
+  const [{ data }, state] = useTokenBalances()
 
   return (
     <Table>

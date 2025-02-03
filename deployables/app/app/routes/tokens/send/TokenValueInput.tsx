@@ -1,45 +1,46 @@
-import { useTokenBalances, type TokenBalance } from '@/balances-client'
+import { useTokenBalances } from '@/balances-client'
 import { invariant } from '@epic-web/invariant'
+import type { HexAddress } from '@zodiac/schema'
 import {
   GhostButton,
   NumberInput,
   Select,
+  SkeletonText,
   type NumberInputProps,
 } from '@zodiac/ui'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatUnits, parseUnits } from 'viem'
 import { Token } from '../Token'
 
 type TokenValueInputProps = Omit<
   NumberInputProps,
   'value' | 'onChange' | 'defaultValue' | 'after'
->
+> & {
+  defaultToken?: HexAddress | null
+}
 
 export const TokenValueInput = ({
   name,
   required,
+  defaultToken = null,
   ...props
 }: TokenValueInputProps) => {
   const [maxBalance, setMaxBalance] = useState<string | null>(null)
-  const [tokenBalances, state] = useTokenBalances()
+  const [{ data: tokenBalances, tokenBalanceByAddress }, state] =
+    useTokenBalances()
   const [selectedTokenAddress, setSelectedTokenAddress] = useState<
     string | null
-  >(null)
-
-  const tokens = useMemo(
-    () =>
-      tokenBalances.reduce(
-        (result, token) =>
-          token.token_address == null
-            ? result
-            : { ...result, [token.token_address]: token },
-        {} as Record<string, TokenBalance>,
-      ),
-    [tokenBalances],
-  )
+  >(defaultToken)
 
   const selectedToken =
-    selectedTokenAddress == null ? null : tokens[selectedTokenAddress]
+    selectedTokenAddress == null || state === 'loading'
+      ? null
+      : tokenBalanceByAddress[selectedTokenAddress]
+
+  invariant(
+    selectedToken == null || selectedToken.token_address != null,
+    'Selected token does not have an address',
+  )
 
   const [amount, setAmount] = useState('')
 
@@ -106,9 +107,9 @@ export const TokenValueInput = ({
               label="Available tokens"
               placeholder="Select token"
               value={
-                selectedTokenAddress == null
+                selectedToken == null
                   ? undefined
-                  : { value: selectedTokenAddress }
+                  : { value: selectedToken.token_address }
               }
               onChange={(value) => {
                 if (value == null) {
@@ -129,7 +130,11 @@ export const TokenValueInput = ({
                 })}
             >
               {({ data: { value } }) => {
-                const { logo, name } = tokens[value]
+                if (state === 'loading') {
+                  return <SkeletonText />
+                }
+
+                const { logo, name } = tokenBalanceByAddress[value]
                 return (
                   <div className="text-xs">
                     <Token logo={logo}>{name}</Token>

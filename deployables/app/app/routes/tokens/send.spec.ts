@@ -181,4 +181,21 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
       screen.getByRole('spinbutton', { name: 'Amount' }),
     ).toHaveAccessibleDescription(`Max: 1234 T€$T`)
   })
+
+  it('is possible to pre-select the token', async () => {
+    const address = randomAddress()
+
+    mockGetTokenBalances.mockResolvedValue([
+      createMockTokenBalance({
+        token_address: address,
+        name: 'Test token',
+        balance_formatted: '1234',
+        symbol: 'T€$T',
+      }),
+    ])
+
+    await render(`/tokens/send/${address}`)
+
+    expect(await screen.findByText('Test token')).toBeInTheDocument()
+  })
 })

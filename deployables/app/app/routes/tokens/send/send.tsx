@@ -1,4 +1,5 @@
 import { getHexString, getString } from '@zodiac/form-data'
+import { verifyHexAddress } from '@zodiac/schema'
 import {
   AddressInput,
   Error as ErrorAlert,
@@ -14,7 +15,11 @@ import { TokenValueInput } from './TokenValueInput'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Send tokens' }]
 
-const Send = () => {
+export const loader = ({ params: { token } }: Route.LoaderArgs) => {
+  return { defaultToken: token != null ? verifyHexAddress(token) : null }
+}
+
+const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
   const { writeContract, isPending, error, isSuccess } = useWriteContract()
   const navigate = useNavigate()
 
@@ -45,7 +50,12 @@ const Send = () => {
     >
       <AddressInput required label="Recipient" name="recipient" />
 
-      <TokenValueInput required label="Amount" name="amount" />
+      <TokenValueInput
+        required
+        label="Amount"
+        name="amount"
+        defaultToken={defaultToken}
+      />
 
       <Form.Actions>
         <PrimaryButton fluid submit disabled={isPending}>
