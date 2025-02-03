@@ -1,5 +1,5 @@
 import type { HexAddress } from '@zodiac/schema'
-import { formatPrefixedAddress, type ChainId } from 'ser-kit'
+import { prefixAddress, type ChainId } from 'ser-kit'
 
 export const randomHex = (size: number): HexAddress => {
   const hex = [...Array(size)]
@@ -19,4 +19,4 @@ type RandomPrefixedAddressOptions = {
 export const randomPrefixedAddress = ({
   chainId = 1,
   address = randomAddress(),
-}: RandomPrefixedAddressOptions = {}) => formatPrefixedAddress(chainId, address)
+}: RandomPrefixedAddressOptions = {}) => prefixAddress(chainId, address)

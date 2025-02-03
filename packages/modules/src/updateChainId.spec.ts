@@ -10,11 +10,7 @@ import {
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  splitPrefixedAddress,
-} from 'ser-kit'
+import { AccountType, prefixAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'
@@ -26,14 +22,14 @@ describe('updateChainId', () => {
       const address = randomAddress()
 
       const route = createMockExecutionRoute({
-        avatar: formatPrefixedAddress(Chain.ETH, address),
+        avatar: prefixAddress(Chain.ETH, address),
       })
 
       const updatedRoute = updateChainId(route, Chain.GNO)
 
       expect(updatedRoute).toHaveProperty(
         'avatar',
-        formatPrefixedAddress(Chain.GNO, address),
+        prefixAddress(Chain.GNO, address),
       )
     })
   })
@@ -43,14 +39,14 @@ describe('updateChainId', () => {
       const address = randomAddress()
 
       const route = createMockExecutionRoute({
-        initiator: formatPrefixedAddress(Chain.ETH, address),
+        initiator: prefixAddress(Chain.ETH, address),
       })
 
       const updatedRoute = updateChainId(route, Chain.GNO)
 
       expect(updatedRoute).toHaveProperty(
         'initiator',
-        formatPrefixedAddress(Chain.GNO, address),
+        prefixAddress(Chain.GNO, address),
       )
     })
   })
@@ -150,7 +146,7 @@ describe('updateChainId', () => {
     })
 
     it('does not update the initiator field when it is an EOA account', () => {
-      const initiator = formatPrefixedAddress(undefined, randomAddress())
+      const initiator = prefixAddress(undefined, randomAddress())
 
       const route = createMockExecutionRoute({
         initiator,
@@ -162,7 +158,7 @@ describe('updateChainId', () => {
     })
 
     it('does not update the from field of a roles waypoint when it is an EOA account', () => {
-      const from = formatPrefixedAddress(undefined, randomAddress())
+      const from = prefixAddress(undefined, randomAddress())
 
       const route = createMockExecutionRoute({
         waypoints: createMockWaypoints({

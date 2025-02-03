@@ -3,7 +3,7 @@ import type { HexAddress } from '@zodiac/schema'
 import {
   AccountType,
   ConnectionType,
-  formatPrefixedAddress,
+  prefixAddress,
   type ChainId,
   type PrefixedAddress,
   type Waypoint,
@@ -28,13 +28,13 @@ export const createMockRoleWaypoint = ({
   account: {
     type: AccountType.ROLES,
     address: moduleAddress,
-    prefixedAddress: formatPrefixedAddress(chainId, moduleAddress),
+    prefixedAddress: prefixAddress(chainId, moduleAddress),
     chain: chainId,
     multisend: [],
     version,
   },
   connection: {
-    from: from != null ? from : formatPrefixedAddress(chainId, randomAddress()),
+    from: from != null ? from : prefixAddress(chainId, randomAddress()),
     type: ConnectionType.IS_MEMBER,
     roles: roleId != null ? [roleId] : [],
   },

@@ -1,6 +1,6 @@
 import { Chain } from '@zodiac/chains'
 import { getDefaultProvider } from 'ethers'
-import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import { AccountType, prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createAccount } from './createAccount'
 
@@ -15,7 +15,7 @@ describe('createAccount', () => {
     expect(account).toEqual({
       type: AccountType.EOA,
       address: vitalikEoaAddress,
-      prefixedAddress: formatPrefixedAddress(undefined, vitalikEoaAddress),
+      prefixedAddress: prefixAddress(undefined, vitalikEoaAddress),
     })
   })
   it('creates a Safe account if the passed address has code', async () => {
@@ -26,7 +26,7 @@ describe('createAccount', () => {
     expect(account).toEqual({
       type: AccountType.SAFE,
       address: gnosisDaoTreasury,
-      prefixedAddress: formatPrefixedAddress(Chain.ETH, gnosisDaoTreasury),
+      prefixedAddress: prefixAddress(Chain.ETH, gnosisDaoTreasury),
       threshold: NaN,
       chain: Chain.ETH,
     })

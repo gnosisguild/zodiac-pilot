@@ -26,7 +26,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { formatPrefixedAddress, type ChainId } from 'ser-kit'
+import { prefixAddress, type ChainId } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { mockGetSafesByOwner } = vi.hoisted(() => ({
@@ -252,7 +252,7 @@ describe('Edit route', () => {
         const safe = randomAddress()
 
         const route = createMockExecutionRoute({
-          avatar: formatPrefixedAddress(Chain.ETH, safe),
+          avatar: prefixAddress(Chain.ETH, safe),
           waypoints: createMockWaypoints({
             end: createMockEndWaypoint({ account: { address: safe } }),
           }),
