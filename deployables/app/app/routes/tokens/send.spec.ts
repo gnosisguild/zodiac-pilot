@@ -27,7 +27,6 @@ vi.mock('@/wagmi', async () => {
       mock({
         accounts: ['0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'],
         features: {
-          defaultConnected: true,
           reconnect: true,
         },
       }),
