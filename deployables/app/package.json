@@ -6,7 +6,7 @@
     "build": "react-router build && node vercel/prepare.js",
     "dev": "cross-env NODE_ENV=development node ./dev-server.js",
     "check-types": "react-router typegen && tsc -b",
-    "test": "vitest",
+    "test": "cross-env NODE_ENV=test vitest",
     "test:e2e": "playwright test --headed",
     "test:e2e:ui": "pnpm test:e2e --ui",
     "lint": "eslint . --max-warnings=0"
@@ -44,7 +44,7 @@
     "zod": "3.24.1"
   },
   "devDependencies": {
-    "@depay/web3-mock": "14.19.1",
+    "@moralisweb3/common-evm-utils": "^2.27.2",
     "@playwright/test": "1.50.1",
     "@react-router/dev": "7.1.5",
     "@sentry/vite-plugin": "3.1.1",
@@ -58,6 +58,7 @@
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitest/coverage-v8": "3.0.4",
+    "@wagmi/core": "^2.16.3",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",

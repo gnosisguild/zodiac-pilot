@@ -161,9 +161,9 @@ importers:
         specifier: 3.24.1
         version: 3.24.1
     devDependencies:
-      '@depay/web3-mock':
-        specifier: 14.19.1
-        version: 14.19.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@moralisweb3/common-evm-utils':
+        specifier: ^2.27.2
+        version: 2.27.2
       '@playwright/test':
         specifier: 1.50.1
         version: 1.50.1
@@ -203,6 +203,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 3.0.4
         version: 3.0.4(vitest@3.0.4(@types/debug@4.1.12)(@types/node@22.13.0)(happy-dom@16.8.1)(jiti@2.4.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
+      '@wagmi/core':
+        specifier: ^2.16.3
+        version: 2.16.3(@tanstack/query-core@5.66.0)(@types/react@19.0.8)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.22.19(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1))
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint

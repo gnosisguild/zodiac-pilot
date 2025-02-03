@@ -27,6 +27,13 @@ export default defineConfig({
     mockReset: true,
     clearMocks: true,
 
+    poolOptions: {
+      forks: { singleFork: true },
+      threads: { singleThread: true },
+      vmForks: { singleFork: true },
+      vmThreads: { singleThread: true },
+    },
+
     coverage: {
       skipFull: true,
       enabled: CI != null,

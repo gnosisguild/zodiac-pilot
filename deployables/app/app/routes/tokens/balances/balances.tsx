@@ -1,24 +1,18 @@
-import { Error as ErrorAlert, SkeletonText, Table } from '@zodiac/ui'
-import { CircleDollarSign } from 'lucide-react'
-import { useEffect, type PropsWithChildren } from 'react'
-import { useFetcher } from 'react-router'
-import { useAccount } from 'wagmi'
-import type { BalanceResult } from '../../types.server'
+import { useTokenBalances } from '@/balances-client'
+import {
+  Error as ErrorAlert,
+  SkeletonText,
+  Table,
+  TokenValue,
+  UsdValue,
+} from '@zodiac/ui'
+import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
-  const { address, chainId } = useAccount()
-  const { load, data = [], state } = useFetcher<BalanceResult>()
-
-  useEffect(() => {
-    if (address == null || chainId == null) {
-      return
-    }
-
-    load(`/${address}/${chainId}/balances`)
-  }, [address, chainId, load])
+  const [data, state] = useTokenBalances()
 
   return (
     <Table>
@@ -32,25 +26,16 @@ const Balances = () => {
         </Table.Tr>
       </Table.THead>
       <Table.TBody>
-        {data.map(({ logo, name, balanceFormatted, usdValue }) => (
+        {data.map(({ logo, name, balance_formatted, usd_value }) => (
           <Table.Tr key={name}>
             <Table.Td noWrap>
-              <div className="flex items-center gap-2">
-                {logo ? (
-                  <img src={logo} alt={name} className="size-4 rounded-full" />
-                ) : (
-                  <div className="flex size-4 items-center justify-center">
-                    <CircleDollarSign size={16} className="opacity-50" />
-                  </div>
-                )}
-                {name}
-              </div>
+              <Token logo={logo}>{name}</Token>
             </Table.Td>
             <Table.Td align="right">
-              <Token>{balanceFormatted}</Token>
+              <TokenValue>{balance_formatted}</TokenValue>
             </Table.Td>
             <Table.Td align="right">
-              <USD>{usdValue}</USD>
+              <UsdValue>{usd_value}</UsdValue>
             </Table.Td>
           </Table.Tr>
         ))}
@@ -84,22 +69,3 @@ export const ErrorBoundary = ({ error }: Route.ErrorBoundaryProps) => {
     )
   }
 }
-
-const usdFormatter = new Intl.NumberFormat('en-US', {
-  currency: 'USD',
-  style: 'currency',
-})
-
-const USD = ({ children }: { children: number }) => (
-  <span className="text-sm slashed-zero tabular-nums">
-    {usdFormatter.format(children)}
-  </span>
-)
-
-type TokenProps = PropsWithChildren
-
-const Token = ({ children }: TokenProps) => (
-  <div className="flex items-center justify-end gap-2 text-sm">
-    <span className="slashed-zero tabular-nums">{children}</span>
-  </div>
-)

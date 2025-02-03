@@ -1,12 +1,14 @@
 import type { ComponentPropsWithoutRef } from 'react'
 import { BareInput } from './BareInput'
 import { type ComposableInputProps, Input } from './Input'
+import { InputLayout, type InputLayoutProps } from './InputLayout'
 
 export type NumberInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
   'id' | 'type' | 'className'
 > &
-  ComposableInputProps
+  ComposableInputProps &
+  InputLayoutProps
 
 export const NumberInput = ({
   label,
@@ -19,24 +21,19 @@ export const NumberInput = ({
 
   ...props
 }: NumberInputProps) => (
-  <Input
-    label={label}
-    description={description}
-    error={error}
-    disabled={disabled}
-    before={before}
-    after={after}
-  >
+  <Input label={label} description={description} error={error}>
     {({ inputId, descriptionId }) => (
-      <BareInput
-        {...props}
-        type="number"
-        id={inputId}
-        disabled={disabled}
-        aria-describedby={descriptionId}
-        aria-errormessage={error ?? undefined}
-        placeholder={placeholder}
-      />
+      <InputLayout disabled={disabled} before={before} after={after}>
+        <BareInput
+          {...props}
+          type="number"
+          id={inputId}
+          disabled={disabled}
+          aria-describedby={descriptionId}
+          aria-errormessage={error ?? undefined}
+          placeholder={placeholder}
+        />
+      </InputLayout>
     )}
   </Input>
 )

@@ -12,7 +12,7 @@ export interface Option {
 }
 
 interface Props<Option = unknown, Multi extends boolean = boolean>
-  extends SelectProps<false, Option, Multi> {
+  extends SelectProps<Option, false, Multi> {
   avatarAddress: HexAddress
 }
 
@@ -20,28 +20,27 @@ export function ModSelect<Multi extends boolean = boolean>({
   avatarAddress,
   ...props
 }: Props<Option, Multi>) {
-  const ModuleOptionLabel = (option: Option) => {
-    if (!option.value)
-      return (
-        <Value label="No Mod — Direct execution" address={avatarAddress}>
-          Transactions submitted directly to the Safe
-        </Value>
-      )
-
-    const checksumAddress = getAddress(option.value)
-    return (
-      <Value address={option.value} label={option.label}>
-        {checksumAddress}
-      </Value>
-    )
-  }
-
   return (
     <Select
       {...props}
-      formatOptionLabel={ModuleOptionLabel}
       noOptionsMessage={() => 'No modules are enabled on this Safe'}
-    />
+    >
+      {({ data: { value, label } }) => {
+        if (!value)
+          return (
+            <Value label="No Mod — Direct execution" address={avatarAddress}>
+              Transactions submitted directly to the Safe
+            </Value>
+          )
+
+        const checksumAddress = getAddress(value)
+        return (
+          <Value address={value} label={label}>
+            {checksumAddress}
+          </Value>
+        )
+      }}
+    </Select>
   )
 }
 
@@ -51,7 +50,7 @@ type ValueProps = PropsWithChildren<{
 }>
 
 const Value = ({ label, address, children }: ValueProps) => (
-  <div className="flex items-center gap-4 py-2">
+  <div className="flex items-center gap-4">
     <Blockie address={address} className="size-5 shrink-0" />
 
     <div className="flex items-center gap-2 overflow-hidden">

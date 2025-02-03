@@ -7,7 +7,10 @@
     "paths": {
       "@/test-utils": ["./test-utils/index.ts"],
       "@/components": ["./app/components/index.ts"],
-      "@/utils": ["./app/utils/index.ts"]
+      "@/utils": ["./app/utils/index.ts"],
+      "@/balances-client": ["./app/balances/client/index.ts"],
+      "@/balances-server": ["./app/balances/server/index.ts"],
+      "@/wagmi": ["./app/wagmi/index.ts"]
     }
   },
   "include": [

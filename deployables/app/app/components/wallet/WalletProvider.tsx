@@ -1,22 +1,9 @@
+import { getWagmiConfig } from '@/wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { getDefaultConfig } from 'connectkit'
 import { useMemo, type PropsWithChildren } from 'react'
-import { createConfig, injected, WagmiProvider } from 'wagmi'
-import {
-  arbitrum,
-  avalanche,
-  base,
-  gnosis,
-  mainnet,
-  optimism,
-  polygon,
-  sepolia,
-} from 'wagmi/chains'
-import { metaMask, walletConnect } from 'wagmi/connectors'
+import { WagmiProvider } from 'wagmi'
 
 const queryClient = new QueryClient()
-
-const WALLETCONNECT_PROJECT_ID = '0f8a5e2cf60430a26274b421418e8a27'
 
 export type WalletProviderProps = PropsWithChildren<{
   injectedOnly?: boolean
@@ -34,32 +21,3 @@ export const WalletProvider = ({
     </QueryClientProvider>
   )
 }
-
-export const getWagmiConfig = (injectedOnly: boolean) =>
-  createConfig(
-    getDefaultConfig({
-      appName: 'Zodiac Pilot',
-      ssr: true,
-      walletConnectProjectId: WALLETCONNECT_PROJECT_ID,
-      chains: [
-        mainnet,
-        optimism,
-        gnosis,
-        polygon,
-        sepolia,
-        base,
-        arbitrum,
-        avalanche,
-      ],
-      connectors: injectedOnly
-        ? [injected()]
-        : [
-            injected(),
-            metaMask(),
-            walletConnect({
-              projectId: WALLETCONNECT_PROJECT_ID,
-              showQrModal: false,
-            }),
-          ],
-    }),
-  )
