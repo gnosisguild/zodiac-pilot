@@ -7,7 +7,7 @@ import { useCallback, useEffect } from 'react'
 import {
   type ChainId,
   type MetaTransactionRequest,
-  parsePrefixedAddress,
+  unprefixAddress,
 } from 'ser-kit'
 import {
   type ApplicableTranslation,
@@ -22,7 +22,7 @@ export const useGloballyApplicableTranslation = () => {
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
   const chainId = getChainId(avatar)
-  const avatarAddress = parsePrefixedAddress(avatar)
+  const avatarAddress = unprefixAddress(avatar)
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {

@@ -1,8 +1,8 @@
 import type { HexAddress } from '@zodiac/schema'
 import {
-  parsePrefixedAddress,
   prefixAddress,
   splitPrefixedAddress,
+  unprefixAddress,
   type ChainId,
   type PrefixedAddress,
 } from 'ser-kit'
@@ -16,7 +16,7 @@ export const updatePrefixedAddress = (
   prefixedAddress: PrefixedAddress,
   {
     chainId,
-    address = parsePrefixedAddress(prefixedAddress),
+    address = unprefixAddress(prefixedAddress),
   }: UpdatePrefixedAddressOptions,
 ) => {
   const [defaultChainId] = splitPrefixedAddress(prefixedAddress)
