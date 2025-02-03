@@ -1,5 +1,4 @@
-import { parseRouteData } from '@/utils'
-import { jsonStringify } from '@zodiac/schema'
+import { decode, jsonStringify } from '@zodiac/schema'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
 import 'highlight.js/styles/atom-one-dark.min.css'
@@ -15,7 +14,7 @@ export const DebugJson = ({ data }: DebugJsonProps) => {
     return null
   }
 
-  const json = hljs.highlight(jsonStringify(parseRouteData(data), 2), {
+  const json = hljs.highlight(jsonStringify(decode(data), 2), {
     language: 'json',
   })
 
