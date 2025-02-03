@@ -1,3 +1,4 @@
+import { ProvideForkContext } from '@/balances-client'
 import { Page, WalletProvider } from '@/components'
 import { Info, PrimaryButton } from '@zodiac/ui'
 import { type PropsWithChildren } from 'react'
@@ -8,7 +9,9 @@ const Tokens = () => {
   return (
     <WalletProvider injectedOnly>
       <Connected>
-        <Outlet />
+        <ProvideForkContext>
+          <Outlet />
+        </ProvideForkContext>
       </Connected>
     </WalletProvider>
   )
