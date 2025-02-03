@@ -31,4 +31,6 @@ export default [
     route('delegates', 'routes/$address.$chainId/delegates.ts'),
     route('balances', 'routes/$address.$chainId/balances.ts'),
   ]),
+
+  route('/dev/decode/:data', 'routes/dev/decode.tsx'),
 ] satisfies RouteConfig

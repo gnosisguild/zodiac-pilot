@@ -51,14 +51,19 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { lazy, useEffect, useState } from 'react'
-import { useLoaderData, useNavigation, useSubmit } from 'react-router'
+import {
+  useLoaderData,
+  useNavigation,
+  useParams,
+  useSubmit,
+} from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
-const DebugRouteData = lazy(async () => {
-  const { DebugRouteData } = await import('./DebugRouteData')
+const DebugJson = lazy(async () => {
+  const { DebugJson } = await import('./DebugJson')
 
-  return { default: DebugRouteData }
+  return { default: DebugJson }
 })
 
 export const meta: Route.MetaFunction = ({ data }) => [
@@ -302,11 +307,7 @@ const EditRoute = ({
         </Page.Main>
       </Page>
 
-      {isDev && (
-        <div className="max-h-1/3 flex overflow-hidden">
-          <DebugRouteData />
-        </div>
-      )}
+      {isDev && <DebugRouteData />}
     </>
   )
 }
@@ -386,3 +387,13 @@ const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
 
 const verifyProviderType = (value: number): ProviderType =>
   providerTypeSchema.parse(value)
+
+const DebugRouteData = () => {
+  const { data } = useParams()
+
+  return (
+    <div className="max-h-1/3 flex overflow-hidden">
+      <DebugJson data={data} />
+    </div>
+  )
+}
