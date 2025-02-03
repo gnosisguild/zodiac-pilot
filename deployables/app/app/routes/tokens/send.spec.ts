@@ -59,9 +59,8 @@ describe('Send Tokens', () => {
       createMockTokenBalance({ name: 'Test token' }),
     ])
 
-    await render('/tokens/send')
-
     await connectWallet()
+    await render('/tokens/send')
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -81,9 +80,8 @@ describe('Send Tokens', () => {
       }),
     ])
 
-    await render('/tokens/send')
-
     await connectWallet()
+    await render('/tokens/send')
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
