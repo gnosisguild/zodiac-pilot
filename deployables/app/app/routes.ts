@@ -9,14 +9,18 @@ import {
 export default [
   index('routes/index.tsx'),
   route('/connect', 'routes/connect.tsx'),
-  route('/tokens', 'routes/tokens/index.tsx', [
-    layout('routes/tokens/balances/layout.tsx', [
-      route('balances', 'routes/tokens/balances/balances.tsx'),
-    ]),
-    layout('routes/tokens/send/layout.tsx', [
-      route('send/:token?', 'routes/tokens/send/send.tsx'),
+
+  layout('routes/Sidebar.tsx', [
+    route('/tokens', 'routes/tokens/index.tsx', [
+      layout('routes/tokens/balances/layout.tsx', [
+        route('balances', 'routes/tokens/balances/balances.tsx'),
+      ]),
+      layout('routes/tokens/send/layout.tsx', [
+        route('send/:token?', 'routes/tokens/send/send.tsx'),
+      ]),
     ]),
   ]),
+
   route('/new-route', 'routes/edit/new-route.ts'),
   route('/edit-route/:data', 'routes/edit/edit-route.$data.tsx'),
 
