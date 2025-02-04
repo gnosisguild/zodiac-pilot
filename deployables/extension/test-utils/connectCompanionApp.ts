@@ -11,7 +11,7 @@ export const connectCompanionApp = async (
   await callListeners(
     chromeMock.runtime.onMessage,
     {
-      type: CompanionAppMessageType.CONNECT,
+      type: CompanionAppMessageType.REQUEST_FORK_INFO,
     } satisfies CompanionAppMessage,
     { id: chrome.runtime.id, tab: createMockTab(tab) },
     vi.fn(),

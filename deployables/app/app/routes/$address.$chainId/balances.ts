@@ -2,7 +2,7 @@ import { getTokenBalances, type TokenBalance } from '@/balances-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
-import { createPublicClient, erc20Abi, http } from 'viem'
+import { createPublicClient, erc20Abi, formatUnits, http } from 'viem'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
@@ -19,8 +19,6 @@ export const loader = async ({
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
 
-    console.log({ fork })
-
     invariantResponse(fork != null, `Fork param was no URL`)
 
     const client = createPublicClient({
@@ -29,6 +27,11 @@ export const loader = async ({
 
     return Promise.all(
       mainNetBalances.map(async (balance) => {
+        if (balance.contractId === 'eth') {
+          // todo: handle default eth
+          return balance
+        }
+
         const forkBalance = await client.readContract({
           address: balance.contractId,
           abi: erc20Abi,
@@ -36,7 +39,14 @@ export const loader = async ({
           args: [address],
         })
 
-        return { ...balance, forkBalance }
+        const amount = formatUnits(BigInt(forkBalance), balance.decimals)
+
+        return {
+          ...balance,
+
+          amount,
+          usdValue: parseFloat(amount) * balance.usdPrice,
+        }
       }),
     )
   }

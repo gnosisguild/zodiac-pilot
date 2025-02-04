@@ -13,7 +13,8 @@ window.addEventListener(
     if (
       event.data.type !== CompanionAppMessageType.SAVE_ROUTE &&
       event.data.type !== CompanionAppMessageType.OPEN_PILOT &&
-      event.data.type !== CompanionAppMessageType.SUBMIT_SUCCESS
+      event.data.type !== CompanionAppMessageType.SUBMIT_SUCCESS &&
+      event.data.type !== CompanionAppMessageType.REQUEST_FORK_INFO
     ) {
       return
     }
@@ -30,7 +31,9 @@ chrome.runtime.onMessage.addListener(
       case PilotMessageType.PILOT_CONNECT: {
         console.debug('Companion App is trying to connect...')
 
-        chrome.runtime.sendMessage({ type: CompanionAppMessageType.CONNECT })
+        chrome.runtime.sendMessage({
+          type: CompanionAppMessageType.REQUEST_FORK_INFO,
+        })
 
         break
       }
@@ -46,6 +49,6 @@ chrome.runtime.onMessage.addListener(
   },
 )
 
-chrome.runtime.sendMessage({ type: CompanionAppMessageType.CONNECT })
+chrome.runtime.sendMessage({ type: CompanionAppMessageType.REQUEST_FORK_INFO })
 
 injectScript('./build/companion/injectedScripts/main.js')

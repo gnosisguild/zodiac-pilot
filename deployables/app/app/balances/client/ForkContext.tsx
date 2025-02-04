@@ -45,5 +45,11 @@ const useListenForForkUrl = () => {
     }
   }, [])
 
+  useEffect(() => {
+    window.postMessage({
+      type: CompanionAppMessageType.REQUEST_FORK_INFO,
+    } satisfies CompanionAppMessage)
+  }, [])
+
   return forkUrl
 }

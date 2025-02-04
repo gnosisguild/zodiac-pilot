@@ -28,5 +28,5 @@ export type TokenBalance = {
   amount: string
   decimals: number
   usdValue: number
-  forkBalance?: string
+  usdPrice: number
 }

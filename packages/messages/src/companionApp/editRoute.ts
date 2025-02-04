@@ -4,7 +4,7 @@ export enum CompanionAppMessageType {
   SAVE_ROUTE = 'COMPANION::SAVE_ROUTE',
   OPEN_PILOT = 'COMPANION::OPEN_PILOT',
   SUBMIT_SUCCESS = 'COMPANION::SUBMIT_SUCCESS',
-  CONNECT = 'COMPANION::CONNECT',
+  REQUEST_FORK_INFO = 'COMPANION::REQUEST_FORK_INFO',
   FORK_UPDATED = 'COMPANION::FORK_UPDATED',
 }
 
@@ -21,8 +21,8 @@ type CompanionAppSubmitSuccessMessage = {
   type: CompanionAppMessageType.SUBMIT_SUCCESS
 }
 
-type CompanionAppConnectMessage = {
-  type: CompanionAppMessageType.CONNECT
+type CompanionAppRequestForkInfoMessage = {
+  type: CompanionAppMessageType.REQUEST_FORK_INFO
 }
 
 type CompanionAppForkUpdateMessage = {
@@ -34,5 +34,5 @@ export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
   | CompanionAppSubmitSuccessMessage
-  | CompanionAppConnectMessage
+  | CompanionAppRequestForkInfoMessage
   | CompanionAppForkUpdateMessage

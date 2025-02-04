@@ -14,7 +14,7 @@ export const companionEnablement = (
 ) => {
   chrome.runtime.onMessage.addListener(
     (message: CompanionAppMessage, { tab }) => {
-      if (message.type !== CompanionAppMessageType.CONNECT) {
+      if (message.type !== CompanionAppMessageType.REQUEST_FORK_INFO) {
         return
       }
 
