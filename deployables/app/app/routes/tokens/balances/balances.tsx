@@ -28,34 +28,33 @@ const Balances = () => {
         </Table.Tr>
       </Table.THead>
       <Table.TBody>
-        {data.map(
-          ({ logo, name, token_address, balance_formatted, usd_value }) => (
-            <Table.Tr key={name}>
-              <Table.Td noWrap>
-                <Token logo={logo}>{name}</Token>
-              </Table.Td>
-              <Table.Td align="right">
-                <TokenValue
-                  action={
-                    <GhostLinkButton
-                      iconOnly
-                      icon={Upload}
-                      size="tiny"
-                      to={`/tokens/send/${token_address}`}
-                    >
-                      Send
-                    </GhostLinkButton>
-                  }
-                >
-                  {balance_formatted}
-                </TokenValue>
-              </Table.Td>
-              <Table.Td align="right">
-                <UsdValue>{usd_value}</UsdValue>
-              </Table.Td>
-            </Table.Tr>
-          ),
-        )}
+        {data.map(({ contractId, name, logoUrl, usdValue, amount, symbol }) => (
+          <Table.Tr key={contractId}>
+            <Table.Td noWrap>
+              <Token logo={logoUrl}>{name}</Token>
+            </Table.Td>
+            <Table.Td align="right">
+              <TokenValue
+                symbol={symbol}
+                action={
+                  <GhostLinkButton
+                    iconOnly
+                    icon={Upload}
+                    size="tiny"
+                    to={`/tokens/send/${contractId}`}
+                  >
+                    Send
+                  </GhostLinkButton>
+                }
+              >
+                {amount}
+              </TokenValue>
+            </Table.Td>
+            <Table.Td align="right">
+              <UsdValue>{usdValue}</UsdValue>
+            </Table.Td>
+          </Table.Tr>
+        ))}
 
         {state === 'loading' &&
           data.length === 0 &&
