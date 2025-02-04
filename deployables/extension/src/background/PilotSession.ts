@@ -6,6 +6,7 @@ import {
   type CompanionAppMessage,
   type Message,
 } from '@zodiac/messages'
+import EventEmitter from 'events'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import type { TrackRequestsResult } from './rpcTracking'
@@ -13,7 +14,9 @@ import type { Fork } from './types'
 
 export type Sessions = Map<number, PilotSession>
 
-export class PilotSession {
+export class PilotSession extends EventEmitter<
+  Record<'forkUpdated', (Fork | null)[]>
+> {
   private id: number
 
   public readonly tabs: Set<number>
@@ -22,6 +25,8 @@ export class PilotSession {
   private handleNewRpcEndpoint: () => void
 
   constructor(windowId: number, trackRequests: TrackRequestsResult) {
+    super()
+
     this.id = windowId
     this.tabs = new Set()
     this.fork = null
@@ -106,7 +111,7 @@ export class PilotSession {
       this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId }),
     )
 
-    await this.updateForkInTabs()
+    this.emit('forkUpdated', this.fork)
 
     this.rpcTracking.onNewRpcEndpointDetected.addListener(
       this.handleNewRpcEndpoint,
@@ -127,7 +132,7 @@ export class PilotSession {
       }),
     )
 
-    await this.updateForkInTabs()
+    this.emit('forkUpdated', this.fork)
   }
 
   updateForkInTabs() {
@@ -154,6 +159,6 @@ export class PilotSession {
       this.handleNewRpcEndpoint,
     )
 
-    await this.updateForkInTabs()
+    this.emit('forkUpdated', this.fork)
   }
 }
