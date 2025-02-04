@@ -1,6 +1,6 @@
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Landmark, Send, type LucideIcon } from 'lucide-react'
+import { Landmark, Plus, Send, type LucideIcon } from 'lucide-react'
 import type { ComponentProps, PropsWithChildren } from 'react'
 import { NavLink, Outlet } from 'react-router'
 
@@ -13,7 +13,7 @@ const Sidebar = () => {
           <PilotType className="h-7 dark:invert" />
         </div>
 
-        <nav>
+        <nav className="flex flex-col gap-8">
           <SidebarSection title="Tokens">
             <SidebarLink to="/tokens/send" icon={Send}>
               Send tokens
@@ -21,6 +21,12 @@ const Sidebar = () => {
 
             <SidebarLink to="/tokens/balances" icon={Landmark}>
               Balances
+            </SidebarLink>
+          </SidebarSection>
+
+          <SidebarSection title="Routes">
+            <SidebarLink to="/new-route" icon={Plus}>
+              Create new route
             </SidebarLink>
           </SidebarSection>
         </nav>
