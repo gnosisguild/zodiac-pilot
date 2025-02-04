@@ -40,15 +40,13 @@ const useListenForForkUrl = () => {
 
     window.addEventListener('message', handleForkUpdate)
 
-    return () => {
-      window.removeEventListener('message', handleForkUpdate)
-    }
-  }, [])
-
-  useEffect(() => {
     window.postMessage({
       type: CompanionAppMessageType.REQUEST_FORK_INFO,
     } satisfies CompanionAppMessage)
+
+    return () => {
+      window.removeEventListener('message', handleForkUpdate)
+    }
   }, [])
 
   return forkUrl
