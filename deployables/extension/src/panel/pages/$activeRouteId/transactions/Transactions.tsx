@@ -1,3 +1,4 @@
+import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -7,8 +8,14 @@ import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
-import { CopyToClipboard, GhostButton, Info, Page } from '@zodiac/ui'
-import { RefreshCcw } from 'lucide-react'
+import {
+  CopyToClipboard,
+  GhostButton,
+  GhostLinkButton,
+  Info,
+  Page,
+} from '@zodiac/ui'
+import { BadgeCent, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -84,6 +91,28 @@ export const Transactions = () => {
           </div>
         </div>
       </Page.Header>
+
+      <div className="flex border-b border-zinc-400/80 p-2 dark:border-gray-700/80">
+        <GhostLinkButton
+          fluid
+          openInNewWindow
+          size="small"
+          icon={BadgeCent}
+          to={`${useCompanionAppUrl()}/tokens/send`}
+        >
+          Send tokens
+        </GhostLinkButton>
+
+        <GhostLinkButton
+          fluid
+          openInNewWindow
+          size="small"
+          icon={Landmark}
+          to={`${useCompanionAppUrl()}/tokens/balances`}
+        >
+          View balances
+        </GhostLinkButton>
+      </div>
 
       <Page.Content ref={scrollContainerRef}>
         {transactions.map((transactionState) => (
