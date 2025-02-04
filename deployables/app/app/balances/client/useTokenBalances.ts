@@ -44,5 +44,8 @@ export const useTokenBalances = () => {
     [data],
   )
 
-  return [{ data, tokenBalanceByAddress }, state] as const
+  return [
+    { data, tokenBalanceByAddress, isForked: forkUrl != null },
+    state,
+  ] as const
 }

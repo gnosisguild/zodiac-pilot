@@ -1,4 +1,4 @@
-import { useForkUrl, useTokenBalances } from '@/balances-client'
+import { useTokenBalances } from '@/balances-client'
 import {
   Error as ErrorAlert,
   GhostLinkButton,
@@ -15,12 +15,11 @@ import type { Route } from './+types/balances'
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
-  const forkUrl = useForkUrl()
-  const [{ data }, state] = useTokenBalances()
+  const [{ data, isForked }, state] = useTokenBalances()
 
   return (
     <>
-      {forkUrl != null && (
+      {isForked && (
         <Info title="Simulated balances">
           The balances you see are based on your current simulation.
         </Info>
