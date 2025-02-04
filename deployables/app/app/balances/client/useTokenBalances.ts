@@ -2,9 +2,11 @@ import { useEffect, useMemo } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
 import type { TokenBalance } from '../types'
+import { useForkUrl } from './ForkContext'
 
 export const useTokenBalances = () => {
   const { address, chainId } = useAccount()
+  const forkUrl = useForkUrl()
   const { load, data = [], state } = useFetcher<TokenBalance[]>()
 
   useEffect(() => {
@@ -12,8 +14,17 @@ export const useTokenBalances = () => {
       return
     }
 
-    load(`/${address}/${chainId}/balances`)
-  }, [address, chainId, load])
+    const url = new URL(
+      `/${address}/${chainId}/balances`,
+      window.location.origin,
+    )
+
+    if (forkUrl != null) {
+      url.searchParams.set('fork', forkUrl)
+    }
+
+    load(`${url.pathname}${url.search}`)
+  }, [address, chainId, forkUrl, load])
 
   const tokenBalanceByAddress = useMemo(
     () =>
@@ -33,5 +44,8 @@ export const useTokenBalances = () => {
     [data],
   )
 
-  return [{ data, tokenBalanceByAddress }, state] as const
+  return [
+    { data, tokenBalanceByAddress, isForked: forkUrl != null },
+    state,
+  ] as const
 }

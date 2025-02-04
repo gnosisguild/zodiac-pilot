@@ -37,6 +37,7 @@ export const getTokenBalances = async (
       logoUrl: data.logo_url,
       symbol: data.optimized_symbol || data.display_symbol || data.symbol,
       usdValue: data.amount * data.price,
+      usdPrice: data.price,
       decimals: data.decimals || 18,
     }))
     .toSorted((a, b) => b.usdValue - a.usdValue)

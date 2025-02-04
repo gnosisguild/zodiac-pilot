@@ -28,4 +28,5 @@ export type TokenBalance = {
   amount: string
   decimals: number
   usdValue: number
+  usdPrice: number
 }

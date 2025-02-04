@@ -79,10 +79,6 @@ export const trackSessions = (
 
   chrome.tabs.onActivated.addListener(({ tabId, windowId }) => {
     withPilotSession(sessions, windowId, (session) => {
-      if (session.isTracked(tabId)) {
-        return
-      }
-
       session.trackTab(tabId)
     })
   })

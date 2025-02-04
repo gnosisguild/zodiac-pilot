@@ -1,9 +1,11 @@
 import type { ExecutionRoute } from '@zodiac/schema'
 
 export enum CompanionAppMessageType {
-  SAVE_ROUTE = 'SAVE_ROUTE',
-  OPEN_PILOT = 'OPEN_PILOT',
-  SUBMIT_SUCCESS = 'SUBMIT_SUCCESS',
+  SAVE_ROUTE = 'COMPANION::SAVE_ROUTE',
+  OPEN_PILOT = 'COMPANION::OPEN_PILOT',
+  SUBMIT_SUCCESS = 'COMPANION::SUBMIT_SUCCESS',
+  REQUEST_FORK_INFO = 'COMPANION::REQUEST_FORK_INFO',
+  FORK_UPDATED = 'COMPANION::FORK_UPDATED',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -19,7 +21,18 @@ type CompanionAppSubmitSuccessMessage = {
   type: CompanionAppMessageType.SUBMIT_SUCCESS
 }
 
+type CompanionAppRequestForkInfoMessage = {
+  type: CompanionAppMessageType.REQUEST_FORK_INFO
+}
+
+type CompanionAppForkUpdateMessage = {
+  type: CompanionAppMessageType.FORK_UPDATED
+  forkUrl: string | null
+}
+
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
   | CompanionAppSubmitSuccessMessage
+  | CompanionAppRequestForkInfoMessage
+  | CompanionAppForkUpdateMessage

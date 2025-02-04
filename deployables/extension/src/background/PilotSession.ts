@@ -1,6 +1,12 @@
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
-import { PilotMessageType, type Message } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  PilotMessageType,
+  type CompanionAppMessage,
+  type Message,
+} from '@zodiac/messages'
+import EventEmitter from 'events'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import type { TrackRequestsResult } from './rpcTracking'
@@ -8,7 +14,9 @@ import type { Fork } from './types'
 
 export type Sessions = Map<number, PilotSession>
 
-export class PilotSession {
+export class PilotSession extends EventEmitter<{
+  forkUpdated: (Fork | null)[]
+}> {
   private id: number
 
   public readonly tabs: Set<number>
@@ -17,6 +25,8 @@ export class PilotSession {
   private handleNewRpcEndpoint: () => void
 
   constructor(windowId: number, trackRequests: TrackRequestsResult) {
+    super()
+
     this.id = windowId
     this.tabs = new Set()
     this.fork = null
@@ -90,7 +100,7 @@ export class PilotSession {
     )
   }
 
-  async createFork(fork: Fork) {
+  async createFork(fork: Fork): Promise<Fork> {
     invariant(!this.isForked(), 'Session has already been forked!')
 
     this.fork = fork
@@ -101,9 +111,13 @@ export class PilotSession {
       this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId }),
     )
 
+    this.emit('forkUpdated', this.fork)
+
     this.rpcTracking.onNewRpcEndpointDetected.addListener(
       this.handleNewRpcEndpoint,
     )
+
+    return this.fork
   }
 
   async updateFork(rpcUrl: string) {
@@ -119,6 +133,21 @@ export class PilotSession {
         chainId: this.fork.chainId,
       }),
     )
+
+    this.emit('forkUpdated', this.fork)
+
+    return this.fork
+  }
+
+  updateForkInTabs() {
+    return Promise.all(
+      this.getTabs().map((tabId) =>
+        chrome.tabs.sendMessage(tabId, {
+          type: CompanionAppMessageType.FORK_UPDATED,
+          forkUrl: this.getFork().rpcUrl ?? null,
+        } satisfies CompanionAppMessage),
+      ),
+    )
   }
 
   async clearFork() {
@@ -133,5 +162,7 @@ export class PilotSession {
     this.rpcTracking.onNewRpcEndpointDetected.removeListener(
       this.handleNewRpcEndpoint,
     )
+
+    this.emit('forkUpdated', this.fork)
   }
 }

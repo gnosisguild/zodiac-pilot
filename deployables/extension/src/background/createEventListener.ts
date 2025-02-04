@@ -11,7 +11,8 @@ export const createEventListener = <
   const listeners = new Set<T>()
 
   return {
-    callListeners: () => listeners.forEach((listener) => listener()),
+    callListeners: (...args) =>
+      listeners.forEach((listener) => listener(...args)),
     toEvent() {
       return {
         addListener(listener) {
