@@ -1,3 +1,5 @@
+import { captureLastError } from '@/sentry'
+import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
   CompanionAppMessageType,
@@ -16,13 +18,19 @@ export const companionEnablement = ({
 
       invariant(tab != null, 'Companion app message must come from a tab.')
 
-      onSimulationUpdate.addListener((fork) => {
+      console.debug('Companion App connected!')
+
+      onSimulationUpdate.addListener(async (fork) => {
         invariant(tab.id != null, 'Tab needs an ID')
 
-        chrome.tabs.sendMessage(tab.id, {
+        console.debug('Sending updated fork to companion app', { fork })
+
+        await sendMessageToTab(tab.id, {
           type: CompanionAppMessageType.FORK_UPDATED,
           forkUrl: fork?.rpcUrl ?? null,
         } satisfies CompanionAppMessage)
+
+        captureLastError()
       })
     },
   )

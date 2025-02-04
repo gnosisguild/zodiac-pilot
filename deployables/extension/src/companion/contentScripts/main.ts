@@ -2,7 +2,9 @@ import { captureLastError } from '@/sentry'
 import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
+  PilotMessageType,
   type CompanionAppMessage,
+  type Message,
 } from '@zodiac/messages'
 
 window.addEventListener(
@@ -22,12 +24,26 @@ window.addEventListener(
   },
 )
 
-chrome.runtime.onMessage.addListener((message: CompanionAppMessage) => {
-  if (message.type !== CompanionAppMessageType.FORK_UPDATED) {
-    return
-  }
+chrome.runtime.onMessage.addListener(
+  (message: Message | CompanionAppMessage) => {
+    switch (message.type) {
+      case PilotMessageType.PILOT_CONNECT: {
+        console.debug('Companion App is trying to connect...')
 
-  window.postMessage(message)
-})
+        chrome.runtime.sendMessage({ type: CompanionAppMessageType.CONNECT })
+
+        break
+      }
+
+      case CompanionAppMessageType.FORK_UPDATED: {
+        console.debug('Received fork update. Relaying to injected script...')
+
+        window.postMessage(message, '*')
+
+        break
+      }
+    }
+  },
+)
 
 injectScript('./build/companion/injectedScripts/main.js')
