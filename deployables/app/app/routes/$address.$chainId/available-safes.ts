@@ -4,7 +4,7 @@ import { verifyChainId } from '@zodiac/chains'
 import { getOptionalString } from '@zodiac/form-data'
 import { initSafeApiKit } from '@zodiac/safe'
 import type { ShouldRevalidateFunctionArgs } from 'react-router'
-import { Intent } from '../intents'
+import { Intent } from '../edit/intents'
 import type { Route } from './+types/available-safes'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {

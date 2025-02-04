@@ -17,8 +17,8 @@ export default [
       route('send/:token?', 'routes/tokens/send/send.tsx'),
     ]),
   ]),
-  route('/new-route', 'routes/new-route.ts'),
-  route('/edit-route/:data', 'routes/edit-route.$data.tsx'),
+  route('/new-route', 'routes/edit/new-route.ts'),
+  route('/edit-route/:data', 'routes/edit/edit-route.$data.tsx'),
 
   route(
     '/submit/:route/:transactions',
