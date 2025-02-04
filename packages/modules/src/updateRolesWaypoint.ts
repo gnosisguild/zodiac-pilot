@@ -45,7 +45,7 @@ export const updateRolesWaypoint = (
         address: moduleAddress,
         chainId,
         multisend,
-        version: 1,
+        version,
         from: startingPoint.account.prefixedAddress,
       })
     })
