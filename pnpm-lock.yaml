@@ -305,8 +305,8 @@ importers:
         specifier: 5.0.9
         version: 5.0.9
       node-stdlib-browser:
-        specifier: 1.3.0
-        version: 1.3.0
+        specifier: 1.3.1
+        version: 1.3.1
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -5419,8 +5419,8 @@ packages:
     resolution: {integrity: sha512-1uiY543L+N7Og4yswvlm5NCKgPKDEXd9AUR9Jh3gen6oOeBsesr6LqhXom1er3eRzSUcVRWXzhv8tSNrIfGHKw==}
     engines: {node: '>=18'}
 
-  node-stdlib-browser@1.3.0:
-    resolution: {integrity: sha512-g/koYzOr9Fb1Jc+tHUHlFd5gODjGn48tHexUK8q6iqOVriEgSnd3/1T7myBYc+0KBVze/7F7n65ec9rW6OD7xw==}
+  node-stdlib-browser@1.3.1:
+    resolution: {integrity: sha512-X75ZN8DCLftGM5iKwoYLA3rjnrAEs97MkzvSd4q2746Tgpg8b8XWiBGiBG4ZpgcAqBgtgPHTiAc8ZMCvZuikDw==}
     engines: {node: '>=10'}
 
   normalize-package-data@5.0.0:
@@ -13118,7 +13118,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.26.5
 
-  node-stdlib-browser@1.3.0:
+  node-stdlib-browser@1.3.1:
     dependencies:
       assert: 2.1.0
       browser-resolve: 2.0.0
