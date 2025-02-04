@@ -13,6 +13,7 @@ export const createMockTokenBalance = ({
   usdValue: 0,
   contractId: randomAddress(),
   logoUrl: null,
+  usdPrice: 0,
 
   ...tokenBalance,
 })
