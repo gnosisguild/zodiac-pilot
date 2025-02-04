@@ -45,7 +45,7 @@
   "devDependencies": {
     "@playwright/test": "1.50.1",
     "@react-router/dev": "7.1.5",
-    "@sentry/vite-plugin": "3.1.1",
+    "@sentry/vite-plugin": "3.1.2",
     "@tailwindcss/vite": "4.0.3",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.2.0",
