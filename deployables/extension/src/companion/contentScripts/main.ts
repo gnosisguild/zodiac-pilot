@@ -46,4 +46,6 @@ chrome.runtime.onMessage.addListener(
   },
 )
 
+chrome.runtime.sendMessage({ type: CompanionAppMessageType.CONNECT })
+
 injectScript('./build/companion/injectedScripts/main.js')
