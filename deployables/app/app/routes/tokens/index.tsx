@@ -7,13 +7,13 @@ import { useAccount } from 'wagmi'
 
 const Tokens = () => {
   return (
-    <WalletProvider injectedOnly>
-      <Connected>
-        <ProvideForkContext>
+    <ProvideForkContext>
+      <WalletProvider injectedOnly>
+        <Connected>
           <Outlet />
-        </ProvideForkContext>
-      </Connected>
-    </WalletProvider>
+        </Connected>
+      </WalletProvider>
+    </ProvideForkContext>
   )
 }
 
