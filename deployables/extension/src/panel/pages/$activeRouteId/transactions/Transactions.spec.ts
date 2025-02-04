@@ -111,4 +111,43 @@ describe('Transactions', () => {
       )
     })
   })
+
+  describe('Token actions', () => {
+    it('shows a link to view the current balances', async () => {
+      const route = await mockRoute({ id: 'test-route' })
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [createTransaction()],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(
+        screen.getByRole('link', { name: 'View balances' }),
+      ).toHaveAttribute('href', 'http://localhost/tokens/balances')
+    })
+
+    it('offers to send tokens', async () => {
+      const route = await mockRoute({ id: 'test-route' })
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [createTransaction()],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(screen.getByRole('link', { name: 'Send tokens' })).toHaveAttribute(
+        'href',
+        'http://localhost/tokens/send',
+      )
+    })
+  })
 })
