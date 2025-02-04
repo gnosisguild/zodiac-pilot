@@ -1,6 +1,7 @@
 import { chromeMock } from '@/test-utils'
 import { randomUUID } from 'crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { companionEnablement } from './companionEnablement'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
@@ -15,6 +16,10 @@ vi.mock('./rpcTracking', () => ({
 
 vi.mock('./simulationTracking', () => ({
   trackSimulations: vi.fn(),
+}))
+
+vi.mock('./companionEnablement', () => ({
+  companionEnablement: vi.fn(),
 }))
 
 describe('Background script', () => {
@@ -47,5 +52,13 @@ describe('Background script', () => {
     await importModule()
 
     expect(trackSimulations).toHaveBeenCalledTimes(1)
+  })
+
+  it('enables companion app features', async () => {
+    expect(companionEnablement).not.toHaveBeenCalled()
+
+    await importModule()
+
+    expect(companionEnablement).toHaveBeenCalledTimes(1)
   })
 })
