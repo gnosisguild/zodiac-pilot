@@ -7,7 +7,8 @@ import {
   stopSimulation,
   updateSimulation,
 } from '@/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { Chain } from '@zodiac/chains'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
@@ -278,6 +279,75 @@ describe('Simulation tracking', () => {
       expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
         text: '',
         tabId: 1,
+      })
+    })
+  })
+
+  describe('Events', () => {
+    const trackRequestsResult = trackRequests()
+    const trackSessionsResult = trackSessions(trackRequestsResult)
+
+    beforeEach(async () => {
+      await startPilotSession({ windowId: 1 })
+    })
+
+    afterEach(async () => {
+      await stopSimulation({ windowId: 1 })
+    })
+
+    it('emits an event when a simulation starts', async () => {
+      const { onSimulationUpdate } = trackSimulations(trackSessionsResult)
+
+      const handler = vi.fn()
+
+      onSimulationUpdate.addListener(handler)
+
+      await startSimulation({
+        windowId: 1,
+        chainId: Chain.ETH,
+        rpcUrl: 'http://test-rpc.com',
+      })
+
+      expect(handler).toHaveBeenCalledWith({
+        chainId: Chain.ETH,
+        rpcUrl: 'http://test-rpc.com',
+      })
+    })
+
+    it('emits an event when the simulation ends', async () => {
+      const { onSimulationUpdate } = trackSimulations(trackSessionsResult)
+
+      const handler = vi.fn()
+
+      onSimulationUpdate.addListener(handler)
+
+      await startSimulation({
+        windowId: 1,
+        chainId: Chain.ETH,
+        rpcUrl: 'http://test-rpc.com',
+      })
+      await stopSimulation({ windowId: 1 })
+
+      expect(handler).toHaveBeenCalledWith(null)
+    })
+
+    it('emits an update when the simulation updates', async () => {
+      const { onSimulationUpdate } = trackSimulations(trackSessionsResult)
+
+      const handler = vi.fn()
+
+      onSimulationUpdate.addListener(handler)
+
+      await startSimulation({
+        windowId: 1,
+        chainId: Chain.ETH,
+        rpcUrl: 'http://test-rpc.com',
+      })
+      await updateSimulation({ windowId: 1, rpcUrl: 'http://new-rpc.com' })
+
+      expect(handler).toHaveBeenCalledWith({
+        chainId: Chain.ETH,
+        rpcUrl: 'http://new-rpc.com',
       })
     })
   })

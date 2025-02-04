@@ -14,9 +14,9 @@ import type { Fork } from './types'
 
 export type Sessions = Map<number, PilotSession>
 
-export class PilotSession extends EventEmitter<
-  Record<'forkUpdated', (Fork | null)[]>
-> {
+export class PilotSession extends EventEmitter<{
+  forkUpdated: (Fork | null)[]
+}> {
   private id: number
 
   public readonly tabs: Set<number>
@@ -100,7 +100,7 @@ export class PilotSession extends EventEmitter<
     )
   }
 
-  async createFork(fork: Fork) {
+  async createFork(fork: Fork): Promise<Fork> {
     invariant(!this.isForked(), 'Session has already been forked!')
 
     this.fork = fork
@@ -116,6 +116,8 @@ export class PilotSession extends EventEmitter<
     this.rpcTracking.onNewRpcEndpointDetected.addListener(
       this.handleNewRpcEndpoint,
     )
+
+    return this.fork
   }
 
   async updateFork(rpcUrl: string) {
@@ -133,6 +135,8 @@ export class PilotSession extends EventEmitter<
     )
 
     this.emit('forkUpdated', this.fork)
+
+    return this.fork
   }
 
   updateForkInTabs() {
