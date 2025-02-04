@@ -1,11 +1,11 @@
-import { getTokenBalances, type BalanceResult } from '@/balances-server'
+import { getTokenBalances, type TokenBalance } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
   params,
-}: Route.LoaderArgs): Promise<BalanceResult> => {
+}: Route.LoaderArgs): Promise<TokenBalance[]> => {
   const { chainId, address } = params
 
   return getTokenBalances(

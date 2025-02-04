@@ -1,7 +1,7 @@
 import { CircleDollarSign } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 
-type TokenProps = PropsWithChildren<{ logo?: string }>
+type TokenProps = PropsWithChildren<{ logo?: string | null }>
 
 export const Token = ({ children, logo }: TokenProps) => (
   <div className="flex items-center gap-2 overflow-hidden">

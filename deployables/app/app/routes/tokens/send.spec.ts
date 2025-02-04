@@ -78,7 +78,7 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({
         name: 'Test token',
-        balance: '1234',
+        amount: '12.34',
         decimals: 2,
       }),
     ])
@@ -105,9 +105,9 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
 
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({
-        token_address: tokenAddress,
+        contractId: tokenAddress,
         name: 'Test token',
-        balance: '1234',
+        amount: '12.34',
         decimals: 2,
       }),
     ])
@@ -162,7 +162,7 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({
         name: 'Test token',
-        balance_formatted: '1234',
+        amount: '1234',
         symbol: 'T€$T',
       }),
     ])
@@ -187,9 +187,9 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
 
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({
-        token_address: address,
+        contractId: address,
         name: 'Test token',
-        balance_formatted: '1234',
+        amount: '12.34',
         symbol: 'T€$T',
       }),
     ])

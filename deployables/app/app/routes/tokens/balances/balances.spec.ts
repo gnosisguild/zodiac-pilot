@@ -60,7 +60,7 @@ describe('Token balances', () => {
     const address = randomAddress()
 
     mockGetTokenBalances.mockResolvedValue([
-      createMockTokenBalance({ token_address: address }),
+      createMockTokenBalance({ contractId: address }),
     ])
 
     await render('/tokens/balances')

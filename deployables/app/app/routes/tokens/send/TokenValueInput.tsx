@@ -9,7 +9,7 @@ import {
   type NumberInputProps,
 } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
-import { formatUnits, parseUnits } from 'viem'
+import { parseUnits } from 'viem'
 import { Token } from '../Token'
 
 type TokenValueInputProps = Omit<
@@ -38,7 +38,7 @@ export const TokenValueInput = ({
       : tokenBalanceByAddress[selectedTokenAddress]
 
   invariant(
-    selectedToken == null || selectedToken.token_address != null,
+    selectedToken == null || selectedToken.contractId != null,
     'Selected token does not have an address',
   )
 
@@ -49,9 +49,7 @@ export const TokenValueInput = ({
       return
     }
 
-    setMaxBalance(
-      formatUnits(BigInt(selectedToken.balance), selectedToken.decimals),
-    )
+    setMaxBalance(selectedToken.amount)
   }, [selectedToken])
 
   return (
@@ -69,7 +67,7 @@ export const TokenValueInput = ({
       <input
         type="hidden"
         name="token"
-        value={selectedToken == null ? '' : selectedToken.token_address}
+        value={selectedToken == null ? '' : selectedToken.contractId}
       />
 
       <NumberInput
@@ -79,7 +77,7 @@ export const TokenValueInput = ({
         description={
           selectedToken == null
             ? undefined
-            : `Max: ${selectedToken.balance_formatted} ${selectedToken.symbol}`
+            : `Max: ${selectedToken.amount} ${selectedToken.symbol}`
         }
         onChange={(ev) => setAmount(ev.target.value)}
         step="any"
@@ -109,7 +107,7 @@ export const TokenValueInput = ({
               value={
                 selectedToken == null
                   ? undefined
-                  : { value: selectedToken.token_address }
+                  : { value: selectedToken.contractId }
               }
               onChange={(value) => {
                 if (value == null) {
@@ -118,26 +116,19 @@ export const TokenValueInput = ({
 
                 setSelectedTokenAddress(value.value)
               }}
-              options={tokenBalances
-                .filter(({ token_address }) => token_address != null)
-                .map(({ token_address }) => {
-                  invariant(
-                    token_address != null,
-                    'Empty token address was not filtered out',
-                  )
-
-                  return { value: token_address }
-                })}
+              options={tokenBalances.map(({ contractId }) => ({
+                value: contractId,
+              }))}
             >
               {({ data: { value } }) => {
                 if (state === 'loading') {
                   return <SkeletonText />
                 }
 
-                const { logo, name } = tokenBalanceByAddress[value]
+                const { logoUrl, name } = tokenBalanceByAddress[value]
                 return (
                   <div className="text-xs">
-                    <Token logo={logo}>{name}</Token>
+                    <Token logo={logoUrl}>{name}</Token>
                   </div>
                 )
               }}
