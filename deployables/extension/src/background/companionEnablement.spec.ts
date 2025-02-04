@@ -18,11 +18,11 @@ describe('Companion Enablement', () => {
     const trackSessionsResult = trackSessions(trackRequestsResult)
     const trackSimulationsResult = trackSimulations(trackSessionsResult)
 
-    companionEnablement(trackSimulationsResult)
+    companionEnablement(trackSessionsResult, trackSimulationsResult)
   })
 
   it('notifies the companion app about fork updates', async () => {
-    await startPilotSession({ windowId: 1 })
+    await startPilotSession({ windowId: 1, tabId: 2 })
 
     await connectCompanionApp({ id: 2, windowId: 1 })
 
@@ -31,6 +31,22 @@ describe('Companion Enablement', () => {
       chainId: Chain.ETH,
       rpcUrl: 'http://test-rpc.com',
     })
+
+    expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
+      type: CompanionAppMessageType.FORK_UPDATED,
+      forkUrl: 'http://test-rpc.com',
+    })
+  })
+
+  it('notifies the companion app about forks even when the simulation is already running', async () => {
+    await startPilotSession({ windowId: 1, tabId: 2 })
+    await startSimulation({
+      windowId: 1,
+      chainId: Chain.ETH,
+      rpcUrl: 'http://test-rpc.com',
+    })
+
+    await connectCompanionApp({ id: 2, windowId: 1 })
 
     expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
       type: CompanionAppMessageType.FORK_UPDATED,

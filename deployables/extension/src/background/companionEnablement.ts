@@ -5,11 +5,13 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import type { TrackSessionsResult } from './sessionTracking'
 import type { TrackSimulationResult } from './simulationTracking'
 
-export const companionEnablement = ({
-  onSimulationUpdate,
-}: TrackSimulationResult) => {
+export const companionEnablement = (
+  { withPilotSession }: TrackSessionsResult,
+  { onSimulationUpdate }: TrackSimulationResult,
+) => {
   chrome.runtime.onMessage.addListener(
     (message: CompanionAppMessage, { tab }) => {
       if (message.type !== CompanionAppMessageType.CONNECT) {
@@ -17,6 +19,19 @@ export const companionEnablement = ({
       }
 
       invariant(tab != null, 'Companion app message must come from a tab.')
+
+      withPilotSession(tab.windowId, async (session) => {
+        if (!session.isForked()) {
+          return
+        }
+
+        invariant(tab.id != null, 'Tab needs an ID')
+
+        await sendMessageToTab(tab.id, {
+          type: CompanionAppMessageType.FORK_UPDATED,
+          forkUrl: session.getFork().rpcUrl ?? null,
+        } satisfies CompanionAppMessage)
+      })
 
       console.debug('Companion App connected!')
 
