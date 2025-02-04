@@ -1,11 +1,6 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  type Account,
-  type ChainId,
-} from 'ser-kit'
+import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
 
 type Delay = Extract<Account, { type: AccountType.DELAY }>
 
@@ -21,5 +16,5 @@ export const createMockDelayAccount = ({
   type: AccountType.DELAY,
   address,
   chain: chainId,
-  prefixedAddress: formatPrefixedAddress(chainId, address),
+  prefixedAddress: prefixAddress(chainId, address),
 })

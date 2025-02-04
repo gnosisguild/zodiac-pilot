@@ -7,7 +7,7 @@ import {
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
-import { formatPrefixedAddress } from 'ser-kit'
+import { prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { removeAvatar } from './removeAvatar'
 
@@ -26,14 +26,14 @@ describe('removeAvatar', () => {
 
   it('resets the avatar address', () => {
     const route = createMockExecutionRoute({
-      avatar: formatPrefixedAddress(Chain.GNO, randomAddress()),
+      avatar: prefixAddress(Chain.GNO, randomAddress()),
     })
 
     const updatedRoute = removeAvatar(route)
 
     expect(updatedRoute).toHaveProperty(
       'avatar',
-      formatPrefixedAddress(Chain.GNO, ZERO_ADDRESS),
+      prefixAddress(Chain.GNO, ZERO_ADDRESS),
     )
   })
 
@@ -41,7 +41,7 @@ describe('removeAvatar', () => {
     const rolesWaypoint = createMockRoleWaypoint()
 
     const route = createMockExecutionRoute({
-      avatar: formatPrefixedAddress(Chain.GNO, randomAddress()),
+      avatar: prefixAddress(Chain.GNO, randomAddress()),
       waypoints: createMockWaypoints({ waypoints: [rolesWaypoint] }),
     })
 

@@ -14,7 +14,7 @@ import {
 } from 'react'
 import {
   ConnectionType,
-  parsePrefixedAddress,
+  unprefixAddress,
   type MetaTransactionRequest,
 } from 'ser-kit'
 import { ExecutionStatus, useDispatch } from '../state'
@@ -30,7 +30,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   const dispatch = useDispatch()
 
-  const avatarAddress = parsePrefixedAddress(route.avatar)
+  const avatarAddress = unprefixAddress(route.avatar)
   const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
   const connectionType =
     avatarWaypoint &&
@@ -38,7 +38,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     avatarWaypoint.connection.type
   const connectedFrom =
     avatarWaypoint && 'connection' in avatarWaypoint
-      ? parsePrefixedAddress(avatarWaypoint.connection.from)
+      ? unprefixAddress(avatarWaypoint.connection.from)
       : undefined
 
   const moduleAddress =

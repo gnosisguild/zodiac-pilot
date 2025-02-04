@@ -6,7 +6,7 @@ import type {
   Waypoint,
   Waypoints,
 } from '@zodiac/schema'
-import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import { AccountType, prefixAddress } from 'ser-kit'
 import { createEnabledConnection } from './createEnabledConnection'
 import { createRolesWaypoint } from './createRolesWaypoint'
 import { createSafeWaypoint } from './createSafeWaypoint'
@@ -91,7 +91,7 @@ const updateSafeConnection = (
     chainId: account.chain,
     safe: account.address,
     connection: createEnabledConnection(
-      formatPrefixedAddress(account.chain, moduleAddress),
+      prefixAddress(account.chain, moduleAddress),
     ),
   })
 }

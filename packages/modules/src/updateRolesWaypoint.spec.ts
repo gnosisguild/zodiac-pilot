@@ -7,7 +7,7 @@ import {
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
-import { formatPrefixedAddress } from 'ser-kit'
+import { prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createEnabledConnection } from './createEnabledConnection'
 import { getWaypoints } from './getWaypoints'
@@ -36,7 +36,7 @@ describe('updateRolesWaypoint', () => {
 
       expect(endPoint).toHaveProperty(
         'connection',
-        createEnabledConnection(formatPrefixedAddress(Chain.ETH, address)),
+        createEnabledConnection(prefixAddress(Chain.ETH, address)),
       )
     })
   })
@@ -64,7 +64,7 @@ describe('updateRolesWaypoint', () => {
 
       expect(endPoint).toHaveProperty(
         'connection',
-        createEnabledConnection(formatPrefixedAddress(Chain.ETH, address)),
+        createEnabledConnection(prefixAddress(Chain.ETH, address)),
       )
     })
   })
