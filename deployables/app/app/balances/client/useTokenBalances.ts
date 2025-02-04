@@ -23,7 +23,7 @@ export const useTokenBalances = () => {
       url.searchParams.set('fork', forkUrl)
     }
 
-    load(url.pathname)
+    load(`${url.pathname}${url.search}`)
   }, [address, chainId, forkUrl, load])
 
   const tokenBalanceByAddress = useMemo(
