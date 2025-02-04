@@ -9,7 +9,7 @@ export const Page = ({ children, fullWidth = false }: PageProps) => {
     <div className="bg-linear-to-b flex flex-1 flex-shrink-0 flex-col overflow-y-auto from-white to-zinc-50 dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900">
       <div
         className={classNames(
-          'mx-16 mt-16',
+          'mx-16 mt-16 flex flex-1 flex-col',
           fullWidth === false && 'mx-auto w-3/4 px-1 md:w-1/2 2xl:w-2/5',
         )}
       >

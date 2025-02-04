@@ -4,7 +4,7 @@ import { verifyChainId } from '@zodiac/chains'
 import { getOptionalString } from '@zodiac/form-data'
 import { fetchZodiacModules } from '@zodiac/modules'
 import type { ShouldRevalidateFunction } from 'react-router'
-import { Intent } from '../intents'
+import { Intent } from '../edit/intents'
 import type { Route } from './+types/modules'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {

@@ -2,6 +2,7 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  DebugJson,
   Page,
   WalletProvider,
   ZodiacMod,
@@ -51,7 +52,7 @@ import {
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { lazy, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   useLoaderData,
   useNavigation,
@@ -60,12 +61,6 @@ import {
 } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
-
-const DebugJson = lazy(async () => {
-  const { DebugJson } = await import('./DebugJson')
-
-  return { default: DebugJson }
-})
 
 export const meta: Route.MetaFunction = ({ data }) => [
   { title: `Pilot | ${data.label || 'Unnamed route'}` },
