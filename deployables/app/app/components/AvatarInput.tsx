@@ -9,7 +9,6 @@ import { getAddress } from 'viem'
 
 type Props = {
   chainId: ChainId | null
-  defaultValue?: HexAddress
   value?: HexAddress
   pilotAddress?: HexAddress | null
   name?: string
@@ -22,7 +21,6 @@ type Option = {
 }
 
 export const AvatarInput = ({
-  defaultValue,
   value,
   chainId,
   pilotAddress,
@@ -30,11 +28,7 @@ export const AvatarInput = ({
   onChange,
 }: Props) => {
   const [internalValue, setInternalValue] = useState<string>(
-    value != null && value !== ZERO_ADDRESS
-      ? value
-      : defaultValue != null && defaultValue !== ZERO_ADDRESS
-        ? defaultValue
-        : '',
+    value != null && value !== ZERO_ADDRESS ? value : '',
   )
 
   useEffect(() => {
