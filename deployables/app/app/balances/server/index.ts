@@ -1,2 +1,5 @@
 export type { TokenBalance } from '../types'
+export { getAvailableChains } from './getAvailableChains'
+export { getDeBankChainId } from './getDeBankChainId'
 export { getTokenBalances } from './getTokenBalances'
+export { isValidToken } from './isValidToken'

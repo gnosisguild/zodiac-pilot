@@ -1,5 +1,5 @@
+import { isValidToken } from '@/balances-server'
 import { getHexString, getString } from '@zodiac/form-data'
-import { verifyHexAddress } from '@zodiac/schema'
 import {
   AddressInput,
   Error as ErrorAlert,
@@ -15,8 +15,20 @@ import { TokenValueInput } from './TokenValueInput'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Send tokens' }]
 
-export const loader = ({ params: { token } }: Route.LoaderArgs) => {
-  return { defaultToken: token != null ? verifyHexAddress(token) : null }
+export const loader = async ({
+  params: { token, chain },
+}: Route.LoaderArgs) => {
+  if (token == null || chain == null) {
+    return { defaultToken: null }
+  }
+
+  const isValid = await isValidToken(chain, token)
+
+  if (isValid) {
+    return { defaultToken: token }
+  }
+
+  return { defaultToken: null }
 }
 
 const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {

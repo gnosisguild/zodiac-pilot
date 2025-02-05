@@ -1,6 +1,5 @@
 import { useTokenBalances } from '@/balances-client'
 import { invariant } from '@epic-web/invariant'
-import type { HexAddress } from '@zodiac/schema'
 import {
   GhostButton,
   NumberInput,
@@ -16,7 +15,7 @@ type TokenValueInputProps = Omit<
   NumberInputProps,
   'value' | 'onChange' | 'defaultValue' | 'after'
 > & {
-  defaultToken?: HexAddress | null
+  defaultToken?: string | null
 }
 
 export const TokenValueInput = ({

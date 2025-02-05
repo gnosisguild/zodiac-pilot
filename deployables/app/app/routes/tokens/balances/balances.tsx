@@ -42,7 +42,15 @@ const Balances = () => {
         </Table.THead>
         <Table.TBody>
           {data.map(
-            ({ contractId, name, logoUrl, usdValue, amount, symbol }) => (
+            ({
+              contractId,
+              chain,
+              name,
+              logoUrl,
+              usdValue,
+              amount,
+              symbol,
+            }) => (
               <Table.Tr key={contractId}>
                 <Table.Td noWrap>
                   <Token logo={logoUrl}>{name}</Token>
@@ -58,7 +66,7 @@ const Balances = () => {
                     <GhostLinkButton
                       icon={ArrowUpFromLine}
                       size="tiny"
-                      to={`/tokens/send/${contractId}`}
+                      to={`/tokens/send/${chain}/${contractId}`}
                     >
                       Send
                     </GhostLinkButton>

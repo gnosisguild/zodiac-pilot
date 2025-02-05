@@ -1,8 +1,18 @@
-import { getTokenBalances, type TokenBalance } from '@/balances-server'
+import {
+  getDeBankChainId,
+  getTokenBalances,
+  type TokenBalance,
+} from '@/balances-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { verifyHexAddress } from '@zodiac/schema'
-import { createPublicClient, erc20Abi, formatUnits, http } from 'viem'
+import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
+import {
+  createPublicClient,
+  erc20Abi,
+  formatUnits,
+  http,
+  type PublicClient,
+} from 'viem'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
@@ -11,6 +21,7 @@ export const loader = async ({
 }: Route.LoaderArgs): Promise<TokenBalance[]> => {
   const url = new URL(request.url)
 
+  const nativeChainId = await getDeBankChainId(verifyChainId(parseInt(chainId)))
   const mainNetBalances = await getTokenBalances(
     verifyChainId(parseInt(chainId)),
     verifyHexAddress(address),
@@ -27,16 +38,11 @@ export const loader = async ({
 
     return Promise.all(
       mainNetBalances.map(async (balance) => {
-        if (balance.contractId === 'eth') {
-          // todo: handle default eth
-          return balance
-        }
-
-        const forkBalance = await client.readContract({
-          address: balance.contractId,
-          abi: erc20Abi,
-          functionName: 'balanceOf',
-          args: [address],
+        // @ts-expect-error the PublicClient type from viem is weird
+        const forkBalance = await getForkBalance(client, {
+          contractId: balance.contractId,
+          nativeChainId,
+          address: verifyHexAddress(address),
         })
 
         const amount = formatUnits(BigInt(forkBalance), balance.decimals)
@@ -52,4 +58,26 @@ export const loader = async ({
   }
 
   return mainNetBalances
+}
+
+type GetForkBalanceOptions = {
+  address: HexAddress
+  contractId: string
+  nativeChainId: string
+}
+
+const getForkBalance = (
+  client: PublicClient,
+  { contractId, address, nativeChainId }: GetForkBalanceOptions,
+): Promise<bigint> => {
+  if (contractId === nativeChainId) {
+    return client.getBalance({ address })
+  }
+
+  return client.readContract({
+    address: contractId,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: [address],
+  })
 }
