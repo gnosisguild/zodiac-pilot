@@ -1,5 +1,6 @@
 export { decode } from './decode'
 export { encode } from './encode'
+export type { Hex } from './hex'
 export { jsonStringify } from './jsonStringify'
 export { metaTransactionRequestSchema } from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'

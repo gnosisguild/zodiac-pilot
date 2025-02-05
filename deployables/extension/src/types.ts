@@ -1,6 +1,7 @@
 import type { JsonRpcRequest } from '@zodiac/messages'
 import type {
   ExecutionRoute as BaseExecutionRoute,
+  Hex,
   HexAddress,
 } from '@zodiac/schema'
 
@@ -29,6 +30,6 @@ export interface Eip1193Provider {
 export interface TransactionData {
   to?: HexAddress
   value?: string
-  data?: HexAddress
+  data?: Hex
   from?: HexAddress
 }
