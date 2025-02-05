@@ -2,7 +2,6 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
-  Page,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -48,10 +47,11 @@ import {
   Form,
   PrimaryButton,
   SecondaryButton,
+  SecondaryLinkButton,
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { lazy, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   useLoaderData,
   useNavigation,
@@ -60,12 +60,6 @@ import {
 } from 'react-router'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
-
-const DebugJson = lazy(async () => {
-  const { DebugJson } = await import('./DebugJson')
-
-  return { default: DebugJson }
-})
 
 export const meta: Route.MetaFunction = ({ data }) => [
   { title: `Pilot | ${data.label || 'Unnamed route'}` },
@@ -195,118 +189,112 @@ const EditRoute = ({
 
   return (
     <>
-      <Page>
-        <Page.Header>Route configuration</Page.Header>
+      <Form>
+        <TextInput label="Label" name="label" defaultValue={label} />
 
-        <Page.Main>
-          <Form>
-            <TextInput label="Label" name="label" defaultValue={label} />
+        <WalletProvider>
+          <ConnectWallet
+            chainId={chainId}
+            pilotAddress={optimisticRoute.pilotAddress}
+            onConnect={({ address, providerType }) => {
+              submit(
+                formData({
+                  intent: Intent.ConnectWallet,
+                  address,
+                  providerType,
+                }),
+                { method: 'POST' },
+              )
+            }}
+            onDisconnect={() => {
+              submit(formData({ intent: Intent.DisconnectWallet }), {
+                method: 'POST',
+              })
+            }}
+          />
+        </WalletProvider>
 
-            <WalletProvider>
-              <ConnectWallet
-                chainId={chainId}
-                pilotAddress={optimisticRoute.pilotAddress}
-                onConnect={({ address, providerType }) => {
-                  submit(
-                    formData({
-                      intent: Intent.ConnectWallet,
-                      address,
-                      providerType,
-                    }),
-                    { method: 'POST' },
-                  )
-                }}
-                onDisconnect={() => {
-                  submit(formData({ intent: Intent.DisconnectWallet }), {
-                    method: 'POST',
-                  })
-                }}
-              />
-            </WalletProvider>
+        <ChainSelect
+          value={chainId}
+          onChange={(chainId) => {
+            submit(formData({ intent: Intent.UpdateChain, chainId }), {
+              method: 'POST',
+            })
+          }}
+        />
 
-            <ChainSelect
-              value={chainId}
-              onChange={(chainId) => {
-                submit(formData({ intent: Intent.UpdateChain, chainId }), {
-                  method: 'POST',
-                })
-              }}
-            />
+        <AvatarInput
+          value={avatar}
+          waypoints={waypoints}
+          onChange={(avatar) => {
+            if (avatar != null) {
+              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+                method: 'POST',
+              })
+            } else {
+              submit(formData({ intent: Intent.RemoveAvatar }), {
+                method: 'POST',
+              })
+            }
+          }}
+        />
 
-            <AvatarInput
-              value={avatar}
-              waypoints={waypoints}
-              onChange={(avatar) => {
-                if (avatar != null) {
-                  submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
-                    method: 'POST',
-                  })
-                } else {
-                  submit(formData({ intent: Intent.RemoveAvatar }), {
-                    method: 'POST',
-                  })
-                }
-              }}
-            />
+        <ZodiacMod
+          avatar={avatar}
+          waypoints={waypoints}
+          onSelect={(module) => {
+            submit(
+              formData({
+                intent: Intent.UpdateModule,
+                module: jsonStringify(module),
+              }),
+              {
+                method: 'POST',
+              },
+            )
+          }}
+        />
 
-            <ZodiacMod
-              avatar={avatar}
-              waypoints={waypoints}
-              onSelect={(module) => {
-                submit(
-                  formData({
-                    intent: Intent.UpdateModule,
-                    module: jsonStringify(module),
-                  }),
-                  {
-                    method: 'POST',
-                  },
-                )
-              }}
-            />
+        <Form.Actions>
+          <div className="text-balance text-xs opacity-75">
+            The Pilot extension must be open to save.
+          </div>
 
-            <Form.Actions>
-              <div className="text-balance text-xs opacity-75">
-                The Pilot extension must be open to save.
-              </div>
+          <div className="flex gap-2">
+            {isDev && <DebugRouteData />}
 
-              <div className="flex gap-2">
-                <SecondaryButton
-                  submit
-                  intent={Intent.DryRun}
-                  busy={useIsPending(Intent.DryRun)}
-                >
-                  Test route
-                </SecondaryButton>
+            <SecondaryButton
+              submit
+              intent={Intent.DryRun}
+              busy={useIsPending(Intent.DryRun)}
+            >
+              Test route
+            </SecondaryButton>
 
-                <PrimaryButton
-                  submit
-                  intent={Intent.Save}
-                  busy={useIsPending(Intent.Save)}
-                >
-                  Save & Close
-                </PrimaryButton>
-              </div>
-            </Form.Actions>
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              busy={useIsPending(Intent.Save)}
+            >
+              Save & Close
+            </PrimaryButton>
+          </div>
+        </Form.Actions>
 
-            {actionData != null && (
-              <div className="mt-8">
-                {actionData.error === true && (
-                  <Error title="Dry run failed">{actionData.message}</Error>
-                )}
-
-                {actionData.error === false && (
-                  <Success title="Dry run succeeded">
-                    Your route seems to be ready for execution!
-                  </Success>
-                )}
-              </div>
+        {actionData != null && (
+          <div className="mt-8">
+            {actionData.error === true && (
+              <Error title="Dry run failed">{actionData.message}</Error>
             )}
-          </Form>
-        </Page.Main>
-      </Page>
 
-      {isDev && <DebugRouteData />}
+            {actionData.error === false && (
+              <Success title="Dry run succeeded">
+                Your route seems to be ready for execution!
+              </Success>
+            )}
+          </div>
+        )}
+      </Form>
     </>
   )
 }
@@ -391,8 +379,8 @@ const DebugRouteData = () => {
   const { data } = useParams()
 
   return (
-    <div className="max-h-1/3 flex overflow-hidden">
-      <DebugJson data={data} />
-    </div>
+    <SecondaryLinkButton openInNewWindow to={`/dev/decode/${data}`}>
+      Debug route data
+    </SecondaryLinkButton>
   )
 }
