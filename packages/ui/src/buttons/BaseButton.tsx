@@ -2,14 +2,31 @@ import classNames from 'classnames'
 import type { LucideIcon } from 'lucide-react'
 import type { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router'
+import { Spinner } from '../Spinner'
 
 type SharedButtonProps = {
+  /**
+   * Fluid makes the button take up as much horizontal space as possible
+   */
   fluid?: boolean
   iconOnly?: boolean
   icon?: LucideIcon
   size?: 'tiny' | 'small' | 'base'
+  /**
+   * Turns the button into a type="submit" button that can be used inside forms
+   */
   submit?: boolean
+  /**
+   * Shortcut to set the name of the button to "intent" and the value to the
+   * specified intent.
+   */
   intent?: string
+  /**
+   * You can use this to indicate that an action is happening. For instance,
+   * when a form is being submitted. When a button is busy it will show
+   * an indicator and also be disabled.
+   */
+  busy?: boolean
 }
 
 export type BaseButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'type'> &
@@ -25,24 +42,40 @@ export const BaseButton = ({
   title,
   submit = false,
   intent,
+  busy = false,
+  disabled = busy,
   ...props
 }: BaseButtonProps) => (
   <button
     {...props}
     type={submit ? 'submit' : 'button'}
+    disabled={disabled}
     title={title ? title : typeof children === 'string' ? children : undefined}
     name={intent != null ? 'intent' : props.name}
     value={intent != null ? intent : props.value}
     className={classNames(
-      'outline-hidden flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all disabled:cursor-not-allowed disabled:opacity-60',
+      'outline-hidden relative cursor-pointer rounded-md border transition-all disabled:cursor-not-allowed disabled:opacity-60',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,
     )}
   >
-    {Icon && <Icon size={size === 'base' ? 20 : 16} />}
+    <span
+      className={classNames(
+        'flex items-center justify-center gap-2 whitespace-nowrap',
+        busy && 'invisible',
+      )}
+    >
+      {Icon && <Icon size={size === 'base' ? 20 : 16} />}
 
-    {iconOnly ? <span className="sr-only">{children}</span> : children}
+      {iconOnly ? <span className="sr-only">{children}</span> : children}
+    </span>
+
+    {busy && (
+      <span className="absolute inset-0 flex items-center justify-center">
+        <Spinner />
+      </span>
+    )}
   </button>
 )
 
