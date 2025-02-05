@@ -1,15 +1,16 @@
 import { isValidToken } from '@/balances-server'
 import { getHexString, getString } from '@zodiac/form-data'
+import { isHexAddress, type HexAddress } from '@zodiac/schema'
 import {
   AddressInput,
   Error as ErrorAlert,
   Form,
   PrimaryButton,
 } from '@zodiac/ui'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { erc20Abi } from 'viem'
-import { useWriteContract } from 'wagmi'
+import { useSendTransaction, useWriteContract } from 'wagmi'
 import type { Route } from './+types/send'
 import { TokenValueInput } from './TokenValueInput'
 
@@ -32,7 +33,7 @@ export const loader = async ({
 }
 
 const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
-  const { writeContract, isPending, error, isSuccess } = useWriteContract()
+  const { sendToken, isSuccess, isPending, error } = useSendToken()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -49,11 +50,12 @@ const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
         const recipient = getHexString(data, 'recipient')
         const value = BigInt(getString(data, 'amount'))
 
-        writeContract({
-          abi: erc20Abi,
-          address: getHexString(data, 'token'),
-          functionName: 'transfer',
-          args: [recipient, value],
+        const token = getString(data, 'token')
+
+        sendToken({
+          token,
+          recipient,
+          value,
         })
 
         ev.preventDefault()
@@ -89,5 +91,39 @@ export const ErrorBoundary = ({ error }: Route.ErrorBoundaryProps) => {
         {error.message}
       </ErrorAlert>
     )
+  }
+}
+
+type SendTokenOptions = {
+  token: string
+  recipient: HexAddress
+  value: bigint
+}
+
+const useSendToken = () => {
+  const { writeContract, ...writeContractProps } = useWriteContract()
+  const { sendTransaction, ...sendTransactionProps } = useSendTransaction()
+
+  const sendToken = useCallback(
+    ({ token, recipient, value }: SendTokenOptions) => {
+      if (isHexAddress(token)) {
+        writeContract({
+          abi: erc20Abi,
+          address: token,
+          functionName: 'transfer',
+          args: [recipient, value],
+        })
+      } else {
+        sendTransaction({ to: recipient, value })
+      }
+    },
+    [sendTransaction, writeContract],
+  )
+
+  return {
+    sendToken,
+    isSuccess: writeContractProps.isSuccess || sendTransactionProps.isSuccess,
+    isPending: writeContractProps.isPending || sendTransactionProps.isPending,
+    error: writeContractProps.error || sendTransactionProps.error,
   }
 }
