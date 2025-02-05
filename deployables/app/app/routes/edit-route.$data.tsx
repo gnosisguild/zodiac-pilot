@@ -6,6 +6,7 @@ import {
   WalletProvider,
   ZodiacMod,
 } from '@/components'
+import { useIsPending } from '@/hooks'
 import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
@@ -192,8 +193,6 @@ const EditRoute = ({
   const submit = useSubmit()
   const optimisticRoute = useOptimisticRoute()
 
-  const { state } = useNavigation()
-
   return (
     <>
       <Page>
@@ -275,7 +274,7 @@ const EditRoute = ({
                 <SecondaryButton
                   submit
                   intent={Intent.DryRun}
-                  disabled={state !== 'idle'}
+                  busy={useIsPending(Intent.DryRun)}
                 >
                   Test route
                 </SecondaryButton>
@@ -283,7 +282,7 @@ const EditRoute = ({
                 <PrimaryButton
                   submit
                   intent={Intent.Save}
-                  disabled={state !== 'idle'}
+                  busy={useIsPending(Intent.Save)}
                 >
                   Save & Close
                 </PrimaryButton>

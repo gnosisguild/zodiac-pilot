@@ -67,21 +67,28 @@ const SubmitTransaction = () => {
   const { data: connectorClient } = useConnectorClient()
   const [submitPending, setSubmitPending] = useState(false)
 
+  if (
+    walletAccount.chainId !== chainId ||
+    walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
+    connectorClient == null
+  ) {
+    return (
+      <PrimaryButton disabled fluid>
+        Sign
+      </PrimaryButton>
+    )
+  }
+
   return (
     <PrimaryButton
       fluid
-      disabled={
-        walletAccount.chainId !== chainId ||
-        walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
-        connectorClient == null ||
-        submitPending
-      }
+      busy={submitPending}
       onClick={async () => {
         invariant(connectorClient != null, 'Client must be ready')
 
         setSubmitPending(true)
 
-        const state = [] as ExecutionState
+        const state: ExecutionState = []
 
         try {
           await execute(
