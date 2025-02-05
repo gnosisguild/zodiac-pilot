@@ -1,6 +1,12 @@
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Landmark, Plus, SendHorizonal, type LucideIcon } from 'lucide-react'
+import {
+  Edit,
+  Landmark,
+  Plus,
+  SendHorizonal,
+  type LucideIcon,
+} from 'lucide-react'
 import type { ComponentProps, PropsWithChildren } from 'react'
 import { NavLink, Outlet } from 'react-router'
 
@@ -27,6 +33,10 @@ const Sidebar = () => {
           <SidebarSection title="Routes">
             <SidebarLink to="/new-route" icon={Plus}>
               Create new route
+            </SidebarLink>
+
+            <SidebarLink to="/edit-route" icon={Edit}>
+              Edit a route
             </SidebarLink>
           </SidebarSection>
         </nav>
