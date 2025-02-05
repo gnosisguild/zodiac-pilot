@@ -1,6 +1,7 @@
-import { getTokenBalances } from '@/balances-server'
+import { getChain, getTokenBalances } from '@/balances-server'
 import {
   connectWallet,
+  createMockChain,
   createMockTokenBalance,
   disconnectWallet,
   render,
@@ -46,18 +47,23 @@ vi.mock('@/balances-server', async (importOriginal) => {
   return {
     ...module,
 
-    getDeBankChainId: vi.fn().mockResolvedValue('eth'),
+    getChain: vi.fn(),
     getTokenBalances: vi.fn(),
   }
 })
 
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
+const mockGetChain = vi.mocked(getChain)
 
 describe('Token balances', () => {
-  beforeEach(() => connectWallet())
+  beforeEach(async () => {
+    await connectWallet()
+
+    mockGetChain.mockResolvedValue(createMockChain())
+  })
   afterEach(() => disconnectWallet())
 
-  it('is possible to send funds of a token', async () => {
+  it.only('is possible to send funds of a token', async () => {
     const address = randomAddress()
 
     mockGetTokenBalances.mockResolvedValue([

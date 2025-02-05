@@ -1,10 +1,7 @@
-import {
-  getDeBankChainId,
-  getTokenBalances,
-  isValidToken,
-} from '@/balances-server'
+import { getChain, getTokenBalances, isValidToken } from '@/balances-server'
 import {
   connectWallet,
+  createMockChain,
   createMockTokenBalance,
   disconnectWallet,
   render,
@@ -52,13 +49,13 @@ vi.mock('@/balances-server', async (importOriginal) => {
   return {
     ...module,
 
-    getDeBankChainId: vi.fn(),
+    getChain: vi.fn(),
     getTokenBalances: vi.fn(),
     isValidToken: vi.fn(),
   }
 })
 
-const mockGetDeBankChainId = vi.mocked(getDeBankChainId)
+const mockGetChain = vi.mocked(getChain)
 const mockIsValidToken = vi.mocked(isValidToken)
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
@@ -66,7 +63,7 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
   beforeEach(async () => {
     await connectWallet()
 
-    mockGetDeBankChainId.mockResolvedValue('eth')
+    mockGetChain.mockResolvedValue(createMockChain())
     mockIsValidToken.mockResolvedValue(true)
   })
   afterEach(() => disconnectWallet())
