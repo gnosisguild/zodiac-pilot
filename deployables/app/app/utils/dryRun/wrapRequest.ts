@@ -6,7 +6,7 @@ import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import {
   AccountType,
-  parsePrefixedAddress,
+  unprefixAddress,
   type MetaTransactionRequest,
 } from 'ser-kit'
 import { getInterface } from './getInterface'
@@ -86,7 +86,7 @@ export function wrapRequest({
   invariant(route.initiator != null, 'No pilot address specified for the route')
 
   return {
-    from: parsePrefixedAddress(route.initiator),
+    from: unprefixAddress(route.initiator),
     to: rolesWaypoint.account.address,
     data: data as HexAddress,
     value: toQuantity(0n),

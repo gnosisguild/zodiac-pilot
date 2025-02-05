@@ -5,7 +5,7 @@ import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
-import { parsePrefixedAddress, type PrefixedAddress } from 'ser-kit'
+import { unprefixAddress, type PrefixedAddress } from 'ser-kit'
 import { getAddress } from 'viem'
 
 type Props = {
@@ -20,7 +20,7 @@ type Option = {
 }
 
 export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
-  const address = parsePrefixedAddress(value)
+  const address = unprefixAddress(value)
   const chainId = getChainId(value)
   const [pendingValue, setPendingValue] = useState<string>(
     address === ZERO_ADDRESS ? '' : address,

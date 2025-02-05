@@ -9,7 +9,7 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { ConnectionType, formatPrefixedAddress } from 'ser-kit'
+import { ConnectionType, prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getWaypoints } from './getWaypoints'
 import { updateAvatar } from './updateAvatar'
@@ -20,7 +20,7 @@ describe('updateAvatar', () => {
       const currentSafe = randomAddress()
 
       const route = createMockExecutionRoute({
-        avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
+        avatar: prefixAddress(Chain.ETH, currentSafe),
         waypoints: createMockWaypoints({
           end: createMockEndWaypoint({
             account: {
@@ -37,7 +37,7 @@ describe('updateAvatar', () => {
 
       expect(updatedRoute).toHaveProperty(
         'avatar',
-        formatPrefixedAddress(Chain.ETH, safe),
+        prefixAddress(Chain.ETH, safe),
       )
     })
   })
@@ -50,7 +50,7 @@ describe('updateAvatar', () => {
       const roleWaypoint = createMockRoleWaypoint()
 
       const route = createMockExecutionRoute({
-        avatar: formatPrefixedAddress(Chain.ETH, currentSafe),
+        avatar: prefixAddress(Chain.ETH, currentSafe),
         waypoints: [startingPoint, roleWaypoint],
       })
 
@@ -69,7 +69,7 @@ describe('updateAvatar', () => {
       const currentSafe = randomAddress()
 
       const route = createMockExecutionRoute({
-        avatar: formatPrefixedAddress(Chain.GNO, currentSafe),
+        avatar: prefixAddress(Chain.GNO, currentSafe),
         waypoints: createMockWaypoints({
           end: createMockEndWaypoint({
             account: {
@@ -89,7 +89,7 @@ describe('updateAvatar', () => {
       expect(updatedWaypoint.account).toMatchObject({
         address: safe,
         chain: Chain.GNO,
-        prefixedAddress: formatPrefixedAddress(Chain.GNO, safe),
+        prefixedAddress: prefixAddress(Chain.GNO, safe),
       })
     })
 
@@ -107,7 +107,7 @@ describe('updateAvatar', () => {
       expect(updatedWaypoint.account).toMatchObject({
         address: safe,
         chain: Chain.GNO,
-        prefixedAddress: formatPrefixedAddress(Chain.GNO, safe),
+        prefixedAddress: prefixAddress(Chain.GNO, safe),
       })
     })
   })
@@ -131,7 +131,7 @@ describe('updateAvatar', () => {
       const [updatedWaypoint] = getWaypoints(updatedRoute)
 
       expect(updatedWaypoint.connection).toEqual({
-        from: formatPrefixedAddress(undefined, pilotAddress),
+        from: prefixAddress(undefined, pilotAddress),
         type: ConnectionType.OWNS,
       })
     })
@@ -154,7 +154,7 @@ describe('updateAvatar', () => {
       const [, updatedWaypoint] = getWaypoints(updatedRoute)
 
       expect(updatedWaypoint.connection).toEqual({
-        from: formatPrefixedAddress(Chain.GNO, moduleAddress),
+        from: prefixAddress(Chain.GNO, moduleAddress),
         type: ConnectionType.IS_ENABLED,
       })
     })

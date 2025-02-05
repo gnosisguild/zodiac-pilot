@@ -1,5 +1,5 @@
 import type { HexAddress } from '@zodiac/schema'
-import { AccountType, formatPrefixedAddress, type Account } from 'ser-kit'
+import { AccountType, prefixAddress, type Account } from 'ser-kit'
 
 type EOA = Extract<Account, { type: AccountType.EOA }>
 
@@ -12,5 +12,5 @@ export const createEoaAccount = ({
 }: CreateEoaAccountOptions): EOA => ({
   type: AccountType.EOA,
   address,
-  prefixedAddress: formatPrefixedAddress(undefined, address),
+  prefixedAddress: prefixAddress(undefined, address),
 })

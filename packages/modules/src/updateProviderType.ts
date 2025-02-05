@@ -7,7 +7,7 @@ import {
 import {
   AccountType,
   ConnectionType,
-  formatPrefixedAddress,
+  prefixAddress,
   type PrefixedAddress,
 } from 'ser-kit'
 import { createEoaWaypoint } from './createEoaWaypoint'
@@ -26,7 +26,7 @@ export const updateProviderType = (
 
   switch (providerType) {
     case ProviderType.InjectedWallet: {
-      const initiator = formatPrefixedAddress(undefined, address)
+      const initiator = prefixAddress(undefined, address)
 
       return {
         ...route,
@@ -44,7 +44,7 @@ export const updateProviderType = (
     case ProviderType.WalletConnect: {
       const chainId = getChainId(route.avatar)
 
-      const initiator = formatPrefixedAddress(chainId, address)
+      const initiator = prefixAddress(chainId, address)
 
       return {
         ...route,

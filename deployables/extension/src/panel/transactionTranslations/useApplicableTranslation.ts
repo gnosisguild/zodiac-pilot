@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   type ChainId,
   type MetaTransactionRequest,
-  parsePrefixedAddress,
+  unprefixAddress,
 } from 'ser-kit'
 import {
   type ApplicableTranslation,
@@ -24,7 +24,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 
   const dispatch = useDispatch()
   const { avatar } = useExecutionRoute()
-  const avatarAddress = parsePrefixedAddress(avatar)
+  const avatarAddress = unprefixAddress(avatar)
 
   const [translation, setTranslation] = useState<
     ApplicableTranslation | undefined

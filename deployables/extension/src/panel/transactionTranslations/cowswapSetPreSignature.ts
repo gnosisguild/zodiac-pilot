@@ -4,7 +4,7 @@ import { id, Interface } from 'ethers'
 import { Waypoints } from 'lucide-react'
 import type { TransactionTranslation } from './types'
 
-const GP_V2_SETTLEMENT_ADDRESS = '0x9008D19f58AAbD9eD0D60971565AA8510560ab41'
+const GP_V2_SETTLEMENT_ADDRESS = '0x9008d19f58aabD9ed0d60971565aa8510560ab41'
 const GPv2SettlementInterface = new Interface([
   {
     type: 'function',
@@ -20,7 +20,7 @@ const GPv2SettlementInterface = new Interface([
 ])
 
 const COWSWAP_ORDER_SIGNER_ADDRESS =
-  '0x23dA9AdE38E4477b23770DeD512fD37b12381FAB'
+  '0x23da9ade38e4477b23770ded512fd37b12381fab'
 
 const CowswapOrderSignerInterface = new Interface([
   'function signOrder(tuple(address sellToken, address buyToken, address receiver, uint256 sellAmount, uint256 buyAmount, uint32 validTo, bytes32 appData, uint256 feeAmount, bytes32 kind, bool partiallyFillable, bytes32 sellTokenBalance, bytes32 buyTokenBalance) order, uint32 validDuration, uint256 feeAmountBP)',

@@ -1,5 +1,5 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
-import { formatPrefixedAddress, splitPrefixedAddress } from 'ser-kit'
+import { prefixAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createBlankRoute } from './createBlankRoute'
 import { getStartingWaypoint } from './getStartingWaypoint'
@@ -40,7 +40,7 @@ describe('createBlankRoute', () => {
       expect(startingPoint.account).toHaveProperty('address', ZERO_ADDRESS)
       expect(startingPoint.account).toHaveProperty(
         'prefixedAddress',
-        formatPrefixedAddress(undefined, ZERO_ADDRESS),
+        prefixAddress(undefined, ZERO_ADDRESS),
       )
     })
   })

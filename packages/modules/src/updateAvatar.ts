@@ -5,7 +5,7 @@ import {
   type HexAddress,
   type Waypoint,
 } from '@zodiac/schema'
-import { AccountType, formatPrefixedAddress } from 'ser-kit'
+import { AccountType, prefixAddress } from 'ser-kit'
 import { createEnabledConnection } from './createEnabledConnection'
 import { createOwnsConnection } from './createOwnsConnection'
 import { createSafeWaypoint } from './createSafeWaypoint'
@@ -36,7 +36,7 @@ const updateEndWaypoint = (
     (waypoint) => waypoint.account.type === AccountType.ROLES,
   )
 
-  const pilotAddress = formatPrefixedAddress(
+  const pilotAddress = prefixAddress(
     startingPoint.account.type === AccountType.EOA ? undefined : chainId,
     startingPoint.account.address,
   )
@@ -80,7 +80,7 @@ const updateAvatarProperty = (
 
   return {
     ...route,
-    avatar: formatPrefixedAddress(chainId, safe),
+    avatar: prefixAddress(chainId, safe),
   }
 }
 

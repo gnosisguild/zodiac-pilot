@@ -1,10 +1,5 @@
 import type { HexAddress } from '@zodiac/schema'
-import {
-  AccountType,
-  formatPrefixedAddress,
-  type Account,
-  type ChainId,
-} from 'ser-kit'
+import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
 
 type Delay = Extract<Account, { type: AccountType.DELAY }>
 
@@ -19,6 +14,6 @@ export const createDelayAccount = ({
 }: CreateDelayAccountOptions): Delay => ({
   type: AccountType.DELAY,
   address,
-  prefixedAddress: formatPrefixedAddress(chainId, address),
+  prefixedAddress: prefixAddress(chainId, address),
   chain: chainId,
 })

@@ -15,8 +15,8 @@ import { useLoaderData } from 'react-router'
 import {
   execute,
   ExecutionActionType,
-  parsePrefixedAddress,
   planExecution,
+  unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
@@ -33,7 +33,7 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   const plan = await planExecution(metaTransactions, route)
   return {
     plan,
-    initiator: parsePrefixedAddress(route.initiator),
+    initiator: unprefixAddress(route.initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
   }
@@ -148,7 +148,7 @@ const SubmitTransaction = () => {
             url.searchParams.set('safe', avatar)
             url.searchParams.set(
               'id',
-              `multisig_${parsePrefixedAddress(avatar)}_${safeTxHash}`,
+              `multisig_${unprefixAddress(avatar)}_${safeTxHash}`,
             )
 
             successToast({

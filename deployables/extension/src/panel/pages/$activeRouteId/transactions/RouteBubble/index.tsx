@@ -12,7 +12,7 @@ import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import Stick from 'react-stick'
-import { parsePrefixedAddress } from 'ser-kit'
+import { unprefixAddress } from 'ser-kit'
 import { ConnectionStack } from '../../../ConnectionStack'
 
 export const RouteBubble = () => {
@@ -49,7 +49,7 @@ export const RouteBubble = () => {
     >
       <div className="flex items-center gap-2 overflow-hidden">
         <Blockies
-          avatarAddress={parsePrefixedAddress(route.avatar)}
+          avatarAddress={unprefixAddress(route.avatar)}
           moduleAddress={
             rolesWaypoint == null ? undefined : rolesWaypoint.account.address
           }
