@@ -11,5 +11,5 @@ window.addEventListener('click', (event) => {
     return
   }
 
-  window.postMessage({ type: CompanionAppMessageType.OPEN_PILOT })
+  window.postMessage({ type: CompanionAppMessageType.OPEN_PILOT }, '*')
 })

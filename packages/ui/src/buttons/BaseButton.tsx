@@ -62,7 +62,7 @@ export const BaseButton = ({
   >
     <span
       className={classNames(
-        'flex items-center justify-center gap-2 whitespace-nowrap',
+        'pointer-events-none flex items-center justify-center gap-2 whitespace-nowrap',
         busy && 'invisible',
       )}
     >
