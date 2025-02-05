@@ -19,7 +19,7 @@ export const SkeletonText = ({
       className="inline-flex h-3 animate-pulse items-center"
       style={{ width: `${width}%` }}
     >
-      <div className="h-2 w-full rounded-full bg-zinc-700" />
+      <div className="h-2 w-full rounded-full bg-zinc-300 dark:bg-zinc-700" />
     </div>
   )
 }
