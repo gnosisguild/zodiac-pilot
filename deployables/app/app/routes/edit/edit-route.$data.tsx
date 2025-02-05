@@ -3,7 +3,6 @@ import {
   ChainSelect,
   ConnectWallet,
   DebugJson,
-  Page,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -190,116 +189,110 @@ const EditRoute = ({
 
   return (
     <>
-      <Page>
-        <Page.Header>Route configuration</Page.Header>
+      <Form>
+        <TextInput label="Label" name="label" defaultValue={label} />
 
-        <Page.Main>
-          <Form>
-            <TextInput label="Label" name="label" defaultValue={label} />
+        <WalletProvider>
+          <ConnectWallet
+            chainId={chainId}
+            pilotAddress={optimisticRoute.pilotAddress}
+            onConnect={({ address, providerType }) => {
+              submit(
+                formData({
+                  intent: Intent.ConnectWallet,
+                  address,
+                  providerType,
+                }),
+                { method: 'POST' },
+              )
+            }}
+            onDisconnect={() => {
+              submit(formData({ intent: Intent.DisconnectWallet }), {
+                method: 'POST',
+              })
+            }}
+          />
+        </WalletProvider>
 
-            <WalletProvider>
-              <ConnectWallet
-                chainId={chainId}
-                pilotAddress={optimisticRoute.pilotAddress}
-                onConnect={({ address, providerType }) => {
-                  submit(
-                    formData({
-                      intent: Intent.ConnectWallet,
-                      address,
-                      providerType,
-                    }),
-                    { method: 'POST' },
-                  )
-                }}
-                onDisconnect={() => {
-                  submit(formData({ intent: Intent.DisconnectWallet }), {
-                    method: 'POST',
-                  })
-                }}
-              />
-            </WalletProvider>
+        <ChainSelect
+          value={chainId}
+          onChange={(chainId) => {
+            submit(formData({ intent: Intent.UpdateChain, chainId }), {
+              method: 'POST',
+            })
+          }}
+        />
 
-            <ChainSelect
-              value={chainId}
-              onChange={(chainId) => {
-                submit(formData({ intent: Intent.UpdateChain, chainId }), {
-                  method: 'POST',
-                })
-              }}
-            />
+        <AvatarInput
+          value={avatar}
+          waypoints={waypoints}
+          onChange={(avatar) => {
+            if (avatar != null) {
+              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
+                method: 'POST',
+              })
+            } else {
+              submit(formData({ intent: Intent.RemoveAvatar }), {
+                method: 'POST',
+              })
+            }
+          }}
+        />
 
-            <AvatarInput
-              value={avatar}
-              waypoints={waypoints}
-              onChange={(avatar) => {
-                if (avatar != null) {
-                  submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
-                    method: 'POST',
-                  })
-                } else {
-                  submit(formData({ intent: Intent.RemoveAvatar }), {
-                    method: 'POST',
-                  })
-                }
-              }}
-            />
+        <ZodiacMod
+          avatar={avatar}
+          waypoints={waypoints}
+          onSelect={(module) => {
+            submit(
+              formData({
+                intent: Intent.UpdateModule,
+                module: jsonStringify(module),
+              }),
+              {
+                method: 'POST',
+              },
+            )
+          }}
+        />
 
-            <ZodiacMod
-              avatar={avatar}
-              waypoints={waypoints}
-              onSelect={(module) => {
-                submit(
-                  formData({
-                    intent: Intent.UpdateModule,
-                    module: jsonStringify(module),
-                  }),
-                  {
-                    method: 'POST',
-                  },
-                )
-              }}
-            />
+        <Form.Actions>
+          <div className="text-balance text-xs opacity-75">
+            The Pilot extension must be open to save.
+          </div>
 
-            <Form.Actions>
-              <div className="text-balance text-xs opacity-75">
-                The Pilot extension must be open to save.
-              </div>
+          <div className="flex gap-2">
+            <SecondaryButton
+              submit
+              intent={Intent.DryRun}
+              busy={useIsPending(Intent.DryRun)}
+            >
+              Test route
+            </SecondaryButton>
 
-              <div className="flex gap-2">
-                <SecondaryButton
-                  submit
-                  intent={Intent.DryRun}
-                  busy={useIsPending(Intent.DryRun)}
-                >
-                  Test route
-                </SecondaryButton>
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              busy={useIsPending(Intent.Save)}
+            >
+              Save & Close
+            </PrimaryButton>
+          </div>
+        </Form.Actions>
 
-                <PrimaryButton
-                  submit
-                  intent={Intent.Save}
-                  busy={useIsPending(Intent.Save)}
-                >
-                  Save & Close
-                </PrimaryButton>
-              </div>
-            </Form.Actions>
-
-            {actionData != null && (
-              <div className="mt-8">
-                {actionData.error === true && (
-                  <Error title="Dry run failed">{actionData.message}</Error>
-                )}
-
-                {actionData.error === false && (
-                  <Success title="Dry run succeeded">
-                    Your route seems to be ready for execution!
-                  </Success>
-                )}
-              </div>
+        {actionData != null && (
+          <div className="mt-8">
+            {actionData.error === true && (
+              <Error title="Dry run failed">{actionData.message}</Error>
             )}
-          </Form>
-        </Page.Main>
-      </Page>
+
+            {actionData.error === false && (
+              <Success title="Dry run succeeded">
+                Your route seems to be ready for execution!
+              </Success>
+            )}
+          </div>
+        )}
+      </Form>
 
       {isDev && <DebugRouteData />}
     </>

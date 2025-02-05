@@ -21,7 +21,13 @@ export default [
     ]),
 
     route('/new-route', 'routes/edit/new-route.ts'),
-    route('/edit-route/:data', 'routes/edit/edit-route.$data.tsx'),
+
+    ...prefix('/edit-route', [
+      layout('routes/edit/layout.tsx', [
+        index('routes/edit/index.tsx'),
+        route(':data', 'routes/edit/edit-route.$data.tsx'),
+      ]),
+    ]),
   ]),
 
   route(
