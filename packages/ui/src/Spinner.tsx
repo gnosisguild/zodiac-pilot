@@ -1,3 +1,3 @@
 import { LoaderCircle } from 'lucide-react'
 
-export const Spinner = () => <LoaderCircle size={16} className="animate-spin" />
+export const Spinner = () => <LoaderCircle size={18} className="animate-spin" />
