@@ -1,13 +1,13 @@
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Landmark, Plus, Send, type LucideIcon } from 'lucide-react'
+import { Landmark, Plus, SendHorizonal, type LucideIcon } from 'lucide-react'
 import type { ComponentProps, PropsWithChildren } from 'react'
 import { NavLink, Outlet } from 'react-router'
 
 const Sidebar = () => {
   return (
     <div className="flex flex-1">
-      <div className="flex w-64 flex-col border-r border-zinc-800/80 bg-zinc-950">
+      <div className="flex w-64 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800/80 dark:bg-zinc-950">
         <div className="my-12 flex items-center justify-center gap-2">
           <ZodiacOsPlain className="h-6" />
           <PilotType className="h-7 dark:invert" />
@@ -15,7 +15,7 @@ const Sidebar = () => {
 
         <nav className="flex flex-col gap-8">
           <SidebarSection title="Tokens">
-            <SidebarLink to="/tokens/send" icon={Send}>
+            <SidebarLink to="/tokens/send" icon={SendHorizonal}>
               Send tokens
             </SidebarLink>
 
@@ -61,14 +61,15 @@ type SidebarLinkProps = Pick<
 const SidebarLink = ({ children, to, icon: Icon }: SidebarLinkProps) => (
   <NavLink
     to={to}
-    className="flex items-center gap-4 px-6 py-2 hover:bg-zinc-800/80"
+    className="flex items-center gap-4 px-6 py-2 hover:bg-zinc-300/60 dark:hover:bg-zinc-800/80"
   >
     {({ isActive }) => (
       <>
         <div
           className={classNames(
             'flex items-center justify-center rounded-full p-1.5',
-            isActive && 'bg-teal-300 text-teal-900',
+            isActive &&
+              'bg-indigo-600 text-indigo-50 dark:bg-teal-300 dark:text-teal-900',
           )}
         >
           <Icon
