@@ -36,6 +36,7 @@ const Start = () => {
         <Form context={{ pilotAddress }}>
           <WalletProvider>
             <ConnectWallet
+              chainId={chainId}
               pilotAddress={pilotAddress}
               onConnect={({ address }) => setPilotAddress(address)}
               onDisconnect={() => setPilotAddress(null)}
