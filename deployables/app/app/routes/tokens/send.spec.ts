@@ -1,11 +1,15 @@
-import { getTokenBalances } from '@/balances-server'
+import {
+  getDeBankChainId,
+  getTokenBalances,
+  isValidToken,
+} from '@/balances-server'
 import {
   connectWallet,
   createMockTokenBalance,
   disconnectWallet,
   render,
 } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
 import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
@@ -48,14 +52,23 @@ vi.mock('@/balances-server', async (importOriginal) => {
   return {
     ...module,
 
+    getDeBankChainId: vi.fn(),
     getTokenBalances: vi.fn(),
+    isValidToken: vi.fn(),
   }
 })
 
+const mockGetDeBankChainId = vi.mocked(getDeBankChainId)
+const mockIsValidToken = vi.mocked(isValidToken)
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
 describe('Send Tokens', { skip: process.env.CI != null }, () => {
-  beforeEach(() => connectWallet())
+  beforeEach(async () => {
+    await connectWallet()
+
+    mockGetDeBankChainId.mockResolvedValue('eth')
+    mockIsValidToken.mockResolvedValue(true)
+  })
   afterEach(() => disconnectWallet())
 
   it('is possible to select the token you want to send', async () => {
@@ -194,8 +207,10 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
       }),
     ])
 
-    await render(`/tokens/send/${address}`)
+    await render(`/tokens/send/eth/${address}`)
 
-    expect(await screen.findByText('Test token')).toBeInTheDocument()
+    await waitFor(async () => {
+      expect(await screen.findByText('Test token')).toBeInTheDocument()
+    })
   })
 })

@@ -46,6 +46,7 @@ vi.mock('@/balances-server', async (importOriginal) => {
   return {
     ...module,
 
+    getDeBankChainId: vi.fn().mockResolvedValue('eth'),
     getTokenBalances: vi.fn(),
   }
 })
@@ -67,7 +68,7 @@ describe('Token balances', () => {
 
     expect(await screen.findByRole('link', { name: 'Send' })).toHaveAttribute(
       'href',
-      `/tokens/send/${address}`,
+      `/tokens/send/eth/${address}`,
     )
   })
 })
