@@ -1,7 +1,7 @@
 import type { ChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { formatUnits } from 'viem'
-import { tokenListSchema, type TokenBalance } from '../types'
+import { tokenBalancesSchema, type TokenBalance } from '../types'
 import { api } from './api'
 import { getDeBankChainId } from './getDeBankChainId'
 
@@ -10,7 +10,7 @@ export const getTokenBalances = async (
   address: HexAddress,
 ): Promise<TokenBalance[]> => {
   const rawData = await api('/user/token_list', {
-    schema: tokenListSchema,
+    schema: tokenBalancesSchema,
     data: {
       id: address,
       chain_id: await getDeBankChainId(chainId),
@@ -28,6 +28,7 @@ export const getTokenBalances = async (
       usdValue: data.amount * data.price,
       usdPrice: data.price,
       decimals: data.decimals || 18,
+      chain: data.chain,
     }))
     .toSorted((a, b) => b.usdValue - a.usdValue)
 }

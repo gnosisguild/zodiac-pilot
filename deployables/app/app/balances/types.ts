@@ -12,13 +12,16 @@ const tokenSchema = z.object({
   is_core: z.boolean(),
   price: z.number(),
   time_at: z.number().int().nullable(),
+})
+
+export const tokensSchema = tokenSchema.array()
+
+const tokenBalanceSchema = tokenSchema.extend({
   amount: z.number(),
   raw_amount: z.number().int(),
 })
 
-export const tokenListSchema = tokenSchema.array()
-
-export type ApiToken = z.infer<typeof tokenSchema>
+export const tokenBalancesSchema = tokenBalanceSchema.array()
 
 export type TokenBalance = {
   contractId: string
@@ -29,6 +32,7 @@ export type TokenBalance = {
   decimals: number
   usdValue: number
   usdPrice: number
+  chain: string
 }
 
 const chainSchema = z.object({

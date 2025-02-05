@@ -1,10 +1,9 @@
 import { invariantResponse } from '@epic-web/invariant'
 import type { ChainId } from 'ser-kit'
-import { chainListSchema } from '../types'
-import { api } from './api'
+import { getAvailableChains } from './getAvailableChains'
 
 export const getDeBankChainId = async (chainId: ChainId) => {
-  const chains = await api('/chain/list', { schema: chainListSchema })
+  const chains = await getAvailableChains()
 
   const chain = chains.find((chain) => chain.community_id === chainId)
 
