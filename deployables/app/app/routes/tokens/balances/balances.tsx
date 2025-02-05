@@ -8,7 +8,7 @@ import {
   TokenValue,
   UsdValue,
 } from '@zodiac/ui'
-import { Upload } from 'lucide-react'
+import { ArrowUpFromLine } from 'lucide-react'
 import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
@@ -48,7 +48,7 @@ const Balances = () => {
                     action={
                       <GhostLinkButton
                         iconOnly
-                        icon={Upload}
+                        icon={ArrowUpFromLine}
                         size="tiny"
                         to={`/tokens/send/${contractId}`}
                       >

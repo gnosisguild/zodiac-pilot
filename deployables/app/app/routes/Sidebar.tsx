@@ -1,10 +1,10 @@
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import classNames from 'classnames'
 import {
+  ArrowUpFromLine,
   Edit,
   Landmark,
   Plus,
-  SendHorizontal,
   type LucideIcon,
 } from 'lucide-react'
 import type { ComponentProps, PropsWithChildren } from 'react'
@@ -21,7 +21,7 @@ const Sidebar = () => {
 
         <nav className="flex flex-col gap-8">
           <SidebarSection title="Tokens">
-            <SidebarLink to="/tokens/send" icon={SendHorizontal}>
+            <SidebarLink to="/tokens/send" icon={ArrowUpFromLine}>
               Send tokens
             </SidebarLink>
 
