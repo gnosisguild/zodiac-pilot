@@ -2,7 +2,6 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
-  DebugJson,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -48,6 +47,7 @@ import {
   Form,
   PrimaryButton,
   SecondaryButton,
+  SecondaryLinkButton,
   Success,
   TextInput,
 } from '@zodiac/ui'
@@ -261,6 +261,8 @@ const EditRoute = ({
           </div>
 
           <div className="flex gap-2">
+            {isDev && <DebugRouteData />}
+
             <SecondaryButton
               submit
               intent={Intent.DryRun}
@@ -293,8 +295,6 @@ const EditRoute = ({
           </div>
         )}
       </Form>
-
-      {isDev && <DebugRouteData />}
     </>
   )
 }
@@ -379,8 +379,8 @@ const DebugRouteData = () => {
   const { data } = useParams()
 
   return (
-    <div className="max-h-1/3 flex overflow-hidden">
-      <DebugJson data={data} />
-    </div>
+    <SecondaryLinkButton openInNewWindow to={`/dev/decode/${data}`}>
+      Debug route data
+    </SecondaryLinkButton>
   )
 }
