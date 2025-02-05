@@ -103,7 +103,9 @@ export const TokenValueInput = ({
               isSearchable={false}
               isDisabled={state === 'loading'}
               label="Available tokens"
-              placeholder="Select token"
+              placeholder={
+                state === 'loading' ? 'Loading tokens...' : 'Select token'
+              }
               value={
                 selectedToken == null
                   ? undefined
