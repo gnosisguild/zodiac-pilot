@@ -1,3 +1,3 @@
-export default function Home() {
-  return null
-}
+import { redirect } from 'react-router'
+
+export const loader = () => redirect('/connect')

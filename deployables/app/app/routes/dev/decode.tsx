@@ -1,5 +1,5 @@
+import { DebugJson } from '@/components'
 import { Error as ErrorAlert } from '@zodiac/ui'
-import { DebugJson } from '../DebugJson'
 import type { Route } from './+types/decode'
 
 const Decode = ({ params: { data } }: Route.ComponentProps) => {
