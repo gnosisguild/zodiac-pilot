@@ -11,7 +11,7 @@ const tokenSchema = z.object({
   logo_url: z.string().nullable(),
   is_core: z.boolean(),
   price: z.number(),
-  time_at: z.number().int(),
+  time_at: z.number().int().nullable(),
   amount: z.number(),
   raw_amount: z.number().int(),
 })
