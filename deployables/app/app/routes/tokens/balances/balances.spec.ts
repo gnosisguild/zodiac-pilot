@@ -63,7 +63,7 @@ describe('Token balances', () => {
   })
   afterEach(() => disconnectWallet())
 
-  it.only('is possible to send funds of a token', async () => {
+  it('is possible to send funds of a token', async () => {
     const address = randomAddress()
 
     mockGetTokenBalances.mockResolvedValue([
