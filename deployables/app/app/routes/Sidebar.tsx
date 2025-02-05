@@ -12,7 +12,7 @@ import { NavLink, Outlet } from 'react-router'
 
 const Sidebar = () => {
   return (
-    <div className="flex flex-1">
+    <div className="flex h-full flex-1">
       <div className="flex w-64 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800/80 dark:bg-zinc-950">
         <div className="my-12 flex items-center justify-center gap-2">
           <ZodiacOsPlain className="h-6" />

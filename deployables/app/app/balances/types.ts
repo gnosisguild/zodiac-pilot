@@ -30,3 +30,15 @@ export type TokenBalance = {
   usdValue: number
   usdPrice: number
 }
+
+const chainSchema = z.object({
+  id: z.string(),
+  community_id: z.number().int(),
+  name: z.string(),
+  logo_url: z.string().nullable(),
+  native_token_id: z.string(),
+  wrapped_token_id: z.string(),
+  is_support_pre_exec: z.boolean(),
+})
+
+export const chainListSchema = chainSchema.array()
