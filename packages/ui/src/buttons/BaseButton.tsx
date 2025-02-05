@@ -66,7 +66,9 @@ export const BaseButton = ({
         busy && 'invisible',
       )}
     >
-      {Icon && <Icon size={size === 'base' ? 20 : 16} />}
+      {Icon && (
+        <Icon size={size === 'base' ? 20 : 16} className="flex-shrink-0" />
+      )}
 
       {iconOnly ? <span className="sr-only">{children}</span> : children}
     </span>
@@ -127,7 +129,9 @@ export const BaseLinkButton = ({
         className,
       )}
     >
-      {Icon && <Icon size={size === 'base' ? 20 : 16} />}
+      {Icon && (
+        <Icon size={size === 'base' ? 20 : 16} className="flex-shrink-0" />
+      )}
 
       {iconOnly ? <span className="sr-only">{children}</span> : children}
     </Link>

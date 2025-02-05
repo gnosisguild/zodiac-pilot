@@ -15,7 +15,7 @@ import {
   Info,
   Page,
 } from '@zodiac/ui'
-import { BadgeCent, Landmark, RefreshCcw } from 'lucide-react'
+import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { parsePrefixedAddress } from 'ser-kit'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -97,7 +97,7 @@ export const Transactions = () => {
           fluid
           openInNewWindow
           size="small"
-          icon={BadgeCent}
+          icon={ArrowUpFromLine}
           to={`${useCompanionAppUrl()}/tokens/send`}
         >
           Send tokens

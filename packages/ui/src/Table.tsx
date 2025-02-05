@@ -23,15 +23,18 @@ Table.Tr = Tr
 
 type Align = 'left' | 'center' | 'right'
 
-type ThProps = PropsWithChildren<{ align?: Align }>
+type ThProps = PropsWithChildren<{ align?: Align; className?: string }>
 
-const Th = ({ children, align = 'left' }: ThProps) => (
+const Th = ({ children, align = 'left', className }: ThProps) => (
   <th
     className={classNames(
       'border-b-2 border-zinc-300 px-2 py-2 text-sm uppercase text-zinc-600 dark:border-zinc-700 dark:text-white',
+
       align === 'left' && 'text-left',
       align === 'right' && 'text-right',
       align === 'center' && 'text-center',
+
+      className,
     )}
   >
     {children}

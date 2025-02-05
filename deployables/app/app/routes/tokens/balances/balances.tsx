@@ -8,7 +8,7 @@ import {
   TokenValue,
   UsdValue,
 } from '@zodiac/ui'
-import { Upload } from 'lucide-react'
+import { ArrowUpFromLine } from 'lucide-react'
 import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
@@ -28,11 +28,16 @@ const Balances = () => {
       <Table>
         <Table.THead>
           <Table.Tr>
-            <Table.Th>
+            <Table.Th className="w-1/2">
               <span className="pl-6">Token</span>
             </Table.Th>
-            <Table.Th align="right">Balance</Table.Th>
-            <Table.Th align="right">USD</Table.Th>
+            <Table.Th className="w-1/5" align="right">
+              Balance
+            </Table.Th>
+            <Table.Th className="w-1/5" align="right">
+              USD
+            </Table.Th>
+            <Table.Th className="w-1/10" />
           </Table.Tr>
         </Table.THead>
         <Table.TBody>
@@ -43,24 +48,21 @@ const Balances = () => {
                   <Token logo={logoUrl}>{name}</Token>
                 </Table.Td>
                 <Table.Td align="right">
-                  <TokenValue
-                    symbol={symbol}
-                    action={
-                      <GhostLinkButton
-                        iconOnly
-                        icon={Upload}
-                        size="tiny"
-                        to={`/tokens/send/${contractId}`}
-                      >
-                        Send
-                      </GhostLinkButton>
-                    }
-                  >
-                    {amount}
-                  </TokenValue>
+                  <TokenValue symbol={symbol}>{amount}</TokenValue>
                 </Table.Td>
                 <Table.Td align="right">
                   <UsdValue>{usdValue}</UsdValue>
+                </Table.Td>
+                <Table.Td align="right">
+                  <div className="flex justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                    <GhostLinkButton
+                      icon={ArrowUpFromLine}
+                      size="tiny"
+                      to={`/tokens/send/${contractId}`}
+                    >
+                      Send
+                    </GhostLinkButton>
+                  </div>
                 </Table.Td>
               </Table.Tr>
             ),
@@ -79,6 +81,7 @@ const Balances = () => {
                 <Table.Td align="right">
                   <SkeletonText />
                 </Table.Td>
+                <Table.Td />
               </Table.Tr>
             ))}
         </Table.TBody>
