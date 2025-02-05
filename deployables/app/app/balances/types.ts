@@ -35,12 +35,8 @@ export type TokenBalance = {
   chain: string
 }
 
-export const chainIdSchema = z.string().brand('DeBankChain')
-
-export type DeBankChain = z.infer<typeof chainIdSchema>
-
 const chainSchema = z.object({
-  id: chainIdSchema,
+  id: z.string(),
   community_id: z.number().int(),
   name: z.string(),
   logo_url: z.string().nullable(),

@@ -23,7 +23,7 @@ export const loader = async ({
 
   const chain = await getChain(verifyChainId(parseInt(chainId)))
   const mainNetBalances = await getTokenBalances(
-    chain.id,
+    chain,
     verifyHexAddress(address),
   )
 

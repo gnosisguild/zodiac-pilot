@@ -1,4 +1,3 @@
-export { chainIdSchema } from '../types'
 export type { Chain, TokenBalance } from '../types'
 export { getAvailableChains } from './getAvailableChains'
 export { getChain } from './getChain'
