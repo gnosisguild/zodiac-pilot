@@ -11,6 +11,7 @@ export {
   executionRouteSchema,
   isHexAddress,
   verifyHexAddress,
+  verifyPrefixedAddress,
 } from './routeSchema'
 export type {
   Connection,

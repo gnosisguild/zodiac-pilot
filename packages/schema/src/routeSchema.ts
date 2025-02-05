@@ -44,6 +44,9 @@ const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   return chains.some(({ shortName }) => prefix === shortName)
 })
 
+export const verifyPrefixedAddress = (value: string) =>
+  prefixedAddressSchema.parse(value)
+
 const safeSchema = z.object({
   type: z.literal(AccountType.SAFE),
   address: addressSchema,
