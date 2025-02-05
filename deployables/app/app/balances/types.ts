@@ -45,4 +45,6 @@ const chainSchema = z.object({
   is_support_pre_exec: z.boolean(),
 })
 
+export type Chain = z.infer<typeof chainSchema>
+
 export const chainListSchema = chainSchema.array()

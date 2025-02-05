@@ -1,8 +1,8 @@
 import { invariantResponse } from '@epic-web/invariant'
-import type { ChainId } from 'ser-kit'
+import type { ChainId } from '@zodiac/chains'
 import { getAvailableChains } from './getAvailableChains'
 
-export const getDeBankChainId = async (chainId: ChainId) => {
+export const getChain = async (chainId: ChainId) => {
   const chains = await getAvailableChains()
 
   const chain = chains.find((chain) => chain.community_id === chainId)
@@ -12,5 +12,5 @@ export const getDeBankChainId = async (chainId: ChainId) => {
     `Could not find a chain on DeBank with community_id "${chainId}"`,
   )
 
-  return chain.id
+  return chain
 }

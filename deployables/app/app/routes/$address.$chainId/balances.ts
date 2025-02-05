@@ -1,5 +1,5 @@
 import {
-  getDeBankChainId,
+  getChain,
   getTokenBalances,
   type TokenBalance,
 } from '@/balances-server'
@@ -21,9 +21,9 @@ export const loader = async ({
 }: Route.LoaderArgs): Promise<TokenBalance[]> => {
   const url = new URL(request.url)
 
-  const nativeChainId = await getDeBankChainId(verifyChainId(parseInt(chainId)))
+  const chain = await getChain(verifyChainId(parseInt(chainId)))
   const mainNetBalances = await getTokenBalances(
-    verifyChainId(parseInt(chainId)),
+    chain,
     verifyHexAddress(address),
   )
 
@@ -41,7 +41,7 @@ export const loader = async ({
         // @ts-expect-error the PublicClient type from viem is weird
         const forkBalance = await getForkBalance(client, {
           contractId: balance.contractId,
-          nativeChainId,
+          nativeChainId: chain.id,
           address: verifyHexAddress(address),
         })
 
