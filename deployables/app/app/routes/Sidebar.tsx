@@ -4,7 +4,7 @@ import {
   Edit,
   Landmark,
   Plus,
-  SendHorizonal,
+  SendHorizontal,
   type LucideIcon,
 } from 'lucide-react'
 import type { ComponentProps, PropsWithChildren } from 'react'
@@ -21,7 +21,7 @@ const Sidebar = () => {
 
         <nav className="flex flex-col gap-8">
           <SidebarSection title="Tokens">
-            <SidebarLink to="/tokens/send" icon={SendHorizonal}>
+            <SidebarLink to="/tokens/send" icon={SendHorizontal}>
               Send tokens
             </SidebarLink>
 
