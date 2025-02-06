@@ -1,4 +1,4 @@
-import { Navigation, PilotStatus } from '@/components'
+import { MinimumVersion, Navigation, PilotStatus } from '@/components'
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import { ArrowUpFromLine, Edit, Landmark, Plus } from 'lucide-react'
 import { Outlet } from 'react-router'
@@ -36,9 +36,11 @@ const Sidebar = () => {
           </Navigation>
         </div>
 
-        <div className="flex justify-center py-8">
-          <PilotStatus />
-        </div>
+        <MinimumVersion version="3.3.2">
+          <div className="flex justify-center py-8">
+            <PilotStatus />
+          </div>
+        </MinimumVersion>
       </div>
 
       <div className="flex flex-1 flex-col">
