@@ -1,0 +1,52 @@
+import {
+  CompanionAppMessageType,
+  PilotMessageType,
+  type CompanionAppMessage,
+  type Message,
+} from '@zodiac/messages'
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from 'react'
+
+export const ExtensionVersionContext = createContext<string | null>(null)
+
+export const ProvideExtensionVersion = ({ children }: PropsWithChildren) => (
+  <ExtensionVersionContext value={useGetVersionFromExtension()}>
+    {children}
+  </ExtensionVersionContext>
+)
+
+const useGetVersionFromExtension = () => {
+  const [version, setVersion] = useState<string | null>(null)
+
+  useEffect(() => {
+    const handleVersion = (event: MessageEvent<Message>) => {
+      if (event.data.type !== PilotMessageType.PROVIDE_VERSION) {
+        return
+      }
+
+      setVersion(event.data.version)
+    }
+
+    window.addEventListener('message', handleVersion)
+
+    window.postMessage(
+      {
+        type: CompanionAppMessageType.REQUEST_VERSION,
+      } satisfies CompanionAppMessage,
+      '*',
+    )
+
+    return () => {
+      window.removeEventListener('message', handleVersion)
+    }
+  }, [])
+
+  return version
+}
+
+export const useExtensionVersion = () => useContext(ExtensionVersionContext)
