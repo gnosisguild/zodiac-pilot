@@ -1,6 +1,10 @@
-import { isValidTab } from './isValidTab'
+import { isValidTab, type ValidityCheckOptions } from './isValidTab'
 
-export const sendMessageToTab = async (tabId: number, message: unknown) => {
+export const sendMessageToTab = async (
+  tabId: number,
+  message: unknown,
+  options?: ValidityCheckOptions,
+) => {
   const tab = await chrome.tabs.get(tabId)
   const { promise, resolve } = Promise.withResolvers()
 
@@ -8,7 +12,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
     message,
   })
 
-  if (!isValidTab(tab.url)) {
+  if (!isValidTab(tab.url, options)) {
     console.debug(`Tab URL "${tab.url}" is not valid.`)
 
     const handleActivate = async (activeInfo: chrome.tabs.TabActiveInfo) => {
@@ -32,7 +36,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
         return
       }
 
-      if (!isValidTab(changeInfo.url)) {
+      if (!isValidTab(changeInfo.url, options)) {
         return
       }
 

@@ -1,7 +1,27 @@
 import { getCompanionAppUrl } from '@zodiac/env'
 
-export const isValidTab = (url: string | undefined) =>
-  url != null && url !== '' && isValidProtocol(url) && isValidPage(url)
+export type ValidityCheckOptions = {
+  protocolCheckOnly?: boolean
+}
+
+export const isValidTab = (
+  url?: string,
+  { protocolCheckOnly = false }: ValidityCheckOptions = {},
+) => {
+  if (url == null || url === '') {
+    return false
+  }
+
+  if (!isValidProtocol(url)) {
+    return false
+  }
+
+  if (protocolCheckOnly) {
+    return true
+  }
+
+  return isValidPage(url)
+}
 
 const isValidProtocol = (url: string) =>
   ['chrome:', 'about:'].every((protocol) => !url.startsWith(protocol))
