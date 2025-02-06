@@ -6,6 +6,7 @@ export enum PilotMessageType {
   /** sent when the panel is closed */
   PILOT_DISCONNECT = 'PILOT_DISCONNECT',
   PONG = 'EXTENSION::PONG',
+  PROVIDE_VERSION = 'EXTENSION::PROVIDE_VERSION',
 }
 
 interface PilotConnect {
@@ -25,4 +26,14 @@ type Pong = {
   type: PilotMessageType.PONG
 }
 
-export type Message = PilotConnect | PilotDisconnect | PilotPanelOpened | Pong
+type ProvideVersion = {
+  type: PilotMessageType.PROVIDE_VERSION
+  version: string
+}
+
+export type Message =
+  | PilotConnect
+  | PilotDisconnect
+  | PilotPanelOpened
+  | Pong
+  | ProvideVersion

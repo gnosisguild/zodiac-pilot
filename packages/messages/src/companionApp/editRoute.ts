@@ -7,6 +7,7 @@ export enum CompanionAppMessageType {
   REQUEST_FORK_INFO = 'COMPANION::REQUEST_FORK_INFO',
   FORK_UPDATED = 'COMPANION::FORK_UPDATED',
   PING = 'COMPANION::PING',
+  REQUEST_VERSION = 'COMPANION::REQUEST_VERSION',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -35,6 +36,10 @@ type CompanionAppPingMessage = {
   type: CompanionAppMessageType.PING
 }
 
+type CompanionAppRequestVersionMessage = {
+  type: CompanionAppMessageType.REQUEST_VERSION
+}
+
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
@@ -42,3 +47,4 @@ export type CompanionAppMessage =
   | CompanionAppRequestForkInfoMessage
   | CompanionAppForkUpdateMessage
   | CompanionAppPingMessage
+  | CompanionAppRequestVersionMessage
