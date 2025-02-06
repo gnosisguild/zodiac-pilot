@@ -14,7 +14,8 @@ window.addEventListener(
       event.data.type !== CompanionAppMessageType.SAVE_ROUTE &&
       event.data.type !== CompanionAppMessageType.OPEN_PILOT &&
       event.data.type !== CompanionAppMessageType.SUBMIT_SUCCESS &&
-      event.data.type !== CompanionAppMessageType.REQUEST_FORK_INFO
+      event.data.type !== CompanionAppMessageType.REQUEST_FORK_INFO &&
+      event.data.type !== CompanionAppMessageType.PING
     ) {
       return
     }
@@ -38,9 +39,8 @@ chrome.runtime.onMessage.addListener(
         break
       }
 
-      case CompanionAppMessageType.FORK_UPDATED: {
-        console.debug('Received fork update. Relaying to injected script...')
-
+      case CompanionAppMessageType.FORK_UPDATED:
+      case PilotMessageType.PONG: {
         window.postMessage(message, '*')
 
         break
