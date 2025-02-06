@@ -36,6 +36,8 @@ chrome.runtime.onMessage.addListener(
           type: CompanionAppMessageType.REQUEST_FORK_INFO,
         })
 
+        window.postMessage(message, '*')
+
         break
       }
 
