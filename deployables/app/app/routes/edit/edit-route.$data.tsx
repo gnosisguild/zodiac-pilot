@@ -2,6 +2,7 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  useIsDev,
   WalletProvider,
   ZodiacMod,
 } from '@/components'
@@ -71,7 +72,6 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     chainId,
     avatar: route.avatar,
     waypoints: route.waypoints,
-    isDev: process.env.NODE_ENV === 'development',
   }
 }
 
@@ -174,11 +174,12 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints, isDev },
+  loaderData: { chainId, label, avatar, waypoints },
   actionData,
 }: Route.ComponentProps) => {
   const submit = useSubmit()
   const optimisticRoute = useOptimisticRoute()
+  const isDev = useIsDev()
 
   return (
     <>

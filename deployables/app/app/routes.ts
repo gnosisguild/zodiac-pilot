@@ -10,7 +10,7 @@ export default [
   index('routes/index.tsx'),
   route('/connect', 'routes/connect.tsx'),
 
-  layout('routes/Sidebar.tsx', [
+  layout('routes/layout.tsx', [
     route('/tokens', 'routes/tokens/index.tsx', [
       layout('routes/tokens/balances/layout.tsx', [
         route('balances', 'routes/tokens/balances/balances.tsx'),

@@ -1,4 +1,7 @@
-import { ProvideExtensionVersion } from '@/components'
+import {
+  ProvideDevelopmentContext,
+  ProvideExtensionVersion,
+} from '@/components'
 import { ToastContainer } from '@zodiac/ui'
 import {
   isRouteErrorResponse,
@@ -7,6 +10,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from 'react-router'
 import type { Route } from './+types/root'
 
@@ -20,7 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="flex h-full flex-col text-base text-zinc-900 dark:text-white">
-        <ProvideExtensionVersion>{children}</ProvideExtensionVersion>
+        {children}
         <ToastContainer />
         <ScrollRestoration />
         <Scripts />
@@ -29,8 +33,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
+export const loader = () => ({ isDev: process.env.NODE_ENV === 'development' })
+
 export default function App() {
-  return <Outlet />
+  const { isDev } = useLoaderData<typeof loader>()
+
+  return (
+    <ProvideDevelopmentContext isDev={isDev}>
+      <ProvideExtensionVersion>
+        <Outlet />
+      </ProvideExtensionVersion>
+    </ProvideDevelopmentContext>
+  )
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
