@@ -26,6 +26,7 @@ jobs:
         working-directory: ./deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
+          NODE_ENV: development
 
       - uses: reloc8/action-latest-release-version@1.0.0
         id: fetch-latest-release
