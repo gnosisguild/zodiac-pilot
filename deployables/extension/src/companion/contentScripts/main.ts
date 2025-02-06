@@ -10,19 +10,31 @@ import {
 window.addEventListener(
   'message',
   (event: MessageEvent<CompanionAppMessage>) => {
-    if (
-      event.data.type !== CompanionAppMessageType.SAVE_ROUTE &&
-      event.data.type !== CompanionAppMessageType.OPEN_PILOT &&
-      event.data.type !== CompanionAppMessageType.SUBMIT_SUCCESS &&
-      event.data.type !== CompanionAppMessageType.REQUEST_FORK_INFO &&
-      event.data.type !== CompanionAppMessageType.PING
-    ) {
-      return
-    }
+    switch (event.data.type) {
+      case CompanionAppMessageType.SAVE_ROUTE:
+      case CompanionAppMessageType.OPEN_PILOT:
+      case CompanionAppMessageType.SUBMIT_SUCCESS:
+      case CompanionAppMessageType.REQUEST_FORK_INFO:
+      case CompanionAppMessageType.PING: {
+        chrome.runtime.sendMessage(event.data, () => {
+          captureLastError()
+        })
 
-    chrome.runtime.sendMessage(event.data, () => {
-      captureLastError()
-    })
+        break
+      }
+
+      case CompanionAppMessageType.REQUEST_VERSION: {
+        const manifest = chrome.runtime.getManifest()
+
+        window.postMessage(
+          {
+            type: PilotMessageType.PROVIDE_VERSION,
+            version: manifest.version,
+          } satisfies Message,
+          '*',
+        )
+      }
+    }
   },
 )
 

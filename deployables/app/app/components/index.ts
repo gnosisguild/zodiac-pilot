@@ -3,6 +3,7 @@ import { lazy } from 'react'
 export { AvatarInput } from './AvatarInput'
 export { ChainSelect } from './ChainSelect'
 export { Page } from './Page'
+export * from './versionManagement'
 export * from './wallet'
 export { ZodiacMod } from './ZodiacMod'
 

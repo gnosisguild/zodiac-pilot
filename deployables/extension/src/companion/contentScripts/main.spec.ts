@@ -6,6 +6,7 @@ import {
   type CompanionAppMessage,
   type Message,
 } from '@zodiac/messages'
+import { createMockManifest } from '@zodiac/test-utils/chrome'
 import { randomUUID } from 'crypto'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -127,6 +128,35 @@ describe('Companion App Content Script', () => {
 
       expect(chrome.runtime.sendMessage).toHaveBeenNthCalledWith(2, {
         type: CompanionAppMessageType.REQUEST_FORK_INFO,
+      })
+    })
+  })
+
+  describe('Version info', () => {
+    it('provides the current version from the manifest', async () => {
+      await importModule()
+
+      const mockPostMessage = vi.spyOn(window, 'postMessage')
+
+      chromeMock.runtime.getManifest.mockReturnValue(
+        createMockManifest({ version: '1.2.3' }),
+      )
+
+      window.postMessage(
+        {
+          type: CompanionAppMessageType.REQUEST_VERSION,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
+
+      await waitFor(() => {
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: PilotMessageType.PROVIDE_VERSION,
+            version: '1.2.3',
+          } satisfies Message,
+          '*',
+        )
       })
     })
   })

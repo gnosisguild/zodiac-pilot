@@ -1,3 +1,4 @@
+import { ProvideExtensionVersion } from '@/components'
 import { ToastContainer } from '@zodiac/ui'
 import {
   isRouteErrorResponse,
@@ -19,7 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="flex h-full flex-col text-base text-zinc-900 dark:text-white">
-        {children}
+        <ProvideExtensionVersion>{children}</ProvideExtensionVersion>
         <ToastContainer />
         <ScrollRestoration />
         <Scripts />
