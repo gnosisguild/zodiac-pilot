@@ -6,6 +6,7 @@ export enum CompanionAppMessageType {
   SUBMIT_SUCCESS = 'COMPANION::SUBMIT_SUCCESS',
   REQUEST_FORK_INFO = 'COMPANION::REQUEST_FORK_INFO',
   FORK_UPDATED = 'COMPANION::FORK_UPDATED',
+  PING = 'COMPANION::PING',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -30,9 +31,14 @@ type CompanionAppForkUpdateMessage = {
   forkUrl: string | null
 }
 
+type CompanionAppPingMessage = {
+  type: CompanionAppMessageType.PING
+}
+
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
   | CompanionAppSubmitSuccessMessage
   | CompanionAppRequestForkInfoMessage
   | CompanionAppForkUpdateMessage
+  | CompanionAppPingMessage
