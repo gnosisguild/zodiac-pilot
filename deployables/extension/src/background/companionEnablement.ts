@@ -1,3 +1,4 @@
+import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
@@ -50,16 +51,42 @@ export const companionEnablement = (
 
           break
         }
-
-        case CompanionAppMessageType.PING: {
-          invariant(tab != null, 'Companion app message must come from a tab.')
-          invariant(tab.id != null, 'Tab needs an ID')
-
-          await sendMessageToTab(tab.id, {
-            type: PilotMessageType.PONG,
-          } satisfies Message)
-        }
       }
     },
   )
+
+  chrome.runtime.onConnect.addListener((port) => {
+    if (port.name !== COMPANION_APP_PORT) {
+      return
+    }
+
+    const handlePing = async (
+      message: CompanionAppMessage,
+      { tab }: chrome.runtime.MessageSender,
+    ) => {
+      if (message.type !== CompanionAppMessageType.PING) {
+        return
+      }
+
+      invariant(tab != null, 'Companion app message must come from a tab.')
+      invariant(tab.id != null, 'Tab needs an ID')
+
+      await sendMessageToTab(
+        tab.id,
+        {
+          type: PilotMessageType.PONG,
+        } satisfies Message,
+        // bypass some tab validity checks so that this
+        // message finds the companion app regardless of what
+        // page the user is currently on
+        { protocolCheckOnly: true },
+      )
+    }
+
+    chrome.runtime.onMessage.addListener(handlePing)
+
+    port.onDisconnect.addListener(() => {
+      chrome.runtime.onMessage.removeListener(handlePing)
+    })
+  })
 }
