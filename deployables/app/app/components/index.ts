@@ -2,6 +2,7 @@ import { lazy } from 'react'
 
 export { AvatarInput } from './AvatarInput'
 export { ChainSelect } from './ChainSelect'
+export * from './navigation'
 export { Page } from './Page'
 export * from './versionManagement'
 export * from './wallet'

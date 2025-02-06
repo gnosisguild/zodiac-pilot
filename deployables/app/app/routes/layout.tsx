@@ -1,0 +1,45 @@
+import { Navigation } from '@/components'
+import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
+import { ArrowUpFromLine, Edit, Landmark, Plus } from 'lucide-react'
+import { Outlet } from 'react-router'
+
+const Sidebar = () => {
+  return (
+    <div className="flex h-full flex-1">
+      <div className="flex w-64 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800/80 dark:bg-zinc-950">
+        <div className="my-12 flex items-center justify-center gap-2">
+          <ZodiacOsPlain className="h-6" />
+          <PilotType className="h-7 dark:invert" />
+        </div>
+
+        <Navigation>
+          <Navigation.Section title="Tokens">
+            <Navigation.Link to="/tokens/send" icon={ArrowUpFromLine}>
+              Send tokens
+            </Navigation.Link>
+
+            <Navigation.Link to="/tokens/balances" icon={Landmark}>
+              Balances
+            </Navigation.Link>
+          </Navigation.Section>
+
+          <Navigation.Section title="Routes">
+            <Navigation.Link to="/new-route" icon={Plus}>
+              Create new route
+            </Navigation.Link>
+
+            <Navigation.Link to="/edit-route" icon={Edit}>
+              Edit a route
+            </Navigation.Link>
+          </Navigation.Section>
+        </Navigation>
+      </div>
+
+      <div className="flex flex-1 flex-col">
+        <Outlet />
+      </div>
+    </div>
+  )
+}
+
+export default Sidebar
