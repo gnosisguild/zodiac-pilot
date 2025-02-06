@@ -1,5 +1,10 @@
 import { Navigation } from '@/components'
-import { PilotMessageType, type Message } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  PilotMessageType,
+  type CompanionAppMessage,
+  type Message,
+} from '@zodiac/messages'
 import { GhostButton, PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import {
   ArrowUpFromLine,
@@ -68,7 +73,10 @@ const PilotStatus = () => {
         return
       }
 
-      if (event.data.type !== PilotMessageType.PILOT_CONNECT) {
+      if (
+        event.data.type !== PilotMessageType.PILOT_CONNECT &&
+        event.data.type !== PilotMessageType.PONG
+      ) {
         return
       }
 
@@ -81,6 +89,22 @@ const PilotStatus = () => {
       window.removeEventListener('message', handleMessage)
     }
   }, [])
+
+  useEffect(() => {
+    if (connected) {
+      return
+    }
+
+    const interval = setInterval(() => {
+      window.postMessage({
+        type: CompanionAppMessageType.PING,
+      } satisfies CompanionAppMessage)
+    }, 500)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [connected])
 
   if (connected) {
     return (
