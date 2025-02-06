@@ -15,7 +15,7 @@ export const useCompanionAppPort = () => {
       return
     }
 
-    if (!isValidTab(activeTab.url, { protocolOnly: true })) {
+    if (!isValidTab(activeTab.url, { protocolCheckOnly: true })) {
       setPort(null)
 
       return
