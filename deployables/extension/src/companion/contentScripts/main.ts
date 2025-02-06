@@ -40,7 +40,8 @@ chrome.runtime.onMessage.addListener(
       }
 
       case CompanionAppMessageType.FORK_UPDATED:
-      case PilotMessageType.PONG: {
+      case PilotMessageType.PONG:
+      case PilotMessageType.PILOT_DISCONNECT: {
         window.postMessage(message, '*')
 
         break

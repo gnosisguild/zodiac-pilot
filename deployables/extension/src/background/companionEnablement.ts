@@ -1,6 +1,6 @@
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
-import { sendMessageToTab } from '@/utils'
+import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
   CompanionAppMessageType,
@@ -85,8 +85,23 @@ export const companionEnablement = (
 
     chrome.runtime.onMessage.addListener(handlePing)
 
-    port.onDisconnect.addListener(() => {
+    port.onDisconnect.addListener(async () => {
       chrome.runtime.onMessage.removeListener(handlePing)
+
+      const activeTab = await getActiveTab()
+
+      invariant(activeTab.id != null, 'Tab needs an ID')
+
+      await sendMessageToTab(
+        activeTab.id,
+        {
+          type: PilotMessageType.PILOT_DISCONNECT,
+        } satisfies Message,
+        // bypass some tab validity checks so that this
+        // message finds the companion app regardless of what
+        // page the user is currently on
+        { protocolCheckOnly: true },
+      )
     })
   })
 }
