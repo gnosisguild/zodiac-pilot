@@ -1,20 +1,6 @@
-import { Navigation } from '@/components'
-import {
-  CompanionAppMessageType,
-  PilotMessageType,
-  type CompanionAppMessage,
-  type Message,
-} from '@zodiac/messages'
-import { GhostButton, PilotType, ZodiacOsPlain } from '@zodiac/ui'
-import {
-  ArrowUpFromLine,
-  Edit,
-  Landmark,
-  Plus,
-  Power,
-  PowerOff,
-} from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Navigation, PilotStatus } from '@/components'
+import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
+import { ArrowUpFromLine, Edit, Landmark, Plus } from 'lucide-react'
 import { Outlet } from 'react-router'
 
 const Sidebar = () => {
@@ -63,70 +49,3 @@ const Sidebar = () => {
 }
 
 export default Sidebar
-
-const PilotStatus = () => {
-  const [connected, setConnected] = useState(false)
-
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent<Message>) => {
-      if (event.data == null) {
-        return
-      }
-
-      if (
-        event.data.type !== PilotMessageType.PILOT_CONNECT &&
-        event.data.type !== PilotMessageType.PONG
-      ) {
-        return
-      }
-
-      setConnected(true)
-    }
-
-    window.addEventListener('message', handleMessage)
-
-    return () => {
-      window.removeEventListener('message', handleMessage)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (connected) {
-      return
-    }
-
-    const interval = setInterval(() => {
-      window.postMessage({
-        type: CompanionAppMessageType.PING,
-      } satisfies CompanionAppMessage)
-    }, 500)
-
-    return () => {
-      clearInterval(interval)
-    }
-  }, [connected])
-
-  if (connected) {
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="leading-0 flex items-center gap-2 text-xs font-semibold uppercase">
-          <Power className="text-green-500" size={16} />
-          Connected
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase">
-        <PowerOff className="text-red-700" size={16} />
-        Disconnected
-      </div>
-
-      <GhostButton id="ZODIAC-PILOT::open-panel-button" size="tiny">
-        Open Pilot
-      </GhostButton>
-    </div>
-  )
-}
