@@ -1,7 +1,7 @@
 import { GhostButton } from '@zodiac/ui'
 import { Power, PowerOff } from 'lucide-react'
 import { useState } from 'react'
-import { useConnectChangeOnPilotEvents } from './useConnectChnageOnPilotEvents'
+import { useConnectChangeOnPilotEvents } from './useConnectChangeOnPilotEvents'
 import { useDisconnectWhenUnreachable } from './useDisconnectWhenUnreachable'
 import { usePingWhileDisconnected } from './usePingWhileDisconnected'
 
