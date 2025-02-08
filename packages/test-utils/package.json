@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@react-router/dev": "7.1.5",
-    "@types/chrome": "0.0.302",
+    "@types/chrome": "0.0.303",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@zodiac/eslint-config": "workspace:*",
