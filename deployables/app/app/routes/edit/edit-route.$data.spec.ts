@@ -18,10 +18,8 @@ import type { initSafeApiKit } from '@zodiac/safe'
 import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
-  createMockEoaAccount,
   createMockExecutionRoute,
   createMockRoleWaypoint,
-  createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
   randomPrefixedAddress,
@@ -167,11 +165,7 @@ describe('Edit route', () => {
       mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
       const route = createMockExecutionRoute({
-        waypoints: [
-          createMockStartingWaypoint(
-            createMockEoaAccount({ address: randomAddress() }),
-          ),
-        ],
+        initiator: randomPrefixedAddress(),
       })
 
       await render(`/edit-route/${encode(route)}`)
@@ -190,11 +184,7 @@ describe('Edit route', () => {
         mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
 
         const route = createMockExecutionRoute({
-          waypoints: createMockWaypoints({
-            start: createMockStartingWaypoint(
-              createMockEoaAccount({ address: randomAddress() }),
-            ),
-          }),
+          initiator: randomPrefixedAddress(),
         })
 
         await render(`/edit-route/${encode(route)}`)
