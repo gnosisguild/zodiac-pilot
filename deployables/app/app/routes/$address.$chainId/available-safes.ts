@@ -17,7 +17,6 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
   try {
     const routes = await queryAvatars(validatedAddress)
-    console.log({ routes })
 
     const possibleRoutes = routes.filter((route) => {
       const [chainId] = splitPrefixedAddress(route.avatar)
@@ -40,7 +39,6 @@ export const shouldRevalidate = ({
   currentParams,
   nextParams,
 }: ShouldRevalidateFunctionArgs) => {
-  console.log({ currentParams, nextParams })
   if (currentParams.chainId !== nextParams.chainId) {
     return true
   }
