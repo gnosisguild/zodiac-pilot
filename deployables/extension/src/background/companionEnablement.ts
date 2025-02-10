@@ -1,3 +1,4 @@
+import { getRoutes } from '@/execution-routes'
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
 import { getActiveTab, sendMessageToTab } from '@/utils'
@@ -16,7 +17,7 @@ export const companionEnablement = (
   { onSimulationUpdate }: TrackSimulationResult,
 ) => {
   chrome.runtime.onMessage.addListener(
-    async (message: CompanionAppMessage, { tab }) => {
+    (message: CompanionAppMessage, { tab }, sendResponse) => {
       switch (message.type) {
         case CompanionAppMessageType.REQUEST_FORK_INFO: {
           invariant(tab != null, 'Companion app message must come from a tab.')
@@ -51,7 +52,13 @@ export const companionEnablement = (
 
           break
         }
+
+        case CompanionAppMessageType.REQUEST_ROUTES: {
+          getRoutes().then(sendResponse)
+        }
       }
+
+      return true
     },
   )
 

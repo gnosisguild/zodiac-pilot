@@ -5,6 +5,7 @@ import {
   connectCompanionApp,
   createMockPort,
   createMockTab,
+  mockRoute,
   startPilotSession,
   startSimulation,
 } from '@/test-utils'
@@ -120,6 +121,25 @@ describe('Companion Enablement', () => {
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
         type: PilotMessageType.PILOT_DISCONNECT,
       } satisfies Message)
+    })
+  })
+
+  describe('List routes', () => {
+    it('is possible to get stored routes', async () => {
+      const sendResponse = vi.fn()
+
+      const route = await mockRoute()
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTES,
+        } satisfies CompanionAppMessage,
+        {},
+        sendResponse,
+      )
+
+      expect(sendResponse).toHaveBeenCalledWith([route])
     })
   })
 })
