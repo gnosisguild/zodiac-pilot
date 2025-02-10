@@ -1,7 +1,9 @@
 import { Page } from '@/components'
-import { invariant } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
+import { getString } from '@zodiac/form-data'
 import { getStartingWaypoint, getWaypoints } from '@zodiac/modules'
 import {
+  encode,
   verifyHexAddress,
   verifyPrefixedAddress,
   type Account,
@@ -12,6 +14,7 @@ import { Blockie, Form, Info, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import { Children, useState, type PropsWithChildren } from 'react'
+import { redirect } from 'react-router'
 import { queryRoutes } from 'ser-kit'
 import type { Route } from './+types/select-route'
 
@@ -24,6 +27,29 @@ export const loader = async ({
   )
 
   return { routes }
+}
+
+export const action = async ({
+  params: { fromAddress, toAddress },
+  request,
+}: Route.ActionArgs) => {
+  const data = await request.formData()
+
+  const routes = await queryRoutes(
+    verifyHexAddress(fromAddress),
+    verifyPrefixedAddress(toAddress),
+  )
+
+  const selectedRouteId = getString(data, 'selectedRouteId')
+
+  const selectedRoute = routes.find((route) => route.id === selectedRouteId)
+
+  invariantResponse(
+    selectedRoute != null,
+    `Could not select route with id "${selectedRouteId}"`,
+  )
+
+  return redirect(`/create/finish/${encode(selectedRoute)}`)
 }
 
 const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
@@ -109,7 +135,7 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
               value={selectedRoute.id}
             />
 
-            <PrimaryButton>Use selected route</PrimaryButton>
+            <PrimaryButton submit>Use selected route</PrimaryButton>
           </Form>
         </div>
       </Page.Main>
