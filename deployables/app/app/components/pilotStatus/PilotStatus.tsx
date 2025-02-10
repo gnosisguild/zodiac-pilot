@@ -1,9 +1,6 @@
 import { GhostButton } from '@zodiac/ui'
 import { Power, PowerOff } from 'lucide-react'
-import { useState } from 'react'
-import { useConnectChangeOnPilotEvents } from './useConnectChangeOnPilotEvents'
-import { useDisconnectWhenUnreachable } from './useDisconnectWhenUnreachable'
-import { usePingWhileDisconnected } from './usePingWhileDisconnected'
+import { useConnected } from './PilotStatusContext'
 
 export const PilotStatus = () => {
   const connected = useConnected()
@@ -31,19 +28,4 @@ export const PilotStatus = () => {
       </GhostButton>
     </div>
   )
-}
-
-const useConnected = () => {
-  const [connected, setConnected] = useState(false)
-
-  useConnectChangeOnPilotEvents({
-    onConnect: () => setConnected(true),
-    onDisconnect: () => setConnected(false),
-  })
-  usePingWhileDisconnected(connected, { onConnect: () => setConnected(true) })
-  useDisconnectWhenUnreachable(connected, {
-    onDisconnect: () => setConnected(false),
-  })
-
-  return connected
 }
