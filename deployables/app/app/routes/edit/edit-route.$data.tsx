@@ -56,6 +56,7 @@ import {
   useParams,
   useSubmit,
 } from 'react-router'
+import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
@@ -69,6 +70,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
 
   return {
     label: route.label,
+    initiator: route.initiator,
     chainId,
     avatar: route.avatar,
     waypoints: route.waypoints,
@@ -174,7 +176,7 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints },
+  loaderData: { chainId, label, avatar, waypoints, initiator },
   actionData,
 }: Route.ComponentProps) => {
   const submit = useSubmit()
@@ -217,8 +219,9 @@ const EditRoute = ({
         />
 
         <AvatarInput
-          value={avatar}
-          waypoints={waypoints}
+          value={unprefixAddress(avatar)}
+          pilotAddress={initiator ? unprefixAddress(initiator) : null}
+          chainId={chainId}
           onChange={(avatar) => {
             if (avatar != null) {
               submit(formData({ intent: Intent.UpdateAvatar, avatar }), {

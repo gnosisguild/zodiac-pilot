@@ -1,17 +1,18 @@
 import { validateAddress } from '@/utils'
-import { getChainId, ZERO_ADDRESS } from '@zodiac/chains'
-import { getPilotAddress } from '@zodiac/modules'
-import type { HexAddress, Waypoints } from '@zodiac/schema'
+import { ZERO_ADDRESS } from '@zodiac/chains'
+import type { HexAddress } from '@zodiac/schema'
 import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
-import { unprefixAddress, type PrefixedAddress } from 'ser-kit'
+import { type ChainId } from 'ser-kit'
 import { getAddress } from 'viem'
 
 type Props = {
-  value: PrefixedAddress
-  waypoints?: Waypoints
-  onChange(value: HexAddress | null): void
+  chainId: ChainId | null
+  value?: HexAddress
+  pilotAddress?: HexAddress | null
+  name?: string
+  onChange?(value: HexAddress | null): void
 }
 
 type Option = {
@@ -19,23 +20,26 @@ type Option = {
   label: string
 }
 
-export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
-  const address = unprefixAddress(value)
-  const chainId = getChainId(value)
-  const [pendingValue, setPendingValue] = useState<string>(
-    address === ZERO_ADDRESS ? '' : address,
+export const AvatarInput = ({
+  value,
+  chainId,
+  pilotAddress,
+  name,
+  onChange,
+}: Props) => {
+  const [internalValue, setInternalValue] = useState<string>(
+    value != null && value !== ZERO_ADDRESS ? value : '',
   )
 
   useEffect(() => {
-    setPendingValue(address === ZERO_ADDRESS ? '' : address)
-  }, [address])
-
+    if (value != null && value !== ZERO_ADDRESS) {
+      setInternalValue(value)
+    }
+  }, [value])
   const { load, state, data } = useFetcher<HexAddress[]>()
 
-  const pilotAddress = waypoints == null ? null : getPilotAddress(waypoints)
-
   useEffect(() => {
-    if (pilotAddress == ZERO_ADDRESS) {
+    if (pilotAddress == null || pilotAddress == ZERO_ADDRESS) {
       return
     }
 
@@ -46,7 +50,7 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
     load(`/${pilotAddress}/${chainId}/available-safes`)
   }, [chainId, load, pilotAddress])
 
-  const checksumAvatarAddress = validateAddress(pendingValue)
+  const checksumAvatarAddress = validateAddress(internalValue)
 
   const availableSafes = data ?? []
 
@@ -63,6 +67,7 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
         dropdownLabel="View all available Safes"
         placeholder="Paste an address or select from the list"
         classNames={selectStyles<Option>()}
+        name={name}
         value={
           checksumAvatarAddress != null
             ? {
@@ -79,10 +84,15 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
           if (option) {
             const sanitized = option.value.trim().replace(/^[a-z]{3}:/g, '')
 
-            onChange(validateAddress(sanitized))
+            if (onChange != null) {
+              onChange(validateAddress(sanitized))
+            }
           } else {
-            setPendingValue('')
-            onChange(null)
+            setInternalValue('')
+
+            if (onChange != null) {
+              onChange(null)
+            }
           }
         }}
         isValidNewOption={(option) => {
@@ -106,15 +116,16 @@ export const AvatarInput = ({ value, waypoints, onChange }: Props) => {
     <TextInput
       label="Piloted Safe"
       disabled={state === 'loading'}
-      value={pendingValue}
+      value={internalValue}
+      name={name}
       placeholder="Paste in Safe address"
       onChange={(ev) => {
         const sanitized = ev.target.value.trim().replace(/^[a-z]{3}:/g, '')
-        setPendingValue(sanitized)
+        setInternalValue(sanitized)
 
         const validatedAddress = validateAddress(sanitized)
 
-        if (validatedAddress != null) {
+        if (validatedAddress != null && onChange != null) {
           onChange(validatedAddress)
         }
       }}

@@ -7,6 +7,7 @@ export { getPilotAddress } from './getPilotAddress'
 export { getRolesVersion } from './getRolesVersion'
 export { getRolesWaypoint } from './getRolesWaypoint'
 export { getStartingWaypoint } from './getStartingWaypoint'
+export { getWaypoints } from './getWaypoints'
 export { queryRolesV1MultiSend } from './queryRolesV1MultiSend'
 export {
   MULTISEND,

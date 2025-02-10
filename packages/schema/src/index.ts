@@ -11,8 +11,10 @@ export {
   executionRouteSchema,
   isHexAddress,
   verifyHexAddress,
+  verifyPrefixedAddress,
 } from './routeSchema'
 export type {
+  Account,
   Connection,
   Contract,
   ExecutionRoute,

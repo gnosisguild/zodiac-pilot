@@ -1,4 +1,4 @@
-import { MinimumVersion, Navigation, PilotStatus } from '@/components'
+import { MinimumVersion, Navigation, PilotStatus, useIsDev } from '@/components'
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import { ArrowUpFromLine, Edit, Landmark, Plus } from 'lucide-react'
 import { Outlet } from 'react-router'
@@ -29,6 +29,12 @@ const Sidebar = () => {
                 Create new route
               </Navigation.Link>
 
+              {useIsDev() && (
+                <Navigation.Link to="/create" icon={Plus}>
+                  New new route
+                </Navigation.Link>
+              )}
+
               <Navigation.Link to="/edit-route" icon={Edit}>
                 Edit a route
               </Navigation.Link>
@@ -43,7 +49,7 @@ const Sidebar = () => {
         </MinimumVersion>
       </div>
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Outlet />
       </div>
     </div>

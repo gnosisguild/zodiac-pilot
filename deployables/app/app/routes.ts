@@ -28,6 +28,12 @@ export default [
         route(':data', 'routes/edit/edit-route.$data.tsx'),
       ]),
     ]),
+
+    ...prefix('/create', [
+      index('routes/create/start.tsx'),
+      route(':fromAddress/:toAddress', 'routes/create/select-route.tsx'),
+      route('finish/:data', 'routes/create/finish.tsx'),
+    ]),
   ]),
 
   route(

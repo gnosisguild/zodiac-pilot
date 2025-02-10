@@ -44,6 +44,9 @@ const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   return chains.some(({ shortName }) => prefix === shortName)
 })
 
+export const verifyPrefixedAddress = (value: string) =>
+  prefixedAddressSchema.parse(value)
+
 const safeSchema = z.object({
   type: z.literal(AccountType.SAFE),
   address: addressSchema,
@@ -119,13 +122,17 @@ const eoaSchema = z.object({
   prefixedAddress: prefixedAddressSchema,
 })
 
+const accountSchema = z.discriminatedUnion('type', [
+  eoaSchema,
+  safeSchema,
+  rolesSchema,
+  delaySchema,
+])
+
+export type Account = z.infer<typeof accountSchema>
+
 const startingPointSchema = z.object({
-  account: z.discriminatedUnion('type', [
-    eoaSchema,
-    safeSchema,
-    rolesSchema,
-    delaySchema,
-  ]),
+  account: accountSchema,
 })
 
 export type StartingWaypoint = z.infer<typeof startingPointSchema>
@@ -136,7 +143,7 @@ export type Waypoints = z.infer<typeof waypointsSchema>
 
 export const executionRouteSchema = z.object({
   id: z.string(),
-  label: z.string(),
+  label: z.string().optional(),
   avatar: prefixedAddressSchema,
   initiator: prefixedAddressSchema.optional(),
   waypoints: waypointsSchema.optional(),
