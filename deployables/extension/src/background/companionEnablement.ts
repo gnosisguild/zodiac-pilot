@@ -17,7 +17,7 @@ export const companionEnablement = (
   { onSimulationUpdate }: TrackSimulationResult,
 ) => {
   chrome.runtime.onMessage.addListener(
-    (message: CompanionAppMessage, { tab }, sendResponse) => {
+    async (message: CompanionAppMessage, { tab }) => {
       switch (message.type) {
         case CompanionAppMessageType.REQUEST_FORK_INFO: {
           invariant(tab != null, 'Companion app message must come from a tab.')
@@ -54,7 +54,15 @@ export const companionEnablement = (
         }
 
         case CompanionAppMessageType.REQUEST_ROUTES: {
-          getRoutes().then(sendResponse)
+          invariant(tab != null, 'Companion app message must come from a tab.')
+          invariant(tab.id != null, 'Tab needs an ID')
+
+          const routes = await getRoutes()
+
+          await sendMessageToTab(tab.id, {
+            type: CompanionAppMessageType.LIST_ROUTES,
+            routes,
+          } satisfies CompanionAppMessage)
         }
       }
 

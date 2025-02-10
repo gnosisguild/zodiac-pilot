@@ -15,6 +15,7 @@ window.addEventListener(
       case CompanionAppMessageType.OPEN_PILOT:
       case CompanionAppMessageType.SUBMIT_SUCCESS:
       case CompanionAppMessageType.REQUEST_FORK_INFO:
+      case CompanionAppMessageType.LIST_ROUTES:
       case CompanionAppMessageType.PING: {
         chrome.runtime.sendMessage(event.data, () => {
           captureLastError()

@@ -9,6 +9,7 @@ export enum CompanionAppMessageType {
   PING = 'COMPANION::PING',
   REQUEST_VERSION = 'COMPANION::REQUEST_VERSION',
   REQUEST_ROUTES = 'COMPANION::REQUEST_ROUTES',
+  LIST_ROUTES = 'COMPANION::LIST_ROUTES',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -45,6 +46,11 @@ type CompanionAppRequestRoutesMessage = {
   type: CompanionAppMessageType.REQUEST_ROUTES
 }
 
+type CompanionAppListRoutesMessage = {
+  type: CompanionAppMessageType.LIST_ROUTES
+  routes: ExecutionRoute[]
+}
+
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
@@ -54,3 +60,4 @@ export type CompanionAppMessage =
   | CompanionAppPingMessage
   | CompanionAppRequestVersionMessage
   | CompanionAppRequestRoutesMessage
+  | CompanionAppListRoutesMessage

@@ -126,8 +126,7 @@ describe('Companion Enablement', () => {
 
   describe('List routes', () => {
     it('is possible to get stored routes', async () => {
-      const sendResponse = vi.fn()
-
+      const tab = mockActiveTab(createMockTab())
       const route = await mockRoute()
 
       await callListeners(
@@ -135,11 +134,14 @@ describe('Companion Enablement', () => {
         {
           type: CompanionAppMessageType.REQUEST_ROUTES,
         } satisfies CompanionAppMessage,
-        {},
-        sendResponse,
+        { tab },
+        vi.fn(),
       )
 
-      expect(sendResponse).toHaveBeenCalledWith([route])
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+        type: CompanionAppMessageType.LIST_ROUTES,
+        routes: [route],
+      } satisfies CompanionAppMessage)
     })
   })
 })
