@@ -4,6 +4,7 @@ import {
   type CompanionAppMessage,
   type Message,
 } from '@zodiac/messages'
+import { compare } from 'compare-versions'
 import {
   createContext,
   useContext,
@@ -50,3 +51,13 @@ const useGetVersionFromExtension = () => {
 }
 
 export const useExtensionVersion = () => useContext(ExtensionVersionContext)
+
+export const useSatisfiesVersion = (targetVersion: string) => {
+  const extensionVersion = useExtensionVersion()
+
+  if (extensionVersion == null) {
+    return false
+  }
+
+  return compare(extensionVersion, targetVersion, '>=')
+}
