@@ -53,51 +53,52 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
     <Page fullWidth>
       <Page.Header>Select route</Page.Header>
 
-      <Page.Main>
-        <div className="flex w-full flex-col gap-4 overflow-hidden">
-          <Waypoint account={startingPoint.account} />
+      <main
+        role="main"
+        className="flex w-full flex-col gap-4 overflow-hidden pl-16"
+      >
+        <Waypoint account={startingPoint.account} />
 
-          <div className="flex gap-4">
-            <Route>
-              <Waypoints>
-                {getWaypoints(selectedRoute, { includeEnd: false }).map(
-                  ({ account, connection }) => (
-                    <Waypoint
-                      key={`${account.address}-${connection.from}`}
-                      account={account}
-                    />
-                  ),
-                )}
-              </Waypoints>
-            </Route>
+        <div className="flex gap-4">
+          <Route>
+            <Waypoints>
+              {getWaypoints(selectedRoute, { includeEnd: false }).map(
+                ({ account, connection }) => (
+                  <Waypoint
+                    key={`${account.address}-${connection.from}`}
+                    account={account}
+                  />
+                ),
+              )}
+            </Waypoints>
+          </Route>
 
-            <Routes>
-              {routes.map((route) => {
-                if (route === selectedRoute) {
-                  return null
-                }
+          <Routes>
+            {routes.map((route) => {
+              if (route === selectedRoute) {
+                return null
+              }
 
-                const waypoints = getWaypoints(route, { includeEnd: false })
+              const waypoints = getWaypoints(route, { includeEnd: false })
 
-                return (
-                  <Route key={route.id}>
-                    <Waypoints>
-                      {waypoints.map(({ account, connection }) => (
-                        <Waypoint
-                          key={`${account.address}-${connection.from}`}
-                          account={account}
-                        />
-                      ))}
-                    </Waypoints>
-                  </Route>
-                )
-              })}
-            </Routes>
-          </div>
-
-          {endPoint && <Waypoint account={endPoint.account} />}
+              return (
+                <Route key={route.id}>
+                  <Waypoints>
+                    {waypoints.map(({ account, connection }) => (
+                      <Waypoint
+                        key={`${account.address}-${connection.from}`}
+                        account={account}
+                      />
+                    ))}
+                  </Waypoints>
+                </Route>
+              )
+            })}
+          </Routes>
         </div>
-      </Page.Main>
+
+        {endPoint && <Waypoint account={endPoint.account} />}
+      </main>
     </Page>
   )
 }
@@ -105,7 +106,7 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
 export default SelectRoute
 
 const Routes = ({ children }: PropsWithChildren) => (
-  <ul className="flex w-full snap-x snap-mandatory gap-4 overflow-x-scroll">
+  <ul className="flex w-full snap-x snap-mandatory gap-4 overflow-x-scroll pr-16">
     {children}
   </ul>
 )
