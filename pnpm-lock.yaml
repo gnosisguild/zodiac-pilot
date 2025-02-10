@@ -149,8 +149,8 @@ importers:
         specifier: 7.1.5
         version: 7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       viem:
         specifier: 2.22.23
         version: 2.22.23(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
@@ -317,8 +317,8 @@ importers:
         specifier: 5.0.6
         version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       zod:
         specifier: 3.24.1
         version: 3.24.1
@@ -539,8 +539,8 @@ importers:
         specifier: 9.20.0
         version: 9.20.0(jiti@2.4.2)
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
 
   packages/env:
     dependencies:
@@ -626,8 +626,8 @@ importers:
         specifier: 5.0.9
         version: 5.0.9
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       zod:
         specifier: 3.24.1
         version: 3.24.1
@@ -682,8 +682,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2(typescript@5.7.3)(zod@3.24.1)
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
       zod:
         specifier: 3.24.1
         version: 3.24.1
@@ -753,8 +753,8 @@ importers:
         specifier: 9.20.0
         version: 9.20.0(jiti@2.4.2)
       ser-kit:
-        specifier: 2.0.0
-        version: 2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
+        specifier: 2.0.1
+        version: 2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
 
   packages/ui:
     dependencies:
@@ -6328,8 +6328,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@2.0.0:
-    resolution: {integrity: sha512-/XU/01nWknQVKTs7/bwXHtPIFgv/yRhU2h3vfSBWubwAo5rJxqOUTjRP9SBhMOYmCW7wulP5qLQ2gowE3te1cw==}
+  ser-kit@2.0.1:
+    resolution: {integrity: sha512-6w+hXCOPqQvKdNHPI0cZBAmuYnipl/v42idH4t8ZCzumJ4ZT2GTnHV8icnk6swfJTEtn/yHHEaqZCOp3R6agMw==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -13913,7 +13913,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@2.0.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1):
+  ser-kit@2.0.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 2.5.8(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.1)
