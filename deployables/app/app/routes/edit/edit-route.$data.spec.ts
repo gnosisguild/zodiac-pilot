@@ -14,7 +14,6 @@ import {
   updateAvatar,
   updateRoleId,
 } from '@zodiac/modules'
-import type { initSafeApiKit } from '@zodiac/safe'
 import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
@@ -24,29 +23,20 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { prefixAddress, type ChainId } from 'ser-kit'
+import { prefixAddress, queryAvatars, type ChainId } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const { mockGetSafesByOwner } = vi.hoisted(() => ({
-  mockGetSafesByOwner: vi
-    .fn<ReturnType<typeof initSafeApiKit>['getSafesByOwner']>()
-    .mockResolvedValue({ safes: [] }),
-}))
-
-vi.mock('@zodiac/safe', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/safe')>()
+vi.mock('ser-kit', async (importOriginal) => {
+  const module = await importOriginal<typeof import('ser-kit')>()
 
   return {
     ...module,
 
-    initSafeApiKit: (chainId: ChainId) => {
-      return {
-        ...module.initSafeApiKit(chainId),
-        getSafesByOwner: mockGetSafesByOwner,
-      }
-    },
+    queryAvatars: vi.fn(),
   }
 })
+
+const mockQueryAvatars = vi.mocked(queryAvatars)
 
 vi.mock('@zodiac/modules', async (importOriginal) => {
   const module = await importOriginal<typeof import('@zodiac/modules')>()
@@ -162,7 +152,10 @@ describe('Edit route', () => {
     it('offers safes that are owned by the user', async () => {
       const safe = randomAddress()
 
-      mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
+      mockQueryAvatars.mockResolvedValue([
+        // @ts-expect-error Some weird clash in a union
+        createMockExecutionRoute({ avatar: prefixAddress(Chain.ETH, safe) }),
+      ])
 
       const route = createMockExecutionRoute({
         initiator: randomPrefixedAddress(),
@@ -181,7 +174,10 @@ describe('Edit route', () => {
       it('is possible to select a safe from the list', async () => {
         const safe = randomAddress()
 
-        mockGetSafesByOwner.mockResolvedValue({ safes: [safe] })
+        mockQueryAvatars.mockResolvedValue([
+          // @ts-expect-error Some weird clash in a union
+          createMockExecutionRoute({ avatar: prefixAddress(Chain.ETH, safe) }),
+        ])
 
         const route = createMockExecutionRoute({
           initiator: randomPrefixedAddress(),
@@ -213,7 +209,7 @@ describe('Edit route', () => {
       it('is possible to type in an address', async () => {
         const safe = randomAddress()
 
-        mockGetSafesByOwner.mockResolvedValue({ safes: [] })
+        mockQueryAvatars.mockResolvedValue([])
 
         const route = createMockExecutionRoute()
 

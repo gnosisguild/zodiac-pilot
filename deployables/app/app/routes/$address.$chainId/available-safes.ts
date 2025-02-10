@@ -2,23 +2,33 @@ import { validateAddress } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import { getOptionalString } from '@zodiac/form-data'
-import { initSafeApiKit } from '@zodiac/safe'
 import type { ShouldRevalidateFunctionArgs } from 'react-router'
+import { queryAvatars, splitPrefixedAddress, unprefixAddress } from 'ser-kit'
 import { Intent } from '../edit/intents'
 import type { Route } from './+types/available-safes'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
-  const { chainId, address } = params
+  const { address, chainId } = params
 
-  const safeService = initSafeApiKit(verifyChainId(parseInt(chainId)))
+  const verifiedChainId = verifyChainId(parseInt(chainId))
   const validatedAddress = validateAddress(address)
 
   invariantResponse(validatedAddress != null, `Invalid address: ${address}`)
 
   try {
-    const { safes } = await safeService.getSafesByOwner(validatedAddress)
+    const routes = await queryAvatars(validatedAddress)
 
-    return Response.json(safes)
+    const possibleRoutes = routes.filter((route) => {
+      const [chainId] = splitPrefixedAddress(route.avatar)
+
+      return chainId === verifiedChainId
+    })
+
+    return Response.json(
+      Array.from(
+        new Set(possibleRoutes.map((route) => unprefixAddress(route.avatar))),
+      ),
+    )
   } catch {
     return Response.json([])
   }
@@ -26,7 +36,13 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
 export const shouldRevalidate = ({
   formData,
+  currentParams,
+  nextParams,
 }: ShouldRevalidateFunctionArgs) => {
+  if (currentParams.chainId !== nextParams.chainId) {
+    return true
+  }
+
   if (formData == null) {
     return false
   }
