@@ -8,7 +8,7 @@ import {
   type ExecutionRoute,
   type Waypoint,
 } from '@zodiac/schema'
-import { Blockie, Info } from '@zodiac/ui'
+import { Blockie, Form, Info, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import { Children, useState, type PropsWithChildren } from 'react'
@@ -99,7 +99,19 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
           </div>
         </div>
 
-        {endPoint && <Waypoint account={endPoint.account} />}
+        <div className="flex justify-between">
+          {endPoint && <Waypoint account={endPoint.account} />}
+
+          <Form>
+            <input
+              type="hidden"
+              name="selectedRouteId"
+              value={selectedRoute.id}
+            />
+
+            <PrimaryButton>Use selected route</PrimaryButton>
+          </Form>
+        </div>
       </Page.Main>
     </Page>
   )
