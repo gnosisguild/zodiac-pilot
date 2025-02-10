@@ -24,9 +24,15 @@ export const AddressInput = ({
   value,
   defaultValue,
   placeholder = ZERO_ADDRESS,
+  hideLabel,
   ...props
 }: AddressInputProps) => (
-  <Input label={label} description={description} error={error}>
+  <Input
+    label={label}
+    description={description}
+    error={error}
+    hideLabel={hideLabel}
+  >
     {({ inputId, descriptionId }) => (
       <InputLayout
         disabled={disabled}
