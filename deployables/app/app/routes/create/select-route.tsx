@@ -9,6 +9,7 @@ import {
   type Waypoint,
 } from '@zodiac/schema'
 import { Blockie, Info } from '@zodiac/ui'
+import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import { Children, useState, type PropsWithChildren } from 'react'
 import { queryRoutes } from 'ser-kit'
@@ -53,52 +54,53 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
     <Page fullWidth>
       <Page.Header>Select route</Page.Header>
 
-      <main
-        role="main"
-        className="flex w-full flex-col gap-4 overflow-hidden pl-16"
-      >
+      <Page.Main>
         <Waypoint account={startingPoint.account} />
 
-        <div className="flex gap-4">
-          <Route>
-            <Waypoints>
-              {getWaypoints(selectedRoute, { includeEnd: false }).map(
-                ({ account, connection }) => (
-                  <Waypoint
-                    key={`${account.address}-${connection.from}`}
-                    account={account}
-                  />
-                ),
-              )}
-            </Waypoints>
-          </Route>
+        <div className="flex">
+          <div className="py-2 pr-4">
+            <Route selectable={false}>
+              <Waypoints>
+                {getWaypoints(selectedRoute, { includeEnd: false }).map(
+                  ({ account, connection }) => (
+                    <Waypoint
+                      key={`${account.address}-${connection.from}`}
+                      account={account}
+                    />
+                  ),
+                )}
+              </Waypoints>
+            </Route>
+          </div>
 
-          <Routes>
-            {routes.map((route) => {
-              if (route === selectedRoute) {
-                return null
-              }
+          <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-700 bg-zinc-900 px-2 py-2">
+            <Routes>
+              {routes.map((route) => {
+                const waypoints = getWaypoints(route, { includeEnd: false })
 
-              const waypoints = getWaypoints(route, { includeEnd: false })
-
-              return (
-                <Route key={route.id}>
-                  <Waypoints>
-                    {waypoints.map(({ account, connection }) => (
-                      <Waypoint
-                        key={`${account.address}-${connection.from}`}
-                        account={account}
-                      />
-                    ))}
-                  </Waypoints>
-                </Route>
-              )
-            })}
-          </Routes>
+                return (
+                  <Route
+                    key={route.id}
+                    selected={route === selectedRoute}
+                    onSelect={() => setSelectedRoute(route)}
+                  >
+                    <Waypoints>
+                      {waypoints.map(({ account, connection }) => (
+                        <Waypoint
+                          key={`${account.address}-${connection.from}`}
+                          account={account}
+                        />
+                      ))}
+                    </Waypoints>
+                  </Route>
+                )
+              })}
+            </Routes>
+          </div>
         </div>
 
         {endPoint && <Waypoint account={endPoint.account} />}
-      </main>
+      </Page.Main>
     </Page>
   )
 }
@@ -106,15 +108,45 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
 export default SelectRoute
 
 const Routes = ({ children }: PropsWithChildren) => (
-  <ul className="flex w-full snap-x snap-mandatory gap-4 overflow-x-scroll pr-16">
-    {children}
-  </ul>
+  <ul className="flex gap-1">{children}</ul>
 )
 
-type RouteProps = PropsWithChildren
+type RouteProps = PropsWithChildren<{
+  selectable?: boolean
+  selected?: boolean
+  onSelect?: () => void
+}>
 
-const Route = ({ children }: RouteProps) => {
-  return <li className="snap-start list-none">{children}</li>
+const Route = ({
+  children,
+  selected = false,
+  selectable = true,
+  onSelect,
+}: RouteProps) => {
+  return (
+    <li className="snap-start list-none">
+      <button
+        className={classNames(
+          'rounded-md border py-2 outline-none',
+
+          selectable &&
+            'cursor-pointer px-2 hover:border-teal-500 hover:bg-teal-500/10 focus:border-teal-500 focus:bg-teal-500/10',
+          selected ? 'border-teal-500 bg-teal-500/10' : 'border-transparent',
+        )}
+        onClick={() => {
+          if (selectable === false) {
+            return
+          }
+
+          if (onSelect != null) {
+            onSelect()
+          }
+        }}
+      >
+        {children}
+      </button>
+    </li>
+  )
 }
 
 const Waypoints = ({ children }: PropsWithChildren) => {
@@ -127,7 +159,7 @@ const Waypoints = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <ul className="flex flex-col items-center gap-4">
+    <ul className="flex flex-col items-center justify-around gap-4">
       {Children.map(children, (child, index) => (
         <>
           {index !== 0 && <MoveDown size={16} />}
@@ -142,7 +174,7 @@ const Waypoints = ({ children }: PropsWithChildren) => {
 type WaypointProps = { account: Account }
 
 const Waypoint = ({ account }: WaypointProps) => (
-  <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-600/75 p-2">
+  <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-600/75 bg-zinc-950 p-2">
     <h3 className="text-xs font-semibold uppercase opacity-75">
       {account.type}
     </h3>
