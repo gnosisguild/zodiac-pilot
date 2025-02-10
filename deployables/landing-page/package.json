@@ -14,14 +14,14 @@
     "react-router": "7.1.5"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "4.0.5",
+    "@tailwindcss/vite": "4.0.6",
     "@vitejs/plugin-react": "4.3.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.20",
     "eslint": "9.20.0",
     "postcss": "8.5.1",
-    "tailwindcss": "4.0.5",
+    "tailwindcss": "4.0.6",
     "typescript": "5.7.3",
     "vite": "6.1.0",
     "vite-plugin-open-graph": "2.0.6"
