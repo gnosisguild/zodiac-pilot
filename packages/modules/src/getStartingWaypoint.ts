@@ -9,6 +9,8 @@ export const getStartingWaypoint = (
     'Cannot get starting waypoints because none are defined',
   )
 
+  console.log({ waypoints })
+
   const [startingPoint] = waypoints
 
   return startingPoint

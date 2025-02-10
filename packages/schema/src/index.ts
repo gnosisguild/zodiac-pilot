@@ -14,6 +14,7 @@ export {
   verifyPrefixedAddress,
 } from './routeSchema'
 export type {
+  Account,
   Connection,
   Contract,
   ExecutionRoute,

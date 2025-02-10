@@ -49,7 +49,7 @@ const Sidebar = () => {
         </MinimumVersion>
       </div>
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Outlet />
       </div>
     </div>
