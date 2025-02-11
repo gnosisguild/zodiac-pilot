@@ -58,6 +58,8 @@ export const RolePermissionCheck = ({
     }
   }, [transactionState, route, provider])
 
+  
+
   if (error === undefined) return null
 
   if (mini) {
@@ -101,6 +103,10 @@ export const RolePermissionCheck = ({
                 </CopyToClipboard>
               )}
             </>
+          )}
+
+          {error && (
+
           )}
         </div>
       </div>
