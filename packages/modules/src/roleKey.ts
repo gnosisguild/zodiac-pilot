@@ -1,24 +1,24 @@
 import { decodeBytes32String, encodeBytes32String } from 'ethers'
 
-export const encodeRoleKey = (key: string) => {
-  if (key.length === 66 && key.startsWith('0x')) {
-    const keyLower = key.toLowerCase()
-    // validate bytes32 hex string
-    if (!keyLower.match(/^0x[0-9a-f]{64}$/)) {
-      throw new Error('Invalid hex string')
-    }
-    return key.toLowerCase()
+export const encodeRoleKey = (roleKey: string) => {
+  if (roleKey.startsWith('0x') && roleKey.length === 66) {
+    // already encoded
+    return roleKey
   }
 
-  return encodeBytes32String(key)
+  return encodeBytes32String(roleKey)
 }
 
-export const decodeRoleKey = (key: string) => {
-  if (key.length === 66 && key.startsWith('0x')) {
-    try {
-      return decodeBytes32String(key)
-    } catch {
-      // ignore
-    }
+export const decodeRoleKey = (roleKey: string) => {
+  if (roleKey.startsWith('0x') && roleKey.length === 66) {
+    return decodeBytes32String(roleKey)
   }
+
+  try {
+    encodeBytes32String(roleKey)
+  } catch {
+    throw new Error(`Invalid role key: ${roleKey}`)
+  }
+
+  return roleKey
 }
