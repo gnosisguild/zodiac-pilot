@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
       - name: Publish
-        uses: cloudflare/wrangler-action@v3.13.1
+        uses: cloudflare/wrangler-action@v3.14.0
         with:
           workingDirectory: deployables/vnet-api
           apiToken: ${{ secrets.CF_API_TOKEN }}
