@@ -58,6 +58,12 @@ type Props = {
   mini?: boolean
 }
 
+enum RecordCallState {
+  Initial,
+  Pending,
+  Done,
+}
+
 export const RolePermissionCheck = ({
   transactionState,
   mini = false,
@@ -113,20 +119,22 @@ export const RolePermissionCheck = ({
 
   const roleRecordLink = useRoleRecordLink(roleToRecordTo)
 
-  const [recordCallPending, setRecordCallPending] = useState(false)
+  const [recordCallState, setRecordCallState] = useState(
+    RecordCallState.Initial,
+  )
   const recordCall = async () => {
     invariant(roleToRecordTo, 'No role to record to')
-    setRecordCallPending(true)
+    setRecordCallState(RecordCallState.Pending)
     try {
       await recordCalls([transactionState.transaction], roleToRecordTo)
+      setRecordCallState(RecordCallState.Done)
     } catch (e) {
       errorToast({
         id: 'roles-record-call-error',
         title: 'Error recording call',
         message: (e as Error).message,
       })
-    } finally {
-      setRecordCallPending(false)
+      setRecordCallState(RecordCallState.Initial)
     }
   }
 
@@ -177,14 +185,20 @@ export const RolePermissionCheck = ({
 
       {error && roleToRecordTo && (
         <div className="flex gap-2">
-          <GhostButton
-            fluid
-            icon={CassetteTape}
-            onClick={recordCall}
-            disabled={recordCallPending}
-          >
-            Record call to request permissions
-          </GhostButton>
+          {recordCallState === RecordCallState.Done ? (
+            <GhostButton fluid icon={Check} disabled>
+              Call has been recorded
+            </GhostButton>
+          ) : (
+            <GhostButton
+              fluid
+              icon={CassetteTape}
+              onClick={recordCall}
+              busy={recordCallState === RecordCallState.Pending}
+            >
+              Record call to request permissions
+            </GhostButton>
+          )}
 
           {roleRecordLink && (
             <GhostLinkButton
