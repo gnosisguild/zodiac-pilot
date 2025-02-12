@@ -12,12 +12,52 @@ const zRecord = z.object({
 })
 type Record = z.infer<typeof zRecord>
 
-type RecordCallsQueueEntry = PromiseWithResolvers<void> & {
-  transactions: MetaTransactionRequest[]
+// We use a single chrome.sync.storage key for all role records so that we don't
+// consume an excessive of stored values (limit: 512).
+const STORAGE_KEY = 'role-records'
+const zRecordStore = z.record(zRecord.optional()) // 📀 🎧
+
+/**
+ * Get a stored role record for the given rolesMod and roleKey combination.
+ * Returns undefined if no record exists.
+ */
+async function getStoredRoleRecord(
+  rolesMod: PrefixedAddress,
+  roleKey: string,
+): Promise<Record | undefined> {
+  const recordStore = zRecordStore.parse(
+    (await getStorageEntry({ key: STORAGE_KEY })) || {},
+  )
+  const storageKey = `${rolesMod}:${decodeRoleKey(roleKey)}`
+  const record = recordStore[storageKey]
+  return record ? zRecord.parse(record) : undefined
 }
 
-// This map holds an entry for each unique combination of { rolesMod, roleKey }.
-// The key is generated as `${rolesMod}:${decodeRoleKey(roleKey)}`.
+/**
+ * Save a role record for the given rolesMod and roleKey combination.
+ */
+async function saveStoredRoleRecord(
+  rolesMod: PrefixedAddress,
+  roleKey: string,
+  record: Record,
+): Promise<void> {
+  const recordStore = zRecordStore.parse(
+    (await getStorageEntry({ key: STORAGE_KEY })) || {},
+  )
+  const storageKey = `${rolesMod}:${decodeRoleKey(roleKey)}`
+  recordStore[storageKey] = record
+  await saveStorageEntry({ key: STORAGE_KEY, value: recordStore })
+}
+
+type RecordCallsQueueEntry = {
+  transactions: MetaTransactionRequest[]
+  deferred: {
+    promise: Promise<void>
+    resolve: () => void
+    reject: (error: any) => void
+  }
+}
+
 const recordCallsQueue = new Map<string, RecordCallsQueueEntry>()
 
 /**
@@ -38,43 +78,31 @@ export async function recordCalls(
   transactions: MetaTransactionRequest[],
   { rolesMod, roleKey }: { rolesMod: PrefixedAddress; roleKey: string },
 ): Promise<void> {
-  // Create a unique key for this { rolesMod, roleKey } combination.
   const key = `${rolesMod}:${decodeRoleKey(roleKey)}`
 
-  // If there's already a queue entry for this key, simply append
-  // the new transactions and return the pending promise.
   if (recordCallsQueue.has(key)) {
     const queueEntry = recordCallsQueue.get(key)!
     queueEntry.transactions.push(...transactions)
-    return queueEntry.promise
+    return queueEntry.deferred.promise
   }
 
-  // Create a new deferred using Promise.withResolvers.
   const deferred = Promise.withResolvers<void>()
-
   const queueEntry: RecordCallsQueueEntry = {
     transactions: [...transactions],
-    ...deferred,
+    deferred,
   }
-
   recordCallsQueue.set(key, queueEntry)
-
-  // Process the queue asynchronously.
   ;(async () => {
     try {
       while (queueEntry.transactions.length > 0) {
-        // Batch all pending transactions.
         const currentBatch = queueEntry.transactions
-        // Clear out the transactions so new ones can be queued.
         queueEntry.transactions = []
         await recordCallsSimple(currentBatch, { rolesMod, roleKey })
       }
-      // Resolve after all transactions are processed.
-      queueEntry.resolve()
+      queueEntry.deferred.resolve()
     } catch (error) {
-      queueEntry.reject(error)
+      queueEntry.deferred.reject(error)
     } finally {
-      // Clean up the queue entry for this key.
       recordCallsQueue.delete(key)
     }
   })()
@@ -86,18 +114,13 @@ const recordCallsSimple = async (
   transactions: MetaTransactionRequest[],
   { rolesMod, roleKey }: { rolesMod: PrefixedAddress; roleKey: string },
 ) => {
-  const entry = await getStorageEntry({
-    key: `${rolesMod}:${decodeRoleKey(roleKey)}`,
-  })
+  const record = await getStoredRoleRecord(rolesMod, roleKey)
 
-  if (entry) {
-    return await recordSubsequentCalls(transactions, zRecord.parse(entry))
+  if (record) {
+    return await recordSubsequentCalls(transactions, record)
   }
 
-  return await recordInitialCalls(transactions, {
-    rolesMod,
-    roleKey,
-  })
+  return await recordInitialCalls(transactions, { rolesMod, roleKey })
 }
 
 const recordInitialCalls = async (
@@ -118,11 +141,7 @@ const recordInitialCalls = async (
   })
 
   const record = zRecord.parse(await response.json())
-
-  await saveStorageEntry({
-    key: `${rolesMod}:${decodeRoleKey(roleKey)}`,
-    value: record,
-  })
+  await saveStoredRoleRecord(rolesMod, roleKey, record)
 }
 
 const recordSubsequentCalls = async (
@@ -147,7 +166,6 @@ const recordSubsequentCalls = async (
   )
 
   const data = await response.json()
-
   if (!response.ok) {
     throw new Error('Failed to record calls: ' + data.error)
   }

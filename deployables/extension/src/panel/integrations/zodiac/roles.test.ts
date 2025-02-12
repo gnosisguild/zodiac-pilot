@@ -46,7 +46,7 @@ describe('recordCalls', () => {
 
   it('posts to the endpoint for a new record if no storage entry exists for the role', async () => {
     // Arrange: simulate that no record exists.
-    mockedGetStorageEntry.mockResolvedValue(undefined)
+    mockedGetStorageEntry.mockResolvedValue({})
 
     // Prepare a fake record returned by the Roles app.
     const fakeRecord = { id: 'record1', authToken: 'secretToken' }
@@ -73,8 +73,10 @@ describe('recordCalls', () => {
     // Finally, assert that saveStorageEntry was called to persist the new record.
     expect(mockedSaveStorageEntry).toHaveBeenCalledTimes(1)
     expect(mockedSaveStorageEntry).toHaveBeenCalledWith({
-      key: 'eth:0x0000000000000000000000000000000000000000:my-role',
-      value: fakeRecord,
+      key: 'role-records',
+      value: {
+        'eth:0x0000000000000000000000000000000000000000:my-role': fakeRecord,
+      },
     })
   })
 
@@ -84,7 +86,9 @@ describe('recordCalls', () => {
       id: 'existingRecordId',
       authToken: 'existingToken',
     }
-    mockedGetStorageEntry.mockResolvedValue(existingRecord)
+    mockedGetStorageEntry.mockResolvedValue({
+      'eth:0x0000000000000000000000000000000000000000:my-role': existingRecord,
+    })
 
     // Configure the fetch mock to return a successful response.
     fetchMock.mockResolvedValueOnce({
@@ -117,11 +121,14 @@ describe('recordCalls', () => {
 
   it('batches 3 concurrent invocations into 2 serial fetch requests', async () => {
     // Setup getStorageEntry so that:
-    // - First call returns null (forcing record creation).
-    // - Subsequent calls return the created record.
-    mockedGetStorageEntry
-      .mockResolvedValueOnce(null)
-      .mockResolvedValue({ id: 'newRecord', authToken: 'newAuthToken' })
+    // - First call returns empty storage (forcing record creation)
+    // - Subsequent calls return storage with the created record
+    mockedGetStorageEntry.mockResolvedValueOnce({}).mockResolvedValue({
+      'eth:0x0000000000000000000000000000000000000000:my-role': {
+        id: 'newRecord',
+        authToken: 'newAuthToken',
+      },
+    })
 
     // Create a deferred for the first fetch call.
     const { resolve: resolveFetchCall1, promise: fetchCall1Promise } =
