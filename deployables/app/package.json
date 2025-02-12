@@ -65,7 +65,7 @@
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
     "eslint": "9.20.1",
-    "globals": "15.14.0",
+    "globals": "15.15.0",
     "jsdom": "26.0.0",
     "postcss": "8.5.2",
     "tailwindcss": "4.0.6",
