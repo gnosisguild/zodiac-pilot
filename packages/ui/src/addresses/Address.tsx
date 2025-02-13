@@ -3,21 +3,34 @@ import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
 import classNames from 'classnames'
 import { splitPrefixedAddress } from 'ser-kit'
 import { getAddress } from 'viem'
+import { CopyToClipboard } from '../CopyToClipboard'
+import { Empty } from '../Empty'
+import { defaultSize, type Size } from '../common'
 import { Blockie } from './Blockie'
-import { CopyToClipboard } from './CopyToClipboard'
-import { Empty } from './Empty'
-import { defaultSize, type Size } from './common'
+import { shortenAddress } from './shortenAddress'
 
 type AddressProps = {
   children: HexAddress | PrefixedAddress
   size?: Size
+  /**
+   * Render a copy button next to the address
+   *
+   * @default false
+   */
   allowCopy?: boolean
+  /**
+   * Only show the first and last 4 characters of the given address
+   *
+   * @default false
+   * */
+  shorten?: boolean
 }
 
 export const Address = ({
   children,
   size = defaultSize,
   allowCopy = false,
+  shorten = false,
 }: AddressProps) => {
   const [, address] = splitPrefixedAddress(children)
 
@@ -38,7 +51,7 @@ export const Address = ({
       />
 
       <code className="max-w-full overflow-hidden text-ellipsis text-nowrap font-mono">
-        {getAddress(address)}
+        {shorten ? shortenAddress(getAddress(address)) : getAddress(address)}
       </code>
 
       {allowCopy && (

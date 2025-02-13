@@ -5,11 +5,9 @@ export enum CompanionAppMessageType {
   OPEN_PILOT = 'COMPANION::OPEN_PILOT',
   SUBMIT_SUCCESS = 'COMPANION::SUBMIT_SUCCESS',
   REQUEST_FORK_INFO = 'COMPANION::REQUEST_FORK_INFO',
-  FORK_UPDATED = 'COMPANION::FORK_UPDATED',
   PING = 'COMPANION::PING',
   REQUEST_VERSION = 'COMPANION::REQUEST_VERSION',
   REQUEST_ROUTES = 'COMPANION::REQUEST_ROUTES',
-  LIST_ROUTES = 'COMPANION::LIST_ROUTES',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -29,11 +27,6 @@ type CompanionAppRequestForkInfoMessage = {
   type: CompanionAppMessageType.REQUEST_FORK_INFO
 }
 
-type CompanionAppForkUpdateMessage = {
-  type: CompanionAppMessageType.FORK_UPDATED
-  forkUrl: string | null
-}
-
 type CompanionAppPingMessage = {
   type: CompanionAppMessageType.PING
 }
@@ -46,18 +39,11 @@ type CompanionAppRequestRoutesMessage = {
   type: CompanionAppMessageType.REQUEST_ROUTES
 }
 
-type CompanionAppListRoutesMessage = {
-  type: CompanionAppMessageType.LIST_ROUTES
-  routes: ExecutionRoute[]
-}
-
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
   | CompanionAppSubmitSuccessMessage
   | CompanionAppRequestForkInfoMessage
-  | CompanionAppForkUpdateMessage
   | CompanionAppPingMessage
   | CompanionAppRequestVersionMessage
   | CompanionAppRequestRoutesMessage
-  | CompanionAppListRoutesMessage

@@ -1,11 +1,6 @@
 import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
-import {
-  CompanionAppMessageType,
-  PilotMessageType,
-  type CompanionAppMessage,
-  type Message,
-} from '@zodiac/messages'
+import { PilotMessageType, type Message } from '@zodiac/messages'
 import EventEmitter from 'events'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
@@ -137,17 +132,6 @@ export class PilotSession extends EventEmitter<{
     this.emit('forkUpdated', this.fork)
 
     return this.fork
-  }
-
-  updateForkInTabs() {
-    return Promise.all(
-      this.getTabs().map((tabId) =>
-        chrome.tabs.sendMessage(tabId, {
-          type: CompanionAppMessageType.FORK_UPDATED,
-          forkUrl: this.getFork().rpcUrl ?? null,
-        } satisfies CompanionAppMessage),
-      ),
-    )
   }
 
   async clearFork() {

@@ -12,8 +12,10 @@ import {
 import { Chain } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
 import { mockActiveTab, mockTab } from '@zodiac/test-utils/chrome'
@@ -45,7 +47,7 @@ describe('Companion Enablement', () => {
       })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
-        type: CompanionAppMessageType.FORK_UPDATED,
+        type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
       })
     })
@@ -61,7 +63,7 @@ describe('Companion Enablement', () => {
       await connectCompanionApp({ id: 2, windowId: 1 })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
-        type: CompanionAppMessageType.FORK_UPDATED,
+        type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
       })
     })
@@ -84,8 +86,8 @@ describe('Companion Enablement', () => {
       )
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
-        type: PilotMessageType.PONG,
-      } satisfies Message)
+        type: CompanionResponseMessageType.PONG,
+      } satisfies CompanionResponseMessage)
     })
 
     it('stops answering pings when the port disconnects', async () => {
@@ -105,8 +107,8 @@ describe('Companion Enablement', () => {
       )
 
       expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith(tab.id, {
-        type: PilotMessageType.PONG,
-      } satisfies Message)
+        type: CompanionResponseMessageType.PONG,
+      } satisfies CompanionResponseMessage)
     })
 
     it('sends a disconnect message when the port closes', async () => {
@@ -139,9 +141,9 @@ describe('Companion Enablement', () => {
       )
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
-        type: CompanionAppMessageType.LIST_ROUTES,
+        type: CompanionResponseMessageType.LIST_ROUTES,
         routes: [route],
-      } satisfies CompanionAppMessage)
+      } satisfies CompanionResponseMessage)
     })
   })
 })

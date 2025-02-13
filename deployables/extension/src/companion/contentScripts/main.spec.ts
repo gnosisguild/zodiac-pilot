@@ -2,8 +2,10 @@ import { callListeners, chromeMock, createMockRoute } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
 import { createMockManifest } from '@zodiac/test-utils/chrome'
@@ -72,11 +74,11 @@ describe('Companion App Content Script', () => {
 
     it.each([
       [
-        CompanionAppMessageType.FORK_UPDATED,
+        CompanionResponseMessageType.FORK_UPDATED,
         {
-          type: CompanionAppMessageType.FORK_UPDATED,
+          type: CompanionResponseMessageType.FORK_UPDATED,
           forkUrl: 'http://rpc.com',
-        } satisfies CompanionAppMessage,
+        } satisfies CompanionResponseMessage,
       ],
       [
         PilotMessageType.PILOT_CONNECT,
@@ -91,10 +93,10 @@ describe('Companion App Content Script', () => {
         } satisfies Message,
       ],
       [
-        PilotMessageType.PONG,
+        CompanionResponseMessageType.PONG,
         {
-          type: PilotMessageType.PONG,
-        } satisfies Message,
+          type: CompanionResponseMessageType.PONG,
+        } satisfies CompanionResponseMessage,
       ],
     ])('forwards %s events from the extension', async (_, event) => {
       await importModule()
@@ -152,9 +154,9 @@ describe('Companion App Content Script', () => {
       await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           {
-            type: PilotMessageType.PROVIDE_VERSION,
+            type: CompanionResponseMessageType.PROVIDE_VERSION,
             version: '1.2.3',
-          } satisfies Message,
+          } satisfies CompanionResponseMessage,
           '*',
         )
       })

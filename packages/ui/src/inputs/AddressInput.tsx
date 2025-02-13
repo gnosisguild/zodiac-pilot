@@ -1,7 +1,7 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-import { Blockie } from '../Blockie'
+import { Blockie } from '../addresses'
 import { type ComposableInputProps, Input } from './Input'
 import { InputLayout } from './InputLayout'
 

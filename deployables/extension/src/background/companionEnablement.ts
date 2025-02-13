@@ -5,8 +5,10 @@ import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
 import type { TrackSessionsResult } from './sessionTracking'
@@ -30,9 +32,9 @@ export const companionEnablement = (
             invariant(tab.id != null, 'Tab needs an ID')
 
             await sendMessageToTab(tab.id, {
-              type: CompanionAppMessageType.FORK_UPDATED,
+              type: CompanionResponseMessageType.FORK_UPDATED,
               forkUrl: session.getFork().rpcUrl ?? null,
-            } satisfies CompanionAppMessage)
+            } satisfies CompanionResponseMessage)
           })
 
           console.debug('Companion App connected!')
@@ -43,9 +45,9 @@ export const companionEnablement = (
             console.debug('Sending updated fork to companion app', { fork })
 
             await sendMessageToTab(tab.id, {
-              type: CompanionAppMessageType.FORK_UPDATED,
+              type: CompanionResponseMessageType.FORK_UPDATED,
               forkUrl: fork?.rpcUrl ?? null,
-            } satisfies CompanionAppMessage)
+            } satisfies CompanionResponseMessage)
 
             captureLastError()
           })
@@ -60,9 +62,9 @@ export const companionEnablement = (
           const routes = await getRoutes()
 
           await sendMessageToTab(tab.id, {
-            type: CompanionAppMessageType.LIST_ROUTES,
+            type: CompanionResponseMessageType.LIST_ROUTES,
             routes,
-          } satisfies CompanionAppMessage)
+          } satisfies CompanionResponseMessage)
         }
       }
 
@@ -89,8 +91,8 @@ export const companionEnablement = (
       await sendMessageToTab(
         tab.id,
         {
-          type: PilotMessageType.PONG,
-        } satisfies Message,
+          type: CompanionResponseMessageType.PONG,
+        } satisfies CompanionResponseMessage,
         // bypass some tab validity checks so that this
         // message finds the companion app regardless of what
         // page the user is currently on

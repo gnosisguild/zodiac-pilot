@@ -1,3 +1,7 @@
+export {
+  CompanionResponseMessageType,
+  type CompanionResponseMessage,
+} from './companionResponse'
 export { PilotMessageType, type Message } from './connect'
 export {
   InjectedProviderMessageTyp,
