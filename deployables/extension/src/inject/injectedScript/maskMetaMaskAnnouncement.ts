@@ -1,6 +1,13 @@
 import type { InjectedProvider } from './InjectedProvider'
 
-export const maskMetaMaskAnnouncement = (provider: InjectedProvider) => {
+type MetaMaskMaskOptions = {
+  overrideName: boolean
+}
+
+export const maskMetaMaskAnnouncement = (
+  provider: InjectedProvider,
+  { overrideName }: MetaMaskMaskOptions,
+) => {
   // override EIP-6963 provider announcement for MetaMask while Pilot is connected
   // (this gives us an extra chance to connect to apps that only listen to MetaMask)
   window.addEventListener('eip6963:announceProvider', (event) => {
@@ -17,7 +24,9 @@ export const maskMetaMaskAnnouncement = (provider: InjectedProvider) => {
           detail: Object.freeze({
             info: {
               ...ev.detail.info,
-              name: 'Zodiac Pilot',
+
+              ...(overrideName ? { name: 'Zodiac Pilot' } : {}),
+
               icon: '//pilot.gnosisguild.org/zodiac48.png',
             },
             provider,
