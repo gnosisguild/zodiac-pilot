@@ -6,6 +6,7 @@ import {
   createMockPort,
   createMockTab,
   mockRoute,
+  mockRoutes,
   startPilotSession,
   startSimulation,
 } from '@/test-utils'
@@ -143,6 +144,29 @@ describe('Companion Enablement', () => {
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
         type: CompanionResponseMessageType.LIST_ROUTES,
         routes: [route],
+      } satisfies CompanionResponseMessage)
+    })
+
+    it('is possible to get a single route', async () => {
+      const tab = mockActiveTab(createMockTab())
+      const [route] = await mockRoutes(
+        { id: 'first-route' },
+        { id: 'another-route' },
+      )
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTE,
+          routeId: route.id,
+        } satisfies CompanionAppMessage,
+        { tab },
+        vi.fn(),
+      )
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
       } satisfies CompanionResponseMessage)
     })
   })

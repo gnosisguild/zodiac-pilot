@@ -1,4 +1,4 @@
-import { getRoutes } from '@/execution-routes'
+import { getRoute, getRoutes } from '@/execution-routes'
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
 import { getActiveTab, sendMessageToTab } from '@/utils'
@@ -65,6 +65,24 @@ export const companionEnablement = (
             type: CompanionResponseMessageType.LIST_ROUTES,
             routes,
           } satisfies CompanionResponseMessage)
+
+          break
+        }
+
+        case CompanionAppMessageType.REQUEST_ROUTE: {
+          const { routeId } = message
+
+          const route = await getRoute(routeId)
+
+          invariant(tab != null, 'Companion app message must come from a tab.')
+          invariant(tab.id != null, 'Tab needs an ID')
+
+          await sendMessageToTab(tab.id, {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          } satisfies CompanionResponseMessage)
+
+          break
         }
       }
 

@@ -3,7 +3,10 @@ import {
   CompanionResponseMessageType,
   PilotMessageType,
 } from '@zodiac/messages'
-import { createRenderFramework, type RenderOptions } from '@zodiac/test-utils'
+import {
+  createRenderFramework,
+  type RenderFrameworkOptions,
+} from '@zodiac/test-utils'
 import type { PropsWithChildren } from 'react'
 import { default as routes } from '../app/routes'
 import { postMessage } from './postMessage'
@@ -13,7 +16,7 @@ const baseRender = await createRenderFramework(
   routes,
 )
 
-type Options = RenderOptions & {
+type Options = RenderFrameworkOptions & {
   /**
    * Determines whether or not the app should render in a
    * state where it is connected to the browser extension.

@@ -5,10 +5,11 @@ import {
   type CompanionAppMessage,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import type { ExecutionRoute } from '@zodiac/schema'
+import { encode, type ExecutionRoute } from '@zodiac/schema'
 import { Address, GhostButton, Info, Table } from '@zodiac/ui'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import type { Route } from './+types/list-routes'
 
 const ListRoutes = () => (
@@ -105,18 +106,35 @@ const Route = ({ route }: RouteProps) => {
 
 const Edit = ({ routeId }: { routeId: string }) => {
   const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (submitting === false) {
       return
     }
 
-    const handleRoute = () => {}
+    const handleRoute = (event: MessageEvent<CompanionResponseMessage>) => {
+      if (event.data.type !== CompanionResponseMessageType.PROVIDE_ROUTE) {
+        return
+      }
+
+      navigate(`/edit-route/${encode(event.data.route)}`)
+    }
+
+    window.addEventListener('message', handleRoute)
+
+    window.postMessage(
+      {
+        type: CompanionAppMessageType.REQUEST_ROUTE,
+        routeId,
+      } satisfies CompanionAppMessage,
+      '*',
+    )
 
     return () => {
       window.removeEventListener('message', handleRoute)
     }
-  }, [])
+  }, [routeId, navigate, submitting])
 
   return (
     <div

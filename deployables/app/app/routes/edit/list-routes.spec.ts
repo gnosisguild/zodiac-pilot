@@ -19,11 +19,18 @@ describe('List Routes', () => {
   }
 
   it('is possible to edit a route', async () => {
-    await render('/list-routes', { version: '3.4.0' })
+    await render('/list-routes', {
+      version: '3.4.0',
+    })
 
     const [route] = await loadRoutes({ label: 'Test route' })
 
     await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+
+    await postMessage({
+      type: CompanionResponseMessageType.PROVIDE_ROUTE,
+      route,
+    })
 
     await expectRouteToBe(`/edit-route/${encode(route)}`)
   })

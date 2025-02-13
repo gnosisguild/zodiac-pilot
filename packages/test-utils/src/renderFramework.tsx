@@ -18,7 +18,6 @@ import type {
   CreateServerLoaderArgs,
 } from 'react-router/route-module'
 import { getCurrentPath } from './getCurrentPath'
-import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
 import { sleepTillIdle } from './sleepTillIdle'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -74,6 +73,8 @@ export type FrameworkRoute<
     : never
 }
 
+export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'>
+
 export async function createRenderFramework<Config extends RouteConfig>(
   basePath: URL,
   routeConfig: Config,
@@ -86,18 +87,14 @@ export async function createRenderFramework<Config extends RouteConfig>(
     Paths extends Awaited<RouteConfig>[number]['path'],
   >(
     currentPath: NonNullable<Paths>,
-    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
+    { searchParams = {}, ...options }: RenderOptions = {},
   ): Promise<RenderResult> {
     const Stub = createRoutesStub([
       {
         path: '/',
         Component: TestElement,
         // @ts-expect-error the real types and the stub types aren't nicely aligned
-        children: [
-          ...stubbedRoutes,
-
-          ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
-        ],
+        children: [...stubbedRoutes],
       },
     ])
 
