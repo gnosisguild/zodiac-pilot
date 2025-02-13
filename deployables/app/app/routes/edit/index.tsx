@@ -1,10 +1,3 @@
-import { Info } from '@zodiac/ui'
+import { redirect } from 'react-router'
 
-const EditHome = () => (
-  <Info>
-    To edit a route open the list of all routes in the Pilot extension and click
-    "Edit".
-  </Info>
-)
-
-export default EditHome
+export const loader = () => redirect('../list-routes')

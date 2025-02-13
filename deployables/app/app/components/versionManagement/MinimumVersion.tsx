@@ -1,11 +1,17 @@
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { useIsDev } from '../DevelopmentContext'
 import { useSatisfiesVersion } from './ExtensionVersionContext'
+
+type MinimumVersionProps = PropsWithChildren<{
+  version: string
+  fallback?: ReactNode
+}>
 
 export const MinimumVersion = ({
   children,
   version,
-}: PropsWithChildren<{ version: string }>) => {
+  fallback = null,
+}: MinimumVersionProps) => {
   const satisfiesVersion = useSatisfiesVersion(version)
   const isDev = useIsDev()
 
@@ -26,5 +32,5 @@ export const MinimumVersion = ({
     return children
   }
 
-  return null
+  return fallback
 }

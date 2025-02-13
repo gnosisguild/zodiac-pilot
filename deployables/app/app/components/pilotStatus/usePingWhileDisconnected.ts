@@ -1,8 +1,8 @@
 import {
   CompanionAppMessageType,
-  PilotMessageType,
+  CompanionResponseMessageType,
   type CompanionAppMessage,
-  type Message,
+  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { useStableHandler } from '@zodiac/ui'
 import { useEffect } from 'react'
@@ -23,17 +23,20 @@ export const usePingWhileDisconnected = (
     }
 
     const interval = setInterval(() => {
-      window.postMessage({
-        type: CompanionAppMessageType.PING,
-      } satisfies CompanionAppMessage)
+      window.postMessage(
+        {
+          type: CompanionAppMessageType.PING,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
     }, 500)
 
-    const handlePong = (event: MessageEvent<Message>) => {
+    const handlePong = (event: MessageEvent<CompanionResponseMessage>) => {
       if (event.data == null) {
         return
       }
 
-      if (event.data.type !== PilotMessageType.PONG) {
+      if (event.data.type !== CompanionResponseMessageType.PONG) {
         return
       }
 

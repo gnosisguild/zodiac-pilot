@@ -5,14 +5,18 @@ import {
   connectCompanionApp,
   createMockPort,
   createMockTab,
+  mockRoute,
+  mockRoutes,
   startPilotSession,
   startSimulation,
 } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
 import { mockActiveTab, mockTab } from '@zodiac/test-utils/chrome'
@@ -44,7 +48,7 @@ describe('Companion Enablement', () => {
       })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
-        type: CompanionAppMessageType.FORK_UPDATED,
+        type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
       })
     })
@@ -60,7 +64,7 @@ describe('Companion Enablement', () => {
       await connectCompanionApp({ id: 2, windowId: 1 })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
-        type: CompanionAppMessageType.FORK_UPDATED,
+        type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
       })
     })
@@ -83,8 +87,8 @@ describe('Companion Enablement', () => {
       )
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
-        type: PilotMessageType.PONG,
-      } satisfies Message)
+        type: CompanionResponseMessageType.PONG,
+      } satisfies CompanionResponseMessage)
     })
 
     it('stops answering pings when the port disconnects', async () => {
@@ -104,8 +108,8 @@ describe('Companion Enablement', () => {
       )
 
       expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith(tab.id, {
-        type: PilotMessageType.PONG,
-      } satisfies Message)
+        type: CompanionResponseMessageType.PONG,
+      } satisfies CompanionResponseMessage)
     })
 
     it('sends a disconnect message when the port closes', async () => {
@@ -120,6 +124,50 @@ describe('Companion Enablement', () => {
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
         type: PilotMessageType.PILOT_DISCONNECT,
       } satisfies Message)
+    })
+  })
+
+  describe('List routes', () => {
+    it('is possible to get stored routes', async () => {
+      const tab = mockActiveTab(createMockTab())
+      const route = await mockRoute()
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTES,
+        } satisfies CompanionAppMessage,
+        { tab },
+        vi.fn(),
+      )
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+        type: CompanionResponseMessageType.LIST_ROUTES,
+        routes: [route],
+      } satisfies CompanionResponseMessage)
+    })
+
+    it('is possible to get a single route', async () => {
+      const tab = mockActiveTab(createMockTab())
+      const [route] = await mockRoutes(
+        { id: 'first-route' },
+        { id: 'another-route' },
+      )
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTE,
+          routeId: route.id,
+        } satisfies CompanionAppMessage,
+        { tab },
+        vi.fn(),
+      )
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      } satisfies CompanionResponseMessage)
     })
   })
 })

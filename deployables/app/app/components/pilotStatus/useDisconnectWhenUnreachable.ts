@@ -1,8 +1,8 @@
 import {
   CompanionAppMessageType,
-  PilotMessageType,
+  CompanionResponseMessageType,
   type CompanionAppMessage,
-  type Message,
+  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { useEffect, useRef } from 'react'
 
@@ -41,12 +41,12 @@ export const useDisconnectWhenUnreachable = (
         onDisconnectRef.current()
       }, 1000)
 
-      const handlePong = (event: MessageEvent<Message>) => {
+      const handlePong = (event: MessageEvent<CompanionResponseMessage>) => {
         if (event.data == null) {
           return
         }
 
-        if (event.data.type !== PilotMessageType.PONG) {
+        if (event.data.type !== CompanionResponseMessageType.PONG) {
           return
         }
 

@@ -1,6 +1,5 @@
-export { Address } from './Address'
+export * from './addresses'
 export * from './alerts'
-export { Blockie } from './Blockie'
 export { Breadcrumbs } from './Breadcrumbs'
 export * from './buttons'
 export { ConfirmationModal, useConfirmationModal } from './ConfirmationModal'

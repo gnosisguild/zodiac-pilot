@@ -2,10 +2,13 @@ import { callListeners, chromeMock, createMockRoute } from '@/test-utils'
 import { waitFor } from '@testing-library/react'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
+import { createMockExecutionRoute } from '@zodiac/test-utils'
 import { createMockManifest } from '@zodiac/test-utils/chrome'
 import { randomUUID } from 'crypto'
 import { describe, expect, it, vi } from 'vitest'
@@ -57,6 +60,19 @@ describe('Companion App Content Script', () => {
           type: CompanionAppMessageType.PING,
         } satisfies CompanionAppMessage,
       ],
+      [
+        CompanionAppMessageType.REQUEST_ROUTES,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTES,
+        } satisfies CompanionAppMessage,
+      ],
+      [
+        CompanionAppMessageType.REQUEST_ROUTE,
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTE,
+          routeId: 'test-route',
+        } satisfies CompanionAppMessage,
+      ],
     ])('forwards %s events to the extension', async (_, event) => {
       await importModule()
 
@@ -72,13 +88,6 @@ describe('Companion App Content Script', () => {
 
     it.each([
       [
-        CompanionAppMessageType.FORK_UPDATED,
-        {
-          type: CompanionAppMessageType.FORK_UPDATED,
-          forkUrl: 'http://rpc.com',
-        } satisfies CompanionAppMessage,
-      ],
-      [
         PilotMessageType.PILOT_CONNECT,
         {
           type: PilotMessageType.PILOT_CONNECT,
@@ -91,10 +100,31 @@ describe('Companion App Content Script', () => {
         } satisfies Message,
       ],
       [
-        PilotMessageType.PONG,
+        CompanionResponseMessageType.FORK_UPDATED,
         {
-          type: PilotMessageType.PONG,
-        } satisfies Message,
+          type: CompanionResponseMessageType.FORK_UPDATED,
+          forkUrl: 'http://rpc.com',
+        } satisfies CompanionResponseMessage,
+      ],
+      [
+        CompanionResponseMessageType.PONG,
+        {
+          type: CompanionResponseMessageType.PONG,
+        } satisfies CompanionResponseMessage,
+      ],
+      [
+        CompanionResponseMessageType.LIST_ROUTES,
+        {
+          type: CompanionResponseMessageType.LIST_ROUTES,
+          routes: [],
+        } satisfies CompanionResponseMessage,
+      ],
+      [
+        CompanionResponseMessageType.PROVIDE_ROUTE,
+        {
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route: createMockExecutionRoute(),
+        } satisfies CompanionResponseMessage,
       ],
     ])('forwards %s events from the extension', async (_, event) => {
       await importModule()
@@ -152,9 +182,9 @@ describe('Companion App Content Script', () => {
       await waitFor(() => {
         expect(mockPostMessage).toHaveBeenCalledWith(
           {
-            type: PilotMessageType.PROVIDE_VERSION,
+            type: CompanionResponseMessageType.PROVIDE_VERSION,
             version: '1.2.3',
-          } satisfies Message,
+          } satisfies CompanionResponseMessage,
           '*',
         )
       })

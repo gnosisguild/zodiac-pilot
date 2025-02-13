@@ -74,6 +74,14 @@ export type FrameworkRoute<
     : never
 }
 
+export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'>
+
+const CombinedTestElement = () => (
+  <TestElement>
+    <InspectRoute />
+  </TestElement>
+)
+
 export async function createRenderFramework<Config extends RouteConfig>(
   basePath: URL,
   routeConfig: Config,
@@ -86,18 +94,14 @@ export async function createRenderFramework<Config extends RouteConfig>(
     Paths extends Awaited<RouteConfig>[number]['path'],
   >(
     currentPath: NonNullable<Paths>,
-    { inspectRoutes = [], searchParams = {}, ...options }: RenderOptions = {},
+    { searchParams = {}, ...options }: RenderOptions = {},
   ): Promise<RenderResult> {
     const Stub = createRoutesStub([
       {
         path: '/',
-        Component: TestElement,
+        Component: CombinedTestElement,
         // @ts-expect-error the real types and the stub types aren't nicely aligned
-        children: [
-          ...stubbedRoutes,
-
-          ...inspectRoutes.map((path) => ({ path, Component: InspectRoute })),
-        ],
+        children: [...stubbedRoutes],
       },
     ])
 

@@ -2,8 +2,10 @@ import { captureLastError } from '@/sentry'
 import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   PilotMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
 
@@ -15,6 +17,8 @@ window.addEventListener(
       case CompanionAppMessageType.OPEN_PILOT:
       case CompanionAppMessageType.SUBMIT_SUCCESS:
       case CompanionAppMessageType.REQUEST_FORK_INFO:
+      case CompanionAppMessageType.REQUEST_ROUTES:
+      case CompanionAppMessageType.REQUEST_ROUTE:
       case CompanionAppMessageType.PING: {
         chrome.runtime.sendMessage(event.data, () => {
           captureLastError()
@@ -28,9 +32,9 @@ window.addEventListener(
 
         window.postMessage(
           {
-            type: PilotMessageType.PROVIDE_VERSION,
+            type: CompanionResponseMessageType.PROVIDE_VERSION,
             version: manifest.version,
-          } satisfies Message,
+          } satisfies CompanionResponseMessage,
           '*',
         )
       }
@@ -39,7 +43,7 @@ window.addEventListener(
 )
 
 chrome.runtime.onMessage.addListener(
-  (message: Message | CompanionAppMessage) => {
+  (message: Message | CompanionResponseMessage) => {
     switch (message.type) {
       case PilotMessageType.PILOT_CONNECT: {
         console.debug('Companion App is trying to connect...')
@@ -53,8 +57,10 @@ chrome.runtime.onMessage.addListener(
         break
       }
 
-      case CompanionAppMessageType.FORK_UPDATED:
-      case PilotMessageType.PONG:
+      case CompanionResponseMessageType.FORK_UPDATED:
+      case CompanionResponseMessageType.PONG:
+      case CompanionResponseMessageType.LIST_ROUTES:
+      case CompanionResponseMessageType.PROVIDE_ROUTE:
       case PilotMessageType.PILOT_DISCONNECT: {
         window.postMessage(message, '*')
 
@@ -64,6 +70,8 @@ chrome.runtime.onMessage.addListener(
   },
 )
 
-chrome.runtime.sendMessage({ type: CompanionAppMessageType.REQUEST_FORK_INFO })
+chrome.runtime.sendMessage<CompanionAppMessage>({
+  type: CompanionAppMessageType.REQUEST_FORK_INFO,
+})
 
 injectScript('./build/companion/injectedScripts/main.js')

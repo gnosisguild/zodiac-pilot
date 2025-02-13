@@ -1,7 +1,7 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-import { Blockie } from '../Blockie'
+import { Blockie } from '../addresses'
 import { type ComposableInputProps, Input } from './Input'
 import { InputLayout } from './InputLayout'
 
@@ -24,9 +24,15 @@ export const AddressInput = ({
   value,
   defaultValue,
   placeholder = ZERO_ADDRESS,
+  hideLabel,
   ...props
 }: AddressInputProps) => (
-  <Input label={label} description={description} error={error}>
+  <Input
+    label={label}
+    description={description}
+    error={error}
+    hideLabel={hideLabel}
+  >
     {({ inputId, descriptionId }) => (
       <InputLayout
         disabled={disabled}
