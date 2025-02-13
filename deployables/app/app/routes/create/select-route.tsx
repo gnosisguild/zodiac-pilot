@@ -15,7 +15,7 @@ import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import { Children, useState, type PropsWithChildren } from 'react'
 import { redirect } from 'react-router'
-import { queryRoutes } from 'ser-kit'
+import { AccountType, queryRoutes } from 'ser-kit'
 import type { Route } from './+types/select-route'
 
 export const loader = async ({
@@ -216,7 +216,7 @@ type WaypointProps = { account: Account }
 const Waypoint = ({ account }: WaypointProps) => (
   <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-300 bg-zinc-100 p-2 dark:border-zinc-600/75 dark:bg-zinc-950">
     <h3 className="text-xs font-semibold uppercase opacity-75">
-      {account.type}
+      <AccountName account={account} />
     </h3>
 
     <Address shorten size="small">
@@ -224,3 +224,11 @@ const Waypoint = ({ account }: WaypointProps) => (
     </Address>
   </li>
 )
+
+const AccountName = ({ account }: { account: Account }) => {
+  if (account.type === AccountType.ROLES) {
+    return `${account.type} v${account.version}`
+  }
+
+  return account.type
+}
