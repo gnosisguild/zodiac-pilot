@@ -1,19 +1,51 @@
-import type { PropsWithChildren } from 'react'
+import { ZERO_ADDRESS } from '@zodiac/chains'
+import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
+import classNames from 'classnames'
+import { splitPrefixedAddress } from 'ser-kit'
+import { getAddress } from 'viem'
+import { Blockie } from './Blockie'
 import { CopyToClipboard } from './CopyToClipboard'
+import { Empty } from './Empty'
+import { defaultSize, type Size } from './common'
+
+type AddressProps = {
+  children: HexAddress | PrefixedAddress
+  size?: Size
+  allowCopy?: boolean
+}
 
 export const Address = ({
   children,
+  size = defaultSize,
   allowCopy = false,
-}: PropsWithChildren<{ allowCopy?: boolean }>) => (
-  <div className="flex items-center gap-2 overflow-hidden">
-    <code className="max-w-full overflow-hidden text-ellipsis text-nowrap rounded-md border border-zinc-300 bg-zinc-100 px-2 py-1 font-mono text-zinc-600 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-50">
-      {children}
-    </code>
+}: AddressProps) => {
+  const [, address] = splitPrefixedAddress(children)
 
-    {allowCopy && (
-      <CopyToClipboard iconOnly data={children}>
-        Copy address
-      </CopyToClipboard>
-    )}
-  </div>
-)
+  if (address === ZERO_ADDRESS) {
+    return (
+      <div className="flex items-center gap-2 overflow-hidden">
+        <Blockie address={ZERO_ADDRESS} className="size-6" />
+        <Empty />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-2 overflow-hidden">
+      <Blockie
+        address={address}
+        className={classNames(size === 'base' && 'size-6')}
+      />
+
+      <code className="max-w-full overflow-hidden text-ellipsis text-nowrap font-mono">
+        {getAddress(address)}
+      </code>
+
+      {allowCopy && (
+        <CopyToClipboard iconOnly data={address}>
+          Copy address
+        </CopyToClipboard>
+      )}
+    </div>
+  )
+}

@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-react'
 import type { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router'
 import { Spinner } from '../Spinner'
+import { defaultSize, type Size } from '../common'
 
 type SharedButtonProps = {
   /**
@@ -11,7 +12,7 @@ type SharedButtonProps = {
   fluid?: boolean
   iconOnly?: boolean
   icon?: LucideIcon
-  size?: 'tiny' | 'small' | 'base'
+  size?: Size
   /**
    * Turns the button into a type="submit" button that can be used inside forms
    */
@@ -37,7 +38,7 @@ export const BaseButton = ({
   fluid = false,
   iconOnly = false,
   icon: Icon,
-  size = 'base',
+  size = defaultSize,
   children,
   title,
   submit = false,

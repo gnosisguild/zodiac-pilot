@@ -1,13 +1,11 @@
 import { MinimumVersion, Page, useConnected } from '@/components'
-import { ZERO_ADDRESS } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { AddressInput, Form, GhostButton, Info, Table } from '@zodiac/ui'
+import { Address, Form, GhostButton, Info, Table } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
-import { unprefixAddress } from 'ser-kit'
 
 const ListRoutes = () => (
   <Page fullWidth>
@@ -86,22 +84,10 @@ const Route = ({ route }: RouteProps) => {
     <Table.Tr>
       <Table.Td>{route.label}</Table.Td>
       <Table.Td>
-        <AddressInput
-          hideLabel
-          readOnly
-          label="Initiator"
-          defaultValue={
-            route.initiator ? unprefixAddress(route.initiator) : ZERO_ADDRESS
-          }
-        />
+        {route.initiator && <Address>{route.initiator}</Address>}
       </Table.Td>
       <Table.Td>
-        <AddressInput
-          hideLabel
-          readOnly
-          label="Avatar"
-          defaultValue={unprefixAddress(route.avatar)}
-        />
+        <Address>{route.avatar}</Address>
       </Table.Td>
       <Table.Td align="right">
         <div className="flex justify-center opacity-0 transition-opacity group-hover:opacity-100">

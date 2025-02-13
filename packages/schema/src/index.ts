@@ -1,3 +1,4 @@
+export { type PrefixedAddress } from 'ser-kit'
 export { decode } from './decode'
 export { encode } from './encode'
 export type { Hex } from './hex'
