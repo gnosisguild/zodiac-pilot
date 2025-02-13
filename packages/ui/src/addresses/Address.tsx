@@ -47,10 +47,19 @@ export const Address = ({
     <div className="flex items-center gap-2 overflow-hidden">
       <Blockie
         address={address}
-        className={classNames(size === 'base' && 'size-6')}
+        className={classNames(
+          size === 'base' && 'size-6',
+          size === 'small' && 'size-4',
+        )}
       />
 
-      <code className="max-w-full overflow-hidden text-ellipsis text-nowrap font-mono">
+      <code
+        className={classNames(
+          'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
+          shorten && 'uppercase',
+          size === 'small' && 'text-xs',
+        )}
+      >
         {shorten ? shortenAddress(getAddress(address)) : getAddress(address)}
       </code>
 
