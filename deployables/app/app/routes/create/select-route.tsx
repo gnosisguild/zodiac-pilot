@@ -1,5 +1,5 @@
 import { Page } from '@/components'
-import { invariant, invariantResponse } from '@epic-web/invariant'
+import { invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
 import { getStartingWaypoint, getWaypoints } from '@zodiac/modules'
 import {
@@ -10,7 +10,7 @@ import {
   type ExecutionRoute,
   type Waypoint,
 } from '@zodiac/schema'
-import { Blockie, Form, Info, PrimaryButton } from '@zodiac/ui'
+import { Address, Form, Info, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import { Children, useState, type PropsWithChildren } from 'react'
@@ -99,7 +99,7 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
             </Route>
           </div>
 
-          <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-700 bg-zinc-900 px-2 py-2">
+          <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
             <Routes>
               {routes.map((route) => {
                 const waypoints = getWaypoints(route, { includeEnd: false })
@@ -168,8 +168,10 @@ const Route = ({
           'rounded-md border py-2 outline-none',
 
           selectable &&
-            'cursor-pointer px-2 hover:border-teal-500 hover:bg-teal-500/10 focus:border-teal-500 focus:bg-teal-500/10',
-          selected ? 'border-teal-500 bg-teal-500/10' : 'border-transparent',
+            'cursor-pointer px-2 hover:border-indigo-500 hover:bg-indigo-500/10 focus:border-indigo-500 focus:bg-indigo-500/10 dark:hover:border-teal-500 dark:hover:bg-teal-500/10 dark:focus:border-teal-500 dark:focus:bg-teal-500/10',
+          selected
+            ? 'border-indigo-500 bg-indigo-500/10 dark:border-teal-500 dark:bg-teal-500/10'
+            : 'border-transparent',
         )}
         onClick={() => {
           if (selectable === false) {
@@ -212,27 +214,13 @@ const Waypoints = ({ children }: PropsWithChildren) => {
 type WaypointProps = { account: Account }
 
 const Waypoint = ({ account }: WaypointProps) => (
-  <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-600/75 bg-zinc-950 p-2">
+  <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-300 bg-zinc-100 p-2 dark:border-zinc-600/75 dark:bg-zinc-950">
     <h3 className="text-xs font-semibold uppercase opacity-75">
       {account.type}
     </h3>
 
-    <div className="flex items-center gap-2">
-      <Blockie className="size-4" address={account.address} />
-
-      <ShortAddress>{account.address}</ShortAddress>
-    </div>
+    <Address shorten size="small">
+      {account.address}
+    </Address>
   </li>
 )
-
-const ShortAddress = ({ children }: { children: string }) => {
-  invariant(verifyHexAddress(children), `children need to be a hex address`)
-
-  const [, address] = children.split('x')
-
-  return (
-    <span className="font-mono text-xs uppercase">
-      {`${address.slice(0, 4)}...${address.slice(address.length - 4)}`}
-    </span>
-  )
-}
