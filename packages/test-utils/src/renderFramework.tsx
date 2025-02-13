@@ -18,6 +18,7 @@ import type {
   CreateServerLoaderArgs,
 } from 'react-router/route-module'
 import { getCurrentPath } from './getCurrentPath'
+import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
 import { sleepTillIdle } from './sleepTillIdle'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -75,6 +76,12 @@ export type FrameworkRoute<
 
 export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'>
 
+const CombinedTestElement = () => (
+  <TestElement>
+    <InspectRoute />
+  </TestElement>
+)
+
 export async function createRenderFramework<Config extends RouteConfig>(
   basePath: URL,
   routeConfig: Config,
@@ -92,7 +99,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
     const Stub = createRoutesStub([
       {
         path: '/',
-        Component: TestElement,
+        Component: CombinedTestElement,
         // @ts-expect-error the real types and the stub types aren't nicely aligned
         children: [...stubbedRoutes],
       },
