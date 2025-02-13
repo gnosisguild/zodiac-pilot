@@ -1,4 +1,4 @@
-import { MinimumVersion, OnlyConnected, Page, useConnected } from '@/components'
+import { MinimumVersion, OnlyConnected, Page } from '@/components'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -37,14 +37,9 @@ const ListRoutes = () => (
 export default ListRoutes
 
 const Routes = () => {
-  const connected = useConnected()
   const [routes, setRoutes] = useState<ExecutionRoute[]>([])
 
   useEffect(() => {
-    if (connected === false) {
-      return
-    }
-
     const handleRoutes = (event: MessageEvent<CompanionResponseMessage>) => {
       if (event.data.type !== CompanionResponseMessageType.LIST_ROUTES) {
         return
@@ -65,7 +60,7 @@ const Routes = () => {
     return () => {
       window.removeEventListener('message', handleRoutes)
     }
-  }, [connected])
+  }, [])
 
   return (
     <Table>
@@ -109,7 +104,6 @@ const Route = ({ route }: RouteProps) => {
 const Edit = ({ routeId }: { routeId: string }) => {
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
-  const connected = useConnected()
 
   useEffect(() => {
     if (submitting === false) {
@@ -148,7 +142,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
     >
       <GhostButton
         size="tiny"
-        disabled={!connected}
+        busy={submitting}
         onClick={() => setSubmitting(true)}
       >
         Edit
