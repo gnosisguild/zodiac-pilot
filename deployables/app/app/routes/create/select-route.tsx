@@ -1,7 +1,11 @@
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
-import { getStartingWaypoint, getWaypoints } from '@zodiac/modules'
+import {
+  decodeRoleKey,
+  getStartingWaypoint,
+  getWaypoints,
+} from '@zodiac/modules'
 import {
   encode,
   verifyHexAddress,
@@ -10,12 +14,23 @@ import {
   type ExecutionRoute,
   type Waypoint,
 } from '@zodiac/schema'
-import { Address, Form, Info, PrimaryButton } from '@zodiac/ui'
+import { Address, Form, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
-import { Children, useState, type PropsWithChildren } from 'react'
+import {
+  Children,
+  useState,
+  type PropsWithChildren,
+  type ReactElement,
+} from 'react'
 import { redirect } from 'react-router'
-import { AccountType, queryRoutes } from 'ser-kit'
+import { default as Stick } from 'react-stick'
+import {
+  AccountType,
+  ConnectionType,
+  queryRoutes,
+  type Connection,
+} from 'ser-kit'
 import type { Route } from './+types/select-route'
 
 export const loader = async ({
@@ -72,6 +87,8 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
 
   const probe = routes[0]
 
+  const selectedWaypoints = getWaypoints(selectedRoute, { includeEnd: false })
+
   const startingPoint = getStartingWaypoint(probe.waypoints)
   const waypoints = getWaypoints(probe)
   const endPoint = waypoints.at(-1)
@@ -81,17 +98,22 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
       <Page.Header>Select route</Page.Header>
 
       <Page.Main>
-        <Waypoint account={startingPoint.account} />
+        <Waypoint {...startingPoint} />
 
         <div className="flex">
           <div className="py-2 pr-4">
             <Route selectable={false}>
+              {selectedWaypoints.length === 0 && endPoint && (
+                <Connection connection={endPoint.connection} />
+              )}
+
               <Waypoints>
                 {getWaypoints(selectedRoute, { includeEnd: false }).map(
                   ({ account, connection }) => (
                     <Waypoint
                       key={`${account.address}-${connection.from}`}
                       account={account}
+                      connection={connection}
                     />
                   ),
                 )}
@@ -104,6 +126,10 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
               {routes.map((route) => {
                 const waypoints = getWaypoints(route, { includeEnd: false })
 
+                if (waypoints.length === 0 && endPoint) {
+                  return <Connection connection={endPoint.connection} />
+                }
+
                 return (
                   <Route
                     key={route.id}
@@ -115,6 +141,7 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
                         <Waypoint
                           key={`${account.address}-${connection.from}`}
                           account={account}
+                          connection={connection}
                         />
                       ))}
                     </Waypoints>
@@ -126,7 +153,7 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
         </div>
 
         <div className="flex justify-between">
-          {endPoint && <Waypoint account={endPoint.account} />}
+          {endPoint && <Waypoint {...endPoint} />}
 
           <Form>
             <input
@@ -189,20 +216,20 @@ const Route = ({
   )
 }
 
-const Waypoints = ({ children }: PropsWithChildren) => {
+const Waypoints = ({
+  children,
+}: {
+  children: ReactElement<WaypointProps>[]
+}) => {
   if (Children.count(children) === 0) {
-    return (
-      <div className="w-40">
-        <Info>Direct connection</Info>
-      </div>
-    )
+    return null
   }
 
   return (
     <ul className="flex flex-col items-center justify-around gap-4">
       {Children.map(children, (child, index) => (
         <>
-          {index !== 0 && <MoveDown size={16} />}
+          {index !== 0 && <Connection connection={child.props.connection} />}
 
           {child}
         </>
@@ -211,7 +238,47 @@ const Waypoints = ({ children }: PropsWithChildren) => {
   )
 }
 
-type WaypointProps = { account: Account }
+const Connection = ({ connection }: { connection?: Connection }) => {
+  const [hover, setHover] = useState(false)
+
+  if (connection == null) {
+    return null
+  }
+
+  return (
+    <div className="flex w-40 items-center justify-center gap-1">
+      <Stick
+        className={classNames(
+          'rounded-full p-1',
+          connection &&
+            connection.type === ConnectionType.IS_MEMBER &&
+            'bg-teal-500/20',
+        )}
+        position="middle right"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        node={hover && <Roles connection={connection} />}
+      >
+        <MoveDown size={16} />
+      </Stick>
+    </div>
+  )
+}
+const Roles = ({ connection }: { connection: Connection }) => {
+  if (connection.type !== ConnectionType.IS_MEMBER) {
+    return null
+  }
+
+  return (
+    <ul className="text-xs font-semibold uppercase opacity-50">
+      {connection.roles.map((roleKey) => (
+        <li key={roleKey}>{decodeRoleKey(roleKey)}</li>
+      ))}
+    </ul>
+  )
+}
+
+type WaypointProps = { account: Account; connection?: Connection }
 
 const Waypoint = ({ account }: WaypointProps) => (
   <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-300 bg-zinc-100 p-2 dark:border-zinc-600/75 dark:bg-zinc-950">
