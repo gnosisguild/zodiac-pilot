@@ -1,10 +1,13 @@
 import { postMessage, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CompanionResponseMessageType } from '@zodiac/messages'
+import {
+  CompanionResponseMessageType,
+  PilotMessageType,
+} from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 describe('List Routes', () => {
   const loadRoutes = async (...routes: Partial<ExecutionRoute>[]) => {
@@ -33,5 +36,17 @@ describe('List Routes', () => {
     })
 
     await expectRouteToBe(`/edit-route/${encode(route)}`)
+  })
+
+  it('disables the edit button when the extension is not connected', async () => {
+    await render('/list-routes', {
+      version: '3.4.0',
+    })
+
+    await loadRoutes({ label: 'Test route' })
+
+    await postMessage({ type: PilotMessageType.PILOT_DISCONNECT })
+
+    expect(await screen.findByRole('button', { name: 'Edit' })).toBeDisabled()
   })
 })

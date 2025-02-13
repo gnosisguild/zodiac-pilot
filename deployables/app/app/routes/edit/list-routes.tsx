@@ -107,6 +107,7 @@ const Route = ({ route }: RouteProps) => {
 const Edit = ({ routeId }: { routeId: string }) => {
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
+  const connected = useConnected()
 
   useEffect(() => {
     if (submitting === false) {
@@ -143,7 +144,11 @@ const Edit = ({ routeId }: { routeId: string }) => {
         submitting ? 'opacity-100' : 'opacity-0',
       )}
     >
-      <GhostButton size="tiny" onClick={() => setSubmitting(true)}>
+      <GhostButton
+        size="tiny"
+        disabled={!connected}
+        onClick={() => setSubmitting(true)}
+      >
         Edit
       </GhostButton>
     </div>
