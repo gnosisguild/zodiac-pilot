@@ -1,4 +1,4 @@
-import { MinimumVersion, Page, useConnected } from '@/components'
+import { MinimumVersion, OnlyConnected, Page, useConnected } from '@/components'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -26,7 +26,9 @@ const ListRoutes = () => (
           </Info>
         }
       >
-        <Routes />
+        <OnlyConnected>
+          <Routes />
+        </OnlyConnected>
       </MinimumVersion>
     </Page.Main>
   </Page>
