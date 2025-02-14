@@ -1,12 +1,10 @@
 import { Transition } from '@headlessui/react'
 import { useState, type PropsWithChildren, type ReactNode } from 'react'
-import { default as Stick } from 'react-stick'
+import { Stick } from './Stick'
 
 type PopoverProps = PropsWithChildren<{
   popover: ReactNode
 }>
-
-console.log({ Stick })
 
 export const Popover = ({ popover, children }: PopoverProps) => {
   const [hover, setHover] = useState(false)
