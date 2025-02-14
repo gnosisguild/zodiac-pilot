@@ -126,16 +126,16 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
               {routes.map((route) => {
                 const waypoints = getWaypoints(route, { includeEnd: false })
 
-                if (waypoints.length === 0 && endPoint) {
-                  return <Connection connection={endPoint.connection} />
-                }
-
                 return (
                   <Route
                     key={route.id}
                     selected={route === selectedRoute}
                     onSelect={() => setSelectedRoute(route)}
                   >
+                    {waypoints.length === 0 && endPoint && (
+                      <Connection connection={endPoint.connection} />
+                    )}
+
                     <Waypoints>
                       {waypoints.map(({ account, connection }) => (
                         <Waypoint
@@ -229,7 +229,7 @@ const Waypoints = ({
     <ul className="flex flex-col items-center justify-around gap-4">
       {Children.map(children, (child, index) => (
         <>
-          {index !== 0 && <Connection connection={child.props.connection} />}
+          <Connection connection={child.props.connection} />
 
           {child}
         </>
