@@ -1,4 +1,5 @@
-import { ConnectWallet, useIsDev, WalletProvider } from '@/components'
+import { getChain } from '@/balances-server'
+import { useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Route, Waypoint, Waypoints } from '@/routes-ui'
 import {
@@ -11,7 +12,6 @@ import {
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
-  formData,
   getHexString,
   getInt,
   getOptionalString,
@@ -47,13 +47,7 @@ import {
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
-import {
-  useLoaderData,
-  useNavigation,
-  useParams,
-  useSubmit,
-} from 'react-router'
+import { useParams } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
@@ -62,14 +56,17 @@ export const meta: RouteType.MetaFunction = ({ data, matches }) => [
   { title: routeTitle(matches, data.label || 'Unnamed route') },
 ]
 
-export const loader = ({ params }: RouteType.LoaderArgs) => {
+export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
   const chainId = getChainId(route.avatar)
 
+  const chain = await getChain(chainId)
+
   return {
     label: route.label,
-    initiator: route.initiator,
+    initiator: route.initiator || ZERO_ADDRESS,
     chainId,
+    chain,
     avatar: route.avatar,
     waypoints: getWaypoints(route),
   }
@@ -174,38 +171,22 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints },
+  loaderData: { label, avatar, chain, waypoints, initiator },
   actionData,
 }: RouteType.ComponentProps) => {
-  const submit = useSubmit()
-  const optimisticRoute = useOptimisticRoute()
   const isDev = useIsDev()
+  const connected = useConnected()
 
   return (
     <>
       <Form>
         <TextInput label="Label" name="label" defaultValue={label} />
 
-        <WalletProvider>
-          <ConnectWallet
-            chainId={chainId}
-            pilotAddress={optimisticRoute.pilotAddress}
-            onConnect={({ address }) => {
-              submit(
-                formData({
-                  intent: Intent.ConnectWallet,
-                  address,
-                }),
-                { method: 'POST' },
-              )
-            }}
-            onDisconnect={() => {
-              submit(formData({ intent: Intent.DisconnectWallet }), {
-                method: 'POST',
-              })
-            }}
-          />
-        </WalletProvider>
+        <AddressInput
+          readOnly
+          label="Pilot Account"
+          defaultValue={unprefixAddress(initiator)}
+        />
 
         <Route selectable={false}>
           <Waypoints excludeEnd>
@@ -222,13 +203,23 @@ const EditRoute = ({
         <AddressInput
           label="Avatar"
           readOnly
+          action={
+            <div className="leading-0 mr-2 flex items-center gap-2 text-xs font-semibold uppercase text-zinc-500">
+              {chain.name}
+              {chain.logo_url && (
+                <img className="size-5" src={chain.logo_url} alt="" />
+              )}
+            </div>
+          }
           defaultValue={unprefixAddress(avatar)}
         />
 
         <Form.Actions>
-          <div className="text-balance text-xs opacity-75">
-            The Pilot extension must be open to save.
-          </div>
+          {!connected && (
+            <div className="text-balance text-xs opacity-75">
+              The Pilot extension must be open to save.
+            </div>
+          )}
 
           <div className="flex gap-2">
             {isDev && <DebugRouteData />}
@@ -244,6 +235,7 @@ const EditRoute = ({
             <PrimaryButton
               submit
               intent={Intent.Save}
+              disabled={!connected}
               busy={useIsPending(Intent.Save)}
             >
               Save & Close
@@ -270,61 +262,6 @@ const EditRoute = ({
 }
 
 export default EditRoute
-
-const useOptimisticRoute = () => {
-  const { waypoints, chainId } = useLoaderData<typeof loader>()
-  const pilotAddress = getPilotAddress(waypoints)
-
-  const { formData } = useNavigation()
-
-  const [optimisticConnection, setOptimisticConnection] = useState({
-    pilotAddress,
-  })
-
-  useEffect(() => {
-    setOptimisticConnection({ pilotAddress })
-  }, [chainId, pilotAddress])
-
-  useEffect(() => {
-    if (formData == null) {
-      return
-    }
-
-    const intent = getOptionalString(formData, 'intent')
-
-    if (intent == null) {
-      return
-    }
-
-    switch (intent) {
-      case Intent.DisconnectWallet: {
-        setOptimisticConnection({
-          pilotAddress: ZERO_ADDRESS,
-        })
-
-        break
-      }
-
-      case Intent.ConnectWallet: {
-        setOptimisticConnection({
-          pilotAddress: getHexString(formData, 'address'),
-        })
-      }
-    }
-  }, [formData])
-
-  return optimisticConnection
-}
-
-const getPilotAddress = (waypoints?: Waypoints) => {
-  if (waypoints == null) {
-    return null
-  }
-
-  const [startingPoint] = waypoints
-
-  return startingPoint.account.address
-}
 
 const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
   const chainId = getChainId(route.avatar)
