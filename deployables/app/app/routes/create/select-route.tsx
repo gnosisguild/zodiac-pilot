@@ -1,5 +1,5 @@
 import { Page } from '@/components'
-import { invariantResponse } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
 import {
   decodeRoleKey,
@@ -14,7 +14,7 @@ import {
   type ExecutionRoute,
   type Waypoint,
 } from '@zodiac/schema'
-import { Address, Form, PrimaryButton } from '@zodiac/ui'
+import { Address, Form, Popover, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import {
@@ -24,7 +24,6 @@ import {
   type ReactElement,
 } from 'react'
 import { redirect } from 'react-router'
-import { default as Stick } from 'react-stick'
 import {
   AccountType,
   ConnectionType,
@@ -98,13 +97,18 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
       <Page.Header>Select route</Page.Header>
 
       <Page.Main>
-        <Waypoint {...startingPoint} />
+        <div className="w-44">
+          <Waypoint {...startingPoint} />
+        </div>
 
         <div className="flex">
           <div className="py-2 pr-4">
             <Route selectable={false}>
               {selectedWaypoints.length === 0 && endPoint && (
-                <Connection connection={endPoint.connection} />
+                <Connection
+                  account={endPoint.account}
+                  connection={endPoint.connection}
+                />
               )}
 
               <Waypoints>
@@ -133,7 +137,10 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
                     onSelect={() => setSelectedRoute(route)}
                   >
                     {waypoints.length === 0 && endPoint && (
-                      <Connection connection={endPoint.connection} />
+                      <Connection
+                        account={endPoint.account}
+                        connection={endPoint.connection}
+                      />
                     )}
 
                     <Waypoints>
@@ -153,7 +160,11 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
         </div>
 
         <div className="flex justify-between">
-          {endPoint && <Waypoint {...endPoint} />}
+          {endPoint && (
+            <div className="w-44">
+              <Waypoint {...endPoint} />
+            </div>
+          )}
 
           <Form>
             <input
@@ -189,10 +200,10 @@ const Route = ({
   onSelect,
 }: RouteProps) => {
   return (
-    <li className="snap-start list-none">
+    <li className="flex snap-start list-none flex-col items-center">
       <button
         className={classNames(
-          'rounded-md border py-2 outline-none',
+          'flex w-44 justify-center rounded-md border py-2 outline-none',
 
           selectable &&
             'cursor-pointer px-2 hover:border-indigo-500 hover:bg-indigo-500/10 focus:border-indigo-500 focus:bg-indigo-500/10 dark:hover:border-teal-500 dark:hover:bg-teal-500/10 dark:focus:border-teal-500 dark:focus:bg-teal-500/10',
@@ -226,10 +237,13 @@ const Waypoints = ({
   }
 
   return (
-    <ul className="flex flex-col items-center justify-around gap-4">
+    <ul className="flex flex-1 flex-col items-center gap-4">
       {Children.map(children, (child) => (
         <>
-          <Connection connection={child.props.connection} />
+          <Connection
+            account={child.props.account}
+            connection={child.props.connection}
+          />
 
           {child}
         </>
@@ -238,50 +252,81 @@ const Waypoints = ({
   )
 }
 
-const Connection = ({ connection }: { connection?: Connection }) => {
-  const [hover, setHover] = useState(false)
-
+const Connection = ({
+  connection,
+  account,
+}: {
+  connection?: Connection
+  account: Account
+}) => {
   if (connection == null) {
     return null
   }
 
-  return (
-    <div className="flex w-40 items-center justify-center gap-1">
-      <Stick
-        className={classNames(
-          'rounded-full p-1',
-          connection &&
-            connection.type === ConnectionType.IS_MEMBER &&
-            'bg-teal-500/20',
-        )}
-        position="middle right"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        node={hover && <Roles connection={connection} />}
+  if (connection && connection.type === ConnectionType.IS_MEMBER) {
+    invariant(
+      account.type === AccountType.ROLES,
+      'IS_MEMBER connection can only be defined with a roles account',
+    )
+
+    return (
+      <Popover
+        popover={<Roles version={account.version} connection={connection} />}
       >
-        <MoveDown size={16} />
-      </Stick>
+        <div className="rounded-full bg-teal-500/20 p-1">
+          <MoveDown size={16} />
+        </div>
+      </Popover>
+    )
+  }
+
+  return (
+    <div className="p-1">
+      <MoveDown size={16} />
     </div>
   )
 }
-const Roles = ({ connection }: { connection: Connection }) => {
+const Roles = ({
+  connection,
+  version,
+}: {
+  connection: Connection
+  version: 1 | 2
+}) => {
   if (connection.type !== ConnectionType.IS_MEMBER) {
     return null
   }
 
+  if (version === 1) {
+    return (
+      <>
+        <h3 className="mb-2 whitespace-nowrap text-xs font-semibold uppercase">
+          Role ID
+        </h3>
+
+        <span className="whitespace-nowrap text-xs">{connection.roles[0]}</span>
+      </>
+    )
+  }
+
   return (
-    <ul className="text-xs font-semibold uppercase opacity-50">
-      {connection.roles.map((roleKey) => (
-        <li key={roleKey}>{decodeRoleKey(roleKey)}</li>
-      ))}
-    </ul>
+    <>
+      <h3 className="mb-2 whitespace-nowrap text-xs font-semibold uppercase">
+        Possible roles
+      </h3>
+      <ul className="list-inside list-disc text-xs">
+        {connection.roles.map((roleKey) => (
+          <li key={roleKey}>{decodeRoleKey(roleKey)}</li>
+        ))}
+      </ul>
+    </>
   )
 }
 
 type WaypointProps = { account: Account; connection?: Connection }
 
 const Waypoint = ({ account }: WaypointProps) => (
-  <li className="flex w-40 flex-col items-center gap-1 rounded border border-zinc-300 bg-zinc-100 p-2 dark:border-zinc-600/75 dark:bg-zinc-950">
+  <li className="flex w-full flex-col items-center gap-1 rounded border border-zinc-300 bg-zinc-100 p-2 dark:border-zinc-600/75 dark:bg-zinc-950">
     <h3 className="text-xs font-semibold uppercase opacity-75">
       <AccountName account={account} />
     </h3>
