@@ -49,7 +49,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
   window.postMessage(
-    { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
+    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
     '*',
   )
 }

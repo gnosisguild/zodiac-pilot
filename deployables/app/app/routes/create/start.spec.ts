@@ -48,7 +48,7 @@ describe('New Account', () => {
 
     expect(postMessage).toHaveBeenCalledWith(
       {
-        type: CompanionAppMessageType.SAVE_ROUTE,
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
         data: expect.objectContaining({
           avatar: prefixAddress(Chain.ETH, address),
         }),
@@ -76,7 +76,7 @@ describe('New Account', () => {
 
     expect(postMessage).toHaveBeenCalledWith(
       {
-        type: CompanionAppMessageType.SAVE_ROUTE,
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
         data: expect.objectContaining({
           avatar: prefixAddress(Chain.GNO, address),
         }),
@@ -111,7 +111,7 @@ describe('New Account', () => {
     await waitFor(() => {
       expect(postMessage).toHaveBeenCalledWith(
         {
-          type: CompanionAppMessageType.SAVE_ROUTE,
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
           data: expect.objectContaining({
             initiator: prefixAddress(undefined, initiator),
           }),
@@ -141,7 +141,7 @@ describe('New Account', () => {
     await waitFor(() => {
       expect(postMessage).toHaveBeenCalledWith(
         {
-          type: CompanionAppMessageType.SAVE_ROUTE,
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
           data: expect.objectContaining({
             label: 'Test label',
           }),
