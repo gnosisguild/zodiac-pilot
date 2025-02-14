@@ -152,10 +152,7 @@ describe('Edit route', () => {
     it('offers safes that are owned by the user', async () => {
       const safe = randomAddress()
 
-      mockQueryAvatars.mockResolvedValue([
-        // @ts-expect-error Some weird clash in a union
-        createMockExecutionRoute({ avatar: prefixAddress(Chain.ETH, safe) }),
-      ])
+      mockQueryAvatars.mockResolvedValue([prefixAddress(Chain.ETH, safe)])
 
       const route = createMockExecutionRoute({
         initiator: randomPrefixedAddress(),
@@ -174,10 +171,7 @@ describe('Edit route', () => {
       it('is possible to select a safe from the list', async () => {
         const safe = randomAddress()
 
-        mockQueryAvatars.mockResolvedValue([
-          // @ts-expect-error Some weird clash in a union
-          createMockExecutionRoute({ avatar: prefixAddress(Chain.ETH, safe) }),
-        ])
+        mockQueryAvatars.mockResolvedValue([prefixAddress(Chain.ETH, safe)])
 
         const route = createMockExecutionRoute({
           initiator: randomPrefixedAddress(),

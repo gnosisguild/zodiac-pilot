@@ -28,6 +28,7 @@ import {
   AccountType,
   ConnectionType,
   queryRoutes,
+  rankRoutes,
   type Connection,
 } from 'ser-kit'
 import type { Route } from './+types/select-route'
@@ -40,7 +41,7 @@ export const loader = async ({
     verifyPrefixedAddress(toAddress),
   )
 
-  return { routes }
+  return { routes: rankRoutes(routes) }
 }
 
 export const action = async ({
