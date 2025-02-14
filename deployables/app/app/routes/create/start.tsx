@@ -90,6 +90,7 @@ const Start = () => {
           />
 
           <AvatarInput
+            required
             chainId={selectedChainId}
             pilotAddress={address}
             name="avatar"
