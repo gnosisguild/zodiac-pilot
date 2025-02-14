@@ -16,18 +16,16 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
   invariantResponse(validatedAddress != null, `Invalid address: ${address}`)
 
   try {
-    const routes = await queryAvatars(validatedAddress)
+    const avatars = await queryAvatars(validatedAddress)
 
-    const possibleRoutes = routes.filter((route) => {
-      const [chainId] = splitPrefixedAddress(route.avatar)
+    const possibleAvatars = avatars.filter((avatar) => {
+      const [chainId] = splitPrefixedAddress(avatar)
 
       return chainId === verifiedChainId
     })
 
     return Response.json(
-      Array.from(
-        new Set(possibleRoutes.map((route) => unprefixAddress(route.avatar))),
-      ),
+      possibleAvatars.map((avatar) => unprefixAddress(avatar)),
     )
   } catch {
     return Response.json([])
