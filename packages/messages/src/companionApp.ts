@@ -48,7 +48,7 @@ type CompanionAppRequestRouteMessage = {
 
 type CompanionAppSaveAndLaunchMessage = {
   type: CompanionAppMessageType.SAVE_AND_LAUNCH
-  route: ExecutionRoute
+  data: ExecutionRoute
 }
 
 export type CompanionAppMessage =

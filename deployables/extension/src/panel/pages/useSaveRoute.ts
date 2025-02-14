@@ -8,15 +8,21 @@ import {
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
-import { useRevalidator } from 'react-router'
+import { useNavigate, useRevalidator } from 'react-router'
 
 export const useSaveRoute = (lastUsedRouteId: string | null) => {
   const transactions = useTransactions()
   const { revalidate } = useRevalidator()
-  const [{ routeUpdate, sender }, setPendingRouteUpdate] = useState<
-    | { routeUpdate: null; sender: null }
-    | { routeUpdate: ExecutionRoute; sender: chrome.runtime.MessageSender }
-  >({ routeUpdate: null, sender: null })
+  const navigate = useNavigate()
+  const [{ routeUpdate, sender, closeSender }, setPendingRouteUpdate] =
+    useState<
+      | { routeUpdate: null; sender: null; closeSender: boolean }
+      | {
+          routeUpdate: ExecutionRoute
+          sender: chrome.runtime.MessageSender
+          closeSender: boolean
+        }
+    >({ routeUpdate: null, sender: null, closeSender: false })
 
   useEffect(() => {
     const handleSaveRoute = async (
@@ -31,7 +37,10 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
         return
       }
 
-      if (message.type !== CompanionAppMessageType.SAVE_ROUTE) {
+      if (
+        message.type !== CompanionAppMessageType.SAVE_ROUTE &&
+        message.type !== CompanionAppMessageType.SAVE_AND_LAUNCH
+      ) {
         return
       }
 
@@ -48,7 +57,11 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           currentRoute.avatar.toLowerCase() !==
           incomingRoute.avatar.toLowerCase()
         ) {
-          setPendingRouteUpdate({ routeUpdate: incomingRoute, sender })
+          setPendingRouteUpdate({
+            routeUpdate: incomingRoute,
+            sender,
+            closeSender: message.type === CompanionAppMessageType.SAVE_ROUTE,
+          })
 
           return
         }
@@ -57,7 +70,19 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
       saveRoute(incomingRoute).then(() => {
         revalidate()
 
-        closeTabAfterSafe(sender)
+        switch (message.type) {
+          case CompanionAppMessageType.SAVE_ROUTE: {
+            closeTabAfterSafe(sender)
+
+            break
+          }
+
+          case CompanionAppMessageType.SAVE_AND_LAUNCH: {
+            navigate(`/${incomingRoute.id}`)
+
+            break
+          }
+        }
       })
     }
 
@@ -66,10 +91,15 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleSaveRoute)
     }
-  }, [lastUsedRouteId, revalidate, transactions.length])
+  }, [lastUsedRouteId, navigate, revalidate, transactions.length])
 
   const cancelUpdate = useCallback(
-    () => setPendingRouteUpdate({ routeUpdate: null, sender: null }),
+    () =>
+      setPendingRouteUpdate({
+        routeUpdate: null,
+        sender: null,
+        closeSender: false,
+      }),
     [],
   )
 
@@ -81,11 +111,18 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
 
     await saveRoute(routeUpdate)
 
-    setPendingRouteUpdate({ routeUpdate: null, sender: null })
-    closeTabAfterSafe(sender)
+    setPendingRouteUpdate({
+      routeUpdate: null,
+      sender: null,
+      closeSender: false,
+    })
+
+    if (closeSender) {
+      closeTabAfterSafe(sender)
+    }
 
     return routeUpdate
-  }, [routeUpdate, sender])
+  }, [closeSender, routeUpdate, sender])
 
   return {
     isUpdatePending: routeUpdate != null,

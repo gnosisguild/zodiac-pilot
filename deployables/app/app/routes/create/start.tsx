@@ -22,6 +22,7 @@ import {
 } from '@zodiac/modules'
 import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
+import { redirect } from 'react-router'
 import { type ChainId } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
@@ -52,6 +53,8 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
     { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
     '*',
   )
+
+  return redirect(`/tokens/balances`)
 }
 
 const Start = () => {
