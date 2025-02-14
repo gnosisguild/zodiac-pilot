@@ -7,8 +7,10 @@ export interface Fork {
 
 export type EventFn = (...args: any) => void
 
+type DisposeFn = () => void
+
 export type Event<T extends EventFn = () => void> = {
-  addListener: (listener: T) => void
+  addListener: (listener: T) => DisposeFn
   removeListener: (listener: T) => void
   removeAllListeners: () => void
 }
