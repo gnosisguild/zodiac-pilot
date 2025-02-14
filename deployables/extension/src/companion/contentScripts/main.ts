@@ -14,6 +14,7 @@ window.addEventListener(
   (event: MessageEvent<CompanionAppMessage>) => {
     switch (event.data.type) {
       case CompanionAppMessageType.SAVE_ROUTE:
+      case CompanionAppMessageType.SAVE_AND_LAUNCH:
       case CompanionAppMessageType.OPEN_PILOT:
       case CompanionAppMessageType.SUBMIT_SUCCESS:
       case CompanionAppMessageType.REQUEST_FORK_INFO:

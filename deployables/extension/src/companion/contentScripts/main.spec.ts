@@ -73,6 +73,13 @@ describe('Companion App Content Script', () => {
           routeId: 'test-route',
         } satisfies CompanionAppMessage,
       ],
+      [
+        CompanionAppMessageType.SAVE_AND_LAUNCH,
+        {
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+          route: createMockExecutionRoute(),
+        },
+      ],
     ])('forwards %s events to the extension', async (_, event) => {
       await importModule()
 
