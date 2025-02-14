@@ -227,7 +227,7 @@ const Waypoints = ({
 
   return (
     <ul className="flex flex-col items-center justify-around gap-4">
-      {Children.map(children, (child, index) => (
+      {Children.map(children, (child) => (
         <>
           <Connection connection={child.props.connection} />
 
