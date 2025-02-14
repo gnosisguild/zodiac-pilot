@@ -1,12 +1,6 @@
-import {
-  AvatarInput,
-  ChainSelect,
-  ConnectWallet,
-  useIsDev,
-  WalletProvider,
-  ZodiacMod,
-} from '@/components'
+import { ConnectWallet, useIsDev, WalletProvider } from '@/components'
 import { useIsPending } from '@/hooks'
+import { Route, Waypoint, Waypoints } from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -28,6 +22,7 @@ import {
   createAccount,
   createEoaAccount,
   getRolesVersion,
+  getWaypoints,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   removeAvatar,
@@ -41,12 +36,9 @@ import {
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  jsonStringify,
-  type ExecutionRoute,
-  type Waypoints,
-} from '@zodiac/schema'
-import {
+  AddressInput,
   Error,
   Form,
   PrimaryButton,
@@ -63,14 +55,14 @@ import {
   useSubmit,
 } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
-import type { Route } from './+types/edit-route.$data'
+import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
-export const meta: Route.MetaFunction = ({ data, matches }) => [
+export const meta: RouteType.MetaFunction = ({ data, matches }) => [
   { title: routeTitle(matches, data.label || 'Unnamed route') },
 ]
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+export const loader = ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
   const chainId = getChainId(route.avatar)
 
@@ -79,11 +71,11 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     initiator: route.initiator,
     chainId,
     avatar: route.avatar,
-    waypoints: route.waypoints,
+    waypoints: getWaypoints(route),
   }
 }
 
-export const action = async ({ request, params }: Route.ActionArgs) => {
+export const action = async ({ request, params }: RouteType.ActionArgs) => {
   const route = parseRouteData(params.data)
   const data = await request.formData()
 
@@ -109,7 +101,7 @@ export const clientAction = async ({
   serverAction,
   request,
   params,
-}: Route.ClientActionArgs) => {
+}: RouteType.ClientActionArgs) => {
   const data = await request.clone().formData()
 
   const intent = getOptionalString(data, 'intent')
@@ -182,9 +174,9 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints, initiator },
+  loaderData: { chainId, label, avatar, waypoints },
   actionData,
-}: Route.ComponentProps) => {
+}: RouteType.ComponentProps) => {
   const submit = useSubmit()
   const optimisticRoute = useOptimisticRoute()
   const isDev = useIsDev()
@@ -215,46 +207,22 @@ const EditRoute = ({
           />
         </WalletProvider>
 
-        <ChainSelect
-          value={chainId}
-          onChange={(chainId) => {
-            submit(formData({ intent: Intent.UpdateChain, chainId }), {
-              method: 'POST',
-            })
-          }}
-        />
+        <Route selectable={false}>
+          <Waypoints excludeEnd>
+            {waypoints.map((waypoint) => (
+              <Waypoint
+                key={waypoint.account.prefixedAddress}
+                account={waypoint.account}
+                connection={waypoint.connection}
+              />
+            ))}
+          </Waypoints>
+        </Route>
 
-        <AvatarInput
-          value={unprefixAddress(avatar)}
-          pilotAddress={initiator ? unprefixAddress(initiator) : null}
-          chainId={chainId}
-          onChange={(avatar) => {
-            if (avatar != null) {
-              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
-                method: 'POST',
-              })
-            } else {
-              submit(formData({ intent: Intent.RemoveAvatar }), {
-                method: 'POST',
-              })
-            }
-          }}
-        />
-
-        <ZodiacMod
-          avatar={avatar}
-          waypoints={waypoints}
-          onSelect={(module) => {
-            submit(
-              formData({
-                intent: Intent.UpdateModule,
-                module: jsonStringify(module),
-              }),
-              {
-                method: 'POST',
-              },
-            )
-          }}
+        <AddressInput
+          label="Avatar"
+          readOnly
+          defaultValue={unprefixAddress(avatar)}
         />
 
         <Form.Actions>

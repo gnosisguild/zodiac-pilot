@@ -6,23 +6,27 @@ import { Connection } from './Connection'
 
 export const Waypoints = ({
   children,
+  excludeEnd,
 }: {
   children: ReactElement<WaypointProps>[]
+  excludeEnd?: boolean
 }) => {
-  if (Children.count(children) === 0) {
+  const size = Children.count(children)
+
+  if (size === 0) {
     return null
   }
 
   return (
     <ul className="flex flex-1 flex-col items-center gap-4">
-      {Children.map(children, (child) => (
+      {Children.map(children, (child, index) => (
         <>
           <Connection
             account={child.props.account}
             connection={child.props.connection}
           />
 
-          {child}
+          {excludeEnd && index === size - 1 ? null : child}
         </>
       ))}
     </ul>
