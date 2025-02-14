@@ -25,7 +25,7 @@
     "ethers": "6.13.5",
     "evm-proxy-detection": "2.0.3",
     "nanoid": "5.0.9",
-    "ser-kit": "2.0.1",
+    "ser-kit": "3.0.0",
     "zod": "3.24.2",
     "zodiac-roles-deployments": "2.4.0"
   },
