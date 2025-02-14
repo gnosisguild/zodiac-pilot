@@ -52,13 +52,17 @@ export const companionEnablement = (
             captureLastError()
           })
 
-          chrome.tabs.onRemoved.addListener((tabId) => {
+          const handleTabClose = (tabId: number) => {
             if (tabId !== tab.id) {
               return
             }
 
+            chrome.tabs.onRemoved.removeListener(handleTabClose)
+
             dispose()
-          })
+          }
+
+          chrome.tabs.onRemoved.addListener(handleTabClose)
 
           break
         }
