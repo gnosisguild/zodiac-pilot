@@ -2,6 +2,7 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWalletButton,
+  OnlyConnected,
   Page,
 } from '@/components'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
@@ -85,30 +86,32 @@ const Start = () => {
       </Page.Header>
 
       <Page.Main>
-        <Form context={{ initiator: address }}>
-          <ChainSelect
-            name="chainId"
-            value={selectedChainId}
-            onChange={setSelectedChainId}
-          />
+        <OnlyConnected>
+          <Form context={{ initiator: address }}>
+            <ChainSelect
+              name="chainId"
+              value={selectedChainId}
+              onChange={setSelectedChainId}
+            />
 
-          <AvatarInput
-            required
-            chainId={selectedChainId}
-            pilotAddress={address}
-            name="avatar"
-          />
+            <AvatarInput
+              required
+              chainId={selectedChainId}
+              pilotAddress={address}
+              name="avatar"
+            />
 
-          <TextInput
-            label="Label"
-            name="label"
-            placeholder="Give this account a descriptive name"
-          />
+            <TextInput
+              label="Label"
+              name="label"
+              placeholder="Give this account a descriptive name"
+            />
 
-          <Form.Actions>
-            <PrimaryButton submit>Create</PrimaryButton>
-          </Form.Actions>
-        </Form>
+            <Form.Actions>
+              <PrimaryButton submit>Create</PrimaryButton>
+            </Form.Actions>
+          </Form>
+        </OnlyConnected>
       </Page.Main>
     </Page>
   )
