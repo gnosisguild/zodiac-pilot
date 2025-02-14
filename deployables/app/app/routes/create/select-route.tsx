@@ -14,7 +14,7 @@ import {
   type ExecutionRoute,
   type Waypoint,
 } from '@zodiac/schema'
-import { Address, Form, Popover, PrimaryButton } from '@zodiac/ui'
+import { Address, Form, Info, Popover, PrimaryButton } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown } from 'lucide-react'
 import {
@@ -105,10 +105,12 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
           <div className="py-2 pr-4">
             <Route selectable={false}>
               {selectedWaypoints.length === 0 && endPoint && (
-                <Connection
-                  account={endPoint.account}
-                  connection={endPoint.connection}
-                />
+                <DirectConnection>
+                  <Connection
+                    account={endPoint.account}
+                    connection={endPoint.connection}
+                  />
+                </DirectConnection>
               )}
 
               <Waypoints>
@@ -137,10 +139,12 @@ const SelectRoute = ({ loaderData: { routes } }: Route.ComponentProps) => {
                     onSelect={() => setSelectedRoute(route)}
                   >
                     {waypoints.length === 0 && endPoint && (
-                      <Connection
-                        account={endPoint.account}
-                        connection={endPoint.connection}
-                      />
+                      <DirectConnection>
+                        <Connection
+                          account={endPoint.account}
+                          connection={endPoint.connection}
+                        />
+                      </DirectConnection>
                     )}
 
                     <Waypoints>
@@ -286,6 +290,15 @@ const Connection = ({
     </div>
   )
 }
+
+const DirectConnection = ({ children }: PropsWithChildren) => (
+  <div className="flex flex-col items-center gap-4">
+    {children}
+
+    <Info>Direct connection</Info>
+  </div>
+)
+
 const Roles = ({
   connection,
   version,
