@@ -39,7 +39,7 @@ export const companionEnablement = (
 
           console.debug('Companion App connected!')
 
-          onSimulationUpdate.addListener(async (fork) => {
+          const dispose = onSimulationUpdate.addListener(async (fork) => {
             invariant(tab.id != null, 'Tab needs an ID')
 
             console.debug('Sending updated fork to companion app', { fork })
@@ -51,6 +51,18 @@ export const companionEnablement = (
 
             captureLastError()
           })
+
+          const handleTabClose = (tabId: number) => {
+            if (tabId !== tab.id) {
+              return
+            }
+
+            chrome.tabs.onRemoved.removeListener(handleTabClose)
+
+            dispose()
+          }
+
+          chrome.tabs.onRemoved.addListener(handleTabClose)
 
           break
         }

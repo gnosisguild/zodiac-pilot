@@ -17,6 +17,10 @@ export const createEventListener = <
       return {
         addListener(listener) {
           listeners.add(listener)
+
+          return () => {
+            listeners.delete(listener)
+          }
         },
         removeAllListeners() {
           listeners.clear()

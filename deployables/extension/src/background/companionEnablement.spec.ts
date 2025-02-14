@@ -19,7 +19,7 @@ import {
   type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
-import { mockActiveTab, mockTab } from '@zodiac/test-utils/chrome'
+import { mockActiveTab, mockTab, mockTabClose } from '@zodiac/test-utils/chrome'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { companionEnablement } from './companionEnablement'
 import { trackRequests } from './rpcTracking'
@@ -67,6 +67,22 @@ describe('Companion Enablement', () => {
         type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
       })
+    })
+
+    it('does not notify the companion app when the tab has been closed', async () => {
+      await startPilotSession({ windowId: 1, tabId: 2 })
+
+      const tab = await connectCompanionApp({ id: 2, windowId: 1 })
+
+      await mockTabClose(tab.id)
+
+      await startSimulation({
+        windowId: 1,
+        chainId: Chain.ETH,
+        rpcUrl: 'http://test-rpc.com',
+      })
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(1)
     })
   })
 
