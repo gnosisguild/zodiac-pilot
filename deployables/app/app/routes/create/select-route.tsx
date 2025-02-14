@@ -3,6 +3,7 @@ import {
   Connection,
   DirectConnection,
   Route,
+  Routes,
   Waypoint,
   Waypoints,
 } from '@/routes-ui'
@@ -17,7 +18,7 @@ import {
 } from '@zodiac/schema'
 import { Form, PrimaryButton } from '@zodiac/ui'
 import { useState } from 'react'
-import { redirect, Routes } from 'react-router'
+import { redirect } from 'react-router'
 import { queryRoutes, rankRoutes } from 'ser-kit'
 import type { Route as RouteType } from './+types/select-route'
 
