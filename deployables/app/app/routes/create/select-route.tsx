@@ -1,12 +1,5 @@
 import { Page } from '@/components'
-import {
-  Connection,
-  DirectConnection,
-  Route,
-  Routes,
-  Waypoint,
-  Waypoints,
-} from '@/routes-ui'
+import { Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
 import { getStartingWaypoint, getWaypoints } from '@zodiac/modules'
@@ -74,12 +67,9 @@ const SelectRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
     return null
   }
 
-  const probe = routes[0]
+  const waypoints = getWaypoints(selectedRoute)
 
-  const selectedWaypoints = getWaypoints(selectedRoute, { includeEnd: false })
-
-  const startingPoint = getStartingWaypoint(probe.waypoints)
-  const waypoints = getWaypoints(probe)
+  const startingPoint = getStartingWaypoint(selectedRoute.waypoints)
   const endPoint = waypoints.at(-1)
 
   return (
@@ -94,25 +84,14 @@ const SelectRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
         <div className="flex">
           <div className="py-2 pr-4">
             <Route selectable={false}>
-              {selectedWaypoints.length === 0 && endPoint && (
-                <DirectConnection>
-                  <Connection
-                    account={endPoint.account}
-                    connection={endPoint.connection}
+              <Waypoints excludeEnd>
+                {waypoints.map(({ account, connection }) => (
+                  <Waypoint
+                    key={`${account.address}-${connection.from}`}
+                    account={account}
+                    connection={connection}
                   />
-                </DirectConnection>
-              )}
-
-              <Waypoints>
-                {getWaypoints(selectedRoute, { includeEnd: false }).map(
-                  ({ account, connection }) => (
-                    <Waypoint
-                      key={`${account.address}-${connection.from}`}
-                      account={account}
-                      connection={connection}
-                    />
-                  ),
-                )}
+                ))}
               </Waypoints>
             </Route>
           </div>
@@ -120,7 +99,7 @@ const SelectRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
           <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
             <Routes>
               {routes.map((route) => {
-                const waypoints = getWaypoints(route, { includeEnd: false })
+                const waypoints = getWaypoints(route)
 
                 return (
                   <Route
@@ -128,16 +107,7 @@ const SelectRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
                     selected={route === selectedRoute}
                     onSelect={() => setSelectedRoute(route)}
                   >
-                    {waypoints.length === 0 && endPoint && (
-                      <DirectConnection>
-                        <Connection
-                          account={endPoint.account}
-                          connection={endPoint.connection}
-                        />
-                      </DirectConnection>
-                    )}
-
-                    <Waypoints>
+                    <Waypoints excludeEnd>
                       {waypoints.map(({ account, connection }) => (
                         <Waypoint
                           key={`${account.address}-${connection.from}`}
