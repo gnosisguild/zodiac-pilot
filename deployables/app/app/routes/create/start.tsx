@@ -2,6 +2,7 @@ import {
   AvatarInput,
   ChainSelect,
   ConnectWallet,
+  ConnectWalletButton,
   Page,
   WalletProvider,
 } from '@/components'
@@ -29,34 +30,43 @@ const Start = () => {
   const [chainId, setChainId] = useState<ChainId>(Chain.ETH)
 
   return (
-    <Page>
-      <Page.Header>Create new route</Page.Header>
+    <WalletProvider>
+      <Page>
+        <Page.Header
+          action={
+            <ConnectWalletButton
+              connectLabel="Connect signer wallet"
+              connectedLabel="Signer wallet"
+            />
+          }
+        >
+          Create new route
+        </Page.Header>
 
-      <Page.Main>
-        <Form context={{ pilotAddress }}>
-          <WalletProvider>
+        <Page.Main>
+          <Form context={{ pilotAddress }}>
             <ConnectWallet
               chainId={chainId}
               pilotAddress={pilotAddress}
               onConnect={({ address }) => setPilotAddress(address)}
               onDisconnect={() => setPilotAddress(null)}
             />
-          </WalletProvider>
 
-          <ChainSelect name="chainId" value={chainId} onChange={setChainId} />
+            <ChainSelect name="chainId" value={chainId} onChange={setChainId} />
 
-          <AvatarInput
-            chainId={chainId}
-            pilotAddress={pilotAddress}
-            name="avatar"
-          />
+            <AvatarInput
+              chainId={chainId}
+              pilotAddress={pilotAddress}
+              name="avatar"
+            />
 
-          <Form.Actions>
-            <PrimaryButton submit>Next: Choose route</PrimaryButton>
-          </Form.Actions>
-        </Form>
-      </Page.Main>
-    </Page>
+            <Form.Actions>
+              <PrimaryButton submit>Next: Choose route</PrimaryButton>
+            </Form.Actions>
+          </Form>
+        </Page.Main>
+      </Page>
+    </WalletProvider>
   )
 }
 
