@@ -277,7 +277,7 @@ const Connection = ({
       <Popover
         popover={<Roles version={account.version} connection={connection} />}
       >
-        <div className="rounded-full bg-teal-500/20 p-1">
+        <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20">
           <MoveDown size={16} />
         </div>
       </Popover>

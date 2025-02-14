@@ -16,7 +16,7 @@ export const Popover = ({ popover, children }: PopoverProps) => {
       position="middle right"
       node={
         <Transition show={hover}>
-          <div className="ml-2 rounded-md bg-white p-2 text-zinc-900 shadow-md transition ease-in data-[closed]:opacity-0">
+          <div className="ml-2 rounded-md bg-zinc-950 p-2 text-white shadow-md transition ease-in data-[closed]:opacity-0 dark:bg-white dark:text-zinc-900">
             {popover}
           </div>
         </Transition>
