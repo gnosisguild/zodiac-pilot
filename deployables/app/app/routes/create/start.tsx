@@ -1,60 +1,117 @@
 import {
   AvatarInput,
   ChainSelect,
-  ConnectWallet,
+  ConnectWalletButton,
+  OnlyConnected,
   Page,
-  WalletProvider,
 } from '@/components'
-import { Chain, verifyChainId } from '@zodiac/chains'
-import { getHexString, getInt } from '@zodiac/form-data'
-import type { HexAddress } from '@zodiac/schema'
-import { Form, PrimaryButton } from '@zodiac/ui'
-import { useState } from 'react'
+import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
+import {
+  getHexString,
+  getInt,
+  getOptionalHexString,
+  getOptionalString,
+} from '@zodiac/form-data'
+import { CompanionAppMessageType } from '@zodiac/messages'
+import {
+  createBlankRoute,
+  createEoaAccount,
+  updateAvatar,
+  updateChainId,
+  updateLabel,
+  updateStartingPoint,
+} from '@zodiac/modules'
+import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { useEffect, useState } from 'react'
 import { redirect } from 'react-router'
-import { prefixAddress, type ChainId } from 'ser-kit'
+import { type ChainId } from 'ser-kit'
+import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
 
-export const action = async ({ request }: Route.ActionArgs) => {
+export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
 
-  const pilotAddress = getHexString(data, 'pilotAddress')
+  let route = createBlankRoute()
+
+  const initiator = getOptionalHexString(data, 'initiator')
+
+  if (initiator != null) {
+    route = updateStartingPoint(route, createEoaAccount({ address: initiator }))
+  }
+
+  const label = getOptionalString(data, 'label')
+
+  if (label != null) {
+    route = updateLabel(route, label)
+  }
+
   const avatar = getHexString(data, 'avatar')
   const chainId = verifyChainId(getInt(data, 'chainId'))
 
-  return redirect(`/create/${pilotAddress}/${prefixAddress(chainId, avatar)}`)
+  route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
+
+  window.postMessage(
+    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
+    '*',
+  )
+
+  return redirect(`/tokens/balances`)
 }
 
 const Start = () => {
-  const [pilotAddress, setPilotAddress] = useState<HexAddress | null>(null)
-  const [chainId, setChainId] = useState<ChainId>(Chain.ETH)
+  const { address, chainId } = useAccount()
+  const [selectedChainId, setSelectedChainId] = useState<ChainId>(
+    verifyChainId(chainId || ChainEnum.ETH),
+  )
+
+  useEffect(() => {
+    if (chainId == null) {
+      return
+    }
+
+    setSelectedChainId(verifyChainId(chainId))
+  }, [chainId])
 
   return (
     <Page>
-      <Page.Header>Create new route</Page.Header>
+      <Page.Header
+        action={
+          <ConnectWalletButton
+            connectLabel="Connect signer wallet"
+            connectedLabel="Signer wallet"
+          />
+        }
+      >
+        New Account
+      </Page.Header>
 
       <Page.Main>
-        <Form context={{ pilotAddress }}>
-          <WalletProvider>
-            <ConnectWallet
-              chainId={chainId}
-              pilotAddress={pilotAddress}
-              onConnect={({ address }) => setPilotAddress(address)}
-              onDisconnect={() => setPilotAddress(null)}
+        <OnlyConnected>
+          <Form context={{ initiator: address }}>
+            <ChainSelect
+              name="chainId"
+              value={selectedChainId}
+              onChange={setSelectedChainId}
             />
-          </WalletProvider>
 
-          <ChainSelect name="chainId" value={chainId} onChange={setChainId} />
+            <AvatarInput
+              required
+              chainId={selectedChainId}
+              pilotAddress={address}
+              name="avatar"
+            />
 
-          <AvatarInput
-            chainId={chainId}
-            pilotAddress={pilotAddress}
-            name="avatar"
-          />
+            <TextInput
+              label="Label"
+              name="label"
+              placeholder="Give this account a descriptive name"
+            />
 
-          <Form.Actions>
-            <PrimaryButton submit>Next: Choose route</PrimaryButton>
-          </Form.Actions>
-        </Form>
+            <Form.Actions>
+              <PrimaryButton submit>Create</PrimaryButton>
+            </Form.Actions>
+          </Form>
+        </OnlyConnected>
       </Page.Main>
     </Page>
   )

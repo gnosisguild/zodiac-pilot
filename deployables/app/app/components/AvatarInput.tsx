@@ -12,6 +12,7 @@ type Props = {
   value?: HexAddress
   pilotAddress?: HexAddress | null
   name?: string
+  required?: boolean
   onChange?(value: HexAddress | null): void
 }
 
@@ -25,6 +26,7 @@ export const AvatarInput = ({
   chainId,
   pilotAddress,
   name,
+  required,
   onChange,
 }: Props) => {
   const [internalValue, setInternalValue] = useState<string>(
@@ -60,6 +62,7 @@ export const AvatarInput = ({
         allowCreate
         blurInputOnSelect
         isClearable
+        required={required}
         isMulti={false}
         isDisabled={state === 'loading'}
         label="Piloted Safe"

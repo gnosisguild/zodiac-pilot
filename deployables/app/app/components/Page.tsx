@@ -1,5 +1,10 @@
 import classNames from 'classnames'
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import {
+  createContext,
+  useContext,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react'
 
 const PageContext = createContext(false)
 
@@ -17,9 +22,16 @@ export const Page = ({ children, fullWidth = false }: PageProps) => {
   )
 }
 
-const Header = ({ children }: PropsWithChildren) => (
+const Header = ({
+  children,
+  action,
+}: PropsWithChildren<{ action?: ReactNode }>) => (
   <Boundary>
-    <h1 className="leading-0 mb-16 text-3xl font-extralight">{children}</h1>
+    <div className="mb-16 flex items-center justify-between">
+      <h1 className="leading-0 text-3xl font-extralight">{children}</h1>
+
+      {action}
+    </div>
   </Boundary>
 )
 

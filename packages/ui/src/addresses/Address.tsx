@@ -37,7 +37,13 @@ export const Address = ({
   if (address === ZERO_ADDRESS) {
     return (
       <div className="flex items-center gap-2 overflow-hidden">
-        <Blockie address={ZERO_ADDRESS} className="size-6" />
+        <Blockie
+          address={ZERO_ADDRESS}
+          className={classNames(
+            size === 'base' && 'size-5',
+            size === 'small' && 'size-4',
+          )}
+        />
         <Empty />
       </div>
     )
@@ -48,7 +54,7 @@ export const Address = ({
       <Blockie
         address={address}
         className={classNames(
-          size === 'base' && 'size-6',
+          size === 'base' && 'size-5',
           size === 'small' && 'size-4',
         )}
       />

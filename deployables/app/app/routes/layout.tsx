@@ -38,7 +38,7 @@ const Sidebar = () => {
 
                 {useIsDev() && (
                   <Navigation.Link to="/create" icon={Plus}>
-                    New new route
+                    Create new account
                   </Navigation.Link>
                 )}
 

@@ -1,5 +1,5 @@
 import type { ChainId } from '@zodiac/chains'
-import { type HexAddress } from '@zodiac/schema'
+import { type Hex, type HexAddress } from '@zodiac/schema'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
@@ -8,7 +8,7 @@ export type OnConnectArgs = {
 }
 
 type ConnectProps = {
-  children: (props: { show?: () => void }) => React.ReactNode
+  children: (props: { show?: () => void; address?: Hex }) => React.ReactNode
   onConnect?: (args: OnConnectArgs) => void
   initialChainId?: ChainId
 }
@@ -43,7 +43,7 @@ export const LaunchConnectKit = ({
       }}
     >
       <ConnectKitButton.Custom>
-        {({ show }) => children({ show })}
+        {({ show, address }) => children({ show, address })}
       </ConnectKitButton.Custom>
     </ConnectKitProvider>
   )

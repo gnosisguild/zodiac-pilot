@@ -13,9 +13,12 @@ export const Form = ({
   ...props
 }: FormProps) => (
   <BaseForm {...props} method={method} className="flex flex-col gap-4">
-    {Object.entries(context).map(([key, value]) => (
-      <input type="hidden" key={key} name={key} value={value ?? ''} />
-    ))}
+    {Object.entries(context).map(
+      ([key, value]) =>
+        value != null && (
+          <input type="hidden" key={key} name={key} value={value} />
+        ),
+    )}
 
     {children}
   </BaseForm>
