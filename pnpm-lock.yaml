@@ -785,6 +785,9 @@ importers:
       react-select:
         specifier: 5.10.0
         version: 5.10.0(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react-stick:
+        specifier: 5.0.6
+        version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify:
         specifier: 11.0.3
         version: 11.0.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
