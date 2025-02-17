@@ -32,9 +32,11 @@ export default [
     route('/list-routes', 'routes/edit/list-routes.tsx'),
 
     ...prefix('/create', [
-      index('routes/create/start.tsx'),
-      route(':fromAddress/:toAddress', 'routes/create/select-route.tsx'),
-      route('finish/:data', 'routes/create/finish.tsx'),
+      layout('routes/create/layout.tsx', [
+        index('routes/create/start.tsx'),
+        route(':fromAddress/:toAddress', 'routes/create/select-route.tsx'),
+        route('finish/:data', 'routes/create/finish.tsx'),
+      ]),
     ]),
   ]),
 

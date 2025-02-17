@@ -39,6 +39,7 @@ export const selectStyles = <
       inline ? 'text-xs rounded-md hover:bg-zinc-100/10' : 'text-sm',
     ),
   valueContainer: () => 'p-0',
+  input: () => 'px-4 py-2 text-sm w-full overflow-hidden',
   dropdownIndicator: () =>
     'rounded-md shrink-0 hover:bg-zinc-200 text-zinc-500 dark:text-zinc-50 dark:hover:bg-zinc-700 self-center size-6 flex items-center justify-center',
   clearIndicator: () =>
