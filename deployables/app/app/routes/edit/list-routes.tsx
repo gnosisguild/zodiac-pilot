@@ -96,7 +96,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
         type: CompanionAppMessageType.REQUEST_ROUTE,
         routeId,
       },
-      (response) => navigate(`/edit-route/${encode(response.route)}`),
+      (response) => navigate(`/edit/${encode(response.route)}`),
     )
   }, [routeId, navigate, submitting])
 

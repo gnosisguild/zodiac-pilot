@@ -32,6 +32,6 @@ describe('List Routes', () => {
       route,
     })
 
-    await expectRouteToBe(`/edit-route/${encode(route)}`)
+    await expectRouteToBe(`/edit/${encode(route)}`)
   })
 })

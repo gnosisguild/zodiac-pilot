@@ -107,7 +107,7 @@ describe('Transactions', () => {
 
       expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
         'href',
-        `http://localhost/edit-route/${encode(route)}`,
+        `http://localhost/edit/${encode(route)}`,
       )
     })
   })
