@@ -1,7 +1,7 @@
 import { ProvideForkContext } from '@/balances-client'
 import { Page, WalletProvider } from '@/components'
 import { Info, PrimaryButton } from '@zodiac/ui'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import { useAccount } from 'wagmi'
 
@@ -21,9 +21,22 @@ export default Tokens
 
 const Connected = ({ children }: PropsWithChildren) => {
   const { address } = useAccount()
+  const [delayed, setDelayed] = useState(true)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDelayed(false)
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [])
 
   if (address != null) {
     return children
+  }
+
+  if (delayed) {
+    return null
   }
 
   return (
