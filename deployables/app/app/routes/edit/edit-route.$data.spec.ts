@@ -64,7 +64,7 @@ describe('Edit route', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render(`/edit-route/${encode(route)}`)
+      await render(`/edit/${encode(route)}`)
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -74,7 +74,7 @@ describe('Edit route', () => {
     it('is possible to change the label of a route', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${encode(route)}`)
+      await render(`/edit/${encode(route)}`)
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Label' }),
@@ -112,7 +112,7 @@ describe('Edit route', () => {
           }),
         })
 
-        await render(`/edit-route/${encode(route)}`)
+        await render(`/edit/${encode(route)}`)
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -122,7 +122,7 @@ describe('Edit route', () => {
   describe('Route', () => {
     it('is possible to select a new route', async () => {
       const route = createMockExecutionRoute({
-        id: 'current-route',
+        id: 'current',
         label: 'Current route',
 
         initiator: randomPrefixedAddress(),
@@ -133,11 +133,11 @@ describe('Edit route', () => {
         end: createMockEndWaypoint({ account: createMockSafeAccount() }),
       })
 
-      const newRoute = createMockRoute({ id: 'first-route', waypoints })
+      const newRoute = createMockRoute({ id: 'first', waypoints })
 
       mockQueryRoutes.mockResolvedValue([newRoute])
 
-      await render(`/edit-route/${encode(route)}`)
+      await render(`/edit/${encode(route)}`)
 
       await userEvent.click(await screen.findByTestId(newRoute.id))
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
@@ -163,7 +163,7 @@ describe('Edit route', () => {
     it('is possible to test a route before saving', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${encode(route)}`)
+      await render(`/edit/${encode(route)}`)
 
       expect(
         screen.getByRole('button', { name: 'Test route' }),
@@ -173,7 +173,7 @@ describe('Edit route', () => {
     it('shows errors returned by dry run', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit-route/${encode(route)}`)
+      await render(`/edit/${encode(route)}`)
 
       mockDryRun.mockResolvedValue({
         error: true,

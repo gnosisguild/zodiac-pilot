@@ -115,7 +115,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
         return
       }
 
-      navigate(`/edit-route/${encode(event.data.route)}`)
+      navigate(`/edit/${encode(event.data.route)}`)
     }
 
     window.addEventListener('message', handleRoute)
