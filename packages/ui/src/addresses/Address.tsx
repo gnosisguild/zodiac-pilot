@@ -70,7 +70,7 @@ export const Address = ({
       </code>
 
       {allowCopy && (
-        <CopyToClipboard iconOnly data={address}>
+        <CopyToClipboard iconOnly data={address} size="tiny">
           Copy address
         </CopyToClipboard>
       )}

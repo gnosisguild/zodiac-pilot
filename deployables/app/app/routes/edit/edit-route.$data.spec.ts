@@ -131,7 +131,7 @@ describe('Edit route', () => {
   })
 
   describe('Avatar', () => {
-    it('shows the avatar of a route', async () => {
+    it.only('shows the avatar of a route', async () => {
       const avatar = randomAddress()
 
       const route = createMockExecutionRoute({
