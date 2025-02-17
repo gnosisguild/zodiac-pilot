@@ -14,6 +14,8 @@ import {
 } from 'react-router'
 import type { Route } from './+types/root'
 
+export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full overflow-hidden">
