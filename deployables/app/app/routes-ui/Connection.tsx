@@ -21,7 +21,17 @@ export const Connection = ({
     return null
   }
 
-  if (connection && connection.type === ConnectionType.IS_MEMBER) {
+  if (connection.type === ConnectionType.OWNS) {
+    return (
+      <Popover popover={<span className="leading-0 text-xs">Owns</span>}>
+        <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20 dark:text-teal-300">
+          <MoveDown size={16} />
+        </div>
+      </Popover>
+    )
+  }
+
+  if (connection.type === ConnectionType.IS_MEMBER) {
     invariant(
       account.type === AccountType.ROLES,
       'IS_MEMBER connection can only be defined with a roles account',
