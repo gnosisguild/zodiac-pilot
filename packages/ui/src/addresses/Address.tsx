@@ -56,6 +56,7 @@ export const Address = ({
         className={classNames(
           size === 'base' && 'size-5',
           size === 'small' && 'size-4',
+          size === 'tiny' && 'size-3',
         )}
       />
 
@@ -64,6 +65,7 @@ export const Address = ({
           'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'uppercase',
           size === 'small' && 'text-xs',
+          size === 'tiny' && 'text-xs',
         )}
       >
         {shorten ? shortenAddress(getAddress(address)) : getAddress(address)}

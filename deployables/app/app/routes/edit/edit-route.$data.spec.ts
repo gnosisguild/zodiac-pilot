@@ -1,45 +1,26 @@
 import { getChain } from '@/balances-server'
 import { createMockChain, render } from '@/test-utils'
 import { dryRun } from '@/utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME } from '@zodiac/chains'
-import { CompanionAppMessageType } from '@zodiac/messages'
-import { fetchZodiacModules, removeAvatar, updateAvatar } from '@zodiac/modules'
+import { CHAIN_NAME } from '@zodiac/chains'
+import {
+  CompanionAppMessageType,
+  type CompanionAppMessage,
+} from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
+  createMockEoaAccount,
   createMockExecutionRoute,
+  createMockRoute,
+  createMockSafeAccount,
+  createMockStartingWaypoint,
   createMockWaypoints,
-  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { prefixAddress, queryAvatars, type ChainId } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-vi.mock('ser-kit', async (importOriginal) => {
-  const module = await importOriginal<typeof import('ser-kit')>()
-
-  return {
-    ...module,
-
-    queryAvatars: vi.fn(),
-  }
-})
-
-const mockQueryAvatars = vi.mocked(queryAvatars)
-
-vi.mock('@zodiac/modules', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/modules')>()
-
-  return {
-    ...module,
-
-    fetchZodiacModules: vi.fn(),
-  }
-})
-
-const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
+import { queryRoutes, type ChainId } from 'ser-kit'
+import { describe, expect, it, vi } from 'vitest'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -66,11 +47,19 @@ vi.mock('@/balances-server', async (importOriginal) => {
 
 const mockGetChain = vi.mocked(getChain)
 
-describe('Edit route', () => {
-  beforeEach(() => {
-    mockFetchZodiacModules.mockResolvedValue([])
-  })
+vi.mock('ser-kit', async (importOriginal) => {
+  const module = await importOriginal<typeof import('ser-kit')>()
 
+  return {
+    ...module,
+
+    queryRoutes: vi.fn(),
+  }
+})
+
+const mockQueryRoutes = vi.mocked(queryRoutes)
+
+describe('Edit route', () => {
   describe('Label', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
@@ -130,121 +119,41 @@ describe('Edit route', () => {
     )
   })
 
-  describe('Avatar', () => {
-    it.only('shows the avatar of a route', async () => {
-      const avatar = randomAddress()
-
+  describe('Route', () => {
+    it('is possible to select a new route', async () => {
       const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress({ address: avatar }),
-      })
+        id: 'current-route',
+        label: 'Current route',
 
-      await render(`/edit-route/${encode(route)}`)
-
-      expect(screen.getByText(avatar)).toBeInTheDocument()
-    })
-
-    it('offers safes that are owned by the user', async () => {
-      const safe = randomAddress()
-
-      mockQueryAvatars.mockResolvedValue([prefixAddress(Chain.ETH, safe)])
-
-      const route = createMockExecutionRoute({
         initiator: randomPrefixedAddress(),
       })
 
+      const waypoints = createMockWaypoints({
+        start: createMockStartingWaypoint(createMockEoaAccount()),
+        end: createMockEndWaypoint({ account: createMockSafeAccount() }),
+      })
+
+      const newRoute = createMockRoute({ id: 'first-route', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([newRoute])
+
       await render(`/edit-route/${encode(route)}`)
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'View all available Safes' }),
-      )
+      await userEvent.click(await screen.findByTestId(newRoute.id))
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(screen.getByRole('option', { name: safe })).toBeInTheDocument()
-    })
-
-    describe('Edit', () => {
-      it('is possible to select a safe from the list', async () => {
-        const safe = randomAddress()
-
-        mockQueryAvatars.mockResolvedValue([prefixAddress(Chain.ETH, safe)])
-
-        const route = createMockExecutionRoute({
-          initiator: randomPrefixedAddress(),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await userEvent.click(
-          await screen.findByRole('button', {
-            name: 'View all available Safes',
-          }),
-        )
-
-        await userEvent.click(screen.getByRole('option', { name: safe }))
-
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Save & Close' }),
-        )
-
-        expect(mockPostMessage).toHaveBeenCalledWith(
+      await waitFor(() => {
+        expect(postMessage).toHaveBeenCalledWith(
           {
             type: CompanionAppMessageType.SAVE_ROUTE,
-            data: updateAvatar(route, { safe }),
-          },
-          expect.anything(),
-        )
-      })
+            data: expect.objectContaining({
+              waypoints: newRoute.waypoints,
 
-      it('is possible to type in an address', async () => {
-        const safe = randomAddress()
-
-        mockQueryAvatars.mockResolvedValue([])
-
-        const route = createMockExecutionRoute()
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await userEvent.type(
-          screen.getByRole('textbox', { name: 'Piloted Safe' }),
-          safe,
-        )
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Save & Close' }),
-        )
-
-        expect(mockPostMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.SAVE_ROUTE,
-            data: updateAvatar(route, { safe }),
-          },
-          expect.anything(),
-        )
-      })
-
-      it('is possible to remove the avatar', async () => {
-        const safe = randomAddress()
-
-        const route = createMockExecutionRoute({
-          avatar: prefixAddress(Chain.ETH, safe),
-          waypoints: createMockWaypoints({
-            end: createMockEndWaypoint({ account: { address: safe } }),
-          }),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Clear piloted Safe' }),
-        )
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Save & Close' }),
-        )
-
-        expect(mockPostMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.SAVE_ROUTE,
-            data: removeAvatar(route),
-          },
-          expect.anything(),
+              id: route.id,
+              label: route.label,
+            }),
+          } satisfies CompanionAppMessage,
+          '*',
         )
       })
     })
