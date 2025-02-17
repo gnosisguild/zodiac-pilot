@@ -27,6 +27,6 @@ const isValidProtocol = (url: string) =>
   ['chrome:', 'about:'].every((protocol) => !url.startsWith(protocol))
 
 const isValidPage = (url: string) =>
-  !url.startsWith(`${getCompanionAppUrl()}/edit-route`) &&
+  !url.startsWith(`${getCompanionAppUrl()}/edit`) &&
   !url.startsWith(`${getCompanionAppUrl()}/create`) &&
   !url.startsWith(`${getCompanionAppUrl()}/submit`)

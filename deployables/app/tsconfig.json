@@ -11,7 +11,8 @@
       "@/hooks": ["./app/hooks/index.ts"],
       "@/balances-client": ["./app/balances/client/index.ts"],
       "@/balances-server": ["./app/balances/server/index.ts"],
-      "@/wagmi": ["./app/wagmi/index.ts"]
+      "@/wagmi": ["./app/wagmi/index.ts"],
+      "@/routes-ui": ["./app/routes-ui/index.ts"]
     }
   },
   "include": [

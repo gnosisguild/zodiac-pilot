@@ -42,7 +42,7 @@ const Sidebar = () => {
                   </Navigation.Link>
                 )}
 
-                <Navigation.Link to="/edit-route" icon={Edit}>
+                <Navigation.Link to="/edit" icon={Edit}>
                   Edit a route
                 </Navigation.Link>
 

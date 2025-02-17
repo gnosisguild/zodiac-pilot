@@ -34,7 +34,7 @@ describe('List routes', () => {
 
       expect(screen.getByRole('link', { name: 'Edit' })).toHaveAttribute(
         'href',
-        `http://localhost/edit-route/${btoa(JSON.stringify(route))}`,
+        `http://localhost/edit/${btoa(JSON.stringify(route))}`,
       )
     })
   })

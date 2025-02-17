@@ -1,17 +1,10 @@
-import {
-  AvatarInput,
-  ChainSelect,
-  ConnectWallet,
-  useIsDev,
-  WalletProvider,
-  ZodiacMod,
-} from '@/components'
+import { Page, useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
+import { Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
-  formData,
   getHexString,
   getInt,
   getOptionalString,
@@ -22,6 +15,8 @@ import {
   createAccount,
   createEoaAccount,
   getRolesVersion,
+  getStartingWaypoint,
+  getWaypoints,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
   removeAvatar,
@@ -29,17 +24,12 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
-  updateRoleId,
   updateRolesWaypoint,
   updateStartingPoint,
   zodiacModuleSchema,
   type ZodiacModule,
 } from '@zodiac/modules'
-import {
-  jsonStringify,
-  type ExecutionRoute,
-  type Waypoints,
-} from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
   Error,
   Form,
@@ -49,35 +39,37 @@ import {
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
-import {
-  useLoaderData,
-  useNavigation,
-  useParams,
-  useSubmit,
-} from 'react-router'
-import { unprefixAddress } from 'ser-kit'
-import type { Route } from './+types/edit-route.$data'
+import { useState } from 'react'
+import { useParams } from 'react-router'
+import { queryRoutes, rankRoutes, unprefixAddress } from 'ser-kit'
+import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
-export const meta: Route.MetaFunction = ({ data }) => [
-  { title: `Pilot | ${data.label || 'Unnamed route'}` },
+export const meta: RouteType.MetaFunction = ({ data }) => [
+  { title: `Pilot | ${data.currentRoute.label || 'Unnamed route'}` },
 ]
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
-  const chainId = getChainId(route.avatar)
 
   return {
-    label: route.label,
-    initiator: route.initiator,
-    chainId,
-    avatar: route.avatar,
-    waypoints: route.waypoints,
+    currentRoute: {
+      id: route.id,
+      label: route.label,
+      startingPoint: getStartingWaypoint(route.waypoints),
+      waypoints: getWaypoints(route),
+    },
+
+    possibleRoutes:
+      route.initiator == null
+        ? []
+        : rankRoutes(
+            await queryRoutes(unprefixAddress(route.initiator), route.avatar),
+          ),
   }
 }
 
-export const action = async ({ request, params }: Route.ActionArgs) => {
+export const action = async ({ request, params }: RouteType.ActionArgs) => {
   const route = parseRouteData(params.data)
   const data = await request.formData()
 
@@ -103,7 +95,7 @@ export const clientAction = async ({
   serverAction,
   request,
   params,
-}: Route.ClientActionArgs) => {
+}: RouteType.ClientActionArgs) => {
   const data = await request.clone().formData()
 
   const intent = getOptionalString(data, 'intent')
@@ -113,13 +105,27 @@ export const clientAction = async ({
     case Intent.Save: {
       let route = parseRouteData(params.data)
 
-      const roleId = getOptionalString(data, 'roleId')
-
-      if (roleId != null) {
-        route = updateRoleId(route, roleId)
-      }
-
       route = updateLabel(route, getString(data, 'label'))
+
+      const selectedRouteId = getString(data, 'selectedRouteId')
+
+      if (selectedRouteId !== route.id) {
+        const possibleRoutes =
+          route.initiator == null
+            ? []
+            : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+        const selectedRoute = possibleRoutes.find(
+          (route) => route.id === selectedRouteId,
+        )
+
+        invariantResponse(
+          selectedRoute != null,
+          `Could not find a route with id "${selectedRouteId}"`,
+        )
+
+        route = { ...selectedRoute, label: route.label, id: route.id }
+      }
 
       if (intent === Intent.Save) {
         window.postMessage(
@@ -176,181 +182,131 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { chainId, label, avatar, waypoints, initiator },
+  loaderData: {
+    currentRoute: { id, label, waypoints, startingPoint },
+    possibleRoutes,
+  },
   actionData,
-}: Route.ComponentProps) => {
-  const submit = useSubmit()
-  const optimisticRoute = useOptimisticRoute()
+}: RouteType.ComponentProps) => {
   const isDev = useIsDev()
+  const connected = useConnected()
+  const endPoint = waypoints.at(-1)
+  const [selectedRouteId, setSelectedRouteId] = useState(id)
 
   return (
-    <>
-      <Form>
-        <TextInput label="Label" name="label" defaultValue={label} />
+    <Page fullWidth>
+      <Page.Header>Edit route</Page.Header>
 
-        <WalletProvider>
-          <ConnectWallet
-            chainId={chainId}
-            pilotAddress={optimisticRoute.pilotAddress}
-            onConnect={({ address }) => {
-              submit(
-                formData({
-                  intent: Intent.ConnectWallet,
-                  address,
-                }),
-                { method: 'POST' },
-              )
-            }}
-            onDisconnect={() => {
-              submit(formData({ intent: Intent.DisconnectWallet }), {
-                method: 'POST',
-              })
-            }}
-          />
-        </WalletProvider>
+      <Page.Main>
+        <Form context={{ selectedRouteId }}>
+          <TextInput label="Label" name="label" defaultValue={label} />
 
-        <ChainSelect
-          value={chainId}
-          onChange={(chainId) => {
-            submit(formData({ intent: Intent.UpdateChain, chainId }), {
-              method: 'POST',
-            })
-          }}
-        />
-
-        <AvatarInput
-          value={unprefixAddress(avatar)}
-          pilotAddress={initiator ? unprefixAddress(initiator) : null}
-          chainId={chainId}
-          onChange={(avatar) => {
-            if (avatar != null) {
-              submit(formData({ intent: Intent.UpdateAvatar, avatar }), {
-                method: 'POST',
-              })
-            } else {
-              submit(formData({ intent: Intent.RemoveAvatar }), {
-                method: 'POST',
-              })
-            }
-          }}
-        />
-
-        <ZodiacMod
-          avatar={avatar}
-          waypoints={waypoints}
-          onSelect={(module) => {
-            submit(
-              formData({
-                intent: Intent.UpdateModule,
-                module: jsonStringify(module),
-              }),
-              {
-                method: 'POST',
-              },
-            )
-          }}
-        />
-
-        <Form.Actions>
-          <div className="text-balance text-xs opacity-75">
-            The Pilot extension must be open to save.
+          <div className="flex items-center justify-between">
+            <div className="w-44">
+              <Waypoint {...startingPoint} />
+            </div>
           </div>
 
-          <div className="flex gap-2">
-            {isDev && <DebugRouteData />}
+          <div className="flex">
+            <div className="py-2 pr-4">
+              <Route id={id} selectable={false}>
+                <Waypoints excludeEnd>
+                  {waypoints.map(({ account, connection }) => (
+                    <Waypoint
+                      key={`${account.address}-${connection.from}`}
+                      account={account}
+                      connection={connection}
+                    />
+                  ))}
+                </Waypoints>
+              </Route>
+            </div>
 
-            <SecondaryButton
-              submit
-              intent={Intent.DryRun}
-              busy={useIsPending(Intent.DryRun)}
-            >
-              Test route
-            </SecondaryButton>
+            <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+              <Routes>
+                {possibleRoutes.map((route) => {
+                  const waypoints = getWaypoints(route)
 
-            <PrimaryButton
-              submit
-              intent={Intent.Save}
-              busy={useIsPending(Intent.Save)}
-            >
-              Save & Close
-            </PrimaryButton>
+                  return (
+                    <Route
+                      id={route.id}
+                      key={route.id}
+                      selected={route.id === selectedRouteId}
+                      onSelect={() => setSelectedRouteId(route.id)}
+                    >
+                      <Waypoints excludeEnd>
+                        {waypoints.map(({ account, connection }) => (
+                          <Waypoint
+                            key={`${account.address}-${connection.from}`}
+                            account={account}
+                            connection={connection}
+                          />
+                        ))}
+                      </Waypoints>
+                    </Route>
+                  )
+                })}
+              </Routes>
+            </div>
           </div>
-        </Form.Actions>
 
-        {actionData != null && (
-          <div className="mt-8">
-            {actionData.error === true && (
-              <Error title="Dry run failed">{actionData.message}</Error>
+          <div className="flex items-start justify-between">
+            {endPoint && (
+              <div className="w-44">
+                <Waypoint {...endPoint} />
+              </div>
             )}
 
-            {actionData.error === false && (
-              <Success title="Dry run succeeded">
-                Your route seems to be ready for execution!
-              </Success>
-            )}
+            <div className="flex items-center justify-between">
+              {!connected && (
+                <div className="text-balance text-xs opacity-75">
+                  The Pilot extension must be open to save.
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                {isDev && <DebugRouteData />}
+
+                <SecondaryButton
+                  submit
+                  intent={Intent.DryRun}
+                  busy={useIsPending(Intent.DryRun)}
+                >
+                  Test route
+                </SecondaryButton>
+
+                <PrimaryButton
+                  submit
+                  intent={Intent.Save}
+                  disabled={!connected}
+                  busy={useIsPending(Intent.Save)}
+                >
+                  Save
+                </PrimaryButton>
+              </div>
+            </div>
           </div>
-        )}
-      </Form>
-    </>
+
+          {actionData != null && (
+            <div className="mt-8">
+              {actionData.error === true && (
+                <Error title="Dry run failed">{actionData.message}</Error>
+              )}
+
+              {actionData.error === false && (
+                <Success title="Dry run succeeded">
+                  Your route seems to be ready for execution!
+                </Success>
+              )}
+            </div>
+          )}
+        </Form>
+      </Page.Main>
+    </Page>
   )
 }
 
 export default EditRoute
-
-const useOptimisticRoute = () => {
-  const { waypoints, chainId } = useLoaderData<typeof loader>()
-  const pilotAddress = getPilotAddress(waypoints)
-
-  const { formData } = useNavigation()
-
-  const [optimisticConnection, setOptimisticConnection] = useState({
-    pilotAddress,
-  })
-
-  useEffect(() => {
-    setOptimisticConnection({ pilotAddress })
-  }, [chainId, pilotAddress])
-
-  useEffect(() => {
-    if (formData == null) {
-      return
-    }
-
-    const intent = getOptionalString(formData, 'intent')
-
-    if (intent == null) {
-      return
-    }
-
-    switch (intent) {
-      case Intent.DisconnectWallet: {
-        setOptimisticConnection({
-          pilotAddress: ZERO_ADDRESS,
-        })
-
-        break
-      }
-
-      case Intent.ConnectWallet: {
-        setOptimisticConnection({
-          pilotAddress: getHexString(formData, 'address'),
-        })
-      }
-    }
-  }, [formData])
-
-  return optimisticConnection
-}
-
-const getPilotAddress = (waypoints?: Waypoints) => {
-  if (waypoints == null) {
-    return null
-  }
-
-  const [startingPoint] = waypoints
-
-  return startingPoint.account.address
-}
 
 const getMultisend = (route: ExecutionRoute, module: ZodiacModule) => {
   const chainId = getChainId(route.avatar)
