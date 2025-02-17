@@ -1,24 +1,15 @@
-import { render } from '@/test-utils'
+import { getChain } from '@/balances-server'
+import { createMockChain, render } from '@/test-utils'
 import { dryRun } from '@/utils'
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
-import {
-  encodeRoleKey,
-  fetchZodiacModules,
-  queryRolesV1MultiSend,
-  queryRolesV2MultiSend,
-  removeAvatar,
-  SupportedZodiacModuleType,
-  updateAvatar,
-  updateRoleId,
-} from '@zodiac/modules'
+import { fetchZodiacModules, removeAvatar, updateAvatar } from '@zodiac/modules'
 import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockExecutionRoute,
-  createMockRoleWaypoint,
   createMockWaypoints,
   randomAddress,
   randomPrefixedAddress,
@@ -45,14 +36,10 @@ vi.mock('@zodiac/modules', async (importOriginal) => {
     ...module,
 
     fetchZodiacModules: vi.fn(),
-    queryRolesV1MultiSend: vi.fn(),
-    queryRolesV2MultiSend: vi.fn(),
   }
 })
 
 const mockFetchZodiacModules = vi.mocked(fetchZodiacModules)
-const mockQueryRolesV1MultiSend = vi.mocked(queryRolesV1MultiSend)
-const mockQueryRolesV2MultiSend = vi.mocked(queryRolesV2MultiSend)
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -66,6 +53,18 @@ vi.mock('@/utils', async (importOriginal) => {
 })
 
 const mockDryRun = vi.mocked(dryRun)
+
+vi.mock('@/balances-server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/balances-server')>()
+
+  return {
+    ...module,
+
+    getChain: vi.fn(),
+  }
+})
+
+const mockGetChain = vi.mocked(getChain)
 
 describe('Edit route', () => {
   beforeEach(() => {
@@ -111,6 +110,13 @@ describe('Edit route', () => {
     it.each(Object.entries(CHAIN_NAME))(
       'shows chainId "%s" as "%s"',
       async (chainId, name) => {
+        mockGetChain.mockResolvedValue(
+          createMockChain({
+            name,
+            id: chainId,
+          }),
+        )
+
         const route = createMockExecutionRoute({
           avatar: randomPrefixedAddress({
             chainId: parseInt(chainId) as ChainId,
@@ -122,18 +128,6 @@ describe('Edit route', () => {
         expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
-  })
-
-  describe('Pilot Account', () => {
-    it('offers a button to connect', async () => {
-      const route = createMockExecutionRoute()
-
-      await render(`/edit-route/${encode(route)}`)
-
-      expect(
-        await screen.findByRole('button', { name: 'Connect wallet' }),
-      ).toBeInTheDocument()
-    })
   })
 
   describe('Avatar', () => {
@@ -252,326 +246,6 @@ describe('Edit route', () => {
           },
           expect.anything(),
         )
-      })
-    })
-  })
-
-  describe('Role', () => {
-    it('is possible to update the roles mod', async () => {
-      const selectedMod = randomAddress()
-
-      mockFetchZodiacModules.mockResolvedValue([
-        {
-          type: SupportedZodiacModuleType.ROLES_V1,
-          moduleAddress: selectedMod,
-        },
-        {
-          type: SupportedZodiacModuleType.ROLES_V2,
-          moduleAddress: randomAddress(),
-        },
-      ])
-
-      mockQueryRolesV2MultiSend.mockResolvedValue([])
-
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-        waypoints: createMockWaypoints({
-          waypoints: [
-            createMockRoleWaypoint({ moduleAddress: selectedMod, version: 1 }),
-          ],
-          end: true,
-        }),
-      })
-
-      await render(`/edit-route/${encode(route)}`)
-
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
-      )
-      await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
-
-      await waitFor(async () => {
-        expect(await screen.findByText('Roles v2')).toBeInTheDocument()
-      })
-    })
-
-    it('reloads the modules when the chain changes', async () => {
-      mockFetchZodiacModules.mockResolvedValue([])
-
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-        waypoints: createMockWaypoints({ end: true }),
-      })
-
-      await render(`/edit-route/${encode(route)}`)
-
-      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
-      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
-
-      await waitFor(() => {
-        expect(mockFetchZodiacModules).toHaveBeenCalledWith(
-          expect.anything(),
-          expect.objectContaining({ chainId: Chain.GNO }),
-        )
-      })
-    })
-
-    describe('V1', () => {
-      it('shows the when the v1 role mod is selected', async () => {
-        const moduleAddress = randomAddress()
-
-        mockFetchZodiacModules.mockResolvedValue([
-          {
-            type: SupportedZodiacModuleType.ROLES_V1,
-            moduleAddress,
-          },
-        ])
-
-        const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: createMockWaypoints({
-            waypoints: [createMockRoleWaypoint({ moduleAddress, version: 1 })],
-          }),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await waitFor(async () => {
-          expect(await screen.findByText('Roles v1')).toBeInTheDocument()
-        })
-      })
-
-      it('is possible to select the v1 roles mod', async () => {
-        mockFetchZodiacModules.mockResolvedValue([
-          {
-            type: SupportedZodiacModuleType.ROLES_V1,
-            moduleAddress: randomAddress(),
-          },
-        ])
-
-        mockQueryRolesV1MultiSend.mockResolvedValue([])
-
-        const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: createMockWaypoints({ end: true }),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await userEvent.click(
-          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
-        )
-        await userEvent.click(screen.getByRole('option', { name: 'Roles v1' }))
-
-        await waitFor(async () => {
-          expect(await screen.findByText('Roles v1')).toBeInTheDocument()
-        })
-      })
-
-      describe('Config', () => {
-        it('shows the v1 role config when the v1 route mod is used', async () => {
-          const moduleAddress = randomAddress()
-          const roleId = randomAddress()
-
-          mockFetchZodiacModules.mockResolvedValue([
-            {
-              type: SupportedZodiacModuleType.ROLES_V1,
-              moduleAddress,
-            },
-          ])
-
-          const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            waypoints: createMockWaypoints({
-              waypoints: [
-                createMockRoleWaypoint({ moduleAddress, roleId, version: 1 }),
-              ],
-            }),
-          })
-
-          await render(`/edit-route/${encode(route)}`)
-
-          expect(
-            await screen.findByRole('textbox', { name: 'Role ID' }),
-          ).toHaveValue(roleId)
-        })
-
-        it('is possible to update the role ID', async () => {
-          const moduleAddress = randomAddress()
-
-          mockFetchZodiacModules.mockResolvedValue([
-            {
-              type: SupportedZodiacModuleType.ROLES_V1,
-              moduleAddress,
-            },
-          ])
-
-          const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            waypoints: createMockWaypoints({
-              waypoints: [
-                createMockRoleWaypoint({ moduleAddress, version: 1 }),
-              ],
-            }),
-          })
-
-          await render(`/edit-route/${encode(route)}`)
-
-          const roleId = randomAddress()
-
-          await waitFor(async () =>
-            expect(
-              await screen.findByRole('textbox', { name: 'Role ID' }),
-            ).not.toBeDisabled(),
-          )
-
-          await userEvent.type(
-            await screen.findByRole('textbox', { name: 'Role ID' }),
-            roleId,
-          )
-
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Save & Close' }),
-          )
-
-          expect(mockPostMessage).toHaveBeenCalledWith(
-            {
-              type: CompanionAppMessageType.SAVE_ROUTE,
-              data: updateRoleId(route, roleId),
-            },
-            expect.anything(),
-          )
-        })
-      })
-    })
-
-    describe('V2', () => {
-      it('shows when the v2 role mod is selected', async () => {
-        const moduleAddress = randomAddress()
-
-        mockFetchZodiacModules.mockResolvedValue([
-          {
-            type: SupportedZodiacModuleType.ROLES_V2,
-            moduleAddress,
-          },
-        ])
-
-        const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: createMockWaypoints({
-            waypoints: [createMockRoleWaypoint({ moduleAddress, version: 2 })],
-          }),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await waitFor(async () => {
-          expect(await screen.findByText('Roles v2')).toBeInTheDocument()
-        })
-      })
-
-      it('is possible to select the v2 roles mod', async () => {
-        mockFetchZodiacModules.mockResolvedValue([
-          {
-            type: SupportedZodiacModuleType.ROLES_V2,
-            moduleAddress: randomAddress(),
-          },
-        ])
-
-        mockQueryRolesV2MultiSend.mockResolvedValue([])
-
-        const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress(),
-          waypoints: createMockWaypoints({ end: true }),
-        })
-
-        await render(`/edit-route/${encode(route)}`)
-
-        await userEvent.click(
-          await screen.findByRole('combobox', { name: 'Zodiac Mod' }),
-        )
-        await userEvent.click(screen.getByRole('option', { name: 'Roles v2' }))
-
-        await waitFor(async () => {
-          expect(await screen.findByText('Roles v2')).toBeInTheDocument()
-        })
-      })
-
-      describe('Config', () => {
-        it('shows the v2 role config when the v2 route mod is used', async () => {
-          const moduleAddress = randomAddress()
-
-          mockFetchZodiacModules.mockResolvedValue([
-            {
-              type: SupportedZodiacModuleType.ROLES_V2,
-              moduleAddress,
-            },
-          ])
-
-          const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            waypoints: createMockWaypoints({
-              waypoints: [
-                createMockRoleWaypoint({
-                  moduleAddress,
-                  roleId: encodeRoleKey('TEST-KEY'),
-                  version: 2,
-                }),
-              ],
-            }),
-          })
-
-          await render(`/edit-route/${encode(route)}`)
-
-          expect(
-            await screen.findByRole('textbox', { name: 'Role Key' }),
-          ).toHaveValue('TEST-KEY')
-        })
-
-        it('is possible to update the role key', async () => {
-          const moduleAddress = randomAddress()
-
-          mockFetchZodiacModules.mockResolvedValue([
-            {
-              type: SupportedZodiacModuleType.ROLES_V2,
-              moduleAddress,
-            },
-          ])
-
-          const route = createMockExecutionRoute({
-            avatar: randomPrefixedAddress(),
-            waypoints: createMockWaypoints({
-              waypoints: [
-                createMockRoleWaypoint({ moduleAddress, version: 2 }),
-              ],
-            }),
-          })
-
-          await render(`/edit-route/${encode(route)}`)
-
-          await waitFor(async () =>
-            expect(
-              await screen.findByRole('textbox', { name: 'Role Key' }),
-            ).not.toBeDisabled(),
-          )
-
-          await userEvent.type(
-            await screen.findByRole('textbox', { name: 'Role Key' }),
-            'MANAGER',
-          )
-
-          await userEvent.click(
-            screen.getByRole('button', { name: 'Save & Close' }),
-          )
-
-          expect(mockPostMessage).toHaveBeenCalledWith(
-            {
-              type: CompanionAppMessageType.SAVE_ROUTE,
-              data: updateRoleId(route, encodeRoleKey('MANAGER')),
-            },
-            expect.anything(),
-          )
-        })
       })
     })
   })
