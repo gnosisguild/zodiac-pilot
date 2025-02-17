@@ -56,7 +56,7 @@ const Sidebar = () => {
           </MinimumVersion>
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="bg-radial-[at_100%_100%] flex flex-1 flex-col overflow-hidden from-white to-zinc-50 dark:from-gray-900 dark:to-zinc-950">
           <Outlet />
         </div>
       </div>

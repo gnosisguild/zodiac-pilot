@@ -14,7 +14,7 @@ type PageProps = PropsWithChildren<{ fullWidth?: boolean }>
 
 export const Page = ({ children, fullWidth = false }: PageProps) => {
   return (
-    <div className="bg-radial-[at_100%_100%] flex flex-1 flex-shrink-0 flex-col overflow-y-auto from-white to-zinc-50 dark:from-gray-900 dark:to-zinc-950">
+    <div className="flex flex-1 flex-shrink-0 flex-col overflow-y-auto">
       <div className="mt-16">
         <PageContext value={fullWidth}>{children}</PageContext>
       </div>
