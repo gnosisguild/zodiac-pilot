@@ -22,6 +22,7 @@ import {
   createAccount,
   createEoaAccount,
   getRolesVersion,
+  getStartingWaypoint,
   getWaypoints,
   queryRolesV1MultiSend,
   queryRolesV2MultiSend,
@@ -38,7 +39,6 @@ import {
 } from '@zodiac/modules'
 import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  AddressInput,
   Error,
   Form,
   PrimaryButton,
@@ -48,7 +48,6 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { useParams } from 'react-router'
-import { unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
@@ -68,6 +67,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     chainId,
     chain,
     avatar: route.avatar,
+    startingPoint: getStartingWaypoint(route.waypoints),
     waypoints: getWaypoints(route),
   }
 }
@@ -171,47 +171,42 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { label, avatar, chain, waypoints, initiator },
+  loaderData: { label, avatar, chain, waypoints, initiator, startingPoint },
   actionData,
 }: RouteType.ComponentProps) => {
   const isDev = useIsDev()
   const connected = useConnected()
+  const endPoint = waypoints.at(-1)
 
   return (
     <Form>
       <TextInput label="Label" name="label" defaultValue={label} />
 
-      <AddressInput
-        readOnly
-        label="Initiator"
-        defaultValue={unprefixAddress(initiator)}
-      />
+      <div className="w-44">
+        <Waypoint {...startingPoint} />
+      </div>
 
-      <Route selectable={false}>
-        <Waypoints excludeEnd>
-          {waypoints.map((waypoint) => (
-            <Waypoint
-              key={waypoint.account.prefixedAddress}
-              account={waypoint.account}
-              connection={waypoint.connection}
-            />
-          ))}
-        </Waypoints>
-      </Route>
+      <div className="flex">
+        <div className="py-2 pr-4">
+          <Route selectable={false}>
+            <Waypoints excludeEnd>
+              {waypoints.map((waypoint) => (
+                <Waypoint
+                  key={waypoint.account.prefixedAddress}
+                  account={waypoint.account}
+                  connection={waypoint.connection}
+                />
+              ))}
+            </Waypoints>
+          </Route>
+        </div>
+      </div>
 
-      <AddressInput
-        label="Avatar"
-        readOnly
-        action={
-          <div className="leading-0 mr-2 flex items-center gap-2 text-xs font-semibold uppercase text-zinc-500">
-            {chain.name}
-            {chain.logo_url && (
-              <img className="size-5" src={chain.logo_url} alt="" />
-            )}
-          </div>
-        }
-        defaultValue={unprefixAddress(avatar)}
-      />
+      {endPoint && (
+        <div className="w-44">
+          <Waypoint {...endPoint} />
+        </div>
+      )}
 
       <Form.Actions>
         {!connected && (

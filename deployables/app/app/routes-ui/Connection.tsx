@@ -23,7 +23,10 @@ export const Connection = ({
 
   if (connection.type === ConnectionType.OWNS) {
     return (
-      <Popover popover={<span className="leading-0 text-xs">Owns</span>}>
+      <Popover
+        position="right"
+        popover={<span className="leading-0 text-xs">Owns</span>}
+      >
         <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20 dark:text-teal-300">
           <MoveDown size={16} />
         </div>
@@ -39,6 +42,7 @@ export const Connection = ({
 
     return (
       <Popover
+        position="right"
         popover={<Roles version={account.version} connection={connection} />}
       >
         <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20 dark:text-teal-300">
