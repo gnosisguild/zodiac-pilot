@@ -65,7 +65,7 @@ export const AvatarInput = ({
         required={required}
         isMulti={false}
         isDisabled={state === 'loading'}
-        label="Piloted Safe"
+        label="Avatar"
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
         placeholder="Paste an address or select from the list"
@@ -117,7 +117,7 @@ export const AvatarInput = ({
 
   return (
     <TextInput
-      label="Piloted Safe"
+      label="Avatar"
       disabled={state === 'loading'}
       value={internalValue}
       name={name}
