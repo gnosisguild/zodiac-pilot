@@ -1,4 +1,4 @@
-import { useConnected, useIsDev } from '@/components'
+import { Page, useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
@@ -46,7 +46,7 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { useState } from 'react'
-import { Outlet, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { queryRoutes, rankRoutes, unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
@@ -200,113 +200,115 @@ const EditRoute = ({
   const [selectedRouteId, setSelectedRouteId] = useState(id)
 
   return (
-    <>
-      <Form context={{ selectedRouteId }}>
-        <TextInput label="Label" name="label" defaultValue={label} />
+    <Page fullWidth>
+      <Page.Header>Edit route</Page.Header>
 
-        <div className="flex items-center justify-between">
-          <div className="w-44">
-            <Waypoint {...startingPoint} />
-          </div>
-        </div>
-
-        <div className="flex">
-          <div className="py-2 pr-4">
-            <Route id={id} selectable={false}>
-              <Waypoints excludeEnd>
-                {waypoints.map(({ account, connection }) => (
-                  <Waypoint
-                    key={`${account.address}-${connection.from}`}
-                    account={account}
-                    connection={connection}
-                  />
-                ))}
-              </Waypoints>
-            </Route>
-          </div>
-
-          <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-            <Routes>
-              {possibleRoutes.map((route) => {
-                const waypoints = getWaypoints(route)
-
-                return (
-                  <Route
-                    id={route.id}
-                    key={route.id}
-                    selected={route.id === selectedRouteId}
-                    onSelect={() => setSelectedRouteId(route.id)}
-                  >
-                    <Waypoints excludeEnd>
-                      {waypoints.map(({ account, connection }) => (
-                        <Waypoint
-                          key={`${account.address}-${connection.from}`}
-                          account={account}
-                          connection={connection}
-                        />
-                      ))}
-                    </Waypoints>
-                  </Route>
-                )
-              })}
-            </Routes>
-          </div>
-        </div>
-
-        <div className="flex items-start justify-between">
-          {endPoint && (
-            <div className="w-44">
-              <Waypoint {...endPoint} />
-            </div>
-          )}
+      <Page.Main>
+        <Form context={{ selectedRouteId }}>
+          <TextInput label="Label" name="label" defaultValue={label} />
 
           <div className="flex items-center justify-between">
-            {!connected && (
-              <div className="text-balance text-xs opacity-75">
-                The Pilot extension must be open to save.
+            <div className="w-44">
+              <Waypoint {...startingPoint} />
+            </div>
+          </div>
+
+          <div className="flex">
+            <div className="py-2 pr-4">
+              <Route id={id} selectable={false}>
+                <Waypoints excludeEnd>
+                  {waypoints.map(({ account, connection }) => (
+                    <Waypoint
+                      key={`${account.address}-${connection.from}`}
+                      account={account}
+                      connection={connection}
+                    />
+                  ))}
+                </Waypoints>
+              </Route>
+            </div>
+
+            <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+              <Routes>
+                {possibleRoutes.map((route) => {
+                  const waypoints = getWaypoints(route)
+
+                  return (
+                    <Route
+                      id={route.id}
+                      key={route.id}
+                      selected={route.id === selectedRouteId}
+                      onSelect={() => setSelectedRouteId(route.id)}
+                    >
+                      <Waypoints excludeEnd>
+                        {waypoints.map(({ account, connection }) => (
+                          <Waypoint
+                            key={`${account.address}-${connection.from}`}
+                            account={account}
+                            connection={connection}
+                          />
+                        ))}
+                      </Waypoints>
+                    </Route>
+                  )
+                })}
+              </Routes>
+            </div>
+          </div>
+
+          <div className="flex items-start justify-between">
+            {endPoint && (
+              <div className="w-44">
+                <Waypoint {...endPoint} />
               </div>
             )}
 
-            <div className="flex gap-2">
-              {isDev && <DebugRouteData />}
+            <div className="flex items-center justify-between">
+              {!connected && (
+                <div className="text-balance text-xs opacity-75">
+                  The Pilot extension must be open to save.
+                </div>
+              )}
 
-              <SecondaryButton
-                submit
-                intent={Intent.DryRun}
-                busy={useIsPending(Intent.DryRun)}
-              >
-                Test route
-              </SecondaryButton>
+              <div className="flex gap-2">
+                {isDev && <DebugRouteData />}
 
-              <PrimaryButton
-                submit
-                intent={Intent.Save}
-                disabled={!connected}
-                busy={useIsPending(Intent.Save)}
-              >
-                Save
-              </PrimaryButton>
+                <SecondaryButton
+                  submit
+                  intent={Intent.DryRun}
+                  busy={useIsPending(Intent.DryRun)}
+                >
+                  Test route
+                </SecondaryButton>
+
+                <PrimaryButton
+                  submit
+                  intent={Intent.Save}
+                  disabled={!connected}
+                  busy={useIsPending(Intent.Save)}
+                >
+                  Save
+                </PrimaryButton>
+              </div>
             </div>
           </div>
-        </div>
 
-        {actionData != null && (
-          <div className="mt-8">
-            {actionData.error === true && (
-              <Error title="Dry run failed">{actionData.message}</Error>
-            )}
+          {actionData != null && (
+            <div className="mt-8">
+              {actionData.error === true && (
+                <Error title="Dry run failed">{actionData.message}</Error>
+              )}
 
-            {actionData.error === false && (
-              <Success title="Dry run succeeded">
-                Your route seems to be ready for execution!
-              </Success>
-            )}
-          </div>
-        )}
-      </Form>
-
-      <Outlet />
-    </>
+              {actionData.error === false && (
+                <Success title="Dry run succeeded">
+                  Your route seems to be ready for execution!
+                </Success>
+              )}
+            </div>
+          )}
+        </Form>
+      </Page.Main>
+    </Page>
   )
 }
 
