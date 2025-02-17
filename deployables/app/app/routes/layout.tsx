@@ -6,7 +6,7 @@ import {
   useIsDev,
 } from '@/components'
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
-import { ArrowUpFromLine, Edit, Landmark, Plus } from 'lucide-react'
+import { ArrowUpFromLine, Edit, Landmark, Plus, Signature } from 'lucide-react'
 import { Outlet } from 'react-router'
 
 const Sidebar = () => {
@@ -44,6 +44,10 @@ const Sidebar = () => {
 
                 <Navigation.Link to="/edit-route" icon={Edit}>
                   Edit a route
+                </Navigation.Link>
+
+                <Navigation.Link to="/submit" icon={Signature}>
+                  Submit
                 </Navigation.Link>
               </Navigation.Section>
             </Navigation>

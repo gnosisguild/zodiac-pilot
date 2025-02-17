@@ -1,6 +1,7 @@
 import { OperationType } from '@safe-global/types-kit'
 import { z } from 'zod'
 import { hexSchema } from './hex'
+import { addressSchema } from './routeSchema'
 
 const operationTypeSchema = z.union([
   z.literal(OperationType.Call),
@@ -8,7 +9,7 @@ const operationTypeSchema = z.union([
 ])
 
 export const metaTransactionRequestSchema = z.object({
-  to: hexSchema,
+  to: addressSchema,
   data: hexSchema,
   value: z.coerce.bigint(),
   operation: operationTypeSchema.optional(),

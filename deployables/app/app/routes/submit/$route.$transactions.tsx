@@ -1,4 +1,4 @@
-import { ConnectWallet, Page, WalletProvider } from '@/components'
+import { ConnectWallet, WalletProvider } from '@/components'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -21,7 +21,7 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route } from './+types/submit.$route.$transactions'
+import type { Route } from './+types/$route.$transactions'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
@@ -43,19 +43,13 @@ const SubmitPage = ({
   loaderData: { initiator, chainId },
 }: Route.ComponentProps) => {
   return (
-    <Page>
-      <Page.Header>Submit</Page.Header>
+    <WalletProvider>
+      <ConnectWallet chainId={chainId} pilotAddress={initiator} />
 
-      <Page.Main>
-        <WalletProvider>
-          <ConnectWallet chainId={chainId} pilotAddress={initiator} />
-
-          <div className="mt-8 flex">
-            <SubmitTransaction />
-          </div>
-        </WalletProvider>
-      </Page.Main>
-    </Page>
+      <div className="mt-8 flex">
+        <SubmitTransaction />
+      </div>
+    </WalletProvider>
   )
 }
 
@@ -190,7 +184,8 @@ const SubmitTransaction = () => {
           window.postMessage({
             type: CompanionAppMessageType.SUBMIT_SUCCESS,
           } satisfies CompanionAppMessage)
-        } catch {
+        } catch (e) {
+          console.log({ e })
           errorToast({
             title: 'Error',
             message: 'Submitting the transaction batch failed',

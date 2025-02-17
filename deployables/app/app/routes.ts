@@ -38,12 +38,14 @@ export default [
         route('finish/:data', 'routes/create/finish.tsx'),
       ]),
     ]),
-  ]),
 
-  route(
-    '/submit/:route/:transactions',
-    'routes/submit.$route.$transactions.tsx',
-  ),
+    ...prefix('/submit', [
+      layout('routes/submit/layout.tsx', [
+        index('routes/submit/index.tsx'),
+        route(':route/:transactions', 'routes/submit/$route.$transactions.tsx'),
+      ]),
+    ]),
+  ]),
 
   ...prefix('/:address/:chainId', [
     route('modules', 'routes/$address.$chainId/modules.ts'),
