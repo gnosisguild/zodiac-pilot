@@ -7,7 +7,13 @@ import {
   ZodiacMod,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import { dryRun, editRoute, jsonRpcProvider, parseRouteData } from '@/utils'
+import {
+  dryRun,
+  editRoute,
+  jsonRpcProvider,
+  parseRouteData,
+  routeTitle,
+} from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import {
@@ -60,8 +66,8 @@ import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
-export const meta: Route.MetaFunction = ({ data }) => [
-  { title: `Pilot | ${data.label || 'Unnamed route'}` },
+export const meta: Route.MetaFunction = ({ data, matches }) => [
+  { title: routeTitle(matches, data.label || 'Unnamed route') },
 ]
 
 export const loader = ({ params }: Route.LoaderArgs) => {
