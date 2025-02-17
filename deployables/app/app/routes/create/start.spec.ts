@@ -102,7 +102,7 @@ describe('New Account', () => {
     const postMessage = vi.spyOn(window, 'postMessage')
 
     await userEvent.click(
-      screen.getByRole('combobox', { name: 'Piloted Safe' }),
+      await screen.findByRole('combobox', { name: 'Piloted Safe' }),
     )
     await userEvent.click(screen.getByRole('option', { name: avatar }))
 
