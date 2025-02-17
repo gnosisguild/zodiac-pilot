@@ -4,20 +4,19 @@ export const routeTitle = (
   matches: CreateMetaArgs<any>['matches'],
   title: string,
 ) => {
-  const parts = matches.reduce((result, match) => {
+  const titles = new Set<string>()
+
+  for (const match of matches) {
     if (match == null) {
-      return result
+      continue
     }
 
-    return [
-      ...result,
-      ...match.meta.reduce((result, meta) => {
-        if ('title' in meta) {
-          return [...result, meta.title]
-        }
+    for (const meta of match.meta) {
+      if ('title' in meta && typeof meta.title === 'string') {
+        titles.add(meta.title)
+      }
+    }
+  }
 
-        return result
-      }, []),
-    ]
-  }, [])
+  return [...titles, title].join(' | ')
 }
