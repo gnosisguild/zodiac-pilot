@@ -178,86 +178,84 @@ const EditRoute = ({
   const connected = useConnected()
 
   return (
-    <>
-      <Form>
-        <TextInput label="Label" name="label" defaultValue={label} />
+    <Form>
+      <TextInput label="Label" name="label" defaultValue={label} />
 
-        <AddressInput
-          readOnly
-          label="Pilot Account"
-          defaultValue={unprefixAddress(initiator)}
-        />
+      <AddressInput
+        readOnly
+        label="Initiator"
+        defaultValue={unprefixAddress(initiator)}
+      />
 
-        <Route selectable={false}>
-          <Waypoints excludeEnd>
-            {waypoints.map((waypoint) => (
-              <Waypoint
-                key={waypoint.account.prefixedAddress}
-                account={waypoint.account}
-                connection={waypoint.connection}
-              />
-            ))}
-          </Waypoints>
-        </Route>
+      <Route selectable={false}>
+        <Waypoints excludeEnd>
+          {waypoints.map((waypoint) => (
+            <Waypoint
+              key={waypoint.account.prefixedAddress}
+              account={waypoint.account}
+              connection={waypoint.connection}
+            />
+          ))}
+        </Waypoints>
+      </Route>
 
-        <AddressInput
-          label="Avatar"
-          readOnly
-          action={
-            <div className="leading-0 mr-2 flex items-center gap-2 text-xs font-semibold uppercase text-zinc-500">
-              {chain.name}
-              {chain.logo_url && (
-                <img className="size-5" src={chain.logo_url} alt="" />
-              )}
-            </div>
-          }
-          defaultValue={unprefixAddress(avatar)}
-        />
-
-        <Form.Actions>
-          {!connected && (
-            <div className="text-balance text-xs opacity-75">
-              The Pilot extension must be open to save.
-            </div>
-          )}
-
-          <div className="flex gap-2">
-            {isDev && <DebugRouteData />}
-
-            <SecondaryButton
-              submit
-              intent={Intent.DryRun}
-              busy={useIsPending(Intent.DryRun)}
-            >
-              Test route
-            </SecondaryButton>
-
-            <PrimaryButton
-              submit
-              intent={Intent.Save}
-              disabled={!connected}
-              busy={useIsPending(Intent.Save)}
-            >
-              Save & Close
-            </PrimaryButton>
+      <AddressInput
+        label="Avatar"
+        readOnly
+        action={
+          <div className="leading-0 mr-2 flex items-center gap-2 text-xs font-semibold uppercase text-zinc-500">
+            {chain.name}
+            {chain.logo_url && (
+              <img className="size-5" src={chain.logo_url} alt="" />
+            )}
           </div>
-        </Form.Actions>
+        }
+        defaultValue={unprefixAddress(avatar)}
+      />
 
-        {actionData != null && (
-          <div className="mt-8">
-            {actionData.error === true && (
-              <Error title="Dry run failed">{actionData.message}</Error>
-            )}
-
-            {actionData.error === false && (
-              <Success title="Dry run succeeded">
-                Your route seems to be ready for execution!
-              </Success>
-            )}
+      <Form.Actions>
+        {!connected && (
+          <div className="text-balance text-xs opacity-75">
+            The Pilot extension must be open to save.
           </div>
         )}
-      </Form>
-    </>
+
+        <div className="flex gap-2">
+          {isDev && <DebugRouteData />}
+
+          <SecondaryButton
+            submit
+            intent={Intent.DryRun}
+            busy={useIsPending(Intent.DryRun)}
+          >
+            Test route
+          </SecondaryButton>
+
+          <PrimaryButton
+            submit
+            intent={Intent.Save}
+            disabled={!connected}
+            busy={useIsPending(Intent.Save)}
+          >
+            Save & Close
+          </PrimaryButton>
+        </div>
+      </Form.Actions>
+
+      {actionData != null && (
+        <div className="mt-8">
+          {actionData.error === true && (
+            <Error title="Dry run failed">{actionData.message}</Error>
+          )}
+
+          {actionData.error === false && (
+            <Success title="Dry run succeeded">
+              Your route seems to be ready for execution!
+            </Success>
+          )}
+        </div>
+      )}
+    </Form>
   )
 }
 

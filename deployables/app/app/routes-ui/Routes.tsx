@@ -20,6 +20,7 @@ export const Route = ({
   return (
     <li className="flex snap-start list-none flex-col items-center">
       <button
+        type="button"
         className={classNames(
           'flex w-44 justify-center rounded-md border py-2 outline-none',
 
