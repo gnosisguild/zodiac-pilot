@@ -6,6 +6,7 @@ export const Routes = ({ children }: PropsWithChildren) => (
 )
 
 type RouteProps = PropsWithChildren<{
+  id: string
   selectable?: boolean
   selected?: boolean
   onSelect?: () => void
@@ -13,6 +14,7 @@ type RouteProps = PropsWithChildren<{
 
 export const Route = ({
   children,
+  id,
   selected = false,
   selectable = true,
   onSelect,
@@ -20,6 +22,7 @@ export const Route = ({
   return (
     <li className="flex snap-start list-none flex-col items-center">
       <button
+        data-testid={id}
         type="button"
         className={classNames(
           'flex w-44 justify-center rounded-md border py-2 outline-none',

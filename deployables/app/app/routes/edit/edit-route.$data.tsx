@@ -1,7 +1,6 @@
-import { getChain } from '@/balances-server'
 import { useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
-import { Route, Waypoint, Waypoints } from '@/routes-ui'
+import { Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -31,7 +30,6 @@ import {
   updateAvatar,
   updateChainId,
   updateLabel,
-  updateRoleId,
   updateRolesWaypoint,
   updateStartingPoint,
   zodiacModuleSchema,
@@ -47,28 +45,33 @@ import {
   Success,
   TextInput,
 } from '@zodiac/ui'
-import { useParams } from 'react-router'
+import { useState } from 'react'
+import { Outlet, useParams } from 'react-router'
+import { queryRoutes, rankRoutes, unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
 export const meta: RouteType.MetaFunction = ({ data, matches }) => [
-  { title: routeTitle(matches, data.label || 'Unnamed route') },
+  { title: routeTitle(matches, data.currentRoute.label || 'Unnamed route') },
 ]
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
-  const chainId = getChainId(route.avatar)
-
-  const chain = await getChain(chainId)
 
   return {
-    label: route.label,
-    initiator: route.initiator || ZERO_ADDRESS,
-    chainId,
-    chain,
-    avatar: route.avatar,
-    startingPoint: getStartingWaypoint(route.waypoints),
-    waypoints: getWaypoints(route),
+    currentRoute: {
+      id: route.id,
+      label: route.label,
+      startingPoint: getStartingWaypoint(route.waypoints),
+      waypoints: getWaypoints(route),
+    },
+
+    possibleRoutes:
+      route.initiator == null
+        ? []
+        : rankRoutes(
+            await queryRoutes(unprefixAddress(route.initiator), route.avatar),
+          ),
   }
 }
 
@@ -108,13 +111,27 @@ export const clientAction = async ({
     case Intent.Save: {
       let route = parseRouteData(params.data)
 
-      const roleId = getOptionalString(data, 'roleId')
-
-      if (roleId != null) {
-        route = updateRoleId(route, roleId)
-      }
-
       route = updateLabel(route, getString(data, 'label'))
+
+      const selectedRouteId = getString(data, 'selectedRouteId')
+
+      if (selectedRouteId !== route.id) {
+        const possibleRoutes =
+          route.initiator == null
+            ? []
+            : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+        const selectedRoute = possibleRoutes.find(
+          (route) => route.id === selectedRouteId,
+        )
+
+        invariantResponse(
+          selectedRoute != null,
+          `Could not find a route with id "${selectedRouteId}"`,
+        )
+
+        route = { ...selectedRoute, label: route.label, id: route.id }
+      }
 
       if (intent === Intent.Save) {
         window.postMessage(
@@ -171,86 +188,125 @@ export const clientAction = async ({
 }
 
 const EditRoute = ({
-  loaderData: { label, avatar, chain, waypoints, initiator, startingPoint },
+  loaderData: {
+    currentRoute: { id, label, waypoints, startingPoint },
+    possibleRoutes,
+  },
   actionData,
 }: RouteType.ComponentProps) => {
   const isDev = useIsDev()
   const connected = useConnected()
   const endPoint = waypoints.at(-1)
+  const [selectedRouteId, setSelectedRouteId] = useState(id)
 
   return (
-    <Form>
-      <TextInput label="Label" name="label" defaultValue={label} />
+    <>
+      <Form context={{ selectedRouteId }}>
+        <TextInput label="Label" name="label" defaultValue={label} />
 
-      <div className="w-44">
-        <Waypoint {...startingPoint} />
-      </div>
-
-      <div className="flex">
-        <div className="py-2 pr-4">
-          <Route selectable={false}>
-            <Waypoints excludeEnd>
-              {waypoints.map((waypoint) => (
-                <Waypoint
-                  key={waypoint.account.prefixedAddress}
-                  account={waypoint.account}
-                  connection={waypoint.connection}
-                />
-              ))}
-            </Waypoints>
-          </Route>
+        <div className="flex items-center justify-between">
+          <div className="w-44">
+            <Waypoint {...startingPoint} />
+          </div>
         </div>
-      </div>
 
-      {endPoint && (
-        <div className="w-44">
-          <Waypoint {...endPoint} />
+        <div className="flex">
+          <div className="py-2 pr-4">
+            <Route id={id} selectable={false}>
+              <Waypoints excludeEnd>
+                {waypoints.map(({ account, connection }) => (
+                  <Waypoint
+                    key={`${account.address}-${connection.from}`}
+                    account={account}
+                    connection={connection}
+                  />
+                ))}
+              </Waypoints>
+            </Route>
+          </div>
+
+          <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+            <Routes>
+              {possibleRoutes.map((route) => {
+                const waypoints = getWaypoints(route)
+
+                return (
+                  <Route
+                    id={route.id}
+                    key={route.id}
+                    selected={route.id === selectedRouteId}
+                    onSelect={() => setSelectedRouteId(route.id)}
+                  >
+                    <Waypoints excludeEnd>
+                      {waypoints.map(({ account, connection }) => (
+                        <Waypoint
+                          key={`${account.address}-${connection.from}`}
+                          account={account}
+                          connection={connection}
+                        />
+                      ))}
+                    </Waypoints>
+                  </Route>
+                )
+              })}
+            </Routes>
+          </div>
         </div>
-      )}
 
-      <Form.Actions>
-        {!connected && (
-          <div className="text-balance text-xs opacity-75">
-            The Pilot extension must be open to save.
+        <div className="flex items-start justify-between">
+          {endPoint && (
+            <div className="w-44">
+              <Waypoint {...endPoint} />
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            {!connected && (
+              <div className="text-balance text-xs opacity-75">
+                The Pilot extension must be open to save.
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              {isDev && <DebugRouteData />}
+
+              <SecondaryButton
+                submit
+                intent={Intent.DryRun}
+                busy={useIsPending(Intent.DryRun)}
+              >
+                Test route
+              </SecondaryButton>
+
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                disabled={!connected}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+
+        {actionData != null && (
+          <div className="mt-8">
+            {actionData.error === true && (
+              <Error title="Dry run failed">{actionData.message}</Error>
+            )}
+
+            {actionData.error === false && (
+              <Success title="Dry run succeeded">
+                Your route seems to be ready for execution!
+              </Success>
+            )}
           </div>
         )}
+      </Form>
 
-        <div className="flex gap-2">
-          {isDev && <DebugRouteData />}
-
-          <SecondaryButton
-            submit
-            intent={Intent.DryRun}
-            busy={useIsPending(Intent.DryRun)}
-          >
-            Test route
-          </SecondaryButton>
-
-          <PrimaryButton
-            submit
-            intent={Intent.Save}
-            disabled={!connected}
-            busy={useIsPending(Intent.Save)}
-          >
-            Save & Close
-          </PrimaryButton>
-        </div>
-      </Form.Actions>
-
-      {actionData != null && (
-        <div className="mt-8">
-          {actionData.error === true && (
-            <Error title="Dry run failed">{actionData.message}</Error>
-          )}
-
-          {actionData.error === false && (
-            <Success title="Dry run succeeded">
-              Your route seems to be ready for execution!
-            </Success>
-          )}
-        </div>
-      )}
-    </Form>
+      <Outlet />
+    </>
   )
 }
 
