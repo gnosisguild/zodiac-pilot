@@ -5,8 +5,8 @@
   "type": "module",
   "dependencies": {
     "@icons-pack/react-simple-icons": "11.2.0",
-    "@types/react": "19.0.9",
-    "@types/react-dom": "19.0.3",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
     "@zodiac/ui": "workspace:*",
     "lucide-react": "0.475.0",
     "react": "19.0.0",
