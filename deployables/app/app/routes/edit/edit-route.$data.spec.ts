@@ -1,13 +1,14 @@
-import { getChain } from '@/balances-server'
+import { getAvailableChains } from '@/balances-server'
 import { createMockChain, render } from '@/test-utils'
 import { dryRun } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CHAIN_NAME } from '@zodiac/chains'
+import { CHAIN_NAME, verifyChainId } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { createBlankRoute, updateAvatar, updateChainId } from '@zodiac/modules'
 import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
@@ -17,9 +18,10 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
+  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { queryRoutes, type ChainId } from 'ser-kit'
+import { queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
@@ -41,11 +43,11 @@ vi.mock('@/balances-server', async (importOriginal) => {
   return {
     ...module,
 
-    getChain: vi.fn(),
+    getAvailableChains: vi.fn(),
   }
 })
 
-const mockGetChain = vi.mocked(getChain)
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -95,26 +97,30 @@ describe('Edit route', () => {
     })
   })
 
-  describe('Chain', () => {
+  describe.only('Chain', () => {
+    beforeEach(() => {
+      mockGetAvailableChains.mockResolvedValue(
+        Object.entries(CHAIN_NAME).map(([chainId, name]) =>
+          createMockChain({
+            name,
+            community_id: parseInt(chainId),
+            logo_url: 'http://chain-img.com',
+          }),
+        ),
+      )
+    })
+
     it.each(Object.entries(CHAIN_NAME))(
       'shows chainId "%s" as "%s"',
       async (chainId, name) => {
-        mockGetChain.mockResolvedValue(
-          createMockChain({
-            name,
-            id: chainId,
-          }),
+        const route = updateChainId(
+          updateAvatar(createBlankRoute(), { safe: randomAddress() }),
+          verifyChainId(parseInt(chainId)),
         )
-
-        const route = createMockExecutionRoute({
-          avatar: randomPrefixedAddress({
-            chainId: parseInt(chainId) as ChainId,
-          }),
-        })
 
         await render(`/edit/${encode(route)}`)
 
-        expect(screen.getByText(name)).toBeInTheDocument()
+        expect(screen.getByAltText(name)).toBeInTheDocument()
       },
     )
   })

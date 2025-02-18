@@ -15,7 +15,7 @@ export const ConnectWalletButton = ({
         <PrimaryButton onClick={show}>{connectLabel}</PrimaryButton>
       ) : (
         <div className="flex items-center gap-4">
-          <span className="text-sm font-semibold uppercase text-zinc-300">
+          <span className="text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-300">
             {connectedLabel}
           </span>
 

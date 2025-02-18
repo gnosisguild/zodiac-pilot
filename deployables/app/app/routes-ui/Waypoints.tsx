@@ -56,8 +56,7 @@ export const Waypoint = ({ account }: WaypointProps) => {
               </span>
             }
           >
-            <img src={chain.logo_url} alt="" className="size-4" />
-            <span className="sr-only">{chain.name}</span>
+            <img src={chain.logo_url} alt={chain.name} className="size-4" />
           </Popover>
         )}
 
