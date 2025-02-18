@@ -62,6 +62,18 @@ vi.mock('ser-kit', async (importOriginal) => {
 const mockQueryRoutes = vi.mocked(queryRoutes)
 
 describe('Edit route', () => {
+  beforeEach(() => {
+    mockGetAvailableChains.mockResolvedValue(
+      Object.entries(CHAIN_NAME).map(([chainId, name]) =>
+        createMockChain({
+          name,
+          community_id: parseInt(chainId),
+          logo_url: 'http://chain-img.com',
+        }),
+      ),
+    )
+  })
+
   describe('Label', () => {
     beforeEach(() => {
       mockQueryRoutes.mockResolvedValue([])
@@ -102,18 +114,6 @@ describe('Edit route', () => {
   })
 
   describe('Chain', () => {
-    beforeEach(() => {
-      mockGetAvailableChains.mockResolvedValue(
-        Object.entries(CHAIN_NAME).map(([chainId, name]) =>
-          createMockChain({
-            name,
-            community_id: parseInt(chainId),
-            logo_url: 'http://chain-img.com',
-          }),
-        ),
-      )
-    })
-
     it.each(Object.entries(CHAIN_NAME))(
       'shows chainId "%s" as "%s"',
       async (chainId, name) => {

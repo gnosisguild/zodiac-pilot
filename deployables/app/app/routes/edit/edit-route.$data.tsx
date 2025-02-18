@@ -92,7 +92,7 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
   const selectedRouteId = getString(data, 'selectedRouteId')
 
-  if (selectedRouteId !== route.id) {
+  if (selectedRouteId !== routeId(route)) {
     const possibleRoutes =
       route.initiator == null
         ? []
