@@ -63,6 +63,10 @@ const mockQueryRoutes = vi.mocked(queryRoutes)
 
 describe('Edit route', () => {
   describe('Label', () => {
+    beforeEach(() => {
+      mockQueryRoutes.mockResolvedValue([])
+    })
+
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
@@ -74,7 +78,9 @@ describe('Edit route', () => {
     })
 
     it('is possible to change the label of a route', async () => {
-      const route = createMockExecutionRoute()
+      const route = createMockExecutionRoute({
+        initiator: randomPrefixedAddress(),
+      })
 
       await render(`/edit/${encode(route)}`)
 
@@ -83,9 +89,7 @@ describe('Edit route', () => {
         'New route label',
       )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Save & Close' }),
-      )
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
       expect(mockPostMessage).toHaveBeenCalledWith(
         {
