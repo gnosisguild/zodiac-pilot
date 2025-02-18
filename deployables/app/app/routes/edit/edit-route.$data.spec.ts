@@ -97,7 +97,7 @@ describe('Edit route', () => {
     })
   })
 
-  describe.only('Chain', () => {
+  describe('Chain', () => {
     beforeEach(() => {
       mockGetAvailableChains.mockResolvedValue(
         Object.entries(CHAIN_NAME).map(([chainId, name]) =>
