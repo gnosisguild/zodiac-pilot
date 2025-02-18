@@ -1,9 +1,4 @@
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  type CompanionAppMessage,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createContext,
   useContext,
@@ -28,32 +23,12 @@ const useListenForForkUrl = () => {
   const [forkUrl, setForkUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    const handleForkUpdate = (
-      message: MessageEvent<CompanionResponseMessage>,
-    ) => {
-      if (message.data == null) {
-        return
-      }
-
-      if (message.data.type !== CompanionResponseMessageType.FORK_UPDATED) {
-        return
-      }
-
-      setForkUrl(message.data.forkUrl)
-    }
-
-    window.addEventListener('message', handleForkUpdate)
-
-    window.postMessage(
+    return companionRequest(
       {
         type: CompanionAppMessageType.REQUEST_FORK_INFO,
-      } satisfies CompanionAppMessage,
-      '*',
+      },
+      (response) => setForkUrl(response.forkUrl),
     )
-
-    return () => {
-      window.removeEventListener('message', handleForkUpdate)
-    }
   }, [])
 
   return forkUrl

@@ -1,10 +1,5 @@
 import { MinimumVersion, OnlyConnected, Page } from '@/components'
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  type CompanionAppMessage,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import { Address, GhostButton, Info, Table } from '@zodiac/ui'
 import classNames from 'classnames'
@@ -40,26 +35,12 @@ const Routes = () => {
   const [routes, setRoutes] = useState<ExecutionRoute[]>([])
 
   useEffect(() => {
-    const handleRoutes = (event: MessageEvent<CompanionResponseMessage>) => {
-      if (event.data.type !== CompanionResponseMessageType.LIST_ROUTES) {
-        return
-      }
-
-      setRoutes(event.data.routes)
-    }
-
-    window.addEventListener('message', handleRoutes)
-
-    window.postMessage(
+    return companionRequest(
       {
         type: CompanionAppMessageType.REQUEST_ROUTES,
-      } satisfies CompanionAppMessage,
-      '*',
+      },
+      (response) => setRoutes(response.routes),
     )
-
-    return () => {
-      window.removeEventListener('message', handleRoutes)
-    }
   }, [])
 
   return (
@@ -110,27 +91,13 @@ const Edit = ({ routeId }: { routeId: string }) => {
       return
     }
 
-    const handleRoute = (event: MessageEvent<CompanionResponseMessage>) => {
-      if (event.data.type !== CompanionResponseMessageType.PROVIDE_ROUTE) {
-        return
-      }
-
-      navigate(`/edit-route/${encode(event.data.route)}`)
-    }
-
-    window.addEventListener('message', handleRoute)
-
-    window.postMessage(
+    return companionRequest(
       {
         type: CompanionAppMessageType.REQUEST_ROUTE,
         routeId,
-      } satisfies CompanionAppMessage,
-      '*',
+      },
+      (response) => navigate(`/edit-route/${encode(response.route)}`),
     )
-
-    return () => {
-      window.removeEventListener('message', handleRoute)
-    }
   }, [routeId, navigate, submitting])
 
   return (
