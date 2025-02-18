@@ -20,7 +20,7 @@ export default [
       ]),
     ]),
 
-    route('/new-route', 'routes/edit/new-route.ts'),
+    route('/new-route', 'routes/legacy-redirects/old-new-route-redirect.ts'),
 
     ...prefix('/edit', [
       index('routes/edit/list-routes.tsx'),
