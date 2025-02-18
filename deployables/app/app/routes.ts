@@ -42,9 +42,7 @@ export default [
   ]),
 
   ...prefix('/:address/:chainId', [
-    route('modules', 'routes/$address.$chainId/modules.ts'),
     route('available-safes', 'routes/$address.$chainId/available-safes.ts'),
-    route('delegates', 'routes/$address.$chainId/delegates.ts'),
     route('balances', 'routes/$address.$chainId/balances.ts'),
   ]),
 
