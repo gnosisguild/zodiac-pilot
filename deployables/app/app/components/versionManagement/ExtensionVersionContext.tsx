@@ -1,9 +1,4 @@
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  type CompanionAppMessage,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { compare } from 'compare-versions'
 import {
   createContext,
@@ -25,26 +20,12 @@ const useGetVersionFromExtension = () => {
   const [version, setVersion] = useState<string | null>(null)
 
   useEffect(() => {
-    const handleVersion = (event: MessageEvent<CompanionResponseMessage>) => {
-      if (event.data.type !== CompanionResponseMessageType.PROVIDE_VERSION) {
-        return
-      }
-
-      setVersion(event.data.version)
-    }
-
-    window.addEventListener('message', handleVersion)
-
-    window.postMessage(
+    return companionRequest(
       {
         type: CompanionAppMessageType.REQUEST_VERSION,
-      } satisfies CompanionAppMessage,
-      '*',
+      },
+      (response) => setVersion(response.version),
     )
-
-    return () => {
-      window.removeEventListener('message', handleVersion)
-    }
   }, [])
 
   return version
