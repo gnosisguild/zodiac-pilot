@@ -26,29 +26,29 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import {
-  addressSchema,
-  type ExecutionRoute,
-  type HexAddress,
-} from '@zodiac/schema'
+import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
 import {
   Address,
-  AddressInput,
   Divider,
   Error,
   Form,
-  GhostButton,
   PrimaryButton,
   SecondaryButton,
   SecondaryLinkButton,
+  Select,
   Success,
   TextInput,
   Warning,
 } from '@zodiac/ui'
-import { useState } from 'react'
-import { redirect, useParams } from 'react-router'
-import { queryRoutes, rankRoutes, unprefixAddress } from 'ser-kit'
-import { useAccount } from 'wagmi'
+import { useEffect, useState } from 'react'
+import { redirect, useFetcher, useParams } from 'react-router'
+import {
+  queryRoutes,
+  rankRoutes,
+  splitPrefixedAddress,
+  unprefixAddress,
+  type PrefixedAddress,
+} from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
 import { Intent } from './intents'
 
@@ -72,6 +72,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       comparableId: routeId(route),
       label: route.label,
       initiator: route.initiator,
+      avatar: route.avatar,
       startingPoint: getStartingWaypoint(route.waypoints),
       waypoints: getWaypoints(route),
     },
@@ -164,6 +165,7 @@ const EditRoute = ({
       initiator,
       waypoints,
       startingPoint,
+      avatar,
     },
     possibleRoutes,
     chains,
@@ -194,7 +196,7 @@ const EditRoute = ({
             <Form context={{ selectedRouteId }}>
               <TextInput label="Label" name="label" defaultValue={label} />
 
-              {initiator == null && <UpdateInitiator />}
+              {initiator == null && <UpdateInitiator avatar={avatar} />}
 
               <Divider />
 
@@ -324,31 +326,29 @@ const DebugRouteData = () => {
   )
 }
 
-const UpdateInitiator = () => {
-  const { address } = useAccount()
-  const [value, setValue] = useState<HexAddress | null>(null)
+const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
+  const [chainId, address] = splitPrefixedAddress(avatar)
+
+  const { load, state, data = [] } = useFetcher<HexAddress[]>()
+
+  useEffect(() => {
+    load(`/${address}/${chainId}/initiators`)
+  }, [address, chainId, load])
 
   return (
     <div className="flex w-full items-end gap-2">
-      <AddressInput
-        required
+      <Select
         label="Initiator"
-        value={value}
         name="initiator"
-        onChange={setValue}
-        action={
-          address != null && (
-            <GhostButton
-              size="tiny"
-              onClick={() => setValue(addressSchema.parse(address))}
-            >
-              <Address shorten size="tiny">
-                {address}
-              </Address>
-            </GhostButton>
-          )
-        }
-      />
+        placeholder="Select an initiator"
+        dropdownLabel="View possible initiators"
+        required
+        isMulti={false}
+        isDisabled={state === 'loading'}
+        options={data.map((address) => ({ value: address, label: address }))}
+      >
+        {({ data: { value } }) => <Address>{value}</Address>}
+      </Select>
 
       <SecondaryButton
         submit
