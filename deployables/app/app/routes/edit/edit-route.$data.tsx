@@ -45,7 +45,7 @@ import {
   Warning,
 } from '@zodiac/ui'
 import { useState } from 'react'
-import { useParams } from 'react-router'
+import { redirect, useParams } from 'react-router'
 import { queryRoutes, rankRoutes, unprefixAddress } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route as RouteType } from './+types/edit-route.$data'
@@ -81,56 +81,46 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   }
 }
 
-export const clientAction = async ({
-  request,
-  params,
-}: RouteType.ClientActionArgs) => {
-  const data = await request.clone().formData()
+export const action = async ({ request, params }: RouteType.ActionArgs) => {
+  const data = await request.formData()
+  const intent = getString(data, 'intent')
 
-  const intent = getOptionalString(data, 'intent')
+  let route = parseRouteData(params.data)
+
+  route = updateLabel(route, getString(data, 'label'))
+
+  const selectedRouteId = getString(data, 'selectedRouteId')
+
+  if (selectedRouteId !== route.id) {
+    const possibleRoutes =
+      route.initiator == null
+        ? []
+        : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+    const selectedRoute = possibleRoutes.find(
+      (route) => route.id === selectedRouteId,
+    )
+
+    invariantResponse(
+      selectedRoute != null,
+      `Could not find a route with id "${selectedRouteId}"`,
+    )
+
+    route = { ...selectedRoute, label: route.label, id: route.id }
+  }
 
   switch (intent) {
-    case Intent.DryRun:
     case Intent.Save: {
-      let route = parseRouteData(params.data)
+      return route
+    }
 
-      route = updateLabel(route, getString(data, 'label'))
-
-      const selectedRouteId = getString(data, 'selectedRouteId')
-
-      if (selectedRouteId !== route.id) {
-        const possibleRoutes =
-          route.initiator == null
-            ? []
-            : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
-
-        const selectedRoute = possibleRoutes.find(
-          (route) => route.id === selectedRouteId,
-        )
-
-        invariantResponse(
-          selectedRoute != null,
-          `Could not find a route with id "${selectedRouteId}"`,
-        )
-
-        route = { ...selectedRoute, label: route.label, id: route.id }
-      }
-
-      if (intent === Intent.Save) {
-        window.postMessage(
-          { type: CompanionAppMessageType.SAVE_ROUTE, data: route },
-          '*',
-        )
-
-        return editRoute(route)
-      }
-
+    case Intent.DryRun: {
       const chainId = getChainId(route.avatar)
 
       return dryRun(jsonRpcProvider(chainId), route)
     }
+
     case Intent.UpdateInitiator: {
-      const route = parseRouteData(params.data)
       const account = await createAccount(
         jsonRpcProvider(getChainId(route.avatar)),
         getHexString(data, 'initiator'),
@@ -138,6 +128,29 @@ export const clientAction = async ({
 
       return editRoute(updateStartingPoint(route, account))
     }
+  }
+}
+
+export const clientAction = async ({
+  serverAction,
+  request,
+}: RouteType.ClientActionArgs) => {
+  const data = await request.clone().formData()
+
+  const intent = getOptionalString(data, 'intent')
+  const serverResult = await serverAction()
+
+  switch (intent) {
+    case Intent.Save: {
+      window.postMessage(
+        { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
+        '*',
+      )
+
+      return redirect('../edit')
+    }
+    default:
+      return serverResult
   }
 }
 
@@ -277,11 +290,11 @@ const EditRoute = ({
 
               {actionData != null && (
                 <div className="mt-8">
-                  {actionData.error === true && (
+                  {'error' in actionData && actionData.error === true && (
                     <Error title="Dry run failed">{actionData.message}</Error>
                   )}
 
-                  {actionData.error === false && (
+                  {'error' in actionData && actionData.error === false && (
                     <Success title="Dry run succeeded">
                       Your route seems to be ready for execution!
                     </Success>
