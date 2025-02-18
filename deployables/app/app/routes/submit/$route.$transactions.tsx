@@ -185,7 +185,6 @@ const SubmitTransaction = () => {
             type: CompanionAppMessageType.SUBMIT_SUCCESS,
           } satisfies CompanionAppMessage)
         } catch (e) {
-          console.log({ e })
           errorToast({
             title: 'Error',
             message: 'Submitting the transaction batch failed',

@@ -39,14 +39,9 @@ const Routes = () => {
       {
         type: CompanionAppMessageType.REQUEST_ROUTES,
       },
-      (response) => {
-        console.log({ response })
-        setRoutes(response.routes)
-      },
+      (response) => setRoutes(response.routes),
     )
   }, [])
-
-  console.log({ routes })
 
   return (
     <Table>

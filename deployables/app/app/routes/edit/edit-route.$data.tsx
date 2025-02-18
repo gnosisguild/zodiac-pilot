@@ -41,6 +41,7 @@ import {
   SecondaryLinkButton,
   Success,
   TextInput,
+  Warning,
 } from '@zodiac/ui'
 import { useState } from 'react'
 import { useParams } from 'react-router'
@@ -193,32 +194,41 @@ const EditRoute = ({
                 </Route>
               </div>
 
-              <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <Routes>
-                  {possibleRoutes.map((route) => {
-                    const waypoints = getWaypoints(route)
+              {possibleRoutes.length === 0 ? (
+                <div className="flex flex-1 items-center justify-center">
+                  <Warning>
+                    We could not find any routes between the initiator account
+                    and the avatar
+                  </Warning>
+                </div>
+              ) : (
+                <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+                  <Routes>
+                    {possibleRoutes.map((route) => {
+                      const waypoints = getWaypoints(route)
 
-                    return (
-                      <Route
-                        id={route.id}
-                        key={route.id}
-                        selected={comparableId === routeId(route)}
-                        onSelect={() => setSelectedRouteId(route.id)}
-                      >
-                        <Waypoints excludeEnd>
-                          {waypoints.map(({ account, connection }) => (
-                            <Waypoint
-                              key={`${account.address}-${connection.from}`}
-                              account={account}
-                              connection={connection}
-                            />
-                          ))}
-                        </Waypoints>
-                      </Route>
-                    )
-                  })}
-                </Routes>
-              </div>
+                      return (
+                        <Route
+                          id={route.id}
+                          key={route.id}
+                          selected={comparableId === routeId(route)}
+                          onSelect={() => setSelectedRouteId(route.id)}
+                        >
+                          <Waypoints excludeEnd>
+                            {waypoints.map(({ account, connection }) => (
+                              <Waypoint
+                                key={`${account.address}-${connection.from}`}
+                                account={account}
+                                connection={connection}
+                              />
+                            ))}
+                          </Waypoints>
+                        </Route>
+                      )
+                    })}
+                  </Routes>
+                </div>
+              )}
             </div>
 
             <div className="flex items-start justify-between">
