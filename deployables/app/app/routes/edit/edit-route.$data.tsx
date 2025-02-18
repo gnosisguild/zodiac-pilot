@@ -34,6 +34,7 @@ import {
 import {
   Address,
   AddressInput,
+  Divider,
   Error,
   Form,
   GhostButton,
@@ -98,7 +99,7 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
         : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
 
     const selectedRoute = possibleRoutes.find(
-      (route) => route.id === selectedRouteId,
+      (route) => routeId(route) === selectedRouteId,
     )
 
     invariantResponse(
@@ -172,7 +173,7 @@ const EditRoute = ({
   const isDev = useIsDev()
   const connected = useConnected()
   const endPoint = waypoints.at(-1)
-  const [selectedRouteId, setSelectedRouteId] = useState(id)
+  const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
 
   return (
     <ProvideChains chains={chains}>
@@ -194,6 +195,8 @@ const EditRoute = ({
               <TextInput label="Label" name="label" defaultValue={label} />
 
               {initiator == null && <UpdateInitiator />}
+
+              <Divider />
 
               <div className="w-44">
                 <Waypoint {...startingPoint} />
@@ -231,8 +234,8 @@ const EditRoute = ({
                           <Route
                             id={route.id}
                             key={route.id}
-                            selected={comparableId === routeId(route)}
-                            onSelect={() => setSelectedRouteId(route.id)}
+                            selected={selectedRouteId === routeId(route)}
+                            onSelect={() => setSelectedRouteId(routeId(route))}
                           >
                             <Waypoints excludeEnd>
                               {waypoints.map(({ account, connection }) => (
@@ -251,42 +254,42 @@ const EditRoute = ({
                 )}
               </div>
 
-              <div className="flex items-start justify-between">
-                {endPoint && (
-                  <div className="w-44">
-                    <Waypoint {...endPoint} />
+              {endPoint && (
+                <div className="w-44">
+                  <Waypoint {...endPoint} />
+                </div>
+              )}
+
+              <Divider />
+
+              <Form.Actions>
+                {!connected && (
+                  <div className="text-balance text-xs opacity-75">
+                    The Pilot extension must be open to save.
                   </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                  {!connected && (
-                    <div className="text-balance text-xs opacity-75">
-                      The Pilot extension must be open to save.
-                    </div>
-                  )}
+                <div className="flex gap-2">
+                  {isDev && <DebugRouteData />}
 
-                  <div className="flex gap-2">
-                    {isDev && <DebugRouteData />}
+                  <SecondaryButton
+                    submit
+                    intent={Intent.DryRun}
+                    busy={useIsPending(Intent.DryRun)}
+                  >
+                    Test route
+                  </SecondaryButton>
 
-                    <SecondaryButton
-                      submit
-                      intent={Intent.DryRun}
-                      busy={useIsPending(Intent.DryRun)}
-                    >
-                      Test route
-                    </SecondaryButton>
-
-                    <PrimaryButton
-                      submit
-                      intent={Intent.Save}
-                      disabled={!connected}
-                      busy={useIsPending(Intent.Save)}
-                    >
-                      Save
-                    </PrimaryButton>
-                  </div>
+                  <PrimaryButton
+                    submit
+                    intent={Intent.Save}
+                    disabled={!connected}
+                    busy={useIsPending(Intent.Save)}
+                  >
+                    Save
+                  </PrimaryButton>
                 </div>
-              </div>
+              </Form.Actions>
 
               {actionData != null && (
                 <div className="mt-8">
