@@ -5,6 +5,7 @@ import { Chain } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { randomAddress } from '@zodiac/test-utils'
 import { prefixAddress, queryAvatars } from 'ser-kit'
+import { getAddress } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
@@ -148,7 +149,9 @@ describe('New Account', () => {
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Avatar' }),
     )
-    await userEvent.click(screen.getByRole('option', { name: avatar }))
+    await userEvent.click(
+      screen.getByRole('option', { name: getAddress(avatar) }),
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
