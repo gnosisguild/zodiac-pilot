@@ -185,11 +185,10 @@ function stubRoutes(
                 )
               },
 
-        children: route.index
-          ? undefined
-          : route.children != null
+        children:
+          route.children != null
             ? await stubRoutes(basePath, route.children)
-            : [],
+            : undefined,
       }
     }),
   )
