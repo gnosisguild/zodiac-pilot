@@ -1,5 +1,5 @@
 import type { Account } from '@zodiac/schema'
-import { Address, Popover } from '@zodiac/ui'
+import { Address } from '@zodiac/ui'
 import { Children, type ReactElement } from 'react'
 import { AccountType, type Connection as SerConnection } from 'ser-kit'
 import { Connection } from './Connection'
@@ -41,14 +41,9 @@ export const Waypoint = ({ account }: WaypointProps) => (
       <AccountName account={account} />
     </h3>
 
-    <Popover
-      position="bottom"
-      popover={<Address size="small">{account.address}</Address>}
-    >
-      <Address allowCopy shorten size="small">
-        {account.address}
-      </Address>
-    </Popover>
+    <Address allowCopy shorten size="small">
+      {account.address}
+    </Address>
   </li>
 )
 
