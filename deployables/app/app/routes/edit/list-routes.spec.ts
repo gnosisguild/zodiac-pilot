@@ -19,7 +19,7 @@ describe('List Routes', () => {
   }
 
   it('is possible to edit a route', async () => {
-    await render('/list-routes', {
+    await render('/edit', {
       version: '3.4.0',
     })
 

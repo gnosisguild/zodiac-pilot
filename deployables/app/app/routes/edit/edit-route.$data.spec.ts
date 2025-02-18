@@ -20,7 +20,7 @@ import {
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { queryRoutes, type ChainId } from 'ser-kit'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -160,6 +160,10 @@ describe('Edit route', () => {
   })
 
   describe('Dry run', () => {
+    beforeEach(() => {
+      mockQueryRoutes.mockResolvedValue([])
+    })
+
     it('is possible to test a route before saving', async () => {
       const route = createMockExecutionRoute()
 
@@ -171,7 +175,9 @@ describe('Edit route', () => {
     })
 
     it('shows errors returned by dry run', async () => {
-      const route = createMockExecutionRoute()
+      const route = createMockExecutionRoute({
+        initiator: randomPrefixedAddress(),
+      })
 
       await render(`/edit/${encode(route)}`)
 
