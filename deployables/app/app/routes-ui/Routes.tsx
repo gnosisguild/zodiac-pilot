@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import type { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 
 export const Routes = ({ children }: PropsWithChildren) => (
   <ul className="flex gap-1">{children}</ul>

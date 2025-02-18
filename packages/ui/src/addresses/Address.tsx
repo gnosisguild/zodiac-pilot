@@ -64,7 +64,7 @@ export const Address = ({
       <code
         className={classNames(
           'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
-          shorten && 'uppercase',
+          shorten && 'cursor-default uppercase',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',
         )}

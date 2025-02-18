@@ -1,3 +1,4 @@
+import { getAvailableChains } from '@/balances-server'
 import {
   ConnectWalletButton,
   Page,
@@ -6,7 +7,7 @@ import {
   WalletProvider,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import { Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import { ProvideChains, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -57,6 +58,13 @@ export const meta: RouteType.MetaFunction = ({ data, matches }) => [
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
 
+  const [routes, chains] = await Promise.all([
+    route.initiator == null
+      ? []
+      : queryRoutes(unprefixAddress(route.initiator), route.avatar),
+    getAvailableChains(),
+  ])
+
   return {
     currentRoute: {
       id: route.id,
@@ -67,12 +75,9 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       waypoints: getWaypoints(route),
     },
 
-    possibleRoutes:
-      route.initiator == null
-        ? []
-        : rankRoutes(
-            await queryRoutes(unprefixAddress(route.initiator), route.avatar),
-          ),
+    possibleRoutes: rankRoutes(routes),
+
+    chains,
   }
 }
 
@@ -147,6 +152,7 @@ const EditRoute = ({
       startingPoint,
     },
     possibleRoutes,
+    chains,
   },
   actionData,
 }: RouteType.ComponentProps) => {
@@ -156,135 +162,137 @@ const EditRoute = ({
   const [selectedRouteId, setSelectedRouteId] = useState(id)
 
   return (
-    <WalletProvider>
-      <Page fullWidth>
-        <Page.Header
-          action={
-            <ConnectWalletButton
-              connectLabel="Connect wallet"
-              connectedLabel="Connected account"
-            />
-          }
-        >
-          Edit route
-        </Page.Header>
+    <ProvideChains chains={chains}>
+      <WalletProvider>
+        <Page fullWidth>
+          <Page.Header
+            action={
+              <ConnectWalletButton
+                connectLabel="Connect wallet"
+                connectedLabel="Connected account"
+              />
+            }
+          >
+            Edit route
+          </Page.Header>
 
-        <Page.Main>
-          <Form context={{ selectedRouteId }}>
-            <TextInput label="Label" name="label" defaultValue={label} />
+          <Page.Main>
+            <Form context={{ selectedRouteId }}>
+              <TextInput label="Label" name="label" defaultValue={label} />
 
-            {initiator == null && <UpdateInitiator />}
+              {initiator == null && <UpdateInitiator />}
 
-            <div className="w-44">
-              <Waypoint {...startingPoint} />
-            </div>
-
-            <div className="flex">
-              <div className="py-2 pr-4">
-                <Route id={id} selectable={false}>
-                  <Waypoints excludeEnd>
-                    {waypoints.map(({ account, connection }) => (
-                      <Waypoint
-                        key={`${account.address}-${connection.from}`}
-                        account={account}
-                        connection={connection}
-                      />
-                    ))}
-                  </Waypoints>
-                </Route>
+              <div className="w-44">
+                <Waypoint {...startingPoint} />
               </div>
 
-              {possibleRoutes.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center">
-                  <Warning>
-                    We could not find any routes between the initiator account
-                    and the avatar
-                  </Warning>
+              <div className="flex">
+                <div className="py-2 pr-4">
+                  <Route id={id} selectable={false}>
+                    <Waypoints excludeEnd>
+                      {waypoints.map(({ account, connection }) => (
+                        <Waypoint
+                          key={`${account.address}-${connection.from}`}
+                          account={account}
+                          connection={connection}
+                        />
+                      ))}
+                    </Waypoints>
+                  </Route>
                 </div>
-              ) : (
-                <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                  <Routes>
-                    {possibleRoutes.map((route) => {
-                      const waypoints = getWaypoints(route)
 
-                      return (
-                        <Route
-                          id={route.id}
-                          key={route.id}
-                          selected={comparableId === routeId(route)}
-                          onSelect={() => setSelectedRouteId(route.id)}
-                        >
-                          <Waypoints excludeEnd>
-                            {waypoints.map(({ account, connection }) => (
-                              <Waypoint
-                                key={`${account.address}-${connection.from}`}
-                                account={account}
-                                connection={connection}
-                              />
-                            ))}
-                          </Waypoints>
-                        </Route>
-                      )
-                    })}
-                  </Routes>
-                </div>
-              )}
-            </div>
+                {possibleRoutes.length === 0 ? (
+                  <div className="flex flex-1 items-center justify-center">
+                    <Warning>
+                      We could not find any routes between the initiator account
+                      and the avatar
+                    </Warning>
+                  </div>
+                ) : (
+                  <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+                    <Routes>
+                      {possibleRoutes.map((route) => {
+                        const waypoints = getWaypoints(route)
 
-            <div className="flex items-start justify-between">
-              {endPoint && (
-                <div className="w-44">
-                  <Waypoint {...endPoint} />
-                </div>
-              )}
+                        return (
+                          <Route
+                            id={route.id}
+                            key={route.id}
+                            selected={comparableId === routeId(route)}
+                            onSelect={() => setSelectedRouteId(route.id)}
+                          >
+                            <Waypoints excludeEnd>
+                              {waypoints.map(({ account, connection }) => (
+                                <Waypoint
+                                  key={`${account.address}-${connection.from}`}
+                                  account={account}
+                                  connection={connection}
+                                />
+                              ))}
+                            </Waypoints>
+                          </Route>
+                        )
+                      })}
+                    </Routes>
+                  </div>
+                )}
+              </div>
 
-              <div className="flex items-center justify-between">
-                {!connected && (
-                  <div className="text-balance text-xs opacity-75">
-                    The Pilot extension must be open to save.
+              <div className="flex items-start justify-between">
+                {endPoint && (
+                  <div className="w-44">
+                    <Waypoint {...endPoint} />
                   </div>
                 )}
 
-                <div className="flex gap-2">
-                  {isDev && <DebugRouteData />}
+                <div className="flex items-center justify-between">
+                  {!connected && (
+                    <div className="text-balance text-xs opacity-75">
+                      The Pilot extension must be open to save.
+                    </div>
+                  )}
 
-                  <SecondaryButton
-                    submit
-                    intent={Intent.DryRun}
-                    busy={useIsPending(Intent.DryRun)}
-                  >
-                    Test route
-                  </SecondaryButton>
+                  <div className="flex gap-2">
+                    {isDev && <DebugRouteData />}
 
-                  <PrimaryButton
-                    submit
-                    intent={Intent.Save}
-                    disabled={!connected}
-                    busy={useIsPending(Intent.Save)}
-                  >
-                    Save
-                  </PrimaryButton>
+                    <SecondaryButton
+                      submit
+                      intent={Intent.DryRun}
+                      busy={useIsPending(Intent.DryRun)}
+                    >
+                      Test route
+                    </SecondaryButton>
+
+                    <PrimaryButton
+                      submit
+                      intent={Intent.Save}
+                      disabled={!connected}
+                      busy={useIsPending(Intent.Save)}
+                    >
+                      Save
+                    </PrimaryButton>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {actionData != null && (
-              <div className="mt-8">
-                {actionData.error === true && (
-                  <Error title="Dry run failed">{actionData.message}</Error>
-                )}
+              {actionData != null && (
+                <div className="mt-8">
+                  {actionData.error === true && (
+                    <Error title="Dry run failed">{actionData.message}</Error>
+                  )}
 
-                {actionData.error === false && (
-                  <Success title="Dry run succeeded">
-                    Your route seems to be ready for execution!
-                  </Success>
-                )}
-              </div>
-            )}
-          </Form>
-        </Page.Main>
-      </Page>
-    </WalletProvider>
+                  {actionData.error === false && (
+                    <Success title="Dry run succeeded">
+                      Your route seems to be ready for execution!
+                    </Success>
+                  )}
+                </div>
+              )}
+            </Form>
+          </Page.Main>
+        </Page>
+      </WalletProvider>
+    </ProvideChains>
   )
 }
 
