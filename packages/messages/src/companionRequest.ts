@@ -37,6 +37,8 @@ export function companionRequest<Type extends CompanionAppMessageType>(
 ) {
   const expectedResponseType = requestResponseTypes[message.type]
 
+  console.log({ expectedResponseType })
+
   if (expectedResponseType == null) {
     window.postMessage(message, '*')
 
@@ -48,6 +50,7 @@ export function companionRequest<Type extends CompanionAppMessageType>(
       return
     }
 
+    console.log(event.data)
     if (event.data.type !== expectedResponseType) {
       return
     }
