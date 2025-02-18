@@ -63,7 +63,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   return {
     currentRoute: {
       id: route.id,
-      comparableId: routeId(route),
+      comparableId: route.initiator == null ? null : routeId(route),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
@@ -85,9 +85,9 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
   route = updateLabel(route, getString(data, 'label'))
 
-  const selectedRouteId = getString(data, 'selectedRouteId')
+  const selectedRouteId = getOptionalString(data, 'selectedRouteId')
 
-  if (selectedRouteId !== routeId(route)) {
+  if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
     const possibleRoutes =
       route.initiator == null
         ? []
@@ -171,13 +171,29 @@ const EditRoute = ({
   const endPoint = waypoints.at(-1)
   const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
 
+  useEffect(() => {
+    if (selectedRouteId != null) {
+      return
+    }
+
+    if (comparableId == null) {
+      return
+    }
+
+    setSelectedRouteId(comparableId)
+  }, [comparableId, selectedRouteId])
+
   return (
     <ProvideChains chains={chains}>
       <Page fullWidth>
         <Page.Header>Edit route</Page.Header>
 
         <Page.Main>
-          <Form context={{ selectedRouteId }}>
+          <Form
+            context={{
+              selectedRouteId,
+            }}
+          >
             <TextInput label="Label" name="label" defaultValue={label} />
 
             {initiator == null && <UpdateInitiator avatar={avatar} />}
