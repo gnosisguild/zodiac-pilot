@@ -17,6 +17,7 @@ export const Popover = ({
 
   return (
     <Stick
+      autoFlipHorizontally
       position={getStickPosition(position)}
       node={
         <Transition show={hover}>

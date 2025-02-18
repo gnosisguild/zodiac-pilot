@@ -25,7 +25,11 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import { addressSchema, type HexAddress } from '@zodiac/schema'
+import {
+  addressSchema,
+  type ExecutionRoute,
+  type HexAddress,
+} from '@zodiac/schema'
 import {
   Address,
   AddressInput,
@@ -55,6 +59,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   return {
     currentRoute: {
       id: route.id,
+      comparableId: routeId(route),
       label: route.label,
       initiator: route.initiator,
       startingPoint: getStartingWaypoint(route.waypoints),
@@ -132,7 +137,14 @@ export const clientAction = async ({
 
 const EditRoute = ({
   loaderData: {
-    currentRoute: { id, label, initiator, waypoints, startingPoint },
+    currentRoute: {
+      id,
+      comparableId,
+      label,
+      initiator,
+      waypoints,
+      startingPoint,
+    },
     possibleRoutes,
   },
   actionData,
@@ -190,7 +202,7 @@ const EditRoute = ({
                       <Route
                         id={route.id}
                         key={route.id}
-                        selected={route.id === selectedRouteId}
+                        selected={comparableId === routeId(route)}
                         onSelect={() => setSelectedRouteId(route.id)}
                       >
                         <Waypoints excludeEnd>
@@ -314,3 +326,11 @@ const UpdateInitiator = () => {
     </div>
   )
 }
+
+const routeId = ({ waypoints }: ExecutionRoute) =>
+  waypoints == null
+    ? ''
+    : waypoints
+        .map(({ account }) => account.prefixedAddress)
+        .join(',')
+        .toLowerCase()
