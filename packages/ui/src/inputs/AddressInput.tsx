@@ -52,7 +52,7 @@ export const AddressInput = ({
           pattern="0x\w+"
           id={inputId}
           disabled={disabled}
-          value={value ?? ''}
+          value={value == null ? undefined : value}
           defaultValue={defaultValue}
           aria-describedby={descriptionId}
           aria-errormessage={error ?? undefined}

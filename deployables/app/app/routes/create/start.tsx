@@ -25,7 +25,7 @@ import {
 import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { redirect } from 'react-router'
-import { type ChainId } from 'ser-kit'
+import { prefixAddress, type ChainId } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
 
@@ -101,7 +101,11 @@ const Start = ({ loaderData: { chains } }: Route.ComponentProps) => {
               <AvatarInput
                 required
                 chainId={selectedChainId}
-                pilotAddress={address}
+                initiator={
+                  address == null
+                    ? undefined
+                    : prefixAddress(undefined, address)
+                }
                 name="avatar"
               />
 

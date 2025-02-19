@@ -124,7 +124,7 @@ describe('Edit route', () => {
 
         await render(`/edit/${encode(route)}`)
 
-        expect(screen.getByAltText(name)).toBeInTheDocument()
+        expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
   })

@@ -1,7 +1,14 @@
 import { getAvailableChains } from '@/balances-server'
-import { Page, useConnected, useIsDev } from '@/components'
+import { AvatarInput, Page, useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ProvideChains, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  ProvideChains,
+  Route,
+  Routes,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -15,8 +22,8 @@ import { getHexString, getOptionalString, getString } from '@zodiac/form-data'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   createAccount,
-  getStartingWaypoint,
   getWaypoints,
+  updateAvatar,
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
@@ -67,7 +74,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      startingPoint: getStartingWaypoint(route.waypoints),
       waypoints: getWaypoints(route),
     },
 
@@ -124,6 +130,12 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
       return editRoute(updateStartingPoint(route, account))
     }
+
+    case Intent.UpdateAvatar: {
+      const avatar = getHexString(data, 'avatar')
+
+      return editRoute(updateAvatar(route, { safe: avatar }))
+    }
   }
 }
 
@@ -152,15 +164,7 @@ export const clientAction = async ({
 
 const EditRoute = ({
   loaderData: {
-    currentRoute: {
-      id,
-      comparableId,
-      label,
-      initiator,
-      waypoints,
-      startingPoint,
-      avatar,
-    },
+    currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
     possibleRoutes,
     chains,
   },
@@ -168,7 +172,6 @@ const EditRoute = ({
 }: RouteType.ComponentProps) => {
   const isDev = useIsDev()
   const connected = useConnected()
-  const endPoint = waypoints.at(-1)
   const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
 
   useEffect(() => {
@@ -196,13 +199,11 @@ const EditRoute = ({
           >
             <TextInput label="Label" name="label" defaultValue={label} />
 
-            {initiator == null && <UpdateInitiator avatar={avatar} />}
+            <ChainSelect disabled value={getChainId(avatar)} />
+
+            <Initiator avatar={avatar} initiator={initiator} />
 
             <Divider />
-
-            <div className="w-44">
-              <Waypoint {...startingPoint} />
-            </div>
 
             <div className="flex">
               <div className="py-2 pr-4">
@@ -256,11 +257,7 @@ const EditRoute = ({
               )}
             </div>
 
-            {endPoint && (
-              <div className="w-44">
-                <Waypoint {...endPoint} />
-              </div>
-            )}
+            <Avatar avatar={avatar} initiator={initiator} />
 
             <Divider />
 
@@ -325,7 +322,12 @@ const DebugRouteData = () => {
   )
 }
 
-const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
+type InitiatorProps = {
+  avatar: PrefixedAddress
+  initiator?: PrefixedAddress
+}
+
+const Initiator = ({ avatar, initiator }: InitiatorProps) => {
   const [chainId, address] = splitPrefixedAddress(avatar)
 
   const { load, state, data = [] } = useFetcher<HexAddress[]>()
@@ -344,6 +346,14 @@ const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
         required
         isMulti={false}
         isDisabled={state === 'loading'}
+        defaultValue={
+          initiator == null
+            ? undefined
+            : {
+                value: unprefixAddress(initiator),
+                label: unprefixAddress(initiator),
+              }
+        }
         options={data.map((address) => ({ value: address, label: address }))}
       >
         {({ data: { value } }) => <Address>{value}</Address>}
@@ -355,6 +365,33 @@ const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
         intent={Intent.UpdateInitiator}
       >
         Update initiator
+      </SecondaryButton>
+    </div>
+  )
+}
+
+type AvatarProps = {
+  avatar: PrefixedAddress
+  initiator?: PrefixedAddress
+}
+
+const Avatar = ({ initiator, avatar }: AvatarProps) => {
+  return (
+    <div className="flex w-full items-end gap-2">
+      <AvatarInput
+        required
+        initiator={initiator}
+        chainId={getChainId(avatar)}
+        name="avatar"
+        defaultValue={unprefixAddress(avatar)}
+      />
+
+      <SecondaryButton
+        submit
+        busy={useIsPending(Intent.UpdateAvatar)}
+        intent={Intent.UpdateAvatar}
+      >
+        Update avatar
       </SecondaryButton>
     </div>
   )

@@ -6,7 +6,8 @@ import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
 import { useChain } from './ChainContext'
 
-export interface Props {
+type ChainSelectProps = {
+  disabled?: boolean
   value?: ChainId | null
   onChange?(chainId: ChainId): void
   name?: string
@@ -17,9 +18,15 @@ const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
   label: name,
 }))
 
-export const ChainSelect = ({ value, name, onChange }: Props) => (
+export const ChainSelect = ({
+  value,
+  disabled,
+  name,
+  onChange,
+}: ChainSelectProps) => (
   <Select
     label="Chain"
+    isDisabled={disabled}
     dropdownLabel="Select a different chain"
     isMulti={false}
     options={options}
