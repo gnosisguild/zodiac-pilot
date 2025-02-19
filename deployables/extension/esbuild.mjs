@@ -26,6 +26,7 @@ esbuild
 
       // COMPANION APP TO EDIT ROUTES
       './src/companion/contentScripts/main.ts',
+      './src/companion/contentScripts/fork-support.ts',
       './src/companion/injectedScripts/main.ts',
 
       // SIDEPANEL APP

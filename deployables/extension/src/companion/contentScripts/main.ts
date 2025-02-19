@@ -71,8 +71,4 @@ chrome.runtime.onMessage.addListener(
   },
 )
 
-chrome.runtime.sendMessage<CompanionAppMessage>({
-  type: CompanionAppMessageType.REQUEST_FORK_INFO,
-})
-
 injectScript('./build/companion/injectedScripts/main.js')
