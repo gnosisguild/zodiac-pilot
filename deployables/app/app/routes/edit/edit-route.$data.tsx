@@ -15,7 +15,6 @@ import { getHexString, getOptionalString, getString } from '@zodiac/form-data'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   createAccount,
-  getStartingWaypoint,
   getWaypoints,
   updateLabel,
   updateStartingPoint,
@@ -67,7 +66,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      startingPoint: getStartingWaypoint(route.waypoints),
       waypoints: getWaypoints(route),
     },
 
@@ -152,15 +150,7 @@ export const clientAction = async ({
 
 const EditRoute = ({
   loaderData: {
-    currentRoute: {
-      id,
-      comparableId,
-      label,
-      initiator,
-      waypoints,
-      startingPoint,
-      avatar,
-    },
+    currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
     possibleRoutes,
     chains,
   },
@@ -196,13 +186,9 @@ const EditRoute = ({
           >
             <TextInput label="Label" name="label" defaultValue={label} />
 
-            {initiator == null && <UpdateInitiator avatar={avatar} />}
+            <Initiator avatar={avatar} initiator={initiator} />
 
             <Divider />
-
-            <div className="w-44">
-              <Waypoint {...startingPoint} />
-            </div>
 
             <div className="flex">
               <div className="py-2 pr-4">
@@ -325,7 +311,13 @@ const DebugRouteData = () => {
   )
 }
 
-const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
+const Initiator = ({
+  avatar,
+  initiator,
+}: {
+  avatar: PrefixedAddress
+  initiator?: PrefixedAddress
+}) => {
   const [chainId, address] = splitPrefixedAddress(avatar)
 
   const { load, state, data = [] } = useFetcher<HexAddress[]>()
@@ -344,6 +336,14 @@ const UpdateInitiator = ({ avatar }: { avatar: PrefixedAddress }) => {
         required
         isMulti={false}
         isDisabled={state === 'loading'}
+        defaultValue={
+          initiator == null
+            ? undefined
+            : {
+                value: unprefixAddress(initiator),
+                label: unprefixAddress(initiator),
+              }
+        }
         options={data.map((address) => ({ value: address, label: address }))}
       >
         {({ data: { value } }) => <Address>{value}</Address>}
