@@ -6,23 +6,18 @@ import {
   createMockEoaAccount,
   createMockExecutionRoute,
   createMockOwnsConnection,
-  createMockSafeAccount,
   createMockStartingWaypoint,
   createMockTransaction,
   createMockWaypoints,
-  randomAddress,
 } from '@zodiac/test-utils'
 import { mockWeb3 } from '@zodiac/test-utils/e2e'
 import { prefixAddress, unprefixAddress } from 'ser-kit'
 import { connectWallet } from '../connectWallet'
 
 test.describe('Locked account', () => {
-  const account = '0x1000000000000000000000000000000000000000'
+  const account = '0xf06a3a90f9a248630bd15f9debc7a6a20e54677d'
 
-  const initiator = prefixAddress(
-    undefined,
-    '0xf06a3a90f9a248630bd15f9debc7a6a20e54677d',
-  )
+  const initiator = prefixAddress(undefined, account)
 
   const route = createMockExecutionRoute({
     initiator,
@@ -35,22 +30,25 @@ test.describe('Locked account', () => {
         createMockEoaAccount({ address: unprefixAddress(initiator) }),
       ),
       end: createMockEndWaypoint({
-        account: createMockSafeAccount({
+        account: {
           chainId: Chain.GNO,
           address: '0xb1578ecfa1da7405821095aa3612158926e6a72a',
-        }),
+        },
         connection: createMockOwnsConnection(initiator),
       }),
     }),
   })
-  const transaction = createMockTransaction({ to: randomAddress() })
+  const transaction = createMockTransaction()
 
   test('handles wallet disconnect gracefully', async ({ page }) => {
-    const { lockWallet } = await mockWeb3(page)
+    const { lockWallet } = await mockWeb3(page, {
+      accounts: [account],
+      chain: 'gnosis',
+    })
 
     await page.goto(`/submit/${encode(route)}/${encode([transaction])}`)
 
-    await connectWallet(page)
+    await connectWallet(page, account)
     await lockWallet()
 
     await expect(
@@ -61,9 +59,10 @@ test.describe('Locked account', () => {
   test('it is possible to reconnect an account', async ({ page }) => {
     const { lockWallet } = await mockWeb3(page, {
       accounts: [account],
+      chain: 'gnosis',
     })
 
-    await page.goto('/new-route')
+    await page.goto(`/submit/${encode(route)}/${encode([transaction])}`)
 
     await connectWallet(page, account)
     await lockWallet()
