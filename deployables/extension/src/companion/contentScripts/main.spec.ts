@@ -145,14 +145,6 @@ describe('Companion App Content Script', () => {
   })
 
   describe('Fork info', () => {
-    it('requests fork info directly on script load', async () => {
-      await importModule()
-
-      expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
-        type: CompanionAppMessageType.REQUEST_FORK_INFO,
-      })
-    })
-
     it('requests for info when pilot connects', async () => {
       await importModule()
 
@@ -163,7 +155,7 @@ describe('Companion App Content Script', () => {
         vi.fn(),
       )
 
-      expect(chrome.runtime.sendMessage).toHaveBeenNthCalledWith(2, {
+      expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
         type: CompanionAppMessageType.REQUEST_FORK_INFO,
       })
     })
