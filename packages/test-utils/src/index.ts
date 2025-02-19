@@ -4,6 +4,7 @@ export type { RenderOptions, Route } from './render'
 export {
   createRenderFramework,
   type RenderFrameworkOptions,
+  type RenderFrameworkResult,
 } from './renderFramework'
 export type { FrameworkRoute, RouteModule } from './renderFramework'
 export { renderHook } from './renderHook'

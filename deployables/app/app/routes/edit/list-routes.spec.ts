@@ -39,11 +39,12 @@ describe('List Routes', () => {
   }
 
   it('is possible to edit a route', async () => {
+    const route = createMockExecutionRoute({ label: 'Test route' })
+
     await render('/edit', {
       version: '3.4.0',
+      loadActions: () => loadRoutes(route),
     })
-
-    const [route] = await loadRoutes({ label: 'Test route' })
 
     await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
