@@ -57,7 +57,7 @@
     "happy-dom": "17.1.1",
     "jsdom-testing-mocks": "1.13.1",
     "madge": "8.0.0",
-    "postcss": "8.5.2",
+    "postcss": "8.5.3",
     "postcss-replace": "2.0.1",
     "rimraf": "6.0.1",
     "tailwindcss": "4.0.7",
