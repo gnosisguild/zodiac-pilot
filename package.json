@@ -18,7 +18,7 @@
     "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {
-    "cspell": "8.17.3",
+    "cspell": "8.17.4",
     "prettier": "3.5.1",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.11",
