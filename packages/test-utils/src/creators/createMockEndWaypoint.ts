@@ -1,9 +1,12 @@
 import type { Connection, Waypoint } from '@zodiac/schema'
 import { createMockEnabledConnection } from './createMockEnabledConnection'
-import { createMockSafeAccount, type Safe } from './createMockSafeAccount'
+import {
+  createMockSafeAccount,
+  type CreateMockSafeAccountOptions,
+} from './createMockSafeAccount'
 
 type CreateMockEndWaypointOptions = {
-  account?: Partial<Safe>
+  account?: CreateMockSafeAccountOptions
   connection?: Connection
 }
 
