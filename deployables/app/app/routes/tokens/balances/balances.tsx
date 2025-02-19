@@ -1,4 +1,5 @@
 import { useTokenBalances } from '@/balances-client'
+import { Token } from '@/components'
 import {
   Error as ErrorAlert,
   GhostLinkButton,
@@ -9,7 +10,6 @@ import {
   UsdValue,
 } from '@zodiac/ui'
 import { ArrowUpFromLine } from 'lucide-react'
-import { Token } from '../Token'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]

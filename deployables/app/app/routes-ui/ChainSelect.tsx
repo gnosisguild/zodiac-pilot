@@ -1,7 +1,10 @@
+import { Token } from '@/components'
 import { invariant } from '@epic-web/invariant'
 import { CHAIN_NAME } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
+import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
+import { useChain } from './ChainContext'
 
 export interface Props {
   value?: ChainId | null
@@ -31,9 +34,17 @@ export const ChainSelect = ({ value, name, onChange }: Props) => (
     }}
   >
     {({ data: { label, value } }) => (
-      <div className="flex items-center gap-4">
-        <div className="pl-1">{label || `#${value}`}</div>
-      </div>
+      <Chain chainId={value}>{label || `#${value}`}</Chain>
     )}
   </Select>
 )
+
+type ChainProps = PropsWithChildren<{
+  chainId: ChainId
+}>
+
+const Chain = ({ chainId, children }: ChainProps) => {
+  const chain = useChain(chainId)
+
+  return <Token logo={chain?.logo_url}>{children}</Token>
+}

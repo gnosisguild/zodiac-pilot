@@ -73,10 +73,14 @@ export const companionEnablement = (
 
           const routes = await getRoutes()
 
-          await sendMessageToTab(tab.id, {
-            type: CompanionResponseMessageType.LIST_ROUTES,
-            routes,
-          } satisfies CompanionResponseMessage)
+          await sendMessageToTab(
+            tab.id,
+            {
+              type: CompanionResponseMessageType.LIST_ROUTES,
+              routes,
+            } satisfies CompanionResponseMessage,
+            { protocolCheckOnly: true },
+          )
 
           break
         }
@@ -89,10 +93,14 @@ export const companionEnablement = (
           invariant(tab != null, 'Companion app message must come from a tab.')
           invariant(tab.id != null, 'Tab needs an ID')
 
-          await sendMessageToTab(tab.id, {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
-          } satisfies CompanionResponseMessage)
+          await sendMessageToTab(
+            tab.id,
+            {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            } satisfies CompanionResponseMessage,
+            { protocolCheckOnly: true },
+          )
 
           break
         }

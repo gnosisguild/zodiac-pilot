@@ -6,6 +6,7 @@ import { getAddress } from 'viem'
 import { CopyToClipboard } from '../CopyToClipboard'
 import { Empty } from '../Empty'
 import { defaultSize, type Size } from '../common'
+import { Popover } from '../overlays'
 import { Blockie } from './Blockie'
 import { shortenAddress } from './shortenAddress'
 
@@ -56,21 +57,32 @@ export const Address = ({
         className={classNames(
           size === 'base' && 'size-5',
           size === 'small' && 'size-4',
+          size === 'tiny' && 'size-3',
         )}
       />
 
       <code
         className={classNames(
           'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
-          shorten && 'uppercase',
+          shorten && 'cursor-default uppercase',
           size === 'small' && 'text-xs',
+          size === 'tiny' && 'text-xs',
         )}
       >
-        {shorten ? shortenAddress(getAddress(address)) : getAddress(address)}
+        {shorten ? (
+          <Popover
+            position="bottom"
+            popover={<Address size="small">{address}</Address>}
+          >
+            {shortenAddress(getAddress(address))}
+          </Popover>
+        ) : (
+          getAddress(address)
+        )}
       </code>
 
       {allowCopy && (
-        <CopyToClipboard iconOnly data={address}>
+        <CopyToClipboard iconOnly data={address} size="tiny">
           Copy address
         </CopyToClipboard>
       )}

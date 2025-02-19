@@ -44,21 +44,6 @@ describe('Root', () => {
     await expect(getRoute(route.id)).resolves.toEqual(route)
   })
 
-  it('closes the origin tab of the update', async () => {
-    const tab = createMockTab()
-
-    await render('/', [{ path: '/', Component: Root, loader }])
-
-    const route = createMockRoute()
-
-    await mockIncomingRouteUpdate(route, tab)
-
-    expect(chromeMock.tabs.remove).toHaveBeenCalledWith(
-      tab.id,
-      expect.anything(),
-    )
-  })
-
   it('saves the route when there are transactions but the route stays the same and the avatar has not changed', async () => {
     const route = await mockRoute()
     await saveLastUsedRouteId(route.id)

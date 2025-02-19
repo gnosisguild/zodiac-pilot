@@ -1,16 +1,17 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import type { HexAddress } from '@zodiac/schema'
+import { addressSchema, type HexAddress } from '@zodiac/schema'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Blockie } from '../addresses'
-import { type ComposableInputProps, Input } from './Input'
+import { Input, type ComposableInputProps } from './Input'
 import { InputLayout } from './InputLayout'
 
 type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
-  'id' | 'type' | 'className' | 'value' | 'defaultValue'
+  'id' | 'type' | 'className' | 'value' | 'defaultValue' | 'onChange'
 > &
   Omit<ComposableInputProps, 'before' | 'after'> & {
-    value?: HexAddress
+    value?: HexAddress | null
+    onChange?: (value: HexAddress | null) => void
     defaultValue?: HexAddress
     action?: ReactNode
   }
@@ -25,6 +26,7 @@ export const AddressInput = ({
   defaultValue,
   placeholder = ZERO_ADDRESS,
   hideLabel,
+  onChange,
   ...props
 }: AddressInputProps) => (
   <Input
@@ -50,7 +52,7 @@ export const AddressInput = ({
           pattern="0x\w+"
           id={inputId}
           disabled={disabled}
-          value={value}
+          value={value ?? ''}
           defaultValue={defaultValue}
           aria-describedby={descriptionId}
           aria-errormessage={error ?? undefined}
@@ -63,6 +65,17 @@ export const AddressInput = ({
             }
           }}
           onInput={(e) => e.currentTarget.setCustomValidity('')}
+          onChange={(event) => {
+            const value = event.target.value
+
+            if (onChange != null) {
+              try {
+                onChange(addressSchema.parse(value))
+              } catch {
+                onChange(null)
+              }
+            }
+          }}
           className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
         />
       </InputLayout>

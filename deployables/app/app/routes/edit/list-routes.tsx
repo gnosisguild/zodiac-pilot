@@ -70,10 +70,10 @@ const Route = ({ route }: RouteProps) => {
     <Table.Tr>
       <Table.Td>{route.label}</Table.Td>
       <Table.Td>
-        {route.initiator && <Address>{route.initiator}</Address>}
+        {route.initiator && <Address shorten>{route.initiator}</Address>}
       </Table.Td>
       <Table.Td>
-        <Address>{route.avatar}</Address>
+        <Address shorten>{route.avatar}</Address>
       </Table.Td>
       <Table.Td align="right">
         <Edit routeId={route.id} />
@@ -96,7 +96,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
         type: CompanionAppMessageType.REQUEST_ROUTE,
         routeId,
       },
-      (response) => navigate(`/edit-route/${encode(response.route)}`),
+      (response) => navigate(`/edit/${encode(response.route)}`),
     )
   }, [routeId, navigate, submitting])
 

@@ -1,10 +1,11 @@
+import { getAvailableChains } from '@/balances-server'
 import {
   AvatarInput,
-  ChainSelect,
   ConnectWalletButton,
   OnlyConnected,
   Page,
 } from '@/components'
+import { ChainSelect, ProvideChains } from '@/routes-ui'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -27,6 +28,8 @@ import { redirect } from 'react-router'
 import { type ChainId } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
+
+export const loader = async () => ({ chains: await getAvailableChains() })
 
 export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
@@ -58,7 +61,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   return redirect(`/tokens/balances`)
 }
 
-const Start = () => {
+const Start = ({ loaderData: { chains } }: Route.ComponentProps) => {
   const { address, chainId } = useAccount()
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(chainId || ChainEnum.ETH),
@@ -73,47 +76,49 @@ const Start = () => {
   }, [chainId])
 
   return (
-    <Page>
-      <Page.Header
-        action={
-          <ConnectWalletButton
-            connectLabel="Connect signer wallet"
-            connectedLabel="Signer wallet"
-          />
-        }
-      >
-        New Account
-      </Page.Header>
-
-      <Page.Main>
-        <OnlyConnected>
-          <Form context={{ initiator: address }}>
-            <ChainSelect
-              name="chainId"
-              value={selectedChainId}
-              onChange={setSelectedChainId}
+    <ProvideChains chains={chains}>
+      <Page>
+        <Page.Header
+          action={
+            <ConnectWalletButton
+              connectLabel="Connect signer wallet"
+              connectedLabel="Signer wallet"
             />
+          }
+        >
+          New Account
+        </Page.Header>
 
-            <AvatarInput
-              required
-              chainId={selectedChainId}
-              pilotAddress={address}
-              name="avatar"
-            />
+        <Page.Main>
+          <OnlyConnected>
+            <Form context={{ initiator: address }}>
+              <ChainSelect
+                name="chainId"
+                value={selectedChainId}
+                onChange={setSelectedChainId}
+              />
 
-            <TextInput
-              label="Label"
-              name="label"
-              placeholder="Give this account a descriptive name"
-            />
+              <AvatarInput
+                required
+                chainId={selectedChainId}
+                pilotAddress={address}
+                name="avatar"
+              />
 
-            <Form.Actions>
-              <PrimaryButton submit>Create</PrimaryButton>
-            </Form.Actions>
-          </Form>
-        </OnlyConnected>
-      </Page.Main>
-    </Page>
+              <TextInput
+                label="Label"
+                name="label"
+                placeholder="Give this account a descriptive name"
+              />
+
+              <Form.Actions>
+                <PrimaryButton submit>Create</PrimaryButton>
+              </Form.Actions>
+            </Form>
+          </OnlyConnected>
+        </Page.Main>
+      </Page>
+    </ProvideChains>
   )
 }
 

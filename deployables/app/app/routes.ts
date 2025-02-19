@@ -20,23 +20,17 @@ export default [
       ]),
     ]),
 
-    route('/new-route', 'routes/edit/new-route.ts'),
+    route('/new-route', 'routes/legacy-redirects/old-new-route-redirect.ts'),
 
-    ...prefix('/edit-route', [
-      layout('routes/edit/layout.tsx', [
-        index('routes/edit/index.tsx'),
-        route(':data', 'routes/edit/edit-route.$data.tsx'),
-      ]),
+    ...prefix('/edit', [
+      index('routes/edit/list-routes.tsx'),
+      route(':data', 'routes/edit/edit-route.$data.tsx'),
     ]),
 
-    route('/list-routes', 'routes/edit/list-routes.tsx'),
+    route('/edit-route/:data', 'routes/legacy-redirects/old-edit-redirect.ts'),
 
     ...prefix('/create', [
-      layout('routes/create/layout.tsx', [
-        index('routes/create/start.tsx'),
-        route(':fromAddress/:toAddress', 'routes/create/select-route.tsx'),
-        route('finish/:data', 'routes/create/finish.tsx'),
-      ]),
+      layout('routes/create/layout.tsx', [index('routes/create/start.tsx')]),
     ]),
 
     ...prefix('/submit', [
@@ -48,9 +42,8 @@ export default [
   ]),
 
   ...prefix('/:address/:chainId', [
-    route('modules', 'routes/$address.$chainId/modules.ts'),
     route('available-safes', 'routes/$address.$chainId/available-safes.ts'),
-    route('delegates', 'routes/$address.$chainId/delegates.ts'),
+    route('initiators', 'routes/$address.$chainId/initiators.ts'),
     route('balances', 'routes/$address.$chainId/balances.ts'),
   ]),
 

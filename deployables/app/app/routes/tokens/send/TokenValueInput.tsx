@@ -1,4 +1,5 @@
 import { useTokenBalances } from '@/balances-client'
+import { Token } from '@/components'
 import { invariant } from '@epic-web/invariant'
 import {
   GhostButton,
@@ -9,7 +10,6 @@ import {
 } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { parseUnits } from 'viem'
-import { Token } from '../Token'
 
 type TokenValueInputProps = Omit<
   NumberInputProps,

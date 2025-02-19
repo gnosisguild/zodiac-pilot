@@ -1,5 +1,4 @@
 import { getRoute, saveRoute } from '@/execution-routes'
-import { captureLastError } from '@/sentry'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import {
@@ -14,21 +13,12 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
   const transactions = useTransactions()
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
-  const [{ routeUpdate, sender, closeSender }, setPendingRouteUpdate] =
-    useState<
-      | { routeUpdate: null; sender: null; closeSender: boolean }
-      | {
-          routeUpdate: ExecutionRoute
-          sender: chrome.runtime.MessageSender
-          closeSender: boolean
-        }
-    >({ routeUpdate: null, sender: null, closeSender: false })
+  const [routeUpdate, setPendingRouteUpdate] = useState<ExecutionRoute | null>(
+    null,
+  )
 
   useEffect(() => {
-    const handleSaveRoute = async (
-      message: CompanionAppMessage,
-      sender: chrome.runtime.MessageSender,
-    ) => {
+    const handleSaveRoute = async (message: CompanionAppMessage) => {
       if (
         typeof message !== 'object' ||
         message == null ||
@@ -57,11 +47,7 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           currentRoute.avatar.toLowerCase() !==
           incomingRoute.avatar.toLowerCase()
         ) {
-          setPendingRouteUpdate({
-            routeUpdate: incomingRoute,
-            sender,
-            closeSender: message.type === CompanionAppMessageType.SAVE_ROUTE,
-          })
+          setPendingRouteUpdate(incomingRoute)
 
           return
         }
@@ -70,18 +56,8 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
       saveRoute(incomingRoute).then(() => {
         revalidate()
 
-        switch (message.type) {
-          case CompanionAppMessageType.SAVE_ROUTE: {
-            closeTabAfterSafe(sender)
-
-            break
-          }
-
-          case CompanionAppMessageType.SAVE_AND_LAUNCH: {
-            navigate(`/${incomingRoute.id}`)
-
-            break
-          }
+        if (message.type === CompanionAppMessageType.SAVE_AND_LAUNCH) {
+          navigate(`/${incomingRoute.id}`)
         }
       })
     }
@@ -93,15 +69,7 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
     }
   }, [lastUsedRouteId, navigate, revalidate, transactions.length])
 
-  const cancelUpdate = useCallback(
-    () =>
-      setPendingRouteUpdate({
-        routeUpdate: null,
-        sender: null,
-        closeSender: false,
-      }),
-    [],
-  )
+  const cancelUpdate = useCallback(() => setPendingRouteUpdate(null), [])
 
   const saveUpdate = useCallback(async () => {
     invariant(
@@ -111,31 +79,14 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
 
     await saveRoute(routeUpdate)
 
-    setPendingRouteUpdate({
-      routeUpdate: null,
-      sender: null,
-      closeSender: false,
-    })
-
-    if (closeSender) {
-      closeTabAfterSafe(sender)
-    }
+    setPendingRouteUpdate(null)
 
     return routeUpdate
-  }, [closeSender, routeUpdate, sender])
+  }, [routeUpdate])
 
   return {
     isUpdatePending: routeUpdate != null,
     cancelUpdate,
     saveUpdate,
   }
-}
-
-const closeTabAfterSafe = (sender: chrome.runtime.MessageSender) => {
-  invariant(sender.tab != null, 'Message did not originate in a tab')
-  invariant(sender.tab.id != null, 'Origin tab has no id')
-
-  chrome.tabs.remove(sender.tab.id, () => {
-    captureLastError()
-  })
 }

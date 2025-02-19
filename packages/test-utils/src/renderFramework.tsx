@@ -98,7 +98,6 @@ export async function createRenderFramework<Config extends RouteConfig>(
   ): Promise<RenderResult> {
     const Stub = createRoutesStub([
       {
-        path: '/',
         Component: CombinedTestElement,
         // @ts-expect-error the real types and the stub types aren't nicely aligned
         children: [...stubbedRoutes],
@@ -146,6 +145,8 @@ function stubRoutes(
       >
 
       return {
+        id: route.id,
+        index: route.index,
         path: route.path,
         clientLoader,
         loader,
@@ -187,7 +188,7 @@ function stubRoutes(
         children:
           route.children != null
             ? await stubRoutes(basePath, route.children)
-            : [],
+            : undefined,
       }
     }),
   )

@@ -1,11 +1,10 @@
 import { validateAddress } from '@/utils'
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
-import { Blockie, Select, selectStyles, TextInput } from '@zodiac/ui'
+import { Address, Select, selectStyles, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { useFetcher } from 'react-router'
 import { type ChainId } from 'ser-kit'
-import { getAddress } from 'viem'
 
 type Props = {
   chainId: ChainId | null
@@ -65,7 +64,7 @@ export const AvatarInput = ({
         required={required}
         isMulti={false}
         isDisabled={state === 'loading'}
-        label="Piloted Safe"
+        label="Avatar"
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
         placeholder="Paste an address or select from the list"
@@ -102,22 +101,14 @@ export const AvatarInput = ({
           return !!validateAddress(option)
         }}
       >
-        {({ data: { value } }) => (
-          <div className="flex items-center gap-4">
-            <Blockie address={value} className="size-5 shrink-0" />
-
-            <code className="overflow-hidden text-ellipsis whitespace-nowrap font-mono">
-              {getAddress(value).toLowerCase()}
-            </code>
-          </div>
-        )}
+        {({ data: { value } }) => <Address>{value}</Address>}
       </Select>
     )
   }
 
   return (
     <TextInput
-      label="Piloted Safe"
+      label="Avatar"
       disabled={state === 'loading'}
       value={internalValue}
       name={name}

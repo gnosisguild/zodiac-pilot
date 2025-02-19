@@ -1,11 +1,13 @@
-import { render } from '@/test-utils'
+import { getAvailableChains } from '@/balances-server'
+import { createMockChain, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain } from '@zodiac/chains'
+import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { randomAddress } from '@zodiac/test-utils'
 import { prefixAddress, queryAvatars } from 'ser-kit'
-import { describe, expect, it, vi } from 'vitest'
+import { getAddress } from 'viem'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 vi.mock('wagmi', async (importOriginal) => {
@@ -32,57 +34,121 @@ vi.mock('ser-kit', async (importOriginal) => {
 
 const mockQueryAvatars = vi.mocked(queryAvatars)
 
+vi.mock('@/balances-server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/balances-server')>()
+
+  return {
+    ...module,
+
+    getAvailableChains: vi.fn(),
+  }
+})
+
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
+
 describe('New Account', () => {
-  it('creates a new route with a given avatar', async () => {
-    await render('/create')
-
-    const postMessage = vi.spyOn(window, 'postMessage')
-
-    const address = randomAddress()
-
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Piloted Safe' }),
-      address,
-    )
-    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-    expect(postMessage).toHaveBeenCalledWith(
-      {
-        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-        data: expect.objectContaining({
-          avatar: prefixAddress(Chain.ETH, address),
-        }),
-      },
-      '*',
+  beforeEach(() => {
+    mockGetAvailableChains.mockResolvedValue(
+      Object.entries(CHAIN_NAME).map(([chainId, name]) =>
+        createMockChain({ community_id: parseInt(chainId), name }),
+      ),
     )
   })
 
-  it('uses the selected chain', async () => {
-    await render('/create')
+  describe('Avatar', () => {
+    it('creates a new route with a given avatar', async () => {
+      await render('/create')
 
-    const postMessage = vi.spyOn(window, 'postMessage')
+      const postMessage = vi.spyOn(window, 'postMessage')
 
-    const address = randomAddress()
+      const address = randomAddress()
 
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Piloted Safe' }),
-      address,
-    )
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Avatar' }),
+        address,
+      )
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
-    await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
+      expect(postMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+          data: expect.objectContaining({
+            avatar: prefixAddress(Chain.ETH, address),
+          }),
+        },
+        '*',
+      )
+    })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    it('uses the selected chain', async () => {
+      await render('/create')
 
-    expect(postMessage).toHaveBeenCalledWith(
-      {
-        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-        data: expect.objectContaining({
-          avatar: prefixAddress(Chain.GNO, address),
-        }),
-      },
-      '*',
-    )
+      const postMessage = vi.spyOn(window, 'postMessage')
+
+      const address = randomAddress()
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Avatar' }),
+        address,
+      )
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
+
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      expect(postMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+          data: expect.objectContaining({
+            avatar: prefixAddress(Chain.GNO, address),
+          }),
+        },
+        '*',
+      )
+    })
+  })
+
+  describe('Label', () => {
+    it('is possible to give label the account', async () => {
+      await render('/create')
+
+      const postMessage = vi.spyOn(window, 'postMessage')
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Avatar' }),
+        randomAddress(),
+      )
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Label' }),
+        'Test label',
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      await waitFor(() => {
+        expect(postMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+            data: expect.objectContaining({
+              label: 'Test label',
+            }),
+          },
+          '*',
+        )
+      })
+    })
+  })
+
+  describe('Initiator', () => {
+    it('offers a button to connect', async () => {
+      await render('/create')
+
+      expect(
+        await screen.findByRole('button', { name: 'Connect signer wallet' }),
+      ).toBeInTheDocument()
+    })
   })
 
   it('uses the connected account as initiator', async () => {
@@ -102,9 +168,11 @@ describe('New Account', () => {
     const postMessage = vi.spyOn(window, 'postMessage')
 
     await userEvent.click(
-      await screen.findByRole('combobox', { name: 'Piloted Safe' }),
+      await screen.findByRole('combobox', { name: 'Avatar' }),
     )
-    await userEvent.click(screen.getByRole('option', { name: avatar }))
+    await userEvent.click(
+      screen.getByRole('option', { name: getAddress(avatar) }),
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
@@ -114,36 +182,6 @@ describe('New Account', () => {
           type: CompanionAppMessageType.SAVE_AND_LAUNCH,
           data: expect.objectContaining({
             initiator: prefixAddress(undefined, initiator),
-          }),
-        },
-        '*',
-      )
-    })
-  })
-
-  it('is possible to give label the account', async () => {
-    await render('/create')
-
-    const postMessage = vi.spyOn(window, 'postMessage')
-
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Piloted Safe' }),
-      randomAddress(),
-    )
-
-    await userEvent.type(
-      screen.getByRole('textbox', { name: 'Label' }),
-      'Test label',
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-    await waitFor(() => {
-      expect(postMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-          data: expect.objectContaining({
-            label: 'Test label',
           }),
         },
         '*',

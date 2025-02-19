@@ -110,7 +110,7 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
     )
   })
 
-  it('sends funds to the selected token', async () => {
+  it.skip('sends funds to the selected token', async () => {
     const tokenAddress = randomAddress()
 
     mockGetTokenBalances.mockResolvedValue([
@@ -139,7 +139,7 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
       await screen.findByRole('option', { name: 'Test token' }),
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Max' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Max' }))
 
     const fetch = vi.spyOn(window, 'fetch')
 

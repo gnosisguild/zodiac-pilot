@@ -15,7 +15,7 @@ type PageProps = PropsWithChildren<{ fullWidth?: boolean }>
 export const Page = ({ children, fullWidth = false }: PageProps) => {
   return (
     <div className="flex flex-1 flex-shrink-0 flex-col overflow-y-auto">
-      <div className="mt-16">
+      <div className="mt-11">
         <PageContext value={fullWidth}>{children}</PageContext>
       </div>
     </div>
@@ -28,7 +28,7 @@ const Header = ({
 }: PropsWithChildren<{ action?: ReactNode }>) => (
   <Boundary>
     <div className="mb-16 flex items-center justify-between">
-      <h1 className="leading-0 text-3xl font-extralight">{children}</h1>
+      <h1 className="text-3xl font-extralight">{children}</h1>
 
       {action}
     </div>

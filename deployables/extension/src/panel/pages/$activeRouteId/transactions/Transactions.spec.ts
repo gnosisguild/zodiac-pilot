@@ -3,6 +3,7 @@ import {
   createTransaction,
   mockRoute,
   mockTabSwitch,
+  randomPrefixedAddress,
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
@@ -63,7 +64,10 @@ describe('Transactions', () => {
         [{ path: '/:activeRouteId/transactions', Component: Transactions }],
         {
           initialState: [],
-          initialSelectedRoute: createMockRoute({ id: 'test-route' }),
+          initialSelectedRoute: createMockRoute({
+            id: 'test-route',
+            initiator: randomPrefixedAddress(),
+          }),
         },
       )
 
@@ -71,7 +75,10 @@ describe('Transactions', () => {
     })
 
     it('encodes the route and transaction state into the target of the submit button', async () => {
-      const route = createMockRoute({ id: 'test-route' })
+      const route = createMockRoute({
+        id: 'test-route',
+        initiator: randomPrefixedAddress(),
+      })
       const transaction = createTransaction()
 
       await render(
@@ -88,6 +95,26 @@ describe('Transactions', () => {
         'href',
         `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
       )
+    })
+
+    it('offers a link to complete the route setup when no initiator is defined', async () => {
+      const route = createMockRoute({
+        id: 'test-route',
+      })
+
+      await render(
+        '/test-route/transactions',
+        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        {
+          initialState: [],
+          initialSelectedRoute: route,
+          companionAppUrl: 'http://localhost',
+        },
+      )
+
+      expect(
+        screen.getByRole('link', { name: 'Complete route setup to submit' }),
+      ).toHaveAttribute('href', `http://localhost/edit/${encode(route)}`)
     })
   })
 
@@ -107,7 +134,7 @@ describe('Transactions', () => {
 
       expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
         'href',
-        `http://localhost/edit-route/${encode(route)}`,
+        `http://localhost/edit/${encode(route)}`,
       )
     })
   })

@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@source '../../../packages/ui';
 
 @theme {
   --font-mono:

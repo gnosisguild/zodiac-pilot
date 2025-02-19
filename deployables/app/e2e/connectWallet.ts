@@ -10,4 +10,8 @@ export const connectWallet = async (
   await expect(
     page.getByRole('textbox', { name: 'Pilot Account' }),
   ).toHaveValue(account)
+
+  await expect(
+    page.getByRole('alert', { name: 'Wallet disconnected' }),
+  ).not.toBeInViewport()
 }

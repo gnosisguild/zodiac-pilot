@@ -3,10 +3,9 @@ import {
   Navigation,
   PilotStatus,
   ProvidePilotStatus,
-  useIsDev,
 } from '@/components'
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
-import { ArrowUpFromLine, Edit, Landmark, Plus, Signature } from 'lucide-react'
+import { ArrowUpFromLine, Landmark, List, Plus, Signature } from 'lucide-react'
 import { Outlet } from 'react-router'
 
 const Sidebar = () => {
@@ -31,23 +30,19 @@ const Sidebar = () => {
                 </Navigation.Link>
               </Navigation.Section>
 
-              <Navigation.Section title="Routes">
-                <Navigation.Link to="/new-route" icon={Plus}>
-                  Create new route
+              <Navigation.Section title="Accounts">
+                <Navigation.Link to="/create" icon={Plus}>
+                  Create new account
                 </Navigation.Link>
 
-                {useIsDev() && (
-                  <Navigation.Link to="/create" icon={Plus}>
-                    Create new account
-                  </Navigation.Link>
-                )}
-
-                <Navigation.Link to="/edit-route" icon={Edit}>
-                  Edit a route
+                <Navigation.Link to="/edit" icon={List}>
+                  Manage accounts
                 </Navigation.Link>
+              </Navigation.Section>
 
+              <Navigation.Section title="Transactions">
                 <Navigation.Link to="/submit" icon={Signature}>
-                  Submit
+                  Sign a transaction
                 </Navigation.Link>
               </Navigation.Section>
             </Navigation>

@@ -44,7 +44,7 @@ export const Submit = () => {
     }
   }, [dispatch, submitPending])
 
-  return (
+  return initiator != null ? (
     <>
       <PrimaryLinkButton
         fluid
@@ -56,13 +56,19 @@ export const Submit = () => {
         Submit
       </PrimaryLinkButton>
 
-      {initiator && (
-        <AwaitingSignatureModal
-          isOpen={submitPending}
-          onClose={() => setSubmitPending(false)}
-        />
-      )}
+      <AwaitingSignatureModal
+        isOpen={submitPending}
+        onClose={() => setSubmitPending(false)}
+      />
     </>
+  ) : (
+    <PrimaryLinkButton
+      fluid
+      openInNewWindow
+      to={`${companionAppUrl}/edit/${encode(route)}`}
+    >
+      Complete route setup to submit
+    </PrimaryLinkButton>
   )
 }
 

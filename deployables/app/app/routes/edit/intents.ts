@@ -1,10 +1,5 @@
 export enum Intent {
+  UpdateInitiator = 'UpdateInitiator',
   Save = 'Save',
-  UpdateModule = 'UpdateModule',
-  UpdateChain = 'UpdateChain',
-  UpdateAvatar = 'UpdateAvatar',
-  RemoveAvatar = 'RemoveAvatar',
-  ConnectWallet = 'ConnectWallet',
-  DisconnectWallet = 'DisconnectWallet',
   DryRun = 'DryRun',
 }

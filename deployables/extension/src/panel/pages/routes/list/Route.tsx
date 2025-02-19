@@ -58,7 +58,7 @@ export const Route = ({ route, currentlyActiveAvatar }: RouteProps) => {
           <div className="flex gap-2">
             <SecondaryLinkButton
               openInNewWindow
-              to={`${useCompanionAppUrl()}/edit-route/${encode(route)}`}
+              to={`${useCompanionAppUrl()}/edit/${encode(route)}`}
             >
               Edit
             </SecondaryLinkButton>

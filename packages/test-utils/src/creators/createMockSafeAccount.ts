@@ -4,7 +4,7 @@ import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
 
 export type Safe = Extract<Account, { type: AccountType.SAFE }>
 
-type CreateMockSafeAccountOptions = {
+export type CreateMockSafeAccountOptions = {
   chainId?: ChainId
   address?: HexAddress
 }
