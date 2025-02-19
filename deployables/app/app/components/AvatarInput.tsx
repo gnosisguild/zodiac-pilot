@@ -82,6 +82,7 @@ export const AvatarInput = ({
 
   return (
     <AddressInput
+      required={required}
       label="Avatar"
       disabled={state === 'loading'}
       defaultValue={defaultValue}

@@ -1,7 +1,14 @@
 import { getAvailableChains } from '@/balances-server'
 import { AvatarInput, Page, useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ProvideChains, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  ProvideChains,
+  Route,
+  Routes,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -191,6 +198,8 @@ const EditRoute = ({
             }}
           >
             <TextInput label="Label" name="label" defaultValue={label} />
+
+            <ChainSelect disabled value={getChainId(avatar)} />
 
             <Initiator avatar={avatar} initiator={initiator} />
 
