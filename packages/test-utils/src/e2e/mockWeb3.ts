@@ -15,16 +15,18 @@ declare global {
   const Web3Mock: mock
 }
 
-type MockOptions = { accounts: string[] }
+type MockOptions = { accounts: string[]; chain?: string }
 
 export const defaultMockAccount = '0x1000000000000000000000000000000000000000'
 
 export const mockWeb3 = async (
   page: Page,
-  { accounts }: MockOptions = { accounts: [defaultMockAccount] },
+  { accounts, chain = 'ethereum' }: MockOptions = {
+    accounts: [defaultMockAccount],
+  },
 ) => {
   page.addInitScript({
-    content: `${getLibraryCode()}\n(() => { Web3Mock.mock(${JSON.stringify({ blockchain: 'ethereum', accounts: { return: accounts } })})})()`,
+    content: `${getLibraryCode()}\n(() => { Web3Mock.mock(${JSON.stringify({ blockchain: chain, accounts: { return: accounts } })})})()`,
   })
 
   return {
