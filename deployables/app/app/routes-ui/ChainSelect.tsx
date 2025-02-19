@@ -9,6 +9,7 @@ import { useChain } from './ChainContext'
 type ChainSelectProps = {
   disabled?: boolean
   value?: ChainId | null
+  defaultValue?: ChainId | null
   onChange?(chainId: ChainId): void
   name?: string
 }
@@ -19,6 +20,7 @@ const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
 }))
 
 export const ChainSelect = ({
+  defaultValue,
   value,
   disabled,
   name,
@@ -32,6 +34,7 @@ export const ChainSelect = ({
     options={options}
     name={name}
     value={options.find((op) => op.value === value)}
+    defaultValue={options.find((op) => op.value === defaultValue)}
     onChange={(option) => {
       invariant(option != null, 'Empty value selected as chain')
 
