@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { Page, useConnected, useIsDev } from '@/components'
+import { AvatarInput, Page, useConnected, useIsDev } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ProvideChains, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
@@ -16,6 +16,7 @@ import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   createAccount,
   getWaypoints,
+  updateAvatar,
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
@@ -122,6 +123,12 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
       return editRoute(updateStartingPoint(route, account))
     }
+
+    case Intent.UpdateAvatar: {
+      const avatar = getHexString(data, 'avatar')
+
+      return editRoute(updateAvatar(route, { safe: avatar }))
+    }
   }
 }
 
@@ -158,7 +165,6 @@ const EditRoute = ({
 }: RouteType.ComponentProps) => {
   const isDev = useIsDev()
   const connected = useConnected()
-  const endPoint = waypoints.at(-1)
   const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
 
   useEffect(() => {
@@ -242,11 +248,7 @@ const EditRoute = ({
               )}
             </div>
 
-            {endPoint && (
-              <div className="w-44">
-                <Waypoint {...endPoint} />
-              </div>
-            )}
+            <Avatar avatar={avatar} initiator={initiator} />
 
             <Divider />
 
@@ -311,13 +313,12 @@ const DebugRouteData = () => {
   )
 }
 
-const Initiator = ({
-  avatar,
-  initiator,
-}: {
+type InitiatorProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
-}) => {
+}
+
+const Initiator = ({ avatar, initiator }: InitiatorProps) => {
   const [chainId, address] = splitPrefixedAddress(avatar)
 
   const { load, state, data = [] } = useFetcher<HexAddress[]>()
@@ -355,6 +356,33 @@ const Initiator = ({
         intent={Intent.UpdateInitiator}
       >
         Update initiator
+      </SecondaryButton>
+    </div>
+  )
+}
+
+type AvatarProps = {
+  avatar: PrefixedAddress
+  initiator?: PrefixedAddress
+}
+
+const Avatar = ({ initiator, avatar }: AvatarProps) => {
+  return (
+    <div className="flex w-full items-end gap-2">
+      <AvatarInput
+        required
+        initiator={initiator}
+        chainId={getChainId(avatar)}
+        name="avatar"
+        defaultValue={unprefixAddress(avatar)}
+      />
+
+      <SecondaryButton
+        submit
+        busy={useIsPending(Intent.UpdateAvatar)}
+        intent={Intent.UpdateAvatar}
+      >
+        Update avatar
       </SecondaryButton>
     </div>
   )

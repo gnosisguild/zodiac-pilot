@@ -1,14 +1,14 @@
 import { validateAddress } from '@/utils'
-import { ZERO_ADDRESS } from '@zodiac/chains'
-import type { HexAddress } from '@zodiac/schema'
+import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
+import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
 import { Address, AddressInput, Select, selectStyles } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
-import { type ChainId } from 'ser-kit'
+import { splitPrefixedAddress, type ChainId } from 'ser-kit'
 
 type Props = {
   chainId: ChainId | null
-  pilotAddress?: HexAddress | null
+  initiator?: PrefixedAddress
   name?: string
   defaultValue?: HexAddress
   required?: boolean
@@ -21,15 +21,17 @@ type Option = {
 
 export const AvatarInput = ({
   chainId,
-  pilotAddress,
+  initiator = ETH_ZERO_ADDRESS,
   name,
   required,
   defaultValue,
 }: Props) => {
   const { load, state, data } = useFetcher<HexAddress[]>()
 
+  const [, initiatorAddress] = splitPrefixedAddress(initiator)
+
   useEffect(() => {
-    if (pilotAddress == null || pilotAddress == ZERO_ADDRESS) {
+    if (initiatorAddress == ZERO_ADDRESS) {
       return
     }
 
@@ -37,8 +39,8 @@ export const AvatarInput = ({
       return
     }
 
-    load(`/${pilotAddress}/${chainId}/available-safes`)
-  }, [chainId, load, pilotAddress])
+    load(`/${initiatorAddress}/${chainId}/available-safes`)
+  }, [chainId, initiatorAddress, load])
 
   const availableSafes = data ?? []
 
@@ -57,7 +59,7 @@ export const AvatarInput = ({
         placeholder="Paste an address or select from the list"
         classNames={selectStyles<Option>()}
         name={name}
-        value={
+        defaultValue={
           defaultValue == null
             ? undefined
             : {
