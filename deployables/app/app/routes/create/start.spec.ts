@@ -1,12 +1,13 @@
-import { render } from '@/test-utils'
+import { getAvailableChains } from '@/balances-server'
+import { createMockChain, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain } from '@zodiac/chains'
+import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { randomAddress } from '@zodiac/test-utils'
 import { prefixAddress, queryAvatars } from 'ser-kit'
 import { getAddress } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
 vi.mock('wagmi', async (importOriginal) => {
@@ -33,7 +34,27 @@ vi.mock('ser-kit', async (importOriginal) => {
 
 const mockQueryAvatars = vi.mocked(queryAvatars)
 
+vi.mock('@/balances-server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/balances-server')>()
+
+  return {
+    ...module,
+
+    getAvailableChains: vi.fn(),
+  }
+})
+
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
+
 describe('New Account', () => {
+  beforeEach(() => {
+    mockGetAvailableChains.mockResolvedValue(
+      Object.entries(CHAIN_NAME).map(([chainId, name]) =>
+        createMockChain({ community_id: parseInt(chainId), name }),
+      ),
+    )
+  })
+
   describe('Avatar', () => {
     it('creates a new route with a given avatar', async () => {
       await render('/create')

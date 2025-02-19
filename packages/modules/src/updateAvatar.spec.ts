@@ -25,7 +25,7 @@ describe('updateAvatar', () => {
           end: createMockEndWaypoint({
             account: {
               address: currentSafe,
-              chain: Chain.ETH,
+              chainId: Chain.ETH,
             },
           }),
         }),
@@ -74,7 +74,7 @@ describe('updateAvatar', () => {
           end: createMockEndWaypoint({
             account: {
               address: currentSafe,
-              chain: Chain.GNO,
+              chainId: Chain.GNO,
             },
           }),
         }),
