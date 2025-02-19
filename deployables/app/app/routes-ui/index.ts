@@ -1,4 +1,5 @@
 export { ProvideChains } from './ChainContext'
+export { ChainSelect } from './ChainSelect'
 export { Connection, DirectConnection } from './Connection'
 export { Route, Routes } from './Routes'
 export { Waypoint, Waypoints } from './Waypoints'

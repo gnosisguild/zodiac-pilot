@@ -1,5 +1,4 @@
 import type { Chain } from '@/balances-server'
-import { invariant } from '@epic-web/invariant'
 import type { ChainId } from '@zodiac/chains'
 import { createContext, useContext, type PropsWithChildren } from 'react'
 
@@ -20,8 +19,6 @@ export const useChain = (chainId?: ChainId) => {
   }
 
   const chain = chains.find((chain) => chain.community_id === chainId)
-
-  invariant(chain != null, `Could not find chain with id "${chainId}"`)
 
   return chain
 }
