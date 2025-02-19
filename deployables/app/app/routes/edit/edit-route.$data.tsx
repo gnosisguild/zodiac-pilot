@@ -83,34 +83,34 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
   let route = parseRouteData(params.data)
 
-  route = updateLabel(route, getString(data, 'label'))
-
-  const selectedRouteId = getOptionalString(data, 'selectedRouteId')
-
-  if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
-    const possibleRoutes =
-      route.initiator == null
-        ? []
-        : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
-
-    const selectedRoute = possibleRoutes.find(
-      (route) => routeId(route) === selectedRouteId,
-    )
-
-    invariantResponse(
-      selectedRoute != null,
-      `Could not find a route with id "${selectedRouteId}"`,
-    )
-
-    route = { ...selectedRoute, label: route.label, id: route.id }
-  }
-
   switch (intent) {
+    case Intent.DryRun:
     case Intent.Save: {
-      return route
-    }
+      route = updateLabel(route, getString(data, 'label'))
 
-    case Intent.DryRun: {
+      const selectedRouteId = getOptionalString(data, 'selectedRouteId')
+
+      if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
+        const possibleRoutes =
+          route.initiator == null
+            ? []
+            : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+        const selectedRoute = possibleRoutes.find(
+          (route) => routeId(route) === selectedRouteId,
+        )
+
+        invariantResponse(
+          selectedRoute != null,
+          `Could not find a route with id "${selectedRouteId}"`,
+        )
+
+        route = { ...selectedRoute, label: route.label, id: route.id }
+      }
+
+      if (intent === Intent.Save) {
+        return route
+      }
       const chainId = getChainId(route.avatar)
 
       return dryRun(jsonRpcProvider(chainId), route)
