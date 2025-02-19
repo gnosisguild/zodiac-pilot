@@ -17,13 +17,19 @@ import {
   routeTitle,
 } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
-import { getHexString, getOptionalString, getString } from '@zodiac/form-data'
+import { getChainId, verifyChainId } from '@zodiac/chains'
+import {
+  getHexString,
+  getInt,
+  getOptionalString,
+  getString,
+} from '@zodiac/form-data'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   createAccount,
   getWaypoints,
   updateAvatar,
+  updateChainId,
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
@@ -41,13 +47,14 @@ import {
   TextInput,
   Warning,
 } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { redirect, useFetcher, useParams } from 'react-router'
 import {
   queryRoutes,
   rankRoutes,
   splitPrefixedAddress,
   unprefixAddress,
+  type ChainId,
   type PrefixedAddress,
 } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route.$data'
@@ -136,6 +143,12 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
       return editRoute(updateAvatar(route, { safe: avatar }))
     }
+
+    case Intent.UpdateChain: {
+      const chainId = verifyChainId(getInt(data, 'chainId'))
+
+      return editRoute(updateChainId(route, chainId))
+    }
   }
 }
 
@@ -170,6 +183,7 @@ const EditRoute = ({
   },
   actionData,
 }: RouteType.ComponentProps) => {
+  const formId = useId()
   const isDev = useIsDev()
   const connected = useConnected()
   const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
@@ -192,75 +206,81 @@ const EditRoute = ({
         <Page.Header>Edit route</Page.Header>
 
         <Page.Main>
+          <TextInput
+            form={formId}
+            label="Label"
+            name="label"
+            defaultValue={label}
+          />
+
+          <Chain chainId={getChainId(avatar)} />
+
+          <Initiator avatar={avatar} initiator={initiator} />
+
+          <Divider />
+
+          <div className="flex">
+            <div className="py-2 pr-4">
+              <Route id={id} selectable={false}>
+                <Waypoints excludeEnd>
+                  {waypoints.map(({ account, connection }) => (
+                    <Waypoint
+                      key={`${account.address}-${connection.from}`}
+                      account={account}
+                      connection={connection}
+                    />
+                  ))}
+                </Waypoints>
+              </Route>
+            </div>
+
+            {possibleRoutes.length === 0 ? (
+              <div className="flex flex-1 items-center justify-center">
+                <Warning>
+                  We could not find any routes between the initiator account and
+                  the avatar
+                </Warning>
+              </div>
+            ) : (
+              <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+                <Routes>
+                  {possibleRoutes.map((route) => {
+                    const waypoints = getWaypoints(route)
+
+                    return (
+                      <Route
+                        id={route.id}
+                        key={route.id}
+                        selected={selectedRouteId === routeId(route)}
+                        onSelect={() => setSelectedRouteId(routeId(route))}
+                      >
+                        <Waypoints excludeEnd>
+                          {waypoints.map(({ account, connection }) => (
+                            <Waypoint
+                              key={`${account.address}-${connection.from}`}
+                              account={account}
+                              connection={connection}
+                            />
+                          ))}
+                        </Waypoints>
+                      </Route>
+                    )
+                  })}
+                </Routes>
+              </div>
+            )}
+          </div>
+
+          <Avatar avatar={avatar} initiator={initiator} />
+
+          <Divider />
+
           <Form
+            id={formId}
             context={{
               selectedRouteId,
             }}
           >
-            <TextInput label="Label" name="label" defaultValue={label} />
-
-            <ChainSelect disabled value={getChainId(avatar)} />
-
-            <Initiator avatar={avatar} initiator={initiator} />
-
-            <Divider />
-
-            <div className="flex">
-              <div className="py-2 pr-4">
-                <Route id={id} selectable={false}>
-                  <Waypoints excludeEnd>
-                    {waypoints.map(({ account, connection }) => (
-                      <Waypoint
-                        key={`${account.address}-${connection.from}`}
-                        account={account}
-                        connection={connection}
-                      />
-                    ))}
-                  </Waypoints>
-                </Route>
-              </div>
-
-              {possibleRoutes.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center">
-                  <Warning>
-                    We could not find any routes between the initiator account
-                    and the avatar
-                  </Warning>
-                </div>
-              ) : (
-                <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                  <Routes>
-                    {possibleRoutes.map((route) => {
-                      const waypoints = getWaypoints(route)
-
-                      return (
-                        <Route
-                          id={route.id}
-                          key={route.id}
-                          selected={selectedRouteId === routeId(route)}
-                          onSelect={() => setSelectedRouteId(routeId(route))}
-                        >
-                          <Waypoints excludeEnd>
-                            {waypoints.map(({ account, connection }) => (
-                              <Waypoint
-                                key={`${account.address}-${connection.from}`}
-                                account={account}
-                                connection={connection}
-                              />
-                            ))}
-                          </Waypoints>
-                        </Route>
-                      )
-                    })}
-                  </Routes>
-                </div>
-              )}
-            </div>
-
-            <Avatar avatar={avatar} initiator={initiator} />
-
-            <Divider />
-
             <Form.Actions>
               {!connected && (
                 <div className="text-balance text-xs opacity-75">
@@ -337,36 +357,38 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
   }, [address, chainId, load])
 
   return (
-    <div className="flex w-full items-end gap-2">
-      <Select
-        label="Initiator"
-        name="initiator"
-        placeholder="Select an initiator"
-        dropdownLabel="View possible initiators"
-        required
-        isMulti={false}
-        isDisabled={state === 'loading'}
-        defaultValue={
-          initiator == null
-            ? undefined
-            : {
-                value: unprefixAddress(initiator),
-                label: unprefixAddress(initiator),
-              }
-        }
-        options={data.map((address) => ({ value: address, label: address }))}
-      >
-        {({ data: { value } }) => <Address>{value}</Address>}
-      </Select>
+    <Form>
+      <div className="flex w-full items-end gap-2">
+        <Select
+          label="Initiator"
+          name="initiator"
+          placeholder="Select an initiator"
+          dropdownLabel="View possible initiators"
+          required
+          isMulti={false}
+          isDisabled={state === 'loading'}
+          defaultValue={
+            initiator == null
+              ? undefined
+              : {
+                  value: unprefixAddress(initiator),
+                  label: unprefixAddress(initiator),
+                }
+          }
+          options={data.map((address) => ({ value: address, label: address }))}
+        >
+          {({ data: { value } }) => <Address>{value}</Address>}
+        </Select>
 
-      <SecondaryButton
-        submit
-        busy={useIsPending(Intent.UpdateInitiator)}
-        intent={Intent.UpdateInitiator}
-      >
-        Update initiator
-      </SecondaryButton>
-    </div>
+        <SecondaryButton
+          submit
+          busy={useIsPending(Intent.UpdateInitiator)}
+          intent={Intent.UpdateInitiator}
+        >
+          Update initiator
+        </SecondaryButton>
+      </div>
+    </Form>
   )
 }
 
@@ -377,23 +399,45 @@ type AvatarProps = {
 
 const Avatar = ({ initiator, avatar }: AvatarProps) => {
   return (
-    <div className="flex w-full items-end gap-2">
-      <AvatarInput
-        required
-        initiator={initiator}
-        chainId={getChainId(avatar)}
-        name="avatar"
-        defaultValue={unprefixAddress(avatar)}
-      />
+    <Form>
+      <div className="flex w-full items-end gap-2">
+        <AvatarInput
+          required
+          initiator={initiator}
+          chainId={getChainId(avatar)}
+          name="avatar"
+          defaultValue={unprefixAddress(avatar)}
+        />
 
-      <SecondaryButton
-        submit
-        busy={useIsPending(Intent.UpdateAvatar)}
-        intent={Intent.UpdateAvatar}
-      >
-        Update avatar
-      </SecondaryButton>
-    </div>
+        <SecondaryButton
+          submit
+          busy={useIsPending(Intent.UpdateAvatar)}
+          intent={Intent.UpdateAvatar}
+        >
+          Update avatar
+        </SecondaryButton>
+      </div>
+    </Form>
+  )
+}
+
+type ChainProps = { chainId: ChainId }
+
+const Chain = ({ chainId }: ChainProps) => {
+  return (
+    <Form>
+      <div className="flex w-full items-end gap-2">
+        <ChainSelect defaultValue={chainId} name="chainId" />
+
+        <SecondaryButton
+          submit
+          busy={useIsPending(Intent.UpdateChain)}
+          intent={Intent.UpdateChain}
+        >
+          Update chain
+        </SecondaryButton>
+      </div>
+    </Form>
   )
 }
 
