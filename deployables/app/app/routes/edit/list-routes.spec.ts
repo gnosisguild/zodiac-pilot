@@ -1,14 +1,15 @@
+import { getAvailableChains } from '@/balances-server'
 import { postMessage, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CompanionResponseMessageType } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
-import { describe, it, vi } from 'vitest'
+import { beforeEach, describe, it, vi } from 'vitest'
 
-// This should not be needed. However,
-// the test rendering for some reason also
-// calls the loader of the edit-route route.
+// We need to also mock stuff from edit-route because
+// the tests are navigating to that route which
+// will execute their code
 vi.mock('@/balances-server', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/balances-server')>()
 
@@ -19,7 +20,13 @@ vi.mock('@/balances-server', async (importOriginal) => {
   }
 })
 
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
+
 describe('List Routes', () => {
+  beforeEach(() => {
+    mockGetAvailableChains.mockResolvedValue([])
+  })
+
   const loadRoutes = async (...routes: Partial<ExecutionRoute>[]) => {
     const mockedRoutes = routes.map(createMockExecutionRoute)
 
