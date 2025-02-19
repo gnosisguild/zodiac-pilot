@@ -34,9 +34,15 @@
   "content_scripts": [
     {
       "matches": ["<COMPANION_APP_URL>/*"],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "all_frames": true,
       "js": ["build/companion/contentScripts/main.js"]
+    },
+    {
+      "matches": ["<COMPANION_APP_URL>/*"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "js": ["build/companion/contentScripts/fork-support.js"]
     },
     {
       "matches": ["<all_urls>"],
