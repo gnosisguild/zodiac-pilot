@@ -1,5 +1,6 @@
 import { ExecutionStatus, type TransactionState } from '@/state'
 import { ZERO_ADDRESS } from '@zodiac/chains'
+import { createMockTransaction } from '@zodiac/test-utils'
 import { nanoid } from 'nanoid'
 
 export const createTransaction = (
@@ -8,11 +9,7 @@ export const createTransaction = (
   id: nanoid(),
   contractInfo: { address: ZERO_ADDRESS, verified: true },
   status: ExecutionStatus.PENDING,
-  transaction: {
-    data: '0x0',
-    to: ZERO_ADDRESS,
-    value: 0n,
-  },
+  transaction: createMockTransaction(transaction.transaction),
 
   ...transaction,
 })
