@@ -33,6 +33,7 @@ import {
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
+  getStartingWaypoint,
   getWaypoints,
   updateAvatar,
   updateChainId,
@@ -461,6 +462,7 @@ const RouteSelect = ({
         <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
           <Routes>
             {routes.map((route) => {
+              const startingPoint = getStartingWaypoint(route.waypoints)
               const waypoints = getWaypoints(route)
 
               return (
@@ -470,8 +472,10 @@ const RouteSelect = ({
                   selected={value === routeId(route)}
                   onSelect={() => onSelect(routeId(route))}
                 >
-                  <Waypoints excludeEnd>
-                    {waypoints.map(({ account, connection }) => (
+                  <Waypoints>
+                    <Waypoint account={startingPoint.account} />
+
+                    {...waypoints.map(({ account, connection }) => (
                       <Waypoint
                         key={`${account.address}-${connection.from}`}
                         account={account}
