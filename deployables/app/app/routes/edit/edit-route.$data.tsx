@@ -229,6 +229,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
 
           <RouteSelect
             form={formId}
+            name="selectedRouteId"
             defaultValue={comparableId}
             routes={possibleRoutes}
             initiator={initiator}
@@ -365,10 +366,17 @@ type RouteSelectProps = {
   routes: ExecutionRoute[]
   defaultValue?: string
   initiator?: PrefixedAddress
-  form: string
+  form?: string
+  name?: string
 }
 
-const RouteSelect = ({ routes, defaultValue, initiator }: RouteSelectProps) => {
+const RouteSelect = ({
+  routes,
+  defaultValue,
+  initiator,
+  form,
+  name,
+}: RouteSelectProps) => {
   const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
 
   useEffect(() => {
@@ -403,6 +411,8 @@ const RouteSelect = ({ routes, defaultValue, initiator }: RouteSelectProps) => {
 
   return (
     <Labeled label="Selected route">
+      <input form={form} type="hidden" name={name} value={selectedRouteId} />
+
       {routes.length === 0 ? (
         <div className="flex w-1/2 flex-1 items-center">
           {initiator == null && (
