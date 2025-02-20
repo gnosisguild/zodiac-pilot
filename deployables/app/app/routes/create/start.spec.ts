@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { createMockChain, render } from '@/test-utils'
+import { createMockChain, loadRoutes, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
@@ -57,15 +57,20 @@ describe('New Account', () => {
 
   describe('Avatar', () => {
     it('creates a new route with a given avatar', async () => {
-      await render('/create')
+      await render('/create', {
+        loadActions: loadRoutes,
+      })
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Avatar' }),
+        screen.getByRole('combobox', { name: 'Avatar' }),
         address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(address) }),
       )
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
@@ -81,15 +86,20 @@ describe('New Account', () => {
     })
 
     it('uses the selected chain', async () => {
-      await render('/create')
+      await render('/create', {
+        loadActions: loadRoutes,
+      })
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Avatar' }),
+        screen.getByRole('combobox', { name: 'Avatar' }),
         address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(address) }),
       )
 
       await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
@@ -111,13 +121,20 @@ describe('New Account', () => {
 
   describe('Label', () => {
     it('is possible to give label the account', async () => {
-      await render('/create')
+      await render('/create', {
+        loadActions: loadRoutes,
+      })
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
+      const address = randomAddress()
+
       await userEvent.type(
-        screen.getByRole('textbox', { name: 'Avatar' }),
-        randomAddress(),
+        screen.getByRole('combobox', { name: 'Avatar' }),
+        address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(address) }),
       )
 
       await userEvent.type(
@@ -143,7 +160,9 @@ describe('New Account', () => {
 
   describe('Initiator', () => {
     it('offers a button to connect', async () => {
-      await render('/create')
+      await render('/create', {
+        loadActions: loadRoutes,
+      })
 
       expect(
         await screen.findByRole('button', { name: 'Connect signer wallet' }),
@@ -163,7 +182,9 @@ describe('New Account', () => {
       chainId: Chain.ETH,
     })
 
-    await render('/create')
+    await render('/create', {
+      loadActions: loadRoutes,
+    })
 
     const postMessage = vi.spyOn(window, 'postMessage')
 
