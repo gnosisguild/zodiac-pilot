@@ -33,8 +33,6 @@ import {
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
-  getStartingWaypoint,
-  getWaypoints,
   updateAvatar,
   updateChainId,
   updateLabel,
@@ -340,8 +338,8 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
   }, [address, chainId, load])
 
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
+    <Form intent={Intent.UpdateInitiator}>
+      {({ submit }) => (
         <AddressSelect
           label="Initiator"
           name="initiator"
@@ -352,6 +350,7 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
           isDisabled={state === 'loading'}
           defaultValue={initiator}
           options={data}
+          onChange={submit}
         >
           {({ data: { value }, isSelected }) =>
             isSelected != null && (
@@ -362,15 +361,7 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
             )
           }
         </AddressSelect>
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateInitiator)}
-          intent={Intent.UpdateInitiator}
-        >
-          Update initiator
-        </SecondaryButton>
-      </div>
+      )}
     </Form>
   )
 }
@@ -383,8 +374,8 @@ type AvatarProps = {
 
 const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
+    <Form intent={Intent.UpdateAvatar}>
+      {({ submit }) => (
         <AvatarInput
           required
           label="Account"
@@ -393,16 +384,9 @@ const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
           name="avatar"
           defaultValue={avatar}
           knownRoutes={knownRoutes}
-        ></AvatarInput>
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateAvatar)}
-          intent={Intent.UpdateAvatar}
-        >
-          Update avatar
-        </SecondaryButton>
-      </div>
+          onChange={submit}
+        />
+      )}
     </Form>
   )
 }
@@ -411,18 +395,10 @@ type ChainProps = { chainId: ChainId }
 
 const Chain = ({ chainId }: ChainProps) => {
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
-        <ChainSelect defaultValue={chainId} name="chainId" />
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateChain)}
-          intent={Intent.UpdateChain}
-        >
-          Update chain
-        </SecondaryButton>
-      </div>
+    <Form intent={Intent.UpdateChain}>
+      {({ submit }) => (
+        <ChainSelect defaultValue={chainId} name="chainId" onChange={submit} />
+      )}
     </Form>
   )
 }
@@ -461,31 +437,30 @@ const RouteSelect = ({
       ) : (
         <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
           <Routes>
-            {routes.map((route) => {
-              const startingPoint = getStartingWaypoint(route.waypoints)
-              const waypoints = getWaypoints(route)
-
-              return (
-                <Route
-                  id={route.id}
-                  key={route.id}
-                  selected={value === routeId(route)}
-                  onSelect={() => onSelect(routeId(route))}
-                >
+            {routes.map((route) => (
+              <Route
+                id={route.id}
+                key={route.id}
+                selected={value === routeId(route)}
+                onSelect={() => onSelect(routeId(route))}
+              >
+                {route.waypoints && (
                   <Waypoints>
-                    <Waypoint account={startingPoint.account} />
-
-                    {...waypoints.map(({ account, connection }) => (
+                    {route.waypoints.map(({ account, ...waypoint }, index) => (
                       <Waypoint
-                        key={`${account.address}-${connection.from}`}
+                        key={`${account.address}-${index}`}
                         account={account}
-                        connection={connection}
+                        connection={
+                          'connection' in waypoint
+                            ? waypoint.connection
+                            : undefined
+                        }
                       />
                     ))}
                   </Waypoints>
-                </Route>
-              )
-            })}
+                )}
+              </Route>
+            ))}
           </Routes>
         </div>
       )}
