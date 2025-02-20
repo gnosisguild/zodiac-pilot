@@ -74,6 +74,7 @@ export const Address = ({
             position="bottom"
             popover={<Address size="small">{address}</Address>}
           >
+            <span className="lowercase">0x</span>
             {shortenAddress(getAddress(address))}
           </Popover>
         ) : (
