@@ -1,28 +1,33 @@
-import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
-import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
-import {
-  AddressInput,
-  AddressSelect,
-  type AddressSelectProps,
-} from '@zodiac/ui'
+import { ETH_ZERO_ADDRESS, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import type {
+  ExecutionRoute,
+  HexAddress,
+  PrefixedAddress,
+} from '@zodiac/schema'
+import { AddressSelect, type AddressSelectProps } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
-import { splitPrefixedAddress, type ChainId } from 'ser-kit'
+import {
+  prefixAddress,
+  splitPrefixedAddress,
+  unprefixAddress,
+  type ChainId,
+} from 'ser-kit'
+import { KnownFromRoutes } from './KnownFromRoutes'
 
 type Props = Omit<
   AddressSelectProps<true>,
   'allowCreate' | 'blurInputOnSelect' | 'isClearable' | 'options' | 'isDisabled'
 > & {
-  chainId: ChainId | null
+  chainId: ChainId
   initiator?: PrefixedAddress
+  knownRoutes?: ExecutionRoute[]
 }
 
 export const AvatarInput = ({
   chainId,
   initiator = ETH_ZERO_ADDRESS,
-  name,
-  required,
-  defaultValue,
+  knownRoutes = [],
   ...props
 }: Props) => {
   const { load, state, data } = useFetcher<HexAddress[]>()
@@ -41,34 +46,36 @@ export const AvatarInput = ({
     load(`/${initiatorAddress}/${chainId}/available-safes`)
   }, [chainId, initiatorAddress, load])
 
-  const availableSafes = data ?? []
-
-  if (availableSafes.length > 0 || defaultValue) {
-    return (
-      <AddressSelect
-        clearLabel="Clear piloted Safe"
-        dropdownLabel="View all available Safes"
-        placeholder="Paste an address or select from the list"
-        defaultValue={defaultValue}
-        required={required}
-        {...props}
-        allowCreate
-        blurInputOnSelect
-        isClearable
-        isDisabled={state === 'loading'}
-        options={availableSafes}
-      />
-    )
-  }
-
   return (
-    <AddressInput
-      required={required}
-      label="Avatar"
-      disabled={state === 'loading'}
-      defaultValue={defaultValue}
-      name={name}
-      placeholder="Paste in a Safe address"
-    />
+    <AddressSelect
+      clearLabel="Clear piloted Safe"
+      dropdownLabel="View all available Safes"
+      placeholder="Paste an address or select from the list"
+      {...props}
+      allowCreate
+      blurInputOnSelect
+      isClearable
+      isDisabled={state === 'loading'}
+      options={
+        data == null
+          ? Array.from(
+              new Set(
+                knownRoutes
+                  .filter((route) => getChainId(route.avatar) === chainId)
+                  .map((route) => unprefixAddress(route.avatar)),
+              ),
+            )
+          : data
+      }
+    >
+      {({ data: { value }, isSelected }) =>
+        isSelected != null && (
+          <KnownFromRoutes
+            routes={knownRoutes}
+            address={prefixAddress(chainId, value)}
+          />
+        )
+      }
+    </AddressSelect>
   )
 }

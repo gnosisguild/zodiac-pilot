@@ -1,5 +1,11 @@
 import { getAvailableChains } from '@/balances-server'
-import { AvatarInput, Page, useConnected, useIsDev } from '@/components'
+import {
+  AvatarInput,
+  KnownFromRoutes,
+  Page,
+  useConnected,
+  useIsDev,
+} from '@/components'
 import { useIsPending } from '@/hooks'
 import {
   ChainSelect,
@@ -436,16 +442,8 @@ const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
           chainId={getChainId(avatar)}
           name="avatar"
           defaultValue={avatar}
-        >
-          {({ data: { value }, isSelected }) =>
-            isSelected != null && (
-              <KnownFromRoutes
-                routes={knownRoutes}
-                address={prefixAddress(getChainId(avatar), value)}
-              />
-            )
-          }
-        </AvatarInput>
+          knownRoutes={knownRoutes}
+        ></AvatarInput>
 
         <SecondaryButton
           submit
@@ -476,35 +474,6 @@ const Chain = ({ chainId }: ChainProps) => {
         </SecondaryButton>
       </div>
     </Form>
-  )
-}
-
-type KnownFromRoutesProps = {
-  routes: ExecutionRoute[]
-  address: PrefixedAddress
-}
-
-const KnownFromRoutes = ({ routes, address }: KnownFromRoutesProps) => {
-  const labels = routes.reduce((result, route) => {
-    if (route.initiator !== address && route.avatar !== address) {
-      return result
-    }
-
-    if (route.label == null) {
-      return result
-    }
-
-    return [...result, route.label]
-  }, [] as string[])
-
-  return (
-    <div className="flex items-center gap-2 divide-x divide-zinc-500 text-xs text-zinc-300">
-      {labels.map((label) => (
-        <span key={label} className="pr-2 last:pr-0">
-          {label}
-        </span>
-      ))}
-    </div>
   )
 }
 

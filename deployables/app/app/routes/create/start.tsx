@@ -13,7 +13,7 @@ import {
   getOptionalHexString,
   getOptionalString,
 } from '@zodiac/form-data'
-import { CompanionAppMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createBlankRoute,
   createEoaAccount,
@@ -22,6 +22,7 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
+import type { ExecutionRoute } from '@zodiac/schema'
 import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { redirect } from 'react-router'
@@ -30,6 +31,25 @@ import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
 
 export const loader = async () => ({ chains: await getAvailableChains() })
+
+export const clientLoader = async ({
+  serverLoader,
+}: Route.ClientLoaderArgs) => {
+  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+
+  companionRequest(
+    {
+      type: CompanionAppMessageType.REQUEST_ROUTES,
+    },
+    (response) => resolve(response.routes),
+  )
+
+  const [serverData, routes] = await Promise.all([serverLoader(), promise])
+
+  return { ...serverData, routes }
+}
+
+clientLoader.hydrate = true as const
 
 export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
@@ -61,7 +81,8 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   return redirect(`/tokens/balances`)
 }
 
-const Start = ({ loaderData: { chains } }: Route.ComponentProps) => {
+const Start = ({ loaderData }: Route.ComponentProps) => {
+  const { chains } = loaderData
   const { address, chainId } = useAccount()
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(chainId || ChainEnum.ETH),
@@ -108,6 +129,7 @@ const Start = ({ loaderData: { chains } }: Route.ComponentProps) => {
                     : prefixAddress(undefined, address)
                 }
                 name="avatar"
+                knownRoutes={'routes' in loaderData ? loaderData.routes : []}
               />
 
               <TextInput
