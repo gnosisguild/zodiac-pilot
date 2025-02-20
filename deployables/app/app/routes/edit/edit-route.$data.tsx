@@ -247,6 +247,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             value={selectedRouteId}
             onSelect={setSelectedRouteId}
             routes={possibleRoutes}
+            initiator={initiator}
           />
 
           <Avatar
@@ -262,32 +263,30 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             }}
           >
             <Form.Actions>
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                disabled={!connected}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
+
+              <SecondaryButton
+                submit
+                intent={Intent.DryRun}
+                busy={useIsPending(Intent.DryRun)}
+              >
+                Test route
+              </SecondaryButton>
+
               {!connected && (
                 <div className="text-balance text-xs opacity-75">
                   The Pilot extension must be open to save.
                 </div>
               )}
 
-              <div className="flex gap-2">
-                {isDev && <DebugRouteData />}
-
-                <SecondaryButton
-                  submit
-                  intent={Intent.DryRun}
-                  busy={useIsPending(Intent.DryRun)}
-                >
-                  Test route
-                </SecondaryButton>
-
-                <PrimaryButton
-                  submit
-                  intent={Intent.Save}
-                  disabled={!connected}
-                  busy={useIsPending(Intent.Save)}
-                >
-                  Save
-                </PrimaryButton>
-              </div>
+              {isDev && <DebugRouteData />}
             </Form.Actions>
 
             {actionData != null && (

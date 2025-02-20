@@ -124,7 +124,7 @@ export const BaseLinkButton = ({
       target={openInNewWindow ? '_blank' : props.target}
       rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
       className={classNames(
-        'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
+        'cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
         fluid && 'flex-1',
         getPadding({ iconOnly, size }),
         className,

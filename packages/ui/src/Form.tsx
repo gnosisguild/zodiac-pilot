@@ -65,9 +65,9 @@ type ActionsProps = PropsWithChildren<{ align?: 'right' | 'left' }>
 const Actions = ({ children, align = 'right' }: ActionsProps) => (
   <div
     className={classNames(
-      'mt-8 flex items-center justify-between gap-8',
-      align === 'left' && 'justify-start',
-      align === 'right' && 'justify-end',
+      'mt-8 flex flex-row-reverse items-center gap-2',
+      align === 'left' && 'justify-end',
+      align === 'right' && 'justify-start',
     )}
   >
     {children}
