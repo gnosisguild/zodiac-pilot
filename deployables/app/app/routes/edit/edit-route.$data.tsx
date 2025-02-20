@@ -42,7 +42,6 @@ import {
 import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
 import {
   AddressSelect,
-  Divider,
   Error,
   Form,
   PrimaryButton,
@@ -227,7 +226,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   return (
     <ProvideChains chains={chains}>
       <Page fullWidth>
-        <Page.Header>Edit route</Page.Header>
+        <Page.Header>Edit account</Page.Header>
 
         <Page.Main>
           <TextInput
@@ -244,8 +243,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             initiator={initiator}
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
-
-          <Divider />
 
           <div className="flex">
             <div className="py-2 pr-4">
@@ -304,8 +301,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             initiator={initiator}
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
-
-          <Divider />
 
           <Form
             id={formId}
@@ -437,7 +432,7 @@ const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
       <div className="flex w-full items-end gap-2">
         <AvatarInput
           required
-          label="Avatar"
+          label="Account"
           initiator={initiator}
           chainId={getChainId(avatar)}
           name="avatar"

@@ -72,7 +72,7 @@ const Routes = ({ children }: PropsWithChildren) => {
         <Table.Tr>
           <Table.Th>Name</Table.Th>
           <Table.Th>Initiator</Table.Th>
-          <Table.Th>Avatar</Table.Th>
+          <Table.Th>Account</Table.Th>
           <Table.Th className="w-1/10" />
         </Table.Tr>
       </Table.THead>
