@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <ProvidePilotStatus>
       <div className="flex h-full flex-1">
-        <div className="flex w-64 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800/80 dark:bg-zinc-950">
+        <div className="flex w-64 flex-col border-r border-zinc-200 dark:border-zinc-800/80">
           <div className="my-12 flex items-center justify-center gap-2">
             <ZodiacOsPlain className="h-6" />
             <PilotType className="h-7 dark:invert" />

@@ -1,3 +1,4 @@
+export { Chain } from './Chain'
 export { ProvideChains } from './ChainContext'
 export { ChainSelect } from './ChainSelect'
 export { Connection, DirectConnection } from './Connection'

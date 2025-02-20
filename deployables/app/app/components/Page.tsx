@@ -15,7 +15,7 @@ type PageProps = PropsWithChildren<{ fullWidth?: boolean }>
 export const Page = ({ children, fullWidth = false }: PageProps) => {
   return (
     <div className="flex flex-1 flex-shrink-0 flex-col overflow-y-auto">
-      <div className="mt-11">
+      <div className="mt-11 flex flex-1 flex-col">
         <PageContext value={fullWidth}>{children}</PageContext>
       </div>
     </div>
@@ -50,7 +50,7 @@ Page.Main = Main
 const Boundary = ({ children }: PropsWithChildren) => (
   <div
     className={classNames(
-      'mx-16 flex flex-1 flex-col',
+      'mx-16 flex flex-col',
       useFullWidth() === false && 'xl:w-3/5 2xl:w-2/5',
     )}
   >
