@@ -1,15 +1,23 @@
+import { getAvailableChains } from '@/balances-server'
 import { MinimumVersion, OnlyConnected, Page } from '@/components'
 import { useIsPending } from '@/hooks'
+import { Chain, ProvideChains } from '@/routes-ui'
+import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import { Address, Form, GhostButton, Info, Table } from '@zodiac/ui'
 import classNames from 'classnames'
+import { Pencil } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
 import { redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 
-export const clientLoader = async () => {
+export const loader = async () => ({ chains: await getAvailableChains() })
+
+export const clientLoader = async ({
+  serverLoader,
+}: Route.ClientLoaderArgs) => {
   const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
 
   companionRequest(
@@ -19,8 +27,12 @@ export const clientLoader = async () => {
     (response) => resolve(response.routes),
   )
 
-  return { routes: await promise }
+  const [serverData, routes] = await Promise.all([serverLoader(), promise])
+
+  return { ...serverData, routes }
 }
+
+clientLoader.hydrate = true as const
 
 export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
@@ -37,30 +49,36 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   return redirect(await promise)
 }
 
-const ListRoutes = ({ loaderData: { routes } }: Route.ComponentProps) => (
-  <Page fullWidth>
-    <Page.Header>Routes</Page.Header>
+const ListRoutes = ({
+  loaderData: { chains, ...loaderData },
+}: Route.ComponentProps) => (
+  <ProvideChains chains={chains}>
+    <Page fullWidth>
+      <Page.Header>Accounts</Page.Header>
 
-    <Page.Main>
-      <MinimumVersion
-        version="3.4.0"
-        fallback={
-          <Info>
-            To edit a route open the list of all routes in the Pilot extension
-            and click "Edit".
-          </Info>
-        }
-      >
-        <OnlyConnected>
-          <Routes>
-            {routes.map((route) => (
-              <Route key={route.id} route={route} />
-            ))}
-          </Routes>
-        </OnlyConnected>
-      </MinimumVersion>
-    </Page.Main>
-  </Page>
+      <Page.Main>
+        <MinimumVersion
+          version="3.4.0"
+          fallback={
+            <Info>
+              To edit a route open the list of all routes in the Pilot extension
+              and click "Edit".
+            </Info>
+          }
+        >
+          <OnlyConnected>
+            {'routes' in loaderData && (
+              <Routes>
+                {loaderData.routes.map((route) => (
+                  <Route key={route.id} route={route} />
+                ))}
+              </Routes>
+            )}
+          </OnlyConnected>
+        </MinimumVersion>
+      </Page.Main>
+    </Page>
+  </ProvideChains>
 )
 
 export default ListRoutes
@@ -71,6 +89,7 @@ const Routes = ({ children }: PropsWithChildren) => {
       <Table.THead>
         <Table.Tr>
           <Table.Th>Name</Table.Th>
+          <Table.Th>Chain</Table.Th>
           <Table.Th>Initiator</Table.Th>
           <Table.Th>Account</Table.Th>
           <Table.Th className="w-1/10" />
@@ -85,11 +104,20 @@ const Routes = ({ children }: PropsWithChildren) => {
 type RouteProps = { route: ExecutionRoute }
 
 const Route = ({ route }: RouteProps) => {
+  const chainId = getChainId(route.avatar)
+
   return (
     <Table.Tr>
       <Table.Td>{route.label}</Table.Td>
       <Table.Td>
-        {route.initiator && <Address shorten>{route.initiator}</Address>}
+        <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
+      </Table.Td>
+      <Table.Td>
+        {route.initiator == null ? (
+          <Address>{ZERO_ADDRESS}</Address>
+        ) : (
+          <Address shorten>{route.initiator}</Address>
+        )}
       </Table.Td>
       <Table.Td>
         <Address shorten>{route.avatar}</Address>
@@ -116,6 +144,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
           submit
           size="tiny"
           name="routeId"
+          icon={Pencil}
           value={routeId}
           busy={submitting}
         >

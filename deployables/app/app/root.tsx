@@ -25,7 +25,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex h-full flex-col text-base text-zinc-900 dark:text-white">
+      <body className="flex h-full flex-col bg-zinc-50 text-base text-zinc-900 dark:bg-zinc-950 dark:text-white">
         {children}
         <ToastContainer />
         <ScrollRestoration />
