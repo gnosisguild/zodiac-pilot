@@ -1,7 +1,7 @@
 import { getAvailableChains } from '@/balances-server'
 import {
   AvatarInput,
-  KnownFromRoutes,
+  InitiatorInput,
   Page,
   useConnected,
   useIsDev,
@@ -38,9 +38,8 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  AddressSelect,
   Error,
   Form,
   Info,
@@ -53,12 +52,10 @@ import {
   Warning,
 } from '@zodiac/ui'
 import { useEffect, useId, useState } from 'react'
-import { redirect, useFetcher, useParams } from 'react-router'
+import { redirect, useParams } from 'react-router'
 import {
-  prefixAddress,
   queryRoutes,
   rankRoutes,
-  splitPrefixedAddress,
   unprefixAddress,
   type ChainId,
   type PrefixedAddress,
@@ -328,38 +325,18 @@ type InitiatorProps = {
 }
 
 const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
-  const [chainId, address] = splitPrefixedAddress(avatar)
-
-  const { load, state, data = [] } = useFetcher<HexAddress[]>()
-
-  useEffect(() => {
-    load(`/${address}/${chainId}/initiators`)
-  }, [address, chainId, load])
-
   return (
     <Form intent={Intent.UpdateInitiator}>
       {({ submit }) => (
-        <AddressSelect
+        <InitiatorInput
+          avatar={avatar}
           label="Initiator"
           name="initiator"
-          placeholder="Select an initiator"
-          dropdownLabel="View possible initiators"
           required
-          isMulti={false}
-          isDisabled={state === 'loading'}
           defaultValue={initiator}
-          options={data}
           onChange={submit}
-        >
-          {({ data: { value }, isSelected }) =>
-            isSelected != null && (
-              <KnownFromRoutes
-                routes={knownRoutes}
-                address={prefixAddress(undefined, value)}
-              />
-            )
-          }
-        </AddressSelect>
+          knownRoutes={knownRoutes}
+        />
       )}
     </Form>
   )
