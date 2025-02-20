@@ -17,7 +17,7 @@ import { KnownFromRoutes } from './KnownFromRoutes'
 
 type Props = Omit<
   AddressSelectProps<true>,
-  'allowCreate' | 'blurInputOnSelect' | 'isClearable' | 'options' | 'isDisabled'
+  'allowCreate' | 'blurInputOnSelect' | 'options' | 'isDisabled'
 > & {
   chainId: ChainId
   initiator?: PrefixedAddress
@@ -54,7 +54,6 @@ export const AvatarInput = ({
       {...props}
       allowCreate
       blurInputOnSelect
-      isClearable
       isDisabled={state === 'loading'}
       options={
         data == null

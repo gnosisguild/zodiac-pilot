@@ -64,7 +64,7 @@ describe('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Avatar' }),
+        screen.getByRole('combobox', { name: 'Account' }),
         address,
       )
       await userEvent.click(
@@ -91,7 +91,7 @@ describe('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Avatar' }),
+        screen.getByRole('combobox', { name: 'Account' }),
         address,
       )
       await userEvent.click(
@@ -124,7 +124,7 @@ describe('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Avatar' }),
+        screen.getByRole('combobox', { name: 'Account' }),
         address,
       )
       await userEvent.click(
@@ -179,7 +179,7 @@ describe('New Account', () => {
     const postMessage = vi.spyOn(window, 'postMessage')
 
     await userEvent.click(
-      await screen.findByRole('combobox', { name: 'Avatar' }),
+      await screen.findByRole('combobox', { name: 'Account' }),
     )
     await userEvent.click(
       screen.getByRole('option', { name: getAddress(avatar) }),

@@ -1,37 +1,73 @@
 import classNames from 'classnames'
-import type { ComponentProps, PropsWithChildren } from 'react'
-import { Form as BaseForm } from 'react-router'
+import {
+  useCallback,
+  useRef,
+  type ComponentProps,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react'
+import { Form as BaseForm, useSubmit } from 'react-router'
 
-type FormProps = Omit<ComponentProps<typeof BaseForm>, 'className'> & {
+type RenderProps = {
+  submit: () => void
+}
+
+type FormProps = Omit<
+  ComponentProps<typeof BaseForm>,
+  'className' | 'children'
+> & {
+  intent?: string
   context?: Record<string, string | null>
+  children?: ReactNode | ((props: RenderProps) => ReactNode)
 }
 
 export const Form = ({
   method = 'POST',
   children,
   context = {},
+  intent,
   ...props
-}: FormProps) => (
-  <BaseForm {...props} method={method} className="flex flex-col gap-4">
-    {Object.entries(context).map(
-      ([key, value]) =>
-        value != null && (
-          <input type="hidden" key={key} name={key} value={value} />
-        ),
-    )}
+}: FormProps) => {
+  const formRef = useRef(null)
 
-    {children}
-  </BaseForm>
-)
+  const submit = useSubmit()
+
+  const submitFromWithin = useCallback(
+    () => setTimeout(() => submit(formRef.current, { method }), 1),
+    [method, submit],
+  )
+
+  return (
+    <BaseForm
+      {...props}
+      ref={formRef}
+      method={method}
+      className="flex flex-col gap-4"
+    >
+      {intent && <input type="hidden" name="intent" value={intent} />}
+
+      {Object.entries(context).map(
+        ([key, value]) =>
+          value != null && (
+            <input type="hidden" key={key} name={key} value={value} />
+          ),
+      )}
+
+      {typeof children === 'function'
+        ? children({ submit: submitFromWithin })
+        : children}
+    </BaseForm>
+  )
+}
 
 type ActionsProps = PropsWithChildren<{ align?: 'right' | 'left' }>
 
 const Actions = ({ children, align = 'right' }: ActionsProps) => (
   <div
     className={classNames(
-      'mt-8 flex items-center justify-between gap-8',
-      align === 'left' && 'justify-start',
-      align === 'right' && 'justify-end',
+      'mt-8 flex flex-row-reverse items-center gap-2',
+      align === 'left' && 'justify-end',
+      align === 'right' && 'justify-start',
     )}
   >
     {children}

@@ -107,7 +107,7 @@ const Start = ({ loaderData }: Route.ComponentProps) => {
             />
           }
         >
-          New Account
+          New account
         </Page.Header>
 
         <Page.Main>
@@ -121,7 +121,8 @@ const Start = ({ loaderData }: Route.ComponentProps) => {
 
               <AvatarInput
                 required
-                label="Avatar"
+                isClearable
+                label="Account"
                 chainId={selectedChainId}
                 initiator={
                   address == null

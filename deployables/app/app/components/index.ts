@@ -2,6 +2,7 @@ import { lazy } from 'react'
 
 export { AvatarInput } from './AvatarInput'
 export { ProvideDevelopmentContext, useIsDev } from './DevelopmentContext'
+export { InitiatorInput } from './InitiatorInput'
 export { KnownFromRoutes } from './KnownFromRoutes'
 export * from './navigation'
 export { Page } from './Page'

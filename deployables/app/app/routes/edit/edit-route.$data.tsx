@@ -1,7 +1,7 @@
 import { getAvailableChains } from '@/balances-server'
 import {
   AvatarInput,
-  KnownFromRoutes,
+  InitiatorInput,
   Page,
   useConnected,
   useIsDev,
@@ -33,18 +33,17 @@ import {
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
-  getWaypoints,
   updateAvatar,
   updateChainId,
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  AddressSelect,
-  Divider,
   Error,
   Form,
+  Info,
+  Labeled,
   PrimaryButton,
   SecondaryButton,
   SecondaryLinkButton,
@@ -52,13 +51,11 @@ import {
   TextInput,
   Warning,
 } from '@zodiac/ui'
-import { useEffect, useId, useState } from 'react'
-import { redirect, useFetcher, useParams } from 'react-router'
+import { useEffect, useId, useRef, useState } from 'react'
+import { redirect, useParams } from 'react-router'
 import {
-  prefixAddress,
   queryRoutes,
   rankRoutes,
-  splitPrefixedAddress,
   unprefixAddress,
   type ChainId,
   type PrefixedAddress,
@@ -82,12 +79,10 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
   return {
     currentRoute: {
-      id: route.id,
-      comparableId: route.initiator == null ? null : routeId(route),
+      comparableId: route.initiator == null ? undefined : routeId(route),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      waypoints: getWaypoints(route),
     },
 
     possibleRoutes: rankRoutes(routes),
@@ -202,7 +197,7 @@ export const clientAction = async ({
 
 const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   const {
-    currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
+    currentRoute: { comparableId, label, initiator, avatar },
     possibleRoutes,
     chains,
   } = loaderData
@@ -210,24 +205,11 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   const formId = useId()
   const isDev = useIsDev()
   const connected = useConnected()
-  const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
-
-  useEffect(() => {
-    if (selectedRouteId != null) {
-      return
-    }
-
-    if (comparableId == null) {
-      return
-    }
-
-    setSelectedRouteId(comparableId)
-  }, [comparableId, selectedRouteId])
 
   return (
     <ProvideChains chains={chains}>
-      <Page fullWidth>
-        <Page.Header>Edit route</Page.Header>
+      <Page>
+        <Page.Header>Edit account</Page.Header>
 
         <Page.Main>
           <TextInput
@@ -245,59 +227,13 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
 
-          <Divider />
-
-          <div className="flex">
-            <div className="py-2 pr-4">
-              <Route id={id} selectable={false}>
-                <Waypoints excludeEnd>
-                  {waypoints.map(({ account, connection }) => (
-                    <Waypoint
-                      key={`${account.address}-${connection.from}`}
-                      account={account}
-                      connection={connection}
-                    />
-                  ))}
-                </Waypoints>
-              </Route>
-            </div>
-
-            {possibleRoutes.length === 0 ? (
-              <div className="flex flex-1 items-center justify-center">
-                <Warning>
-                  We could not find any routes between the initiator account and
-                  the avatar
-                </Warning>
-              </div>
-            ) : (
-              <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <Routes>
-                  {possibleRoutes.map((route) => {
-                    const waypoints = getWaypoints(route)
-
-                    return (
-                      <Route
-                        id={route.id}
-                        key={route.id}
-                        selected={selectedRouteId === routeId(route)}
-                        onSelect={() => setSelectedRouteId(routeId(route))}
-                      >
-                        <Waypoints excludeEnd>
-                          {waypoints.map(({ account, connection }) => (
-                            <Waypoint
-                              key={`${account.address}-${connection.from}`}
-                              account={account}
-                              connection={connection}
-                            />
-                          ))}
-                        </Waypoints>
-                      </Route>
-                    )
-                  })}
-                </Routes>
-              </div>
-            )}
-          </div>
+          <RouteSelect
+            form={formId}
+            name="selectedRouteId"
+            defaultValue={comparableId}
+            routes={possibleRoutes}
+            initiator={initiator}
+          />
 
           <Avatar
             avatar={avatar}
@@ -305,41 +241,32 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
 
-          <Divider />
-
-          <Form
-            id={formId}
-            context={{
-              selectedRouteId,
-            }}
-          >
+          <Form id={formId}>
             <Form.Actions>
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                disabled={!connected}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
+
+              <SecondaryButton
+                submit
+                intent={Intent.DryRun}
+                busy={useIsPending(Intent.DryRun)}
+              >
+                Test route
+              </SecondaryButton>
+
               {!connected && (
                 <div className="text-balance text-xs opacity-75">
                   The Pilot extension must be open to save.
                 </div>
               )}
 
-              <div className="flex gap-2">
-                {isDev && <DebugRouteData />}
-
-                <SecondaryButton
-                  submit
-                  intent={Intent.DryRun}
-                  busy={useIsPending(Intent.DryRun)}
-                >
-                  Test route
-                </SecondaryButton>
-
-                <PrimaryButton
-                  submit
-                  intent={Intent.Save}
-                  disabled={!connected}
-                  busy={useIsPending(Intent.Save)}
-                >
-                  Save
-                </PrimaryButton>
-              </div>
+              {isDev && <DebugRouteData />}
             </Form.Actions>
 
             {actionData != null && (
@@ -381,46 +308,19 @@ type InitiatorProps = {
 }
 
 const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
-  const [chainId, address] = splitPrefixedAddress(avatar)
-
-  const { load, state, data = [] } = useFetcher<HexAddress[]>()
-
-  useEffect(() => {
-    load(`/${address}/${chainId}/initiators`)
-  }, [address, chainId, load])
-
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
-        <AddressSelect
+    <Form intent={Intent.UpdateInitiator}>
+      {({ submit }) => (
+        <InitiatorInput
+          avatar={avatar}
           label="Initiator"
           name="initiator"
-          placeholder="Select an initiator"
-          dropdownLabel="View possible initiators"
           required
-          isMulti={false}
-          isDisabled={state === 'loading'}
           defaultValue={initiator}
-          options={data}
-        >
-          {({ data: { value }, isSelected }) =>
-            isSelected != null && (
-              <KnownFromRoutes
-                routes={knownRoutes}
-                address={prefixAddress(undefined, value)}
-              />
-            )
-          }
-        </AddressSelect>
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateInitiator)}
-          intent={Intent.UpdateInitiator}
-        >
-          Update initiator
-        </SecondaryButton>
-      </div>
+          onChange={submit}
+          knownRoutes={knownRoutes}
+        />
+      )}
     </Form>
   )
 }
@@ -433,26 +333,19 @@ type AvatarProps = {
 
 const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
+    <Form intent={Intent.UpdateAvatar}>
+      {({ submit }) => (
         <AvatarInput
           required
-          label="Avatar"
+          label="Account"
           initiator={initiator}
           chainId={getChainId(avatar)}
           name="avatar"
           defaultValue={avatar}
           knownRoutes={knownRoutes}
-        ></AvatarInput>
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateAvatar)}
-          intent={Intent.UpdateAvatar}
-        >
-          Update avatar
-        </SecondaryButton>
-      </div>
+          onChange={submit}
+        />
+      )}
     </Form>
   )
 }
@@ -461,19 +354,130 @@ type ChainProps = { chainId: ChainId }
 
 const Chain = ({ chainId }: ChainProps) => {
   return (
-    <Form>
-      <div className="flex w-full items-end gap-2">
-        <ChainSelect defaultValue={chainId} name="chainId" />
-
-        <SecondaryButton
-          submit
-          busy={useIsPending(Intent.UpdateChain)}
-          intent={Intent.UpdateChain}
-        >
-          Update chain
-        </SecondaryButton>
-      </div>
+    <Form intent={Intent.UpdateChain}>
+      {({ submit }) => (
+        <ChainSelect defaultValue={chainId} name="chainId" onChange={submit} />
+      )}
     </Form>
+  )
+}
+
+type RouteSelectProps = {
+  routes: ExecutionRoute[]
+  defaultValue?: string
+  initiator?: PrefixedAddress
+  form?: string
+  name?: string
+}
+
+const RouteSelect = ({
+  routes,
+  defaultValue,
+  initiator,
+  form,
+  name,
+}: RouteSelectProps) => {
+  const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
+  const scrollRef = useRef<HTMLLIElement>(null)
+
+  useEffect(() => {
+    if (selectedRouteId != null) {
+      return
+    }
+
+    if (defaultValue == null) {
+      return
+    }
+
+    setSelectedRouteId(defaultValue)
+  }, [defaultValue, selectedRouteId])
+
+  useEffect(() => {
+    const valueIsValid = routes.some(
+      (route) => routeId(route) === selectedRouteId,
+    )
+
+    if (valueIsValid) {
+      return
+    }
+
+    const [route] = routes
+
+    if (route == null) {
+      return
+    }
+
+    setSelectedRouteId(routeId(route))
+  }, [routes, selectedRouteId])
+
+  useEffect(() => {
+    if (scrollRef.current == null) {
+      return
+    }
+
+    scrollRef.current.scrollIntoView()
+  }, [selectedRouteId])
+
+  return (
+    <Labeled label="Selected route">
+      <input form={form} type="hidden" name={name} value={selectedRouteId} />
+
+      {routes.length === 0 ? (
+        <div className="flex w-1/2 flex-1 items-center">
+          {initiator == null && (
+            <Info title="Missing initiator">
+              Once you select an initiator account you can select from all
+              possible routes between the initiator and the account.
+            </Info>
+          )}
+
+          {initiator != null && (
+            <Warning>
+              We could not find any routes between the initiator and the
+              selected account. Make you are using the correct chain.
+            </Warning>
+          )}
+        </div>
+      ) : (
+        <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+          <Routes>
+            {routes.map((route) => {
+              const { waypoints } = route
+              const selected = selectedRouteId === routeId(route)
+
+              return (
+                <Route
+                  id={route.id}
+                  key={route.id}
+                  ref={selected ? scrollRef : undefined}
+                  selected={selected}
+                  onSelect={() => setSelectedRouteId(routeId(route))}
+                >
+                  {waypoints && (
+                    <Waypoints>
+                      {waypoints.map(({ account, ...waypoint }, index) => (
+                        <Waypoint
+                          key={`${account.address}-${index}`}
+                          highlight={
+                            index === 0 || index === waypoints.length - 1
+                          }
+                          account={account}
+                          connection={
+                            'connection' in waypoint
+                              ? waypoint.connection
+                              : undefined
+                          }
+                        />
+                      ))}
+                    </Waypoints>
+                  )}
+                </Route>
+              )
+            })}
+          </Routes>
+        </div>
+      )}
+    </Labeled>
   )
 }
 
