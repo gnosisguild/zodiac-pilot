@@ -1,5 +1,6 @@
 export { createMockChain } from './createMockChain'
 export { createMockTokenBalance } from './createMockTokenBalance'
+export { loadRoutes } from './loadRoutes'
 export { postMessage } from './postMessage'
 export { render } from './render'
 export * from './wallet'

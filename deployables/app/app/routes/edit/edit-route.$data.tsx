@@ -1,5 +1,11 @@
 import { getAvailableChains } from '@/balances-server'
-import { AvatarInput, Page, useConnected, useIsDev } from '@/components'
+import {
+  AvatarInput,
+  KnownFromRoutes,
+  Page,
+  useConnected,
+  useIsDev,
+} from '@/components'
 import { useIsPending } from '@/hooks'
 import {
   ChainSelect,
@@ -24,7 +30,7 @@ import {
   getOptionalString,
   getString,
 } from '@zodiac/form-data'
-import { CompanionAppMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
   getWaypoints,
@@ -35,14 +41,13 @@ import {
 } from '@zodiac/modules'
 import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
 import {
-  Address,
+  AddressSelect,
   Divider,
   Error,
   Form,
   PrimaryButton,
   SecondaryButton,
   SecondaryLinkButton,
-  Select,
   Success,
   TextInput,
   Warning,
@@ -50,6 +55,7 @@ import {
 import { useEffect, useId, useState } from 'react'
 import { redirect, useFetcher, useParams } from 'react-router'
 import {
+  prefixAddress,
   queryRoutes,
   rankRoutes,
   splitPrefixedAddress,
@@ -89,6 +95,25 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     chains,
   }
 }
+
+export const clientLoader = async ({
+  serverLoader,
+}: RouteType.ClientLoaderArgs) => {
+  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+
+  companionRequest(
+    {
+      type: CompanionAppMessageType.REQUEST_ROUTES,
+    },
+    (response) => resolve(response.routes),
+  )
+
+  const [serverData, routes] = await Promise.all([serverLoader(), promise])
+
+  return { ...serverData, routes }
+}
+
+clientLoader.hydrate = true as const
 
 export const action = async ({ request, params }: RouteType.ActionArgs) => {
   const data = await request.formData()
@@ -175,14 +200,13 @@ export const clientAction = async ({
   }
 }
 
-const EditRoute = ({
-  loaderData: {
+const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
+  const {
     currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
     possibleRoutes,
     chains,
-  },
-  actionData,
-}: RouteType.ComponentProps) => {
+  } = loaderData
+
   const formId = useId()
   const isDev = useIsDev()
   const connected = useConnected()
@@ -215,7 +239,11 @@ const EditRoute = ({
 
           <Chain chainId={getChainId(avatar)} />
 
-          <Initiator avatar={avatar} initiator={initiator} />
+          <Initiator
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
           <Divider />
 
@@ -271,7 +299,11 @@ const EditRoute = ({
             )}
           </div>
 
-          <Avatar avatar={avatar} initiator={initiator} />
+          <Avatar
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
           <Divider />
 
@@ -345,9 +377,10 @@ const DebugRouteData = () => {
 type InitiatorProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
+  knownRoutes: ExecutionRoute[]
 }
 
-const Initiator = ({ avatar, initiator }: InitiatorProps) => {
+const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
   const [chainId, address] = splitPrefixedAddress(avatar)
 
   const { load, state, data = [] } = useFetcher<HexAddress[]>()
@@ -359,7 +392,7 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
   return (
     <Form>
       <div className="flex w-full items-end gap-2">
-        <Select
+        <AddressSelect
           label="Initiator"
           name="initiator"
           placeholder="Select an initiator"
@@ -367,18 +400,18 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
           required
           isMulti={false}
           isDisabled={state === 'loading'}
-          defaultValue={
-            initiator == null
-              ? undefined
-              : {
-                  value: unprefixAddress(initiator),
-                  label: unprefixAddress(initiator),
-                }
-          }
-          options={data.map((address) => ({ value: address, label: address }))}
+          defaultValue={initiator}
+          options={data}
         >
-          {({ data: { value } }) => <Address>{value}</Address>}
-        </Select>
+          {({ data: { value }, isSelected }) =>
+            isSelected != null && (
+              <KnownFromRoutes
+                routes={knownRoutes}
+                address={prefixAddress(undefined, value)}
+              />
+            )
+          }
+        </AddressSelect>
 
         <SecondaryButton
           submit
@@ -395,19 +428,22 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
 type AvatarProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
+  knownRoutes: ExecutionRoute[]
 }
 
-const Avatar = ({ initiator, avatar }: AvatarProps) => {
+const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
   return (
     <Form>
       <div className="flex w-full items-end gap-2">
         <AvatarInput
           required
+          label="Avatar"
           initiator={initiator}
           chainId={getChainId(avatar)}
           name="avatar"
-          defaultValue={unprefixAddress(avatar)}
-        />
+          defaultValue={avatar}
+          knownRoutes={knownRoutes}
+        ></AvatarInput>
 
         <SecondaryButton
           submit

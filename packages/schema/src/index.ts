@@ -24,3 +24,4 @@ export type {
   Waypoint,
   Waypoints,
 } from './routeSchema'
+export { validateAddress } from './validateAddress'

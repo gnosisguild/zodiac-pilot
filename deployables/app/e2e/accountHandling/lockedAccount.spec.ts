@@ -1,6 +1,7 @@
 import test, { expect } from '@playwright/test'
 import { encode } from '@zodiac/schema'
 import { mockWeb3 } from '@zodiac/test-utils/e2e'
+import { getAddress } from 'viem'
 import { connectWallet } from '../connectWallet'
 import { account, route, transaction } from './fixture'
 
@@ -38,6 +39,6 @@ test.describe('Locked account', () => {
 
     await expect(
       page.getByRole('textbox', { name: 'Pilot Account' }),
-    ).toHaveValue(account)
+    ).toHaveValue(getAddress(account))
   })
 })

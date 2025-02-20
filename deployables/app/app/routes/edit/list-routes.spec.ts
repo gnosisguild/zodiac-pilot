@@ -1,9 +1,9 @@
 import { getAvailableChains } from '@/balances-server'
-import { postMessage, render } from '@/test-utils'
+import { loadRoutes, postMessage, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CompanionResponseMessageType } from '@zodiac/messages'
-import { encode, type ExecutionRoute } from '@zodiac/schema'
+import { encode } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
 import { beforeEach, describe, it, vi } from 'vitest'
 
@@ -27,23 +27,13 @@ describe('List Routes', () => {
     mockGetAvailableChains.mockResolvedValue([])
   })
 
-  const loadRoutes = async (...routes: Partial<ExecutionRoute>[]) => {
-    const mockedRoutes = routes.map(createMockExecutionRoute)
-
-    await postMessage({
-      type: CompanionResponseMessageType.LIST_ROUTES,
-      routes: mockedRoutes,
-    })
-
-    return mockedRoutes
-  }
-
   it('is possible to edit a route', async () => {
+    const route = createMockExecutionRoute({ label: 'Test route' })
+
     await render('/edit', {
       version: '3.4.0',
+      loadActions: () => loadRoutes(route),
     })
-
-    const [route] = await loadRoutes({ label: 'Test route' })
 
     await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
@@ -51,6 +41,8 @@ describe('List Routes', () => {
       type: CompanionResponseMessageType.PROVIDE_ROUTE,
       route,
     })
+
+    await loadRoutes()
 
     await expectRouteToBe(`/edit/${encode(route)}`)
   })

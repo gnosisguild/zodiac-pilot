@@ -4,7 +4,7 @@ import {
 } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
-import type { ActionFunctionArgs } from 'react-router'
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
 import {
   createRoutesStub,
   useActionData,
@@ -74,7 +74,11 @@ export type FrameworkRoute<
     : never
 }
 
-export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'>
+export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
+  loadActions?: () => Promise<unknown>
+}
+
+export type RenderFrameworkResult = RenderResult
 
 const CombinedTestElement = () => (
   <TestElement>
@@ -94,8 +98,8 @@ export async function createRenderFramework<Config extends RouteConfig>(
     Paths extends Awaited<RouteConfig>[number]['path'],
   >(
     currentPath: NonNullable<Paths>,
-    { searchParams = {}, ...options }: RenderOptions = {},
-  ): Promise<RenderResult> {
+    { searchParams = {}, loadActions, ...options }: RenderFrameworkOptions = {},
+  ): Promise<RenderFrameworkResult> {
     const Stub = createRoutesStub([
       {
         Component: CombinedTestElement,
@@ -108,6 +112,10 @@ export async function createRenderFramework<Config extends RouteConfig>(
       <Stub initialEntries={[getCurrentPath(currentPath, searchParams)]} />,
       options,
     )
+
+    if (loadActions != null) {
+      await loadActions()
+    }
 
     await waitForTestElement()
     await sleepTillIdle()
@@ -148,8 +156,24 @@ function stubRoutes(
         id: route.id,
         index: route.index,
         path: route.path,
-        clientLoader,
-        loader,
+        // the test stub from react-router unfortunately
+        // doesn't handle the clientLoader/loader hierarchy
+        // so we built it ouselves.
+        loader(loaderArgs: LoaderFunctionArgs) {
+          if (clientLoader != null) {
+            return clientLoader({
+              ...loaderArgs,
+              serverLoader:
+                loader == null ? undefined : () => loader(loaderArgs),
+            })
+          }
+
+          if (loader != null) {
+            return loader(loaderArgs)
+          }
+
+          return null
+        },
         // the test stub from react-router unfortunately
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
@@ -171,8 +195,8 @@ function stubRoutes(
           Component == null
             ? undefined
             : () => {
-                const loaderData = useLoaderData<typeof loader>()
-                const actionData = useActionData<typeof action>()
+                const loaderData = useLoaderData()
+                const actionData = useActionData()
                 const params = useParams()
 
                 return (

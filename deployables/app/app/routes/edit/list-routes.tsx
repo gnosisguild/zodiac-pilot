@@ -1,13 +1,43 @@
 import { MinimumVersion, OnlyConnected, Page } from '@/components'
+import { useIsPending } from '@/hooks'
+import { getString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
-import { Address, GhostButton, Info, Table } from '@zodiac/ui'
+import { Address, Form, GhostButton, Info, Table } from '@zodiac/ui'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { type PropsWithChildren } from 'react'
+import { redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 
-const ListRoutes = () => (
+export const clientLoader = async () => {
+  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+
+  companionRequest(
+    {
+      type: CompanionAppMessageType.REQUEST_ROUTES,
+    },
+    (response) => resolve(response.routes),
+  )
+
+  return { routes: await promise }
+}
+
+export const clientAction = async ({ request }: Route.ClientActionArgs) => {
+  const data = await request.formData()
+  const { promise, resolve } = Promise.withResolvers<string>()
+
+  companionRequest(
+    {
+      type: CompanionAppMessageType.REQUEST_ROUTE,
+      routeId: getString(data, 'routeId'),
+    },
+    (response) => resolve(`/edit/${encode(response.route)}`),
+  )
+
+  return redirect(await promise)
+}
+
+const ListRoutes = ({ loaderData: { routes } }: Route.ComponentProps) => (
   <Page fullWidth>
     <Page.Header>Routes</Page.Header>
 
@@ -22,7 +52,11 @@ const ListRoutes = () => (
         }
       >
         <OnlyConnected>
-          <Routes />
+          <Routes>
+            {routes.map((route) => (
+              <Route key={route.id} route={route} />
+            ))}
+          </Routes>
         </OnlyConnected>
       </MinimumVersion>
     </Page.Main>
@@ -31,18 +65,7 @@ const ListRoutes = () => (
 
 export default ListRoutes
 
-const Routes = () => {
-  const [routes, setRoutes] = useState<ExecutionRoute[]>([])
-
-  useEffect(() => {
-    return companionRequest(
-      {
-        type: CompanionAppMessageType.REQUEST_ROUTES,
-      },
-      (response) => setRoutes(response.routes),
-    )
-  }, [])
-
+const Routes = ({ children }: PropsWithChildren) => {
   return (
     <Table>
       <Table.THead>
@@ -54,11 +77,7 @@ const Routes = () => {
         </Table.Tr>
       </Table.THead>
 
-      <Table.TBody>
-        {routes.map((route) => (
-          <Route key={route.id} route={route} />
-        ))}
-      </Table.TBody>
+      <Table.TBody>{children}</Table.TBody>
     </Table>
   )
 }
@@ -83,22 +102,7 @@ const Route = ({ route }: RouteProps) => {
 }
 
 const Edit = ({ routeId }: { routeId: string }) => {
-  const [submitting, setSubmitting] = useState(false)
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (submitting === false) {
-      return
-    }
-
-    return companionRequest(
-      {
-        type: CompanionAppMessageType.REQUEST_ROUTE,
-        routeId,
-      },
-      (response) => navigate(`/edit/${encode(response.route)}`),
-    )
-  }, [routeId, navigate, submitting])
+  const submitting = useIsPending((data) => data.get('routeId') === routeId)
 
   return (
     <div
@@ -107,13 +111,17 @@ const Edit = ({ routeId }: { routeId: string }) => {
         submitting ? 'opacity-100' : 'opacity-0',
       )}
     >
-      <GhostButton
-        size="tiny"
-        busy={submitting}
-        onClick={() => setSubmitting(true)}
-      >
-        Edit
-      </GhostButton>
+      <Form>
+        <GhostButton
+          submit
+          size="tiny"
+          name="routeId"
+          value={routeId}
+          busy={submitting}
+        >
+          Edit
+        </GhostButton>
+      </Form>
     </div>
   )
 }
