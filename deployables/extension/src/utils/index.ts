@@ -4,6 +4,7 @@ export {
   getOptionalString,
   getString,
 } from '@zodiac/form-data'
+export { validateAddress } from '@zodiac/modules'
 export * from './addressValidation'
 export * from './decodeError'
 export { getActiveTab, useActiveTab } from './getActiveTab'

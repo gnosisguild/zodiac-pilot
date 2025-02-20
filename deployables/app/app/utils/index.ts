@@ -1,7 +1,7 @@
+export { validateAddress } from '@zodiac/modules'
 export * from './dryRun'
 export { editRoute } from './editRoute'
 export { jsonRpcProvider } from './jsonRpcProvider'
 export { parseRouteData } from './parseRouteData'
 export { parseTransactionData } from './parseTransactionData'
 export { routeTitle } from './routeTitle'
-export { validateAddress } from './validateAddress'

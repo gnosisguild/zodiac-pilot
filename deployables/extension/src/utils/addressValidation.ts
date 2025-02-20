@@ -1,12 +1,4 @@
-import { getAddress, type Provider } from 'ethers'
-
-export const validateAddress = (address: string) => {
-  try {
-    return getAddress(address)
-  } catch {
-    return ''
-  }
-}
+import { type Provider } from 'ethers'
 
 export async function isSmartContractAddress(
   address: string,

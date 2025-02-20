@@ -11,6 +11,7 @@ export { updateAvatar } from './updateAvatar'
 export { updateChainId } from './updateChainId'
 export { updateLabel } from './updateLabel'
 export { updateStartingPoint } from './updateStartingPoint'
+export { validateAddress } from './validateAddress'
 export {
   SUPPORTED_ZODIAC_MODULES,
   SupportedZodiacModuleType,
