@@ -44,6 +44,8 @@ import {
   AddressSelect,
   Error,
   Form,
+  Info,
+  Labeled,
   PrimaryButton,
   SecondaryButton,
   SecondaryLinkButton,
@@ -81,12 +83,10 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
   return {
     currentRoute: {
-      id: route.id,
       comparableId: route.initiator == null ? null : routeId(route),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      waypoints: getWaypoints(route),
     },
 
     possibleRoutes: rankRoutes(routes),
@@ -201,7 +201,7 @@ export const clientAction = async ({
 
 const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   const {
-    currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
+    currentRoute: { comparableId, label, initiator, avatar },
     possibleRoutes,
     chains,
   } = loaderData
@@ -244,57 +244,11 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
 
-          <div className="flex">
-            <div className="py-2 pr-4">
-              <Route id={id} selectable={false}>
-                <Waypoints excludeEnd>
-                  {waypoints.map(({ account, connection }) => (
-                    <Waypoint
-                      key={`${account.address}-${connection.from}`}
-                      account={account}
-                      connection={connection}
-                    />
-                  ))}
-                </Waypoints>
-              </Route>
-            </div>
-
-            {possibleRoutes.length === 0 ? (
-              <div className="flex flex-1 items-center justify-center">
-                <Warning>
-                  We could not find any routes between the initiator account and
-                  the avatar
-                </Warning>
-              </div>
-            ) : (
-              <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <Routes>
-                  {possibleRoutes.map((route) => {
-                    const waypoints = getWaypoints(route)
-
-                    return (
-                      <Route
-                        id={route.id}
-                        key={route.id}
-                        selected={selectedRouteId === routeId(route)}
-                        onSelect={() => setSelectedRouteId(routeId(route))}
-                      >
-                        <Waypoints excludeEnd>
-                          {waypoints.map(({ account, connection }) => (
-                            <Waypoint
-                              key={`${account.address}-${connection.from}`}
-                              account={account}
-                              connection={connection}
-                            />
-                          ))}
-                        </Waypoints>
-                      </Route>
-                    )
-                  })}
-                </Routes>
-              </div>
-            )}
-          </div>
+          <RouteSelect
+            value={selectedRouteId}
+            onSelect={setSelectedRouteId}
+            routes={possibleRoutes}
+          />
 
           <Avatar
             avatar={avatar}
@@ -469,6 +423,69 @@ const Chain = ({ chainId }: ChainProps) => {
         </SecondaryButton>
       </div>
     </Form>
+  )
+}
+
+type RouteSelectProps = {
+  routes: ExecutionRoute[]
+  value: string | null
+  initiator?: PrefixedAddress
+  onSelect: (value: string) => void
+}
+
+const RouteSelect = ({
+  routes,
+  value,
+  initiator,
+  onSelect,
+}: RouteSelectProps) => {
+  return (
+    <Labeled label="Selected route">
+      {routes.length === 0 ? (
+        <div className="flex w-1/2 flex-1 items-center">
+          {initiator == null && (
+            <Info title="Missing initiator">
+              Once you select an initiator account you can select from all
+              possible routes between the initiator and the account.
+            </Info>
+          )}
+
+          {initiator != null && (
+            <Warning>
+              We could not find any routes between the initiator and the
+              selected account. Make you are using the correct chain.
+            </Warning>
+          )}
+        </div>
+      ) : (
+        <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+          <Routes>
+            {routes.map((route) => {
+              const waypoints = getWaypoints(route)
+
+              return (
+                <Route
+                  id={route.id}
+                  key={route.id}
+                  selected={value === routeId(route)}
+                  onSelect={() => onSelect(routeId(route))}
+                >
+                  <Waypoints excludeEnd>
+                    {waypoints.map(({ account, connection }) => (
+                      <Waypoint
+                        key={`${account.address}-${connection.from}`}
+                        account={account}
+                        connection={connection}
+                      />
+                    ))}
+                  </Waypoints>
+                </Route>
+              )
+            })}
+          </Routes>
+        </div>
+      )}
+    </Labeled>
   )
 }
 
