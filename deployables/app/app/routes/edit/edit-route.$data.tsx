@@ -79,7 +79,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
   return {
     currentRoute: {
-      comparableId: route.initiator == null ? null : routeId(route),
+      comparableId: route.initiator == null ? undefined : routeId(route),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
@@ -205,19 +205,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   const formId = useId()
   const isDev = useIsDev()
   const connected = useConnected()
-  const [selectedRouteId, setSelectedRouteId] = useState(comparableId)
-
-  useEffect(() => {
-    if (selectedRouteId != null) {
-      return
-    }
-
-    if (comparableId == null) {
-      return
-    }
-
-    setSelectedRouteId(comparableId)
-  }, [comparableId, selectedRouteId])
 
   return (
     <ProvideChains chains={chains}>
@@ -241,8 +228,8 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
           />
 
           <RouteSelect
-            value={selectedRouteId}
-            onSelect={setSelectedRouteId}
+            form={formId}
+            defaultValue={comparableId}
             routes={possibleRoutes}
             initiator={initiator}
           />
@@ -253,12 +240,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             knownRoutes={'routes' in loaderData ? loaderData.routes : []}
           />
 
-          <Form
-            id={formId}
-            context={{
-              selectedRouteId,
-            }}
-          >
+          <Form id={formId}>
             <Form.Actions>
               <PrimaryButton
                 submit
@@ -381,17 +363,44 @@ const Chain = ({ chainId }: ChainProps) => {
 
 type RouteSelectProps = {
   routes: ExecutionRoute[]
-  value: string | null
+  defaultValue?: string
   initiator?: PrefixedAddress
-  onSelect: (value: string) => void
+  form: string
 }
 
-const RouteSelect = ({
-  routes,
-  value,
-  initiator,
-  onSelect,
-}: RouteSelectProps) => {
+const RouteSelect = ({ routes, defaultValue, initiator }: RouteSelectProps) => {
+  const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
+
+  useEffect(() => {
+    if (selectedRouteId != null) {
+      return
+    }
+
+    if (defaultValue == null) {
+      return
+    }
+
+    setSelectedRouteId(defaultValue)
+  }, [defaultValue, selectedRouteId])
+
+  useEffect(() => {
+    const valueIsValid = routes.some(
+      (route) => routeId(route) === selectedRouteId,
+    )
+
+    if (valueIsValid) {
+      return
+    }
+
+    const [route] = routes
+
+    if (route == null) {
+      return
+    }
+
+    setSelectedRouteId(routeId(route))
+  }, [routes, selectedRouteId])
+
   return (
     <Labeled label="Selected route">
       {routes.length === 0 ? (
@@ -420,8 +429,8 @@ const RouteSelect = ({
                 <Route
                   id={route.id}
                   key={route.id}
-                  selected={value === routeId(route)}
-                  onSelect={() => onSelect(routeId(route))}
+                  selected={selectedRouteId === routeId(route)}
+                  onSelect={() => setSelectedRouteId(routeId(route))}
                 >
                   {waypoints && (
                     <Waypoints>
