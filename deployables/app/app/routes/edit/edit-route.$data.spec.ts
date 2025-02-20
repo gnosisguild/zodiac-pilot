@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { createMockChain, loadRoutes, render } from '@/test-utils'
+import { createMockChain, render } from '@/test-utils'
 import { dryRun } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -82,9 +82,7 @@ describe('Edit route', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render(`/edit/${encode(route)}`, {
-        loadActions: loadRoutes,
-      })
+      await render(`/edit/${encode(route)}`)
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -96,9 +94,7 @@ describe('Edit route', () => {
         initiator: randomPrefixedAddress(),
       })
 
-      await render(`/edit/${encode(route)}`, {
-        loadActions: loadRoutes,
-      })
+      await render(`/edit/${encode(route)}`)
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Label' }),
@@ -126,9 +122,7 @@ describe('Edit route', () => {
           verifyChainId(parseInt(chainId)),
         )
 
-        await render(`/edit/${encode(route)}`, {
-          loadActions: loadRoutes,
-        })
+        await render(`/edit/${encode(route)}`)
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -153,9 +147,7 @@ describe('Edit route', () => {
 
       mockQueryRoutes.mockResolvedValue([newRoute])
 
-      await render(`/edit/${encode(route)}`, {
-        loadActions: loadRoutes,
-      })
+      await render(`/edit/${encode(route)}`)
 
       await userEvent.click(await screen.findByTestId(newRoute.id))
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
@@ -185,9 +177,7 @@ describe('Edit route', () => {
     it('is possible to test a route before saving', async () => {
       const route = createMockExecutionRoute()
 
-      await render(`/edit/${encode(route)}`, {
-        loadActions: loadRoutes,
-      })
+      await render(`/edit/${encode(route)}`)
 
       expect(
         screen.getByRole('button', { name: 'Test route' }),
@@ -199,9 +189,7 @@ describe('Edit route', () => {
         initiator: randomPrefixedAddress(),
       })
 
-      await render(`/edit/${encode(route)}`, {
-        loadActions: loadRoutes,
-      })
+      await render(`/edit/${encode(route)}`)
 
       mockDryRun.mockResolvedValue({
         error: true,

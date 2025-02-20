@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { createMockChain, loadRoutes, render } from '@/test-utils'
+import { createMockChain, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
@@ -57,9 +57,7 @@ describe('New Account', () => {
 
   describe('Avatar', () => {
     it('creates a new route with a given avatar', async () => {
-      await render('/create', {
-        loadActions: loadRoutes,
-      })
+      await render('/create')
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
@@ -86,9 +84,7 @@ describe('New Account', () => {
     })
 
     it('uses the selected chain', async () => {
-      await render('/create', {
-        loadActions: loadRoutes,
-      })
+      await render('/create')
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
@@ -121,9 +117,7 @@ describe('New Account', () => {
 
   describe('Label', () => {
     it('is possible to give label the account', async () => {
-      await render('/create', {
-        loadActions: loadRoutes,
-      })
+      await render('/create')
 
       const postMessage = vi.spyOn(window, 'postMessage')
 
@@ -160,9 +154,7 @@ describe('New Account', () => {
 
   describe('Initiator', () => {
     it('offers a button to connect', async () => {
-      await render('/create', {
-        loadActions: loadRoutes,
-      })
+      await render('/create')
 
       expect(
         await screen.findByRole('button', { name: 'Connect signer wallet' }),
@@ -182,9 +174,7 @@ describe('New Account', () => {
       chainId: Chain.ETH,
     })
 
-    await render('/create', {
-      loadActions: loadRoutes,
-    })
+    await render('/create')
 
     const postMessage = vi.spyOn(window, 'postMessage')
 
