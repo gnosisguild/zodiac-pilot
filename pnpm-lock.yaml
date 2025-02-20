@@ -438,8 +438,8 @@ importers:
   deployables/landing-page:
     dependencies:
       '@icons-pack/react-simple-icons':
-        specifier: 11.2.0
-        version: 11.2.0(react@19.0.0)
+        specifier: 12.0.0
+        version: 12.0.0(react@19.0.0)
       '@types/react':
         specifier: 19.0.10
         version: 19.0.10
@@ -2046,8 +2046,8 @@ packages:
     resolution: {integrity: sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==}
     engines: {node: '>=18.18'}
 
-  '@icons-pack/react-simple-icons@11.2.0':
-    resolution: {integrity: sha512-jCJ+1Fe0yiBQGYSfhx8QGU/9o27t8J4Hw3mxHEI9vohRltLSi5CaPzO2fCQcMNeTrAUAm4j+yaDuAutskiKRjA==}
+  '@icons-pack/react-simple-icons@12.0.0':
+    resolution: {integrity: sha512-7MqCY27RLQqzGAGYAcmsIIy/CU64TaFeTIFaFwEMkyeA6FWptg5AXWFm6UV9kvrCDwXYbzcWLz/cbhutLfcUUg==}
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
@@ -8743,7 +8743,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@icons-pack/react-simple-icons@11.2.0(react@19.0.0)':
+  '@icons-pack/react-simple-icons@12.0.0(react@19.0.0)':
     dependencies:
       react: 19.0.0
 
