@@ -436,30 +436,37 @@ const RouteSelect = ({
       ) : (
         <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
           <Routes>
-            {routes.map((route) => (
-              <Route
-                id={route.id}
-                key={route.id}
-                selected={value === routeId(route)}
-                onSelect={() => onSelect(routeId(route))}
-              >
-                {route.waypoints && (
-                  <Waypoints>
-                    {route.waypoints.map(({ account, ...waypoint }, index) => (
-                      <Waypoint
-                        key={`${account.address}-${index}`}
-                        account={account}
-                        connection={
-                          'connection' in waypoint
-                            ? waypoint.connection
-                            : undefined
-                        }
-                      />
-                    ))}
-                  </Waypoints>
-                )}
-              </Route>
-            ))}
+            {routes.map((route) => {
+              const { waypoints } = route
+
+              return (
+                <Route
+                  id={route.id}
+                  key={route.id}
+                  selected={value === routeId(route)}
+                  onSelect={() => onSelect(routeId(route))}
+                >
+                  {waypoints && (
+                    <Waypoints>
+                      {waypoints.map(({ account, ...waypoint }, index) => (
+                        <Waypoint
+                          key={`${account.address}-${index}`}
+                          highlight={
+                            index === 0 || index === waypoints.length - 1
+                          }
+                          account={account}
+                          connection={
+                            'connection' in waypoint
+                              ? waypoint.connection
+                              : undefined
+                          }
+                        />
+                      ))}
+                    </Waypoints>
+                  )}
+                </Route>
+              )
+            })}
           </Routes>
         </div>
       )}
