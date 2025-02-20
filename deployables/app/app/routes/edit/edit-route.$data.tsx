@@ -51,7 +51,7 @@ import {
   TextInput,
   Warning,
 } from '@zodiac/ui'
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { redirect, useParams } from 'react-router'
 import {
   queryRoutes,
@@ -378,6 +378,7 @@ const RouteSelect = ({
   name,
 }: RouteSelectProps) => {
   const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
+  const scrollRef = useRef<HTMLLIElement>(null)
 
   useEffect(() => {
     if (selectedRouteId != null) {
@@ -409,6 +410,14 @@ const RouteSelect = ({
     setSelectedRouteId(routeId(route))
   }, [routes, selectedRouteId])
 
+  useEffect(() => {
+    if (scrollRef.current == null) {
+      return
+    }
+
+    scrollRef.current.scrollIntoView()
+  }, [selectedRouteId])
+
   return (
     <Labeled label="Selected route">
       <input form={form} type="hidden" name={name} value={selectedRouteId} />
@@ -430,16 +439,18 @@ const RouteSelect = ({
           )}
         </div>
       ) : (
-        <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
           <Routes>
             {routes.map((route) => {
               const { waypoints } = route
+              const selected = selectedRouteId === routeId(route)
 
               return (
                 <Route
                   id={route.id}
                   key={route.id}
-                  selected={selectedRouteId === routeId(route)}
+                  ref={selected ? scrollRef : undefined}
+                  selected={selected}
                   onSelect={() => setSelectedRouteId(routeId(route))}
                 >
                   {waypoints && (

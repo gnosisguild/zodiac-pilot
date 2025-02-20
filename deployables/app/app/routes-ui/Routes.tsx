@@ -1,26 +1,28 @@
 import classNames from 'classnames'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type RefAttributes } from 'react'
 
 export const Routes = ({ children }: PropsWithChildren) => (
   <ul className="flex gap-1">{children}</ul>
 )
 
-type RouteProps = PropsWithChildren<{
-  id: string
-  selectable?: boolean
-  selected?: boolean
-  onSelect?: () => void
-}>
+type RouteProps = RefAttributes<HTMLLIElement> &
+  PropsWithChildren<{
+    id: string
+    selectable?: boolean
+    selected?: boolean
+    onSelect?: () => void
+  }>
 
 export const Route = ({
   children,
   id,
   selected = false,
   selectable = true,
+  ref,
   onSelect,
 }: RouteProps) => {
   return (
-    <li className="flex snap-start list-none flex-col items-center">
+    <li ref={ref} className="flex snap-start list-none flex-col items-center">
       <button
         data-testid={id}
         type="button"
