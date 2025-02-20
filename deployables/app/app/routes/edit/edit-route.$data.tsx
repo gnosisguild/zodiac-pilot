@@ -24,7 +24,7 @@ import {
   getOptionalString,
   getString,
 } from '@zodiac/form-data'
-import { CompanionAppMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
   getWaypoints,
@@ -50,6 +50,7 @@ import {
 import { useEffect, useId, useState } from 'react'
 import { redirect, useFetcher, useParams } from 'react-router'
 import {
+  prefixAddress,
   queryRoutes,
   rankRoutes,
   splitPrefixedAddress,
@@ -89,6 +90,25 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     chains,
   }
 }
+
+export const clientLoader = async ({
+  serverLoader,
+}: RouteType.ClientLoaderArgs) => {
+  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+
+  companionRequest(
+    {
+      type: CompanionAppMessageType.REQUEST_ROUTES,
+    },
+    (response) => resolve(response.routes),
+  )
+
+  const [serverData, routes] = await Promise.all([serverLoader(), promise])
+
+  return { ...serverData, routes }
+}
+
+clientLoader.hydrate = true as const
 
 export const action = async ({ request, params }: RouteType.ActionArgs) => {
   const data = await request.formData()
@@ -175,14 +195,13 @@ export const clientAction = async ({
   }
 }
 
-const EditRoute = ({
-  loaderData: {
+const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
+  const {
     currentRoute: { id, comparableId, label, initiator, waypoints, avatar },
     possibleRoutes,
     chains,
-  },
-  actionData,
-}: RouteType.ComponentProps) => {
+  } = loaderData
+
   const formId = useId()
   const isDev = useIsDev()
   const connected = useConnected()
@@ -215,7 +234,11 @@ const EditRoute = ({
 
           <Chain chainId={getChainId(avatar)} />
 
-          <Initiator avatar={avatar} initiator={initiator} />
+          <Initiator
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
           <Divider />
 
@@ -271,7 +294,11 @@ const EditRoute = ({
             )}
           </div>
 
-          <Avatar avatar={avatar} initiator={initiator} />
+          <Avatar
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
           <Divider />
 
@@ -345,9 +372,10 @@ const DebugRouteData = () => {
 type InitiatorProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
+  knownRoutes: ExecutionRoute[]
 }
 
-const Initiator = ({ avatar, initiator }: InitiatorProps) => {
+const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
   const [chainId, address] = splitPrefixedAddress(avatar)
 
   const { load, state, data = [] } = useFetcher<HexAddress[]>()
@@ -377,7 +405,18 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
           }
           options={data.map((address) => ({ value: address, label: address }))}
         >
-          {({ data: { value } }) => <Address>{value}</Address>}
+          {({ data: { value }, isSelected }) => (
+            <div className="flex items-center justify-between">
+              <Address>{value}</Address>
+
+              {isSelected != null && (
+                <KnownFromRoutes
+                  routes={knownRoutes}
+                  address={prefixAddress(undefined, value)}
+                />
+              )}
+            </div>
+          )}
         </Select>
 
         <SecondaryButton
@@ -395,6 +434,7 @@ const Initiator = ({ avatar, initiator }: InitiatorProps) => {
 type AvatarProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
+  knownRoutes: ExecutionRoute[]
 }
 
 const Avatar = ({ initiator, avatar }: AvatarProps) => {
@@ -438,6 +478,35 @@ const Chain = ({ chainId }: ChainProps) => {
         </SecondaryButton>
       </div>
     </Form>
+  )
+}
+
+type KnownFromRoutesProps = {
+  routes: ExecutionRoute[]
+  address: PrefixedAddress
+}
+
+const KnownFromRoutes = ({ routes, address }: KnownFromRoutesProps) => {
+  const labels = routes.reduce((result, route) => {
+    if (route.initiator !== address && route.avatar !== address) {
+      return result
+    }
+
+    if (route.label == null) {
+      return result
+    }
+
+    return [...result, route.label]
+  }, [] as string[])
+
+  return (
+    <div className="flex items-center gap-2 divide-x divide-zinc-500 text-xs text-zinc-300">
+      {labels.map((label) => (
+        <span key={label} className="pr-2 last:pr-0">
+          {label}
+        </span>
+      ))}
+    </div>
   )
 }
 

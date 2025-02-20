@@ -1,7 +1,7 @@
 import { validateAddress } from '@/utils'
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
-import { Address, AddressInput, Select, selectStyles } from '@zodiac/ui'
+import { Address, AddressInput, Select } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
 import { splitPrefixedAddress, type ChainId } from 'ser-kit'
@@ -12,11 +12,6 @@ type Props = {
   name?: string
   defaultValue?: HexAddress
   required?: boolean
-}
-
-type Option = {
-  value: HexAddress
-  label: string
 }
 
 export const AvatarInput = ({
@@ -57,7 +52,6 @@ export const AvatarInput = ({
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
         placeholder="Paste an address or select from the list"
-        classNames={selectStyles<Option>()}
         name={name}
         defaultValue={
           defaultValue == null
@@ -71,9 +65,7 @@ export const AvatarInput = ({
           value: address,
           label: address,
         }))}
-        isValidNewOption={(option) => {
-          return !!validateAddress(option)
-        }}
+        isValidNewOption={(option) => validateAddress(option) != null}
       >
         {({ data: { value } }) => <Address>{value}</Address>}
       </Select>
