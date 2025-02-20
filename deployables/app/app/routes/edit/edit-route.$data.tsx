@@ -208,7 +208,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
 
   return (
     <ProvideChains chains={chains}>
-      <Page fullWidth>
+      <Page>
         <Page.Header>Edit account</Page.Header>
 
         <Page.Main>
