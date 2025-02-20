@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test'
 import { defaultMockAccount } from '@zodiac/test-utils/e2e'
+import { getAddress } from 'viem'
 
 export const connectWallet = async (
   page: Page,
@@ -9,7 +10,7 @@ export const connectWallet = async (
   await page.getByRole('button', { name: 'Browser Wallet' }).click()
   await expect(
     page.getByRole('textbox', { name: 'Pilot Account' }),
-  ).toHaveValue(account)
+  ).toHaveValue(getAddress(account))
 
   await expect(
     page.getByRole('alert', { name: 'Wallet disconnected' }),
