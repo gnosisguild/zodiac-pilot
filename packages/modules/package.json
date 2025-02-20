@@ -26,7 +26,6 @@
     "evm-proxy-detection": "2.0.3",
     "nanoid": "5.1.0",
     "ser-kit": "3.1.1",
-    "viem": "2.23.3",
     "zod": "3.24.2",
     "zodiac-roles-deployments": "2.4.0"
   },

@@ -1,4 +1,10 @@
-import type { HexAddress } from '@zodiac/schema'
+import {
+  validateAddress,
+  type HexAddress,
+  type PrefixedAddress,
+} from '@zodiac/schema'
+import { unprefixAddress } from 'ser-kit'
+import { Address } from '../addresses'
 import { Select, type SelectProps } from './Select'
 
 type Option = {
@@ -6,38 +12,51 @@ type Option = {
   value: HexAddress
 }
 
-export type AddressSelectProps<
-  Creatable extends boolean,
-  Multi extends boolean,
-> = Omit<
-  SelectProps<Option, Creatable, Multi>,
+export type AddressSelectProps<Creatable extends boolean> = Omit<
+  SelectProps<Option, Creatable>,
   'options' | 'value' | 'defaultValue'
 > & {
-  value?: HexAddress
-  defaultValue?: HexAddress
+  value?: HexAddress | PrefixedAddress
+  defaultValue?: HexAddress | PrefixedAddress
   options: HexAddress[]
 }
 
-export function AddressSelect<
-  Creatable extends boolean = false,
-  Multi extends boolean = false,
->({
+export function AddressSelect<Creatable extends boolean>({
   value,
   defaultValue,
   options,
+  allowCreate = false,
+  children,
   ...props
-}: AddressSelectProps<Creatable, Multi>) {
+}: AddressSelectProps<Creatable>) {
+  const processedValue = value == null ? undefined : unprefixAddress(value)
+  const processedDefaultValue =
+    defaultValue == null ? undefined : unprefixAddress(defaultValue)
+
   return (
     <Select
       {...props}
+      allowCreate={allowCreate}
       options={options.map((option) => ({ label: option, value: option }))}
-      isValidNewOption={(option) => validateAddress(option) != null}
-      value={value == null ? undefined : { label: value, value }}
-      defaultValue={
-        defaultValue == null
+      isValidNewOption={(value) => validateAddress(value) != null}
+      value={
+        processedValue == null
           ? undefined
-          : { label: defaultValue, value: defaultValue }
+          : { label: processedValue, value: processedValue }
       }
-    ></Select>
+      defaultValue={
+        processedDefaultValue == null
+          ? undefined
+          : { label: processedDefaultValue, value: processedDefaultValue }
+      }
+    >
+      {(props) => (
+        <div className="flex items-center justify-between">
+          <Address>{props.data.value}</Address>
+
+          {children != null && children(props)}
+        </div>
+      )}
+    </Select>
   )
 }

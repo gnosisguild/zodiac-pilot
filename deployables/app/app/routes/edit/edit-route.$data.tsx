@@ -35,14 +35,13 @@ import {
 } from '@zodiac/modules'
 import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
 import {
-  Address,
+  AddressSelect,
   Divider,
   Error,
   Form,
   PrimaryButton,
   SecondaryButton,
   SecondaryLinkButton,
-  Select,
   Success,
   TextInput,
   Warning,
@@ -387,7 +386,7 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
   return (
     <Form>
       <div className="flex w-full items-end gap-2">
-        <Select
+        <AddressSelect
           label="Initiator"
           name="initiator"
           placeholder="Select an initiator"
@@ -395,29 +394,18 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
           required
           isMulti={false}
           isDisabled={state === 'loading'}
-          defaultValue={
-            initiator == null
-              ? undefined
-              : {
-                  value: unprefixAddress(initiator),
-                  label: unprefixAddress(initiator),
-                }
-          }
-          options={data.map((address) => ({ value: address, label: address }))}
+          defaultValue={initiator}
+          options={data}
         >
-          {({ data: { value }, isSelected }) => (
-            <div className="flex items-center justify-between">
-              <Address>{value}</Address>
-
-              {isSelected != null && (
-                <KnownFromRoutes
-                  routes={knownRoutes}
-                  address={prefixAddress(undefined, value)}
-                />
-              )}
-            </div>
-          )}
-        </Select>
+          {({ data: { value }, isSelected }) =>
+            isSelected != null && (
+              <KnownFromRoutes
+                routes={knownRoutes}
+                address={prefixAddress(undefined, value)}
+              />
+            )
+          }
+        </AddressSelect>
 
         <SecondaryButton
           submit
@@ -437,17 +425,27 @@ type AvatarProps = {
   knownRoutes: ExecutionRoute[]
 }
 
-const Avatar = ({ initiator, avatar }: AvatarProps) => {
+const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
   return (
     <Form>
       <div className="flex w-full items-end gap-2">
         <AvatarInput
           required
+          label="Avatar"
           initiator={initiator}
           chainId={getChainId(avatar)}
           name="avatar"
-          defaultValue={unprefixAddress(avatar)}
-        />
+          defaultValue={avatar}
+        >
+          {({ data: { value }, isSelected }) =>
+            isSelected != null && (
+              <KnownFromRoutes
+                routes={knownRoutes}
+                address={prefixAddress(getChainId(avatar), value)}
+              />
+            )
+          }
+        </AvatarInput>
 
         <SecondaryButton
           submit

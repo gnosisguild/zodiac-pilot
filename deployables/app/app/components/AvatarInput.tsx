@@ -1,17 +1,20 @@
-import { validateAddress } from '@/utils'
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
-import { Address, AddressInput, Select } from '@zodiac/ui'
+import {
+  AddressInput,
+  AddressSelect,
+  type AddressSelectProps,
+} from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
 import { splitPrefixedAddress, type ChainId } from 'ser-kit'
 
-type Props = {
+type Props = Omit<
+  AddressSelectProps<true>,
+  'allowCreate' | 'blurInputOnSelect' | 'isClearable' | 'options' | 'isDisabled'
+> & {
   chainId: ChainId | null
   initiator?: PrefixedAddress
-  name?: string
-  defaultValue?: HexAddress
-  required?: boolean
 }
 
 export const AvatarInput = ({
@@ -20,6 +23,7 @@ export const AvatarInput = ({
   name,
   required,
   defaultValue,
+  ...props
 }: Props) => {
   const { load, state, data } = useFetcher<HexAddress[]>()
 
@@ -41,34 +45,19 @@ export const AvatarInput = ({
 
   if (availableSafes.length > 0 || defaultValue) {
     return (
-      <Select
-        allowCreate
-        blurInputOnSelect
-        isClearable
-        required={required}
-        isMulti={false}
-        isDisabled={state === 'loading'}
-        label="Avatar"
+      <AddressSelect
         clearLabel="Clear piloted Safe"
         dropdownLabel="View all available Safes"
         placeholder="Paste an address or select from the list"
-        name={name}
-        defaultValue={
-          defaultValue == null
-            ? undefined
-            : {
-                value: defaultValue,
-                label: defaultValue,
-              }
-        }
-        options={availableSafes.map((address) => ({
-          value: address,
-          label: address,
-        }))}
-        isValidNewOption={(option) => validateAddress(option) != null}
-      >
-        {({ data: { value } }) => <Address>{value}</Address>}
-      </Select>
+        defaultValue={defaultValue}
+        required={required}
+        {...props}
+        allowCreate
+        blurInputOnSelect
+        isClearable
+        isDisabled={state === 'loading'}
+        options={availableSafes}
+      />
     )
   }
 

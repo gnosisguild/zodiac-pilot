@@ -1,4 +1,4 @@
-export { validateAddress } from '@zodiac/modules'
+export { validateAddress } from '@zodiac/schema'
 export * from './dryRun'
 export { editRoute } from './editRoute'
 export { jsonRpcProvider } from './jsonRpcProvider'

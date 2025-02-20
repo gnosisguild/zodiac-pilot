@@ -100,6 +100,7 @@ const Start = ({ loaderData: { chains } }: Route.ComponentProps) => {
 
               <AvatarInput
                 required
+                label="Avatar"
                 chainId={selectedChainId}
                 initiator={
                   address == null
