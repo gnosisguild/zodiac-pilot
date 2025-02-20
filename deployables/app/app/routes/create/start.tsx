@@ -121,6 +121,7 @@ const Start = ({ loaderData }: Route.ComponentProps) => {
 
               <AvatarInput
                 required
+                isClearable
                 label="Account"
                 chainId={selectedChainId}
                 initiator={
