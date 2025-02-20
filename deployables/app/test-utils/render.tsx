@@ -3,12 +3,14 @@ import {
   CompanionResponseMessageType,
   PilotMessageType,
 } from '@zodiac/messages'
+import type { ExecutionRoute } from '@zodiac/schema'
 import {
   createRenderFramework,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
 import type { PropsWithChildren } from 'react'
 import { default as routes } from '../app/routes'
+import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
 
 const baseRender = await createRenderFramework(
@@ -16,7 +18,7 @@ const baseRender = await createRenderFramework(
   routes,
 )
 
-type Options = RenderFrameworkOptions & {
+type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
   /**
    * Determines whether or not the app should render in a
    * state where it is connected to the browser extension.
@@ -30,15 +32,25 @@ type Options = RenderFrameworkOptions & {
    * simulate.
    */
   version?: string
+
+  /**
+   * Routes that would be stored in the browser extension
+   *
+   * @default []
+   */
+  availableRoutes?: ExecutionRoute[]
 }
 
 export const render = async (
   path: string,
-  { connected = true, version, ...options }: Options = {},
+  { connected = true, version, availableRoutes = [], ...options }: Options = {},
 ) => {
   const renderResult = await baseRender(path, {
     ...options,
     wrapper: RenderWrapper,
+    loadActions() {
+      return loadRoutes(...availableRoutes)
+    },
   })
 
   if (version != null) {

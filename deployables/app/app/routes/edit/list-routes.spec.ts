@@ -32,7 +32,7 @@ describe('List Routes', () => {
 
     await render('/edit', {
       version: '3.4.0',
-      loadActions: () => loadRoutes(route),
+      availableRoutes: [route],
     })
 
     await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
