@@ -423,7 +423,7 @@ const RouteSelect = ({
       <input form={form} type="hidden" name={name} value={selectedRouteId} />
 
       {routes.length === 0 ? (
-        <div className="flex w-1/2 flex-1 items-center">
+        <>
           {initiator == null && (
             <Info title="Missing initiator">
               Once you select an initiator account you can select from all
@@ -437,7 +437,7 @@ const RouteSelect = ({
               selected account. Make you are using the correct chain.
             </Warning>
           )}
-        </div>
+        </>
       ) : (
         <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
           <Routes>
