@@ -10,6 +10,7 @@ import {
   UsdValue,
 } from '@zodiac/ui'
 import { ArrowUpFromLine } from 'lucide-react'
+import { href } from 'react-router'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
@@ -66,7 +67,10 @@ const Balances = () => {
                     <GhostLinkButton
                       icon={ArrowUpFromLine}
                       size="tiny"
-                      to={`/tokens/send/${chain}/${contractId}`}
+                      to={href('/tokens/send/:chain?/:token?', {
+                        chain,
+                        token: contractId,
+                      })}
                     >
                       Send
                     </GhostLinkButton>

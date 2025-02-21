@@ -22,6 +22,7 @@ import {
   parseRouteData,
   routeTitle,
 } from '@/utils'
+import { invariant } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -51,7 +52,7 @@ import {
   Warning,
 } from '@zodiac/ui'
 import { useId } from 'react'
-import { redirect, useParams } from 'react-router'
+import { href, redirect, useParams } from 'react-router'
 import {
   queryRoutes,
   rankRoutes,
@@ -197,7 +198,7 @@ export const clientAction = async ({
         '*',
       )
 
-      return redirect('../edit')
+      return redirect(href('/edit'))
     }
     default:
       return serverResult
@@ -303,8 +304,13 @@ export default EditRoute
 const DebugRouteData = () => {
   const { data } = useParams()
 
+  invariant(typeof data === 'string', 'Expected string data parameter')
+
   return (
-    <SecondaryLinkButton openInNewWindow to={`/dev/decode/${data}`}>
+    <SecondaryLinkButton
+      openInNewWindow
+      to={href('/dev/decode/:data', { data })}
+    >
       Debug route data
     </SecondaryLinkButton>
   )

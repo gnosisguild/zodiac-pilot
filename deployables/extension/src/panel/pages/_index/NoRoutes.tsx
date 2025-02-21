@@ -39,7 +39,7 @@ export const NoRoutes = () => {
         <PrimaryLinkButton
           openInNewWindow
           icon={Plus}
-          to={`${useCompanionAppUrl()}/new-route`}
+          to={`${useCompanionAppUrl()}/create`}
         >
           Add route
         </PrimaryLinkButton>

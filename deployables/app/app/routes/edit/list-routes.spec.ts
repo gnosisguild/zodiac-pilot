@@ -7,19 +7,6 @@ import { encode } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
 import { beforeEach, describe, it, vi } from 'vitest'
 
-// We need to also mock stuff from edit-route because
-// the tests are navigating to that route which
-// will execute their code
-vi.mock('@/balances-server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/balances-server')>()
-
-  return {
-    ...module,
-
-    getAvailableChains: vi.fn(),
-  }
-})
-
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
 describe('List Routes', () => {

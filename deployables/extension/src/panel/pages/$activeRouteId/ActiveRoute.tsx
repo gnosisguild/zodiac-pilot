@@ -11,7 +11,7 @@ import {
   useLoaderData,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { saveStorageEntry } from '../../utils/saveStorageEntry'
+import { saveStorageEntry } from '../../utils'
 import { getActiveRouteId } from './getActiveRouteId'
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {

@@ -43,18 +43,6 @@ vi.mock('@/wagmi', async () => {
   }
 })
 
-vi.mock('@/balances-server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/balances-server')>()
-
-  return {
-    ...module,
-
-    getChain: vi.fn(),
-    getTokenBalances: vi.fn(),
-    isValidToken: vi.fn(),
-  }
-})
-
 const mockGetChain = vi.mocked(getChain)
 const mockIsValidToken = vi.mocked(isValidToken)
 const mockGetTokenBalances = vi.mocked(getTokenBalances)

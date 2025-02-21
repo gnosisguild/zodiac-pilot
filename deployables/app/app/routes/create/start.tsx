@@ -25,7 +25,7 @@ import {
 import type { ExecutionRoute } from '@zodiac/schema'
 import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
-import { redirect } from 'react-router'
+import { href, redirect } from 'react-router'
 import { prefixAddress, type ChainId } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
@@ -78,7 +78,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
     '*',
   )
 
-  return redirect(`/tokens/balances`)
+  return redirect(href(`/tokens/balances`))
 }
 
 const Start = ({ loaderData }: Route.ComponentProps) => {
