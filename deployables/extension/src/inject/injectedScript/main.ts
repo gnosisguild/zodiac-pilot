@@ -1,5 +1,6 @@
 // This script will be injected via executeScript to all windows in tracked tabs
 
+import { sentry } from '@/sentry'
 import { announceEip6963Provider } from './announceProvider'
 import { ensureInjectedProvider } from './ensureInjectedProvider'
 import { maskMetaMaskAnnouncement } from './maskMetaMaskAnnouncement'
@@ -36,4 +37,8 @@ const enableInjectedProvider = () => {
   }
 }
 
-enableInjectedProvider()
+try {
+  enableInjectedProvider()
+} catch (e) {
+  sentry.captureException(e, { data: 'Could not inject provider' })
+}
