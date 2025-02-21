@@ -51,7 +51,7 @@ import {
   TextInput,
   Warning,
 } from '@zodiac/ui'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useId } from 'react'
 import { redirect, useParams } from 'react-router'
 import {
   queryRoutes,
@@ -117,11 +117,19 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
   let route = parseRouteData(params.data)
 
   switch (intent) {
-    case Intent.DryRun:
+    case Intent.DryRun: {
+      const chainId = getChainId(route.avatar)
+
+      return dryRun(jsonRpcProvider(chainId), route)
+    }
     case Intent.Save: {
       route = updateLabel(route, getString(data, 'label'))
 
       const selectedRouteId = getOptionalString(data, 'selectedRouteId')
+
+      console.log({ selectedRouteId })
+
+      return null
 
       if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
         const possibleRoutes =
@@ -141,12 +149,7 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
         route = { ...selectedRoute, label: route.label, id: route.id }
       }
 
-      if (intent === Intent.Save) {
-        return route
-      }
-      const chainId = getChainId(route.avatar)
-
-      return dryRun(jsonRpcProvider(chainId), route)
+      return route
     }
 
     case Intent.UpdateInitiator: {
@@ -169,6 +172,23 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
       return editRoute(updateChainId(route, chainId))
     }
+  }
+}
+
+const findSelectedRoute = async (route: ExecutionRoute, data: FormData) => {
+  const selectedRouteId = getOptionalString(data, 'selectedRouteId')
+
+  if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
+    const possibleRoutes =
+      route.initiator == null
+        ? []
+        : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+    const selectedRoute = possibleRoutes.find(
+      (route) => routeId(route) === selectedRouteId,
+    )
+
+    return selectedRoute
   }
 }
 
@@ -377,82 +397,37 @@ const RouteSelect = ({
   form,
   name,
 }: RouteSelectProps) => {
-  const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
-  const scrollRef = useRef<HTMLLIElement>(null)
-
-  useEffect(() => {
-    if (selectedRouteId != null) {
-      return
-    }
-
-    if (defaultValue == null) {
-      return
-    }
-
-    setSelectedRouteId(defaultValue)
-  }, [defaultValue, selectedRouteId])
-
-  useEffect(() => {
-    const valueIsValid = routes.some(
-      (route) => routeId(route) === selectedRouteId,
-    )
-
-    if (valueIsValid) {
-      return
-    }
-
-    const [route] = routes
-
-    if (route == null) {
-      return
-    }
-
-    setSelectedRouteId(routeId(route))
-  }, [routes, selectedRouteId])
-
-  useEffect(() => {
-    if (scrollRef.current == null) {
-      return
-    }
-
-    scrollRef.current.scrollIntoView()
-  }, [selectedRouteId])
-
   return (
     <Labeled label="Selected route">
-      <input form={form} type="hidden" name={name} value={selectedRouteId} />
+      {({ inputId }) =>
+        routes.length === 0 ? (
+          <>
+            {initiator == null && (
+              <Info title="Missing initiator">
+                Once you select an initiator account you can select from all
+                possible routes between the initiator and the account.
+              </Info>
+            )}
 
-      {routes.length === 0 ? (
-        <>
-          {initiator == null && (
-            <Info title="Missing initiator">
-              Once you select an initiator account you can select from all
-              possible routes between the initiator and the account.
-            </Info>
-          )}
-
-          {initiator != null && (
-            <Warning>
-              We could not find any routes between the initiator and the
-              selected account. Make you are using the correct chain.
-            </Warning>
-          )}
-        </>
-      ) : (
-        <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-          <Routes>
+            {initiator != null && (
+              <Warning>
+                We could not find any routes between the initiator and the
+                selected account. Make you are using the correct chain.
+              </Warning>
+            )}
+          </>
+        ) : (
+          <Routes
+            key={initiator}
+            id={inputId}
+            form={form}
+            defaultValue={verifyDefaultValue(routes, defaultValue)}
+          >
             {routes.map((route) => {
               const { waypoints } = route
-              const selected = selectedRouteId === routeId(route)
 
               return (
-                <Route
-                  id={route.id}
-                  key={route.id}
-                  ref={selected ? scrollRef : undefined}
-                  selected={selected}
-                  onSelect={() => setSelectedRouteId(routeId(route))}
-                >
+                <Route id={routeId(route)} key={route.id} name={name}>
                   {waypoints && (
                     <Waypoints>
                       {waypoints.map(({ account, ...waypoint }, index) => (
@@ -475,10 +450,33 @@ const RouteSelect = ({
               )
             })}
           </Routes>
-        </div>
-      )}
+        )
+      }
     </Labeled>
   )
+}
+
+const verifyDefaultValue = (
+  routes: ExecutionRoute[],
+  defaultValue?: string,
+) => {
+  if (defaultValue == null) {
+    return defaultValue
+  }
+
+  const valueIsValid = routes.some((route) => routeId(route) === defaultValue)
+
+  if (valueIsValid) {
+    return defaultValue
+  }
+
+  const [route] = routes
+
+  if (route == null) {
+    return
+  }
+
+  return routeId(route)
 }
 
 const routeId = ({ waypoints }: ExecutionRoute) =>

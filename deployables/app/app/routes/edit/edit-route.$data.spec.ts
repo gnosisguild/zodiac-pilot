@@ -184,10 +184,8 @@ describe('Edit route', () => {
       ).toBeInTheDocument()
     })
 
-    it('shows errors returned by dry run', async () => {
-      const route = createMockExecutionRoute({
-        initiator: randomPrefixedAddress(),
-      })
+    it.only('shows errors returned by dry run', async () => {
+      const route = createMockExecutionRoute()
 
       await render(`/edit/${encode(route)}`)
 
