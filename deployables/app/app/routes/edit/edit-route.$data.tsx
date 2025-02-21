@@ -178,8 +178,6 @@ const findSelectedRoute = async (
     (route) => routeId(route) === selectedRouteId,
   )
 
-  console.log({ possibleRoutes, selectedRoute })
-
   return selectedRoute
 }
 

@@ -3,7 +3,7 @@ import { createMockChain, render } from '@/test-utils'
 import { dryRun } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CHAIN_NAME, verifyChainId } from '@zodiac/chains'
+import { Chain, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -18,6 +18,7 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
+  expectRouteToBe,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -127,10 +128,23 @@ describe('Edit route', () => {
         expect(screen.getByText(name)).toBeInTheDocument()
       },
     )
+
+    it.only('is possible to update the chain', async () => {
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
+      })
+
+      await render(`/edit/${encode(route)}`)
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
+      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
+
+      await expectRouteToBe(`/edit/${encode(updateChainId(route, Chain.GNO))}`)
+    })
   })
 
   describe('Route', () => {
-    it('is possible to select a new route', async () => {
+    it('is auto-selects the first route', async () => {
       const route = createMockExecutionRoute({
         id: 'current',
         label: 'Current route',
@@ -149,7 +163,6 @@ describe('Edit route', () => {
 
       await render(`/edit/${encode(route)}`)
 
-      await userEvent.click(await screen.findByTestId(newRoute.id))
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
       await waitFor(() => {
@@ -184,7 +197,7 @@ describe('Edit route', () => {
       ).toBeInTheDocument()
     })
 
-    it.only('shows errors returned by dry run', async () => {
+    it('shows errors returned by dry run', async () => {
       const route = createMockExecutionRoute()
 
       await render(`/edit/${encode(route)}`)
