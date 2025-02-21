@@ -1,13 +1,10 @@
-import type { Eip1193Provider } from '@/types'
+import { sentry } from '@/sentry'
 import { invariant } from '@epic-web/invariant'
 import type { InjectedProvider } from './InjectedProvider'
 
 declare let window: Window & {
   rabbyWalletRouter?: {
-    setDefaultProvider(rabbyAsDefault: boolean): void
-    addProvider(provider: InjectedProvider): void
-    currentProvider: Eip1193Provider
-    lastInjectedProvider?: Eip1193Provider
+    rabbyEthereumProvider: any
   }
 }
 
@@ -24,10 +21,10 @@ export const rabbyTakeOver = (provider: InjectedProvider) => {
   )
 
   const { rabbyWalletRouter } = window
-  const setDefaultProvider = rabbyWalletRouter.setDefaultProvider
 
-  rabbyWalletRouter.addProvider(provider)
-  setDefaultProvider(false)
-  // prevent Rabby from setting its own provider as default while Pilot is connected
-  rabbyWalletRouter.setDefaultProvider = () => {}
+  try {
+    rabbyWalletRouter.rabbyEthereumProvider._switchCurrentProvider(provider)
+  } catch (e) {
+    sentry.captureException(e, { data: 'Rabby take over failed' })
+  }
 }
