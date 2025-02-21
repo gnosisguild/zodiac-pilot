@@ -1,5 +1,6 @@
 import { getAvailableChains } from '@/balances-server'
 import { createMockChain, render } from '@/test-utils'
+import { isSmartContractAddress } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
@@ -34,6 +35,17 @@ vi.mock('ser-kit', async (importOriginal) => {
 
 const mockQueryAvatars = vi.mocked(queryAvatars)
 
+vi.mock('@/utils', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/utils')>()
+
+  return {
+    ...module,
+
+    isSmartContractAddress: vi.fn(),
+  }
+})
+
+const mockIsSmartContractAddress = vi.mocked(isSmartContractAddress)
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
 describe('New Account', () => {
@@ -43,6 +55,8 @@ describe('New Account', () => {
         createMockChain({ community_id: parseInt(chainId), name }),
       ),
     )
+
+    mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
   describe('Avatar', () => {
