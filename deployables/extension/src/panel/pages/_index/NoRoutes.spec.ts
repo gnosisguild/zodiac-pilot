@@ -36,7 +36,7 @@ describe('No routes', () => {
 
       expect(screen.getByRole('link', { name: 'Add route' })).toHaveAttribute(
         'href',
-        'http://localhost/new-route',
+        'http://localhost/create',
       )
     })
 
