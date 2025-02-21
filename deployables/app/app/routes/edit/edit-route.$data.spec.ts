@@ -156,7 +156,7 @@ describe('Edit route', () => {
 
       await render(`/edit/${encode(route)}`)
 
-      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
       await waitFor(() => {
         expect(postMessage).toHaveBeenCalledWith(
