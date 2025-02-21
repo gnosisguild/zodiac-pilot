@@ -5,7 +5,9 @@ import {
   OnlyConnected,
   Page,
 } from '@/components'
+import { useIsPending } from '@/hooks'
 import { ChainSelect, ProvideChains } from '@/routes-ui'
+import { isSmartContractAddress, jsonRpcProvider } from '@/utils'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -23,7 +25,7 @@ import {
   updateStartingPoint,
 } from '@zodiac/modules'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { href, redirect } from 'react-router'
 import { prefixAddress, type ChainId } from 'ser-kit'
@@ -71,6 +73,10 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const avatar = getHexString(data, 'avatar')
   const chainId = verifyChainId(getInt(data, 'chainId'))
 
+  if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
+    return { error: 'Account is not a smart contract' }
+  }
+
   route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
   window.postMessage(
@@ -81,7 +87,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   return redirect(href(`/tokens/balances`))
 }
 
-const Start = ({ loaderData }: Route.ComponentProps) => {
+const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
   const { chains } = loaderData
   const { address, chainId } = useAccount()
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
@@ -113,6 +119,12 @@ const Start = ({ loaderData }: Route.ComponentProps) => {
         <Page.Main>
           <OnlyConnected>
             <Form context={{ initiator: address }}>
+              {actionData && (
+                <Error title="Could not create account">
+                  {actionData.error}
+                </Error>
+              )}
+
               <ChainSelect
                 name="chainId"
                 value={selectedChainId}
@@ -140,7 +152,9 @@ const Start = ({ loaderData }: Route.ComponentProps) => {
               />
 
               <Form.Actions>
-                <PrimaryButton submit>Create</PrimaryButton>
+                <PrimaryButton submit busy={useIsPending()}>
+                  Create
+                </PrimaryButton>
               </Form.Actions>
             </Form>
           </OnlyConnected>
