@@ -22,7 +22,6 @@ import {
   parseRouteData,
   routeTitle,
 } from '@/utils'
-import { invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -118,38 +117,19 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
   switch (intent) {
     case Intent.DryRun: {
-      const chainId = getChainId(route.avatar)
+      const selectedRoute = await findSelectedRoute(route, data)
 
-      return dryRun(jsonRpcProvider(chainId), route)
+      return dryRun(jsonRpcProvider(getChainId(route.avatar)), {
+        ...route,
+        ...selectedRoute,
+      })
     }
     case Intent.Save: {
-      route = updateLabel(route, getString(data, 'label'))
+      const selectedRoute = await findSelectedRoute(route, data)
 
-      const selectedRouteId = getOptionalString(data, 'selectedRouteId')
+      route = { ...route, ...selectedRoute, id: route.id }
 
-      console.log({ selectedRouteId })
-
-      return null
-
-      if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
-        const possibleRoutes =
-          route.initiator == null
-            ? []
-            : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
-
-        const selectedRoute = possibleRoutes.find(
-          (route) => routeId(route) === selectedRouteId,
-        )
-
-        invariantResponse(
-          selectedRoute != null,
-          `Could not find a route with id "${selectedRouteId}"`,
-        )
-
-        route = { ...selectedRoute, label: route.label, id: route.id }
-      }
-
-      return route
+      return updateLabel(route, getString(data, 'label'))
     }
 
     case Intent.UpdateInitiator: {
@@ -175,21 +155,32 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
   }
 }
 
-const findSelectedRoute = async (route: ExecutionRoute, data: FormData) => {
+const findSelectedRoute = async (
+  route: ExecutionRoute,
+  data: FormData,
+): Promise<ExecutionRoute | undefined> => {
   const selectedRouteId = getOptionalString(data, 'selectedRouteId')
 
-  if (selectedRouteId != null && selectedRouteId !== routeId(route)) {
-    const possibleRoutes =
-      route.initiator == null
-        ? []
-        : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
-
-    const selectedRoute = possibleRoutes.find(
-      (route) => routeId(route) === selectedRouteId,
-    )
-
-    return selectedRoute
+  if (selectedRouteId == null) {
+    return
   }
+
+  if (selectedRouteId === routeId(route)) {
+    return route
+  }
+
+  const possibleRoutes =
+    route.initiator == null
+      ? []
+      : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+
+  const selectedRoute = possibleRoutes.find(
+    (route) => routeId(route) === selectedRouteId,
+  )
+
+  console.log({ possibleRoutes, selectedRoute })
+
+  return selectedRoute
 }
 
 export const clientAction = async ({

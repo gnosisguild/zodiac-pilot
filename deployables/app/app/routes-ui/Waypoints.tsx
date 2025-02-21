@@ -24,7 +24,7 @@ export const Waypoints = ({
   }
 
   return (
-    <ul className="flex flex-1 flex-col items-center gap-4">
+    <ol className="flex flex-1 flex-col items-center gap-4">
       {Children.map(children, (child, index) => (
         <>
           <Connection
@@ -35,7 +35,7 @@ export const Waypoints = ({
           {excludeEnd && index === size - 1 ? null : child}
         </>
       ))}
-    </ul>
+    </ol>
   )
 }
 
