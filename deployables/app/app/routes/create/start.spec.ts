@@ -34,16 +34,6 @@ vi.mock('ser-kit', async (importOriginal) => {
 
 const mockQueryAvatars = vi.mocked(queryAvatars)
 
-vi.mock('@/balances-server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/balances-server')>()
-
-  return {
-    ...module,
-
-    getAvailableChains: vi.fn(),
-  }
-})
-
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
 describe('New Account', () => {

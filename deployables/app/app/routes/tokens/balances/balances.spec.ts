@@ -1,7 +1,6 @@
-import { getChain, getTokenBalances } from '@/balances-server'
+import { getTokenBalances } from '@/balances-server'
 import {
   connectWallet,
-  createMockChain,
   createMockTokenBalance,
   disconnectWallet,
   render,
@@ -41,25 +40,11 @@ vi.mock('@/wagmi', async () => {
   }
 })
 
-vi.mock('@/balances-server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/balances-server')>()
-
-  return {
-    ...module,
-
-    getChain: vi.fn(),
-    getTokenBalances: vi.fn(),
-  }
-})
-
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
-const mockGetChain = vi.mocked(getChain)
 
 describe('Token balances', () => {
   beforeEach(async () => {
     await connectWallet()
-
-    mockGetChain.mockResolvedValue(createMockChain())
   })
   afterEach(() => disconnectWallet())
 
