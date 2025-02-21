@@ -38,14 +38,12 @@ export async function dryRun(
   }
 
   if (
-    !(await isSmartContractAddress(rolesWaypoint.account.address, provider))
+    !(await isSmartContractAddress(provider, rolesWaypoint.account.address))
   ) {
     return { error: true, message: 'Module address is not a smart contract.' }
   }
 
-  if (
-    !(await isSmartContractAddress(unprefixAddress(route.avatar), provider))
-  ) {
+  if (!(await isSmartContractAddress(provider, route.avatar))) {
     return { error: true, message: 'Avatar is not a smart contract.' }
   }
 

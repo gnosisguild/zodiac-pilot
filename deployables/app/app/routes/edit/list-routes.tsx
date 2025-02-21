@@ -24,7 +24,24 @@ export const clientLoader = async ({
     {
       type: CompanionAppMessageType.REQUEST_ROUTES,
     },
-    (response) => resolve(response.routes),
+    (response) =>
+      resolve(
+        response.routes.toSorted((a, b) => {
+          if (a.label == null && b.label == null) {
+            return 0
+          }
+
+          if (a.label == null) {
+            return -1
+          }
+
+          if (b.label == null) {
+            return 1
+          }
+
+          return a.label.localeCompare(b.label)
+        }),
+      ),
   )
 
   const [serverData, routes] = await Promise.all([serverLoader(), promise])
