@@ -183,8 +183,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.304
-        version: 0.0.304
+        specifier: 0.0.305
+        version: 0.0.305
       '@types/express':
         specifier: 5.0.0
         version: 5.0.0
@@ -351,8 +351,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.304
-        version: 0.0.304
+        specifier: 0.0.305
+        version: 0.0.305
       '@types/events':
         specifier: 3.0.3
         version: 3.0.3
@@ -738,8 +738,8 @@ importers:
         specifier: 7.2.0
         version: 7.2.0(@react-router/serve@7.2.0(react-router@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.3))(@types/node@22.13.4)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(react-router@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.7.3)(vite@6.1.1(@types/node@22.13.4)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.109.2(@cloudflare/workers-types@4.20250214.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
       '@types/chrome':
-        specifier: 0.0.304
-        version: 0.0.304
+        specifier: 0.0.305
+        version: 0.0.305
       '@types/react':
         specifier: 19.0.10
         version: 19.0.10
@@ -3000,8 +3000,8 @@ packages:
   '@types/chrome@0.0.114':
     resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
 
-  '@types/chrome@0.0.304':
-    resolution: {integrity: sha512-ms9CLILU+FEMK7gcmgz/Mtn2E81YQWiMIzCFF8ktp98EVNIIfoqaDTD4+ailOCq1sGjbnEmfJxQ1FAsQtk5M3A==}
+  '@types/chrome@0.0.305':
+    resolution: {integrity: sha512-bTdl6Co33lKk4jktVfpYgtrrAiHIipwaiQKaytPSn3DQx4ACz+MbtNK6JXicIxHyuzV6S3RcyGICsR8fEZ9M0g==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -9904,7 +9904,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@types/chrome@0.0.304':
+  '@types/chrome@0.0.305':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
