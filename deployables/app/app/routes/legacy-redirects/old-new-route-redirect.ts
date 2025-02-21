@@ -1,3 +1,3 @@
-import { redirect } from 'react-router'
+import { href, redirect } from 'react-router'
 
-export const loader = () => redirect('/create')
+export const loader = () => redirect(href('/create'))

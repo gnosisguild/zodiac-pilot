@@ -6,7 +6,7 @@ import {
 } from '@/components'
 import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, List, Plus, Signature } from 'lucide-react'
-import { Outlet } from 'react-router'
+import { href, Outlet } from 'react-router'
 
 const Sidebar = () => {
   return (
@@ -21,27 +21,30 @@ const Sidebar = () => {
           <div className="flex-1">
             <Navigation>
               <Navigation.Section title="Tokens">
-                <Navigation.Link to="/tokens/send" icon={ArrowUpFromLine}>
+                <Navigation.Link
+                  to={href('/tokens/send/:chain?/:token?')}
+                  icon={ArrowUpFromLine}
+                >
                   Send tokens
                 </Navigation.Link>
 
-                <Navigation.Link to="/tokens/balances" icon={Landmark}>
+                <Navigation.Link to={href('/tokens/balances')} icon={Landmark}>
                   Balances
                 </Navigation.Link>
               </Navigation.Section>
 
               <Navigation.Section title="Accounts">
-                <Navigation.Link to="/create" icon={Plus}>
+                <Navigation.Link to={href('/create')} icon={Plus}>
                   Create new account
                 </Navigation.Link>
 
-                <Navigation.Link to="/edit" icon={List}>
+                <Navigation.Link to={href('/edit')} icon={List}>
                   Manage accounts
                 </Navigation.Link>
               </Navigation.Section>
 
               <Navigation.Section title="Transactions">
-                <Navigation.Link to="/submit" icon={Signature}>
+                <Navigation.Link to={href('/submit')} icon={Signature}>
                   Sign a transaction
                 </Navigation.Link>
               </Navigation.Section>

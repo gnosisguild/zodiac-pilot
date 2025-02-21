@@ -10,7 +10,7 @@ import { Address, Form, GhostButton, Info, Table } from '@zodiac/ui'
 import classNames from 'classnames'
 import { Pencil } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
-import { redirect } from 'react-router'
+import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 
 export const loader = async () => ({ chains: await getAvailableChains() })
@@ -43,7 +43,8 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
       type: CompanionAppMessageType.REQUEST_ROUTE,
       routeId: getString(data, 'routeId'),
     },
-    (response) => resolve(`/edit/${encode(response.route)}`),
+    (response) =>
+      resolve(href('/edit/:data', { data: encode(response.route) })),
   )
 
   return redirect(await promise)
