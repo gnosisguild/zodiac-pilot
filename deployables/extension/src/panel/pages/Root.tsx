@@ -3,6 +3,7 @@ import { getLastUsedRouteId } from '@/execution-routes'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { Outlet, useLoaderData, useNavigate } from 'react-router'
 import { FutureClearTransactionsModal } from './ClearTransactionsModal'
+import { useDeleteRoute } from './useDeleteRoute'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async () => {
@@ -15,6 +16,7 @@ export const Root = () => {
   const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
   const { isUpdatePending, cancelUpdate, saveUpdate } =
     useSaveRoute(lastUsedRouteId)
+  useDeleteRoute()
 
   const navigate = useNavigate()
 
