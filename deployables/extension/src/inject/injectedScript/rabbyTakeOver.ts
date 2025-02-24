@@ -24,6 +24,7 @@ export const rabbyTakeOver = (provider: InjectedProvider) => {
 
   try {
     rabbyWalletRouter.rabbyEthereumProvider._switchCurrentProvider(provider)
+    rabbyWalletRouter.rabbyEthereumProvider._switchCurrentProvider = () => null
   } catch (e) {
     sentry.captureException(e, { data: 'Rabby take over failed' })
   }
