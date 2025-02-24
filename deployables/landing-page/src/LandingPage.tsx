@@ -17,7 +17,7 @@ export const LandingPage = () => (
 
       <aside className="flex gap-4">
         <a
-          href="https://discord.gg/tXugWAMX"
+          href="https://discord.com/channels/881881751369175040/884777203332710460"
           target="_blank"
           rel="noreferrer noopener"
         >
