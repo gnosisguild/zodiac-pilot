@@ -58,7 +58,7 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@vitest/coverage-v8": "3.0.6",
-    "@wagmi/core": "2.16.4",
+    "@wagmi/core": "2.16.5",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
