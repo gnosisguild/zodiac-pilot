@@ -11,32 +11,40 @@ export default [
   route('/connect', 'routes/connect.tsx'),
 
   layout('routes/layout.tsx', [
-    route('/tokens', 'routes/tokens/index.tsx', [
-      layout('routes/tokens/balances/layout.tsx', [
-        route('balances', 'routes/tokens/balances/balances.tsx'),
+    layout('routes/errorBoundary.tsx', [
+      route('/tokens', 'routes/tokens/index.tsx', [
+        layout('routes/tokens/balances/layout.tsx', [
+          route('balances', 'routes/tokens/balances/balances.tsx'),
+        ]),
+        layout('routes/tokens/send/layout.tsx', [
+          route('send/:chain?/:token?', 'routes/tokens/send/send.tsx'),
+        ]),
       ]),
-      layout('routes/tokens/send/layout.tsx', [
-        route('send/:chain?/:token?', 'routes/tokens/send/send.tsx'),
+
+      route('/new-route', 'routes/legacy-redirects/old-new-route-redirect.ts'),
+
+      ...prefix('/edit', [
+        index('routes/edit/list-routes.tsx'),
+        route(':data', 'routes/edit/edit-route.$data.tsx'),
       ]),
-    ]),
 
-    route('/new-route', 'routes/legacy-redirects/old-new-route-redirect.ts'),
+      route(
+        '/edit-route/:data',
+        'routes/legacy-redirects/old-edit-redirect.ts',
+      ),
 
-    ...prefix('/edit', [
-      index('routes/edit/list-routes.tsx'),
-      route(':data', 'routes/edit/edit-route.$data.tsx'),
-    ]),
+      ...prefix('/create', [
+        layout('routes/create/layout.tsx', [index('routes/create/start.tsx')]),
+      ]),
 
-    route('/edit-route/:data', 'routes/legacy-redirects/old-edit-redirect.ts'),
-
-    ...prefix('/create', [
-      layout('routes/create/layout.tsx', [index('routes/create/start.tsx')]),
-    ]),
-
-    ...prefix('/submit', [
-      layout('routes/submit/layout.tsx', [
-        index('routes/submit/index.tsx'),
-        route(':route/:transactions', 'routes/submit/$route.$transactions.tsx'),
+      ...prefix('/submit', [
+        layout('routes/submit/layout.tsx', [
+          index('routes/submit/index.tsx'),
+          route(
+            ':route/:transactions',
+            'routes/submit/$route.$transactions.tsx',
+          ),
+        ]),
       ]),
     ]),
   ]),
