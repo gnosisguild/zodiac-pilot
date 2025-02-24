@@ -7,8 +7,10 @@ type InfoProps = PropsWithChildren<{ title?: string }>
 export const Info = ({ title, children }: InfoProps) => (
   <BaseAlert className="border-blue-400/80 dark:border-blue-600/80">
     {title && (
-      <BaseAlert.Title className="text-blue-700 dark:text-blue-500">
-        <InfoIcon size={16} />
+      <BaseAlert.Title
+        className="text-blue-700 dark:text-blue-500"
+        icon={InfoIcon}
+      >
         {title}
       </BaseAlert.Title>
     )}
