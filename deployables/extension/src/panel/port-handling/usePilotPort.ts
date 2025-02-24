@@ -1,5 +1,5 @@
 import { captureLastError } from '@/sentry'
-import { isValidTab, useActiveTab } from '@/utils'
+import { useActiveTab } from '@/utils'
 import { type Message, PilotMessageType } from '@zodiac/messages'
 import { useEffect, useState } from 'react'
 
@@ -16,21 +16,6 @@ export const usePilotPort = () => {
     if (activeTab == null) {
       setPort(null)
 
-      return
-    }
-
-    if (!isValidTab(activeTab.url)) {
-      setPort(null)
-
-      return
-    }
-
-    if (activeTab.status !== 'complete') {
-      // do not reset the port here because
-      // a tab might go into the loading state
-      // multiple times during its lifecycle.
-      // This, however, does not mean that our
-      // port has disconnected and needs to be reset.
       return
     }
 

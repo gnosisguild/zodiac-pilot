@@ -2,7 +2,6 @@ import {
   createMockRoute,
   createTransaction,
   mockRoute,
-  mockTabSwitch,
   randomPrefixedAddress,
   render,
 } from '@/test-utils'
@@ -23,20 +22,6 @@ describe('Transactions', () => {
       expect(
         screen.getByRole('heading', { name: 'Recording transactions' }),
       ).not.toHaveAccessibleDescription()
-    })
-
-    it('shows that transactions cannot be recorded when Pilot is not ready, yet', async () => {
-      await render(
-        '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
-        { initialSelectedRoute: createMockRoute({ id: 'test-route' }) },
-      )
-
-      await mockTabSwitch({ url: 'chrome://extensions' })
-
-      expect(
-        screen.getByRole('heading', { name: 'Not recording transactions' }),
-      ).toHaveAccessibleDescription('Recording starts when Pilot connects')
     })
   })
 
