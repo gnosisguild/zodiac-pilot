@@ -187,7 +187,7 @@ export const RolePermissionCheck = ({
         <div className="flex gap-2">
           {recordCallState === RecordCallState.Done ? (
             <GhostButton fluid icon={Check} disabled>
-              Call has been recorded
+              Request recorded
             </GhostButton>
           ) : (
             <GhostButton
@@ -196,7 +196,7 @@ export const RolePermissionCheck = ({
               onClick={recordCall}
               busy={recordCallState === RecordCallState.Pending}
             >
-              Record call to request permissions
+              Request permission
             </GhostButton>
           )}
 
@@ -208,7 +208,7 @@ export const RolePermissionCheck = ({
               icon={SquareArrowOutUpRight}
               to={roleRecordLink}
             >
-              View recorded calls
+              View permissions
             </GhostLinkButton>
           )}
         </div>
