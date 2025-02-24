@@ -25,5 +25,7 @@ export const createStorageMock = () => {
     if (typeof key === 'string') {
       data.delete(key)
     }
+
+    return Promise.resolve()
   })
 }

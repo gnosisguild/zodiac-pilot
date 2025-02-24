@@ -6,12 +6,21 @@ import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
-import { Address, Form, GhostButton, Info, Table } from '@zodiac/ui'
+import {
+  Address,
+  Form,
+  GhostButton,
+  Info,
+  Modal,
+  PrimaryButton,
+  Table,
+} from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil } from 'lucide-react'
-import { type PropsWithChildren } from 'react'
+import { Pencil, Trash2 } from 'lucide-react'
+import { useState, type PropsWithChildren } from 'react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
+import { Intent } from './intents'
 
 export const loader = async () => ({ chains: await getAvailableChains() })
 
@@ -53,18 +62,40 @@ clientLoader.hydrate = true as const
 
 export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
-  const { promise, resolve } = Promise.withResolvers<string>()
+  const intent = getString(data, 'intent')
 
-  companionRequest(
-    {
-      type: CompanionAppMessageType.REQUEST_ROUTE,
-      routeId: getString(data, 'routeId'),
-    },
-    (response) =>
-      resolve(href('/edit/:data', { data: encode(response.route) })),
-  )
+  switch (intent) {
+    case Intent.Edit: {
+      const { promise, resolve } = Promise.withResolvers<string>()
 
-  return redirect(await promise)
+      companionRequest(
+        {
+          type: CompanionAppMessageType.REQUEST_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        (response) =>
+          resolve(href('/edit/:data', { data: encode(response.route) })),
+      )
+
+      return redirect(await promise)
+    }
+
+    case Intent.Delete: {
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      companionRequest(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        () => resolve(),
+      )
+
+      await promise
+
+      return null
+    }
+  }
 }
 
 const ListRoutes = ({
@@ -141,13 +172,21 @@ const Route = ({ route }: RouteProps) => {
         <Address shorten>{route.avatar}</Address>
       </Table.Td>
       <Table.Td align="right">
-        <Edit routeId={route.id} />
+        <Actions routeId={route.id}>
+          <Edit routeId={route.id} />
+          <MinimumVersion version="3.6.0">
+            <Delete routeId={route.id} />
+          </MinimumVersion>
+        </Actions>
       </Table.Td>
     </Table.Tr>
   )
 }
 
-const Edit = ({ routeId }: { routeId: string }) => {
+const Actions = ({
+  children,
+  routeId,
+}: PropsWithChildren<{ routeId: string }>) => {
   const submitting = useIsPending((data) => data.get('routeId') === routeId)
 
   return (
@@ -157,18 +196,71 @@ const Edit = ({ routeId }: { routeId: string }) => {
         submitting ? 'opacity-100' : 'opacity-0',
       )}
     >
-      <Form>
-        <GhostButton
-          submit
-          size="tiny"
-          name="routeId"
-          icon={Pencil}
-          value={routeId}
-          busy={submitting}
-        >
-          Edit
-        </GhostButton>
-      </Form>
+      {children}
     </div>
+  )
+}
+
+const Edit = ({ routeId }: { routeId: string }) => {
+  const submitting = useIsPending(
+    Intent.Edit,
+    (data) => data.get('routeId') === routeId,
+  )
+
+  return (
+    <Form intent={Intent.Edit}>
+      <GhostButton
+        submit
+        size="tiny"
+        name="routeId"
+        icon={Pencil}
+        value={routeId}
+        busy={submitting}
+      >
+        Edit
+      </GhostButton>
+    </Form>
+  )
+}
+
+const Delete = ({ routeId }: { routeId: string }) => {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const submitting = useIsPending(
+    Intent.Delete,
+    (data) => data.get('routeId') === routeId,
+  )
+
+  return (
+    <>
+      <GhostButton
+        size="tiny"
+        icon={Trash2}
+        style="critical"
+        onClick={() => setConfirmDelete(true)}
+      >
+        Delete
+      </GhostButton>
+
+      <Modal
+        title="Confirm delete"
+        closeLabel="Cancel"
+        onClose={() => setConfirmDelete(false)}
+        open={confirmDelete}
+      >
+        <Modal.Actions>
+          <Form intent={Intent.Delete}>
+            <PrimaryButton
+              submit
+              name="routeId"
+              value={routeId}
+              style="contrast"
+              busy={submitting}
+            >
+              Delete
+            </PrimaryButton>
+          </Form>
+        </Modal.Actions>
+      </Modal>
+    </>
   )
 }

@@ -9,8 +9,10 @@ type ErrorProps = PropsWithChildren<{
 export const Error = ({ children, title }: ErrorProps) => (
   <BaseAlert className="border-red-600/80 dark:border-red-600/80">
     {title && (
-      <BaseAlert.Title className="text-red-700 dark:text-red-500">
-        <ServerCrash size={16} />
+      <BaseAlert.Title
+        className="text-red-700 dark:text-red-500"
+        icon={ServerCrash}
+      >
         {title}
       </BaseAlert.Title>
     )}

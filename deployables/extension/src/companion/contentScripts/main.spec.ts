@@ -77,8 +77,15 @@ describe('Companion App Content Script', () => {
         CompanionAppMessageType.SAVE_AND_LAUNCH,
         {
           type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-          route: createMockExecutionRoute(),
-        },
+          data: createMockExecutionRoute(),
+        } satisfies CompanionAppMessage,
+      ],
+      [
+        CompanionAppMessageType.DELETE_ROUTE,
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: 'test-route',
+        } satisfies CompanionAppMessage,
       ],
     ])('forwards %s events to the extension', async (_, event) => {
       await importModule()
@@ -131,6 +138,12 @@ describe('Companion App Content Script', () => {
         {
           type: CompanionResponseMessageType.PROVIDE_ROUTE,
           route: createMockExecutionRoute(),
+        } satisfies CompanionResponseMessage,
+      ],
+      [
+        CompanionResponseMessageType.DELETED_ROUTE,
+        {
+          type: CompanionResponseMessageType.DELETED_ROUTE,
         } satisfies CompanionResponseMessage,
       ],
     ])('forwards %s events from the extension', async (_, event) => {

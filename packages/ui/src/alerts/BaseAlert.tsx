@@ -1,5 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import classNames from 'classnames'
+import type { LucideIcon } from 'lucide-react'
 import { createContext, type PropsWithChildren, useContext, useId } from 'react'
 
 type BaseAlertProps = PropsWithChildren<{
@@ -30,11 +31,13 @@ export const BaseAlert = ({ children, className }: BaseAlertProps) => {
 const Title = ({
   children,
   className,
-}: PropsWithChildren<{ className?: string }>) => (
+  icon: Icon,
+}: PropsWithChildren<{ className?: string; icon: LucideIcon }>) => (
   <h4
     id={useTitleId()}
     className={classNames('flex items-center gap-2 font-bold', className)}
   >
+    <Icon size={16} className="shrink-0" />
     {children}
   </h4>
 )

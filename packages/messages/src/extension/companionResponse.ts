@@ -7,6 +7,7 @@ export enum CompanionResponseMessageType {
   FORK_UPDATED = 'COMPANION::FORK_UPDATED',
   LIST_ROUTES = 'EXTENSION::LIST_ROUTES',
   PROVIDE_ROUTE = 'EXTENSION::PROVIDE_ROUTE',
+  DELETED_ROUTE = 'EXTENSION::DELETED_ROUTE',
 }
 
 type Pong = {
@@ -33,9 +34,14 @@ type ProvideRoute = {
   route: ExecutionRoute
 }
 
+type DeletedRoute = {
+  type: CompanionResponseMessageType.DELETED_ROUTE
+}
+
 export type CompanionResponseMessage =
   | Pong
   | ProvideVersion
   | ListRoutes
   | ForkUpdated
   | ProvideRoute
+  | DeletedRoute

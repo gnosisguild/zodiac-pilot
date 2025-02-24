@@ -21,6 +21,8 @@ const requestResponseTypes = {
     CompanionResponseMessageType.LIST_ROUTES,
   [CompanionAppMessageType.REQUEST_ROUTE]:
     CompanionResponseMessageType.PROVIDE_ROUTE,
+  [CompanionAppMessageType.DELETE_ROUTE]:
+    CompanionResponseMessageType.DELETED_ROUTE,
 } as const
 
 type RequestResponse = typeof requestResponseTypes
