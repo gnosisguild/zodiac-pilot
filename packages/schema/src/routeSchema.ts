@@ -56,8 +56,9 @@ const safeSchema = z.object({
     .number()
     .or(z.nan())
     .nullable()
+    .optional()
     .transform((value) => (value == null ? NaN : value))
-    .optional(),
+    .pipe(z.number().or(z.nan())),
 })
 
 const rolesSchema = z.object({
@@ -117,7 +118,7 @@ const waypointSchema = z.object({
 export type Waypoint = z.infer<typeof waypointSchema>
 
 const eoaSchema = z.object({
-  type: z.literal('EOA'),
+  type: z.literal(AccountType.EOA),
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
 })
