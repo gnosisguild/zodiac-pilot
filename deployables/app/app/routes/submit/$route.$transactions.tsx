@@ -25,15 +25,20 @@ import type { Route } from './+types/$route.$transactions'
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
-  const route = parseRouteData(params.route)
+  const { initiator, waypoints, ...route } = parseRouteData(params.route)
 
-  invariantResponse(route.initiator != null, 'Route needs an initiator')
+  invariantResponse(initiator != null, 'Route needs an initiator')
+  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  // @ts-expect-error Bla
-  const plan = await planExecution(metaTransactions, route)
+  const plan = await planExecution(metaTransactions, {
+    initiator,
+    waypoints,
+    ...route,
+  })
+
   return {
     plan,
-    initiator: unprefixAddress(route.initiator),
+    initiator: unprefixAddress(initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
   }
