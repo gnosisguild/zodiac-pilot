@@ -38,7 +38,7 @@ const Header = ({
 Page.Header = Header
 
 const Main = ({ children }: PropsWithChildren) => (
-  <Boundary>
+  <Boundary className="flex-1">
     <main role="main" className="flex flex-1 flex-col gap-4 pb-16">
       {children}
     </main>
@@ -47,11 +47,15 @@ const Main = ({ children }: PropsWithChildren) => (
 
 Page.Main = Main
 
-const Boundary = ({ children }: PropsWithChildren) => (
+const Boundary = ({
+  children,
+  className,
+}: PropsWithChildren<{ className?: string }>) => (
   <div
     className={classNames(
       'mx-16 flex flex-col',
       useFullWidth() === false && 'xl:w-3/5 2xl:w-2/5',
+      className,
     )}
   >
     {children}
