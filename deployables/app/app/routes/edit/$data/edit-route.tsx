@@ -60,7 +60,8 @@ import {
   type ChainId,
   type PrefixedAddress,
 } from 'ser-kit'
-import type { Route as RouteType } from './+types/edit-route.$data'
+
+import type { Route as RouteType } from './+types/edit-route'
 import { Intent } from './intents'
 
 export const meta: RouteType.MetaFunction = ({ data, matches }) => [
