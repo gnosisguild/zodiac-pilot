@@ -1,3 +1,4 @@
+import { MessageSquareWarning } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import { BaseAlert } from './BaseAlert'
 
@@ -6,13 +7,14 @@ type WarningProps = PropsWithChildren<{
 }>
 
 export const Warning = ({ children, title }: WarningProps) => (
-  <BaseAlert className="border-amber-600/80 bg-amber-500 dark:border-yellow-600/80 dark:bg-yellow-800">
-    {title && <BaseAlert.Title className="text-white">{title}</BaseAlert.Title>}
-
-    {children && (
-      <BaseAlert.Description className="text-amber-50 dark:text-yellow-200">
-        {children}
-      </BaseAlert.Description>
+  <BaseAlert className="border-amber-600/80 dark:border-yellow-500/80">
+    {title && (
+      <BaseAlert.Title className="text-amber-700 dark:text-amber-500">
+        <MessageSquareWarning size={16} />
+        {title}
+      </BaseAlert.Title>
     )}
+
+    {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )
