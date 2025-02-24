@@ -1,7 +1,4 @@
 export enum Intent {
-  UpdateInitiator = 'UpdateInitiator',
-  UpdateAvatar = 'UpdateAvatar',
-  UpdateChain = 'UpdateChain',
-  Save = 'Save',
-  DryRun = 'DryRun',
+  Edit = 'Edit',
+  Delete = 'Delete',
 }

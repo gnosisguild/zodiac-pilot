@@ -10,6 +10,7 @@ export enum CompanionAppMessageType {
   REQUEST_VERSION = 'COMPANION::REQUEST_VERSION',
   REQUEST_ROUTES = 'COMPANION::REQUEST_ROUTES',
   REQUEST_ROUTE = 'COMPANION::REQUEST_ROUTE',
+  DELETE_ROUTE = 'COMPANION::DELETE_ROUTE',
 }
 
 type CompanionAppSaveRouteMessage = {
@@ -51,6 +52,11 @@ type CompanionAppSaveAndLaunchMessage = {
   data: ExecutionRoute
 }
 
+type CompanionAppDeleteRouteMessage = {
+  type: CompanionAppMessageType.DELETE_ROUTE
+  routeId: string
+}
+
 export type CompanionAppMessage =
   | CompanionAppSaveRouteMessage
   | CompanionAppOpenPilotMessage
@@ -61,3 +67,4 @@ export type CompanionAppMessage =
   | CompanionAppRequestRoutesMessage
   | CompanionAppRequestRouteMessage
   | CompanionAppSaveAndLaunchMessage
+  | CompanionAppDeleteRouteMessage

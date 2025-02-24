@@ -1,11 +1,15 @@
 import { getAvailableChains } from '@/balances-server'
 import { loadRoutes, postMessage, render } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CompanionResponseMessageType } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  CompanionResponseMessageType,
+  type CompanionAppMessage,
+} from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
-import { beforeEach, describe, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
@@ -14,23 +18,55 @@ describe('List Routes', () => {
     mockGetAvailableChains.mockResolvedValue([])
   })
 
-  it('is possible to edit a route', async () => {
-    const route = createMockExecutionRoute({ label: 'Test route' })
+  describe('Edit', () => {
+    it('is possible to edit a route', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
 
-    await render('/edit', {
-      version: '3.4.0',
-      availableRoutes: [route],
+      await render('/edit', {
+        version: '3.4.0',
+        availableRoutes: [route],
+      })
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await loadRoutes()
+
+      await expectRouteToBe(`/edit/${encode(route)}`)
     })
+  })
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+  describe('Remove', () => {
+    it('is possible to remove a route', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
+      const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-    await postMessage({
-      type: CompanionResponseMessageType.PROVIDE_ROUTE,
-      route,
+      await render('/edit', {
+        version: '3.6.0',
+        availableRoutes: [route],
+      })
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Delete' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Confirm delete' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: route.id,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
     })
-
-    await loadRoutes()
-
-    await expectRouteToBe(`/edit/${encode(route)}`)
   })
 })
