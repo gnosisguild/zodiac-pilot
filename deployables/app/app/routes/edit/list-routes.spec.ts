@@ -69,4 +69,29 @@ describe('List Routes', () => {
       )
     })
   })
+
+  it('hides the dialog once the delete is confirmed', async () => {
+    const route = createMockExecutionRoute({ label: 'Test route' })
+
+    await render('/edit', {
+      version: '3.6.0',
+      availableRoutes: [route],
+    })
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Delete' }))
+
+    const { getByRole } = within(
+      screen.getByRole('dialog', { name: 'Confirm delete' }),
+    )
+
+    await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+    await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+
+    await loadRoutes()
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Confirm delete' }),
+    ).not.toBeInTheDocument()
+  })
 })

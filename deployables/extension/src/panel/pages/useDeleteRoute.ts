@@ -32,11 +32,13 @@ export const useDeleteRoute = () => {
       const tabId = tab.id
 
       removeRoute(message.routeId).then(() => {
-        revalidate()
-
-        sendMessageToTab(tabId, {
-          type: CompanionResponseMessageType.DELETED_ROUTE,
-        } satisfies CompanionResponseMessage)
+        sendMessageToTab(
+          tabId,
+          {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          } satisfies CompanionResponseMessage,
+          { protocolCheckOnly: true },
+        ).then(() => revalidate())
       })
     }
 
