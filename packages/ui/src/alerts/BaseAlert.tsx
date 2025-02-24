@@ -17,7 +17,7 @@ export const BaseAlert = ({ children, className }: BaseAlertProps) => {
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
         className={classNames(
-          'px rounded-xs flex flex-col gap-2 text-balance border px-4 py-2 text-sm shadow-md',
+          'border-l-6 flex flex-col gap-4 text-balance px-4 py-2 text-sm',
           className,
         )}
       >
@@ -31,7 +31,10 @@ const Title = ({
   children,
   className,
 }: PropsWithChildren<{ className?: string }>) => (
-  <h4 id={useTitleId()} className={classNames('font-bold', className)}>
+  <h4
+    id={useTitleId()}
+    className={classNames('flex items-center gap-2 font-bold', className)}
+  >
     {children}
   </h4>
 )

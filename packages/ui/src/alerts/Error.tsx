@@ -1,3 +1,4 @@
+import { ServerCrash } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import { BaseAlert } from './BaseAlert'
 
@@ -6,13 +7,14 @@ type ErrorProps = PropsWithChildren<{
 }>
 
 export const Error = ({ children, title }: ErrorProps) => (
-  <BaseAlert className="border-red-600/80 bg-red-500 dark:border-red-600/80 dark:bg-red-800">
-    {title && <BaseAlert.Title className="text-white">{title}</BaseAlert.Title>}
-
-    {children && (
-      <BaseAlert.Description className="text-red-50 dark:text-red-200">
-        {children}
-      </BaseAlert.Description>
+  <BaseAlert className="border-red-600/80 dark:border-red-600/80">
+    {title && (
+      <BaseAlert.Title className="text-red-700 dark:text-red-500">
+        <ServerCrash size={16} />
+        {title}
+      </BaseAlert.Title>
     )}
+
+    {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )

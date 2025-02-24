@@ -1,19 +1,17 @@
+import { InfoIcon } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import { BaseAlert } from './BaseAlert'
 
 type InfoProps = PropsWithChildren<{ title?: string }>
 
 export const Info = ({ title, children }: InfoProps) => (
-  <BaseAlert className="border-gray-200/80 bg-gray-100 dark:border-zinc-600/80 dark:bg-zinc-800">
+  <BaseAlert className="border-blue-400/80 dark:border-blue-600/80">
     {title && (
-      <BaseAlert.Title className="text-gray-700 dark:text-white">
+      <BaseAlert.Title className="text-blue-700 dark:text-blue-500">
+        <InfoIcon size={16} />
         {title}
       </BaseAlert.Title>
     )}
-    {children && (
-      <BaseAlert.Description className="text-gray-500 dark:text-zinc-200">
-        {children}
-      </BaseAlert.Description>
-    )}
+    {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )
