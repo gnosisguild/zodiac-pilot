@@ -4,7 +4,8 @@ import {
   PilotStatus,
   ProvidePilotStatus,
 } from '@/components'
-import { PilotType, ZodiacOsPlain } from '@zodiac/ui'
+import { SiDiscord, SiGithub } from '@icons-pack/react-simple-icons'
+import { GhostLinkButton, PilotType, ZodiacOsPlain } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, List, Plus, Signature } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 
@@ -56,6 +57,26 @@ const Sidebar = () => {
               <PilotStatus />
             </div>
           </MinimumVersion>
+
+          <aside className="flex justify-center p-2">
+            <GhostLinkButton
+              openInNewWindow
+              iconOnly
+              icon={SiDiscord}
+              to="https://discord.com/channels/881881751369175040/884777203332710460"
+            >
+              Open Discord
+            </GhostLinkButton>
+
+            <GhostLinkButton
+              openInNewWindow
+              iconOnly
+              icon={SiGithub}
+              to="https://github.com/gnosis/zodiac-pilot"
+            >
+              View on GitHub
+            </GhostLinkButton>
+          </aside>
         </div>
 
         <div className="bg-radial-[at_100%_100%] flex flex-1 flex-col overflow-hidden from-white to-zinc-50 dark:from-gray-900 dark:to-zinc-950">

@@ -76,6 +76,9 @@ importers:
       '@gnosis.pm/zodiac':
         specifier: 4.0.3
         version: 4.0.3(patch_hash=qw56tepajizvmumojx6tatibqy)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@icons-pack/react-simple-icons':
+        specifier: 12.0.0
+        version: 12.0.0(react@19.0.0)
       '@react-router/express':
         specifier: 7.2.0
         version: 7.2.0(express@4.21.2)(react-router@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.7.3)
