@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "cspell": "8.17.5",
-    "prettier": "3.5.1",
+    "prettier": "3.5.2",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.11",
     "turbo": "2.4.2",
