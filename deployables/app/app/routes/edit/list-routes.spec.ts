@@ -28,7 +28,7 @@ describe('List Routes', () => {
     })
 
     expect(
-      screen.getByRole('cell', { name: 'Test route' }),
+      await screen.findByRole('cell', { name: 'Test route' }),
     ).toHaveAccessibleDescription('Active')
   })
 
@@ -41,6 +41,9 @@ describe('List Routes', () => {
         availableRoutes: [route],
       })
 
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
       await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       await postMessage({
@@ -64,6 +67,9 @@ describe('List Routes', () => {
         availableRoutes: [route],
       })
 
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
       await userEvent.click(
         await screen.findByRole('button', { name: 'Delete' }),
       )
@@ -91,6 +97,9 @@ describe('List Routes', () => {
         availableRoutes: [route],
       })
 
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
       await userEvent.click(
         await screen.findByRole('button', { name: 'Delete' }),
       )
@@ -121,6 +130,9 @@ describe('List Routes', () => {
         availableRoutes: [route],
       })
 
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
       await userEvent.click(
         await screen.findByRole('button', { name: 'Launch' }),
       )
