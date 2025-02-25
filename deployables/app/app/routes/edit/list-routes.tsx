@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { MinimumVersion, OnlyConnected, Page } from '@/components'
+import { fromVersion, MinimumVersion, OnlyConnected, Page } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Chain, ProvideChains } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
@@ -33,7 +33,7 @@ export const clientLoader = async ({
   const [serverData, routes, activeRouteId] = await Promise.all([
     serverLoader(),
     loadRoutes(),
-    loadActiveRouteId(),
+    fromVersion('3.6.0', () => loadActiveRouteId()),
   ])
 
   return { ...serverData, routes, activeRouteId }
