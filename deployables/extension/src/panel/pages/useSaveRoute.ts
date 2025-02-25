@@ -1,12 +1,10 @@
 import { getRoute, saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
+import { useMessageHandler } from '@/utils'
 import { invariant } from '@epic-web/invariant'
-import {
-  CompanionAppMessageType,
-  type CompanionAppMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate, useRevalidator } from 'react-router'
 
 export const useSaveRoute = (lastUsedRouteId: string | null) => {
@@ -17,23 +15,12 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
     null,
   )
 
-  useEffect(() => {
-    const handleSaveRoute = async (message: CompanionAppMessage) => {
-      if (
-        typeof message !== 'object' ||
-        message == null ||
-        !('type' in message)
-      ) {
-        return
-      }
-
-      if (
-        message.type !== CompanionAppMessageType.SAVE_ROUTE &&
-        message.type !== CompanionAppMessageType.SAVE_AND_LAUNCH
-      ) {
-        return
-      }
-
+  useMessageHandler(
+    [
+      CompanionAppMessageType.SAVE_ROUTE,
+      CompanionAppMessageType.SAVE_AND_LAUNCH,
+    ],
+    async (message) => {
       const incomingRoute = message.data
 
       if (
@@ -60,14 +47,8 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           navigate(`/${incomingRoute.id}`)
         }
       })
-    }
-
-    chrome.runtime.onMessage.addListener(handleSaveRoute)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleSaveRoute)
-    }
-  }, [lastUsedRouteId, navigate, revalidate, transactions.length])
+    },
+  )
 
   const cancelUpdate = useCallback(() => setPendingRouteUpdate(null), [])
 

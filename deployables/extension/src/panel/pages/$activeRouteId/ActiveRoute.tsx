@@ -5,14 +5,12 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
-import { getActiveTab, sendMessageToTab } from '@/utils'
+import { getActiveTab, sendMessageToTab, useMessageHandler } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
-  type CompanionAppMessage,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { useEffect } from 'react'
 import {
   Outlet,
   redirect,
@@ -54,39 +52,19 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 export const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
 
-  useEffect(() => {
-    const handleRequestActiveRoute = async (
-      message: CompanionAppMessage,
-      { id, tab }: chrome.runtime.MessageSender,
-    ) => {
-      if (id !== chrome.runtime.id) {
-        return
-      }
-
-      if (tab == null || tab.id == null) {
-        return
-      }
-
-      if (message.type !== CompanionAppMessageType.REQUEST_ACTIVE_ROUTE) {
-        return
-      }
-
+  useMessageHandler(
+    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+    async (_, { tabId }) => {
       await sendMessageToTab(
-        tab.id,
+        tabId,
         {
           type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
           activeRouteId: route.id,
         } satisfies CompanionResponseMessage,
         { protocolCheckOnly: true },
       )
-    }
-
-    chrome.runtime.onMessage.addListener(handleRequestActiveRoute)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleRequestActiveRoute)
-    }
-  }, [route.id])
+    },
+  )
 
   return (
     <ProvideExecutionRoute route={route}>

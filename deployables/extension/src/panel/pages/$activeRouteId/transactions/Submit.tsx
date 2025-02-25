@@ -1,13 +1,11 @@
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useDispatch, useTransactions } from '@/state'
-import {
-  CompanionAppMessageType,
-  type CompanionAppMessage,
-} from '@zodiac/messages'
+import { useMessageHandler } from '@/utils'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { Modal, PrimaryLinkButton, Spinner } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export const Submit = () => {
   const route = useExecutionRoute()
@@ -20,29 +18,17 @@ export const Submit = () => {
 
   const companionAppUrl = useCompanionAppUrl()
 
-  useEffect(() => {
+  useMessageHandler(CompanionAppMessageType.SUBMIT_SUCCESS, () => {
     if (submitPending === false) {
       return
     }
 
-    const handleSubmitSuccess = (message: CompanionAppMessage) => {
-      if (message.type !== CompanionAppMessageType.SUBMIT_SUCCESS) {
-        return
-      }
+    setSubmitPending(false)
 
-      setSubmitPending(false)
-
-      dispatch({
-        type: 'CLEAR_TRANSACTIONS',
-      })
-    }
-
-    chrome.runtime.onMessage.addListener(handleSubmitSuccess)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleSubmitSuccess)
-    }
-  }, [dispatch, submitPending])
+    dispatch({
+      type: 'CLEAR_TRANSACTIONS',
+    })
+  })
 
   return initiator != null ? (
     <>
