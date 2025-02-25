@@ -16,7 +16,7 @@ import {
   Table,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Play, Trash2 } from 'lucide-react'
 import { useState, type PropsWithChildren } from 'react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
@@ -86,6 +86,22 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
       companionRequest(
         {
           type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        () => resolve(),
+      )
+
+      await promise
+
+      return null
+    }
+
+    case Intent.Launch: {
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      companionRequest(
+        {
+          type: CompanionAppMessageType.LAUNCH_ROUTE,
           routeId: getString(data, 'routeId'),
         },
         () => resolve(),
@@ -173,6 +189,9 @@ const Route = ({ route }: RouteProps) => {
       </Table.Td>
       <Table.Td align="right">
         <Actions routeId={route.id}>
+          <MinimumVersion version="3.6.0">
+            <Launch routeId={route.id} />
+          </MinimumVersion>
           <Edit routeId={route.id} />
           <MinimumVersion version="3.6.0">
             <Delete routeId={route.id} />
@@ -198,6 +217,28 @@ const Actions = ({
     >
       {children}
     </div>
+  )
+}
+
+const Launch = ({ routeId }: { routeId: string }) => {
+  const submitting = useIsPending(
+    Intent.Launch,
+    (data) => data.get('routeId') === routeId,
+  )
+
+  return (
+    <Form intent={Intent.Launch}>
+      <GhostButton
+        submit
+        size="tiny"
+        name="routeId"
+        value={routeId}
+        busy={submitting}
+        icon={Play}
+      >
+        Launch
+      </GhostButton>
+    </Form>
   )
 }
 
