@@ -41,7 +41,7 @@ type DeletedRoute = {
 
 type ProvideActiveRoute = {
   type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE
-  activeRouteId: string
+  activeRouteId: string | null
 }
 
 export type CompanionResponseMessage =

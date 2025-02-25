@@ -1,6 +1,6 @@
 import { getAvailableChains } from '@/balances-server'
 import { loadRoutes, postMessage, render } from '@/test-utils'
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   CompanionAppMessageType,
@@ -16,6 +16,20 @@ const mockGetAvailableChains = vi.mocked(getAvailableChains)
 describe('List Routes', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue([])
+  })
+
+  it('indicates which route is currently active', async () => {
+    const route = createMockExecutionRoute({ label: 'Test route' })
+
+    await render('/edit', {
+      version: '3.6.0',
+      availableRoutes: [route],
+      activeRouteId: route.id,
+    })
+
+    expect(
+      screen.getByRole('cell', { name: 'Test route' }),
+    ).toHaveAccessibleDescription('Active')
   })
 
   describe('Edit', () => {
@@ -89,11 +103,11 @@ describe('List Routes', () => {
 
       await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
 
-      await loadRoutes()
-
-      expect(
-        screen.queryByRole('dialog', { name: 'Confirm delete' }),
-      ).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('dialog', { name: 'Confirm delete' }),
+        ).not.toBeInTheDocument()
+      })
     })
   })
 

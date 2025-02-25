@@ -21,41 +21,21 @@ import { useState, type PropsWithChildren } from 'react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
+import { loadActiveRouteId } from './loadActiveRouteId'
+import { loadRoutes } from './loadRoutes'
 
 export const loader = async () => ({ chains: await getAvailableChains() })
 
 export const clientLoader = async ({
   serverLoader,
 }: Route.ClientLoaderArgs) => {
-  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+  const [serverData, routes, activeRouteId] = await Promise.all([
+    serverLoader(),
+    loadRoutes(),
+    loadActiveRouteId(),
+  ])
 
-  companionRequest(
-    {
-      type: CompanionAppMessageType.REQUEST_ROUTES,
-    },
-    (response) =>
-      resolve(
-        response.routes.toSorted((a, b) => {
-          if (a.label == null && b.label == null) {
-            return 0
-          }
-
-          if (a.label == null) {
-            return -1
-          }
-
-          if (b.label == null) {
-            return 1
-          }
-
-          return a.label.localeCompare(b.label)
-        }),
-      ),
-  )
-
-  const [serverData, routes] = await Promise.all([serverLoader(), promise])
-
-  return { ...serverData, routes }
+  return { ...serverData, routes, activeRouteId }
 }
 
 clientLoader.hydrate = true as const
@@ -132,10 +112,14 @@ const ListRoutes = ({
           }
         >
           <OnlyConnected>
-            {'routes' in loaderData && (
+            {'routes' in loaderData && 'activeRouteId' in loaderData && (
               <Routes>
                 {loaderData.routes.map((route) => (
-                  <Route key={route.id} route={route} />
+                  <Route
+                    key={route.id}
+                    route={route}
+                    active={route.id === loaderData.activeRouteId}
+                  />
                 ))}
               </Routes>
             )}
@@ -166,14 +150,21 @@ const Routes = ({ children }: PropsWithChildren) => {
   )
 }
 
-type RouteProps = { route: ExecutionRoute }
+type RouteProps = { route: ExecutionRoute; active: boolean }
 
-const Route = ({ route }: RouteProps) => {
+const Route = ({ route, active }: RouteProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
     <Table.Tr>
-      <Table.Td>{route.label}</Table.Td>
+      <Table.Td aria-describedby={route.id}>
+        {route.label}
+        {active && (
+          <span aria-hidden id={route.id}>
+            Active
+          </span>
+        )}
+      </Table.Td>
       <Table.Td>
         <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
       </Table.Td>
@@ -278,6 +269,7 @@ const Delete = ({ routeId }: { routeId: string }) => {
         icon={Trash2}
         style="critical"
         onClick={() => setConfirmDelete(true)}
+        busy={submitting}
       >
         Delete
       </GhostButton>
@@ -289,7 +281,7 @@ const Delete = ({ routeId }: { routeId: string }) => {
         open={confirmDelete}
       >
         <Modal.Actions>
-          <Form intent={Intent.Delete}>
+          <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
             <PrimaryButton
               submit
               name="routeId"
