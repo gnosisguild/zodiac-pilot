@@ -1,16 +1,19 @@
 import classNames from 'classnames'
 import type { ReactNode } from 'react'
 
-interface Props {
+type Props = {
+  id?: string
   head?: ReactNode
-  color: 'success' | 'danger' | 'warning' | 'info'
+  color?: 'success' | 'danger' | 'warning' | 'info'
   children?: ReactNode
 }
 
-export const Tag = ({ head, children, color }: Props) => (
+export const Tag = ({ id, head, children, color = 'info' }: Props) => (
   <div
+    aria-hidden
+    id={id}
     className={classNames(
-      'rounded-xs inline-flex items-center justify-center gap-2 border font-semibold',
+      'rounded-xs inline-flex cursor-default select-none items-center justify-center gap-2 border font-semibold',
       color === 'danger' &&
         'border-red-400/80 bg-red-50/80 text-red-600 dark:border-red-800/80 dark:bg-red-900/10 dark:text-red-500/80',
       color === 'success' &&
@@ -32,6 +35,12 @@ export const Tag = ({ head, children, color }: Props) => (
       </div>
     )}
 
-    {children && <div className="py-1 pr-2 text-xs">{children}</div>}
+    {children && (
+      <div
+        className={classNames('py-1 text-xs', head == null ? 'px-2' : 'pr-2')}
+      >
+        {children}
+      </div>
+    )}
   </div>
 )

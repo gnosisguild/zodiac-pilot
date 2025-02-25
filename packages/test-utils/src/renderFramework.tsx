@@ -100,9 +100,20 @@ export async function createRenderFramework<Config extends RouteConfig>(
     currentPath: NonNullable<Paths>,
     { searchParams = {}, loadActions, ...options }: RenderFrameworkOptions = {},
   ): Promise<RenderFrameworkResult> {
+    const { promise, resolve } = Promise.withResolvers<void>()
+
     const Stub = createRoutesStub([
       {
         Component: CombinedTestElement,
+        async loader() {
+          if (loadActions != null) {
+            await loadActions()
+          }
+
+          resolve()
+
+          return null
+        },
         // @ts-expect-error the real types and the stub types aren't nicely aligned
         children: [...stubbedRoutes],
       },
@@ -113,9 +124,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
       options,
     )
 
-    if (loadActions != null) {
-      await loadActions()
-    }
+    await promise
 
     await waitForTestElement()
     await sleepTillIdle()

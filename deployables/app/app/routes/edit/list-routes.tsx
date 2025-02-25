@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { MinimumVersion, OnlyConnected, Page } from '@/components'
+import { fromVersion, MinimumVersion, OnlyConnected, Page } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Chain, ProvideChains } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
@@ -11,51 +11,33 @@ import {
   Form,
   GhostButton,
   Info,
+  MeatballMenu,
   Modal,
   PrimaryButton,
   Table,
+  Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Play, Trash2 } from 'lucide-react'
 import { useState, type PropsWithChildren } from 'react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
+import { loadActiveRouteId } from './loadActiveRouteId'
+import { loadRoutes } from './loadRoutes'
 
 export const loader = async () => ({ chains: await getAvailableChains() })
 
 export const clientLoader = async ({
   serverLoader,
 }: Route.ClientLoaderArgs) => {
-  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+  const [serverData, routes, activeRouteId] = await Promise.all([
+    serverLoader(),
+    loadRoutes(),
+    fromVersion('3.6.0', () => loadActiveRouteId()),
+  ])
 
-  companionRequest(
-    {
-      type: CompanionAppMessageType.REQUEST_ROUTES,
-    },
-    (response) =>
-      resolve(
-        response.routes.toSorted((a, b) => {
-          if (a.label == null && b.label == null) {
-            return 0
-          }
-
-          if (a.label == null) {
-            return -1
-          }
-
-          if (b.label == null) {
-            return 1
-          }
-
-          return a.label.localeCompare(b.label)
-        }),
-      ),
-  )
-
-  const [serverData, routes] = await Promise.all([serverLoader(), promise])
-
-  return { ...serverData, routes }
+  return { ...serverData, routes, activeRouteId }
 }
 
 clientLoader.hydrate = true as const
@@ -95,6 +77,22 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 
       return null
     }
+
+    case Intent.Launch: {
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      companionRequest(
+        {
+          type: CompanionAppMessageType.LAUNCH_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        () => resolve(),
+      )
+
+      await promise
+
+      return null
+    }
   }
 }
 
@@ -116,10 +114,14 @@ const ListRoutes = ({
           }
         >
           <OnlyConnected>
-            {'routes' in loaderData && (
+            {'routes' in loaderData && 'activeRouteId' in loaderData && (
               <Routes>
                 {loaderData.routes.map((route) => (
-                  <Route key={route.id} route={route} />
+                  <Route
+                    key={route.id}
+                    route={route}
+                    active={route.id === loaderData.activeRouteId}
+                  />
                 ))}
               </Routes>
             )}
@@ -150,14 +152,23 @@ const Routes = ({ children }: PropsWithChildren) => {
   )
 }
 
-type RouteProps = { route: ExecutionRoute }
+type RouteProps = { route: ExecutionRoute; active: boolean }
 
-const Route = ({ route }: RouteProps) => {
+const Route = ({ route, active }: RouteProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
     <Table.Tr>
-      <Table.Td>{route.label}</Table.Td>
+      <Table.Td aria-describedby={route.id}>
+        <div className="flex items-center justify-between gap-4">
+          {route.label}
+          {active && (
+            <Tag aria-hidden id={route.id} color="success">
+              Active
+            </Tag>
+          )}
+        </div>
+      </Table.Td>
       <Table.Td>
         <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
       </Table.Td>
@@ -173,6 +184,9 @@ const Route = ({ route }: RouteProps) => {
       </Table.Td>
       <Table.Td align="right">
         <Actions routeId={route.id}>
+          <MinimumVersion version="3.6.0">
+            <Launch routeId={route.id} />
+          </MinimumVersion>
           <Edit routeId={route.id} />
           <MinimumVersion version="3.6.0">
             <Delete routeId={route.id} />
@@ -188,16 +202,47 @@ const Actions = ({
   routeId,
 }: PropsWithChildren<{ routeId: string }>) => {
   const submitting = useIsPending((data) => data.get('routeId') === routeId)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div
       className={classNames(
-        'flex justify-center transition-opacity group-hover:opacity-100',
-        submitting ? 'opacity-100' : 'opacity-0',
+        'flex justify-end transition-opacity group-hover:opacity-100',
+        submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
-      {children}
+      <MeatballMenu
+        size="tiny"
+        label="Account options"
+        onShow={() => setMenuOpen(true)}
+        onHide={() => setMenuOpen(false)}
+      >
+        {children}
+      </MeatballMenu>
     </div>
+  )
+}
+
+const Launch = ({ routeId }: { routeId: string }) => {
+  const submitting = useIsPending(
+    Intent.Launch,
+    (data) => data.get('routeId') === routeId,
+  )
+
+  return (
+    <Form intent={Intent.Launch}>
+      <GhostButton
+        submit
+        align="left"
+        size="tiny"
+        name="routeId"
+        value={routeId}
+        busy={submitting}
+        icon={Play}
+      >
+        Launch
+      </GhostButton>
+    </Form>
   )
 }
 
@@ -211,6 +256,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
     <Form intent={Intent.Edit}>
       <GhostButton
         submit
+        align="left"
         size="tiny"
         name="routeId"
         icon={Pencil}
@@ -233,10 +279,12 @@ const Delete = ({ routeId }: { routeId: string }) => {
   return (
     <>
       <GhostButton
+        align="left"
         size="tiny"
         icon={Trash2}
         style="critical"
         onClick={() => setConfirmDelete(true)}
+        busy={submitting}
       >
         Delete
       </GhostButton>
@@ -248,7 +296,7 @@ const Delete = ({ routeId }: { routeId: string }) => {
         open={confirmDelete}
       >
         <Modal.Actions>
-          <Form intent={Intent.Delete}>
+          <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
             <PrimaryButton
               submit
               name="routeId"

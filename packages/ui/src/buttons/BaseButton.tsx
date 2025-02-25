@@ -28,6 +28,11 @@ type SharedButtonProps = {
    * an indicator and also be disabled.
    */
   busy?: boolean
+
+  /**
+   * @default center
+   */
+  align?: 'left' | 'center' | 'right'
 }
 
 export type BaseButtonProps = Omit<ComponentPropsWithoutRef<'button'>, 'type'> &
@@ -45,6 +50,7 @@ export const BaseButton = ({
   intent,
   busy = false,
   disabled = busy,
+  align = 'center',
   ...props
 }: BaseButtonProps) => (
   <button
@@ -63,8 +69,11 @@ export const BaseButton = ({
   >
     <span
       className={classNames(
-        'pointer-events-none flex items-center justify-center gap-2 whitespace-nowrap',
+        'pointer-events-none flex items-center gap-2 whitespace-nowrap',
         busy && 'invisible',
+        align === 'left' && 'justify-start',
+        align === 'center' && 'justify-center',
+        align === 'right' && 'justify-end',
       )}
     >
       {Icon && (

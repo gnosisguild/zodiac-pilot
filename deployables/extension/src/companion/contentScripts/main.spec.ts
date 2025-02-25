@@ -87,6 +87,19 @@ describe('Companion App Content Script', () => {
           routeId: 'test-route',
         } satisfies CompanionAppMessage,
       ],
+      [
+        CompanionAppMessageType.LAUNCH_ROUTE,
+        {
+          type: CompanionAppMessageType.LAUNCH_ROUTE,
+          routeId: 'test-route',
+        } satisfies CompanionAppMessage,
+      ],
+      [
+        CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+        {
+          type: CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+        } satisfies CompanionAppMessage,
+      ],
     ])('forwards %s events to the extension', async (_, event) => {
       await importModule()
 
@@ -144,6 +157,13 @@ describe('Companion App Content Script', () => {
         CompanionResponseMessageType.DELETED_ROUTE,
         {
           type: CompanionResponseMessageType.DELETED_ROUTE,
+        } satisfies CompanionResponseMessage,
+      ],
+      [
+        CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        {
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: 'test-route',
         } satisfies CompanionResponseMessage,
       ],
     ])('forwards %s events from the extension', async (_, event) => {

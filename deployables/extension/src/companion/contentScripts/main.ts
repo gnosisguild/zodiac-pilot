@@ -21,6 +21,8 @@ window.addEventListener(
       case CompanionAppMessageType.REQUEST_ROUTES:
       case CompanionAppMessageType.REQUEST_ROUTE:
       case CompanionAppMessageType.DELETE_ROUTE:
+      case CompanionAppMessageType.LAUNCH_ROUTE:
+      case CompanionAppMessageType.REQUEST_ACTIVE_ROUTE:
       case CompanionAppMessageType.PING: {
         chrome.runtime.sendMessage(event.data, () => {
           captureLastError()
@@ -64,6 +66,7 @@ chrome.runtime.onMessage.addListener(
       case CompanionResponseMessageType.LIST_ROUTES:
       case CompanionResponseMessageType.PROVIDE_ROUTE:
       case CompanionResponseMessageType.DELETED_ROUTE:
+      case CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE:
       case PilotMessageType.PILOT_DISCONNECT: {
         window.postMessage(message, '*')
 

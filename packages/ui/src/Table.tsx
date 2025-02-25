@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import type { PropsWithChildren } from 'react'
+import type { ComponentPropsWithoutRef, PropsWithChildren } from 'react'
 
 export const Table = ({ children }: PropsWithChildren) => (
   <table className="w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-950 dark:shadow-md">
@@ -43,13 +43,20 @@ const Th = ({ children, align = 'left', className }: ThProps) => (
 
 Table.Th = Th
 
-type TdProps = PropsWithChildren<{
-  align?: Align
-  noWrap?: boolean
-}>
+type TdProps = Omit<ComponentPropsWithoutRef<'td'>, 'className'> &
+  PropsWithChildren<{
+    align?: Align
+    noWrap?: boolean
+  }>
 
-const Td = ({ children, align = 'left', noWrap = false }: TdProps) => (
+const Td = ({
+  children,
+  align = 'left',
+  noWrap = false,
+  ...props
+}: TdProps) => (
   <td
+    {...props}
     className={classNames(
       'border-b border-zinc-300 px-2 py-1.5 text-sm text-zinc-900/75 group-last:border-b-0 group-hover:bg-zinc-200 group-hover:text-zinc-900 dark:border-zinc-700 dark:text-white/75 dark:group-hover:bg-zinc-900 dark:group-hover:text-white',
       align === 'left' && 'text-left',

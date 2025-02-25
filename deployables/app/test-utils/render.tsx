@@ -39,26 +39,44 @@ type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * @default []
    */
   availableRoutes?: ExecutionRoute[]
+
+  /**
+   * The route that is currently active in the browser extension
+   *
+   * @default undefined
+   */
+  activeRouteId?: string | null
 }
 
 export const render = async (
   path: string,
-  { connected = true, version, availableRoutes = [], ...options }: Options = {},
+  {
+    connected = true,
+    version,
+    availableRoutes = [],
+    activeRouteId = null,
+    ...options
+  }: Options = {},
 ) => {
   const renderResult = await baseRender(path, {
     ...options,
     wrapper: RenderWrapper,
-    loadActions() {
-      return loadRoutes(...availableRoutes)
+    async loadActions() {
+      if (version != null) {
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_VERSION,
+          version,
+        })
+      }
+
+      await loadRoutes(...availableRoutes)
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId,
+      })
     },
   })
-
-  if (version != null) {
-    await postMessage({
-      type: CompanionResponseMessageType.PROVIDE_VERSION,
-      version,
-    })
-  }
 
   if (connected) {
     await postMessage({ type: PilotMessageType.PILOT_CONNECT })

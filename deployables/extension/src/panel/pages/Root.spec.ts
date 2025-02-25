@@ -12,6 +12,7 @@ import {
 import type { ExecutionRoute } from '@/types'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -22,6 +23,154 @@ import { describe, expect, it, vi } from 'vitest'
 import { loader, Root } from './Root'
 
 describe('Root', () => {
+  describe('Launch route', () => {
+    const mockIncomingLaunch = async (routeId: string, tab: MockTab) => {
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.LAUNCH_ROUTE,
+          routeId,
+        } satisfies CompanionAppMessage,
+        { id: chromeMock.runtime.id, tab },
+        vi.fn(),
+      )
+    }
+
+    it('is possible to launch a route', async () => {
+      await mockRoute({ id: 'test-route' })
+      const activeTab = createMockTab()
+
+      await render('/', [{ path: '/', Component: Root, loader }], {
+        inspectRoutes: ['/:activeRouteId'],
+        activeTab,
+      })
+
+      mockIncomingLaunch('test-route', activeTab)
+
+      await expectRouteToBe('/test-route')
+    })
+
+    it('is possible to launch a new route and clear transactions', async () => {
+      const activeTab = createMockTab()
+
+      const selectedRoute = createMockRoute({
+        avatar: randomPrefixedAddress(),
+        id: 'firstRoute',
+        label: 'First route',
+      })
+
+      await saveLastUsedRouteId('firstRoute')
+
+      mockRoutes(selectedRoute, {
+        id: 'secondRoute',
+        label: 'Second route',
+        avatar: randomPrefixedAddress(),
+      })
+
+      await render('/', [{ path: '/', Component: Root, loader }], {
+        initialState: [createTransaction()],
+        activeTab,
+        inspectRoutes: ['/:activeRouteId/clear-transactions/:newActiveRouteId'],
+      })
+
+      await mockIncomingLaunch('secondRoute', activeTab)
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Clear transactions' }),
+      )
+
+      await expectRouteToBe('/firstRoute/clear-transactions/secondRoute')
+    })
+
+    describe('Clearing transactions', () => {
+      it('warns about clearing transactions when the avatars differ', async () => {
+        const activeTab = createMockTab()
+
+        const selectedRoute = createMockRoute({
+          avatar: randomPrefixedAddress(),
+          id: 'firstRoute',
+          label: 'First route',
+        })
+
+        await mockRoutes(selectedRoute, {
+          avatar: randomPrefixedAddress(),
+          id: 'secondRoute',
+          label: 'Second route',
+        })
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render('/', [{ path: '/', Component: Root, loader }], {
+          initialState: [createTransaction()],
+          activeTab,
+        })
+
+        await mockIncomingLaunch('secondRoute', activeTab)
+
+        expect(
+          screen.getByRole('dialog', { name: 'Clear transactions' }),
+        ).toBeInTheDocument()
+      })
+
+      it('does not warn about clearing transactions when the avatars stay the same', async () => {
+        const activeTab = createMockTab()
+
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          label: 'First route',
+          avatar: ETH_ZERO_ADDRESS,
+        })
+
+        await mockRoutes(selectedRoute, {
+          id: 'secondRoute',
+          label: 'Second route',
+          avatar: ETH_ZERO_ADDRESS,
+        })
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render('/', [{ path: '/', Component: Root, loader }], {
+          initialState: [createTransaction()],
+          activeTab,
+          inspectRoutes: ['/:activeRouteId'],
+        })
+
+        await mockIncomingLaunch('secondRoute', activeTab)
+
+        expect(
+          screen.queryByRole('dialog', { name: 'Clear transactions' }),
+        ).not.toBeInTheDocument()
+      })
+
+      it('should not warn about clearing transactions when there are none', async () => {
+        const activeTab = createMockTab()
+
+        const selectedRoute = createMockRoute({
+          id: 'firstRoute',
+          label: 'First route',
+          avatar: randomPrefixedAddress(),
+        })
+
+        await mockRoutes(selectedRoute, {
+          id: 'secondRoute',
+          label: 'Second route',
+          avatar: randomPrefixedAddress(),
+        })
+
+        await saveLastUsedRouteId(selectedRoute.id)
+
+        await render('/', [{ path: '/', Component: Root, loader }], {
+          inspectRoutes: ['/:activeRouteId'],
+          activeTab,
+        })
+
+        await mockIncomingLaunch('secondRoute', activeTab)
+
+        expect(
+          screen.queryByRole('dialog', { name: 'Clear transactions' }),
+        ).not.toBeInTheDocument()
+      })
+    })
+  })
+
   describe('Delete route', () => {
     const mockIncomingDelete = async (routeId: string, tab: MockTab) => {
       await callListeners(
@@ -45,7 +194,7 @@ describe('Root', () => {
 
       await mockIncomingDelete('test-route', tab)
 
-      expect(getRoutes()).resolves.toEqual([])
+      await expect(getRoutes()).resolves.toEqual([])
     })
   })
 
