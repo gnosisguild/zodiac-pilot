@@ -22,6 +22,7 @@ window.addEventListener(
       case CompanionAppMessageType.REQUEST_ROUTE:
       case CompanionAppMessageType.DELETE_ROUTE:
       case CompanionAppMessageType.LAUNCH_ROUTE:
+      case CompanionAppMessageType.REQUEST_ACTIVE_ROUTE:
       case CompanionAppMessageType.PING: {
         chrome.runtime.sendMessage(event.data, () => {
           captureLastError()

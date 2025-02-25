@@ -94,6 +94,12 @@ describe('Companion App Content Script', () => {
           routeId: 'test-route',
         } satisfies CompanionAppMessage,
       ],
+      [
+        CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+        {
+          type: CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+        } satisfies CompanionAppMessage,
+      ],
     ])('forwards %s events to the extension', async (_, event) => {
       await importModule()
 
