@@ -62,6 +62,13 @@ export const render = async (
     ...options,
     wrapper: RenderWrapper,
     async loadActions() {
+      if (version != null) {
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_VERSION,
+          version,
+        })
+      }
+
       await loadRoutes(...availableRoutes)
 
       await postMessage({
@@ -70,13 +77,6 @@ export const render = async (
       })
     },
   })
-
-  if (version != null) {
-    await postMessage({
-      type: CompanionResponseMessageType.PROVIDE_VERSION,
-      version,
-    })
-  }
 
   if (connected) {
     await postMessage({ type: PilotMessageType.PILOT_CONNECT })

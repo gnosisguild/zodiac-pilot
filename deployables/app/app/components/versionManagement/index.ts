@@ -2,5 +2,5 @@ export {
   ProvideExtensionVersion,
   useSatisfiesVersion,
 } from './ExtensionVersionContext'
-export { fromVersion } from './fromVerison'
+export { fromVersion } from './fromVersion'
 export { MinimumVersion } from './MinimumVersion'
