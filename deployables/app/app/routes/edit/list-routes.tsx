@@ -14,6 +14,7 @@ import {
   Modal,
   PrimaryButton,
   Table,
+  Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
 import { Pencil, Play, Trash2 } from 'lucide-react'
@@ -158,12 +159,14 @@ const Route = ({ route, active }: RouteProps) => {
   return (
     <Table.Tr>
       <Table.Td aria-describedby={route.id}>
-        {route.label}
-        {active && (
-          <span aria-hidden id={route.id}>
-            Active
-          </span>
-        )}
+        <div className="flex items-center justify-between gap-4">
+          {route.label}
+          {active && (
+            <Tag aria-hidden id={route.id} color="success">
+              Active
+            </Tag>
+          )}
+        </div>
       </Table.Td>
       <Table.Td>
         <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
