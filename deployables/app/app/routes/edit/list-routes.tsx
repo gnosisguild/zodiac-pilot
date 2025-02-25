@@ -11,6 +11,7 @@ import {
   Form,
   GhostButton,
   Info,
+  MeatballMenu,
   Modal,
   PrimaryButton,
   Table,
@@ -201,15 +202,23 @@ const Actions = ({
   routeId,
 }: PropsWithChildren<{ routeId: string }>) => {
   const submitting = useIsPending((data) => data.get('routeId') === routeId)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div
       className={classNames(
-        'flex justify-center transition-opacity group-hover:opacity-100',
-        submitting ? 'opacity-100' : 'opacity-0',
+        'flex justify-end transition-opacity group-hover:opacity-100',
+        submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
-      {children}
+      <MeatballMenu
+        size="tiny"
+        label="Account options"
+        onShow={() => setMenuOpen(true)}
+        onHide={() => setMenuOpen(false)}
+      >
+        {children}
+      </MeatballMenu>
     </div>
   )
 }
@@ -224,6 +233,7 @@ const Launch = ({ routeId }: { routeId: string }) => {
     <Form intent={Intent.Launch}>
       <GhostButton
         submit
+        align="left"
         size="tiny"
         name="routeId"
         value={routeId}
@@ -246,6 +256,7 @@ const Edit = ({ routeId }: { routeId: string }) => {
     <Form intent={Intent.Edit}>
       <GhostButton
         submit
+        align="left"
         size="tiny"
         name="routeId"
         icon={Pencil}
@@ -268,6 +279,7 @@ const Delete = ({ routeId }: { routeId: string }) => {
   return (
     <>
       <GhostButton
+        align="left"
         size="tiny"
         icon={Trash2}
         style="critical"
