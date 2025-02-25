@@ -73,7 +73,9 @@ export const RouteBubble = () => {
         </Link>
 
         <Link
-          to={`/routes`}
+          target="_blank"
+          rel="noopener noreferrer"
+          to={`${useCompanionAppUrl()}/edit`}
           className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
         >
           <span className="sr-only">Configure routes</span>
