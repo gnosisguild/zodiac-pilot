@@ -795,8 +795,8 @@ importers:
         specifier: 5.0.6
         version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify:
-        specifier: 11.0.3
-        version: 11.0.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 11.0.5
+        version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
         specifier: 3.1.1
         version: 3.1.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -6275,8 +6275,8 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  react-toastify@11.0.3:
-    resolution: {integrity: sha512-cbPtHJPfc0sGqVwozBwaTrTu1ogB9+BLLjd4dDXd863qYLj7DGrQ2sg5RAChjFUB4yc3w8iXOtWcJqPK/6xqRQ==}
+  react-toastify@11.0.5:
+    resolution: {integrity: sha512-EpqHBGvnSTtHYhCPLxML05NLY2ZX0JURbAdNYa6BUkk+amz4wbKBQvoKQAB0ardvSarUBuY4Q4s1sluAzZwkmA==}
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
@@ -13992,7 +13992,7 @@ snapshots:
       requestidlecallback: 0.3.0
       substyle: 9.4.1(react@19.0.0)
 
-  react-toastify@11.0.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-toastify@11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       clsx: 2.1.1
       react: 19.0.0
