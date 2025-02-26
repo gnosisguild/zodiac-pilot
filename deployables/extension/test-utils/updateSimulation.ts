@@ -2,24 +2,26 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
-import { callListeners, chromeMock } from './chrome'
+import { callListeners, chromeMock, createMockTab } from './chrome'
 
 type UpdateSimulationOptions = {
-  windowId: number
   rpcUrl: string
 }
 
-export const updateSimulation = ({
-  windowId,
-  rpcUrl,
-}: UpdateSimulationOptions) =>
-  callListeners(
+export const updateSimulation = (
+  tab: Partial<chrome.tabs.Tab>,
+  { rpcUrl }: UpdateSimulationOptions,
+) => {
+  const currentTab = createMockTab(tab)
+
+  return callListeners(
     chromeMock.runtime.onMessage,
     {
       type: PilotSimulationMessageType.SIMULATE_UPDATE,
-      windowId,
+      windowId: currentTab.windowId,
       rpcUrl,
     } satisfies SimulationMessage,
-    { id: chrome.runtime.id },
+    { id: chrome.runtime.id, tab: currentTab },
     () => {},
   )
+}

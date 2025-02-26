@@ -37,12 +37,13 @@ describe('Companion Enablement', () => {
 
   describe('Fork updates', () => {
     it('notifies the companion app about fork updates', async () => {
-      await startPilotSession({ windowId: 1, tabId: 2 })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      await connectCompanionApp({ id: 2, windowId: 1 })
+      await startPilotSession({ windowId: 1 }, tab)
 
-      await startSimulation({
-        windowId: 1,
+      await connectCompanionApp(tab)
+
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
@@ -54,14 +55,15 @@ describe('Companion Enablement', () => {
     })
 
     it('notifies the companion app about forks even when the simulation is already running', async () => {
-      await startPilotSession({ windowId: 1, tabId: 2 })
-      await startSimulation({
-        windowId: 1,
+      const tab = createMockTab({ id: 2, windowId: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
 
-      await connectCompanionApp({ id: 2, windowId: 1 })
+      await connectCompanionApp(tab)
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
         type: CompanionResponseMessageType.FORK_UPDATED,
@@ -70,14 +72,15 @@ describe('Companion Enablement', () => {
     })
 
     it('does not notify the companion app when the tab has been closed', async () => {
-      await startPilotSession({ windowId: 1, tabId: 2 })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      const tab = await connectCompanionApp({ id: 2, windowId: 1 })
+      await startPilotSession({ windowId: 1 }, tab)
+
+      await connectCompanionApp(tab)
 
       await mockTabClose(tab.id)
 
-      await startSimulation({
-        windowId: 1,
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })

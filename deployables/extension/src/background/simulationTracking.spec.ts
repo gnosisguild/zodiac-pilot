@@ -1,5 +1,6 @@
 import {
   chromeMock,
+  createMockTab,
   mockActiveTab,
   mockRpcRequest,
   startPilotSession,
@@ -24,11 +25,13 @@ describe('Simulation tracking', () => {
 
   describe('RPC redirect rules', () => {
     it('sets up redirect rules when a simulation starts', async () => {
-      await startPilotSession({ windowId: 1, tabId: 2 })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      await startPilotSession({ windowId: 1 }, tab)
 
-      await startSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
+
+      await startSimulation(tab, { rpcUrl: 'http://test.com' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -57,12 +60,14 @@ describe('Simulation tracking', () => {
     })
 
     it('removes redirect rules when the simulation stops', async () => {
-      startPilotSession({ windowId: 1, tabId: 2 })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      startPilotSession({ windowId: 1 }, tab)
 
-      await startSimulation({ windowId: 1 })
-      await stopSimulation({ windowId: 1 })
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
+
+      await startSimulation(tab)
+      await stopSimulation(tab)
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -75,14 +80,13 @@ describe('Simulation tracking', () => {
     })
 
     it('removes redirect rules when the pilot session ends', async () => {
-      const { stopPilotSession } = await startPilotSession({
-        windowId: 1,
-        tabId: 2,
-      })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 2, chainId: 1, url: 'http://test-url' })
+      const { stopPilotSession } = await startPilotSession({ windowId: 1 }, tab)
 
-      await startSimulation({ windowId: 1 })
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
+
+      await startSimulation(tab)
       await stopPilotSession()
 
       expect(
@@ -96,10 +100,12 @@ describe('Simulation tracking', () => {
     })
 
     it('updates the redirect rules when a new RPC endpoint is detected during simulation', async () => {
-      await startPilotSession({ windowId: 1, tabId: 1 })
-      await startSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
+      const tab = createMockTab({ id: 1, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+      await startPilotSession({ windowId: 1 }, tab)
+      await startSimulation(tab, { rpcUrl: 'http://test.com' })
+
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://another-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -128,12 +134,14 @@ describe('Simulation tracking', () => {
     })
 
     it('updates RPC redirect rules when the rpc URL of a fork changes', async () => {
-      await startPilotSession({ windowId: 1, tabId: 1 })
-      await startSimulation({ windowId: 1, rpcUrl: undefined })
+      const tab = createMockTab({ id: 2, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://another-url' })
+      await startPilotSession({ windowId: 1 }, tab)
+      await startSimulation(tab, { rpcUrl: undefined })
 
-      await updateSimulation({ windowId: 1, rpcUrl: 'http://test.com' })
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://another-url' })
+
+      await updateSimulation(tab, { rpcUrl: 'http://test.com' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -141,7 +149,7 @@ describe('Simulation tracking', () => {
         expect.objectContaining({
           addRules: [
             {
-              id: 1,
+              id: tab.id,
               priority: 1,
               action: {
                 type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
@@ -152,7 +160,7 @@ describe('Simulation tracking', () => {
                   chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
                 ],
                 regexFilter: '^(http:\\/\\/another\\-url)$',
-                tabIds: [1],
+                tabIds: [tab.id],
               },
             },
           ],
@@ -162,11 +170,13 @@ describe('Simulation tracking', () => {
     })
 
     it('stops updating the redirect rules when the simulation stops', async () => {
-      await startPilotSession({ windowId: 1, tabId: 1 })
-      await startSimulation({ windowId: 1 })
-      await stopSimulation({ windowId: 1 })
+      const tab = createMockTab({ id: 1, windowId: 1 })
 
-      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
+      await startPilotSession({ windowId: 1 }, tab)
+      await startSimulation(tab)
+      await stopSimulation(tab)
+
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -194,15 +204,14 @@ describe('Simulation tracking', () => {
     })
 
     it('stops updating the redirect rules when the session ends', async () => {
-      const { stopPilotSession } = await startPilotSession({
-        windowId: 1,
-        tabId: 1,
-      })
+      const tab = createMockTab({ id: 1, windowId: 1 })
+
+      const { stopPilotSession } = await startPilotSession({ windowId: 1 }, tab)
       await startSimulation({ windowId: 1 })
 
       await stopPilotSession()
 
-      await mockRpcRequest({ tabId: 1, chainId: 1, url: 'http://test-url' })
+      await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
 
       expect(
         chromeMock.declarativeNetRequest.updateSessionRules,
@@ -244,9 +253,11 @@ describe('Simulation tracking', () => {
 
   describe('Badge', () => {
     it('updates the badge when a simulation starts', async () => {
-      await startPilotSession({ windowId: 1, tabId: 1 })
+      const tab = createMockTab({ id: 1, windowId: 1 })
 
-      await startSimulation({ windowId: 1 })
+      await startPilotSession({ windowId: 1 }, tab)
+
+      await startSimulation(tab)
 
       expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
         text: '🟢',
@@ -255,10 +266,12 @@ describe('Simulation tracking', () => {
     })
 
     it('updates the badge when a simulation stops', async () => {
-      await startPilotSession({ windowId: 1, tabId: 1 })
+      const tab = createMockTab({ id: 1, windowId: 1 })
 
-      await startSimulation({ windowId: 1 })
-      await stopSimulation({ windowId: 1 })
+      await startPilotSession({ windowId: 1 }, tab)
+
+      await startSimulation(tab)
+      await stopSimulation(tab)
 
       expect(chromeMock.action.setBadgeText).toHaveBeenCalledWith({
         text: '',
@@ -267,12 +280,11 @@ describe('Simulation tracking', () => {
     })
 
     it('updates the badge when a session ends', async () => {
-      const { stopPilotSession } = await startPilotSession({
-        windowId: 1,
-        tabId: 1,
-      })
+      const tab = createMockTab({ id: 1, windowId: 1 })
 
-      await startSimulation({ windowId: 1 })
+      const { stopPilotSession } = await startPilotSession({ windowId: 1 }, tab)
+
+      await startSimulation(tab)
 
       await stopPilotSession()
 
@@ -302,8 +314,9 @@ describe('Simulation tracking', () => {
 
       onSimulationUpdate.addListener(handler)
 
-      await startSimulation({
-        windowId: 1,
+      const tab = createMockTab({ id: 1, windowId: 1 })
+
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
@@ -321,12 +334,13 @@ describe('Simulation tracking', () => {
 
       onSimulationUpdate.addListener(handler)
 
-      await startSimulation({
-        windowId: 1,
+      const tab = createMockTab({ id: 1, windowId: 1 })
+
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
-      await stopSimulation({ windowId: 1 })
+      await stopSimulation(tab)
 
       expect(handler).toHaveBeenCalledWith(null)
     })
@@ -338,12 +352,13 @@ describe('Simulation tracking', () => {
 
       onSimulationUpdate.addListener(handler)
 
-      await startSimulation({
-        windowId: 1,
+      const tab = createMockTab({ id: 1, windowId: 1 })
+
+      await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
-      await updateSimulation({ windowId: 1, rpcUrl: 'http://new-rpc.com' })
+      await updateSimulation(tab, { rpcUrl: 'http://new-rpc.com' })
 
       expect(handler).toHaveBeenCalledWith({
         chainId: Chain.ETH,

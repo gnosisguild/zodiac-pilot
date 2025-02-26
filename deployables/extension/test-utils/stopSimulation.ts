@@ -2,19 +2,18 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
-import { callListeners, chromeMock } from './chrome'
+import { callListeners, chromeMock, createMockTab } from './chrome'
 
-type StopSimulationOptions = {
-  windowId: number
-}
+export const stopSimulation = (tab: Partial<chrome.tabs.Tab>) => {
+  const currentTab = createMockTab(tab)
 
-export const stopSimulation = ({ windowId }: StopSimulationOptions) =>
-  callListeners(
+  return callListeners(
     chromeMock.runtime.onMessage,
     {
       type: PilotSimulationMessageType.SIMULATE_STOP,
-      windowId,
+      windowId: currentTab.windowId,
     } satisfies SimulationMessage,
-    { id: chromeMock.runtime.id },
+    { id: chromeMock.runtime.id, tab: currentTab },
     () => {},
   )
+}

@@ -9,7 +9,7 @@ import {
   type Message,
 } from '@zodiac/messages'
 import { createMockExecutionRoute } from '@zodiac/test-utils'
-import { createMockManifest } from '@zodiac/test-utils/chrome'
+import { createMockManifest, createMockTab } from '@zodiac/test-utils/chrome'
 import { randomUUID } from 'crypto'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -169,9 +169,16 @@ describe('Companion App Content Script', () => {
     ])('forwards %s events from the extension', async (_, event) => {
       await importModule()
 
+      const tab = createMockTab()
+
       const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-      await callListeners(chromeMock.runtime.onMessage, event, {}, vi.fn())
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        event,
+        { id: chrome.runtime.id, tab },
+        vi.fn(),
+      )
 
       expect(mockPostMessage).toHaveBeenCalledWith(event, '*')
     })
@@ -181,10 +188,12 @@ describe('Companion App Content Script', () => {
     it('requests for info when pilot connects', async () => {
       await importModule()
 
+      const tab = createMockTab()
+
       await callListeners(
         chromeMock.runtime.onMessage,
         { type: PilotMessageType.PILOT_CONNECT } satisfies Message,
-        {},
+        { id: chrome.runtime.id, tab },
         vi.fn(),
       )
 
