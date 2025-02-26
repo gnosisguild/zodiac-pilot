@@ -16,7 +16,9 @@ export function useMessageHandler<
   }, [onMessage])
 
   useEffect(() => {
-    const handleMessage = createMessageHandler(type, onMessageRef.current)
+    const handleMessage = createMessageHandler(type, (message, options) =>
+      onMessageRef.current(message as Message, options),
+    )
 
     chrome.runtime.onMessage.addListener(handleMessage)
 
