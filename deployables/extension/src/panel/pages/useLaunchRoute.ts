@@ -1,7 +1,6 @@
 import { getLastUsedRouteId, getRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
-import { useMessageHandler } from '@/utils'
-import { CompanionAppMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType, useMessageHandler } from '@zodiac/messages'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 

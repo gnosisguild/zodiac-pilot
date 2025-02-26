@@ -1,12 +1,11 @@
 import { injectScript, isValidTab } from '@/utils'
 import {
+  createMessageHandler,
   InjectedProviderMessageTyp,
   PilotMessageType,
   RpcMessageType,
   type InjectedProviderMessage,
   type InjectedProviderResponse,
-  type Message,
-  type RpcMessage,
 } from '@zodiac/messages'
 import { probeChainId } from './probeChainId'
 
@@ -58,57 +57,51 @@ if (!alreadyInjected && isValidTab(window.location.href)) {
     },
   )
 
-  // Relay panel toggling and events from the Eip1193Provider in the panel to the InjectedProvider in the tab
   chrome.runtime.onMessage.addListener(
-    (
-      message: InjectedProviderMessage | RpcMessage | Message,
-      sender,
-      respond,
-    ) => {
-      if (sender.id !== chrome.runtime.id) {
-        return
-      }
+    createMessageHandler(PilotMessageType.PILOT_DISCONNECT, () => {
+      // when the panel is closed, we trigger an EIP1193 'disconnect' event
 
-      switch (message.type) {
-        // when the panel is closed, we trigger an EIP1193 'disconnect' event
-        case PilotMessageType.PILOT_DISCONNECT: {
-          console.debug('Pilot disconnected')
-          window.postMessage(
-            {
-              type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
-              eventName: 'disconnect',
-              eventData: {
-                error: {
-                  message: 'Zodiac Pilot disconnected',
-                  code: 4900,
-                },
-              },
-            } as InjectedProviderMessage,
-            '*',
-          )
+      console.debug('Pilot disconnected')
+      window.postMessage(
+        {
+          type: InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+          eventName: 'disconnect',
+          eventData: {
+            error: {
+              message: 'Zodiac Pilot disconnected',
+              code: 4900,
+            },
+          },
+        } as InjectedProviderMessage,
+        '*',
+      )
+    }),
+  )
 
-          break
-        }
+  chrome.runtime.onMessage.addListener(
+    createMessageHandler(
+      InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
+      (message) => {
+        console.debug(
+          `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
+          message.eventData,
+        )
+        window.postMessage(message, '*')
+      },
+    ),
+  )
 
-        case InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT: {
-          console.debug(
-            `🧑‍✈️ event: \x1B[34m${message.eventName}\x1B[m %O`,
-            message.eventData,
-          )
-          window.postMessage(message, '*')
+  chrome.runtime.onMessage.addListener(
+    createMessageHandler(
+      RpcMessageType.PROBE_CHAIN_ID,
+      ({ url }, { sendResponse }) => {
+        console.debug(`Probing chain ID using URL "${url}"`)
 
-          break
-        }
+        probeChainId(url).then(sendResponse)
 
-        case RpcMessageType.PROBE_CHAIN_ID: {
-          console.debug(`Probing chain ID using URL "${message.url}"`)
-
-          probeChainId(message.url).then(respond)
-
-          // without this the response won't be sent
-          return true
-        }
-      }
-    },
+        // without this the response won't be sent
+        return true
+      },
+    ),
   )
 }

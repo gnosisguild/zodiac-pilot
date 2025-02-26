@@ -5,10 +5,11 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
-import { getActiveTab, sendMessageToTab, useMessageHandler } from '@/utils'
+import { getActiveTab, sendMessageToTab } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
+  useMessageHandler,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {

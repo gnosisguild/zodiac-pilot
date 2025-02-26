@@ -591,7 +591,16 @@ importers:
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
     devDependencies:
+      '@types/chrome':
+        specifier: 0.0.306
+        version: 0.0.306
+      '@types/react':
+        specifier: 19.0.10
+        version: 19.0.10
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
