@@ -3,7 +3,7 @@ import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
-  createMessageHandler,
+  createClientMessageHandler,
   PilotMessageType,
   type CompanionAppMessage,
   type CompanionResponseMessage,
@@ -47,7 +47,7 @@ window.addEventListener(
 )
 
 chrome.runtime.onMessage.addListener(
-  createMessageHandler(PilotMessageType.PILOT_CONNECT, (message) => {
+  createClientMessageHandler(PilotMessageType.PILOT_CONNECT, (message) => {
     console.debug('Companion App is trying to connect...')
 
     chrome.runtime.sendMessage({
@@ -59,7 +59,7 @@ chrome.runtime.onMessage.addListener(
 )
 
 chrome.runtime.onMessage.addListener(
-  createMessageHandler(
+  createClientMessageHandler(
     [
       CompanionResponseMessageType.FORK_UPDATED,
       CompanionResponseMessageType.PONG,

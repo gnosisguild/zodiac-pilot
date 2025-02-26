@@ -1,6 +1,6 @@
 import { injectScript, isValidTab } from '@/utils'
 import {
-  createMessageHandler,
+  createClientMessageHandler,
   InjectedProviderMessageTyp,
   PilotMessageType,
   RpcMessageType,
@@ -58,7 +58,7 @@ if (!alreadyInjected && isValidTab(window.location.href)) {
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(PilotMessageType.PILOT_DISCONNECT, () => {
+    createClientMessageHandler(PilotMessageType.PILOT_DISCONNECT, () => {
       // when the panel is closed, we trigger an EIP1193 'disconnect' event
 
       console.debug('Pilot disconnected')
@@ -79,7 +79,7 @@ if (!alreadyInjected && isValidTab(window.location.href)) {
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createClientMessageHandler(
       InjectedProviderMessageTyp.INJECTED_PROVIDER_EVENT,
       (message) => {
         console.debug(
@@ -92,7 +92,7 @@ if (!alreadyInjected && isValidTab(window.location.href)) {
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createClientMessageHandler(
       RpcMessageType.PROBE_CHAIN_ID,
       ({ url }, { sendResponse }) => {
         console.debug(`Probing chain ID using URL "${url}"`)

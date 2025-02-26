@@ -15,7 +15,7 @@ export type AllMessages =
   | InjectedProviderMessage
   | RpcMessage
 
-type ResponseFn = (response: unknown) => void
+export type ResponseFn = (response: unknown) => void
 
 type HandlerOptions = {
   tabId: number

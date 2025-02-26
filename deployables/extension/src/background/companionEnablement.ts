@@ -104,8 +104,8 @@ export const companionEnablement = (
 
     const handlePing = createMessageHandler(
       CompanionAppMessageType.PING,
-      async (_, { tabId }) => {
-        await sendMessageToTab(
+      (_, { tabId }) => {
+        sendMessageToTab(
           tabId,
           {
             type: CompanionResponseMessageType.PONG,

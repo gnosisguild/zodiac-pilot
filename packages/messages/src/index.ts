@@ -1,5 +1,6 @@
 export * from './companionApp'
 export { companionRequest } from './companionRequest'
+export { createClientMessageHandler } from './createClientMessageHandler'
 export { createMessageHandler } from './createMessageHandler'
 export * from './extension'
 export { type JsonRpcRequest } from './JsonRpcRequest'
