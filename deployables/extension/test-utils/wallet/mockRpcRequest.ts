@@ -8,18 +8,16 @@ import {
 
 type MockRpcRequestOptions = {
   chainId: ChainId
-  tabId: number
   url: string
 }
 
-export const mockRpcRequest = async ({
-  chainId,
-  tabId,
-  url,
-}: MockRpcRequestOptions) => {
-  const tab = createMockTab({ id: tabId })
+export const mockRpcRequest = async (
+  tab: Partial<chrome.tabs.Tab>,
+  { chainId, url }: MockRpcRequestOptions,
+) => {
+  const currentTab = createMockTab(tab)
 
-  chromeMock.tabs.get.mockResolvedValue(tab)
+  chromeMock.tabs.get.mockResolvedValue(currentTab)
 
   // @ts-expect-error I don't give a crap in a test helper
   chromeMock.tabs.sendMessage.mockImplementation((_, __, respond) => {
@@ -34,7 +32,7 @@ export const mockRpcRequest = async ({
   return callListeners(
     chromeMock.webRequest.onBeforeRequest,
     createMockWebRequest({
-      tabId,
+      tabId: currentTab.id,
       method: 'POST',
       url,
       requestBody: { jsonrpc: '2.0' },

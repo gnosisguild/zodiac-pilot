@@ -3,10 +3,10 @@ import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
+  createClientMessageHandler,
   PilotMessageType,
   type CompanionAppMessage,
   type CompanionResponseMessage,
-  type Message,
 } from '@zodiac/messages'
 
 window.addEventListener(
@@ -47,33 +47,32 @@ window.addEventListener(
 )
 
 chrome.runtime.onMessage.addListener(
-  (message: Message | CompanionResponseMessage) => {
-    switch (message.type) {
-      case PilotMessageType.PILOT_CONNECT: {
-        console.debug('Companion App is trying to connect...')
+  createClientMessageHandler(PilotMessageType.PILOT_CONNECT, (message) => {
+    console.debug('Companion App is trying to connect...')
 
-        chrome.runtime.sendMessage({
-          type: CompanionAppMessageType.REQUEST_FORK_INFO,
-        })
+    chrome.runtime.sendMessage({
+      type: CompanionAppMessageType.REQUEST_FORK_INFO,
+    })
 
-        window.postMessage(message, '*')
+    window.postMessage(message, '*')
+  }),
+)
 
-        break
-      }
-
-      case CompanionResponseMessageType.FORK_UPDATED:
-      case CompanionResponseMessageType.PONG:
-      case CompanionResponseMessageType.LIST_ROUTES:
-      case CompanionResponseMessageType.PROVIDE_ROUTE:
-      case CompanionResponseMessageType.DELETED_ROUTE:
-      case CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE:
-      case PilotMessageType.PILOT_DISCONNECT: {
-        window.postMessage(message, '*')
-
-        break
-      }
-    }
-  },
+chrome.runtime.onMessage.addListener(
+  createClientMessageHandler(
+    [
+      CompanionResponseMessageType.FORK_UPDATED,
+      CompanionResponseMessageType.PONG,
+      CompanionResponseMessageType.LIST_ROUTES,
+      CompanionResponseMessageType.PROVIDE_ROUTE,
+      CompanionResponseMessageType.DELETED_ROUTE,
+      CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+      PilotMessageType.PILOT_DISCONNECT,
+    ],
+    (message) => {
+      window.postMessage(message, '*')
+    },
+  ),
 )
 
 injectScript('./build/companion/injectedScripts/main.js')

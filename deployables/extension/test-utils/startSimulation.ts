@@ -3,27 +3,28 @@ import {
   type SimulationMessage,
 } from '@zodiac/messages'
 import type { ChainId } from 'ser-kit'
-import { callListeners, chromeMock } from './chrome'
+import { callListeners, chromeMock, createMockTab } from './chrome'
 
 type StartSimulationOptions = {
-  windowId: number
   chainId?: ChainId
   rpcUrl?: string
 }
 
-export const startSimulation = ({
-  windowId,
-  chainId = 1,
-  rpcUrl,
-}: StartSimulationOptions) =>
-  callListeners(
+export const startSimulation = (
+  tab: Partial<chrome.tabs.Tab>,
+  { chainId = 1, rpcUrl }: StartSimulationOptions = {},
+) => {
+  const currentTab = createMockTab(tab)
+
+  return callListeners(
     chromeMock.runtime.onMessage,
     {
       type: PilotSimulationMessageType.SIMULATE_START,
-      windowId,
+      windowId: currentTab.windowId,
       chainId,
       rpcUrl,
     } satisfies SimulationMessage,
-    { id: chrome.runtime.id },
+    { id: chrome.runtime.id, tab: currentTab },
     () => {},
   )
+}

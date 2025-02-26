@@ -2,7 +2,7 @@
   "extends": "@zodiac/typescript-config",
   "compilerOptions": {
     "composite": true,
-    "types": ["vite/client", "node"],
+    "types": ["vite/client", "node", "chrome"],
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/test-utils": ["./test-utils/index.ts"],

@@ -6,8 +6,8 @@ import { invariant } from '@epic-web/invariant'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
+  createMessageHandler,
   PilotMessageType,
-  type CompanionAppMessage,
   type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
@@ -19,95 +19,82 @@ export const companionEnablement = (
   { onSimulationUpdate }: TrackSimulationResult,
 ) => {
   chrome.runtime.onMessage.addListener(
-    async (message: CompanionAppMessage, { tab }) => {
-      switch (message.type) {
-        case CompanionAppMessageType.REQUEST_FORK_INFO: {
-          invariant(tab != null, 'Companion app message must come from a tab.')
-
-          withPilotSession(tab.windowId, async (session) => {
-            if (!session.isForked()) {
-              return
-            }
-
-            invariant(tab.id != null, 'Tab needs an ID')
-
-            await sendMessageToTab(tab.id, {
-              type: CompanionResponseMessageType.FORK_UPDATED,
-              forkUrl: session.getFork().rpcUrl ?? null,
-            } satisfies CompanionResponseMessage)
-          })
-
-          console.debug('Companion App connected!')
-
-          const dispose = onSimulationUpdate.addListener(async (fork) => {
-            invariant(tab.id != null, 'Tab needs an ID')
-
-            console.debug('Sending updated fork to companion app', { fork })
-
-            await sendMessageToTab(tab.id, {
-              type: CompanionResponseMessageType.FORK_UPDATED,
-              forkUrl: fork?.rpcUrl ?? null,
-            } satisfies CompanionResponseMessage)
-
-            captureLastError()
-          })
-
-          const handleTabClose = (tabId: number) => {
-            if (tabId !== tab.id) {
-              return
-            }
-
-            chrome.tabs.onRemoved.removeListener(handleTabClose)
-
-            dispose()
+    createMessageHandler(
+      CompanionAppMessageType.REQUEST_FORK_INFO,
+      (_, { tabId, windowId }) => {
+        withPilotSession(windowId, async (session) => {
+          if (!session.isForked()) {
+            return
           }
 
-          chrome.tabs.onRemoved.addListener(handleTabClose)
+          await sendMessageToTab(tabId, {
+            type: CompanionResponseMessageType.FORK_UPDATED,
+            forkUrl: session.getFork().rpcUrl ?? null,
+          } satisfies CompanionResponseMessage)
+        })
 
-          break
+        console.debug('Companion App connected!')
+
+        const dispose = onSimulationUpdate.addListener(async (fork) => {
+          console.debug('Sending updated fork to companion app', { fork })
+
+          await sendMessageToTab(tabId, {
+            type: CompanionResponseMessageType.FORK_UPDATED,
+            forkUrl: fork?.rpcUrl ?? null,
+          } satisfies CompanionResponseMessage)
+
+          captureLastError()
+        })
+
+        const handleTabClose = (closedTabId: number) => {
+          if (tabId !== closedTabId) {
+            return
+          }
+
+          chrome.tabs.onRemoved.removeListener(handleTabClose)
+
+          dispose()
         }
 
-        case CompanionAppMessageType.REQUEST_ROUTES: {
-          invariant(tab != null, 'Companion app message must come from a tab.')
-          invariant(tab.id != null, 'Tab needs an ID')
+        chrome.tabs.onRemoved.addListener(handleTabClose)
+      },
+    ),
+  )
 
-          const routes = await getRoutes()
+  chrome.runtime.onMessage.addListener(
+    createMessageHandler(
+      CompanionAppMessageType.REQUEST_ROUTES,
+      async (_, { tabId }) => {
+        const routes = await getRoutes()
 
-          await sendMessageToTab(
-            tab.id,
-            {
-              type: CompanionResponseMessageType.LIST_ROUTES,
-              routes,
-            } satisfies CompanionResponseMessage,
-            { protocolCheckOnly: true },
-          )
+        await sendMessageToTab(
+          tabId,
+          {
+            type: CompanionResponseMessageType.LIST_ROUTES,
+            routes,
+          } satisfies CompanionResponseMessage,
+          { protocolCheckOnly: true },
+        )
+      },
+    ),
+  )
 
-          break
-        }
+  chrome.runtime.onMessage.addListener(
+    createMessageHandler(
+      CompanionAppMessageType.REQUEST_ROUTE,
+      async ({ routeId }, { tabId }) => {
+        const route = await getRoute(routeId)
 
-        case CompanionAppMessageType.REQUEST_ROUTE: {
-          const { routeId } = message
-
-          const route = await getRoute(routeId)
-
-          invariant(tab != null, 'Companion app message must come from a tab.')
-          invariant(tab.id != null, 'Tab needs an ID')
-
-          await sendMessageToTab(
-            tab.id,
-            {
-              type: CompanionResponseMessageType.PROVIDE_ROUTE,
-              route,
-            } satisfies CompanionResponseMessage,
-            { protocolCheckOnly: true },
-          )
-
-          break
-        }
-      }
-
-      return true
-    },
+        await sendMessageToTab(
+          tabId,
+          {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          } satisfies CompanionResponseMessage,
+          { protocolCheckOnly: true },
+        )
+      },
+    ),
   )
 
   chrome.runtime.onConnect.addListener((port) => {
@@ -115,28 +102,21 @@ export const companionEnablement = (
       return
     }
 
-    const handlePing = async (
-      message: CompanionAppMessage,
-      { tab }: chrome.runtime.MessageSender,
-    ) => {
-      if (message.type !== CompanionAppMessageType.PING) {
-        return
-      }
-
-      invariant(tab != null, 'Companion app message must come from a tab.')
-      invariant(tab.id != null, 'Tab needs an ID')
-
-      await sendMessageToTab(
-        tab.id,
-        {
-          type: CompanionResponseMessageType.PONG,
-        } satisfies CompanionResponseMessage,
-        // bypass some tab validity checks so that this
-        // message finds the companion app regardless of what
-        // page the user is currently on
-        { protocolCheckOnly: true },
-      )
-    }
+    const handlePing = createMessageHandler(
+      CompanionAppMessageType.PING,
+      (_, { tabId }) => {
+        sendMessageToTab(
+          tabId,
+          {
+            type: CompanionResponseMessageType.PONG,
+          } satisfies CompanionResponseMessage,
+          // bypass some tab validity checks so that this
+          // message finds the companion app regardless of what
+          // page the user is currently on
+          { protocolCheckOnly: true },
+        )
+      },
+    )
 
     chrome.runtime.onMessage.addListener(handlePing)
 

@@ -1,7 +1,6 @@
 import { PILOT_PANEL_PORT } from '@/port-handling'
 import { invariant } from '@epic-web/invariant'
 import { type Message, PilotMessageType } from '@zodiac/messages'
-import type { MockTab } from '@zodiac/test-utils/chrome'
 import {
   callListeners,
   chromeMock,
@@ -9,21 +8,18 @@ import {
   createMockTab,
 } from './chrome'
 
-type StartSessionOptions = {
-  windowId: number
-  tabId?: number
-}
-
 type AnotherSessionStartOptions = {
   tabId: number
 }
 
-const trackedTabs = new Map<number, MockTab>()
+type StartSessionOptions = { windowId: number }
 
-export const startPilotSession = async ({
-  windowId,
-  tabId,
-}: StartSessionOptions) => {
+const trackedTabs = new Map<number, chrome.tabs.Tab>()
+
+export const startPilotSession = async (
+  { windowId }: StartSessionOptions,
+  tab?: chrome.tabs.Tab,
+) => {
   chromeMock.tabs.get.mockImplementation((tabId) => {
     const tab = trackedTabs.get(tabId)
 
@@ -35,8 +31,8 @@ export const startPilotSession = async ({
     return Promise.resolve(tab)
   })
 
-  if (tabId != null) {
-    trackedTabs.set(tabId, createMockTab({ id: tabId }))
+  if (tab != null && tab.id != null) {
+    trackedTabs.set(tab.id, tab)
   }
 
   const port = createMockPort({ name: PILOT_PANEL_PORT })
@@ -48,7 +44,7 @@ export const startPilotSession = async ({
     {
       type: PilotMessageType.PILOT_PANEL_OPENED,
       windowId,
-      tabId,
+      tabId: tab != null && tab.id != null ? tab.id : undefined,
     } satisfies Message,
     port,
   )

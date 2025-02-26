@@ -3,10 +3,12 @@ import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
   InjectedProviderMessageTyp,
+  useMessageHandler,
   type InjectedProviderMessage,
+  type InjectedProviderResponse,
 } from '@zodiac/messages'
 import { toQuantity } from 'ethers'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
 import { useWindowId } from './BridgeContext'
 
@@ -21,8 +23,6 @@ const emitEvent = async (eventName: string, eventData: any) => {
     eventData,
   } satisfies InjectedProviderMessage)
 }
-
-type ResponseFn = (response: InjectedProviderMessage) => void
 
 type UseProviderBridgeOptions = {
   provider: Eip1193Provider
@@ -67,61 +67,37 @@ export const useProviderBridge = ({
 }
 
 const useHandleProviderRequests = (provider: Eip1193Provider) => {
-  const windowId = useWindowId()
+  const currentWindowId = useWindowId()
 
-  const handleMessage = useCallback(
-    (
-      message: InjectedProviderMessage,
-      sender: chrome.runtime.MessageSender,
-      sendResponse: ResponseFn,
-    ) => {
-      // only handle messages from our extension
-      if (sender.id !== chrome.runtime.id) {
-        return
-      }
-
-      // only handle messages from the current window
-      if (sender.tab?.windowId !== windowId) {
-        return
-      }
-
-      if (
-        message.type !== InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST
-      ) {
+  useMessageHandler(
+    InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
+    ({ request, requestId }, { sendResponse, windowId }) => {
+      if (currentWindowId !== windowId) {
         return
       }
 
       provider
-        .request(message.request)
+        .request(request)
         .then((response) => {
           sendResponse({
             type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE,
-            requestId: message.requestId,
+            requestId,
             response,
-          })
+          } satisfies InjectedProviderResponse)
         })
         .catch((error) => {
           sendResponse({
             type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
-            requestId: message.requestId,
+            requestId,
             error: {
               message: error.message,
               code: error.code,
             },
-          })
+          } satisfies InjectedProviderMessage)
         })
 
       // without this the response won't be sent
       return true
     },
-    [provider, windowId],
   )
-
-  useEffect(() => {
-    chrome.runtime.onMessage.addListener(handleMessage)
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleMessage)
-    }
-  }, [handleMessage])
 }

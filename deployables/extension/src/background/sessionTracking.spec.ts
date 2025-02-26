@@ -31,7 +31,7 @@ describe('Session tracking', () => {
     it('starts tracking a tab if provided with a tabId', async () => {
       const { getPilotSession } = trackSessions(trackRequests())
 
-      await startPilotSession({ windowId: 1, tabId: 2 })
+      await startPilotSession({ windowId: 1 }, createMockTab({ id: 2 }))
 
       expect(getPilotSession(1)).toMatchObject({
         fork: null,
@@ -43,7 +43,7 @@ describe('Session tracking', () => {
     it('sends a connect message the respective tab', async () => {
       trackSessions(trackRequests())
 
-      await startPilotSession({ windowId: 1, tabId: 1 })
+      await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
         type: PilotMessageType.PILOT_CONNECT,
@@ -67,8 +67,8 @@ describe('Session tracking', () => {
       const { stopPilotSession, startAnotherSession } = await startPilotSession(
         {
           windowId: 1,
-          tabId: 1,
         },
+        createMockTab({ id: 1 }),
       )
       await startAnotherSession({ tabId: 2 })
 
@@ -88,7 +88,7 @@ describe('Session tracking', () => {
       it('tracks new tabs in a window, when a session is active', async () => {
         const { getPilotSession } = trackSessions(trackRequests())
 
-        await startPilotSession({ windowId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
         await callListeners(chromeMock.tabs.onActivated, {
           windowId: 1,
           tabId: 1,
@@ -132,7 +132,7 @@ describe('Session tracking', () => {
       it('stops tracking tabs in a window, when they are closed', async () => {
         const { getPilotSession } = trackSessions(trackRequests())
 
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
@@ -160,7 +160,7 @@ describe('Session tracking', () => {
       it('does not send a pilot disconnect message', async () => {
         trackSessions(trackRequests())
 
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         await callListeners(chromeMock.tabs.onRemoved, 1, {
           windowId: 1,
@@ -179,7 +179,7 @@ describe('Session tracking', () => {
       })
 
       it('injects the provider script when new pages are loaded', async () => {
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         await callListeners(
           chromeMock.tabs.onUpdated,
@@ -223,7 +223,7 @@ describe('Session tracking', () => {
         'does nothing when the page is in the "%s" status',
         async (status) => {
           const tab = createMockTab({ windowId: 1 })
-          await startPilotSession({ windowId: 1, tabId: tab.id })
+          await startPilotSession({ windowId: 1 }, tab)
 
           await callListeners(
             chromeMock.tabs.onUpdated,
@@ -245,7 +245,7 @@ describe('Session tracking', () => {
 
     describe('Start session', () => {
       it('removes CSP headers', async () => {
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules,
@@ -279,7 +279,7 @@ describe('Session tracking', () => {
       })
 
       it('removes CSP from the main frame and any sub frame', async () => {
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules,
@@ -301,7 +301,7 @@ describe('Session tracking', () => {
       })
 
       it('removes CSP headers only from tracked tabs', async () => {
-        await startPilotSession({ windowId: 1, tabId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         expect(
           chromeMock.declarativeNetRequest.updateSessionRules,
@@ -338,7 +338,7 @@ describe('Session tracking', () => {
 
     describe('Tab opened', () => {
       it('updates the rules to include the new tab', async () => {
-        await startPilotSession({ windowId: 1 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 1 }))
 
         await callListeners(chromeMock.tabs.onActivated, {
           tabId: 1,
@@ -364,7 +364,7 @@ describe('Session tracking', () => {
 
     describe('Tab closed', () => {
       it('updates the rules and removes the closed tab', async () => {
-        await startPilotSession({ windowId: 1, tabId: 2 })
+        await startPilotSession({ windowId: 1 }, createMockTab({ id: 2 }))
 
         await callListeners(chromeMock.tabs.onActivated, {
           windowId: 1,
