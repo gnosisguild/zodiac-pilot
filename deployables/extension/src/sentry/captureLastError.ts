@@ -5,5 +5,7 @@ export const captureLastError = () => {
     return
   }
 
+  console.warn(chrome.runtime.lastError)
+
   client.captureException(chrome.runtime.lastError)
 }

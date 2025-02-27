@@ -1,7 +1,7 @@
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useDispatch, useTransactions } from '@/state'
-import { CompanionAppMessageType, useMessageHandler } from '@zodiac/messages'
+import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { Modal, PrimaryLinkButton, Spinner } from '@zodiac/ui'
 import { useState } from 'react'
@@ -17,7 +17,7 @@ export const Submit = () => {
 
   const companionAppUrl = useCompanionAppUrl()
 
-  useMessageHandler(CompanionAppMessageType.SUBMIT_SUCCESS, () => {
+  useTabMessageHandler(CompanionAppMessageType.SUBMIT_SUCCESS, () => {
     if (submitPending === false) {
       return
     }

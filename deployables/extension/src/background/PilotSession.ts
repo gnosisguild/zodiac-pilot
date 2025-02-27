@@ -34,24 +34,24 @@ export class PilotSession extends EventEmitter<{
     return this.tabs.has(tabId)
   }
 
-  trackTab(tabId: number) {
+  async trackTab(tabId: number) {
     this.tabs.add(tabId)
 
     this.rpcTracking.trackTab(tabId)
 
-    updateCSPHeaderRule(this.tabs)
+    await updateCSPHeaderRule(this.tabs)
 
-    sendMessageToTab(tabId, {
+    await sendMessageToTab(tabId, {
       type: PilotMessageType.PILOT_CONNECT,
     } satisfies Message)
   }
 
-  untrackTab(tabId: number) {
+  async untrackTab(tabId: number) {
     this.tabs.delete(tabId)
 
     this.rpcTracking.untrackTab(tabId)
 
-    updateCSPHeaderRule(this.tabs)
+    await updateCSPHeaderRule(this.tabs)
   }
 
   async delete() {
@@ -64,11 +64,8 @@ export class PilotSession extends EventEmitter<{
     this.rpcTracking.onNewRpcEndpointDetected.removeAllListeners()
 
     removeCSPHeaderRule()
-    await removeAllRpcRedirectRules(this.getTabs())
-  }
 
-  getTabs() {
-    return Array.from(this.tabs)
+    await removeAllRpcRedirectRules()
   }
 
   getFork() {
@@ -87,7 +84,6 @@ export class PilotSession extends EventEmitter<{
     }
 
     return addRpcRedirectRules(
-      this.getTabs(),
       this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
@@ -101,7 +97,6 @@ export class PilotSession extends EventEmitter<{
     this.fork = fork
 
     await addRpcRedirectRules(
-      this.getTabs(),
       this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({ chainId: fork.chainId }),
     )
@@ -118,11 +113,13 @@ export class PilotSession extends EventEmitter<{
   async updateFork(rpcUrl: string) {
     invariant(this.fork != null, 'Session is not forked')
 
+    if (this.fork.rpcUrl != null) {
+      await removeAllRpcRedirectRules(this.fork.rpcUrl)
+    }
+
     this.fork = { ...this.fork, rpcUrl }
 
-    await removeAllRpcRedirectRules(this.getTabs())
     await addRpcRedirectRules(
-      this.getTabs(),
       this.getFork(),
       this.rpcTracking.getTrackedRpcUrlsForChainId({
         chainId: this.fork.chainId,
@@ -139,9 +136,11 @@ export class PilotSession extends EventEmitter<{
       return
     }
 
-    this.fork = null
+    if (this.fork.rpcUrl != null) {
+      await removeAllRpcRedirectRules(this.fork.rpcUrl)
+    }
 
-    await removeAllRpcRedirectRules(this.getTabs())
+    this.fork = null
 
     this.rpcTracking.onNewRpcEndpointDetected.removeListener(
       this.handleNewRpcEndpoint,

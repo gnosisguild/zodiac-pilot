@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
 import {
-  createMessageHandler,
+  createTabMessageHandler,
   type AllMessages,
   type HandlerFn,
-} from './createMessageHandler'
+} from './createTabMessageHandler'
 
-export function useMessageHandler<
+export function useTabMessageHandler<
   Type extends AllMessages['type'],
   Message = Extract<AllMessages, { type: Type }>,
 >(type: Type | Type[], onMessage: HandlerFn<Message>) {
@@ -16,7 +16,7 @@ export function useMessageHandler<
   }, [onMessage])
 
   useEffect(() => {
-    const handleMessage = createMessageHandler(type, (message, options) =>
+    const handleMessage = createTabMessageHandler(type, (message, options) =>
       onMessageRef.current(message as Message, options),
     )
 

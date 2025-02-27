@@ -1,6 +1,6 @@
 import {
   InjectedProviderMessageTyp,
-  useMessageHandler,
+  useTabMessageHandler,
   type InjectedProviderMessage,
 } from '@zodiac/messages'
 import { errorToast } from '@zodiac/ui'
@@ -11,7 +11,7 @@ export const useBridgeError = (errorMessage: string) => {
   const currentWindowId = useWindowId()
   const toastId = useId()
 
-  useMessageHandler(
+  useTabMessageHandler(
     InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
     (message, { windowId, sendResponse }) => {
       // only handle messages from the current window

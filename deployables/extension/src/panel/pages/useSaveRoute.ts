@@ -1,7 +1,7 @@
 import { getRoute, saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { CompanionAppMessageType, useMessageHandler } from '@zodiac/messages'
+import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
 import { useNavigate, useRevalidator } from 'react-router'
@@ -14,7 +14,7 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
     null,
   )
 
-  useMessageHandler(
+  useTabMessageHandler(
     [
       CompanionAppMessageType.SAVE_ROUTE,
       CompanionAppMessageType.SAVE_AND_LAUNCH,

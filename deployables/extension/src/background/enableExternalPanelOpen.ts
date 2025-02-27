@@ -1,9 +1,12 @@
-import { CompanionAppMessageType, createMessageHandler } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  createTabMessageHandler,
+} from '@zodiac/messages'
 import { resolve } from 'path'
 
 export const enableExternalPanelOpen = () => {
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createTabMessageHandler(
       CompanionAppMessageType.OPEN_PILOT,
       async (_, { tabId, windowId }) => {
         // This will open a tab-specific side panel only on the current tab.
