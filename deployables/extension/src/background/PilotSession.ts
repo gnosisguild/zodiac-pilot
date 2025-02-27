@@ -68,10 +68,6 @@ export class PilotSession extends EventEmitter<{
     await removeAllRpcRedirectRules()
   }
 
-  getTabs() {
-    return Array.from(this.tabs)
-  }
-
   getFork() {
     invariant(this.fork != null, 'Session is not forked')
 
