@@ -9,7 +9,7 @@ import { getActiveTab, sendMessageToTab } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
-  useMessageHandler,
+  useTabMessageHandler,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {
@@ -53,7 +53,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 export const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
 
-  useMessageHandler(
+  useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
     async (_, { tabId }) => {
       await sendMessageToTab(

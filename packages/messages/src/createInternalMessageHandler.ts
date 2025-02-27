@@ -6,7 +6,7 @@ type HandlerOptions = {
 
 type HandlerFn<Message> = (message: Message, options: HandlerOptions) => void
 
-export function createClientMessageHandler<
+export function createInternalMessageHandler<
   Type extends AllMessages['type'],
   Message = Extract<AllMessages, { type: Type }>,
 >(type: Type | Type[], handler: HandlerFn<Message>) {

@@ -1,5 +1,5 @@
 import {
-  createMessageHandler,
+  createInternalMessageHandler,
   PilotSimulationMessageType,
 } from '@zodiac/messages'
 import { createEventListener } from './createEventListener'
@@ -22,7 +22,7 @@ export const trackSimulations = ({
     createEventListener<SimulationUpdateEventListener>()
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createInternalMessageHandler(
       PilotSimulationMessageType.SIMULATE_START,
       async ({ chainId, rpcUrl, windowId }) => {
         const session = getPilotSession(windowId)
@@ -45,7 +45,7 @@ export const trackSimulations = ({
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createInternalMessageHandler(
       PilotSimulationMessageType.SIMULATE_UPDATE,
       ({ windowId, rpcUrl }) => {
         withPilotSession(windowId, async (session) => {
@@ -60,7 +60,7 @@ export const trackSimulations = ({
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createInternalMessageHandler(
       PilotSimulationMessageType.SIMULATE_STOP,
       ({ windowId }) => {
         withPilotSession(windowId, async (session) => {

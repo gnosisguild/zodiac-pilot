@@ -24,7 +24,7 @@ window.addEventListener(
       case CompanionAppMessageType.LAUNCH_ROUTE:
       case CompanionAppMessageType.REQUEST_ACTIVE_ROUTE:
       case CompanionAppMessageType.PING: {
-        chrome.runtime.sendMessage(event.data, () => {
+        chrome.runtime.sendMessage<CompanionAppMessage>(event.data, () => {
           captureLastError()
         })
 
@@ -50,7 +50,7 @@ chrome.runtime.onMessage.addListener(
   createClientMessageHandler(PilotMessageType.PILOT_CONNECT, (message) => {
     console.debug('Companion App is trying to connect...')
 
-    chrome.runtime.sendMessage({
+    chrome.runtime.sendMessage<CompanionAppMessage>({
       type: CompanionAppMessageType.REQUEST_FORK_INFO,
     })
 

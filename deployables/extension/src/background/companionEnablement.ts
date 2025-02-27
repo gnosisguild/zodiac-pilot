@@ -6,7 +6,7 @@ import { invariant } from '@epic-web/invariant'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
-  createMessageHandler,
+  createTabMessageHandler,
   PilotMessageType,
   type CompanionResponseMessage,
   type Message,
@@ -19,7 +19,7 @@ export const companionEnablement = (
   { onSimulationUpdate }: TrackSimulationResult,
 ) => {
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createTabMessageHandler(
       CompanionAppMessageType.REQUEST_FORK_INFO,
       (_, { tabId, windowId }) => {
         withPilotSession(windowId, async (session) => {
@@ -62,7 +62,7 @@ export const companionEnablement = (
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createTabMessageHandler(
       CompanionAppMessageType.REQUEST_ROUTES,
       async (_, { tabId }) => {
         const routes = await getRoutes()
@@ -80,7 +80,7 @@ export const companionEnablement = (
   )
 
   chrome.runtime.onMessage.addListener(
-    createMessageHandler(
+    createTabMessageHandler(
       CompanionAppMessageType.REQUEST_ROUTE,
       async ({ routeId }, { tabId }) => {
         const route = await getRoute(routeId)
@@ -102,7 +102,7 @@ export const companionEnablement = (
       return
     }
 
-    const handlePing = createMessageHandler(
+    const handlePing = createTabMessageHandler(
       CompanionAppMessageType.PING,
       (_, { tabId }) => {
         sendMessageToTab(
