@@ -147,25 +147,31 @@ const detectNetworkOfRpcUrl = async (
     )
   }
 
-  const result = await chainIdPromiseByRpcUrl.get(url)
+  try {
+    const result = await chainIdPromiseByRpcUrl.get(url)
 
-  if (result == null || chainIdByRpcUrl.has(url)) {
+    if (result == null || chainIdByRpcUrl.has(url)) {
+      console.debug(
+        `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
+      )
+
+      return { newEndpoint: false }
+    }
+
+    trackRpcUrl(state, { tabId, url })
+
+    chainIdByRpcUrl.set(url, result)
+
     console.debug(
-      `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
+      `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
     )
+
+    return { newEndpoint: true }
+  } catch {
+    chainIdPromiseByRpcUrl.delete(url)
 
     return { newEndpoint: false }
   }
-
-  trackRpcUrl(state, { tabId, url })
-
-  chainIdByRpcUrl.set(url, result)
-
-  console.debug(
-    `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
-  )
-
-  return { newEndpoint: true }
 }
 
 type TrackRpcUrlOptions = {

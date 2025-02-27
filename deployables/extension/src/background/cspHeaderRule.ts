@@ -25,10 +25,13 @@ export const removeCSPHeaderRule = () => {
 }
 
 export const updateCSPHeaderRule = (tabIds: Set<number>) => {
+  const { promise, resolve } = Promise.withResolvers<void>()
+
   // TODO removing the CSP headers alone is not enough as it does not handle apps setting CSPs via <meta http-equiv> tags in the HTML (such as Uniswap, for example)
   // see: https://github.com/w3c/webextensions/issues/169#issuecomment-1689812644
   // A potential solution could be a service worker rewriting the HTML content in the doc request to filter out these tags?
-  return chrome.declarativeNetRequest.updateSessionRules(
+
+  chrome.declarativeNetRequest.updateSessionRules(
     {
       addRules:
         tabIds.size > 0
@@ -72,6 +75,10 @@ export const updateCSPHeaderRule = (tabIds: Set<number>) => {
       } else {
         console.debug('Headers rule update successful', tabIds)
       }
+
+      resolve()
     },
   )
+
+  return promise
 }
