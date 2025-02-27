@@ -1,24 +1,46 @@
 import { captureLastError } from '@/sentry'
+import { createRedirectRule } from './createRedirectRule'
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 import type { Fork } from './types'
 
-export const removeAllRpcRedirectRules = async (tabIds: number[]) => {
+export const removeAllRpcRedirectRules = async (forkUrl?: string) => {
   const { promise, resolve } = Promise.withResolvers<void>()
 
-  chrome.declarativeNetRequest.updateSessionRules(
-    {
-      removeRuleIds: tabIds,
-    },
-    () => {
-      captureLastError()
+  chrome.declarativeNetRequest.getSessionRules((rules) => {
+    const removeRuleIds = rules.reduce((result, rule) => {
+      if (
+        rule.action.type ===
+        chrome.declarativeNetRequest.RuleActionType.REDIRECT
+      ) {
+        if (forkUrl != null) {
+          if (rule.action.redirect?.url === forkUrl) {
+            return [...result, rule.id]
+          }
 
-      chrome.declarativeNetRequest.getSessionRules((rules) => {
-        console.debug('RPC redirect rules updated', rules)
+          return result
+        }
 
-        resolve()
-      })
-    },
-  )
+        return [...result, rule.id]
+      }
+
+      return result
+    }, [] as number[])
+
+    chrome.declarativeNetRequest.updateSessionRules(
+      {
+        removeRuleIds,
+      },
+      () => {
+        captureLastError()
+
+        chrome.declarativeNetRequest.getSessionRules((rules) => {
+          console.debug('RPC redirect rules updated', rules)
+
+          resolve()
+        })
+      },
+    )
+  })
 
   return promise
 }
@@ -27,82 +49,63 @@ export const removeAllRpcRedirectRules = async (tabIds: number[]) => {
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.
  */
 export const addRpcRedirectRules = async (
-  tabIds: number[],
-  fork: Fork,
-  trackedRPCUrlsByTabId: Map<number, string[]>,
-) => {
+  { rpcUrl }: Fork,
+  trackedRPCUrlsByTabId: Map<number, Set<string>>,
+): Promise<void> => {
   console.debug(`Updating redirect rules for tabs`, { trackedRPCUrlsByTabId })
+  const { promise, resolve } = Promise.withResolvers<void>()
 
-  const addRules = tabIds
-    .map((tabId) => ({
-      tabId,
-      redirectUrl: fork.rpcUrl,
-      regexFilter: makeUrlRegex(trackedRPCUrlsByTabId.get(tabId) || []),
-    }))
-    .filter(
-      ({ regexFilter, redirectUrl }) =>
-        regexFilter != null && redirectUrl != null,
+  if (rpcUrl == null) {
+    return resolve()
+  }
+
+  const tabsByTrackedRPCUrls = new Map<string, number[]>()
+
+  trackedRPCUrlsByTabId.forEach((trackedRPCUrls, tabId) => {
+    trackedRPCUrls.forEach((trackedRPCUrl) => {
+      const tabIds = tabsByTrackedRPCUrls.get(trackedRPCUrl) || []
+
+      tabsByTrackedRPCUrls.set(trackedRPCUrl, [...tabIds, tabId])
+    })
+  })
+
+  for (const [trackedRPCUrl, tabIds] of tabsByTrackedRPCUrls.entries()) {
+    const { promise, resolve } = Promise.withResolvers<void>()
+
+    const rule = await createRedirectRule({
+      redirectUrl: rpcUrl,
+      urlToMatch: trackedRPCUrl,
+      tabIds,
+    })
+
+    chrome.declarativeNetRequest.updateSessionRules(
+      {
+        addRules: [rule],
+      },
+      () => {
+        captureLastError()
+
+        resolve()
+      },
     )
-    .map(({ tabId, redirectUrl, regexFilter }) => ({
-      id: tabId,
-      priority: 1,
-      action: {
-        type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-        redirect: { url: redirectUrl },
-      },
-      condition: {
-        resourceTypes: [
-          chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-        ],
-        regexFilter: regexFilter!,
-        tabIds: [tabId],
-      },
-    }))
 
-  const { promise, resolve } = Promise.withResolvers()
+    await promise
+  }
 
-  console.debug(`Adding new redirect rules`, { addRules })
+  chrome.declarativeNetRequest.getSessionRules((rules) => {
+    console.debug(
+      'RPC redirect rules updated',
+      rules.filter(
+        (rule) =>
+          rule.action.type ===
+          chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+      ),
+    )
 
-  chrome.declarativeNetRequest.updateSessionRules(
-    {
-      addRules,
-    },
-    () => {
-      captureLastError()
-
-      chrome.declarativeNetRequest.getSessionRules((rules) => {
-        console.debug('RPC redirect rules updated', rules)
-      })
-
-      resolve(new Set(addRules.map(({ id }) => id)))
-    },
-  )
+    resolve()
+  })
 
   return promise
-}
-
-/**
- * Concatenates all RPC urls for the given tab & network into a regular expression matching any of them.
- */
-const makeUrlRegex = (rpcUrls: string[]) => {
-  if (rpcUrls.length === 0) {
-    return null
-  }
-
-  const regex = rpcUrls
-    // Escape special characters
-    .map((s) => s.replace(/[()[\]{}*+?^$|#.,/\\\s-]/g, '\\$&'))
-    // Sort for maximal munch
-    .sort((a, b) => b.length - a.length)
-    .join('|')
-
-  if (regex.length > 1500) {
-    console.warn(
-      'Regex longer than 1500 chars. Running in danger of exceeding 2kb rule size limit',
-    )
-  }
-
-  return `^(${regex})$`
 }
 
 export const enableRpcDebugLogging = () => {
@@ -114,11 +117,7 @@ export const enableRpcDebugLogging = () => {
 
   chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
     if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
-      console.debug(
-        'rule matched on request',
-        details.request.url,
-        details.rule.ruleId,
-      )
+      console.debug('rule matched on request', { details })
     }
   })
 }

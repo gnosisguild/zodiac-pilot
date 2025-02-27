@@ -22,7 +22,7 @@ type GetTrackedRpcUrlsForChainIdOptions = {
 export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions,
-  ) => Map<number, string[]>
+  ) => Map<number, Set<string>>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
   onNewRpcEndpointDetected: Event
@@ -117,13 +117,14 @@ const getRpcUrlsByTabId = (
   { chainId }: GetRpcUrlsOptions,
 ) => {
   return rpcUrlsByTabId.entries().reduce((result, [tabId, urls]) => {
-    result.set(
-      tabId,
-      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === chainId),
+    const matchingUrls = Array.from(urls).filter(
+      (url) => chainIdByRpcUrl.get(url) === chainId,
     )
 
+    result.set(tabId, new Set(matchingUrls))
+
     return result
-  }, new Map<number, string[]>())
+  }, new Map<number, Set<string>>())
 }
 
 type DetectNetworkOfRpcOptions = {
