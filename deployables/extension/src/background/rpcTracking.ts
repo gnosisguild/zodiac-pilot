@@ -22,7 +22,7 @@ type GetTrackedRpcUrlsForChainIdOptions = {
 export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions,
-  ) => Map<number, string[]>
+  ) => Map<string, number[]>
   trackTab: (tabId: number) => void
   untrackTab: (tabId: number) => void
   onNewRpcEndpointDetected: Event
@@ -63,7 +63,7 @@ export const trackRequests = (): TrackRequestsResult => {
 
   return {
     getTrackedRpcUrlsForChainId({ chainId }) {
-      return getRpcUrlsByTabId(state, { chainId })
+      return getTabIdsByRPCUrl(state, { chainId })
     },
     trackTab(tabId) {
       state.trackedTabs.add(tabId)
@@ -112,18 +112,25 @@ type GetRpcUrlsOptions = {
   chainId: ChainId
 }
 
-const getRpcUrlsByTabId = (
+const getTabIdsByRPCUrl = (
   { rpcUrlsByTabId, chainIdByRpcUrl }: TrackingState,
   { chainId }: GetRpcUrlsOptions,
 ) => {
-  return rpcUrlsByTabId.entries().reduce((result, [tabId, urls]) => {
-    result.set(
-      tabId,
-      Array.from(urls).filter((url) => chainIdByRpcUrl.get(url) === chainId),
+  const tabIdsByRpcUrl = new Map<string, number[]>()
+
+  for (const [tabId, urls] of rpcUrlsByTabId.entries()) {
+    const matchingUrls = Array.from(urls).filter(
+      (url) => chainIdByRpcUrl.get(url) === chainId,
     )
 
-    return result
-  }, new Map<number, string[]>())
+    for (const url of matchingUrls) {
+      const tabIds = tabIdsByRpcUrl.get(url) || []
+
+      tabIdsByRpcUrl.set(url, [...tabIds, tabId])
+    }
+  }
+
+  return tabIdsByRpcUrl
 }
 
 type DetectNetworkOfRpcOptions = {

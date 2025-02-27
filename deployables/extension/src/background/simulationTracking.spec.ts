@@ -33,30 +33,23 @@ describe('Simulation tracking', () => {
 
       await startSimulation(tab, { rpcUrl: 'http://test.com' })
 
-      expect(
-        chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          addRules: [
-            {
-              id: 2,
-              priority: 1,
-              action: {
-                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-                redirect: { url: 'http://test.com' },
-              },
-              condition: {
-                resourceTypes: [
-                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-                ],
-                regexFilter: '^(http:\\/\\/test\\-url)$',
-                tabIds: [2],
-              },
-            },
-          ],
-        }),
-        expect.anything(),
+      const rules = await chromeMock.declarativeNetRequest.getSessionRules()
+
+      const redirectRule = rules.find(
+        (rule) =>
+          rule.action.type ===
+          chrome.declarativeNetRequest.RuleActionType.REDIRECT,
       )
+
+      expect(redirectRule).toMatchObject({
+        action: {
+          redirect: { url: 'http://test.com' },
+        },
+        condition: {
+          urlFilter: 'http://test-url',
+          tabIds: [2],
+        },
+      })
     })
 
     it('removes redirect rules when the simulation stops', async () => {
@@ -69,14 +62,14 @@ describe('Simulation tracking', () => {
       await startSimulation(tab)
       await stopSimulation(tab)
 
-      expect(
-        chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenLastCalledWith(
-        {
-          removeRuleIds: [2],
-        },
-        expect.anything(),
+      const rules = await chromeMock.declarativeNetRequest.getSessionRules()
+      const redirectRules = rules.filter(
+        (rule) =>
+          rule.action.type ===
+          chrome.declarativeNetRequest.RuleActionType.REDIRECT,
       )
+
+      expect(redirectRules).toEqual([])
     })
 
     it('removes redirect rules when the pilot session ends', async () => {
@@ -86,17 +79,12 @@ describe('Simulation tracking', () => {
 
       await mockRpcRequest(tab, { chainId: 1, url: 'http://test-url' })
 
-      await startSimulation(tab)
+      await startSimulation(tab, { rpcUrl: 'http://rpc.com' })
       await stopPilotSession()
 
-      expect(
-        chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenLastCalledWith(
-        {
-          removeRuleIds: [2],
-        },
-        expect.anything(),
-      )
+      await expect(
+        chromeMock.declarativeNetRequest.getSessionRules(),
+      ).resolves.toEqual([])
     })
 
     it('updates the redirect rules when a new RPC endpoint is detected during simulation', async () => {
@@ -107,30 +95,25 @@ describe('Simulation tracking', () => {
 
       await mockRpcRequest(tab, { chainId: 1, url: 'http://another-url' })
 
-      expect(
-        chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          addRules: [
-            {
-              id: 1,
-              priority: 1,
-              action: {
-                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-                redirect: { url: 'http://test.com' },
-              },
-              condition: {
-                resourceTypes: [
-                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-                ],
-                regexFilter: '^(http:\\/\\/another\\-url)$',
-                tabIds: [1],
-              },
-            },
-          ],
-        }),
-        expect.anything(),
+      const rules = await chromeMock.declarativeNetRequest.getSessionRules()
+
+      const redirectRule = rules.find(
+        (rule) =>
+          rule.action.type ===
+          chrome.declarativeNetRequest.RuleActionType.REDIRECT,
       )
+
+      expect(redirectRule).toMatchObject({
+        action: {
+          redirect: {
+            url: 'http://test.com',
+          },
+        },
+        condition: {
+          urlFilter: 'http://another-url',
+          tabIds: [1],
+        },
+      })
     })
 
     it('updates RPC redirect rules when the rpc URL of a fork changes', async () => {
@@ -143,30 +126,25 @@ describe('Simulation tracking', () => {
 
       await updateSimulation(tab, { rpcUrl: 'http://test.com' })
 
-      expect(
-        chromeMock.declarativeNetRequest.updateSessionRules,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          addRules: [
-            {
-              id: tab.id,
-              priority: 1,
-              action: {
-                type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-                redirect: { url: 'http://test.com' },
-              },
-              condition: {
-                resourceTypes: [
-                  chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST,
-                ],
-                regexFilter: '^(http:\\/\\/another\\-url)$',
-                tabIds: [tab.id],
-              },
-            },
-          ],
-        }),
-        expect.anything(),
+      const rules = await chromeMock.declarativeNetRequest.getSessionRules()
+
+      const redirectRule = rules.find(
+        (rule) =>
+          rule.action.type ===
+          chrome.declarativeNetRequest.RuleActionType.REDIRECT,
       )
+
+      expect(redirectRule).toMatchObject({
+        action: {
+          redirect: {
+            url: 'http://test.com',
+          },
+        },
+        condition: {
+          urlFilter: 'http://another-url',
+          tabIds: [2],
+        },
+      })
     })
 
     it('stops updating the redirect rules when the simulation stops', async () => {

@@ -1,9 +1,11 @@
 import { afterEach, beforeEach } from 'vitest'
 import { chromeMock } from './src/chrome/chromeMock'
+import { createSessionRulesMock } from './src/chrome/sessionRulesMock'
 import { createStorageMock } from './src/chrome/storageMock'
 
 beforeEach(() => {
   createStorageMock()
+  createSessionRulesMock()
 })
 
 afterEach(() => {
