@@ -50,26 +50,17 @@ export const removeAllRpcRedirectRules = async (forkUrl?: string) => {
  */
 export const addRpcRedirectRules = async (
   { rpcUrl }: Fork,
-  trackedRPCUrlsByTabId: Map<number, Set<string>>,
+  tabIdsByTrackedRPCUrls: Map<string, number[]>,
 ): Promise<void> => {
-  console.debug(`Updating redirect rules for tabs`, { trackedRPCUrlsByTabId })
+  console.debug(`Updating redirect rules `, { tabIdsByTrackedRPCUrls })
+
   const { promise, resolve } = Promise.withResolvers<void>()
 
   if (rpcUrl == null) {
     return resolve()
   }
 
-  const tabsByTrackedRPCUrls = new Map<string, number[]>()
-
-  trackedRPCUrlsByTabId.forEach((trackedRPCUrls, tabId) => {
-    trackedRPCUrls.forEach((trackedRPCUrl) => {
-      const tabIds = tabsByTrackedRPCUrls.get(trackedRPCUrl) || []
-
-      tabsByTrackedRPCUrls.set(trackedRPCUrl, [...tabIds, tabId])
-    })
-  })
-
-  for (const [trackedRPCUrl, tabIds] of tabsByTrackedRPCUrls.entries()) {
+  for (const [trackedRPCUrl, tabIds] of tabIdsByTrackedRPCUrls.entries()) {
     const { promise, resolve } = Promise.withResolvers<void>()
 
     const rule = await createRedirectRule({

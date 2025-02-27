@@ -19,10 +19,7 @@ describe('RPC redirects', () => {
 
       await addRpcRedirectRules(
         fork,
-        new Map<number, Set<string>>().set(
-          tabId,
-          new Set<string>().add('http://real-url.com'),
-        ),
+        new Map<string, number[]>().set('http://real-url.com', [tabId]),
       )
 
       const rules = await chromeMock.declarativeNetRequest.getSessionRules()
@@ -42,12 +39,9 @@ describe('RPC redirects', () => {
 
       await addRpcRedirectRules(
         fork,
-        new Map<number, Set<string>>().set(
-          tabId,
-          new Set<string>()
-            .add('http://real-url.com')
-            .add('http://another-real-url.com'),
-        ),
+        new Map<string, number[]>()
+          .set('http://real-url.com', [tabId])
+          .set('http://another-real-url.com', [tabId]),
       )
 
       const rules = await chromeMock.declarativeNetRequest.getSessionRules()
@@ -71,14 +65,9 @@ describe('RPC redirects', () => {
     it('groups rules based on tab ids', async () => {
       await addRpcRedirectRules(
         fork,
-        new Map<number, Set<string>>()
-          .set(
-            1,
-            new Set<string>()
-              .add('http://real-url.com')
-              .add('http://another-real-url.com'),
-          )
-          .set(2, new Set<string>().add('http://real-url.com')),
+        new Map<string, number[]>()
+          .set('http://real-url.com', [1, 2])
+          .set('http://another-real-url.com', [1]),
       )
 
       const rules = await chromeMock.declarativeNetRequest.getSessionRules()
@@ -104,18 +93,12 @@ describe('RPC redirects', () => {
     it('Removes all redirect rules for a fork', async () => {
       await addRpcRedirectRules(
         { chainId: Chain.ETH, rpcUrl: 'http://fork-url.com' },
-        new Map<number, Set<string>>().set(
-          1,
-          new Set<string>().add('http://rpc.com'),
-        ),
+        new Map<string, number[]>().set('http://rpc.com', [1]),
       )
 
       await addRpcRedirectRules(
         { chainId: Chain.ETH, rpcUrl: 'http://another-fork-url.com' },
-        new Map<number, Set<string>>().set(
-          1,
-          new Set<string>().add('http://rpc.com'),
-        ),
+        new Map<string, number[]>().set('http://rpc.com', [1]),
       )
 
       await removeAllRpcRedirectRules('http://fork-url.com')
