@@ -1,4 +1,3 @@
-import { regexEscape } from '@/utils'
 import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 
 type RedirectRuleOptions = {
@@ -34,7 +33,7 @@ export const createRedirectRule = async ({
   },
   condition: {
     resourceTypes: [chrome.declarativeNetRequest.ResourceType.XMLHTTPREQUEST],
-    regexFilter: `^${regexEscape(urlToMatch)}$`,
+    urlFilter: urlToMatch,
     tabIds,
   },
 })

@@ -8,7 +8,6 @@ import {
   stopSimulation,
   updateSimulation,
 } from '@/test-utils'
-import { regexEscape } from '@/utils'
 import { Chain } from '@zodiac/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
@@ -47,7 +46,7 @@ describe('Simulation tracking', () => {
           redirect: { url: 'http://test.com' },
         },
         condition: {
-          regexFilter: `^${regexEscape('http://test-url')}$`,
+          urlFilter: 'http://test-url',
           tabIds: [2],
         },
       })
@@ -111,7 +110,7 @@ describe('Simulation tracking', () => {
           },
         },
         condition: {
-          regexFilter: `^${regexEscape('http://another-url')}$`,
+          urlFilter: 'http://another-url',
           tabIds: [1],
         },
       })
@@ -142,7 +141,7 @@ describe('Simulation tracking', () => {
           },
         },
         condition: {
-          regexFilter: `^${regexEscape('http://another-url')}$`,
+          urlFilter: 'http://another-url',
           tabIds: [2],
         },
       })
