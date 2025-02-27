@@ -8,7 +8,7 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@zodiac/ui": "workspace:*",
-    "lucide-react": "0.475.0",
+    "lucide-react": "0.476.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router": "7.2.0"
