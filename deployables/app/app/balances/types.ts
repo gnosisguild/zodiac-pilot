@@ -46,5 +46,4 @@ const chainSchema = z.object({
 })
 
 export type Chain = z.infer<typeof chainSchema>
-
 export const chainListSchema = chainSchema.array()

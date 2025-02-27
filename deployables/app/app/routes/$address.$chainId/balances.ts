@@ -3,6 +3,11 @@ import {
   getTokenBalances,
   type TokenBalance,
 } from '@/balances-server'
+import {
+  applyDeltaToBalances,
+  getVnetIdByRpc,
+  getVnetTransactionDelta,
+} from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
@@ -10,6 +15,7 @@ import {
   createPublicClient,
   erc20Abi,
   formatUnits,
+  getAddress,
   http,
   type PublicClient,
 } from 'viem'
@@ -20,24 +26,38 @@ export const loader = async ({
   params: { chainId, address },
 }: Route.LoaderArgs): Promise<TokenBalance[]> => {
   const url = new URL(request.url)
-
   const chain = await getChain(verifyChainId(parseInt(chainId)))
+  let allBalances = []
   const mainNetBalances = await getTokenBalances(
     chain,
     verifyHexAddress(address),
   )
-
+  allBalances = mainNetBalances
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
 
     invariantResponse(fork != null, `Fork param was no URL`)
+
+    const vnetId = await getVnetIdByRpc(fork)
+    if (vnetId) {
+      const deltas = await getVnetTransactionDelta(
+        vnetId,
+        fork,
+        getAddress(address),
+      )
+      allBalances = await applyDeltaToBalances(
+        mainNetBalances,
+        deltas,
+        chain.id,
+      )
+    }
 
     const client = createPublicClient({
       transport: http(fork),
     })
 
     return Promise.all(
-      mainNetBalances.map(async (balance) => {
+      allBalances.map(async (balance) => {
         const forkBalance = await getForkBalance(client, {
           contractId: balance.contractId,
           nativeChainId: chain.id,
