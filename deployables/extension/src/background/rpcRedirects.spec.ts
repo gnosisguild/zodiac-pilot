@@ -123,6 +123,16 @@ describe('RPC redirects', () => {
       const rules = await chromeMock.declarativeNetRequest.getSessionRules()
 
       expect(rules).toHaveLength(1)
+
+      const [rule] = rules
+
+      expect(rule).toMatchObject({
+        action: {
+          redirect: {
+            url: 'http://another-fork-url.com',
+          },
+        },
+      })
     })
   })
 })
