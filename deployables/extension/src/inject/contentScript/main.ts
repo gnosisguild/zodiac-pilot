@@ -44,7 +44,7 @@ if (!alreadyInjected && isValidTab(window.location.href)) {
         )
 
         const responseMessage: InjectedProviderResponse | undefined =
-          await chrome.runtime.sendMessage(message)
+          await chrome.runtime.sendMessage<InjectedProviderMessage>(message)
 
         // This can happen if the panel is closed before the response is received
         if (!responseMessage) return

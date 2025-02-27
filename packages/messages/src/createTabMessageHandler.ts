@@ -28,7 +28,7 @@ export type HandlerFn<Message> = (
   options: HandlerOptions,
 ) => void
 
-export function createMessageHandler<
+export function createTabMessageHandler<
   Type extends AllMessages['type'],
   Message = Extract<AllMessages, { type: Type }>,
 >(type: Type | Type[], handler: HandlerFn<Message>) {

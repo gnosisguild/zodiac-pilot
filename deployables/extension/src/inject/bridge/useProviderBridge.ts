@@ -3,7 +3,7 @@ import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
   InjectedProviderMessageTyp,
-  useMessageHandler,
+  useTabMessageHandler,
   type InjectedProviderMessage,
   type InjectedProviderResponse,
 } from '@zodiac/messages'
@@ -69,7 +69,7 @@ export const useProviderBridge = ({
 const useHandleProviderRequests = (provider: Eip1193Provider) => {
   const currentWindowId = useWindowId()
 
-  useMessageHandler(
+  useTabMessageHandler(
     InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
     ({ request, requestId }, { sendResponse, windowId }) => {
       if (currentWindowId !== windowId) {

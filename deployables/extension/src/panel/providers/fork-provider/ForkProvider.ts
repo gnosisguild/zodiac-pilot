@@ -10,6 +10,7 @@ import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import {
   PilotSimulationMessageType,
   type SimulationMessage,
@@ -308,19 +309,19 @@ export class ForkProvider extends EventEmitter {
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
 
-    chrome.runtime.sendMessage({
+    chrome.runtime.sendMessage<SimulationMessage>({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
       chainId: this.chainId,
       rpcUrl: this.provider.publicRpc,
-    } satisfies SimulationMessage)
+    })
 
     this.provider.on('update', ({ rpcUrl }) => {
-      chrome.runtime.sendMessage({
+      chrome.runtime.sendMessage<SimulationMessage>({
         type: PilotSimulationMessageType.SIMULATE_UPDATE,
         windowId: activeTab.windowId,
         rpcUrl,
-      } satisfies SimulationMessage)
+      })
     })
 
     this.isInitialized = true
@@ -332,10 +333,10 @@ export class ForkProvider extends EventEmitter {
 
     this.provider.removeAllListeners('update')
 
-    chrome.runtime.sendMessage({
+    chrome.runtime.sendMessage<SimulationMessage>({
       type: PilotSimulationMessageType.SIMULATE_STOP,
       windowId: activeTab.windowId,
-    } satisfies SimulationMessage)
+    })
 
     await this.provider.deleteFork()
     this.isInitialized = false
@@ -375,7 +376,6 @@ const execTransactionFromModule = (
   }
 }
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const DUMMY_MODULE_ADDRESS = '0xfacade0000000000000000000000000000000000'
 
 async function readBlockGasLimit(provider: Eip1193Provider) {

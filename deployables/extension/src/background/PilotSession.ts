@@ -34,24 +34,24 @@ export class PilotSession extends EventEmitter<{
     return this.tabs.has(tabId)
   }
 
-  trackTab(tabId: number) {
+  async trackTab(tabId: number) {
     this.tabs.add(tabId)
 
     this.rpcTracking.trackTab(tabId)
 
-    updateCSPHeaderRule(this.tabs)
+    await updateCSPHeaderRule(this.tabs)
 
-    sendMessageToTab(tabId, {
+    await sendMessageToTab(tabId, {
       type: PilotMessageType.PILOT_CONNECT,
     } satisfies Message)
   }
 
-  untrackTab(tabId: number) {
+  async untrackTab(tabId: number) {
     this.tabs.delete(tabId)
 
     this.rpcTracking.untrackTab(tabId)
 
-    updateCSPHeaderRule(this.tabs)
+    await updateCSPHeaderRule(this.tabs)
   }
 
   async delete() {

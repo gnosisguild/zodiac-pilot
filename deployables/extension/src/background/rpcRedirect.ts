@@ -31,6 +31,8 @@ export const addRpcRedirectRules = async (
   fork: Fork,
   trackedRPCUrlsByTabId: Map<number, string[]>,
 ) => {
+  console.debug(`Updating redirect rules for tabs`, { trackedRPCUrlsByTabId })
+
   const addRules = tabIds
     .map((tabId) => ({
       tabId,
@@ -58,6 +60,8 @@ export const addRpcRedirectRules = async (
     }))
 
   const { promise, resolve } = Promise.withResolvers()
+
+  console.debug(`Adding new redirect rules`, { addRules })
 
   chrome.declarativeNetRequest.updateSessionRules(
     {
