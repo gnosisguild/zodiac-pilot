@@ -114,17 +114,24 @@ const ListRoutes = ({
           }
         >
           <OnlyConnected>
-            {'routes' in loaderData && 'activeRouteId' in loaderData && (
-              <Routes>
-                {loaderData.routes.map((route) => (
-                  <Route
-                    key={route.id}
-                    route={route}
-                    active={route.id === loaderData.activeRouteId}
-                  />
-                ))}
-              </Routes>
-            )}
+            {'routes' in loaderData &&
+              (loaderData.routes.length > 0 ? (
+                <Routes>
+                  {loaderData.routes.map((route) => (
+                    <Route
+                      key={route.id}
+                      route={route}
+                      active={route.id === loaderData.activeRouteId}
+                    />
+                  ))}
+                </Routes>
+              ) : (
+                <div className="flex flex-1 flex-col">
+                  <h2 className="text-lg">
+                    You haven't created any accounts, yet.
+                  </h2>
+                </div>
+              ))}
           </OnlyConnected>
         </MinimumVersion>
       </Page.Main>
