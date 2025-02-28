@@ -11,7 +11,7 @@ import {
 
 window.addEventListener(
   'message',
-  (event: MessageEvent<CompanionAppMessage>) => {
+  async (event: MessageEvent<CompanionAppMessage>) => {
     switch (event.data.type) {
       case CompanionAppMessageType.SAVE_ROUTE:
       case CompanionAppMessageType.SAVE_AND_LAUNCH:
@@ -24,9 +24,9 @@ window.addEventListener(
       case CompanionAppMessageType.LAUNCH_ROUTE:
       case CompanionAppMessageType.REQUEST_ACTIVE_ROUTE:
       case CompanionAppMessageType.PING: {
-        chrome.runtime.sendMessage<CompanionAppMessage>(event.data, () => {
-          captureLastError()
-        })
+        await chrome.runtime.sendMessage<CompanionAppMessage>(event.data)
+
+        captureLastError()
 
         break
       }
