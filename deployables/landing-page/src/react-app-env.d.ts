@@ -1,5 +1,4 @@
-/// <reference types="react-scripts" />
-declare module '*.mp4' {
+declare module '*.jpg' {
   const src: string
   export default src
 }
