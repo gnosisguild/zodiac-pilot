@@ -530,14 +530,10 @@ describe('Root', () => {
         vi.fn(),
       )
 
-      expect(chromeMock.tabs.sendMessage).toHaveBeenNthCalledWith(
-        2,
-        mockedTab.id,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: 'test-route',
-        } satisfies CompanionResponseMessage,
-      )
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: 'test-route',
+      } satisfies CompanionResponseMessage)
     })
   })
 })

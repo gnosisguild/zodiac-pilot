@@ -42,7 +42,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       activeTab.id,
       {
         type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: lastUsedRouteId,
+        activeRouteId: routeId,
       } satisfies CompanionResponseMessage,
       { protocolCheckOnly: true },
     )
