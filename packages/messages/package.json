@@ -20,7 +20,7 @@
     "@zodiac/schema": "workspace:*"
   },
   "devDependencies": {
-    "@types/chrome": "0.0.306",
+    "@types/chrome": "0.0.307",
     "@types/react": "19.0.10",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
