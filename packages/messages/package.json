@@ -24,7 +24,7 @@
     "@types/react": "19.0.10",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.20.1"
+    "eslint": "9.21.0"
   },
   "peerDependencies": {
     "react": "19.0.0"
