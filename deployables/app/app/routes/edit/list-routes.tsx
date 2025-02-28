@@ -14,6 +14,7 @@ import {
   MeatballMenu,
   Modal,
   PrimaryButton,
+  SecondaryLinkButton,
   Table,
   Tag,
 } from '@zodiac/ui'
@@ -126,11 +127,15 @@ const ListRoutes = ({
                   ))}
                 </Routes>
               ) : (
-                <div className="flex flex-1 flex-col">
-                  <h2 className="text-lg">
-                    You haven't created any accounts, yet.
-                  </h2>
-                </div>
+                <Info title="You haven't created any accounts, yet.">
+                  Accounts let you quickly impersonate other safes and record
+                  transaction bundles for them.
+                  <div className="mt-4 flex">
+                    <SecondaryLinkButton to="/create">
+                      Create an account
+                    </SecondaryLinkButton>
+                  </div>
+                </Info>
               ))}
           </OnlyConnected>
         </MinimumVersion>
