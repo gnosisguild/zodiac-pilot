@@ -1,6 +1,13 @@
 import { ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId } from '@/execution-routes'
+import { sendMessageToTab } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
+import {
+  CompanionAppMessageType,
+  CompanionResponseMessageType,
+  useTabMessageHandler,
+  type CompanionResponseMessage,
+} from '@zodiac/messages'
 import { Outlet, useLoaderData, useNavigate } from 'react-router'
 import { FutureClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
@@ -19,6 +26,20 @@ export const Root = () => {
     useSaveRoute(lastUsedRouteId)
   useDeleteRoute()
   const { isLaunchPending, cancelLaunch, proceedWithLaunch } = useLaunchRoute()
+
+  useTabMessageHandler(
+    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+    async (_, { tabId }) => {
+      await sendMessageToTab(
+        tabId,
+        {
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: lastUsedRouteId,
+        } satisfies CompanionResponseMessage,
+        { protocolCheckOnly: true },
+      )
+    },
+  )
 
   const navigate = useNavigate()
 

@@ -7,9 +7,7 @@ import {
 import { ProvideProvider } from '@/providers-ui'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import {
-  CompanionAppMessageType,
   CompanionResponseMessageType,
-  useTabMessageHandler,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {
@@ -52,20 +50,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
-
-  useTabMessageHandler(
-    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
-    async (_, { tabId }) => {
-      await sendMessageToTab(
-        tabId,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
-    },
-  )
 
   return (
     <ProvideExecutionRoute route={route}>
