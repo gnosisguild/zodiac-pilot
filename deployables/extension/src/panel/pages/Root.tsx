@@ -24,6 +24,17 @@ import { useSaveRoute } from './useSaveRoute'
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
+  return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
+}
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const data = await request.formData()
+
+  const routeId = getString(data, 'routeId')
+  const lastUsedRouteId = await getLastUsedRouteId()
+
+  await saveLastUsedRouteId(routeId)
+
   const activeTab = await getActiveTab()
 
   if (activeTab.id != null) {
@@ -36,17 +47,6 @@ export const loader = async () => {
       { protocolCheckOnly: true },
     )
   }
-
-  return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
-}
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const data = await request.formData()
-
-  const routeId = getString(data, 'routeId')
-  const lastUsedRouteId = await getLastUsedRouteId()
-
-  await saveLastUsedRouteId(routeId)
 
   if (lastUsedRouteId != null) {
     return redirect(`/${lastUsedRouteId}/clear-transactions/${routeId}`)

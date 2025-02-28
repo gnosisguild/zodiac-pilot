@@ -512,21 +512,6 @@ describe('Root', () => {
   })
 
   describe('Active route', () => {
-    it('notifies the companion app about the active route', async () => {
-      await mockRoute({ id: 'test-route' })
-
-      await saveLastUsedRouteId('test-route')
-
-      const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader },
-      ])
-
-      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: 'test-route',
-      } satisfies CompanionResponseMessage)
-    })
-
     it('answers when queried for the currently active route', async () => {
       await mockRoute({ id: 'test-route' })
 
