@@ -5,13 +5,6 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
-import { getActiveTab, sendMessageToTab } from '@/utils'
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  useTabMessageHandler,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
 import {
   Outlet,
   redirect,
@@ -29,19 +22,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
     await saveStorageEntry({ key: 'lastUsedRoute', value: route.id })
 
-    const activeTab = await getActiveTab()
-
-    if (activeTab.id != null) {
-      sendMessageToTab(
-        activeTab.id,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
-    }
-
     return { route: await markRouteAsUsed(route) }
   } catch {
     await saveLastUsedRouteId(null)
@@ -52,20 +32,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 export const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
-
-  useTabMessageHandler(
-    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
-    async (_, { tabId }) => {
-      await sendMessageToTab(
-        tabId,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
-    },
-  )
 
   return (
     <ProvideExecutionRoute route={route}>
