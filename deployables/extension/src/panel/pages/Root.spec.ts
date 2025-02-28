@@ -15,7 +15,9 @@ import userEvent from '@testing-library/user-event'
 import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
+  CompanionResponseMessageType,
   type CompanionAppMessage,
+  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import type { MockTab } from '@zodiac/test-utils/chrome'
@@ -70,7 +72,7 @@ describe('Root', () => {
       await render('/', [{ path: '/', Component: Root, loader }], {
         initialState: [createTransaction()],
         activeTab,
-        inspectRoutes: ['/:activeRouteId/clear-transactions/:newActiveRouteId'],
+        inspectRoutes: ['/:activeRouteId/clear-transactions/:newRootId'],
       })
 
       await mockIncomingLaunch('secondRoute', activeTab)
@@ -474,6 +476,51 @@ describe('Root', () => {
           `/${currentRoute.id}/clear-transactions/${currentRoute.id}`,
         )
       })
+    })
+  })
+
+  describe('Active route', () => {
+    it('notifies the companion app about the active route', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await saveLastUsedRouteId('test-route')
+
+      const { mockedTab } = await render('/', [
+        { path: '/', Component: Root, loader },
+      ])
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: 'test-route',
+      } satisfies CompanionResponseMessage)
+    })
+
+    it('answers when queried for the currently active route', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await saveLastUsedRouteId('test-route')
+
+      const { mockedTab } = await render('/', [
+        { path: '/', Component: Root, loader },
+      ])
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+        } satisfies CompanionAppMessage,
+        { id: chromeMock.runtime.id, tab: mockedTab },
+        vi.fn(),
+      )
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenNthCalledWith(
+        2,
+        mockedTab.id,
+        {
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: 'test-route',
+        } satisfies CompanionResponseMessage,
+      )
     })
   })
 })
