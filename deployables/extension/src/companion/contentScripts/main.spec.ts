@@ -106,10 +106,7 @@ describe('Companion App Content Script', () => {
       window.postMessage(event, '*')
 
       await waitFor(() => {
-        expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
-          event,
-          expect.anything(),
-        )
+        expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(event)
       })
     })
 

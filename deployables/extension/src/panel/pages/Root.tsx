@@ -18,6 +18,7 @@ export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
   const activeTab = await getActiveTab()
+
   if (activeTab.id != null) {
     sendMessageToTab(
       activeTab.id,
