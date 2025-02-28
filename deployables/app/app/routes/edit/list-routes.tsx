@@ -19,7 +19,7 @@ import {
 } from '@zodiac/ui'
 import classNames from 'classnames'
 import { Pencil, Play, Trash2 } from 'lucide-react'
-import { useState, type PropsWithChildren } from 'react'
+import { useEffect, useState, type PropsWithChildren } from 'react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
@@ -183,26 +183,16 @@ const Route = ({ route, active }: RouteProps) => {
         <Address shorten>{route.avatar}</Address>
       </Table.Td>
       <Table.Td align="right">
-        <Actions routeId={route.id}>
-          <MinimumVersion version="3.6.0">
-            <Launch routeId={route.id} />
-          </MinimumVersion>
-          <Edit routeId={route.id} />
-          <MinimumVersion version="3.6.0">
-            <Delete routeId={route.id} />
-          </MinimumVersion>
-        </Actions>
+        <Actions routeId={route.id} />
       </Table.Td>
     </Table.Tr>
   )
 }
 
-const Actions = ({
-  children,
-  routeId,
-}: PropsWithChildren<{ routeId: string }>) => {
+const Actions = ({ routeId }: { routeId: string }) => {
   const submitting = useIsPending((data) => data.get('routeId') === routeId)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   return (
     <div
@@ -212,12 +202,21 @@ const Actions = ({
       )}
     >
       <MeatballMenu
+        open={menuOpen || confirmingDelete}
         size="tiny"
         label="Account options"
-        onShow={() => setMenuOpen(true)}
-        onHide={() => setMenuOpen(false)}
+        onRequestShow={() => setMenuOpen(true)}
+        onRequestHide={() => setMenuOpen(false)}
       >
-        {children}
+        <MinimumVersion version="3.6.0">
+          <Launch routeId={routeId} />
+        </MinimumVersion>
+
+        <Edit routeId={routeId} />
+
+        <MinimumVersion version="3.6.0">
+          <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
+        </MinimumVersion>
       </MeatballMenu>
     </div>
   )
@@ -269,12 +268,22 @@ const Edit = ({ routeId }: { routeId: string }) => {
   )
 }
 
-const Delete = ({ routeId }: { routeId: string }) => {
+const Delete = ({
+  routeId,
+  onConfirmChange,
+}: {
+  routeId: string
+  onConfirmChange: (state: boolean) => void
+}) => {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const submitting = useIsPending(
     Intent.Delete,
     (data) => data.get('routeId') === routeId,
   )
+
+  useEffect(() => {
+    onConfirmChange(confirmDelete)
+  }, [confirmDelete, onConfirmChange])
 
   return (
     <>
@@ -303,6 +312,9 @@ const Delete = ({ routeId }: { routeId: string }) => {
               value={routeId}
               style="contrast"
               busy={submitting}
+              onClick={(event) => {
+                event.stopPropagation()
+              }}
             >
               Delete
             </PrimaryButton>
