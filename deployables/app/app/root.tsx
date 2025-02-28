@@ -10,7 +10,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from 'react-router'
 import type { Route } from './+types/root'
 
@@ -37,9 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export const loader = () => ({ isDev: process.env.NODE_ENV === 'development' })
 
-export default function App() {
-  const { isDev } = useLoaderData<typeof loader>()
-
+export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
   return (
     <ProvideDevelopmentContext isDev={isDev}>
       <ProvideExtensionVersion>

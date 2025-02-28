@@ -1,13 +1,24 @@
 import { getLastUsedRouteId, getRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
+import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
-export const useLaunchRoute = () => {
+type OnLaunchOptions = {
+  onLaunch: (routeId: string) => void
+}
+
+export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions) => {
   const navigate = useNavigate()
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
   const transactions = useTransactions()
+
+  const onLaunchRef = useRef(onLaunch)
+
+  useEffect(() => {
+    onLaunchRef.current = onLaunch
+  }, [onLaunch])
 
   useTabMessageHandler(
     CompanionAppMessageType.LAUNCH_ROUTE,
@@ -25,7 +36,7 @@ export const useLaunchRoute = () => {
         }
       }
 
-      navigate(`/${message.routeId}`)
+      onLaunchRef.current(message.routeId)
     },
   )
 
@@ -36,6 +47,9 @@ export const useLaunchRoute = () => {
 
     setPendingRouteId(null)
 
+    invariant(pendingRouteId != null, 'No route launch was pending')
+
+    onLaunchRef.current(pendingRouteId)
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
   }, [navigate, pendingRouteId])
 

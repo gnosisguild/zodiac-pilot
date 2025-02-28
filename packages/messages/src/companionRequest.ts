@@ -58,6 +58,8 @@ export function companionRequest<Type extends CompanionAppMessageType>(
       return
     }
 
+    window.removeEventListener('message', handleMessage)
+
     handler(event.data as Extract<CompanionResponseMessage, { type: Type }>)
   }
 

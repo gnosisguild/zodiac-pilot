@@ -10,7 +10,7 @@ import {
   render,
 } from '@/test-utils'
 import type { ExecutionRoute } from '@/types'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ETH_ZERO_ADDRESS } from '@zodiac/chains'
 import {
@@ -21,8 +21,9 @@ import {
 } from '@zodiac/messages'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import type { MockTab } from '@zodiac/test-utils/chrome'
+import { Outlet } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
-import { loader, Root } from './Root'
+import { action, loader, Root } from './Root'
 
 describe('Root', () => {
   describe('Launch route', () => {
@@ -42,7 +43,7 @@ describe('Root', () => {
       await mockRoute({ id: 'test-route' })
       const activeTab = createMockTab()
 
-      await render('/', [{ path: '/', Component: Root, loader }], {
+      await render('/', [{ path: '/', Component: Root, loader, action }], {
         inspectRoutes: ['/:activeRouteId'],
         activeTab,
       })
@@ -50,6 +51,37 @@ describe('Root', () => {
       mockIncomingLaunch('test-route', activeTab)
 
       await expectRouteToBe('/test-route')
+    })
+
+    it('communicates the new route id', async () => {
+      const activeTab = createMockTab()
+
+      await mockRoute({ id: 'test-route' })
+
+      await render(
+        '/',
+        [
+          {
+            path: '/',
+            Component: Root,
+            loader,
+            action,
+            children: [{ path: ':activeRouteId', Component: Outlet }],
+          },
+        ],
+        {
+          activeTab,
+        },
+      )
+
+      await mockIncomingLaunch('test-route', activeTab)
+
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(activeTab.id, {
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: 'test-route',
+        } satisfies CompanionResponseMessage)
+      })
     })
 
     it('is possible to launch a new route and clear transactions', async () => {
@@ -69,7 +101,7 @@ describe('Root', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      await render('/', [{ path: '/', Component: Root, loader }], {
+      await render('/', [{ path: '/', Component: Root, loader, action }], {
         initialState: [createTransaction()],
         activeTab,
         inspectRoutes: ['/:activeRouteId/clear-transactions/:newRootId'],
@@ -480,21 +512,6 @@ describe('Root', () => {
   })
 
   describe('Active route', () => {
-    it('notifies the companion app about the active route', async () => {
-      await mockRoute({ id: 'test-route' })
-
-      await saveLastUsedRouteId('test-route')
-
-      const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader },
-      ])
-
-      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: 'test-route',
-      } satisfies CompanionResponseMessage)
-    })
-
     it('answers when queried for the currently active route', async () => {
       await mockRoute({ id: 'test-route' })
 
@@ -513,14 +530,10 @@ describe('Root', () => {
         vi.fn(),
       )
 
-      expect(chromeMock.tabs.sendMessage).toHaveBeenNthCalledWith(
-        2,
-        mockedTab.id,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: 'test-route',
-        } satisfies CompanionResponseMessage,
-      )
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: 'test-route',
+      } satisfies CompanionResponseMessage)
     })
   })
 })
