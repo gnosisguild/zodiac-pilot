@@ -1,6 +1,6 @@
 import { ProvideCompanionAppContext } from '@/companion'
-import { getLastUsedRouteId } from '@/execution-routes'
-import { getActiveTab, sendMessageToTab } from '@/utils'
+import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
+import { formData, getActiveTab, getString, sendMessageToTab } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionAppMessageType,
@@ -8,7 +8,14 @@ import {
   useTabMessageHandler,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { Outlet, useLoaderData, useNavigate } from 'react-router'
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useSubmit,
+  type ActionFunctionArgs,
+} from 'react-router'
 import { FutureClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
 import { useLaunchRoute } from './useLaunchRoute'
@@ -33,12 +40,32 @@ export const loader = async () => {
   return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
 }
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const data = await request.formData()
+
+  const routeId = getString(data, 'routeId')
+  const lastUsedRouteId = await getLastUsedRouteId()
+
+  await saveLastUsedRouteId(routeId)
+
+  if (lastUsedRouteId != null) {
+    return redirect(`/${lastUsedRouteId}/clear-transactions/${routeId}`)
+  }
+
+  return redirect(`/${routeId}`)
+}
+
 export const Root = () => {
   const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
   const { isUpdatePending, cancelUpdate, saveUpdate } =
     useSaveRoute(lastUsedRouteId)
   useDeleteRoute()
-  const { isLaunchPending, cancelLaunch, proceedWithLaunch } = useLaunchRoute()
+  const submit = useSubmit()
+  const { isLaunchPending, cancelLaunch, proceedWithLaunch } = useLaunchRoute({
+    onLaunch(routeId) {
+      submit(formData({ routeId }), { method: 'POST' })
+    },
+  })
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,

@@ -6,6 +6,7 @@ import {
   RouterProvider,
   type ActionFunction,
   type LoaderFunction,
+  type RouteObject,
 } from 'react-router'
 import { InspectRoute } from './InspectRoute'
 import { TestElement, waitForTestElement } from './TestElement'
@@ -16,6 +17,7 @@ export type Route = {
   Component: ComponentType
   loader?: LoaderFunction
   action?: ActionFunction
+  children?: Route[]
 }
 
 export type RenderOptions = Parameters<typeof baseRender>[1] & {
@@ -56,12 +58,7 @@ export const render = async (
         path: '/',
         element: <TestElement />,
         children: [
-          ...routes.map(({ Component, path, loader, action }) => ({
-            path,
-            loader,
-            action,
-            element: <Component />,
-          })),
+          ...transformRoutes(routes),
 
           ...inspectRoutes.map((path) => ({ path, element: <InspectRoute /> })),
         ],
@@ -78,6 +75,15 @@ export const render = async (
 
   return result
 }
+
+const transformRoutes = (routes: Route[]): RouteObject[] =>
+  routes.map(({ path, Component, action, loader, children }) => ({
+    path,
+    element: <Component />,
+    action,
+    loader,
+    children: children != null ? transformRoutes(children) : undefined,
+  }))
 
 export const expectRouteToBe = (expectedPathName: string) =>
   waitFor(() => {
