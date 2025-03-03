@@ -1,6 +1,7 @@
 export { type PrefixedAddress } from 'ser-kit'
 export { decode } from './decode'
 export { encode } from './encode'
+export { isHex } from './hex'
 export type { Hex } from './hex'
 export { jsonStringify } from './jsonStringify'
 export { metaTransactionRequestSchema } from './metaTransactionRequestSchema'

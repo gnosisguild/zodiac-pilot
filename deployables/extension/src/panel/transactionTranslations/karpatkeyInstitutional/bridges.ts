@@ -1,11 +1,12 @@
 import type { HexAddress } from '@/types'
+import { isHex, type Hex } from '@zodiac/schema'
 import { FunctionFragment, Interface } from 'ethers'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 
 export function extractBridgedTokenAddress(
   { to, data }: MetaTransactionRequest,
   chainId: ChainId,
-): undefined | `0x${string}` {
+): undefined | Hex {
   const bridge = allBridges.find(
     (bridge) =>
       to.toLowerCase() === bridge.address.toLowerCase() &&
@@ -29,7 +30,9 @@ export function extractBridgedTokenAddress(
   )
   return bridge.tokenArgument !== undefined
     ? decodedData[bridge.tokenArgument]
-    : bridge.token
+    : isHex(bridge.token)
+      ? bridge.token
+      : undefined
 }
 
 type BridgeData = {

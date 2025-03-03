@@ -1,18 +1,19 @@
+import type { Hex } from '@zodiac/schema'
 import { getAddress } from 'ethers'
 import type { ChainId } from 'ser-kit'
 
 type AbiFragment = object
 
 export interface ContractInfo {
-  address: `0x${string}`
-  proxyTo?: `0x${string}`
+  address: Hex
+  proxyTo?: Hex
   verified: boolean
   name?: string
   abi?: AbiFragment[]
 }
 
 export const fetchContractInfo = async (
-  address: `0x${string}`,
+  address: Hex,
   chainId: ChainId,
 ): Promise<ContractInfo> => {
   const url = `https://api.abi.pub/v1/chains/${chainId}/accounts/${address.toLowerCase()}`

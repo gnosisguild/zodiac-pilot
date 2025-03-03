@@ -3,6 +3,7 @@ import { ForkProvider } from '@/providers'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
+import type { Hex } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   createContext,
@@ -56,7 +57,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
       // Now we can take some time decoding the transaction and we update the state once that's done.
       const contractInfo = await fetchContractInfo(
-        transaction.to as `0x${string}`,
+        transaction.to as Hex,
         chainId,
       )
       dispatch({
