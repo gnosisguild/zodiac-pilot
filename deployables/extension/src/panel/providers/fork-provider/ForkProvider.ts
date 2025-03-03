@@ -15,7 +15,7 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
-import { BrowserProvider, toBigInt, toQuantity, ZeroAddress } from 'ethers'
+import { BrowserProvider, toBigInt, toQuantity } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
@@ -231,7 +231,7 @@ export class ForkProvider extends EventEmitter {
     }
 
     const ownerAddress =
-      this.ownerAddress === ZeroAddress ? undefined : this.ownerAddress
+      this.ownerAddress === ZERO_ADDRESS ? undefined : this.ownerAddress
     const isSafe = await this.isSafePromise
 
     invariant(
@@ -262,7 +262,7 @@ export class ForkProvider extends EventEmitter {
     let tx: TransactionData
     if (isSafe) {
       let from = this.moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
-      if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
+      if (from === ZERO_ADDRESS) from = DUMMY_MODULE_ADDRESS
 
       // correctly route the meta tx through the avatar
       tx = execTransactionFromModule(
@@ -416,7 +416,7 @@ async function prepareSafeForSimulation(
   // However, enabling the owner as a module seems like a more simple approach.
 
   let from = moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
-  if (from === ZeroAddress) from = DUMMY_MODULE_ADDRESS
+  if (from === ZERO_ADDRESS) from = DUMMY_MODULE_ADDRESS
 
   const { safeContract } = safe.getContractManager()
 
@@ -428,6 +428,7 @@ async function prepareSafeForSimulation(
       params: [
         {
           to: avatarAddress,
+          // @ts-expect-error This apparently produces a too big union type
           data: safeContract.encode('enableModule', [from]),
           from: avatarAddress,
         },

@@ -3,6 +3,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
 import { getChainId } from '@zodiac/chains'
+import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
 import {
   type ChainId,
@@ -104,7 +105,7 @@ export const useGloballyApplicableTranslation = () => {
 const findGloballyApplicableTranslation = async (
   transactions: TransactionState[],
   chainId: ChainId,
-  avatarAddress: `0x${string}`,
+  avatarAddress: Hex,
 ): Promise<ApplicableTranslation | undefined> => {
   if (transactions.length === 0) return undefined
 
@@ -144,7 +145,7 @@ const findGloballyApplicableTranslation = async (
 const cacheKeyGlobal = (
   transactions: TransactionState[],
   chainId: ChainId,
-  avatarAddress: `0x${string}`,
+  avatarAddress: Hex,
 ) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`
 
 const transactionsEqual = (

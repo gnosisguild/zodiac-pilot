@@ -1,5 +1,6 @@
 import type { HexAddress } from '@/types'
 import { SupportedZodiacModuleType } from '@zodiac/modules'
+import type { Hex } from '@zodiac/schema'
 import { Interface } from 'ethers'
 import { BetweenHorizontalStart } from 'lucide-react'
 import type { MetaTransactionRequest } from 'ser-kit'
@@ -64,7 +65,7 @@ export const kpkBridgeAware = {
 
     const bridgedTokenAddresses = allTransactions
       .map((tx) => extractBridgedTokenAddress(tx, chainId))
-      .filter(Boolean) as `0x${string}`[]
+      .filter(Boolean) as Hex[]
 
     if (bridgedTokenAddresses.length === 0) {
       return

@@ -1,5 +1,7 @@
+import type { Hex } from '@zodiac/schema'
+
 declare module 'abitype' {
   export interface Register {
-    addressType: `0x${string}`
+    addressType: Hex
   }
 }

@@ -24,7 +24,7 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import type { ExecutionRoute } from '@zodiac/schema'
+import { isHexAddress, type ExecutionRoute } from '@zodiac/schema'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import { href, redirect } from 'react-router'
@@ -139,7 +139,9 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
                 initiator={
                   address == null
                     ? undefined
-                    : prefixAddress(undefined, address)
+                    : isHexAddress(address)
+                      ? prefixAddress(undefined, address)
+                      : undefined
                 }
                 name="avatar"
                 knownRoutes={'routes' in loaderData ? loaderData.routes : []}

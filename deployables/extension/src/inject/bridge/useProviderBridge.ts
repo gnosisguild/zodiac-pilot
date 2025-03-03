@@ -7,6 +7,7 @@ import {
   type InjectedProviderMessage,
   type InjectedProviderResponse,
 } from '@zodiac/messages'
+import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
@@ -27,7 +28,7 @@ const emitEvent = async (eventName: string, eventData: any) => {
 type UseProviderBridgeOptions = {
   provider: Eip1193Provider
   chainId?: ChainId
-  account?: `0x${string}`
+  account?: Hex
 }
 
 export const useProviderBridge = ({

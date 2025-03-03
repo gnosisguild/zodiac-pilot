@@ -23,32 +23,15 @@ export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {
     throw new Error(`service not available for chain #${chainId}`)
   }
 
-  // @ts-expect-error SafeApiKit is only available as a CJS module. That doesn't play super nice with us being ESM.
-  if (SafeApiKit.default) {
-    // @ts-expect-error See above
-    return new SafeApiKit.default({ txServiceUrl, chainId: BigInt(chainId) })
-  }
-
   return new SafeApiKit({ txServiceUrl, chainId: BigInt(chainId) })
 }
 
-export const initSafeProtocolKit = async (
+export const initSafeProtocolKit = (
   chainId: ChainId,
   safeAddress: string,
-): Promise<Safe> => {
-  // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
-  if (Safe.default) {
-    // @ts-expect-error protocol-kit is only available as a CJS module. That doesn't play super nice with us being ESM.
-    return await Safe.default.init({
-      // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
-      provider: RPC[chainId],
-      safeAddress,
-    })
-  }
-
-  return await Safe.init({
+): Promise<Safe> =>
+  Safe.init({
     // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
     provider: RPC[chainId],
     safeAddress,
   })
-}

@@ -1,5 +1,6 @@
+import { invariant } from '@epic-web/invariant'
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import { type HexAddress } from '@zodiac/schema'
+import { isHexAddress, type HexAddress } from '@zodiac/schema'
 import { useEffect, useRef } from 'react'
 import { type ChainId } from 'ser-kit'
 import { useAccount, useAccountEffect, useDisconnect } from 'wagmi'
@@ -103,6 +104,8 @@ const useAutoReconnect = ({
     if (onConnectRef.current == null) {
       return
     }
+
+    invariant(isHexAddress(address), `"${address}" is not a hex address`)
 
     onConnectRef.current({
       address,

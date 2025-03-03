@@ -4,6 +4,7 @@ import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
+import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
 import {
   type ChainId,
@@ -99,7 +100,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 const findApplicableTranslation = async (
   metaTransaction: MetaTransactionRequest,
   chainId: ChainId,
-  avatarAddress: `0x${string}`,
+  avatarAddress: Hex,
 ): Promise<ApplicableTranslation | undefined> => {
   // we cache the result of the translation to avoid test-running translation functions over and over again
   const key = cacheKey(metaTransaction, chainId, avatarAddress)
@@ -135,7 +136,7 @@ const findApplicableTranslation = async (
 const cacheKey = (
   transaction: MetaTransactionRequest,
   chainId: ChainId,
-  avatarAddress: `0x${string}`,
+  avatarAddress: Hex,
 ) =>
   `${chainId}:${avatarAddress}:${transaction.to}:${transaction.value}:${transaction.data}:${
     transaction.operation || 0

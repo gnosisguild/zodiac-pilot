@@ -1,4 +1,5 @@
 import type { SupportedZodiacModuleType } from '@zodiac/modules'
+import type { Hex } from '@zodiac/schema'
 import type { LucideIcon } from 'lucide-react'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 
@@ -16,7 +17,7 @@ export type TransactionTranslation = {
       translate: (
         transaction: MetaTransactionRequest,
         chainId: ChainId,
-        avatarAddress: `0x${string}`,
+        avatarAddress: Hex,
       ) => Promise<MetaTransactionRequest[] | undefined>
     }
   | {
@@ -24,7 +25,7 @@ export type TransactionTranslation = {
       translateGlobal: (
         allTransactions: MetaTransactionRequest[],
         chainId: ChainId,
-        avatarAddress: `0x${string}`,
+        avatarAddress: Hex,
       ) => Promise<MetaTransactionRequest[] | undefined>
     }
 )

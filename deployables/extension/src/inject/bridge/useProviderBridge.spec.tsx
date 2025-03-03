@@ -10,6 +10,7 @@ import type { Eip1193Provider } from '@/types'
 import { cleanup, waitFor } from '@testing-library/react'
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import { InjectedProviderMessageTyp } from '@zodiac/messages'
+import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
@@ -162,14 +163,14 @@ describe('Bridge', () => {
     it('does emit an "accountsChanged" event when the account resets on later renders', async () => {
       const tab = mockActiveTab()
 
-      const { rerender } = await renderHook<
-        void,
-        { account: `0x${string}` | undefined }
-      >(({ account }) => useProviderBridge({ provider, account }), {
-        initialProps: { account: ZERO_ADDRESS },
-        wrapper: Wrapper,
-        activeTab: tab,
-      })
+      const { rerender } = await renderHook<void, { account: Hex | undefined }>(
+        ({ account }) => useProviderBridge({ provider, account }),
+        {
+          initialProps: { account: ZERO_ADDRESS },
+          wrapper: Wrapper,
+          activeTab: tab,
+        },
+      )
 
       rerender({ account: undefined })
 

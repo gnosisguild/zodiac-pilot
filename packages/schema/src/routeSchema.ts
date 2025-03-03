@@ -19,7 +19,8 @@ export const chainIdSchema = z.union([
 ])
 
 export type HexAddress = Lowercase<Hex>
-export const isHexAddress = isHex
+export const isHexAddress = (address: unknown): address is HexAddress =>
+  isHex(address)
 export const addressSchema = hexSchema.transform<HexAddress>(
   (data) => data.toLowerCase() as HexAddress,
 )
