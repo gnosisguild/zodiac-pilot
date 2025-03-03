@@ -6,6 +6,7 @@ import {
 import type { ExecutionRoute } from '@zodiac/schema'
 import {
   createRenderFramework,
+  sleepTillIdle,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
 import type { PropsWithChildren } from 'react'
@@ -77,6 +78,8 @@ export const render = async (
       })
     },
   })
+
+  await sleepTillIdle()
 
   if (connected) {
     await postMessage({ type: PilotMessageType.PILOT_CONNECT })
