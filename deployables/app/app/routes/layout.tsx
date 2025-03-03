@@ -23,23 +23,44 @@ const Sidebar = () => {
             <Navigation>
               <Navigation.Section title="Tokens">
                 <Navigation.Link
+                  reloadDocument={(location) =>
+                    !location.pathname.startsWith('/tokens')
+                  }
                   to={href('/tokens/send/:chain?/:token?')}
                   icon={ArrowUpFromLine}
                 >
                   Send tokens
                 </Navigation.Link>
 
-                <Navigation.Link to={href('/tokens/balances')} icon={Landmark}>
+                <Navigation.Link
+                  reloadDocument={(location) =>
+                    !location.pathname.startsWith('/tokens')
+                  }
+                  to={href('/tokens/balances')}
+                  icon={Landmark}
+                >
                   Balances
                 </Navigation.Link>
               </Navigation.Section>
 
               <Navigation.Section title="Accounts">
-                <Navigation.Link to={href('/create')} icon={Plus}>
+                <Navigation.Link
+                  to={href('/create')}
+                  icon={Plus}
+                  reloadDocument={(location) =>
+                    location.pathname.startsWith('/tokens')
+                  }
+                >
                   Create new account
                 </Navigation.Link>
 
-                <Navigation.Link to={href('/edit')} icon={List}>
+                <Navigation.Link
+                  to={href('/edit')}
+                  icon={List}
+                  reloadDocument={(location) =>
+                    location.pathname.startsWith('/tokens')
+                  }
+                >
                   Manage accounts
                 </Navigation.Link>
               </Navigation.Section>
