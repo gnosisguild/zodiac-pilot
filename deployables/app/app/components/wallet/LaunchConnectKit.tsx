@@ -1,5 +1,6 @@
+import { invariant } from '@epic-web/invariant'
 import type { ChainId } from '@zodiac/chains'
-import { type Hex, type HexAddress } from '@zodiac/schema'
+import { isHexAddress, type Hex, type HexAddress } from '@zodiac/schema'
 import { ConnectKitButton, ConnectKitProvider } from 'connectkit'
 import { useAccountEffect } from 'wagmi'
 
@@ -27,6 +28,8 @@ export const LaunchConnectKit = ({
       if (onConnect == null) {
         return
       }
+
+      invariant(isHexAddress(address), `"${address}" is not a hex address`)
 
       onConnect({
         address,

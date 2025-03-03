@@ -17,7 +17,7 @@ type FormProps = Omit<
   'className' | 'children'
 > & {
   intent?: string
-  context?: Record<string, string | null>
+  context?: Record<string, string | null | undefined>
   children?: ReactNode | ((props: RenderProps) => ReactNode)
 }
 

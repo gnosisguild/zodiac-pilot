@@ -38,7 +38,6 @@ export const loader = async ({
 
     return Promise.all(
       mainNetBalances.map(async (balance) => {
-        // @ts-expect-error the PublicClient type from viem is weird
         const forkBalance = await getForkBalance(client, {
           contractId: balance.contractId,
           nativeChainId: chain.id,
