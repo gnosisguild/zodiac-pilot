@@ -22,7 +22,7 @@ const Section = ({ title, children }: SectionProps) => (
 Navigation.Section = Section
 
 type LinkProps = Pick<ComponentProps<typeof NavLink>, 'to' | 'children'> & {
-  reloadDocument?: boolean | ((locaiont: Location) => boolean)
+  reloadDocument?: boolean | ((location: Location) => boolean)
   icon: LucideIcon
 }
 
