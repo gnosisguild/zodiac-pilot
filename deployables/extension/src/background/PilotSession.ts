@@ -110,14 +110,18 @@ export class PilotSession extends EventEmitter<{
     return this.fork
   }
 
-  async updateFork(rpcUrl: string) {
+  async updateFork(rpcUrl: string, vnetId: string) {
     invariant(this.fork != null, 'Session is not forked')
 
     if (this.fork.rpcUrl != null) {
       await removeAllRpcRedirectRules(this.fork.rpcUrl)
     }
 
-    this.fork = { ...this.fork, rpcUrl }
+    this.fork = {
+      ...this.fork,
+      rpcUrl,
+      vnetId,
+    }
 
     await addRpcRedirectRules(
       this.getFork(),

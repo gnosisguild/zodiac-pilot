@@ -26,10 +26,12 @@ export const companionEnablement = (
           if (!session.isForked()) {
             return
           }
+          const { rpcUrl, vnetId } = session.getFork()
 
           await sendMessageToTab(tabId, {
             type: CompanionResponseMessageType.FORK_UPDATED,
-            forkUrl: session.getFork().rpcUrl ?? null,
+            forkUrl: rpcUrl ?? null,
+            vnetId: vnetId ?? null,
           } satisfies CompanionResponseMessage)
         })
 
@@ -37,10 +39,10 @@ export const companionEnablement = (
 
         const dispose = onSimulationUpdate.addListener(async (fork) => {
           console.debug('Sending updated fork to companion app', { fork })
-
           await sendMessageToTab(tabId, {
             type: CompanionResponseMessageType.FORK_UPDATED,
             forkUrl: fork?.rpcUrl ?? null,
+            vnetId: fork?.vnetId ?? null,
           } satisfies CompanionResponseMessage)
 
           captureLastError()

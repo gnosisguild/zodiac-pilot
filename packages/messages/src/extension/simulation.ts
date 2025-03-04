@@ -11,12 +11,14 @@ interface SimulateStart {
   windowId: number
   chainId: ChainId
   rpcUrl?: string
+  vnetId?: string
 }
 
 type SimulateUpdate = {
   type: PilotSimulationMessageType.SIMULATE_UPDATE
   windowId: number
   rpcUrl: string
+  vnetId: string
 }
 
 interface SimulateStop {

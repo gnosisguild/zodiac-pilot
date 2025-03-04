@@ -3,6 +3,7 @@ import type { ChainId } from 'ser-kit'
 export interface Fork {
   chainId: ChainId
   rpcUrl?: string
+  vnetId?: string
 }
 
 export type EventFn = (...args: any) => void
