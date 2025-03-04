@@ -12,7 +12,7 @@ export const FakeBrowser = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col">
+    <div className="flex h-full w-full flex-1 flex-col">
       <div className="relative flex items-center justify-center border-b border-zinc-300 bg-zinc-200 py-4 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-3">
           <div className="size-3 rounded-full bg-slate-400 dark:bg-zinc-500" />
@@ -31,7 +31,8 @@ export const FakeBrowser = ({ children }: PropsWithChildren) => {
           />
         </div>
       </div>
-      {children}
+
+      <div className="flex-1 overflow-hidden">{children}</div>
     </div>
   )
 }
