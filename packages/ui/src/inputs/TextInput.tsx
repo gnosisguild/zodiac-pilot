@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef } from 'react'
-import { BareInput } from './BareInput'
+import { BareInput, type TextAlign } from './BareInput'
 import { type ComposableInputProps, Input } from './Input'
 import { InputLayout, type InputLayoutProps } from './InputLayout'
 
@@ -8,7 +8,9 @@ type TextInputProps = Omit<
   'id' | 'type' | 'className'
 > &
   ComposableInputProps &
-  InputLayoutProps
+  InputLayoutProps & {
+    textAlign?: TextAlign
+  }
 
 export const TextInput = ({
   label,
@@ -17,10 +19,16 @@ export const TextInput = ({
   disabled,
   after,
   before,
+  hideLabel,
 
   ...props
 }: TextInputProps) => (
-  <Input label={label} description={description} error={error}>
+  <Input
+    hideLabel={hideLabel}
+    label={label}
+    description={description}
+    error={error}
+  >
     {({ inputId, descriptionId }) => (
       <InputLayout disabled={disabled} before={before} after={after}>
         <BareInput

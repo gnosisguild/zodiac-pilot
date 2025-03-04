@@ -61,7 +61,7 @@ export const BaseButton = ({
     name={intent != null ? 'intent' : props.name}
     value={intent != null ? intent : props.value}
     className={classNames(
-      'outline-hidden relative cursor-pointer rounded-md border transition-all disabled:cursor-not-allowed disabled:opacity-60',
+      'outline-hidden relative cursor-pointer rounded-md border transition-all disabled:cursor-not-allowed disabled:opacity-75',
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,

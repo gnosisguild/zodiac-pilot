@@ -1,5 +1,5 @@
 import { verifyHexAddress } from '@zodiac/schema'
-import { Address, PrimaryButton, SecondaryButton } from '@zodiac/ui'
+import { Address, SecondaryButton } from '@zodiac/ui'
 import { LaunchConnectKit } from './LaunchConnectKit'
 
 export const ConnectWalletButton = ({
@@ -12,7 +12,7 @@ export const ConnectWalletButton = ({
   <LaunchConnectKit>
     {({ show, address }) =>
       address == null ? (
-        <PrimaryButton onClick={show}>{connectLabel}</PrimaryButton>
+        <SecondaryButton onClick={show}>{connectLabel}</SecondaryButton>
       ) : (
         <div className="flex items-center gap-4">
           <span className="text-sm font-semibold uppercase text-zinc-500 dark:text-zinc-300">
