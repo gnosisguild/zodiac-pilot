@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { createAccount } from './createAccount'
 
 describe('createAccount', () => {
-  const ethProvider = getDefaultProvider(1)
+  const ethProvider = getDefaultProvider(Chain.ETH)
 
   it('creates an EAO account if the passed address does not have code', async () => {
     const vitalikEoaAddress = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'
