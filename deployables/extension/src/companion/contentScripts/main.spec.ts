@@ -128,6 +128,7 @@ describe('Companion App Content Script', () => {
         {
           type: CompanionResponseMessageType.FORK_UPDATED,
           forkUrl: 'http://rpc.com',
+          vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
         } satisfies CompanionResponseMessage,
       ],
       [

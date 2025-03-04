@@ -308,19 +308,20 @@ export class ForkProvider extends EventEmitter {
     // notify the background script to start intercepting JSON RPC requests in the current window
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
-
     chrome.runtime.sendMessage<SimulationMessage>({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
       chainId: this.chainId,
       rpcUrl: this.provider.publicRpc,
+      vnetId: this.provider.vnetId,
     })
 
-    this.provider.on('update', ({ rpcUrl }) => {
+    this.provider.on('update', ({ rpcUrl, vnetId }) => {
       chrome.runtime.sendMessage<SimulationMessage>({
         type: PilotSimulationMessageType.SIMULATE_UPDATE,
         windowId: activeTab.windowId,
         rpcUrl,
+        vnetId,
       })
     })
 

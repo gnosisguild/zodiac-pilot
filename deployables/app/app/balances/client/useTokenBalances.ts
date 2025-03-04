@@ -6,7 +6,7 @@ import { useForkUrl } from './ForkContext'
 
 export const useTokenBalances = () => {
   const { address, chainId } = useAccount()
-  const forkUrl = useForkUrl()
+  const { forkUrl } = useForkUrl()
   const { load, data = [], state } = useFetcher<TokenBalance[]>()
 
   useEffect(() => {
