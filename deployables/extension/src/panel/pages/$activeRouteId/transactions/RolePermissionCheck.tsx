@@ -30,7 +30,11 @@ const simulateRolesTransaction = async (
   const routeWithInitiator = (
     route.initiator ? route : { ...route, initiator: ZeroAddress }
   ) as SerRoute
-  const plan = await planExecution([encodedTransaction], routeWithInitiator)
+  const plan = await planExecution([encodedTransaction], routeWithInitiator, {
+    safeTransactionProperties: {
+      [route.avatar]: { nonce: 'override' },
+    } as const,
+  })
 
   // TODO generalize permission checking logic (ser-kit)
   invariant(plan.length <= 1, 'Multi-step execution not yet supported')
