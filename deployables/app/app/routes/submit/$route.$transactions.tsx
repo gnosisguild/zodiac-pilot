@@ -1,4 +1,4 @@
-import { ConnectWallet, WalletProvider } from '@/components'
+import { ConnectWallet } from '@/components'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
@@ -97,18 +97,16 @@ const SubmitPage = ({
         </Labeled>
       </Form.Section>
 
-      <WalletProvider>
-        <Form.Section
-          title="Signer details"
-          description="Make sure that your connected wallet matches the signer that is configured for this account"
-        >
-          <ConnectWallet chainId={chainId} pilotAddress={initiator} />
-        </Form.Section>
+      <Form.Section
+        title="Signer details"
+        description="Make sure that your connected wallet matches the signer that is configured for this account"
+      >
+        <ConnectWallet chainId={chainId} pilotAddress={initiator} />
+      </Form.Section>
 
-        <Form.Actions>
-          <SubmitTransaction />
-        </Form.Actions>
-      </WalletProvider>
+      <Form.Actions>
+        <SubmitTransaction />
+      </Form.Actions>
     </Form>
   )
 }
