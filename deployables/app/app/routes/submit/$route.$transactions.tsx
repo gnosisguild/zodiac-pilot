@@ -15,7 +15,7 @@ import {
   PrimaryButton,
   successToast,
 } from '@zodiac/ui'
-import type { Eip1193Provider } from 'ethers'
+import { type Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useLoaderData } from 'react-router'
@@ -45,11 +45,13 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       ...route,
     },
     {
-      safeTransactionProperties: {
-        [route.avatar]: {
-          nonce: 'override',
-        } as const,
-      },
+      safeTransactionProperties: waypoints.reduce(
+        (result, waypoint) => ({
+          ...result,
+          [waypoint.account.prefixedAddress]: { nonce: 'override' },
+        }),
+        {},
+      ),
     },
   )
 
