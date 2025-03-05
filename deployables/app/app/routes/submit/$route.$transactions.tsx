@@ -1,4 +1,5 @@
 import { ConnectWallet, WalletProvider } from '@/components'
+import { Route, Waypoint, Waypoints } from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -7,7 +8,13 @@ import {
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
-import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
+import {
+  Divider,
+  errorToast,
+  Labeled,
+  PrimaryButton,
+  successToast,
+} from '@zodiac/ui'
 import type { Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
@@ -21,9 +28,9 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route } from './+types/$route.$transactions'
+import type { Route as RouteType } from './+types/$route.$transactions'
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
   const { initiator, waypoints, ...route } = parseRouteData(params.route)
 
@@ -48,20 +55,45 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
   return {
     plan,
+    id: route.id,
     initiator: unprefixAddress(initiator),
+    waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
   }
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId },
-}: Route.ComponentProps) => {
+  loaderData: { initiator, chainId, id, waypoints },
+}: RouteType.ComponentProps) => {
   return (
     <WalletProvider>
+      <Labeled label="Selected route">
+        <Route id={id}>
+          {waypoints && (
+            <Waypoints orientation="horizontal">
+              {waypoints.map(({ account, ...waypoint }, index) => (
+                <Waypoint
+                  key={`${account.address}-${index}`}
+                  highlight={index === 0 || index === waypoints.length - 1}
+                  account={account}
+                  connection={
+                    'connection' in waypoint ? waypoint.connection : undefined
+                  }
+                />
+              ))}
+            </Waypoints>
+          )}
+        </Route>
+      </Labeled>
+
+      <div className="my-8">
+        <Divider />
+      </div>
+
       <ConnectWallet chainId={chainId} pilotAddress={initiator} />
 
-      <div className="mt-8 flex">
+      <div className="mt-8 flex justify-end">
         <SubmitTransaction />
       </div>
     </WalletProvider>
@@ -81,16 +113,11 @@ const SubmitTransaction = () => {
     walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
     connectorClient == null
   ) {
-    return (
-      <PrimaryButton disabled fluid>
-        Sign
-      </PrimaryButton>
-    )
+    return <PrimaryButton disabled>Sign</PrimaryButton>
   }
 
   return (
     <PrimaryButton
-      fluid
       busy={submitPending}
       onClick={async () => {
         invariant(connectorClient != null, 'Client must be ready')

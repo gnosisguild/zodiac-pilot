@@ -26,21 +26,18 @@ export const SwitchChain = ({
       <Warning title="Chain mismatch">
         The connected wallet belongs to a different chain. To use it you need to
         switch back to <span className="font-semibold">{chainName}</span>
+        <Warning.Actions>
+          {onSwitch && (
+            <SecondaryButton onClick={onSwitch}>
+              Switch wallet to {chainName}
+            </SecondaryButton>
+          )}
+
+          {onDisconnect && (
+            <SecondaryButton onClick={onDisconnect}>Disconnect</SecondaryButton>
+          )}
+        </Warning.Actions>
       </Warning>
-
-      <Section.Actions>
-        {onSwitch && (
-          <SecondaryButton fluid onClick={onSwitch}>
-            Switch wallet to {chainName}
-          </SecondaryButton>
-        )}
-
-        {onDisconnect && (
-          <SecondaryButton fluid onClick={onDisconnect}>
-            Disconnect
-          </SecondaryButton>
-        )}
-      </Section.Actions>
     </Section>
   )
 }

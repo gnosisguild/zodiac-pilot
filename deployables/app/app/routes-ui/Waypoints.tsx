@@ -1,6 +1,7 @@
 import type { Account } from '@zodiac/schema'
 import { Address, Popover } from '@zodiac/ui'
 import classNames from 'classnames'
+import { MoveDown, MoveRight } from 'lucide-react'
 import { Children, type ReactElement } from 'react'
 import {
   AccountType,
@@ -10,13 +11,17 @@ import {
 import { useChain } from './ChainContext'
 import { Connection } from './Connection'
 
+type WaypointsProps = {
+  children: ReactElement<WaypointProps>[]
+  excludeEnd?: boolean
+  orientation?: 'horizontal' | 'vertical'
+}
+
 export const Waypoints = ({
   children,
   excludeEnd,
-}: {
-  children: ReactElement<WaypointProps>[]
-  excludeEnd?: boolean
-}) => {
+  orientation = 'vertical',
+}: WaypointsProps) => {
   const size = Children.count(children)
 
   if (size === 0) {
@@ -24,13 +29,25 @@ export const Waypoints = ({
   }
 
   return (
-    <ol className="flex flex-1 flex-col items-center gap-4">
+    <ol
+      className={classNames(
+        'flex flex-1 items-center gap-4',
+        orientation === 'vertical' && 'flex-col',
+      )}
+    >
       {Children.map(children, (child, index) => (
         <>
           <Connection
             account={child.props.account}
             connection={child.props.connection}
-          />
+            popoverPosition={orientation === 'vertical' ? 'right' : 'top'}
+          >
+            {orientation === 'vertical' ? (
+              <MoveDown size={16} />
+            ) : (
+              <MoveRight size={16} />
+            )}
+          </Connection>
 
           {excludeEnd && index === size - 1 ? null : child}
         </>

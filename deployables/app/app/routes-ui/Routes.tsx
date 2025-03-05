@@ -92,18 +92,22 @@ export const Route = ({ children, id, name }: RouteProps) => {
     ref.current.scrollIntoView()
   }, [selected])
 
+  const form = useForm()
+
   return (
     <div ref={ref} className="flex snap-start list-none flex-col items-center">
-      <div className="sr-only">
-        <input
-          type="radio"
-          ref={inputRef}
-          name={name}
-          form={useForm()}
-          value={id}
-          defaultChecked={selected}
-        />
-      </div>
+      {name && (
+        <div className="sr-only">
+          <input
+            type="radio"
+            ref={inputRef}
+            name={name}
+            form={form}
+            value={id}
+            defaultChecked={selected}
+          />
+        </div>
+      )}
 
       <button
         data-testid={id}
