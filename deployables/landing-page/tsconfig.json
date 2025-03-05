@@ -1,7 +1,16 @@
 {
   "extends": "@zodiac/typescript-config",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "composite": true,
+    "baseUrl": ".",
+    "types": ["@cloudflare/workers-types", "vite/client"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "rootDirs": [".", "./.react-router/types"]
   },
-  "include": ["src", "./png.d.ts"]
+  "include": [
+    ".react-router/types/**/*",
+    "./wranger-configuration.d.ts",
+    "app",
+    "./png.d.ts"
+  ]
 }

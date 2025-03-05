@@ -1,13 +1,19 @@
+import { reactRouter } from '@react-router/dev/vite'
+import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import openGraph from 'vite-plugin-open-graph'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
+    cloudflareDevProxy({
+      getLoadContext({ context }) {
+        return { cloudflare: context.cloudflare }
+      },
+    }),
     tailwindcss(),
-    react(),
+    reactRouter(),
     openGraph({
       basic: {
         type: 'website',
@@ -26,8 +32,13 @@ export default defineConfig({
   },
   build: {
     manifest: true,
+    rollupOptions: isSsrBuild
+      ? {
+          input: './workers/app.ts',
+        }
+      : undefined,
   },
   define: {
     'process.env': {},
   },
-})
+}))
