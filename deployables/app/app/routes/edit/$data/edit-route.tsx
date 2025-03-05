@@ -217,7 +217,7 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
             />
           }
         >
-          Edit account
+          Edit Account
         </Page.Header>
 
         <Page.Main>

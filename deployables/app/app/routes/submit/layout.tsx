@@ -12,7 +12,7 @@ const SubmitLayout = () => (
           />
         }
       >
-        Submit
+        Sign Transaction Bundle
       </Page.Header>
 
       <Page.Main>

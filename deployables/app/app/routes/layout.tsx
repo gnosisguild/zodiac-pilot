@@ -55,23 +55,23 @@ const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
 
                   <Navigation.Section title="Accounts">
                     <Navigation.Link
-                      to={href('/create')}
-                      icon={Plus}
-                      reloadDocument={(location) =>
-                        location.pathname.startsWith('/tokens')
-                      }
-                    >
-                      Create new account
-                    </Navigation.Link>
-
-                    <Navigation.Link
                       to={href('/edit')}
                       icon={List}
                       reloadDocument={(location) =>
                         location.pathname.startsWith('/tokens')
                       }
                     >
-                      Manage accounts
+                      Accounts
+                    </Navigation.Link>
+
+                    <Navigation.Link
+                      to={href('/create')}
+                      icon={Plus}
+                      reloadDocument={(location) =>
+                        location.pathname.startsWith('/tokens')
+                      }
+                    >
+                      New Account
                     </Navigation.Link>
                   </Navigation.Section>
 

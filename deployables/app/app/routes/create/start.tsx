@@ -104,7 +104,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
           />
         }
       >
-        New account
+        New Account
       </Page.Header>
 
       <Page.Main>
