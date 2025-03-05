@@ -12,16 +12,13 @@ export const WalletDisconnected = ({ children }: WalletDisconnectedProps) => (
     <Warning title="Wallet disconnected">
       Your wallet is disconnected from Pilot. Reconnect it to use the selected
       account with Pilot.
+      <Warning.Actions>
+        <LaunchConnectKit>
+          {({ show }) => (
+            <SecondaryButton onClick={show}>Connect wallet</SecondaryButton>
+          )}
+        </LaunchConnectKit>
+      </Warning.Actions>
     </Warning>
-
-    <Section.Actions>
-      <LaunchConnectKit>
-        {({ show }) => (
-          <SecondaryButton fluid onClick={show}>
-            Connect wallet
-          </SecondaryButton>
-        )}
-      </LaunchConnectKit>
-    </Section.Actions>
   </Section>
 )

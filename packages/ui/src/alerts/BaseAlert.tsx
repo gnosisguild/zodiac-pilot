@@ -55,6 +55,12 @@ const Description = ({
 
 BaseAlert.Description = Description
 
+const Actions = ({ children }: PropsWithChildren) => (
+  <div className="mt-4 flex gap-2">{children}</div>
+)
+
+BaseAlert.Actions = Actions
+
 const AlertContext = createContext<{
   titleId: string | null
   descriptionId: string | null

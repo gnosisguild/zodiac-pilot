@@ -2,21 +2,28 @@ import { invariant } from '@epic-web/invariant'
 import { decodeRoleKey } from '@zodiac/modules'
 import type { Account } from '@zodiac/schema'
 import { Info, Popover } from '@zodiac/ui'
-import { MoveDown } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import {
   AccountType,
   ConnectionType,
   type Connection as SerConnection,
 } from 'ser-kit'
+import { useOrientation } from './Routes'
+
+type ConnectionProps = PropsWithChildren<{
+  connection?: SerConnection
+  account: Account
+}>
 
 export const Connection = ({
   connection,
   account,
-}: {
-  connection?: SerConnection
-  account: Account
-}) => {
+  children,
+}: ConnectionProps) => {
+  const orientation = useOrientation()
+
+  const popoverPosition = orientation === 'vertical' ? 'right' : 'top'
+
   if (connection == null) {
     return null
   }
@@ -24,11 +31,11 @@ export const Connection = ({
   if (connection.type === ConnectionType.OWNS) {
     return (
       <Popover
-        position="right"
+        position={popoverPosition}
         popover={<span className="leading-0 text-xs">Owns</span>}
       >
         <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20 dark:text-teal-300">
-          <MoveDown size={16} />
+          {children}
         </div>
       </Popover>
     )
@@ -42,21 +49,17 @@ export const Connection = ({
 
     return (
       <Popover
-        position="right"
+        position={popoverPosition}
         popover={<Roles version={account.version} connection={connection} />}
       >
         <div className="rounded-full bg-indigo-500/20 p-1 text-indigo-600 dark:bg-teal-500/20 dark:text-teal-300">
-          <MoveDown size={16} />
+          {children}
         </div>
       </Popover>
     )
   }
 
-  return (
-    <div className="p-1">
-      <MoveDown size={16} />
-    </div>
-  )
+  return <div className="p-1">{children}</div>
 }
 
 export const DirectConnection = ({ children }: PropsWithChildren) => (

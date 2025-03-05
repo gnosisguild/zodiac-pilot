@@ -1,6 +1,7 @@
 import type { Account } from '@zodiac/schema'
 import { Address, Popover } from '@zodiac/ui'
 import classNames from 'classnames'
+import { MoveDown, MoveRight } from 'lucide-react'
 import { Children, type ReactElement } from 'react'
 import {
   AccountType,
@@ -9,28 +10,41 @@ import {
 } from 'ser-kit'
 import { useChain } from './ChainContext'
 import { Connection } from './Connection'
+import { useOrientation } from './Routes'
 
-export const Waypoints = ({
-  children,
-  excludeEnd,
-}: {
+type WaypointsProps = {
   children: ReactElement<WaypointProps>[]
   excludeEnd?: boolean
-}) => {
+}
+
+export const Waypoints = ({ children, excludeEnd }: WaypointsProps) => {
   const size = Children.count(children)
+
+  const orientation = useOrientation()
 
   if (size === 0) {
     return null
   }
 
   return (
-    <ol className="flex flex-1 flex-col items-center gap-4">
+    <ol
+      className={classNames(
+        'flex flex-1 items-center gap-4',
+        orientation === 'vertical' && 'flex-col',
+      )}
+    >
       {Children.map(children, (child, index) => (
         <>
           <Connection
             account={child.props.account}
             connection={child.props.connection}
-          />
+          >
+            {orientation === 'vertical' ? (
+              <MoveDown size={16} />
+            ) : (
+              <MoveRight size={16} />
+            )}
+          </Connection>
 
           {excludeEnd && index === size - 1 ? null : child}
         </>
