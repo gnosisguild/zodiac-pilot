@@ -2,7 +2,7 @@ import { Page } from '@/components'
 import { Outlet } from 'react-router'
 
 const SubmitLayout = () => (
-  <Page>
+  <Page fullWidth>
     <Page.Header>Submit</Page.Header>
 
     <Page.Main>

@@ -10,19 +10,17 @@ import {
 } from 'ser-kit'
 import { useChain } from './ChainContext'
 import { Connection } from './Connection'
+import { useOrientation } from './Routes'
 
 type WaypointsProps = {
   children: ReactElement<WaypointProps>[]
   excludeEnd?: boolean
-  orientation?: 'horizontal' | 'vertical'
 }
 
-export const Waypoints = ({
-  children,
-  excludeEnd,
-  orientation = 'vertical',
-}: WaypointsProps) => {
+export const Waypoints = ({ children, excludeEnd }: WaypointsProps) => {
   const size = Children.count(children)
+
+  const orientation = useOrientation()
 
   if (size === 0) {
     return null
@@ -40,7 +38,6 @@ export const Waypoints = ({
           <Connection
             account={child.props.account}
             connection={child.props.connection}
-            popoverPosition={orientation === 'vertical' ? 'right' : 'top'}
           >
             {orientation === 'vertical' ? (
               <MoveDown size={16} />

@@ -1,17 +1,17 @@
 import { invariant } from '@epic-web/invariant'
 import { decodeRoleKey } from '@zodiac/modules'
 import type { Account } from '@zodiac/schema'
-import { Info, Popover, type PopoverPosition } from '@zodiac/ui'
+import { Info, Popover } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import {
   AccountType,
   ConnectionType,
   type Connection as SerConnection,
 } from 'ser-kit'
+import { useOrientation } from './Routes'
 
 type ConnectionProps = PropsWithChildren<{
   connection?: SerConnection
-  popoverPosition?: PopoverPosition
   account: Account
 }>
 
@@ -19,8 +19,11 @@ export const Connection = ({
   connection,
   account,
   children,
-  popoverPosition = 'right',
 }: ConnectionProps) => {
+  const orientation = useOrientation()
+
+  const popoverPosition = orientation === 'vertical' ? 'right' : 'top'
+
   if (connection == null) {
     return null
   }
