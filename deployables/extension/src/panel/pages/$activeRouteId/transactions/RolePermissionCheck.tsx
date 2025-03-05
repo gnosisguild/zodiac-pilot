@@ -31,9 +31,13 @@ const simulateRolesTransaction = async (
     route.initiator ? route : { ...route, initiator: ZeroAddress }
   ) as SerRoute
   const plan = await planExecution([encodedTransaction], routeWithInitiator, {
-    safeTransactionProperties: {
-      [route.avatar]: { nonce: 'override' },
-    } as const,
+    safeTransactionProperties: (route.waypoints || []).reduce(
+      (result, waypoint) => ({
+        ...result,
+        [waypoint.account.prefixedAddress]: { nonce: 'override' },
+      }),
+      {},
+    ),
   })
 
   // TODO generalize permission checking logic (ser-kit)
