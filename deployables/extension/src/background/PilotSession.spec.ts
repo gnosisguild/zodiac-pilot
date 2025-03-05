@@ -37,10 +37,10 @@ describe('Pilot Session', () => {
     }
 
     await session.createFork(fork)
-    await session.updateFork(
-      'http://new-rpc.com',
-      'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
-    )
+    await session.updateFork({
+      rpcUrl: 'http://new-rpc.com',
+      vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
+    })
 
     expect(handleForkUpdate).toHaveBeenCalledWith({
       ...fork,

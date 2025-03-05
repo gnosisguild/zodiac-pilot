@@ -110,7 +110,13 @@ export class PilotSession extends EventEmitter<{
     return this.fork
   }
 
-  async updateFork(rpcUrl: string, vnetId: string) {
+  async updateFork({
+    rpcUrl,
+    vnetId,
+  }: {
+    rpcUrl: string
+    vnetId: string
+  }): Promise<Fork> {
     invariant(this.fork != null, 'Session is not forked')
 
     if (this.fork.rpcUrl != null) {

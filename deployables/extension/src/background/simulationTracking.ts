@@ -51,7 +51,7 @@ export const trackSimulations = ({
         withPilotSession(windowId, async (session) => {
           console.debug('Updating current session', rpcUrl)
 
-          const fork = await session.updateFork(rpcUrl, vnetId)
+          const fork = await session.updateFork({ rpcUrl, vnetId })
           onSimulationUpdate.callListeners(fork)
         })
       },
