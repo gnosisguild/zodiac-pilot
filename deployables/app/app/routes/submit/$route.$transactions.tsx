@@ -1,5 +1,5 @@
 import { ConnectWallet, WalletProvider } from '@/components'
-import { Route, Waypoint, Waypoints } from '@/routes-ui'
+import { ChainSelect, Route, Waypoint, Waypoints } from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -68,6 +68,8 @@ const SubmitPage = ({
 }: RouteType.ComponentProps) => {
   return (
     <WalletProvider>
+      <ChainSelect disabled defaultValue={chainId} />
+
       <Labeled label="Selected route">
         <Route id={id}>
           {waypoints && (

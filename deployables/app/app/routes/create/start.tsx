@@ -1,4 +1,3 @@
-import { getAvailableChains } from '@/balances-server'
 import {
   AvatarInput,
   ConnectWalletButton,
@@ -6,7 +5,7 @@ import {
   Page,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ChainSelect, ProvideChains } from '@/routes-ui'
+import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider } from '@/utils'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import {
@@ -32,11 +31,7 @@ import { prefixAddress, type ChainId } from 'ser-kit'
 import { useAccount } from 'wagmi'
 import type { Route } from './+types/start'
 
-export const loader = async () => ({ chains: await getAvailableChains() })
-
-export const clientLoader = async ({
-  serverLoader,
-}: Route.ClientLoaderArgs) => {
+export const clientLoader = async () => {
   const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
 
   companionRequest(
@@ -46,9 +41,7 @@ export const clientLoader = async ({
     (response) => resolve(response.routes),
   )
 
-  const [serverData, routes] = await Promise.all([serverLoader(), promise])
-
-  return { ...serverData, routes }
+  return { routes: await promise }
 }
 
 clientLoader.hydrate = true as const
@@ -88,7 +81,6 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 }
 
 const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
-  const { chains } = loaderData
   const { address, chainId } = useAccount()
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(chainId || ChainEnum.ETH),
@@ -103,66 +95,62 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
   }, [chainId])
 
   return (
-    <ProvideChains chains={chains}>
-      <Page>
-        <Page.Header
-          action={
-            <ConnectWalletButton
-              connectLabel="Connect signer wallet"
-              connectedLabel="Signer wallet"
+    <Page>
+      <Page.Header
+        action={
+          <ConnectWalletButton
+            connectLabel="Connect signer wallet"
+            connectedLabel="Signer wallet"
+          />
+        }
+      >
+        New account
+      </Page.Header>
+
+      <Page.Main>
+        <OnlyConnected>
+          <Form context={{ initiator: address }}>
+            {actionData && (
+              <Error title="Could not create account">{actionData.error}</Error>
+            )}
+
+            <ChainSelect
+              name="chainId"
+              value={selectedChainId}
+              onChange={setSelectedChainId}
             />
-          }
-        >
-          New account
-        </Page.Header>
 
-        <Page.Main>
-          <OnlyConnected>
-            <Form context={{ initiator: address }}>
-              {actionData && (
-                <Error title="Could not create account">
-                  {actionData.error}
-                </Error>
-              )}
+            <AvatarInput
+              required
+              isClearable
+              label="Account"
+              chainId={selectedChainId}
+              initiator={
+                address == null
+                  ? undefined
+                  : isHexAddress(address)
+                    ? prefixAddress(undefined, address)
+                    : undefined
+              }
+              name="avatar"
+              knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+            />
 
-              <ChainSelect
-                name="chainId"
-                value={selectedChainId}
-                onChange={setSelectedChainId}
-              />
+            <TextInput
+              label="Label"
+              name="label"
+              placeholder="Give this account a descriptive name"
+            />
 
-              <AvatarInput
-                required
-                isClearable
-                label="Account"
-                chainId={selectedChainId}
-                initiator={
-                  address == null
-                    ? undefined
-                    : isHexAddress(address)
-                      ? prefixAddress(undefined, address)
-                      : undefined
-                }
-                name="avatar"
-                knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-              />
-
-              <TextInput
-                label="Label"
-                name="label"
-                placeholder="Give this account a descriptive name"
-              />
-
-              <Form.Actions>
-                <PrimaryButton submit busy={useIsPending()}>
-                  Create
-                </PrimaryButton>
-              </Form.Actions>
-            </Form>
-          </OnlyConnected>
-        </Page.Main>
-      </Page>
-    </ProvideChains>
+            <Form.Actions>
+              <PrimaryButton submit busy={useIsPending()}>
+                Create
+              </PrimaryButton>
+            </Form.Actions>
+          </Form>
+        </OnlyConnected>
+      </Page.Main>
+    </Page>
   )
 }
 

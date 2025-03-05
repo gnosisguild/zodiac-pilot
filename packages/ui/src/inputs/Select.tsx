@@ -3,7 +3,8 @@ import { ChevronDown, X } from 'lucide-react'
 import { createContext, useContext, type ReactNode } from 'react'
 import BaseSelect, {
   type ClassNamesConfig,
-  type CommonProps,
+  type ClearIndicatorProps,
+  type DropdownIndicatorProps,
   type GroupBase,
   type OptionProps,
   type Props,
@@ -40,8 +41,6 @@ export function selectStyles<Option = unknown>({
       ),
     valueContainer: () => 'p-0',
     input: () => 'px-4 py-2 text-sm w-full overflow-hidden',
-    dropdownIndicator: () =>
-      'rounded-md shrink-0 hover:bg-zinc-200 text-zinc-500 dark:text-zinc-50 dark:hover:bg-zinc-700 self-center size-6 flex items-center justify-center',
     clearIndicator: () =>
       'rounded-md shrink-0 hover:bg-zinc-200 text-zinc-500 dark:text-zinc-50 dark:hover:bg-zinc-700 self-center size-6 flex items-center justify-center',
     menu: () =>
@@ -111,7 +110,7 @@ export function Select<Option = unknown, Creatable extends boolean = false>({
               isDisabled={isDisabled}
               inputId={inputId}
               components={{
-                ClearIndicator: ClearIndicator<Option, false>,
+                ClearIndicator,
                 DropdownIndicator,
                 ...(children == null
                   ? {}
@@ -131,9 +130,7 @@ export function Select<Option = unknown, Creatable extends boolean = false>({
   )
 }
 
-function ClearIndicator<Option, IsMulti extends boolean>({
-  clearValue,
-}: CommonProps<Option, IsMulti, GroupBase<Option>>) {
+function ClearIndicator({ clearValue }: ClearIndicatorProps) {
   return (
     <GhostButton iconOnly icon={X} size="small" onClick={clearValue}>
       {useClearLabel()}
@@ -143,9 +140,10 @@ function ClearIndicator<Option, IsMulti extends boolean>({
 
 Select.ClearIndicator = ClearIndicator
 
-const DropdownIndicator = () => (
+const DropdownIndicator = ({ isDisabled }: DropdownIndicatorProps) => (
   <GhostButton
     iconOnly
+    disabled={isDisabled}
     icon={ChevronDown}
     size={useInline() ? 'tiny' : 'small'}
   >
