@@ -28,6 +28,7 @@
     "delegatecalls",
     "depay",
     "deployables",
+    "duneanalytics",
     "esbuild",
     "ethersproject",
     "extralight",
