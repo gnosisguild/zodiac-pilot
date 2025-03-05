@@ -3,3 +3,6 @@ name = "pilot-landing-page"
 compatibility_date = "2024-11-18"
 main = "./build/server/index.js"
 assets = { directory = "./build/client/" }
+
+[observability.logs]
+enabled = true
