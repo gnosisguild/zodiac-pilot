@@ -1,7 +1,6 @@
-import { getAvailableChains } from '@/balances-server'
 import { fromVersion, MinimumVersion, OnlyConnected, Page } from '@/components'
 import { useIsPending } from '@/hooks'
-import { Chain, ProvideChains } from '@/routes-ui'
+import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -27,18 +26,13 @@ import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
 import { loadRoutes } from './loadRoutes'
 
-export const loader = async () => ({ chains: await getAvailableChains() })
-
-export const clientLoader = async ({
-  serverLoader,
-}: Route.ClientLoaderArgs) => {
-  const [serverData, routes, activeRouteId] = await Promise.all([
-    serverLoader(),
+export const clientLoader = async () => {
+  const [routes, activeRouteId] = await Promise.all([
     loadRoutes(),
     fromVersion('3.6.0', () => loadActiveRouteId()),
   ])
 
-  return { ...serverData, routes, activeRouteId }
+  return { routes, activeRouteId }
 }
 
 clientLoader.hydrate = true as const
@@ -97,51 +91,47 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   }
 }
 
-const ListRoutes = ({
-  loaderData: { chains, ...loaderData },
-}: Route.ComponentProps) => (
-  <ProvideChains chains={chains}>
-    <Page fullWidth>
-      <Page.Header>Accounts</Page.Header>
+const ListRoutes = ({ loaderData }: Route.ComponentProps) => (
+  <Page fullWidth>
+    <Page.Header>Accounts</Page.Header>
 
-      <Page.Main>
-        <MinimumVersion
-          version="3.4.0"
-          fallback={
-            <Info>
-              To edit a route open the list of all routes in the Pilot extension
-              and click "Edit".
-            </Info>
-          }
-        >
-          <OnlyConnected>
-            {'routes' in loaderData &&
-              (loaderData.routes.length > 0 ? (
-                <Routes>
-                  {loaderData.routes.map((route) => (
-                    <Route
-                      key={route.id}
-                      route={route}
-                      active={route.id === loaderData.activeRouteId}
-                    />
-                  ))}
-                </Routes>
-              ) : (
-                <Info title="You haven't created any accounts, yet.">
-                  Accounts let you quickly impersonate other safes and record
-                  transaction bundles for them.
-                  <div className="mt-4 flex">
-                    <SecondaryLinkButton to="/create">
-                      Create an account
-                    </SecondaryLinkButton>
-                  </div>
-                </Info>
-              ))}
-          </OnlyConnected>
-        </MinimumVersion>
-      </Page.Main>
-    </Page>
-  </ProvideChains>
+    <Page.Main>
+      <MinimumVersion
+        version="3.4.0"
+        fallback={
+          <Info>
+            To edit a route open the list of all routes in the Pilot extension
+            and click "Edit".
+          </Info>
+        }
+      >
+        <OnlyConnected>
+          {'routes' in loaderData &&
+            (loaderData.routes.length > 0 ? (
+              <Routes>
+                {loaderData.routes.map((route) => (
+                  <Route
+                    key={route.id}
+                    route={route}
+                    active={route.id === loaderData.activeRouteId}
+                  />
+                ))}
+              </Routes>
+            ) : (
+              <Info title="You haven't created any accounts, yet.">
+                Accounts let you quickly impersonate other safes and record
+                transaction bundles for them.
+                <div className="mt-4 flex">
+                  <SecondaryLinkButton to="/create">
+                    Create an account
+                  </SecondaryLinkButton>
+                </div>
+              </Info>
+            ))}
+        </OnlyConnected>
+      </MinimumVersion>
+    </Page.Main>
+  </Page>
 )
 
 export default ListRoutes

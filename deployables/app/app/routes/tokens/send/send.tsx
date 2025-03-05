@@ -72,7 +72,7 @@ const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
       />
 
       <Form.Actions>
-        <PrimaryButton fluid submit busy={isPending}>
+        <PrimaryButton submit busy={isPending}>
           Send
         </PrimaryButton>
       </Form.Actions>

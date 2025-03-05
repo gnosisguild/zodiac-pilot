@@ -8,11 +8,19 @@ import {
   type PropsWithChildren,
 } from 'react'
 
+type Orientation = 'horizontal' | 'vertical'
+
 const RoutesContext = createContext<{
   selectedRouteId?: string
   form?: string
   disabled: boolean
-}>({ selectedRouteId: undefined, form: undefined, disabled: true })
+  orientation: Orientation
+}>({
+  selectedRouteId: undefined,
+  form: undefined,
+  disabled: true,
+  orientation: 'vertical',
+})
 
 const useSelectedRouteId = () => {
   const { selectedRouteId } = useContext(RoutesContext)
@@ -32,11 +40,18 @@ const useDisabled = () => {
   return disabled
 }
 
+export const useOrientation = () => {
+  const { orientation } = useContext(RoutesContext)
+
+  return orientation
+}
+
 type RoutesProps = PropsWithChildren<{
   id?: string
   form?: string
   defaultValue?: string
   disabled?: boolean
+  orientation?: Orientation
 }>
 
 export const Routes = ({
@@ -45,6 +60,7 @@ export const Routes = ({
   form,
   defaultValue,
   disabled = false,
+  orientation = 'vertical',
 }: RoutesProps) => {
   const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
 
@@ -60,7 +76,7 @@ export const Routes = ({
           }
         }}
       >
-        <RoutesContext value={{ selectedRouteId, form, disabled }}>
+        <RoutesContext value={{ selectedRouteId, form, disabled, orientation }}>
           {children}
         </RoutesContext>
       </fieldset>
@@ -92,28 +108,34 @@ export const Route = ({ children, id, name }: RouteProps) => {
     ref.current.scrollIntoView()
   }, [selected])
 
+  const form = useForm()
+  const orientation = useOrientation()
+
   return (
     <div ref={ref} className="flex snap-start list-none flex-col items-center">
-      <div className="sr-only">
-        <input
-          type="radio"
-          ref={inputRef}
-          name={name}
-          form={useForm()}
-          value={id}
-          defaultChecked={selected}
-        />
-      </div>
+      {name && (
+        <div className="sr-only">
+          <input
+            type="radio"
+            ref={inputRef}
+            name={name}
+            form={form}
+            value={id}
+            defaultChecked={selected}
+          />
+        </div>
+      )}
 
       <button
         data-testid={id}
         type="button"
         disabled={disabled}
         className={classNames(
-          'flex w-44 justify-center rounded-md border py-2 outline-none',
+          'flex justify-center rounded-md border px-2 py-2 outline-none',
 
+          orientation === 'vertical' && 'w-44',
           disabled === false &&
-            'cursor-pointer px-2 hover:border-indigo-500 hover:bg-indigo-500/10 focus:border-indigo-500 focus:bg-indigo-500/10 dark:hover:border-teal-500 dark:hover:bg-teal-500/10 dark:focus:border-teal-500 dark:focus:bg-teal-500/10',
+            'cursor-pointer hover:border-indigo-500 hover:bg-indigo-500/10 focus:border-indigo-500 focus:bg-indigo-500/10 dark:hover:border-teal-500 dark:hover:bg-teal-500/10 dark:focus:border-teal-500 dark:focus:bg-teal-500/10',
           selected
             ? 'border-indigo-500 bg-indigo-500/10 dark:border-teal-500 dark:bg-teal-500/10'
             : 'border-transparent',

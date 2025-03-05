@@ -20,3 +20,5 @@ export const Warning = ({ children, title }: WarningProps) => (
     {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )
+
+Warning.Actions = BaseAlert.Actions

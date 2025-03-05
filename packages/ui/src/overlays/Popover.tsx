@@ -3,9 +3,11 @@ import classNames from 'classnames'
 import { useState, type PropsWithChildren, type ReactNode } from 'react'
 import { Stick } from './Stick'
 
+export type PopoverPosition = 'top' | 'right' | 'bottom' | 'left'
+
 type PopoverProps = PropsWithChildren<{
   popover: ReactNode
-  position?: 'top' | 'right' | 'bottom' | 'left'
+  position?: PopoverPosition
 }>
 
 export const Popover = ({
