@@ -186,8 +186,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.307
-        version: 0.0.307
+        specifier: 0.0.308
+        version: 0.0.308
       '@types/express':
         specifier: 5.0.0
         version: 5.0.0
@@ -354,8 +354,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.307
-        version: 0.0.307
+        specifier: 0.0.308
+        version: 0.0.308
       '@types/events':
         specifier: 3.0.3
         version: 3.0.3
@@ -596,8 +596,8 @@ importers:
         version: 19.0.0
     devDependencies:
       '@types/chrome':
-        specifier: 0.0.307
-        version: 0.0.307
+        specifier: 0.0.308
+        version: 0.0.308
       '@types/react':
         specifier: 19.0.10
         version: 19.0.10
@@ -750,8 +750,8 @@ importers:
         specifier: 7.2.0
         version: 7.2.0(@react-router/serve@7.2.0(react-router@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2))(@types/node@22.13.9)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(react-router@7.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.2)(vite@6.2.0(@types/node@22.13.9)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@3.112.0(@cloudflare/workers-types@4.20250303.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
       '@types/chrome':
-        specifier: 0.0.307
-        version: 0.0.307
+        specifier: 0.0.308
+        version: 0.0.308
       '@types/react':
         specifier: 19.0.10
         version: 19.0.10
@@ -2858,8 +2858,8 @@ packages:
   '@types/chrome@0.0.114':
     resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
 
-  '@types/chrome@0.0.307':
-    resolution: {integrity: sha512-IHqsTT+JT6vlFTcRWaih7saaEYhFCT13KRgRIRFKjXYOG3g0ummwXAGKtaxK9Zzz6yYsYvbEut91exTX0F/xSg==}
+  '@types/chrome@0.0.308':
+    resolution: {integrity: sha512-H5VF01xhUQHwNy8Hfu4khwHJncyckw7IEricOqrIBan8gsDXnBu5A3qJ15him8Kx+YY6lNkrXZGJajEUSGRsRQ==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -9667,7 +9667,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@types/chrome@0.0.307':
+  '@types/chrome@0.0.308':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
