@@ -124,7 +124,10 @@ describe('Simulation tracking', () => {
 
       await mockRpcRequest(tab, { chainId: 1, url: 'http://another-url' })
 
-      await updateSimulation(tab, { rpcUrl: 'http://test.com' })
+      await updateSimulation(tab, {
+        rpcUrl: 'http://test.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
+      })
 
       const rules = await chromeMock.declarativeNetRequest.getSessionRules()
 
@@ -336,11 +339,15 @@ describe('Simulation tracking', () => {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
       })
-      await updateSimulation(tab, { rpcUrl: 'http://new-rpc.com' })
+      await updateSimulation(tab, {
+        rpcUrl: 'http://new-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
+      })
 
       expect(handler).toHaveBeenCalledWith({
         chainId: Chain.ETH,
         rpcUrl: 'http://new-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
     })
   })

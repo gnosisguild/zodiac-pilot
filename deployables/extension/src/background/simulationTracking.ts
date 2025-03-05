@@ -24,9 +24,9 @@ export const trackSimulations = ({
   chrome.runtime.onMessage.addListener(
     createInternalMessageHandler(
       PilotSimulationMessageType.SIMULATE_START,
-      async ({ chainId, rpcUrl, windowId }) => {
+      async ({ chainId, rpcUrl, windowId, vnetId }) => {
         const session = getPilotSession(windowId)
-        const fork = await session.createFork({ chainId, rpcUrl })
+        const fork = await session.createFork({ chainId, rpcUrl, vnetId })
 
         console.debug(
           `start intercepting JSON RPC requests in window #${windowId}`,
@@ -47,12 +47,11 @@ export const trackSimulations = ({
   chrome.runtime.onMessage.addListener(
     createInternalMessageHandler(
       PilotSimulationMessageType.SIMULATE_UPDATE,
-      ({ windowId, rpcUrl }) => {
+      ({ windowId, rpcUrl, vnetId }) => {
         withPilotSession(windowId, async (session) => {
           console.debug('Updating current session', rpcUrl)
 
-          const fork = await session.updateFork(rpcUrl)
-
+          const fork = await session.updateFork({ rpcUrl, vnetId })
           onSimulationUpdate.callListeners(fork)
         })
       },

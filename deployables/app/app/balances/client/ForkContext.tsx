@@ -7,29 +7,41 @@ import {
   type PropsWithChildren,
 } from 'react'
 
-const ForkContext = createContext<string | null>(null)
+interface ForkContextValue {
+  forkUrl: string | null
+  vnetId: string | null
+}
+
+const ForkContext = createContext<ForkContextValue>({
+  forkUrl: null,
+  vnetId: null,
+})
 
 type ProvideForkContextProps = PropsWithChildren
 
 export const ProvideForkContext = ({ children }: ProvideForkContextProps) => {
-  const forkUrl = useListenForForkUrl()
+  const forkContextValue = useListenForForkInfo()
 
-  return <ForkContext value={forkUrl}>{children}</ForkContext>
+  return <ForkContext value={forkContextValue}>{children}</ForkContext>
 }
 
 export const useForkUrl = () => useContext(ForkContext)
 
-const useListenForForkUrl = () => {
-  const [forkUrl, setForkUrl] = useState<string | null>(null)
-
+const useListenForForkInfo = () => {
+  const [forkInfo, setForkInfo] = useState<ForkContextValue>({
+    forkUrl: null,
+    vnetId: null,
+  })
   useEffect(() => {
     return companionRequest(
       {
         type: CompanionAppMessageType.REQUEST_FORK_INFO,
       },
-      (response) => setForkUrl(response.forkUrl),
+      (response) => {
+        setForkInfo({ forkUrl: response.forkUrl, vnetId: response.vnetId })
+      },
     )
   }, [])
 
-  return forkUrl
+  return forkInfo
 }
