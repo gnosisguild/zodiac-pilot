@@ -1,6 +1,7 @@
 import { createRequestHandler } from 'react-router'
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface CloudflareEnvironment extends Env {}
 }
 
