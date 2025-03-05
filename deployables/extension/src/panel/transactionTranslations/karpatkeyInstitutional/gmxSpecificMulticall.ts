@@ -33,6 +33,7 @@ export const gmxSpecific = {
     if (!data) {
       return undefined
     }
+    const sendWntSelector = gmxMulticallInterface.getFunction('sendWnt')?.selector;
     let functionCalls: HexAddress[] = []
     if (
       value > 0 &&
@@ -54,7 +55,11 @@ export const gmxSpecific = {
       if (functionCalls.length === 0) {
         return undefined
       }
-      return functionCalls.map((data) => ({ to, data, value }))
+      return functionCalls.map(data => ({
+        to,
+        data,
+        value: data.slice(0, 10) === sendWntSelector ? value : 0n
+      }));
     }
 
     if (value > 0) {
