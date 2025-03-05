@@ -7,7 +7,7 @@ import { PilotType, PrimaryLinkButton, ZodiacOsPlain } from '@zodiac/ui'
 import darkScreenshot from './extension-dark.png'
 import lightScreenshot from './extension-light.png'
 
-export const LandingPage = () => (
+const LandingPage = () => (
   <div className="mx-8 my-8 flex flex-col justify-between lg:mx-auto lg:w-2/3">
     <header className="mb-24 flex items-center justify-between lg:my-24">
       <div className="flex items-center gap-4">
@@ -74,3 +74,5 @@ export const LandingPage = () => (
     </main>
   </div>
 )
+
+export default LandingPage

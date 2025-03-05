@@ -28,6 +28,7 @@ type ListRoutes = {
 type ForkUpdated = {
   type: CompanionResponseMessageType.FORK_UPDATED
   forkUrl: string | null
+  vnetId: string | null
 }
 
 type ProvideRoute = {

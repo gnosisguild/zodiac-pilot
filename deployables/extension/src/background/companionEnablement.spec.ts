@@ -46,11 +46,13 @@ describe('Companion Enablement', () => {
       await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
         type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
     })
 
@@ -61,6 +63,7 @@ describe('Companion Enablement', () => {
       await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
 
       await connectCompanionApp(tab)
@@ -68,6 +71,7 @@ describe('Companion Enablement', () => {
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(2, {
         type: CompanionResponseMessageType.FORK_UPDATED,
         forkUrl: 'http://test-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
     })
 
@@ -83,6 +87,7 @@ describe('Companion Enablement', () => {
       await startSimulation(tab, {
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
+        vnetId: 'df87555f-93d3-4cbc-9e6c-8248e8ffb13f',
       })
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledTimes(1)

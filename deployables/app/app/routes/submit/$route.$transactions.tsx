@@ -1,4 +1,5 @@
-import { ConnectWallet, WalletProvider } from '@/components'
+import { ConnectWallet } from '@/components'
+import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -7,8 +8,14 @@ import {
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
-import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
-import type { Eip1193Provider } from 'ethers'
+import {
+  errorToast,
+  Form,
+  Labeled,
+  PrimaryButton,
+  successToast,
+} from '@zodiac/ui'
+import { type Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useLoaderData } from 'react-router'
@@ -21,9 +28,9 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route } from './+types/$route.$transactions'
+import type { Route as RouteType } from './+types/$route.$transactions'
 
-export const loader = async ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
   const { initiator, waypoints, ...route } = parseRouteData(params.route)
 
@@ -38,33 +45,71 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
       ...route,
     },
     {
-      safeTransactionProperties: {
-        [route.avatar]: {
-          nonce: 'override',
-        } as const,
-      },
+      safeTransactionProperties: waypoints.reduce(
+        (result, waypoint) => ({
+          ...result,
+          [waypoint.account.prefixedAddress]: { nonce: 'override' },
+        }),
+        {},
+      ),
     },
   )
 
   return {
     plan,
+    id: route.id,
     initiator: unprefixAddress(initiator),
+    waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
   }
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId },
-}: Route.ComponentProps) => {
+  loaderData: { initiator, chainId, id, waypoints },
+}: RouteType.ComponentProps) => {
   return (
-    <WalletProvider>
-      <ConnectWallet chainId={chainId} pilotAddress={initiator} />
+    <Form>
+      <Form.Section
+        title="Review account information"
+        description="Please review the account information that will be used to sign this transaction bundle"
+      >
+        <ChainSelect disabled defaultValue={chainId} />
+        <Labeled label="Selected route">
+          <Routes disabled orientation="horizontal">
+            <Route id={id}>
+              {waypoints && (
+                <Waypoints>
+                  {waypoints.map(({ account, ...waypoint }, index) => (
+                    <Waypoint
+                      key={`${account.address}-${index}`}
+                      highlight={index === 0 || index === waypoints.length - 1}
+                      account={account}
+                      connection={
+                        'connection' in waypoint
+                          ? waypoint.connection
+                          : undefined
+                      }
+                    />
+                  ))}
+                </Waypoints>
+              )}
+            </Route>
+          </Routes>
+        </Labeled>
+      </Form.Section>
 
-      <div className="mt-8 flex">
+      <Form.Section
+        title="Signer details"
+        description="Make sure that your connected wallet matches the signer that is configured for this account"
+      >
+        <ConnectWallet chainId={chainId} pilotAddress={initiator} />
+      </Form.Section>
+
+      <Form.Actions>
         <SubmitTransaction />
-      </div>
-    </WalletProvider>
+      </Form.Actions>
+    </Form>
   )
 }
 
@@ -81,16 +126,11 @@ const SubmitTransaction = () => {
     walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
     connectorClient == null
   ) {
-    return (
-      <PrimaryButton disabled fluid>
-        Sign
-      </PrimaryButton>
-    )
+    return <PrimaryButton disabled>Sign</PrimaryButton>
   }
 
   return (
     <PrimaryButton
-      fluid
       busy={submitPending}
       onClick={async () => {
         invariant(connectorClient != null, 'Client must be ready')

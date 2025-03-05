@@ -1,4 +1,3 @@
-import { getAvailableChains } from '@/balances-server'
 import {
   AvatarInput,
   ConnectWalletButton,
@@ -9,14 +8,7 @@ import {
   WalletProvider,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import {
-  ChainSelect,
-  ProvideChains,
-  Route,
-  Routes,
-  Waypoint,
-  Waypoints,
-} from '@/routes-ui'
+import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
   dryRun,
   editRoute,
@@ -73,12 +65,10 @@ export const meta: RouteType.MetaFunction = ({ data, matches }) => [
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
 
-  const [routes, chains] = await Promise.all([
+  const routes =
     route.initiator == null
       ? []
-      : queryRoutes(unprefixAddress(route.initiator), route.avatar),
-    getAvailableChains(),
-  ])
+      : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
 
   return {
     currentRoute: {
@@ -89,8 +79,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     },
 
     possibleRoutes: rankRoutes(routes),
-
-    chains,
   }
 }
 
@@ -212,7 +200,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
   const {
     currentRoute: { comparableId, label, initiator, avatar },
     possibleRoutes,
-    chains,
   } = loaderData
 
   const formId = useId()
@@ -221,94 +208,92 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
 
   return (
     <WalletProvider>
-      <ProvideChains chains={chains}>
-        <Page>
-          <Page.Header
-            action={
-              <ConnectWalletButton
-                connectedLabel="Wallet"
-                connectLabel="Connect wallet"
-              />
-            }
-          >
-            Edit account
-          </Page.Header>
-
-          <Page.Main>
-            <TextInput
-              form={formId}
-              label="Label"
-              name="label"
-              defaultValue={label}
+      <Page>
+        <Page.Header
+          action={
+            <ConnectWalletButton
+              connectedLabel="Wallet"
+              connectLabel="Connect wallet"
             />
+          }
+        >
+          Edit Account
+        </Page.Header>
 
-            <Chain chainId={getChainId(avatar)} />
+        <Page.Main>
+          <TextInput
+            form={formId}
+            label="Label"
+            name="label"
+            defaultValue={label}
+          />
 
-            <Initiator
-              avatar={avatar}
-              initiator={initiator}
-              knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-            />
+          <Chain chainId={getChainId(avatar)} />
 
-            <RouteSelect
-              form={formId}
-              name="selectedRouteId"
-              defaultValue={comparableId}
-              routes={possibleRoutes}
-              initiator={initiator}
-            />
+          <Initiator
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
-            <Avatar
-              avatar={avatar}
-              initiator={initiator}
-              knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-            />
+          <RouteSelect
+            form={formId}
+            name="selectedRouteId"
+            defaultValue={comparableId}
+            routes={possibleRoutes}
+            initiator={initiator}
+          />
 
-            <Form id={formId}>
-              <Form.Actions>
-                <PrimaryButton
-                  submit
-                  intent={Intent.Save}
-                  disabled={!connected}
-                  busy={useIsPending(Intent.Save)}
-                >
-                  Save
-                </PrimaryButton>
+          <Avatar
+            avatar={avatar}
+            initiator={initiator}
+            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+          />
 
-                <SecondaryButton
-                  submit
-                  intent={Intent.DryRun}
-                  busy={useIsPending(Intent.DryRun)}
-                >
-                  Test route
-                </SecondaryButton>
+          <Form id={formId}>
+            <Form.Actions>
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                disabled={!connected}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
 
-                {!connected && (
-                  <div className="text-balance text-xs opacity-75">
-                    The Pilot extension must be open to save.
-                  </div>
-                )}
+              <SecondaryButton
+                submit
+                intent={Intent.DryRun}
+                busy={useIsPending(Intent.DryRun)}
+              >
+                Test route
+              </SecondaryButton>
 
-                {isDev && <DebugRouteData />}
-              </Form.Actions>
-
-              {actionData != null && (
-                <div className="mt-8">
-                  {'error' in actionData && actionData.error === true && (
-                    <Error title="Dry run failed">{actionData.message}</Error>
-                  )}
-
-                  {'error' in actionData && actionData.error === false && (
-                    <Success title="Dry run succeeded">
-                      Your route seems to be ready for execution!
-                    </Success>
-                  )}
+              {!connected && (
+                <div className="text-balance text-xs opacity-75">
+                  The Pilot extension must be open to save.
                 </div>
               )}
-            </Form>
-          </Page.Main>
-        </Page>
-      </ProvideChains>
+
+              {isDev && <DebugRouteData />}
+            </Form.Actions>
+
+            {actionData != null && (
+              <div className="mt-8">
+                {'error' in actionData && actionData.error === true && (
+                  <Error title="Dry run failed">{actionData.message}</Error>
+                )}
+
+                {'error' in actionData && actionData.error === false && (
+                  <Success title="Dry run succeeded">
+                    Your route seems to be ready for execution!
+                  </Success>
+                )}
+              </div>
+            )}
+          </Form>
+        </Page.Main>
+      </Page>
     </WalletProvider>
   )
 }

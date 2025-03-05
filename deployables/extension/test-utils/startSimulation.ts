@@ -8,11 +8,12 @@ import { callListeners, chromeMock, createMockTab } from './chrome'
 type StartSimulationOptions = {
   chainId?: ChainId
   rpcUrl?: string
+  vnetId?: string
 }
 
 export const startSimulation = (
   tab: Partial<chrome.tabs.Tab>,
-  { chainId = 1, rpcUrl }: StartSimulationOptions = {},
+  { chainId = 1, rpcUrl, vnetId }: StartSimulationOptions = {},
 ) => {
   const currentTab = createMockTab(tab)
 
@@ -23,6 +24,7 @@ export const startSimulation = (
       windowId: currentTab.windowId,
       chainId,
       rpcUrl,
+      vnetId,
     } satisfies SimulationMessage,
     { id: chrome.runtime.id, tab: currentTab },
     () => {},
