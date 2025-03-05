@@ -1,9 +1,9 @@
 import type { HexAddress } from '@/types'
+import { Chain } from '@zodiac/chains'
 import { SupportedZodiacModuleType } from '@zodiac/modules'
 import { FunctionFragment, Interface } from 'ethers'
 import { UnfoldVertical } from 'lucide-react'
 import type { TransactionTranslation } from '../types'
-import { Chain } from '@zodiac/chains'
 
 const uniswapMulticallInterface = new Interface([
   'function multicall(bytes[] calldata data) external returns (bytes[] memory results)',
@@ -13,10 +13,11 @@ const uniswapMulticallInterface = new Interface([
 
 const gmxMulticallInterface = new Interface([
   'function multicall(bytes[] calldata data) external returns (bytes[] memory results)',
-  'function sendWnt(address receiver, uint256 amount) external'
+  'function sendWnt(address receiver, uint256 amount) external',
 ])
 
-const gmxExchangeRouterContractAddress = '0x900173A66dbD345006C51fA35fA3aB760FcD843b';
+const gmxExchangeRouterContractAddress =
+  '0x900173A66dbD345006C51fA35fA3aB760FcD843b'
 
 export const gmxSpecific = {
   title: 'Unfold GMX multicall and handle ETH correctly',
@@ -34,9 +35,9 @@ export const gmxSpecific = {
     }
     let functionCalls: HexAddress[] = []
     if (
-      value > 0
-      && chainId === Chain.ARB1
-      && to.toLowerCase() === gmxExchangeRouterContractAddress.toLowerCase()
+      value > 0 &&
+      chainId === Chain.ARB1 &&
+      to.toLowerCase() === gmxExchangeRouterContractAddress.toLowerCase()
     ) {
       for (const fragment of gmxMulticallInterface.fragments) {
         if (fragment.type !== 'function') continue
