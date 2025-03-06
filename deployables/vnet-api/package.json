@@ -8,7 +8,7 @@
     "env-cmd": "10.1.0",
     "eslint": "9.21.0",
     "typescript": "5.8.2",
-    "wrangler": "3.112.0"
+    "wrangler": "3.113.0"
   },
   "private": true,
   "scripts": {
