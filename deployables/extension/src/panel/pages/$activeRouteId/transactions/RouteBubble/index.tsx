@@ -8,7 +8,7 @@ import {
 } from '@zodiac/modules'
 import { type HexAddress } from '@zodiac/schema'
 import { Blockie, Form, GhostButton } from '@zodiac/ui'
-import { AlignJustify, Cog } from 'lucide-react'
+import { List, Pencil } from 'lucide-react'
 import { useState } from 'react'
 import Stick from 'react-stick'
 import { unprefixAddress } from 'ser-kit'
@@ -26,7 +26,7 @@ export const RouteBubble = () => {
   return (
     <Stick
       sameWidth
-      className="flex justify-between gap-2 overflow-hidden rounded-full border border-zinc-200/80 bg-zinc-100/80 text-zinc-600 hover:border-zinc-300/80 dark:border-zinc-600/80 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500/80"
+      className="flex justify-between gap-2 overflow-hidden border-b border-zinc-200/80 bg-zinc-100/80 text-zinc-600 hover:border-zinc-300/80 dark:border-zinc-600/80 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500/80"
       position="bottom center"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -40,7 +40,7 @@ export const RouteBubble = () => {
           enter="transition-opacity"
           leave="transition-opacity"
         >
-          <div className="isolate z-10 pt-2">
+          <div className="isolate z-10 mx-4 pt-2">
             <div className="backdrop-blur-xs rounded-md border border-zinc-200/80 bg-zinc-100/80 px-4 py-2 shadow-lg dark:border-zinc-500/80 dark:bg-zinc-900/80">
               <ConnectionStack route={route} />
             </div>
@@ -62,14 +62,14 @@ export const RouteBubble = () => {
         </p>
       </div>
 
-      <div className="mr-2 flex shrink-0 items-center">
+      <div className="mr-4 flex shrink-0 items-center gap-1">
         <Form context={{ routeId: route.id, windowId }}>
           <GhostButton
             submit
             iconOnly
             intent={Intent.EditAccount}
-            icon={Cog}
-            size="tiny"
+            icon={Pencil}
+            size="small"
           >
             Edit account
           </GhostButton>
@@ -80,8 +80,8 @@ export const RouteBubble = () => {
             submit
             iconOnly
             intent={Intent.ListAccounts}
-            icon={AlignJustify}
-            size="tiny"
+            icon={List}
+            size="small"
           >
             List accounts
           </GhostButton>
@@ -102,19 +102,19 @@ const Blockies = ({
   moduleAddress,
   avatarAddress,
 }: BlockiesProps) => (
-  <div className="flex h-10 shrink-0 p-1">
+  <div className="flex shrink-0 p-2">
     {pilotAddress && (
       <div className="rounded-full border-2 border-slate-500 dark:border-slate-900">
-        <Blockie address={pilotAddress} className="h-full" />
+        <Blockie address={pilotAddress} className="size-6" />
       </div>
     )}
     {moduleAddress && (
       <div className="-ml-4 rounded-full border-2 border-slate-500 first:ml-0 dark:border-slate-900">
-        <Blockie address={moduleAddress} className="h-full" />
+        <Blockie address={moduleAddress} className="size-6" />
       </div>
     )}
     <div className="-ml-4 rounded-full border-2 border-slate-500 first:ml-0 dark:border-slate-900">
-      <Blockie address={avatarAddress} className="h-full" />
+      <Blockie address={avatarAddress} className="size-6" />
     </div>
   </div>
 )

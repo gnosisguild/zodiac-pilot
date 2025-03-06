@@ -123,7 +123,7 @@ export const Transactions = () => {
       <Page.Header>
         <RouteBubble />
 
-        <div className="mt-4 flex items-center justify-between gap-2">
+        <div className="m-4 flex items-center justify-between gap-2">
           <RecordingIndicator />
 
           <div className="flex gap-1">

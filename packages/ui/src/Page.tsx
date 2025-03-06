@@ -7,7 +7,7 @@ export const Page = ({ children }: PropsWithChildren) => (
 
 const Header = ({ children }: PropsWithChildren) => (
   <>
-    <div className="flex flex-col p-4">{children}</div>
+    <div className="flex flex-col">{children}</div>
 
     <Divider />
   </>
