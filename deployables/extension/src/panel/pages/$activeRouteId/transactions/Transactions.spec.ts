@@ -31,7 +31,13 @@ describe('Transactions', () => {
     it('hides the info when Pilot is ready', async () => {
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         { initialSelectedRoute: createMockRoute({ id: 'test-route' }) },
       )
 
@@ -45,7 +51,13 @@ describe('Transactions', () => {
     it('lists transactions', async () => {
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [createTransaction()],
           initialSelectedRoute: createMockRoute({ id: 'test-route' }),
@@ -62,7 +74,13 @@ describe('Transactions', () => {
     it('disables the submit button when there are no transactions', async () => {
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [],
           initialSelectedRoute: createMockRoute({
@@ -84,7 +102,13 @@ describe('Transactions', () => {
 
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [transaction],
           initialSelectedRoute: route,
@@ -99,13 +123,21 @@ describe('Transactions', () => {
     })
 
     it('offers a link to complete the route setup when no initiator is defined', async () => {
-      const route = createMockRoute({
+      const route = await mockRoute({
         id: 'test-route',
       })
 
+      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [],
           initialSelectedRoute: route,
@@ -113,12 +145,14 @@ describe('Transactions', () => {
         },
       )
 
-      expect(
-        screen.getByRole('link', { name: 'Complete route setup to submit' }),
-      ).toHaveAttribute(
-        'href',
-        `http://localhost/edit/${route.id}/${encode(route)}`,
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Complete route setup to submit' }),
       )
+
+      expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+        active: true,
+        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+      })
     })
   })
 
@@ -193,7 +227,13 @@ describe('Transactions', () => {
 
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [createTransaction()],
           initialSelectedRoute: route,
@@ -211,7 +251,13 @@ describe('Transactions', () => {
 
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [createTransaction()],
           initialSelectedRoute: route,

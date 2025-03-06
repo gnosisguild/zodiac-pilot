@@ -1,15 +1,23 @@
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
+import { useWindowId } from '@/inject-bridge'
 import { useDispatch, useTransactions } from '@/state'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
-import { Modal, PrimaryLinkButton, Spinner } from '@zodiac/ui'
+import {
+  Form,
+  Modal,
+  PrimaryButton,
+  PrimaryLinkButton,
+  Spinner,
+} from '@zodiac/ui'
 import { useState } from 'react'
 
 export const Submit = () => {
   const route = useExecutionRoute()
   const dispatch = useDispatch()
   const { initiator } = route
+  const windowId = useWindowId()
 
   const transactions = useTransactions()
   const metaTransactions = transactions.map((tx) => tx.transaction)
@@ -47,13 +55,11 @@ export const Submit = () => {
       />
     </>
   ) : (
-    <PrimaryLinkButton
-      fluid
-      openInNewWindow
-      to={`${companionAppUrl}/edit/${route.id}/${encode(route)}`}
-    >
-      Complete route setup to submit
-    </PrimaryLinkButton>
+    <Form context={{ routeId: route.id, windowId }}>
+      <PrimaryButton fluid submit>
+        Complete route setup to submit
+      </PrimaryButton>
+    </Form>
   )
 }
 
