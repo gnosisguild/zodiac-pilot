@@ -50,7 +50,7 @@ export const Submit = () => {
     <PrimaryLinkButton
       fluid
       openInNewWindow
-      to={`${companionAppUrl}/edit/${encode(route)}`}
+      to={`${companionAppUrl}/edit/${route.id}/${encode(route)}`}
     >
       Complete route setup to submit
     </PrimaryLinkButton>
