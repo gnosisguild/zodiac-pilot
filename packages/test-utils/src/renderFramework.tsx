@@ -7,6 +7,7 @@ import type { ComponentType } from 'react'
 import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
 import {
   createRoutesStub,
+  Outlet,
   useActionData,
   useLoaderData,
   useParams,
@@ -152,7 +153,7 @@ function stubRoutes(
         loader,
         clientAction,
         action,
-        default: RouteComponent,
+        default: RouteComponent = Outlet,
       }: RouteModule = await import(
         new URL(route.file, `${basePath}/`).pathname
       )
