@@ -1,5 +1,6 @@
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
+import { useWindowId } from '@/inject-bridge'
 import { Transition } from '@headlessui/react'
 import {
   getPilotAddress,
@@ -17,6 +18,7 @@ import { ConnectionStack } from '../../../ConnectionStack'
 
 export const RouteBubble = () => {
   const route = useExecutionRoute()
+  const windowId = useWindowId()
   const [hover, setHover] = useState(false)
 
   const pilotAddress = getPilotAddress([getStartingWaypoint(route.waypoints)])
@@ -62,7 +64,7 @@ export const RouteBubble = () => {
       </div>
 
       <div className="flex shrink-0 items-center">
-        <Form context={{ routeId: route.id }}>
+        <Form context={{ routeId: route.id, windowId }}>
           <GhostButton submit iconOnly icon={Cog} size="tiny">
             Edit account
           </GhostButton>

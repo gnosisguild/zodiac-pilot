@@ -9,7 +9,7 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import { getCompanionAppUrl } from '@zodiac/env'
-import { getString } from '@zodiac/form-data'
+import { getInt, getString } from '@zodiac/form-data'
 import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
@@ -29,13 +29,28 @@ import { Transaction } from './Transaction'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
+  const windowId = getInt(data, 'windowId')
   const routeId = getString(data, 'routeId')
   const route = await getRoute(routeId)
 
-  await chrome.tabs.create({
-    active: true,
-    url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
-  })
+  const tabs = await chrome.tabs.query({ windowId })
+  const existingTab = tabs.find(
+    (tab) =>
+      tab.url != null &&
+      tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
+  )
+
+  if (existingTab != null && existingTab.id != null) {
+    await chrome.tabs.update(existingTab.id, {
+      active: true,
+      url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+    })
+  } else {
+    await chrome.tabs.create({
+      active: true,
+      url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+    })
+  }
 
   return null
 }

@@ -10,6 +10,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { encode } from '@zodiac/schema'
+import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 import { action, Transactions } from './Transactions'
 
@@ -147,6 +148,39 @@ describe('Transactions', () => {
       )
 
       expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+        active: true,
+        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+      })
+    })
+
+    it('activates an existing tab when it already exists', async () => {
+      const route = await mockRoute({ id: 'test-route' })
+      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+
+      const tab = mockTab({
+        url: `http://localhost/edit/${route.id}/some-old-route-data`,
+      })
+
+      await render(
+        '/test-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
+        {
+          initialState: [createTransaction()],
+          initialSelectedRoute: route,
+        },
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Edit account' }),
+      )
+
+      expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
         active: true,
         url: `http://localhost/edit/${route.id}/${encode(route)}`,
       })
