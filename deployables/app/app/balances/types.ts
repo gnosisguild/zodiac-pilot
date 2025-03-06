@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const tokenSchema = z.object({
+export const tokenSchema = z.object({
   id: z.string(),
   chain: z.string(),
   name: z.string().nullable(),

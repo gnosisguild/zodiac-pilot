@@ -38,10 +38,10 @@ const vnetSchema = z.object({
 const vnetTransactionSchema = z.object({
   id: z.string(),
   vnet_id: z.string(),
-  tx_hash: z.string(),
+  tx_hash: z.string().optional(),
   block_number: z.string(),
   status: z.string(),
-  rpc_method: z.string(),
+  rpc_method: z.string().optional(),
 })
 
 export type VnetTransaction = z.infer<typeof vnetTransactionSchema>
