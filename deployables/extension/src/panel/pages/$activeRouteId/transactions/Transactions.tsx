@@ -1,5 +1,5 @@
 import { useCompanionAppUrl } from '@/companion'
-import { useExecutionRoute } from '@/execution-routes'
+import { getRoute, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -8,6 +8,9 @@ import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
+import { getCompanionAppUrl } from '@zodiac/env'
+import { getInt, getString } from '@zodiac/form-data'
+import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
   GhostButton,
@@ -17,11 +20,65 @@ import {
 } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import type { ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import { RecordingIndicator } from './RecordingIndicator'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
+import { Intent } from './intents'
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const data = await request.formData()
+
+  const intent = getString(data, 'intent')
+  const windowId = getInt(data, 'windowId')
+  const tabs = await chrome.tabs.query({ windowId })
+
+  switch (intent) {
+    case Intent.EditAccount: {
+      const routeId = getString(data, 'routeId')
+      const route = await getRoute(routeId)
+
+      const existingTab = tabs.find(
+        (tab) =>
+          tab.url != null &&
+          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
+      )
+
+      if (existingTab != null && existingTab.id != null) {
+        await chrome.tabs.update(existingTab.id, {
+          active: true,
+          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+        })
+      } else {
+        await chrome.tabs.create({
+          active: true,
+          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+        })
+      }
+
+      return null
+    }
+
+    case Intent.ListAccounts: {
+      const existingTab = tabs.find(
+        (tab) => tab.url != null && tab.url === `${getCompanionAppUrl()}/edit`,
+      )
+
+      if (existingTab != null && existingTab.id != null) {
+        await chrome.tabs.update(existingTab.id, { active: true })
+      } else {
+        await chrome.tabs.create({
+          active: true,
+          url: `${getCompanionAppUrl()}/edit`,
+        })
+      }
+
+      return null
+    }
+  }
+}
 
 export const Transactions = () => {
   const transactions = useTransactions()
@@ -66,7 +123,7 @@ export const Transactions = () => {
       <Page.Header>
         <RouteBubble />
 
-        <div className="mt-4 flex items-center justify-between gap-2">
+        <div className="m-4 flex items-center justify-between gap-2">
           <RecordingIndicator />
 
           <div className="flex gap-1">

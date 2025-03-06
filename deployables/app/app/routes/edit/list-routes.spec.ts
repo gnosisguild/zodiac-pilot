@@ -9,6 +9,7 @@ import {
 } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
+import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
@@ -21,7 +22,7 @@ describe('List Routes', () => {
   it('indicates which route is currently active', async () => {
     const route = createMockExecutionRoute({ label: 'Test route' })
 
-    await render('/edit', {
+    await render(href('/edit'), {
       version: '3.6.0',
       availableRoutes: [route],
       activeRouteId: route.id,
@@ -36,7 +37,7 @@ describe('List Routes', () => {
     it('is possible to edit a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render('/edit', {
+      await render(href('/edit'), {
         version: '3.4.0',
         availableRoutes: [route],
       })
@@ -53,7 +54,12 @@ describe('List Routes', () => {
 
       await loadRoutes()
 
-      await expectRouteToBe(`/edit/${encode(route)}`)
+      await expectRouteToBe(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
     })
   })
 
@@ -62,7 +68,7 @@ describe('List Routes', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
       const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-      await render('/edit', {
+      await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
       })
@@ -92,7 +98,7 @@ describe('List Routes', () => {
     it('hides the dialog once the delete is confirmed', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render('/edit', {
+      await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
       })
@@ -125,7 +131,7 @@ describe('List Routes', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
       const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-      await render('/edit', {
+      await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
       })

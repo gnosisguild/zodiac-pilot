@@ -1,6 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
 import { createMockChain, render } from '@/test-utils'
-import { dryRun } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
@@ -22,21 +21,11 @@ import {
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
+import { href } from 'react-router'
 import { queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
-
-vi.mock('@/utils', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/utils')>()
-
-  return {
-    ...module,
-    dryRun: vi.fn(),
-  }
-})
-
-const mockDryRun = vi.mocked(dryRun)
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
@@ -73,7 +62,12 @@ describe('Edit route', () => {
     it('shows the name of a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await render(`/edit/${encode(route)}`)
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
 
       expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test route',
@@ -85,7 +79,12 @@ describe('Edit route', () => {
         initiator: randomPrefixedAddress(),
       })
 
-      await render(`/edit/${encode(route)}`)
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
 
       await userEvent.type(
         screen.getByRole('textbox', { name: 'Label' }),
@@ -113,7 +112,12 @@ describe('Edit route', () => {
           verifyChainId(parseInt(chainId)),
         )
 
-        await render(`/edit/${encode(route)}`)
+        await render(
+          href('/edit/:routeId/:data', {
+            routeId: route.id,
+            data: encode(route),
+          }),
+        )
 
         expect(screen.getByText(name)).toBeInTheDocument()
       },
@@ -127,7 +131,12 @@ describe('Edit route', () => {
         avatar: randomPrefixedAddress({ chainId: Chain.ETH }),
       })
 
-      await render(`/edit/${encode(route)}`)
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
 
       await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
       await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
@@ -154,7 +163,12 @@ describe('Edit route', () => {
 
       mockQueryRoutes.mockResolvedValue([newRoute])
 
-      await render(`/edit/${encode(route)}`)
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
@@ -172,39 +186,6 @@ describe('Edit route', () => {
           '*',
         )
       })
-    })
-  })
-
-  describe('Dry run', () => {
-    beforeEach(() => {
-      mockQueryRoutes.mockResolvedValue([])
-    })
-
-    it('is possible to test a route before saving', async () => {
-      const route = createMockExecutionRoute()
-
-      await render(`/edit/${encode(route)}`)
-
-      expect(
-        screen.getByRole('button', { name: 'Test route' }),
-      ).toBeInTheDocument()
-    })
-
-    it('shows errors returned by dry run', async () => {
-      const route = createMockExecutionRoute()
-
-      await render(`/edit/${encode(route)}`)
-
-      mockDryRun.mockResolvedValue({
-        error: true,
-        message: 'Something went wrong',
-      })
-
-      await userEvent.click(screen.getByRole('button', { name: 'Test route' }))
-
-      expect(
-        await screen.findByRole('alert', { name: 'Dry run failed' }),
-      ).toHaveAccessibleDescription('Something went wrong')
     })
   })
 })

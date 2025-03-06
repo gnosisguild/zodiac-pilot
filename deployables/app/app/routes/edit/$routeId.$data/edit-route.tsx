@@ -9,13 +9,7 @@ import {
 } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
-import {
-  dryRun,
-  editRoute,
-  jsonRpcProvider,
-  parseRouteData,
-  routeTitle,
-} from '@/utils'
+import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
 import {
@@ -34,14 +28,11 @@ import {
 } from '@zodiac/modules'
 import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  Error,
   Form,
   Info,
   Labeled,
   PrimaryButton,
-  SecondaryButton,
   SecondaryLinkButton,
-  Success,
   TextInput,
   Warning,
 } from '@zodiac/ui'
@@ -108,14 +99,6 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
   let route = parseRouteData(params.data)
 
   switch (intent) {
-    case Intent.DryRun: {
-      const selectedRoute = await findSelectedRoute(route, data)
-
-      return dryRun(jsonRpcProvider(getChainId(route.avatar)), {
-        ...route,
-        ...selectedRoute,
-      })
-    }
     case Intent.Save: {
       const selectedRoute = await findSelectedRoute(route, data)
 
@@ -196,7 +179,7 @@ export const clientAction = async ({
   }
 }
 
-const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
+const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
   const {
     currentRoute: { comparableId, label, initiator, avatar },
     possibleRoutes,
@@ -261,14 +244,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
                 Save
               </PrimaryButton>
 
-              <SecondaryButton
-                submit
-                intent={Intent.DryRun}
-                busy={useIsPending(Intent.DryRun)}
-              >
-                Test route
-              </SecondaryButton>
-
               {!connected && (
                 <div className="text-balance text-xs opacity-75">
                   The Pilot extension must be open to save.
@@ -277,20 +252,6 @@ const EditRoute = ({ loaderData, actionData }: RouteType.ComponentProps) => {
 
               {isDev && <DebugRouteData />}
             </Form.Actions>
-
-            {actionData != null && (
-              <div className="mt-8">
-                {'error' in actionData && actionData.error === true && (
-                  <Error title="Dry run failed">{actionData.message}</Error>
-                )}
-
-                {'error' in actionData && actionData.error === false && (
-                  <Success title="Dry run succeeded">
-                    Your route seems to be ready for execution!
-                  </Success>
-                )}
-              </div>
-            )}
           </Form>
         </Page.Main>
       </Page>
