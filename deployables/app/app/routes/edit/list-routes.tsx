@@ -50,8 +50,13 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
           type: CompanionAppMessageType.REQUEST_ROUTE,
           routeId: getString(data, 'routeId'),
         },
-        (response) =>
-          resolve(href('/edit/:data', { data: encode(response.route) })),
+        ({ route }) =>
+          resolve(
+            href('/edit/:routeId/:data', {
+              routeId: route.id,
+              data: encode(route),
+            }),
+          ),
       )
 
       return redirect(await promise)

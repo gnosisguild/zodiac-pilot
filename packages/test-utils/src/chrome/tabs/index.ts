@@ -1,0 +1,5 @@
+export { mockActiveTab } from './mockActiveTab'
+export { mockTab } from './mockTab'
+export { mockTabClose } from './mockTabClose'
+export { mockTabConnect } from './mockTabConnect'
+export { mockTabSwitch } from './mockTabSwitch'

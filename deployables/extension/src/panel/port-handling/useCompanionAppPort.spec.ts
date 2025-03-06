@@ -79,7 +79,9 @@ describe('useCompanionAppPort', () => {
 
   it('allows companion URLs that are on a denylist', async () => {
     await renderHook(() => useCompanionAppPort(), {
-      activeTab: createMockTab({ url: 'http://localhost/edit/route-id' }),
+      activeTab: createMockTab({
+        url: 'http://localhost/edit/route-id/route-data',
+      }),
     })
 
     await waitFor(() => {
