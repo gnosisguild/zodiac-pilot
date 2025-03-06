@@ -157,66 +157,132 @@ describe('Transactions', () => {
   })
 
   describe('Edit', () => {
-    it('is possible to edit the current route', async () => {
-      const route = await mockRoute({ id: 'test-route' })
+    describe('Current route', () => {
+      it('is possible to edit the current route', async () => {
+        const route = await mockRoute({ id: 'test-route' })
 
-      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
 
-      await render(
-        '/test-route/transactions',
-        [
+        await render(
+          '/test-route/transactions',
+          [
+            {
+              path: '/:activeRouteId/transactions',
+              Component: Transactions,
+              action,
+            },
+          ],
           {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
+            initialState: [createTransaction()],
+            initialSelectedRoute: route,
           },
-        ],
-        {
-          initialState: [createTransaction()],
-          initialSelectedRoute: route,
-        },
-      )
+        )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Edit account' }),
-      )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Edit account' }),
+        )
 
-      expect(chromeMock.tabs.create).toHaveBeenCalledWith({
-        active: true,
-        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+          active: true,
+          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        })
+      })
+
+      it('activates an existing tab when it already exists', async () => {
+        const route = await mockRoute({ id: 'test-route' })
+        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+
+        const tab = mockTab({
+          url: `http://localhost/edit/${route.id}/some-old-route-data`,
+        })
+
+        await render(
+          '/test-route/transactions',
+          [
+            {
+              path: '/:activeRouteId/transactions',
+              Component: Transactions,
+              action,
+            },
+          ],
+          {
+            initialState: [createTransaction()],
+            initialSelectedRoute: route,
+          },
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Edit account' }),
+        )
+
+        expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
+          active: true,
+          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        })
       })
     })
 
-    it('activates an existing tab when it already exists', async () => {
-      const route = await mockRoute({ id: 'test-route' })
-      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+    describe('List all routes', () => {
+      it('is possible to see all routes', async () => {
+        const route = await mockRoute({ id: 'test-route' })
+        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
 
-      const tab = mockTab({
-        url: `http://localhost/edit/${route.id}/some-old-route-data`,
+        await render(
+          '/test-route/transactions',
+          [
+            {
+              path: '/:activeRouteId/transactions',
+              Component: Transactions,
+              action,
+            },
+          ],
+          {
+            initialState: [],
+            initialSelectedRoute: route,
+          },
+        )
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'List accounts' }),
+        )
+
+        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+          active: true,
+          url: 'http://localhost/edit',
+        })
       })
 
-      await render(
-        '/test-route/transactions',
-        [
+      it('activates an existing tab when it already exists', async () => {
+        const route = await mockRoute({ id: 'test-route' })
+
+        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+
+        const tab = mockTab({
+          url: `http://localhost/edit`,
+        })
+
+        await render(
+          '/test-route/transactions',
+          [
+            {
+              path: '/:activeRouteId/transactions',
+              Component: Transactions,
+              action,
+            },
+          ],
           {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
+            initialState: [],
+            initialSelectedRoute: route,
           },
-        ],
-        {
-          initialState: [createTransaction()],
-          initialSelectedRoute: route,
-        },
-      )
+        )
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Edit account' }),
-      )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'List accounts' }),
+        )
 
-      expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
-        active: true,
-        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
+          active: true,
+        })
       })
     })
   })

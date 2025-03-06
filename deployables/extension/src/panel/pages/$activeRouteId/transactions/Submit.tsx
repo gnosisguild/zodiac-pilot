@@ -12,6 +12,7 @@ import {
   Spinner,
 } from '@zodiac/ui'
 import { useState } from 'react'
+import { Intent } from './intents'
 
 export const Submit = () => {
   const route = useExecutionRoute()
@@ -56,7 +57,7 @@ export const Submit = () => {
     </>
   ) : (
     <Form context={{ routeId: route.id, windowId }}>
-      <PrimaryButton fluid submit>
+      <PrimaryButton fluid submit intent={Intent.EditAccount}>
         Complete route setup to submit
       </PrimaryButton>
     </Form>

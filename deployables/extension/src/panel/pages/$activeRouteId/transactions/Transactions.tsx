@@ -26,33 +26,58 @@ import { RecordingIndicator } from './RecordingIndicator'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
+import { Intent } from './intents'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
+
+  const intent = getString(data, 'intent')
   const windowId = getInt(data, 'windowId')
-  const routeId = getString(data, 'routeId')
-  const route = await getRoute(routeId)
-
   const tabs = await chrome.tabs.query({ windowId })
-  const existingTab = tabs.find(
-    (tab) =>
-      tab.url != null &&
-      tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
-  )
 
-  if (existingTab != null && existingTab.id != null) {
-    await chrome.tabs.update(existingTab.id, {
-      active: true,
-      url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
-    })
-  } else {
-    await chrome.tabs.create({
-      active: true,
-      url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
-    })
+  switch (intent) {
+    case Intent.EditAccount: {
+      const routeId = getString(data, 'routeId')
+      const route = await getRoute(routeId)
+
+      const existingTab = tabs.find(
+        (tab) =>
+          tab.url != null &&
+          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
+      )
+
+      if (existingTab != null && existingTab.id != null) {
+        await chrome.tabs.update(existingTab.id, {
+          active: true,
+          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+        })
+      } else {
+        await chrome.tabs.create({
+          active: true,
+          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+        })
+      }
+
+      return null
+    }
+
+    case Intent.ListAccounts: {
+      const existingTab = tabs.find(
+        (tab) => tab.url != null && tab.url === `${getCompanionAppUrl()}/edit`,
+      )
+
+      if (existingTab != null && existingTab.id != null) {
+        await chrome.tabs.update(existingTab.id, { active: true })
+      } else {
+        await chrome.tabs.create({
+          active: true,
+          url: `${getCompanionAppUrl()}/edit`,
+        })
+      }
+
+      return null
+    }
   }
-
-  return null
 }
 
 export const Transactions = () => {

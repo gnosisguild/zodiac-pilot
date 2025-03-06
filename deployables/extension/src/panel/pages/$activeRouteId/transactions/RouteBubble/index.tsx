@@ -1,4 +1,3 @@
-import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
 import { Transition } from '@headlessui/react'
@@ -11,10 +10,10 @@ import { type HexAddress } from '@zodiac/schema'
 import { Blockie, Form, GhostButton } from '@zodiac/ui'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import Stick from 'react-stick'
 import { unprefixAddress } from 'ser-kit'
 import { ConnectionStack } from '../../../ConnectionStack'
+import { Intent } from '../intents'
 
 export const RouteBubble = () => {
   const route = useExecutionRoute()
@@ -63,22 +62,30 @@ export const RouteBubble = () => {
         </p>
       </div>
 
-      <div className="flex shrink-0 items-center">
+      <div className="mr-2 flex shrink-0 items-center">
         <Form context={{ routeId: route.id, windowId }}>
-          <GhostButton submit iconOnly icon={Cog} size="tiny">
+          <GhostButton
+            submit
+            iconOnly
+            intent={Intent.EditAccount}
+            icon={Cog}
+            size="tiny"
+          >
             Edit account
           </GhostButton>
         </Form>
 
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          to={`${useCompanionAppUrl()}/edit`}
-          className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
-        >
-          <span className="sr-only">Configure routes</span>
-          <AlignJustify size={20} />
-        </Link>
+        <Form context={{ windowId }}>
+          <GhostButton
+            submit
+            iconOnly
+            intent={Intent.ListAccounts}
+            icon={AlignJustify}
+            size="tiny"
+          >
+            List accounts
+          </GhostButton>
+        </Form>
       </div>
     </Stick>
   )
