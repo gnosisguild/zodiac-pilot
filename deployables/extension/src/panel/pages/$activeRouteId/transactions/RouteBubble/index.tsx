@@ -6,8 +6,8 @@ import {
   getRolesWaypoint,
   getStartingWaypoint,
 } from '@zodiac/modules'
-import { encode, type HexAddress } from '@zodiac/schema'
-import { Blockie } from '@zodiac/ui'
+import { type HexAddress } from '@zodiac/schema'
+import { Blockie, Form, GhostButton } from '@zodiac/ui'
 import { AlignJustify, Cog } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -61,16 +61,12 @@ export const RouteBubble = () => {
         </p>
       </div>
 
-      <div className="flex shrink-0">
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          to={`${useCompanionAppUrl()}/edit/${route.id}/${encode(route)}`}
-          className="flex items-center justify-center p-2 text-zinc-400 transition-all hover:bg-zinc-200/80 hover:text-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-500/80 dark:hover:text-zinc-300"
-        >
-          <span className="sr-only">Edit route</span>
-          <Cog size={20} />
-        </Link>
+      <div className="flex shrink-0 items-center">
+        <Form context={{ routeId: route.id }}>
+          <GhostButton submit iconOnly icon={Cog} size="tiny">
+            Edit account
+          </GhostButton>
+        </Form>
 
         <Link
           target="_blank"

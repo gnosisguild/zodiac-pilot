@@ -1,5 +1,5 @@
 import { useCompanionAppUrl } from '@/companion'
-import { useExecutionRoute } from '@/execution-routes'
+import { getRoute, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -8,6 +8,9 @@ import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
+import { getCompanionAppUrl } from '@zodiac/env'
+import { getString } from '@zodiac/form-data'
+import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
   GhostButton,
@@ -17,11 +20,25 @@ import {
 } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import type { ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import { RecordingIndicator } from './RecordingIndicator'
 import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const data = await request.formData()
+  const routeId = getString(data, 'routeId')
+  const route = await getRoute(routeId)
+
+  await chrome.tabs.create({
+    active: true,
+    url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+  })
+
+  return null
+}
 
 export const Transactions = () => {
   const transactions = useTransactions()

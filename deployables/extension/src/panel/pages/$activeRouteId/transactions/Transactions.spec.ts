@@ -1,4 +1,5 @@
 import {
+  chromeMock,
   createMockRoute,
   createTransaction,
   mockRoute,
@@ -6,9 +7,23 @@ import {
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { getCompanionAppUrl } from '@zodiac/env'
 import { encode } from '@zodiac/schema'
-import { describe, expect, it } from 'vitest'
-import { Transactions } from './Transactions'
+import { describe, expect, it, vi } from 'vitest'
+import { action, Transactions } from './Transactions'
+
+vi.mock('@zodiac/env', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/env')>()
+
+  return {
+    ...module,
+
+    getCompanionAppUrl: vi.fn(),
+  }
+})
+
+const mockGetCompanionAppUrl = vi.mocked(getCompanionAppUrl)
 
 describe('Transactions', () => {
   describe('Recording state', () => {
@@ -110,20 +125,31 @@ describe('Transactions', () => {
     it('is possible to edit the current route', async () => {
       const route = await mockRoute({ id: 'test-route' })
 
+      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+
       await render(
         '/test-route/transactions',
-        [{ path: '/:activeRouteId/transactions', Component: Transactions }],
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+          },
+        ],
         {
           initialState: [createTransaction()],
           initialSelectedRoute: route,
-          companionAppUrl: 'http://localhost',
         },
       )
 
-      expect(screen.getByRole('link', { name: 'Edit route' })).toHaveAttribute(
-        'href',
-        `http://localhost/edit/${route.id}/${encode(route)}`,
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Edit account' }),
       )
+
+      expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+        active: true,
+        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+      })
     })
   })
 
