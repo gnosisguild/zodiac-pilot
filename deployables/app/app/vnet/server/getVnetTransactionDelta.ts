@@ -9,12 +9,16 @@ export const getVnetTransactionDelta = async (
 ) => {
   const txs = await getVnetTransactionList(vnetId)
   const deltas: Record<string, bigint> = {}
-  const relevantTxs = txs.filter(
-    (tx) =>
-      tx.rpc_method === 'eth_sendTransaction' ||
-      tx.rpc_method === 'tenderly_sendTransaction',
-  )
+  const relevantTxs = txs.filter((tx) => {
+    const method = tx.rpc_method
+    return (
+      (method === 'eth_sendTransaction' ||
+        method === 'tenderly_sendTransaction') &&
+      typeof tx.tx_hash === 'string'
+    )
+  })
   for (const tx of relevantTxs) {
+    if (!tx.tx_hash) continue
     const receipt = await getVnetTxReceipt(rpc, tx.tx_hash)
     if (receipt?.logs) {
       processTransferLogs(receipt.logs, address, deltas)

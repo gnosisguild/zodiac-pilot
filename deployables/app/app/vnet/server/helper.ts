@@ -5,8 +5,8 @@ const ERC20_TRANSFER_TOPIC =
   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 
 const decodeTransferLog = (log: Log) => {
-  const from = '0x' + log.topics[1].slice(26)
-  const to = '0x' + log.topics[2].slice(26)
+  const from = '0x' + (log.topics[1]?.slice(26) || '')
+  const to = '0x' + (log.topics[2]?.slice(26) || '')
   const valueHex = log.data
   const value = BigInt(valueHex).toString()
   return { from, to, value }
@@ -28,13 +28,16 @@ export const processTransferLogs = (
 ) => {
   for (const log of logs) {
     if (log.topics[0]?.toLowerCase() === ERC20_TRANSFER_TOPIC) {
-      const { to, value } = decodeTransferLog(log)
+      const { to, from, value } = decodeTransferLog(log)
       const token = log.address.toLowerCase()
       const amount = BigInt(value)
+
       if (to.toLowerCase() === address.toLowerCase()) {
         // Avatar receives tokens => increment delta
-        // Note: We don't use 'from' to calculate the send event as it is already processed in routes/$address.$chainId/balances.ts
-        return (deltas[token] = (deltas[token] ?? 0n) + amount)
+        deltas[token] = (deltas[token] ?? 0n) + amount
+      } else if (from.toLowerCase() === address.toLowerCase()) {
+        // Avatar sends tokens => increment delta
+        deltas[token] = (deltas[token] ?? 0n) - amount
       }
     }
   }
@@ -58,11 +61,14 @@ export const applyDeltaToBalances = async (
       const existingRaw = parseUnits(existing.amount, decimals)
       const newRaw = existingRaw + deltaValue
       const finalRaw = newRaw < 0n ? 0n : newRaw
+
       const newAmount = formatUnits(finalRaw, decimals)
       existing.amount = newAmount
+      existing.usdValue = parseFloat(newAmount) * (existing.usdPrice || 0)
       balancesMap.set(lowerAddr, existing)
     } else {
       const info = await getTokenByAddress(chain, tokenAddress)
+
       if (!info) {
         const decimals = 18
         const raw = deltaValue < 0n ? 0n : deltaValue
@@ -83,14 +89,12 @@ export const applyDeltaToBalances = async (
         const decimals = info.decimals || 18
         const raw = deltaValue < 0n ? 0n : deltaValue
         const amount = formatUnits(raw, decimals)
+
         const newToken: TokenBalance = {
           contractId: info.id,
           name: info.name || 'Unknown',
           symbol:
-            info.optimized_symbol ||
-            info.display_symbol ||
-            info.symbol ||
-            '???',
+            info.optimized_symbol || info.display_symbol || info.symbol || '',
           logoUrl: info.logo_url || '',
           amount,
           decimals,
@@ -102,6 +106,7 @@ export const applyDeltaToBalances = async (
       }
     }
   }
+
   const finalBalances = Array.from(balancesMap.values())
   return finalBalances
 }
