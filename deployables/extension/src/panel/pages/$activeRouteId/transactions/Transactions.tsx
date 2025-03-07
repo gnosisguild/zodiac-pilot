@@ -1,5 +1,5 @@
 import { useCompanionAppUrl } from '@/companion'
-import { getRoute, useExecutionRoute } from '@/execution-routes'
+import { getRoute, getRoutes, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -20,23 +20,29 @@ import {
 } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import type { ActionFunctionArgs } from 'react-router'
+import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
+import { getActiveRouteId } from '../getActiveRouteId'
+import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
-import { RouteBubble } from './RouteBubble'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const loader = async () => {
+  return { routes: await getRoutes() }
+}
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = await request.formData()
 
   const intent = getString(data, 'intent')
-  const windowId = getInt(data, 'windowId')
-  const tabs = await chrome.tabs.query({ windowId })
 
   switch (intent) {
     case Intent.EditAccount: {
+      const windowId = getInt(data, 'windowId')
+      const tabs = await chrome.tabs.query({ windowId })
+
       const routeId = getString(data, 'routeId')
       const route = await getRoute(routeId)
 
@@ -62,6 +68,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
 
     case Intent.ListAccounts: {
+      const windowId = getInt(data, 'windowId')
+      const tabs = await chrome.tabs.query({ windowId })
+
       const existingTab = tabs.find(
         (tab) => tab.url != null && tab.url === `${getCompanionAppUrl()}/edit`,
       )
@@ -77,6 +86,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       return null
     }
+
+    case Intent.LaunchRoute: {
+      const routeId = getString(data, 'routeId')
+      const activeRouteId = getActiveRouteId(params)
+
+      return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
+    }
   }
 }
 
@@ -86,6 +102,7 @@ export const Transactions = () => {
   const provider = useProvider()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
+  const { routes } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
@@ -121,7 +138,7 @@ export const Transactions = () => {
   return (
     <Page>
       <Page.Header>
-        <RouteBubble />
+        <AccountSelect accounts={routes} />
 
         <div className="m-4 flex items-center justify-between gap-2">
           <RecordingIndicator />

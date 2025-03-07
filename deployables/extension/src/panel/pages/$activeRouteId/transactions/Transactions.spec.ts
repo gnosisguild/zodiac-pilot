@@ -3,6 +3,7 @@ import {
   createMockRoute,
   createTransaction,
   mockRoute,
+  mockRoutes,
   randomPrefixedAddress,
   render,
 } from '@/test-utils'
@@ -10,9 +11,10 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { encode } from '@zodiac/schema'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
-import { action, Transactions } from './Transactions'
+import { action, loader, Transactions } from './Transactions'
 
 vi.mock('@zodiac/env', async (importOriginal) => {
   const module = await importOriginal<typeof import('@zodiac/env')>()
@@ -27,6 +29,38 @@ vi.mock('@zodiac/env', async (importOriginal) => {
 const mockGetCompanionAppUrl = vi.mocked(getCompanionAppUrl)
 
 describe('Transactions', () => {
+  describe('Route switch', () => {
+    it('is possible to switch the active route', async () => {
+      const [selectedRoute] = await mockRoutes(
+        { id: 'first-route', label: 'First route' },
+        { id: 'second-route', label: 'Second route' },
+      )
+
+      await render(
+        '/first-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          initialSelectedRoute: selectedRoute,
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Accounts' }))
+      await userEvent.click(
+        screen.getByRole('option', { name: 'Second route' }),
+      )
+
+      await expectRouteToBe('/first-route/clear-transactions/second-route')
+    })
+  })
+
   describe('Recording state', () => {
     it('hides the info when Pilot is ready', async () => {
       await render(
@@ -36,6 +70,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         { initialSelectedRoute: createMockRoute({ id: 'test-route' }) },
@@ -56,6 +91,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
@@ -79,6 +115,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
@@ -107,6 +144,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
@@ -136,6 +174,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
@@ -170,6 +209,7 @@ describe('Transactions', () => {
               path: '/:activeRouteId/transactions',
               Component: Transactions,
               action,
+              loader,
             },
           ],
           {
@@ -203,6 +243,7 @@ describe('Transactions', () => {
               path: '/:activeRouteId/transactions',
               Component: Transactions,
               action,
+              loader,
             },
           ],
           {
@@ -234,6 +275,7 @@ describe('Transactions', () => {
               path: '/:activeRouteId/transactions',
               Component: Transactions,
               action,
+              loader,
             },
           ],
           {
@@ -268,6 +310,7 @@ describe('Transactions', () => {
               path: '/:activeRouteId/transactions',
               Component: Transactions,
               action,
+              loader,
             },
           ],
           {
@@ -298,6 +341,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
@@ -322,6 +366,7 @@ describe('Transactions', () => {
             path: '/:activeRouteId/transactions',
             Component: Transactions,
             action,
+            loader,
           },
         ],
         {
