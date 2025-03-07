@@ -6,10 +6,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 type OnLaunchOptions = {
-  onLaunch: (routeId: string) => void
+  onLaunch?: (routeId: string) => void
 }
 
-export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions) => {
+export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
   const transactions = useTransactions()
@@ -20,24 +20,26 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions) => {
     onLaunchRef.current = onLaunch
   }, [onLaunch])
 
-  useTabMessageHandler(
-    CompanionAppMessageType.LAUNCH_ROUTE,
-    async (message) => {
+  const launchRoute = useCallback(
+    async (routeId: string) => {
       const activeRouteId = await getLastUsedRouteId()
 
       if (activeRouteId != null) {
         const activeRoute = await getRoute(activeRouteId)
-        const newRoute = await getRoute(message.routeId)
+        const newRoute = await getRoute(routeId)
 
         if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
-          setPendingRouteId(message.routeId)
+          setPendingRouteId(routeId)
 
           return
         }
       }
 
-      onLaunchRef.current(message.routeId)
+      if (onLaunchRef.current != null) {
+        onLaunchRef.current(routeId)
+      }
     },
+    [transactions.length],
   )
 
   const cancelLaunch = useCallback(() => setPendingRouteId(null), [])
@@ -49,13 +51,30 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions) => {
 
     invariant(pendingRouteId != null, 'No route launch was pending')
 
-    onLaunchRef.current(pendingRouteId)
+    if (onLaunchRef.current != null) {
+      onLaunchRef.current(pendingRouteId)
+    }
+
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
   }, [navigate, pendingRouteId])
 
-  return {
-    isLaunchPending: pendingRouteId != null,
-    cancelLaunch,
-    proceedWithLaunch,
-  }
+  return [
+    launchRoute,
+    {
+      isLaunchPending: pendingRouteId != null,
+      cancelLaunch,
+      proceedWithLaunch,
+    },
+  ] as const
+}
+
+export const useLaunchRouteOnMessage = (launchOptions: OnLaunchOptions) => {
+  const [launchRoute, options] = useLaunchRoute(launchOptions)
+
+  useTabMessageHandler(
+    CompanionAppMessageType.LAUNCH_ROUTE,
+    async ({ routeId }) => launchRoute(routeId),
+  )
+
+  return options
 }
