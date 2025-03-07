@@ -40,7 +40,7 @@
     "@vitest/coverage-v8": "3.0.8",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router": "7.3.0",
