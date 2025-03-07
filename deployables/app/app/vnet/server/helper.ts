@@ -22,35 +22,45 @@ const decodeTransferLog = (log: Log) => {
  * @returns The updated deltas record with the amounts transferred to the specified address.
  */
 export const processTransferLogs = (
+  currentDeltas: Record<string, bigint>,
   logs: Log[],
   address: string, //avatar address
-  deltas: Record<string, bigint>,
-) => {
-  for (const log of logs) {
-    if (log.topics[0]?.toLowerCase() === ERC20_TRANSFER_TOPIC) {
-      const { to, from, value } = decodeTransferLog(log)
-      const token = log.address.toLowerCase()
-      const amount = BigInt(value)
+): Record<string, bigint> =>
+  logs.reduce((newDeltas, log) => {
+    const [topic] = log.topics
 
-      if (to.toLowerCase() === address.toLowerCase()) {
-        // Avatar receives tokens => increment delta
-        deltas[token] = (deltas[token] ?? 0n) + amount
-      } else if (from.toLowerCase() === address.toLowerCase()) {
-        // Avatar sends tokens => increment delta
-        deltas[token] = (deltas[token] ?? 0n) - amount
+    if (topic !== ERC20_TRANSFER_TOPIC) {
+      return newDeltas
+    }
+
+    const { to, from, value } = decodeTransferLog(log)
+    const token = log.address.toLowerCase()
+    const amount = BigInt(value)
+
+    if (to.toLowerCase() === address.toLowerCase()) {
+      // Avatar receives tokens => increment delta
+      return { ...newDeltas, [token]: (newDeltas[token] ?? 0n) + amount }
+    }
+
+    if (from.toLowerCase() === address.toLowerCase()) {
+      // Avatar sends tokens => increment delta
+      return {
+        ...newDeltas,
+        [token]: (newDeltas[token] = (newDeltas[token] ?? 0n) - amount),
       }
     }
-  }
-}
+
+    return newDeltas
+  }, currentDeltas)
 
 export const applyDeltaToBalances = async (
-  mainnetBalance: TokenBalance[],
+  allBalances: TokenBalance[],
   delta: Record<string, bigint>,
   chain: string,
 ): Promise<TokenBalance[]> => {
   const balancesMap = new Map<string, TokenBalance>()
-  for (const bal of mainnetBalance) {
-    balancesMap.set(bal.contractId.toLowerCase(), { ...bal })
+  for (const balance of allBalances) {
+    balancesMap.set(balance.contractId.toLowerCase(), balance)
   }
 
   for (const [tokenAddress, deltaValue] of Object.entries(delta)) {

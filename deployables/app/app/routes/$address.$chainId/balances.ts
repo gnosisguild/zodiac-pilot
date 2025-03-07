@@ -17,35 +17,28 @@ export const loader = async ({
   const url = new URL(request.url)
 
   const chain = await getChain(verifyChainId(parseInt(chainId)))
-  let allBalances = []
-  const mainNetBalances = await getTokenBalances(
-    chain,
-    verifyHexAddress(address),
-  )
-  allBalances = mainNetBalances
+
+  const allBalances = await getTokenBalances(chain, verifyHexAddress(address))
+
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
 
     invariantResponse(fork != null, `Fork param was no URL`)
+
     const vnetId = url.searchParams.get('vnetId')
-    invariantResponse(vnetId != null, `vnetId param was no URL`)
+
     if (vnetId) {
       const deltas = await getVnetTransactionDelta(
         vnetId,
         fork,
         getAddress(address),
       )
-      if (deltas) {
-        allBalances = await applyDeltaToBalances(
-          mainNetBalances,
-          deltas,
-          chain.id,
-        )
-      }
+
+      return await applyDeltaToBalances(allBalances, deltas, chain.id)
     }
 
-    return allBalances
+    // TODO: bring back fallback to `getBalances` call for older extension versions that do not support the vnetId, yet
   }
 
-  return mainNetBalances
+  return allBalances
 }
