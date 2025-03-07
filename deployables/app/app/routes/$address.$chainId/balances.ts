@@ -6,8 +6,15 @@ import {
 import { applyDeltaToBalances, getVnetTransactionDelta } from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { verifyHexAddress } from '@zodiac/schema'
-import { getAddress } from 'viem'
+import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
+import {
+  createPublicClient,
+  erc20Abi,
+  formatUnits,
+  getAddress,
+  http,
+  type PublicClient,
+} from 'viem'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
@@ -32,13 +39,61 @@ export const loader = async ({
         vnetId,
         fork,
         getAddress(address),
+        allBalances,
+        chain.id,
       )
 
       return await applyDeltaToBalances(allBalances, deltas, chain.id)
     }
 
-    // TODO: bring back fallback to `getBalances` call for older extension versions that do not support the vnetId, yet
+    /**
+     * Fallback approach for older extension versions (< v3.6.5) that do not send `vnetId`.
+     * We skip the delta approach and simply read each token’s balance from the fork.
+     *
+     * TODO: remove once extension adoption is high enough that `vnetId` is always provided
+     */
+    const client = createPublicClient({ transport: http(fork) })
+    return Promise.all(
+      allBalances.map(async (balance) => {
+        const forkBalance = await getForkBalance(client, {
+          contractId: balance.contractId,
+          nativeChainId: chain.id,
+          address: verifyHexAddress(address),
+        })
+
+        const amount = formatUnits(BigInt(forkBalance), balance.decimals)
+
+        return {
+          ...balance,
+
+          amount,
+          usdValue: parseFloat(amount) * balance.usdPrice,
+        }
+      }),
+    )
   }
 
   return allBalances
+}
+
+type GetForkBalanceOptions = {
+  address: HexAddress
+  contractId: string
+  nativeChainId: string
+}
+
+const getForkBalance = (
+  client: PublicClient,
+  { contractId, address, nativeChainId }: GetForkBalanceOptions,
+): Promise<bigint> => {
+  if (contractId === nativeChainId) {
+    return client.getBalance({ address })
+  }
+
+  return client.readContract({
+    address: contractId,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: [address],
+  })
 }
