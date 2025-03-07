@@ -218,6 +218,9 @@ const Actions = ({ routeId }: { routeId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
+      <MinimumVersion version="3.6.0">
+        <Launch routeId={routeId} />
+      </MinimumVersion>
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -225,10 +228,6 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
-        <MinimumVersion version="3.6.0">
-          <Launch routeId={routeId} />
-        </MinimumVersion>
-
         <Edit routeId={routeId} />
 
         <MinimumVersion version="3.6.0">

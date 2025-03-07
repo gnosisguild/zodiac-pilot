@@ -29,16 +29,16 @@ const Link = ({ children, to, icon: Icon, reloadDocument }: LinkProps) => {
   const location = useLocation()
 
   return (
-    <NavLink to={to}>
+    <NavLink
+      to={to}
+      reloadDocument={
+        reloadDocument == null || typeof reloadDocument === 'boolean'
+          ? reloadDocument
+          : reloadDocument(location)
+      }
+    >
       {({ isActive }) => (
-        <SidebarItem
-          current={isActive}
-          reloadDocument={
-            reloadDocument == null || typeof reloadDocument === 'boolean'
-              ? reloadDocument
-              : reloadDocument(location)
-          }
-        >
+        <SidebarItem current={isActive}>
           <Icon size={18} />
 
           {children}
