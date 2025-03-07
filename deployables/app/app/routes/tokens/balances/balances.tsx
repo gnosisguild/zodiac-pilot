@@ -40,8 +40,8 @@ const Balances = () => {
       )}
 
       <Table
-        bleed
         dense
+        bleed
         className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
       >
         <TableHead>

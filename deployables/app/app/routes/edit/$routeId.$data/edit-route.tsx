@@ -203,7 +203,7 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
           Edit Account
         </Page.Header>
 
-        <Page.Main>
+        <Page.Main className="max-w-5xl">
           <TextInput
             form={formId}
             label="Label"
