@@ -23,7 +23,7 @@ export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 const Balances = () => {
   const [{ data, isForked }, state] = useTokenBalances()
 
-  if (data.length === 0) {
+  if (data.length === 0 && state !== 'loading') {
     return (
       <Info title="Nothing to show">
         We could not find any relevant token balances in the connected account.
