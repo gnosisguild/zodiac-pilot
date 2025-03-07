@@ -36,20 +36,6 @@ describe('applyDeltaToBalances', () => {
   })
 
   it('Add a new token recognized by DBank', async () => {
-    const mainnetBalances: TokenBalance[] = [
-      {
-        contractId: '0x6b175474e89094c44da98b954eedeac495271d0f', // DAI
-        name: 'Dai Stablecoin',
-        symbol: 'DAI',
-        logoUrl: '...',
-        amount: '1000',
-        decimals: 18,
-        usdPrice: 1,
-        usdValue: 1000,
-        chain: 'eth',
-      },
-    ]
-
     const newTokenAddress = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' // USDC
     const delta = {
       [newTokenAddress]: parseUnits('200', 6), // 200.000000 USDC
@@ -69,15 +55,13 @@ describe('applyDeltaToBalances', () => {
       time_at: null,
     })
 
-    const result = await applyDeltaToBalances(mainnetBalances, delta, 'eth')
-    expect(result).toHaveLength(2)
-    const usdc = result.find(
-      (b) => b.contractId.toLowerCase() === newTokenAddress.toLowerCase(),
-    )
-    expect(usdc).toBeDefined()
-    expect(usdc?.amount).toBe('200')
-    expect(usdc?.symbol).toBe('USDC')
-    expect(usdc?.usdValue).toBeCloseTo(200, 6)
+    const [result] = await applyDeltaToBalances([], delta, 'eth')
+
+    expect(result).toMatchObject({
+      amount: '200',
+      symbol: 'USDC',
+      usdValue: 200,
+    })
   })
 
   it('Ensure negative balance is forced to zero', async () => {

@@ -1,7 +1,4 @@
 export type { VnetTransaction } from '../types'
 export { getVnetIdByRpc } from './getVnetIdByRpc'
-export { getVnetList } from './getVnetList'
 export { getVnetTransactionDelta } from './getVnetTransactionDelta'
-export { getVnetTransactionList } from './getVnetTransactionList'
-export { getVnetTxReceipt } from './getVnetTxReceipt'
 export { applyDeltaToBalances, processTransferLogs } from './helper'

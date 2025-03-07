@@ -54,69 +54,76 @@ export const processTransferLogs = (
   }, currentDeltas)
 
 export const applyDeltaToBalances = async (
-  allBalances: TokenBalance[],
+  existingTokenBalances: TokenBalance[],
   delta: Record<string, bigint>,
   chain: string,
 ): Promise<TokenBalance[]> => {
-  const balancesMap = new Map<string, TokenBalance>()
-  for (const balance of allBalances) {
-    balancesMap.set(balance.contractId.toLowerCase(), balance)
-  }
+  const balanceByAddress = existingTokenBalances.reduce(
+    (result, balance) => ({
+      ...result,
+      [balance.contractId.toLowerCase()]: balance,
+    }),
+    {} as Record<string, TokenBalance>,
+  )
 
-  for (const [tokenAddress, deltaValue] of Object.entries(delta)) {
-    const lowerAddr = tokenAddress.toLowerCase()
-    const existing = balancesMap.get(lowerAddr)
-    if (existing) {
-      const decimals = existing.decimals || 18
-      const existingRaw = parseUnits(existing.amount, decimals)
-      const newRaw = existingRaw + deltaValue
-      const finalRaw = newRaw < 0n ? 0n : newRaw
+  const newTokenBalances = await Promise.all(
+    Object.keys(delta)
+      .filter((tokenAddress) => balanceByAddress[tokenAddress] == null)
+      .map(async (tokenAddress) => {
+        const info = await getTokenByAddress(chain, tokenAddress)
 
-      const newAmount = formatUnits(finalRaw, decimals)
-      existing.amount = newAmount
-      existing.usdValue = parseFloat(newAmount) * (existing.usdPrice || 0)
-      balancesMap.set(lowerAddr, existing)
-    } else {
-      const info = await getTokenByAddress(chain, tokenAddress)
+        if (info == null) {
+          const decimals = 18
+          const amount = formatUnits(0n, decimals)
 
-      if (!info) {
-        const decimals = 18
-        const raw = deltaValue < 0n ? 0n : deltaValue
-        const amount = formatUnits(raw, decimals)
-        const newToken: TokenBalance = {
-          contractId: tokenAddress,
-          name: 'Unknown Token',
-          amount,
-          logoUrl: '',
-          symbol: '???',
-          usdValue: 0,
-          usdPrice: 0,
-          decimals,
-          chain,
+          return {
+            contractId: tokenAddress,
+            name: 'Unknown Token',
+            amount,
+            logoUrl: '',
+            symbol: '???',
+            usdValue: 0,
+            usdPrice: 0,
+            decimals,
+            chain,
+          }
         }
-        balancesMap.set(lowerAddr, newToken)
-      } else {
-        const decimals = info.decimals || 18
-        const raw = deltaValue < 0n ? 0n : deltaValue
-        const amount = formatUnits(raw, decimals)
 
-        const newToken: TokenBalance = {
+        const decimals = info.decimals || 18
+        const amount = formatUnits(0n, decimals)
+
+        return {
           contractId: info.id,
-          name: info.name || 'Unknown',
-          symbol:
-            info.optimized_symbol || info.display_symbol || info.symbol || '',
-          logoUrl: info.logo_url || '',
+          name: info.name,
+          symbol: info.optimized_symbol || info.display_symbol || info.symbol,
+          logoUrl: info.logo_url,
           amount,
           decimals,
           usdPrice: info.price || 0,
           usdValue: parseFloat(amount) * (info.price || 0),
           chain: info.chain,
         }
-        balancesMap.set(lowerAddr, newToken)
-      }
-    }
-  }
+      }),
+  )
 
-  const finalBalances = Array.from(balancesMap.values())
-  return finalBalances
+  return [...existingTokenBalances, ...newTokenBalances].map((balance) => {
+    if (delta[balance.contractId.toLowerCase()] == null) {
+      return balance
+    }
+
+    const decimals = balance.decimals || 18
+    const existingRaw = parseUnits(balance.amount, decimals)
+
+    const newRaw = existingRaw + delta[balance.contractId.toLowerCase()]
+    const finalRaw = newRaw < 0n ? 0n : newRaw
+
+    const newAmount = formatUnits(finalRaw, decimals)
+
+    return {
+      ...balance,
+
+      amount: newAmount,
+      usdValue: parseFloat(newAmount) * (balance.usdPrice || 0),
+    }
+  })
 }
