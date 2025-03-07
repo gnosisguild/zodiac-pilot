@@ -19,18 +19,20 @@ describe('List Routes', () => {
     mockGetAvailableChains.mockResolvedValue([])
   })
 
-  it('indicates which route is currently active', async () => {
-    const route = createMockExecutionRoute({ label: 'Test route' })
+  describe('Active route', () => {
+    it('indicates which route is currently active', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
 
-    await render(href('/edit'), {
-      version: '3.6.0',
-      availableRoutes: [route],
-      activeRouteId: route.id,
+      await render(href('/edit'), {
+        version: '3.6.0',
+        availableRoutes: [route],
+        activeRouteId: route.id,
+      })
+
+      expect(
+        await screen.findByRole('cell', { name: 'Test route' }),
+      ).toHaveAccessibleDescription('Active')
     })
-
-    expect(
-      await screen.findByRole('cell', { name: 'Test route' }),
-    ).toHaveAccessibleDescription('Active')
   })
 
   describe('Edit', () => {
