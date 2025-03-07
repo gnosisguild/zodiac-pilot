@@ -115,7 +115,6 @@ export async function createRenderFramework<Config extends RouteConfig>(
 
           return null
         },
-        // @ts-expect-error the real types and the stub types aren't nicely aligned
         children: [...stubbedRoutes],
       },
     ])
