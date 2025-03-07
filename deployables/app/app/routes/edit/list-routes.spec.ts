@@ -137,9 +137,6 @@ describe('List Routes', () => {
       })
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
         await screen.findByRole('button', { name: 'Launch' }),
       )
 

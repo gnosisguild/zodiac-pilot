@@ -15,6 +15,11 @@ import {
   PrimaryButton,
   SecondaryLinkButton,
   Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
@@ -143,18 +148,23 @@ export default ListRoutes
 
 const Routes = ({ children }: PropsWithChildren) => {
   return (
-    <Table>
-      <Table.THead>
-        <Table.Tr>
-          <Table.Th>Name</Table.Th>
-          <Table.Th>Chain</Table.Th>
-          <Table.Th>Initiator</Table.Th>
-          <Table.Th>Account</Table.Th>
-          <Table.Th className="w-1/10" />
-        </Table.Tr>
-      </Table.THead>
+    <Table
+      bleed
+      className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
+    >
+      <TableHead>
+        <TableRow>
+          <TableHeader>Name</TableHeader>
+          <TableHeader>Chain</TableHeader>
+          <TableHeader>Initiator</TableHeader>
+          <TableHeader>Account</TableHeader>
+          <TableHeader className="relative w-0">
+            <span className="sr-only">Actions</span>
+          </TableHeader>
+        </TableRow>
+      </TableHead>
 
-      <Table.TBody>{children}</Table.TBody>
+      <TableBody>{children}</TableBody>
     </Table>
   )
 }
@@ -165,8 +175,8 @@ const Route = ({ route, active }: RouteProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
-    <Table.Tr>
-      <Table.Td aria-describedby={route.id}>
+    <TableRow className="group">
+      <TableCell aria-describedby={route.id}>
         <div className="flex items-center justify-between gap-4">
           {route.label}
           {active && (
@@ -175,24 +185,24 @@ const Route = ({ route, active }: RouteProps) => {
             </Tag>
           )}
         </div>
-      </Table.Td>
-      <Table.Td>
+      </TableCell>
+      <TableCell>
         <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
-      </Table.Td>
-      <Table.Td>
+      </TableCell>
+      <TableCell>
         {route.initiator == null ? (
           <Address>{ZERO_ADDRESS}</Address>
         ) : (
           <Address shorten>{route.initiator}</Address>
         )}
-      </Table.Td>
-      <Table.Td>
+      </TableCell>
+      <TableCell>
         <Address shorten>{route.avatar}</Address>
-      </Table.Td>
-      <Table.Td align="right">
+      </TableCell>
+      <TableCell>
         <Actions routeId={route.id} />
-      </Table.Td>
-    </Table.Tr>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -208,6 +218,9 @@ const Actions = ({ routeId }: { routeId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
+      <MinimumVersion version="3.6.0">
+        <Launch routeId={routeId} />
+      </MinimumVersion>
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -215,10 +228,6 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
-        <MinimumVersion version="3.6.0">
-          <Launch routeId={routeId} />
-        </MinimumVersion>
-
         <Edit routeId={routeId} />
 
         <MinimumVersion version="3.6.0">
