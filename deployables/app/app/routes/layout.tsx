@@ -11,6 +11,10 @@ import { SiDiscord, SiGithub } from '@icons-pack/react-simple-icons'
 import {
   GhostLinkButton,
   PilotType,
+  Sidebar,
+  SidebarBody,
+  SidebarFooter,
+  SidebarHeader,
   SidebarLayout,
   ZodiacOsPlain,
 } from '@zodiac/ui'
@@ -22,7 +26,7 @@ export const loader = async () => {
   return { chains: await getAvailableChains() }
 }
 
-const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
+const PageLayout = ({ loaderData: { chains } }: Route.ComponentProps) => {
   return (
     <FakeBrowser>
       <ProvideChains chains={chains}>
@@ -30,13 +34,15 @@ const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
           <SidebarLayout
             navbar={null}
             sidebar={
-              <div className="flex h-full flex-col">
-                <div className="my-12 flex items-center justify-center gap-2">
-                  <ZodiacOsPlain className="h-6" />
-                  <PilotType className="h-7 dark:invert" />
-                </div>
+              <Sidebar>
+                <SidebarHeader>
+                  <div className="my-8 flex items-center justify-center gap-2">
+                    <ZodiacOsPlain className="h-6" />
+                    <PilotType className="h-7 dark:invert" />
+                  </div>
+                </SidebarHeader>
 
-                <div className="flex-1">
+                <SidebarBody>
                   <Navigation>
                     <Navigation.Section title="Tokens">
                       <Navigation.Link
@@ -88,34 +94,36 @@ const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
                       </Navigation.Link>
                     </Navigation.Section>
                   </Navigation>
-                </div>
+                </SidebarBody>
 
-                <MinimumVersion version="3.3.2">
-                  <div className="flex justify-center py-8">
-                    <PilotStatus />
-                  </div>
-                </MinimumVersion>
+                <SidebarFooter>
+                  <MinimumVersion version="3.3.2">
+                    <div className="flex justify-center py-8">
+                      <PilotStatus />
+                    </div>
+                  </MinimumVersion>
 
-                <aside className="flex justify-center p-2">
-                  <GhostLinkButton
-                    openInNewWindow
-                    iconOnly
-                    icon={SiDiscord}
-                    to="https://discord.com/channels/881881751369175040/884777203332710460"
-                  >
-                    Open Discord
-                  </GhostLinkButton>
+                  <aside className="flex justify-center p-2">
+                    <GhostLinkButton
+                      openInNewWindow
+                      iconOnly
+                      icon={SiDiscord}
+                      to="https://discord.com/channels/881881751369175040/884777203332710460"
+                    >
+                      Open Discord
+                    </GhostLinkButton>
 
-                  <GhostLinkButton
-                    openInNewWindow
-                    iconOnly
-                    icon={SiGithub}
-                    to="https://github.com/gnosis/zodiac-pilot"
-                  >
-                    View on GitHub
-                  </GhostLinkButton>
-                </aside>
-              </div>
+                    <GhostLinkButton
+                      openInNewWindow
+                      iconOnly
+                      icon={SiGithub}
+                      to="https://github.com/gnosis/zodiac-pilot"
+                    >
+                      View on GitHub
+                    </GhostLinkButton>
+                  </aside>
+                </SidebarFooter>
+              </Sidebar>
             }
           >
             <Outlet />
@@ -126,4 +134,4 @@ const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
   )
 }
 
-export default Sidebar
+export default PageLayout
