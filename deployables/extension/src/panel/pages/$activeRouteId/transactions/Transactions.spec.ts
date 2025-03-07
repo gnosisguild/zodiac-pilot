@@ -10,6 +10,10 @@ import {
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getCompanionAppUrl } from '@zodiac/env'
+import {
+  CompanionResponseMessageType,
+  type CompanionResponseMessage,
+} from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
@@ -58,6 +62,39 @@ describe('Transactions', () => {
       )
 
       await expectRouteToBe('/first-route/clear-transactions/second-route')
+    })
+
+    it('communicates the new active route', async () => {
+      const [selectedRoute] = await mockRoutes(
+        { id: 'first-route', label: 'First route' },
+        { id: 'second-route', label: 'Second route' },
+      )
+
+      const { mockedTab } = await render(
+        '/first-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          initialSelectedRoute: selectedRoute,
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      await userEvent.click(screen.getByRole('combobox', { name: 'Accounts' }))
+      await userEvent.click(
+        screen.getByRole('option', { name: 'Second route' }),
+      )
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: 'second-route',
+      } satisfies CompanionResponseMessage)
     })
   })
 

@@ -6,10 +6,15 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
+import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
+import {
+  CompanionResponseMessageType,
+  type CompanionResponseMessage,
+} from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
@@ -90,6 +95,18 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     case Intent.LaunchRoute: {
       const routeId = getString(data, 'routeId')
       const activeRouteId = getActiveRouteId(params)
+      const activeTab = await getActiveTab()
+
+      if (activeTab.id != null) {
+        await sendMessageToTab(
+          activeTab.id,
+          {
+            type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+            activeRouteId: routeId,
+          } satisfies CompanionResponseMessage,
+          { protocolCheckOnly: true },
+        )
+      }
 
       return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
     }
