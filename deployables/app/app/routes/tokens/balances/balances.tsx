@@ -6,6 +6,11 @@ import {
   Info,
   SkeletonText,
   Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   TokenValue,
   UsdValue,
 } from '@zodiac/ui'
@@ -34,22 +39,22 @@ const Balances = () => {
         </Info>
       )}
 
-      <Table>
-        <Table.THead>
-          <Table.Tr>
-            <Table.Th className="w-1/2">
-              <span className="pl-6">Token</span>
-            </Table.Th>
-            <Table.Th className="w-1/5" align="right">
-              Balance
-            </Table.Th>
-            <Table.Th className="w-1/5" align="right">
-              USD
-            </Table.Th>
-            <Table.Th className="w-1/10" />
-          </Table.Tr>
-        </Table.THead>
-        <Table.TBody>
+      <Table
+        bleed
+        dense
+        className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
+      >
+        <TableHead>
+          <TableRow>
+            <TableHeader>Token</TableHeader>
+            <TableHeader align="right">Balance</TableHeader>
+            <TableHeader align="right">USD</TableHeader>
+            <TableHeader className="relative w-16">
+              <span className="sr-only">Actions</span>
+            </TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {data.map(
             ({
               contractId,
@@ -60,17 +65,17 @@ const Balances = () => {
               amount,
               symbol,
             }) => (
-              <Table.Tr key={contractId}>
-                <Table.Td noWrap>
+              <TableRow key={contractId} className="group">
+                <TableCell>
                   <Token logo={logoUrl}>{name}</Token>
-                </Table.Td>
-                <Table.Td align="right">
+                </TableCell>
+                <TableCell align="right">
                   <TokenValue symbol={symbol}>{amount}</TokenValue>
-                </Table.Td>
-                <Table.Td align="right">
+                </TableCell>
+                <TableCell align="right">
                   <UsdValue>{usdValue}</UsdValue>
-                </Table.Td>
-                <Table.Td align="right">
+                </TableCell>
+                <TableCell className="pr-16">
                   <div className="flex justify-center opacity-0 transition-opacity group-hover:opacity-100">
                     <GhostLinkButton
                       icon={ArrowUpFromLine}
@@ -83,28 +88,28 @@ const Balances = () => {
                       Send
                     </GhostLinkButton>
                   </div>
-                </Table.Td>
-              </Table.Tr>
+                </TableCell>
+              </TableRow>
             ),
           )}
 
           {state === 'loading' &&
             data.length === 0 &&
             Array.from({ length: 10 }).map((_, index) => (
-              <Table.Tr key={index}>
-                <Table.Td>
+              <TableRow key={index}>
+                <TableCell>
                   <SkeletonText />
-                </Table.Td>
-                <Table.Td align="right">
+                </TableCell>
+                <TableCell align="right">
                   <SkeletonText />
-                </Table.Td>
-                <Table.Td align="right">
+                </TableCell>
+                <TableCell align="right">
                   <SkeletonText />
-                </Table.Td>
-                <Table.Td />
-              </Table.Tr>
+                </TableCell>
+                <TableCell />
+              </TableRow>
             ))}
-        </Table.TBody>
+        </TableBody>
       </Table>
     </>
   )

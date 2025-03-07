@@ -110,7 +110,7 @@ const Sidebar = ({ loaderData: { chains } }: Route.ComponentProps) => {
               </aside>
             </div>
 
-            <div className="bg-radial-[at_100%_100%] flex flex-1 flex-col overflow-hidden from-white to-zinc-50 dark:from-gray-900 dark:to-zinc-950">
+            <div className="flex flex-1 flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-900">
               <Outlet />
             </div>
           </div>
