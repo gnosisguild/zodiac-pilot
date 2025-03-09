@@ -62,7 +62,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "autoprefixer": "10.4.20",
+    "autoprefixer": "10.4.21",
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
     "eslint": "9.22.0",
