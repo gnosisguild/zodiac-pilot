@@ -14,7 +14,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
-    "@icons-pack/react-simple-icons": "12.1.0",
+    "@icons-pack/react-simple-icons": "12.2.0",
     "@react-router/express": "7.3.0",
     "@react-router/node": "7.3.0",
     "@react-router/serve": "7.3.0",
