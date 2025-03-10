@@ -8,9 +8,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     if: github.event.deployment_status.state == 'success'
-    defaults:
-      run:
-        working-directory: ./deployables/app
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -19,14 +17,32 @@ jobs:
           node-version: 22.13.1
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
+
       - name: Install dependencies
         run: pnpm install --prefer-offline
+
+      - name: Build extension
+        run: pnpm build
+        working-directory: ./deployables/extension
+
+      - uses: reloc8/action-latest-release-version@1.0.0
+        id: fetch-latest-release
+
+      - name: 'Update manifest'
+        run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
+        working-directory: ./deployables/extension
+        env:
+          COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
+
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
+        working-directory: ./deployables/app
 
       - name: Companion E2E
         run: xvfb-run pnpm playwright test
+        working-directory: ./deployables/app
         env:
+          PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
 
