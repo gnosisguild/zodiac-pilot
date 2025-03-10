@@ -6,93 +6,39 @@ import editDark from '@/images/features/edit-account-dark.png'
 import editLight from '@/images/features/edit-account-light.png'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import classNames from 'classnames'
-import { Blocks, Milestone, ShieldCheck } from 'lucide-react'
-import { type ReactNode } from 'react'
+import { Gift, Library, Table2 } from 'lucide-react'
 import { Container } from './Container'
 
 interface Feature {
   name: React.ReactNode
   summary: string
-  description: ReactNode
   image: [light: string, dark: string]
   icon: React.ComponentType
 }
 
 const features: Array<Feature> = [
   {
-    name: 'Secure Execution for Smart Accounts',
+    name: 'Multiple Account - One Interface',
     summary:
-      'Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale onchain operations.',
-    description: (
-      <ul className="flex flex-col gap-2">
-        <li>
-          <strong>Move beyond single-step approvals:</strong> Automate
-          multi-dapp execution paths and reduce manual coordination overhead.
-        </li>
-        <li>
-          <strong>Reduce transaction costs:</strong> Batch interactions across
-          dapps to minimize gas fees.
-        </li>
-        <li>
-          <strong>Trusted at scale:</strong> Pilot facilitates secure,
-          non-custodial execution for over $2B in DAO treasuries, including
-          karpatkey, ENS DAO, Balancer, and GnosisDAO.
-        </li>
-      </ul>
-    ),
+      'Pilot keeps all your accounts in one place which makes switching between them a breeze.',
     image: [accountOverviewLight, accountOverviewDark],
-    icon: ShieldCheck,
+    icon: Library,
   },
   {
-    name: 'Seamless Interactions with Dapps',
+    name: 'Quick accounting',
     summary:
-      'Pilot integrates Safe workflows directly into dapp interactions, eliminating the need for external approvals and custom integrations.',
-    description: (
-      <ul className="flex flex-col gap-2">
-        <li>
-          <strong>One interface, no extra windows:</strong> Pilot’s
-          browser-native side panel embeds Safe execution into dapps.
-        </li>
-        <li>
-          <strong>Test and execute transactions in one place:</strong> Minimize
-          coordination overhead for multisig signers.
-        </li>
-        <li>
-          <strong>Seamless execution across protocols:</strong> Move assets,
-          execute swaps, and rebalance liquidity without leaving the workflow.
-        </li>
-      </ul>
-    ),
+      'View all assets that belong to an account and transfer tokens directly from our companion app.',
+
     image: [balancesLight, balancesDark],
-    icon: Blocks,
+    icon: Table2,
   },
   {
-    name: 'Maximize Efficiency, Reduce Risk',
+    name: 'Minimal setup',
     summary:
-      'Pilot eliminates transaction uncertainty with its advanced batching capabilities and industry-first simulation forks, providing a secure environment to test workflows before execution and maximizing capital efficiency.',
-    description: (
-      <ul className="flex flex-col gap-2">
-        <li>
-          <strong>Group transactions into a single batch:</strong> Execute
-          multi-dapp workflows in one transaction to minimize gas costs and
-          operational overhead.
-        </li>
-        <li>
-          <strong>Simulate transactions in a dedicated sandbox:</strong> Detect
-          and fix errors in DeFi strategies, treasury operations, and DAO
-          proposals before committing onchain.
-        </li>
-        <li>
-          <strong>
-            Validate smart contract interactions before execution:
-          </strong>{' '}
-          Test transaction flows in a secure, off-chain environment to minimize
-          risk and prevent costly failures.
-        </li>
-      </ul>
-    ),
+      'Pilot will automatically find all routes between your signer account the target account. You simply need to choose which one to use.',
+
     image: [editLight, editDark],
-    icon: Milestone,
+    icon: Gift,
   },
 ]
 
@@ -108,7 +54,7 @@ function Feature({
   return (
     <div
       className={classNames(
-        'row-span-2 grid grid-rows-subgrid',
+        'grid grid-rows-subgrid',
         className,
         !isActive && 'opacity-75 hover:opacity-100',
       )}
@@ -139,9 +85,6 @@ function Feature({
           {feature.summary}
         </p>
       </div>
-      <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-300">
-        {feature.description}
-      </p>
     </div>
   )
 }
@@ -154,14 +97,7 @@ function FeaturesMobile() {
           <Feature feature={feature} className="mx-auto max-w-2xl" isActive />
           <div className="relative mt-10 pb-10">
             <div className="absolute -inset-x-4 bottom-0 top-8 bg-zinc-200 sm:-inset-x-6" />
-            <div className="relative mx-auto w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-zinc-900/5 ring-1 ring-zinc-500/10">
-              {/* <img
-                className="w-full"
-                src={feature.image}
-                alt=""
-                sizes="52.75rem"
-              /> */}
-            </div>
+            <div className="relative mx-auto w-[52.75rem] overflow-hidden rounded-xl bg-white shadow-lg shadow-zinc-900/5 ring-1 ring-zinc-500/10"></div>
           </div>
         </div>
       ))}
@@ -174,7 +110,7 @@ function FeaturesDesktop() {
     <TabGroup className="hidden lg:mt-20 lg:block">
       {({ selectedIndex }) => (
         <>
-          <TabList className="grid grid-cols-3 grid-rows-2 gap-x-8">
+          <TabList className="grid grid-cols-3 gap-x-8">
             {features.map((feature, featureIndex) => (
               <Feature
                 key={feature.summary}
