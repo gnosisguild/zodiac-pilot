@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc"
@@ -24,7 +24,7 @@
     "@types/react": "19.0.10",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0"
+    "eslint": "9.22.0"
   },
   "peerDependencies": {
     "react": "19.0.0"

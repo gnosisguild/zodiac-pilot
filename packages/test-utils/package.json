@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "test": "vitest",
     "lint": "eslint . --max-warnings=0",
@@ -50,7 +50,7 @@
     "@types/react-dom": "19.0.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "ser-kit": "3.2.0"
   }
 }

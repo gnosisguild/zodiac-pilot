@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@icons-pack/react-simple-icons": "12.1.0",
+    "@icons-pack/react-simple-icons": "12.2.0",
     "@react-router/serve": "7.3.0",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
@@ -22,8 +22,8 @@
     "@vitejs/plugin-react": "4.3.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "autoprefixer": "10.4.20",
-    "eslint": "9.21.0",
+    "autoprefixer": "10.4.21",
+    "eslint": "9.22.0",
     "postcss": "8.5.3",
     "tailwindcss": "4.0.12",
     "typescript": "5.8.2",
@@ -56,5 +56,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "pnpm@9.15.7"
+  "packageManager": "pnpm@9.15.9"
 }

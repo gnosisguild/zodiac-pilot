@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "test": "vitest",
     "lint": "eslint . --max-warnings=0",
@@ -30,7 +30,7 @@
     "react-stick": "5.0.6",
     "react-toastify": "11.0.5",
     "ser-kit": "3.2.0",
-    "viem": "2.23.7"
+    "viem": "2.23.9"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",
@@ -40,7 +40,7 @@
     "@vitest/coverage-v8": "3.0.8",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router": "7.3.0",
