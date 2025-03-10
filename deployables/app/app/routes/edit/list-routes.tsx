@@ -9,11 +9,12 @@ import {
   CompanionResponseMessageType,
   useExtensionMessageHandler,
 } from '@zodiac/messages'
-import { encode, type ExecutionRoute } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
   Address,
   Form,
   GhostButton,
+  GhostLinkButton,
   Info,
   MeatballMenu,
   Modal,
@@ -30,7 +31,7 @@ import {
 import classNames from 'classnames'
 import { Pencil, Play, Trash2 } from 'lucide-react'
 import { useEffect, useState, type PropsWithChildren } from 'react'
-import { href, redirect, useRevalidator } from 'react-router'
+import { href, useRevalidator } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -52,26 +53,6 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const intent = getString(data, 'intent')
 
   switch (intent) {
-    case Intent.Edit: {
-      const { promise, resolve } = Promise.withResolvers<string>()
-
-      companionRequest(
-        {
-          type: CompanionAppMessageType.REQUEST_ROUTE,
-          routeId: getString(data, 'routeId'),
-        },
-        ({ route }) =>
-          resolve(
-            href('/edit/:routeId/:data', {
-              routeId: route.id,
-              data: encode(route),
-            }),
-          ),
-      )
-
-      return redirect(await promise)
-    }
-
     case Intent.Delete: {
       const { promise, resolve } = Promise.withResolvers<void>()
 
@@ -196,7 +177,10 @@ const Route = ({ route, active }: RouteProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
-    <TableRow className="group">
+    <TableRow
+      className="group"
+      href={href('/edit/:routeId', { routeId: route.id })}
+    >
       <TableCell aria-describedby={route.id}>{route.label}</TableCell>
       <TableCell>
         {active && (
@@ -280,28 +264,16 @@ const Launch = ({ routeId }: { routeId: string }) => {
   )
 }
 
-const Edit = ({ routeId }: { routeId: string }) => {
-  const submitting = useIsPending(
-    Intent.Edit,
-    (data) => data.get('routeId') === routeId,
-  )
-
-  return (
-    <Form intent={Intent.Edit}>
-      <GhostButton
-        submit
-        align="left"
-        size="tiny"
-        name="routeId"
-        icon={Pencil}
-        value={routeId}
-        busy={submitting}
-      >
-        Edit
-      </GhostButton>
-    </Form>
-  )
-}
+const Edit = ({ routeId }: { routeId: string }) => (
+  <GhostLinkButton
+    to={href('/edit/:routeId', { routeId })}
+    align="left"
+    size="tiny"
+    icon={Pencil}
+  >
+    Edit
+  </GhostLinkButton>
+)
 
 const Delete = ({
   routeId,
