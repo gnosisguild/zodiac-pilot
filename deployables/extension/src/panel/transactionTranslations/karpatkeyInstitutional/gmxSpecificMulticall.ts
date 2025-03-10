@@ -16,7 +16,7 @@ const gmxMulticallInterface = new Interface([
 ])
 
 const gmxExchangeRouterContractAddress =
-  '0x900173A66dbD345006C51fA35fA3aB760FcD843b'
+  '0x5aC4e27341e4cCcb3e5FD62f9E62db2Adf43dd57'
 
 export const gmxSpecific = {
   title: 'Unfold GMX multicall and handle ETH correctly',
@@ -53,7 +53,7 @@ export const gmxSpecific = {
     }
     return functionCalls.map((data) => {
       const isSendWnt =
-        data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1
+        data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1 && to === gmxExchangeRouterContractAddress.toLowerCase()
 
       return {
         to,
