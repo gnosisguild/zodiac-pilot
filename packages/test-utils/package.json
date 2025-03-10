@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "test": "vitest",
     "lint": "eslint . --max-warnings=0",
@@ -40,17 +40,17 @@
   },
   "peerDependencies": {
     "react": "19.0.0",
-    "react-router": "7.2.0",
-    "ser-kit": "3.1.1"
+    "react-router": "7.3.0",
+    "ser-kit": "3.2.0"
   },
   "devDependencies": {
-    "@react-router/dev": "7.2.0",
+    "@react-router/dev": "7.3.0",
     "@types/chrome": "0.0.308",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0",
-    "ser-kit": "3.1.1"
+    "eslint": "9.22.0",
+    "ser-kit": "3.2.0"
   }
 }

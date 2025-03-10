@@ -6,7 +6,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "env-cmd": "10.1.0",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "typescript": "5.8.2",
     "wrangler": "3.114.0"
   },
@@ -17,5 +17,5 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0"
   },
-  "packageManager": "pnpm@9.15.7"
+  "packageManager": "pnpm@9.15.9"
 }

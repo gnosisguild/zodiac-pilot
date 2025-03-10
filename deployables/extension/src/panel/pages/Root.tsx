@@ -16,9 +16,9 @@ import {
   useSubmit,
   type ActionFunctionArgs,
 } from 'react-router'
-import { FutureClearTransactionsModal } from './ClearTransactionsModal'
+import { ClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
-import { useLaunchRoute } from './useLaunchRoute'
+import { useLaunchRouteOnMessage } from './useLaunchRoute'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async () => {
@@ -61,11 +61,12 @@ export const Root = () => {
     useSaveRoute(lastUsedRouteId)
   useDeleteRoute()
   const submit = useSubmit()
-  const { isLaunchPending, cancelLaunch, proceedWithLaunch } = useLaunchRoute({
-    onLaunch(routeId) {
-      submit(formData({ routeId }), { method: 'POST' })
-    },
-  })
+  const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
+    useLaunchRouteOnMessage({
+      onLaunch(routeId) {
+        submit(formData({ routeId }), { method: 'POST' })
+      },
+    })
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -87,13 +88,13 @@ export const Root = () => {
     <ProvideCompanionAppContext url={companionAppUrl}>
       <Outlet />
 
-      <FutureClearTransactionsModal
+      <ClearTransactionsModal
         open={isLaunchPending}
         onCancel={cancelLaunch}
         onAccept={proceedWithLaunch}
       />
 
-      <FutureClearTransactionsModal
+      <ClearTransactionsModal
         open={isUpdatePending}
         onCancel={cancelUpdate}
         onAccept={() => {

@@ -3,7 +3,12 @@ import { useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getString } from '@zodiac/form-data'
-import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  companionRequest,
+  CompanionResponseMessageType,
+  useExtensionMessageHandler,
+} from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import {
   Address,
@@ -15,12 +20,17 @@ import {
   PrimaryButton,
   SecondaryLinkButton,
   Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
 import { Pencil, Play, Trash2 } from 'lucide-react'
 import { useEffect, useState, type PropsWithChildren } from 'react'
-import { href, redirect } from 'react-router'
+import { href, redirect, useRevalidator } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -96,65 +106,86 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   }
 }
 
-const ListRoutes = ({ loaderData }: Route.ComponentProps) => (
-  <Page fullWidth>
-    <Page.Header>Accounts</Page.Header>
+const ListRoutes = ({ loaderData }: Route.ComponentProps) => {
+  const { revalidate, state } = useRevalidator()
 
-    <Page.Main>
-      <MinimumVersion
-        version="3.4.0"
-        fallback={
-          <Info>
-            To edit a route open the list of all routes in the Pilot extension
-            and click "Edit".
-          </Info>
-        }
-      >
-        <OnlyConnected>
-          {'routes' in loaderData &&
-            (loaderData.routes.length > 0 ? (
-              <Routes>
-                {loaderData.routes.map((route) => (
-                  <Route
-                    key={route.id}
-                    route={route}
-                    active={route.id === loaderData.activeRouteId}
-                  />
-                ))}
-              </Routes>
-            ) : (
-              <Info title="You haven't created any accounts, yet.">
-                Accounts let you quickly impersonate other safes and record
-                transaction bundles for them.
-                <div className="mt-4 flex">
-                  <SecondaryLinkButton to="/create">
-                    Create an account
-                  </SecondaryLinkButton>
-                </div>
-              </Info>
-            ))}
-        </OnlyConnected>
-      </MinimumVersion>
-    </Page.Main>
-  </Page>
-)
+  useExtensionMessageHandler(
+    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+    ({ activeRouteId }) => {
+      if (state === 'idle' && activeRouteId !== loaderData.activeRouteId) {
+        revalidate()
+      }
+    },
+  )
+
+  return (
+    <Page fullWidth>
+      <Page.Header>Accounts</Page.Header>
+
+      <Page.Main>
+        <MinimumVersion
+          version="3.4.0"
+          fallback={
+            <Info>
+              To edit a route open the list of all routes in the Pilot extension
+              and click "Edit".
+            </Info>
+          }
+        >
+          <OnlyConnected>
+            {'routes' in loaderData &&
+              (loaderData.routes.length > 0 ? (
+                <Routes>
+                  {loaderData.routes.map((route) => (
+                    <Route
+                      key={route.id}
+                      route={route}
+                      active={route.id === loaderData.activeRouteId}
+                    />
+                  ))}
+                </Routes>
+              ) : (
+                <Info title="You haven't created any accounts, yet.">
+                  Accounts let you quickly impersonate other safes and record
+                  transaction bundles for them.
+                  <div className="mt-4 flex">
+                    <SecondaryLinkButton to="/create">
+                      Create an account
+                    </SecondaryLinkButton>
+                  </div>
+                </Info>
+              ))}
+          </OnlyConnected>
+        </MinimumVersion>
+      </Page.Main>
+    </Page>
+  )
+}
 
 export default ListRoutes
 
 const Routes = ({ children }: PropsWithChildren) => {
   return (
-    <Table>
-      <Table.THead>
-        <Table.Tr>
-          <Table.Th>Name</Table.Th>
-          <Table.Th>Chain</Table.Th>
-          <Table.Th>Initiator</Table.Th>
-          <Table.Th>Account</Table.Th>
-          <Table.Th className="w-1/10" />
-        </Table.Tr>
-      </Table.THead>
+    <Table
+      bleed
+      className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
+    >
+      <TableHead>
+        <TableRow>
+          <TableHeader>Name</TableHeader>
+          <TableHeader className="relative w-0">
+            <span className="sr-only">Active</span>
+          </TableHeader>
+          <TableHeader>Chain</TableHeader>
+          <TableHeader>Initiator</TableHeader>
+          <TableHeader>Account</TableHeader>
+          <TableHeader className="relative w-0">
+            <span className="sr-only">Actions</span>
+          </TableHeader>
+        </TableRow>
+      </TableHead>
 
-      <Table.TBody>{children}</Table.TBody>
+      <TableBody>{children}</TableBody>
     </Table>
   )
 }
@@ -165,34 +196,32 @@ const Route = ({ route, active }: RouteProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
-    <Table.Tr>
-      <Table.Td aria-describedby={route.id}>
-        <div className="flex items-center justify-between gap-4">
-          {route.label}
-          {active && (
-            <Tag aria-hidden id={route.id} color="success">
-              Active
-            </Tag>
-          )}
-        </div>
-      </Table.Td>
-      <Table.Td>
+    <TableRow className="group">
+      <TableCell aria-describedby={route.id}>{route.label}</TableCell>
+      <TableCell>
+        {active && (
+          <Tag aria-hidden id={route.id} color="success">
+            Active
+          </Tag>
+        )}
+      </TableCell>
+      <TableCell>
         <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
-      </Table.Td>
-      <Table.Td>
+      </TableCell>
+      <TableCell>
         {route.initiator == null ? (
           <Address>{ZERO_ADDRESS}</Address>
         ) : (
           <Address shorten>{route.initiator}</Address>
         )}
-      </Table.Td>
-      <Table.Td>
+      </TableCell>
+      <TableCell>
         <Address shorten>{route.avatar}</Address>
-      </Table.Td>
-      <Table.Td align="right">
+      </TableCell>
+      <TableCell>
         <Actions routeId={route.id} />
-      </Table.Td>
-    </Table.Tr>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -208,6 +237,9 @@ const Actions = ({ routeId }: { routeId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
+      <MinimumVersion version="3.6.0">
+        <Launch routeId={routeId} />
+      </MinimumVersion>
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -215,10 +247,6 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
-        <MinimumVersion version="3.6.0">
-          <Launch routeId={routeId} />
-        </MinimumVersion>
-
         <Edit routeId={routeId} />
 
         <MinimumVersion version="3.6.0">

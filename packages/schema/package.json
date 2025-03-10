@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.7",
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc"
@@ -18,13 +18,13 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@safe-global/types-kit": "1.0.4",
-    "ser-kit": "3.1.1",
-    "viem": "2.23.6",
+    "ser-kit": "3.2.0",
+    "viem": "2.23.9",
     "zod": "3.24.2"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.21.0"
+    "eslint": "9.22.0"
   }
 }

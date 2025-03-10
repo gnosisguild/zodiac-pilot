@@ -4,30 +4,30 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@icons-pack/react-simple-icons": "12.1.0",
-    "@react-router/serve": "7.2.0",
+    "@icons-pack/react-simple-icons": "12.2.0",
+    "@react-router/serve": "7.3.0",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@zodiac/ui": "workspace:*",
     "isbot": "5.1.23",
-    "lucide-react": "0.477.0",
+    "lucide-react": "0.479.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-router": "7.2.0"
+    "react-router": "7.3.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250303.0",
-    "@react-router/dev": "7.2.0",
-    "@tailwindcss/vite": "4.0.11",
+    "@react-router/dev": "7.3.0",
+    "@tailwindcss/vite": "4.0.12",
     "@vitejs/plugin-react": "4.3.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "autoprefixer": "10.4.20",
-    "eslint": "9.21.0",
+    "autoprefixer": "10.4.21",
+    "eslint": "9.22.0",
     "postcss": "8.5.3",
-    "tailwindcss": "4.0.11",
+    "tailwindcss": "4.0.12",
     "typescript": "5.8.2",
-    "vite": "6.2.0",
+    "vite": "6.2.1",
     "vite-plugin-open-graph": "2.0.6",
     "wrangler": "3.114.0"
   },
@@ -56,5 +56,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "pnpm@9.15.7"
+  "packageManager": "pnpm@9.15.9"
 }
