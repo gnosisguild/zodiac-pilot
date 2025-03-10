@@ -35,12 +35,15 @@ export const RolePermissionCheck = ({
     let canceled = false
     if (!provider) return
 
-    invariant(!!route.waypoints, 'Route must have waypoints')
+    const { waypoints } = route
+
+    invariant(waypoints != null, 'Route must have waypoints')
 
     const checkableRoute = {
       ...route,
+      waypoints,
       initiator: route.initiator ?? EOA_ZERO_ADDRESS,
-    } as SerRoute
+    } satisfies SerRoute
 
     checkPermissions([transactionState.transaction], checkableRoute).then(
       ({ success, error }) => {
