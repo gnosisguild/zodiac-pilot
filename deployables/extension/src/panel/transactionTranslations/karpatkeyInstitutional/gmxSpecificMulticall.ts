@@ -52,7 +52,8 @@ export const gmxSpecific = {
       return undefined
     }
     return functionCalls.map((data) => {
-      const isSendWnt = data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1;
+      const isSendWnt =
+        data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1
 
       return {
         to,
@@ -60,5 +61,5 @@ export const gmxSpecific = {
         value: isSendWnt ? value : 0n,
       }
     })
-  }
+  },
 } satisfies TransactionTranslation
