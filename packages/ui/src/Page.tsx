@@ -19,7 +19,10 @@ const Content = (
   { children }: PropsWithChildren,
   ref: ForwardedRef<HTMLDivElement>,
 ) => (
-  <div ref={ref} className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+  <div
+    ref={ref}
+    className="shadow-xs mx-2 flex flex-1 flex-col gap-4 overflow-y-auto rounded-lg bg-white p-4 ring-1 ring-zinc-950/5 dark:bg-zinc-900 dark:ring-white/10"
+  >
     {children}
   </div>
 )
@@ -27,9 +30,7 @@ const Content = (
 Page.Content = forwardRef(Content)
 
 const Footer = ({ children }: PropsWithChildren) => (
-  <div className="flex flex-col gap-4 border-t border-zinc-400/80 bg-zinc-100 p-4 dark:border-gray-700/80 dark:bg-gray-950/80">
-    {children}
-  </div>
+  <div className="flex flex-col gap-4 p-4">{children}</div>
 )
 
 Page.Footer = Footer

@@ -139,8 +139,32 @@ export const Transactions = () => {
     <Page>
       <Page.Header>
         <AccountSelect accounts={routes} />
+      </Page.Header>
 
-        <div className="m-4 flex items-center justify-between gap-2">
+      <div className="flex p-2">
+        <GhostLinkButton
+          fluid
+          openInNewWindow
+          size="small"
+          icon={ArrowUpFromLine}
+          to={`${useCompanionAppUrl()}/tokens/send`}
+        >
+          Send tokens
+        </GhostLinkButton>
+
+        <GhostLinkButton
+          fluid
+          openInNewWindow
+          size="small"
+          icon={Landmark}
+          to={`${useCompanionAppUrl()}/tokens/balances`}
+        >
+          View balances
+        </GhostLinkButton>
+      </div>
+
+      <Page.Content ref={scrollContainerRef}>
+        <div className="flex items-center justify-between gap-2">
           <RecordingIndicator />
 
           <div className="flex gap-1">
@@ -164,31 +188,7 @@ export const Transactions = () => {
             </GhostButton>
           </div>
         </div>
-      </Page.Header>
 
-      <div className="flex border-b border-zinc-400/80 p-2 dark:border-gray-700/80">
-        <GhostLinkButton
-          fluid
-          openInNewWindow
-          size="small"
-          icon={ArrowUpFromLine}
-          to={`${useCompanionAppUrl()}/tokens/send`}
-        >
-          Send tokens
-        </GhostLinkButton>
-
-        <GhostLinkButton
-          fluid
-          openInNewWindow
-          size="small"
-          icon={Landmark}
-          to={`${useCompanionAppUrl()}/tokens/balances`}
-        >
-          View balances
-        </GhostLinkButton>
-      </div>
-
-      <Page.Content ref={scrollContainerRef}>
         {transactions.map((transactionState) => (
           <div id={`t-${transactionState.id}`} key={transactionState.id}>
             <Transaction transactionState={transactionState} />
