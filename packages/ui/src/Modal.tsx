@@ -45,7 +45,7 @@ export const Modal = ({
             </GhostButton>
           </div>
 
-          <div className="px-2 text-zinc-200 dark:text-zinc-700">
+          <div className="flex flex-col px-2 text-zinc-200 dark:text-zinc-700">
             {description && <Description>{description}</Description>}
 
             {children}
@@ -57,7 +57,7 @@ export const Modal = ({
 }
 
 const Actions = ({ children }: PropsWithChildren) => (
-  <div className="mt-4 flex justify-end gap-2 border-t border-zinc-700 pt-4 dark:border-zinc-300">
+  <div className="mt-2 flex flex-row-reverse justify-start gap-2 border-t border-zinc-700 pt-2 md:mt-4 md:pt-4 dark:border-zinc-300">
     {children}
   </div>
 )

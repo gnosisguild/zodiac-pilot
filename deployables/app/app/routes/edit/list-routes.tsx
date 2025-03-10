@@ -310,31 +310,28 @@ const Delete = ({
         closeLabel="Cancel"
         onClose={() => setConfirmDelete(false)}
         open={confirmDelete}
+        description="Are you sure you want to delete this account? This action cannot be undone."
       >
-        <Modal.Actions>
-          Are you sure you want to delete this account? This action cannot be
-          undone.
-          <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
-            <Form.Actions>
-              <PrimaryButton
-                submit
-                name="routeId"
-                value={routeId}
-                style="contrast"
-                busy={submitting}
-              >
-                Delete
-              </PrimaryButton>
+        <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
+          <Modal.Actions>
+            <PrimaryButton
+              submit
+              name="routeId"
+              value={routeId}
+              style="contrast"
+              busy={submitting}
+            >
+              Delete
+            </PrimaryButton>
 
-              <GhostButton
-                style="contrast"
-                onClick={() => setConfirmDelete(false)}
-              >
-                Cancel
-              </GhostButton>
-            </Form.Actions>
-          </Form>
-        </Modal.Actions>
+            <GhostButton
+              style="contrast"
+              onClick={() => setConfirmDelete(false)}
+            >
+              Cancel
+            </GhostButton>
+          </Modal.Actions>
+        </Form>
       </Modal>
     </>
   )
