@@ -37,23 +37,11 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const plan = await planExecution(
-    metaTransactions,
-    {
-      initiator,
-      waypoints,
-      ...route,
-    },
-    {
-      safeTransactionProperties: waypoints.reduce(
-        (result, waypoint) => ({
-          ...result,
-          [waypoint.account.prefixedAddress]: { nonce: 'override' },
-        }),
-        {},
-      ),
-    },
-  )
+  const plan = await planExecution(metaTransactions, {
+    initiator,
+    waypoints,
+    ...route,
+  })
 
   return {
     plan,
