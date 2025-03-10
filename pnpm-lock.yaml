@@ -152,8 +152,8 @@ importers:
         specifier: 7.3.0
         version: 7.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.9
         version: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -320,8 +320,8 @@ importers:
         specifier: 5.0.6
         version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -557,8 +557,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/env:
     dependencies:
@@ -653,8 +653,8 @@ importers:
         specifier: 5.1.3
         version: 5.1.3
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -709,8 +709,8 @@ importers:
         specifier: 1.0.4
         version: 1.0.4(typescript@5.8.2)(zod@3.24.2)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.9
         version: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -783,8 +783,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/ui:
     dependencies:
@@ -825,8 +825,8 @@ importers:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.3.0
+        version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.9
         version: 2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -6490,8 +6490,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@3.2.0:
-    resolution: {integrity: sha512-UhPg0Uh7wTAY3VNWy8BI8j4TZ/KqIPKOdgrncOd99c+l3DooDZDIi6lGCs0fDlfsRfyujhoer8VGwSv7x+3BHg==}
+  ser-kit@3.3.0:
+    resolution: {integrity: sha512-ZRojWjn8Q8Je7wjngsjCxdba2fsy3ccEY8rXtSpYAJHZh+QHZuTfd75uUDQ7bdj7D8NL6/mVz26yc5bx9ykErA==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -7364,6 +7364,7 @@ packages:
   wrangler@3.114.0:
     resolution: {integrity: sha512-cY0HxgU5yuc24tE1Y4KD2n9UzYYEx+9lSL7p/Sqj18SgDfwyiMPY/FryXQAPYLuD/S+dxArRQyeEkFSokIr75Q==}
     engines: {node: '>=16.17.0'}
+    deprecated: Deployments with nodejs_compat are broken. Please downgrade to 3.112.0
     hasBin: true
     peerDependencies:
       '@cloudflare/workers-types': ^4.20250224.0
@@ -14156,7 +14157,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@3.2.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
+  ser-kit@3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 2.5.11(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
