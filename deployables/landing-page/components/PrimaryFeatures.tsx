@@ -1,3 +1,4 @@
+import { Divider } from '@zodiac/ui'
 import {
   AppWindow,
   BookOpenCheck,
@@ -58,6 +59,8 @@ export function PrimaryFeatures() {
         </Description>
       </Feature>
 
+      <Divider />
+
       <Feature
         color="indigo"
         section="Section B"
@@ -91,6 +94,8 @@ export function PrimaryFeatures() {
           </Description.Item>
         </Description>
       </Feature>
+
+      <Divider />
 
       <Feature
         color="amber"
@@ -127,6 +132,8 @@ export function PrimaryFeatures() {
           </Description.Item>
         </Description>
       </Feature>
+
+      <Divider />
 
       <Feature
         color="blue"
