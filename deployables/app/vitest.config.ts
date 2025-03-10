@@ -12,8 +12,6 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
   {},
 )
 
-const { CI } = process.env
-
 export default defineConfig({
   ssr: {
     noExternal: ['@gnosis.pm/zodiac'],
@@ -32,15 +30,6 @@ export default defineConfig({
       threads: { singleThread: true },
       vmForks: { singleFork: true },
       vmThreads: { singleThread: true },
-    },
-
-    coverage: {
-      skipFull: true,
-      enabled: CI != null,
-      reportOnFailure: CI != null,
-      reporter: CI ? ['json', 'json-summary'] : undefined,
-      include: ['**/app/**/*.{ts,tsx}'],
-      exclude: ['**/src/**/*.spec.{ts,tsx}'],
     },
   },
 })
