@@ -47,7 +47,7 @@ describe('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Account options' }),
       )
-      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await postMessage({
         type: CompanionResponseMessageType.PROVIDE_ROUTE,

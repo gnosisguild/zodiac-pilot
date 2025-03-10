@@ -26,6 +26,7 @@ export default [
 
       ...prefix('/edit', [
         index('routes/edit/list-routes.tsx'),
+        route(':routeId', 'routes/edit/$routeId/load-route.ts'),
         route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
 
         route(':data', 'routes/legacy-redirects/extract-route-id-from-edit.ts'),

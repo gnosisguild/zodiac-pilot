@@ -106,6 +106,7 @@ export const BaseLinkButton = ({
   size = 'base',
   children,
   title,
+  align,
   ...props
 }: BaseLinkButtonProps) => {
   if ('disabled' in props && props.disabled) {
@@ -118,6 +119,7 @@ export const BaseLinkButton = ({
         iconOnly={iconOnly}
         size={size}
         title={title}
+        align={align}
       >
         {children}
       </BaseButton>
@@ -133,17 +135,26 @@ export const BaseLinkButton = ({
       target={openInNewWindow ? '_blank' : props.target}
       rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
       className={classNames(
-        'flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border transition-all',
+        'cursor-pointer rounded-md border transition-all',
         fluid && 'flex-1',
         getPadding({ iconOnly, size }),
         className,
       )}
     >
-      {Icon && (
-        <Icon size={size === 'base' ? 20 : 16} className="flex-shrink-0" />
-      )}
+      <span
+        className={classNames(
+          'flex items-center gap-2 whitespace-nowrap',
+          align === 'left' && 'justify-start',
+          align === 'center' && 'justify-center',
+          align === 'right' && 'justify-end',
+        )}
+      >
+        {Icon && (
+          <Icon size={size === 'base' ? 20 : 16} className="flex-shrink-0" />
+        )}
 
-      {iconOnly ? <span className="sr-only">{children}</span> : children}
+        {iconOnly ? <span className="sr-only">{children}</span> : children}
+      </span>
     </Link>
   )
 }
