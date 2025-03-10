@@ -25,8 +25,11 @@ jobs:
         run: pnpm build
         working-directory: ./deployables/extension
 
+      - uses: reloc8/action-latest-release-version@1.0.0
+        id: fetch-latest-release
+
       - name: 'Update manifest'
-        run: pnpm update-manifest
+        run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
         working-directory: ./deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
