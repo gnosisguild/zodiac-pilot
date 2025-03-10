@@ -7,7 +7,7 @@ export const RecordingIndicator = () => {
   const id = useId()
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 text-sm">
       <div className="flex items-center gap-2">
         <RecordingIcon active={pilotIsReady} />
 
