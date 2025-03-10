@@ -57,8 +57,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export const Root = () => {
   const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
-  const { isUpdatePending, cancelUpdate, saveUpdate } =
-    useSaveRoute(lastUsedRouteId)
+  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId)
   useDeleteRoute()
   const submit = useSubmit()
   const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
@@ -95,10 +94,16 @@ export const Root = () => {
       />
 
       <ClearTransactionsModal
-        open={isUpdatePending}
-        onCancel={cancelUpdate}
+        open={saveAndLaunchOptions.isLaunchPending}
+        onCancel={saveAndLaunchOptions.cancelLaunch}
+        onAccept={saveAndLaunchOptions.proceedWithLaunch}
+      />
+
+      <ClearTransactionsModal
+        open={saveOptions.isUpdatePending}
+        onCancel={saveOptions.cancelUpdate}
         onAccept={() => {
-          saveUpdate().then((updatedRoute) => {
+          saveOptions.saveUpdate().then((updatedRoute) => {
             navigate(
               `/${updatedRoute.id}/clear-transactions/${updatedRoute.id}`,
             )

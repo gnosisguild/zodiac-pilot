@@ -86,7 +86,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
 
             launchRoute(option.value)
           }}
-          defaultValue={{ value: route.id, name: route.label }}
+          value={{ value: route.id, name: route.label }}
           options={accounts.map((account) => ({
             value: account.id,
             name: account.label,
