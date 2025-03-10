@@ -17,11 +17,32 @@ jobs:
           node-version: 22.13.1
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
+
       - run: pnpm install --prefer-offline
+
       - run: pnpm build
+
       - uses: cloudflare/wrangler-action@v3
+        id: preview
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           workingDirectory: ./deployables/landing-page
           command: versions upload
+
+      - uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Landing page preview
+
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          body: |
+            ## Landing page preview
+
+            ${{ steps.preview.outputs.deployment-url }}
