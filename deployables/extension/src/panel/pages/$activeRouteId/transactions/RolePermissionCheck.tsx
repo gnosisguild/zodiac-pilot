@@ -33,7 +33,9 @@ export const RolePermissionCheck = ({
 
   useEffect(() => {
     let canceled = false
-    if (!provider) return
+    if (provider == null) {
+      return
+    }
 
     const { waypoints } = route
 
