@@ -1,5 +1,6 @@
 import {
   CallToAction,
+  FAQs,
   Footer,
   Header,
   Hero,
@@ -40,6 +41,7 @@ export const LandingPage = ({ loaderData: { ttv } }: Route.ComponentProps) => {
         <SecondaryFeatures />
         <CallToAction />
         <Testimonials />
+        <FAQs />
       </main>
 
       <Footer />
