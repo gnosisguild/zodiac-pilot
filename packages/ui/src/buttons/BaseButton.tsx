@@ -106,7 +106,7 @@ export const BaseLinkButton = ({
   size = 'base',
   children,
   title,
-  align,
+  align = 'center',
   ...props
 }: BaseLinkButtonProps) => {
   if ('disabled' in props && props.disabled) {
