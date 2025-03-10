@@ -12,7 +12,6 @@ const uniswapMulticallInterface = new Interface([
 ])
 
 const gmxMulticallInterface = new Interface([
-  'function multicall(bytes[] calldata data) external returns (bytes[] memory results)',
   'function sendWnt(address receiver, uint256 amount) external',
 ])
 
@@ -36,38 +35,6 @@ export const gmxSpecific = {
     const sendWntSelector =
       gmxMulticallInterface.getFunction('sendWnt')?.selector
     let functionCalls: HexAddress[] = []
-    if (
-      value > 0 &&
-      chainId === Chain.ARB1 &&
-      to.toLowerCase() === gmxExchangeRouterContractAddress.toLowerCase()
-    ) {
-      for (const fragment of gmxMulticallInterface.fragments) {
-        if (fragment.type !== 'function') continue
-        try {
-          functionCalls = gmxMulticallInterface.decodeFunctionData(
-            fragment as FunctionFragment,
-            data,
-          ).data as HexAddress[]
-          break
-        } catch {
-          continue
-        }
-      }
-      if (functionCalls.length === 0) {
-        return undefined
-      }
-      return functionCalls.map((data) => ({
-        to,
-        data,
-        value: data.slice(0, 10) === sendWntSelector ? value : 0n,
-      }))
-    }
-
-    if (value > 0) {
-      // We don't support unfolding of transactions with value since it's hard to tell which individual calls are supposed to receive the value
-      return undefined
-    }
-
     for (const fragment of uniswapMulticallInterface.fragments) {
       if (fragment.type !== 'function') continue
       try {
@@ -84,7 +51,14 @@ export const gmxSpecific = {
     if (functionCalls.length === 0) {
       return undefined
     }
+    return functionCalls.map((data) => {
+      const isSendWnt = data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1;
 
-    return functionCalls.map((data) => ({ to, data, value: 0n }))
-  },
+      return {
+        to,
+        data,
+        value: isSendWnt ? value : 0n,
+      }
+    })
+  }
 } satisfies TransactionTranslation
