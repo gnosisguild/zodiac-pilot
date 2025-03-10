@@ -42,6 +42,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
+          PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
 
