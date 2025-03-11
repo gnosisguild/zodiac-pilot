@@ -53,7 +53,9 @@ export const gmxSpecific = {
     }
     return functionCalls.map((data) => {
       const isSendWnt =
-        data.slice(0, 10) === sendWntSelector && chainId === Chain.ARB1 && to === gmxExchangeRouterContractAddress.toLowerCase()
+        data.slice(0, 10) === sendWntSelector &&
+        chainId === Chain.ARB1 &&
+        to === gmxExchangeRouterContractAddress.toLowerCase()
 
       return {
         to,
