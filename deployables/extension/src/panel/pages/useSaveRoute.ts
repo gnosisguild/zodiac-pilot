@@ -4,15 +4,16 @@ import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
-import { useNavigate, useRevalidator } from 'react-router'
+import { useRevalidator } from 'react-router'
+import { useLaunchRoute } from './useLaunchRoute'
 
 export const useSaveRoute = (lastUsedRouteId: string | null) => {
   const transactions = useTransactions()
   const { revalidate } = useRevalidator()
-  const navigate = useNavigate()
   const [routeUpdate, setPendingRouteUpdate] = useState<ExecutionRoute | null>(
     null,
   )
+  const [launchRoute, launchOptions] = useLaunchRoute()
 
   useTabMessageHandler(
     [
@@ -43,7 +44,7 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
         revalidate()
 
         if (message.type === CompanionAppMessageType.SAVE_AND_LAUNCH) {
-          navigate(`/${incomingRoute.id}`)
+          launchRoute(incomingRoute.id)
         }
       })
     },
@@ -64,9 +65,12 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
     return routeUpdate
   }, [routeUpdate])
 
-  return {
-    isUpdatePending: routeUpdate != null,
-    cancelUpdate,
-    saveUpdate,
-  }
+  return [
+    {
+      isUpdatePending: routeUpdate != null,
+      cancelUpdate,
+      saveUpdate,
+    },
+    launchOptions,
+  ] as const
 }

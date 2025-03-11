@@ -39,7 +39,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
 
   return (
     <>
-      <div className="flex items-center gap-2 border-b border-zinc-200/80 bg-zinc-100/80 text-zinc-600 hover:border-zinc-300/80 dark:border-zinc-600/80 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-500/80">
+      <div className="flex items-center gap-2">
         <Stick
           className="flex items-center gap-2 overflow-hidden"
           position="bottom left"
@@ -86,7 +86,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
 
             launchRoute(option.value)
           }}
-          defaultValue={{ value: route.id, name: route.label }}
+          value={{ value: route.id, name: route.label }}
           options={accounts.map((account) => ({
             value: account.id,
             name: account.label,

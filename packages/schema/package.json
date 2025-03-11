@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@10.6.2",
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc"
@@ -18,7 +18,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@safe-global/types-kit": "1.0.4",
-    "ser-kit": "3.2.0",
+    "ser-kit": "3.3.0",
     "viem": "2.23.9",
     "zod": "3.24.2"
   },
