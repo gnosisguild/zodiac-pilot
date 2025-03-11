@@ -31,7 +31,7 @@
     "@playwright/test": "1.51.0",
     "@safe-global/safe-gateway-typescript-sdk": "3.22.9",
     "@sentry/esbuild-plugin": "3.2.2",
-    "@tailwindcss/postcss": "4.0.12",
+    "@tailwindcss/postcss": "4.0.13",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.2.0",
@@ -59,7 +59,7 @@
     "postcss": "8.5.3",
     "postcss-replace": "2.0.1",
     "rimraf": "6.0.1",
-    "tailwindcss": "4.0.12",
+    "tailwindcss": "4.0.13",
     "typescript": "5.8.2",
     "vitest": "3.0.8",
     "vitest-chrome": "0.1.0"
