@@ -1,5 +1,12 @@
 import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons'
-import { GhostLinkButton, PilotType, ZodiacOsPlain } from '@zodiac/ui'
+import {
+  GhostLinkButton,
+  PilotType,
+  Strong,
+  Text,
+  TextLink,
+  ZodiacOsPlain,
+} from '@zodiac/ui'
 import { Container } from './Container'
 
 export function Footer() {
@@ -21,15 +28,13 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="text-balance text-center text-sm text-slate-500">
+        <Text className="text-balance text-center text-sm">
           Zodiac Pilot is an open-source tool built by{' '}
-          <a href="https://gnosisguild.org" className="underline">
-            Gnosis Guild
-          </a>
-          . All information is for informational purposes only and does not
-          constitute legal, financial, or investment advice.{' '}
-          <strong>Use at your own risk.</strong>
-        </div>
+          <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>. All
+          information is for informational purposes only and does not constitute
+          legal, financial, or investment advice.{' '}
+          <Strong>Use at your own risk.</Strong>
+        </Text>
 
         <div className="mt-10 flex flex-col items-center border-t border-zinc-900/10 py-10 sm:flex-row-reverse sm:justify-between dark:border-zinc-100/10">
           <div className="flex">
@@ -57,13 +62,11 @@ export function Footer() {
               Contact us on Discord
             </GhostLinkButton>
           </div>
-          <p className="mt-6 text-sm text-slate-500 sm:mt-0">
+          <Text className="mt-6 text-sm sm:mt-0">
             Copyright &copy; {new Date().getFullYear()}{' '}
-            <a href="https://gnosisguild.org" className="underline">
-              Gnosis Guild
-            </a>
-            . All rights reserved.
-          </p>
+            <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>. All
+            rights reserved.
+          </Text>
         </div>
       </Container>
     </footer>
