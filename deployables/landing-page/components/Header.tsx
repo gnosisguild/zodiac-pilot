@@ -9,7 +9,7 @@ import {
   GhostButton,
   GhostLinkButton,
   PilotType,
-  PrimaryLinkButton,
+  SecondaryLinkButton,
   ZodiacOsPlain,
 } from '@zodiac/ui'
 import { Menu } from 'lucide-react'
@@ -53,9 +53,7 @@ function MobileNavigation() {
   )
 }
 
-type HeaderProps = { ttv: string }
-
-export function Header({ ttv }: HeaderProps) {
+export function Header() {
   return (
     <header className="py-10">
       <Container>
@@ -79,23 +77,16 @@ export function Header({ ttv }: HeaderProps) {
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden gap-x-5 md:flex md:gap-x-8">
-              <PrimaryLinkButton
+              <SecondaryLinkButton
                 openInNewWindow
                 to="https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
                 icon={SiGooglechrome}
               >
                 Add to Chrome
-              </PrimaryLinkButton>
+              </SecondaryLinkButton>
             </div>
             <div className="-mr-1 md:hidden">
               <MobileNavigation />
-            </div>
-
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-zinc-300">
-                Total value transacted
-              </span>
-              <span className="font-semibold">{ttv}</span>
             </div>
           </div>
         </nav>
