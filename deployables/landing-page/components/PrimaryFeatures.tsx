@@ -21,7 +21,7 @@ export function PrimaryFeatures() {
     <section
       id="features"
       aria-label="Features for running your books"
-      className="relative overflow-hidden pb-28 pt-20 sm:py-32"
+      className="relative pb-28 pt-20 sm:py-32"
     >
       <Feature
         color="teal"
