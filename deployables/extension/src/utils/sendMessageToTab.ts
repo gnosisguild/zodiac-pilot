@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { isValidTab, type ValidityCheckOptions } from './isValidTab'
 
 export const sendMessageToTab = async (
@@ -62,8 +63,13 @@ export const sendMessageToTab = async (
       console.debug(`Received response from tab`, { response })
 
       return response
-    } catch {
-      console.debug('Could not send message to tab. Waiting for tab to reload.')
+    } catch (error) {
+      console.debug(
+        'Could not send message to tab. Waiting for tab to reload.',
+        { error },
+      )
+
+      sentry.captureException(error)
     }
   }
 

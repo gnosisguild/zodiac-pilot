@@ -28,7 +28,7 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route as RouteType } from './+types/$route.$transactions'
+import type { Route as RouteType } from './+types/sign'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
