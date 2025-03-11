@@ -16,6 +16,7 @@ export function Footer() {
             <div className="-my-1 flex justify-center gap-x-6">
               <GhostLinkButton to="#features">Features</GhostLinkButton>
               <GhostLinkButton to="#testimonials">Testimonials</GhostLinkButton>
+              <GhostLinkButton to="#faqs">FAQs</GhostLinkButton>
             </div>
           </nav>
         </div>
