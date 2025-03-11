@@ -11,6 +11,7 @@ import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   errorToast,
   Form,
+  GhostLinkButton,
   Labeled,
   PrimaryButton,
   successToast,
@@ -18,7 +19,7 @@ import {
 import { type Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { useLoaderData } from 'react-router'
+import { href, Outlet, useLoaderData } from 'react-router'
 import {
   execute,
   ExecutionActionType,
@@ -55,49 +56,65 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
 const SubmitPage = ({
   loaderData: { initiator, chainId, id, waypoints },
+  params: { route, transactions },
 }: RouteType.ComponentProps) => {
   return (
-    <Form>
-      <Form.Section
-        title="Review account information"
-        description="Please review the account information that will be used to sign this transaction bundle"
-      >
-        <ChainSelect disabled defaultValue={chainId} />
-        <Labeled label="Selected route">
-          <Routes disabled orientation="horizontal">
-            <Route id={id}>
-              {waypoints && (
-                <Waypoints>
-                  {waypoints.map(({ account, ...waypoint }, index) => (
-                    <Waypoint
-                      key={`${account.address}-${index}`}
-                      highlight={index === 0 || index === waypoints.length - 1}
-                      account={account}
-                      connection={
-                        'connection' in waypoint
-                          ? waypoint.connection
-                          : undefined
-                      }
-                    />
-                  ))}
-                </Waypoints>
-              )}
-            </Route>
-          </Routes>
-        </Labeled>
-      </Form.Section>
+    <>
+      <Form>
+        <Form.Section
+          title="Review account information"
+          description="Please review the account information that will be used to sign this transaction bundle"
+        >
+          <ChainSelect disabled defaultValue={chainId} />
+          <Labeled label="Selected route">
+            <Routes disabled orientation="horizontal">
+              <Route id={id}>
+                {waypoints && (
+                  <Waypoints>
+                    {waypoints.map(({ account, ...waypoint }, index) => (
+                      <Waypoint
+                        key={`${account.address}-${index}`}
+                        highlight={
+                          index === 0 || index === waypoints.length - 1
+                        }
+                        account={account}
+                        connection={
+                          'connection' in waypoint
+                            ? waypoint.connection
+                            : undefined
+                        }
+                      />
+                    ))}
+                  </Waypoints>
+                )}
+              </Route>
+            </Routes>
+          </Labeled>
 
-      <Form.Section
-        title="Signer details"
-        description="Make sure that your connected wallet matches the signer that is configured for this account"
-      >
-        <ConnectWallet chainId={chainId} pilotAddress={initiator} />
-      </Form.Section>
+          <GhostLinkButton
+            to={href('/submit/:route/:transactions/update-route', {
+              route,
+              transactions,
+            })}
+          >
+            Select a different route
+          </GhostLinkButton>
+        </Form.Section>
 
-      <Form.Actions>
-        <SubmitTransaction />
-      </Form.Actions>
-    </Form>
+        <Form.Section
+          title="Signer details"
+          description="Make sure that your connected wallet matches the signer that is configured for this account"
+        >
+          <ConnectWallet chainId={chainId} pilotAddress={initiator} />
+        </Form.Section>
+
+        <Form.Actions>
+          <SubmitTransaction />
+        </Form.Actions>
+      </Form>
+
+      <Outlet />
+    </>
   )
 }
 
