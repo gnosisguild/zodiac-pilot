@@ -4,7 +4,7 @@ import { parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
 import { encode } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton } from '@zodiac/ui'
+import { Form, GhostButton, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { queryRoutes, unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/update-route'
@@ -89,6 +89,8 @@ const UpdateRoute = ({
           <PrimaryButton submit busy={isSubmitting}>
             Use
           </PrimaryButton>
+
+          <GhostButton onClick={() => navigate('..')}>Cancel</GhostButton>
         </Modal.Actions>
       </Form>
     </Modal>
