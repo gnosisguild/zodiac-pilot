@@ -11,7 +11,7 @@ export const Description = ({ children }: PropsWithChildren) => (
 type ItemsProps = PropsWithChildren<{
   title: string
   icon: LucideIcon
-  color: 'teal' | 'indigo' | 'amber' | 'blue'
+  color: 'teal' | 'indigo' | 'amber' | 'pink'
 }>
 
 const Item = ({ icon: Icon, title, children, color }: ItemsProps) => (
@@ -23,7 +23,7 @@ const Item = ({ icon: Icon, title, children, color }: ItemsProps) => (
           color === 'teal' && 'text-teal-700 dark:text-teal-500',
           color === 'indigo' && 'text-indigo-700 dark:text-indigo-500',
           color === 'amber' && 'text-amber-700 dark:text-amber-500',
-          color === 'blue' && 'text-blue-700 dark:text-blue-500',
+          color === 'pink' && 'text-pink-700 dark:text-pink-500',
         )}
       />
       {title}

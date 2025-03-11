@@ -5,7 +5,7 @@ type FeatureProps = PropsWithChildren<{
   section: string
   title: string
   description: string
-  color: 'teal' | 'indigo' | 'amber' | 'blue'
+  color: 'teal' | 'indigo' | 'amber' | 'pink'
 }>
 
 export const Feature = ({
@@ -21,7 +21,7 @@ export const Feature = ({
       color === 'teal' && 'from-teal-400/50 dark:from-teal-500/50',
       color === 'indigo' && 'from-indigo-400/50 dark:from-indigo-500/50',
       color === 'amber' && 'from-amber-300/50 dark:from-amber-500/50',
-      color === 'blue' && 'from-blue-400/50 dark:from-blue-500/50',
+      color === 'pink' && 'from-pink-400/50 dark:from-pink-500/50',
     )}
   >
     <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -37,8 +37,8 @@ export const Feature = ({
                   'bg-indigo-500 text-indigo-50 dark:bg-indigo-600 dark:text-white',
                 color === 'amber' &&
                   'bg-amber-500 text-amber-50 dark:bg-amber-600 dark:text-white',
-                color === 'blue' &&
-                  'bg-blue-500 text-blue-50 dark:bg-blue-600 dark:text-white',
+                color === 'pink' &&
+                  'bg-pink-500 text-pink-50 dark:bg-pink-600 dark:text-white',
               )}
             >
               {section}
