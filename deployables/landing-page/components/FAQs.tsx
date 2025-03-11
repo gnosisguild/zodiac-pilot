@@ -56,6 +56,12 @@ export const FAQs = () => {
             transparent.
           </FAQ>
 
+          <FAQ question="Is Pilot available on mobile or non-Chromium browsers?">
+            Not currently. Pilot is a desktop-only tool, compatible exclusively
+            with Chromium-based browsers like Chrome, Brave, and Opera. Mobile
+            support is not available at this time.
+          </FAQ>
+
           <FAQ question="Does Pilot work for individual users, or just teams?">
             <strong>Both.</strong> While treasury teams and DAOs benefit from
             batching and role-based execution, individual users can use Pilot
@@ -70,12 +76,6 @@ export const FAQs = () => {
                 and unexpected costs.
               </li>
             </ul>
-          </FAQ>
-
-          <FAQ question="Is Pilot available on mobile or non-Chromium browsers?">
-            Not currently. Pilot is a desktop-only tool, compatible exclusively
-            with Chromium-based browsers like Chrome, Brave, and Opera. Mobile
-            support is not available at this time.
           </FAQ>
         </dl>
       </div>
