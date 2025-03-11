@@ -7,36 +7,36 @@ export const HatsLogo = () => (
   >
     <path d="M2.96289 34.8281H10.2603V42.1255H2.96289V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M9.65227 35.4363H3.57101V41.5175H9.65227V35.4363ZM2.96289 34.8281V42.1255H10.2603V34.8281H2.96289Z"
       fill="#0E0E18"
     />
     <path d="M50.0669 34.8281H42.7695V42.1255H50.0669V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M43.3777 35.4363H49.4589V41.5175H43.3777V35.4363ZM50.0669 34.8281V42.1255H42.7695V34.8281H50.0669Z"
       fill="#0E0E18"
     />
     <path d="M26.8467 34.8281H34.1442V42.1255H26.8467V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M33.5361 35.4363H27.4548V41.5175H33.5361V35.4363ZM26.8467 34.8281V42.1255H34.1442V34.8281H26.8467Z"
       fill="#0E0E18"
     />
     <path d="M26.8467 26.9219H34.1442V34.2193H26.8467V26.9219Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M33.5361 27.53H27.4548V33.6113H33.5361V27.53ZM26.8467 26.9219V34.2193H34.1442V26.9219H26.8467Z"
       fill="#0E0E18"
     />
     <path d="M26.8467 19.0156H34.1442V26.313H26.8467V19.0156Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M33.5361 19.6238H27.4548V25.705H33.5361V19.6238ZM26.8467 19.0156V26.313H34.1442V19.0156H26.8467Z"
       fill="#0E0E18"
     />
@@ -45,85 +45,85 @@ export const HatsLogo = () => (
       fill="white"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M31.0027 15.2654L28.3599 17.7988H33.5361V12.6226L31.0027 15.2654ZM30.5726 14.8353L26.8467 18.4068H34.1442V11.1094L30.5726 14.8353Z"
       fill="#0E0E18"
     />
     <path d="M10.9229 34.8281H18.2202V42.1255H10.9229V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M17.6122 35.4363H11.531V41.5175H17.6122V35.4363ZM10.9229 34.8281V42.1255H18.2202V34.8281H10.9229Z"
       fill="#0E0E18"
     />
     <path d="M10.9229 26.9219H18.2202V34.2193H10.9229V26.9219Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M17.6122 27.53H11.531V33.6113H17.6122V27.53ZM10.9229 26.9219V34.2193H18.2202V26.9219H10.9229Z"
       fill="#0E0E18"
     />
     <path d="M10.9229 19.0156H18.2202V26.313H10.9229V19.0156Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M17.6122 19.6238H11.531V25.705H17.6122V19.6238ZM10.9229 19.0156V26.313H18.2202V19.0156H10.9229Z"
       fill="#0E0E18"
     />
     <path d="M10.9229 11.1094H18.2202V18.4068H10.9229V11.1094Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M17.6122 11.7175H11.531V17.7988H17.6122V11.7175ZM10.9229 11.1094V18.4068H18.2202V11.1094H10.9229Z"
       fill="#0E0E18"
     />
     <path d="M34.8057 34.8281H42.1032V42.1255H34.8057V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M41.495 35.4363H35.4138V41.5175H41.495V35.4363ZM34.8057 34.8281V42.1255H42.1032V34.8281H34.8057Z"
       fill="#0E0E18"
     />
     <path d="M34.8057 26.9219H42.1032V34.2193H34.8057V26.9219Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M41.495 27.53H35.4138V33.6113H41.495V27.53ZM34.8057 26.9219V34.2193H42.1032V26.9219H34.8057Z"
       fill="#0E0E18"
     />
     <path d="M34.8057 19.0156H42.1032V26.313H34.8057V19.0156Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M41.495 19.6238H35.4138V25.705H41.495V19.6238ZM34.8057 19.0156V26.313H42.1032V19.0156H34.8057Z"
       fill="#0E0E18"
     />
     <path d="M34.8057 11.1094H42.1032V18.4068H34.8057V11.1094Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M41.495 11.7175H35.4138V17.7988H41.495V11.7175ZM34.8057 11.1094V18.4068H42.1032V11.1094H34.8057Z"
       fill="#0E0E18"
     />
     <path d="M18.8848 34.8281H26.1823V42.1255H18.8848V34.8281Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M25.5741 35.4363H19.4929V41.5175H25.5741V35.4363ZM18.8848 34.8281V42.1255H26.1823V34.8281H18.8848Z"
       fill="#0E0E18"
     />
     <path d="M18.8848 26.9219H26.1823V34.2193H18.8848V26.9219Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M25.5741 27.53H19.4929V33.6113H25.5741V27.53ZM18.8848 26.9219V34.2193H26.1823V26.9219H18.8848Z"
       fill="#0E0E18"
     />
     <path d="M18.8848 19.0156H26.1823V26.313H18.8848V19.0156Z" fill="white" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M25.5741 19.6238H19.4929V25.705H25.5741V19.6238ZM18.8848 19.0156V26.313H26.1823V19.0156H18.8848Z"
       fill="#0E0E18"
     />
@@ -132,8 +132,8 @@ export const HatsLogo = () => (
       fill="white"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M22.4601 14.8314L18.8848 11.1094V18.4068H26.1823L22.4601 14.8314ZM24.6713 17.7988L22.03 15.2615L19.4929 12.6202V17.7988H24.6713Z"
       fill="#0E0E18"
     />
