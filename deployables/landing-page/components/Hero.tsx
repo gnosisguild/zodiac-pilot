@@ -1,5 +1,6 @@
 import { SiGithub, SiGooglechrome } from '@icons-pack/react-simple-icons'
 import { PrimaryLinkButton, SecondaryLinkButton } from '@zodiac/ui'
+import { GraduationCap } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 import { Container } from './Container'
 import {
@@ -47,7 +48,10 @@ export function Hero({ children }: PropsWithChildren) {
           View on GitHub
         </SecondaryLinkButton>
 
-        <SecondaryLinkButton to="https://www.zodiac.wiki/documentation/pilot-extension">
+        <SecondaryLinkButton
+          to="https://www.zodiac.wiki/documentation/pilot-extension"
+          icon={GraduationCap}
+        >
           Explore operator tutorial
         </SecondaryLinkButton>
       </div>
