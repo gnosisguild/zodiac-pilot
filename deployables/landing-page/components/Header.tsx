@@ -72,6 +72,9 @@ export function Header({ ttv }: HeaderProps) {
               <GhostLinkButton reloadDocument to="#testimonials">
                 Testimonials
               </GhostLinkButton>
+              <GhostLinkButton reloadDocument to="#faqs">
+                FAQs
+              </GhostLinkButton>
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
