@@ -17,11 +17,11 @@ export const Feature = ({
 }: FeatureProps) => (
   <div
     className={classNames(
-      'bg-radial-[at_50%_110%] flex h-screen w-full snap-start snap-always items-center overflow-hidden to-50% py-24 sm:py-32',
-      color === 'teal' && 'from-teal-500/50 to-zinc-950',
-      color === 'indigo' && 'from-indigo-500/50 to-zinc-950',
-      color === 'amber' && 'from-amber-500/50 to-zinc-950',
-      color === 'blue' && 'from-blue-500/50 to-zinc-950',
+      'bg-radial-[at_40%_50%] flex h-screen w-full snap-start snap-always items-center overflow-hidden to-60% py-24 sm:py-32 dark:to-zinc-950',
+      color === 'teal' && 'from-teal-400/50 dark:from-teal-500/50',
+      color === 'indigo' && 'from-indigo-400/50 dark:from-indigo-500/50',
+      color === 'amber' && 'from-amber-300/50 dark:from-amber-500/50',
+      color === 'blue' && 'from-blue-400/50 dark:from-blue-500/50',
     )}
   >
     <div className="mx-auto max-w-7xl px-6 lg:px-8">
