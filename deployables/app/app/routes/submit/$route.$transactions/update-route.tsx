@@ -68,6 +68,7 @@ const UpdateRoute = ({
         navigate('..')
       }}
       title="Update route"
+      description="You can select any of the routes below to sign the current transaction bundle."
     >
       <Form>
         <Routes defaultValue={selectedRouteId}>
@@ -78,6 +79,9 @@ const UpdateRoute = ({
                   <Waypoint
                     key={waypoint.account.prefixedAddress}
                     account={waypoint.account}
+                    connection={
+                      'connection' in waypoint ? waypoint.connection : undefined
+                    }
                   />
                 ))}
               </Waypoints>

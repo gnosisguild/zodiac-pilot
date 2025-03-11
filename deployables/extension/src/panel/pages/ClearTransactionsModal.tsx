@@ -21,13 +21,8 @@ export const ClearTransactionsModal = ({
       onClose={onCancel}
     >
       <Modal.Actions>
-        <PrimaryButton style="contrast" onClick={onAccept}>
-          Clear transactions
-        </PrimaryButton>
-
-        <GhostButton style="contrast" onClick={onCancel}>
-          Cancel
-        </GhostButton>
+        <PrimaryButton onClick={onAccept}>Clear transactions</PrimaryButton>
+        <GhostButton onClick={onCancel}>Cancel</GhostButton>
       </Modal.Actions>
     </Modal>
   )

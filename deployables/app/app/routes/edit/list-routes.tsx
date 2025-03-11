@@ -318,16 +318,12 @@ const Delete = ({
               submit
               name="routeId"
               value={routeId}
-              style="contrast"
               busy={submitting}
             >
               Delete
             </PrimaryButton>
 
-            <GhostButton
-              style="contrast"
-              onClick={() => setConfirmDelete(false)}
-            >
+            <GhostButton onClick={() => setConfirmDelete(false)}>
               Cancel
             </GhostButton>
           </Modal.Actions>
