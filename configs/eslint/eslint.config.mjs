@@ -11,6 +11,8 @@ export default tsEslint.config(
 
   { files: ['**/*.{ts,tsx,js}'] },
 
+  { ignores: ['**/playwright-report/**/*'] },
+
   {
     plugins: {
       react: eslintPluginReact,
