@@ -127,8 +127,8 @@ export function PrimaryFeatures() {
             color="amber"
             title="Validate smart contract interactions before execution"
           >
-            Test transaction flows in a secure, offchain environment to minimize
-            risk and prevent costly failures.
+            Test transaction flows in a secure, off-chain environment to
+            minimize risk and prevent costly failures.
           </Description.Item>
         </Description>
       </Feature>

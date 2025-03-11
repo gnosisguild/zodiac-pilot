@@ -2,17 +2,20 @@ import type { PropsWithChildren } from 'react'
 
 export const FAQs = () => {
   return (
-    <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8">
+    <section
+      id="faqs"
+      className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8"
+    >
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+        <h2 className="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-50">
           Frequently asked questions
         </h2>
-        <p className="mt-6 text-base/7 text-gray-600">
+        <p className="mt-6 text-base/7 text-zinc-600 dark:text-zinc-200">
           Have a different question and can’t find the answer you’re looking
           for? Reach out to our support team by{' '}
           <a
-            href="#"
-            className="font-semibold text-indigo-600 hover:text-indigo-500"
+            href="mailto:info@gnosisguild.org"
+            className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-teal-500 dark:hover:text-teal-400"
           >
             sending us an email
           </a>{' '}
@@ -76,7 +79,7 @@ export const FAQs = () => {
           </FAQ>
         </dl>
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -86,7 +89,11 @@ type FAQProps = PropsWithChildren<{
 
 const FAQ = ({ question, children }: FAQProps) => (
   <div>
-    <dt className="text-base/7 font-semibold text-gray-900">{question}</dt>
-    <dd className="mt-2 text-base/7 text-gray-600">{children}</dd>
+    <dt className="text-base/7 font-semibold text-zinc-900 dark:text-zinc-50">
+      {question}
+    </dt>
+    <dd className="mt-2 text-base/7 text-zinc-600 dark:text-zinc-300">
+      {children}
+    </dd>
   </div>
 )
