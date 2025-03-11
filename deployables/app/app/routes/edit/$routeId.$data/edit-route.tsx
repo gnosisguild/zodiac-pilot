@@ -8,7 +8,14 @@ import {
   WalletProvider,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  Route,
+  routeId,
+  Routes,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
@@ -388,9 +395,6 @@ const RouteSelect = ({
                       {waypoints.map(({ account, ...waypoint }, index) => (
                         <Waypoint
                           key={`${account.address}-${index}`}
-                          highlight={
-                            index === 0 || index === waypoints.length - 1
-                          }
                           account={account}
                           connection={
                             'connection' in waypoint
@@ -433,11 +437,3 @@ const verifyDefaultValue = (
 
   return routeId(route)
 }
-
-const routeId = ({ waypoints }: ExecutionRoute) =>
-  waypoints == null
-    ? ''
-    : waypoints
-        .map(({ account }) => account.prefixedAddress)
-        .join(',')
-        .toLowerCase()

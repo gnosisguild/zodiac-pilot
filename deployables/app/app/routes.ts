@@ -46,7 +46,13 @@ export default [
           index('routes/submit/index.tsx'),
           route(
             ':route/:transactions',
-            'routes/submit/$route.$transactions.tsx',
+            'routes/submit/$route.$transactions/sign.tsx',
+            [
+              route(
+                'update-route',
+                'routes/submit/$route.$transactions/update-route.tsx',
+              ),
+            ],
           ),
         ]),
       ]),

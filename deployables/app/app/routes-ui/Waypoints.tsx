@@ -2,7 +2,7 @@ import type { Account } from '@zodiac/schema'
 import { Address, Popover } from '@zodiac/ui'
 import classNames from 'classnames'
 import { MoveDown, MoveRight } from 'lucide-react'
-import { Children, type ReactElement } from 'react'
+import { Children, cloneElement, type ReactElement } from 'react'
 import {
   AccountType,
   splitPrefixedAddress,
@@ -14,10 +14,9 @@ import { useOrientation } from './Routes'
 
 type WaypointsProps = {
   children: ReactElement<WaypointProps>[]
-  excludeEnd?: boolean
 }
 
-export const Waypoints = ({ children, excludeEnd }: WaypointsProps) => {
+export const Waypoints = ({ children }: WaypointsProps) => {
   const size = Children.count(children)
 
   const orientation = useOrientation()
@@ -46,7 +45,10 @@ export const Waypoints = ({ children, excludeEnd }: WaypointsProps) => {
             )}
           </Connection>
 
-          {excludeEnd && index === size - 1 ? null : child}
+          {cloneElement(child, {
+            ...child.props,
+            highlight: index === 0 || index === size - 1,
+          })}
         </>
       ))}
     </ol>
