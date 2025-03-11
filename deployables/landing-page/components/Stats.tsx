@@ -10,8 +10,8 @@ export const Stats = ({ children }: PropsWithChildren) => (
 
 const Stat = ({ name, children }: PropsWithChildren<{ name: string }>) => (
   <div className="mx-auto flex max-w-xs flex-col gap-y-4">
-    <dt className="text-base/7 text-gray-600">{name}</dt>
-    <dd className="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+    <dt className="text-base/7 text-zinc-600 dark:text-zinc-400">{name}</dt>
+    <dd className="order-first text-3xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-50">
       {children}
     </dd>
   </div>
