@@ -15,7 +15,15 @@ export const Feature = ({
   children,
   color,
 }: FeatureProps) => (
-  <div className={classNames('w-full overflow-hidden py-24 sm:py-32')}>
+  <div
+    className={classNames(
+      'bg-radial-[at_50%_110%] flex h-screen w-full snap-start snap-always items-center overflow-hidden to-50% py-24 sm:py-32',
+      color === 'teal' && 'from-teal-500/50 to-zinc-950',
+      color === 'indigo' && 'from-indigo-500/50 to-zinc-950',
+      color === 'amber' && 'from-amber-500/50 to-zinc-950',
+      color === 'blue' && 'from-blue-500/50 to-zinc-950',
+    )}
+  >
     <div className="mx-auto max-w-7xl px-6 lg:px-8">
       <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
         <div className="lg:pr-8 lg:pt-4">
