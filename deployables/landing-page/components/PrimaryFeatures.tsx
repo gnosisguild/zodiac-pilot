@@ -136,14 +136,14 @@ export function PrimaryFeatures() {
       <Divider />
 
       <Feature
-        color="blue"
+        color="pink"
         section="Feature"
         title="Delegate Securely with Advanced Permissions"
         description="Pilot enables secure delegation with fine-grained permissions using Zodiac Roles Modifier — the most expressive conditions system for permissioning EVM calls."
       >
         <Description>
           <Description.Item
-            color="blue"
+            color="pink"
             icon={Lock}
             title="Assign tightly scoped permissions"
           >
@@ -152,7 +152,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={ShieldPlus}
-            color="blue"
+            color="pink"
             title="Limit execution risk"
           >
             Specify which transactions can be executed, by whom, and under what
@@ -161,7 +161,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={Milestone}
-            color="blue"
+            color="pink"
             title="Reduce governance bottlenecks"
           >
             Teams can batch, delegate, and execute workflows without manual
