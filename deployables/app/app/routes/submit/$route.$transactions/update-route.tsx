@@ -62,11 +62,11 @@ const UpdateRoute = ({
 
   return (
     <Modal
+      open
       closeLabel="Cancel"
       onClose={() => {
         navigate('..')
       }}
-      open
       title="Update route"
     >
       <Form>
