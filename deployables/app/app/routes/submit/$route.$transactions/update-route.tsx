@@ -1,8 +1,10 @@
-import { Route, Routes } from '@/routes-ui'
+import { Route, routeId, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { Modal } from '@zodiac/ui'
-import { useNavigate } from 'react-router'
+import { getString } from '@zodiac/form-data'
+import { encode } from '@zodiac/schema'
+import { Form, Modal, PrimaryButton } from '@zodiac/ui'
+import { href, redirect, useNavigate } from 'react-router'
 import { queryRoutes, unprefixAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/update-route'
 
@@ -15,11 +17,45 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   )
 
   return {
+    selectedRouteId: routeId(route),
     routes: await queryRoutes(unprefixAddress(route.initiator), route.avatar),
   }
 }
 
-const UpdateRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
+export const action = async ({ request, params }: RouteType.ActionArgs) => {
+  const data = await request.formData()
+
+  const currentRoute = parseRouteData(params.route)
+
+  invariantResponse(
+    currentRoute.initiator != null,
+    'Route does not specify an initiator',
+  )
+
+  const routes = await queryRoutes(
+    unprefixAddress(currentRoute.initiator),
+    currentRoute.avatar,
+  )
+
+  const newRouteId = getString(data, 'routeId')
+  const newRoute = routes.find((route) => routeId(route) === newRouteId)
+
+  invariantResponse(
+    newRoute != null,
+    `Could not find route with id "${newRouteId}"`,
+  )
+
+  return redirect(
+    href('/submit/:route/:transactions', {
+      route: encode(newRoute),
+      transactions: params.transactions,
+    }),
+  )
+}
+
+const UpdateRoute = ({
+  loaderData: { routes, selectedRouteId },
+}: RouteType.ComponentProps) => {
   const navigate = useNavigate()
 
   return (
@@ -31,13 +67,26 @@ const UpdateRoute = ({ loaderData: { routes } }: RouteType.ComponentProps) => {
       open
       title="Update route"
     >
-      <Routes>
-        {routes.map((route) => (
-          <Route key={route.id} id={route.id}></Route>
-        ))}
-      </Routes>
+      <Form>
+        <Routes defaultValue={selectedRouteId}>
+          {routes.map((route) => (
+            <Route key={route.id} id={routeId(route)} name="routeId">
+              <Waypoints>
+                {route.waypoints.map((waypoint) => (
+                  <Waypoint
+                    key={waypoint.account.prefixedAddress}
+                    account={waypoint.account}
+                  />
+                ))}
+              </Waypoints>
+            </Route>
+          ))}
+        </Routes>
 
-      <Modal.Actions></Modal.Actions>
+        <Modal.Actions>
+          <PrimaryButton submit>Use</PrimaryButton>
+        </Modal.Actions>
+      </Form>
     </Modal>
   )
 }
