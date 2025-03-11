@@ -29,7 +29,7 @@
     "typescript": "5.8.2",
     "vite": "6.2.1",
     "vite-plugin-open-graph": "2.0.6",
-    "wrangler": "3.114.0"
+    "wrangler": "3.114.1"
   },
   "scripts": {
     "build": "react-router build",
