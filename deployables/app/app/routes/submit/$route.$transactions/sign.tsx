@@ -11,15 +11,15 @@ import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   errorToast,
   Form,
-  GhostLinkButton,
   Labeled,
   PrimaryButton,
+  SecondaryLinkButton,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { href, Outlet, useLoaderData } from 'react-router'
+import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
   execute,
   ExecutionActionType,
@@ -58,6 +58,8 @@ const SubmitPage = ({
   loaderData: { initiator, chainId, id, waypoints },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
+  const { location, formData } = useNavigation()
+
   return (
     <>
       <Form>
@@ -89,16 +91,19 @@ const SubmitPage = ({
                 )}
               </Route>
             </Routes>
-          </Labeled>
 
-          <GhostLinkButton
-            to={href('/submit/:route/:transactions/update-route', {
-              route,
-              transactions,
-            })}
-          >
-            Select a different route
-          </GhostLinkButton>
+            <div className="flex justify-end">
+              <SecondaryLinkButton
+                busy={location != null && formData == null}
+                to={href('/submit/:route/:transactions/update-route', {
+                  route,
+                  transactions,
+                })}
+              >
+                Select a different route
+              </SecondaryLinkButton>
+            </div>
+          </Labeled>
         </Form.Section>
 
         <Form.Section

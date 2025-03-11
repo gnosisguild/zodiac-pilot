@@ -1,3 +1,4 @@
+import { useIsPending } from '@/hooks'
 import { Route, routeId, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { parseRouteData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
@@ -57,6 +58,7 @@ const UpdateRoute = ({
   loaderData: { routes, selectedRouteId },
 }: RouteType.ComponentProps) => {
   const navigate = useNavigate()
+  const isSubmitting = useIsPending()
 
   return (
     <Modal
@@ -84,7 +86,9 @@ const UpdateRoute = ({
         </Routes>
 
         <Modal.Actions>
-          <PrimaryButton submit>Use</PrimaryButton>
+          <PrimaryButton submit busy={isSubmitting}>
+            Use
+          </PrimaryButton>
         </Modal.Actions>
       </Form>
     </Modal>

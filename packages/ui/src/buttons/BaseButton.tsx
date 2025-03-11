@@ -107,6 +107,7 @@ export const BaseLinkButton = ({
   children,
   title,
   align = 'center',
+  busy,
   ...props
 }: BaseLinkButtonProps) => {
   if ('disabled' in props && props.disabled) {
@@ -120,6 +121,7 @@ export const BaseLinkButton = ({
         size={size}
         title={title}
         align={align}
+        busy={busy}
       >
         {children}
       </BaseButton>
@@ -135,7 +137,7 @@ export const BaseLinkButton = ({
       target={openInNewWindow ? '_blank' : props.target}
       rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
       className={classNames(
-        'flex cursor-pointer rounded-md border transition-all',
+        'relative flex cursor-pointer rounded-md border transition-all',
         fluid && 'flex-1',
         getPadding({ iconOnly, size }),
         align === 'left' && 'justify-start',
@@ -147,6 +149,7 @@ export const BaseLinkButton = ({
       <span
         className={classNames(
           'flex items-center gap-2 whitespace-nowrap',
+          busy && 'invisible',
           align === 'left' && 'justify-start',
           align === 'center' && 'justify-center',
           align === 'right' && 'justify-end',
@@ -158,6 +161,12 @@ export const BaseLinkButton = ({
 
         {iconOnly ? <span className="sr-only">{children}</span> : children}
       </span>
+
+      {busy && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Spinner />
+        </span>
+      )}
     </Link>
   )
 }
