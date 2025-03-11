@@ -395,9 +395,6 @@ const RouteSelect = ({
                       {waypoints.map(({ account, ...waypoint }, index) => (
                         <Waypoint
                           key={`${account.address}-${index}`}
-                          highlight={
-                            index === 0 || index === waypoints.length - 1
-                          }
                           account={account}
                           connection={
                             'connection' in waypoint
