@@ -1,3 +1,5 @@
+import marcelo from '@/images/testimonials/marcelo-ruiz-de-olano.jpg'
+import spencer from '@/images/testimonials/spencer-graham.jpg'
 import { Container } from './Container'
 
 const testimonials = [
@@ -7,7 +9,7 @@ const testimonials = [
     author: {
       name: 'Marcelo Ruiz de Olano',
       role: 'CEO at karpatkey',
-      // image: avatarImage1,
+      image: marcelo,
     },
   },
   {
@@ -16,7 +18,7 @@ const testimonials = [
     author: {
       name: 'Spencer Graham',
       role: 'Hats Protocol',
-      // image: avatarImage4,
+      image: spencer,
     },
   },
 ]
@@ -67,13 +69,13 @@ export function Testimonials() {
                     </div>
                   </div>
                   <div className="overflow-hidden rounded-full bg-slate-50 dark:bg-slate-900">
-                    {/* <img
-                      className="h-14 w-14 object-cover"
+                    <img
+                      className="size-14 object-cover"
                       src={testimonial.author.image}
                       alt=""
                       width={56}
                       height={56}
-                    /> */}
+                    />
                   </div>
                 </figcaption>
               </figure>
