@@ -1,5 +1,5 @@
 import { removeRoute } from '@/execution-routes'
-import { sendMessageToTab } from '@/utils'
+import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -15,13 +15,9 @@ export const useDeleteRoute = () => {
     CompanionAppMessageType.DELETE_ROUTE,
     (message, { tabId }) => {
       removeRoute(message.routeId).then(() => {
-        sendMessageToTab(
-          tabId,
-          {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          } satisfies CompanionResponseMessage,
-          { protocolCheckOnly: true },
-        ).then(() => revalidate())
+        sendMessageToCompanionApp(tabId, {
+          type: CompanionResponseMessageType.DELETED_ROUTE,
+        } satisfies CompanionResponseMessage).then(() => revalidate())
       })
     },
   )
