@@ -41,6 +41,7 @@ describe('List Routes', () => {
 
       await render(href('/edit'), {
         availableRoutes: [route],
+        version: '3.6.0',
       })
 
       await userEvent.click(
