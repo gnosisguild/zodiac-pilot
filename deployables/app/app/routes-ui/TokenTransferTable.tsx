@@ -1,4 +1,4 @@
-import type { TokenBalance } from '@/balances-server'
+import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
 import {
   Address,
@@ -16,10 +16,7 @@ const enum TokenTransferType {
   RECEIVED = 'Tokens Received',
   OTHER = 'Other',
 }
-interface TokenTransfer extends TokenBalance {
-  from: AddressType
-  to: AddressType
-}
+
 type AddressItemType = {
   type: string
   from: AddressType
