@@ -133,7 +133,7 @@ describe('Root', () => {
         })
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader }], {
+        await render('/', [{ path: '/', Component: Root, loader, action }], {
           initialState: [createTransaction()],
           activeTab,
         })
@@ -161,10 +161,12 @@ describe('Root', () => {
         })
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader }], {
+        await render('/', [{ path: '/', Component: Root, loader, action }], {
           initialState: [createTransaction()],
           activeTab,
-          inspectRoutes: ['/:activeRouteId'],
+          inspectRoutes: [
+            '/:activeRouteId/clear-transactions/:newActiveRouteId',
+          ],
         })
 
         await mockIncomingLaunch('secondRoute', activeTab)
@@ -191,8 +193,10 @@ describe('Root', () => {
 
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader }], {
-          inspectRoutes: ['/:activeRouteId'],
+        await render('/', [{ path: '/', Component: Root, loader, action }], {
+          inspectRoutes: [
+            '/:activeRouteId/clear-transactions/:newActiveRouteId',
+          ],
           activeTab,
         })
 
@@ -222,7 +226,7 @@ describe('Root', () => {
       await mockRoutes({ id: 'test-route' })
       const tab = createMockTab()
 
-      await render('/', [{ path: '/', Component: Root, loader }], {
+      await render('/', [{ path: '/', Component: Root, loader, action }], {
         activeTab: tab,
       })
 
@@ -249,7 +253,7 @@ describe('Root', () => {
     }
 
     it('stores route data it receives from the companion app', async () => {
-      await render('/', [{ path: '/', Component: Root, loader }])
+      await render('/', [{ path: '/', Component: Root, loader, action }])
 
       const route = createMockRoute()
 
@@ -262,7 +266,7 @@ describe('Root', () => {
       const route = await mockRoute()
       await saveLastUsedRouteId(route.id)
 
-      await render('/', [{ path: '/', Component: Root, loader }], {
+      await render('/', [{ path: '/', Component: Root, loader, action }], {
         initialState: [createTransaction()],
       })
 
@@ -292,6 +296,7 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
@@ -325,10 +330,14 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
             initialState: [createTransaction()],
+            inspectRoutes: [
+              '/:activeRouteId/clear-transactions/:newActiveRouteId',
+            ],
           },
         )
 
@@ -358,6 +367,7 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
@@ -387,6 +397,7 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
@@ -420,6 +431,7 @@ describe('Root', () => {
             path: '/',
             Component: Root,
             loader,
+            action,
           },
         ])
 
@@ -446,6 +458,7 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
@@ -483,6 +496,7 @@ describe('Root', () => {
               path: '/',
               Component: Root,
               loader,
+              action,
             },
           ],
           {
@@ -518,7 +532,7 @@ describe('Root', () => {
       await saveLastUsedRouteId('test-route')
 
       const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader },
+        { path: '/', Component: Root, loader, action },
       ])
 
       await callListeners(

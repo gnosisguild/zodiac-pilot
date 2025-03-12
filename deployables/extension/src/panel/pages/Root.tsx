@@ -1,12 +1,16 @@
 import { ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
-import { formData, getActiveTab, getString, sendMessageToTab } from '@/utils'
+import {
+  formData,
+  getActiveTab,
+  getString,
+  sendMessageToCompanionApp,
+} from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   useTabMessageHandler,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {
   Outlet,
@@ -38,14 +42,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const activeTab = await getActiveTab()
 
   if (activeTab.id != null) {
-    sendMessageToTab(
-      activeTab.id,
-      {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: routeId,
-      } satisfies CompanionResponseMessage,
-      { protocolCheckOnly: true },
-    )
+    sendMessageToCompanionApp(activeTab.id, {
+      type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+      activeRouteId: routeId,
+    })
   }
 
   if (lastUsedRouteId != null) {
@@ -70,14 +70,10 @@ export const Root = () => {
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
     async (_, { tabId }) => {
-      await sendMessageToTab(
-        tabId,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: lastUsedRouteId,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: lastUsedRouteId,
+      })
     },
   )
 

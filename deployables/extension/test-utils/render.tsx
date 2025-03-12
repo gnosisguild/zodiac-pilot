@@ -26,13 +26,6 @@ type Options = RenderOptions & {
    * Pass a route id here to define the currently launched route
    */
   initialSelectedRoute?: ExecutionRoute | null
-  /**
-   * URL of the companion app that extends certain features
-   * like route editing
-   *
-   * @default http://localhost:3040
-   */
-  companionAppUrl?: string
 }
 
 export const render = async (
@@ -43,7 +36,7 @@ export const render = async (
     initialState,
     initialSelectedRoute,
     wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
-    companionAppUrl = 'http://localhost:3040',
+
     ...options
   }: Options = {},
 ) => {
@@ -59,7 +52,6 @@ export const render = async (
       <RenderWrapper
         initialSelectedRoute={initialSelectedRoute}
         initialState={initialState}
-        companionAppUrl={companionAppUrl}
       >
         {children}
         <ToastContainer />

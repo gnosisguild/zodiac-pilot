@@ -1,0 +1,1 @@
+export { mockCompanionAppUrl } from './mockCompanionAppUrl'

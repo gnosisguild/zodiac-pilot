@@ -2,6 +2,7 @@ import {
   chromeMock,
   createMockRoute,
   createTransaction,
+  mockCompanionAppUrl,
   mockRoute,
   mockRoutes,
   randomPrefixedAddress,
@@ -9,24 +10,11 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { getCompanionAppUrl } from '@zodiac/env'
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { action, loader, Transactions } from './Transactions'
-
-vi.mock('@zodiac/env', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/env')>()
-
-  return {
-    ...module,
-
-    getCompanionAppUrl: vi.fn(),
-  }
-})
-
-const mockGetCompanionAppUrl = vi.mocked(getCompanionAppUrl)
 
 describe('Transactions', () => {
   describe('Route switch', () => {
@@ -137,6 +125,8 @@ describe('Transactions', () => {
       })
       const transaction = createTransaction()
 
+      mockCompanionAppUrl('http://localhost')
+
       await render(
         '/test-route/transactions',
         [
@@ -150,7 +140,6 @@ describe('Transactions', () => {
         {
           initialState: [transaction],
           initialSelectedRoute: route,
-          companionAppUrl: 'http://localhost',
         },
       )
 
@@ -165,7 +154,7 @@ describe('Transactions', () => {
         id: 'test-route',
       })
 
-      mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+      mockCompanionAppUrl('http://localhost')
 
       await render(
         '/test-route/transactions',
@@ -180,7 +169,6 @@ describe('Transactions', () => {
         {
           initialState: [],
           initialSelectedRoute: route,
-          companionAppUrl: 'http://localhost',
         },
       )
 
@@ -200,7 +188,7 @@ describe('Transactions', () => {
       it('is possible to edit the current route', async () => {
         const route = await mockRoute({ id: 'test-route' })
 
-        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
         await render(
           '/test-route/transactions',
@@ -230,7 +218,7 @@ describe('Transactions', () => {
 
       it('activates an existing tab when it already exists', async () => {
         const route = await mockRoute({ id: 'test-route' })
-        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
         const tab = mockTab({
           url: `http://localhost/edit/${route.id}/some-old-route-data`,
@@ -266,7 +254,7 @@ describe('Transactions', () => {
     describe('List all routes', () => {
       it('is possible to see all routes', async () => {
         const route = await mockRoute({ id: 'test-route' })
-        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
         await render(
           '/test-route/transactions',
@@ -297,7 +285,7 @@ describe('Transactions', () => {
       it('activates an existing tab when it already exists', async () => {
         const route = await mockRoute({ id: 'test-route' })
 
-        mockGetCompanionAppUrl.mockReturnValue('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
         const tab = mockTab({
           url: `http://localhost/edit`,
@@ -334,6 +322,8 @@ describe('Transactions', () => {
     it('shows a link to view the current balances', async () => {
       const route = await mockRoute({ id: 'test-route' })
 
+      mockCompanionAppUrl('http://localhost')
+
       await render(
         '/test-route/transactions',
         [
@@ -347,7 +337,6 @@ describe('Transactions', () => {
         {
           initialState: [createTransaction()],
           initialSelectedRoute: route,
-          companionAppUrl: 'http://localhost',
         },
       )
 
@@ -359,6 +348,8 @@ describe('Transactions', () => {
     it('offers to send tokens', async () => {
       const route = await mockRoute({ id: 'test-route' })
 
+      mockCompanionAppUrl('http://localhost')
+
       await render(
         '/test-route/transactions',
         [
@@ -372,7 +363,6 @@ describe('Transactions', () => {
         {
           initialState: [createTransaction()],
           initialSelectedRoute: route,
-          companionAppUrl: 'http://localhost',
         },
       )
 

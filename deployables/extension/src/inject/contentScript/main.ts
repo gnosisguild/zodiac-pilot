@@ -1,4 +1,4 @@
-import { injectScript, isValidTab } from '@/utils'
+import { injectScript } from '@/utils'
 import {
   createClientMessageHandler,
   InjectedProviderMessageTyp,
@@ -15,7 +15,7 @@ import { probeChainId } from './probeChainId'
 const alreadyInjected =
   '__zodiacPilotInjected' in document.documentElement.dataset
 
-if (!alreadyInjected && isValidTab(window.location.href)) {
+if (alreadyInjected === false) {
   document.documentElement.dataset.__zodiacPilotInjected = 'true'
   document.documentElement.dataset.__zodiacPilotConnected = 'true'
 
