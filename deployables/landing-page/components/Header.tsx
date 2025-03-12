@@ -15,20 +15,6 @@ import {
 import { Menu } from 'lucide-react'
 import { Container } from './Container'
 
-function MobileNavLink({
-  href,
-  children,
-}: {
-  href: string
-  children: React.ReactNode
-}) {
-  return (
-    <PopoverButton as={'a'} href={href} className="block w-full p-2">
-      {children}
-    </PopoverButton>
-  )
-}
-
 function MobileNavigation() {
   return (
     <Popover>
@@ -41,13 +27,17 @@ function MobileNavigation() {
       />
       <PopoverPanel
         transition
-        className="data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5"
+        className="data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5 dark:bg-black"
       >
-        <MobileNavLink href="#features">Features</MobileNavLink>
-        <MobileNavLink href="#testimonials">Testimonials</MobileNavLink>
-        <MobileNavLink href="#pricing">Pricing</MobileNavLink>
-        <hr className="m-2 border-slate-300/40" />
-        <MobileNavLink href="/login">Sign in</MobileNavLink>
+        <PopoverButton as={GhostLinkButton} align="left" to="#features">
+          Features
+        </PopoverButton>
+        <PopoverButton as={GhostLinkButton} align="left" to="#testimonials">
+          Testimonials
+        </PopoverButton>
+        <PopoverButton as={GhostLinkButton} align="left" to="#faqs">
+          FAQs
+        </PopoverButton>
       </PopoverPanel>
     </Popover>
   )
