@@ -70,25 +70,39 @@ export function Hero({ children }: PropsWithChildren) {
           <li>
             <ul className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
               <li className="flex">
-                <SafeLogo />
+                <a href="https://safe.global/">
+                  <SafeLogo />
+                </a>
               </li>
               <li className="flex">
-                <KarpatkeyLogo />
+                <a href="https://www.karpatkey.com/">
+                  <KarpatkeyLogo />
+                </a>
               </li>
               <li className="flex">
-                <HatsLogo />
+                <a href="https://hats.finance/">
+                  <HatsLogo />
+                </a>
               </li>
               <li className="flex">
-                <RethinkLogo />
+                <a href="https://www.rethink.finance/">
+                  <RethinkLogo />
+                </a>
               </li>
               <li className="flex">
-                <BalancerLogo />
+                <a href="https://balancer.fi/">
+                  <BalancerLogo />
+                </a>
               </li>
               <li className="flex">
-                <EnsLogo />
+                <a href="https://ens.domains/">
+                  <EnsLogo />
+                </a>
               </li>
               <li className="flex">
-                <GnosisLogo />
+                <a href="https://www.gnosis.io/dao">
+                  <GnosisLogo />
+                </a>
               </li>
             </ul>
           </li>
