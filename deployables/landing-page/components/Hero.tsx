@@ -38,7 +38,9 @@ export function Hero({ children }: PropsWithChildren) {
           icon={SiGooglechrome}
           to="https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
         >
-          Add Pilot to Your Browser
+          <span className="hidden md:inline">Add Pilot to Your Browser</span>
+
+          <span className="inline md:hidden">View in Chrome WebStore</span>
         </PrimaryLinkButton>
 
         <SecondaryLinkButton
@@ -56,10 +58,15 @@ export function Hero({ children }: PropsWithChildren) {
         </SecondaryLinkButton>
       </div>
 
-      <div className="mt-36 lg:mt-44">
+      <div className="mt-24 2xl:mt-44">
         {children}
 
-        <ul className="mt-12 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0">
+        <p className="mb-12 mt-24 text-balance">
+          Pilot is already facilitating execution for treasury teams, governance
+          protocols, and multisig operators, including
+        </p>
+
+        <ul className="flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0">
           <li>
             <ul className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
               <li className="flex">
