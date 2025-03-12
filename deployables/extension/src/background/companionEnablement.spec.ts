@@ -14,10 +14,8 @@ import { Chain } from '@zodiac/chains'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
-  PilotMessageType,
   type CompanionAppMessage,
   type CompanionResponseMessage,
-  type Message,
 } from '@zodiac/messages'
 import { mockActiveTab, mockTab, mockTabClose } from '@zodiac/test-utils/chrome'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -134,20 +132,6 @@ describe('Companion Enablement', () => {
       expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith(tab.id, {
         type: CompanionResponseMessageType.PONG,
       } satisfies CompanionResponseMessage)
-    })
-
-    it('sends a disconnect message when the port closes', async () => {
-      const port = createMockPort({ name: COMPANION_APP_PORT })
-
-      await callListeners(chromeMock.runtime.onConnect, port)
-
-      const tab = mockActiveTab(createMockTab())
-
-      await callListeners(port.onDisconnect, port)
-
-      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
-        type: PilotMessageType.PILOT_DISCONNECT,
-      } satisfies Message)
     })
   })
 

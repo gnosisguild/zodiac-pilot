@@ -1,5 +1,10 @@
 import { saveLastUsedRouteId } from '@/execution-routes'
-import { mockProviderRequest, mockRoutes, render } from '@/test-utils'
+import {
+  mockCompanionAppUrl,
+  mockProviderRequest,
+  mockRoutes,
+  render,
+} from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
@@ -30,9 +35,9 @@ describe('No routes', () => {
 
   describe('No routes available', () => {
     it('allows to create a new route', async () => {
-      await render('/', [{ path: '/', Component: NoRoutes, loader }], {
-        companionAppUrl: 'http://localhost',
-      })
+      mockCompanionAppUrl('http://localhost')
+
+      await render('/', [{ path: '/', Component: NoRoutes, loader }])
 
       expect(screen.getByRole('link', { name: 'Add route' })).toHaveAttribute(
         'href',

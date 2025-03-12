@@ -1,4 +1,5 @@
 export * from './chrome'
+export * from './companionApp'
 export { connectCompanionApp } from './connectCompanionApp'
 export * from './creators'
 export * from './executionRoutes'

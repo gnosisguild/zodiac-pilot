@@ -1,3 +1,4 @@
+import { mockCompanionAppUrl } from '@/test-utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { CompanionResponseMessageType } from '@zodiac/messages'
 import { mockTab } from '@zodiac/test-utils/chrome'
@@ -9,21 +10,9 @@ vi.mock('./sendMessageToTab', () => ({
   sendMessageToTab: vi.fn(),
 }))
 
-vi.mock('@zodiac/env', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/env')>()
-
-  return {
-    ...module,
-
-    getCompanionAppUrl: vi.fn(),
-  }
-})
-
-const mockGetCompanionAppUrl = vi.mocked(getCompanionAppUrl)
-
 describe('Send message to companion app', () => {
   beforeEach(() => {
-    mockGetCompanionAppUrl.mockReturnValue('http://companion-app.com')
+    mockCompanionAppUrl('http://companion-app.com')
   })
 
   it('sends a message to the respective tab', async () => {

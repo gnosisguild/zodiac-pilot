@@ -3,6 +3,7 @@ import {
   chromeMock,
   createMockTab,
   mockActiveTab,
+  mockCompanionAppUrl,
   startPilotSession,
 } from '@/test-utils'
 import { getCompanionAppUrl } from '@zodiac/env'
@@ -11,23 +12,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
-vi.mock('@zodiac/env', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/env')>()
-
-  return {
-    ...module,
-
-    getCompanionAppUrl: vi.fn(),
-  }
-})
-
-const mockGetCompanionAppUrl = vi.mocked(getCompanionAppUrl)
-
 describe('Session tracking', () => {
   beforeEach(() => {
     mockActiveTab()
 
-    mockGetCompanionAppUrl.mockReturnValue('http://companion-app.com')
+    mockCompanionAppUrl('http://companion-app.com')
   })
 
   describe('Start session', () => {
