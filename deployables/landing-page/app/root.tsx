@@ -15,7 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className="snap-y snap-proximity bg-white antialiased dark:bg-zinc-950"
+      className="snap-y snap-proximity scroll-smooth bg-white antialiased dark:bg-zinc-950"
     >
       <head>
         <meta charSet="utf-8" />
