@@ -5,6 +5,7 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
+import { sentry } from '@/sentry'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import {
   CompanionResponseMessageType,
@@ -29,7 +30,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     const activeTab = await getActiveTab()
 
     if (activeTab.id != null) {
-      await sendMessageToTab(
+      sendMessageToTab(
         activeTab.id,
         {
           type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
@@ -40,8 +41,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     }
 
     return { route: await markRouteAsUsed(route) }
-  } catch {
+  } catch (error) {
     await saveLastUsedRouteId(null)
+
+    sentry.captureException(error)
 
     throw redirect('/')
   }
