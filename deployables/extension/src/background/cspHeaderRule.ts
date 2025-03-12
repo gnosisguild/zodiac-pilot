@@ -8,6 +8,8 @@ import { captureLastError } from '@/sentry'
 export const REMOVE_CSP_RULE_ID = 1
 
 export const removeCSPHeaderRule = () => {
+  const { promise, resolve } = Promise.withResolvers<void>()
+
   chrome.declarativeNetRequest.updateSessionRules(
     {
       removeRuleIds: [REMOVE_CSP_RULE_ID],
@@ -20,8 +22,12 @@ export const removeCSPHeaderRule = () => {
       } else {
         console.debug('CSP rule removed successfully')
       }
+
+      resolve()
     },
   )
+
+  return promise
 }
 
 export const updateCSPHeaderRule = (tabIds: Set<number>) => {
