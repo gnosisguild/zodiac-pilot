@@ -26,7 +26,7 @@ export function PrimaryFeatures() {
       <Feature
         color="teal"
         section="Feature"
-        title="Secure Execution for Smart Accounts"
+        title="Smart Execution for Safe Accounts"
         description="Pilot powers institutional-grade treasury management, helping DAOs and other onchain entities reduce overhead and optimize operations through secure, efficient execution."
       >
         <Description>
@@ -64,7 +64,7 @@ export function PrimaryFeatures() {
       <Feature
         color="indigo"
         section="Feature"
-        title="Seamless Interactions with Dapps"
+        title="Seamless Dapp Interactions"
         description="Pilot integrates Safe workflows directly into dapp interactions, making transactions smooth, intuitive, and cost-efficient."
       >
         <Description>
@@ -100,7 +100,7 @@ export function PrimaryFeatures() {
       <Feature
         color="amber"
         section="Feature"
-        title="Maximize Efficiency, Reduce Risk"
+        title="Maximize Efficiency, Minimize Risk"
         description="Pilot eliminates transaction uncertainty with its advanced batching capabilities and industry-first simulation forks, providing a secure environment to test workflows before execution and maximizing capital efficiency."
       >
         <Description>
@@ -138,7 +138,7 @@ export function PrimaryFeatures() {
       <Feature
         color="pink"
         section="Feature"
-        title="Delegate Securely with Advanced Permissions"
+        title="Delegate with Advanced Permissions"
         description="Pilot enables secure delegation with fine-grained permissions using Zodiac Roles Modifier — the most expressive conditions system for permissioning EVM calls."
       >
         <Description>
