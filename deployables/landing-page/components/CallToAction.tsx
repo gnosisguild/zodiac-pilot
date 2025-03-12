@@ -10,7 +10,7 @@ export function CallToAction() {
       className="relative overflow-hidden bg-blue-600 py-32"
     >
       <img
-        className="dark:hue-rotate-305 absolute top-0 w-full brightness-125 contrast-75 hue-rotate-30 dark:brightness-75 dark:contrast-75"
+        className="dark:hue-rotate-305 absolute top-0 min-h-full w-full brightness-125 contrast-75 hue-rotate-30 dark:brightness-75 dark:contrast-75"
         src={backgroundImage}
         alt=""
         width={2347}
