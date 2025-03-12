@@ -6,7 +6,6 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   createTabMessageHandler,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import type { TrackSessionsResult } from './sessionTracking'
 import type { TrackSimulationResult } from './simulationTracking'
@@ -29,7 +28,7 @@ export const companionEnablement = (
             type: CompanionResponseMessageType.FORK_UPDATED,
             forkUrl: rpcUrl ?? null,
             vnetId: vnetId ?? null,
-          } satisfies CompanionResponseMessage)
+          })
         })
 
         console.debug('Companion App connected!')
@@ -40,7 +39,7 @@ export const companionEnablement = (
             type: CompanionResponseMessageType.FORK_UPDATED,
             forkUrl: fork?.rpcUrl ?? null,
             vnetId: fork?.vnetId ?? null,
-          } satisfies CompanionResponseMessage)
+          })
 
           captureLastError()
         })
@@ -69,7 +68,7 @@ export const companionEnablement = (
         await sendMessageToCompanionApp(tabId, {
           type: CompanionResponseMessageType.LIST_ROUTES,
           routes,
-        } satisfies CompanionResponseMessage)
+        })
       },
     ),
   )
@@ -83,7 +82,7 @@ export const companionEnablement = (
         await sendMessageToCompanionApp(tabId, {
           type: CompanionResponseMessageType.PROVIDE_ROUTE,
           route,
-        } satisfies CompanionResponseMessage)
+        })
       },
     ),
   )
@@ -100,7 +99,7 @@ export const companionEnablement = (
           tabId,
           {
             type: CompanionResponseMessageType.PONG,
-          } satisfies CompanionResponseMessage,
+          },
           // bypass some tab validity checks so that this
           // message finds the companion app regardless of what
           // page the user is currently on

@@ -7,10 +7,7 @@ import {
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
 import { getActiveTab, sendMessageToCompanionApp } from '@/utils'
-import {
-  CompanionResponseMessageType,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import {
   Outlet,
   redirect,
@@ -33,7 +30,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       await sendMessageToCompanionApp(activeTab.id, {
         type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: route.id,
-      } satisfies CompanionResponseMessage)
+      })
     }
 
     return { route: await markRouteAsUsed(route) }

@@ -4,7 +4,6 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   useTabMessageHandler,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { useRevalidator } from 'react-router'
 
@@ -17,7 +16,7 @@ export const useDeleteRoute = () => {
       removeRoute(message.routeId).then(() => {
         sendMessageToCompanionApp(tabId, {
           type: CompanionResponseMessageType.DELETED_ROUTE,
-        } satisfies CompanionResponseMessage).then(() => revalidate())
+        }).then(() => revalidate())
       })
     },
   )

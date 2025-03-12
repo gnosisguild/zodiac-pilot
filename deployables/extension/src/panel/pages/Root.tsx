@@ -11,7 +11,6 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   useTabMessageHandler,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {
   Outlet,
@@ -46,7 +45,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     sendMessageToCompanionApp(activeTab.id, {
       type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
       activeRouteId: routeId,
-    } satisfies CompanionResponseMessage)
+    })
   }
 
   if (lastUsedRouteId != null) {
@@ -74,7 +73,7 @@ export const Root = () => {
       await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: lastUsedRouteId,
-      } satisfies CompanionResponseMessage)
+      })
     },
   )
 
