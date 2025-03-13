@@ -1,10 +1,12 @@
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
+  createWindowMessageHandler,
   type CompanionAppMessage,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { useEffect, useRef } from 'react'
+import { useStableHandler } from '@zodiac/ui'
+import { useEffect } from 'react'
+import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type DisconnectWhenUnreachableOptions = {
   onDisconnect: () => void
@@ -14,14 +16,15 @@ export const useDisconnectWhenUnreachable = (
   connected: boolean,
   { onDisconnect }: DisconnectWhenUnreachableOptions,
 ) => {
-  const onDisconnectRef = useRef(onDisconnect)
-
-  useEffect(() => {
-    onDisconnectRef.current = onDisconnect
-  }, [onDisconnect])
+  const onDisconnectRef = useStableHandler(onDisconnect)
+  const active = useActiveWhenVisible()
 
   useEffect(() => {
     if (connected === false) {
+      return
+    }
+
+    if (!active) {
       return
     }
 
@@ -41,17 +44,10 @@ export const useDisconnectWhenUnreachable = (
         onDisconnectRef.current()
       }, 1000)
 
-      const handlePong = (event: MessageEvent<CompanionResponseMessage>) => {
-        if (event.data == null) {
-          return
-        }
-
-        if (event.data.type !== CompanionResponseMessageType.PONG) {
-          return
-        }
-
-        clearTimeout(disconnectTimeout)
-      }
+      const handlePong = createWindowMessageHandler(
+        CompanionResponseMessageType.PONG,
+        () => clearTimeout(disconnectTimeout),
+      )
 
       window.addEventListener('message', handlePong)
     }
@@ -63,5 +59,5 @@ export const useDisconnectWhenUnreachable = (
 
       clearInterval(interval)
     }
-  }, [connected])
+  }, [active, connected, onDisconnectRef])
 }
