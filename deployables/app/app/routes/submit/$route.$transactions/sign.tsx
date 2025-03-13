@@ -24,6 +24,7 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
+  queryRoutes,
   unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
@@ -38,14 +39,18 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const plan = await planExecution(metaTransactions, {
-    initiator,
-    waypoints,
-    ...route,
-  })
+  const [plan, routes] = await Promise.all([
+    planExecution(metaTransactions, {
+      initiator,
+      waypoints,
+      ...route,
+    }),
+    queryRoutes(unprefixAddress(initiator), route.avatar),
+  ])
 
   return {
     plan,
+    isValidRoute: routes.length > 0,
     id: route.id,
     initiator: unprefixAddress(initiator),
     waypoints,
@@ -55,7 +60,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId, id, waypoints },
+  loaderData: { initiator, chainId, id, waypoints, isValidRoute },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
@@ -111,7 +116,7 @@ const SubmitPage = ({
         </Form.Section>
 
         <Form.Actions>
-          <SubmitTransaction />
+          <SubmitTransaction disabled={!isValidRoute} />
         </Form.Actions>
       </Form>
 
@@ -122,13 +127,18 @@ const SubmitPage = ({
 
 export default SubmitPage
 
-const SubmitTransaction = () => {
+type SubmitTransactionProps = {
+  disabled?: boolean
+}
+
+const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
   const { plan, chainId, avatar, initiator } = useLoaderData<typeof loader>()
   const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
   const [submitPending, setSubmitPending] = useState(false)
 
   if (
+    disabled ||
     walletAccount.chainId !== chainId ||
     walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
     connectorClient == null
