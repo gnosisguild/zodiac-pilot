@@ -1,5 +1,12 @@
 import { ConnectWallet } from '@/components'
-import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  Route,
+  Routes,
+  TokenTransferTable,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -11,24 +18,38 @@ import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   errorToast,
   Form,
+  Info,
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
-import { SquareArrowOutUpRight } from 'lucide-react'
-import { useState } from 'react'
+import {
+  ArrowDownToLine,
+  ArrowLeftRight,
+  ArrowUpFromLine,
+  SquareArrowOutUpRight,
+} from 'lucide-react'
+import { useState, type JSX } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
   execute,
   ExecutionActionType,
   planExecution,
+  splitPrefixedAddress,
   unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
+
+import { useTokenFlows, type TokenTransfer } from '@/balances-client'
+import {
+  extractTokenFlowsFromSimulation,
+  simulateBundleTransaction,
+  type SimulationParams,
+} from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
@@ -43,6 +64,21 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     waypoints,
     ...route,
   })
+  const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
+
+  const simulationParams: SimulationParams[] = metaTransactions.map((tx) => ({
+    network_id: chainId ?? 1,
+    from: avatarAddress,
+    to: tx.to,
+    input: tx.data,
+    value: tx.value.toString(),
+    save: true,
+    save_if_fails: true,
+    simulation_type: 'full',
+  }))
+
+  const simulationResponse = await simulateBundleTransaction(simulationParams)
+  const tokenFlows = await extractTokenFlowsFromSimulation(simulationResponse)
 
   return {
     plan,
@@ -51,15 +87,17 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
+    tokenFlows,
+    avatarAddress,
   }
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId, id, waypoints },
+  loaderData: { initiator, chainId, id, waypoints, tokenFlows, avatarAddress },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
-
+  const { sent, received, other } = useTokenFlows(tokenFlows, avatarAddress)
   return (
     <>
       <Form>
@@ -102,13 +140,39 @@ const SubmitPage = ({
             </div>
           </Labeled>
         </Form.Section>
-
         <Form.Section
           title="Signer details"
           description="Make sure that your connected wallet matches the signer that is configured for this account"
         >
           <ConnectWallet chainId={chainId} pilotAddress={initiator} />
         </Form.Section>
+
+        {tokenFlows.length === 0 ? (
+          <Info title="Nothing to show">
+            We could not find any token flows for this transaction.
+          </Info>
+        ) : (
+          <Form.Section
+            title="Token Flows"
+            description="An overview of the tokens involved in this transaction bundle."
+          >
+            <TokenFlowSection
+              title="Tokens Sent"
+              icon={<ArrowUpFromLine className="h-4 w-4" />}
+              flows={sent}
+            />
+            <TokenFlowSection
+              title="Tokens Received"
+              icon={<ArrowDownToLine className="h-4 w-4" />}
+              flows={received}
+            />
+            <TokenFlowSection
+              title="Other Token Movements"
+              icon={<ArrowLeftRight className="h-4 w-4" />}
+              flows={other}
+            />
+          </Form.Section>
+        )}
 
         <Form.Actions>
           <SubmitTransaction />
@@ -258,5 +322,26 @@ const SubmitTransaction = () => {
     >
       Sign
     </PrimaryButton>
+  )
+}
+
+type TokenFlowSectionProps = {
+  title: string
+  flows: TokenTransfer[]
+  icon: JSX.Element
+}
+
+const TokenFlowSection = ({ title, flows, icon }: TokenFlowSectionProps) => {
+  if (flows.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="mb-4">
+      <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold dark:text-zinc-50">
+        {icon} {title}
+      </h3>
+      <TokenTransferTable title={title} tokens={flows} />
+    </div>
   )
 }
