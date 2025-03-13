@@ -13,4 +13,15 @@ test.describe('Edit route', () => {
 
     await expect(extension.getByText('New route')).toBeInViewport()
   })
+
+  test('the new route shows up in the list afterwards', async ({ page }) => {
+    await page.goto(`/edit/${route.id}/${encode(route)}`)
+
+    await loadExtension(page)
+
+    await page.getByRole('textbox', { name: 'Label' }).fill('New route')
+    await page.getByRole('button', { name: 'Save' }).click()
+
+    await expect(page.getByRole('cell', { name: 'New route' })).toBeInViewport()
+  })
 })

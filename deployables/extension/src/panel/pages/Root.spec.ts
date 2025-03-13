@@ -253,11 +253,13 @@ describe('Root', () => {
     }
 
     it('stores route data it receives from the companion app', async () => {
-      await render('/', [{ path: '/', Component: Root, loader, action }])
+      const { mockedTab } = await render('/', [
+        { path: '/', Component: Root, loader, action },
+      ])
 
       const route = createMockRoute()
 
-      await mockIncomingRouteUpdate(route)
+      await mockIncomingRouteUpdate(route, mockedTab)
 
       await expect(getRoute(route.id)).resolves.toEqual(route)
     })
@@ -266,15 +268,34 @@ describe('Root', () => {
       const route = await mockRoute()
       await saveLastUsedRouteId(route.id)
 
-      await render('/', [{ path: '/', Component: Root, loader, action }], {
-        initialState: [createTransaction()],
-      })
+      const { mockedTab } = await render(
+        '/',
+        [{ path: '/', Component: Root, loader, action }],
+        {
+          initialState: [createTransaction()],
+        },
+      )
 
       const updatedRoute = { ...route, label: 'Changed label' }
 
-      await mockIncomingRouteUpdate(updatedRoute)
+      await mockIncomingRouteUpdate(updatedRoute, mockedTab)
 
       await expect(getRoute(route.id)).resolves.toEqual(updatedRoute)
+    })
+
+    it('provides the saved route back', async () => {
+      const { mockedTab } = await render('/', [
+        { path: '/', Component: Root, loader, action },
+      ])
+
+      const route = createMockRoute()
+
+      await mockIncomingRouteUpdate(route, mockedTab)
+
+      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      } satisfies CompanionResponseMessage)
     })
 
     describe('Clearing transactions', () => {
@@ -289,7 +310,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -304,10 +325,13 @@ describe('Root', () => {
           },
         )
 
-        await mockIncomingRouteUpdate({
-          ...currentRoute,
-          avatar: randomPrefixedAddress(),
-        })
+        await mockIncomingRouteUpdate(
+          {
+            ...currentRoute,
+            avatar: randomPrefixedAddress(),
+          },
+          mockedTab,
+        )
 
         expect(
           await screen.findByRole('dialog', { name: 'Clear transactions' }),
@@ -323,7 +347,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -341,10 +365,13 @@ describe('Root', () => {
           },
         )
 
-        await mockIncomingRouteUpdate({
-          ...currentRoute,
-          label: 'New label',
-        })
+        await mockIncomingRouteUpdate(
+          {
+            ...currentRoute,
+            label: 'New label',
+          },
+          mockedTab,
+        )
 
         expect(
           screen.queryByRole('dialog', { name: 'Clear transactions' }),
@@ -360,7 +387,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -380,6 +407,7 @@ describe('Root', () => {
             id: 'another-route',
             avatar: randomPrefixedAddress(),
           }),
+          mockedTab,
         )
 
         expect(
@@ -390,7 +418,7 @@ describe('Root', () => {
       it('does not warn when no route is currently selected', async () => {
         await saveLastUsedRouteId(null)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -410,6 +438,7 @@ describe('Root', () => {
             id: 'another-route',
             avatar: randomPrefixedAddress(),
           }),
+          mockedTab,
         )
 
         expect(
@@ -426,7 +455,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render('/', [
+        const { mockedTab } = await render('/', [
           {
             path: '/',
             Component: Root,
@@ -435,10 +464,13 @@ describe('Root', () => {
           },
         ])
 
-        await mockIncomingRouteUpdate({
-          ...currentRoute,
-          avatar: randomPrefixedAddress(),
-        })
+        await mockIncomingRouteUpdate(
+          {
+            ...currentRoute,
+            avatar: randomPrefixedAddress(),
+          },
+          mockedTab,
+        )
 
         expect(
           screen.queryByRole('dialog', { name: 'Clear transactions' }),
@@ -451,7 +483,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -474,7 +506,7 @@ describe('Root', () => {
           avatar: randomPrefixedAddress(),
         }
 
-        await mockIncomingRouteUpdate(updatedRoute)
+        await mockIncomingRouteUpdate(updatedRoute, mockedTab)
 
         await userEvent.click(
           screen.getByRole('button', { name: 'Clear transactions' }),
@@ -489,7 +521,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        await render(
+        const { mockedTab } = await render(
           '/',
           [
             {
@@ -512,7 +544,7 @@ describe('Root', () => {
           avatar: randomPrefixedAddress(),
         }
 
-        await mockIncomingRouteUpdate(updatedRoute)
+        await mockIncomingRouteUpdate(updatedRoute, mockedTab)
 
         await userEvent.click(
           screen.getByRole('button', { name: 'Clear transactions' }),
