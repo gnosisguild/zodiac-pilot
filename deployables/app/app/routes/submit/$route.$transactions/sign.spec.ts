@@ -121,6 +121,26 @@ describe('Sign', () => {
           screen.getByRole('button', { name: 'Select a different route' }),
         ).toBeDisabled()
       })
+
+      it('shows a warning to the user', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockResolvedValue([])
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          screen.getByRole('alert', { name: 'Invalid route' }),
+        ).toHaveAccessibleDescription(
+          'You cannot sign this transaction as we could not find any route form the signer wallet to the account.',
+        )
+      })
     })
   })
 })

@@ -9,6 +9,7 @@ import {
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
+  Error,
   errorToast,
   Form,
   Labeled,
@@ -72,7 +73,15 @@ const SubmitPage = ({
           title="Review account information"
           description="Please review the account information that will be used to sign this transaction bundle"
         >
+          {!isValidRoute && (
+            <Error title="Invalid route">
+              You cannot sign this transaction as we could not find any route
+              form the signer wallet to the account.
+            </Error>
+          )}
+
           <ChainSelect disabled defaultValue={chainId} />
+
           <Labeled label="Selected route">
             <Routes disabled orientation="horizontal">
               <Route id={id}>
