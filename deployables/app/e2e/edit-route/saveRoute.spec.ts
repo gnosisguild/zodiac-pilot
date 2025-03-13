@@ -22,6 +22,6 @@ test.describe('Edit route', () => {
     await page.getByRole('textbox', { name: 'Label' }).fill('New route')
     await page.getByRole('button', { name: 'Save' }).click()
 
-    expect(page.getByRole('cell', { name: 'New route' })).toBeInViewport()
+    await expect(page.getByRole('cell', { name: 'New route' })).toBeInViewport()
   })
 })
