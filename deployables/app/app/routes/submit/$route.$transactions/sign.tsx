@@ -15,6 +15,7 @@ import {
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
+  Success,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
@@ -22,6 +23,7 @@ import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
+  checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
@@ -40,18 +42,20 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [plan, routes] = await Promise.all([
+  const [plan, routes, permissionCheck] = await Promise.all([
     planExecution(metaTransactions, {
       initiator,
       waypoints,
       ...route,
     }),
     queryRoutes(unprefixAddress(initiator), route.avatar),
+    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
   ])
 
   return {
     plan,
     isValidRoute: routes.length > 0,
+    permissionCheck,
     id: route.id,
     initiator: unprefixAddress(initiator),
     waypoints,
@@ -61,7 +65,14 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId, id, waypoints, isValidRoute },
+  loaderData: {
+    initiator,
+    chainId,
+    id,
+    waypoints,
+    isValidRoute,
+    permissionCheck,
+  },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
@@ -119,6 +130,17 @@ const SubmitPage = ({
         </Form.Section>
 
         <Form.Section
+          title="Permissions check"
+          description="We check whether any permissions on the current route would prevent this transaction from succeeding."
+        >
+          {permissionCheck.success ? (
+            <Success title="All checks passed" />
+          ) : (
+            <Error title="Permission violation">{permissionCheck.error}</Error>
+          )}
+        </Form.Section>
+
+        <Form.Section
           title="Signer details"
           description="Make sure that your connected wallet matches the signer that is configured for this account"
         >
@@ -126,7 +148,9 @@ const SubmitPage = ({
         </Form.Section>
 
         <Form.Actions>
-          <SubmitTransaction disabled={!isValidRoute} />
+          <SubmitTransaction
+            disabled={!isValidRoute || !permissionCheck.success}
+          />
         </Form.Actions>
       </Form>
 

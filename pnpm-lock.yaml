@@ -230,6 +230,9 @@ importers:
       jsdom:
         specifier: 26.0.0
         version: 26.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      jsdom-testing-mocks:
+        specifier: 1.13.1
+        version: 1.13.1
       postcss:
         specifier: 8.5.3
         version: 8.5.3
