@@ -14,7 +14,6 @@ export const usePilotPort = () => {
 
   useEffect(() => {
     if (activeTab == null) {
-      console.log('ACTIVE TAB WENT TO NULL')
       setPort(null)
 
       return
