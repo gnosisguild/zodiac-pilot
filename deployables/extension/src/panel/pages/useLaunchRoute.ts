@@ -53,7 +53,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
     }
 
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
-  }, [navigate, pendingRouteId])
+  }, [navigate, onLaunchRef, pendingRouteId])
 
   return [
     launchRoute,
