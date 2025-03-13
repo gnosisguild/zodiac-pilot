@@ -3,7 +3,8 @@ import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useStableHandler } from '@zodiac/ui'
+import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { useLaunchRoute } from './useLaunchRoute'
 
@@ -31,11 +32,7 @@ export const useSaveRoute = (
     },
   })
 
-  const onSaveRef = useRef(onSave)
-
-  useEffect(() => {
-    onSaveRef.current = onSave
-  }, [onSave])
+  const onSaveRef = useStableHandler(onSave)
 
   useTabMessageHandler(
     [
@@ -95,7 +92,7 @@ export const useSaveRoute = (
     setPendingRouteUpdate(null)
 
     return incomingRoute
-  }, [routeUpdate])
+  }, [onSaveRef, routeUpdate])
 
   return [
     {

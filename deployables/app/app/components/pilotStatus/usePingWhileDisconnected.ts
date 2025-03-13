@@ -1,11 +1,12 @@
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
+  createWindowMessageHandler,
   type CompanionAppMessage,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { useStableHandler } from '@zodiac/ui'
 import { useEffect } from 'react'
+import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type PingWhileDisconnectedOptions = {
   onConnect: () => void
@@ -16,9 +17,14 @@ export const usePingWhileDisconnected = (
   { onConnect }: PingWhileDisconnectedOptions,
 ) => {
   const onConnectRef = useStableHandler(onConnect)
+  const active = useActiveWhenVisible()
 
   useEffect(() => {
     if (connected) {
+      return
+    }
+
+    if (!active) {
       return
     }
 
@@ -31,17 +37,12 @@ export const usePingWhileDisconnected = (
       )
     }, 500)
 
-    const handlePong = (event: MessageEvent<CompanionResponseMessage>) => {
-      if (event.data == null) {
-        return
-      }
-
-      if (event.data.type !== CompanionResponseMessageType.PONG) {
-        return
-      }
-
-      onConnectRef.current()
-    }
+    const handlePong = createWindowMessageHandler(
+      CompanionResponseMessageType.PONG,
+      () => {
+        onConnectRef.current()
+      },
+    )
 
     window.addEventListener('message', handlePong)
 
@@ -49,5 +50,5 @@ export const usePingWhileDisconnected = (
       window.removeEventListener('message', handlePong)
       clearInterval(interval)
     }
-  }, [connected, onConnectRef])
+  }, [active, connected, onConnectRef])
 }
