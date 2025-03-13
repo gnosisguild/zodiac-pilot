@@ -1,5 +1,5 @@
 import type { TokenTransfer } from '@/balances-client'
-import { getChain, getTokenBalance } from '@/balances-server'
+import { getChain, getTokenDetails } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { formatUnits } from 'viem'
@@ -27,7 +27,7 @@ export const extractTokenFlowsFromSimulation = async (
             ? change.token_info.contract_address
             : change.token_info.symbol
 
-          const tokenDetails = await getTokenBalance(
+          const tokenDetails = await getTokenDetails(
             chain,
             tokenAddress as HexAddress,
           )
