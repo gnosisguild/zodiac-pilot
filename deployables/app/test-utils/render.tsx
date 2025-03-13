@@ -1,6 +1,8 @@
 import { ProvideExtensionVersion } from '@/components'
 import {
+  CompanionAppMessageType,
   CompanionResponseMessageType,
+  createWindowMessageHandler,
   PilotMessageType,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
@@ -9,7 +11,8 @@ import {
   sleepTillIdle,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, Ref } from 'react'
+import { afterEach, beforeEach } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
@@ -32,7 +35,7 @@ type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * The version of the Pilot extension that the app should
    * simulate.
    */
-  version?: string
+  version?: string | null
 
   /**
    * Routes that would be stored in the browser extension
@@ -49,27 +52,43 @@ type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
   activeRouteId?: string | null
 }
 
+const versionRef: Ref<string> = { current: null }
+
+const handleVersionRequest = createWindowMessageHandler(
+  CompanionAppMessageType.REQUEST_VERSION,
+  () => {
+    postMessage({
+      type: CompanionResponseMessageType.PROVIDE_VERSION,
+      version: versionRef.current ?? '0.0.0',
+    })
+  },
+)
+
+beforeEach(() => {
+  window.addEventListener('message', handleVersionRequest)
+})
+
+afterEach(() => {
+  window.removeEventListener('message', handleVersionRequest)
+})
+
 export const render = async (
   path: string,
   {
     connected = true,
-    version,
+    version = null,
     availableRoutes = [],
     activeRouteId = null,
     ...options
   }: Options = {},
 ) => {
+  versionRef.current = version
+
   const renderResult = await baseRender(path, {
     ...options,
+
     wrapper: RenderWrapper,
     async loadActions() {
-      if (version != null) {
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_VERSION,
-          version,
-        })
-      }
-
       await loadRoutes(...availableRoutes)
 
       await postMessage({

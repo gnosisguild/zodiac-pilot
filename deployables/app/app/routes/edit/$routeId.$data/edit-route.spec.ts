@@ -93,13 +93,15 @@ describe('Edit route', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
-      expect(mockPostMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.SAVE_ROUTE,
-          data: expect.objectContaining({ label: 'New route label' }),
-        },
-        expect.anything(),
-      )
+      await waitFor(() => {
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.SAVE_ROUTE,
+            data: expect.objectContaining({ label: 'New route label' }),
+          },
+          expect.anything(),
+        )
+      })
     })
   })
 
@@ -168,6 +170,7 @@ describe('Edit route', () => {
           routeId: route.id,
           data: encode(route),
         }),
+        { version: '3.8.2' },
       )
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
