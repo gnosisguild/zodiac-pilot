@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react'
 
 export const useActiveWhenVisible = () => {
-  const [active, setActive] = useState(document.visibilityState === 'visible')
+  const [active, setActive] = useState(() => {
+    if (typeof document === 'undefined') {
+      return false
+    }
+
+    return document.visibilityState === 'visible'
+  })
 
   useEffect(() => {
+    if (typeof document === 'undefined') {
+      return
+    }
+
     const handleVisibilityChange = () =>
       setActive(document.visibilityState === 'visible')
 
