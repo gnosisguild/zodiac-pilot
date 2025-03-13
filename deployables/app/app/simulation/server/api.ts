@@ -18,7 +18,7 @@ export const api = async <Schema extends ZodTypeAny>(
   const url = new URL(
     `https://api.tenderly.co/api/v1/account/${TENDERLY_USER}/project/${TENDERLY_PROJECT}${endpoint}`,
   )
-  console.log('TENDERLY_ACCESS_KEY', TENDERLY_ACCESS_KEY)
+
   const fetchOptions: RequestInit = {
     method,
     headers: {

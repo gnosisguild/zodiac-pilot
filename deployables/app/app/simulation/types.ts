@@ -115,17 +115,19 @@ const contractItemSchema = z.object({
     ),
     abi: z.array(z.any()),
     raw_abi: z.array(z.any()),
-    states: z.array(
-      z.object({
-        name: z.string(),
-        type: z.string(),
-        storage_location: z.string(),
-        offset: z.number(),
-        index: z.string(),
-        indexed: z.boolean().optional(),
-        simple_type: z.object({ type: z.string() }).optional(),
-      }),
-    ),
+    states: z
+      .array(
+        z.object({
+          name: z.string(),
+          type: z.string(),
+          storage_location: z.string(),
+          offset: z.number(),
+          index: z.string(),
+          indexed: z.boolean().optional(),
+          simple_type: z.object({ type: z.string() }).optional(),
+        }),
+      )
+      .default([]),
   }),
   src_map: z.record(z.any()),
   creation_block: z.number(),
