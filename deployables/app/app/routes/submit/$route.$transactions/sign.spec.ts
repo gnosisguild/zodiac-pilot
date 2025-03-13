@@ -182,5 +182,25 @@ describe('Sign', () => {
 
       expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
     })
+
+    it('shows the permission error', async () => {
+      const transaction = createMockTransaction()
+
+      mockCheckPermissions.mockResolvedValue({
+        success: false,
+        error: PermissionViolation.AllowanceExceeded,
+      })
+
+      await render(
+        href('/submit/:route/:transactions', {
+          route: encode(route),
+          transactions: encode([transaction]),
+        }),
+      )
+
+      expect(
+        screen.getByRole('alert', { name: 'Permission violation' }),
+      ).toHaveAccessibleDescription(PermissionViolation.AllowanceExceeded)
+    })
   })
 })

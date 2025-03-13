@@ -15,6 +15,7 @@ import {
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
+  Success,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
@@ -126,6 +127,17 @@ const SubmitPage = ({
               </SecondaryLinkButton>
             </div>
           </Labeled>
+        </Form.Section>
+
+        <Form.Section
+          title="Permissions check"
+          description="We check whether any permissions on the current route would prevent this transaction from succeeding."
+        >
+          {permissionCheck.success ? (
+            <Success title="All checks passed" />
+          ) : (
+            <Error title="Permission violation">{permissionCheck.error}</Error>
+          )}
         </Form.Section>
 
         <Form.Section
