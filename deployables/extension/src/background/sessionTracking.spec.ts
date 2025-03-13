@@ -3,8 +3,10 @@ import {
   chromeMock,
   createMockTab,
   mockActiveTab,
+  mockCompanionAppUrl,
   startPilotSession,
 } from '@/test-utils'
+import { getCompanionAppUrl } from '@zodiac/env'
 import { PilotMessageType } from '@zodiac/messages'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
@@ -13,6 +15,8 @@ import { trackSessions } from './sessionTracking'
 describe('Session tracking', () => {
   beforeEach(() => {
     mockActiveTab()
+
+    mockCompanionAppUrl('http://companion-app.com')
   })
 
   describe('Start session', () => {
@@ -229,6 +233,27 @@ describe('Session tracking', () => {
             chromeMock.tabs.onUpdated,
             tab.id,
             { status },
+            tab,
+          )
+
+          expect(chromeMock.scripting.executeScript).not.toHaveBeenCalled()
+        },
+      )
+
+      it.each(['/edit', '/create', '/submit'])(
+        'does nothing for the "%s" page of the companion app',
+        async (path) => {
+          const tab = createMockTab({
+            windowId: 1,
+            url: `${getCompanionAppUrl()}${path}`,
+          })
+
+          await startPilotSession({ windowId: 1 }, tab)
+
+          await callListeners(
+            chromeMock.tabs.onUpdated,
+            tab.id,
+            { status: 'loading' },
             tab,
           )
 

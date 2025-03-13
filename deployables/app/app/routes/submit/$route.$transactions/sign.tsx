@@ -13,12 +13,13 @@ import {
   Form,
   Labeled,
   PrimaryButton,
+  SecondaryLinkButton,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
-import { useLoaderData } from 'react-router'
+import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
   execute,
   ExecutionActionType,
@@ -28,7 +29,7 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route as RouteType } from './+types/$route.$transactions'
+import type { Route as RouteType } from './+types/sign'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
@@ -55,49 +56,67 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
 const SubmitPage = ({
   loaderData: { initiator, chainId, id, waypoints },
+  params: { route, transactions },
 }: RouteType.ComponentProps) => {
+  const { location, formData } = useNavigation()
+
   return (
-    <Form>
-      <Form.Section
-        title="Review account information"
-        description="Please review the account information that will be used to sign this transaction bundle"
-      >
-        <ChainSelect disabled defaultValue={chainId} />
-        <Labeled label="Selected route">
-          <Routes disabled orientation="horizontal">
-            <Route id={id}>
-              {waypoints && (
-                <Waypoints>
-                  {waypoints.map(({ account, ...waypoint }, index) => (
-                    <Waypoint
-                      key={`${account.address}-${index}`}
-                      highlight={index === 0 || index === waypoints.length - 1}
-                      account={account}
-                      connection={
-                        'connection' in waypoint
-                          ? waypoint.connection
-                          : undefined
-                      }
-                    />
-                  ))}
-                </Waypoints>
-              )}
-            </Route>
-          </Routes>
-        </Labeled>
-      </Form.Section>
+    <>
+      <Form>
+        <Form.Section
+          title="Review account information"
+          description="Please review the account information that will be used to sign this transaction bundle"
+        >
+          <ChainSelect disabled defaultValue={chainId} />
+          <Labeled label="Selected route">
+            <Routes disabled orientation="horizontal">
+              <Route id={id}>
+                {waypoints && (
+                  <Waypoints>
+                    {waypoints.map(({ account, ...waypoint }, index) => (
+                      <Waypoint
+                        key={`${account.address}-${index}`}
+                        account={account}
+                        connection={
+                          'connection' in waypoint
+                            ? waypoint.connection
+                            : undefined
+                        }
+                      />
+                    ))}
+                  </Waypoints>
+                )}
+              </Route>
+            </Routes>
 
-      <Form.Section
-        title="Signer details"
-        description="Make sure that your connected wallet matches the signer that is configured for this account"
-      >
-        <ConnectWallet chainId={chainId} pilotAddress={initiator} />
-      </Form.Section>
+            <div className="flex justify-end">
+              <SecondaryLinkButton
+                busy={location != null && formData == null}
+                to={href('/submit/:route/:transactions/update-route', {
+                  route,
+                  transactions,
+                })}
+              >
+                Select a different route
+              </SecondaryLinkButton>
+            </div>
+          </Labeled>
+        </Form.Section>
 
-      <Form.Actions>
-        <SubmitTransaction />
-      </Form.Actions>
-    </Form>
+        <Form.Section
+          title="Signer details"
+          description="Make sure that your connected wallet matches the signer that is configured for this account"
+        >
+          <ConnectWallet chainId={chainId} pilotAddress={initiator} />
+        </Form.Section>
+
+        <Form.Actions>
+          <SubmitTransaction />
+        </Form.Actions>
+      </Form>
+
+      <Outlet />
+    </>
   )
 }
 

@@ -1,6 +1,7 @@
 import {
   AvatarInput,
   ConnectWalletButton,
+  fromVersion,
   InitiatorInput,
   Page,
   useConnected,
@@ -8,9 +9,16 @@ import {
   WalletProvider,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  Route,
+  routeId,
+  Routes,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
-import { invariant } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -167,10 +175,32 @@ export const clientAction = async ({
 
   switch (intent) {
     case Intent.Save: {
-      window.postMessage(
-        { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
-        '*',
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      invariantResponse(
+        serverResult,
+        'Route save was not processed correctly on the server',
       )
+
+      await fromVersion(
+        '3.8.2',
+        () => {
+          companionRequest(
+            { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
+            () => resolve(),
+          )
+        },
+        () => {
+          window.postMessage(
+            { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
+            '*',
+          )
+
+          resolve()
+        },
+      )
+
+      await promise
 
       return redirect(href('/edit'))
     }
@@ -388,9 +418,6 @@ const RouteSelect = ({
                       {waypoints.map(({ account, ...waypoint }, index) => (
                         <Waypoint
                           key={`${account.address}-${index}`}
-                          highlight={
-                            index === 0 || index === waypoints.length - 1
-                          }
                           account={account}
                           connection={
                             'connection' in waypoint
@@ -433,11 +460,3 @@ const verifyDefaultValue = (
 
   return routeId(route)
 }
-
-const routeId = ({ waypoints }: ExecutionRoute) =>
-  waypoints == null
-    ? ''
-    : waypoints
-        .map(({ account }) => account.prefixedAddress)
-        .join(',')
-        .toLowerCase()

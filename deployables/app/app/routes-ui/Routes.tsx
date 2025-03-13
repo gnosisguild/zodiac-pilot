@@ -65,7 +65,7 @@ export const Routes = ({
   const [selectedRouteId, setSelectedRouteId] = useState(defaultValue)
 
   return (
-    <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="flex w-full snap-x snap-mandatory scroll-pl-2 overflow-x-scroll overscroll-contain scroll-smooth rounded-md border border-zinc-200 bg-zinc-50 px-2 py-2 dark:border-zinc-700 dark:bg-zinc-900">
       <fieldset
         id={id}
         className="flex gap-1"

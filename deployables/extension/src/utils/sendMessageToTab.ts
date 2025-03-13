@@ -1,10 +1,7 @@
-import { isValidTab, type ValidityCheckOptions } from './isValidTab'
+import { sentry } from '@/sentry'
+import { isValidTab } from './isValidTab'
 
-export const sendMessageToTab = async (
-  tabId: number,
-  message: unknown,
-  options?: ValidityCheckOptions,
-) => {
+export const sendMessageToTab = async (tabId: number, message: unknown) => {
   const tab = await chrome.tabs.get(tabId)
   const { promise, resolve } = Promise.withResolvers()
 
@@ -12,7 +9,7 @@ export const sendMessageToTab = async (
     message,
   })
 
-  if (!isValidTab(tab.url, options)) {
+  if (!isValidTab(tab.url)) {
     console.debug(`Tab URL "${tab.url}" is not valid.`)
 
     const handleActivate = async (activeInfo: chrome.tabs.TabActiveInfo) => {
@@ -36,7 +33,7 @@ export const sendMessageToTab = async (
         return
       }
 
-      if (!isValidTab(changeInfo.url, options)) {
+      if (!isValidTab(changeInfo.url)) {
         return
       }
 
@@ -62,8 +59,13 @@ export const sendMessageToTab = async (
       console.debug(`Received response from tab`, { response })
 
       return response
-    } catch {
-      console.debug('Could not send message to tab. Waiting for tab to reload.')
+    } catch (error) {
+      console.debug(
+        'Could not send message to tab. Waiting for tab to reload.',
+        { error },
+      )
+
+      sentry.captureException(error)
     }
   }
 

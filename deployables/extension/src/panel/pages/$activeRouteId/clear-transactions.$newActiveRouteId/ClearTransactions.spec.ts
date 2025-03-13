@@ -17,13 +17,17 @@ describe('Clear transactions', () => {
   })
 
   it('clears all transactions', async () => {
-    await render('/test-route/clear-transactions/new-route', [
-      {
-        path: '/:activeRouteId/clear-transactions/:newActiveRouteId',
-        Component: ClearTransactions,
-        action,
-      },
-    ])
+    await render(
+      '/test-route/clear-transactions/new-route',
+      [
+        {
+          path: '/:activeRouteId/clear-transactions/:newActiveRouteId',
+          Component: ClearTransactions,
+          action,
+        },
+      ],
+      { inspectRoutes: ['/:activeRouteId'] },
+    )
 
     expect(mockClearTransactions).toHaveBeenCalled()
   })

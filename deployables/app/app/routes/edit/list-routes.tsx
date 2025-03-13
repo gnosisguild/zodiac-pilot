@@ -104,40 +104,30 @@ const ListRoutes = ({ loaderData }: Route.ComponentProps) => {
       <Page.Header>Accounts</Page.Header>
 
       <Page.Main>
-        <MinimumVersion
-          version="3.4.0"
-          fallback={
-            <Info>
-              To edit a route open the list of all routes in the Pilot extension
-              and click "Edit".
-            </Info>
-          }
-        >
-          <OnlyConnected>
-            {'routes' in loaderData &&
-              (loaderData.routes.length > 0 ? (
-                <Routes>
-                  {loaderData.routes.map((route) => (
-                    <Route
-                      key={route.id}
-                      route={route}
-                      active={route.id === loaderData.activeRouteId}
-                    />
-                  ))}
-                </Routes>
-              ) : (
-                <Info title="You haven't created any accounts, yet.">
-                  Accounts let you quickly impersonate other safes and record
-                  transaction bundles for them.
-                  <div className="mt-4 flex">
-                    <SecondaryLinkButton to="/create">
-                      Create an account
-                    </SecondaryLinkButton>
-                  </div>
-                </Info>
-              ))}
-          </OnlyConnected>
-        </MinimumVersion>
+        <OnlyConnected>
+          {'routes' in loaderData &&
+            (loaderData.routes.length > 0 ? (
+              <Routes>
+                {loaderData.routes.map((route) => (
+                  <Route
+                    key={route.id}
+                    route={route}
+                    active={route.id === loaderData.activeRouteId}
+                  />
+                ))}
+              </Routes>
+            ) : (
+              <Info title="You haven't created any accounts, yet.">
+                Accounts let you quickly impersonate other safes and record
+                transaction bundles for them.
+                <div className="mt-4 flex">
+                  <SecondaryLinkButton to="/create">
+                    Create an account
+                  </SecondaryLinkButton>
+                </div>
+              </Info>
+            ))}
+        </OnlyConnected>
       </Page.Main>
     </Page>
   )
@@ -318,16 +308,12 @@ const Delete = ({
               submit
               name="routeId"
               value={routeId}
-              style="contrast"
               busy={submitting}
             >
               Delete
             </PrimaryButton>
 
-            <GhostButton
-              style="contrast"
-              onClick={() => setConfirmDelete(false)}
-            >
+            <GhostButton onClick={() => setConfirmDelete(false)}>
               Cancel
             </GhostButton>
           </Modal.Actions>

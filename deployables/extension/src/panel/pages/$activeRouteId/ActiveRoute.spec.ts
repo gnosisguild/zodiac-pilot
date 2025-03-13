@@ -1,10 +1,18 @@
-import { chromeMock, mockRoute, render } from '@/test-utils'
+import {
+  chromeMock,
+  mockCompanionAppUrl,
+  mockRoute,
+  render,
+} from '@/test-utils'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionResponseMessageType,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { describe, expect, it } from 'vitest'
 import { ActiveRoute, loader } from './ActiveRoute'
+
+mockCompanionAppUrl('http://companion-app.com')
 
 describe('Active Route', () => {
   it('communicates the new active route', async () => {
@@ -21,6 +29,7 @@ describe('Active Route', () => {
       ],
       {
         initialSelectedRoute: route,
+        activeTab: { url: getCompanionAppUrl() },
       },
     )
 

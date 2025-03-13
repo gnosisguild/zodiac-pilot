@@ -1,5 +1,5 @@
 import { PILOT_PANEL_PORT } from '@/port-handling'
-import { isValidTab, reloadActiveTab, reloadTab } from '@/utils'
+import { isCompanionApp, isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { PilotMessageType, type Message } from '@zodiac/messages'
 import type { RefObject } from 'react'
 import { createEventListener } from './createEventListener'
@@ -101,6 +101,10 @@ export const trackSessions = (
       }
 
       if (!isValidTab(tab.url)) {
+        return
+      }
+
+      if (isCompanionApp(tab.url)) {
         return
       }
 

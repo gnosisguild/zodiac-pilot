@@ -5,6 +5,16 @@ import { config } from 'dotenv'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, vi } from 'vitest'
 
+vi.mock('@zodiac/env', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/env')>()
+
+  return {
+    ...module,
+
+    getCompanionAppUrl: vi.fn(),
+  }
+})
+
 config()
 
 configMocks({ afterEach, afterAll })

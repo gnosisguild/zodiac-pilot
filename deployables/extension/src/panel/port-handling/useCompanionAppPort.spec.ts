@@ -6,18 +6,8 @@ import {
   renderHook,
 } from '@/test-utils'
 import { cleanup, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { COMPANION_APP_PORT, useCompanionAppPort } from './useCompanionAppPort'
-
-vi.mock('@zodiac/env', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@zodiac/env')>()
-
-  return {
-    ...module,
-
-    getCompanionAppUrl: () => 'http://localhost',
-  }
-})
 
 describe('useCompanionAppPort', () => {
   afterEach(cleanup)

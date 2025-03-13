@@ -3,24 +3,46 @@ import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { useLaunchRoute } from './useLaunchRoute'
 
-export const useSaveRoute = (lastUsedRouteId: string | null) => {
+type UseSaveOptions = {
+  onSave?: (route: ExecutionRoute, tabId: number) => void
+}
+
+export const useSaveRoute = (
+  lastUsedRouteId: string | null,
+  { onSave }: UseSaveOptions = {},
+) => {
   const transactions = useTransactions()
   const { revalidate } = useRevalidator()
-  const [routeUpdate, setPendingRouteUpdate] = useState<ExecutionRoute | null>(
-    null,
-  )
-  const [launchRoute, launchOptions] = useLaunchRoute()
+  const [routeUpdate, setPendingRouteUpdate] = useState<{
+    incomingRoute: ExecutionRoute
+    tabId: number
+  } | null>(null)
+  const [launchRoute, launchOptions] = useLaunchRoute({
+    onLaunch: async (routeId, tabId) => {
+      if (onSaveRef.current) {
+        invariant(tabId != null, `tabId was not provided to launchRoute`)
+
+        onSaveRef.current(await getRoute(routeId), tabId)
+      }
+    },
+  })
+
+  const onSaveRef = useRef(onSave)
+
+  useEffect(() => {
+    onSaveRef.current = onSave
+  }, [onSave])
 
   useTabMessageHandler(
     [
       CompanionAppMessageType.SAVE_ROUTE,
       CompanionAppMessageType.SAVE_AND_LAUNCH,
     ],
-    async (message) => {
+    async (message, { tabId }) => {
       const incomingRoute = message.data
 
       if (
@@ -34,7 +56,7 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
           currentRoute.avatar.toLowerCase() !==
           incomingRoute.avatar.toLowerCase()
         ) {
-          setPendingRouteUpdate(incomingRoute)
+          setPendingRouteUpdate({ incomingRoute, tabId })
 
           return
         }
@@ -44,7 +66,11 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
         revalidate()
 
         if (message.type === CompanionAppMessageType.SAVE_AND_LAUNCH) {
-          launchRoute(incomingRoute.id)
+          launchRoute(incomingRoute.id, tabId)
+        } else {
+          if (onSaveRef.current) {
+            onSaveRef.current(incomingRoute, tabId)
+          }
         }
       })
     },
@@ -58,11 +84,17 @@ export const useSaveRoute = (lastUsedRouteId: string | null) => {
       'Tried to save a route when no save was pending',
     )
 
-    await saveRoute(routeUpdate)
+    const { incomingRoute, tabId } = routeUpdate
+
+    await saveRoute(incomingRoute)
+
+    if (onSaveRef.current) {
+      onSaveRef.current(incomingRoute, tabId)
+    }
 
     setPendingRouteUpdate(null)
 
-    return routeUpdate
+    return incomingRoute
   }, [routeUpdate])
 
   return [
