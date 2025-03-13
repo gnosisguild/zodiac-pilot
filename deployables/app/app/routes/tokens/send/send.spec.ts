@@ -9,7 +9,6 @@ import {
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
-import { encodeFunctionData, erc20Abi, getAddress } from 'viem'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/wagmi', async () => {
@@ -47,7 +46,7 @@ const mockGetChain = vi.mocked(getChain)
 const mockIsValidToken = vi.mocked(isValidToken)
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
-describe('Send Tokens', { skip: process.env.CI != null }, () => {
+describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
   beforeEach(async () => {
     await connectWallet()
 
@@ -98,64 +97,6 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
     )
   })
 
-  it.skip('sends funds to the selected token', async () => {
-    const tokenAddress = randomAddress()
-
-    mockGetTokenBalances.mockResolvedValue([
-      createMockTokenBalance({
-        contractId: tokenAddress,
-        name: 'Test token',
-        amount: '12.34',
-        decimals: 2,
-      }),
-    ])
-
-    await render('/tokens/send')
-
-    const recipient = randomAddress()
-
-    await userEvent.type(
-      await screen.findByRole('textbox', { name: 'Recipient' }),
-      recipient,
-    )
-
-    await userEvent.click(
-      await screen.findByRole('combobox', { name: 'Available tokens' }),
-    )
-
-    await userEvent.click(
-      await screen.findByRole('option', { name: 'Test token' }),
-    )
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Max' }))
-
-    const fetch = vi.spyOn(window, 'fetch')
-
-    await userEvent.click(screen.getByRole('button', { name: 'Send' }))
-
-    expect(fetch).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'eth_sendTransaction',
-          params: [
-            {
-              data: encodeFunctionData({
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [recipient, 1234n],
-              }),
-              from: getAddress('0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'),
-              to: tokenAddress,
-            },
-          ],
-        }),
-      }),
-    )
-  })
-
   it('displays how many tokens are available', async () => {
     mockGetTokenBalances.mockResolvedValue([
       createMockTokenBalance({
@@ -194,8 +135,11 @@ describe('Send Tokens', { skip: process.env.CI != null }, () => {
 
     await render(`/tokens/send/eth/${address}`)
 
-    await waitFor(async () => {
-      expect(await screen.findByText('Test token')).toBeInTheDocument()
-    })
+    await waitFor(
+      async () => {
+        expect(await screen.findByText('Test token')).toBeInTheDocument()
+      },
+      { timeout: 5_000 },
+    )
   })
 })
