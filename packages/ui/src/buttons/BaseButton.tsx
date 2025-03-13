@@ -137,7 +137,7 @@ export const BaseLinkButton = ({
       target={openInNewWindow ? '_blank' : props.target}
       rel={openInNewWindow ? 'noreferrer noopener' : props.rel}
       className={classNames(
-        'relative flex cursor-pointer rounded-md border transition-all',
+        'relative flex cursor-pointer rounded-md border outline-none transition-all',
         fluid && 'flex-1',
         getPadding({ iconOnly, size }),
         align === 'left' && 'justify-start',
