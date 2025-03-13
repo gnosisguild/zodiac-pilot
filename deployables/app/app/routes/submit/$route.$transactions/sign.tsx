@@ -96,6 +96,7 @@ const SubmitPage = ({
 
             <div className="flex justify-end">
               <SecondaryLinkButton
+                disabled={!isValidRoute}
                 busy={location != null && formData == null}
                 to={href('/submit/:route/:transactions/update-route', {
                   route,
