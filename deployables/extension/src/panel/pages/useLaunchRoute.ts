@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 type OnLaunchOptions = {
-  onLaunch?: (routeId: string) => void
+  onLaunch?: (routeId: string, tabId?: number) => void
 }
 
 export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
@@ -21,7 +21,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   }, [onLaunch])
 
   const launchRoute = useCallback(
-    async (routeId: string) => {
+    async (routeId: string, tabId?: number) => {
       const activeRouteId = await getLastUsedRouteId()
 
       if (activeRouteId != null) {
@@ -36,7 +36,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
       }
 
       if (onLaunchRef.current != null) {
-        onLaunchRef.current(routeId)
+        onLaunchRef.current(routeId, tabId)
       }
     },
     [transactions.length],

@@ -56,10 +56,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 export const Root = () => {
-  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
-  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId)
-  useDeleteRoute()
   const submit = useSubmit()
+
+  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
+  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId, {
+    onSave: (route, tabId) => {
+      sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+    },
+  })
+
+  useDeleteRoute()
+
   const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
     useLaunchRouteOnMessage({
       onLaunch(routeId) {

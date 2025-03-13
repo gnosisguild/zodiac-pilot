@@ -17,7 +17,7 @@ import {
   Waypoints,
 } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
-import { invariant } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
 import {
   getHexString,
@@ -174,10 +174,19 @@ export const clientAction = async ({
 
   switch (intent) {
     case Intent.Save: {
-      window.postMessage(
-        { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
-        '*',
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      invariantResponse(
+        serverResult,
+        'Route save was not processed correctly on the server',
       )
+
+      companionRequest(
+        { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
+        () => resolve(),
+      )
+
+      await promise
 
       return redirect(href('/edit'))
     }

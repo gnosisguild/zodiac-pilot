@@ -8,7 +8,8 @@ import {
 } from './extension'
 
 const requestResponseTypes = {
-  [CompanionAppMessageType.SAVE_ROUTE]: null,
+  [CompanionAppMessageType.SAVE_ROUTE]:
+    CompanionResponseMessageType.PROVIDE_ROUTE,
   [CompanionAppMessageType.SAVE_AND_LAUNCH]: null,
   [CompanionAppMessageType.OPEN_PILOT]: null,
   [CompanionAppMessageType.SUBMIT_SUCCESS]: null,
