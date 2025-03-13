@@ -22,6 +22,7 @@ import { SquareArrowOutUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
+  checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
@@ -40,18 +41,20 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [plan, routes] = await Promise.all([
+  const [plan, routes, permissionCheck] = await Promise.all([
     planExecution(metaTransactions, {
       initiator,
       waypoints,
       ...route,
     }),
     queryRoutes(unprefixAddress(initiator), route.avatar),
+    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
   ])
 
   return {
     plan,
     isValidRoute: routes.length > 0,
+    permissionCheck,
     id: route.id,
     initiator: unprefixAddress(initiator),
     waypoints,
@@ -61,7 +64,14 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId, id, waypoints, isValidRoute },
+  loaderData: {
+    initiator,
+    chainId,
+    id,
+    waypoints,
+    isValidRoute,
+    permissionCheck,
+  },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
@@ -126,7 +136,9 @@ const SubmitPage = ({
         </Form.Section>
 
         <Form.Actions>
-          <SubmitTransaction disabled={!isValidRoute} />
+          <SubmitTransaction
+            disabled={!isValidRoute || !permissionCheck.success}
+          />
         </Form.Actions>
       </Form>
 
