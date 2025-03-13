@@ -700,8 +700,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@safe-global/types-kit':
-        specifier: 1.0.4
-        version: 1.0.4(typescript@5.8.2)(zod@3.24.2)
+        specifier: 2.0.0
+        version: 2.0.0(typescript@5.8.2)(zod@3.24.2)
       ser-kit:
         specifier: 3.3.0
         version: 3.3.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -2685,6 +2685,9 @@ packages:
 
   '@safe-global/types-kit@1.0.4':
     resolution: {integrity: sha512-PTVgu+tNrC0km7J/vSZBDGyv0yAEc9IWgh6oWyBPsCysxuLUqyVA53K1qrzzGfJL2mzpC7Bj4bx+Bt6iP9m/yQ==}
+
+  '@safe-global/types-kit@2.0.0':
+    resolution: {integrity: sha512-gB3meneVTEndmZw9yKZ7x6s+xke1YjxsxoZBzhg2vrdSXJzCvGXmZF23kRkaj0PtTg+UcWWMeY22szWQ/Ir/uw==}
 
   '@scure/base@1.1.9':
     resolution: {integrity: sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==}
@@ -9401,6 +9404,13 @@ snapshots:
   '@safe-global/safe-modules-deployments@2.2.5': {}
 
   '@safe-global/types-kit@1.0.4(typescript@5.8.2)(zod@3.24.2)':
+    dependencies:
+      abitype: 1.0.8(typescript@5.8.2)(zod@3.24.2)
+    transitivePeerDependencies:
+      - typescript
+      - zod
+
+  '@safe-global/types-kit@2.0.0(typescript@5.8.2)(zod@3.24.2)':
     dependencies:
       abitype: 1.0.8(typescript@5.8.2)(zod@3.24.2)
     transitivePeerDependencies:
