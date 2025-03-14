@@ -2,11 +2,12 @@ import { getLastUsedRouteId, getRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useStableHandler } from '@zodiac/ui'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 type OnLaunchOptions = {
-  onLaunch?: (routeId: string) => void
+  onLaunch?: (routeId: string, tabId?: number) => void
 }
 
 export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
@@ -14,14 +15,10 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
   const transactions = useTransactions()
 
-  const onLaunchRef = useRef(onLaunch)
-
-  useEffect(() => {
-    onLaunchRef.current = onLaunch
-  }, [onLaunch])
+  const onLaunchRef = useStableHandler(onLaunch)
 
   const launchRoute = useCallback(
-    async (routeId: string) => {
+    async (routeId: string, tabId?: number) => {
       const activeRouteId = await getLastUsedRouteId()
 
       if (activeRouteId != null) {
@@ -36,10 +33,10 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
       }
 
       if (onLaunchRef.current != null) {
-        onLaunchRef.current(routeId)
+        onLaunchRef.current(routeId, tabId)
       }
     },
-    [transactions.length],
+    [onLaunchRef, transactions.length],
   )
 
   const cancelLaunch = useCallback(() => setPendingRouteId(null), [])
@@ -56,7 +53,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
     }
 
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
-  }, [navigate, pendingRouteId])
+  }, [navigate, onLaunchRef, pendingRouteId])
 
   return [
     launchRoute,

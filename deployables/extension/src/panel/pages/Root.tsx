@@ -1,12 +1,16 @@
 import { ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
-import { formData, getActiveTab, getString, sendMessageToTab } from '@/utils'
+import {
+  formData,
+  getActiveTab,
+  getString,
+  sendMessageToCompanionApp,
+} from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   useTabMessageHandler,
-  type CompanionResponseMessage,
 } from '@zodiac/messages'
 import {
   Outlet,
@@ -38,14 +42,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const activeTab = await getActiveTab()
 
   if (activeTab.id != null) {
-    sendMessageToTab(
-      activeTab.id,
-      {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: routeId,
-      } satisfies CompanionResponseMessage,
-      { protocolCheckOnly: true },
-    )
+    sendMessageToCompanionApp(activeTab.id, {
+      type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+      activeRouteId: routeId,
+    })
   }
 
   if (lastUsedRouteId != null) {
@@ -56,10 +56,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 }
 
 export const Root = () => {
-  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
-  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId)
-  useDeleteRoute()
   const submit = useSubmit()
+
+  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
+  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId, {
+    onSave: (route, tabId) => {
+      sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+    },
+  })
+
+  useDeleteRoute()
+
   const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
     useLaunchRouteOnMessage({
       onLaunch(routeId) {
@@ -70,14 +80,10 @@ export const Root = () => {
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
     async (_, { tabId }) => {
-      await sendMessageToTab(
-        tabId,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: lastUsedRouteId,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: lastUsedRouteId,
+      })
     },
   )
 

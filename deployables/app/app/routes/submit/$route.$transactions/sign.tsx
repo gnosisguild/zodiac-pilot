@@ -16,12 +16,14 @@ import {
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
+  Error,
   errorToast,
   Form,
   Info,
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
+  Success,
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
@@ -34,9 +36,11 @@ import {
 import { useState, type JSX } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
+  checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
+  queryRoutes,
   splitPrefixedAddress,
   unprefixAddress,
   type ExecutionPlan,
@@ -59,11 +63,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const plan = await planExecution(metaTransactions, {
-    initiator,
-    waypoints,
-    ...route,
-  })
   const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
 
   const simulationParams: SimulationParams[] = metaTransactions.map((tx) => ({
@@ -77,11 +76,25 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     simulation_type: 'full',
   }))
 
-  const simulationResponse = await simulateBundleTransaction(simulationParams)
+  const [plan, routes, permissionCheck, simulationResponse] = await Promise.all(
+    [
+      planExecution(metaTransactions, {
+        initiator,
+        waypoints,
+        ...route,
+      }),
+      queryRoutes(unprefixAddress(initiator), route.avatar),
+      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+      simulateBundleTransaction(simulationParams),
+    ],
+  )
+
   const tokenFlows = await extractTokenFlowsFromSimulation(simulationResponse)
 
   return {
     plan,
+    isValidRoute: routes.length > 0,
+    permissionCheck,
     id: route.id,
     initiator: unprefixAddress(initiator),
     waypoints,
@@ -93,7 +106,16 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 const SubmitPage = ({
-  loaderData: { initiator, chainId, id, waypoints, tokenFlows, avatarAddress },
+  loaderData: {
+    initiator,
+    chainId,
+    id,
+    waypoints,
+    isValidRoute,
+    permissionCheck,
+    tokenFlows,
+    avatarAddress,
+  },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
@@ -105,7 +127,15 @@ const SubmitPage = ({
           title="Review account information"
           description="Please review the account information that will be used to sign this transaction bundle"
         >
+          {!isValidRoute && (
+            <Error title="Invalid route">
+              You cannot sign this transaction as we could not find any route
+              form the signer wallet to the account.
+            </Error>
+          )}
+
           <ChainSelect disabled defaultValue={chainId} />
+
           <Labeled label="Selected route">
             <Routes disabled orientation="horizontal">
               <Route id={id}>
@@ -129,6 +159,7 @@ const SubmitPage = ({
 
             <div className="flex justify-end">
               <SecondaryLinkButton
+                disabled={!isValidRoute}
                 busy={location != null && formData == null}
                 to={href('/submit/:route/:transactions/update-route', {
                   route,
@@ -140,6 +171,17 @@ const SubmitPage = ({
             </div>
           </Labeled>
         </Form.Section>
+        <Form.Section
+          title="Permissions check"
+          description="We check whether any permissions on the current route would prevent this transaction from succeeding."
+        >
+          {permissionCheck.success ? (
+            <Success title="All checks passed" />
+          ) : (
+            <Error title="Permission violation">{permissionCheck.error}</Error>
+          )}
+        </Form.Section>
+
         <Form.Section
           title="Signer details"
           description="Make sure that your connected wallet matches the signer that is configured for this account"
@@ -175,7 +217,9 @@ const SubmitPage = ({
         )}
 
         <Form.Actions>
-          <SubmitTransaction />
+          <SubmitTransaction
+            disabled={!isValidRoute || !permissionCheck.success}
+          />
         </Form.Actions>
       </Form>
 
@@ -186,13 +230,18 @@ const SubmitPage = ({
 
 export default SubmitPage
 
-const SubmitTransaction = () => {
+type SubmitTransactionProps = {
+  disabled?: boolean
+}
+
+const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
   const { plan, chainId, avatar, initiator } = useLoaderData<typeof loader>()
   const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
   const [submitPending, setSubmitPending] = useState(false)
 
   if (
+    disabled ||
     walletAccount.chainId !== chainId ||
     walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
     connectorClient == null

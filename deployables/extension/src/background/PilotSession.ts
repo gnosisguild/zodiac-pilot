@@ -63,8 +63,7 @@ export class PilotSession extends EventEmitter<{
 
     this.rpcTracking.onNewRpcEndpointDetected.removeAllListeners()
 
-    removeCSPHeaderRule()
-
+    await removeCSPHeaderRule()
     await removeAllRpcRedirectRules()
   }
 

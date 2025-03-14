@@ -5,11 +5,9 @@ import {
   saveLastUsedRouteId,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
-import { getActiveTab, sendMessageToTab } from '@/utils'
-import {
-  CompanionResponseMessageType,
-  type CompanionResponseMessage,
-} from '@zodiac/messages'
+import { sentry } from '@/sentry'
+import { getActiveTab, sendMessageToCompanionApp } from '@/utils'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import {
   Outlet,
   redirect,
@@ -29,19 +27,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     const activeTab = await getActiveTab()
 
     if (activeTab.id != null) {
-      await sendMessageToTab(
-        activeTab.id,
-        {
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        } satisfies CompanionResponseMessage,
-        { protocolCheckOnly: true },
-      )
+      await sendMessageToCompanionApp(activeTab.id, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: route.id,
+      })
     }
 
     return { route: await markRouteAsUsed(route) }
-  } catch {
+  } catch (error) {
     await saveLastUsedRouteId(null)
+
+    sentry.captureException(error)
 
     throw redirect('/')
   }

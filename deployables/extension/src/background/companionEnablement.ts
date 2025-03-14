@@ -1,15 +1,11 @@
 import { getRoute, getRoutes } from '@/execution-routes'
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
-import { getActiveTab, sendMessageToTab } from '@/utils'
-import { invariant } from '@epic-web/invariant'
+import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   createTabMessageHandler,
-  PilotMessageType,
-  type CompanionResponseMessage,
-  type Message,
 } from '@zodiac/messages'
 import type { TrackSessionsResult } from './sessionTracking'
 import type { TrackSimulationResult } from './simulationTracking'
@@ -28,30 +24,22 @@ export const companionEnablement = (
           }
           const { rpcUrl, vnetId } = session.getFork()
 
-          await sendMessageToTab(
-            tabId,
-            {
-              type: CompanionResponseMessageType.FORK_UPDATED,
-              forkUrl: rpcUrl ?? null,
-              vnetId: vnetId ?? null,
-            } satisfies CompanionResponseMessage,
-            { protocolCheckOnly: true },
-          )
+          await sendMessageToCompanionApp(tabId, {
+            type: CompanionResponseMessageType.FORK_UPDATED,
+            forkUrl: rpcUrl ?? null,
+            vnetId: vnetId ?? null,
+          })
         })
 
         console.debug('Companion App connected!')
 
         const dispose = onSimulationUpdate.addListener(async (fork) => {
           console.debug('Sending updated fork to companion app', { fork })
-          await sendMessageToTab(
-            tabId,
-            {
-              type: CompanionResponseMessageType.FORK_UPDATED,
-              forkUrl: fork?.rpcUrl ?? null,
-              vnetId: fork?.vnetId ?? null,
-            } satisfies CompanionResponseMessage,
-            { protocolCheckOnly: true },
-          )
+          await sendMessageToCompanionApp(tabId, {
+            type: CompanionResponseMessageType.FORK_UPDATED,
+            forkUrl: fork?.rpcUrl ?? null,
+            vnetId: fork?.vnetId ?? null,
+          })
 
           captureLastError()
         })
@@ -77,14 +65,10 @@ export const companionEnablement = (
       async (_, { tabId }) => {
         const routes = await getRoutes()
 
-        await sendMessageToTab(
-          tabId,
-          {
-            type: CompanionResponseMessageType.LIST_ROUTES,
-            routes,
-          } satisfies CompanionResponseMessage,
-          { protocolCheckOnly: true },
-        )
+        await sendMessageToCompanionApp(tabId, {
+          type: CompanionResponseMessageType.LIST_ROUTES,
+          routes,
+        })
       },
     ),
   )
@@ -95,14 +79,10 @@ export const companionEnablement = (
       async ({ routeId }, { tabId }) => {
         const route = await getRoute(routeId)
 
-        await sendMessageToTab(
-          tabId,
-          {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
-          } satisfies CompanionResponseMessage,
-          { protocolCheckOnly: true },
-        )
+        await sendMessageToCompanionApp(tabId, {
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route,
+        })
       },
     ),
   )
@@ -115,15 +95,14 @@ export const companionEnablement = (
     const handlePing = createTabMessageHandler(
       CompanionAppMessageType.PING,
       (_, { tabId }) => {
-        sendMessageToTab(
+        sendMessageToCompanionApp(
           tabId,
           {
             type: CompanionResponseMessageType.PONG,
-          } satisfies CompanionResponseMessage,
+          },
           // bypass some tab validity checks so that this
           // message finds the companion app regardless of what
           // page the user is currently on
-          { protocolCheckOnly: true },
         )
       },
     )
@@ -132,21 +111,6 @@ export const companionEnablement = (
 
     port.onDisconnect.addListener(async () => {
       chrome.runtime.onMessage.removeListener(handlePing)
-
-      const activeTab = await getActiveTab()
-
-      invariant(activeTab.id != null, 'Tab needs an ID')
-
-      await sendMessageToTab(
-        activeTab.id,
-        {
-          type: PilotMessageType.PILOT_DISCONNECT,
-        } satisfies Message,
-        // bypass some tab validity checks so that this
-        // message finds the companion app regardless of what
-        // page the user is currently on
-        { protocolCheckOnly: true },
-      )
     })
   })
 }

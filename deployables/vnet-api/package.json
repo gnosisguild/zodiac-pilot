@@ -2,13 +2,13 @@
   "name": "@zodiac/vnet-api",
   "version": "1.0.0",
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250311.0",
+    "@cloudflare/workers-types": "4.20250312.0",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "env-cmd": "10.1.0",
     "eslint": "9.22.0",
     "typescript": "5.8.2",
-    "wrangler": "3.114.1"
+    "wrangler": "4.0.0"
   },
   "private": true,
   "scripts": {
@@ -17,5 +17,5 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0"
   },
-  "packageManager": "pnpm@10.6.2"
+  "packageManager": "pnpm@10.6.3"
 }

@@ -16,20 +16,20 @@
     "react-router": "7.3.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250311.0",
+    "@cloudflare/workers-types": "4.20250312.0",
     "@react-router/dev": "7.3.0",
-    "@tailwindcss/vite": "4.0.12",
+    "@tailwindcss/vite": "4.0.14",
     "@vitejs/plugin-react": "4.3.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
     "eslint": "9.22.0",
     "postcss": "8.5.3",
-    "tailwindcss": "4.0.12",
+    "tailwindcss": "4.0.14",
     "typescript": "5.8.2",
     "vite": "6.2.1",
     "vite-plugin-open-graph": "2.0.6",
-    "wrangler": "3.114.1"
+    "wrangler": "4.0.0"
   },
   "scripts": {
     "build": "react-router build",
@@ -56,5 +56,5 @@
       "last 1 safari version"
     ]
   },
-  "packageManager": "pnpm@10.6.2"
+  "packageManager": "pnpm@10.6.3"
 }

@@ -40,8 +40,8 @@ describe('List Routes', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(href('/edit'), {
-        version: '3.4.0',
         availableRoutes: [route],
+        version: '3.6.0',
       })
 
       await userEvent.click(
