@@ -12,6 +12,7 @@
       "@/balances-client": ["./app/balances/client/index.ts"],
       "@/balances-server": ["./app/balances/server/index.ts"],
       "@/vnet-server": ["./app/vnet/server/index.ts"],
+      "@/simulation-server": ["./app/simulation/server/index.ts"],
       "@/wagmi": ["./app/wagmi/index.ts"],
       "@/routes-ui": ["./app/routes-ui/index.ts"]
     }

@@ -1,3 +1,4 @@
+import type { Address } from 'ser-kit'
 import { z } from 'zod'
 
 export const tokenSchema = z.object({
@@ -33,6 +34,11 @@ export type TokenBalance = {
   usdValue: number
   usdPrice: number
   chain: string
+}
+
+export type TokenTransfer = TokenBalance & {
+  from: Address
+  to: Address
 }
 
 const chainSchema = z.object({
