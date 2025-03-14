@@ -554,8 +554,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.4.0
-        version: 3.4.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.4.1
+        version: 3.4.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/env:
     dependencies:
@@ -780,8 +780,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.4.0
-        version: 3.4.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.4.1
+        version: 3.4.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/ui:
     dependencies:
@@ -6419,8 +6419,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@3.4.0:
-    resolution: {integrity: sha512-gDvBps6zFaZSYeAFaIAgkXMc1CRpkvhJXsrf3MSQWQDkFqTuZNQh2XdrgGsTPX6XUndBp54rPHmjfiQSwXRHPA==}
+  ser-kit@3.4.1:
+    resolution: {integrity: sha512-BJPzVz2XOJPXtXh/5A44YnN2dI/N2rStMJKByRTCKADVT+xKj0+tXohWHuvahAWfiVgKkHxW/CrPqSP5ojuGdA==}
 
   ser-kit@3.4.1:
     resolution: {integrity: sha512-BJPzVz2XOJPXtXh/5A44YnN2dI/N2rStMJKByRTCKADVT+xKj0+tXohWHuvahAWfiVgKkHxW/CrPqSP5ojuGdA==}
@@ -14098,7 +14098,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@3.4.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
+  ser-kit@3.4.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 2.5.11(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
