@@ -24,7 +24,7 @@
     "@zodiac/schema": "workspace:*",
     "ethers": "6.13.5",
     "evm-proxy-detection": "2.0.3",
-    "nanoid": "5.1.3",
+    "nanoid": "5.1.4",
     "ser-kit": "3.4.1",
     "zod": "3.24.2",
     "zodiac-roles-deployments": "2.4.0"
