@@ -33,7 +33,7 @@ import {
   ArrowUpFromLine,
   SquareArrowOutUpRight,
 } from 'lucide-react'
-import { useState, type JSX } from 'react'
+import { useState } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
   checkPermissions,
@@ -48,7 +48,6 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 
-import { type TokenTransfer } from '@/balances-client'
 import {
   extractTokenFlowsFromSimulation,
   simulateBundleTransaction,
@@ -191,29 +190,45 @@ const SubmitPage = ({
         </Form.Section>
 
         {tokenFlows.length === 0 ? (
-          <Info title="Nothing to show">
-            We could not find any token flows for this transaction.
+          <Info title="No token flows">
+            This transaction does not involve any token transfers.
           </Info>
         ) : (
           <Form.Section
             title="Token Flows"
             description="An overview of the tokens involved in this transaction bundle."
           >
-            <TokenFlowSection
-              title="Tokens Sent"
-              icon={<ArrowUpFromLine className="h-4 w-4" />}
-              flows={sent}
-            />
-            <TokenFlowSection
-              title="Tokens Received"
-              icon={<ArrowDownToLine className="h-4 w-4" />}
-              flows={received}
-            />
-            <TokenFlowSection
-              title="Other Token Movements"
-              icon={<ArrowLeftRight className="h-4 w-4" />}
-              flows={other}
-            />
+            <div className="flex flex-col gap-8">
+              {sent.length > 0 && (
+                <TokenTransferTable
+                  title="Tokens Sent"
+                  columnTitle="To"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowUpFromLine className="h-4 w-4" />}
+                  tokens={sent}
+                />
+              )}
+
+              {received.length > 0 && (
+                <TokenTransferTable
+                  title="Tokens Received"
+                  columnTitle="From"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowDownToLine className="h-4 w-4" />}
+                  tokens={received}
+                />
+              )}
+
+              {other.length > 0 && (
+                <TokenTransferTable
+                  title="Other Token Movements"
+                  columnTitle="From → To"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowLeftRight className="h-4 w-4" />}
+                  tokens={other}
+                />
+              )}
+            </div>
           </Form.Section>
         )}
 
@@ -372,26 +387,5 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
     >
       Sign
     </PrimaryButton>
-  )
-}
-
-type TokenFlowSectionProps = {
-  title: string
-  flows: TokenTransfer[]
-  icon: JSX.Element
-}
-
-const TokenFlowSection = ({ title, flows, icon }: TokenFlowSectionProps) => {
-  if (flows.length === 0) {
-    return null
-  }
-
-  return (
-    <div className="mb-4">
-      <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold dark:text-zinc-50">
-        {icon} {title}
-      </h3>
-      <TokenTransferTable title={title} tokens={flows} />
-    </div>
   )
 }

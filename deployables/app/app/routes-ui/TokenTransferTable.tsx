@@ -9,96 +9,89 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import type { Address as AddressType } from 'ser-kit'
-
-const enum TokenTransferType {
-  SENT = 'Tokens Sent',
-  RECEIVED = 'Tokens Received',
-  OTHER = 'Other',
-}
-
-type AddressItemType = {
-  type: string
-  from: AddressType
-  to: AddressType
-}
+import { ZeroAddress } from 'ethers'
+import type { JSX } from 'react'
 
 type TokenTransferTable = {
+  icon: JSX.Element
   title: string
+  columnTitle: string
   tokens: TokenTransfer[]
+  ownAddress: string
 }
 
-const headerMap: Record<string, string> = {
-  [TokenTransferType.SENT]: 'Recipient',
-  [TokenTransferType.RECEIVED]: 'Sender',
-}
-
-export const TokenTransferTable = ({ title, tokens }: TokenTransferTable) => {
+export const TokenTransferTable = ({
+  icon,
+  title,
+  columnTitle,
+  tokens,
+  ownAddress,
+}: TokenTransferTable) => {
   return (
     <Table dense bleed>
       <TableHead>
         <TableRow>
-          <TableHeader>Token</TableHeader>
-
-          <TableHeader align="right">
-            {headerMap[title] ?? 'From → To'}
+          <TableHeader>
+            <div className="flex items-center gap-1">
+              {icon}
+              {title}
+            </div>
           </TableHeader>
+
+          <TableHeader align="right">{columnTitle}</TableHeader>
         </TableRow>
       </TableHead>
 
       <TableBody>
-        {tokens.map(({ symbol, from, to, logoUrl, amount }, idx) => (
-          <TableRow key={`${symbol}-${from}-${to}-${idx}`}>
-            <TableCell>
-              <Token logo={logoUrl}>
-                {symbol} <span className="ml-2"> {amount}</span>
-              </Token>
-            </TableCell>
+        {tokens.map(({ symbol, from, to, logoUrl, amount }, index) => {
+          const fromOwn = from.toLowerCase() === ownAddress.toLowerCase()
+          const toOwn = to.toLowerCase() === ownAddress.toLowerCase()
+          const isMint = from === ZeroAddress
+          const isBurn = to === ZeroAddress
 
-            {/* Addresses column */}
-            <TableCell align="right">
-              {AddressItem({ type: title, from, to })}
-            </TableCell>
-          </TableRow>
-        ))}
+          return (
+            <TableRow key={index}>
+              <TableCell>
+                <Token logo={logoUrl}>
+                  {symbol} <span className="ml-2"> {amount}</span>
+                </Token>
+              </TableCell>
+
+              <TableCell align="right">
+                <div className="flex flex-col items-center justify-end gap-1 text-right sm:flex-row sm:items-center sm:gap-2">
+                  {!fromOwn && (
+                    <span className="whitespace-nowrap">
+                      {isMint ? (
+                        <span title={`${ZeroAddress} (mint)`}>🌱</span>
+                      ) : (
+                        <Address shorten size="small">
+                          {from}
+                        </Address>
+                      )}
+                    </span>
+                  )}
+
+                  {!fromOwn && !toOwn && (
+                    <span className="hidden sm:block">→</span>
+                  )}
+
+                  {!toOwn && (
+                    <span className="whitespace-nowrap">
+                      {isBurn ? (
+                        <span title={`${ZeroAddress} (burn)`}>🔥</span>
+                      ) : (
+                        <Address shorten size="small">
+                          {to}
+                        </Address>
+                      )}
+                    </span>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
-  )
-}
-
-const AddressItem = ({ type, from, to }: AddressItemType) => {
-  const transferType: Record<string, React.ReactNode> = {
-    [TokenTransferType.SENT]: (
-      <div className="flex justify-end gap-1">
-        <Address shorten size="small">
-          {to}
-        </Address>
-      </div>
-    ),
-    [TokenTransferType.RECEIVED]: (
-      <div className="flex justify-end gap-1">
-        <Address shorten size="small">
-          {from}
-        </Address>
-      </div>
-    ),
-  }
-
-  return (
-    transferType[type] ?? (
-      <div className="flex flex-col items-center justify-end gap-1 text-right sm:flex-row sm:items-center sm:gap-2">
-        <span className="whitespace-nowrap">
-          <Address shorten size="small">
-            {from}
-          </Address>
-        </span>
-        <span className="hidden sm:block">→</span>
-        <span className="whitespace-nowrap">
-          <Address shorten size="small">
-            {to}
-          </Address>
-        </span>
-      </div>
-    )
   )
 }
