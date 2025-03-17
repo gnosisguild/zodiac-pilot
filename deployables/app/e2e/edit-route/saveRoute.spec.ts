@@ -1,10 +1,16 @@
 import { encode } from '@zodiac/schema'
+import { href } from 'react-router'
 import { expect, loadExtension, test } from '../utils'
 import { route } from './fixture'
 
 test.describe('Edit route', () => {
   test('it is possible to save a route', async ({ page }) => {
-    await page.goto(`/edit/${route.id}/${encode(route)}`)
+    await page.goto(
+      href('/edit/:routeId/:data', {
+        routeId: route.id,
+        data: encode(route),
+      }),
+    )
 
     const extension = await loadExtension(page)
 
@@ -15,7 +21,12 @@ test.describe('Edit route', () => {
   })
 
   test('the new route shows up in the list afterwards', async ({ page }) => {
-    await page.goto(`/edit/${route.id}/${encode(route)}`)
+    await page.goto(
+      href('/edit/:routeId/:data', {
+        routeId: route.id,
+        data: encode(route),
+      }),
+    )
 
     await loadExtension(page)
 

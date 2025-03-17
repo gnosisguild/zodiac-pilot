@@ -15,6 +15,6 @@ export const postMessage = createPostMessage<
   CompanionAppMessage | CompanionResponseMessage | Message
 >()
 
-export const expectMessage = createExpectMessage<
+export const expectMessage = await createExpectMessage<
   CompanionAppMessage | CompanionResponseMessage
 >()

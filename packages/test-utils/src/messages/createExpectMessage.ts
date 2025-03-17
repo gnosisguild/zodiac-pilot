@@ -1,7 +1,9 @@
 import { waitFor } from '@testing-library/react'
-import { expect } from 'vitest'
 
-export function createExpectMessage<T>() {
+export async function createExpectMessage<T>() {
+  // This is needed to ensure compatibility with playwright
+  const { expect } = await import('vitest')
+
   return (message: T) =>
     waitFor(() => {
       expect(window.postMessage).toHaveBeenCalledWith(message, '*')
