@@ -15,8 +15,8 @@ const tokenInfoSchema = z.object({
 const assetChangeSchema = z.object({
   token_info: tokenInfoSchema,
   type: z.string(),
-  from: z.string(),
-  to: z.string(),
+  from: z.string().optional(),
+  to: z.string().optional(),
   amount: z.string(),
   raw_amount: z.string(),
   dollar_value: z.string(),
