@@ -121,7 +121,12 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
 
       route = { ...route, ...selectedRoute, id: createRouteId() }
 
-      return updateLabel(route, getString(data, 'label'))
+      const label = getString(data, 'label')
+
+      return updateLabel(
+        route,
+        label === route.label ? `${label} (copy)` : label,
+      )
     }
 
     case Intent.UpdateInitiator: {

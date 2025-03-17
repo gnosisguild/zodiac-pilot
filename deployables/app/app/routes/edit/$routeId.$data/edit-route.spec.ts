@@ -195,6 +195,11 @@ describe('Edit route', () => {
         }),
       )
 
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Label' }),
+        'New route',
+      )
+
       await userEvent.click(
         screen.getByRole('button', { name: 'Show save options' }),
       )
@@ -208,7 +213,33 @@ describe('Edit route', () => {
           ...route,
 
           id: expect.stringMatching(new RegExp(`^(?!${route.id}$).*`)),
+          label: 'New route',
         },
+      })
+    })
+
+    it('adds the word "Copy" to the label if it was not changed', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
+
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Show save options' }),
+      )
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: 'Save as copy' }),
+      )
+
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_ROUTE,
+        data: expect.objectContaining({
+          label: 'Test route (copy)',
+        }),
       })
     })
   })
