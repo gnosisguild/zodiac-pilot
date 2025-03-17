@@ -8,28 +8,20 @@ import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider } from '@/utils'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
-import {
-  getHexString,
-  getInt,
-  getOptionalHexString,
-  getOptionalString,
-} from '@zodiac/form-data'
+import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createBlankRoute,
-  createEoaAccount,
   updateAvatar,
   updateChainId,
   updateLabel,
-  updateStartingPoint,
 } from '@zodiac/modules'
-import { isHexAddress, type ExecutionRoute } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
-import { prefixAddress, type ChainId } from 'ser-kit'
-import { useAccount } from 'wagmi'
-import type { Route } from './+types/start'
+import { type ChainId } from 'ser-kit'
+import type { Route } from './+types/create'
 
 export const clientLoader = async () => {
   const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
@@ -50,12 +42,6 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const data = await request.formData()
 
   let route = createBlankRoute()
-
-  const initiator = getOptionalHexString(data, 'initiator')
-
-  if (initiator != null) {
-    route = updateStartingPoint(route, createEoaAccount({ address: initiator }))
-  }
 
   const label = getOptionalString(data, 'label')
 
@@ -81,18 +67,9 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 }
 
 const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
-  const { address, chainId } = useAccount()
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
-    verifyChainId(chainId || ChainEnum.ETH),
+    verifyChainId(ChainEnum.ETH),
   )
-
-  useEffect(() => {
-    if (chainId == null) {
-      return
-    }
-
-    setSelectedChainId(verifyChainId(chainId))
-  }, [chainId])
 
   return (
     <Page>
@@ -109,7 +86,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
 
       <Page.Main>
         <OnlyConnected>
-          <Form context={{ initiator: address }}>
+          <Form>
             {actionData && (
               <Error title="Could not create account">{actionData.error}</Error>
             )}
@@ -125,13 +102,6 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
               isClearable
               label="Account"
               chainId={selectedChainId}
-              initiator={
-                address == null
-                  ? undefined
-                  : isHexAddress(address)
-                    ? prefixAddress(undefined, address)
-                    : undefined
-              }
               name="avatar"
               knownRoutes={'routes' in loaderData ? loaderData.routes : []}
             />
