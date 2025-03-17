@@ -1,6 +1,7 @@
 import {
   AvatarInput,
   ConnectWalletButton,
+  fromVersion,
   OnlyConnected,
   Page,
 } from '@/components'
@@ -58,10 +59,26 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 
   route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
-  window.postMessage(
-    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
-    '*',
+  const { promise, resolve } = Promise.withResolvers<void>()
+
+  fromVersion(
+    '3.9.1',
+    () =>
+      companionRequest(
+        { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
+        () => resolve(),
+      ),
+    () => {
+      window.postMessage(
+        { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
+        '*',
+      )
+
+      resolve()
+    },
   )
+
+  await promise
 
   return redirectDocument(href(`/tokens/balances`))
 }

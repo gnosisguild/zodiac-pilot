@@ -1,11 +1,20 @@
 import { getAvailableChains } from '@/balances-server'
-import { createMockChain, render } from '@/test-utils'
+import {
+  createMockChain,
+  expectMessage,
+  postMessage,
+  render,
+} from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
-import { CompanionAppMessageType } from '@zodiac/messages'
-import { randomAddress } from '@zodiac/test-utils'
+import {
+  CompanionAppMessageType,
+  CompanionResponseMessageType,
+} from '@zodiac/messages'
+import { createMockExecutionRoute, randomAddress } from '@zodiac/test-utils'
+import { href, redirectDocument } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { getAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -23,7 +32,19 @@ vi.mock('@/utils', async (importOriginal) => {
 const mockIsSmartContractAddress = vi.mocked(isSmartContractAddress)
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
-describe('New Account', () => {
+vi.mock('react-router', async (importOriginal) => {
+  const module = await importOriginal<typeof import('react-router')>()
+
+  return {
+    ...module,
+
+    redirectDocument: vi.fn(),
+  }
+})
+
+const mockRedirectDocument = vi.mocked(redirectDocument)
+
+describe.sequential('New Account', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
       Object.entries(CHAIN_NAME).map(([chainId, name]) =>
@@ -38,8 +59,6 @@ describe('New Account', () => {
     it('creates a new route with a given avatar', async () => {
       await render('/create')
 
-      const postMessage = vi.spyOn(window, 'postMessage')
-
       const address = randomAddress()
 
       await userEvent.type(
@@ -51,21 +70,16 @@ describe('New Account', () => {
       )
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-      expect(postMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-          data: expect.objectContaining({
-            avatar: prefixAddress(Chain.ETH, address),
-          }),
-        },
-        '*',
-      )
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: expect.objectContaining({
+          avatar: prefixAddress(Chain.ETH, address),
+        }),
+      })
     })
 
     it('uses the selected chain', async () => {
       await render('/create')
-
-      const postMessage = vi.spyOn(window, 'postMessage')
 
       const address = randomAddress()
 
@@ -82,23 +96,18 @@ describe('New Account', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-      expect(postMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-          data: expect.objectContaining({
-            avatar: prefixAddress(Chain.GNO, address),
-          }),
-        },
-        '*',
-      )
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: expect.objectContaining({
+          avatar: prefixAddress(Chain.GNO, address),
+        }),
+      })
     })
   })
 
   describe('Label', () => {
     it('is possible to give label the account', async () => {
       await render('/create')
-
-      const postMessage = vi.spyOn(window, 'postMessage')
 
       const address = randomAddress()
 
@@ -117,15 +126,37 @@ describe('New Account', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-      await waitFor(() => {
-        expect(postMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-            data: expect.objectContaining({
-              label: 'Test label',
-            }),
-          },
-          '*',
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: expect.objectContaining({
+          label: 'Test label',
+        }),
+      })
+    })
+
+    describe('Save', () => {
+      it('does a full page redirect to the balances page', async () => {
+        await render('/create', { version: '3.9.1' })
+
+        const address = randomAddress()
+
+        await userEvent.type(
+          screen.getByRole('combobox', { name: 'Account' }),
+          address,
+        )
+        await userEvent.click(
+          screen.getByRole('option', { name: getAddress(address) }),
+        )
+
+        await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route: createMockExecutionRoute(),
+        })
+
+        expect(mockRedirectDocument).toHaveBeenCalledWith(
+          href('/tokens/balances'),
         )
       })
     })
