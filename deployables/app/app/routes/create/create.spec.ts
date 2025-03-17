@@ -136,7 +136,7 @@ describe.sequential('New Account', () => {
 
     describe('Save', () => {
       it('does a full page redirect to the balances page', async () => {
-        await render('/create', { version: '3.9.1' })
+        await render('/create', { version: '3.8.2' })
 
         const address = randomAddress()
 

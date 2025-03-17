@@ -62,7 +62,7 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
   const { promise, resolve } = Promise.withResolvers<void>()
 
   fromVersion(
-    '3.9.1',
+    '3.8.2',
     () =>
       companionRequest(
         { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
