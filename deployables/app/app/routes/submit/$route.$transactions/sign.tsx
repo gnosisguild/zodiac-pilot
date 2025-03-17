@@ -1,5 +1,12 @@
 import { ConnectWallet } from '@/components'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  buildSimulationParams,
+  extractApprovalsFromSimulation,
+  extractTokenFlowsFromSimulation,
+  simulateBundleTransaction,
+  splitTokenFlows,
+} from '@/simulation-server'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -8,10 +15,17 @@ import {
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
+import type {
+  HexAddress,
+  MetaTransactionRequest,
+  PrefixedAddress,
+} from '@zodiac/schema'
 import {
+  Checkbox,
   Error,
   errorToast,
   Form,
+  Info,
   Labeled,
   PrimaryButton,
   Success,
@@ -31,20 +45,16 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
+  prefixAddress,
   queryRoutes,
   unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-
-import {
-  extractTokenFlowsFromSimulation,
-  simulateBundleTransaction,
-  splitTokenFlows,
-} from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
 import { TokenTransferTable } from './TokenTransferTable'
+import { appendApprovalTransactions } from './helper'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
@@ -53,43 +63,47 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [plan, routes, permissionCheck, simulationResponse] = await Promise.all(
-    [
-      planExecution(metaTransactions, {
-        initiator,
-        waypoints,
-        ...route,
-      }),
-      queryRoutes(unprefixAddress(initiator), route.avatar),
-      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-      simulateBundleTransaction(
-        metaTransactions.map((tx) => ({
-          network_id: getChainId(route.avatar),
-          from: unprefixAddress(route.avatar),
-          to: tx.to,
-          input: tx.data,
-          value: tx.value.toString(),
-          save: true,
-          save_if_fails: true,
-          simulation_type: 'full',
-        })),
+  const [routes, permissionCheck, simulation] = await Promise.all([
+    queryRoutes(unprefixAddress(initiator), route.avatar),
+    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+    simulateBundleTransaction(
+      buildSimulationParams(
+        getChainId(route.avatar),
+        unprefixAddress(route.avatar),
+        metaTransactions,
       ),
-    ],
-  )
+    ),
+  ])
 
-  const tokenFlows = await extractTokenFlowsFromSimulation(simulationResponse)
+  const tokenFlows = await extractTokenFlowsFromSimulation(simulation)
+  const approvalTxs = extractApprovalsFromSimulation(simulation)
 
   return {
-    plan,
     isValidRoute: routes.length > 0,
-    permissionCheck,
     id: route.id,
     initiator: unprefixAddress(initiator),
-    waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
     tokenFlows: splitTokenFlows(tokenFlows, unprefixAddress(route.avatar)),
+    permissionCheck,
+    waypoints,
+    approvalTxs,
+    metaTransactions,
   }
+}
+
+export const action = ({ params }: RouteType.ActionArgs) => {
+  const metaTransactions = parseTransactionData(params.transactions)
+
+  let finalTxs = metaTransactions
+  if (approvalTxs && revokeApproval) {
+    finalTxs = appendApprovalTransactions(metaTransactions, approvalTxs)
+  }
+  const plan = await planExecution(finalTxs, {
+    initiator,
+    waypoints,
+    ...route,
+  })
 }
 
 const SubmitPage = ({
@@ -102,8 +116,11 @@ const SubmitPage = ({
     isValidRoute,
     permissionCheck,
     tokenFlows: { other, received, sent },
+    approvalTxs,
+    metaTransactions,
   },
 }: RouteType.ComponentProps) => {
+  const [revokeApproval, setRevokeApproval] = useState(true)
   return (
     <Form>
       <Form.Section
@@ -182,6 +199,20 @@ const SubmitPage = ({
         )}
       </Form.Section>
 
+      {approvalTxs && (
+        <Form.Section title="Leftover Approvals">
+          <Checkbox
+            label="Revoke all approvals"
+            checked={revokeApproval}
+            onChange={() => setRevokeApproval((prev) => !prev)}
+          />
+          <Info>
+            Token approvals let other addresses spend your tokens. If you
+            don&apos;t revoke them, they can keep spending indefinitely.
+          </Info>
+        </Form.Section>
+      )}
+
       <Form.Section
         title="Signer details"
         description="Make sure that your connected wallet matches the signer that is configured for this account"
@@ -192,6 +223,9 @@ const SubmitPage = ({
       <Form.Actions>
         <SubmitTransaction
           disabled={!isValidRoute || !permissionCheck.success}
+          approvalTxs={approvalTxs}
+          initiator={prefixAddress(undefined, initiator)}
+          metaTransactions={metaTransactions}
         />
       </Form.Actions>
     </Form>
@@ -202,10 +236,24 @@ export default SubmitPage
 
 type SubmitTransactionProps = {
   disabled?: boolean
+  metaTransactions: MetaTransactionRequest[]
+  approvalTxs: { spender: HexAddress; tokenAddress: HexAddress }[]
+  revokeApproval: boolean
+  initiator: PrefixedAddress
+  rawRoute: string
 }
 
-const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
-  const { plan, chainId, avatar, initiator } = useLoaderData<typeof loader>()
+const SubmitTransaction = ({
+  disabled = false,
+  revokeApproval,
+  rawRoute,
+  approvalTxs,
+  metaTransactions,
+  initiator,
+}: SubmitTransactionProps) => {
+  const { waypoints, ...route } = parseRouteData(rawRoute)
+  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+  const { chainId, avatar } = useLoaderData<typeof loader>()
   const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
   const [submitPending, setSubmitPending] = useState(false)
@@ -213,7 +261,7 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
   if (
     disabled ||
     walletAccount.chainId !== chainId ||
-    walletAccount.address?.toLowerCase() !== initiator.toLowerCase() ||
+    walletAccount.address?.toLowerCase() !== initiator?.toLowerCase() ||
     connectorClient == null
   ) {
     return <PrimaryButton disabled>Sign</PrimaryButton>

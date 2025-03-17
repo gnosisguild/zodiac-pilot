@@ -1,10 +1,10 @@
 import type { TokenTransfer } from '@/balances-client'
 import { getChain, getTokenDetails } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
-import type { HexAddress } from '@zodiac/schema'
+import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
 import { ZeroAddress } from 'ethers'
 import { formatUnits } from 'viem'
-import type { SimulationResult } from '../types'
+import type { SimulationParams, SimulationResult } from '../types'
 
 export const extractTokenFlowsFromSimulation = async (
   simulation: SimulationResult,
@@ -77,4 +77,24 @@ export const splitTokenFlows = (flows: TokenTransfer[], address: string) => {
         f.from.toLowerCase() !== addrLower && f.to.toLowerCase() !== addrLower,
     ),
   }
+}
+
+export const buildSimulationParams = (
+  chainId: number,
+  avatarAddress: string,
+  metaTxs: MetaTransactionRequest[],
+): SimulationParams[] => {
+  return metaTxs.map(
+    (tx) =>
+      ({
+        network_id: chainId,
+        from: avatarAddress,
+        to: tx.to,
+        input: tx.data,
+        value: tx.value.toString(),
+        save: true,
+        save_if_fails: true,
+        simulation_type: 'full',
+      }) as SimulationParams,
+  )
 }
