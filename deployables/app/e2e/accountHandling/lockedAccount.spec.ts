@@ -1,6 +1,7 @@
 import test, { expect } from '@playwright/test'
 import { encode } from '@zodiac/schema'
 import { mockWeb3 } from '@zodiac/test-utils/e2e'
+import { href } from 'react-router'
 import { getAddress } from 'viem'
 import { connectWallet } from '../connectWallet'
 import { account, route, transaction } from './fixture'
@@ -12,7 +13,12 @@ test.describe('Locked account', () => {
       chain: 'gnosis',
     })
 
-    await page.goto(`/submit/${encode(route)}/${encode([transaction])}`)
+    await page.goto(
+      href('/submit/:route/:transactions', {
+        route: encode(route),
+        transactions: encode([transaction]),
+      }),
+    )
 
     await connectWallet(page, account)
     await lockWallet()
@@ -28,7 +34,12 @@ test.describe('Locked account', () => {
       chain: 'gnosis',
     })
 
-    await page.goto(`/submit/${encode(route)}/${encode([transaction])}`)
+    await page.goto(
+      href('/submit/:route/:transactions', {
+        route: encode(route),
+        transactions: encode([transaction]),
+      }),
+    )
 
     await connectWallet(page, account)
     await lockWallet()

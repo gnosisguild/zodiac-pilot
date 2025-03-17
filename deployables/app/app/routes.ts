@@ -38,7 +38,7 @@ export default [
       ),
 
       ...prefix('/create', [
-        layout('routes/create/layout.tsx', [index('routes/create/start.tsx')]),
+        layout('routes/create/layout.tsx', [index('routes/create/create.tsx')]),
       ]),
 
       ...prefix('/submit', [

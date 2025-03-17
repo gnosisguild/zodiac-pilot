@@ -10,7 +10,8 @@ import {
 const requestResponseTypes = {
   [CompanionAppMessageType.SAVE_ROUTE]:
     CompanionResponseMessageType.PROVIDE_ROUTE,
-  [CompanionAppMessageType.SAVE_AND_LAUNCH]: null,
+  [CompanionAppMessageType.SAVE_AND_LAUNCH]:
+    CompanionResponseMessageType.PROVIDE_ROUTE,
   [CompanionAppMessageType.OPEN_PILOT]: null,
   [CompanionAppMessageType.SUBMIT_SUCCESS]: null,
   [CompanionAppMessageType.REQUEST_FORK_INFO]:
