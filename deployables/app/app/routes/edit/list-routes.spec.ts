@@ -14,7 +14,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
-describe('List Routes', () => {
+describe.sequential('List Routes', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue([])
   })
@@ -42,6 +42,7 @@ describe('List Routes', () => {
       await render(href('/edit'), {
         availableRoutes: [route],
         version: '3.6.0',
+        activeRouteId: route.id,
       })
 
       await userEvent.click(
@@ -73,6 +74,7 @@ describe('List Routes', () => {
       await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
+        activeRouteId: route.id,
       })
 
       await userEvent.click(
@@ -103,6 +105,7 @@ describe('List Routes', () => {
       await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
+        activeRouteId: route.id,
       })
 
       await userEvent.click(
@@ -136,6 +139,7 @@ describe('List Routes', () => {
       await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
+        activeRouteId: route.id,
       })
 
       await userEvent.click(

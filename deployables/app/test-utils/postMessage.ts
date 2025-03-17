@@ -3,12 +3,8 @@ import type {
   CompanionResponseMessage,
   Message,
 } from '@zodiac/messages'
-import { sleepTillIdle } from '@zodiac/test-utils'
+import { createPostMessage } from '@zodiac/test-utils'
 
-export const postMessage = (
-  message: CompanionAppMessage | CompanionResponseMessage | Message,
-) => {
-  window.postMessage(message, '*')
-
-  return sleepTillIdle()
-}
+export const postMessage = createPostMessage<
+  CompanionAppMessage | CompanionResponseMessage | Message
+>()

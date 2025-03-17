@@ -46,6 +46,8 @@ const mockGetTokenByAddress = vi.mocked(getTokenByAddress)
 const mockIsValidToken = vi.mocked(isValidToken)
 
 beforeEach(() => {
+  vi.spyOn(window, 'postMessage')
+
   mockGetAvailableChains.mockResolvedValue([])
   mockGetTokenBalances.mockResolvedValue([])
   mockGetTokenByAddress.mockResolvedValue(createMockToken())

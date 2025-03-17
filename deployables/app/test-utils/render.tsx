@@ -91,10 +91,12 @@ export const render = async (
     async loadActions() {
       await loadRoutes(...availableRoutes)
 
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId,
-      })
+      if (activeRouteId != null) {
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId,
+        })
+      }
     },
   })
 
