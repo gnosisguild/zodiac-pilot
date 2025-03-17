@@ -48,10 +48,11 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 
-import { useTokenFlows, type TokenTransfer } from '@/balances-client'
+import { type TokenTransfer } from '@/balances-client'
 import {
   extractTokenFlowsFromSimulation,
   simulateBundleTransaction,
+  splitTokenFlows,
   type SimulationParams,
 } from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
@@ -119,7 +120,7 @@ const SubmitPage = ({
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
-  const { sent, received, other } = useTokenFlows(tokenFlows, avatarAddress)
+  const { sent, received, other } = splitTokenFlows(tokenFlows, avatarAddress)
   return (
     <>
       <Form>

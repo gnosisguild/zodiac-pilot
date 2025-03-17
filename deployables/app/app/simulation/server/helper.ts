@@ -49,3 +49,15 @@ export const extractTokenFlowsFromSimulation = async (
   )
   return flowsPerResult.flat()
 }
+
+export const splitTokenFlows = (flows: TokenTransfer[], address: string) => {
+  const addrLower = address.toLowerCase()
+  return {
+    sent: flows.filter((f) => f.from.toLowerCase() === addrLower),
+    received: flows.filter((f) => f.to.toLowerCase() === addrLower),
+    other: flows.filter(
+      (f) =>
+        f.from.toLowerCase() !== addrLower && f.to.toLowerCase() !== addrLower,
+    ),
+  }
+}
