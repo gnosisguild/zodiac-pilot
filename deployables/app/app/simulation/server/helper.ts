@@ -51,6 +51,22 @@ export const extractTokenFlowsFromSimulation = async (
   return flowsPerResult.flat()
 }
 
+export const extractApprovalsFromSimulation = (
+  simulation: SimulationResult,
+): { spender: HexAddress; tokenAddress: HexAddress }[] => {
+  return (simulation.simulation_results ?? []).flatMap(({ transaction }) => {
+    const logs = transaction?.transaction_info?.logs
+    if (!Array.isArray(logs)) return []
+
+    return logs
+      .filter((log) => log.name === 'Approval')
+      .map((log) => ({
+        tokenAddress: log.raw.address.toLowerCase() as HexAddress,
+        spender: log.inputs[1].value as HexAddress,
+      }))
+  })
+}
+
 export const splitTokenFlows = (flows: TokenTransfer[], address: string) => {
   const addrLower = address.toLowerCase()
   return {
