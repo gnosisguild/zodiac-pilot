@@ -26,7 +26,9 @@ afterEach(async () => {
 })
 
 vi.mock('@/simulation-server', async () => {
-  const actual = await vi.importActual<typeof import('@/simulation-server')>('@/simulation-server')
+  const actual = await vi.importActual<typeof import('@/simulation-server')>(
+    '@/simulation-server',
+  )
   return {
     ...actual,
     simulateBundleTransaction: vi.fn(async () => {
@@ -59,8 +61,6 @@ vi.mock('@/balances-server', async (importOriginal) => {
     getChain: vi.fn(),
   }
 })
-
-
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 const mockGetChain = vi.mocked(getChain)
