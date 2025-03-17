@@ -327,8 +327,8 @@ importers:
         version: 3.24.2
     devDependencies:
       '@depay/web3-mock':
-        specifier: 14.19.1
-        version: 14.19.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 15.1.1
+        version: 15.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@playwright/test':
         specifier: 1.51.0
         version: 1.51.0
@@ -728,8 +728,8 @@ importers:
   packages/test-utils:
     dependencies:
       '@depay/web3-mock':
-        specifier: 14.19.1
-        version: 14.19.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 15.1.1
+        version: 15.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@epic-web/invariant':
         specifier: 1.0.0
         version: 1.0.0
@@ -1341,15 +1341,15 @@ packages:
     resolution: {integrity: sha512-UJnjoFsmxfKUdNYdWgOB0mWUypuLvAfQPH1+pyvRJs6euowbFkFC6P13w1l8mJyi3vxYMxc9kld5jZEGRQs6bw==}
     engines: {node: '>=18'}
 
-  '@depay/solana-web3.js@1.28.0':
-    resolution: {integrity: sha512-E08PbTLKBUnBb8vUYx4q6Zy5lcQtlIIHxwfD7BamUy97RwpAhwckv0ZLD0XhxcJQBXjLlwHlLph31Qi3pxgszg==}
+  '@depay/solana-web3.js@1.98.0':
+    resolution: {integrity: sha512-4Gi+tjyWNS94D2NyNGtMMnyCf1d5M/Hbsw7WZis21RF0GyFFEu8wsbQHq+4KL6IaaUma0e0mGz8HLwCAGJd47A==}
 
-  '@depay/web3-blockchains@9.7.5':
-    resolution: {integrity: sha512-Nhte6p1mYolqe58JS3Gt3ebn1/xsMMzytNhHk6BK/rpCeqTwX2WyeaYeTAHXNn0sm99hlZM4Qf2Vo4BeZUKOLw==}
+  '@depay/web3-blockchains@9.7.9':
+    resolution: {integrity: sha512-nYv04ClJn6aOUrusApIyBtIk3/wHxY2OnQC5mFQ7giJqr0/ZE3FbdDmKHPYYkysedNQdERq/lR+p+AFWVzfEQQ==}
     engines: {node: '>=18'}
 
-  '@depay/web3-mock@14.19.1':
-    resolution: {integrity: sha512-bBM1J0EWDWXJKVPtzo8YrX7fbGwUATYWN8kaJniQU2z5V+UK3kVhjQi+en0JMF9cCjinkERK7MqoZLaYR+cb+Q==}
+  '@depay/web3-mock@15.1.1':
+    resolution: {integrity: sha512-hAVm0WNG/7oqudIG37fc4q9KIRInnDZv0hMyzDp3hsH6k7pHyzMu4zXLu39TTyJGcAaONo1bvxGqjFQt6XnXRg==}
     engines: {node: '>=16'}
 
   '@dependents/detective-less@5.0.0':
@@ -7982,16 +7982,16 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.3': {}
 
-  '@depay/solana-web3.js@1.28.0':
+  '@depay/solana-web3.js@1.98.0':
     dependencies:
       bs58: 5.0.0
 
-  '@depay/web3-blockchains@9.7.5': {}
+  '@depay/web3-blockchains@9.7.9': {}
 
-  '@depay/web3-mock@14.19.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@depay/web3-mock@15.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
-      '@depay/solana-web3.js': 1.28.0
-      '@depay/web3-blockchains': 9.7.5
+      '@depay/solana-web3.js': 1.98.0
+      '@depay/web3-blockchains': 9.7.9
       ethers: 5.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
