@@ -29,6 +29,7 @@ import {
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
+  createRouteId,
   updateAvatar,
   updateChainId,
   updateLabel,
@@ -39,7 +40,7 @@ import {
   Form,
   Info,
   Labeled,
-  PrimaryButton,
+  PrimaryButtonGroup,
   SecondaryLinkButton,
   TextInput,
   Warning,
@@ -115,6 +116,14 @@ export const action = async ({ request, params }: RouteType.ActionArgs) => {
       return updateLabel(route, getString(data, 'label'))
     }
 
+    case Intent.SaveAsCopy: {
+      const selectedRoute = await findSelectedRoute(route, data)
+
+      route = { ...route, ...selectedRoute, id: createRouteId() }
+
+      return updateLabel(route, getString(data, 'label'))
+    }
+
     case Intent.UpdateInitiator: {
       const account = await createAccount(
         jsonRpcProvider(getChainId(route.avatar)),
@@ -174,7 +183,8 @@ export const clientAction = async ({
   const serverResult = await serverAction()
 
   switch (intent) {
-    case Intent.Save: {
+    case Intent.Save:
+    case Intent.SaveAsCopy: {
       const { promise, resolve } = Promise.withResolvers<void>()
 
       invariantResponse(
@@ -265,14 +275,20 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
 
           <Form id={formId}>
             <Form.Actions>
-              <PrimaryButton
+              <PrimaryButtonGroup
                 submit
                 intent={Intent.Save}
                 disabled={!connected}
+                groupLabel="Show save options"
+                group={(GroupOption) => (
+                  <GroupOption submit intent={Intent.SaveAsCopy}>
+                    Save as copy
+                  </GroupOption>
+                )}
                 busy={useIsPending(Intent.Save)}
               >
                 Save
-              </PrimaryButton>
+              </PrimaryButtonGroup>
 
               {!connected && (
                 <div className="text-balance text-xs opacity-75">

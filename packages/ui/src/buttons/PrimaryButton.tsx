@@ -1,6 +1,8 @@
 import cn from 'classnames'
 import {
   BaseButton,
+  BaseButtonGroup,
+  type BaseButtonGroupProps,
   type BaseButtonProps,
   BaseLinkButton,
   type BaseLinkButtonProps,
@@ -14,6 +16,24 @@ export const PrimaryButton = ({
   ...props
 }: PrimaryButtonProps) => (
   <BaseButton
+    {...props}
+    className={cn(
+      'font-bold ring-2 ring-transparent',
+      style === 'regular' &&
+        'border-transparent bg-zinc-900 text-zinc-50 focus:border-white focus:ring-indigo-600 enabled:hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:focus:border-transparent dark:focus:ring-teal-400 dark:enabled:hover:bg-zinc-50',
+    )}
+  />
+)
+
+type PrimaryButtonGroupProps = WithStyle<
+  Omit<BaseButtonGroupProps, 'className'>
+>
+
+export const PrimaryButtonGroup = ({
+  style = 'regular',
+  ...props
+}: PrimaryButtonGroupProps) => (
+  <BaseButtonGroup
     {...props}
     className={cn(
       'font-bold ring-2 ring-transparent',
