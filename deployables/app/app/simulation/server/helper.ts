@@ -2,6 +2,7 @@ import type { TokenTransfer } from '@/balances-client'
 import { getChain, getTokenDetails } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
+import { ZeroAddress } from 'ethers'
 import { formatUnits } from 'viem'
 import type { SimulationResult } from '../types'
 
@@ -38,8 +39,8 @@ export const extractTokenFlowsFromSimulation = async (
 
           return {
             ...tokenDetails,
-            from: change.from as HexAddress,
-            to: change.to as HexAddress,
+            from: change.from ?? ZeroAddress,
+            to: change.to ?? ZeroAddress,
             token: tokenAddress,
             amount: formattedAmount,
           } as TokenTransfer
