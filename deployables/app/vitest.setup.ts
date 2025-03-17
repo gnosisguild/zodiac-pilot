@@ -25,6 +25,29 @@ afterEach(async () => {
   cleanup()
 })
 
+vi.mock('@/simulation-server', async () => {
+  const actual = await vi.importActual<typeof import('@/simulation-server')>(
+    '@/simulation-server',
+  )
+  return {
+    ...actual,
+    simulateBundleTransaction: vi.fn(async () => {
+      return {
+        simulation_results: [
+          {
+            transaction: {
+              network_id: '1',
+              transaction_info: {
+                asset_changes: [],
+              },
+            },
+          },
+        ],
+      }
+    }),
+  }
+})
+
 vi.mock('@/balances-server', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/balances-server')>()
 

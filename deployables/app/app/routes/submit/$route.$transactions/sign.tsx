@@ -1,5 +1,12 @@
 import { ConnectWallet } from '@/components'
-import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import {
+  ChainSelect,
+  Route,
+  Routes,
+  TokenTransferTable,
+  Waypoint,
+  Waypoints,
+} from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -12,6 +19,7 @@ import {
   Error,
   errorToast,
   Form,
+  Info,
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
@@ -19,7 +27,12 @@ import {
   successToast,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
-import { SquareArrowOutUpRight } from 'lucide-react'
+import {
+  ArrowDownToLine,
+  ArrowLeftRight,
+  ArrowUpFromLine,
+  SquareArrowOutUpRight,
+} from 'lucide-react'
 import { useState } from 'react'
 import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
 import {
@@ -28,11 +41,19 @@ import {
   ExecutionActionType,
   planExecution,
   queryRoutes,
+  splitPrefixedAddress,
   unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
+
+import {
+  extractTokenFlowsFromSimulation,
+  simulateBundleTransaction,
+  splitTokenFlows,
+  type SimulationParams,
+} from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
@@ -42,15 +63,33 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [plan, routes, permissionCheck] = await Promise.all([
-    planExecution(metaTransactions, {
-      initiator,
-      waypoints,
-      ...route,
-    }),
-    queryRoutes(unprefixAddress(initiator), route.avatar),
-    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-  ])
+  const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
+
+  const simulationParams: SimulationParams[] = metaTransactions.map((tx) => ({
+    network_id: chainId ?? 1,
+    from: avatarAddress,
+    to: tx.to,
+    input: tx.data,
+    value: tx.value.toString(),
+    save: true,
+    save_if_fails: true,
+    simulation_type: 'full',
+  }))
+
+  const [plan, routes, permissionCheck, simulationResponse] = await Promise.all(
+    [
+      planExecution(metaTransactions, {
+        initiator,
+        waypoints,
+        ...route,
+      }),
+      queryRoutes(unprefixAddress(initiator), route.avatar),
+      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+      simulateBundleTransaction(simulationParams),
+    ],
+  )
+
+  const tokenFlows = await extractTokenFlowsFromSimulation(simulationResponse)
 
   return {
     plan,
@@ -61,6 +100,8 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
+    tokenFlows,
+    avatarAddress,
   }
 }
 
@@ -72,11 +113,13 @@ const SubmitPage = ({
     waypoints,
     isValidRoute,
     permissionCheck,
+    tokenFlows,
+    avatarAddress,
   },
   params: { route, transactions },
 }: RouteType.ComponentProps) => {
   const { location, formData } = useNavigation()
-
+  const { sent, received, other } = splitTokenFlows(tokenFlows, avatarAddress)
   return (
     <>
       <Form>
@@ -128,7 +171,6 @@ const SubmitPage = ({
             </div>
           </Labeled>
         </Form.Section>
-
         <Form.Section
           title="Permissions check"
           description="We check whether any permissions on the current route would prevent this transaction from succeeding."
@@ -146,6 +188,49 @@ const SubmitPage = ({
         >
           <ConnectWallet chainId={chainId} pilotAddress={initiator} />
         </Form.Section>
+
+        {tokenFlows.length === 0 ? (
+          <Info title="No token flows">
+            This transaction does not involve any token transfers.
+          </Info>
+        ) : (
+          <Form.Section
+            title="Token Flows"
+            description="An overview of the tokens involved in this transaction bundle."
+          >
+            <div className="flex flex-col gap-8">
+              {sent.length > 0 && (
+                <TokenTransferTable
+                  title="Tokens Sent"
+                  columnTitle="To"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowUpFromLine className="h-4 w-4" />}
+                  tokens={sent}
+                />
+              )}
+
+              {received.length > 0 && (
+                <TokenTransferTable
+                  title="Tokens Received"
+                  columnTitle="From"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowDownToLine className="h-4 w-4" />}
+                  tokens={received}
+                />
+              )}
+
+              {other.length > 0 && (
+                <TokenTransferTable
+                  title="Other Token Movements"
+                  columnTitle="From → To"
+                  ownAddress={avatarAddress}
+                  icon={<ArrowLeftRight className="h-4 w-4" />}
+                  tokens={other}
+                />
+              )}
+            </div>
+          </Form.Section>
+        )}
 
         <Form.Actions>
           <SubmitTransaction
