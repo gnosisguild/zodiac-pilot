@@ -1,6 +1,7 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import type { Route } from './+types/root'
 import './general.css'
+import { Matomo } from './matomo'
 
 export const meta: Route.MetaFunction = () => [
   { title: 'Zodiac Pilot' },
@@ -21,6 +22,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <Matomo />
       </head>
       <body className="h-full text-zinc-900 dark:text-white">
         {children}
