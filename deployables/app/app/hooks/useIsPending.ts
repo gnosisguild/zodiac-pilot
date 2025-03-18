@@ -1,28 +1,35 @@
 import { useNavigation } from 'react-router'
 
 type CheckFn = (data: FormData) => boolean
-type IntentOrCheckFn = string | CheckFn
 
-export const useIsPending = (...intentOrCheckFns: IntentOrCheckFn[]) => {
+export const useIsPending = (
+  intent: string | string[] = [],
+  ...checkFns: CheckFn[]
+) => {
   const { state, formData } = useNavigation()
 
   if (state === 'idle') {
     return false
   }
 
-  if (intentOrCheckFns.length === 0) {
+  const intents = Array.isArray(intent) ? intent : [intent]
+
+  if (intents.length === 0 && checkFns.length === 0) {
     return true
   }
 
-  return intentOrCheckFns.every((intentOrCheckFn) => {
-    if (formData == null) {
-      return false
-    }
+  if (formData == null) {
+    return false
+  }
 
-    if (typeof intentOrCheckFn === 'string') {
-      return formData.get('intent') === intentOrCheckFn
-    }
+  const matchesIntent =
+    intents.length === 0
+      ? true
+      : intents.some((intent) => formData.get('intent') === intent)
 
-    return intentOrCheckFn(formData)
-  })
+  if (checkFns.length === 0 || !matchesIntent) {
+    return matchesIntent
+  }
+
+  return checkFns.some((checkFn) => checkFn(formData))
 }

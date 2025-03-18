@@ -8,7 +8,11 @@ import {
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { sleepTillIdle } from '@zodiac/test-utils'
-import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
+import {
+  configMocks,
+  mockAnimationsApi,
+  mockResizeObserver,
+} from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 import { createMockChain } from './test-utils/createMockChain'
 import { createMockToken } from './test-utils/createMockToken'
@@ -16,6 +20,7 @@ import { createMockToken } from './test-utils/createMockToken'
 configMocks({ afterEach, afterAll })
 
 mockAnimationsApi()
+mockResizeObserver()
 
 Element.prototype.scrollIntoView = vi.fn()
 

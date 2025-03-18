@@ -8,6 +8,7 @@ export { createMockChain } from './createMockChain'
 export { createMockTokenBalance } from './createMockTokenBalance'
 export { loadRoutes } from './loadRoutes'
 export { postMessage } from './postMessage'
+export { regexEscape } from './regexEscape'
 export { render } from './render'
 export * from './wallet'
 

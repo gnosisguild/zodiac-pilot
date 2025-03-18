@@ -3,4 +3,5 @@ export enum Intent {
   UpdateAvatar = 'UpdateAvatar',
   UpdateChain = 'UpdateChain',
   Save = 'Save',
+  SaveAsCopy = 'SaveAsCopy',
 }

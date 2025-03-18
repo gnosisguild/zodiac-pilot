@@ -1,12 +1,9 @@
 import { getAvailableChains } from '@/balances-server'
-import { createMockChain, render } from '@/test-utils'
+import { createMockChain, expectMessage, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
-import {
-  CompanionAppMessageType,
-  type CompanionAppMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import { createBlankRoute, updateAvatar, updateChainId } from '@zodiac/modules'
 import { encode } from '@zodiac/schema'
 import {
@@ -175,19 +172,74 @@ describe('Edit route', () => {
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
-      await waitFor(() => {
-        expect(postMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.SAVE_ROUTE,
-            data: expect.objectContaining({
-              waypoints: newRoute.waypoints,
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_ROUTE,
+        data: expect.objectContaining({
+          waypoints: newRoute.waypoints,
 
-              id: route.id,
-              label: route.label,
-            }),
-          } satisfies CompanionAppMessage,
-          '*',
-        )
+          id: route.id,
+          label: route.label,
+        }),
+      })
+    })
+  })
+
+  describe('Save as', () => {
+    it('is possible to save the route as a copy', async () => {
+      const route = createMockExecutionRoute()
+
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
+
+      await userEvent.type(
+        screen.getByRole('textbox', { name: 'Label' }),
+        'New route',
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Show save options' }),
+      )
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: 'Save as copy' }),
+      )
+
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_ROUTE,
+        data: {
+          ...route,
+
+          id: expect.stringMatching(new RegExp(`^(?!${route.id}$).*`)),
+          label: 'New route',
+        },
+      })
+    })
+
+    it('adds the word "Copy" to the label if it was not changed', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
+
+      await render(
+        href('/edit/:routeId/:data', {
+          routeId: route.id,
+          data: encode(route),
+        }),
+      )
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Show save options' }),
+      )
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: 'Save as copy' }),
+      )
+
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_ROUTE,
+        data: expect.objectContaining({
+          label: 'Test route (copy)',
+        }),
       })
     })
   })

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import type { LucideIcon } from 'lucide-react'
+import { type LucideIcon } from 'lucide-react'
 import type { ComponentPropsWithoutRef } from 'react'
 import { Link } from 'react-router'
 import { Spinner } from '../Spinner'
@@ -171,7 +171,7 @@ export const BaseLinkButton = ({
   )
 }
 
-const getPadding = ({
+export const getPadding = ({
   iconOnly = false,
   size = 'base',
 }: Pick<SharedButtonProps, 'iconOnly' | 'size'>) => {

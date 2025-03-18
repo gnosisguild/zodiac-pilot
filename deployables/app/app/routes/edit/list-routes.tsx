@@ -200,14 +200,17 @@ const Route = ({ route, active }: RouteProps) => {
 }
 
 const Actions = ({ routeId }: { routeId: string }) => {
-  const submitting = useIsPending((data) => data.get('routeId') === routeId)
+  const submitting = useIsPending(
+    undefined,
+    (data) => data.get('routeId') === routeId,
+  )
   const [menuOpen, setMenuOpen] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   return (
     <div
       className={classNames(
-        'flex justify-end transition-opacity group-hover:opacity-100',
+        'flex justify-end gap-1 transition-opacity group-hover:opacity-100',
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
