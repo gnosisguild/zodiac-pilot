@@ -64,7 +64,7 @@ export const TokenTransferTable = ({
             <TableRow key={index}>
               <TableCell>
                 <Token logo={logoUrl}>
-                  {symbol} <span className="ml-2"> {amount}</span>
+                  {symbol} <span className="ml-2">{amount}</span>
                 </Token>
               </TableCell>
 
