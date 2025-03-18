@@ -1,12 +1,5 @@
 import { ConnectWallet } from '@/components'
-import {
-  ChainSelect,
-  Route,
-  Routes,
-  TokenTransferTable,
-  Waypoint,
-  Waypoints,
-} from '@/routes-ui'
+import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -19,7 +12,6 @@ import {
   Error,
   errorToast,
   Form,
-  Info,
   Labeled,
   PrimaryButton,
   SecondaryLinkButton,
@@ -55,6 +47,7 @@ import {
   type SimulationParams,
 } from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
+import { TokenTransferTable } from './TokenTransferTable'
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
@@ -171,6 +164,36 @@ const SubmitPage = ({
             </div>
           </Labeled>
         </Form.Section>
+
+        <Form.Section
+          title="Token Flows"
+          description="An overview of the tokens involved in this transaction bundle."
+        >
+          <TokenTransferTable
+            title="Tokens Sent"
+            columnTitle="To"
+            ownAddress={avatarAddress}
+            icon={<ArrowUpFromLine className="h-4 w-4" />}
+            tokens={sent}
+          />
+
+          <TokenTransferTable
+            title="Tokens Received"
+            columnTitle="From"
+            ownAddress={avatarAddress}
+            icon={<ArrowDownToLine className="h-4 w-4" />}
+            tokens={received}
+          />
+
+          <TokenTransferTable
+            title="Other Token Movements"
+            columnTitle="From → To"
+            ownAddress={avatarAddress}
+            icon={<ArrowLeftRight className="h-4 w-4" />}
+            tokens={other}
+          />
+        </Form.Section>
+
         <Form.Section
           title="Permissions check"
           description="We check whether any permissions on the current route would prevent this transaction from succeeding."
@@ -188,49 +211,6 @@ const SubmitPage = ({
         >
           <ConnectWallet chainId={chainId} pilotAddress={initiator} />
         </Form.Section>
-
-        {tokenFlows.length === 0 ? (
-          <Info title="No token flows">
-            This transaction does not involve any token transfers.
-          </Info>
-        ) : (
-          <Form.Section
-            title="Token Flows"
-            description="An overview of the tokens involved in this transaction bundle."
-          >
-            <div className="flex flex-col gap-8">
-              {sent.length > 0 && (
-                <TokenTransferTable
-                  title="Tokens Sent"
-                  columnTitle="To"
-                  ownAddress={avatarAddress}
-                  icon={<ArrowUpFromLine className="h-4 w-4" />}
-                  tokens={sent}
-                />
-              )}
-
-              {received.length > 0 && (
-                <TokenTransferTable
-                  title="Tokens Received"
-                  columnTitle="From"
-                  ownAddress={avatarAddress}
-                  icon={<ArrowDownToLine className="h-4 w-4" />}
-                  tokens={received}
-                />
-              )}
-
-              {other.length > 0 && (
-                <TokenTransferTable
-                  title="Other Token Movements"
-                  columnTitle="From → To"
-                  ownAddress={avatarAddress}
-                  icon={<ArrowLeftRight className="h-4 w-4" />}
-                  tokens={other}
-                />
-              )}
-            </div>
-          </Form.Section>
-        )}
 
         <Form.Actions>
           <SubmitTransaction
