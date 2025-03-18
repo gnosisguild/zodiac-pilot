@@ -260,7 +260,7 @@ describe('extractApprovalsFromSimulation', () => {
       spender: '0xSpender',
     })
     expect(result[1]).toMatchObject({
-      tokenAddress: '0xanothertoken',
+      tokenAddress: '0xAnotherToken',
       spender: '0xSpender2',
     })
   })
@@ -308,11 +308,11 @@ describe('extractApprovalsFromSimulation', () => {
     const result = extractApprovalsFromSimulation(simulation)
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({
-      tokenAddress: '0xtoken1',
+      tokenAddress: '0xToken1',
       spender: '0xSpender1',
     })
     expect(result[1]).toMatchObject({
-      tokenAddress: '0xtoken2',
+      tokenAddress: '0xToken2',
       spender: '0xSpender2',
     })
   })
