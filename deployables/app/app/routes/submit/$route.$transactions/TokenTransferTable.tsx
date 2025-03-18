@@ -28,7 +28,7 @@ export const TokenTransferTable = ({
   ownAddress,
 }: TokenTransferTable) => {
   return (
-    <Table dense bleed>
+    <Table dense>
       <TableHead>
         <TableRow>
           <TableHeader>
@@ -43,6 +43,14 @@ export const TokenTransferTable = ({
       </TableHead>
 
       <TableBody>
+        {tokens.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={2} align="center">
+              <span className="italic opacity-75">No recorded token flows</span>
+            </TableCell>
+          </TableRow>
+        )}
+
         {tokens.map(({ symbol, from, to, logoUrl, amount }, index) => {
           const fromOwn = from.toLowerCase() === ownAddress.toLowerCase()
           const toOwn = to.toLowerCase() === ownAddress.toLowerCase()
