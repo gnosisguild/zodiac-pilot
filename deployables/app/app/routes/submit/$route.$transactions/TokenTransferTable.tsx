@@ -41,14 +41,19 @@ export const TokenTransferTable = ({
             </div>
           </TableHeader>
 
-          <TableHeader align="right">{columnTitle}</TableHeader>
+          {tokens.length > 0 && (
+            <>
+              <TableHeader>{columnTitle}</TableHeader>
+              <TableHeader align="right">Amount</TableHeader>
+            </>
+          )}
         </TableRow>
       </TableHead>
 
       <TableBody>
         {tokens.length === 0 && (
           <TableRow>
-            <TableCell colSpan={2} align="center">
+            <TableCell align="center">
               <span className="italic opacity-75">No recorded token flows</span>
             </TableCell>
           </TableRow>
@@ -63,13 +68,11 @@ export const TokenTransferTable = ({
           return (
             <TableRow key={index}>
               <TableCell>
-                <Token logo={logoUrl}>
-                  {symbol} <span className="ml-2"> {amount}</span>
-                </Token>
+                <Token logo={logoUrl}>{symbol}</Token>
               </TableCell>
 
-              <TableCell align="right">
-                <div className="flex flex-col items-center justify-end gap-1 text-right sm:flex-row sm:items-center sm:gap-2">
+              <TableCell>
+                <div className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-2">
                   {!fromAvatar && (
                     <span className="whitespace-nowrap">
                       {isMint ? (
@@ -98,6 +101,10 @@ export const TokenTransferTable = ({
                     </span>
                   )}
                 </div>
+              </TableCell>
+
+              <TableCell align="right" className="tabular-nums">
+                {amount}
               </TableCell>
             </TableRow>
           )

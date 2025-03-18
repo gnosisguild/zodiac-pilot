@@ -8,7 +8,6 @@ import { Empty } from '../Empty'
 import { defaultSize, type Size } from '../common'
 import { Popover } from '../overlays'
 import { Blockie } from './Blockie'
-import { shortenAddress } from './shortenAddress'
 
 type AddressProps = {
   children: HexAddress | PrefixedAddress
@@ -69,17 +68,7 @@ export const Address = ({
           size === 'tiny' && 'text-xs',
         )}
       >
-        {shorten ? (
-          <Popover
-            position="bottom"
-            popover={<Address size="small">{address}</Address>}
-          >
-            <span className="lowercase">0x</span>
-            {shortenAddress(getAddress(address))}
-          </Popover>
-        ) : (
-          getAddress(address)
-        )}
+        {shorten ? <ShortAddress>{address}</ShortAddress> : getAddress(address)}
       </code>
 
       {allowCopy && (
@@ -88,5 +77,27 @@ export const Address = ({
         </CopyToClipboard>
       )}
     </div>
+  )
+}
+
+const VISIBLE_START = 4
+const VISIBLE_END = 4
+
+const ShortAddress = ({ children }: { children: HexAddress }) => {
+  const start = children.substring(2, VISIBLE_START + 2)
+  const end = children.substring(42 - VISIBLE_END, 42)
+
+  return (
+    <Popover
+      position="bottom"
+      popover={<Address size="small">{children}</Address>}
+    >
+      <span className="flex items-center">
+        <span className="lowercase">0x</span>
+        {start}
+        <span className="font-sans">...</span>
+        {end}
+      </span>
+    </Popover>
   )
 }
