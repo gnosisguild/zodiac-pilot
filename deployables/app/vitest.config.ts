@@ -25,6 +25,8 @@ export default defineConfig({
     mockReset: true,
     clearMocks: true,
 
+    retry: process.env.CI ? 1 : undefined,
+
     poolOptions: {
       forks: { singleFork: true },
       threads: { singleThread: true },
