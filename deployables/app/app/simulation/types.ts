@@ -3,13 +3,13 @@ import { z } from 'zod'
 
 const tokenInfoSchema = z.object({
   standard: z.string().optional(),
-  type: z.string(),
-  symbol: z.string(),
+  type: z.string().optional(),
+  symbol: z.string().optional(),
   contract_address: z.string().optional(),
-  name: z.string(),
-  logo: z.string().url().nullable().or(z.string().length(0)),
-  decimals: z.number(),
-  dollar_value: z.string(),
+  name: z.string().optional(),
+  logo: z.string().url().nullable().or(z.string().length(0)).optional(),
+  decimals: z.number().optional(),
+  dollar_value: z.string().optional(),
 })
 
 const assetChangeSchema = z.object({
@@ -17,9 +17,9 @@ const assetChangeSchema = z.object({
   type: z.string(),
   from: z.string().optional(),
   to: z.string().optional(),
-  amount: z.string(),
+  amount: z.string().nullable(),
   raw_amount: z.string(),
-  dollar_value: z.string(),
+  dollar_value: z.string().nullable(),
 })
 
 const diffSchema = z.object({

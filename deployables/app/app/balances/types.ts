@@ -10,7 +10,7 @@ export const tokenSchema = z.object({
   optimized_symbol: z.string().nullable(),
   decimals: z.number().int().nullable(),
   logo_url: z.string().nullable(),
-  is_core: z.boolean(),
+  is_core: z.boolean().nullable(),
   price: z.number(),
   time_at: z.number().int().nullable(),
 })
