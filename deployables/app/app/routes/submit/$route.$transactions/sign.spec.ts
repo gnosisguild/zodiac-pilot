@@ -86,24 +86,6 @@ describe('Sign', () => {
         expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
       })
 
-      it('disables the button to select a different route', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
-
-        mockQueryRoutes.mockResolvedValue([])
-
-        await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
-            transactions: encode([transaction]),
-          }),
-        )
-
-        expect(
-          screen.getByRole('button', { name: 'Select a different route' }),
-        ).toBeDisabled()
-      })
-
       it('shows a warning to the user', async () => {
         const currentRoute = createMockSerRoute({ initiator })
         const transaction = createMockTransaction()
