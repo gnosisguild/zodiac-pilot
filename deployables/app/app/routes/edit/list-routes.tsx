@@ -207,7 +207,7 @@ const Actions = ({ routeId }: { routeId: string }) => {
   return (
     <div
       className={classNames(
-        'flex justify-end transition-opacity group-hover:opacity-100',
+        'flex justify-end gap-1 transition-opacity group-hover:opacity-100',
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
