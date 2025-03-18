@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@depay/web3-mock": "15.1.1",
-    "@playwright/test": "1.51.0",
+    "@playwright/test": "1.51.1",
     "@safe-global/safe-gateway-typescript-sdk": "3.22.9",
     "@sentry/esbuild-plugin": "3.2.2",
     "@tailwindcss/postcss": "4.0.14",
