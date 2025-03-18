@@ -238,7 +238,7 @@ describe('extractApprovalsFromSimulation', () => {
                 {
                   name: 'Approval',
                   raw: {
-                    address: '0xAnotherToken',
+                    address: '0xWd1',
                   },
                   inputs: [
                     { name: 'owner', value: '0xOwner2' },
@@ -260,7 +260,7 @@ describe('extractApprovalsFromSimulation', () => {
       spender: '0xSpender',
     })
     expect(result[1]).toMatchObject({
-      tokenAddress: '0xAnotherToken',
+      tokenAddress: '0xwd1',
       spender: '0xSpender2',
     })
   })
@@ -274,7 +274,7 @@ describe('extractApprovalsFromSimulation', () => {
               logs: [
                 {
                   name: 'Approval',
-                  raw: { address: '0xToken1' },
+                  raw: { address: '0xAbc1' },
                   inputs: [
                     { name: 'owner', value: '0xOwner1' },
                     { name: 'spender', value: '0xSpender1' },
@@ -291,7 +291,7 @@ describe('extractApprovalsFromSimulation', () => {
               logs: [
                 {
                   name: 'Approval',
-                  raw: { address: '0xToken2' },
+                  raw: { address: '0xAbc2' },
                   inputs: [
                     { name: 'owner', value: '0xOwner2' },
                     { name: 'spender', value: '0xSpender2' },
@@ -308,11 +308,11 @@ describe('extractApprovalsFromSimulation', () => {
     const result = extractApprovalsFromSimulation(simulation)
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({
-      tokenAddress: '0xToken1',
+      tokenAddress: '0xabc1',
       spender: '0xSpender1',
     })
     expect(result[1]).toMatchObject({
-      tokenAddress: '0xToken2',
+      tokenAddress: '0xabc2',
       spender: '0xSpender2',
     })
   })
