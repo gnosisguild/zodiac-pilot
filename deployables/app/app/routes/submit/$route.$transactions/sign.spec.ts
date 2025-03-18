@@ -1,12 +1,10 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
 import { encode } from '@zodiac/schema'
 import {
   createMockSerRoute,
   createMockTransaction,
-  expectRouteToBe,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -69,36 +67,6 @@ describe('Sign', () => {
         success: true,
         error: undefined,
       })
-    })
-
-    it('is possible to update the route', async () => {
-      const currentRoute = createMockSerRoute()
-      const newRoute = createMockSerRoute()
-      const transaction = createMockTransaction()
-
-      mockQueryRoutes.mockResolvedValue([currentRoute, newRoute])
-
-      await render(
-        href('/submit/:route/:transactions', {
-          route: encode(currentRoute),
-          transactions: encode([transaction]),
-        }),
-      )
-
-      await userEvent.click(
-        screen.getByRole('link', { name: 'Select a different route' }),
-      )
-
-      await userEvent.click((await screen.findAllByRole('radio'))[1])
-
-      await userEvent.click(screen.getByRole('button', { name: 'Use' }))
-
-      await expectRouteToBe(
-        href('/submit/:route/:transactions', {
-          route: encode(newRoute),
-          transactions: encode([transaction]),
-        }),
-      )
     })
 
     describe('Invalid route', () => {

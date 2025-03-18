@@ -14,7 +14,6 @@ import {
   Form,
   Labeled,
   PrimaryButton,
-  SecondaryLinkButton,
   Success,
   successToast,
 } from '@zodiac/ui'
@@ -26,14 +25,13 @@ import {
   SquareArrowOutUpRight,
 } from 'lucide-react'
 import { useState } from 'react'
-import { href, Outlet, useLoaderData, useNavigation } from 'react-router'
+import { Outlet, useLoaderData } from 'react-router'
 import {
   checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
   queryRoutes,
-  splitPrefixedAddress,
   unprefixAddress,
   type ExecutionPlan,
   type ExecutionState,
@@ -44,7 +42,6 @@ import {
   extractTokenFlowsFromSimulation,
   simulateBundleTransaction,
   splitTokenFlows,
-  type SimulationParams,
 } from '@/simulation-server'
 import type { Route as RouteType } from './+types/sign'
 import { TokenTransferTable } from './TokenTransferTable'
@@ -56,19 +53,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [chainId, avatarAddress] = splitPrefixedAddress(route.avatar)
-
-  const simulationParams: SimulationParams[] = metaTransactions.map((tx) => ({
-    network_id: chainId ?? 1,
-    from: avatarAddress,
-    to: tx.to,
-    input: tx.data,
-    value: tx.value.toString(),
-    save: true,
-    save_if_fails: true,
-    simulation_type: 'full',
-  }))
-
   const [plan, routes, permissionCheck, simulationResponse] = await Promise.all(
     [
       planExecution(metaTransactions, {
@@ -78,7 +62,18 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       }),
       queryRoutes(unprefixAddress(initiator), route.avatar),
       checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-      simulateBundleTransaction(simulationParams),
+      simulateBundleTransaction(
+        metaTransactions.map((tx) => ({
+          network_id: getChainId(route.avatar),
+          from: unprefixAddress(route.avatar),
+          to: tx.to,
+          input: tx.data,
+          value: tx.value.toString(),
+          save: true,
+          save_if_fails: true,
+          simulation_type: 'full',
+        })),
+      ),
     ],
   )
 
@@ -93,8 +88,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     waypoints,
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
-    tokenFlows,
-    avatarAddress,
+    tokenFlows: splitTokenFlows(tokenFlows, unprefixAddress(route.avatar)),
   }
 }
 
@@ -103,16 +97,13 @@ const SubmitPage = ({
     initiator,
     chainId,
     id,
+    avatar,
     waypoints,
     isValidRoute,
     permissionCheck,
-    tokenFlows,
-    avatarAddress,
+    tokenFlows: { other, received, sent },
   },
-  params: { route, transactions },
 }: RouteType.ComponentProps) => {
-  const { location, formData } = useNavigation()
-  const { sent, received, other } = splitTokenFlows(tokenFlows, avatarAddress)
   return (
     <>
       <Form>
@@ -149,19 +140,6 @@ const SubmitPage = ({
                 )}
               </Route>
             </Routes>
-
-            <div className="flex justify-end">
-              <SecondaryLinkButton
-                disabled={!isValidRoute}
-                busy={location != null && formData == null}
-                to={href('/submit/:route/:transactions/update-route', {
-                  route,
-                  transactions,
-                })}
-              >
-                Select a different route
-              </SecondaryLinkButton>
-            </div>
           </Labeled>
         </Form.Section>
 
@@ -172,24 +150,24 @@ const SubmitPage = ({
           <TokenTransferTable
             title="Tokens Sent"
             columnTitle="To"
-            ownAddress={avatarAddress}
-            icon={<ArrowUpFromLine className="h-4 w-4" />}
+            avatar={avatar}
+            icon={ArrowUpFromLine}
             tokens={sent}
           />
 
           <TokenTransferTable
             title="Tokens Received"
             columnTitle="From"
-            ownAddress={avatarAddress}
-            icon={<ArrowDownToLine className="h-4 w-4" />}
+            avatar={avatar}
+            icon={ArrowDownToLine}
             tokens={received}
           />
 
           <TokenTransferTable
             title="Other Token Movements"
             columnTitle="From → To"
-            ownAddress={avatarAddress}
-            icon={<ArrowLeftRight className="h-4 w-4" />}
+            avatar={avatar}
+            icon={ArrowLeftRight}
             tokens={other}
           />
         </Form.Section>
