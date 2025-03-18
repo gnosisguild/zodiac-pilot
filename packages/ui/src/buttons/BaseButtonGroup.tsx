@@ -62,9 +62,14 @@ export const BaseButtonGroup = ({
   </ButtonGroupContext>
 )
 
-export const BaseButtonGroupAction = (props: BaseButtonProps) => (
-  <BaseButton {...props} />
-)
+export const BaseButtonGroupAction = ({
+  disabled,
+  ...props
+}: BaseButtonProps) => {
+  const defaultDisabled = useDisabled()
+
+  return <BaseButton {...props} disabled={disabled ?? defaultDisabled} />
+}
 
 export const BaseButtonGroupTrigger = ({
   disabled,

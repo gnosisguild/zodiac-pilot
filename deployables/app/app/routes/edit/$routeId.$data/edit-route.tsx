@@ -290,7 +290,7 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
                     Save as copy
                   </GroupOption>
                 )}
-                busy={useIsPending(Intent.Save)}
+                busy={useIsPending([Intent.Save, Intent.SaveAsCopy])}
               >
                 Save
               </PrimaryButtonGroup>

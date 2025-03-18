@@ -1,5 +1,5 @@
 export const formData = (
-  data: Record<string, string | number | File>,
+  data: Record<string, string | number | File> = {},
 ): FormData => {
   const formData = new FormData()
 
