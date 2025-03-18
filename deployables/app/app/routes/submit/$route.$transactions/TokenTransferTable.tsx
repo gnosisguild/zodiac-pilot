@@ -10,30 +10,33 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { ZeroAddress } from 'ethers'
-import type { JSX } from 'react'
+import type { LucideIcon } from 'lucide-react'
+import { unprefixAddress, type PrefixedAddress } from 'ser-kit'
 
 type TokenTransferTable = {
-  icon: JSX.Element
+  icon: LucideIcon
   title: string
   columnTitle: string
   tokens: TokenTransfer[]
-  ownAddress: string
+  avatar: PrefixedAddress
 }
 
 export const TokenTransferTable = ({
-  icon,
+  icon: Icon,
   title,
   columnTitle,
   tokens,
-  ownAddress,
+  avatar,
 }: TokenTransferTable) => {
+  const avatarAddress = unprefixAddress(avatar).toLowerCase()
+
   return (
     <Table dense>
       <TableHead>
         <TableRow>
           <TableHeader>
             <div className="flex items-center gap-1">
-              {icon}
+              <Icon size={16} />
               {title}
             </div>
           </TableHeader>
@@ -52,8 +55,8 @@ export const TokenTransferTable = ({
         )}
 
         {tokens.map(({ symbol, from, to, logoUrl, amount }, index) => {
-          const fromOwn = from.toLowerCase() === ownAddress.toLowerCase()
-          const toOwn = to.toLowerCase() === ownAddress.toLowerCase()
+          const fromAvatar = from.toLowerCase() === avatarAddress
+          const toAvatar = to.toLowerCase() === avatarAddress
           const isMint = from === ZeroAddress
           const isBurn = to === ZeroAddress
 
@@ -67,7 +70,7 @@ export const TokenTransferTable = ({
 
               <TableCell align="right">
                 <div className="flex flex-col items-center justify-end gap-1 text-right sm:flex-row sm:items-center sm:gap-2">
-                  {!fromOwn && (
+                  {!fromAvatar && (
                     <span className="whitespace-nowrap">
                       {isMint ? (
                         <span title={`${ZeroAddress} (mint)`}>🌱</span>
@@ -79,11 +82,11 @@ export const TokenTransferTable = ({
                     </span>
                   )}
 
-                  {!fromOwn && !toOwn && (
+                  {!fromAvatar && !toAvatar && (
                     <span className="hidden sm:block">→</span>
                   )}
 
-                  {!toOwn && (
+                  {!toAvatar && (
                     <span className="whitespace-nowrap">
                       {isBurn ? (
                         <span title={`${ZeroAddress} (burn)`}>🔥</span>

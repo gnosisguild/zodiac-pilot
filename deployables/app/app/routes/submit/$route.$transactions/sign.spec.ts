@@ -1,12 +1,10 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
 import { encode } from '@zodiac/schema'
 import {
   createMockSerRoute,
   createMockTransaction,
-  expectRouteToBe,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -71,36 +69,6 @@ describe('Sign', () => {
       })
     })
 
-    it('is possible to update the route', async () => {
-      const currentRoute = createMockSerRoute()
-      const newRoute = createMockSerRoute()
-      const transaction = createMockTransaction()
-
-      mockQueryRoutes.mockResolvedValue([currentRoute, newRoute])
-
-      await render(
-        href('/submit/:route/:transactions', {
-          route: encode(currentRoute),
-          transactions: encode([transaction]),
-        }),
-      )
-
-      await userEvent.click(
-        screen.getByRole('link', { name: 'Select a different route' }),
-      )
-
-      await userEvent.click((await screen.findAllByRole('radio'))[1])
-
-      await userEvent.click(screen.getByRole('button', { name: 'Use' }))
-
-      await expectRouteToBe(
-        href('/submit/:route/:transactions', {
-          route: encode(newRoute),
-          transactions: encode([transaction]),
-        }),
-      )
-    })
-
     describe('Invalid route', () => {
       it('disables the submit button when no routes can be found', async () => {
         const currentRoute = createMockSerRoute({ initiator })
@@ -116,24 +84,6 @@ describe('Sign', () => {
         )
 
         expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
-      })
-
-      it('disables the button to select a different route', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
-
-        mockQueryRoutes.mockResolvedValue([])
-
-        await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
-            transactions: encode([transaction]),
-          }),
-        )
-
-        expect(
-          screen.getByRole('button', { name: 'Select a different route' }),
-        ).toBeDisabled()
       })
 
       it('shows a warning to the user', async () => {
