@@ -57,7 +57,7 @@ const transactionInfoSchema = z.object({
   raw_state_diff: z.any().nullable(),
   console_logs: z.any().nullable(),
   asset_changes: z.array(assetChangeSchema).nullable().default([]).optional(),
-  balance_changes: z.array(balanceChangeSchema).optional(),
+  balance_changes: z.array(balanceChangeSchema).optional().nullable(),
   created_at: z.string(),
 })
 
