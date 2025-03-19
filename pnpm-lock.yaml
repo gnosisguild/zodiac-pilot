@@ -152,8 +152,8 @@ importers:
         specifier: 7.3.0
         version: 7.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.12
         version: 2.23.12(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -320,8 +320,8 @@ importers:
         specifier: 5.0.6
         version: 5.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -554,8 +554,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/env:
     dependencies:
@@ -650,8 +650,8 @@ importers:
         specifier: 5.1.5
         version: 5.1.5
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -709,8 +709,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(typescript@5.8.2)(zod@3.24.2)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.12
         version: 2.23.12(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -783,8 +783,8 @@ importers:
         specifier: 9.22.0
         version: 9.22.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
 
   packages/ui:
     dependencies:
@@ -825,8 +825,8 @@ importers:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       ser-kit:
-        specifier: 3.5.1
-        version: 3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 3.6.0
+        version: 3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
       viem:
         specifier: 2.23.12
         version: 2.23.12(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -6429,8 +6429,8 @@ packages:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
     engines: {node: '>= 0.8.0'}
 
-  ser-kit@3.5.1:
-    resolution: {integrity: sha512-ZO0hhWlgKZSt3pJh+7WfTg5TSn5PEKeuMi3CgWuA/LkotIfDN5lE4l7AGHZt6eXCxJC/ut//I7/pKie+AovDlg==}
+  ser-kit@3.6.0:
+    resolution: {integrity: sha512-w54B/qj6V4LJFalX9AHze0Sly3DFKFfGuf8LivOnDdudMVUYH0upkhWH+8bCRlXoWB5zWrhDDCMWCoLKokl5tA==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -14140,7 +14140,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ser-kit@3.5.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
+  ser-kit@3.6.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 2.5.11(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
