@@ -25,7 +25,7 @@
     "ethereum-blockies-base64": "1.0.2",
     "framer-motion": "12.5.0",
     "lucide-react": "0.482.0",
-    "nanoid": "5.1.4",
+    "nanoid": "5.1.5",
     "react-select": "5.10.1",
     "react-stick": "5.0.6",
     "react-toastify": "11.0.5",
