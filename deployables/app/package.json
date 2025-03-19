@@ -41,7 +41,7 @@
     "react-router": "7.3.0",
     "ser-kit": "3.5.1",
     "viem": "2.23.12",
-    "wagmi": "2.14.13",
+    "wagmi": "2.14.15",
     "zod": "3.24.2"
   },
   "devDependencies": {
