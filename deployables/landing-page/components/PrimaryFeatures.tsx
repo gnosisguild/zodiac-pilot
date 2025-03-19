@@ -1,3 +1,4 @@
+import seamlessDappInteractions from '@/videos/seamless-dapp-Interactions.mp4'
 import { Divider } from '@zodiac/ui'
 import {
   AppWindow,
@@ -66,6 +67,11 @@ export function PrimaryFeatures() {
         section="Feature"
         title="Seamless Dapp Interactions"
         description="Pilot integrates Safe workflows directly into dapp interactions, eliminating the need for external approvals and custom integrations."
+        media={
+          <video loop muted autoPlay controls>
+            <source src={seamlessDappInteractions} type="video/mp4" />
+          </video>
+        }
       >
         <Description>
           <Description.Item
