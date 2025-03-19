@@ -27,7 +27,7 @@ export function PrimaryFeatures() {
         color="teal"
         section="Feature"
         title="Smart Execution for Safe Accounts"
-        description="Pilot powers institutional-grade treasury management, helping DAOs and other onchain entities reduce overhead and optimize operations through secure, efficient execution."
+        description="Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale on-chain operations."
       >
         <Description>
           <Description.Item
@@ -53,8 +53,8 @@ export function PrimaryFeatures() {
             title="Trusted at scale"
           >
             Pilot facilitates secure, non-custodial execution for over $2B in
-            DAO treasuries, including karpatkey, ENS DAO, Balancer, and
-            GnosisDAO.
+            DAO treasuries, including kpk (formerly karpatkey), ENS DAO,
+            Balancer, and GnosisDAO.
           </Description.Item>
         </Description>
       </Feature>
@@ -65,7 +65,7 @@ export function PrimaryFeatures() {
         color="indigo"
         section="Feature"
         title="Seamless Dapp Interactions"
-        description="Pilot integrates Safe workflows directly into dapp interactions, making transactions smooth, intuitive, and cost-efficient."
+        description="Pilot integrates Safe workflows directly into dapp interactions, eliminating the need for external approvals and custom integrations."
       >
         <Description>
           <Description.Item
@@ -139,7 +139,7 @@ export function PrimaryFeatures() {
         color="pink"
         section="Feature"
         title="Delegate with Advanced Permissions"
-        description="Pilot enables secure delegation with fine-grained permissions using Zodiac Roles Modifier — the most expressive conditions system for permissioning EVM calls."
+        description="Pilot enables secure delegation with fine-grained permissions using Zodiac Roles Modifier, allowing accounts to define precise, programmable execution rules."
       >
         <Description>
           <Description.Item

@@ -79,16 +79,22 @@ export const FAQs = () => {
             <Strong>Both.</Strong> While treasury teams and DAOs benefit from
             batching and role-based execution, individual users can use Pilot
             to:
-            <ul className="ml-4 mt-4 list-disc">
-              <li>Automate frequent interactions and reduce signer fatigue.</li>
+            <ol className="ml-4 mt-4 list-decimal">
+              <li>Automate frequent interactions and reduce signer fatigue;</li>
               <li>
-                Batch approvals across dapps for a smoother user experience.
+                Batch approvals across dapps for a smoother user experience; and
               </li>
               <li>
                 Test transactions before signing to prevent failed transactions
                 and unexpected costs.
               </li>
-            </ul>
+            </ol>
+          </FAQ>
+
+          <FAQ question="Are there fees associated with using Pilot?">
+            <Strong>Yes,</Strong> there is a structured fee on swaps [details
+            here]. These fees help sustain Pilot's development as we continue
+            make improvements and introduce new features.
           </FAQ>
         </dl>
       </div>

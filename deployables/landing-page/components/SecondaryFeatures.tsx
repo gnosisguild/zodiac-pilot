@@ -6,7 +6,7 @@ import editDark from '@/images/features/edit-account-dark.png'
 import editLight from '@/images/features/edit-account-light.png'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import classNames from 'classnames'
-import { Gift, Library, Table2 } from 'lucide-react'
+import { Library, Split, SwatchBook } from 'lucide-react'
 import { Container } from './Container'
 
 interface Feature {
@@ -18,27 +18,27 @@ interface Feature {
 
 const features: Array<Feature> = [
   {
-    name: 'Multiple Account - One Interface',
+    name: 'Multi-Account Management',
     summary:
-      'Pilot keeps all your accounts in one place which makes switching between them a breeze.',
+      'View balances, switch between Safe accounts, and transfer tokens — streamlining treasury operations.',
     image: [accountOverviewLight, accountOverviewDark],
     icon: Library,
   },
   {
-    name: 'Quick accounting',
+    name: 'Route Customization & Sharing',
     summary:
-      'View all assets that belong to an account and transfer tokens directly from our companion app.',
+      'Construct, edit, and share execution routes for flexible, repeatable workflows across teams.',
 
     image: [balancesLight, balancesDark],
-    icon: Table2,
+    icon: SwatchBook,
   },
   {
-    name: 'Minimal setup',
+    name: 'Automated Pathfinding',
     summary:
-      'Pilot will automatically find all routes between your signer account the target account. You simply need to choose which one to use.',
+      'Pilot intelligently identifies transaction routes between signer accounts and target destinations — you simply choose the best option for your needs.',
 
     image: [editLight, editDark],
-    icon: Gift,
+    icon: Split,
   },
 ]
 
@@ -181,11 +181,12 @@ export function SecondaryFeatures() {
       <Container>
         <div className="mx-auto max-w-2xl md:text-center">
           <h2 className="font-display text-3xl tracking-tight text-zinc-900 sm:text-4xl dark:text-slate-50">
-            Simplify everyday business tasks.
+            Manage Accounts & Execution Routes
           </h2>
           <p className="mt-4 text-lg tracking-tight text-zinc-700 dark:text-slate-300">
-            Because you’d probably be a little confused if we suggested you
-            complicate your everyday business tasks instead.
+            In addition to the side panel, Pilot makes it easy to track assets
+            across multiple Safe accounts and customize transaction routing —
+            ensuring smooth, efficient onchain operations.
           </p>
         </div>
         <FeaturesMobile />
