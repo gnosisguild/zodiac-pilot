@@ -5,11 +5,20 @@ import { Container } from './Container'
 const testimonials = [
   {
     content:
-      'Pilot and its underlying Zodiac modules for Safe have been instrumental in helping karpatkey manage funds securely, without taking custody of partner assets. The improved operational efficiency and security it affords have helped us grow our DAO treasury network to over $1.8B in assets.',
+      'Pilot and its underlying Zodiac modules for Safe have been instrumental in helping kpk manage funds securely, without taking custody of partner assets. The improved operational efficiency and security it affords have helped us grow our DAO treasury network to over $1.8B in assets.',
     author: {
       name: 'Marcelo Ruiz de Olano',
-      role: 'CEO at karpatkey',
+      role: 'CEO at kpk (formerly karpatkey)',
       image: marcelo,
+    },
+  },
+  {
+    content:
+      'Pilot extends the power of Safe with streamlined transaction building and seamless dapp compatibility — no custom setup is needed. It makes connecting Safes to web3 apps as easy as using an EOA, helping DAOs and treasury teams operate and scale efficiently.',
+    author: {
+      name: 'Lukas Schor',
+      role: 'Co-Founder Safe',
+      // image: marcelo,
     },
   },
   {
@@ -49,7 +58,7 @@ export function Testimonials() {
             mission-critical features.
           </p> */}
         </div>
-        <ul className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:gap-8 lg:mt-20 lg:max-w-none lg:grid-cols-2">
+        <ul className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:gap-8 lg:mt-20 lg:max-w-none lg:grid-cols-3">
           {testimonials.map((testimonial, testimonialIndex) => (
             <li key={testimonialIndex}>
               <figure className="relative rounded-2xl bg-white p-6 shadow-xl shadow-slate-900/10 dark:bg-slate-800 dark:shadow-2xl dark:shadow-slate-300/10">
