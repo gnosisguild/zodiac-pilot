@@ -1,4 +1,5 @@
 import { ConnectWallet } from '@/components'
+import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
   buildSimulationParams,
@@ -8,18 +9,14 @@ import {
   splitTokenFlows,
 } from '@/simulation-server'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
-import { invariant, invariantResponse } from '@epic-web/invariant'
+import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
+import { getBoolean } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { waitForMultisigExecution } from '@zodiac/safe'
-import type {
-  HexAddress,
-  MetaTransactionRequest,
-  PrefixedAddress,
-} from '@zodiac/schema'
 import {
   Checkbox,
   Error,
@@ -38,14 +35,13 @@ import {
   ArrowUpFromLine,
   SquareArrowOutUpRight,
 } from 'lucide-react'
-import { useState } from 'react'
-import { useLoaderData } from 'react-router'
+import { useEffect } from 'react'
+import { useActionData, useLoaderData } from 'react-router'
 import {
   checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
-  prefixAddress,
   queryRoutes,
   unprefixAddress,
   type ExecutionPlan,
@@ -87,23 +83,47 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     tokenFlows: splitTokenFlows(tokenFlows, unprefixAddress(route.avatar)),
     permissionCheck,
     waypoints,
-    approvalTxs,
+    hasApprovals: approvalTxs.length > 0,
     metaTransactions,
   }
 }
 
-export const action = ({ params }: RouteType.ActionArgs) => {
+export const action = async ({ params, request }: RouteType.ActionArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
 
   let finalTxs = metaTransactions
-  if (approvalTxs && revokeApproval) {
+
+  const data = await request.formData()
+  const revokeApprovals = getBoolean(data, 'revokeApprovals')
+
+  const { initiator, waypoints, ...route } = parseRouteData(params.route)
+  const simulation = await simulateBundleTransaction(
+    buildSimulationParams(
+      getChainId(route.avatar),
+      unprefixAddress(route.avatar),
+      metaTransactions,
+    ),
+  )
+  const approvalTxs = extractApprovalsFromSimulation(simulation)
+
+  console.log({ approvalTxs, revokeApprovals })
+
+  if (approvalTxs && revokeApprovals) {
     finalTxs = appendApprovalTransactions(metaTransactions, approvalTxs)
   }
+
+  console.log({ finalTxs })
+
+  invariantResponse(initiator != null, 'Route needs an initiator')
+  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+
   const plan = await planExecution(finalTxs, {
     initiator,
     waypoints,
     ...route,
   })
+
+  return { plan }
 }
 
 const SubmitPage = ({
@@ -116,11 +136,9 @@ const SubmitPage = ({
     isValidRoute,
     permissionCheck,
     tokenFlows: { other, received, sent },
-    approvalTxs,
-    metaTransactions,
+    hasApprovals,
   },
 }: RouteType.ComponentProps) => {
-  const [revokeApproval, setRevokeApproval] = useState(true)
   return (
     <Form>
       <Form.Section
@@ -199,13 +217,14 @@ const SubmitPage = ({
         )}
       </Form.Section>
 
-      {approvalTxs && (
+      {hasApprovals && (
         <Form.Section title="Leftover Approvals">
           <Checkbox
+            defaultChecked
             label="Revoke all approvals"
-            checked={revokeApproval}
-            onChange={() => setRevokeApproval((prev) => !prev)}
+            name="revokeApprovals"
           />
+
           <Info>
             Token approvals let other addresses spend your tokens. If you
             don&apos;t revoke them, they can keep spending indefinitely.
@@ -223,9 +242,6 @@ const SubmitPage = ({
       <Form.Actions>
         <SubmitTransaction
           disabled={!isValidRoute || !permissionCheck.success}
-          approvalTxs={approvalTxs}
-          initiator={prefixAddress(undefined, initiator)}
-          metaTransactions={metaTransactions}
         />
       </Form.Actions>
     </Form>
@@ -236,27 +252,139 @@ export default SubmitPage
 
 type SubmitTransactionProps = {
   disabled?: boolean
-  metaTransactions: MetaTransactionRequest[]
-  approvalTxs: { spender: HexAddress; tokenAddress: HexAddress }[]
-  revokeApproval: boolean
-  initiator: PrefixedAddress
-  rawRoute: string
 }
 
-const SubmitTransaction = ({
-  disabled = false,
-  revokeApproval,
-  rawRoute,
-  approvalTxs,
-  metaTransactions,
-  initiator,
-}: SubmitTransactionProps) => {
-  const { waypoints, ...route } = parseRouteData(rawRoute)
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
-  const { chainId, avatar } = useLoaderData<typeof loader>()
+const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
+  const { chainId, avatar, initiator } = useLoaderData<typeof loader>()
   const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
-  const [submitPending, setSubmitPending] = useState(false)
+
+  const actionData = useActionData<typeof action>()
+
+  useEffect(() => {
+    if (actionData == null) {
+      return
+    }
+
+    const { plan } = actionData
+
+    console.log({ plan })
+
+    const executePlan = async () => {
+      const state: ExecutionState = []
+
+      try {
+        await execute(
+          plan as ExecutionPlan,
+          state,
+          connectorClient as Eip1193Provider,
+          { origin: 'Zodiac Pilot' },
+        )
+
+        const safeTxHash =
+          state[
+            plan.findLastIndex(
+              (action) =>
+                action.type === ExecutionActionType.PROPOSE_TRANSACTION,
+            )
+          ]
+        const txHash =
+          safeTxHash == null
+            ? state[
+                plan.findLastIndex(
+                  (action) =>
+                    action.type === ExecutionActionType.EXECUTE_TRANSACTION,
+                )
+              ]
+            : undefined
+
+        if (txHash) {
+          console.debug(
+            `Transaction batch has been submitted with transaction hash ${txHash}`,
+          )
+          const receipt =
+            await jsonRpcProvider(chainId).waitForTransaction(txHash)
+          console.debug(`Transaction ${txHash} has been executed`, receipt)
+          successToast({
+            title: 'Transaction batch has been executed',
+            message: (
+              <a
+                href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+                className="inline-flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SquareArrowOutUpRight size={16} />
+                View in block explorer
+              </a>
+            ),
+          })
+        }
+
+        if (safeTxHash) {
+          console.debug(
+            `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
+          )
+
+          const url = new URL('/transactions/tx', 'https://app.safe.global')
+
+          url.searchParams.set('safe', avatar)
+          url.searchParams.set(
+            'id',
+            `multisig_${unprefixAddress(avatar)}_${safeTxHash}`,
+          )
+
+          successToast({
+            title: 'Transaction batch has been proposed for execution',
+            message: (
+              <a
+                href={url.toString()}
+                className="inline-flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SquareArrowOutUpRight size={16} />
+                {'View in Safe{Wallet}'}
+              </a>
+            ),
+          })
+          // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
+          const txHash = await waitForMultisigExecution(chainId, safeTxHash)
+          console.debug(
+            `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`,
+          )
+          successToast({
+            title: 'Proposed Safe transaction has been confirmed and executed',
+            message: (
+              <a
+                href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
+                className="inline-flex items-center gap-1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SquareArrowOutUpRight size={16} />
+                View in block explorer
+              </a>
+            ),
+          })
+        }
+
+        window.postMessage({
+          type: CompanionAppMessageType.SUBMIT_SUCCESS,
+        } satisfies CompanionAppMessage)
+      } catch (error) {
+        console.debug({ error })
+        errorToast({
+          title: 'Error',
+          message: 'Submitting the transaction batch failed',
+        })
+      }
+    }
+
+    executePlan()
+  }, [actionData, avatar, chainId, connectorClient])
+
+  const isSubmitting = useIsPending()
 
   if (
     disabled ||
@@ -268,125 +396,7 @@ const SubmitTransaction = ({
   }
 
   return (
-    <PrimaryButton
-      busy={submitPending}
-      onClick={async () => {
-        invariant(connectorClient != null, 'Client must be ready')
-
-        setSubmitPending(true)
-
-        const state: ExecutionState = []
-
-        try {
-          await execute(
-            plan as ExecutionPlan,
-            state,
-            connectorClient as Eip1193Provider,
-            { origin: 'Zodiac Pilot' },
-          )
-
-          const safeTxHash =
-            state[
-              plan.findLastIndex(
-                (action) =>
-                  action.type === ExecutionActionType.PROPOSE_TRANSACTION,
-              )
-            ]
-          const txHash =
-            safeTxHash == null
-              ? state[
-                  plan.findLastIndex(
-                    (action) =>
-                      action.type === ExecutionActionType.EXECUTE_TRANSACTION,
-                  )
-                ]
-              : undefined
-
-          if (txHash) {
-            console.debug(
-              `Transaction batch has been submitted with transaction hash ${txHash}`,
-            )
-            const receipt =
-              await jsonRpcProvider(chainId).waitForTransaction(txHash)
-            console.debug(`Transaction ${txHash} has been executed`, receipt)
-            successToast({
-              title: 'Transaction batch has been executed',
-              message: (
-                <a
-                  href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-                  className="inline-flex items-center gap-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <SquareArrowOutUpRight size={16} />
-                  View in block explorer
-                </a>
-              ),
-            })
-          }
-
-          if (safeTxHash) {
-            console.debug(
-              `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
-            )
-
-            const url = new URL('/transactions/tx', 'https://app.safe.global')
-
-            url.searchParams.set('safe', avatar)
-            url.searchParams.set(
-              'id',
-              `multisig_${unprefixAddress(avatar)}_${safeTxHash}`,
-            )
-
-            successToast({
-              title: 'Transaction batch has been proposed for execution',
-              message: (
-                <a
-                  href={url.toString()}
-                  className="inline-flex items-center gap-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <SquareArrowOutUpRight size={16} />
-                  {'View in Safe{Wallet}'}
-                </a>
-              ),
-            })
-            // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
-            const txHash = await waitForMultisigExecution(chainId, safeTxHash)
-            console.debug(
-              `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`,
-            )
-            successToast({
-              title:
-                'Proposed Safe transaction has been confirmed and executed',
-              message: (
-                <a
-                  href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-                  className="inline-flex items-center gap-1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <SquareArrowOutUpRight size={16} />
-                  View in block explorer
-                </a>
-              ),
-            })
-          }
-
-          window.postMessage({
-            type: CompanionAppMessageType.SUBMIT_SUCCESS,
-          } satisfies CompanionAppMessage)
-        } catch {
-          errorToast({
-            title: 'Error',
-            message: 'Submitting the transaction batch failed',
-          })
-        } finally {
-          setSubmitPending(false)
-        }
-      }}
-    >
+    <PrimaryButton submit busy={isSubmitting}>
       Sign
     </PrimaryButton>
   )
