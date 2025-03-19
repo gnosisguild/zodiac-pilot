@@ -8,12 +8,14 @@ export type PopoverPosition = 'top' | 'right' | 'bottom' | 'left'
 type PopoverProps = PropsWithChildren<{
   popover: ReactNode
   position?: PopoverPosition
+  inline?: boolean
 }>
 
 export const Popover = ({
   popover,
   children,
   position = 'top',
+  inline = false,
 }: PopoverProps) => {
   const [hover, setHover] = useState(false)
 
@@ -21,6 +23,7 @@ export const Popover = ({
     <Stick
       autoFlipHorizontally
       position={getStickPosition(position)}
+      className={classNames(inline && 'inline')}
       node={
         <Transition show={hover}>
           <div
