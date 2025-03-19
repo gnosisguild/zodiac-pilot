@@ -26,60 +26,74 @@ export const FAQs = () => {
       <div className="mt-20">
         <dl className="space-y-16 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-16 sm:space-y-0 lg:gap-x-10">
           <FAQ question="Who built Pilot?">
-            Pilot was built by{' '}
-            <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>, a
-            web3-native venture builder incubated in{' '}
-            <TextLink to="https://www.gnosis.io/dao">GnosisDAO</TextLink>{' '}
-            alongside <TextLink to="https://safe.global/">Safe</TextLink> before
-            spinning out as an independent entity.
+            <Text>
+              Pilot was built by{' '}
+              <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>, a
+              web3-native venture builder incubated in{' '}
+              <TextLink to="https://www.gnosis.io/dao">GnosisDAO</TextLink>{' '}
+              alongside <TextLink to="https://safe.global/">Safe</TextLink>{' '}
+              before spinning out as an independent entity.
+            </Text>
           </FAQ>
 
           <FAQ question="What is Zodiac?">
-            In addition to Pilot,{' '}
-            <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink> is
-            the creator of Zodiac, an open standard for smart accounts that has
-            led to a suite of open-source modules for{' '}
-            <TextLink to="https://safe.global/">Safe</TextLink>. Pilot itself
-            isn't a Zodiac module, but integrates directly with the Zodiac
-            ecosystem (specifically{' '}
-            <TextLink to="https://www.zodiac.wiki/documentation/roles-modifier">
-              Zodiac Roles
-            </TextLink>{' '}
-            for role-based permissions).
+            <Text>
+              In addition to Pilot,{' '}
+              <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink> is
+              the creator of Zodiac, an open standard for smart accounts that
+              has led to a suite of open-source modules for{' '}
+              <TextLink to="https://safe.global/">Safe</TextLink>. Pilot itself
+              isn't a Zodiac module, but integrates directly with the Zodiac
+              ecosystem (specifically{' '}
+              <TextLink to="https://www.zodiac.wiki/documentation/roles-modifier">
+                Zodiac Roles
+              </TextLink>{' '}
+              for role-based permissions).
+            </Text>
           </FAQ>
 
           <FAQ question="Do I need custom smart contracts or Safe modules to use Pilot?">
-            <Strong>No.</Strong> Pilot works with your existing{' '}
-            <TextLink to="https://safe.global/">Safe</TextLink> setup — no
-            additional contracts or modules required.
+            <Text>
+              <Strong>No.</Strong> Pilot works with your existing{' '}
+              <TextLink to="https://safe.global/">Safe</TextLink> setup — no
+              additional contracts or modules required.
+            </Text>
           </FAQ>
 
           <FAQ question="Does Pilot work with all dapps?">
-            <Strong>Yes.</Strong> Pilot enables multi-dapp execution without
-            requiring custom integrations. Users can interact with Aave,
-            Uniswap, Balancer, and more directly from the side panel.
+            <Text>
+              <Strong>Yes.</Strong> Pilot enables multi-dapp execution without
+              requiring custom integrations. Users can interact with Aave,
+              Uniswap, Balancer, and more directly from the side panel.
+            </Text>
           </FAQ>
 
           <FAQ question="Is Pilot secure?">
-            <Strong>Yes.</Strong> Pilot extends{' '}
-            <TextLink to="https://safe.global/">Safe’s</TextLink> execution
-            capabilities without modifying its security model. Transactions
-            remain non-custodial, signed by{' '}
-            <TextLink to="https://safe.global/">Safe’s</TextLink> multisig
-            permissions, and fully transparent.
+            <Text>
+              <Strong>Yes.</Strong> Pilot extends{' '}
+              <TextLink to="https://safe.global/">Safe’s</TextLink> execution
+              capabilities without modifying its security model. Transactions
+              remain non-custodial, signed by{' '}
+              <TextLink to="https://safe.global/">Safe’s</TextLink> multisig
+              permissions, and fully transparent.
+            </Text>
           </FAQ>
 
           <FAQ question="Is Pilot available on mobile or non-Chromium browsers?">
-            Not currently. Pilot is a desktop-only tool, compatible exclusively
-            with Chromium-based browsers like Chrome, Brave, and Opera. Mobile
-            support is not available at this time.
+            <Text>
+              Not currently. Pilot is a desktop-only tool, compatible
+              exclusively with Chromium-based browsers like Chrome, Brave, and
+              Opera. Mobile support is not available at this time.
+            </Text>
           </FAQ>
 
           <FAQ question="Does Pilot work for individual users, or just teams?">
-            <Strong>Both.</Strong> While treasury teams and DAOs benefit from
-            batching and role-based execution, individual users can use Pilot
-            to:
-            <ol className="ml-4 mt-4 list-decimal">
+            <Text>
+              <Strong>Both.</Strong> While treasury teams and DAOs benefit from
+              batching and role-based execution, individual users can use Pilot
+              to:
+            </Text>
+            <ol className="ml-4 mt-4 list-decimal text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
               <li>Automate frequent interactions and reduce signer fatigue;</li>
               <li>
                 Batch approvals across dapps for a smoother user experience; and
@@ -92,9 +106,11 @@ export const FAQs = () => {
           </FAQ>
 
           <FAQ question="Are there fees associated with using Pilot?">
-            <Strong>Yes,</Strong> there is a structured fee on swaps [details
-            here]. These fees help sustain Pilot's development as we continue
-            make improvements and introduce new features.
+            <Text>
+              <Strong>Yes,</Strong> there is a structured fee on swaps [details
+              here]. These fees help sustain Pilot's development as we continue
+              make improvements and introduce new features.
+            </Text>
           </FAQ>
         </dl>
       </div>
@@ -111,8 +127,6 @@ const FAQ = ({ question, children }: FAQProps) => (
     <dt className="text-base/7 font-semibold text-zinc-900 dark:text-zinc-50">
       {question}
     </dt>
-    <dd className="mt-2 text-base/7">
-      <Text>{children}</Text>
-    </dd>
+    <dd className="mt-2 text-base/7">{children}</dd>
   </div>
 )

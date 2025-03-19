@@ -8,6 +8,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/images/*": ["./images/*"],
+      "@/videos/*": ["./videos/*"],
       "@/components": ["./components/index.ts"]
     }
   },
@@ -18,6 +19,7 @@
     "./app",
     "./components",
     "./images",
+    "./videos",
     "./png.d.ts"
   ]
 }

@@ -32,6 +32,7 @@ export default defineConfig(({ isSsrBuild }) => ({
   server: {
     port: 3050,
   },
+  assetsInclude: ['**/*.mp4'],
   build: {
     manifest: true,
     rollupOptions: isSsrBuild
