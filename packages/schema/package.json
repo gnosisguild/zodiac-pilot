@@ -18,7 +18,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@safe-global/types-kit": "2.0.0",
-    "ser-kit": "3.5.1",
+    "ser-kit": "3.6.0",
     "viem": "2.23.12",
     "zod": "3.24.2"
   },
