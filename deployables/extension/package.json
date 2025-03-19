@@ -61,7 +61,7 @@
     "rimraf": "6.0.1",
     "tailwindcss": "4.0.14",
     "typescript": "5.8.2",
-    "vitest": "3.0.8",
+    "vitest": "3.0.9",
     "vitest-chrome": "0.1.0"
   },
   "packageManager": "pnpm@10.6.4",
