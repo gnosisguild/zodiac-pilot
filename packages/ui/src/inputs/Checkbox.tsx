@@ -20,7 +20,7 @@ export const Checkbox = ({
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md"
+          className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900 dark:checked:border-zinc-700 dark:checked:bg-zinc-800"
           {...props}
         />
 
