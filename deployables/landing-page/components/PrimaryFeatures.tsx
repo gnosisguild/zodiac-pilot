@@ -1,3 +1,5 @@
+import routesDark from '@/images/features/routes-dark.png'
+import routesLight from '@/images/features/routes-light.png'
 import signDark from '@/images/features/sign-dark.png'
 import signLight from '@/images/features/sign-light.png'
 import seamlessDappInteractions from '@/videos/seamless-dapp-Interactions.mp4'
@@ -72,6 +74,12 @@ export function PrimaryFeatures() {
         section="Feature"
         title="Smart Execution for Safe Accounts"
         description="Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale on-chain operations."
+        media={
+          <>
+            <img src={routesDark} className="hidden dark:block" alt="" />
+            <img src={routesLight} className="dark:hidden" alt="" />
+          </>
+        }
       >
         <Description>
           <Description.Item
