@@ -106,13 +106,9 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   )
   const approvalTxs = extractApprovalsFromSimulation(simulation)
 
-  console.log({ approvalTxs, revokeApprovals })
-
   if (approvalTxs && revokeApprovals) {
     finalTxs = appendApprovalTransactions(metaTransactions, approvalTxs)
   }
-
-  console.log({ finalTxs })
 
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
@@ -267,8 +263,6 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
     }
 
     const { plan } = actionData
-
-    console.log({ plan })
 
     const executePlan = async () => {
       const state: ExecutionState = []
