@@ -11,13 +11,16 @@ export const simulateBundleTransaction = async (
   avatar: PrefixedAddress,
   transactions: MetaTransactionRequest[],
 ) => {
+  const chainId = getChainId(avatar)
+  const from = unprefixAddress(avatar)
+
   return api('/simulate-bundle', {
     schema: simulationResultSchema,
     method: 'POST',
     body: {
       simulations: transactions.map(({ to, data, value }) => ({
-        network_id: getChainId(avatar),
-        from: unprefixAddress(avatar),
+        network_id: chainId,
+        from,
         to,
         input: data,
         value: value.toString(),
