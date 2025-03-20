@@ -6,19 +6,22 @@ type ApprovalLogOptions = {
   rawAddress?: HexAddress
   owner?: HexAddress
   spender?: HexAddress
+  value?: number
 }
 
 export const createMockApprovalLog = ({
   rawAddress = randomAddress(),
   owner = randomAddress(),
   spender = randomAddress(),
+  value = 0,
 }: ApprovalLogOptions = {}): ApprovalLog => ({
   name: 'Approval',
   raw: {
     address: rawAddress,
   },
   inputs: [
-    { name: 'owner', value: owner },
-    { name: 'spender', value: spender },
+    { soltype: { name: 'owner' }, value: owner },
+    { soltype: { name: 'spender' }, value: spender },
+    { soltype: { name: 'value' }, value: value.toString() },
   ],
 })

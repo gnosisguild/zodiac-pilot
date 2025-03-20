@@ -7,10 +7,23 @@ export type ApprovalTransaction = {
   tokenAddress: HexAddress
 }
 
-const ownerSchema = z.object({ name: z.literal('owner'), value: addressSchema })
-const spenderSchema = z.object({
-  name: z.literal('spender'),
+const ownerSchema = z.object({
+  soltype: z.object({
+    name: z.literal('owner'),
+  }),
   value: addressSchema,
+})
+const spenderSchema = z.object({
+  soltype: z.object({
+    name: z.literal('spender'),
+  }),
+  value: addressSchema,
+})
+const valueSchema = z.object({
+  soltype: z.object({
+    name: z.literal('value'),
+  }),
+  value: z.string(),
 })
 
 const approvalLogSchema = z.object({
@@ -18,7 +31,7 @@ const approvalLogSchema = z.object({
   raw: z.object({
     address: addressSchema,
   }),
-  inputs: z.tuple([ownerSchema, spenderSchema]),
+  inputs: z.tuple([ownerSchema, spenderSchema, valueSchema]),
 })
 
 export type ApprovalLog = z.infer<typeof approvalLogSchema>
