@@ -67,7 +67,10 @@ export const loader = async ({
           ...balance,
 
           amount,
-          usdValue: parseFloat(amount) * balance.usdPrice,
+          usdValue:
+            balance.usdPrice == null
+              ? null
+              : parseFloat(amount) * balance.usdPrice,
         }
       }),
     )
