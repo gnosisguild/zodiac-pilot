@@ -1,153 +1,93 @@
+import {
+  createMockApprovalLog,
+  createMockSimulatedTransaction,
+} from '@/test-utils'
+import { randomAddress } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
-import type { SimulationResult } from '../types'
 import { extractApprovalsFromSimulation } from './extractApprovalsFromSimulation'
 
 describe('extractApprovalsFromSimulation', () => {
-  it('returns an empty array if simulation_results is undefined', () => {
-    const simulation = {} as SimulationResult
-    const result = extractApprovalsFromSimulation(simulation)
-    expect(result).toEqual([])
-  })
-
-  it('returns an empty array if logs is missing or not an array', () => {
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            // no transaction_info.logs
-            transaction_info: {},
-          },
-        },
-      ],
-    } as SimulationResult
-
-    const result = extractApprovalsFromSimulation(simulation)
-    expect(result).toEqual([])
+  it('returns an empty array if logs are missing', () => {
+    expect(
+      extractApprovalsFromSimulation([createMockSimulatedTransaction()]),
+    ).toEqual([])
   })
 
   it('ignores logs that do not have name="Approval"', () => {
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            transaction_info: {
-              logs: [
-                {
-                  name: 'Transfer',
-                  raw: { address: '0xSomeRandomToken' },
-                  inputs: [
-                    { name: 'from', value: '0xFoo' },
-                    { name: 'to', value: '0xBar' },
-                  ],
-                },
-              ],
-            },
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: {
+        logs: [
+          {
+            name: 'Transfer',
           },
-        },
-      ],
-    } as SimulationResult
+        ],
+      },
+    })
 
-    const result = extractApprovalsFromSimulation(simulation)
-    expect(result).toEqual([])
+    expect(extractApprovalsFromSimulation([transaction])).toEqual([])
   })
 
   it('extracts approval logs correctly', () => {
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            transaction_info: {
-              logs: [
-                {
-                  name: 'Approval',
-                  raw: {
-                    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-                  },
-                  inputs: [
-                    { name: 'owner', value: '0xOwner' },
-                    { name: 'spender', value: '0xSpender' },
-                    { name: 'value', value: '9999' },
-                  ],
-                },
-                {
-                  name: 'Approval',
-                  raw: {
-                    address: '0xWd1',
-                  },
-                  inputs: [
-                    { name: 'owner', value: '0xOwner2' },
-                    { name: 'spender', value: '0xSpender2' },
-                    { name: 'value', value: '1234' },
-                  ],
-                },
-              ],
-            },
-          },
-        },
-      ],
-    } as SimulationResult
+    const tokenA = randomAddress()
+    const spenderA = randomAddress()
 
-    const result = extractApprovalsFromSimulation(simulation)
-    expect(result).toHaveLength(2)
-    expect(result[0]).toMatchObject({
-      tokenAddress: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-      spender: '0xSpender',
+    const tokenB = randomAddress()
+    const spenderB = randomAddress()
+
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: {
+        logs: [
+          createMockApprovalLog({ rawAddress: tokenA, spender: spenderA }),
+          createMockApprovalLog({ rawAddress: tokenB, spender: spenderB }),
+        ],
+      },
     })
-    expect(result[1]).toMatchObject({
-      tokenAddress: '0xwd1',
-      spender: '0xSpender2',
+
+    const [transactionA, transactionB] = extractApprovalsFromSimulation([
+      transaction,
+    ])
+
+    expect(transactionA).toMatchObject({
+      tokenAddress: tokenA,
+      spender: spenderA,
+    })
+    expect(transactionB).toMatchObject({
+      tokenAddress: tokenB,
+      spender: spenderB,
     })
   })
 
   it('combines approvals across multiple transactions', () => {
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            transaction_info: {
-              logs: [
-                {
-                  name: 'Approval',
-                  raw: { address: '0xAbc1' },
-                  inputs: [
-                    { name: 'owner', value: '0xOwner1' },
-                    { name: 'spender', value: '0xSpender1' },
-                    { name: 'value', value: '111' },
-                  ],
-                },
-              ],
-            },
-          },
-        },
-        {
-          transaction: {
-            transaction_info: {
-              logs: [
-                {
-                  name: 'Approval',
-                  raw: { address: '0xAbc2' },
-                  inputs: [
-                    { name: 'owner', value: '0xOwner2' },
-                    { name: 'spender', value: '0xSpender2' },
-                    { name: 'value', value: '222' },
-                  ],
-                },
-              ],
-            },
-          },
-        },
-      ],
-    } as SimulationResult
-
-    const result = extractApprovalsFromSimulation(simulation)
-    expect(result).toHaveLength(2)
-    expect(result[0]).toMatchObject({
-      tokenAddress: '0xabc1',
-      spender: '0xSpender1',
+    const tokenA = randomAddress()
+    const spenderA = randomAddress()
+    const transactionA = createMockSimulatedTransaction({
+      transaction_info: {
+        logs: [
+          createMockApprovalLog({ rawAddress: tokenA, spender: spenderA }),
+        ],
+      },
     })
-    expect(result[1]).toMatchObject({
-      tokenAddress: '0xabc2',
-      spender: '0xSpender2',
+
+    const tokenB = randomAddress()
+    const spenderB = randomAddress()
+    const transactionB = createMockSimulatedTransaction({
+      transaction_info: {
+        logs: [
+          createMockApprovalLog({ rawAddress: tokenB, spender: spenderB }),
+        ],
+      },
+    })
+
+    const [approvalTransactionA, approvalTransactionB] =
+      extractApprovalsFromSimulation([transactionA, transactionB])
+
+    expect(approvalTransactionA).toMatchObject({
+      tokenAddress: tokenA,
+      spender: spenderA,
+    })
+    expect(approvalTransactionB).toMatchObject({
+      tokenAddress: tokenB,
+      spender: spenderB,
     })
   })
 })

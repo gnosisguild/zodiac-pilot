@@ -4,7 +4,9 @@ import type {
 } from '@zodiac/messages'
 import { createExpectMessage } from '@zodiac/test-utils'
 
+export { createMockApprovalLog } from './createMockApprovalLog'
 export { createMockChain } from './createMockChain'
+export { createMockSimulatedTransaction } from './createMockSimulatedTransaction'
 export { createMockTokenBalance } from './createMockTokenBalance'
 export { loadRoutes } from './loadRoutes'
 export { postMessage } from './postMessage'
