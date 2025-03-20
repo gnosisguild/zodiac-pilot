@@ -25,7 +25,7 @@ export const addressSchema = hexSchema.transform<HexAddress>(
   (data) => data.toLowerCase() as HexAddress,
 )
 
-export const verifyHexAddress = (value: string) => addressSchema.parse(value)
+export const verifyHexAddress = (value?: string) => addressSchema.parse(value)
 
 const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   if (typeof value !== 'string') {

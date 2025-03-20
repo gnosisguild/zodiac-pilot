@@ -1,4 +1,5 @@
 export type { SimulationParams } from '../types'
+export { extractApprovalsFromSimulation } from './extractApprovalsFromSimulation'
 export {
   buildSimulationParams,
   extractApprovalsFromSimulation,

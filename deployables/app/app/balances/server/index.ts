@@ -1,4 +1,4 @@
-export type { Chain, TokenBalance } from '../types'
+export type { Chain, TokenBalance, TokenTransfer } from '../types'
 export { getAvailableChains } from './getAvailableChains'
 export { getChain } from './getChain'
 export { getTokenBalances } from './getTokenBalances'
