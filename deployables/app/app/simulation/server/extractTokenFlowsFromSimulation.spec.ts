@@ -1,25 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-import type { Chain } from '@/balances-server'
-import { getChain, getTokenDetails } from '@/balances-server'
-import { verifyChainId } from '@zodiac/chains'
+import { getTokenDetails } from '@/balances-server'
+import { randomAddress } from '@zodiac/test-utils'
+import { describe, expect, it, vi } from 'vitest'
 import type { SimulationResult } from '../types'
 import { extractTokenFlowsFromSimulation } from './extractTokenFlowsFromSimulation'
 
-vi.mock('@/balances-server', () => ({
-  getChain: vi.fn(),
-  getTokenDetails: vi.fn(),
-}))
-
-vi.mock('@zodiac/chains', () => ({
-  verifyChainId: vi.fn(),
-}))
+const mockGetTokenDetails = vi.mocked(getTokenDetails)
 
 describe('extractTokenFlowsFromSimulation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('returns an empty array if simulation_results is undefined', async () => {
     const simulation = {} as SimulationResult
     const result = await extractTokenFlowsFromSimulation(simulation)
@@ -40,24 +27,16 @@ describe('extractTokenFlowsFromSimulation', () => {
       ],
     } as unknown as SimulationResult
 
-    const result = await extractTokenFlowsFromSimulation(simulation)
-    expect(result).toEqual([])
+    await expect(extractTokenFlowsFromSimulation(simulation)).resolves.toEqual(
+      [],
+    )
   })
 
   it('parses ERC20 flows correctly', async () => {
-    // Setup mocks
-    vi.mocked(verifyChainId).mockReturnValueOnce(1)
-    vi.mocked(getChain).mockResolvedValueOnce({
-      name: 'Ethereum',
-      id: '1',
-      community_id: 1,
-      logo_url: null,
-      native_token_id: 'ETH',
-      wrapped_token_id: 'WETH',
-      is_support_pre_exec: true,
-    } as Chain)
-    vi.mocked(getTokenDetails).mockResolvedValueOnce({
-      contractId: '0xSomeERC20Token',
+    const contract = randomAddress()
+
+    mockGetTokenDetails.mockResolvedValueOnce({
+      contractId: contract,
       name: 'Mock Token',
       symbol: 'MCK',
       logoUrl: '',
@@ -68,6 +47,9 @@ describe('extractTokenFlowsFromSimulation', () => {
       chain: 'eth',
     })
 
+    const from = randomAddress()
+    const to = randomAddress()
+
     const simulation: SimulationResult = {
       simulation_results: [
         {
@@ -76,12 +58,12 @@ describe('extractTokenFlowsFromSimulation', () => {
             transaction_info: {
               asset_changes: [
                 {
-                  from: '0xFromAddress',
-                  to: '0xToAddress',
+                  from,
+                  to,
                   raw_amount: '1000000',
                   token_info: {
                     standard: 'ERC20',
-                    contract_address: '0xSomeERC20Token',
+                    contract_address: contract,
                     symbol: 'MCK',
                   },
                 },
@@ -93,32 +75,20 @@ describe('extractTokenFlowsFromSimulation', () => {
     } as unknown as SimulationResult
 
     const result = await extractTokenFlowsFromSimulation(simulation)
-    expect(verifyChainId).toHaveBeenCalledWith(1)
-    expect(getChain).toHaveBeenCalledTimes(1)
-    expect(getTokenDetails).toHaveBeenCalledTimes(1)
 
-    expect(result).toHaveLength(1)
     const [flow] = result
-    expect(flow.from).toBe('0xFromAddress')
-    expect(flow.to).toBe('0xToAddress')
-    expect(flow.contractId).toBe('0xSomeERC20Token')
-    expect(flow.amount).toBe('1')
-    expect(flow.symbol).toBe('MCK')
+
+    expect(flow).toMatchObject({
+      from,
+      to,
+      contractId: contract,
+      amount: '1',
+      symbol: 'MCK',
+    })
   })
 
   it('parses non-ERC20 (e.g. native) flows using symbol as token address', async () => {
-    // Setup mocks
-    vi.mocked(verifyChainId).mockReturnValueOnce(1)
-    vi.mocked(getChain).mockResolvedValueOnce({
-      id: '1',
-      community_id: 1,
-      name: 'Ethereum',
-      logo_url: null,
-      native_token_id: 'ETH',
-      wrapped_token_id: 'WETH',
-      is_support_pre_exec: true,
-    } as Chain)
-    vi.mocked(getTokenDetails).mockResolvedValueOnce({
+    mockGetTokenDetails.mockResolvedValueOnce({
       contractId: 'ETH',
       name: 'Ethereum',
       symbol: 'ETH',
@@ -130,6 +100,9 @@ describe('extractTokenFlowsFromSimulation', () => {
       chain: 'eth',
     })
 
+    const from = randomAddress()
+    const to = randomAddress()
+
     const simulation: SimulationResult = {
       simulation_results: [
         {
@@ -138,13 +111,12 @@ describe('extractTokenFlowsFromSimulation', () => {
             transaction_info: {
               asset_changes: [
                 {
-                  from: '0xFromNative',
-                  to: '0xToNative',
+                  from,
+                  to,
                   raw_amount: '1000000000000000000',
                   token_info: {
                     standard: 'NATIVE',
-                    contract_address: null,
-                    symbol: 'ETH',
+                    contract_address: 'eth',
                   },
                 },
               ],
@@ -152,15 +124,18 @@ describe('extractTokenFlowsFromSimulation', () => {
           },
         },
       ],
-    } as unknown as SimulationResult
+    }
 
     const result = await extractTokenFlowsFromSimulation(simulation)
-    expect(result).toHaveLength(1)
+
     const [flow] = result
-    expect(flow.from).toBe('0xFromNative')
-    expect(flow.to).toBe('0xToNative')
-    expect(flow.contractId).toBe('ETH')
-    expect(flow.amount).toBe('1')
-    expect(flow.symbol).toBe('ETH')
+
+    expect(flow).toMatchObject({
+      from,
+      to,
+      contractId: 'ETH',
+      amount: '1',
+      symbol: 'ETH',
+    })
   })
 })

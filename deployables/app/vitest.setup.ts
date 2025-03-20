@@ -61,6 +61,7 @@ vi.mock('@/balances-server', async (importOriginal) => {
 
     isValidToken: vi.fn(),
     getTokenBalances: vi.fn(),
+    getTokenDetails: vi.fn(),
     getAvailableChains: vi.fn(),
     getTokenByAddress: vi.fn(),
     getChain: vi.fn(),
