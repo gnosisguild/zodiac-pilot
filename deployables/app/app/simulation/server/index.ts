@@ -1,9 +1,4 @@
-export type { SimulationParams } from '../types'
 export { extractApprovalsFromSimulation } from './extractApprovalsFromSimulation'
-export {
-  buildSimulationParams,
-  extractApprovalsFromSimulation,
-  extractTokenFlowsFromSimulation,
-  splitTokenFlows,
-} from './helper'
+export { extractTokenFlowsFromSimulation } from './extractTokenFlowsFromSimulation'
 export { simulateBundleTransaction } from './simulateBundleTransaction'
+export { splitTokenFlows } from './splitTokenFlows'
