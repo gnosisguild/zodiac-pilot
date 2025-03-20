@@ -22,7 +22,6 @@ import {
   Error,
   errorToast,
   Form,
-  Info,
   Labeled,
   PrimaryButton,
   Success,
@@ -91,12 +90,11 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 export const action = async ({ params, request }: RouteType.ActionArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
 
-  let finalTxs = metaTransactions
-
-  const data = await request.formData()
-  const revokeApprovals = getBoolean(data, 'revokeApprovals')
-
   const { initiator, waypoints, ...route } = parseRouteData(params.route)
+
+  invariantResponse(initiator != null, 'Route needs an initiator')
+  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+
   const simulation = await simulateBundleTransaction(
     buildSimulationParams(
       getChainId(route.avatar),
@@ -104,22 +102,34 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
       metaTransactions,
     ),
   )
+
   const approvalTxs = extractApprovalsFromSimulation(simulation)
 
-  if (approvalTxs && revokeApprovals) {
-    finalTxs = appendApprovalTransactions(metaTransactions, approvalTxs)
+  if (approvalTxs.length > 0) {
+    const data = await request.formData()
+    const revokeApprovals = getBoolean(data, 'revokeApprovals')
+
+    if (revokeApprovals) {
+      return {
+        plan: await planExecution(
+          appendApprovalTransactions(metaTransactions, approvalTxs),
+          {
+            initiator,
+            waypoints,
+            ...route,
+          },
+        ),
+      }
+    }
   }
 
-  invariantResponse(initiator != null, 'Route needs an initiator')
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
-
-  const plan = await planExecution(finalTxs, {
-    initiator,
-    waypoints,
-    ...route,
-  })
-
-  return { plan }
+  return {
+    plan: await planExecution(metaTransactions, {
+      initiator,
+      waypoints,
+      ...route,
+    }),
+  }
 }
 
 const SubmitPage = ({
@@ -213,20 +223,21 @@ const SubmitPage = ({
         )}
       </Form.Section>
 
-      {hasApprovals && (
-        <Form.Section title="Leftover Approvals">
+      <Form.Section
+        title="Approvals"
+        description="Token approvals let other addresses spend your tokens. If you don't
+            revoke them, they can keep spending indefinitely."
+      >
+        {hasApprovals ? (
           <Checkbox
             defaultChecked
             label="Revoke all approvals"
             name="revokeApprovals"
           />
-
-          <Info>
-            Token approvals let other addresses spend your tokens. If you
-            don&apos;t revoke them, they can keep spending indefinitely.
-          </Info>
-        </Form.Section>
-      )}
+        ) : (
+          <Success title="No approval to revoke" />
+        )}
+      </Form.Section>
 
       <Form.Section
         title="Signer details"
