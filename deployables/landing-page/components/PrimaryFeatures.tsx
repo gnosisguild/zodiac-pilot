@@ -1,3 +1,5 @@
+import signDark from '@/images/features/sign-dark.png'
+import signLight from '@/images/features/sign-light.png'
 import seamlessDappInteractions from '@/videos/seamless-dapp-Interactions.mp4'
 import { Divider } from '@zodiac/ui'
 import {
@@ -24,44 +26,6 @@ export function PrimaryFeatures() {
       aria-label="Features for running your books"
       className="relative pb-28 pt-20 sm:py-32"
     >
-      <Feature
-        color="teal"
-        section="Feature"
-        title="Smart Execution for Safe Accounts"
-        description="Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale on-chain operations."
-      >
-        <Description>
-          <Description.Item
-            icon={ListCheck}
-            color="teal"
-            title="Move beyond single-step approvals"
-          >
-            Automate multi-dapp execution paths and reduce manual coordination
-            overhead.
-          </Description.Item>
-
-          <Description.Item
-            icon={Wallet}
-            color="teal"
-            title="Reduce transaction costs"
-          >
-            Batch interactions across dapps to minimize gas fees.
-          </Description.Item>
-
-          <Description.Item
-            icon={BookOpenCheck}
-            color="teal"
-            title="Trusted at scale"
-          >
-            Pilot facilitates secure, non-custodial execution for over $2B in
-            DAO treasuries, including kpk (formerly karpatkey), ENS DAO,
-            Balancer, and GnosisDAO.
-          </Description.Item>
-        </Description>
-      </Feature>
-
-      <Divider />
-
       <Feature
         color="indigo"
         section="Feature"
@@ -104,10 +68,54 @@ export function PrimaryFeatures() {
       <Divider />
 
       <Feature
+        color="teal"
+        section="Feature"
+        title="Smart Execution for Safe Accounts"
+        description="Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale on-chain operations."
+      >
+        <Description>
+          <Description.Item
+            icon={ListCheck}
+            color="teal"
+            title="Move beyond single-step approvals"
+          >
+            Automate multi-dapp execution paths and reduce manual coordination
+            overhead.
+          </Description.Item>
+
+          <Description.Item
+            icon={Wallet}
+            color="teal"
+            title="Reduce transaction costs"
+          >
+            Batch interactions across dapps to minimize gas fees.
+          </Description.Item>
+
+          <Description.Item
+            icon={BookOpenCheck}
+            color="teal"
+            title="Trusted at scale"
+          >
+            Pilot facilitates secure, non-custodial execution for over $2B in
+            DAO treasuries, including kpk (formerly karpatkey), ENS DAO,
+            Balancer, and GnosisDAO.
+          </Description.Item>
+        </Description>
+      </Feature>
+
+      <Divider />
+
+      <Feature
         color="amber"
         section="Feature"
         title="Maximize Efficiency, Minimize Risk"
         description="Pilot eliminates transaction uncertainty with its advanced batching capabilities and industry-first simulation forks, providing a secure environment to test workflows before execution and maximizing capital efficiency."
+        media={
+          <>
+            <img src={signDark} className="hidden dark:block" alt="" />
+            <img src={signLight} className="dark:hidden" alt="" />
+          </>
+        }
       >
         <Description>
           <Description.Item
