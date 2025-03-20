@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "@icons-pack/react-simple-icons": "12.3.0",
-    "@react-router/serve": "7.3.0",
+    "@react-router/serve": "7.4.0",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "@zodiac/ui": "workspace:*",
@@ -13,11 +13,11 @@
     "lucide-react": "0.482.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-router": "7.3.0"
+    "react-router": "7.4.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250313.0",
-    "@react-router/dev": "7.3.0",
+    "@react-router/dev": "7.4.0",
     "@tailwindcss/vite": "4.0.14",
     "@vitejs/plugin-react": "4.3.4",
     "@zodiac/eslint-config": "workspace:*",
