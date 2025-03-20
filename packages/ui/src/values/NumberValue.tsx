@@ -6,11 +6,6 @@ type NumberValueProps = {
   precision?: number
 }
 
-const defaultNumberFormatter = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 40,
-})
-
 export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
   const numberFormatter = useMemo(
     () =>
@@ -19,6 +14,15 @@ export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
         maximumFractionDigits: precision,
       }),
     [precision],
+  )
+
+  const defaultNumberFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 40,
+      }),
+    [],
   )
 
   return (
