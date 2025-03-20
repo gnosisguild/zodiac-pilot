@@ -6,6 +6,10 @@ type NumberValueProps = {
   precision?: number
 }
 
+const defaultNumberFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 40,
+})
+
 export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
   const numberFormatter = useMemo(
     () =>
@@ -20,7 +24,9 @@ export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
     <Popover
       inline
       popover={
-        <span className="tabular-numbs text-sm slashed-zero">{children}</span>
+        <span className="tabular-numbs text-sm slashed-zero">
+          {defaultNumberFormatter.format(children)}
+        </span>
       }
     >
       <span className="slashed-zero tabular-nums">
