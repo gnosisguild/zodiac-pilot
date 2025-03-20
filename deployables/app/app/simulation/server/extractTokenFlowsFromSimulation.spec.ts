@@ -1,35 +1,20 @@
 import { getTokenDetails } from '@/balances-server'
+import { createMockSimulatedTransaction } from '@/test-utils'
 import { randomAddress } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import type { SimulationResult } from '../types'
 import { extractTokenFlowsFromSimulation } from './extractTokenFlowsFromSimulation'
 
 const mockGetTokenDetails = vi.mocked(getTokenDetails)
 
 describe('extractTokenFlowsFromSimulation', () => {
-  it('returns an empty array if simulation_results is undefined', async () => {
-    const simulation = {} as SimulationResult
-    const result = await extractTokenFlowsFromSimulation(simulation)
-    expect(result).toEqual([])
-  })
-
   it('returns empty array if transaction_info.asset_changes is empty', async () => {
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            network_id: '1',
-            transaction_info: {
-              asset_changes: [],
-            },
-          },
-        },
-      ],
-    } as unknown as SimulationResult
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: { asset_changes: [] },
+    })
 
-    await expect(extractTokenFlowsFromSimulation(simulation)).resolves.toEqual(
-      [],
-    )
+    await expect(
+      extractTokenFlowsFromSimulation([transaction]),
+    ).resolves.toEqual([])
   })
 
   it('parses ERC20 flows correctly', async () => {
@@ -50,33 +35,23 @@ describe('extractTokenFlowsFromSimulation', () => {
     const from = randomAddress()
     const to = randomAddress()
 
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            network_id: '1',
-            transaction_info: {
-              asset_changes: [
-                {
-                  from,
-                  to,
-                  raw_amount: '1000000',
-                  token_info: {
-                    standard: 'ERC20',
-                    contract_address: contract,
-                    symbol: 'MCK',
-                  },
-                },
-              ],
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: {
+        asset_changes: [
+          {
+            from,
+            to,
+            raw_amount: '1000000',
+            token_info: {
+              standard: 'ERC20',
+              contract_address: contract,
             },
           },
-        },
-      ],
-    } as unknown as SimulationResult
+        ],
+      },
+    })
 
-    const result = await extractTokenFlowsFromSimulation(simulation)
-
-    const [flow] = result
+    const [flow] = await extractTokenFlowsFromSimulation([transaction])
 
     expect(flow).toMatchObject({
       from,
@@ -103,32 +78,23 @@ describe('extractTokenFlowsFromSimulation', () => {
     const from = randomAddress()
     const to = randomAddress()
 
-    const simulation: SimulationResult = {
-      simulation_results: [
-        {
-          transaction: {
-            network_id: '1',
-            transaction_info: {
-              asset_changes: [
-                {
-                  from,
-                  to,
-                  raw_amount: '1000000000000000000',
-                  token_info: {
-                    standard: 'NATIVE',
-                    contract_address: 'eth',
-                  },
-                },
-              ],
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: {
+        asset_changes: [
+          {
+            from,
+            to,
+            raw_amount: '1000000000000000000',
+            token_info: {
+              standard: 'NATIVE',
+              contract_address: 'eth',
             },
           },
-        },
-      ],
-    }
+        ],
+      },
+    })
 
-    const result = await extractTokenFlowsFromSimulation(simulation)
-
-    const [flow] = result
+    const [flow] = await extractTokenFlowsFromSimulation([transaction])
 
     expect(flow).toMatchObject({
       from,
