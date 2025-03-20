@@ -23,7 +23,7 @@ export const getTokenBalances = async (
       amount: formatUnits(BigInt(data.raw_amount), data.decimals || 18),
       logoUrl: data.logo_url,
       symbol: data.optimized_symbol || data.display_symbol || data.symbol,
-      usdValue: data.amount * data.price,
+      usdValue: data.price == null ? null : data.amount * data.price,
       usdPrice: data.price,
       decimals: data.decimals || 18,
       chain: data.chain,
@@ -33,6 +33,18 @@ export const getTokenBalances = async (
         return -1
       }
 
-      return b.usdValue - a.usdValue
+      if (a.usdValue != null && b.usdValue != null) {
+        return b.usdValue - a.usdValue
+      }
+
+      if (a.usdValue == null && b.usdValue != null) {
+        return -1
+      }
+
+      if (a.usdPrice != null && b.usdValue == null) {
+        return 1
+      }
+
+      return 0
     })
 }

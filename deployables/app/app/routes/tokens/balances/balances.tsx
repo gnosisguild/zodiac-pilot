@@ -1,6 +1,7 @@
 import { useTokenBalances } from '@/balances-client'
 import { Token } from '@/components'
 import {
+  Empty,
   Error as ErrorAlert,
   GhostLinkButton,
   Info,
@@ -73,7 +74,11 @@ const Balances = () => {
                   <TokenValue symbol={symbol}>{amount}</TokenValue>
                 </TableCell>
                 <TableCell align="right">
-                  <UsdValue>{usdValue}</UsdValue>
+                  {usdValue == null ? (
+                    <Empty />
+                  ) : (
+                    <UsdValue>{usdValue}</UsdValue>
+                  )}
                 </TableCell>
                 <TableCell className="pr-16">
                   <div className="flex justify-center opacity-0 transition-opacity group-hover:opacity-100">

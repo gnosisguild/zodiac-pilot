@@ -11,7 +11,7 @@ export const tokenSchema = z.object({
   decimals: z.number().int().nullable(),
   logo_url: z.string().nullable(),
   is_core: z.boolean().nullable(),
-  price: z.number(),
+  price: z.number().nullable(),
   time_at: z.number().int().nullable(),
 })
 
@@ -31,8 +31,8 @@ export type TokenBalance = {
   logoUrl: string | null
   amount: string
   decimals: number
-  usdValue: number
-  usdPrice: number
+  usdValue: number | null
+  usdPrice: number | null
   chain: string
 }
 
