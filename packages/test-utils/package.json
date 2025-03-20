@@ -40,11 +40,11 @@
   },
   "peerDependencies": {
     "react": "19.0.0",
-    "react-router": "7.3.0",
+    "react-router": "7.4.0",
     "ser-kit": "3.6.0"
   },
   "devDependencies": {
-    "@react-router/dev": "7.3.0",
+    "@react-router/dev": "7.4.0",
     "@types/chrome": "0.0.309",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
