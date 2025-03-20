@@ -2,7 +2,6 @@ import { ConnectWallet } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import {
-  buildSimulationParams,
   extractApprovalsFromSimulation,
   extractTokenFlowsFromSimulation,
   simulateBundleTransaction,
@@ -60,13 +59,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const [routes, permissionCheck, simulation] = await Promise.all([
     queryRoutes(unprefixAddress(initiator), route.avatar),
     checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-    simulateBundleTransaction(
-      buildSimulationParams(
-        getChainId(route.avatar),
-        unprefixAddress(route.avatar),
-        metaTransactions,
-      ),
-    ),
+    simulateBundleTransaction(route.avatar, metaTransactions),
   ])
 
   const tokenFlows = await extractTokenFlowsFromSimulation(simulation)
@@ -95,11 +88,8 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
   const simulation = await simulateBundleTransaction(
-    buildSimulationParams(
-      getChainId(route.avatar),
-      unprefixAddress(route.avatar),
-      metaTransactions,
-    ),
+    route.avatar,
+    metaTransactions,
   )
 
   const approvalTxs = extractApprovalsFromSimulation(simulation)
