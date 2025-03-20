@@ -1,10 +1,9 @@
-import type { HexAddress } from '@zodiac/schema'
 import { tokenSchema, type Chain, type TokenBalance } from '../types'
 import { api } from './api'
 
 export const getTokenDetails = async (
   chain: Chain,
-  address: HexAddress,
+  address: string,
 ): Promise<TokenBalance> => {
   const rawData = await api('/token', {
     schema: tokenSchema,

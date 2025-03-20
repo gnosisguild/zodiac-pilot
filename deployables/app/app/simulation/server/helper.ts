@@ -1,10 +1,10 @@
 import type { TokenTransfer } from '@/balances-client'
 import { getChain, getTokenDetails } from '@/balances-server'
 import { verifyChainId } from '@zodiac/chains'
-import type { HexAddress } from '@zodiac/schema'
+import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
 import { ZeroAddress } from 'ethers'
 import { formatUnits } from 'viem'
-import type { SimulationResult } from '../types'
+import type { SimulationParams, SimulationResult } from '../types'
 
 export const extractTokenFlowsFromSimulation = async (
   simulation: SimulationResult,
@@ -25,13 +25,10 @@ export const extractTokenFlowsFromSimulation = async (
         assetChanges.map(async (change) => {
           const isErc20 = change.token_info.standard === 'ERC20'
           const tokenAddress = isErc20
-            ? change.token_info.contract_address
-            : change.token_info.symbol
+            ? change.token_info.contract_address || ''
+            : change.token_info.symbol || ''
 
-          const tokenDetails = await getTokenDetails(
-            chain,
-            tokenAddress as HexAddress,
-          )
+          const tokenDetails = await getTokenDetails(chain, tokenAddress)
           const formattedAmount = formatUnits(
             BigInt(change.raw_amount),
             tokenDetails.decimals,
@@ -51,6 +48,22 @@ export const extractTokenFlowsFromSimulation = async (
   return flowsPerResult.flat()
 }
 
+export const extractApprovalsFromSimulation = (
+  simulation: SimulationResult,
+): { spender: HexAddress; tokenAddress: HexAddress }[] => {
+  return (simulation.simulation_results ?? []).flatMap(({ transaction }) => {
+    const logs = transaction?.transaction_info?.logs
+    if (!Array.isArray(logs)) return []
+
+    return logs
+      .filter((log) => log.name === 'Approval')
+      .map((log) => ({
+        tokenAddress: log.raw.address.toLowerCase(),
+        spender: log.inputs[1].value,
+      }))
+  })
+}
+
 export const splitTokenFlows = (flows: TokenTransfer[], address: string) => {
   const addrLower = address.toLowerCase()
   return {
@@ -61,4 +74,21 @@ export const splitTokenFlows = (flows: TokenTransfer[], address: string) => {
         f.from.toLowerCase() !== addrLower && f.to.toLowerCase() !== addrLower,
     ),
   }
+}
+
+export const buildSimulationParams = (
+  chainId: number,
+  avatarAddress: HexAddress,
+  metaTxs: MetaTransactionRequest[],
+): SimulationParams[] => {
+  return metaTxs.map((tx) => ({
+    network_id: chainId,
+    from: avatarAddress,
+    to: tx.to,
+    input: tx.data,
+    value: tx.value.toString(),
+    save: true,
+    save_if_fails: true,
+    simulation_type: 'full',
+  }))
 }

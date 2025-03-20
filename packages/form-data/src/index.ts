@@ -1,4 +1,5 @@
 export { formData } from './formData'
+export { getBoolean } from './getBoolean'
 export { getHexString, getOptionalHexString } from './getHexString'
 export { getInt } from './getInt'
 export { getOptionalString } from './getOptionalString'
