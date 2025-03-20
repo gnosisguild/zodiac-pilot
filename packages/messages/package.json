@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/chrome": "0.0.309",
-    "@types/react": "19.0.11",
+    "@types/react": "19.0.12",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.22.0"
