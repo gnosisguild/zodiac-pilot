@@ -1,12 +1,7 @@
 import { ConnectWallet } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
-import {
-  extractApprovalsFromSimulation,
-  extractTokenFlowsFromSimulation,
-  simulateBundleTransaction,
-  splitTokenFlows,
-} from '@/simulation-server'
+import { simulateTransactionBundle } from '@/simulation-server'
 import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
@@ -56,14 +51,12 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [routes, permissionCheck, simulation] = await Promise.all([
-    queryRoutes(unprefixAddress(initiator), route.avatar),
-    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-    simulateBundleTransaction(route.avatar, metaTransactions),
-  ])
-
-  const tokenFlows = await extractTokenFlowsFromSimulation(simulation)
-  const approvalTxs = extractApprovalsFromSimulation(simulation)
+  const [routes, permissionCheck, { tokenFlows, approvalTransactions }] =
+    await Promise.all([
+      queryRoutes(unprefixAddress(initiator), route.avatar),
+      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+      simulateTransactionBundle(route.avatar, metaTransactions),
+    ])
 
   return {
     isValidRoute: routes.length > 0,
@@ -71,10 +64,10 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     initiator: unprefixAddress(initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
-    tokenFlows: splitTokenFlows(tokenFlows, unprefixAddress(route.avatar)),
+    tokenFlows,
     permissionCheck,
     waypoints,
-    hasApprovals: approvalTxs.length > 0,
+    hasApprovals: approvalTransactions.length > 0,
     metaTransactions,
   }
 }
@@ -87,21 +80,20 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const simulation = await simulateBundleTransaction(
+  const { approvalTransactions } = await simulateTransactionBundle(
     route.avatar,
     metaTransactions,
+    { omitTokenFlows: true },
   )
 
-  const approvalTxs = extractApprovalsFromSimulation(simulation)
-
-  if (approvalTxs.length > 0) {
+  if (approvalTransactions.length > 0) {
     const data = await request.formData()
     const revokeApprovals = getBoolean(data, 'revokeApprovals')
 
     if (revokeApprovals) {
       return {
         plan: await planExecution(
-          appendApprovalTransactions(metaTransactions, approvalTxs),
+          appendApprovalTransactions(metaTransactions, approvalTransactions),
           {
             initiator,
             waypoints,

@@ -3,23 +3,19 @@ import { getChain, getTokenDetails } from '@/balances-server'
 import { verifyChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
 import { formatUnits } from 'viem'
-import type { SimulationResult } from '../types'
+import type { SimulatedTransaction } from '../types'
 
 export const extractTokenFlowsFromSimulation = async (
-  simulation: SimulationResult,
+  transactions: SimulatedTransaction[],
 ): Promise<TokenTransfer[]> => {
-  const results = simulation.simulation_results ?? []
-
   const flowsPerResult = await Promise.all(
-    results.map(async ({ transaction }) => {
-      const assetChanges = transaction?.transaction_info?.asset_changes
+    transactions.map(async ({ transaction_info, network_id }) => {
+      const assetChanges = transaction_info.asset_changes
       if (!assetChanges?.length) {
         return []
       }
 
-      const chain = await getChain(
-        verifyChainId(parseInt(transaction.network_id)),
-      )
+      const chain = await getChain(verifyChainId(parseInt(network_id)))
 
       return Promise.all(
         assetChanges.map<Promise<TokenTransfer>>(async (change) => {

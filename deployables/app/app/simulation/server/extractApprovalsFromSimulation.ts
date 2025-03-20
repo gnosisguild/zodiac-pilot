@@ -1,18 +1,24 @@
-import type { HexAddress } from '@zodiac/schema'
-import type { SimulationResult } from '../types'
+import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
+import type { SimulatedTransaction } from '../types'
+
+export type ApprovalTransaction = {
+  spender: HexAddress
+  tokenAddress: HexAddress
+}
 
 export const extractApprovalsFromSimulation = (
-  simulation: SimulationResult,
-): { spender: HexAddress; tokenAddress: HexAddress }[] => {
-  return (simulation.simulation_results ?? []).flatMap(({ transaction }) => {
-    const logs = transaction?.transaction_info?.logs
-    if (!Array.isArray(logs)) return []
+  transactions: SimulatedTransaction[],
+): ApprovalTransaction[] => {
+  return transactions.flatMap(({ transaction_info: { logs } }) => {
+    if (!Array.isArray(logs)) {
+      return []
+    }
 
     return logs
       .filter((log) => log.name === 'Approval')
       .map((log) => ({
-        tokenAddress: log.raw.address.toLowerCase(),
-        spender: log.inputs[1].value,
+        tokenAddress: verifyHexAddress(log.raw.address),
+        spender: verifyHexAddress(log.inputs[1].value),
       }))
   })
 }

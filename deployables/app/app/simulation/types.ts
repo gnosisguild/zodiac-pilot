@@ -37,4 +37,4 @@ export const simulationResultSchema = z.object({
   simulation_results: z.array(simulationRunResultSchema),
 })
 
-export type SimulationResult = z.infer<typeof simulationResultSchema>
+export type SimulatedTransaction = z.infer<typeof transactionSchema>

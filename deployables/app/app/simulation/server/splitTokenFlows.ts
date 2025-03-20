@@ -1,14 +1,14 @@
 import type { TokenTransfer } from '@/balances-server'
 import type { HexAddress } from '@zodiac/schema'
 
-type TokenFlowSplit = {
+export type TokenFlows = {
   sent: TokenTransfer[]
   received: TokenTransfer[]
   other: TokenTransfer[]
 }
 
 export const splitTokenFlows = (flows: TokenTransfer[], address: HexAddress) =>
-  flows.reduce<TokenFlowSplit>(
+  flows.reduce<TokenFlows>(
     ({ sent, received, other }, flow) => {
       if (flow.from === address) {
         return {
