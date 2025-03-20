@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { CHAIN_NAME } from '@zodiac/chains'
+import { CHAIN_NAME, verifyChainId } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { Chain } from './Chain'
@@ -13,7 +13,7 @@ type ChainSelectProps = {
 }
 
 const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
-  value: parseInt(chainId) as ChainId,
+  value: verifyChainId(parseInt(chainId)),
   label: name,
 }))
 

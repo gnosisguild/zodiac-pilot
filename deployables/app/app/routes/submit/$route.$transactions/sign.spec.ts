@@ -1,3 +1,4 @@
+import { simulateTransactionBundle } from '@/simulation-server'
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
@@ -46,6 +47,18 @@ vi.mock('wagmi', async (importOriginal) => {
 const mockUseAccount = vi.mocked(useAccount)
 const mockUseConnectorClient = vi.mocked(useConnectorClient)
 
+vi.mock('@/simulation-server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/simulation-server')>()
+
+  return {
+    ...module,
+
+    simulateTransactionBundle: vi.fn(),
+  }
+})
+
+const mockSimulateTransactionBundle = vi.mocked(simulateTransactionBundle)
+
 describe('Sign', () => {
   const chainId = Chain.ETH
   const initiator = randomPrefixedAddress({ chainId: undefined })
@@ -59,6 +72,11 @@ describe('Sign', () => {
 
     // @ts-expect-error We just need this to be there
     mockUseConnectorClient.mockReturnValue({ data: {} })
+
+    mockSimulateTransactionBundle.mockResolvedValue({
+      approvalTransactions: [],
+      tokenFlows: { sent: [], received: [], other: [] },
+    })
   })
 
   describe('Route', () => {

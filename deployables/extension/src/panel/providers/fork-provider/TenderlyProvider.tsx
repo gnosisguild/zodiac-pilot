@@ -8,7 +8,7 @@ import { getReadOnlyProvider } from './readOnlyProvider'
 const slug = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789')
 
 export class TenderlyProvider extends EventEmitter {
-  private chainId: number
+  private chainId: ChainId
   private forkProviderPromise: Promise<JsonRpcProvider> | undefined
   private blockNumber: number | undefined
 
@@ -49,7 +49,7 @@ export class TenderlyProvider extends EventEmitter {
       this.forkProviderPromise = this.createFork(this.chainId)
     } else if (!this.forkProviderPromise) {
       // We have not spawned a fork currently, so we can just use the provider to get the latest on-chain state
-      return await getReadOnlyProvider(this.chainId as ChainId).send(
+      return await getReadOnlyProvider(this.chainId).send(
         request.method,
         request.params || [],
       )

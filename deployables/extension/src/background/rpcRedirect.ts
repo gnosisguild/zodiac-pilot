@@ -7,7 +7,7 @@ export const removeAllRpcRedirectRules = async (forkUrl?: string) => {
   const { promise, resolve } = Promise.withResolvers<void>()
 
   chrome.declarativeNetRequest.getSessionRules((rules) => {
-    const removeRuleIds = rules.reduce((result, rule) => {
+    const removeRuleIds = rules.reduce<number[]>((result, rule) => {
       if (
         rule.action.type ===
         chrome.declarativeNetRequest.RuleActionType.REDIRECT
@@ -24,7 +24,7 @@ export const removeAllRpcRedirectRules = async (forkUrl?: string) => {
       }
 
       return result
-    }, [] as number[])
+    }, [])
 
     chrome.declarativeNetRequest.updateSessionRules(
       {

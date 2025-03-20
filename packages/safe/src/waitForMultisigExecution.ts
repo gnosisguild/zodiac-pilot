@@ -2,10 +2,10 @@ import type { ChainId } from '@zodiac/chains'
 import { initSafeApiKit } from './kits'
 
 export function waitForMultisigExecution(
-  chainId: number,
+  chainId: ChainId,
   safeTxHash: string,
 ): Promise<string | null> {
-  const safeService = initSafeApiKit(chainId as ChainId)
+  const safeService = initSafeApiKit(chainId)
 
   return new Promise((resolve, reject) => {
     function tryAgain() {
