@@ -19,6 +19,10 @@ export const Popover = ({
 }: PopoverProps) => {
   const [hover, setHover] = useState(false)
 
+  if (!popover) {
+    return <>{children}</>
+  }
+
   return (
     <Stick
       autoFlipHorizontally

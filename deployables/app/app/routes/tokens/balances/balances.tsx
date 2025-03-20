@@ -23,7 +23,6 @@ export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
   const [{ data, isForked }, state] = useTokenBalances()
-
   if (data.length === 0 && state !== 'loading') {
     return (
       <Info title="Nothing to show">
@@ -65,19 +64,23 @@ const Balances = () => {
               usdValue,
               amount,
               symbol,
+              balanceDiffUsd,
+              balanceDiff,
             }) => (
               <TableRow key={contractId} className="group">
                 <TableCell>
                   <Token logo={logoUrl}>{name}</Token>
                 </TableCell>
                 <TableCell align="right">
-                  <TokenValue symbol={symbol}>{amount}</TokenValue>
+                  <TokenValue symbol={symbol} balanceDiff={balanceDiff}>
+                    {amount}
+                  </TokenValue>
                 </TableCell>
                 <TableCell align="right">
                   {usdValue == null ? (
                     <Empty />
                   ) : (
-                    <UsdValue>{usdValue}</UsdValue>
+                    <UsdValue balanceDiff={balanceDiffUsd}>{usdValue}</UsdValue>
                   )}
                 </TableCell>
                 <TableCell className="pr-16">

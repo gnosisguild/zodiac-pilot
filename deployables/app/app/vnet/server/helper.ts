@@ -112,18 +112,21 @@ export const applyDeltaToBalances = async (
     if (delta[balance.contractId.toLowerCase()] == null) {
       return balance
     }
-
+    const deltaBalance = delta[balance.contractId.toLowerCase()]
     const decimals = balance.decimals || 18
     const existingRaw = parseUnits(balance.amount, decimals)
 
-    const newRaw = existingRaw + delta[balance.contractId.toLowerCase()]
+    const newRaw = existingRaw + deltaBalance
     const finalRaw = newRaw < 0n ? 0n : newRaw
 
     const newAmount = formatUnits(finalRaw, decimals)
+    const balanceDiff = formatUnits(deltaBalance, decimals)
 
     return {
       ...balance,
 
+      balanceDiff: Number(balanceDiff),
+      balanceDiffUsd: parseFloat(balanceDiff) * (balance.usdPrice || 0),
       amount: newAmount,
       usdValue: parseFloat(newAmount) * (balance.usdPrice || 0),
     }

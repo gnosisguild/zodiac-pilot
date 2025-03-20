@@ -4,6 +4,8 @@ import { getVnetTransactions } from './getVnetTransactions'
 import { getVnetTxReceipt } from './getVnetTxReceipt'
 import { processTransferLogs } from './helper'
 
+const TOLERANCE_WEI = 100_000n
+
 export const getVnetTransactionDelta = async (
   vnetId: string,
   rpc: string,
@@ -43,12 +45,14 @@ export const getVnetTransactionDelta = async (
   const baselineNative = baselineBalances.find(
     (b) => b.contractId.toLowerCase() === chain.toLowerCase(),
   )
+
   let baselineValue = 0n
   if (baselineNative) {
     baselineValue = parseUnits(baselineNative.amount, baselineNative.decimals)
   }
   const diff = forkNativeBalance - baselineValue
-  if (diff !== 0n) {
+  const absDiff = diff < 0n ? -diff : diff
+  if (absDiff > TOLERANCE_WEI) {
     erc20Deltas[chain.toLowerCase()] =
       (erc20Deltas[chain.toLowerCase()] ?? 0n) + diff
   }
