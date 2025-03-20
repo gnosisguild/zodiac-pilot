@@ -2,6 +2,7 @@ import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
 import {
   Address,
+  NumberValue,
   Table,
   TableBody,
   TableCell,
@@ -34,7 +35,7 @@ export const TokenTransferTable = ({
     <Table dense>
       <TableHead>
         <TableRow>
-          <TableHeader>
+          <TableHeader className="w-1/3">
             <div className="flex items-center gap-1">
               <Icon size={16} />
               {title}
@@ -104,7 +105,7 @@ export const TokenTransferTable = ({
               </TableCell>
 
               <TableCell align="right" className="tabular-nums">
-                {amount}
+                <NumberValue precision={4}>{parseFloat(amount)}</NumberValue>
               </TableCell>
             </TableRow>
           )
