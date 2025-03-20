@@ -40,6 +40,7 @@ const genericLogSchema = z
   .object({ name: z.string().optional() })
   .passthrough()
   .array()
+  .nullable()
   .optional()
 
 export const extractApprovalsFromSimulation = (
