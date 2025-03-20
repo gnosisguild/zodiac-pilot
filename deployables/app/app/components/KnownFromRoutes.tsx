@@ -7,7 +7,7 @@ type KnownFromRoutesProps = {
 }
 
 export const KnownFromRoutes = ({ routes, address }: KnownFromRoutesProps) => {
-  const labels = routes.reduce((result, route) => {
+  const labels = routes.reduce<string[]>((result, route) => {
     if (route.label == null) {
       return result
     }
@@ -24,7 +24,7 @@ export const KnownFromRoutes = ({ routes, address }: KnownFromRoutesProps) => {
     }
 
     return result
-  }, [] as string[])
+  }, [])
 
   if (labels.length === 0) {
     return null

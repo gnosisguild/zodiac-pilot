@@ -32,19 +32,16 @@ export const useTokenBalances = () => {
 
   const tokenBalanceByAddress = useMemo(
     () =>
-      data.reduce(
-        (result, token) => {
-          if (token.contractId == null) {
-            return result
-          }
+      data.reduce<Record<string, TokenBalance>>((result, token) => {
+        if (token.contractId == null) {
+          return result
+        }
 
-          return {
-            ...result,
-            [token.contractId]: token,
-          }
-        },
-        {} as Record<string, TokenBalance>,
-      ),
+        return {
+          ...result,
+          [token.contractId]: token,
+        }
+      }, {}),
     [data],
   )
 

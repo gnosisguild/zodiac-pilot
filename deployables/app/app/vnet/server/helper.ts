@@ -58,12 +58,14 @@ export const applyDeltaToBalances = async (
   delta: Record<string, bigint>,
   chain: string,
 ): Promise<TokenBalance[]> => {
-  const balanceByAddress = existingTokenBalances.reduce(
+  const balanceByAddress = existingTokenBalances.reduce<
+    Record<string, TokenBalance>
+  >(
     (result, balance) => ({
       ...result,
       [balance.contractId.toLowerCase()]: balance,
     }),
-    {} as Record<string, TokenBalance>,
+    {},
   )
 
   const newTokenBalances = await Promise.all(

@@ -43,7 +43,6 @@ import {
   planExecution,
   queryRoutes,
   unprefixAddress,
-  type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
@@ -279,12 +278,9 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
       const state: ExecutionState = []
 
       try {
-        await execute(
-          plan as ExecutionPlan,
-          state,
-          connectorClient as Eip1193Provider,
-          { origin: 'Zodiac Pilot' },
-        )
+        await execute(plan, state, connectorClient as Eip1193Provider, {
+          origin: 'Zodiac Pilot',
+        })
 
         const safeTxHash =
           state[

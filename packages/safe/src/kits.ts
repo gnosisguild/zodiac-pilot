@@ -19,7 +19,7 @@ export const TX_SERVICE_URL: Record<ChainId, string | undefined> = {
 }
 
 export const initSafeApiKit = (chainId: ChainId): SafeApiKit => {
-  const txServiceUrl = TX_SERVICE_URL[chainId as ChainId]
+  const txServiceUrl = TX_SERVICE_URL[chainId]
 
   invariant(txServiceUrl != null, `service not available for chain #${chainId}`)
 
