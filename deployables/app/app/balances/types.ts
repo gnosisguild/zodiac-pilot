@@ -34,6 +34,8 @@ export type TokenBalance = {
   usdValue: number | null
   usdPrice: number | null
   chain: string
+  balanceDiff?: number
+  balanceDiffUsd?: number
 }
 
 export type TokenTransfer = TokenBalance & {
