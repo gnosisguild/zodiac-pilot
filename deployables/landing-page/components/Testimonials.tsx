@@ -1,3 +1,4 @@
+import lukas from '@/images/testimonials/lukas-schor.png'
 import marcelo from '@/images/testimonials/marcelo-ruiz-de-olano.jpg'
 import spencer from '@/images/testimonials/spencer-graham.jpg'
 import { Container } from './Container'
@@ -18,7 +19,7 @@ const testimonials = [
     author: {
       name: 'Lukas Schor',
       role: 'Co-Founder Safe',
-      // image: marcelo,
+      image: lukas,
     },
   },
   {
