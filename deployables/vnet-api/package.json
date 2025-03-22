@@ -6,7 +6,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "env-cmd": "10.1.0",
-    "eslint": "9.22.0",
+    "eslint": "9.23.0",
     "typescript": "5.8.2",
     "wrangler": "4.3.0"
   },

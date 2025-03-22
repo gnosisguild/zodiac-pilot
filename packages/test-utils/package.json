@@ -50,7 +50,7 @@
     "@types/react-dom": "19.0.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.22.0",
+    "eslint": "9.23.0",
     "ser-kit": "3.6.0"
   }
 }
