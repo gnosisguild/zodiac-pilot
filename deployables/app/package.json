@@ -54,7 +54,7 @@
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.0.310",
     "@types/express": "5.0.1",
-    "@types/node": "22.13.11",
+    "@types/node": "22.13.12",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "@wagmi/core": "2.16.7",

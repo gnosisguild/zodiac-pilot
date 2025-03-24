@@ -19,7 +19,7 @@
     "@epic-web/invariant": "1.0.0"
   },
   "devDependencies": {
-    "@types/node": "22.13.11",
+    "@types/node": "22.13.12",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.23.0"
