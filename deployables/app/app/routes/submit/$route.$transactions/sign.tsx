@@ -15,7 +15,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import { queryRoutes } from '@zodiac/modules'
+import { checkPermissions, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   Checkbox,
@@ -39,7 +39,6 @@ import {
 import { Suspense, useEffect } from 'react'
 import { Await, useActionData, useLoaderData } from 'react-router'
 import {
-  checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
@@ -58,14 +57,17 @@ export const meta: RouteType.MetaFunction = ({ matches }) => [
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
-  const { initiator, waypoints, ...route } = parseRouteData(params.route)
+  const route = parseRouteData(params.route)
 
-  invariantResponse(initiator != null, 'Route needs an initiator')
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+  invariantResponse(route.initiator != null, 'Route needs an initiator')
+  invariantResponse(
+    route.waypoints != null,
+    'Route does not provide any waypoints',
+  )
 
-  const [queryRoutesResult, permissionCheck] = await Promise.all([
-    queryRoutes(initiator, route.avatar),
-    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+  const [queryRoutesResult, permissionCheckResult] = await Promise.all([
+    queryRoutes(route.initiator, route.avatar),
+    checkPermissions(route, metaTransactions),
   ])
 
   const simulate = async () => {
@@ -80,12 +82,15 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       queryRoutesResult.error != null || queryRoutesResult.routes.length > 0,
     hasQueryRoutesError: queryRoutesResult.error != null,
     id: route.id,
-    initiator: unprefixAddress(initiator),
+    initiator: unprefixAddress(route.initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
     simulation: simulate(),
-    permissionCheck,
-    waypoints,
+    permissionCheck: permissionCheckResult.permissionCheck,
+    passesPermissionCheck:
+      permissionCheckResult.permissionCheck == null ||
+      permissionCheckResult.permissionCheck.success,
+    waypoints: route.waypoints,
     metaTransactions,
   }
 }
@@ -142,6 +147,7 @@ const SubmitPage = ({
     permissionCheck,
     simulation,
     hasQueryRoutesError,
+    passesPermissionCheck,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -230,10 +236,21 @@ const SubmitPage = ({
         title="Permissions check"
         description="We check whether any permissions on the current route would prevent this transaction from succeeding."
       >
-        {permissionCheck.success ? (
-          <Success title="All checks passed" />
+        {permissionCheck == null ? (
+          <Warning title="Permissions backend unavailable">
+            We could not check the permissions for this route. Proceed with
+            caution.
+          </Warning>
         ) : (
-          <Error title="Permission violation">{permissionCheck.error}</Error>
+          <>
+            {permissionCheck.success ? (
+              <Success title="All checks passed" />
+            ) : (
+              <Error title="Permission violation">
+                {permissionCheck.error}
+              </Error>
+            )}
+          </>
         )}
       </Form.Section>
 
@@ -263,9 +280,7 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Actions>
-        <SubmitTransaction
-          disabled={!isValidRoute || !permissionCheck.success}
-        />
+        <SubmitTransaction disabled={!isValidRoute || !passesPermissionCheck} />
       </Form.Actions>
     </Form>
   )

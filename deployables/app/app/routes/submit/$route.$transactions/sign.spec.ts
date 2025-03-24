@@ -231,6 +231,64 @@ describe('Sign', () => {
         screen.getByRole('alert', { name: 'Permission violation' }),
       ).toHaveAccessibleDescription(PermissionViolation.AllowanceExceeded)
     })
+
+    describe('Ser unavailability', () => {
+      it('shows the page even when ser-kit cannot check permissions', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await expect(
+          render(
+            href('/submit/:route/:transactions', {
+              route: encode(currentRoute),
+              transactions: encode([transaction]),
+            }),
+          ),
+        ).resolves.not.toThrow()
+      })
+
+      it('shows a warning when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('alert', {
+            name: 'Permissions backend unavailable',
+          }),
+        ).toHaveAccessibleDescription(
+          'We could not check the permissions for this route. Proceed with caution.',
+        )
+      })
+
+      it('enables the "Sign" button when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('button', { name: 'Sign' }),
+        ).toBeEnabled()
+      })
+    })
   })
 
   describe('Approvals', () => {
