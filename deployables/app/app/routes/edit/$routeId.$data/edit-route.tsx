@@ -79,7 +79,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      waypoints: route.waypoints,
+      waypoints: routes.length === 0 ? route.waypoints : undefined,
     },
 
     possibleRoutes: rankRoutes(routes),
