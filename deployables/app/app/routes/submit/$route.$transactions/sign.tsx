@@ -158,8 +158,8 @@ const SubmitPage = ({
       >
         {!isValidRoute && (
           <Error title="Invalid route">
-            You cannot sign this transaction as we could not find any route form
-            the signer wallet to the account.
+            We could not find any route form the signer wallet to the account.
+            Proceed with caution.
           </Error>
         )}
 
@@ -280,7 +280,7 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Actions>
-        <SubmitTransaction disabled={!isValidRoute || !passesPermissionCheck} />
+        <SubmitTransaction disabled={!passesPermissionCheck} />
       </Form.Actions>
     </Form>
   )
