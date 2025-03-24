@@ -4,14 +4,17 @@ import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
 import { encode } from '@zodiac/schema'
 import {
+  createMockExecutionRoute,
   createMockSerRoute,
   createMockTransaction,
+  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import {
   checkPermissions,
   PermissionViolation,
+  prefixAddress,
   queryRoutes,
   unprefixAddress,
 } from 'ser-kit'
@@ -169,6 +172,40 @@ describe('Sign', () => {
       expect(
         screen.getByRole('alert', { name: 'Permission violation' }),
       ).toHaveAccessibleDescription(PermissionViolation.AllowanceExceeded)
+    })
+  })
+
+  describe('Approvals', () => {
+    beforeEach(() => {
+      mockQueryRoutes.mockResolvedValue([])
+      mockCheckPermissions.mockResolvedValue({
+        error: undefined,
+        success: true,
+      })
+    })
+
+    it('does not revoke approvals by default', async () => {
+      mockSimulateTransactionBundle.mockResolvedValue({
+        approvalTransactions: [
+          { spender: randomAddress(), tokenAddress: randomAddress() },
+        ],
+        tokenFlows: { sent: [], received: [], other: [] },
+      })
+
+      await render(
+        href('/submit/:route/:transactions', {
+          route: encode(
+            createMockExecutionRoute({
+              initiator: prefixAddress(undefined, randomAddress()),
+            }),
+          ),
+          transactions: encode([createMockTransaction()]),
+        }),
+      )
+
+      expect(
+        screen.getByRole('checkbox', { name: 'Revoke all approvals' }),
+      ).not.toBeChecked()
     })
   })
 })
