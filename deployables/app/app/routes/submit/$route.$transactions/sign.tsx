@@ -23,6 +23,7 @@ import {
   Form,
   Labeled,
   PrimaryButton,
+  SkeletonText,
   Success,
   successToast,
 } from '@zodiac/ui'
@@ -33,8 +34,8 @@ import {
   ArrowUpFromLine,
   SquareArrowOutUpRight,
 } from 'lucide-react'
-import { useEffect } from 'react'
-import { useActionData, useLoaderData } from 'react-router'
+import { Suspense, useEffect } from 'react'
+import { Await, useActionData, useLoaderData } from 'react-router'
 import {
   checkPermissions,
   execute,
@@ -46,8 +47,9 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
-import { TokenTransferTable } from './TokenTransferTable'
 import { appendApprovalTransactions } from './helper'
+import { SkeletonFlowTable } from './SkeletonFlowTable'
+import { TokenTransferTable } from './TokenTransferTable'
 
 export const meta: RouteType.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Sign transaction bundle') },
@@ -60,12 +62,17 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [routes, permissionCheck, { tokenFlows, approvalTransactions }] =
-    await Promise.all([
-      queryRoutes(unprefixAddress(initiator), route.avatar),
-      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-      simulateTransactionBundle(route.avatar, metaTransactions),
-    ])
+  const [routes, permissionCheck] = await Promise.all([
+    queryRoutes(unprefixAddress(initiator), route.avatar),
+    checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
+  ])
+
+  const simulate = async () => {
+    const { tokenFlows, approvalTransactions } =
+      await simulateTransactionBundle(route.avatar, metaTransactions)
+
+    return { tokenFlows, hasApprovals: approvalTransactions.length > 0 }
+  }
 
   return {
     isValidRoute: routes.length > 0,
@@ -73,10 +80,9 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     initiator: unprefixAddress(initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
-    tokenFlows,
+    simulation: simulate(),
     permissionCheck,
     waypoints,
-    hasApprovals: approvalTransactions.length > 0,
     metaTransactions,
   }
 }
@@ -131,8 +137,7 @@ const SubmitPage = ({
     waypoints,
     isValidRoute,
     permissionCheck,
-    tokenFlows: { other, received, sent },
-    hasApprovals,
+    simulation,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -177,29 +182,37 @@ const SubmitPage = ({
         title="Token Flows"
         description="An overview of the tokens involved in this transaction bundle."
       >
-        <TokenTransferTable
-          title="Tokens Sent"
-          columnTitle="To"
-          avatar={avatar}
-          icon={ArrowUpFromLine}
-          tokens={sent}
-        />
+        <Suspense fallback={<SkeletonFlowTable />}>
+          <Await resolve={simulation}>
+            {({ tokenFlows: { sent, received, other } }) => (
+              <>
+                <TokenTransferTable
+                  title="Tokens Sent"
+                  columnTitle="To"
+                  avatar={avatar}
+                  icon={ArrowUpFromLine}
+                  tokens={sent}
+                />
 
-        <TokenTransferTable
-          title="Tokens Received"
-          columnTitle="From"
-          avatar={avatar}
-          icon={ArrowDownToLine}
-          tokens={received}
-        />
+                <TokenTransferTable
+                  title="Tokens Received"
+                  columnTitle="From"
+                  avatar={avatar}
+                  icon={ArrowDownToLine}
+                  tokens={received}
+                />
 
-        <TokenTransferTable
-          title="Other Token Movements"
-          columnTitle="From → To"
-          avatar={avatar}
-          icon={ArrowLeftRight}
-          tokens={other}
-        />
+                <TokenTransferTable
+                  title="Other Token Movements"
+                  columnTitle="From → To"
+                  avatar={avatar}
+                  icon={ArrowLeftRight}
+                  tokens={other}
+                />
+              </>
+            )}
+          </Await>
+        </Suspense>
       </Form.Section>
 
       <Form.Section
@@ -218,11 +231,17 @@ const SubmitPage = ({
         description="Token approvals let other addresses spend your tokens. If you don't
             revoke them, they can keep spending indefinitely."
       >
-        {hasApprovals ? (
-          <Checkbox label="Revoke all approvals" name="revokeApprovals" />
-        ) : (
-          <Success title="No approval to revoke" />
-        )}
+        <Suspense fallback={<SkeletonText />}>
+          <Await resolve={simulation}>
+            {({ hasApprovals }) =>
+              hasApprovals ? (
+                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
+              ) : (
+                <Success title="No approval to revoke" />
+              )
+            }
+          </Await>
+        </Suspense>
       </Form.Section>
 
       <Form.Section
