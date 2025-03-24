@@ -9,19 +9,22 @@ export type ApprovalTransaction = {
 
 const ownerSchema = z.object({
   soltype: z.object({
-    name: z.literal('owner'),
+    // name: z.literal('owner'),
+    name: z.string(),
   }),
   value: addressSchema,
 })
 const spenderSchema = z.object({
   soltype: z.object({
-    name: z.literal('spender'),
+    // name: z.literal('spender'),
+    name: z.string(),
   }),
   value: addressSchema,
 })
 const valueSchema = z.object({
   soltype: z.object({
-    name: z.literal('value'),
+    // name: z.literal('value'),
+    name: z.string(),
   }),
   value: z.string(),
 })
