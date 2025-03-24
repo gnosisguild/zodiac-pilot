@@ -1,25 +1,21 @@
-import type { ChangeEventHandler, HTMLProps } from 'react'
+import { useId, type ComponentPropsWithoutRef } from 'react'
 
-type CheckboxProps = Omit<HTMLProps<HTMLInputElement>, 'type'> & {
-  label?: string
-  onChange?: ChangeEventHandler<HTMLInputElement>
+type CheckboxProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'type' | 'id' | 'className'
+> & {
+  label: string
 }
 
-export const Checkbox = ({
-  label,
-  checked,
-  onChange,
-  id,
-  ...props
-}: CheckboxProps) => {
+export const Checkbox = ({ label, ...props }: CheckboxProps) => {
+  const id = useId()
+
   return (
     <div className="inline-flex items-center">
-      <label className="relative flex cursor-pointer items-center">
+      <div className="relative flex cursor-pointer items-center">
         <input
           id={id}
           type="checkbox"
-          checked={checked}
-          onChange={onChange}
           className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 shadow transition-all checked:border-slate-800 checked:bg-slate-800 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900 dark:checked:border-zinc-700 dark:checked:bg-zinc-800"
           {...props}
         />
@@ -42,9 +38,11 @@ export const Checkbox = ({
             />
           </svg>
         </span>
-      </label>
+      </div>
 
-      {label && <span className="ml-2 text-sm dark:text-gray-50">{label}</span>}
+      <label htmlFor={id} className="ml-2 text-sm dark:text-gray-50">
+        {label}
+      </label>
     </div>
   )
 }
