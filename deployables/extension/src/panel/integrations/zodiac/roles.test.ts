@@ -1,3 +1,4 @@
+import { getRolesAppUrl } from '@zodiac/env'
 import type { MetaTransactionRequest } from '@zodiac/schema'
 import {
   afterEach,
@@ -66,7 +67,7 @@ describe('recordCalls', () => {
     // Assert: Verify that fetch was called once with the URL for creating a new record.
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(fetchMock).toHaveBeenCalledWith(
-      `${process.env.ROLES_APP_URL}/api/records`,
+      `${getRolesAppUrl()}/api/records`,
       expect.anything(),
     )
 
@@ -105,7 +106,7 @@ describe('recordCalls', () => {
     // Assert that the correct endpoint is used for subsequent calls.
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(fetchMock).toHaveBeenCalledWith(
-      `${process.env.ROLES_APP_URL}/api/records/existingRecordId/calls`,
+      `${getRolesAppUrl()}/api/records/existingRecordId/calls`,
       expect.objectContaining({
         method: 'POST',
         headers: expect.objectContaining({
@@ -176,14 +177,12 @@ describe('recordCalls', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
 
     // The first fetch call should be to create a new record.
-    expect(fetchMock.mock.calls[0][0]).toBe(
-      `${process.env.ROLES_APP_URL}/api/records`,
-    )
+    expect(fetchMock.mock.calls[0][0]).toBe(`${getRolesAppUrl()}/api/records`)
 
     // The second fetch call should use the stored record's details,
     // batching the transactions from the second and third invocations.
     expect(fetchMock.mock.calls[1][0]).toBe(
-      `${process.env.ROLES_APP_URL}/api/records/newRecord/calls`,
+      `${getRolesAppUrl()}/api/records/newRecord/calls`,
     )
     const secondCallBody = JSON.parse(fetchMock.mock.calls[1][1]?.body)
     expect(secondCallBody).toHaveLength(2)

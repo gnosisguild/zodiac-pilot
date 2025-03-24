@@ -1,11 +1,10 @@
+import { getRolesAppUrl } from '@zodiac/env'
 import { decodeRoleKey } from '@zodiac/modules'
 import { jsonStringify, type MetaTransactionRequest } from '@zodiac/schema'
 import { useEffect, useState } from 'react'
 import type { PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import { getStorageEntry, saveStorageEntry } from '../../utils'
-
-const rolesAppUrl = process.env.ROLES_APP_URL
 
 /**
  * Record calls to the Zodiac Roles app, so the user can update their role's permissions.
@@ -79,7 +78,7 @@ const recordInitialCalls = async (
     recordedWith: 'Zodiac Pilot',
   }
 
-  const response = await fetch(`${rolesAppUrl}/api/records`, {
+  const response = await fetch(`${getRolesAppUrl()}/api/records`, {
     method: 'POST',
     body: jsonStringify(transactions.map((t) => ({ ...t, metadata }))),
     headers: {
@@ -101,7 +100,7 @@ const recordSubsequentCalls = async (
   }
 
   const response = await fetch(
-    `${rolesAppUrl}/api/records/${record.id}/calls`,
+    `${getRolesAppUrl()}/api/records/${record.id}/calls`,
     {
       method: 'POST',
       body: jsonStringify(transactions.map((t) => ({ ...t, metadata }))),
@@ -166,7 +165,7 @@ export const useRoleRecordLink = (props?: {
     rolesMod &&
     roleKey &&
     record &&
-    `${rolesAppUrl}/${rolesMod}/roles/${decodeRoleKey(roleKey)}/records/${record.id}/auth/${record.authToken}`
+    `${getRolesAppUrl()}/${rolesMod}/roles/${decodeRoleKey(roleKey)}/records/${record.id}/auth/${record.authToken}`
   )
 }
 
