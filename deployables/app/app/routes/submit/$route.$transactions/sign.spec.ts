@@ -144,7 +144,46 @@ describe('Sign', () => {
           ),
         ).resolves.not.toThrow()
       })
-      it.todo('shows a warning when ser is unavailable')
+
+      it('shows a warning when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('alert', {
+            name: 'Routes backend unavailable',
+          }),
+        ).toHaveAccessibleDescription(
+          'We could not verify the currently selected route. Please proceed with caution.',
+        )
+      })
+
+      it('enables the "Sign" button when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('button', { name: 'Sign' }),
+        ).toBeEnabled()
+      })
     })
   })
 

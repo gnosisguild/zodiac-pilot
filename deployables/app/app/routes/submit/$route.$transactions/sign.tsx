@@ -15,6 +15,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   Checkbox,
@@ -26,6 +27,7 @@ import {
   SkeletonText,
   Success,
   successToast,
+  Warning,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
 import {
@@ -41,7 +43,6 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
-  queryRoutes,
   unprefixAddress,
   type ExecutionState,
 } from 'ser-kit'
@@ -62,8 +63,8 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const [routes, permissionCheck] = await Promise.all([
-    queryRoutes(unprefixAddress(initiator), route.avatar),
+  const [queryRoutesResult, permissionCheck] = await Promise.all([
+    queryRoutes(initiator, route.avatar),
     checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
   ])
 
@@ -75,7 +76,9 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   }
 
   return {
-    isValidRoute: routes.length > 0,
+    isValidRoute:
+      queryRoutesResult.error != null || queryRoutesResult.routes.length > 0,
+    hasQueryRoutesError: queryRoutesResult.error != null,
     id: route.id,
     initiator: unprefixAddress(initiator),
     avatar: route.avatar,
@@ -138,6 +141,7 @@ const SubmitPage = ({
     isValidRoute,
     permissionCheck,
     simulation,
+    hasQueryRoutesError,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -156,6 +160,13 @@ const SubmitPage = ({
         <ChainSelect disabled defaultValue={chainId} />
 
         <Labeled label="Selected route">
+          {hasQueryRoutesError && (
+            <Warning title="Routes backend unavailable">
+              We could not verify the currently selected route. Please proceed
+              with caution.
+            </Warning>
+          )}
+
           <Routes disabled orientation="horizontal">
             <Route id={id}>
               {waypoints && (

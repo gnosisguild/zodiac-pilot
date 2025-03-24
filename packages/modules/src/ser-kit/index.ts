@@ -1,0 +1,1 @@
+export { queryRoutes } from './queryRoutes'
