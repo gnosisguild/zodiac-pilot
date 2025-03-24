@@ -70,6 +70,7 @@
     "jsdom": "26.0.0",
     "jsdom-testing-mocks": "1.13.1",
     "postcss": "8.5.3",
+    "prisma": "^6.5.0",
     "tailwindcss": "4.0.17",
     "typescript": "5.8.2",
     "vite": "6.2.3",
