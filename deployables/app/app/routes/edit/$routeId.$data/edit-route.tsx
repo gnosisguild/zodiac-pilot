@@ -431,7 +431,7 @@ const RouteSelect = ({
 
                 {waypoints && (
                   <Routes disabled orientation="horizontal">
-                    <Route id="current-route">
+                    <Route>
                       <Waypoints>
                         {waypoints.map(({ account, ...waypoint }, index) => (
                           <Waypoint

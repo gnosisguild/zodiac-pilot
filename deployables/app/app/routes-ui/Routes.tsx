@@ -85,7 +85,7 @@ export const Routes = ({
 }
 
 type RouteProps = PropsWithChildren<{
-  id: string
+  id?: string
   name?: string
 }>
 
