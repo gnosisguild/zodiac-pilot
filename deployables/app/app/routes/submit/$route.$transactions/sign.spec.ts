@@ -127,6 +127,25 @@ describe('Sign', () => {
         )
       })
     })
+
+    describe('Ser unavailability', () => {
+      it('shows the page even when ser-kit cannot query routes', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await expect(
+          render(
+            href('/submit/:route/:transactions', {
+              route: encode(currentRoute),
+              transactions: encode([transaction]),
+            }),
+          ),
+        ).resolves.not.toThrow()
+      })
+      it.todo('shows a warning when ser is unavailable')
+    })
   })
 
   describe('Permissions', () => {
@@ -204,7 +223,7 @@ describe('Sign', () => {
       )
 
       expect(
-        screen.getByRole('checkbox', { name: 'Revoke all approvals' }),
+        await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
       ).not.toBeChecked()
     })
   })
