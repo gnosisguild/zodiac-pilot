@@ -7,7 +7,7 @@ import {
 } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
-import { isSmartContractAddress, jsonRpcProvider } from '@/utils'
+import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -23,6 +23,10 @@ import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
 import { type ChainId } from 'ser-kit'
 import type { Route } from './+types/create'
+
+export const meta: Route.MetaFunction = ({ matches }) => [
+  { title: routeTitle(matches, 'New Account') },
+]
 
 export const clientLoader = async () => {
   const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()

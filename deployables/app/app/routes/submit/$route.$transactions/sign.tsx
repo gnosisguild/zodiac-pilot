@@ -2,7 +2,12 @@ import { ConnectWallet } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { simulateTransactionBundle } from '@/simulation-server'
-import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
+import {
+  jsonRpcProvider,
+  parseRouteData,
+  parseTransactionData,
+  routeTitle,
+} from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
 import { getBoolean } from '@zodiac/form-data'
@@ -43,6 +48,10 @@ import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
 import { TokenTransferTable } from './TokenTransferTable'
 import { appendApprovalTransactions } from './helper'
+
+export const meta: RouteType.MetaFunction = ({ matches }) => [
+  { title: routeTitle(matches, 'Sign transaction bundle') },
+]
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
@@ -210,11 +219,7 @@ const SubmitPage = ({
             revoke them, they can keep spending indefinitely."
       >
         {hasApprovals ? (
-          <Checkbox
-            defaultChecked
-            label="Revoke all approvals"
-            name="revokeApprovals"
-          />
+          <Checkbox label="Revoke all approvals" name="revokeApprovals" />
         ) : (
           <Success title="No approval to revoke" />
         )}
