@@ -27,12 +27,6 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      - name: Build manifest
-        run: pnpm update-manifest -v v4.0.0
-        working-directory: ./deployables/extension
-        env:
-          COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
-
       - uses: reloc8/action-latest-release-version@1.0.0
         id: fetch-latest-release
 
