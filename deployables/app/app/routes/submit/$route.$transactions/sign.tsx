@@ -157,16 +157,16 @@ const SubmitPage = ({
           </Error>
         )}
 
+        {hasQueryRoutesError && (
+          <Warning title="Routes backend unavailable">
+            We could not verify the currently selected route. Please proceed
+            with caution.
+          </Warning>
+        )}
+
         <ChainSelect disabled defaultValue={chainId} />
 
         <Labeled label="Selected route">
-          {hasQueryRoutesError && (
-            <Warning title="Routes backend unavailable">
-              We could not verify the currently selected route. Please proceed
-              with caution.
-            </Warning>
-          )}
-
           <Routes disabled orientation="horizontal">
             <Route id={id}>
               {waypoints && (
