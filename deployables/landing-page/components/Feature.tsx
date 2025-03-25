@@ -4,7 +4,7 @@ import type { PropsWithChildren, ReactNode } from 'react'
 type FeatureProps = PropsWithChildren<{
   section: string
   title: string
-  description: string
+  description: ReactNode
   color: 'teal' | 'indigo' | 'amber' | 'pink'
   media?: ReactNode
 }>
