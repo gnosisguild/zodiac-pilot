@@ -56,7 +56,7 @@ export function Footer() {
 
             <GhostLinkButton
               iconOnly
-              to="https://discord.com/channels/881881751369175040/884777203332710460"
+              to="https://discord.gnosisguild.org"
               icon={SiDiscord}
             >
               Contact us on Discord

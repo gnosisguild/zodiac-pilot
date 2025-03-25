@@ -35,7 +35,7 @@ const features: Array<Feature> = [
   {
     name: 'Automated Pathfinding',
     summary:
-      'Pilot intelligently identifies transaction routes between signer accounts and target destinations — you simply choose the best option for your needs.',
+      'Pilot surfaces all viable routes between accounts so you can choose the most efficient path.',
 
     image: [editLight, editDark],
     icon: Split,

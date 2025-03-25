@@ -5,22 +5,19 @@ export const FAQs = () => {
   return (
     <section
       id="faqs"
-      className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8"
+      className="mx-auto max-w-7xl snap-start px-16 py-16 sm:py-24 lg:px-32"
     >
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-50">
-          Frequently asked questions
+          Frequently Asked Questions
         </h2>
         <p className="mt-6 text-base/7 text-zinc-600 dark:text-zinc-200">
           Have a different question and can’t find the answer you’re looking
-          for? Reach out to our support team by{' '}
-          <a
-            href="mailto:info@gnosisguild.org"
-            className="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-teal-500 dark:hover:text-teal-400"
-          >
-            sending us an email
-          </a>{' '}
-          and we’ll get back to you as soon as we can.
+          for? Join the{' '}
+          <TextLink to="https://discord.gnosisguild.org">
+            Gnosis Guild Discord
+          </TextLink>{' '}
+          and drop a note in our support channel.
         </p>
       </div>
       <div className="mt-20">

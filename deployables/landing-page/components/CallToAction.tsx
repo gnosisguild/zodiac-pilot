@@ -1,31 +1,20 @@
 import { SiGooglechrome } from '@icons-pack/react-simple-icons'
-import { PrimaryLinkButton } from '@zodiac/ui'
-import backgroundImage from '../images/background-call-to-action.jpg'
-import { Container } from './Container'
+import { PrimaryLinkButton, ZodiacOsPlain } from '@zodiac/ui'
 
 export function CallToAction() {
   return (
-    <section
-      id="get-started-today"
-      className="relative overflow-hidden bg-blue-600 py-32"
-    >
-      <img
-        className="dark:hue-rotate-305 absolute top-0 min-h-full w-full brightness-125 contrast-75 hue-rotate-30 dark:brightness-75 dark:contrast-75"
-        src={backgroundImage}
-        alt=""
-        width={2347}
-        height={1244}
-      />
-      <Container className="relative">
-        <div className="mx-auto max-w-lg text-center">
+    <section id="get-started-today" className="h-screen snap-start">
+      <div className="xl:bg-radial-[at_50%_55%] h-full from-teal-600 to-zinc-950 to-40%">
+        <div className="mx-4 flex h-full max-w-lg flex-col items-center justify-center text-center xl:mx-auto">
+          <ZodiacOsPlain className="mb-16 size-16 xl:mb-24 xl:size-24" />
+
           <h2 className="font-display text-3xl tracking-tight text-white sm:text-4xl">
             Start Using Zodiac Pilot
           </h2>
+
           <p className="mb-10 mt-4 text-lg tracking-tight text-white">
-            Pilot moves execution beyond manual approvals and fragmented dapp
-            interactions. It enables composable, risk-free, and highly
-            controlled transaction flows — bridging the gap between programmable
-            execution and real-world operational needs.
+            Add Zodiac Pilot to your browser to batch, simulate, and execute
+            onchain transactions — all from a secure, streamlined interface.
           </p>
 
           <div className="flex justify-center">
@@ -37,7 +26,7 @@ export function CallToAction() {
             </PrimaryLinkButton>
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   )
 }
