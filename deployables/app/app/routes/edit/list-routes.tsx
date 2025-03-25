@@ -1,6 +1,7 @@
 import { fromVersion, MinimumVersion, OnlyConnected, Page } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
+import { routeTitle } from '@/utils'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { getString } from '@zodiac/form-data'
 import {
@@ -36,6 +37,10 @@ import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
 import { loadRoutes } from './loadRoutes'
+
+export const meta: Route.MetaFunction = ({ matches }) => [
+  { title: routeTitle(matches, 'Accounts') },
+]
 
 export const clientLoader = async () => {
   const [routes, activeRouteId] = await Promise.all([

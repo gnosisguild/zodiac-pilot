@@ -4,14 +4,17 @@ import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
 import { encode } from '@zodiac/schema'
 import {
+  createMockExecutionRoute,
   createMockSerRoute,
   createMockTransaction,
+  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import {
   checkPermissions,
   PermissionViolation,
+  prefixAddress,
   queryRoutes,
   unprefixAddress,
 } from 'ser-kit'
@@ -88,22 +91,6 @@ describe('Sign', () => {
     })
 
     describe('Invalid route', () => {
-      it('disables the submit button when no routes can be found', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
-
-        mockQueryRoutes.mockResolvedValue([])
-
-        await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
-            transactions: encode([transaction]),
-          }),
-        )
-
-        expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
-      })
-
       it('shows a warning to the user', async () => {
         const currentRoute = createMockSerRoute({ initiator })
         const transaction = createMockTransaction()
@@ -120,8 +107,66 @@ describe('Sign', () => {
         expect(
           screen.getByRole('alert', { name: 'Invalid route' }),
         ).toHaveAccessibleDescription(
-          'You cannot sign this transaction as we could not find any route form the signer wallet to the account.',
+          'We could not find any route form the signer wallet to the account. Proceed with caution.',
         )
+      })
+    })
+
+    describe('Ser unavailability', () => {
+      it('shows the page even when ser-kit cannot query routes', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await expect(
+          render(
+            href('/submit/:route/:transactions', {
+              route: encode(currentRoute),
+              transactions: encode([transaction]),
+            }),
+          ),
+        ).resolves.not.toThrow()
+      })
+
+      it('shows a warning when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('alert', {
+            name: 'Routes backend unavailable',
+          }),
+        ).toHaveAccessibleDescription(
+          'We could not verify the currently selected route. Please proceed with caution.',
+        )
+      })
+
+      it('enables the "Sign" button when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockQueryRoutes.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('button', { name: 'Sign' }),
+        ).toBeEnabled()
       })
     })
   })
@@ -169,6 +214,98 @@ describe('Sign', () => {
       expect(
         screen.getByRole('alert', { name: 'Permission violation' }),
       ).toHaveAccessibleDescription(PermissionViolation.AllowanceExceeded)
+    })
+
+    describe('Ser unavailability', () => {
+      it('shows the page even when ser-kit cannot check permissions', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await expect(
+          render(
+            href('/submit/:route/:transactions', {
+              route: encode(currentRoute),
+              transactions: encode([transaction]),
+            }),
+          ),
+        ).resolves.not.toThrow()
+      })
+
+      it('shows a warning when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('alert', {
+            name: 'Permissions backend unavailable',
+          }),
+        ).toHaveAccessibleDescription(
+          'We could not check the permissions for this route. Proceed with caution.',
+        )
+      })
+
+      it('enables the "Sign" button when ser is unavailable', async () => {
+        const currentRoute = createMockSerRoute({ initiator })
+        const transaction = createMockTransaction()
+
+        mockCheckPermissions.mockRejectedValue('Ser is down')
+
+        await render(
+          href('/submit/:route/:transactions', {
+            route: encode(currentRoute),
+            transactions: encode([transaction]),
+          }),
+        )
+
+        expect(
+          await screen.findByRole('button', { name: 'Sign' }),
+        ).toBeEnabled()
+      })
+    })
+  })
+
+  describe('Approvals', () => {
+    beforeEach(() => {
+      mockQueryRoutes.mockResolvedValue([])
+      mockCheckPermissions.mockResolvedValue({
+        error: undefined,
+        success: true,
+      })
+    })
+
+    it('does not revoke approvals by default', async () => {
+      mockSimulateTransactionBundle.mockResolvedValue({
+        approvalTransactions: [
+          { spender: randomAddress(), tokenAddress: randomAddress() },
+        ],
+        tokenFlows: { sent: [], received: [], other: [] },
+      })
+
+      await render(
+        href('/submit/:route/:transactions', {
+          route: encode(
+            createMockExecutionRoute({
+              initiator: prefixAddress(undefined, randomAddress()),
+            }),
+          ),
+          transactions: encode([createMockTransaction()]),
+        }),
+      )
+
+      expect(
+        await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
+      ).not.toBeChecked()
     })
   })
 })

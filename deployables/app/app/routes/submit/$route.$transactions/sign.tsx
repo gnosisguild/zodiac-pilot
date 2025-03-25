@@ -2,7 +2,12 @@ import { ConnectWallet } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { simulateTransactionBundle } from '@/simulation-server'
-import { jsonRpcProvider, parseRouteData, parseTransactionData } from '@/utils'
+import {
+  jsonRpcProvider,
+  parseRouteData,
+  parseTransactionData,
+  routeTitle,
+} from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
 import { getBoolean } from '@zodiac/form-data'
@@ -10,6 +15,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { checkPermissions, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   Checkbox,
@@ -18,8 +24,10 @@ import {
   Form,
   Labeled,
   PrimaryButton,
+  SkeletonText,
   Success,
   successToast,
+  Warning,
 } from '@zodiac/ui'
 import { type Eip1193Provider } from 'ethers'
 import {
@@ -28,46 +36,61 @@ import {
   ArrowUpFromLine,
   SquareArrowOutUpRight,
 } from 'lucide-react'
-import { useEffect } from 'react'
-import { useActionData, useLoaderData } from 'react-router'
+import { Suspense, useEffect } from 'react'
+import { Await, useActionData, useLoaderData } from 'react-router'
 import {
-  checkPermissions,
   execute,
   ExecutionActionType,
   planExecution,
-  queryRoutes,
   unprefixAddress,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
-import { TokenTransferTable } from './TokenTransferTable'
 import { appendApprovalTransactions } from './helper'
+import { SkeletonFlowTable } from './SkeletonFlowTable'
+import { TokenTransferTable } from './TokenTransferTable'
+
+export const meta: RouteType.MetaFunction = ({ matches }) => [
+  { title: routeTitle(matches, 'Sign transaction bundle') },
+]
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const metaTransactions = parseTransactionData(params.transactions)
-  const { initiator, waypoints, ...route } = parseRouteData(params.route)
+  const route = parseRouteData(params.route)
 
-  invariantResponse(initiator != null, 'Route needs an initiator')
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+  invariantResponse(route.initiator != null, 'Route needs an initiator')
+  invariantResponse(
+    route.waypoints != null,
+    'Route does not provide any waypoints',
+  )
 
-  const [routes, permissionCheck, { tokenFlows, approvalTransactions }] =
-    await Promise.all([
-      queryRoutes(unprefixAddress(initiator), route.avatar),
-      checkPermissions(metaTransactions, { initiator, waypoints, ...route }),
-      simulateTransactionBundle(route.avatar, metaTransactions),
-    ])
+  const [queryRoutesResult, permissionCheckResult] = await Promise.all([
+    queryRoutes(route.initiator, route.avatar),
+    checkPermissions(route, metaTransactions),
+  ])
+
+  const simulate = async () => {
+    const { tokenFlows, approvalTransactions } =
+      await simulateTransactionBundle(route.avatar, metaTransactions)
+
+    return { tokenFlows, hasApprovals: approvalTransactions.length > 0 }
+  }
 
   return {
-    isValidRoute: routes.length > 0,
+    isValidRoute:
+      queryRoutesResult.error != null || queryRoutesResult.routes.length > 0,
+    hasQueryRoutesError: queryRoutesResult.error != null,
     id: route.id,
-    initiator: unprefixAddress(initiator),
+    initiator: unprefixAddress(route.initiator),
     avatar: route.avatar,
     chainId: getChainId(route.avatar),
-    tokenFlows,
-    permissionCheck,
-    waypoints,
-    hasApprovals: approvalTransactions.length > 0,
+    simulation: simulate(),
+    permissionCheck: permissionCheckResult.permissionCheck,
+    passesPermissionCheck:
+      permissionCheckResult.permissionCheck == null ||
+      permissionCheckResult.permissionCheck.success,
+    waypoints: route.waypoints,
     metaTransactions,
   }
 }
@@ -122,8 +145,9 @@ const SubmitPage = ({
     waypoints,
     isValidRoute,
     permissionCheck,
-    tokenFlows: { other, received, sent },
-    hasApprovals,
+    simulation,
+    hasQueryRoutesError,
+    passesPermissionCheck,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -134,9 +158,16 @@ const SubmitPage = ({
       >
         {!isValidRoute && (
           <Error title="Invalid route">
-            You cannot sign this transaction as we could not find any route form
-            the signer wallet to the account.
+            We could not find any route form the signer wallet to the account.
+            Proceed with caution.
           </Error>
+        )}
+
+        {hasQueryRoutesError && (
+          <Warning title="Routes backend unavailable">
+            We could not verify the currently selected route. Please proceed
+            with caution.
+          </Warning>
         )}
 
         <ChainSelect disabled defaultValue={chainId} />
@@ -168,39 +199,58 @@ const SubmitPage = ({
         title="Token Flows"
         description="An overview of the tokens involved in this transaction bundle."
       >
-        <TokenTransferTable
-          title="Tokens Sent"
-          columnTitle="To"
-          avatar={avatar}
-          icon={ArrowUpFromLine}
-          tokens={sent}
-        />
+        <Suspense fallback={<SkeletonFlowTable />}>
+          <Await resolve={simulation}>
+            {({ tokenFlows: { sent, received, other } }) => (
+              <>
+                <TokenTransferTable
+                  title="Tokens Sent"
+                  columnTitle="To"
+                  avatar={avatar}
+                  icon={ArrowUpFromLine}
+                  tokens={sent}
+                />
 
-        <TokenTransferTable
-          title="Tokens Received"
-          columnTitle="From"
-          avatar={avatar}
-          icon={ArrowDownToLine}
-          tokens={received}
-        />
+                <TokenTransferTable
+                  title="Tokens Received"
+                  columnTitle="From"
+                  avatar={avatar}
+                  icon={ArrowDownToLine}
+                  tokens={received}
+                />
 
-        <TokenTransferTable
-          title="Other Token Movements"
-          columnTitle="From → To"
-          avatar={avatar}
-          icon={ArrowLeftRight}
-          tokens={other}
-        />
+                <TokenTransferTable
+                  title="Other Token Movements"
+                  columnTitle="From → To"
+                  avatar={avatar}
+                  icon={ArrowLeftRight}
+                  tokens={other}
+                />
+              </>
+            )}
+          </Await>
+        </Suspense>
       </Form.Section>
 
       <Form.Section
         title="Permissions check"
         description="We check whether any permissions on the current route would prevent this transaction from succeeding."
       >
-        {permissionCheck.success ? (
-          <Success title="All checks passed" />
+        {permissionCheck == null ? (
+          <Warning title="Permissions backend unavailable">
+            We could not check the permissions for this route. Proceed with
+            caution.
+          </Warning>
         ) : (
-          <Error title="Permission violation">{permissionCheck.error}</Error>
+          <>
+            {permissionCheck.success ? (
+              <Success title="All checks passed" />
+            ) : (
+              <Error title="Permission violation">
+                {permissionCheck.error}
+              </Error>
+            )}
+          </>
         )}
       </Form.Section>
 
@@ -209,15 +259,17 @@ const SubmitPage = ({
         description="Token approvals let other addresses spend your tokens. If you don't
             revoke them, they can keep spending indefinitely."
       >
-        {hasApprovals ? (
-          <Checkbox
-            defaultChecked
-            label="Revoke all approvals"
-            name="revokeApprovals"
-          />
-        ) : (
-          <Success title="No approval to revoke" />
-        )}
+        <Suspense fallback={<SkeletonText />}>
+          <Await resolve={simulation}>
+            {({ hasApprovals }) =>
+              hasApprovals ? (
+                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
+              ) : (
+                <Success title="No approval to revoke" />
+              )
+            }
+          </Await>
+        </Suspense>
       </Form.Section>
 
       <Form.Section
@@ -228,9 +280,7 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Actions>
-        <SubmitTransaction
-          disabled={!isValidRoute || !permissionCheck.success}
-        />
+        <SubmitTransaction disabled={!passesPermissionCheck} />
       </Form.Actions>
     </Form>
   )

@@ -35,7 +35,10 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import { type ExecutionRoute } from '@zodiac/schema'
+import {
+  type ExecutionRoute,
+  type Waypoints as WaypointsType,
+} from '@zodiac/schema'
 import {
   Form,
   Info,
@@ -76,6 +79,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
+      waypoints: routes.length === 0 ? route.waypoints : undefined,
     },
 
     possibleRoutes: rankRoutes(routes),
@@ -226,7 +230,7 @@ export const clientAction = async ({
 
 const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
   const {
-    currentRoute: { comparableId, label, initiator, avatar },
+    currentRoute: { comparableId, label, initiator, avatar, waypoints },
     possibleRoutes,
   } = loaderData
 
@@ -270,6 +274,7 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
             defaultValue={comparableId}
             routes={possibleRoutes}
             initiator={initiator}
+            waypoints={waypoints}
           />
 
           <Avatar
@@ -390,6 +395,7 @@ const Chain = ({ chainId }: ChainProps) => {
 
 type RouteSelectProps = {
   routes: ExecutionRoute[]
+  waypoints?: WaypointsType
   defaultValue?: string
   initiator?: PrefixedAddress
   form?: string
@@ -402,6 +408,7 @@ const RouteSelect = ({
   initiator,
   form,
   name,
+  waypoints,
 }: RouteSelectProps) => {
   return (
     <Labeled label="Selected route">
@@ -416,10 +423,32 @@ const RouteSelect = ({
             )}
 
             {initiator != null && (
-              <Warning>
-                We could not find any routes between the initiator and the
-                selected account. Make you are using the correct chain.
-              </Warning>
+              <>
+                <Warning title="Invalid route">
+                  We could not find any routes between the initiator and the
+                  selected account. Make you are using the correct chain.
+                </Warning>
+
+                {waypoints && (
+                  <Routes disabled orientation="horizontal">
+                    <Route>
+                      <Waypoints>
+                        {waypoints.map(({ account, ...waypoint }, index) => (
+                          <Waypoint
+                            key={`${account.address}-${index}`}
+                            account={account}
+                            connection={
+                              'connection' in waypoint
+                                ? waypoint.connection
+                                : undefined
+                            }
+                          />
+                        ))}
+                      </Waypoints>
+                    </Route>
+                  </Routes>
+                )}
+              </>
             )}
           </>
         ) : (

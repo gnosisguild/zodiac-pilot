@@ -10,7 +10,7 @@ function enableMatomo() {
 
   const u = 'https://analytics.gnosisguild.org/'
   _paq.push(['setTrackerUrl', u + 'matomo.php'])
-  _paq.push(['setSiteId', '1'])
+  _paq.push(['setSiteId', '2'])
   const d = document,
     g = d.createElement('script'),
     s = d.getElementsByTagName('script')[0]
