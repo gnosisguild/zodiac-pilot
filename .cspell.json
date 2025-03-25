@@ -57,6 +57,7 @@
     "omnibridge",
     "outdir",
     "paraswap",
+    "Pipeable",
     "prebuild",
     "presignature",
     "proxied",
