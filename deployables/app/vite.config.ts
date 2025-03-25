@@ -22,8 +22,8 @@ export default defineConfig(({ command }) => ({
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
-    reactRouter(),
     tailwindcss(),
+    reactRouter(),
     tsconfigPaths(),
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
