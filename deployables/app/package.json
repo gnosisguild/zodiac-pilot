@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "pnpm db:generate",
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development react-router dev",
     "check-types": "react-router typegen && tsc -b",
