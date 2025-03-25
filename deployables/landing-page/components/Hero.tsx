@@ -61,40 +61,40 @@ export function Hero({ children }: PropsWithChildren) {
       <div className="mt-24 2xl:mt-44">
         {children}
 
-        <ul className="mt-24 flex items-center justify-center gap-x-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0 2xl:mt-44">
+        <ul className="mt-24 flex items-center justify-center gap-8 sm:flex-col sm:gap-x-0 sm:gap-y-10 xl:flex-row xl:gap-x-12 xl:gap-y-0 2xl:mt-44">
           <li>
-            <ul className="flex flex-col items-center gap-y-8 sm:flex-row sm:gap-x-12 sm:gap-y-0">
-              <li className="flex">
+            <ul className="grid grid-cols-3 flex-col items-center gap-8 sm:flex-row sm:gap-x-12 sm:gap-y-0 xl:flex">
+              <li className="flex justify-center">
                 <a href="https://safe.global/">
                   <SafeLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="flex justify-center">
                 <a href="https://www.karpatkey.com/">
                   <KarpatkeyLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="flex justify-center">
                 <a href="https://hats.finance/">
                   <HatsLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="flex justify-center">
                 <a href="https://www.rethink.finance/">
                   <RethinkLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="flex justify-center">
                 <a href="https://balancer.fi/">
                   <BalancerLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="flex justify-center">
                 <a href="https://ens.domains/">
                   <EnsLogo />
                 </a>
               </li>
-              <li className="flex">
+              <li className="col-span-3 flex justify-center">
                 <a href="https://www.gnosis.io/dao">
                   <GnosisLogo />
                 </a>
