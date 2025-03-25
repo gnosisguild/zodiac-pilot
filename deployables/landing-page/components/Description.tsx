@@ -15,8 +15,8 @@ type ItemsProps = PropsWithChildren<{
 }>
 
 const Item = ({ icon: Icon, title, children, color }: ItemsProps) => (
-  <div className="relative pl-9">
-    <dt className="inline font-semibold text-zinc-900 dark:text-zinc-50">
+  <div className="relative flex flex-col pl-9">
+    <dt className="mb-1 font-semibold text-zinc-900 dark:text-zinc-50">
       <Icon
         className={classNames(
           'absolute left-1 top-1 size-5',
@@ -27,8 +27,8 @@ const Item = ({ icon: Icon, title, children, color }: ItemsProps) => (
         )}
       />
       {title}
-    </dt>{' '}
-    <dd className="inline text-zinc-800 dark:text-zinc-200">{children}</dd>
+    </dt>
+    <dd className="text-sm text-zinc-800 dark:text-zinc-300">{children}</dd>
   </div>
 )
 
