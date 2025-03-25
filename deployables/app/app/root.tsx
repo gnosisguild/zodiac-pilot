@@ -15,7 +15,14 @@ import type { Route } from './+types/root'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const loader = ({ request }: Route.LoaderArgs) => ({
+  isDev: process.env.NODE_ENV === 'development',
+  nonce: request.headers.get('x-nonce') ?? undefined,
+})
+
+export default function App({
+  loaderData: { isDev, nonce },
+}: Route.ComponentProps) {
   return (
     <html lang="en" className="h-full">
       <head>
@@ -26,24 +33,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* <Matomo /> */}
       </head>
       <body className="overflow-x-hidden bg-zinc-50 text-base text-zinc-900 dark:bg-zinc-950 dark:text-white">
-        {children}
+        <ProvideDevelopmentContext isDev={isDev}>
+          <ProvideExtensionVersion>
+            <Outlet />
+          </ProvideExtensionVersion>
+        </ProvideDevelopmentContext>
         <ToastContainer />
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
-  )
-}
-
-export const loader = () => ({ isDev: process.env.NODE_ENV === 'development' })
-
-export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
-  return (
-    <ProvideDevelopmentContext isDev={isDev}>
-      <ProvideExtensionVersion>
-        <Outlet />
-      </ProvideExtensionVersion>
-    </ProvideDevelopmentContext>
   )
 }
 

@@ -24,6 +24,8 @@ export default async function (
 ): Promise<Response> {
   const nonce = crypto.randomUUID()
 
+  request.headers.set('x-nonce', nonce)
+
   const response = await handleRequest(
     request,
     responseStatusCode,
