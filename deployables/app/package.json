@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "cross-env NODE_ENV=development node ./dev-server.js",
+    "dev": "cross-env NODE_ENV=development react-router dev",
     "check-types": "react-router typegen && tsc -b",
     "test": "cross-env NODE_ENV=test vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",

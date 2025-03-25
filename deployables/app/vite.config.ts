@@ -12,6 +12,11 @@ export default defineConfig(({ command }) => ({
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
   },
+
+  server: {
+    port: 3040,
+  },
+
   ssr: {
     noExternal:
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
