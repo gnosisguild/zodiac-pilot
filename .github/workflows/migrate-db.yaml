@@ -24,4 +24,4 @@ jobs:
       - run: pnpm db:migrate
         working-directory: deployables/app
         env:
-          DATABASE_URL: postgres://prisma.${{ secrets.SUPABASE_PROJECT_ID }}:${{ secrets.DB_PASSWORD }}@aws-0-us-east-1.pooler.supabase.com:5432/postgres
+          POSTGRES_PRISMA_URL: postgres://prisma.${{ secrets.SUPABASE_PROJECT_ID }}:${{ secrets.DB_PASSWORD }}@aws-0-us-east-1.pooler.supabase.com:5432/postgres
