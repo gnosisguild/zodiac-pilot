@@ -9,12 +9,16 @@
     "test": "cross-env NODE_ENV=test vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",
     "test:e2e:ui": "pnpm test:e2e --ui",
-    "lint": "eslint . --max-warnings=0"
+    "lint": "eslint . --max-warnings=0",
+    "db:start": "docker-compose up db",
+    "db:create-migration": "prisma migrate dev",
+    "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
     "@icons-pack/react-simple-icons": "12.3.0",
+    "@prisma/client": "6.5.0",
     "@react-router/express": "7.4.0",
     "@react-router/node": "7.4.0",
     "@react-router/serve": "7.4.0",
