@@ -12,7 +12,8 @@
     "lint": "eslint . --max-warnings=0",
     "db:start": "docker-compose up db",
     "db:create-migration": "prisma migrate dev",
-    "db:migrate": "prisma migrate deploy"
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
