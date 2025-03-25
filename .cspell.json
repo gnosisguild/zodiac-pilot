@@ -128,6 +128,8 @@
     "**/*.sh",
     "**/*.tsbuildinfo",
     "**/build/**",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "**/docker-compose.yml",
+    "**/*.sql"
   ]
 }
