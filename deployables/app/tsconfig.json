@@ -29,5 +29,6 @@
     "server/**/*",
     "test-utils/**/*",
     "prisma/**/*"
-  ]
+  ],
+  "exclude": ["prisma/generated/client/runtime/edge-esm.js"]
 }
