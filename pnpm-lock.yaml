@@ -145,6 +145,9 @@ importers:
       lucide-react:
         specifier: 0.484.0
         version: 0.484.0(react@19.0.0)
+      prisma:
+        specifier: ^6.5.0
+        version: 6.5.0(typescript@5.8.2)
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -242,9 +245,6 @@ importers:
       postcss:
         specifier: 8.5.3
         version: 8.5.3
-      prisma:
-        specifier: ^6.5.0
-        version: 6.5.0(typescript@5.8.2)
       tailwindcss:
         specifier: 4.0.17
         version: 4.0.17
