@@ -71,6 +71,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
+      - run: pnpm db:generate
       - run: pnpm test
 
   modules-package:
