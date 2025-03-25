@@ -19,7 +19,8 @@ const migrateDirectory = async (directory: string) => {
         content
           .toString('utf-8')
           .replaceAll('eval("__dirname")', 'import.meta.dirname')
-          .replaceAll('__dirname', 'import.meta.dirname'),
+          .replaceAll('__dirname', 'import.meta.dirname')
+          .replaceAll('__filename', 'import.meta.filename'),
       )
     }
   }
