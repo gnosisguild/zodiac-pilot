@@ -12,17 +12,17 @@ import {
   ScrollRestoration,
 } from 'react-router'
 import type { Route } from './+types/root'
+import './app.css'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
 
-export const loader = ({ request }: Route.LoaderArgs) => ({
-  isDev: process.env.NODE_ENV === 'development',
-  nonce: request.headers.get('x-nonce') ?? undefined,
-})
+export const loader = () => {
+  return {
+    isDev: process.env.NODE_ENV === 'development',
+  }
+}
 
-export default function App({
-  loaderData: { isDev, nonce },
-}: Route.ComponentProps) {
+export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
   return (
     <html lang="en" className="h-full">
       <head>
@@ -39,8 +39,8 @@ export default function App({
           </ProvideExtensionVersion>
         </ProvideDevelopmentContext>
         <ToastContainer />
-        <ScrollRestoration nonce={nonce} />
-        <Scripts nonce={nonce} />
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   )

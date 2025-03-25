@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HydratedRouter } from 'react-router/dom'
-import './app.css'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({

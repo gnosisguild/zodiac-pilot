@@ -15,27 +15,20 @@ import {
 
 export const streamTimeout = 30_000
 
-export default async function (
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
   loadContext?: AppLoadContext,
 ): Promise<Response> {
-  const nonce = crypto.randomUUID()
-
-  request.headers.set('x-nonce', nonce)
-
-  const response = await handleRequest(
+  const response = await handleRequestVercel(
     request,
     responseStatusCode,
     responseHeaders,
     routerContext,
     loadContext,
-    { nonce },
   )
-
-  response.headers.set('Content-Security-Policy', `script-src 'nonce-${nonce}'`)
 
   return response
 }
@@ -45,7 +38,7 @@ export type RenderOptions = {
     keyof RenderToPipeableStreamOptions]?: RenderToReadableStreamOptions[K]
 }
 
-function handleRequest(
+function handleRequestVercel(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
