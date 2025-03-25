@@ -12,7 +12,6 @@ import {
   ScrollRestoration,
 } from 'react-router'
 import type { Route } from './+types/root'
-import { Matomo } from './matomo'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
 
@@ -24,7 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <Matomo />
+        {/* <Matomo /> */}
       </head>
       <body className="overflow-x-hidden bg-zinc-50 text-base text-zinc-900 dark:bg-zinc-950 dark:text-white">
         {children}

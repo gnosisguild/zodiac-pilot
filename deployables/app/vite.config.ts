@@ -4,13 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-export default defineConfig(({ isSsrBuild, command }) => ({
+export default defineConfig(({ command }) => ({
   build: {
-    rollupOptions: isSsrBuild
-      ? {
-          input: './server/app.ts',
-        }
-      : undefined,
     sourcemap: true,
   },
 
@@ -22,8 +17,8 @@ export default defineConfig(({ isSsrBuild, command }) => ({
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
-    tailwindcss(),
     reactRouter(),
+    tailwindcss(),
     tsconfigPaths(),
     sentryVitePlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
