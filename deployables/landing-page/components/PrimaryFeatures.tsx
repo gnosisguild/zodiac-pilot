@@ -3,7 +3,7 @@ import routesLight from '@/images/features/routes-light.png'
 import signDark from '@/images/features/sign-dark.png'
 import signLight from '@/images/features/sign-light.png'
 import seamlessDappInteractions from '@/videos/seamless-dapp-Interactions.mp4'
-import { Divider } from '@zodiac/ui'
+import { TextLink } from '@zodiac/ui'
 import {
   AppWindow,
   BookOpenCheck,
@@ -29,7 +29,7 @@ export function PrimaryFeatures() {
       className="relative pb-28 pt-20 sm:py-32"
     >
       <Feature
-        color="indigo"
+        color="teal"
         section="Feature"
         title="Seamless Dapp Interactions"
         description="Pilot integrates Safe workflows directly into dapp interactions, eliminating the need for external approvals and custom integrations."
@@ -41,7 +41,7 @@ export function PrimaryFeatures() {
       >
         <Description>
           <Description.Item
-            color="indigo"
+            color="teal"
             icon={AppWindow}
             title="One interface, no extra windows  "
           >
@@ -50,7 +50,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={FlaskConical}
-            color="indigo"
+            color="teal"
             title="Test and execute transactions in one place"
           >
             Minimize coordination overhead for multisig signers.
@@ -58,7 +58,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={Boxes}
-            color="indigo"
+            color="teal"
             title="Seamless execution across protocols"
           >
             Move assets, execute swaps, and rebalance liquidity without leaving
@@ -67,10 +67,8 @@ export function PrimaryFeatures() {
         </Description>
       </Feature>
 
-      <Divider />
-
       <Feature
-        color="teal"
+        color="amber"
         section="Feature"
         title="Smart Execution for Safe Accounts"
         description="Pilot enables scalable, programmable execution for Safe accounts — supporting both individual users and large-scale on-chain operations."
@@ -84,7 +82,7 @@ export function PrimaryFeatures() {
         <Description>
           <Description.Item
             icon={ListCheck}
-            color="teal"
+            color="amber"
             title="Move beyond single-step approvals"
           >
             Automate multi-dapp execution paths and reduce manual coordination
@@ -93,7 +91,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={Wallet}
-            color="teal"
+            color="amber"
             title="Reduce transaction costs"
           >
             Batch interactions across dapps to minimize gas fees.
@@ -101,7 +99,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={BookOpenCheck}
-            color="teal"
+            color="amber"
             title="Trusted at scale"
           >
             Pilot facilitates secure, non-custodial execution for over $2B in
@@ -111,10 +109,8 @@ export function PrimaryFeatures() {
         </Description>
       </Feature>
 
-      <Divider />
-
       <Feature
-        color="amber"
+        color="pink"
         section="Feature"
         title="Maximize Efficiency, Minimize Risk"
         description="Pilot eliminates transaction uncertainty with its advanced batching capabilities and industry-first simulation forks, providing a secure environment to test workflows before execution and maximizing capital efficiency."
@@ -127,7 +123,7 @@ export function PrimaryFeatures() {
       >
         <Description>
           <Description.Item
-            color="amber"
+            color="pink"
             icon={Group}
             title="Group transactions into a single batch"
           >
@@ -137,7 +133,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={PackageOpen}
-            color="amber"
+            color="pink"
             title="Simulate transactions in a dedicated sandbox"
           >
             Detect and fix errors in DeFi strategies, treasury operations, and
@@ -146,7 +142,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={ListChecks}
-            color="amber"
+            color="pink"
             title="Validate smart contract interactions before execution"
           >
             Test transaction flows in a secure, off-chain environment to
@@ -155,17 +151,23 @@ export function PrimaryFeatures() {
         </Description>
       </Feature>
 
-      <Divider />
-
       <Feature
-        color="pink"
+        color="indigo"
         section="Feature"
         title="Delegate with Advanced Permissions"
-        description="Pilot enables secure delegation with fine-grained permissions using Zodiac Roles Modifier, allowing accounts to define precise, programmable execution rules."
+        description={
+          <>
+            Pilot enables secure delegation with fine-grained permissions using{' '}
+            <TextLink to="https://roles.gnosisguild.org">
+              Zodiac Roles Modifier
+            </TextLink>
+            , allowing accounts to define precise, programmable execution rules.
+          </>
+        }
       >
         <Description>
           <Description.Item
-            color="pink"
+            color="indigo"
             icon={Lock}
             title="Assign tightly scoped permissions"
           >
@@ -174,7 +176,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={ShieldPlus}
-            color="pink"
+            color="indigo"
             title="Limit execution risk"
           >
             Specify which transactions can be executed, by whom, and under what
@@ -183,7 +185,7 @@ export function PrimaryFeatures() {
 
           <Description.Item
             icon={Milestone}
-            color="pink"
+            color="indigo"
             title="Reduce governance bottlenecks"
           >
             Teams can batch, delegate, and execute workflows without manual
