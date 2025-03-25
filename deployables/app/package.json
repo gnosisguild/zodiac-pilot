@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "prebuild": "pnpm db:generate",
-    "build": "react-router build",
+    "build": "react-router build && pnpm db:copy-runtime",
     "dev": "cross-env NODE_ENV=development react-router dev",
     "check-types": "react-router typegen && tsc -b",
     "test": "cross-env NODE_ENV=test vitest",
@@ -15,7 +15,8 @@
     "db:create-migration": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate && pnpm db:cjs-compat",
-    "db:cjs-compat": "node --experimental-strip-types patch-prisma.ts"
+    "db:cjs-compat": "node --experimental-strip-types patch-prisma.ts",
+    "db:copy-runtime": "cp node_modules/prisma/libquery_engine-rhel-openssl-3.0.x.so.node ./prisma/generated/client/"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
