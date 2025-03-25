@@ -14,6 +14,7 @@ if (process.env.NODE_ENV === 'production') {
       'localhost',
       /^https:\/\/app\.pilot\.gnosisguild\.org/,
     ],
+    maxValueLength: 5000, // enable capturing entire submit & route urls
   })
 }
 
