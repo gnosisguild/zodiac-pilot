@@ -14,7 +14,8 @@
     "db:start": "docker-compose up db",
     "db:create-migration": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate && pnpm db:cjs-compat",
+    "db:cjs-compat": "node --experimental-strip-types patch-prisma.ts"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
@@ -80,6 +81,7 @@
     "tailwindcss": "4.0.17",
     "typescript": "5.8.2",
     "vite": "6.2.3",
+    "vite-plugin-commonjs": "^0.10.4",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.0.9"
   }
