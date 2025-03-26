@@ -1,18 +1,15 @@
-import classNames from 'classnames'
 import { useMemo, type ReactNode } from 'react'
 import { Popover } from '../overlays'
 
 type NumberValueProps = {
   children: number
   precision?: number
-  className?: string
   additionalInfo?: ReactNode
 }
 
 export const NumberValue = ({
   children,
   precision = 2,
-  className,
   additionalInfo,
 }: NumberValueProps) => {
   const numberFormatter = useMemo(
@@ -45,7 +42,7 @@ export const NumberValue = ({
         </div>
       }
     >
-      <span className={classNames('slashed-zero tabular-nums', className)}>
+      <span className="slashed-zero tabular-nums">
         {numberFormatter.format(children)}
       </span>
     </Popover>

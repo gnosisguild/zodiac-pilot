@@ -12,13 +12,6 @@ export const UsdValue = ({
   children: number
   balanceDiff?: number
 }) => {
-  const textColor =
-    balanceDiff == null
-      ? 'text-gray-600'
-      : balanceDiff > 0
-        ? 'text-green-600 dark:text-green-400'
-        : 'text-red-600 dark:text-red-400'
-
   return (
     <Popover
       inline
@@ -30,7 +23,7 @@ export const UsdValue = ({
         )
       }
     >
-      <span className={`text-sm slashed-zero tabular-nums ${textColor}`}>
+      <span className={'text-sm slashed-zero tabular-nums'}>
         {usdFormatter.format(children)}
       </span>
     </Popover>
