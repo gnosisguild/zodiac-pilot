@@ -1,7 +1,5 @@
-import { prisma } from '@/db'
+import type { Route } from './+types/health'
 
-export const loader = async () => {
-  await prisma.$connect()
-
+export const loader = async ({ context: { dbClient } }: Route.LoaderArgs) => {
   return 'OK'
 }
