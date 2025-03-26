@@ -1,12 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "check-types": {
-      "dependsOn": ["db:generate"]
-    },
-    "db:generate": {
-      "cache": false
-    },
+    "check-types": {},
     "check-cycles": {},
     "lint": {},
     "dev": {
