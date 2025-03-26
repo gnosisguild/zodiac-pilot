@@ -2,6 +2,3 @@ packages:
   - deployables/**
   - packages/**
   - configs/**
-onlyBuiltDependencies:
-  - '@prisma/engines'
-  - prisma
