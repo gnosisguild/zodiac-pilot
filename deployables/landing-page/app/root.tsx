@@ -15,7 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className="bg-linear-to-b min-h-full from-white to-zinc-50 text-base dark:from-zinc-950 dark:via-zinc-950 dark:to-gray-900"
+      className="snap-y snap-proximity scroll-smooth bg-white antialiased dark:bg-zinc-950"
     >
       <head>
         <meta charSet="utf-8" />
@@ -24,8 +24,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <Matomo />
       </head>
-      <body className="h-full text-zinc-900 dark:text-white">
+      <body className="relative h-full snap-y snap-proximity scroll-smooth text-zinc-900 dark:text-white">
         {children}
+
         <ScrollRestoration />
         <Scripts />
       </body>

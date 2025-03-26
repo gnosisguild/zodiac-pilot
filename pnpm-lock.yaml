@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  '@duneanalytics/client-sdk':
+    hash: 67965d6f25eb7981a19599df92d633a35566a2e8ef4296070394c50ee82bde42
+    path: patches/@duneanalytics__client-sdk.patch
   '@gnosis.pm/zodiac':
     hash: 4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31
     path: patches/@gnosis.pm__zodiac.patch
@@ -437,6 +440,15 @@ importers:
 
   deployables/landing-page:
     dependencies:
+      '@duneanalytics/client-sdk':
+        specifier: ^0.2.5
+        version: 0.2.5(patch_hash=67965d6f25eb7981a19599df92d633a35566a2e8ef4296070394c50ee82bde42)
+      '@epic-web/invariant':
+        specifier: 1.0.0
+        version: 1.0.0
+      '@headlessui/react':
+        specifier: 2.2.0
+        version: 2.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@icons-pack/react-simple-icons':
         specifier: 12.3.0
         version: 12.3.0(react@19.0.0)
@@ -449,9 +461,15 @@ importers:
       '@types/react-dom':
         specifier: 19.0.4
         version: 19.0.4(@types/react@19.0.12)
+      '@zodiac/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@zodiac/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      classnames:
+        specifier: 2.5.1
+        version: 2.5.1
       isbot:
         specifier: 5.1.25
         version: 5.1.25
@@ -507,6 +525,9 @@ importers:
       vite-plugin-open-graph:
         specifier: 2.0.6
         version: 2.0.6
+      vite-tsconfig-paths:
+        specifier: 5.1.4
+        version: 5.1.4(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.13)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
       wrangler:
         specifier: 4.4.0
         version: 4.4.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -1397,6 +1418,9 @@ packages:
   '@dependents/detective-less@5.0.0':
     resolution: {integrity: sha512-D/9dozteKcutI5OdxJd8rU+fL6XgaaRg60sPPJWkT33OCiRfkCu5wO5B/yXTaaL2e6EB0lcCBGe5E0XscZCvvQ==}
     engines: {node: '>=18'}
+
+  '@duneanalytics/client-sdk@0.2.5':
+    resolution: {integrity: sha512-ftE9sLIuzcxX0g9nhOA0pN/uxTvPwa88CVXpgU2sSRGnN43Kb5ZuaexetVNcNidapdIV95bWW+VpnoSvpMJUXw==}
 
   '@ecies/ciphers@0.2.2':
     resolution: {integrity: sha512-ylfGR7PyTd+Rm2PqQowG08BCKA22QuX8NzrL+LxAAvazN10DMwdJ2fWwAzRj05FI/M8vNFGm3cv9Wq/GFWCBLg==}
@@ -4090,6 +4114,10 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  deprecated@0.0.2:
+    resolution: {integrity: sha512-vt7tvBJtDu1pmn8HTUc/Q3lSkrgah4Tl5IbbBzqu33jcPQlihAGAO9yD4ubfhFh/xyXD+HbUX1Dg6PwnARWxag==}
+    engines: {node: '>= 0.9'}
+
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
@@ -5344,6 +5372,10 @@ packages:
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
+
+  loglevel@1.9.2:
+    resolution: {integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==}
+    engines: {node: '>= 0.6.0'}
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
@@ -8095,6 +8127,11 @@ snapshots:
     dependencies:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.0
+
+  '@duneanalytics/client-sdk@0.2.5(patch_hash=67965d6f25eb7981a19599df92d633a35566a2e8ef4296070394c50ee82bde42)':
+    dependencies:
+      deprecated: 0.0.2
+      loglevel: 1.9.2
 
   '@ecies/ciphers@0.2.2(@noble/ciphers@1.2.1)':
     dependencies:
@@ -11471,6 +11508,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  deprecated@0.0.2: {}
+
   dequal@2.0.3: {}
 
   des.js@1.1.0:
@@ -13056,6 +13095,8 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       is-unicode-supported: 0.1.0
+
+  loglevel@1.9.2: {}
 
   loose-envify@1.4.0:
     dependencies:
