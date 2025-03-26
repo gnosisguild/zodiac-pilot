@@ -26,6 +26,9 @@ const migrateDirectory = async (directory: string) => {
   }
 }
 
-const prismaRoot = new URL('./prisma/generated/client', import.meta.url)
+const prismaRoot = new URL(
+  './node_modules/@prisma/client-generated',
+  import.meta.url,
+)
 
 await migrateDirectory(fileURLToPath(prismaRoot))

@@ -15,7 +15,9 @@
       "@/simulation-server": ["./app/simulation/server/index.ts"],
       "@/wagmi": ["./app/wagmi/index.ts"],
       "@/routes-ui": ["./app/routes-ui/index.ts"],
-      "@/db": ["./prisma/index.ts"]
+      "@/db": ["./prisma/index.ts"],
+
+      "@prisma/client-generated": ["./node_modules/@prisma/client-generated"]
     }
   },
   "include": [

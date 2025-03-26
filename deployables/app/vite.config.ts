@@ -2,7 +2,6 @@ import { reactRouter } from '@react-router/dev/vite'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
-import commonjs from 'vite-plugin-commonjs'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig(({ command }) => ({
@@ -23,11 +22,6 @@ export default defineConfig(({ command }) => ({
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
-    commonjs({
-      filter(id) {
-        return id.includes('generated/client')
-      },
-    }),
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
