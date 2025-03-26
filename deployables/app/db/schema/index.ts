@@ -1,1 +1,5 @@
-export * from './Tenant'
+import { Tenant } from './Tenant'
+
+export const schema = {
+  tenant: Tenant,
+}

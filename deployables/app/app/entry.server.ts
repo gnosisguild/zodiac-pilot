@@ -12,7 +12,6 @@ import {
   type AppLoadContext,
   type EntryContext,
 } from 'react-router'
-import { dbClient } from '../db'
 
 export const streamTimeout = 30_000
 
@@ -28,7 +27,7 @@ export default async function handleRequest(
     responseStatusCode,
     responseHeaders,
     routerContext,
-    { ...loadContext, db: dbClient() },
+    loadContext,
   )
 
   return response

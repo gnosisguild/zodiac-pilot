@@ -1,1 +1,2 @@
-export { dbClient } from './dbClient'
+export * from './access'
+export { dbClient, type DBClient } from './dbClient'

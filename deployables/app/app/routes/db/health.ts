@@ -1,5 +1,7 @@
-import type { Route } from './+types/health'
+import { dbClient, getTenants } from '@/db'
 
-export const loader = async ({ context: { dbClient } }: Route.LoaderArgs) => {
+export const loader = async () => {
+  await getTenants(dbClient())
+
   return 'OK'
 }
