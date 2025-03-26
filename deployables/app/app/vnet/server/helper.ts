@@ -124,9 +124,10 @@ export const applyDeltaToBalances = async (
 
     return {
       ...balance,
-
-      balanceDiff: Number(balanceDiff),
-      balanceDiffUsd: parseFloat(balanceDiff) * (balance.usdPrice || 0),
+      diff: {
+        tokenValue: Number(balanceDiff),
+        usdValue: parseFloat(balanceDiff) * (balance.usdPrice || 0),
+      },
       amount: newAmount,
       usdValue: parseFloat(newAmount) * (balance.usdPrice || 0),
     }
