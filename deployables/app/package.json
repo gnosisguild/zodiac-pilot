@@ -12,11 +12,8 @@
     "test:e2e:ui": "pnpm test:e2e --ui",
     "lint": "eslint . --max-warnings=0",
     "db:start": "docker-compose up db",
-    "db:create-migration": "prisma migrate dev",
-    "db:migrate": "prisma migrate deploy",
-    "db:generate": "prisma generate",
-    "db:cjs-compat": "node --experimental-strip-types patch-prisma.ts",
-    "db:copy-runtime": "cp node_modules/prisma/libquery_engine-rhel-openssl-3.0.x.so.node .vercel/output/functions/index.func/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node"
+    "db:create-migration": "drizzle-kit generate --name $1",
+    "db:migrate": "drizzle-kit push"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
