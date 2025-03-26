@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build && node vercel/prepare.js",
-    "dev": "cross-env NODE_ENV=development node ./dev-server.js",
+    "build": "react-router build",
+    "dev": "cross-env NODE_ENV=development react-router dev",
     "check-types": "react-router typegen && tsc -b",
     "test": "cross-env NODE_ENV=test vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",
@@ -57,6 +57,7 @@
     "@types/node": "22.13.13",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
+    "@vercel/react-router": "^1.1.0",
     "@wagmi/core": "2.16.7",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",

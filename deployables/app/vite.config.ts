@@ -4,19 +4,19 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-export default defineConfig(({ isSsrBuild, command }) => ({
+export default defineConfig(({ command }) => ({
   build: {
-    rollupOptions: isSsrBuild
-      ? {
-          input: './server/app.ts',
-        }
-      : undefined,
     sourcemap: true,
   },
 
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
   },
+
+  server: {
+    port: 3040,
+  },
+
   ssr: {
     noExternal:
       command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],

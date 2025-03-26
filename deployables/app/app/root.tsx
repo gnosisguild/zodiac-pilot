@@ -12,11 +12,17 @@ import {
   ScrollRestoration,
 } from 'react-router'
 import type { Route } from './+types/root'
-import { Matomo } from './matomo'
+import './app.css'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const loader = () => {
+  return {
+    isDev: process.env.NODE_ENV === 'development',
+  }
+}
+
+export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
   return (
     <html lang="en" className="h-full">
       <head>
@@ -24,27 +30,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
-        <Matomo />
+        {/* <Matomo /> */}
       </head>
       <body className="overflow-x-hidden bg-zinc-50 text-base text-zinc-900 dark:bg-zinc-950 dark:text-white">
-        {children}
+        <ProvideDevelopmentContext isDev={isDev}>
+          <ProvideExtensionVersion>
+            <Outlet />
+          </ProvideExtensionVersion>
+        </ProvideDevelopmentContext>
         <ToastContainer />
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
-  )
-}
-
-export const loader = () => ({ isDev: process.env.NODE_ENV === 'development' })
-
-export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
-  return (
-    <ProvideDevelopmentContext isDev={isDev}>
-      <ProvideExtensionVersion>
-        <Outlet />
-      </ProvideExtensionVersion>
-    </ProvideDevelopmentContext>
   )
 }
 
