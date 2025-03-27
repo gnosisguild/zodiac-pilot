@@ -208,7 +208,7 @@ const SubmitPage = ({
         description="The transaction bundle is checked against permissions on the execution route."
       >
         {permissionCheck == null ? (
-          <Warning title="Permissions backend unavailable">
+          <Warning title="Permissions check unavailable">
             We could not check the permissions for this route. Proceed with
             caution.
           </Warning>
