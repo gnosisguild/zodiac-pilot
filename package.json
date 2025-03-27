@@ -1,7 +1,7 @@
 {
   "name": "@zodiac-os/pilot-root",
   "private": true,
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.7.0",
   "pnpm": {
     "patchedDependencies": {
       "vitest-chrome": "patches/vitest-chrome.patch",
@@ -18,7 +18,7 @@
     "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {
-    "cspell": "8.17.5",
+    "cspell": "8.18.0",
     "prettier": "3.5.3",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.11",

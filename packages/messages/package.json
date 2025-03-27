@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.7.0",
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc"
@@ -20,7 +20,7 @@
     "@zodiac/schema": "workspace:*"
   },
   "devDependencies": {
-    "@types/chrome": "0.0.310",
+    "@types/chrome": "0.0.312",
     "@types/react": "19.0.12",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",

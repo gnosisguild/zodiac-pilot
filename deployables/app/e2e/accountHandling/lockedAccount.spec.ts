@@ -48,8 +48,8 @@ test.describe('Locked account', () => {
       .getByRole('button', { name: 'Connect wallet', exact: true })
       .click()
 
-    await expect(
-      page.getByRole('textbox', { name: 'Pilot Account' }),
-    ).toHaveValue(getAddress(account))
+    await expect(page.getByRole('textbox', { name: 'Operator' })).toHaveValue(
+      getAddress(account),
+    )
   })
 })

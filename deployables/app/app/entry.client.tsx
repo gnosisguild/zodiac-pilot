@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HydratedRouter } from 'react-router/dom'
-import './app.css'
 
 if (process.env.NODE_ENV === 'production') {
   Sentry.init({
@@ -15,6 +14,7 @@ if (process.env.NODE_ENV === 'production') {
       'localhost',
       /^https:\/\/app\.pilot\.gnosisguild\.org/,
     ],
+    maxValueLength: 5000, // enable capturing entire submit & route urls
   })
 }
 

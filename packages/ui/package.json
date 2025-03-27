@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@10.6.5",
+  "packageManager": "pnpm@10.7.0",
   "scripts": {
     "test": "vitest",
     "lint": "eslint . --max-warnings=0",
@@ -23,14 +23,14 @@
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
     "ethereum-blockies-base64": "1.0.2",
-    "framer-motion": "12.6.0",
+    "framer-motion": "12.6.2",
     "lucide-react": "0.484.0",
     "nanoid": "5.1.5",
     "react-select": "5.10.1",
     "react-stick": "5.0.6",
     "react-toastify": "11.0.5",
     "ser-kit": "3.6.0",
-    "viem": "2.23.15"
+    "viem": "2.24.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",

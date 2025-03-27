@@ -344,7 +344,7 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
       {({ submit }) => (
         <InitiatorInput
           avatar={avatar}
-          label="Initiator"
+          label="Operator"
           name="initiator"
           required
           defaultValue={initiator}

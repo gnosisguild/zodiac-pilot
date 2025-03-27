@@ -1,22 +1,51 @@
 import { createReadableStreamFromReadable } from '@react-router/node'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
-import type { RenderToPipeableStreamOptions } from 'react-dom/server'
-import { renderToPipeableStream } from 'react-dom/server'
-import type { EntryContext } from 'react-router'
-import { ServerRouter } from 'react-router'
+import { createElement } from 'react'
+import {
+  renderToPipeableStream,
+  type RenderToPipeableStreamOptions,
+  type RenderToReadableStreamOptions,
+} from 'react-dom/server'
+import {
+  ServerRouter,
+  type AppLoadContext,
+  type EntryContext,
+} from 'react-router'
 
-export const streamTimeout = 1_000 * 30
+export const streamTimeout = 30_000
 
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
+  loadContext?: AppLoadContext,
+): Promise<Response> {
+  const response = await handleRequestVercel(
+    request,
+    responseStatusCode,
+    responseHeaders,
+    routerContext,
+    loadContext,
+  )
 
-  // If you have middleware enabled:
-  // loadContext: unstable_RouterContextProvider
-) {
+  return response
+}
+
+export type RenderOptions = {
+  [K in keyof RenderToReadableStreamOptions &
+    keyof RenderToPipeableStreamOptions]?: RenderToReadableStreamOptions[K]
+}
+
+function handleRequestVercel(
+  request: Request,
+  responseStatusCode: number,
+  responseHeaders: Headers,
+  routerContext: EntryContext,
+  _loadContext?: AppLoadContext,
+  options?: RenderOptions,
+): Promise<Response> {
   return new Promise((resolve, reject) => {
     let shellRendered = false
     const userAgent = request.headers.get('user-agent')
@@ -29,8 +58,14 @@ export default function handleRequest(
         : 'onShellReady'
 
     const { pipe, abort } = renderToPipeableStream(
-      <ServerRouter context={routerContext} url={request.url} />,
+      createElement(ServerRouter, {
+        context: routerContext,
+        url: request.url,
+        nonce: options?.nonce,
+      }),
       {
+        ...options,
+
         [readyOption]() {
           shellRendered = true
           const body = new PassThrough()

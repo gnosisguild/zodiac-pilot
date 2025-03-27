@@ -8,7 +8,7 @@
     "env-cmd": "10.1.0",
     "eslint": "9.23.0",
     "typescript": "5.8.2",
-    "wrangler": "4.4.0"
+    "wrangler": "4.5.0"
   },
   "private": true,
   "scripts": {
@@ -17,5 +17,5 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0"
   },
-  "packageManager": "pnpm@10.6.5"
+  "packageManager": "pnpm@10.7.0"
 }
