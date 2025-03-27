@@ -70,7 +70,7 @@
     "autoprefixer": "10.4.21",
     "cross-env": "7.0.3",
     "dotenv": "16.4.7",
-    "drizzle-kit": "0.30.5",
+    "drizzle-kit": "0.30.6",
     "eslint": "9.23.0",
     "globals": "16.0.0",
     "jsdom": "26.0.0",
