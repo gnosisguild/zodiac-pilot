@@ -12,7 +12,7 @@ export const Account = ({ children }: AccountProps) => {
     <AddressInput
       readOnly
       value={address ?? undefined}
-      label="Pilot Account"
+      label="Operator"
       action={
         <CopyToClipboard iconOnly size="small" data={address}>
           Copy address
