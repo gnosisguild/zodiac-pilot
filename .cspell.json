@@ -113,10 +113,9 @@
     "**/tsconfig.json",
     "**/renovate.json",
     "**/esbuild.js",
-    "**/tailwind.config.js",
-    "**/tailwind.config.mjs",
-    "**/tailwind.config.ts",
-    "**/vite.config.ts",
+    "**/*.config.js",
+    "**/*.config.mjs",
+    "**/*.config.ts",
     "**/entry.server.tsx",
     "**/dist/**",
     "**/public/build/**",
@@ -128,6 +127,8 @@
     "**/*.sh",
     "**/*.tsbuildinfo",
     "**/build/**",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "**/docker-compose.yml",
+    "**/*.sql"
   ]
 }

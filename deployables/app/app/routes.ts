@@ -59,5 +59,7 @@ export default [
     route('balances', 'routes/$address.$chainId/balances.ts'),
   ]),
 
+  route('/db/health', 'routes/db/health.ts'),
+
   route('/dev/decode/:data', 'routes/dev/decode.tsx'),
 ] satisfies RouteConfig
