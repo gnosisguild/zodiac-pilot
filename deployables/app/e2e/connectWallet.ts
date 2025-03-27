@@ -9,9 +9,9 @@ export const connectWallet = async (
 ) => {
   await page.getByRole('button', { name: 'Connect wallet' }).click()
   await page.getByRole('button', { name: 'Browser Wallet' }).click()
-  await expect(
-    page.getByRole('textbox', { name: 'Pilot Account' }),
-  ).toHaveValue(getAddress(account))
+  await expect(page.getByRole('textbox', { name: 'Operator' })).toHaveValue(
+    getAddress(account),
+  )
 
   await expect(
     page.getByRole('alert', { name: 'Wallet disconnected' }),
