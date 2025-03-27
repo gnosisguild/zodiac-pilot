@@ -1,4 +1,3 @@
-// ApprovalOverviewSection.tsx
 import type { ApprovalTransaction } from '@/simulation-server'
 import { Checkbox, SkeletonText, Success } from '@zodiac/ui'
 import { Suspense, useState } from 'react'
