@@ -18,13 +18,11 @@ import {
 import { checkPermissions, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
-  Checkbox,
   Error,
   errorToast,
   Form,
   Labeled,
   PrimaryButton,
-  SkeletonText,
   Success,
   successToast,
   Warning,
@@ -47,6 +45,7 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
+import { ApprovalOverviewSection } from './ApprovalOverviewSection'
 import { appendApprovalTransactions } from './helper'
 import { SkeletonFlowTable } from './SkeletonFlowTable'
 import { TokenTransferTable } from './TokenTransferTable'
@@ -74,7 +73,11 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     const { tokenFlows, approvalTransactions } =
       await simulateTransactionBundle(route.avatar, metaTransactions)
 
-    return { tokenFlows, hasApprovals: approvalTransactions.length > 0 }
+    return {
+      tokenFlows,
+      hasApprovals: approvalTransactions.length > 0,
+      approvalTransactions,
+    }
   }
 
   return {
@@ -259,17 +262,7 @@ const SubmitPage = ({
         description="Token approvals let other addresses spend your tokens. If you don't
             revoke them, they can keep spending indefinitely."
       >
-        <Suspense fallback={<SkeletonText />}>
-          <Await resolve={simulation}>
-            {({ hasApprovals }) =>
-              hasApprovals ? (
-                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
-              ) : (
-                <Success title="No approval to revoke" />
-              )
-            }
-          </Await>
-        </Suspense>
+        <ApprovalOverviewSection simulation={simulation} />
       </Form.Section>
 
       <Form.Section

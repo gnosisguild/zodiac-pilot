@@ -5,6 +5,9 @@ import type { SimulatedTransaction } from '../types'
 export type ApprovalTransaction = {
   spender: HexAddress
   tokenAddress: HexAddress
+  symbol: string
+  logoUrl: string
+  decimals: number
 }
 
 const ownerSchema = z.object({
@@ -46,13 +49,29 @@ const genericLogSchema = z
   .nullable()
   .optional()
 
+const groupApprovals = (
+  approvals: ApprovalTransaction[],
+): ApprovalTransaction[] => {
+  const grouped = new Map<string, ApprovalTransaction>()
+
+  approvals.forEach((approval) => {
+    const key = `${approval.tokenAddress.toLowerCase()}-${approval.spender.toLowerCase()}`
+
+    if (!grouped.has(key)) {
+      grouped.set(key, approval)
+    }
+  })
+
+  return Array.from(grouped.values())
+}
+
 export const extractApprovalsFromSimulation = (
   transactions: SimulatedTransaction[],
 ): ApprovalTransaction[] => {
-  return transactions.flatMap(({ transaction_info: { logs } }) => {
-    const allLogs = genericLogSchema.parse(logs)
+  const approvals = transactions.flatMap(({ transaction_info }) => {
+    const allLogs = genericLogSchema.parse(transaction_info.logs)
 
-    if (allLogs == null) {
+    if (!allLogs) {
       return []
     }
 
@@ -60,9 +79,19 @@ export const extractApprovalsFromSimulation = (
       .filter(({ name }) => name === 'Approval')
       .map((log) => approvalLogSchema.parse(log))
 
-    return approvalLogs.map(({ raw: { address }, inputs: [, spender] }) => ({
-      tokenAddress: address,
-      spender: spender.value,
-    }))
+    return approvalLogs.map(({ raw: { address }, inputs: [, spender] }) => {
+      const tokenInfo = transaction_info.exposure_changes?.find(
+        (token) => token.token_info.contract_address === address,
+      )
+      return {
+        symbol: tokenInfo?.token_info.symbol ?? '',
+        logoUrl: tokenInfo?.token_info.logo ?? '',
+        decimals: tokenInfo?.token_info.decimals ?? 0,
+        tokenAddress: address,
+        spender: spender.value,
+      }
+    })
   })
+
+  return groupApprovals(approvals)
 }
