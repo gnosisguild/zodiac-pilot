@@ -1,6 +1,6 @@
 import { dbClient, getTenants } from '@/db'
 import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
@@ -20,8 +20,10 @@ describe('Sign up', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign up' }))
 
-    const [tenant] = await getTenants(dbClient())
+    await waitFor(async () => {
+      const [tenant] = await getTenants(dbClient())
 
-    expect(tenant).toHaveProperty('name', 'ACME')
+      expect(tenant).toHaveProperty('name', 'ACME')
+    })
   })
 })
