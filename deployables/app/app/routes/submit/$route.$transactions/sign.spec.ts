@@ -269,7 +269,13 @@ describe('Sign', () => {
     it('does not revoke approvals by default', async () => {
       mockSimulateTransactionBundle.mockResolvedValue({
         approvalTransactions: [
-          { spender: randomAddress(), tokenAddress: randomAddress() },
+          {
+            spender: randomAddress(),
+            tokenAddress: randomAddress(),
+            symbol: '',
+            logoUrl: '',
+            decimals: 0,
+          },
         ],
         tokenFlows: { sent: [], received: [], other: [] },
       })
