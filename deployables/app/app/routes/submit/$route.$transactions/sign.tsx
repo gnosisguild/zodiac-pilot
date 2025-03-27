@@ -87,9 +87,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     chainId: getChainId(route.avatar),
     simulation: simulate(),
     permissionCheck: permissionCheckResult.permissionCheck,
-    passesPermissionCheck:
-      permissionCheckResult.permissionCheck == null ||
-      permissionCheckResult.permissionCheck.success,
     waypoints: route.waypoints,
     metaTransactions,
   }
@@ -147,7 +144,6 @@ const SubmitPage = ({
     permissionCheck,
     simulation,
     hasQueryRoutesError,
-    passesPermissionCheck,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -279,7 +275,7 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Actions>
-        <SubmitTransaction disabled={!passesPermissionCheck} />
+        <SubmitTransaction />
       </Form.Actions>
     </Form>
   )
