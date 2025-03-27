@@ -153,51 +153,8 @@ const SubmitPage = ({
   return (
     <Form>
       <Form.Section
-        title="Review account information"
-        description="Please review the account information that will be used to sign this transaction bundle"
-      >
-        {!isValidRoute && (
-          <Error title="Invalid route">
-            We could not find any route form the signer wallet to the account.
-            Proceed with caution.
-          </Error>
-        )}
-
-        {hasQueryRoutesError && (
-          <Warning title="Routes backend unavailable">
-            We could not verify the currently selected route. Please proceed
-            with caution.
-          </Warning>
-        )}
-
-        <ChainSelect disabled defaultValue={chainId} />
-
-        <Labeled label="Selected route">
-          <Routes disabled orientation="horizontal">
-            <Route id={id}>
-              {waypoints && (
-                <Waypoints>
-                  {waypoints.map(({ account, ...waypoint }, index) => (
-                    <Waypoint
-                      key={`${account.address}-${index}`}
-                      account={account}
-                      connection={
-                        'connection' in waypoint
-                          ? waypoint.connection
-                          : undefined
-                      }
-                    />
-                  ))}
-                </Waypoints>
-              )}
-            </Route>
-          </Routes>
-        </Labeled>
-      </Form.Section>
-
-      <Form.Section
-        title="Token Flows"
-        description="An overview of the tokens involved in this transaction bundle."
+        title="Review token flows"
+        description="Simulating the transaction bundle "
       >
         <Suspense fallback={<SkeletonFlowTable />}>
           <Await resolve={simulation}>
@@ -233,7 +190,25 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Section
-        title="Permissions check"
+        title="Review approvals"
+        description="Token approvals let other addresses spend your tokens. If you don't
+            revoke them, they can keep spending indefinitely."
+      >
+        <Suspense fallback={<SkeletonText />}>
+          <Await resolve={simulation}>
+            {({ hasApprovals }) =>
+              hasApprovals ? (
+                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
+              ) : (
+                <Success title="No approval to revoke" />
+              )
+            }
+          </Await>
+        </Suspense>
+      </Form.Section>
+
+      <Form.Section
+        title="Permission check"
         description="We check whether any permissions on the current route would prevent this transaction from succeeding."
       >
         {permissionCheck == null ? (
@@ -255,21 +230,46 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Section
-        title="Approvals"
-        description="Token approvals let other addresses spend your tokens. If you don't
-            revoke them, they can keep spending indefinitely."
+        title="Review account information"
+        description="Please review the account information that will be used to sign this transaction bundle"
       >
-        <Suspense fallback={<SkeletonText />}>
-          <Await resolve={simulation}>
-            {({ hasApprovals }) =>
-              hasApprovals ? (
-                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
-              ) : (
-                <Success title="No approval to revoke" />
-              )
-            }
-          </Await>
-        </Suspense>
+        {!isValidRoute && (
+          <Error title="Invalid route">
+            We could not find any route form the signer wallet to the account.
+            Proceed with caution.
+          </Error>
+        )}
+
+        {hasQueryRoutesError && (
+          <Warning title="Routes backend unavailable">
+            We could not verify the currently selected route. Please proceed
+            with caution.
+          </Warning>
+        )}
+
+        <ChainSelect disabled defaultValue={chainId} />
+
+        <Labeled label="Execution route">
+          <Routes disabled orientation="horizontal">
+            <Route id={id}>
+              {waypoints && (
+                <Waypoints>
+                  {waypoints.map(({ account, ...waypoint }, index) => (
+                    <Waypoint
+                      key={`${account.address}-${index}`}
+                      account={account}
+                      connection={
+                        'connection' in waypoint
+                          ? waypoint.connection
+                          : undefined
+                      }
+                    />
+                  ))}
+                </Waypoints>
+              )}
+            </Route>
+          </Routes>
+        </Labeled>
       </Form.Section>
 
       <Form.Section
