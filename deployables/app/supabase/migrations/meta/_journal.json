@@ -8,6 +8,13 @@
       "when": 1743000104549,
       "tag": "0000_add tenant table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743078045052,
+      "tag": "0001_add default random uuid to tenant id",
+      "breakpoints": true
     }
   ]
 }
