@@ -6,13 +6,14 @@
     "build": "react-router build",
     "dev": "cross-env NODE_ENV=development react-router dev",
     "check-types": "react-router typegen && tsc -b",
-    "test": "cross-env NODE_ENV=test vitest",
+    "test": "dotenvx run --env-file=.env.test -- vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",
     "test:e2e:ui": "pnpm test:e2e --ui",
     "lint": "eslint . --max-warnings=0",
     "db:start": "docker-compose up db",
     "db:create-migration": "drizzle-kit generate --name $1",
-    "db:migrate": "drizzle-kit push"
+    "db:migrate": "dotenvx run -- drizzle-kit push",
+    "db:migrate-test": "dotenvx run --env-file=.env.test -- drizzle-kit push"
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
@@ -50,6 +51,7 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.39.0",
     "@playwright/test": "1.51.1",
     "@react-router/dev": "7.4.0",
     "@sentry/vite-plugin": "3.2.4",
@@ -69,7 +71,6 @@
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
     "cross-env": "7.0.3",
-    "dotenv": "16.4.7",
     "drizzle-kit": "0.30.6",
     "eslint": "9.23.0",
     "globals": "16.0.0",
