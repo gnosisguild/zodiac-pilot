@@ -1,12 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { Popover } from '../overlays'
 
 type NumberValueProps = {
   children: number
   precision?: number
+  additionalInfo?: ReactNode
 }
 
-export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
+export const NumberValue = ({
+  children,
+  precision = 2,
+  additionalInfo,
+}: NumberValueProps) => {
   const numberFormatter = useMemo(
     () =>
       new Intl.NumberFormat('en-US', {
@@ -29,9 +34,12 @@ export const NumberValue = ({ children, precision = 2 }: NumberValueProps) => {
     <Popover
       inline
       popover={
-        <span className="tabular-numbs text-sm slashed-zero">
-          {defaultNumberFormatter.format(children)}
-        </span>
+        <div className="flex flex-col gap-1">
+          <span className="tabular-numbs text-sm slashed-zero">
+            {defaultNumberFormatter.format(children)}
+          </span>
+          {additionalInfo}
+        </div>
       }
     >
       <span className="slashed-zero tabular-nums">
