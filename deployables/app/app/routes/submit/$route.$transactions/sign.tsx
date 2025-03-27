@@ -154,7 +154,7 @@ const SubmitPage = ({
     <Form>
       <Form.Section
         title="Review token flows"
-        description="Simulating the transaction bundle "
+        description="See all token transfers associated with this transaction bundle at a glance."
       >
         <Suspense fallback={<SkeletonFlowTable />}>
           <Await resolve={simulation}>
@@ -209,7 +209,7 @@ const SubmitPage = ({
 
       <Form.Section
         title="Permission check"
-        description="We check whether any permissions on the current route would prevent this transaction from succeeding."
+        description="The transaction bundle is checked against permissions on the execution route."
       >
         {permissionCheck == null ? (
           <Warning title="Permissions backend unavailable">
@@ -231,19 +231,18 @@ const SubmitPage = ({
 
       <Form.Section
         title="Review account information"
-        description="Please review the account information that will be used to sign this transaction bundle"
+        description="Verify the account and execution route for signing this transaction bundle."
       >
         {!isValidRoute && (
-          <Error title="Invalid route">
-            We could not find any route form the signer wallet to the account.
-            Proceed with caution.
+          <Error title="Unknown route">
+            The selected execution route appears invalid. Proceed with caution.
           </Error>
         )}
 
         {hasQueryRoutesError && (
-          <Warning title="Routes backend unavailable">
-            We could not verify the currently selected route. Please proceed
-            with caution.
+          <Warning title="Route validation unavailable">
+            The selected execution route could not be validated. Proceed with
+            caution.
           </Warning>
         )}
 
@@ -274,7 +273,7 @@ const SubmitPage = ({
 
       <Form.Section
         title="Signer details"
-        description="Make sure that your connected wallet matches the signer that is configured for this account"
+        description="Make sure that your wallet is connected to the route's operator account."
       >
         <ConnectWallet chainId={chainId} pilotAddress={initiator} />
       </Form.Section>
