@@ -90,7 +90,7 @@ describe('Sign', () => {
       })
     })
 
-    describe('Invalid route', () => {
+    describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
         const currentRoute = createMockSerRoute({ initiator })
         const transaction = createMockTransaction()
@@ -105,7 +105,7 @@ describe('Sign', () => {
         )
 
         expect(
-          screen.getByRole('alert', { name: 'Invalid route' }),
+          screen.getByRole('alert', { name: 'Unknown route' }),
         ).toHaveAccessibleDescription(
           'We could not find any route form the signer wallet to the account. Proceed with caution.',
         )
