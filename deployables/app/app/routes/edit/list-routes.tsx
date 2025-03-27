@@ -153,7 +153,7 @@ const Routes = ({ children }: PropsWithChildren) => {
             <span className="sr-only">Active</span>
           </TableHeader>
           <TableHeader>Chain</TableHeader>
-          <TableHeader>Initiator</TableHeader>
+          <TableHeader>Operator</TableHeader>
           <TableHeader>Account</TableHeader>
           <TableHeader className="relative w-0">
             <span className="sr-only">Actions</span>

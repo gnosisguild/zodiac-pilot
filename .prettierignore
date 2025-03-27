@@ -6,3 +6,5 @@ playwright-report
 *.zip
 *.toml
 *.patch
+
+**/migrations/**/*.json

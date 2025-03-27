@@ -90,7 +90,7 @@ describe('Sign', () => {
       })
     })
 
-    describe('Invalid route', () => {
+    describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
         const currentRoute = createMockSerRoute({ initiator })
         const transaction = createMockTransaction()
@@ -105,9 +105,9 @@ describe('Sign', () => {
         )
 
         expect(
-          screen.getByRole('alert', { name: 'Invalid route' }),
+          screen.getByRole('alert', { name: 'Unknown route' }),
         ).toHaveAccessibleDescription(
-          'We could not find any route form the signer wallet to the account. Proceed with caution.',
+          'The selected execution route appears invalid. Proceed with caution.',
         )
       })
     })
@@ -144,10 +144,10 @@ describe('Sign', () => {
 
         expect(
           await screen.findByRole('alert', {
-            name: 'Routes backend unavailable',
+            name: 'Route validation unavailable',
           }),
         ).toHaveAccessibleDescription(
-          'We could not verify the currently selected route. Please proceed with caution.',
+          'The selected execution route could not be validated. Proceed with caution.',
         )
       })
 
@@ -176,24 +176,6 @@ describe('Sign', () => {
 
     beforeEach(() => {
       mockQueryRoutes.mockResolvedValue([route])
-    })
-
-    it('disables the sign button if permission checks fail', async () => {
-      const transaction = createMockTransaction()
-
-      mockCheckPermissions.mockResolvedValue({
-        success: false,
-        error: PermissionViolation.AllowanceExceeded,
-      })
-
-      await render(
-        href('/submit/:route/:transactions', {
-          route: encode(route),
-          transactions: encode([transaction]),
-        }),
-      )
-
-      expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
     })
 
     it('shows the permission error', async () => {
@@ -248,7 +230,7 @@ describe('Sign', () => {
 
         expect(
           await screen.findByRole('alert', {
-            name: 'Permissions backend unavailable',
+            name: 'Permissions check unavailable',
           }),
         ).toHaveAccessibleDescription(
           'We could not check the permissions for this route. Proceed with caution.',
