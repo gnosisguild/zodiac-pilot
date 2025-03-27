@@ -128,7 +128,7 @@ importers:
         specifier: 1.8.2
         version: 1.8.2(@babel/core@7.26.0)(@tanstack/react-query@5.69.0(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react-is@17.0.2)(react@19.0.0)(viem@2.23.15(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.14.15(@tanstack/query-core@5.69.0)(@tanstack/react-query@5.69.0(react@19.0.0))(@types/react@19.0.12)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.2)(utf-8-validate@5.0.10)(viem@2.23.15(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))
       drizzle-orm:
-        specifier: ^0.41.0
+        specifier: 0.41.0
         version: 0.41.0(@cloudflare/workers-types@4.20250321.0)(gel@2.0.1)(postgres@3.4.5)
       ethers:
         specifier: 6.13.5
@@ -146,7 +146,7 @@ importers:
         specifier: 0.484.0
         version: 0.484.0(react@19.0.0)
       postgres:
-        specifier: ^3.4.5
+        specifier: 3.4.5
         version: 3.4.5
       react:
         specifier: 19.0.0
@@ -231,7 +231,7 @@ importers:
         specifier: 16.4.7
         version: 16.4.7
       drizzle-kit:
-        specifier: ^0.30.5
+        specifier: 0.30.5
         version: 0.30.5
       eslint:
         specifier: 9.23.0
@@ -258,7 +258,7 @@ importers:
         specifier: 6.2.3
         version: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0)
       vite-plugin-commonjs:
-        specifier: ^0.10.4
+        specifier: 0.10.4
         version: 0.10.4
       vite-tsconfig-paths:
         specifier: 5.1.4
