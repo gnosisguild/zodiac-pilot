@@ -33,6 +33,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
   } catch (error) {
     Sentry.captureException(error)
 
+    console.error(error)
+
     return { error: true }
   }
 }
