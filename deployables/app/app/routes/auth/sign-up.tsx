@@ -8,13 +8,28 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const data = await request.formData()
 
   const tenantName = getString(data, 'tenantName')
+  const email = getString(data, 'email')
 
-  const tenant = await createTenant(dbClient(), { name: tenantName })
+  await dbClient().transaction(async (tx) => {
+    const tenant = await createTenant(tx, { name: tenantName })
+    const workOS = new WorkOS()
 
-  const workOS = new WorkOS()
-  workOS.organizations.createOrganization({
-    name: tenantName,
-    externalId: tenant.id,
+    const workOSOrganization = await workOS.organizations.createOrganization({
+      name: tenantName,
+      externalId: tenant.id,
+    })
+
+    try {
+      await workOS.userManagement.sendInvitation({
+        email,
+        organizationId: workOSOrganization.id,
+        roleSlug: 'admin',
+      })
+    } catch (e) {
+      await workOS.organizations.deleteOrganization(workOSOrganization.id)
+
+      throw e
+    }
   })
 
   return null
@@ -23,7 +38,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 const SignUp = () => {
   return (
     <Form>
-      <TextInput label="Email" />
+      <TextInput label="Email" name="email" />
       <TextInput label="Organization name" name="tenantName" />
 
       <Form.Actions>
