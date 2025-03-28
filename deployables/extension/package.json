@@ -30,7 +30,7 @@
     "@depay/web3-mock": "15.1.1",
     "@playwright/test": "1.51.1",
     "@safe-global/safe-gateway-typescript-sdk": "3.22.9",
-    "@sentry/esbuild-plugin": "3.2.3",
+    "@sentry/esbuild-plugin": "3.2.4",
     "@tailwindcss/postcss": "4.0.17",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
