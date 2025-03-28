@@ -486,7 +486,7 @@ importers:
         version: 4.20250321.0
       '@react-router/dev':
         specifier: 7.4.0
-        version: 7.4.0(@react-router/serve@7.4.0(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2))(@types/node@22.13.14)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
+        version: 7.4.0(@react-router/serve@7.4.0(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2))(@types/node@22.13.14)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)
       '@tailwindcss/vite':
         specifier: 4.0.17
         version: 4.0.17(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))
@@ -521,8 +521,8 @@ importers:
         specifier: 2.0.6
         version: 2.0.6
       wrangler:
-        specifier: 4.5.0
-        version: 4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 4.5.1
+        version: 4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
   deployables/vnet-api:
     devDependencies:
@@ -545,8 +545,8 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
       wrangler:
-        specifier: 4.5.0
-        version: 4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 4.5.1
+        version: 4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
   packages/chains:
     dependencies:
@@ -5917,8 +5917,8 @@ packages:
     engines: {node: '>=16.13'}
     hasBin: true
 
-  miniflare@4.20250321.0:
-    resolution: {integrity: sha512-os+NJA7Eqi00BJHdVhzIa+3PMotnCtZg3hiUIRYcsZF5W7He8SK2EkV8csAb+npZq3jZ4SNpDebO01swM5dcWw==}
+  miniflare@4.20250321.1:
+    resolution: {integrity: sha512-pQuVtF6vQ1zMvPCo3Z19mzSFjgnlEnybzNzAJZipsqIk6kMXpYBZq+d8cWmeQFkBYlgeZKeKJ4EBKT6KapfTNg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -7853,8 +7853,8 @@ packages:
       '@cloudflare/workers-types':
         optional: true
 
-  wrangler@4.5.0:
-    resolution: {integrity: sha512-avu5ob9B8aVkC4N8b3f0QVcD8oehz3Y4zRkrsiTHbbaCgXNaa2uFU00YYip9DLNZCYM8aCupsGBuWqe1cBB09Q==}
+  wrangler@4.5.1:
+    resolution: {integrity: sha512-7ct52LPiKnjqtC6SteKr0aherOS6CmvEurGXxGoDjgIOuoAPjN7jjYAw3eEIReGPlcQXmhpPLuunVFkWNhCoZA==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -9994,7 +9994,7 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/dev@7.4.0(@react-router/serve@7.4.0(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2))(@types/node@22.13.14)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)':
+  '@react-router/dev@7.4.0(@react-router/serve@7.4.0(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2))(@types/node@22.13.14)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.2)(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.0))(wrangler@4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.0)':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/generator': 7.26.5
@@ -10028,7 +10028,7 @@ snapshots:
     optionalDependencies:
       '@react-router/serve': 7.4.0(react-router@7.4.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(typescript@5.8.2)
       typescript: 5.8.2
-      wrangler: 4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      wrangler: 4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -13938,7 +13938,7 @@ snapshots:
       - utf-8-validate
     optional: true
 
-  miniflare@4.20250321.0(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  miniflare@4.20250321.1(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       acorn: 8.14.0
@@ -16064,13 +16064,13 @@ snapshots:
       - utf-8-validate
     optional: true
 
-  wrangler@4.5.0(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  wrangler@4.5.1(@cloudflare/workers-types@4.20250321.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250321.0)
       blake3-wasm: 2.1.5
       esbuild: 0.24.2
-      miniflare: 4.20250321.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      miniflare: 4.20250321.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       path-to-regexp: 6.3.0
       unenv: 2.0.0-rc.15
       workerd: 1.20250321.0
