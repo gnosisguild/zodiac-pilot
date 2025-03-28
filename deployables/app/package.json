@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": " NODE_OPTIONS='--import ./instrument.server.mjs' dotenvx run -- react-router dev",
+    "dev": "dotenvx run -- react-router dev",
     "check-types": "react-router typegen && tsc -b",
     "test": "dotenvx run --env-file=.env.test -- vitest",
     "test:e2e": "PW_CHROMIUM_ATTACH_TO_OTHER=1 playwright test --headed",

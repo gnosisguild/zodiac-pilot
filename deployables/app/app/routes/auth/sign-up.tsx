@@ -1,10 +1,11 @@
 import { Page } from '@/components'
 import { createTenant, dbClient } from '@/db'
+import { useIsPending } from '@/hooks'
 import { routeTitle } from '@/utils'
 import { createOrganization } from '@/workOS'
 import * as Sentry from '@sentry/react-router'
 import { getString } from '@zodiac/form-data'
-import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { EmailInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/sign-up'
 
@@ -52,11 +53,23 @@ const SignUp = ({ actionData }: Route.ComponentProps) => {
             </Error>
           )}
 
-          <TextInput label="Email" name="email" />
-          <TextInput label="Organization name" name="tenantName" />
+          <EmailInput
+            required
+            label="Email"
+            name="email"
+            placeholder="jane.doe@acme.com"
+          />
+          <TextInput
+            required
+            label="Organization name"
+            name="tenantName"
+            placeholder="Example Org"
+          />
 
           <Form.Actions>
-            <PrimaryButton submit>Sign up</PrimaryButton>
+            <PrimaryButton busy={useIsPending()} submit>
+              Sign up
+            </PrimaryButton>
           </Form.Actions>
         </Form>
       </Page.Main>
