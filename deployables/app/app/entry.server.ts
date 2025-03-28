@@ -1,4 +1,5 @@
 import { createReadableStreamFromReadable } from '@react-router/node'
+import * as Sentry from '@sentry/react-router'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
 import { createElement } from 'react'
@@ -11,9 +12,19 @@ import {
   ServerRouter,
   type AppLoadContext,
   type EntryContext,
+  type HandleErrorFunction,
 } from 'react-router'
 
 export const streamTimeout = 30_000
+
+export const handleError: HandleErrorFunction = (error, { request }) => {
+  // React Router may abort some interrupted requests, report those
+  if (!request.signal.aborted) {
+    Sentry.captureException(error)
+    // make sure to still log the error so you can see it
+    console.error(error)
+  }
+}
 
 export default async function handleRequest(
   request: Request,

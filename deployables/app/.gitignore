@@ -10,5 +10,5 @@
 .mf
 .wrangler
 .vercel
-
-prisma/generated/
+.branches
+.temp

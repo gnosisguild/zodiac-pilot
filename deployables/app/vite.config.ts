@@ -1,10 +1,16 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { sentryVitePlugin } from '@sentry/vite-plugin'
+import { sentryReactRouter } from '@sentry/react-router'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
-export default defineConfig(({ command }) => ({
+const sentryConfig = {
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  org: 'gnosis-guild',
+  project: 'pilot-companion-app',
+}
+
+export default defineConfig((config) => ({
   build: {
     sourcemap: true,
   },
@@ -19,16 +25,16 @@ export default defineConfig(({ command }) => ({
 
   ssr: {
     noExternal:
-      command === 'build' ? true : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
+      config.command === 'build'
+        ? true
+        : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
   },
   plugins: [
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
-    sentryVitePlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'gnosis-guild',
-      project: 'pilot-companion-app',
-    }),
+    sentryReactRouter(sentryConfig, config),
   ],
+
+  sentryConfig,
 }))

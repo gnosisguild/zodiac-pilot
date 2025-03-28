@@ -13,6 +13,16 @@ export default [
     route('/connect', 'routes/connect.tsx'),
 
     layout('routes/errorBoundary.tsx', [
+      route('/callback', 'routes/auth/callback.ts'),
+
+      ...prefix('/sign-up', [
+        index('routes/auth/sign-up.tsx'),
+        route('success', 'routes/auth/sign-up.success.tsx'),
+      ]),
+
+      route('/sign-in', 'routes/auth/sign-in.ts'),
+      route('/logout', 'routes/auth/logout.ts'),
+
       route('/tokens', 'routes/tokens/index.tsx', [
         layout('routes/tokens/balances/layout.tsx', [
           route('balances', 'routes/tokens/balances/balances.tsx'),
