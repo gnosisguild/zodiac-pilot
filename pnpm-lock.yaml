@@ -95,10 +95,10 @@ importers:
         specifier: 5.69.3
         version: 5.69.3(react@19.0.0)
       '@workos-inc/authkit-remix':
-        specifier: ^0.8.0
+        specifier: 0.8.0
         version: 0.8.0(@remix-run/node@2.16.2(typescript@5.8.2))(express@4.21.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@workos-inc/node':
-        specifier: ^7.45.0
+        specifier: 7.45.0
         version: 7.45.0(express@4.21.2)
       '@zodiac/chains':
         specifier: workspace:*
@@ -177,7 +177,7 @@ importers:
         version: 3.24.2
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: ^1.39.0
+        specifier: 1.39.0
         version: 1.39.0
       '@playwright/test':
         specifier: 1.51.1
