@@ -1,4 +1,5 @@
 import { createTenant, dbClient } from '@/db'
+import { WorkOS } from '@workos-inc/node'
 import { getString } from '@zodiac/form-data'
 import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import type { Route } from './+types/sign-up'
@@ -8,7 +9,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
   const tenantName = getString(data, 'tenantName')
 
-  await createTenant(dbClient(), { name: tenantName })
+  const tenant = await createTenant(dbClient(), { name: tenantName })
+
+  const workOS = new WorkOS()
+  workOS.organizations.createOrganization({
+    name: tenantName,
+    externalId: tenant.id,
+  })
 
   return null
 }
