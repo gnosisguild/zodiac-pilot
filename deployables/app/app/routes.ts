@@ -14,7 +14,12 @@ export default [
 
     layout('routes/errorBoundary.tsx', [
       route('/callback', 'routes/auth/callback.ts'),
-      route('/sign-up', 'routes/auth/sign-up.tsx'),
+
+      ...prefix('/sign-up', [
+        index('routes/auth/sign-up.tsx'),
+        route('success', 'routes/auth/sign-up.success.tsx'),
+      ]),
+
       route('/sign-in', 'routes/auth/sign-in.ts'),
       route('/logout', 'routes/auth/logout.ts'),
 
