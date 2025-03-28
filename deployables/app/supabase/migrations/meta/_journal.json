@@ -34,7 +34,7 @@
       "idx": 4,
       "version": "7",
       "when": 1743152344119,
-      "tag": "0004_remove user columns\n",
+      "tag": "0004_remove user columns",
       "breakpoints": true
     }
   ]
