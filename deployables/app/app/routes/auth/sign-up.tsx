@@ -2,6 +2,7 @@ import { Page } from '@/components'
 import { createTenant, dbClient } from '@/db'
 import { routeTitle } from '@/utils'
 import { createOrganization } from '@/workOS'
+import * as Sentry from '@sentry/react-router'
 import { getString } from '@zodiac/form-data'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
@@ -29,7 +30,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
     })
 
     return redirect(href('/sign-up/success'))
-  } catch {
+  } catch (error) {
+    Sentry.captureException(error)
+
     return { error: true }
   }
 }
