@@ -11,29 +11,36 @@ export const extractTokenFlowsFromSimulation = async (
   const flowsPerResult = await Promise.all(
     transactions.map(async ({ transaction_info, network_id }) => {
       const assetChanges = transaction_info.asset_changes
-      if (!assetChanges?.length) {
+      if (!assetChanges) {
         return []
       }
-
       const chain = await getChain(verifyChainId(parseInt(network_id)))
-
       return Promise.all(
-        assetChanges.map<Promise<TokenTransfer>>(async (change) => {
+        assetChanges.map<Promise<TokenTransfer | null>>(async (change) => {
           const isErc20 = change.token_info.standard === 'ERC20'
-
-          const tokenDetails = await getTokenDetails(
-            chain,
-            isErc20
-              ? {
-                  address: verifyHexAddress(change.token_info.contract_address),
-                }
-              : { symbol: chain.native_token_id },
-          )
+          let tokenDetails
+          try {
+            tokenDetails = await getTokenDetails(
+              chain,
+              isErc20
+                ? {
+                    address: verifyHexAddress(
+                      change.token_info.contract_address,
+                    ),
+                  }
+                : { symbol: chain.native_token_id },
+            )
+          } catch (error) {
+            console.error('Error fetching token details:', error)
+            return null
+          }
+          if (!tokenDetails) {
+            return null
+          }
           const formattedAmount = formatUnits(
             BigInt(change.raw_amount),
             tokenDetails.decimals,
           )
-
           return {
             ...tokenDetails,
             from:
@@ -47,5 +54,7 @@ export const extractTokenFlowsFromSimulation = async (
       )
     }),
   )
-  return flowsPerResult.flat()
+  return flowsPerResult
+    .flat()
+    .filter((flow): flow is TokenTransfer => flow !== null)
 }
