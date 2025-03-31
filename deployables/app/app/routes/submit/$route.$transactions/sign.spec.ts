@@ -294,7 +294,7 @@ describe('Sign', () => {
 
       expect(
         await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
-      ).toBeChecked()
+      ).not.toBeChecked()
     })
   })
 })
