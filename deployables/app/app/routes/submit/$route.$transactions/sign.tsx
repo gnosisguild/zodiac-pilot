@@ -70,13 +70,14 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   ])
 
   const simulate = async () => {
-    const { tokenFlows, approvalTransactions } =
-      await simulateTransactionBundle(route.avatar, metaTransactions)
+    const { tokenFlows, approvals } = await simulateTransactionBundle(
+      route.avatar,
+      metaTransactions,
+    )
 
     return {
       tokenFlows,
-      hasApprovals: approvalTransactions.length > 0,
-      approvalTransactions,
+      approvals,
     }
   }
 
@@ -103,20 +104,20 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const { approvalTransactions } = await simulateTransactionBundle(
+  const { approvals } = await simulateTransactionBundle(
     route.avatar,
     metaTransactions,
     { omitTokenFlows: true },
   )
 
-  if (approvalTransactions.length > 0) {
+  if (approvals.length > 0) {
     const data = await request.formData()
     const revokeApprovals = getBoolean(data, 'revokeApprovals')
 
     if (revokeApprovals) {
       return {
         plan: await planExecution(
-          appendApprovalTransactions(metaTransactions, approvalTransactions),
+          appendApprovalTransactions(metaTransactions, approvals),
           {
             initiator,
             waypoints,

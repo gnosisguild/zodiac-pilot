@@ -1,7 +1,7 @@
 export type { SimulatedTransaction } from '../types'
 export type {
   ApprovalLog,
-  ApprovalTransaction,
+  Approval as ApprovalTransaction,
 } from './extractApprovalsFromSimulation'
 
 export { simulateTransactionBundle } from './simulateTransactionBundle'

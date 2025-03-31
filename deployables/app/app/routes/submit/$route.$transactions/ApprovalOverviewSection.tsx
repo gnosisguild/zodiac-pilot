@@ -7,8 +7,7 @@ import { TokenApprovalTable } from './TokenApprovalTable'
 
 type ApprovalOverviewSectionProps = {
   simulation: Promise<{
-    hasApprovals: boolean
-    approvalTransactions: ApprovalTransaction[]
+    approvals: ApprovalTransaction[]
   }>
 }
 
@@ -20,13 +19,10 @@ export function ApprovalOverviewSection({
   return (
     <Suspense fallback={<SkeletonFlowTable />}>
       <Await resolve={simulation}>
-        {({ hasApprovals, approvalTransactions }) =>
-          hasApprovals ? (
+        {({ approvals }) =>
+          approvals.length > 0 ? (
             <>
-              <TokenApprovalTable
-                approvals={approvalTransactions}
-                revokeAll={revokeAll}
-              />
+              <TokenApprovalTable approvals={approvals} revokeAll={revokeAll} />
 
               <Checkbox
                 label="Revoke all approvals"

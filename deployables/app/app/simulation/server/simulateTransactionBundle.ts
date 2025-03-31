@@ -8,14 +8,14 @@ import { simulationResultSchema } from '../types'
 import { api } from './api'
 import {
   extractApprovalsFromSimulation,
-  type ApprovalTransaction,
+  type Approval,
 } from './extractApprovalsFromSimulation'
 import { extractTokenFlowsFromSimulation } from './extractTokenFlowsFromSimulation'
 import { splitTokenFlows, type TokenFlows } from './splitTokenFlows'
 
 type Simulation = {
   tokenFlows: TokenFlows
-  approvalTransactions: ApprovalTransaction[]
+  approvals: Approval[]
 }
 
 type SimulationOptions = {
@@ -58,6 +58,6 @@ export const simulateTransactionBundle = async (
           await extractTokenFlowsFromSimulation(simulatedTransactions),
           from,
         ),
-    approvalTransactions: extractApprovalsFromSimulation(simulatedTransactions),
+    approvals: extractApprovalsFromSimulation(simulatedTransactions),
   }
 }

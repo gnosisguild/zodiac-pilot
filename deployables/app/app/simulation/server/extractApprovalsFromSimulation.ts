@@ -2,7 +2,7 @@ import { addressSchema, type HexAddress } from '@zodiac/schema'
 import { z } from 'zod'
 import type { SimulatedTransaction } from '../types'
 
-export type ApprovalTransaction = {
+export type Approval = {
   spender: HexAddress
   tokenAddress: HexAddress
   approvalAmount: bigint
@@ -50,10 +50,8 @@ const genericLogSchema = z
   .nullable()
   .optional()
 
-const groupApprovals = (
-  approvals: ApprovalTransaction[],
-): ApprovalTransaction[] => {
-  const grouped = new Map<string, ApprovalTransaction>()
+const groupApprovals = (approvals: Approval[]): Approval[] => {
+  const grouped = new Map<string, Approval>()
 
   approvals.forEach((approval) => {
     const key = `${approval.tokenAddress.toLowerCase()}-${approval.spender.toLowerCase()}`
@@ -68,7 +66,7 @@ const groupApprovals = (
 
 export const extractApprovalsFromSimulation = (
   transactions: SimulatedTransaction[],
-): ApprovalTransaction[] => {
+): Approval[] => {
   const approvals = transactions.flatMap(({ transaction_info }) => {
     const allLogs = genericLogSchema.parse(transaction_info.logs)
 
