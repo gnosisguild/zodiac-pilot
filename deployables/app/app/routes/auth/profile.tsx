@@ -41,7 +41,17 @@ const Profile = ({
 
     const result = window.matchMedia('(prefers-color-scheme: dark)')
 
+    const handleDarkChange = (result: MediaQueryListEvent) => {
+      setDark(result.matches)
+    }
+
+    result.addEventListener('change', handleDarkChange)
+
     setDark(result.matches)
+
+    return () => {
+      result.removeEventListener('change', handleDarkChange)
+    }
   }, [])
 
   return (

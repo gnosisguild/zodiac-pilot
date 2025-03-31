@@ -112,21 +112,24 @@ const PageLayout = ({ loaderData: { chains, user } }: Route.ComponentProps) => {
                   {user && (
                     <NavLink
                       to={href('/profile')}
-                      className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-white hover:bg-gray-800"
+                      className="group flex items-center gap-x-2 px-6 text-sm/6 font-semibold text-zinc-950 dark:text-white"
                     >
                       {user.profilePictureUrl ? (
                         <img
                           alt=""
                           src={user.profilePictureUrl}
-                          className="size-8 rounded-full bg-gray-800"
+                          className="size-8 rounded-full bg-zinc-800"
                         />
                       ) : (
-                        <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-gray-800">
+                        <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
                           <User size={16} />
                         </div>
                       )}
                       <span className="sr-only">Your profile</span>
-                      <span aria-hidden="true">
+                      <span
+                        aria-hidden="true"
+                        className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
+                      >
                         {user.firstName} {user.lastName}
                       </span>
                     </NavLink>
