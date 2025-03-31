@@ -10,15 +10,17 @@ type GetTokenDetailOptions = GetByAddressOptions | GetBySymbolOptions
 export const getTokenDetails = async (
   chain: Chain,
   options: GetTokenDetailOptions,
-): Promise<TokenBalance> => {
+): Promise<TokenBalance | null> => {
   const rawData = await api('/token', {
-    schema: tokenSchema,
+    schema: tokenSchema.nullable(),
     data: {
       id: 'address' in options ? options.address : options.symbol,
       chain_id: chain.id,
     },
   })
-
+  if (!rawData) {
+    return null
+  }
   return {
     contractId: rawData.id,
     name: rawData.name,

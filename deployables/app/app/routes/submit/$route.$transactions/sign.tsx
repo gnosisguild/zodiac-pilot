@@ -18,13 +18,11 @@ import {
 import { checkPermissions, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
-  Checkbox,
   Error,
   errorToast,
   Form,
   Labeled,
   PrimaryButton,
-  SkeletonText,
   Success,
   successToast,
   Warning,
@@ -47,6 +45,7 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
+import { ApprovalOverviewSection } from './ApprovalOverviewSection'
 import { appendApprovalTransactions } from './helper'
 import { SkeletonFlowTable } from './SkeletonFlowTable'
 import { TokenTransferTable } from './TokenTransferTable'
@@ -71,10 +70,15 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   ])
 
   const simulate = async () => {
-    const { tokenFlows, approvalTransactions } =
-      await simulateTransactionBundle(route.avatar, metaTransactions)
+    const { tokenFlows, approvals } = await simulateTransactionBundle(
+      route.avatar,
+      metaTransactions,
+    )
 
-    return { tokenFlows, hasApprovals: approvalTransactions.length > 0 }
+    return {
+      tokenFlows,
+      approvals,
+    }
   }
 
   return {
@@ -100,20 +104,20 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const { approvalTransactions } = await simulateTransactionBundle(
+  const { approvals } = await simulateTransactionBundle(
     route.avatar,
     metaTransactions,
     { omitTokenFlows: true },
   )
 
-  if (approvalTransactions.length > 0) {
+  if (approvals.length > 0) {
     const data = await request.formData()
     const revokeApprovals = getBoolean(data, 'revokeApprovals')
 
     if (revokeApprovals) {
       return {
         plan: await planExecution(
-          appendApprovalTransactions(metaTransactions, approvalTransactions),
+          appendApprovalTransactions(metaTransactions, approvals),
           {
             initiator,
             waypoints,
@@ -188,19 +192,9 @@ const SubmitPage = ({
       <Form.Section
         title="Review approvals"
         description="Token approvals let other addresses spend your tokens. If you don't
-            revoke them, they can keep spending indefinitely."
+            revoke approvals, they can keep spending indefinitely."
       >
-        <Suspense fallback={<SkeletonText />}>
-          <Await resolve={simulation}>
-            {({ hasApprovals }) =>
-              hasApprovals ? (
-                <Checkbox label="Revoke all approvals" name="revokeApprovals" />
-              ) : (
-                <Success title="No approval to revoke" />
-              )
-            }
-          </Await>
-        </Suspense>
+        <ApprovalOverviewSection simulation={simulation} />
       </Form.Section>
 
       <Form.Section

@@ -1,10 +1,16 @@
+import { getChain, getTokenDetails } from '@/balances-server'
+import { verifyChainId } from '@zodiac/chains'
 import { addressSchema, type HexAddress } from '@zodiac/schema'
 import { z } from 'zod'
 import type { SimulatedTransaction } from '../types'
 
-export type ApprovalTransaction = {
+export type Approval = {
   spender: HexAddress
   tokenAddress: HexAddress
+  approvalAmount: bigint
+  symbol: string
+  logoUrl: string
+  decimals: number
 }
 
 const ownerSchema = z.object({
@@ -46,23 +52,54 @@ const genericLogSchema = z
   .nullable()
   .optional()
 
-export const extractApprovalsFromSimulation = (
-  transactions: SimulatedTransaction[],
-): ApprovalTransaction[] => {
-  return transactions.flatMap(({ transaction_info: { logs } }) => {
-    const allLogs = genericLogSchema.parse(logs)
+const groupApprovals = (approvals: Approval[]): Approval[] => {
+  const grouped = new Map<string, Approval>()
 
-    if (allLogs == null) {
-      return []
+  approvals.forEach((approval) => {
+    const key = `${approval.tokenAddress.toLowerCase()}-${approval.spender.toLowerCase()}`
+
+    if (!grouped.has(key)) {
+      grouped.set(key, approval)
     }
-
-    const approvalLogs = allLogs
-      .filter(({ name }) => name === 'Approval')
-      .map((log) => approvalLogSchema.parse(log))
-
-    return approvalLogs.map(({ raw: { address }, inputs: [, spender] }) => ({
-      tokenAddress: address,
-      spender: spender.value,
-    }))
   })
+
+  return Array.from(grouped.values())
+}
+
+export const extractApprovalsFromSimulation = async (
+  transactions: SimulatedTransaction[],
+): Promise<Approval[]> => {
+  const approvalsArrays = await Promise.all(
+    transactions.map(async ({ network_id, transaction_info }) => {
+      const allLogs = genericLogSchema.parse(transaction_info.logs) || []
+
+      const chain = await getChain(verifyChainId(parseInt(network_id)))
+
+      const approvalLogs = allLogs
+        .filter(({ name }) => name === 'Approval')
+        .map((log) => approvalLogSchema.parse(log))
+
+      const approvalsForTx = await Promise.all(
+        approvalLogs.map(
+          async ({ raw: { address }, inputs: [, spender, amount] }) => {
+            const tokenDetails = await getTokenDetails(chain, { address })
+
+            return {
+              symbol: tokenDetails?.symbol ?? '',
+              logoUrl: tokenDetails?.logoUrl ?? '',
+              decimals: tokenDetails?.decimals ?? 0,
+              tokenAddress: address,
+              spender: spender.value,
+              approvalAmount: BigInt(amount.value),
+            }
+          },
+        ),
+      )
+
+      return approvalsForTx
+    }),
+  )
+
+  const approvalsFlat = approvalsArrays.flat()
+  return groupApprovals(approvalsFlat)
 }

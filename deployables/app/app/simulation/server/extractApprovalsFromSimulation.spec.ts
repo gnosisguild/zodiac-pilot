@@ -7,13 +7,16 @@ import { describe, expect, it } from 'vitest'
 import { extractApprovalsFromSimulation } from './extractApprovalsFromSimulation'
 
 describe('extractApprovalsFromSimulation', () => {
-  it('returns an empty array if logs are missing', () => {
-    expect(
-      extractApprovalsFromSimulation([createMockSimulatedTransaction()]),
-    ).toEqual([])
-  })
+  it('returns an empty array if logs are missing', async () => {
+    const transaction = createMockSimulatedTransaction({
+      transaction_info: { asset_changes: [] },
+    })
 
-  it('ignores logs that do not have name="Approval"', () => {
+    await expect(
+      extractApprovalsFromSimulation([transaction]),
+    ).resolves.toEqual([])
+  })
+  it('ignores logs that do not have name="Approval"', async () => {
     const transaction = createMockSimulatedTransaction({
       transaction_info: {
         logs: [
@@ -24,46 +27,53 @@ describe('extractApprovalsFromSimulation', () => {
       },
     })
 
-    expect(extractApprovalsFromSimulation([transaction])).toEqual([])
+    await expect(
+      extractApprovalsFromSimulation([transaction]),
+    ).resolves.toEqual([])
   })
 
-  it('extracts approval logs correctly', () => {
+  it('extracts approval logs correctly', async () => {
     const tokenA = randomAddress()
     const spenderA = randomAddress()
-
-    const tokenB = randomAddress()
-    const spenderB = randomAddress()
-
     const transaction = createMockSimulatedTransaction({
       transaction_info: {
         logs: [
           createMockApprovalLog({ rawAddress: tokenA, spender: spenderA }),
-          createMockApprovalLog({ rawAddress: tokenB, spender: spenderB }),
         ],
       },
     })
-
-    const [transactionA, transactionB] = extractApprovalsFromSimulation([
-      transaction,
+    const result = await extractApprovalsFromSimulation([transaction])
+    expect(result).toEqual([
+      {
+        symbol: '',
+        logoUrl: '',
+        decimals: 0,
+        tokenAddress: tokenA,
+        spender: spenderA,
+        approvalAmount: BigInt(0),
+      },
     ])
-
-    expect(transactionA).toMatchObject({
-      tokenAddress: tokenA,
-      spender: spenderA,
-    })
-    expect(transactionB).toMatchObject({
-      tokenAddress: tokenB,
-      spender: spenderB,
-    })
   })
 
-  it('combines approvals across multiple transactions', () => {
+  it('combines approvals across multiple transactions', async () => {
     const tokenA = randomAddress()
     const spenderA = randomAddress()
     const transactionA = createMockSimulatedTransaction({
       transaction_info: {
         logs: [
           createMockApprovalLog({ rawAddress: tokenA, spender: spenderA }),
+        ],
+        exposure_changes: [
+          {
+            token_info: {
+              contract_address: tokenA,
+              symbol: '',
+              logo: 'https://example.com/tokenA.png',
+              decimals: 18,
+              standard: 'ERC20',
+            },
+            type: 'approval',
+          },
         ],
       },
     })
@@ -75,19 +85,42 @@ describe('extractApprovalsFromSimulation', () => {
         logs: [
           createMockApprovalLog({ rawAddress: tokenB, spender: spenderB }),
         ],
+        exposure_changes: [
+          {
+            token_info: {
+              contract_address: tokenB,
+              symbol: 'TKB',
+              logo: 'https://example.com/tokenB.png',
+              decimals: 18,
+              standard: 'ERC20',
+            },
+            type: 'approval',
+          },
+        ],
       },
     })
 
-    const [approvalTransactionA, approvalTransactionB] =
-      extractApprovalsFromSimulation([transactionA, transactionB])
-
-    expect(approvalTransactionA).toMatchObject({
-      tokenAddress: tokenA,
-      spender: spenderA,
-    })
-    expect(approvalTransactionB).toMatchObject({
-      tokenAddress: tokenB,
-      spender: spenderB,
-    })
+    const result = await extractApprovalsFromSimulation([
+      transactionA,
+      transactionB,
+    ])
+    expect(result).toEqual([
+      {
+        symbol: '',
+        logoUrl: '',
+        decimals: 0,
+        tokenAddress: tokenA,
+        spender: spenderA,
+        approvalAmount: BigInt(0),
+      },
+      {
+        symbol: '',
+        logoUrl: '',
+        decimals: 0,
+        tokenAddress: tokenB,
+        spender: spenderB,
+        approvalAmount: BigInt(0),
+      },
+    ])
   })
 })

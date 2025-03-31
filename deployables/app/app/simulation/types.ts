@@ -3,6 +3,9 @@ import { z } from 'zod'
 const tokenInfoSchema = z.object({
   standard: z.string().optional(),
   contract_address: z.string().optional(),
+  symbol: z.string().optional(),
+  decimals: z.number().optional(),
+  logo: z.string().optional(),
 })
 
 const assetChangeSchema = z.object({
@@ -17,11 +20,16 @@ const balanceChangeSchema = z.object({
   dollar_value: z.string(),
   transfers: z.array(z.number()),
 })
+const exposureChangeSchema = z.object({
+  token_info: tokenInfoSchema,
+  type: z.string(),
+})
 
 const transactionInfoSchema = z.object({
   logs: z.any().nullable(),
   asset_changes: z.array(assetChangeSchema).nullable().default([]).optional(),
   balance_changes: z.array(balanceChangeSchema).optional().nullable(),
+  exposure_changes: z.array(exposureChangeSchema).optional().nullable(),
 })
 
 const transactionSchema = z.object({
