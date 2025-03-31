@@ -58,6 +58,6 @@ export const simulateTransactionBundle = async (
           await extractTokenFlowsFromSimulation(simulatedTransactions),
           from,
         ),
-    approvals: extractApprovalsFromSimulation(simulatedTransactions),
+    approvals: await extractApprovalsFromSimulation(simulatedTransactions),
   }
 }

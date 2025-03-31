@@ -1,3 +1,5 @@
+import { getChain, getTokenDetails } from '@/balances-server'
+import { verifyChainId } from '@zodiac/chains'
 import { addressSchema, type HexAddress } from '@zodiac/schema'
 import { z } from 'zod'
 import type { SimulatedTransaction } from '../types'
@@ -64,34 +66,40 @@ const groupApprovals = (approvals: Approval[]): Approval[] => {
   return Array.from(grouped.values())
 }
 
-export const extractApprovalsFromSimulation = (
+export const extractApprovalsFromSimulation = async (
   transactions: SimulatedTransaction[],
-): Approval[] => {
-  const approvals = transactions.flatMap(({ transaction_info }) => {
-    const allLogs = genericLogSchema.parse(transaction_info.logs)
+): Promise<Approval[]> => {
+  const approvalsArrays = await Promise.all(
+    transactions.map(async ({ network_id, transaction_info }) => {
+      const allLogs = genericLogSchema.parse(transaction_info.logs) || []
 
-    if (!allLogs) {
-      return []
-    }
-    const approvalLogs = allLogs
-      .filter(({ name }) => name === 'Approval')
-      .map((log) => approvalLogSchema.parse(log))
-    return approvalLogs.map(
-      ({ raw: { address }, inputs: [, spender, amount] }) => {
-        const tokenInfo = transaction_info.exposure_changes?.find(
-          (token) => token.token_info.contract_address === address,
-        )
-        return {
-          symbol: tokenInfo?.token_info.symbol ?? '',
-          logoUrl: tokenInfo?.token_info.logo ?? '',
-          decimals: tokenInfo?.token_info.decimals ?? 0,
-          tokenAddress: address,
-          spender: spender.value,
-          approvalAmount: BigInt(amount.value),
-        }
-      },
-    )
-  })
+      const chain = await getChain(verifyChainId(parseInt(network_id)))
 
-  return groupApprovals(approvals)
+      const approvalLogs = allLogs
+        .filter(({ name }) => name === 'Approval')
+        .map((log) => approvalLogSchema.parse(log))
+
+      const approvalsForTx = await Promise.all(
+        approvalLogs.map(
+          async ({ raw: { address }, inputs: [, spender, amount] }) => {
+            const tokenDetails = await getTokenDetails(chain, { address })
+
+            return {
+              symbol: tokenDetails?.symbol ?? '',
+              logoUrl: tokenDetails?.logoUrl ?? '',
+              decimals: tokenDetails?.decimals ?? 0,
+              tokenAddress: address,
+              spender: spender.value,
+              approvalAmount: BigInt(amount.value),
+            }
+          },
+        ),
+      )
+
+      return approvalsForTx
+    }),
+  )
+
+  const approvalsFlat = approvalsArrays.flat()
+  return groupApprovals(approvalsFlat)
 }
