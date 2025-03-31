@@ -1,7 +1,8 @@
 import type { ApprovalTransaction } from '@/simulation-server'
-import { Checkbox, SkeletonText, Success } from '@zodiac/ui'
+import { Checkbox, Success } from '@zodiac/ui'
 import { Suspense, useState } from 'react'
 import { Await } from 'react-router'
+import { SkeletonFlowTable } from './SkeletonFlowTable'
 import { TokenApprovalTable } from './TokenApprovalTable'
 
 type ApprovalOverviewSectionProps = {
@@ -14,27 +15,28 @@ type ApprovalOverviewSectionProps = {
 export function ApprovalOverviewSection({
   simulation,
 }: ApprovalOverviewSectionProps) {
-  const [revokeAll, setRevokeAll] = useState(true)
+  const [revokeAll, setRevokeAll] = useState(false)
 
   return (
-    <Suspense fallback={<SkeletonText />}>
+    <Suspense fallback={<SkeletonFlowTable />}>
       <Await resolve={simulation}>
         {({ hasApprovals, approvalTransactions }) =>
           hasApprovals ? (
             <>
+              <TokenApprovalTable
+                approvals={approvalTransactions}
+                revokeAll={revokeAll}
+              />
+
               <Checkbox
                 label="Revoke all approvals"
                 name="revokeApprovals"
                 checked={revokeAll}
                 onChange={(e) => setRevokeAll(e.target.checked)}
               />
-              <TokenApprovalTable
-                approvals={approvalTransactions}
-                revokeAll={revokeAll}
-              />
             </>
           ) : (
-            <Success title="No approval to revoke" />
+            <Success title="No recorded approvals" />
           )
         }
       </Await>

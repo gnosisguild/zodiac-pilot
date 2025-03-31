@@ -191,7 +191,7 @@ const SubmitPage = ({
       <Form.Section
         title="Review approvals"
         description="Token approvals let other addresses spend your tokens. If you don't
-            revoke them, they can keep spending indefinitely."
+            revoke approvals, they can keep spending indefinitely."
       >
         <ApprovalOverviewSection simulation={simulation} />
       </Form.Section>
