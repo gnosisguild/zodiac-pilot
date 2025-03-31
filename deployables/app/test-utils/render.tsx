@@ -1,4 +1,5 @@
 import { ProvideExtensionVersion } from '@/components'
+import { authkitLoader } from '@workos-inc/authkit-react-router'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -12,7 +13,8 @@ import {
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
 import type { PropsWithChildren, Ref } from 'react'
-import { afterEach, beforeEach } from 'vitest'
+import { data } from 'react-router'
+import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
@@ -72,6 +74,8 @@ afterEach(() => {
   window.removeEventListener('message', handleVersionRequest)
 })
 
+const mockAuthKitLoader = vi.mocked(authkitLoader)
+
 export const render = async (
   path: string,
   {
@@ -83,6 +87,24 @@ export const render = async (
   }: Options = {},
 ) => {
   versionRef.current = version
+
+  mockAuthKitLoader.mockImplementation(async (loaderArgs, loader) => {
+    const auth = {
+      accessToken: null,
+      entitlements: null,
+      impersonator: null,
+      organizationId: null,
+      permissions: null,
+      role: null,
+      sealedSession: null,
+      sessionId: null,
+      user: null,
+    }
+
+    const loaderResult = await loader({ ...loaderArgs, auth })
+
+    return data({ ...loaderResult, ...auth })
+  })
 
   const renderResult = await baseRender(path, {
     ...options,

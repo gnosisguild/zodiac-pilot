@@ -9,4 +9,9 @@ export const dbClient = () => {
   return drizzle({ client, schema })
 }
 
-export type DBClient = ReturnType<typeof dbClient>
+type DefaultClient = ReturnType<typeof dbClient>
+type TransactionClient = Parameters<
+  Parameters<DefaultClient['transaction']>[0]
+>[0]
+
+export type DBClient = DefaultClient | TransactionClient
