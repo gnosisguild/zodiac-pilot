@@ -1,6 +1,7 @@
 import { useTokenBalances } from '@/balances-client'
 import { Token } from '@/components'
 import {
+  Diff,
   Empty,
   Error as ErrorAlert,
   GhostLinkButton,
@@ -23,7 +24,6 @@ export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = () => {
   const [{ data, isForked }, state] = useTokenBalances()
-
   if (data.length === 0 && state !== 'loading') {
     return (
       <Info title="Nothing to show">
@@ -65,19 +65,37 @@ const Balances = () => {
               usdValue,
               amount,
               symbol,
+              diff,
             }) => (
               <TableRow key={contractId} className="group">
                 <TableCell>
                   <Token logo={logoUrl}>{name}</Token>
                 </TableCell>
                 <TableCell align="right">
-                  <TokenValue symbol={symbol}>{amount}</TokenValue>
+                  <Diff value={diff?.tokenValue}>
+                    <TokenValue
+                      symbol={symbol}
+                      additionalInfo={
+                        diff?.tokenValue && (
+                          <span className="tabular-numbs text-sm slashed-zero">
+                            {diff?.tokenValue} {symbol}
+                          </span>
+                        )
+                      }
+                    >
+                      {amount}
+                    </TokenValue>
+                  </Diff>
                 </TableCell>
                 <TableCell align="right">
                   {usdValue == null ? (
                     <Empty />
                   ) : (
-                    <UsdValue>{usdValue}</UsdValue>
+                    <Diff value={diff?.usdValue}>
+                      <UsdValue balanceDiff={diff?.usdValue}>
+                        {usdValue}
+                      </UsdValue>
+                    </Diff>
                   )}
                 </TableCell>
                 <TableCell className="pr-16">

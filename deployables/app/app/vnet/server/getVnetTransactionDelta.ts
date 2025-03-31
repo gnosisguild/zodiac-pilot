@@ -1,8 +1,8 @@
 import type { TokenBalance } from '@/balances-server'
-import { createPublicClient, http, parseUnits } from 'viem'
+import { createPublicClient, http } from 'viem'
 import { getVnetTransactions } from './getVnetTransactions'
 import { getVnetTxReceipt } from './getVnetTxReceipt'
-import { processTransferLogs } from './helper'
+import { computeNativeDiff, processTransferLogs } from './helper'
 
 export const getVnetTransactionDelta = async (
   vnetId: string,
@@ -43,15 +43,13 @@ export const getVnetTransactionDelta = async (
   const baselineNative = baselineBalances.find(
     (b) => b.contractId.toLowerCase() === chain.toLowerCase(),
   )
-  let baselineValue = 0n
-  if (baselineNative) {
-    baselineValue = parseUnits(baselineNative.amount, baselineNative.decimals)
-  }
-  const diff = forkNativeBalance - baselineValue
-  if (diff !== 0n) {
-    erc20Deltas[chain.toLowerCase()] =
-      (erc20Deltas[chain.toLowerCase()] ?? 0n) + diff
-  }
 
+  if (baselineNative) {
+    const diff = computeNativeDiff(baselineNative, forkNativeBalance)
+    if (diff !== 0n) {
+      erc20Deltas[chain.toLowerCase()] =
+        (erc20Deltas[chain.toLowerCase()] ?? 0n) + diff
+    }
+  }
   return erc20Deltas
 }

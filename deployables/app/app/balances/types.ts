@@ -24,6 +24,11 @@ const tokenBalanceSchema = tokenSchema.extend({
 
 export const tokenBalancesSchema = tokenBalanceSchema.array()
 
+type TokenDiff = {
+  tokenValue: number
+  usdValue: number
+}
+
 export type TokenBalance = {
   contractId: string
   name: string | null
@@ -34,6 +39,7 @@ export type TokenBalance = {
   usdValue: number | null
   usdPrice: number | null
   chain: string
+  diff?: TokenDiff
 }
 
 export type TokenTransfer = TokenBalance & {

@@ -112,20 +112,55 @@ export const applyDeltaToBalances = async (
     if (delta[balance.contractId.toLowerCase()] == null) {
       return balance
     }
-
+    const deltaBalance = delta[balance.contractId.toLowerCase()]
     const decimals = balance.decimals || 18
     const existingRaw = parseUnits(balance.amount, decimals)
 
-    const newRaw = existingRaw + delta[balance.contractId.toLowerCase()]
+    const newRaw = existingRaw + deltaBalance
     const finalRaw = newRaw < 0n ? 0n : newRaw
 
     const newAmount = formatUnits(finalRaw, decimals)
+    const balanceDiff = formatUnits(deltaBalance, decimals)
 
     return {
       ...balance,
-
+      diff: {
+        tokenValue: Number(balanceDiff),
+        usdValue: parseFloat(balanceDiff) * (balance.usdPrice || 0),
+      },
       amount: newAmount,
       usdValue: parseFloat(newAmount) * (balance.usdPrice || 0),
     }
   })
+}
+
+const normalizeBalance = (
+  value: string | bigint,
+  decimals: number,
+  precision = 12,
+): bigint => {
+  const numericString =
+    typeof value === 'bigint' ? formatUnits(value, decimals) : value
+  const truncated = parseFloat(numericString).toFixed(precision)
+  return parseUnits(truncated, decimals)
+}
+
+export const computeNativeDiff = (
+  baselineNative: TokenBalance,
+  forkNativeBalance: bigint,
+  precision = 12,
+): bigint => {
+  const baselineValue = normalizeBalance(
+    baselineNative.amount,
+    baselineNative.decimals,
+    precision,
+  )
+
+  const forkValue = normalizeBalance(
+    forkNativeBalance,
+    baselineNative.decimals,
+    precision,
+  )
+
+  return forkValue - baselineValue
 }
