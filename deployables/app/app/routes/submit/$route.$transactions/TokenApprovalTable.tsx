@@ -65,7 +65,7 @@ export function TokenApprovalTable({
                 <TableCell align="right">
                   {revokeAll ? (
                     <div className="flex flex-col items-center justify-end gap-1 tabular-nums sm:flex-row sm:items-center sm:gap-2">
-                      <del className="mr-2 text-red-700 dark:text-red-500">
+                      <del className="mr-2">
                         <ApprovalDisplay
                           approvalAmount={approvalAmount}
                           decimals={decimals}
@@ -78,12 +78,10 @@ export function TokenApprovalTable({
                       </span>
                     </div>
                   ) : (
-                    <span className="tabular-nums text-red-700 dark:text-red-500">
-                      <ApprovalDisplay
-                        approvalAmount={approvalAmount}
-                        decimals={decimals}
-                      />
-                    </span>
+                    <ApprovalDisplay
+                      approvalAmount={approvalAmount}
+                      decimals={decimals}
+                    />
                   )}
                 </TableCell>
               </TableRow>
@@ -110,7 +108,9 @@ const ApprovalDisplay = ({
         <span className="tabular-numbs text-sm slashed-zero">{tooltip}</span>
       }
     >
-      <span>{display}</span>
+      <span className="tabular-nums text-red-700 dark:text-red-500">
+        {display}
+      </span>
     </Popover>
   )
 }
