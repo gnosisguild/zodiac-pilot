@@ -95,8 +95,8 @@ importers:
         specifier: 5.71.1
         version: 5.71.1(react@19.0.0)
       '@workos-inc/authkit-remix':
-        specifier: 0.8.0
-        version: 0.8.0(@remix-run/node@2.16.2(typescript@5.8.2))(express@4.21.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 0.9.1
+        version: 0.9.1(@remix-run/node@2.16.2(typescript@5.8.2))(express@4.21.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@workos-inc/node':
         specifier: 7.45.0
         version: 7.45.0(express@4.21.2)
@@ -4173,10 +4173,10 @@ packages:
   '@web3-storage/multipart-parser@1.0.0':
     resolution: {integrity: sha512-BEO6al7BYqcnfX15W2cnGR+Q566ACXAT9UQykORCWW80lmkpWsnEob6zJS1ZVBKsSJC8+7vJkHwlp+lXG1UCdw==}
 
-  '@workos-inc/authkit-remix@0.8.0':
-    resolution: {integrity: sha512-Xur7NySDYGGGZSnjxSJjlQ74UNEhWdNHlA1XC61+ypMhCiAdLywW10+vOzOxCXr73uxOBxGYVuQDatP201L+Ow==}
+  '@workos-inc/authkit-remix@0.9.1':
+    resolution: {integrity: sha512-SCivS8gwyLT9cgpMfKVMmQDdSYMQlTVVTc4iG1Bmq984kNeH9wEJhosLaH2S9SydqbGtlI3gUQpCmFNtju8LwA==}
     peerDependencies:
-      '@remix-run/node': ^2.4.1
+      '@remix-run/node': ^2.16.0
       react: ^18.0 || ^19.0.0
       react-dom: ^18.0 || ^19.0.0
 
@@ -12520,7 +12520,7 @@ snapshots:
 
   '@web3-storage/multipart-parser@1.0.0': {}
 
-  '@workos-inc/authkit-remix@0.8.0(@remix-run/node@2.16.2(typescript@5.8.2))(express@4.21.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@workos-inc/authkit-remix@0.9.1(@remix-run/node@2.16.2(typescript@5.8.2))(express@4.21.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@remix-run/node': 2.16.2(typescript@5.8.2)
       '@workos-inc/node': 7.45.0(express@4.21.2)
