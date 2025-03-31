@@ -275,6 +275,7 @@ describe('Sign', () => {
             symbol: '',
             logoUrl: '',
             decimals: 0,
+            approvalAmount: 0n,
           },
         ],
         tokenFlows: { sent: [], received: [], other: [] },
