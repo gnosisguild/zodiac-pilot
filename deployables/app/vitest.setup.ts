@@ -86,3 +86,13 @@ beforeEach(() => {
   mockGetChain.mockResolvedValue(createMockChain())
   mockIsValidToken.mockResolvedValue(true)
 })
+
+vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
+  const module =
+    await importOriginal<typeof import('@workos-inc/authkit-react-router')>()
+
+  return {
+    ...module,
+    authkitLoader: vi.fn(),
+  }
+})
