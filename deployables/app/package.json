@@ -19,7 +19,7 @@
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
     "@icons-pack/react-simple-icons": "12.3.0",
-    "@radix-ui/themes": "^3.2.1",
+    "@radix-ui/themes": "3.2.1",
     "@react-router/express": "7.4.0",
     "@react-router/node": "7.4.0",
     "@react-router/serve": "7.4.0",
@@ -27,7 +27,7 @@
     "@tanstack/react-query": "5.71.1",
     "@workos-inc/authkit-react-router": "0.1.0",
     "@workos-inc/node": "7.45.0",
-    "@workos-inc/widgets": "^1.1.1",
+    "@workos-inc/widgets": "1.1.1",
     "@zodiac/chains": "workspace:*",
     "@zodiac/env": "workspace:*",
     "@zodiac/form-data": "workspace:*",
@@ -82,7 +82,7 @@
     "postcss": "8.5.3",
     "tailwindcss": "4.0.17",
     "typescript": "5.8.2",
-    "vite": "6.2.3",
+    "vite": "6.2.4",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.0.9"
   }
