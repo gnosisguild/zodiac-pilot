@@ -8,6 +8,7 @@
     "ankr",
     "apikey",
     "arbitrum",
+    "authkit",
     "barnbridge",
     "Bitmask",
     "bitshift",
@@ -100,6 +101,7 @@
     "Wagmi",
     "walletconnect",
     "whatsabi",
+    "workos",
     "xcall",
     "xdai",
     "xmlhttprequest"

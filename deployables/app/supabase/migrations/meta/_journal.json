@@ -8,6 +8,34 @@
       "when": 1743000104549,
       "tag": "0000_add tenant table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743078045052,
+      "tag": "0001_add default random uuid to tenant id",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743149885205,
+      "tag": "0002_add user table",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1743151663558,
+      "tag": "0003_fk relation",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1743152344119,
+      "tag": "0004_remove user columns",
+      "breakpoints": true
     }
   ]
 }
