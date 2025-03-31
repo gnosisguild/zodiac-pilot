@@ -17,6 +17,11 @@ export default defineConfig((config) => ({
 
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+    'process.env': JSON.stringify({
+      ...process.env,
+
+      WORKOS_REDIRECT_URI: getWorkOSRedirectURI(),
+    }),
   },
 
   server: {
@@ -27,7 +32,7 @@ export default defineConfig((config) => ({
     noExternal:
       config.command === 'build'
         ? true
-        : ['@gnosis.pm/zodiac', 'evm-proxy-detection'],
+        : ['@gnosis.pm/zodiac', 'evm-proxy-detection', '@workos-inc/widgets'],
   },
   plugins: [
     tailwindcss(),
@@ -38,3 +43,14 @@ export default defineConfig((config) => ({
 
   sentryConfig,
 }))
+
+const getWorkOSRedirectURI = () => {
+  switch (process.env.VERCEL_ENV) {
+    case 'production':
+      return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/callback`
+    case 'preview':
+      return `https://${process.env.VERCEL_BRANCH_URL}/callback`
+    default:
+      return process.env.WORKOS_REDIRECT_URI
+  }
+}

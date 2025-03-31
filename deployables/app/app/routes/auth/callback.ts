@@ -1,10 +1,9 @@
 import { createUser, dbClient, getTenant } from '@/db'
 import { getOrganizationForUser, updateExternalUserId } from '@/workOS'
 import { invariantResponse } from '@epic-web/invariant'
-import { authLoader } from '@workos-inc/authkit-remix'
-import type { LoaderFunction } from 'react-router'
+import { authLoader } from '@workos-inc/authkit-react-router'
 
-export const loader: LoaderFunction = authLoader({
+export const loader = authLoader({
   async onSuccess({ user: workOSUser }) {
     if (workOSUser.externalId != null) {
       return
