@@ -29,7 +29,7 @@ export function TokenApprovalTable({
         <TableRow>
           {approvals.length > 0 && (
             <>
-              <TableHeader>Token</TableHeader>
+              <TableHeader className="w-1/3">Token</TableHeader>
               <TableHeader>Spender</TableHeader>
               <TableHeader align="right">Remaining Approval</TableHeader>
             </>
