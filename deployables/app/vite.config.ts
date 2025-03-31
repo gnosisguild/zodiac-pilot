@@ -17,7 +17,11 @@ export default defineConfig((config) => ({
 
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
-    'process.env.WORKOS_REDIRECT_URI': `"${getWorkOSRedirectURI()}"`,
+    'process.env': JSON.stringify({
+      ...process.env,
+
+      WORKOS_REDIRECT_URI: getWorkOSRedirectURI(),
+    }),
   },
 
   server: {
