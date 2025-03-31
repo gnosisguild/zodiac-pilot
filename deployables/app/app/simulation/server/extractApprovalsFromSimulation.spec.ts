@@ -27,7 +27,7 @@ describe('extractApprovalsFromSimulation', () => {
     expect(extractApprovalsFromSimulation([transaction])).toEqual([])
   })
 
-  it('extracts approval logs correctly', () => {
+  it('extracts approval logs correctly', async () => {
     const tokenA = randomAddress()
     const spenderA = randomAddress()
 
@@ -43,7 +43,7 @@ describe('extractApprovalsFromSimulation', () => {
       },
     })
 
-    const [transactionA, transactionB] = extractApprovalsFromSimulation([
+    const [transactionA, transactionB] = await extractApprovalsFromSimulation([
       transaction,
     ])
 
@@ -57,7 +57,7 @@ describe('extractApprovalsFromSimulation', () => {
     })
   })
 
-  it('combines approvals across multiple transactions', () => {
+  it('combines approvals across multiple transactions', async () => {
     const tokenA = randomAddress()
     const spenderA = randomAddress()
     const transactionA = createMockSimulatedTransaction({
@@ -79,7 +79,7 @@ describe('extractApprovalsFromSimulation', () => {
     })
 
     const [approvalTransactionA, approvalTransactionB] =
-      extractApprovalsFromSimulation([transactionA, transactionB])
+      await extractApprovalsFromSimulation([transactionA, transactionB])
 
     expect(approvalTransactionA).toMatchObject({
       tokenAddress: tokenA,
