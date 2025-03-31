@@ -1,7 +1,6 @@
 import { Page } from '@/components'
 import '@radix-ui/themes/styles.css'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
-import { WorkOS } from '@workos-inc/node'
 import {
   UserProfile,
   UserSecurity,
@@ -9,24 +8,11 @@ import {
   WorkOsWidgets,
 } from '@workos-inc/widgets'
 import '@workos-inc/widgets/styles.css'
-import { getString } from '@zodiac/form-data'
 import { useEffect, useState } from 'react'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) => {
   return authkitLoader(args, { ensureSignedIn: true })
-}
-
-export const action = async ({ request }: Route.ActionArgs) => {
-  const data = await request.formData()
-  const workOS = new WorkOS()
-
-  await workOS.userManagement.updateUser({
-    userId: getString(data, 'userId'),
-    firstName: getString(data, 'firstName'),
-  })
-
-  return null
 }
 
 const Profile = ({
