@@ -25,7 +25,6 @@ export function ApprovalOverviewSection({
               <Checkbox
                 label="Revoke all approvals"
                 name="revokeApprovals"
-                defaultChecked
                 checked={revokeAll}
                 onChange={(e) => setRevokeAll(e.target.checked)}
               />

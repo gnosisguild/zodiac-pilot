@@ -2,6 +2,7 @@ import { Token } from '@/components'
 import type { ApprovalTransaction } from '@/simulation-server'
 import {
   Address,
+  Popover,
   Table,
   TableBody,
   TableCell,
@@ -10,6 +11,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { type PrefixedAddress } from 'ser-kit'
+import { formatApprovalAmount } from './helper'
 
 type TokenApprovalTableProps = {
   approvals: ApprovalTransaction[]
@@ -46,37 +48,67 @@ export function TokenApprovalTable({
           </TableRow>
         )}
 
-        {approvals.map(({ symbol, logoUrl, spender }, index) => {
-          return (
-            <TableRow key={index}>
-              <TableCell>
-                <Token logo={logoUrl}>{symbol}</Token>
-              </TableCell>
+        {approvals.map(
+          ({ symbol, logoUrl, spender, approvalAmount, decimals }, index) => {
+            return (
+              <TableRow key={index}>
+                <TableCell>
+                  <Token logo={logoUrl}>{symbol}</Token>
+                </TableCell>
 
-              <TableCell>
-                <Address shorten size="small">
-                  {spender as PrefixedAddress}
-                </Address>
-              </TableCell>
+                <TableCell>
+                  <Address shorten size="small">
+                    {spender as PrefixedAddress}
+                  </Address>
+                </TableCell>
 
-              <TableCell align="right">
-                {revokeAll ? (
-                  <div className="flex flex-col items-center justify-end gap-1 tabular-nums sm:flex-row sm:items-center sm:gap-2">
-                    <del className="mr-2 text-red-400">∞</del>
+                <TableCell align="right">
+                  {revokeAll ? (
+                    <div className="flex flex-col items-center justify-end gap-1 tabular-nums sm:flex-row sm:items-center sm:gap-2">
+                      <del className="mr-2 text-red-400">
+                        <ApprovalDisplay
+                          approvalAmount={approvalAmount}
+                          decimals={decimals}
+                        />
+                      </del>
 
-                    <span className="hidden sm:block">→</span>
-                    <span className="text-green-600">0</span>
-                  </div>
-                ) : (
-                  <span className="font-semibold tabular-nums text-red-500">
-                    ∞
-                  </span>
-                )}
-              </TableCell>
-            </TableRow>
-          )
-        })}
+                      {/* <span className="hidden sm:block">→</span> */}
+                      <span className="text-green-600">0</span>
+                    </div>
+                  ) : (
+                    <span className="font-semibold tabular-nums text-red-500">
+                      <ApprovalDisplay
+                        approvalAmount={approvalAmount}
+                        decimals={decimals}
+                      />
+                    </span>
+                  )}
+                </TableCell>
+              </TableRow>
+            )
+          },
+        )}
       </TableBody>
     </Table>
+  )
+}
+
+const ApprovalDisplay = ({
+  approvalAmount,
+  decimals,
+}: {
+  approvalAmount: bigint
+  decimals: number
+}) => {
+  const { display, tooltip } = formatApprovalAmount(approvalAmount, decimals)
+  return (
+    <Popover
+      inline
+      popover={
+        <span className="tabular-numbs text-sm slashed-zero">{tooltip}</span>
+      }
+    >
+      <span>{display}</span>
+    </Popover>
   )
 }

@@ -5,6 +5,7 @@ import type { SimulatedTransaction } from '../types'
 export type ApprovalTransaction = {
   spender: HexAddress
   tokenAddress: HexAddress
+  approvalAmount: bigint
   symbol: string
   logoUrl: string
   decimals: number
@@ -74,23 +75,24 @@ export const extractApprovalsFromSimulation = (
     if (!allLogs) {
       return []
     }
-
     const approvalLogs = allLogs
       .filter(({ name }) => name === 'Approval')
       .map((log) => approvalLogSchema.parse(log))
-
-    return approvalLogs.map(({ raw: { address }, inputs: [, spender] }) => {
-      const tokenInfo = transaction_info.exposure_changes?.find(
-        (token) => token.token_info.contract_address === address,
-      )
-      return {
-        symbol: tokenInfo?.token_info.symbol ?? '',
-        logoUrl: tokenInfo?.token_info.logo ?? '',
-        decimals: tokenInfo?.token_info.decimals ?? 0,
-        tokenAddress: address,
-        spender: spender.value,
-      }
-    })
+    return approvalLogs.map(
+      ({ raw: { address }, inputs: [, spender, amount] }) => {
+        const tokenInfo = transaction_info.exposure_changes?.find(
+          (token) => token.token_info.contract_address === address,
+        )
+        return {
+          symbol: tokenInfo?.token_info.symbol ?? '',
+          logoUrl: tokenInfo?.token_info.logo ?? '',
+          decimals: tokenInfo?.token_info.decimals ?? 0,
+          tokenAddress: address,
+          spender: spender.value,
+          approvalAmount: BigInt(amount.value),
+        }
+      },
+    )
   })
 
   return groupApprovals(approvals)
