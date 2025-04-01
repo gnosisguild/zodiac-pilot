@@ -1,4 +1,4 @@
-import { useCompanionAppUrl } from '@/companion'
+import { getUser, useCompanionAppUrl } from '@/companion'
 import { getRoute, getRoutes, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -30,7 +30,6 @@ import {
 import { useEffect, useRef } from 'react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
-import { z } from 'zod'
 import { getActiveRouteId } from '../getActiveRouteId'
 import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -38,21 +37,8 @@ import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
-const authSchema = z.object({
-  user: z
-    .object({
-      firstName: z.string(),
-      lastName: z.string(),
-    })
-    .nullable(),
-})
-
 export const loader = async () => {
-  const heartbeat = await fetch(`${getCompanionAppUrl()}/extension/heartbeat`)
-
-  const { user } = authSchema.parse(await heartbeat.json())
-
-  return { routes: await getRoutes(), user }
+  return { routes: await getRoutes(), user: await getUser() }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {

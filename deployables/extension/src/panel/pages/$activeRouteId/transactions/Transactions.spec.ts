@@ -13,8 +13,18 @@ import userEvent from '@testing-library/user-event'
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { action, loader, Transactions } from './Transactions'
+
+vi.mock('@/companion', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/companion')>()
+
+  return {
+    ...module,
+
+    getUser: vi.fn().mockResolvedValue(null),
+  }
+})
 
 describe('Transactions', () => {
   describe('Route switch', () => {

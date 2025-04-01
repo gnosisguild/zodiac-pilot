@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { sleepTillIdle } from '@zodiac/test-utils'
-import { config } from 'dotenv'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, vi } from 'vitest'
 
@@ -14,8 +13,6 @@ vi.mock('@zodiac/env', async (importOriginal) => {
     getCompanionAppUrl: vi.fn(),
   }
 })
-
-config()
 
 configMocks({ afterEach, afterAll })
 
