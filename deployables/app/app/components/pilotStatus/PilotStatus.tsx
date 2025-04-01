@@ -1,5 +1,5 @@
 import { GhostButton } from '@zodiac/ui'
-import { Power, PowerOff } from 'lucide-react'
+import { PanelRightOpen, Power, PowerOff } from 'lucide-react'
 import { useConnected } from './PilotStatusContext'
 
 export const PilotStatus = () => {
@@ -17,13 +17,18 @@ export const PilotStatus = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex justify-between gap-2">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase">
         <PowerOff className="text-red-700" size={16} />
         Disconnected
       </div>
 
-      <GhostButton id="ZODIAC-PILOT::open-panel-button" size="tiny">
+      <GhostButton
+        iconOnly
+        icon={PanelRightOpen}
+        id="ZODIAC-PILOT::open-panel-button"
+        size="tiny"
+      >
         Open Pilot
       </GhostButton>
     </div>
