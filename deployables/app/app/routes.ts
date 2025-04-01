@@ -20,9 +20,7 @@ export default [
         route('success', 'routes/auth/sign-up.success.tsx'),
       ]),
 
-      route('/sign-in', 'routes/auth/sign-in.ts'),
       route('/profile', 'routes/auth/profile.tsx'),
-      route('/logout', 'routes/auth/logout.ts'),
 
       route('/tokens', 'routes/tokens/index.tsx', [
         layout('routes/tokens/balances/layout.tsx', [
