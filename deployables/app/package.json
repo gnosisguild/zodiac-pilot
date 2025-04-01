@@ -44,7 +44,7 @@
     "express": "4.21.2",
     "highlight.js": "11.11.1",
     "isbot": "5.1.25",
-    "lucide-react": "0.484.0",
+    "lucide-react": "0.486.0",
     "postgres": "3.4.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
