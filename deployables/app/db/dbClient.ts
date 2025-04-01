@@ -1,12 +1,17 @@
 import { getDBConnectionString } from '@zodiac/env'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { default as postgres } from 'postgres'
+import type { Ref } from 'react'
 import { schema } from './schema'
 
-export const dbClient = () => {
-  const client = postgres(getDBConnectionString())
+const clientRef: Ref<ReturnType<typeof postgres>> = { current: null }
 
-  return drizzle({ client, schema })
+export const dbClient = () => {
+  if (clientRef.current == null) {
+    clientRef.current = postgres(getDBConnectionString())
+  }
+
+  return drizzle({ client: clientRef.current, schema })
 }
 
 type DefaultClient = ReturnType<typeof dbClient>
