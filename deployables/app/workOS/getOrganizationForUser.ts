@@ -1,7 +1,13 @@
 import { invariant } from '@epic-web/invariant'
-import { WorkOS } from '@workos-inc/node'
+import { WorkOS, type Organization } from '@workos-inc/node'
 
-export const getOrganizationForUser = async (userId: string) => {
+type VerifiedOrganization = Omit<Organization, 'externalId'> & {
+  externalId: string
+}
+
+export const getOrganizationForUser = async (
+  userId: string,
+): Promise<VerifiedOrganization> => {
   const workOS = new WorkOS()
 
   const {
@@ -15,5 +21,10 @@ export const getOrganizationForUser = async (userId: string) => {
     `User with id "${userId}" is not part of any organization`,
   )
 
-  return workOS.organizations.getOrganization(membership.organizationId)
+  const { externalId, ...organization } =
+    await workOS.organizations.getOrganization(membership.organizationId)
+
+  invariant(externalId != null, 'WorkOS organization not known in Zodiac OS')
+
+  return { ...organization, externalId }
 }

@@ -33,11 +33,15 @@ export const UserTable = pgTable(
   (table) => [index().on(table.tenantId)],
 )
 
-export const FeatureTable = pgTable('Feature', {
-  id: uuid().notNull().defaultRandom().primaryKey(),
-  createdAt: date().notNull().defaultNow(),
-  name: text().notNull(),
-})
+export const FeatureTable = pgTable(
+  'Feature',
+  {
+    id: uuid().notNull().defaultRandom().primaryKey(),
+    createdAt: date().notNull().defaultNow(),
+    name: text().notNull(),
+  },
+  (table) => [unique().on(table.name)],
+)
 
 export const FeatureRelations = relations(FeatureTable, ({ many }) => ({
   activeOnTenants: many(ActiveFeatureTable),
