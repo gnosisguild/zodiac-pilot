@@ -50,6 +50,13 @@
       "when": 1743494888945,
       "tag": "0006_indexes on existing tables",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743496764484,
+      "tag": "0007_relations and keys on features",
+      "breakpoints": true
     }
   ]
 }

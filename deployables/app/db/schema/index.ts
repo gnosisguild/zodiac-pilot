@@ -1,4 +1,13 @@
-import { date, index, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
+import {
+  date,
+  index,
+  pgTable,
+  primaryKey,
+  text,
+  unique,
+  uuid,
+} from 'drizzle-orm/pg-core'
 
 export const TenantTable = pgTable('Tenant', {
   id: uuid().defaultRandom().primaryKey(),
@@ -7,6 +16,10 @@ export const TenantTable = pgTable('Tenant', {
 })
 
 export type Tenant = typeof TenantTable.$inferSelect
+
+export const TenantRelations = relations(TenantTable, ({ many }) => ({
+  activeFeatures: many(ActiveFeatureTable),
+}))
 
 export const UserTable = pgTable(
   'User',
@@ -26,6 +39,10 @@ export const FeatureTable = pgTable('Feature', {
   name: text().notNull(),
 })
 
+export const FeatureRelations = relations(FeatureTable, ({ many }) => ({
+  activeOnTenants: many(ActiveFeatureTable),
+}))
+
 export const ActiveFeatureTable = pgTable(
   'ActiveFeature',
   {
@@ -38,10 +55,25 @@ export const ActiveFeatureTable = pgTable(
     createdAt: date().notNull().defaultNow(),
   },
   (table) => [
+    primaryKey({ columns: [table.featureId, table.tenantId] }),
     unique().on(table.featureId, table.tenantId),
     index().on(table.featureId),
     index().on(table.tenantId),
   ],
+)
+
+export const ActiveFeatureRelations = relations(
+  ActiveFeatureTable,
+  ({ one }) => ({
+    tenant: one(TenantTable, {
+      fields: [ActiveFeatureTable.tenantId],
+      references: [TenantTable.id],
+    }),
+    feature: one(FeatureTable, {
+      fields: [ActiveFeatureTable.featureId],
+      references: [FeatureTable.id],
+    }),
+  }),
 )
 
 export const schema = {
@@ -49,4 +81,8 @@ export const schema = {
   user: UserTable,
   feature: FeatureTable,
   activeFeature: ActiveFeatureTable,
+
+  TenantRelations,
+  FeatureRelations,
+  ActiveFeatureRelations,
 }
