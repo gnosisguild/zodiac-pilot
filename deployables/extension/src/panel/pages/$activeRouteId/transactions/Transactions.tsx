@@ -13,6 +13,7 @@ import { getInt, getString } from '@zodiac/form-data'
 import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
+  Feature,
   GhostButton,
   GhostLinkButton,
   Info,
@@ -217,23 +218,25 @@ export const Transactions = () => {
               Re-simulate on current blockchain head
             </GhostButton>
 
-            <InlineForm>
-              {user == null ? (
-                <GhostButton
-                  iconOnly
-                  submit
-                  intent={Intent.Login}
-                  size="small"
-                  icon={CloudOff}
-                >
-                  Log into Zodiac OS
-                </GhostButton>
-              ) : (
-                <GhostButton iconOnly size="small" icon={Cloud}>
-                  View Profile
-                </GhostButton>
-              )}
-            </InlineForm>
+            <Feature feature="user-management">
+              <InlineForm>
+                {user == null ? (
+                  <GhostButton
+                    iconOnly
+                    submit
+                    intent={Intent.Login}
+                    size="small"
+                    icon={CloudOff}
+                  >
+                    Log into Zodiac OS
+                  </GhostButton>
+                ) : (
+                  <GhostButton iconOnly size="small" icon={Cloud}>
+                    View Profile
+                  </GhostButton>
+                )}
+              </InlineForm>
+            </Feature>
           </div>
         </div>
 

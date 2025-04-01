@@ -16,7 +16,6 @@
       "@/wagmi": ["./app/wagmi/index.ts"],
       "@/routes-ui": ["./app/routes-ui/index.ts"],
       "@/db": ["./db/index.ts"],
-      "@/features": ["./features/index.ts"],
       "@/workOS": ["./workOS/index.ts"]
     }
   },
@@ -32,7 +31,6 @@
     "server/**/*",
     "test-utils/**/*",
     "db/**/*",
-    "features/**/*",
     "workOS/**/*"
   ]
 }

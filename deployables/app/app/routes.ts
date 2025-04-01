@@ -76,6 +76,7 @@ export default [
     route('sign-in', 'routes/extension/sign-in.ts'),
     route('callback', 'routes/extension/callback.ts'),
     route('heartbeat', 'routes/extension/heartbeat.ts'),
+    route('features', 'routes/extension/features.ts'),
   ]),
 
   route('/dev/decode/:data', 'routes/dev/decode.tsx'),

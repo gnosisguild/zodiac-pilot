@@ -1,4 +1,4 @@
-import { ProvideCompanionAppContext } from '@/companion'
+import { getFeatures, ProvideCompanionAppContext } from '@/companion'
 import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
 import {
   formData,
@@ -12,6 +12,7 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
+import { FeatureProvider } from '@zodiac/ui'
 import {
   Outlet,
   redirect,
@@ -28,7 +29,11 @@ import { useSaveRoute } from './useSaveRoute'
 export const loader = async () => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
-  return { lastUsedRouteId, companionAppUrl: getCompanionAppUrl() }
+  return {
+    lastUsedRouteId,
+    companionAppUrl: getCompanionAppUrl(),
+    features: await getFeatures(),
+  }
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -58,7 +63,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export const Root = () => {
   const submit = useSubmit()
 
-  const { lastUsedRouteId, companionAppUrl } = useLoaderData<typeof loader>()
+  const { lastUsedRouteId, companionAppUrl, features } =
+    useLoaderData<typeof loader>()
   const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId, {
     onSave: (route, tabId) => {
       sendMessageToCompanionApp(tabId, {
@@ -90,32 +96,34 @@ export const Root = () => {
   const navigate = useNavigate()
 
   return (
-    <ProvideCompanionAppContext url={companionAppUrl}>
-      <Outlet />
+    <FeatureProvider features={features}>
+      <ProvideCompanionAppContext url={companionAppUrl}>
+        <Outlet />
 
-      <ClearTransactionsModal
-        open={isLaunchPending}
-        onCancel={cancelLaunch}
-        onAccept={proceedWithLaunch}
-      />
+        <ClearTransactionsModal
+          open={isLaunchPending}
+          onCancel={cancelLaunch}
+          onAccept={proceedWithLaunch}
+        />
 
-      <ClearTransactionsModal
-        open={saveAndLaunchOptions.isLaunchPending}
-        onCancel={saveAndLaunchOptions.cancelLaunch}
-        onAccept={saveAndLaunchOptions.proceedWithLaunch}
-      />
+        <ClearTransactionsModal
+          open={saveAndLaunchOptions.isLaunchPending}
+          onCancel={saveAndLaunchOptions.cancelLaunch}
+          onAccept={saveAndLaunchOptions.proceedWithLaunch}
+        />
 
-      <ClearTransactionsModal
-        open={saveOptions.isUpdatePending}
-        onCancel={saveOptions.cancelUpdate}
-        onAccept={() => {
-          saveOptions.saveUpdate().then((updatedRoute) => {
-            navigate(
-              `/${updatedRoute.id}/clear-transactions/${updatedRoute.id}`,
-            )
-          })
-        }}
-      />
-    </ProvideCompanionAppContext>
+        <ClearTransactionsModal
+          open={saveOptions.isUpdatePending}
+          onCancel={saveOptions.cancelUpdate}
+          onAccept={() => {
+            saveOptions.saveUpdate().then((updatedRoute) => {
+              navigate(
+                `/${updatedRoute.id}/clear-transactions/${updatedRoute.id}`,
+              )
+            })
+          }}
+        />
+      </ProvideCompanionAppContext>
+    </FeatureProvider>
   )
 }
