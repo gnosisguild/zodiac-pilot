@@ -19,6 +19,8 @@ export const SecondaryButton = ({
       'font-bold ring-2 ring-transparent',
       style === 'regular' &&
         'border-zinc-300 bg-white text-zinc-600 focus:border-transparent focus:ring-indigo-600 enabled:hover:border-zinc-400 dark:border-zinc-600 dark:bg-zinc-950 dark:text-zinc-50 dark:focus:ring-teal-400 dark:enabled:hover:border-zinc-600 dark:enabled:hover:bg-zinc-800',
+      style === 'critical' &&
+        'border-red-300 bg-white text-red-600 hover:bg-red-50 focus:border-transparent focus:ring-indigo-600 enabled:hover:border-red-400 dark:border-red-600 dark:bg-red-950 dark:text-zinc-50 dark:focus:ring-teal-400 dark:enabled:hover:border-red-600 dark:enabled:hover:bg-red-800',
     )}
   />
 )

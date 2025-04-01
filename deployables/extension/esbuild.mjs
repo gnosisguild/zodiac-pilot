@@ -1,13 +1,10 @@
 import tailwindcss from '@tailwindcss/postcss'
-import { config } from 'dotenv'
 import esbuild from 'esbuild'
 import postCssPlugin from 'esbuild-style-plugin'
 import stdLibBrowser from 'node-stdlib-browser'
 import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
 import replace from 'postcss-replace'
 import { fileURLToPath } from 'url'
-
-config()
 
 const SERVE_PORT = 3999
 
@@ -61,6 +58,7 @@ esbuild
           : 'false',
       global: 'window',
       'process.env.COMPANION_APP_URL': `"${process.env.COMPANION_APP_URL}"`,
+      'process.env.WORKOS_CLIENT_ID': `"${process.env.WORKOS_CLIENT_ID}"`,
     },
     plugins: [
       plugin(stdLibBrowser),

@@ -12,7 +12,6 @@ export const loader = (args: Route.LoaderArgs) =>
     throw redirect(
       workos.userManagement.getLogoutUrl({
         sessionId: auth.sessionId,
-        returnTo: 'http://localhost:3040',
       }),
     )
   })

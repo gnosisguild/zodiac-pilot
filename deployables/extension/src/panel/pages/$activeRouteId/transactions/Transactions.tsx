@@ -16,12 +16,20 @@ import {
   GhostButton,
   GhostLinkButton,
   Info,
+  InlineForm,
   Page,
 } from '@zodiac/ui'
-import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
+import {
+  ArrowUpFromLine,
+  Cloud,
+  CloudOff,
+  Landmark,
+  RefreshCcw,
+} from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
+import { z } from 'zod'
 import { getActiveRouteId } from '../getActiveRouteId'
 import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -29,8 +37,21 @@ import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
+const authSchema = z.object({
+  user: z
+    .object({
+      firstName: z.string(),
+      lastName: z.string(),
+    })
+    .nullable(),
+})
+
 export const loader = async () => {
-  return { routes: await getRoutes() }
+  const heartbeat = await fetch(`${getCompanionAppUrl()}/extension/heartbeat`)
+
+  const { user } = authSchema.parse(await heartbeat.json())
+
+  return { routes: await getRoutes(), user }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -93,6 +114,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
     }
+
+    case Intent.Login: {
+      await chrome.identity.launchWebAuthFlow({
+        url: `${getCompanionAppUrl()}/extension/sign-in`,
+        interactive: true,
+      })
+
+      return null
+    }
   }
 }
 
@@ -102,7 +132,7 @@ export const Transactions = () => {
   const provider = useProvider()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
-  const { routes } = useLoaderData<typeof loader>()
+  const { routes, user } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
@@ -186,6 +216,24 @@ export const Transactions = () => {
             >
               Re-simulate on current blockchain head
             </GhostButton>
+
+            <InlineForm>
+              {user == null ? (
+                <GhostButton
+                  iconOnly
+                  submit
+                  intent={Intent.Login}
+                  size="small"
+                  icon={CloudOff}
+                >
+                  Log into Zodiac OS
+                </GhostButton>
+              ) : (
+                <GhostButton iconOnly size="small" icon={Cloud}>
+                  View Profile
+                </GhostButton>
+              )}
+            </InlineForm>
           </div>
         </div>
 

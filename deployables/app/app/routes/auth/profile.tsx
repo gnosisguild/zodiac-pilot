@@ -1,6 +1,7 @@
 import { Page } from '@/components'
+import { useIsPending } from '@/hooks'
 import '@radix-ui/themes/styles.css'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
+import { authkitLoader, signOut } from '@workos-inc/authkit-react-router'
 import {
   UserProfile,
   UserSecurity,
@@ -8,6 +9,7 @@ import {
   WorkOsWidgets,
 } from '@workos-inc/widgets'
 import '@workos-inc/widgets/styles.css'
+import { Form, SecondaryButton } from '@zodiac/ui'
 import { useEffect, useState } from 'react'
 import type { Route } from './+types/profile'
 
@@ -15,10 +17,16 @@ export const loader = (args: Route.LoaderArgs) => {
   return authkitLoader(args, { ensureSignedIn: true })
 }
 
+export const action = async ({ request }: Route.ActionArgs) => {
+  return await signOut(request)
+}
+
 const Profile = ({
   loaderData: { accessToken, sessionId },
 }: Route.ComponentProps) => {
   const [dark, setDark] = useState(false)
+
+  const signingOut = useIsPending()
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -62,6 +70,14 @@ const Profile = ({
               authToken={accessToken}
               currentSessionId={sessionId}
             />
+
+            <Form>
+              <Form.Actions align="left">
+                <SecondaryButton submit busy={signingOut} style="critical">
+                  Sign out
+                </SecondaryButton>
+              </Form.Actions>
+            </Form>
           </WorkOsWidgets>
         )}
       </Page.Main>
