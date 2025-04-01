@@ -16,7 +16,25 @@ export const UserTable = pgTable('User', {
   createdAt: date().notNull().defaultNow(),
 })
 
+export const FeatureTable = pgTable('Feature', {
+  id: uuid().notNull().defaultRandom().primaryKey(),
+  createdAt: date().notNull().defaultNow(),
+  name: text().notNull(),
+})
+
+export const ActiveFeatureTable = pgTable('ActiveFeature', {
+  featureId: uuid()
+    .notNull()
+    .references(() => FeatureTable.id, { onDelete: 'cascade' }),
+  tenantId: uuid()
+    .notNull()
+    .references(() => TenantTable.id, { onDelete: 'cascade' }),
+  createdAt: date().notNull().defaultNow(),
+})
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
+  feature: FeatureTable,
+  activeFeature: ActiveFeatureTable,
 }
