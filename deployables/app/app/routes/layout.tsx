@@ -6,7 +6,7 @@ import {
   ProvidePilotStatus,
 } from '@/components'
 import { dbClient, getFeatures, getTenant } from '@/db'
-import { FeatureProvider } from '@/features'
+import { Feature, FeatureProvider } from '@/features'
 import { ProvideChains } from '@/routes-ui'
 import { getOrganizationForUser } from '@/workOS'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
@@ -128,31 +128,33 @@ const PageLayout = ({
                       <PilotStatus />
                     </div>
 
-                    {user && (
-                      <NavLink
-                        to={href('/profile')}
-                        className="group flex items-center gap-x-2 px-6 text-sm/6 font-semibold text-zinc-950 dark:text-white"
-                      >
-                        {user.profilePictureUrl ? (
-                          <img
-                            alt=""
-                            src={user.profilePictureUrl}
-                            className="size-8 rounded-full bg-zinc-800"
-                          />
-                        ) : (
-                          <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
-                            <User size={16} />
-                          </div>
-                        )}
-                        <span className="sr-only">Your profile</span>
-                        <span
-                          aria-hidden="true"
-                          className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
+                    <Feature feature="user-management">
+                      {user && (
+                        <NavLink
+                          to={href('/profile')}
+                          className="group flex items-center gap-x-2 px-6 text-sm/6 font-semibold text-zinc-950 dark:text-white"
                         >
-                          {user.firstName} {user.lastName}
-                        </span>
-                      </NavLink>
-                    )}
+                          {user.profilePictureUrl ? (
+                            <img
+                              alt=""
+                              src={user.profilePictureUrl}
+                              className="size-8 rounded-full bg-zinc-800"
+                            />
+                          ) : (
+                            <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
+                              <User size={16} />
+                            </div>
+                          )}
+                          <span className="sr-only">Your profile</span>
+                          <span
+                            aria-hidden="true"
+                            className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
+                          >
+                            {user.firstName} {user.lastName}
+                          </span>
+                        </NavLink>
+                      )}
+                    </Feature>
                   </SidebarFooter>
                 </Sidebar>
               }
