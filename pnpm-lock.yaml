@@ -82,13 +82,7 @@ importers:
       '@radix-ui/themes':
         specifier: 3.2.1
         version: 3.2.1(@types/react-dom@19.0.4(@types/react@19.0.12))(@types/react@19.0.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@react-router/express':
-        specifier: 7.4.1
-        version: 7.4.1(express@4.21.2)(react-router@7.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.2)
       '@react-router/node':
-        specifier: 7.4.1
-        version: 7.4.1(react-router@7.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.2)
-      '@react-router/serve':
         specifier: 7.4.1
         version: 7.4.1(react-router@7.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.2)
       '@sentry/react-router':
@@ -145,9 +139,6 @@ importers:
       ethers:
         specifier: 6.13.5
         version: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      express:
-        specifier: 4.21.2
-        version: 4.21.2
       highlight.js:
         specifier: 11.11.1
         version: 11.11.1
@@ -206,9 +197,6 @@ importers:
       '@types/chrome':
         specifier: 0.0.313
         version: 0.0.313
-      '@types/express':
-        specifier: 5.0.1
-        version: 5.0.1
       '@types/node':
         specifier: 22.13.16
         version: 22.13.16
@@ -236,9 +224,6 @@ importers:
       autoprefixer:
         specifier: 10.4.21
         version: 10.4.21(postcss@8.5.3)
-      cross-env:
-        specifier: 7.0.3
-        version: 7.0.3
       drizzle-kit:
         specifier: 0.30.6
         version: 0.30.6
@@ -5264,11 +5249,6 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
-
-  cross-env@7.0.3:
-    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
-    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
-    hasBin: true
 
   cross-fetch@3.1.8:
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
@@ -14359,10 +14339,6 @@ snapshots:
       sha.js: 2.4.11
 
   create-require@1.1.1: {}
-
-  cross-env@7.0.3:
-    dependencies:
-      cross-spawn: 7.0.6
 
   cross-fetch@3.1.8:
     dependencies:
