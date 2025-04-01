@@ -36,6 +36,34 @@
       "when": 1743152344119,
       "tag": "0004_remove user columns",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1743494626387,
+      "tag": "0005_add features",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743494888945,
+      "tag": "0006_indexes on existing tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743496764484,
+      "tag": "0007_relations and keys on features",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743497970400,
+      "tag": "0008_unique name for features",
+      "breakpoints": true
     }
   ]
 }

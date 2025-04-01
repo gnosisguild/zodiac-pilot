@@ -1,0 +1,1 @@
+ALTER TABLE "Feature" ADD CONSTRAINT "Feature_name_unique" UNIQUE("name");

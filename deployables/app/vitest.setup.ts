@@ -14,7 +14,7 @@ import {
   mockResizeObserver,
 } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
-import { dbClient, deleteAllTenants } from './db'
+import { dbClient, deleteAllFeatures, deleteAllTenants } from './db'
 import { createMockChain } from './test-utils/createMockChain'
 import { createMockToken } from './test-utils/createMockToken'
 
@@ -25,7 +25,11 @@ mockResizeObserver()
 
 Element.prototype.scrollIntoView = vi.fn()
 
-beforeEach(() => deleteAllTenants(dbClient()))
+beforeEach(() => {
+  const db = dbClient()
+
+  return Promise.all([deleteAllTenants(db), deleteAllFeatures(db)])
+})
 
 afterEach(async () => {
   await sleepTillIdle()

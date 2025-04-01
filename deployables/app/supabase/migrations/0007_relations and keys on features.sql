@@ -1,0 +1,1 @@
+ALTER TABLE "ActiveFeature" ADD CONSTRAINT "ActiveFeature_featureId_tenantId_pk" PRIMARY KEY("featureId","tenantId");

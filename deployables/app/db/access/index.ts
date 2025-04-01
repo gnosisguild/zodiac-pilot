@@ -1,5 +1,7 @@
 export { createTenant } from './createTenant'
 export { createUser } from './createUser'
+export { deleteAllFeatures } from './deleteAllFeatures'
 export { deleteAllTenants } from './deleteAllTenants'
+export { getFeatures } from './getFeatures'
 export { getTenant } from './getTenant'
 export { getTenants } from './getTenants'
