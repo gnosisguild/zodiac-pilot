@@ -11,8 +11,8 @@
     "@zodiac/ui": "workspace:*",
     "isbot": "5.1.25",
     "lucide-react": "0.486.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-router": "7.4.1"
   },
   "devDependencies": {
