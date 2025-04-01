@@ -17,6 +17,7 @@ export default defineConfig((config) => ({
 
   define: {
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
+    'process.env.PILOT_EXTENSION_ID': `"${process.env.PILOT_EXTENSION_ID}"`,
     'process.env': JSON.stringify({
       ...process.env,
 
