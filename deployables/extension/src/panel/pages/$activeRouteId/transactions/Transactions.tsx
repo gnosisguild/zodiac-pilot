@@ -1,4 +1,4 @@
-import { useCompanionAppUrl } from '@/companion'
+import { getUser, useCompanionAppUrl } from '@/companion'
 import { getRoute, getRoutes, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -13,12 +13,20 @@ import { getInt, getString } from '@zodiac/form-data'
 import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
+  Feature,
   GhostButton,
   GhostLinkButton,
   Info,
+  InlineForm,
   Page,
 } from '@zodiac/ui'
-import { ArrowUpFromLine, Landmark, RefreshCcw } from 'lucide-react'
+import {
+  ArrowUpFromLine,
+  Cloud,
+  CloudOff,
+  Landmark,
+  RefreshCcw,
+} from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
@@ -30,7 +38,7 @@ import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
 export const loader = async () => {
-  return { routes: await getRoutes() }
+  return { routes: await getRoutes(), user: await getUser() }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -93,6 +101,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
     }
+
+    case Intent.Login: {
+      await chrome.identity.launchWebAuthFlow({
+        url: `${getCompanionAppUrl()}/extension/sign-in`,
+        interactive: true,
+      })
+
+      return null
+    }
   }
 }
 
@@ -102,7 +119,7 @@ export const Transactions = () => {
   const provider = useProvider()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
-  const { routes } = useLoaderData<typeof loader>()
+  const { routes, user } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
@@ -186,6 +203,26 @@ export const Transactions = () => {
             >
               Re-simulate on current blockchain head
             </GhostButton>
+
+            <Feature feature="user-management">
+              <InlineForm>
+                {user == null ? (
+                  <GhostButton
+                    iconOnly
+                    submit
+                    intent={Intent.Login}
+                    size="small"
+                    icon={CloudOff}
+                  >
+                    Log into Zodiac OS
+                  </GhostButton>
+                ) : (
+                  <GhostButton iconOnly size="small" icon={Cloud}>
+                    View Profile
+                  </GhostButton>
+                )}
+              </InlineForm>
+            </Feature>
           </div>
         </div>
 

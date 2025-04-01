@@ -287,6 +287,12 @@ importers:
       '@sentry/browser':
         specifier: 9.10.1
         version: 9.10.1
+      '@workos-inc/authkit-react':
+        specifier: ^0.9.0
+        version: 0.9.0(react@19.1.0)
+      '@workos-inc/node':
+        specifier: 7.45.0
+        version: 7.45.0(express@4.21.2)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
@@ -348,6 +354,9 @@ importers:
       '@depay/web3-mock':
         specifier: 15.1.1
         version: 15.1.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@dotenvx/dotenvx':
+        specifier: 1.39.0
+        version: 1.39.0
       '@playwright/test':
         specifier: 1.51.1
         version: 1.51.1
@@ -402,9 +411,6 @@ importers:
       chalk:
         specifier: 5.4.1
         version: 5.4.1
-      dotenv:
-        specifier: 16.4.7
-        version: 16.4.7
       esbuild:
         specifier: 0.25.2
         version: 0.25.2
@@ -4658,6 +4664,9 @@ packages:
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
 
+  '@workos-inc/authkit-js@0.9.0':
+    resolution: {integrity: sha512-zcl2W9LpmoIqDTnFnv6vHfWKJjZUTxZIdw5IfPL5DDTKrvH49qIRudmMIP4dCWYXIKcnMVA5lGU/PuHsimTjDQ==}
+
   '@workos-inc/authkit-react-router@0.1.1':
     resolution: {integrity: sha512-N/QsHGm6ESUIkvEKD23LfgP2YgkdbCqWB7v/+X8uzpTeSM4Xf+Ur/VZy6v2dhkfsLuBipQXiR5wQbshJGbqAAA==}
     engines: {node: '>=20.0.0'}
@@ -4665,6 +4674,11 @@ packages:
       react: ^18.0 || ^19.0.0
       react-dom: ^18.0 || ^19.0.0
       react-router: ^7.2.0
+
+  '@workos-inc/authkit-react@0.9.0':
+    resolution: {integrity: sha512-5JJOGwslFw5eL5uEr5vYZghS/BxTWY66d4nAnopk/L46HLqUNIgjfnVBzztGWOZk1pGUFx8s5DSoXFsdGWt0gw==}
+    peerDependencies:
+      react: '>=17'
 
   '@workos-inc/node@7.45.0':
     resolution: {integrity: sha512-8wx2YuhkmTc3bKc1Py/Gv8X44QovIDQVLfDL8qNMRybCLD5Cu7R6AnWP/ZI5VHwSgeird0g+Cuukqk3ZG8ycMg==}
@@ -13654,6 +13668,8 @@ snapshots:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
 
+  '@workos-inc/authkit-js@0.9.0': {}
+
   '@workos-inc/authkit-react-router@0.1.1(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@workos-inc/node': 7.45.0(express@4.21.2)
@@ -13666,6 +13682,11 @@ snapshots:
       - express
       - koa
       - next
+
+  '@workos-inc/authkit-react@0.9.0(react@19.1.0)':
+    dependencies:
+      '@workos-inc/authkit-js': 0.9.0
+      react: 19.1.0
 
   '@workos-inc/node@7.45.0(express@4.21.2)':
     dependencies:

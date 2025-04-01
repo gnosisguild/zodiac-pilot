@@ -6,11 +6,12 @@ import {
   ProvidePilotStatus,
 } from '@/components'
 import { dbClient, getFeatures, getTenant } from '@/db'
-import { Feature, FeatureProvider } from '@/features'
 import { ProvideChains } from '@/routes-ui'
 import { getOrganizationForUser } from '@/workOS'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import {
+  Feature,
+  FeatureProvider,
   PilotType,
   Sidebar,
   SidebarBody,

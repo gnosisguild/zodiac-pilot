@@ -1,11 +1,8 @@
 import { invariant } from '@epic-web/invariant'
 import { getCompanionAppUrl } from '@zodiac/env'
 import chalk from 'chalk'
-import { config } from 'dotenv'
 import fs from 'fs'
 import { parseArgs } from 'node:util'
-
-config()
 
 // this script is used to update the release value
 // in the manifest.json when released through github

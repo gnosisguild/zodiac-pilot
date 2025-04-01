@@ -25,6 +25,16 @@ import { Outlet } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import { action, loader, Root } from './Root'
 
+vi.mock('@/companion', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/companion')>()
+
+  return {
+    ...module,
+
+    getFeatures: vi.fn().mockResolvedValue([]),
+  }
+})
+
 describe('Root', () => {
   describe('Launch route', () => {
     const mockIncomingLaunch = async (routeId: string, tab: MockTab) => {
