@@ -1,3 +1,4 @@
+import { getTenderlyCredentials } from '@zodiac/env'
 import type { z, ZodTypeAny } from 'zod'
 
 type VnetApiOptions<Schema extends ZodTypeAny> = {
@@ -9,8 +10,13 @@ export const api = async <Schema extends ZodTypeAny>(
   endpoint: `/${string}`,
   { schema, data = {} }: VnetApiOptions<Schema>,
 ) => {
-  const baseUrl = 'https://vnet-api.pilot.gnosisguild.org'
-  const url = new URL(endpoint, baseUrl)
+  const { TENDERLY_ACCESS_KEY, TENDERLY_PROJECT, TENDERLY_USER } =
+    getTenderlyCredentials()
+
+  const url = new URL(
+    `https://api.tenderly.co/api/v1/account/${TENDERLY_USER}/project/${TENDERLY_PROJECT}/vnets` +
+      endpoint,
+  )
 
   Object.entries(data).forEach(([key, value]) => {
     if (Array.isArray(value)) {
@@ -21,7 +27,10 @@ export const api = async <Schema extends ZodTypeAny>(
   })
 
   const response = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Key': TENDERLY_ACCESS_KEY,
+    },
   })
 
   if (!response.ok) {
