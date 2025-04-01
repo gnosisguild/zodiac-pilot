@@ -20,9 +20,7 @@
     "@gnosis.pm/zodiac": "4.0.3",
     "@icons-pack/react-simple-icons": "12.3.0",
     "@radix-ui/themes": "3.2.1",
-    "@react-router/express": "7.4.1",
     "@react-router/node": "7.4.1",
-    "@react-router/serve": "7.4.1",
     "@sentry/react-router": "9.10.1",
     "@tanstack/react-query": "5.71.1",
     "@workos-inc/authkit-react-router": "0.1.1",
@@ -41,7 +39,6 @@
     "connectkit": "1.8.2",
     "drizzle-orm": "0.41.0",
     "ethers": "6.13.5",
-    "express": "4.21.2",
     "highlight.js": "11.11.1",
     "isbot": "5.1.25",
     "lucide-react": "0.486.0",
@@ -63,7 +60,6 @@
     "@testing-library/react": "16.2.0",
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.0.313",
-    "@types/express": "5.0.1",
     "@types/node": "22.13.16",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
@@ -73,7 +69,6 @@
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
-    "cross-env": "7.0.3",
     "drizzle-kit": "0.30.6",
     "eslint": "9.23.0",
     "globals": "16.0.0",
@@ -84,6 +79,6 @@
     "typescript": "5.8.2",
     "vite": "6.2.4",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.0.9"
+    "vitest": "3.1.1"
   }
 }
