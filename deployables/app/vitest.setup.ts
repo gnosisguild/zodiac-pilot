@@ -98,5 +98,6 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
   return {
     ...module,
     authkitLoader: vi.fn(),
+    getSignInUrl: vi.fn().mockResolvedValue('http://workos-test.com/sign-in'),
   }
 })
