@@ -1,5 +1,5 @@
-import { getCompanionAppUrl } from '@zodiac/env'
 import { z } from 'zod'
+import { api, type FetchOptions } from './api'
 
 const authSchema = z.object({
   user: z
@@ -10,10 +10,11 @@ const authSchema = z.object({
     .nullable(),
 })
 
-export const getUser = async () => {
-  const heartbeat = await fetch(`${getCompanionAppUrl()}/extension/heartbeat`)
-
-  const { user } = authSchema.parse(await heartbeat.json())
+export const getUser = async ({ signal }: FetchOptions = {}) => {
+  const { user } = await api('/extension/heartbeat', {
+    schema: authSchema,
+    signal,
+  })
 
   return user
 }

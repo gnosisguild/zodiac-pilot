@@ -15,7 +15,7 @@ export const Address = ({ address }: Props) => {
       {checksumAddress && <BaseAddress shorten>{address}</BaseAddress>}
 
       {!address && (
-        <Tag head={<Unlink size={14} />} color="warning">
+        <Tag head={<Unlink size={14} />} color="amber">
           No Connection
         </Tag>
       )}

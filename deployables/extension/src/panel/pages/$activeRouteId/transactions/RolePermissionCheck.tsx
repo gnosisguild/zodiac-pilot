@@ -64,9 +64,9 @@ export const RolePermissionCheck = ({
     return (
       <>
         {error === false ? (
-          <Tag head={<UsersRound size={16} />} color="success"></Tag>
+          <Tag head={<UsersRound size={16} />} color="green"></Tag>
         ) : (
-          <Tag head={<UsersRound size={16} />} color="danger"></Tag>
+          <Tag head={<UsersRound size={16} />} color="red"></Tag>
         )}
       </>
     )
@@ -78,11 +78,11 @@ export const RolePermissionCheck = ({
         Role permissions
         <div className="flex gap-2">
           {error === false ? (
-            <Tag head={<Check size={16} />} color="success">
+            <Tag head={<Check size={16} />} color="green">
               Allowed
             </Tag>
           ) : (
-            <Tag head={<TriangleAlert size={16} />} color="danger">
+            <Tag head={<TriangleAlert size={16} />} color="red">
               {error}
             </Tag>
           )}

@@ -20,19 +20,20 @@ import {
   useNavigate,
   useSubmit,
   type ActionFunctionArgs,
+  type LoaderFunctionArgs,
 } from 'react-router'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
 import { useLaunchRouteOnMessage } from './useLaunchRoute'
 import { useSaveRoute } from './useSaveRoute'
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const lastUsedRouteId = await getLastUsedRouteId()
 
   return {
     lastUsedRouteId,
     companionAppUrl: getCompanionAppUrl(),
-    features: await getFeatures(),
+    features: await getFeatures({ signal: request.signal }),
   }
 }
 

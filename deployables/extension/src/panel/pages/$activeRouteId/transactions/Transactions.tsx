@@ -28,7 +28,12 @@ import {
   RefreshCcw,
 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { redirect, useLoaderData, type ActionFunctionArgs } from 'react-router'
+import {
+  redirect,
+  useLoaderData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import { getActiveRouteId } from '../getActiveRouteId'
 import { AccountSelect } from './AccountSelect'
@@ -37,8 +42,11 @@ import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
-export const loader = async () => {
-  return { routes: await getRoutes(), user: await getUser() }
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return {
+    routes: await getRoutes(),
+    user: await getUser({ signal: request.signal }),
+  }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
