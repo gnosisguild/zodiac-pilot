@@ -1,7 +1,8 @@
 import { SiGithub, SiGooglechrome } from '@icons-pack/react-simple-icons'
 import { PrimaryLinkButton, SecondaryLinkButton } from '@zodiac/ui'
 import { GraduationCap } from 'lucide-react'
-import type { PropsWithChildren } from 'react'
+import { useEffect, useRef, type PropsWithChildren } from 'react'
+import { annotate } from 'rough-notation'
 import { Container } from './Container'
 import {
   BalancerLogo,
@@ -14,15 +15,37 @@ import {
 } from './logos'
 
 export function Hero({ children }: PropsWithChildren) {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (ref.current == null) {
+      return
+    }
+
+    const annotation = annotate(ref.current, {
+      type: 'underline',
+      strokeWidth: 7,
+      iterations: 3,
+    })
+
+    annotation.show()
+
+    return () => {
+      annotation.remove()
+    }
+  }, [])
+
   return (
     <Container className="pt-20 text-center lg:pt-32">
       <h1 className="font-display mx-auto max-w-4xl text-5xl font-medium tracking-tight text-zinc-900 sm:text-7xl dark:text-white">
-        Granular Control,
-        <br />
-        <span className="relative whitespace-nowrap text-indigo-600 dark:text-teal-600">
-          <span className="relative">Dynamic</span>
+        <span className="relative whitespace-nowrap text-indigo-600 dark:text-teal-500">
+          <span ref={ref} className="relative dark:text-teal-500">
+            Smart Execution
+          </span>
         </span>{' '}
-        Execution
+        for
+        <br />
+        <span className="relative z-10">Smart Accounts</span>
       </h1>
       <p className="mx-auto mb-6 mt-12 max-w-2xl text-balance text-2xl font-semibold tracking-tight text-zinc-700 dark:text-zinc-200">
         Zodiac Pilot makes Safe execution smarter, faster, and safer.
