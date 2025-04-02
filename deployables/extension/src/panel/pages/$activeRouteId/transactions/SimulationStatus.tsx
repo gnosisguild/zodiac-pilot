@@ -20,15 +20,15 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
     return (
       <>
         {transactionState.status === ExecutionStatus.PENDING && (
-          <Tag head={<Spinner />} color="info"></Tag>
+          <Tag head={<Spinner />} color="blue"></Tag>
         )}
         {transactionState.status === ExecutionStatus.SUCCESS && (
-          <Tag head={<Compass size={16} />} color="success"></Tag>
+          <Tag head={<Compass size={16} />} color="green"></Tag>
         )}
         {transactionState.status === ExecutionStatus.FAILED ||
           (transactionState.status ===
             ExecutionStatus.META_TRANSACTION_REVERTED && (
-            <Tag head={<Compass size={16} />} color="danger"></Tag>
+            <Tag head={<Compass size={16} />} color="red"></Tag>
           ))}
       </>
     )
@@ -40,23 +40,23 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
         Simulation
         <div className="flex gap-2">
           {transactionState.status === ExecutionStatus.PENDING && (
-            <Tag head={<Spinner />} color="info">
+            <Tag head={<Spinner />} color="blue">
               Pending...
             </Tag>
           )}
           {transactionState.status === ExecutionStatus.SUCCESS && (
-            <Tag head={<Check size={16} />} color="success">
+            <Tag head={<Check size={16} />} color="green">
               Success
             </Tag>
           )}
           {transactionState.status === ExecutionStatus.FAILED && (
-            <Tag head={<TriangleAlert size={16} />} color="danger">
+            <Tag head={<TriangleAlert size={16} />} color="red">
               Failed
             </Tag>
           )}
           {transactionState.status ===
             ExecutionStatus.META_TRANSACTION_REVERTED && (
-            <Tag head={<TriangleAlert size={16} />} color="danger">
+            <Tag head={<TriangleAlert size={16} />} color="red">
               Reverted
             </Tag>
           )}
