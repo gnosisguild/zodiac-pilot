@@ -1,0 +1,1 @@
+ALTER TABLE "ActiveFeature" DROP CONSTRAINT "ActiveFeature_featureId_tenantId_unique";

@@ -66,7 +66,6 @@ export const ActiveFeatureTable = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.featureId, table.tenantId] }),
-    unique().on(table.featureId, table.tenantId),
     index().on(table.featureId),
     index().on(table.tenantId),
   ],
