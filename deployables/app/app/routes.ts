@@ -21,6 +21,7 @@ export default [
       ]),
 
       route('/profile', 'routes/auth/profile.tsx'),
+      route('/admin', 'routes/auth/admin.tsx'),
 
       route('/tokens', 'routes/tokens/index.tsx', [
         layout('routes/tokens/balances/layout.tsx', [

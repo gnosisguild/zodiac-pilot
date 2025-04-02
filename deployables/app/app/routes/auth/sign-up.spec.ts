@@ -1,14 +1,14 @@
 import { dbClient, getTenants } from '@/db'
 import { render } from '@/test-utils'
-import { createOrganization } from '@/workOS'
+import { createOrganization } from '@/workOS/server'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@/workOS', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/workOS')>()
+vi.mock('@/workOS/server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/workOS/server')>()
 
   return {
     ...module,

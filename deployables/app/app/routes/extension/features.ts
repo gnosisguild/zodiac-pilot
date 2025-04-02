@@ -1,5 +1,5 @@
 import { dbClient, getFeatures, getTenant } from '@/db'
-import { getOrganizationForUser } from '@/workOS'
+import { getOrganizationForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type { Route } from './+types/features'
 

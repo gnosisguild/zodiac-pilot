@@ -7,7 +7,7 @@ import {
 } from '@/components'
 import { dbClient, getFeatures, getTenant } from '@/db'
 import { ProvideChains } from '@/routes-ui'
-import { getOrganizationForUser } from '@/workOS'
+import { getOrganizationForUser } from '@/workOS/server'
 import {
   authkitLoader,
   getSignInUrl,
@@ -32,6 +32,7 @@ import {
   Landmark,
   List,
   Plus,
+  ShieldUser,
   Signature,
   User,
 } from 'lucide-react'
@@ -71,7 +72,7 @@ export const loader = async (args: Route.LoaderArgs) =>
   })
 
 const PageLayout = ({
-  loaderData: { chains, user, features, signInUrl },
+  loaderData: { chains, user, features, signInUrl, role },
 }: Route.ComponentProps) => {
   return (
     <FakeBrowser>
@@ -99,7 +100,7 @@ const PageLayout = ({
                           to={href('/tokens/send/:chain?/:token?')}
                           icon={ArrowUpFromLine}
                         >
-                          Send tokens
+                          Send Tokens
                         </Navigation.Link>
 
                         <Navigation.Link
@@ -140,6 +141,19 @@ const PageLayout = ({
                           Sign a transaction
                         </Navigation.Link>
                       </Navigation.Section>
+
+                      <Feature feature="user-management">
+                        {role === 'admin' && (
+                          <Navigation.Section title="Organization">
+                            <Navigation.Link
+                              to={href('/admin')}
+                              icon={ShieldUser}
+                            >
+                              User Management
+                            </Navigation.Link>
+                          </Navigation.Section>
+                        )}
+                      </Feature>
                     </Navigation>
                   </SidebarBody>
 
