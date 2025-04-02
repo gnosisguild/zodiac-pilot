@@ -666,8 +666,8 @@ importers:
         specifier: 3.24.2
         version: 3.24.2
       zodiac-roles-deployments:
-        specifier: 2.4.0
-        version: 2.4.0
+        specifier: 2.4.1
+        version: 2.4.1
     devDependencies:
       '@zodiac/eslint-config':
         specifier: workspace:*
@@ -9222,8 +9222,8 @@ packages:
   zod@3.24.2:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
-  zodiac-roles-deployments@2.4.0:
-    resolution: {integrity: sha512-kdD4UKoWAF7YMgnFA8Gw3ZHvmkwssxFT8Q+mKBAUHBhCzl2qS6FI+bcW/yOsNnOS79Ba3dVR36B8oG50rAA5gg==}
+  zodiac-roles-deployments@2.4.1:
+    resolution: {integrity: sha512-GsgZKHVtG15zvIy3LaqqyesHR+HZRyDGST2M9xfvxZaiZuaxGH7SPS0W8c34nTQ42yDEjT87AcuzZP8smSHWeA==}
 
   zustand@5.0.0:
     resolution: {integrity: sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==}
@@ -18858,7 +18858,7 @@ snapshots:
 
   zod@3.24.2: {}
 
-  zodiac-roles-deployments@2.4.0: {}
+  zodiac-roles-deployments@2.4.1: {}
 
   zustand@5.0.0(@types/react@19.0.12)(react@19.1.0)(use-sync-external-store@1.4.0(react@19.1.0)):
     optionalDependencies:
