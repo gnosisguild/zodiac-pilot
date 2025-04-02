@@ -8,7 +8,11 @@ import {
 import { dbClient, getFeatures, getTenant } from '@/db'
 import { ProvideChains } from '@/routes-ui'
 import { getOrganizationForUser } from '@/workOS'
-import { authkitLoader, getSignInUrl } from '@workos-inc/authkit-react-router'
+import {
+  authkitLoader,
+  getSignInUrl,
+  signOut,
+} from '@workos-inc/authkit-react-router'
 import {
   Divider,
   Feature,
@@ -50,14 +54,19 @@ export const loader = async (args: Route.LoaderArgs) =>
     const db = dbClient()
 
     const organization = await getOrganizationForUser(user.id)
-    const tenant = await getTenant(db, organization.externalId)
 
-    const features = await getFeatures(db, tenant.id)
+    try {
+      const tenant = await getTenant(db, organization.externalId)
 
-    return {
-      chains: await getAvailableChains(),
-      features: [...features.map(({ name }) => name), ...routeFeatures],
-      signInUrl: await getSignInUrl(),
+      const features = await getFeatures(db, tenant.id)
+
+      return {
+        chains: await getAvailableChains(),
+        features: [...features.map(({ name }) => name), ...routeFeatures],
+        signInUrl: await getSignInUrl(),
+      }
+    } catch {
+      throw await signOut(request)
     }
   })
 
