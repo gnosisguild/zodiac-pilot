@@ -7,7 +7,7 @@ import {
 } from '@/components'
 import { dbClient, getFeatures, getTenant } from '@/db'
 import { ProvideChains } from '@/routes-ui'
-import { getOrganizationForUser } from '@/workOS'
+import { getOrganizationForUser } from '@/workOS/server'
 import {
   authkitLoader,
   getSignInUrl,

@@ -1,5 +1,5 @@
 import { createUser, dbClient, getTenant } from '@/db'
-import { getOrganizationForUser, updateExternalUserId } from '@/workOS'
+import { getOrganizationForUser, updateExternalUserId } from '@/workOS/server'
 import { authLoader, signOut } from '@workos-inc/authkit-react-router'
 import type { Route } from './+types/callback'
 

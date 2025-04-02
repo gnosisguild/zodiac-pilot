@@ -16,7 +16,8 @@
       "@/wagmi": ["./app/wagmi/index.ts"],
       "@/routes-ui": ["./app/routes-ui/index.ts"],
       "@/db": ["./db/index.ts"],
-      "@/workOS": ["./workOS/index.ts"]
+      "@/workOS/client": ["./workOS/client/index.ts"],
+      "@/workOS/server": ["./workOS/server/index.ts"]
     }
   },
   "include": [
