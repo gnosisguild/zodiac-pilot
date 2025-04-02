@@ -179,7 +179,7 @@ const Route = ({ route, active }: RouteProps) => {
       <TableCell aria-describedby={route.id}>{route.label}</TableCell>
       <TableCell>
         {active && (
-          <Tag aria-hidden id={route.id} color="success">
+          <Tag aria-hidden id={route.id} color="green">
             Active
           </Tag>
         )}

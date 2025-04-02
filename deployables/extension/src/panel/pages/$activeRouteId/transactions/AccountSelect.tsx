@@ -1,13 +1,14 @@
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
 import { Transition } from '@headlessui/react'
+import { CHAIN_NAME, getChainId } from '@zodiac/chains'
 import {
   getPilotAddress,
   getRolesWaypoint,
   getStartingWaypoint,
 } from '@zodiac/modules'
 import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
-import { Blockie, Form, GhostButton, Select } from '@zodiac/ui'
+import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
 import { List, Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { useSubmit } from 'react-router'
@@ -86,17 +87,29 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
 
             launchRoute(option.value)
           }}
-          value={{ value: route.id, name: route.label }}
-          options={accounts.map((account) => ({
-            value: account.id,
-            name: account.label,
-          }))}
+          value={{ value: route.id }}
+          options={accounts.map((account) => ({ value: account.id }))}
         >
-          {({ data: { name } }) => (
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {name || 'Unnamed route'}
-            </span>
-          )}
+          {({ data: { value } }) => {
+            const account = accounts.find(({ id }) => id === value)
+
+            return (
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {account == null ? (
+                  'Unnamed route'
+                ) : (
+                  <div className="flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                      {account.label}
+                    </span>
+                    <Tag color="gray">
+                      {CHAIN_NAME[getChainId(account.avatar)]}
+                    </Tag>
+                  </div>
+                )}
+              </span>
+            )
+          }}
         </Select>
 
         <div className="mr-4 flex shrink-0 items-center gap-1">
