@@ -6,9 +6,9 @@
   "dependencies": {
     "@duneanalytics/client-sdk": "^0.2.5",
     "@epic-web/invariant": "1.0.0",
+    "@headlessui/react": "2.2.0",
     "@icons-pack/react-simple-icons": "12.3.0",
     "@react-router/serve": "7.4.1",
-    "@headlessui/react": "2.2.0",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
     "@zodiac/env": "workspace:*",
@@ -18,7 +18,8 @@
     "lucide-react": "0.487.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-router": "7.4.1"
+    "react-router": "7.4.1",
+    "rough-notation": "^0.5.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20250402.0",
