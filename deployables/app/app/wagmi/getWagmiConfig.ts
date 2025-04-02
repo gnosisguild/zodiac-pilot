@@ -1,4 +1,5 @@
 import { getDefaultConfig } from 'connectkit'
+import type { Ref } from 'react'
 import { createConfig } from 'wagmi'
 import {
   arbitrum,
@@ -39,12 +40,22 @@ const getConnectors = (injectedOnly: boolean) => {
     return [injected()]
   }
 
-  return [
-    injected(),
-    metaMask(),
-    walletConnect({
-      projectId: WALLETCONNECT_PROJECT_ID,
-      showQrModal: false,
-    }),
-  ]
+  return [injected(), metaMask(), getWalletConnectConnector()]
+}
+
+const walletConnectConnectorRef: Ref<ReturnType<typeof walletConnect>> = {
+  current: null,
+}
+
+const getWalletConnectConnector = () => {
+  if (walletConnectConnectorRef.current) {
+    return walletConnectConnectorRef.current
+  }
+
+  walletConnectConnectorRef.current = walletConnect({
+    projectId: WALLETCONNECT_PROJECT_ID,
+    showQrModal: false,
+  })
+
+  return walletConnectConnectorRef.current
 }
