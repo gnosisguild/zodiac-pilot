@@ -21,7 +21,7 @@ const OrganizationAdmin = ({
 }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Administration</Page.Header>
+      <Page.Header>User Management</Page.Header>
       <Page.Main>
         <Widgets>
           <UsersManagement authToken={accessToken} />
