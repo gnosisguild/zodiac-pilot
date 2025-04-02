@@ -1,19 +1,29 @@
 import { relations } from 'drizzle-orm'
 import {
-  date,
   index,
   pgTable,
   primaryKey,
   text,
+  timestamp,
   unique,
   uuid,
 } from 'drizzle-orm/pg-core'
 
+const createdTimestamp = {
+  createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}
+
 export const TenantTable = pgTable('Tenant', {
   id: uuid().defaultRandom().primaryKey(),
   name: text().notNull(),
-  createdAt: date().notNull().defaultNow(),
+  ...createdTimestamp,
 })
+
+const tenantReference = {
+  tenantId: uuid()
+    .notNull()
+    .references(() => TenantTable.id, { onDelete: 'cascade' }),
+}
 
 export type Tenant = typeof TenantTable.$inferSelect
 
@@ -25,10 +35,8 @@ export const UserTable = pgTable(
   'User',
   {
     id: uuid().notNull().defaultRandom().primaryKey(),
-    tenantId: uuid()
-      .notNull()
-      .references(() => TenantTable.id, { onDelete: 'cascade' }),
-    createdAt: date().notNull().defaultNow(),
+    ...tenantReference,
+    ...createdTimestamp,
   },
   (table) => [index().on(table.tenantId)],
 )
@@ -37,8 +45,8 @@ export const FeatureTable = pgTable(
   'Feature',
   {
     id: uuid().notNull().defaultRandom().primaryKey(),
-    createdAt: date().notNull().defaultNow(),
     name: text().notNull(),
+    ...createdTimestamp,
   },
   (table) => [unique().on(table.name)],
 )
@@ -53,14 +61,11 @@ export const ActiveFeatureTable = pgTable(
     featureId: uuid()
       .notNull()
       .references(() => FeatureTable.id, { onDelete: 'cascade' }),
-    tenantId: uuid()
-      .notNull()
-      .references(() => TenantTable.id, { onDelete: 'cascade' }),
-    createdAt: date().notNull().defaultNow(),
+    ...tenantReference,
+    ...createdTimestamp,
   },
   (table) => [
     primaryKey({ columns: [table.featureId, table.tenantId] }),
-    unique().on(table.featureId, table.tenantId),
     index().on(table.featureId),
     index().on(table.tenantId),
   ],
