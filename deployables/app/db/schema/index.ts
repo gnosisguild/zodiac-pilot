@@ -19,6 +19,12 @@ export const TenantTable = pgTable('Tenant', {
   ...createdTimestamp,
 })
 
+const tenantReference = {
+  tenantId: uuid()
+    .notNull()
+    .references(() => TenantTable.id, { onDelete: 'cascade' }),
+}
+
 export type Tenant = typeof TenantTable.$inferSelect
 
 export const TenantRelations = relations(TenantTable, ({ many }) => ({
@@ -29,9 +35,7 @@ export const UserTable = pgTable(
   'User',
   {
     id: uuid().notNull().defaultRandom().primaryKey(),
-    tenantId: uuid()
-      .notNull()
-      .references(() => TenantTable.id, { onDelete: 'cascade' }),
+    ...tenantReference,
     ...createdTimestamp,
   },
   (table) => [index().on(table.tenantId)],
@@ -57,9 +61,7 @@ export const ActiveFeatureTable = pgTable(
     featureId: uuid()
       .notNull()
       .references(() => FeatureTable.id, { onDelete: 'cascade' }),
-    tenantId: uuid()
-      .notNull()
-      .references(() => TenantTable.id, { onDelete: 'cascade' }),
+    ...tenantReference,
     ...createdTimestamp,
   },
   (table) => [
