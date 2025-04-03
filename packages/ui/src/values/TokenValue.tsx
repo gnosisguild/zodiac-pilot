@@ -4,7 +4,7 @@ import { NumberValue } from './NumberValue'
 type TokenValueProps = {
   action?: ReactNode
   symbol?: string | null
-  children: string
+  children: `${number}`
   additionalInfo?: ReactNode
 }
 
@@ -23,7 +23,7 @@ export const TokenValue = ({
       )}
 
       <NumberValue precision={4} additionalInfo={additionalInfo}>
-        {parseFloat(children)}
+        {children}
       </NumberValue>
 
       {action}

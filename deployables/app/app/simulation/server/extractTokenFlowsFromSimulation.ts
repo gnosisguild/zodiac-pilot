@@ -40,7 +40,7 @@ export const extractTokenFlowsFromSimulation = async (
           const formattedAmount = formatUnits(
             BigInt(change.raw_amount),
             tokenDetails.decimals,
-          )
+          ) as `${number}`
           return {
             ...tokenDetails,
             from:
@@ -49,6 +49,8 @@ export const extractTokenFlowsFromSimulation = async (
                 : verifyHexAddress(change.from),
             to: change.to == null ? ZERO_ADDRESS : verifyHexAddress(change.to),
             amount: formattedAmount,
+            usdValue:
+              parseFloat(formattedAmount) * (tokenDetails.usdPrice || 0),
           }
         }),
       )

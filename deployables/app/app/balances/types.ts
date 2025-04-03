@@ -34,7 +34,7 @@ export type TokenBalance = {
   name: string | null
   symbol: string | null
   logoUrl: string | null
-  amount: string
+  amount: `${number}`
   decimals: number
   usdValue: number | null
   usdPrice: number | null

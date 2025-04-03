@@ -2,7 +2,7 @@ import { useMemo, type ReactNode } from 'react'
 import { Popover } from '../overlays'
 
 type NumberValueProps = {
-  children: number
+  children: `${number}`
   precision?: number
   additionalInfo?: ReactNode
 }
@@ -34,7 +34,7 @@ export const NumberValue = ({
     <Popover
       inline
       popover={
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1" role="tooltip">
           <span className="tabular-numbs text-sm slashed-zero">
             {defaultNumberFormatter.format(children)}
           </span>
