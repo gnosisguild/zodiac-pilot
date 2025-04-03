@@ -28,6 +28,7 @@ const tenantReference = {
 }
 
 export type Tenant = typeof TenantTable.$inferSelect
+export type TenantCreateInput = typeof TenantTable.$inferInsert
 
 export const TenantRelations = relations(TenantTable, ({ many }) => ({
   activeFeatures: many(ActiveFeatureTable),
@@ -44,6 +45,7 @@ export const UserTable = pgTable(
 )
 
 export type User = typeof UserTable.$inferSelect
+export type UserCreateInput = typeof UserTable.$inferInsert
 
 export const FeatureTable = pgTable(
   'Feature',

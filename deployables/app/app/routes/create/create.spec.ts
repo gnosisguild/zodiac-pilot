@@ -1,10 +1,12 @@
 import { getAvailableChains } from '@/balances-server'
-import { createTenant, createUser, dbClient, getAccounts } from '@/db'
+import { dbClient, getAccounts } from '@/db'
 import {
   createMockChain,
   expectMessage,
   postMessage,
   render,
+  tenantFactory,
+  userFactory,
 } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
@@ -58,15 +60,15 @@ describe.sequential('New Account', () => {
 
   describe('Logged in', () => {
     it('creates a new account in the DB', async () => {
-      const tenant = await createTenant(dbClient(), { name: 'Test tenant' })
-      const user = await createUser(dbClient(), tenant)
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
 
       await render('/create', { user })
 
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -87,6 +89,8 @@ describe.sequential('New Account', () => {
       expect(account).toHaveProperty('chainId', Chain.ETH)
       expect(account).toHaveProperty('createdById', user.id)
     })
+
+    it('shows an error when the same account is supposed to be created twice', async () => {})
   })
 
   describe('Logged out', () => {
@@ -96,7 +100,7 @@ describe.sequential('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -118,7 +122,7 @@ describe.sequential('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -146,7 +150,7 @@ describe.sequential('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -175,7 +179,7 @@ describe.sequential('New Account', () => {
         const address = randomAddress()
 
         await userEvent.type(
-          screen.getByRole('combobox', { name: 'Account' }),
+          screen.getByRole('combobox', { name: 'Address' }),
           address,
         )
         await userEvent.click(

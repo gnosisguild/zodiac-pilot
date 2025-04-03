@@ -118,9 +118,13 @@ export const render = async (
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loader) => {
     const auth = createAuth(workOsUser)
 
-    const loaderResult = await loader({ ...loaderArgs, auth })
+    if (loader != null) {
+      const loaderResult = await loader({ ...loaderArgs, auth })
 
-    return data({ ...loaderResult, ...auth })
+      return data({ ...loaderResult, ...auth })
+    }
+
+    return data({ ...auth })
   })
 
   const renderResult = await baseRender(path, {
