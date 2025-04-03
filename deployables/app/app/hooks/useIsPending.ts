@@ -6,9 +6,9 @@ export const useIsPending = (
   intent: string | string[] = [],
   ...checkFns: CheckFn[]
 ) => {
-  const { state, formData } = useNavigation()
+  const { formData, formMethod } = useNavigation()
 
-  if (state === 'idle') {
+  if (formMethod !== 'POST') {
     return false
   }
 
