@@ -80,11 +80,15 @@ export const action = (args: Route.ActionArgs) =>
       route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
       if (user != null) {
-        await createAccount(dbClient(), user, {
-          label,
-          chainId,
-          address: avatar,
-        })
+        try {
+          await createAccount(dbClient(), user, {
+            label,
+            chainId,
+            address: avatar,
+          })
+        } catch {
+          return { error: 'An account with this address already exists.' }
+        }
       }
 
       return { route }
