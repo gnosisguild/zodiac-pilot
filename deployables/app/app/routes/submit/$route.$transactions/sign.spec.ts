@@ -77,6 +77,7 @@ describe('Sign', () => {
     mockUseConnectorClient.mockReturnValue({ data: {} })
 
     mockSimulateTransactionBundle.mockResolvedValue({
+      error: null,
       approvals: [],
       tokenFlows: { sent: [], received: [], other: [] },
     })
@@ -268,6 +269,7 @@ describe('Sign', () => {
 
     it('does not revoke approvals by default', async () => {
       mockSimulateTransactionBundle.mockResolvedValue({
+        error: null,
         approvals: [
           {
             spender: randomAddress(),

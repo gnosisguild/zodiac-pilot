@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-router'
 import { getChainId } from '@zodiac/chains'
 import {
   unprefixAddress,
@@ -14,6 +15,7 @@ import { extractTokenFlowsFromSimulation } from './extractTokenFlowsFromSimulati
 import { splitTokenFlows, type TokenFlows } from './splitTokenFlows'
 
 type Simulation = {
+  error: unknown | null
   tokenFlows: TokenFlows
   approvals: Approval[]
 }
@@ -27,37 +29,48 @@ export const simulateTransactionBundle = async (
   transactions: MetaTransactionRequest[],
   { omitTokenFlows = false }: SimulationOptions = {},
 ): Promise<Simulation> => {
-  const chainId = getChainId(avatar)
-  const from = unprefixAddress(avatar)
+  try {
+    const chainId = getChainId(avatar)
+    const from = unprefixAddress(avatar)
 
-  const result = await api('/simulate-bundle', {
-    schema: simulationResultSchema,
-    method: 'POST',
-    body: {
-      simulations: transactions.map(({ to, data, value }) => ({
-        network_id: chainId,
-        from,
-        to,
-        input: data,
-        value: value.toString(),
-        save: true,
-        save_if_fails: true,
-        simulation_type: 'full',
-      })),
-    },
-  })
-
-  const simulatedTransactions = result.simulation_results.map(
-    ({ transaction }) => transaction,
-  )
-
-  return {
-    tokenFlows: omitTokenFlows
-      ? { sent: [], received: [], other: [] }
-      : splitTokenFlows(
-          await extractTokenFlowsFromSimulation(simulatedTransactions),
+    const result = await api('/simulate-bundle', {
+      schema: simulationResultSchema,
+      method: 'POST',
+      body: {
+        simulations: transactions.map(({ to, data, value }) => ({
+          network_id: chainId,
           from,
-        ),
-    approvals: await extractApprovalsFromSimulation(simulatedTransactions),
+          to,
+          input: data,
+          value: value.toString(),
+          save: true,
+          save_if_fails: true,
+          simulation_type: 'full',
+        })),
+      },
+    })
+
+    const simulatedTransactions = result.simulation_results.map(
+      ({ transaction }) => transaction,
+    )
+
+    return {
+      error: null,
+      tokenFlows: omitTokenFlows
+        ? { sent: [], received: [], other: [] }
+        : splitTokenFlows(
+            await extractTokenFlowsFromSimulation(simulatedTransactions),
+            from,
+          ),
+      approvals: await extractApprovalsFromSimulation(simulatedTransactions),
+    }
+  } catch (error) {
+    console.error(error)
+    Sentry.captureException(error)
+    return {
+      error,
+      tokenFlows: { sent: [], received: [], other: [] },
+      approvals: [],
+    }
   }
 }
