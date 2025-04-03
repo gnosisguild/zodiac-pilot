@@ -1,5 +1,11 @@
 import { ProvideExtensionVersion } from '@/components'
+import type { User } from '@/db'
+import { getOrganizationForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
+import type {
+  AuthorizedData,
+  UnauthorizedData,
+} from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -12,12 +18,15 @@ import {
   sleepTillIdle,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
+import { randomUUID } from 'crypto'
 import type { PropsWithChildren, Ref } from 'react'
 import { data } from 'react-router'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
+
+const mockGetOrganizationForUser = vi.mocked(getOrganizationForUser)
 
 const baseRender = await createRenderFramework(
   new URL('../app', import.meta.url),
@@ -52,6 +61,11 @@ type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * @default undefined
    */
   activeRouteId?: string | null
+
+  /**
+   * Render the route in a logged in context
+   */
+  user?: User | null
 }
 
 const versionRef: Ref<string> = { current: null }
@@ -83,27 +97,24 @@ export const render = async (
     version = null,
     availableRoutes = [],
     activeRouteId = null,
+    user = null,
     ...options
   }: Options = {},
 ) => {
   versionRef.current = version
 
+  const workOsUser = mockWorkOs(user)
+
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loader) => {
-    const auth = {
-      accessToken: null,
-      entitlements: null,
-      impersonator: null,
-      organizationId: null,
-      permissions: null,
-      role: null,
-      sealedSession: null,
-      sessionId: null,
-      user: null,
+    const auth = createAuth(workOsUser)
+
+    if (loader != null) {
+      const loaderResult = await loader({ ...loaderArgs, auth })
+
+      return data({ ...loaderResult, ...auth })
     }
 
-    const loaderResult = await loader({ ...loaderArgs, auth })
-
-    return data({ ...loaderResult, ...auth })
+    return data({ ...auth })
   })
 
   const renderResult = await baseRender(path, {
@@ -134,3 +145,64 @@ export const render = async (
 const RenderWrapper = ({ children }: PropsWithChildren) => (
   <ProvideExtensionVersion>{children}</ProvideExtensionVersion>
 )
+
+const createAuth = (user?: AuthorizedData['user'] | null) => {
+  if (user == null) {
+    return {
+      accessToken: null,
+      entitlements: null,
+      impersonator: null,
+      organizationId: null,
+      permissions: null,
+      role: null,
+      sealedSession: null,
+      sessionId: null,
+      user: null,
+    } satisfies UnauthorizedData
+  }
+
+  return {
+    accessToken: '',
+    entitlements: [],
+    impersonator: null,
+    organizationId: '',
+    permissions: [],
+    role: 'admin',
+    sealedSession: '',
+    sessionId: '',
+    user,
+  } satisfies AuthorizedData
+}
+
+const mockWorkOs = (user?: User | null) => {
+  if (user == null) {
+    return null
+  }
+
+  mockGetOrganizationForUser.mockResolvedValue({
+    allowProfilesOutsideOrganization: false,
+    createdAt: user.createdAt.toISOString(),
+    domains: [],
+    id: randomUUID(),
+    metadata: {},
+    name: 'Test Org',
+    object: 'organization',
+    updatedAt: user.createdAt.toISOString(),
+    externalId: user.tenantId,
+  })
+
+  return {
+    createdAt: user.createdAt.toISOString(),
+    email: 'john@doe.com',
+    emailVerified: true,
+    externalId: user.id,
+    firstName: 'John',
+    lastName: 'Doe',
+    id: randomUUID(),
+    lastSignInAt: null,
+    metadata: {},
+    object: 'user',
+    profilePictureUrl: null,
+    updatedAt: user.createdAt.toISOString(),
+  } satisfies AuthorizedData['user']
+}

@@ -7,16 +7,6 @@ import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@/workOS/server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/workOS/server')>()
-
-  return {
-    ...module,
-
-    createOrganization: vi.fn(),
-  }
-})
-
 const mockCreateOrganization = vi.mocked(createOrganization)
 
 describe('Sign up', () => {

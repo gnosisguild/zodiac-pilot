@@ -186,7 +186,7 @@ const mockNavigation = (
         formAction: undefined,
         formData: undefined,
         formEncType: undefined,
-        formMethod: undefined,
+        formMethod: 'POST',
         json: undefined,
         location: {
           hash: '',

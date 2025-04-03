@@ -78,6 +78,13 @@
       "when": 1743599970552,
       "tag": "0010_remove duplicate index",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1743670242561,
+      "tag": "0011_add account models",
+      "breakpoints": true
     }
   ]
 }

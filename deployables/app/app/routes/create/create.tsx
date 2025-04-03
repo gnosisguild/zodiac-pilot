@@ -2,12 +2,15 @@ import {
   AvatarInput,
   ConnectWalletButton,
   fromVersion,
-  OnlyConnected,
+  OnlyConnectedWhenLoggedOut,
   Page,
 } from '@/components'
+import { createAccount, dbClient } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
+import { authKitAction } from '@/workOS/server'
+import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -28,8 +31,14 @@ export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'New Account') },
 ]
 
-export const clientLoader = async () => {
+export const loader = (args: Route.LoaderArgs) => authkitLoader(args)
+
+export const clientLoader = async ({
+  serverLoader,
+}: Route.ClientLoaderArgs) => {
   const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
+
+  const { user } = await serverLoader()
 
   companionRequest(
     {
@@ -38,30 +47,62 @@ export const clientLoader = async () => {
     (response) => resolve(response.routes),
   )
 
-  return { routes: await promise }
+  return { routes: await promise, user }
 }
 
 clientLoader.hydrate = true as const
 
-export const clientAction = async ({ request }: Route.ClientActionArgs) => {
-  const data = await request.formData()
+export const action = (args: Route.ActionArgs) =>
+  authKitAction(
+    args,
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
+      const data = await request.formData()
 
-  let route = createBlankRoute()
+      const label = getOptionalString(data, 'label')
+      const avatar = getHexString(data, 'avatar')
+      const chainId = verifyChainId(getInt(data, 'chainId'))
 
-  const label = getOptionalString(data, 'label')
+      if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
+        return { error: 'Account is not a smart contract' }
+      }
 
-  if (label != null) {
-    route = updateLabel(route, label)
+      let route = createBlankRoute()
+
+      if (label != null) {
+        route = updateLabel(route, label)
+      }
+
+      route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
+
+      if (user != null) {
+        try {
+          await createAccount(dbClient(), user, {
+            label,
+            chainId,
+            address: avatar,
+          })
+        } catch {
+          return { error: 'An account with this address already exists.' }
+        }
+      }
+
+      return { route }
+    },
+  )
+
+export const clientAction = async ({
+  serverAction,
+}: Route.ClientActionArgs) => {
+  const { route, error } = await serverAction()
+
+  if (error != null) {
+    return { error }
   }
-
-  const avatar = getHexString(data, 'avatar')
-  const chainId = verifyChainId(getInt(data, 'chainId'))
-
-  if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
-    return { error: 'Account is not a smart contract' }
-  }
-
-  route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
   const { promise, resolve } = Promise.withResolvers<void>()
 
@@ -106,26 +147,11 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
       </Page.Header>
 
       <Page.Main>
-        <OnlyConnected>
+        <OnlyConnectedWhenLoggedOut user={loaderData.user}>
           <Form>
             {actionData && (
               <Error title="Could not create account">{actionData.error}</Error>
             )}
-
-            <ChainSelect
-              name="chainId"
-              value={selectedChainId}
-              onChange={setSelectedChainId}
-            />
-
-            <AvatarInput
-              required
-              isClearable
-              label="Account"
-              chainId={selectedChainId}
-              name="avatar"
-              knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-            />
 
             <TextInput
               label="Label"
@@ -133,13 +159,34 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
               placeholder="Give this account a descriptive name"
             />
 
+            <div className="grid grid-cols-6 gap-4">
+              <div className="col-span-2">
+                <ChainSelect
+                  name="chainId"
+                  value={selectedChainId}
+                  onChange={setSelectedChainId}
+                />
+              </div>
+
+              <div className="col-span-4">
+                <AvatarInput
+                  required
+                  isClearable
+                  label="Address"
+                  chainId={selectedChainId}
+                  name="avatar"
+                  knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+                />
+              </div>
+            </div>
+
             <Form.Actions>
               <PrimaryButton submit busy={useIsPending()}>
                 Create
               </PrimaryButton>
             </Form.Actions>
           </Form>
-        </OnlyConnected>
+        </OnlyConnectedWhenLoggedOut>
       </Page.Main>
     </Page>
   )

@@ -44,9 +44,11 @@ export const loader = async (args: Route.LoaderArgs) =>
     const url = new URL(request.url)
     const routeFeatures = url.searchParams.getAll('feature')
 
+    const chains = await getAvailableChains()
+
     if (user == null) {
       return {
-        chains: await getAvailableChains(),
+        chains,
         features: routeFeatures,
         signInUrl: await getSignInUrl(),
       }
@@ -62,7 +64,7 @@ export const loader = async (args: Route.LoaderArgs) =>
       const features = await getFeatures(db, tenant.id)
 
       return {
-        chains: await getAvailableChains(),
+        chains,
         features: [...features.map(({ name }) => name), ...routeFeatures],
         signInUrl: await getSignInUrl(),
       }

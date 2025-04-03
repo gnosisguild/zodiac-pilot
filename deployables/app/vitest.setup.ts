@@ -25,18 +25,6 @@ mockResizeObserver()
 
 Element.prototype.scrollIntoView = vi.fn()
 
-beforeEach(() => {
-  const db = dbClient()
-
-  return Promise.all([deleteAllTenants(db), deleteAllFeatures(db)])
-})
-
-afterEach(async () => {
-  await sleepTillIdle()
-
-  cleanup()
-})
-
 vi.mock('@/simulation-server', async () => {
   const actual = await vi.importActual<typeof import('@/simulation-server')>(
     '@/simulation-server',
@@ -75,22 +63,6 @@ vi.mock('@/balances-server', async (importOriginal) => {
   }
 })
 
-const mockGetAvailableChains = vi.mocked(getAvailableChains)
-const mockGetChain = vi.mocked(getChain)
-const mockGetTokenBalances = vi.mocked(getTokenBalances)
-const mockGetTokenByAddress = vi.mocked(getTokenByAddress)
-const mockIsValidToken = vi.mocked(isValidToken)
-
-beforeEach(() => {
-  vi.spyOn(window, 'postMessage')
-
-  mockGetAvailableChains.mockResolvedValue([])
-  mockGetTokenBalances.mockResolvedValue([])
-  mockGetTokenByAddress.mockResolvedValue(createMockToken())
-  mockGetChain.mockResolvedValue(createMockChain())
-  mockIsValidToken.mockResolvedValue(true)
-})
-
 vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
   const module =
     await importOriginal<typeof import('@workos-inc/authkit-react-router')>()
@@ -100,4 +72,41 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
     authkitLoader: vi.fn(),
     getSignInUrl: vi.fn().mockResolvedValue('http://workos-test.com/sign-in'),
   }
+})
+
+vi.mock('@/workOS/server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/workOS/server')>()
+
+  return {
+    ...module,
+
+    createOrganization: vi.fn(),
+    getOrganizationForUser: vi.fn(),
+  }
+})
+
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
+const mockGetChain = vi.mocked(getChain)
+const mockGetTokenBalances = vi.mocked(getTokenBalances)
+const mockGetTokenByAddress = vi.mocked(getTokenByAddress)
+const mockIsValidToken = vi.mocked(isValidToken)
+
+beforeEach(async () => {
+  vi.spyOn(window, 'postMessage')
+
+  const db = dbClient()
+
+  mockGetAvailableChains.mockResolvedValue([])
+  mockGetTokenBalances.mockResolvedValue([])
+  mockGetTokenByAddress.mockResolvedValue(createMockToken())
+  mockGetChain.mockResolvedValue(createMockChain())
+  mockIsValidToken.mockResolvedValue(true)
+
+  await Promise.all([deleteAllTenants(db), deleteAllFeatures(db)])
+})
+
+afterEach(async () => {
+  await sleepTillIdle()
+
+  cleanup()
 })
