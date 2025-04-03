@@ -5,9 +5,11 @@ import {
   OnlyConnected,
   Page,
 } from '@/components'
+import { createAccount, dbClient } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
+import { authKitAction } from '@/workOS/server'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -43,25 +45,53 @@ export const clientLoader = async () => {
 
 clientLoader.hydrate = true as const
 
-export const clientAction = async ({ request }: Route.ClientActionArgs) => {
-  const data = await request.formData()
+export const action = (args: Route.ActionArgs) =>
+  authKitAction(
+    args,
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
+      const data = await request.formData()
 
-  let route = createBlankRoute()
+      const label = getOptionalString(data, 'label')
+      const avatar = getHexString(data, 'avatar')
+      const chainId = verifyChainId(getInt(data, 'chainId'))
 
-  const label = getOptionalString(data, 'label')
+      if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
+        return { error: 'Account is not a smart contract' }
+      }
 
-  if (label != null) {
-    route = updateLabel(route, label)
+      let route = createBlankRoute()
+
+      if (label != null) {
+        route = updateLabel(route, label)
+      }
+
+      route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
+
+      if (user != null) {
+        await createAccount(dbClient(), user, {
+          label,
+          chainId,
+          address: avatar,
+        })
+      }
+
+      return { route }
+    },
+  )
+
+export const clientAction = async ({
+  serverAction,
+}: Route.ClientActionArgs) => {
+  const { route, error } = await serverAction()
+
+  if (error != null) {
+    return { error }
   }
-
-  const avatar = getHexString(data, 'avatar')
-  const chainId = verifyChainId(getInt(data, 'chainId'))
-
-  if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
-    return { error: 'Account is not a smart contract' }
-  }
-
-  route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
   const { promise, resolve } = Promise.withResolvers<void>()
 

@@ -56,7 +56,7 @@ describe.sequential('New Account', () => {
     mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
-  describe.only('Logged in', () => {
+  describe('Logged in', () => {
     it('creates a new account in the DB', async () => {
       const tenant = await createTenant(dbClient(), { name: 'Test tenant' })
       const user = await createUser(dbClient(), tenant)
@@ -73,6 +73,13 @@ describe.sequential('New Account', () => {
         screen.getByRole('option', { name: getAddress(address) }),
       )
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: expect.objectContaining({
+          avatar: prefixAddress(Chain.ETH, address),
+        }),
+      })
 
       const [account] = await getAccounts(dbClient(), { tenantId: tenant.id })
 
