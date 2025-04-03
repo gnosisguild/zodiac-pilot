@@ -10,6 +10,7 @@ import {
   AddressInput,
   Form,
   FormLayout,
+  GhostButton,
   InlineForm,
   Modal,
   PrimaryButton,
@@ -137,6 +138,7 @@ const AddWallet = () => {
 
           <Modal.Actions>
             <PrimaryButton submit>Add</PrimaryButton>
+            <GhostButton onClick={() => setOpen(false)}>Cancel</GhostButton>
           </Modal.Actions>
         </Form>
       </Modal>
