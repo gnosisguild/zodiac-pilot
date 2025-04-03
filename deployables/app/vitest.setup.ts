@@ -74,6 +74,17 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
   }
 })
 
+vi.mock('@/workOS/server', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/workOS/server')>()
+
+  return {
+    ...module,
+
+    createOrganization: vi.fn(),
+    getOrganizationForUser: vi.fn(),
+  }
+})
+
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 const mockGetChain = vi.mocked(getChain)
 const mockGetTokenBalances = vi.mocked(getTokenBalances)

@@ -26,16 +26,6 @@ import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
 
-vi.mock('@/workOS/server', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/workOS/server')>()
-
-  return {
-    ...module,
-
-    getOrganizationForUser: vi.fn(),
-  }
-})
-
 const mockGetOrganizationForUser = vi.mocked(getOrganizationForUser)
 
 const baseRender = await createRenderFramework(
