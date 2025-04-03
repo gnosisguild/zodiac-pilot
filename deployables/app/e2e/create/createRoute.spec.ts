@@ -14,7 +14,7 @@ test.describe('Create new account', () => {
 
     const address = '0xB1578ecfA1da7405821095Aa3612158926e6a72a'
 
-    await page.getByRole('combobox', { name: 'Account' }).fill(address)
+    await page.getByRole('combobox', { name: 'Address' }).fill(address)
     await page.getByRole('option', { name: address }).click()
 
     await page.getByRole('button', { name: 'Create' }).click()

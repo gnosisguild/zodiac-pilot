@@ -1,9 +1,13 @@
 import { getAvailableChains } from '@/balances-server'
+import { dbClient, getAccounts } from '@/db'
 import {
+  accountFactory,
   createMockChain,
   expectMessage,
   postMessage,
   render,
+  tenantFactory,
+  userFactory,
 } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
@@ -55,14 +59,70 @@ describe.sequential('New Account', () => {
     mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
-  describe('Avatar', () => {
+  describe('Logged in', () => {
+    it('creates a new account in the DB', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      await render('/create', { user })
+
+      const address = randomAddress()
+
+      await userEvent.type(
+        screen.getByRole('combobox', { name: 'Address' }),
+        address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(address) }),
+      )
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      await expectMessage({
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: expect.objectContaining({
+          avatar: prefixAddress(Chain.ETH, address),
+        }),
+      })
+
+      const [account] = await getAccounts(dbClient(), { tenantId: tenant.id })
+
+      expect(account).toHaveProperty('address', address)
+      expect(account).toHaveProperty('chainId', Chain.ETH)
+      expect(account).toHaveProperty('createdById', user.id)
+    })
+
+    it('shows an error when the same account is supposed to be created twice', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+
+      await render('/create', { user })
+
+      await userEvent.type(
+        screen.getByRole('combobox', { name: 'Address' }),
+        account.address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(account.address) }),
+      )
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      expect(
+        await screen.findByRole('alert', { name: 'Could not create account' }),
+      ).toHaveAccessibleDescription(
+        'An account with this address already exists.',
+      )
+    })
+  })
+
+  describe('Logged out', () => {
     it('creates a new route with a given avatar', async () => {
       await render('/create')
 
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -84,7 +144,7 @@ describe.sequential('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -112,7 +172,7 @@ describe.sequential('New Account', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Account' }),
+        screen.getByRole('combobox', { name: 'Address' }),
         address,
       )
       await userEvent.click(
@@ -141,7 +201,7 @@ describe.sequential('New Account', () => {
         const address = randomAddress()
 
         await userEvent.type(
-          screen.getByRole('combobox', { name: 'Account' }),
+          screen.getByRole('combobox', { name: 'Address' }),
           address,
         )
         await userEvent.click(
