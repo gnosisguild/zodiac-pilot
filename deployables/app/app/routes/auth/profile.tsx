@@ -24,16 +24,23 @@ const Profile = ({
       <Page.Header>Profile</Page.Header>
       <Page.Main>
         <Widgets>
-          <UserProfile authToken={accessToken} />
-
-          <h2 className="mb-8 mt-16 text-2xl">Security</h2>
-          <UserSecurity authToken={accessToken} />
-
-          <h2 className="mb-8 mt-16 text-2xl">Sessions</h2>
-          <UserSessions authToken={accessToken} currentSessionId={sessionId} />
-
           <Form>
-            <Form.Actions align="left">
+            <Form.Section title="Personal information">
+              <UserProfile authToken={accessToken} />
+            </Form.Section>
+
+            <Form.Section title="Security">
+              <UserSecurity authToken={accessToken} />
+            </Form.Section>
+
+            <Form.Section title="Sessions">
+              <UserSessions
+                authToken={accessToken}
+                currentSessionId={sessionId}
+              />
+            </Form.Section>
+
+            <Form.Actions>
               <SecondaryButton submit busy={signingOut} style="critical">
                 Sign out
               </SecondaryButton>
