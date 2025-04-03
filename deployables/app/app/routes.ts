@@ -9,12 +9,12 @@ import {
 export default [
   index('routes/index.tsx'),
 
+  route('/callback', 'routes/auth/callback.ts'),
+
   layout('routes/layout.tsx', [
     route('/connect', 'routes/connect.tsx'),
 
     layout('routes/errorBoundary.tsx', [
-      route('/callback', 'routes/auth/callback.ts'),
-
       ...prefix('/sign-up', [
         index('routes/auth/sign-up.tsx'),
         route('success', 'routes/auth/sign-up.success.tsx'),
