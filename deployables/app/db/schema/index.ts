@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm'
 import {
   index,
   integer,
+  json,
   pgTable,
   primaryKey,
   text,
@@ -15,7 +16,7 @@ const createdTimestamp = {
 }
 
 export const TenantTable = pgTable('Tenant', {
-  id: uuid().defaultRandom().primaryKey(),
+  id: uuid().notNull().defaultRandom().primaryKey(),
   name: text().notNull(),
   ...createdTimestamp,
 })
@@ -91,7 +92,7 @@ export const ActiveFeatureRelations = relations(
 export const AccountTable = pgTable(
   'Account',
   {
-    id: uuid().defaultRandom().primaryKey(),
+    id: uuid().notNull().defaultRandom().primaryKey(),
     createdById: uuid()
       .notNull()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
@@ -109,12 +110,80 @@ export const AccountTable = pgTable(
   ],
 )
 
+export const WalletTable = pgTable(
+  'Wallet',
+  {
+    id: uuid().notNull().defaultRandom().primaryKey(),
+    belongsToId: uuid()
+      .notNull()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+    label: text().notNull(),
+    address: text().notNull(),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.belongsToId),
+    unique().on(table.belongsToId, table.address),
+  ],
+)
+
+export const RouteTable = pgTable(
+  'Route',
+  {
+    id: uuid().notNull().defaultRandom().primaryKey(),
+    fromId: uuid().references(() => WalletTable.id, { onDelete: 'set null' }),
+    toId: uuid()
+      .notNull()
+      .references(() => AccountTable.id, { onDelete: 'cascade' }),
+    waypoints: json(),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.fromId),
+    index().on(table.toId),
+    index().on(table.tenantId),
+  ],
+)
+
+export const ActiveRouteTable = pgTable(
+  'ActiveRoute',
+  {
+    userId: uuid()
+      .notNull()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+    accountId: uuid()
+      .notNull()
+      .references(() => AccountTable.id, { onDelete: 'cascade' }),
+    routeId: uuid()
+      .notNull()
+      .references(() => RouteTable.id, { onDelete: 'cascade' }),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.accountId, table.routeId] }),
+    index().on(table.userId),
+    index().on(table.accountId),
+    index().on(table.routeId),
+    index().on(table.tenantId),
+  ],
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
   feature: FeatureTable,
   activeFeature: ActiveFeatureTable,
   account: AccountTable,
+  wallet: WalletTable,
+  route: RouteTable,
+  activeRoute: ActiveRouteTable,
 
   TenantRelations,
   FeatureRelations,
