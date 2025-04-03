@@ -61,7 +61,10 @@ export const loader = async ({
           address: verifyHexAddress(address),
         })
 
-        const amount = formatUnits(BigInt(forkBalance), balance.decimals)
+        const amount = formatUnits(
+          BigInt(forkBalance),
+          balance.decimals,
+        ) as `${number}`
 
         return {
           ...balance,

@@ -30,7 +30,7 @@ const Balances = () => {
       </Info>
     )
   }
-  console.log(data)
+
   return (
     <>
       {isForked && (
