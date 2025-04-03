@@ -60,7 +60,7 @@
     "@testing-library/react": "16.2.0",
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.0.313",
-    "@types/node": "22.13.17",
+    "@types/node": "22.14.0",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
     "@vercel/react-router": "1.1.0",
