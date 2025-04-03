@@ -70,12 +70,13 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   ])
 
   const simulate = async () => {
-    const { tokenFlows, approvals } = await simulateTransactionBundle(
+    const { error, tokenFlows, approvals } = await simulateTransactionBundle(
       route.avatar,
       metaTransactions,
     )
 
     return {
+      error,
       tokenFlows,
       approvals,
     }
@@ -158,33 +159,37 @@ const SubmitPage = ({
       >
         <Suspense fallback={<SkeletonFlowTable />}>
           <Await resolve={simulation}>
-            {({ tokenFlows: { sent, received, other } }) => (
-              <>
-                <TokenTransferTable
-                  title="Tokens Sent"
-                  columnTitle="To"
-                  avatar={avatar}
-                  icon={ArrowUpFromLine}
-                  tokens={sent}
-                />
+            {({ error, tokenFlows: { sent, received, other } }) =>
+              error ? (
+                <Warning title="Token flow simulation is unavailable at the moment" />
+              ) : (
+                <>
+                  <TokenTransferTable
+                    title="Tokens Sent"
+                    columnTitle="To"
+                    avatar={avatar}
+                    icon={ArrowUpFromLine}
+                    tokens={sent}
+                  />
 
-                <TokenTransferTable
-                  title="Tokens Received"
-                  columnTitle="From"
-                  avatar={avatar}
-                  icon={ArrowDownToLine}
-                  tokens={received}
-                />
+                  <TokenTransferTable
+                    title="Tokens Received"
+                    columnTitle="From"
+                    avatar={avatar}
+                    icon={ArrowDownToLine}
+                    tokens={received}
+                  />
 
-                <TokenTransferTable
-                  title="Other Token Movements"
-                  columnTitle="From → To"
-                  avatar={avatar}
-                  icon={ArrowLeftRight}
-                  tokens={other}
-                />
-              </>
-            )}
+                  <TokenTransferTable
+                    title="Other Token Movements"
+                    columnTitle="From → To"
+                    avatar={avatar}
+                    icon={ArrowLeftRight}
+                    tokens={other}
+                  />
+                </>
+              )
+            }
           </Await>
         </Suspense>
       </Form.Section>

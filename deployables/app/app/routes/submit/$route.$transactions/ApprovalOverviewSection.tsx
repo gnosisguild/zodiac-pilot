@@ -1,5 +1,5 @@
 import type { ApprovalTransaction } from '@/simulation-server'
-import { Checkbox, Success } from '@zodiac/ui'
+import { Checkbox, Success, Warning } from '@zodiac/ui'
 import { Suspense, useState } from 'react'
 import { Await } from 'react-router'
 import { SkeletonFlowTable } from './SkeletonFlowTable'
@@ -7,6 +7,7 @@ import { TokenApprovalTable } from './TokenApprovalTable'
 
 type ApprovalOverviewSectionProps = {
   simulation: Promise<{
+    error: unknown | null
     approvals: ApprovalTransaction[]
   }>
 }
@@ -19,8 +20,14 @@ export function ApprovalOverviewSection({
   return (
     <Suspense fallback={<SkeletonFlowTable />}>
       <Await resolve={simulation}>
-        {({ approvals }) =>
-          approvals.length > 0 ? (
+        {({ error, approvals }) => {
+          if (error) {
+            return (
+              <Warning title="Approval check is unavailable at the moment" />
+            )
+          }
+
+          return approvals.length > 0 ? (
             <>
               <TokenApprovalTable approvals={approvals} revokeAll={revokeAll} />
 
@@ -34,7 +41,7 @@ export function ApprovalOverviewSection({
           ) : (
             <Success title="No recorded approvals" />
           )
-        }
+        }}
       </Await>
     </Suspense>
   )
