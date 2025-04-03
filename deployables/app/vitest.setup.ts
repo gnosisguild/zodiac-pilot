@@ -12,6 +12,7 @@ import {
   configMocks,
   mockAnimationsApi,
   mockResizeObserver,
+  mockViewport,
 } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 import { dbClient, deleteAllFeatures, deleteAllTenants } from './db'
@@ -22,6 +23,7 @@ configMocks({ afterEach, afterAll })
 
 mockAnimationsApi()
 mockResizeObserver()
+mockViewport({ width: 1024, height: 768 })
 
 Element.prototype.scrollIntoView = vi.fn()
 
