@@ -1,4 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
+import { createTenant, createUser, dbClient, getAccounts } from '@/db'
 import {
   createMockChain,
   expectMessage,
@@ -55,7 +56,33 @@ describe.sequential('New Account', () => {
     mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
-  describe('Avatar', () => {
+  describe.only('Logged in', () => {
+    it('creates a new account in the DB', async () => {
+      const tenant = await createTenant(dbClient(), { name: 'Test tenant' })
+      const user = await createUser(dbClient(), tenant)
+
+      await render('/create', { user })
+
+      const address = randomAddress()
+
+      await userEvent.type(
+        screen.getByRole('combobox', { name: 'Account' }),
+        address,
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: getAddress(address) }),
+      )
+      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+      const [account] = await getAccounts(dbClient(), { tenantId: tenant.id })
+
+      expect(account).toHaveProperty('address', address)
+      expect(account).toHaveProperty('chainId', Chain.ETH)
+      expect(account).toHaveProperty('createdById', user.id)
+    })
+  })
+
+  describe('Logged out', () => {
     it('creates a new route with a given avatar', async () => {
       await render('/create')
 
