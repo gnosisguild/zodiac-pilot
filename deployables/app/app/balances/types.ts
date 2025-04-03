@@ -25,7 +25,7 @@ const tokenBalanceSchema = tokenSchema.extend({
 export const tokenBalancesSchema = tokenBalanceSchema.array()
 
 type TokenDiff = {
-  tokenValue: number
+  amount: `${number}`
   usdValue: number
 }
 
