@@ -27,7 +27,7 @@
     "postcss": "8.5.3",
     "tailwindcss": "4.1.1",
     "typescript": "5.8.2",
-    "vite": "6.2.4",
+    "vite": "6.2.5",
     "vite-plugin-open-graph": "2.0.6",
     "wrangler": "4.7.0"
   },
