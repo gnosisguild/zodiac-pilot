@@ -67,14 +67,11 @@ export function ReviewAccountSection({
               className="flex flex-col items-end gap-4 md:flex-row"
             >
               <div className="w-full md:w-1/3">
-                <Waypoint
-                  account={wp.account}
-                  connection={'connection' in wp ? wp.connection : undefined}
-                />
+                <Waypoint account={wp.account} />
               </div>
               <div className="mr-1 w-full md:w-3/4">
                 <NumberInput
-                  label={'Nonce'}
+                  label="Nonce"
                   name={`customSafeNonce[${wp.account.prefixedAddress}]`}
                   placeholder={wp.defaultNonce.toString()}
                   min={0}
