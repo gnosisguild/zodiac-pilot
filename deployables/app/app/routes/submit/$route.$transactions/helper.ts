@@ -1,7 +1,7 @@
 import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
 import { encodeFunctionData, erc20Abi, formatUnits } from 'viem'
 
-export const appendApprovalTransactions = (
+export const appendRevokeApprovals = (
   metaTxs: MetaTransactionRequest[],
   approvalTxs: { spender: HexAddress; tokenAddress: HexAddress }[],
 ): MetaTransactionRequest[] => {

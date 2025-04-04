@@ -45,7 +45,7 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
-import { appendApprovalTransactions } from './helper'
+import { appendRevokeApprovals } from './helper'
 import { ApprovalOverviewSection } from './sections/ApprovalOverviewSection'
 import { ReviewAccountSection } from './sections/ReviewAccountSection'
 import { SkeletonFlowTable } from './table/SkeletonFlowTable'
@@ -155,10 +155,7 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
       { omitTokenFlows: true },
     )
     if (approvals.length > 0) {
-      finalMetaTransactions = appendApprovalTransactions(
-        metaTransactions,
-        approvals,
-      )
+      finalMetaTransactions = appendRevokeApprovals(metaTransactions, approvals)
     }
   }
 
