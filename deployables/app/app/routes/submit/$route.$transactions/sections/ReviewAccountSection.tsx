@@ -1,6 +1,6 @@
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 
-import { Collapsable, Error, Labeled, NumberInput, Warning } from '@zodiac/ui'
+import { Collapsible, Error, Labeled, NumberInput, Warning } from '@zodiac/ui'
 
 import type { ChainId, StartingPoint, Waypoint as WaypointType } from 'ser-kit'
 
@@ -60,7 +60,7 @@ export function ReviewAccountSection({
         </Routes>
       </Labeled>
       <div className="flex flex-col gap-4">
-        <Collapsable title="Define custom Safe transaction nonce">
+        <Collapsible title="Define custom Safe transaction nonce">
           {safeOwnerWaypoints.map((wp) => (
             <div
               key={wp.account.prefixedAddress}
@@ -79,7 +79,7 @@ export function ReviewAccountSection({
               </div>
             </div>
           ))}
-        </Collapsable>
+        </Collapsible>
       </div>
     </>
   )

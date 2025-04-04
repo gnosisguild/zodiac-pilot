@@ -2,17 +2,17 @@ import classNames from 'classnames'
 import { ChevronDown } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-type CollapsableProps = {
+type CollapsibleProps = {
   title: string
   children: ReactNode
   defaultOpen?: boolean
 }
 
-export const Collapsable = ({
+export const Collapsible = ({
   title,
   children,
   defaultOpen = false,
-}: CollapsableProps) => {
+}: CollapsibleProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [contentHeight, setContentHeight] = useState<number>(0)
   const contentRef = useRef<HTMLDivElement>(null)
