@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@icons-pack/react-simple-icons": "12.3.0",
+    "@icons-pack/react-simple-icons": "12.4.0",
     "@react-router/serve": "7.4.1",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
