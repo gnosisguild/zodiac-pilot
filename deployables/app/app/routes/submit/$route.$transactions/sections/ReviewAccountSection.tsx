@@ -1,10 +1,18 @@
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
+import { invariant } from '@epic-web/invariant'
 
 import { Collapsible, Error, Labeled, NumberInput, Warning } from '@zodiac/ui'
 
-import type { ChainId, StartingPoint, Waypoint as WaypointType } from 'ser-kit'
+import type {
+  ChainId,
+  PrefixedAddress,
+  StartingPoint,
+  Waypoint as WaypointType,
+} from 'ser-kit'
 
-export type SafeOwnerWaypoint = WaypointType & { defaultNonce: number }
+type NonceMap = {
+  [safe: PrefixedAddress]: number
+}
 
 type ReviewAccountSectionProps = {
   id: string
@@ -12,7 +20,7 @@ type ReviewAccountSectionProps = {
   hasQueryRoutesError: boolean
   chainId: ChainId
   waypoints: [StartingPoint, ...WaypointType[]]
-  safeOwnerWaypoints: SafeOwnerWaypoint[]
+  defaultSafeNonces: NonceMap
 }
 
 export function ReviewAccountSection({
@@ -21,7 +29,7 @@ export function ReviewAccountSection({
   hasQueryRoutesError,
   chainId,
   waypoints,
-  safeOwnerWaypoints,
+  defaultSafeNonces,
 }: ReviewAccountSectionProps) {
   return (
     <>
@@ -61,24 +69,32 @@ export function ReviewAccountSection({
       </Labeled>
       <div className="flex flex-col gap-4">
         <Collapsible title="Define custom Safe transaction nonce">
-          {safeOwnerWaypoints.map((wp) => (
-            <div
-              key={wp.account.prefixedAddress}
-              className="flex flex-col items-end gap-4 md:flex-row"
-            >
-              <div className="w-full md:w-1/3">
-                <Waypoint account={wp.account} />
-              </div>
-              <div className="mr-1 w-full md:w-3/4">
-                <NumberInput
-                  label="Nonce"
-                  name={`customSafeNonce[${wp.account.prefixedAddress}]`}
-                  placeholder={wp.defaultNonce.toString()}
-                  min={0}
-                />
-              </div>
-            </div>
-          ))}
+          {Object.entries(defaultSafeNonces).map(
+            ([safePrefixedAddress, defaultNonce]) => {
+              const wp = waypoints.find(
+                (wp) => wp.account.prefixedAddress === safePrefixedAddress,
+              )
+              invariant(wp, 'waypoint not found')
+              return (
+                <div
+                  key={wp.account.prefixedAddress}
+                  className="flex flex-col items-end gap-4 md:flex-row"
+                >
+                  <div className="w-full md:w-1/3">
+                    <Waypoint account={wp.account} />
+                  </div>
+                  <div className="mr-1 w-full md:w-3/4">
+                    <NumberInput
+                      label="Nonce"
+                      name={`customSafeNonce[${wp.account.prefixedAddress}]`}
+                      placeholder={defaultNonce.toString()}
+                      min={0}
+                    />
+                  </div>
+                </div>
+              )
+            },
+          )}
         </Collapsible>
       </div>
     </>

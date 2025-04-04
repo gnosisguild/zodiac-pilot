@@ -35,11 +35,10 @@ import {
 import { Suspense, useEffect } from 'react'
 import { Await, useActionData, useLoaderData } from 'react-router'
 import {
-  AccountType,
-  ConnectionType,
   execute,
   ExecutionActionType,
   planExecution,
+  prefixAddress,
   unprefixAddress,
   type ExecutionState,
 } from 'ser-kit'
@@ -47,10 +46,7 @@ import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
 import { appendApprovalTransactions } from './helper'
 import { ApprovalOverviewSection } from './sections/ApprovalOverviewSection'
-import {
-  ReviewAccountSection,
-  type SafeOwnerWaypoint,
-} from './sections/ReviewAccountSection'
+import { ReviewAccountSection } from './sections/ReviewAccountSection'
 import { SkeletonFlowTable } from './table/SkeletonFlowTable'
 import { TokenTransferTable } from './table/TokenTransferTable'
 
@@ -77,14 +73,20 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     queryRoutes(route.initiator, route.avatar),
     checkPermissions(route, metaTransactions),
   ])
-  const safeNonceMap: Record<string, number> = {}
-  for (const action of plan) {
-    if (action.type === ExecutionActionType.PROPOSE_TRANSACTION) {
-      const safeAddress = action.safe
-      const nonce = Number(action.safeTransaction.nonce)
-      safeNonceMap[safeAddress] = nonce
-    }
-  }
+
+  // when planning without setting options, planExecution will populate the default nonces
+  const safeTransactions = plan.filter(
+    (action) => action.type === ExecutionActionType.SAFE_TRANSACTION,
+  )
+  const defaultSafeNonces = Object.fromEntries(
+    safeTransactions.map(
+      (safeTransaction) =>
+        [
+          prefixAddress(safeTransaction.chain, safeTransaction.safe),
+          safeTransaction.safeTransaction.nonce,
+        ] as const,
+    ),
+  )
 
   const simulate = async () => {
     const { error, tokenFlows, approvals } = await simulateTransactionBundle(
@@ -98,17 +100,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       approvals,
     }
   }
-  const ownerWaypoints = route.waypoints.filter(
-    (wp) =>
-      wp.account.type === AccountType.SAFE &&
-      'connection' in wp &&
-      wp.connection.type === ConnectionType.OWNS,
-  )
-
-  const safeOwnerWaypoints = ownerWaypoints.map((wp) => ({
-    ...wp,
-    defaultNonce: safeNonceMap[wp.account.address],
-  })) as SafeOwnerWaypoint[]
 
   return {
     isValidRoute:
@@ -122,7 +113,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     permissionCheck: permissionCheckResult.permissionCheck,
     waypoints: route.waypoints,
     metaTransactions,
-    safeOwnerWaypoints,
+    defaultSafeNonces,
   }
 }
 
@@ -209,7 +200,7 @@ const SubmitPage = ({
     permissionCheck,
     simulation,
     hasQueryRoutesError,
-    safeOwnerWaypoints,
+    defaultSafeNonces,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -295,7 +286,7 @@ const SubmitPage = ({
           hasQueryRoutesError={hasQueryRoutesError}
           chainId={chainId}
           waypoints={waypoints}
-          safeOwnerWaypoints={safeOwnerWaypoints}
+          defaultSafeNonces={defaultSafeNonces}
         />
       </Form.Section>
 
