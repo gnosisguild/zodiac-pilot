@@ -14,6 +14,7 @@ import { href } from 'react-router'
 import {
   checkPermissions,
   PermissionViolation,
+  planExecution,
   prefixAddress,
   queryRoutes,
   unprefixAddress,
@@ -67,6 +68,9 @@ describe('Sign', () => {
   const initiator = randomPrefixedAddress({ chainId: undefined })
 
   beforeEach(() => {
+    // @ts-expect-error We only needs an empty array
+    vi.mocked(planExecution).mockResolvedValue([])
+
     // @ts-expect-error We really only want to use this subset
     mockUseAccount.mockReturnValue({
       address: unprefixAddress(initiator),
@@ -176,6 +180,8 @@ describe('Sign', () => {
     const route = createMockSerRoute({ initiator })
 
     beforeEach(() => {
+      // @ts-expect-error We only needs an empty array
+      vi.mocked(planExecution).mockResolvedValue([])
       mockQueryRoutes.mockResolvedValue([route])
     })
 
@@ -260,6 +266,9 @@ describe('Sign', () => {
 
   describe('Approvals', () => {
     beforeEach(() => {
+      // @ts-expect-error We only needs an empty array
+      vi.mocked(planExecution).mockResolvedValue([])
+
       mockQueryRoutes.mockResolvedValue([])
       mockCheckPermissions.mockResolvedValue({
         error: undefined,
