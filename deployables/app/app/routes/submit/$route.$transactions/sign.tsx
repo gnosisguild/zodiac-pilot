@@ -41,6 +41,7 @@ import {
   prefixAddress,
   unprefixAddress,
   type ExecutionState,
+  type PrefixedAddress,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
@@ -118,9 +119,14 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 export const action = async ({ params, request }: RouteType.ActionArgs) => {
-  const data = await request.formData()
   const metaTransactions = parseTransactionData(params.transactions)
 
+  const { initiator, waypoints, ...route } = parseRouteData(params.route)
+
+  invariantResponse(initiator != null, 'Route needs an initiator')
+  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
+
+  const data = await request.formData()
   const rawSafeNonceMap: Record<string, { nonce: number } | null> = Array.from(
     data.keys(),
   )
@@ -137,54 +143,34 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
       },
       {} as Record<string, { nonce: number } | null>,
     )
-
-  const safeNonceMap = Object.fromEntries(
+  const safeTransactionProperties = Object.fromEntries(
     Object.entries(rawSafeNonceMap).filter(([, value]) => value !== null),
-  ) as Record<string, { nonce: number }>
+  ) as { [safe: PrefixedAddress]: { nonce: number } }
 
-  const options =
-    Object.keys(safeNonceMap).length > 0
-      ? { safeTransactionProperties: safeNonceMap }
-      : {}
-
-  const { initiator, waypoints, ...route } = parseRouteData(params.route)
-
-  invariantResponse(initiator != null, 'Route needs an initiator')
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
-
-  const { approvals } = await simulateTransactionBundle(
-    route.avatar,
-    metaTransactions,
-    { omitTokenFlows: true },
-  )
-
-  if (approvals.length > 0) {
-    const revokeApprovals = getBoolean(data, 'revokeApprovals')
-
-    if (revokeApprovals) {
-      return {
-        plan: await planExecution(
-          appendApprovalTransactions(metaTransactions, approvals),
-          {
-            initiator,
-            waypoints,
-            ...route,
-          },
-          options,
-        ),
-      }
+  let finalMetaTransactions = metaTransactions
+  if (getBoolean(data, 'revokeApprovals')) {
+    const { approvals } = await simulateTransactionBundle(
+      route.avatar,
+      metaTransactions,
+      { omitTokenFlows: true },
+    )
+    if (approvals.length > 0) {
+      finalMetaTransactions = appendApprovalTransactions(
+        metaTransactions,
+        approvals,
+      )
     }
   }
 
   return {
     plan: await planExecution(
-      metaTransactions,
+      finalMetaTransactions,
       {
         initiator,
         waypoints,
         ...route,
       },
-      options,
+      { safeTransactionProperties },
     ),
   }
 }
