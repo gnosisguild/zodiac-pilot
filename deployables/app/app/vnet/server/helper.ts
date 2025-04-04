@@ -76,7 +76,7 @@ export const applyDeltaToBalances = async (
 
         if (info == null) {
           const decimals = 18
-          const amount = formatUnits(0n, decimals)
+          const amount = formatUnits(0n, decimals) as `${number}`
 
           return {
             contractId: tokenAddress,
@@ -92,7 +92,7 @@ export const applyDeltaToBalances = async (
         }
 
         const decimals = info.decimals || 18
-        const amount = formatUnits(0n, decimals)
+        const amount = formatUnits(0n, decimals) as `${number}`
 
         return {
           contractId: info.id,
@@ -119,13 +119,13 @@ export const applyDeltaToBalances = async (
     const newRaw = existingRaw + deltaBalance
     const finalRaw = newRaw < 0n ? 0n : newRaw
 
-    const newAmount = formatUnits(finalRaw, decimals)
-    const balanceDiff = formatUnits(deltaBalance, decimals)
+    const newAmount = formatUnits(finalRaw, decimals) as `${number}`
+    const balanceDiff = formatUnits(deltaBalance, decimals) as `${number}`
 
     return {
       ...balance,
       diff: {
-        tokenValue: Number(balanceDiff),
+        amount: balanceDiff,
         usdValue: parseFloat(balanceDiff) * (balance.usdPrice || 0),
       },
       amount: newAmount,

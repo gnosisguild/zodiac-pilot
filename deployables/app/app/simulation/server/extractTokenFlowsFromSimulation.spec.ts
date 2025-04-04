@@ -25,9 +25,7 @@ describe('extractTokenFlowsFromSimulation', () => {
       name: 'Mock Token',
       symbol: 'MCK',
       logoUrl: '',
-      amount: '0',
       decimals: 6,
-      usdValue: 0,
       usdPrice: 1,
       chain: 'eth',
     })
@@ -68,9 +66,7 @@ describe('extractTokenFlowsFromSimulation', () => {
       name: 'Ethereum',
       symbol: 'ETH',
       logoUrl: '',
-      amount: '0',
       decimals: 18,
-      usdValue: 0,
       usdPrice: 1900,
       chain: 'eth',
     })

@@ -4,16 +4,17 @@ import { NumberValue } from './NumberValue'
 type TokenValueProps = {
   action?: ReactNode
   symbol?: string | null
-  children: string
-  additionalInfo?: ReactNode
+  children: `${number}`
+  delta?: `${number}`
 }
 
 export const TokenValue = ({
   children,
   action,
   symbol,
-  additionalInfo,
+  delta,
 }: TokenValueProps) => {
+  console.log('delta', delta)
   return (
     <span className="inline-flex items-center gap-2">
       {symbol && (
@@ -22,8 +23,8 @@ export const TokenValue = ({
         </span>
       )}
 
-      <NumberValue precision={4} additionalInfo={additionalInfo}>
-        {parseFloat(children)}
+      <NumberValue precision={4} delta={delta}>
+        {children}
       </NumberValue>
 
       {action}

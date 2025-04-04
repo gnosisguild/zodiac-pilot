@@ -1,4 +1,5 @@
 import { Popover } from '../overlays'
+import { Delta } from './Delta'
 
 const usdFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
@@ -7,25 +8,31 @@ const usdFormatter = new Intl.NumberFormat('en-US', {
 
 export const UsdValue = ({
   children,
-  balanceDiff,
+  delta,
 }: {
   children: number
-  balanceDiff?: number
+  delta?: number
 }) => {
+  const isPositive = delta && delta > 0
+
   return (
     <Popover
       inline
       popover={
-        balanceDiff && (
-          <span className="tabular-numbs text-sm slashed-zero">
-            {usdFormatter.format(balanceDiff)}
-          </span>
+        delta && (
+          <Delta value={delta} invertedBackground>
+            <span className="tabular-numbs text-sm slashed-zero">
+              {isPositive ? '+' : '-'} {usdFormatter.format(Math.abs(delta))}
+            </span>
+          </Delta>
         )
       }
     >
-      <span className={'text-sm slashed-zero tabular-nums'}>
-        {usdFormatter.format(children)}
-      </span>
+      <Delta value={delta}>
+        <span className="text-sm slashed-zero tabular-nums">
+          {usdFormatter.format(children)}
+        </span>
+      </Delta>
     </Popover>
   )
 }

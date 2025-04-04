@@ -20,7 +20,10 @@ export const getTokenBalances = async (
     .map((data) => ({
       contractId: data.id,
       name: data.name,
-      amount: formatUnits(BigInt(data.raw_amount), data.decimals || 18),
+      amount: formatUnits(
+        BigInt(data.raw_amount),
+        data.decimals || 18,
+      ) as `${number}`,
       logoUrl: data.logo_url,
       symbol: data.optimized_symbol || data.display_symbol || data.symbol,
       usdValue: data.price == null ? null : data.amount * data.price,

@@ -1,7 +1,6 @@
 import { useTokenBalances } from '@/balances-client'
 import { Token } from '@/components'
 import {
-  Diff,
   Empty,
   Error as ErrorAlert,
   GhostLinkButton,
@@ -72,30 +71,15 @@ const Balances = () => {
                   <Token logo={logoUrl}>{name}</Token>
                 </TableCell>
                 <TableCell align="right">
-                  <Diff value={diff?.tokenValue}>
-                    <TokenValue
-                      symbol={symbol}
-                      additionalInfo={
-                        diff?.tokenValue && (
-                          <span className="tabular-numbs text-sm slashed-zero">
-                            {diff?.tokenValue} {symbol}
-                          </span>
-                        )
-                      }
-                    >
-                      {amount}
-                    </TokenValue>
-                  </Diff>
+                  <TokenValue symbol={symbol} delta={diff?.amount}>
+                    {amount}
+                  </TokenValue>
                 </TableCell>
                 <TableCell align="right">
                   {usdValue == null ? (
                     <Empty />
                   ) : (
-                    <Diff value={diff?.usdValue}>
-                      <UsdValue balanceDiff={diff?.usdValue}>
-                        {usdValue}
-                      </UsdValue>
-                    </Diff>
+                    <UsdValue delta={diff?.usdValue}>{usdValue}</UsdValue>
                   )}
                 </TableCell>
                 <TableCell className="pr-16">

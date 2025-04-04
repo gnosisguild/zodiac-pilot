@@ -1,16 +1,17 @@
-import { useMemo, type ReactNode } from 'react'
+import { useMemo } from 'react'
 import { Popover } from '../overlays'
+import { Delta } from './Delta'
 
 type NumberValueProps = {
-  children: number
+  children: `${number}`
+  delta?: `${number}`
   precision?: number
-  additionalInfo?: ReactNode
 }
 
 export const NumberValue = ({
   children,
   precision = 2,
-  additionalInfo,
+  delta,
 }: NumberValueProps) => {
   const numberFormatter = useMemo(
     () =>
@@ -30,21 +31,36 @@ export const NumberValue = ({
     [],
   )
 
+  const diffValue = delta && parseFloat(delta)
+  const isPositive = diffValue && diffValue > 0
+  const absDelta = delta?.startsWith('-')
+    ? (delta.slice(1) as `${number}`)
+    : delta
+
   return (
     <Popover
       inline
       popover={
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col items-end gap-1" role="tooltip">
           <span className="tabular-numbs text-sm slashed-zero">
             {defaultNumberFormatter.format(children)}
           </span>
-          {additionalInfo}
+          {absDelta != null && (
+            <Delta value={diffValue} invertedBackground>
+              <span className="tabular-numbs text-sm slashed-zero">
+                {isPositive ? '+' : '-'}{' '}
+                {defaultNumberFormatter.format(absDelta)}
+              </span>
+            </Delta>
+          )}
         </div>
       }
     >
-      <span className="slashed-zero tabular-nums">
-        {numberFormatter.format(children)}
-      </span>
+      <Delta value={diffValue}>
+        <span className="slashed-zero tabular-nums">
+          {numberFormatter.format(children)}
+        </span>
+      </Delta>
     </Popover>
   )
 }

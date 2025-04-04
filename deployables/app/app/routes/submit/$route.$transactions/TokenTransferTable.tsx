@@ -105,7 +105,7 @@ export const TokenTransferTable = ({
               </TableCell>
 
               <TableCell align="right" className="tabular-nums">
-                <NumberValue precision={4}>{parseFloat(amount)}</NumberValue>
+                <NumberValue precision={4}>{amount}</NumberValue>
               </TableCell>
             </TableRow>
           )
