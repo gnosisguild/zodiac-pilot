@@ -2,8 +2,8 @@ import type { ApprovalTransaction } from '@/simulation-server'
 import { Checkbox, Success, Warning } from '@zodiac/ui'
 import { Suspense, useState } from 'react'
 import { Await } from 'react-router'
-import { SkeletonFlowTable } from './SkeletonFlowTable'
-import { TokenApprovalTable } from './TokenApprovalTable'
+import { SkeletonFlowTable } from '../table/SkeletonFlowTable'
+import { TokenApprovalTable } from '../table/TokenApprovalTable'
 
 type ApprovalOverviewSectionProps = {
   simulation: Promise<{
