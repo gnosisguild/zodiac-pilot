@@ -267,8 +267,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@headlessui/react':
-        specifier: 2.2.0
-        version: 2.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.1
+        version: 2.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sentry/browser':
         specifier: 9.10.1
         version: 9.10.1
@@ -802,8 +802,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.0
-        version: 2.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.1
+        version: 2.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -2392,8 +2392,8 @@ packages:
   '@gnosis.pm/zodiac@4.0.3':
     resolution: {integrity: sha512-yliHytBRlb4wNkeiYsaaAvYZC5VwiUBVfJ+HLEmjnWPG2EHB5tvAOUboDU7XvSQ4GUJAz8h2YUrph0XkH+/xfA==}
 
-  '@headlessui/react@2.2.0':
-    resolution: {integrity: sha512-RzCEg+LXsuI7mHiSomsu/gBJSjpupm6A1qIZ5sWjd7JhARNlMiSA4kKfJpCKwU9tE+zMRterhhrP74PvfJrpXQ==}
+  '@headlessui/react@2.2.1':
+    resolution: {integrity: sha512-daiUqVLae8CKVjEVT19P/izW0aGK0GNhMSAeMlrDebKmoVZHcRRwbxzgtnEadUVDXyBsWo9/UH4KHeniO+0tMg==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -10666,7 +10666,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@headlessui/react@2.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@headlessui/react@2.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-aria/focus': 3.19.0(react@19.1.0)
