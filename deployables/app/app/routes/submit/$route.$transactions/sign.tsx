@@ -77,8 +77,11 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
   // when planning without setting options, planExecution will populate the default nonces
   const safeTransactions = plan.filter(
-    (action) => action.type === ExecutionActionType.SAFE_TRANSACTION,
+    (action) =>
+      action.type === ExecutionActionType.SAFE_TRANSACTION ||
+      action.type === ExecutionActionType.PROPOSE_TRANSACTION,
   )
+
   const defaultSafeNonces = Object.fromEntries(
     safeTransactions.map(
       (safeTransaction) =>
