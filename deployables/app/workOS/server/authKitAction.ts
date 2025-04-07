@@ -12,7 +12,7 @@ export async function authKitAction<
 >(
   args: Args,
   fn: Fn,
-  options: GetAuthOptions,
+  options?: GetAuthOptions,
 ): Promise<Awaited<ReturnType<typeof fn>>>
 export async function authKitAction<
   Args extends ActionFunctionArgs,
