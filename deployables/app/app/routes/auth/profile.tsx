@@ -1,5 +1,5 @@
 import { Page } from '@/components'
-import { createWallet, dbClient, getWallets } from '@/db'
+import { createWallet, dbClient, deleteWallet, getWallets } from '@/db'
 import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
 import { authKitAction, authKitLoader } from '@/workOS/server'
@@ -24,6 +24,7 @@ import {
   TableRow,
   TextInput,
 } from '@zodiac/ui'
+import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { Route } from './+types/profile'
 
@@ -68,6 +69,16 @@ export const action = async (args: Route.ActionArgs) =>
           const address = getHexString(data, 'address')
 
           await createWallet(dbClient(), user, { label, address })
+
+          return null
+        }
+
+        case Intent.DeleteWallet: {
+          const walletId = getString(data, 'walletId')
+
+          await deleteWallet(dbClient(), user, walletId)
+
+          return null
         }
       }
     },
@@ -106,6 +117,9 @@ const Profile = ({
                   <TableRow>
                     <TableHeader>Label</TableHeader>
                     <TableHeader>Address</TableHeader>
+                    <TableHeader className="relative w-0">
+                      <span className="sr-only">Actions</span>
+                    </TableHeader>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -114,6 +128,21 @@ const Profile = ({
                       <TableCell>{wallet.label}</TableCell>
                       <TableCell>
                         <Address>{wallet.address}</Address>
+                      </TableCell>
+                      <TableCell>
+                        <InlineForm
+                          intent={Intent.DeleteWallet}
+                          context={{ walletId: wallet.id }}
+                        >
+                          <GhostButton
+                            submit
+                            iconOnly
+                            size="small"
+                            icon={Trash2}
+                          >
+                            Remove wallet
+                          </GhostButton>
+                        </InlineForm>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -182,4 +211,5 @@ export default Profile
 enum Intent {
   SignOut = 'SignOut',
   AddWallet = 'AddWallet',
+  DeleteWallet = 'DeleteWallet',
 }

@@ -1,6 +1,7 @@
 import type { HexAddress } from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
+  boolean,
   index,
   integer,
   json,
@@ -14,6 +15,12 @@ import {
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}
+
+const deletable = {
+  deleted: boolean().default(false).notNull(),
+  deletedById: uuid().references(() => UserTable.id, { onDelete: 'set null' }),
+  deletedAt: timestamp({ withTimezone: true }),
 }
 
 export const TenantTable = pgTable('Tenant', {
@@ -128,6 +135,7 @@ export const WalletTable = pgTable(
 
     ...tenantReference,
     ...createdTimestamp,
+    ...deletable,
   },
   (table) => [
     index().on(table.tenantId),

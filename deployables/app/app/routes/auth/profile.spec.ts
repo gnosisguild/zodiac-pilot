@@ -56,4 +56,31 @@ describe('Profile', () => {
       await screen.findByRole('cell', { name: getAddress(address) }),
     ).toBeInTheDocument()
   })
+
+  it('is possible to remove a wallet', async () => {
+    const tenant = await tenantFactory.create()
+    const user = await userFactory.create(tenant)
+    const wallet = await walletFactory.create(user, {
+      label: 'User wallet',
+    })
+
+    const { waitForPendingActions } = await render(href('/profile'), { user })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Remove wallet' }),
+    )
+
+    await waitForPendingActions()
+
+    const [deletedWallet] = await getWallets(dbClient(), user.id, {
+      deleted: true,
+    })
+
+    expect(deletedWallet).toMatchObject({
+      id: wallet.id,
+
+      deleted: true,
+      deletedById: user.id,
+    })
+  })
 })
