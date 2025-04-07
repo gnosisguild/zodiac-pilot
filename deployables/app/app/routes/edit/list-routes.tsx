@@ -1,5 +1,11 @@
 import { fromVersion, OnlyConnected, Page } from '@/components'
-import { dbClient, deleteAccount, getAccounts, type Account } from '@/db'
+import {
+  dbClient,
+  deleteAccount,
+  getAccount,
+  getAccounts,
+  type Account,
+} from '@/db'
 import { routeTitle } from '@/utils'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
@@ -79,10 +85,6 @@ export const action = async (args: Route.ActionArgs) =>
         auth: { user },
       },
     }) => {
-      if (user == null) {
-        return null
-      }
-
       const data = await request.formData()
 
       switch (getString(data, 'intent')) {
@@ -92,6 +94,18 @@ export const action = async (args: Route.ActionArgs) =>
           return null
         }
       }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ user, request }) {
+        const data = await request.formData()
+        const account = await getAccount(
+          dbClient(),
+          getString(data, 'accountId'),
+        )
+
+        return account.createdById === user.id
+      },
     },
   )
 
