@@ -1,3 +1,4 @@
+import type { ChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
@@ -107,8 +108,8 @@ export const AccountTable = pgTable(
       .notNull()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text(),
-    chainId: integer().notNull(),
-    address: text().notNull(),
+    chainId: integer().$type<ChainId>().notNull(),
+    address: text().$type<HexAddress>().notNull(),
 
     ...tenantReference,
     ...createdTimestamp,

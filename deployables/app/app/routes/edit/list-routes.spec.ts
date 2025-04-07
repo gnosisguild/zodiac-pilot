@@ -1,5 +1,12 @@
 import { getAvailableChains } from '@/balances-server'
-import { loadRoutes, postMessage, render } from '@/test-utils'
+import {
+  accountFactory,
+  loadRoutes,
+  postMessage,
+  render,
+  tenantFactory,
+  userFactory,
+} from '@/test-utils'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -17,6 +24,25 @@ const mockGetAvailableChains = vi.mocked(getAvailableChains)
 describe.sequential('List Routes', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue([])
+  })
+
+  describe('List', () => {
+    describe('Logged in', () => {
+      it('lists all routes', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+
+        await accountFactory.create(user, {
+          label: 'Test account',
+        })
+
+        await render(href('/edit'), { user })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test account' }),
+        ).toBeInTheDocument()
+      })
+    })
   })
 
   describe('Active route', () => {
