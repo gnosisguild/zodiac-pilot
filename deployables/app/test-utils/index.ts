@@ -4,11 +4,13 @@ import type {
 } from '@zodiac/messages'
 import { createExpectMessage } from '@zodiac/test-utils'
 
+export { activateRoute } from './activateRoute'
 export { createMockApprovalLog } from './createMockApprovalLog'
 export { createMockChain } from './createMockChain'
 export { createMockSimulatedTransaction } from './createMockSimulatedTransaction'
 export { createMockTokenBalance } from './createMockTokenBalance'
 export * from './db'
+export { loadAndActivateRoute } from './loadAndActivateRoute'
 export { loadRoutes } from './loadRoutes'
 export { postMessage } from './postMessage'
 export { regexEscape } from './regexEscape'

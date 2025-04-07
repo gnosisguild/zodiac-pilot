@@ -1,6 +1,7 @@
 import { getAvailableChains } from '@/balances-server'
 import {
   accountFactory,
+  loadAndActivateRoute,
   loadRoutes,
   postMessage,
   render,
@@ -52,6 +53,10 @@ describe.sequential('List Routes', () => {
       await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
+      })
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: route.id,
       })
 
@@ -68,6 +73,10 @@ describe.sequential('List Routes', () => {
       await render(href('/edit'), {
         availableRoutes: [route],
         version: '3.6.0',
+      })
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: route.id,
       })
 
@@ -129,10 +138,11 @@ describe.sequential('List Routes', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(href('/edit'), {
-        version: '3.6.0',
         availableRoutes: [route],
-        activeRouteId: route.id,
+        version: '3.6.0',
       })
+
+      await loadAndActivateRoute(route)
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Account options' }),
@@ -165,6 +175,10 @@ describe.sequential('List Routes', () => {
       await render(href('/edit'), {
         version: '3.6.0',
         availableRoutes: [route],
+      })
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: route.id,
       })
 
