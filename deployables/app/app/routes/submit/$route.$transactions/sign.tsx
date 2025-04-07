@@ -1,6 +1,5 @@
 import { ConnectWallet } from '@/components'
 import { useIsPending } from '@/hooks'
-import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { simulateTransactionBundle } from '@/simulation-server'
 import {
   jsonRpcProvider,
@@ -21,13 +20,12 @@ import {
   Error,
   errorToast,
   Form,
-  Labeled,
   PrimaryButton,
   Success,
   successToast,
   Warning,
 } from '@zodiac/ui'
-import { type Eip1193Provider } from 'ethers'
+import type { Eip1193Provider } from 'ethers'
 import {
   ArrowDownToLine,
   ArrowLeftRight,
@@ -40,15 +38,18 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
+  prefixAddress,
   unprefixAddress,
   type ExecutionState,
+  type PrefixedAddress,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import type { Route as RouteType } from './+types/sign'
-import { ApprovalOverviewSection } from './ApprovalOverviewSection'
-import { appendApprovalTransactions } from './helper'
-import { SkeletonFlowTable } from './SkeletonFlowTable'
-import { TokenTransferTable } from './TokenTransferTable'
+import { appendRevokeApprovals } from './helper'
+import { ApprovalOverviewSection } from './sections/ApprovalOverviewSection'
+import { ReviewAccountSection } from './sections/ReviewAccountSection'
+import { SkeletonFlowTable } from './table/SkeletonFlowTable'
+import { TokenTransferTable } from './table/TokenTransferTable'
 
 export const meta: RouteType.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Sign transaction bundle') },
@@ -64,10 +65,32 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     'Route does not provide any waypoints',
   )
 
-  const [queryRoutesResult, permissionCheckResult] = await Promise.all([
+  const [plan, queryRoutesResult, permissionCheckResult] = await Promise.all([
+    planExecution(metaTransactions, {
+      initiator: route.initiator,
+      waypoints: route.waypoints,
+      ...route,
+    }),
     queryRoutes(route.initiator, route.avatar),
     checkPermissions(route, metaTransactions),
   ])
+
+  // when planning without setting options, planExecution will populate the default nonces
+  const safeTransactions = plan.filter(
+    (action) =>
+      action.type === ExecutionActionType.SAFE_TRANSACTION ||
+      action.type === ExecutionActionType.PROPOSE_TRANSACTION,
+  )
+
+  const defaultSafeNonces = Object.fromEntries(
+    safeTransactions.map(
+      (safeTransaction) =>
+        [
+          prefixAddress(safeTransaction.chain, safeTransaction.safe),
+          safeTransaction.safeTransaction.nonce,
+        ] as const,
+    ),
+  )
 
   const simulate = async () => {
     const { error, tokenFlows, approvals } = await simulateTransactionBundle(
@@ -94,6 +117,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     permissionCheck: permissionCheckResult.permissionCheck,
     waypoints: route.waypoints,
     metaTransactions,
+    defaultSafeNonces,
   }
 }
 
@@ -105,36 +129,49 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(initiator != null, 'Route needs an initiator')
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
-  const { approvals } = await simulateTransactionBundle(
-    route.avatar,
-    metaTransactions,
-    { omitTokenFlows: true },
+  const data = await request.formData()
+  const rawSafeNonceMap: Record<string, { nonce: number } | null> = Array.from(
+    data.keys(),
   )
+    .filter((key) => key.startsWith('customSafeNonce['))
+    .reduce(
+      (acc, key) => {
+        const safeAddress = key.slice('customSafeNonce['.length, -1)
+        const nonceValue = data.get(key)
+        acc[safeAddress] =
+          nonceValue && !isNaN(Number(nonceValue))
+            ? { nonce: Number(nonceValue) }
+            : null
+        return acc
+      },
+      {} as Record<string, { nonce: number } | null>,
+    )
+  const safeTransactionProperties = Object.fromEntries(
+    Object.entries(rawSafeNonceMap).filter(([, value]) => value !== null),
+  ) as { [safe: PrefixedAddress]: { nonce: number } }
 
-  if (approvals.length > 0) {
-    const data = await request.formData()
-    const revokeApprovals = getBoolean(data, 'revokeApprovals')
-
-    if (revokeApprovals) {
-      return {
-        plan: await planExecution(
-          appendApprovalTransactions(metaTransactions, approvals),
-          {
-            initiator,
-            waypoints,
-            ...route,
-          },
-        ),
-      }
+  let finalMetaTransactions = metaTransactions
+  if (getBoolean(data, 'revokeApprovals')) {
+    const { approvals } = await simulateTransactionBundle(
+      route.avatar,
+      metaTransactions,
+      { omitTokenFlows: true },
+    )
+    if (approvals.length > 0) {
+      finalMetaTransactions = appendRevokeApprovals(metaTransactions, approvals)
     }
   }
 
   return {
-    plan: await planExecution(metaTransactions, {
-      initiator,
-      waypoints,
-      ...route,
-    }),
+    plan: await planExecution(
+      finalMetaTransactions,
+      {
+        initiator,
+        waypoints,
+        ...route,
+      },
+      { safeTransactionProperties },
+    ),
   }
 }
 
@@ -149,6 +186,7 @@ const SubmitPage = ({
     permissionCheck,
     simulation,
     hasQueryRoutesError,
+    defaultSafeNonces,
   },
 }: RouteType.ComponentProps) => {
   return (
@@ -228,42 +266,14 @@ const SubmitPage = ({
         title="Review account information"
         description="Verify the account and execution route for signing this transaction bundle."
       >
-        {!isValidRoute && (
-          <Error title="Unknown route">
-            The selected execution route appears invalid. Proceed with caution.
-          </Error>
-        )}
-
-        {hasQueryRoutesError && (
-          <Warning title="Route validation unavailable">
-            The selected execution route could not be validated. Proceed with
-            caution.
-          </Warning>
-        )}
-
-        <ChainSelect disabled defaultValue={chainId} />
-
-        <Labeled label="Execution route">
-          <Routes disabled orientation="horizontal">
-            <Route id={id}>
-              {waypoints && (
-                <Waypoints>
-                  {waypoints.map(({ account, ...waypoint }, index) => (
-                    <Waypoint
-                      key={`${account.address}-${index}`}
-                      account={account}
-                      connection={
-                        'connection' in waypoint
-                          ? waypoint.connection
-                          : undefined
-                      }
-                    />
-                  ))}
-                </Waypoints>
-              )}
-            </Route>
-          </Routes>
-        </Labeled>
+        <ReviewAccountSection
+          id={id}
+          isValidRoute={isValidRoute}
+          hasQueryRoutesError={hasQueryRoutesError}
+          chainId={chainId}
+          waypoints={waypoints}
+          defaultSafeNonces={defaultSafeNonces}
+        />
       </Form.Section>
 
       <Form.Section
@@ -302,7 +312,6 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
 
     const executePlan = async () => {
       const state: ExecutionState = []
-
       try {
         await execute(plan, state, connectorClient as Eip1193Provider, {
           origin: 'Zodiac Pilot',
