@@ -3,7 +3,10 @@ import type { PropsWithChildren } from 'react'
 import { useEffect, useState } from 'react'
 import { useConnected } from './PilotStatusContext'
 
-export const OnlyConnected = ({ children }: PropsWithChildren) => {
+export const OnlyConnected = ({
+  children,
+  showWarning = true,
+}: PropsWithChildren<{ showWarning?: boolean }>) => {
   const connected = useConnected()
   const [delayed, setDelayed] = useState(true)
 
@@ -20,6 +23,10 @@ export const OnlyConnected = ({ children }: PropsWithChildren) => {
   }
 
   if (delayed) {
+    return null
+  }
+
+  if (showWarning === false) {
     return null
   }
 

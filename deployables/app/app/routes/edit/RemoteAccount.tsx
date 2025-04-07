@@ -1,8 +1,7 @@
 import type { Account } from '@/db'
 import { Chain } from '@/routes-ui'
-import { CHAIN_NAME } from '@zodiac/chains'
+import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import { Address, TableCell, TableRow } from '@zodiac/ui'
-import { href } from 'react-router'
 
 type RemoteAccountProps = {
   account: Account
@@ -12,7 +11,7 @@ export const RemoteAccount = ({ account }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
-      href={href('/edit/account/:accountId', { accountId: account.id })}
+      // href={href('/edit/account/:accountId', { accountId: account.id })}
     >
       <TableCell aria-describedby={account.id}>{account.label}</TableCell>
       <TableCell>
@@ -26,8 +25,8 @@ export const RemoteAccount = ({ account }: RemoteAccountProps) => {
         <Chain chainId={account.chainId}>{CHAIN_NAME[account.chainId]}</Chain>
       </TableCell>
       <TableCell>
+        <Address>{ZERO_ADDRESS}</Address>
         {/* {account.initiator == null ? (
-          <Address>{ZERO_ADDRESS}</Address>
         ) : (
           <Address shorten>{route.initiator}</Address>
         )} */}

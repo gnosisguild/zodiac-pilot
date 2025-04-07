@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import { type PropsWithChildren } from 'react'
-import { useRevalidator } from 'react-router'
+import { Suspense, type PropsWithChildren } from 'react'
+import { Await, useRevalidator } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -41,11 +41,13 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       if (user == null) {
         return {
+          loggedIn: false,
           remoteAccounts: [] as Account[],
         }
       }
 
       return {
+        loggedIn: true,
         remoteAccounts: await getAccounts(dbClient(), {
           tenantId: user.tenantId,
           userId: user.id,
@@ -57,13 +59,13 @@ export const loader = (args: Route.LoaderArgs) =>
 export const clientLoader = async ({
   serverLoader,
 }: Route.ClientLoaderArgs) => {
-  const [localAccounts, { remoteAccounts }, activeRouteId] = await Promise.all([
-    loadRoutes(),
-    serverLoader(),
-    fromVersion('3.6.0', () => loadActiveRouteId()),
-  ])
+  const serverData = await serverLoader()
 
-  return { localAccounts, remoteAccounts, activeRouteId }
+  return {
+    ...serverData,
+    localAccounts: loadRoutes(),
+    activeRouteId: fromVersion('3.6.0', () => loadActiveRouteId()),
+  }
 }
 
 clientLoader.hydrate = true as const
@@ -108,23 +110,8 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 }
 
 const ListRoutes = ({
-  loaderData: { remoteAccounts, ...clientData },
+  loaderData: { remoteAccounts, loggedIn, ...clientData },
 }: Route.ComponentProps) => {
-  const { revalidate, state } = useRevalidator()
-
-  useExtensionMessageHandler(
-    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-    ({ activeRouteId }) => {
-      if (
-        state === 'idle' &&
-        'activeRouteId' in clientData &&
-        activeRouteId !== clientData.activeRouteId
-      ) {
-        revalidate()
-      }
-    },
-  )
-
   return (
     <Page fullWidth>
       <Page.Header>Accounts</Page.Header>
@@ -138,29 +125,59 @@ const ListRoutes = ({
           </Accounts>
         )}
 
-        <OnlyConnected>
-          {'localAccounts' in clientData &&
-            (clientData.localAccounts.length > 0 ? (
-              <Accounts>
-                {clientData.localAccounts.map((route) => (
-                  <LocalAccount
-                    key={route.id}
-                    route={route}
-                    active={route.id === clientData.activeRouteId}
-                  />
-                ))}
-              </Accounts>
-            ) : (
-              <Info title="You haven't created any accounts, yet.">
-                Accounts let you quickly impersonate other safes and record
-                transaction bundles for them.
-                <div className="mt-4 flex">
-                  <SecondaryLinkButton to="/create">
-                    Create an account
-                  </SecondaryLinkButton>
-                </div>
-              </Info>
-            ))}
+        <OnlyConnected showWarning={!loggedIn}>
+          {'localAccounts' in clientData && (
+            <Suspense>
+              <Await resolve={clientData.localAccounts}>
+                {(localAccounts) => (
+                  <>
+                    {localAccounts.length > 0 ? (
+                      <Suspense>
+                        <Await resolve={clientData.activeRouteId}>
+                          {(activeRouteId) => (
+                            <>
+                              <RevalidateWhenActiveRouteChanges
+                                activeRouteId={activeRouteId}
+                              />
+
+                              <h2 className="my-6 text-xl">
+                                Local Accounts
+                                <p className="my-2 text-sm opacity-80">
+                                  Local accounts live only on your machine. They
+                                  are only usable when the Pilot browser
+                                  extension is installed and open.
+                                </p>
+                              </h2>
+
+                              <Accounts>
+                                {localAccounts.map((route) => (
+                                  <LocalAccount
+                                    key={route.id}
+                                    route={route}
+                                    active={route.id === activeRouteId}
+                                  />
+                                ))}
+                              </Accounts>
+                            </>
+                          )}
+                        </Await>
+                      </Suspense>
+                    ) : (
+                      <Info title="You haven't created any accounts, yet.">
+                        Accounts let you quickly impersonate other safes and
+                        record transaction bundles for them.
+                        <div className="mt-4 flex">
+                          <SecondaryLinkButton to="/create">
+                            Create an account
+                          </SecondaryLinkButton>
+                        </div>
+                      </Info>
+                    )}
+                  </>
+                )}
+              </Await>
+            </Suspense>
+          )}
         </OnlyConnected>
       </Page.Main>
     </Page>
@@ -193,4 +210,23 @@ const Accounts = ({ children }: PropsWithChildren) => {
       <TableBody>{children}</TableBody>
     </Table>
   )
+}
+
+const RevalidateWhenActiveRouteChanges = ({
+  activeRouteId,
+}: {
+  activeRouteId: string | void | null
+}) => {
+  const { revalidate, state } = useRevalidator()
+
+  useExtensionMessageHandler(
+    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+    ({ activeRouteId: newActiveRouteId }) => {
+      if (state === 'idle' && activeRouteId !== newActiveRouteId) {
+        revalidate()
+      }
+    },
+  )
+
+  return null
 }
