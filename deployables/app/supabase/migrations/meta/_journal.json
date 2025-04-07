@@ -106,6 +106,20 @@
       "when": 1744019277327,
       "tag": "0014_remove unique index",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1744033538880,
+      "tag": "0015_make account deletable",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1744034078452,
+      "tag": "0016_remove unique constraint from account",
+      "breakpoints": true
     }
   ]
 }

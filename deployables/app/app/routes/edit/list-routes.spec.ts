@@ -1,4 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
+import { dbClient, getAccounts } from '@/db'
 import {
   accountFactory,
   loadAndActivateRoute,
@@ -102,67 +103,111 @@ describe.sequential('List Routes', () => {
   })
 
   describe('Remove', () => {
-    it('is possible to remove a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-      const mockPostMessage = vi.spyOn(window, 'postMessage')
+    describe('Logged in', () => {
+      it('is possible to remove an account', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-        activeRouteId: route.id,
+        const account = await accountFactory.create(user)
+
+        const { waitForPendingActions } = await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
+
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
+
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        await waitForPendingActions()
+
+        const [deletedAccount] = await getAccounts(dbClient(), {
+          userId: user.id,
+          tenantId: tenant.id,
+          deleted: true,
+        })
+
+        expect(deletedAccount).toMatchObject({
+          id: account.id,
+
+          deleted: true,
+          deletedById: user.id,
+        })
       })
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Delete' }),
-      )
-
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
-
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-      expect(mockPostMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.DELETE_ROUTE,
-          routeId: route.id,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
     })
 
-    it('hides the dialog once the delete is confirmed', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
+    describe('Logged out', () => {
+      it('is possible to remove an account', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+        const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-      await render(href('/edit'), {
-        availableRoutes: [route],
-        version: '3.6.0',
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await loadAndActivateRoute(route)
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
+
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
+
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.DELETE_ROUTE,
+            routeId: route.id,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
       })
 
-      await loadAndActivateRoute(route)
+      it('hides the dialog once the delete is confirmed', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Delete' }),
-      )
+        await render(href('/edit'), {
+          availableRoutes: [route],
+          version: '3.6.0',
+        })
 
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
+        await loadAndActivateRoute(route)
 
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
 
-      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
 
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('dialog', { name: 'Confirm delete' }),
-        ).not.toBeInTheDocument()
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+
+        await waitFor(() => {
+          expect(
+            screen.queryByRole('dialog', { name: 'Confirm delete' }),
+          ).not.toBeInTheDocument()
+        })
       })
     })
   })

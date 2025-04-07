@@ -1,7 +1,7 @@
 import { fromVersion, OnlyConnected, Page } from '@/components'
-import { dbClient, getAccounts, type Account } from '@/db'
+import { dbClient, deleteAccount, getAccounts, type Account } from '@/db'
 import { routeTitle } from '@/utils'
-import { authKitLoader } from '@/workOS/server'
+import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
@@ -70,8 +70,36 @@ export const clientLoader = async ({
 
 clientLoader.hydrate = true as const
 
-export const clientAction = async ({ request }: Route.ClientActionArgs) => {
-  const data = await request.formData()
+export const action = async (args: Route.ActionArgs) =>
+  authKitAction(
+    args,
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
+      if (user == null) {
+        return null
+      }
+
+      const data = await request.formData()
+
+      switch (getString(data, 'intent')) {
+        case Intent.RemoteDelete: {
+          await deleteAccount(dbClient(), user, getString(data, 'accountId'))
+
+          return null
+        }
+      }
+    },
+  )
+
+export const clientAction = async ({
+  request,
+  serverAction,
+}: Route.ClientActionArgs) => {
+  const data = await request.clone().formData()
   const intent = getString(data, 'intent')
 
   switch (intent) {
@@ -105,6 +133,10 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
       await promise
 
       return null
+    }
+
+    default: {
+      return await serverAction()
     }
   }
 }

@@ -113,12 +113,9 @@ export const AccountTable = pgTable(
 
     ...tenantReference,
     ...createdTimestamp,
+    ...deletable,
   },
-  (table) => [
-    index().on(table.tenantId),
-    index().on(table.createdById),
-    unique().on(table.tenantId, table.chainId, table.address),
-  ],
+  (table) => [index().on(table.tenantId), index().on(table.createdById)],
 )
 
 export type Account = typeof AccountTable.$inferSelect
