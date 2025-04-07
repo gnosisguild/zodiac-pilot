@@ -113,7 +113,8 @@ const recordSubsequentCalls = async (
 
   const data = await response.json()
   if (!response.ok) {
-    throw new Error('Failed to record calls: ' + data.error)
+    console.error('Failed to record calls', data)
+    throw new Error('Failed to record calls: ' + response.statusText)
   }
 }
 
