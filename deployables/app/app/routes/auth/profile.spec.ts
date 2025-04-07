@@ -1,9 +1,10 @@
 import { dbClient, getWallets } from '@/db'
-import { render, tenantFactory, userFactory } from '@/test-utils'
+import { render, tenantFactory, userFactory, walletFactory } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
+import { getAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 describe('Profile', () => {
@@ -36,5 +37,23 @@ describe('Profile', () => {
 
     expect(wallet).toHaveProperty('label', 'Test')
     expect(wallet).toHaveProperty('address', address)
+  })
+
+  it('lists all existing wallets', async () => {
+    const tenant = await tenantFactory.create()
+    const user = await userFactory.create(tenant)
+
+    const address = randomAddress()
+
+    await walletFactory.create(user, { label: 'User wallet', address })
+
+    await render(href('/profile'), { user })
+
+    expect(
+      await screen.findByRole('cell', { name: 'User wallet' }),
+    ).toBeInTheDocument()
+    expect(
+      await screen.findByRole('cell', { name: getAddress(address) }),
+    ).toBeInTheDocument()
   })
 })

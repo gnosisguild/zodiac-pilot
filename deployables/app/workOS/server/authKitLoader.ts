@@ -1,18 +1,18 @@
 import { dbClient, getUser } from '@/db'
 import { invariantResponse } from '@epic-web/invariant'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
-import type { ActionFunction, ActionFunctionArgs } from 'react-router'
+import { authkitLoader as baseAuthKitLoader } from '@workos-inc/authkit-react-router'
+import type { LoaderFunction, LoaderFunctionArgs } from 'react-router'
 import type { AuthorizedData, UnauthorizedData } from './types'
 
 type Options = { ensureSignedIn: true }
 
-export async function authKitAction<
-  Args extends ActionFunctionArgs,
-  Fn extends ActionFunction<{ auth: AuthorizedData }>,
+export async function authKitLoader<
+  Args extends LoaderFunctionArgs,
+  Fn extends LoaderFunction<{ auth: AuthorizedData }>,
 >(args: Args, fn: Fn, options: Options): Promise<Awaited<ReturnType<typeof fn>>>
-export async function authKitAction<
-  Args extends ActionFunctionArgs,
-  Fn extends ActionFunction<{ auth: AuthorizedData | UnauthorizedData }>,
+export async function authKitLoader<
+  Args extends LoaderFunctionArgs,
+  Fn extends LoaderFunction<{ auth: AuthorizedData | UnauthorizedData }>,
 >(
   { request, params, context }: Args,
   fn: Fn,
@@ -22,7 +22,7 @@ export async function authKitAction<
     AuthorizedData | UnauthorizedData
   >()
 
-  authkitLoader({ request, params: {}, context: {} }, async ({ auth }) => {
+  baseAuthKitLoader({ request, params: {}, context: {} }, async ({ auth }) => {
     if (auth.user == null) {
       invariantResponse(options == null, 'User must be signed in', {
         status: 404,

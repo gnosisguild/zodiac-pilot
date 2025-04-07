@@ -1,12 +1,13 @@
 import { Page } from '@/components'
-import { createWallet, dbClient } from '@/db'
+import { createWallet, dbClient, getWallets } from '@/db'
 import { useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
-import { authKitAction } from '@/workOS/server'
-import { authkitLoader, signOut } from '@workos-inc/authkit-react-router'
+import { authKitAction, authKitLoader } from '@/workOS/server'
+import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import { getString } from '@zodiac/form-data'
 import {
+  Address,
   AddressInput,
   Form,
   FormLayout,
@@ -17,6 +18,7 @@ import {
   SecondaryButton,
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -26,7 +28,23 @@ import { useState } from 'react'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) => {
-  return authkitLoader(args, { ensureSignedIn: true })
+  return authKitLoader(
+    args,
+    async ({
+      context: {
+        auth: { user, sessionId, accessToken },
+      },
+    }) => {
+      return {
+        accessToken,
+        sessionId,
+        wallets: await getWallets(dbClient(), user.id),
+      }
+    },
+    {
+      ensureSignedIn: true,
+    },
+  )
 }
 
 export const action = async (args: Route.ActionArgs) =>
@@ -57,7 +75,7 @@ export const action = async (args: Route.ActionArgs) =>
   )
 
 const Profile = ({
-  loaderData: { accessToken, sessionId },
+  loaderData: { accessToken, sessionId, wallets },
 }: Route.ComponentProps) => {
   const signingOut = useIsPending()
 
@@ -90,7 +108,16 @@ const Profile = ({
                     <TableHeader>Address</TableHeader>
                   </TableRow>
                 </TableHead>
-                <TableBody></TableBody>
+                <TableBody>
+                  {wallets.map((wallet) => (
+                    <TableRow key={wallet.id}>
+                      <TableCell>{wallet.label}</TableCell>
+                      <TableCell>
+                        <Address>{wallet.address}</Address>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
               </Table>
 
               <div className="flex justify-end">

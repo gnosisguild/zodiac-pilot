@@ -135,6 +135,9 @@ export const WalletTable = pgTable(
   ],
 )
 
+export type Wallet = typeof WalletTable.$inferSelect
+export type WalletCreateInput = typeof WalletTable.$inferInsert
+
 export const RouteTable = pgTable(
   'Route',
   {
