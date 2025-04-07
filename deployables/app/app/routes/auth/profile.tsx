@@ -1,6 +1,6 @@
 import { Page } from '@/components'
 import { createWallet, dbClient, getWallets } from '@/db'
-import { useIsPending } from '@/hooks'
+import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { signOut } from '@workos-inc/authkit-react-router'
@@ -147,6 +147,8 @@ const Profile = ({
 const AddWallet = () => {
   const [open, setOpen] = useState(false)
 
+  useAfterSubmit(Intent.AddWallet, () => setOpen(false))
+
   return (
     <>
       <SecondaryButton onClick={() => setOpen(true)}>
@@ -164,7 +166,9 @@ const AddWallet = () => {
           <AddressInput label="Address" name="address" />
 
           <Modal.Actions>
-            <PrimaryButton submit>Add</PrimaryButton>
+            <PrimaryButton submit busy={useIsPending(Intent.AddWallet)}>
+              Add
+            </PrimaryButton>
             <GhostButton onClick={() => setOpen(false)}>Cancel</GhostButton>
           </Modal.Actions>
         </Form>

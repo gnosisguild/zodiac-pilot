@@ -18,27 +18,27 @@ export async function authKitLoader<
   fn: Fn,
   options?: Options,
 ): Promise<Awaited<ReturnType<typeof fn>>> {
-  const { promise, resolve } = Promise.withResolvers<
+  const { promise, resolve, reject } = Promise.withResolvers<
     AuthorizedData | UnauthorizedData
   >()
 
-  baseAuthKitLoader({ request, params: {}, context: {} }, async ({ auth }) => {
-    if (auth.user == null) {
-      invariantResponse(options == null, 'User must be signed in', {
-        status: 404,
-      })
+  baseAuthKitLoader(
+    { request, params: {}, context: {} },
+    async ({ auth }) => {
+      if (auth.user == null) {
+        resolve({ ...auth, user: null, workOsUser: null })
+      } else {
+        invariantResponse(auth.user.externalId != null, 'User does not exist.')
 
-      resolve({ ...auth, user: null, workOsUser: null })
-    } else {
-      invariantResponse(auth.user.externalId != null, 'User does not exist.')
+        const user = await getUser(dbClient(), auth.user.externalId)
 
-      const user = await getUser(dbClient(), auth.user.externalId)
+        resolve({ ...auth, user, workOsUser: auth.user })
+      }
 
-      resolve({ ...auth, user, workOsUser: auth.user })
-    }
-
-    return {}
-  })
+      return {}
+    },
+    options,
+  ).catch(reject)
 
   const auth = await promise
 
