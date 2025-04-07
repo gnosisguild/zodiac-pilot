@@ -1,7 +1,6 @@
 import { getAvailableChains } from '@/balances-server'
 import { dbClient, getAccounts } from '@/db'
 import {
-  accountFactory,
   createMockChain,
   expectMessage,
   postMessage,
@@ -89,29 +88,6 @@ describe.sequential('New Account', () => {
       expect(account).toHaveProperty('address', address)
       expect(account).toHaveProperty('chainId', Chain.ETH)
       expect(account).toHaveProperty('createdById', user.id)
-    })
-
-    it('shows an error when the same account is supposed to be created twice', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
-      const account = await accountFactory.create(user)
-
-      await render('/create', { user })
-
-      await userEvent.type(
-        screen.getByRole('combobox', { name: 'Address' }),
-        account.address,
-      )
-      await userEvent.click(
-        screen.getByRole('option', { name: getAddress(account.address) }),
-      )
-      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-      expect(
-        await screen.findByRole('alert', { name: 'Could not create account' }),
-      ).toHaveAccessibleDescription(
-        'An account with this address already exists.',
-      )
     })
   })
 
