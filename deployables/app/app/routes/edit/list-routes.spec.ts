@@ -222,13 +222,15 @@ describe.sequential('List Routes', () => {
           label: 'Test account',
         })
 
-        await render(href('/edit'), {
+        const { waitForPendingActions } = await render(href('/edit'), {
           user,
         })
 
         await userEvent.click(
           await screen.findByRole('button', { name: 'Launch' }),
         )
+
+        await waitForPendingActions()
 
         await waitFor(async () => {
           expect(
