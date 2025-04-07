@@ -7,6 +7,7 @@ export const getVnetTransactions = async (vnetId: string) => {
       kind: 'blockchain',
       category: 'write',
       status: 'success',
+      per_page: 100,
     },
     schema: vnetTransactionsListSchema,
   })
