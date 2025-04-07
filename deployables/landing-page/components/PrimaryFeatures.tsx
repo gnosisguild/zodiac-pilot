@@ -156,12 +156,6 @@ export function PrimaryFeatures() {
         color="indigo"
         section="Feature"
         title="Delegate with Advanced Permissions"
-        media={
-          <img
-            src={delegateDark}
-            alt="Screenshot of the roles management interface"
-          />
-        }
         description={
           <>
             Pilot enables secure delegation with fine-grained permissions using{' '}
