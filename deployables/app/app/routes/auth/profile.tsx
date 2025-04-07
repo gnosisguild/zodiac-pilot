@@ -1,5 +1,11 @@
 import { Page } from '@/components'
-import { createWallet, dbClient, deleteWallet, getWallets } from '@/db'
+import {
+  createWallet,
+  dbClient,
+  deleteWallet,
+  getWallet,
+  getWallets,
+} from '@/db'
 import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
 import { authKitAction, authKitLoader } from '@/workOS/server'
@@ -28,8 +34,8 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { Route } from './+types/profile'
 
-export const loader = (args: Route.LoaderArgs) => {
-  return authKitLoader(
+export const loader = (args: Route.LoaderArgs) =>
+  authKitLoader(
     args,
     async ({
       context: {
@@ -46,7 +52,6 @@ export const loader = (args: Route.LoaderArgs) => {
       ensureSignedIn: true,
     },
   )
-}
 
 export const action = async (args: Route.ActionArgs) =>
   authKitAction(
@@ -82,7 +87,27 @@ export const action = async (args: Route.ActionArgs) =>
         }
       }
     },
-    { ensureSignedIn: true },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ user, request }) {
+        const data = await request.formData()
+
+        switch (getString(data, 'intent')) {
+          case Intent.DeleteWallet: {
+            const wallet = await getWallet(
+              dbClient(),
+              getString(data, 'walletId'),
+            )
+
+            return wallet.belongsToId === user.id
+          }
+
+          default: {
+            return true
+          }
+        }
+      },
+    },
   )
 
 const Profile = ({
