@@ -5,7 +5,7 @@ import { Widgets } from '@/workOS/client'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
-import { getString } from '@zodiac/form-data'
+import { getHexString, getString } from '@zodiac/form-data'
 import {
   Address,
   AddressInput,
@@ -65,7 +65,7 @@ export const action = async (args: Route.ActionArgs) =>
 
         case Intent.AddWallet: {
           const label = getString(data, 'label')
-          const address = getString(data, 'address')
+          const address = getHexString(data, 'address')
 
           await createWallet(dbClient(), user, { label, address })
         }

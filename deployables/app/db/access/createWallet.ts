@@ -1,9 +1,10 @@
+import type { HexAddress } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
 import { WalletTable, type User } from '../schema'
 
 type CreateWalletOptions = {
   label: string
-  address: string
+  address: HexAddress
 }
 
 export const createWallet = async (
