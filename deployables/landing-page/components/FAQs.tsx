@@ -106,7 +106,7 @@ export const FAQs = () => {
             <Text>
               <Strong>Yes,</Strong> there is a structured fee on swaps [details
               here]. These fees help sustain Pilot's development as we continue
-              make improvements and introduce new features.
+              to make improvements and introduce new features.
             </Text>
           </FAQ>
         </dl>
