@@ -1,4 +1,4 @@
-import type { ActionFunction, ActionFunctionArgs } from 'react-router'
+import type { LoaderFunction, LoaderFunctionArgs } from 'react-router'
 import {
   getAuth,
   type AuthorizedData,
@@ -6,17 +6,17 @@ import {
   type UnauthorizedData,
 } from './getAuth'
 
-export async function authKitAction<
-  Args extends ActionFunctionArgs,
-  Fn extends ActionFunction<{ auth: AuthorizedData }>,
+export async function authKitLoader<
+  Args extends LoaderFunctionArgs,
+  Fn extends LoaderFunction<{ auth: AuthorizedData }>,
 >(
   args: Args,
   fn: Fn,
-  options?: GetAuthOptions,
+  options: GetAuthOptions,
 ): Promise<Awaited<ReturnType<typeof fn>>>
-export async function authKitAction<
-  Args extends ActionFunctionArgs,
-  Fn extends ActionFunction<{ auth: AuthorizedData | UnauthorizedData }>,
+export async function authKitLoader<
+  Args extends LoaderFunctionArgs,
+  Fn extends LoaderFunction<{ auth: AuthorizedData | UnauthorizedData }>,
 >(
   { request, params, context }: Args,
   fn: Fn,

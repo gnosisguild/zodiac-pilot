@@ -79,7 +79,9 @@ export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
   loadActions?: () => Promise<unknown>
 }
 
-export type RenderFrameworkResult = RenderResult
+export type RenderFrameworkResult = RenderResult & {
+  waitForPendingActions: () => Promise<void>
+}
 
 const CombinedTestElement = () => (
   <TestElement>
@@ -87,13 +89,29 @@ const CombinedTestElement = () => (
   </TestElement>
 )
 
+type ResolveFn = () => void
+
 export async function createRenderFramework<Config extends RouteConfig>(
   basePath: URL,
   routeConfig: Config,
 ) {
   const routes = await Promise.resolve(routeConfig)
 
-  const stubbedRoutes = await stubRoutes(basePath, routes)
+  const pendingActions: Promise<void>[] = []
+
+  const stubbedRoutes = await stubRoutes(basePath, routes, {
+    startAction: () => {
+      const { resolve, promise } = Promise.withResolvers<void>()
+
+      pendingActions.push(promise)
+
+      return resolve
+    },
+  })
+
+  const waitForPendingActions = async () => {
+    await Promise.all(pendingActions)
+  }
 
   return async function renderFramework<
     Paths extends Awaited<RouteConfig>[number]['path'],
@@ -129,7 +147,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
     await waitForTestElement()
     await sleepTillIdle()
 
-    return result
+    return { ...result, waitForPendingActions }
   }
 }
 
@@ -141,9 +159,14 @@ type StubRoute = {
   Component?: ComponentType
 }
 
+type StubRoutesOptions = {
+  startAction: () => ResolveFn
+}
+
 function stubRoutes(
   basePath: URL,
   routes: RouteConfigEntry[],
+  { startAction }: StubRoutesOptions,
 ): Promise<StubRoute[]> {
   return Promise.all(
     routes.map(async (route) => {
@@ -186,19 +209,25 @@ function stubRoutes(
         // the test stub from react-router unfortunately
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
-        action(actionArgs: ActionFunctionArgs) {
-          if (clientAction != null) {
-            return clientAction({
-              ...actionArgs,
-              serverAction: action ? () => action(actionArgs) : undefined,
-            })
-          }
+        async action(actionArgs: ActionFunctionArgs) {
+          const finishAction = startAction()
 
-          if (action != null) {
-            return action(actionArgs)
-          }
+          try {
+            if (clientAction != null) {
+              return await clientAction({
+                ...actionArgs,
+                serverAction: action ? () => action(actionArgs) : undefined,
+              })
+            }
 
-          return null
+            if (action != null) {
+              return await action(actionArgs)
+            }
+
+            return null
+          } finally {
+            finishAction()
+          }
         },
         Component:
           Component == null
@@ -220,7 +249,9 @@ function stubRoutes(
 
         children:
           route.children != null
-            ? await stubRoutes(basePath, route.children)
+            ? await stubRoutes(basePath, route.children, {
+                startAction,
+              })
             : undefined,
       }
     }),

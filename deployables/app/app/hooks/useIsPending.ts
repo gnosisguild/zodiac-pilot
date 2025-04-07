@@ -1,6 +1,6 @@
 import { useNavigation } from 'react-router'
 
-type CheckFn = (data: FormData) => boolean
+export type CheckFn = (data: FormData) => boolean
 
 export const useIsPending = (
   intent: string | string[] = [],

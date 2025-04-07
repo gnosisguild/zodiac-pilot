@@ -105,11 +105,11 @@ export const render = async (
 
   const workOsUser = mockWorkOs(user)
 
-  mockAuthKitLoader.mockImplementation(async (loaderArgs, loader) => {
+  mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
     const auth = createAuth(workOsUser)
 
-    if (loader != null) {
-      const loaderResult = await loader({ ...loaderArgs, auth })
+    if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
+      const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
 
       return data({ ...loaderResult, ...auth })
     }

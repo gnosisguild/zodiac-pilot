@@ -85,6 +85,27 @@
       "when": 1743670242561,
       "tag": "0011_add account models",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1744012508145,
+      "tag": "0012_delete wallet",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1744017824665,
+      "tag": "0013_cascade for wallet",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1744019277327,
+      "tag": "0014_remove unique index",
+      "breakpoints": true
     }
   ]
 }

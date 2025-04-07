@@ -1,5 +1,7 @@
+import type { HexAddress } from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
+  boolean,
   index,
   integer,
   json,
@@ -13,6 +15,12 @@ import {
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+}
+
+const deletable = {
+  deleted: boolean().default(false).notNull(),
+  deletedById: uuid().references(() => UserTable.id, { onDelete: 'set null' }),
+  deletedAt: timestamp({ withTimezone: true }),
 }
 
 export const TenantTable = pgTable('Tenant', {
@@ -123,17 +131,17 @@ export const WalletTable = pgTable(
       .notNull()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text().notNull(),
-    address: text().notNull(),
+    address: text().$type<HexAddress>().notNull(),
 
     ...tenantReference,
     ...createdTimestamp,
+    ...deletable,
   },
-  (table) => [
-    index().on(table.tenantId),
-    index().on(table.belongsToId),
-    unique().on(table.belongsToId, table.address),
-  ],
+  (table) => [index().on(table.tenantId), index().on(table.belongsToId)],
 )
+
+export type Wallet = typeof WalletTable.$inferSelect
+export type WalletCreateInput = typeof WalletTable.$inferInsert
 
 export const RouteTable = pgTable(
   'Route',
