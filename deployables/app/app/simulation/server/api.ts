@@ -3,14 +3,14 @@ import type { z, ZodTypeAny } from 'zod'
 
 type ApiOptions<Schema extends ZodTypeAny> = {
   schema: Schema
-  data?: Record<string, string | number | boolean | string[] | number[]>
+  searchParams?: Record<string, string | number | boolean | string[] | number[]>
   body?: Record<string, unknown>
   method?: 'GET' | 'POST'
 }
 
 export const api = async <Schema extends ZodTypeAny>(
   endpoint: `/${string}`,
-  { schema, data = {}, method = 'GET', body }: ApiOptions<Schema>,
+  { schema, searchParams = {}, method = 'GET', body }: ApiOptions<Schema>,
 ) => {
   const { TENDERLY_ACCESS_KEY, TENDERLY_PROJECT, TENDERLY_USER } =
     getTenderlyCredentials()
@@ -27,7 +27,7 @@ export const api = async <Schema extends ZodTypeAny>(
     },
   }
 
-  Object.entries(data).forEach(([key, value]) =>
+  Object.entries(searchParams).forEach(([key, value]) =>
     Array.isArray(value)
       ? value.forEach((entry) => url.searchParams.append(key, entry.toString()))
       : url.searchParams.set(key, value.toString()),

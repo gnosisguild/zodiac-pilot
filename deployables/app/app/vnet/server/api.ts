@@ -3,12 +3,12 @@ import type { z, ZodTypeAny } from 'zod'
 
 type VnetApiOptions<Schema extends ZodTypeAny> = {
   schema: Schema
-  data?: Record<string, string | number | boolean | string[] | number[]>
+  searchParams?: Record<string, string | number | boolean | string[] | number[]>
 }
 
 export const api = async <Schema extends ZodTypeAny>(
   endpoint: `/${string}`,
-  { schema, data = {} }: VnetApiOptions<Schema>,
+  { schema, searchParams = {} }: VnetApiOptions<Schema>,
 ) => {
   const { TENDERLY_ACCESS_KEY, TENDERLY_PROJECT, TENDERLY_USER } =
     getTenderlyCredentials()
@@ -18,7 +18,7 @@ export const api = async <Schema extends ZodTypeAny>(
       endpoint,
   )
 
-  Object.entries(data).forEach(([key, value]) => {
+  Object.entries(searchParams).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach((entry) => url.searchParams.append(key, entry.toString()))
     } else {
