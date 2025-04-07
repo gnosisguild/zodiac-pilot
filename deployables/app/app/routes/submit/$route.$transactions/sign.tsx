@@ -319,7 +319,7 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
 
         const safeTxHash =
           state[
-            plan.findLastIndex(
+            plan.findIndex(
               (action) =>
                 action.type === ExecutionActionType.PROPOSE_TRANSACTION,
             )
