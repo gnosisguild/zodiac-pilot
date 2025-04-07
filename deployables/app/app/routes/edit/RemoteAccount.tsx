@@ -1,5 +1,5 @@
 import type { Account } from '@/db'
-import { useIsPending } from '@/hooks'
+import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import {
@@ -123,6 +123,8 @@ const Delete = ({
     (data) => data.get('accountId') === accountId,
   )
 
+  useAfterSubmit(Intent.RemoteDelete, () => setConfirmDelete(false))
+
   useEffect(() => {
     onConfirmChange(confirmDelete)
   }, [confirmDelete, onConfirmChange])
@@ -147,10 +149,7 @@ const Delete = ({
         open={confirmDelete}
         description="Are you sure you want to delete this account? This action cannot be undone."
       >
-        <Form
-          intent={Intent.RemoteDelete}
-          onSubmit={() => setConfirmDelete(false)}
-        >
+        <Form intent={Intent.RemoteDelete}>
           <Modal.Actions>
             <PrimaryButton
               submit
