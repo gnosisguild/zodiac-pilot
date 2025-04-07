@@ -3,4 +3,5 @@ export enum Intent {
   Delete = 'Delete',
   RemoteDelete = 'RemoteDelete',
   Launch = 'Launch',
+  RemoteLaunch = 'RemoteLaunch',
 }

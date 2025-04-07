@@ -1,9 +1,11 @@
 import { fromVersion, OnlyConnected, Page } from '@/components'
 import {
+  activateAccount,
   dbClient,
   deleteAccount,
   getAccount,
   getAccounts,
+  getActiveAccount,
   type Account,
 } from '@/db'
 import { routeTitle } from '@/utils'
@@ -49,15 +51,23 @@ export const loader = (args: Route.LoaderArgs) =>
         return {
           loggedIn: false,
           remoteAccounts: [] as Account[],
+          activeRemoteAccountId: null,
         }
       }
 
-      return {
-        loggedIn: true,
-        remoteAccounts: await getAccounts(dbClient(), {
+      const [remoteAccounts, activeRemoteAccount] = await Promise.all([
+        getAccounts(dbClient(), {
           tenantId: user.tenantId,
           userId: user.id,
         }),
+        getActiveAccount(dbClient(), user),
+      ])
+
+      return {
+        loggedIn: true,
+        remoteAccounts,
+        activeRemoteAccountId:
+          activeRemoteAccount == null ? null : activeRemoteAccount.id,
       }
     },
   )
@@ -90,6 +100,12 @@ export const action = async (args: Route.ActionArgs) =>
       switch (getString(data, 'intent')) {
         case Intent.RemoteDelete: {
           await deleteAccount(dbClient(), user, getString(data, 'accountId'))
+
+          return null
+        }
+
+        case Intent.RemoteLaunch: {
+          await activateAccount(dbClient(), user, getString(data, 'accountId'))
 
           return null
         }
@@ -156,7 +172,12 @@ export const clientAction = async ({
 }
 
 const ListRoutes = ({
-  loaderData: { remoteAccounts, loggedIn, ...clientData },
+  loaderData: {
+    remoteAccounts,
+    activeRemoteAccountId,
+    loggedIn,
+    ...clientData
+  },
 }: Route.ComponentProps) => {
   return (
     <Page fullWidth>
@@ -166,7 +187,11 @@ const ListRoutes = ({
         {remoteAccounts.length > 0 && (
           <Accounts>
             {remoteAccounts.map((account) => (
-              <RemoteAccount key={account.id} account={account} />
+              <RemoteAccount
+                key={account.id}
+                account={account}
+                active={activeRemoteAccountId === account.id}
+              />
             ))}
           </Accounts>
         )}

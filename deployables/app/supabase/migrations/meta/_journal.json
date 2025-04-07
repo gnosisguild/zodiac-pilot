@@ -120,6 +120,20 @@
       "when": 1744034078452,
       "tag": "0016_remove unique constraint from account",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1744034896722,
+      "tag": "0017_create active account",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1744034928695,
+      "tag": "0018_create indexes",
+      "breakpoints": true
     }
   ]
 }

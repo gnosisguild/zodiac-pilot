@@ -11,17 +11,19 @@ import {
   PrimaryButton,
   TableCell,
   TableRow,
+  Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Trash2 } from 'lucide-react'
+import { Play, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Intent } from './intents'
 
 type RemoteAccountProps = {
   account: Account
+  active: boolean
 }
 
-export const RemoteAccount = ({ account }: RemoteAccountProps) => {
+export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
@@ -29,11 +31,11 @@ export const RemoteAccount = ({ account }: RemoteAccountProps) => {
     >
       <TableCell aria-describedby={account.id}>{account.label}</TableCell>
       <TableCell>
-        {/* {active && (
-          <Tag aria-hidden id={account.id} color="green">
+        {active && (
+          <Tag id={account.id} color="green">
             Active
           </Tag>
-        )} */}
+        )}
       </TableCell>
       <TableCell>
         <Chain chainId={account.chainId}>{CHAIN_NAME[account.chainId]}</Chain>
@@ -70,6 +72,8 @@ const Actions = ({ accountId }: { accountId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
+      <Launch accountId={accountId} />
+
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -80,6 +84,29 @@ const Actions = ({ accountId }: { accountId: string }) => {
         <Delete accountId={accountId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
+  )
+}
+
+const Launch = ({ accountId }: { accountId: string }) => {
+  const submitting = useIsPending(
+    Intent.RemoteLaunch,
+    (data) => data.get('accountId') === accountId,
+  )
+
+  return (
+    <Form intent={Intent.RemoteLaunch}>
+      <GhostButton
+        submit
+        align="left"
+        size="tiny"
+        name="accountId"
+        value={accountId}
+        busy={submitting}
+        icon={Play}
+      >
+        Launch
+      </GhostButton>
+    </Form>
   )
 }
 

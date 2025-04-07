@@ -213,31 +213,58 @@ describe.sequential('List Routes', () => {
   })
 
   describe('Launch', () => {
-    it('is possible to launch a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-      const mockPostMessage = vi.spyOn(window, 'postMessage')
+    describe('Logged in', () => {
+      it('is possible to launch a route', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
+        await accountFactory.create(user, {
+          label: 'Test account',
+        })
+
+        await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Launch' }),
+        )
+
+        await waitFor(async () => {
+          expect(
+            await screen.findByRole('cell', { name: 'Test account' }),
+          ).toHaveAccessibleDescription('Active')
+        })
       })
+    })
 
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: route.id,
+    describe('Logged out', () => {
+      it('is possible to launch a route', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+        const mockPostMessage = vi.spyOn(window, 'postMessage')
+
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Launch' }),
+        )
+
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.LAUNCH_ROUTE,
+            routeId: route.id,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
       })
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Launch' }),
-      )
-
-      expect(mockPostMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.LAUNCH_ROUTE,
-          routeId: route.id,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
     })
   })
 })
