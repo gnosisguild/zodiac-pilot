@@ -1,3 +1,4 @@
+import roles from '@/images/features/roles.png'
 import routesDark from '@/images/features/routes-dark.png'
 import routesLight from '@/images/features/routes-light.png'
 import signDark from '@/images/features/sign-dark.png'
@@ -164,6 +165,7 @@ export function PrimaryFeatures() {
             , allowing accounts to define precise, programmable execution rules.
           </>
         }
+        media={<img src={roles} alt="" />}
       >
         <Description>
           <Description.Item

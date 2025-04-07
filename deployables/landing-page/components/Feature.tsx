@@ -26,8 +26,8 @@ export const Feature = ({
       color === 'pink' && 'via-pink-400/50 dark:via-pink-500/50',
     )}
   >
-    <div className="mx-auto max-w-7xl px-6 lg:px-8">
-      <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+    <div className="mx-4 lg:mx-12 2xl:mx-auto 2xl:max-w-7xl 2xl:px-8">
+      <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 2xl:gap-x-8">
         <div className="lg:pr-8 lg:pt-4">
           <div className="lg:max-w-lg">
             <h2
@@ -55,16 +55,9 @@ export const Feature = ({
             {children}
           </div>
         </div>
-        <div className="w-[48rem] max-w-none overflow-hidden rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0">
+        <div className="w-[48rem] max-w-full items-center overflow-hidden rounded-xl shadow-xl ring-1 ring-gray-400/10 md:-ml-4 md:w-[57rem] lg:-ml-0 2xl:max-w-none">
           {media}
         </div>
-        {/* <img
-          alt="Product screenshot"
-          src="https://tailwindcss.com/plus-assets/img/component-images/dark-project-app-screenshot.png"
-          width={2432}
-          height={1442}
-          
-        /> */}
       </div>
     </div>
   </div>
