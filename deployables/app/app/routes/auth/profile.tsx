@@ -113,7 +113,7 @@ export const action = async (args: Route.ActionArgs) =>
 const Profile = ({
   loaderData: { accessToken, sessionId, wallets },
 }: Route.ComponentProps) => {
-  const signingOut = useIsPending()
+  const signingOut = useIsPending(Intent.SignOut)
 
   return (
     <Page>
@@ -148,6 +148,16 @@ const Profile = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {wallets.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3}>
+                        <div className="text-center italic">
+                          You haven't created any wallets, yet.
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+
                   {wallets.map((wallet) => (
                     <TableRow key={wallet.id}>
                       <TableCell>{wallet.label}</TableCell>
@@ -155,19 +165,7 @@ const Profile = ({
                         <Address>{wallet.address}</Address>
                       </TableCell>
                       <TableCell>
-                        <InlineForm
-                          intent={Intent.DeleteWallet}
-                          context={{ walletId: wallet.id }}
-                        >
-                          <GhostButton
-                            submit
-                            iconOnly
-                            size="small"
-                            icon={Trash2}
-                          >
-                            Remove wallet
-                          </GhostButton>
-                        </InlineForm>
+                        <DeleteWallet walletId={wallet.id} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -216,8 +214,8 @@ const AddWallet = () => {
         title="Add Wallet"
       >
         <Form intent={Intent.AddWallet}>
-          <TextInput label="Label" name="label" placeholder="Label" />
-          <AddressInput label="Address" name="address" />
+          <TextInput required label="Label" name="label" placeholder="Label" />
+          <AddressInput required label="Address" name="address" />
 
           <Modal.Actions>
             <PrimaryButton submit busy={useIsPending(Intent.AddWallet)}>
@@ -228,6 +226,21 @@ const AddWallet = () => {
         </Form>
       </Modal>
     </>
+  )
+}
+
+const DeleteWallet = ({ walletId }: { walletId: string }) => {
+  const pending = useIsPending(
+    Intent.DeleteWallet,
+    (data) => data.get('walletId') === walletId,
+  )
+
+  return (
+    <InlineForm intent={Intent.DeleteWallet} context={{ walletId }}>
+      <GhostButton submit iconOnly busy={pending} size="small" icon={Trash2}>
+        Remove wallet
+      </GhostButton>
+    </InlineForm>
   )
 }
 

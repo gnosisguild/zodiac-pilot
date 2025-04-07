@@ -99,6 +99,13 @@
       "when": 1744017824665,
       "tag": "0013_cascade for wallet",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1744019277327,
+      "tag": "0014_remove unique index",
+      "breakpoints": true
     }
   ]
 }

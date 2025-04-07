@@ -137,11 +137,7 @@ export const WalletTable = pgTable(
     ...createdTimestamp,
     ...deletable,
   },
-  (table) => [
-    index().on(table.tenantId),
-    index().on(table.belongsToId),
-    unique().on(table.belongsToId, table.address),
-  ],
+  (table) => [index().on(table.tenantId), index().on(table.belongsToId)],
 )
 
 export type Wallet = typeof WalletTable.$inferSelect
