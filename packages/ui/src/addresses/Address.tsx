@@ -11,7 +11,7 @@ import { Blockie } from './Blockie'
 
 type AddressProps = {
   children: HexAddress | PrefixedAddress
-  label?: string
+  label?: string | null
   size?: Size
   /**
    * Render a copy button next to the address

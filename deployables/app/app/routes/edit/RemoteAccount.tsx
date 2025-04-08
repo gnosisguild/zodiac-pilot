@@ -1,4 +1,4 @@
-import type { Account } from '@/db'
+import type { Account, Wallet } from '@/db'
 import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
@@ -22,10 +22,15 @@ import { Intent } from './intents'
 
 type RemoteAccountProps = {
   account: Account
+  wallet?: Wallet
   active: boolean
 }
 
-export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
+export const RemoteAccount = ({
+  account,
+  wallet,
+  active,
+}: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
@@ -43,11 +48,13 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
         <Chain chainId={account.chainId}>{CHAIN_NAME[account.chainId]}</Chain>
       </TableCell>
       <TableCell>
-        <Address>{ZERO_ADDRESS}</Address>
-        {/* {account.initiator == null ? (
+        {wallet == null ? (
+          <Address>{ZERO_ADDRESS}</Address>
         ) : (
-          <Address shorten>{route.initiator}</Address>
-        )} */}
+          <Address shorten label={wallet.label}>
+            {wallet.address}
+          </Address>
+        )}
       </TableCell>
       <TableCell>
         <Address shorten>{account.address}</Address>
