@@ -9,9 +9,17 @@ import {
   getWallets,
   updateAccount,
 } from '@/db'
+import { useIsPending } from '@/hooks'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getOptionalHexString, getString } from '@zodiac/form-data'
-import { AddressSelect, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import {
+  AddressSelect,
+  Form,
+  GhostLinkButton,
+  PrimaryButton,
+  TextInput,
+} from '@zodiac/ui'
+import { href } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
 
@@ -113,7 +121,15 @@ const EditAccount = ({
           />
 
           <Form.Actions>
-            <PrimaryButton submit>Save</PrimaryButton>
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              busy={useIsPending(Intent.Save)}
+            >
+              Save
+            </PrimaryButton>
+
+            <GhostLinkButton to={href('/edit')}>Cancel</GhostLinkButton>
           </Form.Actions>
         </Form>
       </Page.Main>
@@ -122,3 +138,7 @@ const EditAccount = ({
 }
 
 export default EditAccount
+
+enum Intent {
+  Save = 'Save',
+}
