@@ -8,9 +8,16 @@ import { Address } from '../addresses'
 import { Select, type SelectProps } from './Select'
 
 type Option = {
-  label: HexAddress
+  label: string
   value: HexAddress
 }
+
+type LabeledAddress = {
+  label: string
+  address: HexAddress
+}
+
+type Options = HexAddress[] | LabeledAddress[]
 
 export type AddressSelectProps<Creatable extends boolean> = Omit<
   SelectProps<Option, Creatable>,
@@ -18,7 +25,7 @@ export type AddressSelectProps<Creatable extends boolean> = Omit<
 > & {
   value?: HexAddress | PrefixedAddress
   defaultValue?: HexAddress | PrefixedAddress
-  options: HexAddress[]
+  options: Options
 }
 
 export function AddressSelect<Creatable extends boolean>({
@@ -37,28 +44,65 @@ export function AddressSelect<Creatable extends boolean>({
     <Select
       {...props}
       allowCreate={allowCreate}
-      options={options.map((option) => ({ label: option, value: option }))}
+      options={options.map((option) => {
+        if (typeof option === 'string') {
+          return { label: option, value: option }
+        }
+
+        return { label: option.label, value: option.address }
+      })}
       isValidNewOption={(value) => validateAddress(value) != null}
       value={
-        processedValue == null
-          ? undefined
-          : { label: processedValue, value: processedValue }
+        processedValue == null ? undefined : getValue(options, processedValue)
       }
       defaultValue={
         processedDefaultValue == null
           ? undefined
-          : { label: processedDefaultValue, value: processedDefaultValue }
+          : getValue(options, processedDefaultValue)
       }
     >
       {(props) => (
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 flex-shrink-0">
-            <Address>{props.data.value}</Address>
+            <Address
+              label={
+                props.data.value === props.data.label ||
+                getValue(options, props.data.value) == null
+                  ? undefined
+                  : props.data.label
+              }
+            >
+              {props.data.value}
+            </Address>
           </div>
 
-          {children != null && children(props)}
+          <div aria-hidden id={props.selectProps.id}>
+            {children != null && children(props)}
+          </div>
         </div>
       )}
     </Select>
   )
+}
+
+const getValue = (options: Options, value: HexAddress) => {
+  return options.reduce<Option | undefined>((finalValue, option) => {
+    if (finalValue != null) {
+      return finalValue
+    }
+
+    if (typeof option === 'string') {
+      if (option === value) {
+        return { label: value, value }
+      }
+
+      return finalValue
+    }
+
+    if (option.address === value) {
+      return { label: option.label, value: option.address }
+    }
+
+    return finalValue
+  }, undefined)
 }

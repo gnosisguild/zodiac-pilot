@@ -16,14 +16,22 @@ export type UnauthorizedData = Omit<WorkOsUnauthorizedData, 'user'> & {
   workOsUser: WorkOsUnauthorizedData['user']
 }
 
-type AccessFn = (options: {
+type AccessFn<Params> = (options: {
   user: User
   request: Request
+  params: Params
 }) => boolean | Promise<boolean>
 
-export type GetAuthOptions = { ensureSignedIn: true; hasAccess?: AccessFn }
+export type GetAuthOptions<Params> = {
+  ensureSignedIn: true
+  hasAccess?: AccessFn<Params>
+}
 
-export const getAuth = (request: Request, options?: GetAuthOptions) => {
+export const getAuth = <Params>(
+  request: Request,
+  params: Params,
+  options?: GetAuthOptions<Params>,
+) => {
   const { promise, resolve, reject } = Promise.withResolvers<
     AuthorizedData | UnauthorizedData
   >()
@@ -41,7 +49,7 @@ export const getAuth = (request: Request, options?: GetAuthOptions) => {
         if (options && options.hasAccess != null) {
           invariantResponse(
             await Promise.resolve(
-              options.hasAccess({ user, request: request.clone() }),
+              options.hasAccess({ user, request: request.clone(), params }),
             ),
             'User has no access',
             {

@@ -11,6 +11,7 @@ import { Blockie } from './Blockie'
 
 type AddressProps = {
   children: HexAddress | PrefixedAddress
+  label?: string | null
   size?: Size
   /**
    * Render a copy button next to the address
@@ -31,6 +32,7 @@ export const Address = ({
   size = defaultSize,
   allowCopy = false,
   shorten = false,
+  label,
 }: AddressProps) => {
   const [, address] = splitPrefixedAddress(children)
 
@@ -60,12 +62,16 @@ export const Address = ({
         )}
       />
 
+      {label && <span className="font-semibold">{label}</span>}
+
       <code
+        aria-hidden={label != null}
         className={classNames(
           'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default uppercase',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',
+          label != null && 'opacity-50',
         )}
       >
         {shorten ? <ShortAddress>{address}</ShortAddress> : getAddress(address)}

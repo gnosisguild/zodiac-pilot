@@ -145,7 +145,9 @@ export const RouteTable = pgTable(
   'Route',
   {
     id: uuid().notNull().defaultRandom().primaryKey(),
-    fromId: uuid().references(() => WalletTable.id, { onDelete: 'set null' }),
+    fromId: uuid()
+      .notNull()
+      .references(() => WalletTable.id, { onDelete: 'set null' }),
     toId: uuid()
       .notNull()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
@@ -160,6 +162,20 @@ export const RouteTable = pgTable(
     index().on(table.tenantId),
   ],
 )
+
+export type Route = typeof RouteTable.$inferSelect
+export type RouteCreateInput = typeof RouteTable.$inferInsert
+
+const RouteRelations = relations(RouteTable, ({ one }) => ({
+  wallet: one(WalletTable, {
+    fields: [RouteTable.fromId],
+    references: [WalletTable.id],
+  }),
+  account: one(AccountTable, {
+    fields: [RouteTable.toId],
+    references: [AccountTable.id],
+  }),
+}))
 
 export const ActiveRouteTable = pgTable(
   'ActiveRoute',
@@ -185,6 +201,13 @@ export const ActiveRouteTable = pgTable(
     index().on(table.tenantId),
   ],
 )
+
+const ActiveRouteRelations = relations(ActiveRouteTable, ({ one }) => ({
+  route: one(RouteTable, {
+    fields: [ActiveRouteTable.routeId],
+    references: [RouteTable.id],
+  }),
+}))
 
 export const ActiveAccountTable = pgTable(
   'ActiveAccount',
@@ -230,6 +253,8 @@ export const schema = {
 
   TenantRelations,
   FeatureRelations,
+  RouteRelations,
   ActiveFeatureRelations,
+  ActiveRouteRelations,
   ActiveAccountRelations,
 }

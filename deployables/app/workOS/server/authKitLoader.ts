@@ -1,4 +1,7 @@
-import type { LoaderFunction, LoaderFunctionArgs } from 'react-router'
+import type {
+  LoaderFunctionArgs,
+  LoaderFunction as ReactRouteRLoaderFunction,
+} from 'react-router'
 import {
   getAuth,
   type AuthorizedData,
@@ -6,23 +9,32 @@ import {
   type UnauthorizedData,
 } from './getAuth'
 
+type LoaderFunction<Params, Context> = (args: {
+  request: Request
+  params: Params
+  context: Context
+}) => ReturnType<ReactRouteRLoaderFunction<Context>>
+
 export async function authKitLoader<
   Args extends LoaderFunctionArgs,
-  Fn extends LoaderFunction<{ auth: AuthorizedData }>,
+  Fn extends LoaderFunction<Args['params'], { auth: AuthorizedData }>,
 >(
   args: Args,
   fn: Fn,
-  options?: GetAuthOptions,
+  options?: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>>
 export async function authKitLoader<
   Args extends LoaderFunctionArgs,
-  Fn extends LoaderFunction<{ auth: AuthorizedData | UnauthorizedData }>,
+  Fn extends LoaderFunction<
+    Args['params'],
+    { auth: AuthorizedData | UnauthorizedData }
+  >,
 >(
   { request, params, context }: Args,
   fn: Fn,
-  options?: GetAuthOptions,
+  options?: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>> {
-  const auth = await getAuth(request, options)
+  const auth = await getAuth(request, params, options)
 
   // @ts-expect-error type check works during usage
   return await fn({ request, params, context: { auth, ...context } })
