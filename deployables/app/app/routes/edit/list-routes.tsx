@@ -18,6 +18,7 @@ import {
   useExtensionMessageHandler,
 } from '@zodiac/messages'
 import {
+  Feature,
   Info,
   SecondaryLinkButton,
   Table,
@@ -28,7 +29,6 @@ import {
 } from '@zodiac/ui'
 import { Suspense, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
-import { useFeatures } from '../../../../../packages/ui/src/features/FeatureContext'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -180,9 +180,6 @@ const ListRoutes = ({
     ...clientData
   },
 }: Route.ComponentProps) => {
-  const features = useFeatures()
-  const hasUserManagementFeature = features.includes('user-management')
-
   return (
     <Page fullWidth>
       <Page.Header>Safe Accounts</Page.Header>
@@ -215,7 +212,7 @@ const ListRoutes = ({
                                 activeRouteId={activeRouteId}
                               />
 
-                              {hasUserManagementFeature && (
+                              <Feature feature="user-management">
                                 <h2 className="my-6 text-xl">
                                   Local Accounts
                                   <p className="my-2 text-sm opacity-80">
@@ -224,7 +221,7 @@ const ListRoutes = ({
                                     extension is installed and open.
                                   </p>
                                 </h2>
-                              )}
+                              </Feature>
 
                               <Accounts>
                                 {localAccounts.map((route) => (
