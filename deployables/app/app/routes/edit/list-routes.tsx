@@ -181,7 +181,7 @@ const ListRoutes = ({
 }: Route.ComponentProps) => {
   return (
     <Page fullWidth>
-      <Page.Header>Accounts</Page.Header>
+      <Page.Header>Safe Accounts</Page.Header>
 
       <Page.Main>
         {remoteAccounts.length > 0 && (
@@ -269,8 +269,8 @@ const Accounts = ({ children }: PropsWithChildren) => {
             <span className="sr-only">Active</span>
           </TableHeader>
           <TableHeader>Chain</TableHeader>
-          <TableHeader>Operator</TableHeader>
-          <TableHeader>Account</TableHeader>
+          <TableHeader>Pilot Signer</TableHeader>
+          <TableHeader>Safe Account</TableHeader>
           <TableHeader className="relative w-0">
             <span className="sr-only">Actions</span>
           </TableHeader>

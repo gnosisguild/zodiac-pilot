@@ -9,7 +9,7 @@ export const connectWallet = async (
 ) => {
   await page.getByRole('button', { name: 'Connect wallet' }).click()
   await page.getByRole('button', { name: 'Browser Wallet' }).click()
-  await expect(page.getByRole('textbox', { name: 'Operator' })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Pilot Signer' })).toHaveValue(
     getAddress(account),
   )
 
