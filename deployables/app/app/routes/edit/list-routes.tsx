@@ -28,6 +28,7 @@ import {
 } from '@zodiac/ui'
 import { Suspense, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
+import { useFeatures } from '../../../../../packages/ui/src/features/FeatureContext'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -179,6 +180,9 @@ const ListRoutes = ({
     ...clientData
   },
 }: Route.ComponentProps) => {
+  const features = useFeatures()
+  const hasUserManagementFeature = features.includes('user-management')
+
   return (
     <Page fullWidth>
       <Page.Header>Safe Accounts</Page.Header>
@@ -211,14 +215,16 @@ const ListRoutes = ({
                                 activeRouteId={activeRouteId}
                               />
 
-                              <h2 className="my-6 text-xl">
-                                Local Accounts
-                                <p className="my-2 text-sm opacity-80">
-                                  Local accounts live only on your machine. They
-                                  are only usable when the Pilot browser
-                                  extension is installed and open.
-                                </p>
-                              </h2>
+                              {hasUserManagementFeature && (
+                                <h2 className="my-6 text-xl">
+                                  Local Accounts
+                                  <p className="my-2 text-sm opacity-80">
+                                    Local accounts live only on your machine.
+                                    They are only usable when the Pilot browser
+                                    extension is installed and open.
+                                  </p>
+                                </h2>
+                              )}
 
                               <Accounts>
                                 {localAccounts.map((route) => (
