@@ -7,6 +7,7 @@ import {
   getAccount,
   getWalletByAddress,
   getWallets,
+  removeActiveRoute,
   updateAccount,
 } from '@/db'
 import { useIsPending } from '@/hooks'
@@ -80,6 +81,8 @@ export const action = (args: Route.ActionArgs) =>
           const route = await createRoute(tx, wallet, account)
 
           await activateRoute(tx, user, route)
+        } else {
+          await removeActiveRoute(tx, user, accountId)
         }
 
         await updateAccount(tx, accountId, {
@@ -110,9 +113,11 @@ const EditAccount = ({
           <TextInput label="Label" name="label" defaultValue={label} />
 
           <AddressSelect
+            isClearable
             isMulti={false}
             label="Pilot Signer"
             name="initiator"
+            clearLabel="Remove Pilot Signer"
             defaultValue={initiator}
             options={initiators.map(({ address, label }) => ({
               address,

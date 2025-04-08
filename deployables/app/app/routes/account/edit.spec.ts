@@ -1,4 +1,10 @@
-import { activateRoute, dbClient, getAccount, getActiveRoute } from '@/db'
+import {
+  activateRoute,
+  dbClient,
+  findActiveRoute,
+  getAccount,
+  getActiveRoute,
+} from '@/db'
 import {
   accountFactory,
   render,
@@ -143,7 +149,34 @@ describe('Edit account', () => {
       })
     })
 
-    it.todo('is possible to remove the initiator')
+    it('is possible to remove the initiator', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user)
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), user, route)
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId', { accountId: account.id }),
+        { user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove Pilot Signer' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        findActiveRoute(dbClient(), user, account.id),
+      ).resolves.not.toBeDefined()
+    })
+
     it.todo('is possible to update the initiator')
   })
 })
