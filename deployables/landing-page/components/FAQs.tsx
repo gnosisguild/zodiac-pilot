@@ -104,7 +104,7 @@ export const FAQs = () => {
 
           <FAQ question="Are there fees associated with using Pilot?">
             <Text>
-              <Strong>Yes,</Strong> , but only for certain actions. See the{' '}
+              <Strong>Yes</Strong>, but only for certain actions. See the{' '}
               <TextLink to="https://gnosisguild.notion.site/Zodiac-Pilot-Fees-1ced812d4bc080cc82b3d1072b7fc920?pvs=4">
                 Pilot fees table
               </TextLink>{' '}
