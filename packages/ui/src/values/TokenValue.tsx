@@ -14,7 +14,6 @@ export const TokenValue = ({
   symbol,
   delta,
 }: TokenValueProps) => {
-  console.log('delta', delta)
   return (
     <span className="inline-flex items-center gap-2">
       {symbol && (

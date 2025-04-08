@@ -1,0 +1,1 @@
+ALTER TABLE "Account" DROP CONSTRAINT "Account_tenantId_chainId_address_unique";

@@ -139,6 +139,8 @@ export const render = async (
     await postMessage({ type: PilotMessageType.PILOT_CONNECT })
   }
 
+  await renderResult.waitForPendingLoaders()
+
   return renderResult
 }
 

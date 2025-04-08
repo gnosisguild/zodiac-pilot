@@ -1,5 +1,14 @@
 import { getAvailableChains } from '@/balances-server'
-import { loadRoutes, postMessage, render } from '@/test-utils'
+import { activateAccount, dbClient, getAccounts, getActiveAccount } from '@/db'
+import {
+  accountFactory,
+  loadAndActivateRoute,
+  loadRoutes,
+  postMessage,
+  render,
+  tenantFactory,
+  userFactory,
+} from '@/test-utils'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -19,140 +28,286 @@ describe.sequential('List Routes', () => {
     mockGetAvailableChains.mockResolvedValue([])
   })
 
-  describe('Active route', () => {
-    it('indicates which route is currently active', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
+  describe('List', () => {
+    describe('Logged in', () => {
+      it('lists all routes', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-        activeRouteId: route.id,
+        await accountFactory.create(user, {
+          label: 'Test account',
+        })
+
+        await render(href('/edit'), { user })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test account' }),
+        ).toBeInTheDocument()
       })
-
-      expect(
-        await screen.findByRole('cell', { name: 'Test route' }),
-      ).toHaveAccessibleDescription('Active')
     })
   })
 
   describe('Edit', () => {
-    it('is possible to edit a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
+    describe('Logged in', () => {
+      it('is possible to edit a route', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        availableRoutes: [route],
-        version: '3.6.0',
-        activeRouteId: route.id,
+        const account = await accountFactory.create(user)
+
+        await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+        await expectRouteToBe(
+          href('/account/:accountId', {
+            accountId: account.id,
+          }),
+        )
       })
+    })
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+    describe('Logged out', () => {
+      it('is possible to edit a route', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
 
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
+        await render(href('/edit'), {
+          availableRoutes: [route],
+          version: '3.6.0',
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route,
+        })
+
+        await loadRoutes()
+
+        await expectRouteToBe(
+          href('/edit/:routeId/:data', {
+            routeId: route.id,
+            data: encode(route),
+          }),
+        )
       })
-
-      await loadRoutes()
-
-      await expectRouteToBe(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
-          data: encode(route),
-        }),
-      )
     })
   })
 
   describe('Remove', () => {
-    it('is possible to remove a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-      const mockPostMessage = vi.spyOn(window, 'postMessage')
+    describe('Logged in', () => {
+      it('is possible to remove an account', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-        activeRouteId: route.id,
+        const account = await accountFactory.create(user)
+
+        const { waitForPendingActions } = await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
+
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
+
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        await waitForPendingActions()
+
+        const [deletedAccount] = await getAccounts(dbClient(), {
+          userId: user.id,
+          tenantId: tenant.id,
+          deleted: true,
+        })
+
+        expect(deletedAccount).toMatchObject({
+          id: account.id,
+
+          deleted: true,
+          deletedById: user.id,
+        })
       })
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Delete' }),
-      )
-
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
-
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-      expect(mockPostMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.DELETE_ROUTE,
-          routeId: route.id,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
     })
 
-    it('hides the dialog once the delete is confirmed', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
+    describe('Logged out', () => {
+      it('is possible to remove an account', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+        const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-        activeRouteId: route.id,
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await loadAndActivateRoute(route)
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
+
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
+
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.DELETE_ROUTE,
+            routeId: route.id,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
       })
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Delete' }),
-      )
+      it('hides the dialog once the delete is confirmed', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
 
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
+        await render(href('/edit'), {
+          availableRoutes: [route],
+          version: '3.6.0',
+        })
 
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
+        await loadAndActivateRoute(route)
 
-      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Delete' }),
+        )
 
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('dialog', { name: 'Confirm delete' }),
-        ).not.toBeInTheDocument()
+        const { getByRole } = within(
+          screen.getByRole('dialog', { name: 'Confirm delete' }),
+        )
+
+        await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+        await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+
+        await waitFor(() => {
+          expect(
+            screen.queryByRole('dialog', { name: 'Confirm delete' }),
+          ).not.toBeInTheDocument()
+        })
       })
     })
   })
 
-  describe('Launch', () => {
-    it('is possible to launch a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-      const mockPostMessage = vi.spyOn(window, 'postMessage')
+  describe('Activate', () => {
+    describe('Logged in', () => {
+      it('is possible to activate an account', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-        activeRouteId: route.id,
+        const account = await accountFactory.create(user, {
+          label: 'Test account',
+        })
+
+        const { waitForPendingActions } = await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Launch' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(getActiveAccount(dbClient(), user)).resolves.toEqual(
+          account,
+        )
       })
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Launch' }),
-      )
+      it('indicates which route is currently active', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      expect(mockPostMessage).toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.LAUNCH_ROUTE,
-          routeId: route.id,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
+        const account = await accountFactory.create(user, {
+          label: 'Test account',
+        })
+
+        await activateAccount(dbClient(), user, account.id)
+
+        await render(href('/edit'), {
+          user,
+        })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test account' }),
+        ).toHaveAccessibleDescription('Active')
+      })
+    })
+
+    describe('Logged out', () => {
+      it('is possible to activate an account', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+        const mockPostMessage = vi.spyOn(window, 'postMessage')
+
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Launch' }),
+        )
+
+        expect(mockPostMessage).toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.LAUNCH_ROUTE,
+            routeId: route.id,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
+      })
+
+      it('indicates which route is currently active', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test route' }),
+        ).toHaveAccessibleDescription('Active')
+      })
     })
   })
 })

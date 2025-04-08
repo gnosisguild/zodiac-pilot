@@ -81,6 +81,7 @@ export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
 
 export type RenderFrameworkResult = RenderResult & {
   waitForPendingActions: () => Promise<void>
+  waitForPendingLoaders: () => Promise<void>
 }
 
 const CombinedTestElement = () => (
@@ -97,9 +98,17 @@ export async function createRenderFramework<Config extends RouteConfig>(
 ) {
   const routes = await Promise.resolve(routeConfig)
 
+  const pendingLoaders: Promise<void>[] = []
   const pendingActions: Promise<void>[] = []
 
   const stubbedRoutes = await stubRoutes(basePath, routes, {
+    startLoader: () => {
+      const { resolve, promise } = Promise.withResolvers<void>()
+
+      pendingLoaders.push(promise)
+
+      return resolve
+    },
     startAction: () => {
       const { resolve, promise } = Promise.withResolvers<void>()
 
@@ -108,6 +117,10 @@ export async function createRenderFramework<Config extends RouteConfig>(
       return resolve
     },
   })
+
+  const waitForPendingLoaders = async () => {
+    await Promise.all(pendingLoaders)
+  }
 
   const waitForPendingActions = async () => {
     await Promise.all(pendingActions)
@@ -147,7 +160,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
     await waitForTestElement()
     await sleepTillIdle()
 
-    return { ...result, waitForPendingActions }
+    return { ...result, waitForPendingActions, waitForPendingLoaders }
   }
 }
 
@@ -161,12 +174,13 @@ type StubRoute = {
 
 type StubRoutesOptions = {
   startAction: () => ResolveFn
+  startLoader: () => ResolveFn
 }
 
 function stubRoutes(
   basePath: URL,
   routes: RouteConfigEntry[],
-  { startAction }: StubRoutesOptions,
+  { startAction, startLoader }: StubRoutesOptions,
 ): Promise<StubRoute[]> {
   return Promise.all(
     routes.map(async (route) => {
@@ -191,20 +205,26 @@ function stubRoutes(
         // the test stub from react-router unfortunately
         // doesn't handle the clientLoader/loader hierarchy
         // so we built it ouselves.
-        loader(loaderArgs: LoaderFunctionArgs) {
-          if (clientLoader != null) {
-            return clientLoader({
-              ...loaderArgs,
-              serverLoader:
-                loader == null ? undefined : () => loader(loaderArgs),
-            })
-          }
+        async loader(loaderArgs: LoaderFunctionArgs) {
+          const finishLoader = startLoader()
 
-          if (loader != null) {
-            return loader(loaderArgs)
-          }
+          try {
+            if (clientLoader != null) {
+              return await clientLoader({
+                ...loaderArgs,
+                serverLoader:
+                  loader == null ? undefined : () => loader(loaderArgs),
+              })
+            }
 
-          return null
+            if (loader != null) {
+              return await loader(loaderArgs)
+            }
+
+            return null
+          } finally {
+            finishLoader()
+          }
         },
         // the test stub from react-router unfortunately
         // doesn't handle the clientAction/action hierarchy
@@ -251,6 +271,7 @@ function stubRoutes(
           route.children != null
             ? await stubRoutes(basePath, route.children, {
                 startAction,
+                startLoader,
               })
             : undefined,
       }

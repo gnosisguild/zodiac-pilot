@@ -1,3 +1,4 @@
+import type { ChainId } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
@@ -107,17 +108,14 @@ export const AccountTable = pgTable(
       .notNull()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text(),
-    chainId: integer().notNull(),
-    address: text().notNull(),
+    chainId: integer().$type<ChainId>().notNull(),
+    address: text().$type<HexAddress>().notNull(),
 
     ...tenantReference,
     ...createdTimestamp,
+    ...deletable,
   },
-  (table) => [
-    index().on(table.tenantId),
-    index().on(table.createdById),
-    unique().on(table.tenantId, table.chainId, table.address),
-  ],
+  (table) => [index().on(table.tenantId), index().on(table.createdById)],
 )
 
 export type Account = typeof AccountTable.$inferSelect
@@ -188,6 +186,37 @@ export const ActiveRouteTable = pgTable(
   ],
 )
 
+export const ActiveAccountTable = pgTable(
+  'ActiveAccount',
+  {
+    userId: uuid()
+      .notNull()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+    accountId: uuid()
+      .notNull()
+      .references(() => AccountTable.id, { onDelete: 'cascade' }),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.accountId),
+    index().on(table.tenantId),
+    index().on(table.userId),
+  ],
+)
+
+const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
+  user: one(UserTable, {
+    fields: [ActiveAccountTable.userId],
+    references: [UserTable.id],
+  }),
+  account: one(AccountTable, {
+    fields: [ActiveAccountTable.accountId],
+    references: [AccountTable.id],
+  }),
+}))
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -197,8 +226,10 @@ export const schema = {
   wallet: WalletTable,
   route: RouteTable,
   activeRoute: ActiveRouteTable,
+  activeAccount: ActiveAccountTable,
 
   TenantRelations,
   FeatureRelations,
   ActiveFeatureRelations,
+  ActiveAccountRelations,
 }

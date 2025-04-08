@@ -1,8 +1,15 @@
-import { fromVersion, MinimumVersion, OnlyConnected, Page } from '@/components'
-import { useIsPending } from '@/hooks'
-import { Chain } from '@/routes-ui'
+import { fromVersion, OnlyConnected, Page } from '@/components'
+import {
+  activateAccount,
+  dbClient,
+  deleteAccount,
+  getAccount,
+  getAccounts,
+  getActiveAccount,
+  type Account,
+} from '@/db'
 import { routeTitle } from '@/utils'
-import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
@@ -10,51 +17,119 @@ import {
   CompanionResponseMessageType,
   useExtensionMessageHandler,
 } from '@zodiac/messages'
-import { type ExecutionRoute } from '@zodiac/schema'
 import {
-  Address,
-  Form,
-  GhostButton,
-  GhostLinkButton,
   Info,
-  MeatballMenu,
-  Modal,
-  PrimaryButton,
   SecondaryLinkButton,
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Tag,
 } from '@zodiac/ui'
-import classNames from 'classnames'
-import { Pencil, Play, Trash2 } from 'lucide-react'
-import { useEffect, useState, type PropsWithChildren } from 'react'
-import { href, useRevalidator } from 'react-router'
+import { Suspense, type PropsWithChildren } from 'react'
+import { Await, useRevalidator } from 'react-router'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
 import { loadRoutes } from './loadRoutes'
+import { LocalAccount } from './LocalAccount'
+import { RemoteAccount } from './RemoteAccount'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Accounts') },
 ]
 
-export const clientLoader = async () => {
-  const [routes, activeRouteId] = await Promise.all([
-    loadRoutes(),
-    fromVersion('3.6.0', () => loadActiveRouteId()),
-  ])
+export const loader = (args: Route.LoaderArgs) =>
+  authKitLoader(
+    args,
+    async ({
+      context: {
+        auth: { user },
+      },
+    }) => {
+      if (user == null) {
+        return {
+          loggedIn: false,
+          remoteAccounts: [] as Account[],
+          activeRemoteAccountId: null,
+        }
+      }
 
-  return { routes, activeRouteId }
+      const [remoteAccounts, activeRemoteAccount] = await Promise.all([
+        getAccounts(dbClient(), {
+          tenantId: user.tenantId,
+          userId: user.id,
+        }),
+        getActiveAccount(dbClient(), user),
+      ])
+
+      return {
+        loggedIn: true,
+        remoteAccounts,
+        activeRemoteAccountId:
+          activeRemoteAccount == null ? null : activeRemoteAccount.id,
+      }
+    },
+  )
+
+export const clientLoader = async ({
+  serverLoader,
+}: Route.ClientLoaderArgs) => {
+  const serverData = await serverLoader()
+
+  return {
+    ...serverData,
+    localAccounts: loadRoutes(),
+    activeRouteId: fromVersion('3.6.0', () => loadActiveRouteId()),
+  }
 }
 
 clientLoader.hydrate = true as const
 
-export const clientAction = async ({ request }: Route.ClientActionArgs) => {
-  const data = await request.formData()
+export const action = async (args: Route.ActionArgs) =>
+  authKitAction(
+    args,
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
+      const data = await request.formData()
+
+      switch (getString(data, 'intent')) {
+        case Intent.RemoteDelete: {
+          await deleteAccount(dbClient(), user, getString(data, 'accountId'))
+
+          return null
+        }
+
+        case Intent.RemoteLaunch: {
+          await activateAccount(dbClient(), user, getString(data, 'accountId'))
+
+          return null
+        }
+      }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ user, request }) {
+        const data = await request.formData()
+        const account = await getAccount(
+          dbClient(),
+          getString(data, 'accountId'),
+        )
+
+        return account.createdById === user.id
+      },
+    },
+  )
+
+export const clientAction = async ({
+  request,
+  serverAction,
+}: Route.ClientActionArgs) => {
+  const data = await request.clone().formData()
   const intent = getString(data, 'intent')
 
   switch (intent) {
@@ -89,49 +164,91 @@ export const clientAction = async ({ request }: Route.ClientActionArgs) => {
 
       return null
     }
+
+    default: {
+      return await serverAction()
+    }
   }
 }
 
-const ListRoutes = ({ loaderData }: Route.ComponentProps) => {
-  const { revalidate, state } = useRevalidator()
-
-  useExtensionMessageHandler(
-    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-    ({ activeRouteId }) => {
-      if (state === 'idle' && activeRouteId !== loaderData.activeRouteId) {
-        revalidate()
-      }
-    },
-  )
-
+const ListRoutes = ({
+  loaderData: {
+    remoteAccounts,
+    activeRemoteAccountId,
+    loggedIn,
+    ...clientData
+  },
+}: Route.ComponentProps) => {
   return (
     <Page fullWidth>
       <Page.Header>Accounts</Page.Header>
 
       <Page.Main>
-        <OnlyConnected>
-          {'routes' in loaderData &&
-            (loaderData.routes.length > 0 ? (
-              <Routes>
-                {loaderData.routes.map((route) => (
-                  <Route
-                    key={route.id}
-                    route={route}
-                    active={route.id === loaderData.activeRouteId}
-                  />
-                ))}
-              </Routes>
-            ) : (
-              <Info title="You haven't created any accounts, yet.">
-                Accounts let you quickly impersonate other safes and record
-                transaction bundles for them.
-                <div className="mt-4 flex">
-                  <SecondaryLinkButton to="/create">
-                    Create an account
-                  </SecondaryLinkButton>
-                </div>
-              </Info>
+        {remoteAccounts.length > 0 && (
+          <Accounts>
+            {remoteAccounts.map((account) => (
+              <RemoteAccount
+                key={account.id}
+                account={account}
+                active={activeRemoteAccountId === account.id}
+              />
             ))}
+          </Accounts>
+        )}
+
+        <OnlyConnected showWarning={!loggedIn}>
+          {'localAccounts' in clientData && (
+            <Suspense>
+              <Await resolve={clientData.localAccounts}>
+                {(localAccounts) => (
+                  <>
+                    {localAccounts.length > 0 ? (
+                      <Suspense>
+                        <Await resolve={clientData.activeRouteId}>
+                          {(activeRouteId) => (
+                            <>
+                              <RevalidateWhenActiveRouteChanges
+                                activeRouteId={activeRouteId}
+                              />
+
+                              <h2 className="my-6 text-xl">
+                                Local Accounts
+                                <p className="my-2 text-sm opacity-80">
+                                  Local accounts live only on your machine. They
+                                  are only usable when the Pilot browser
+                                  extension is installed and open.
+                                </p>
+                              </h2>
+
+                              <Accounts>
+                                {localAccounts.map((route) => (
+                                  <LocalAccount
+                                    key={route.id}
+                                    route={route}
+                                    active={route.id === activeRouteId}
+                                  />
+                                ))}
+                              </Accounts>
+                            </>
+                          )}
+                        </Await>
+                      </Suspense>
+                    ) : (
+                      <Info title="You haven't created any accounts, yet.">
+                        Accounts let you quickly impersonate other safes and
+                        record transaction bundles for them.
+                        <div className="mt-4 flex">
+                          <SecondaryLinkButton to="/create">
+                            Create an account
+                          </SecondaryLinkButton>
+                        </div>
+                      </Info>
+                    )}
+                  </>
+                )}
+              </Await>
+            </Suspense>
+          )}
         </OnlyConnected>
       </Page.Main>
     </Page>
@@ -140,7 +257,7 @@ const ListRoutes = ({ loaderData }: Route.ComponentProps) => {
 
 export default ListRoutes
 
-const Routes = ({ children }: PropsWithChildren) => {
+const Accounts = ({ children }: PropsWithChildren) => {
   return (
     <Table
       bleed
@@ -166,167 +283,21 @@ const Routes = ({ children }: PropsWithChildren) => {
   )
 }
 
-type RouteProps = { route: ExecutionRoute; active: boolean }
-
-const Route = ({ route, active }: RouteProps) => {
-  const chainId = getChainId(route.avatar)
-
-  return (
-    <TableRow
-      className="group"
-      href={href('/edit/:routeId', { routeId: route.id })}
-    >
-      <TableCell aria-describedby={route.id}>{route.label}</TableCell>
-      <TableCell>
-        {active && (
-          <Tag aria-hidden id={route.id} color="green">
-            Active
-          </Tag>
-        )}
-      </TableCell>
-      <TableCell>
-        <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
-      </TableCell>
-      <TableCell>
-        {route.initiator == null ? (
-          <Address>{ZERO_ADDRESS}</Address>
-        ) : (
-          <Address shorten>{route.initiator}</Address>
-        )}
-      </TableCell>
-      <TableCell>
-        <Address shorten>{route.avatar}</Address>
-      </TableCell>
-      <TableCell>
-        <Actions routeId={route.id} />
-      </TableCell>
-    </TableRow>
-  )
-}
-
-const Actions = ({ routeId }: { routeId: string }) => {
-  const submitting = useIsPending(
-    undefined,
-    (data) => data.get('routeId') === routeId,
-  )
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [confirmingDelete, setConfirmingDelete] = useState(false)
-
-  return (
-    <div
-      className={classNames(
-        'flex justify-end gap-1 transition-opacity group-hover:opacity-100',
-        submitting || menuOpen ? 'opacity-100' : 'opacity-0',
-      )}
-    >
-      <MinimumVersion version="3.6.0">
-        <Launch routeId={routeId} />
-      </MinimumVersion>
-      <MeatballMenu
-        open={menuOpen || confirmingDelete}
-        size="tiny"
-        label="Account options"
-        onRequestShow={() => setMenuOpen(true)}
-        onRequestHide={() => setMenuOpen(false)}
-      >
-        <Edit routeId={routeId} />
-
-        <MinimumVersion version="3.6.0">
-          <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
-        </MinimumVersion>
-      </MeatballMenu>
-    </div>
-  )
-}
-
-const Launch = ({ routeId }: { routeId: string }) => {
-  const submitting = useIsPending(
-    Intent.Launch,
-    (data) => data.get('routeId') === routeId,
-  )
-
-  return (
-    <Form intent={Intent.Launch}>
-      <GhostButton
-        submit
-        align="left"
-        size="tiny"
-        name="routeId"
-        value={routeId}
-        busy={submitting}
-        icon={Play}
-      >
-        Launch
-      </GhostButton>
-    </Form>
-  )
-}
-
-const Edit = ({ routeId }: { routeId: string }) => (
-  <GhostLinkButton
-    to={href('/edit/:routeId', { routeId })}
-    align="left"
-    size="tiny"
-    icon={Pencil}
-  >
-    Edit
-  </GhostLinkButton>
-)
-
-const Delete = ({
-  routeId,
-  onConfirmChange,
+const RevalidateWhenActiveRouteChanges = ({
+  activeRouteId,
 }: {
-  routeId: string
-  onConfirmChange: (state: boolean) => void
+  activeRouteId: string | void | null
 }) => {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const submitting = useIsPending(
-    Intent.Delete,
-    (data) => data.get('routeId') === routeId,
+  const { revalidate, state } = useRevalidator()
+
+  useExtensionMessageHandler(
+    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+    ({ activeRouteId: newActiveRouteId }) => {
+      if (state === 'idle' && activeRouteId !== newActiveRouteId) {
+        revalidate()
+      }
+    },
   )
 
-  useEffect(() => {
-    onConfirmChange(confirmDelete)
-  }, [confirmDelete, onConfirmChange])
-
-  return (
-    <>
-      <GhostButton
-        align="left"
-        size="tiny"
-        icon={Trash2}
-        style="critical"
-        onClick={() => setConfirmDelete(true)}
-        busy={submitting}
-      >
-        Delete
-      </GhostButton>
-
-      <Modal
-        title="Confirm delete"
-        closeLabel="Cancel"
-        onClose={() => setConfirmDelete(false)}
-        open={confirmDelete}
-        description="Are you sure you want to delete this account? This action cannot be undone."
-      >
-        <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
-          <Modal.Actions>
-            <PrimaryButton
-              submit
-              name="routeId"
-              value={routeId}
-              busy={submitting}
-            >
-              Delete
-            </PrimaryButton>
-
-            <GhostButton onClick={() => setConfirmDelete(false)}>
-              Cancel
-            </GhostButton>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
-  )
+  return null
 }
