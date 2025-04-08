@@ -15,7 +15,7 @@ import {
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Play, Trash2 } from 'lucide-react'
+import { Pencil, Play, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { href } from 'react-router'
 import { Intent } from './intents'
@@ -90,7 +90,12 @@ const Actions = ({ accountId }: { accountId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
-        <GhostLinkButton to={href('/account/:accountId', { accountId })}>
+        <GhostLinkButton
+          to={href('/account/:accountId', { accountId })}
+          icon={Pencil}
+          align="left"
+          size="tiny"
+        >
           Edit
         </GhostLinkButton>
         <Delete accountId={accountId} onConfirmChange={setConfirmingDelete} />
