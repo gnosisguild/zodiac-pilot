@@ -1,5 +1,11 @@
 import { Page } from '@/components'
-import { dbClient, getAccount, getWallets, updateAccount } from '@/db'
+import {
+  dbClient,
+  getAccount,
+  getActiveRoute,
+  getWallets,
+  updateAccount,
+} from '@/db'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
 import { AddressSelect, Form, PrimaryButton, TextInput } from '@zodiac/ui'
@@ -20,9 +26,12 @@ export const loader = (args: Route.LoaderArgs) =>
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
 
       return {
         label: account.label || '',
+        initiator:
+          activeRoute == null ? undefined : activeRoute.route.wallet.address,
         initiators: wallets.filter((wallet) =>
           initiators.includes(wallet.address),
         ),
@@ -61,7 +70,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditAccount = ({
-  loaderData: { label, initiators },
+  loaderData: { label, initiators, initiator },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -73,6 +82,7 @@ const EditAccount = ({
           <AddressSelect
             isMulti={false}
             label="Pilot Signer"
+            defaultValue={initiator}
             options={initiators.map(({ address, label }) => ({
               address,
               label,

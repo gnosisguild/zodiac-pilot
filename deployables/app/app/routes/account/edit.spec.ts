@@ -1,7 +1,8 @@
-import { dbClient, getAccount } from '@/db'
+import { activateRoute, dbClient, getAccount } from '@/db'
 import {
   accountFactory,
   render,
+  routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
@@ -89,6 +90,24 @@ describe('Edit account', () => {
       expect(
         await screen.findByRole('option', { name: 'Test Wallet' }),
       ).toBeInTheDocument()
+    })
+
+    it('shows the current initiator', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test Wallet' })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), user, route)
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+      })
+
+      expect(await screen.findByText('Test Wallet')).toBeInTheDocument()
     })
   })
 })

@@ -17,13 +17,15 @@ type LabeledAddress = {
   address: HexAddress
 }
 
+type Options = HexAddress[] | LabeledAddress[]
+
 export type AddressSelectProps<Creatable extends boolean> = Omit<
   SelectProps<Option, Creatable>,
   'options' | 'value' | 'defaultValue'
 > & {
   value?: HexAddress | PrefixedAddress
   defaultValue?: HexAddress | PrefixedAddress
-  options: HexAddress[] | LabeledAddress[]
+  options: Options
 }
 
 export function AddressSelect<Creatable extends boolean>({
@@ -51,14 +53,12 @@ export function AddressSelect<Creatable extends boolean>({
       })}
       isValidNewOption={(value) => validateAddress(value) != null}
       value={
-        processedValue == null
-          ? undefined
-          : { label: processedValue, value: processedValue }
+        processedValue == null ? undefined : getValue(options, processedValue)
       }
       defaultValue={
         processedDefaultValue == null
           ? undefined
-          : { label: processedDefaultValue, value: processedDefaultValue }
+          : getValue(options, processedDefaultValue)
       }
     >
       {(props) => (
@@ -82,4 +82,22 @@ export function AddressSelect<Creatable extends boolean>({
       )}
     </Select>
   )
+}
+
+const getValue = (options: Options, value: HexAddress) => {
+  return options.reduce<Option | undefined>((finalValue, option) => {
+    if (finalValue != null) {
+      return finalValue
+    }
+
+    if (typeof option === 'string') {
+      return { label: value, value }
+    }
+
+    if (option.address === value) {
+      return { label: option.label, value: option.address }
+    }
+
+    return finalValue
+  }, undefined)
 }

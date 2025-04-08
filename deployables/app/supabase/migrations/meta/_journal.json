@@ -134,6 +134,13 @@
       "when": 1744034928695,
       "tag": "0018_create indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1744109594973,
+      "tag": "0019_route must have from and to",
+      "breakpoints": true
     }
   ]
 }

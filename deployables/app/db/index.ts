@@ -1,9 +1,17 @@
 export * from './access'
 export { dbClient, type DBClient } from './dbClient'
-export { AccountTable, TenantTable, UserTable, WalletTable } from './schema'
+export {
+  AccountTable,
+  RouteTable,
+  TenantTable,
+  UserTable,
+  WalletTable,
+} from './schema'
 export type {
   Account,
   AccountCreateInput,
+  Route,
+  RouteCreateInput,
   Tenant,
   TenantCreateInput,
   User,
