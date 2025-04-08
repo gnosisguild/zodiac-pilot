@@ -51,7 +51,7 @@ describe('Transactions', () => {
       )
 
       await userEvent.click(
-        screen.getByRole('combobox', { name: 'SafeAccounts' }),
+        screen.getByRole('combobox', { name: 'Safe Accounts' }),
       )
       await userEvent.click(
         screen.getByRole('option', { name: 'Second route' }),
