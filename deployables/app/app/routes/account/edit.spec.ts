@@ -4,11 +4,26 @@ import {
   render,
   tenantFactory,
   userFactory,
+  walletFactory,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { queryInitiators } from 'ser-kit'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('ser-kit', async (importOriginal) => {
+  const module = await importOriginal<typeof import('ser-kit')>()
+
+  return {
+    ...module,
+
+    queryInitiators: vi.fn(),
+  }
+})
+
+const mockQueryInitiators = vi.mocked(queryInitiators)
 
 describe('Edit account', () => {
   describe('Label', () => {
@@ -17,7 +32,9 @@ describe('Edit account', () => {
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(user, { label: 'Test label' })
 
-      await render(href('/account/:accountId', { accountId: account.id }))
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+      })
 
       expect(await screen.findByRole('textbox', { name: 'Label' })).toHaveValue(
         'Test label',
@@ -31,6 +48,7 @@ describe('Edit account', () => {
 
       const { waitForPendingActions } = await render(
         href('/account/:accountId', { accountId: account.id }),
+        { user },
       )
 
       await userEvent.type(
@@ -45,6 +63,32 @@ describe('Edit account', () => {
         'label',
         'New label',
       )
+    })
+  })
+
+  describe('Pilot Signer', () => {
+    it('lists all wallets that can be signers on the selected account', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+
+      const address = randomAddress()
+
+      await walletFactory.create(user, { label: 'Test Wallet', address })
+
+      mockQueryInitiators.mockResolvedValue([address])
+
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+      })
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+
+      expect(
+        await screen.findByRole('option', { name: 'Test Wallet' }),
+      ).toBeInTheDocument()
     })
   })
 })

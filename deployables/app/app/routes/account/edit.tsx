@@ -1,17 +1,32 @@
 import { Page } from '@/components'
-import { dbClient, getAccount, updateAccount } from '@/db'
+import { dbClient, getAccount, getWallets, updateAccount } from '@/db'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
-import { Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { AddressSelect, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
 
 export const loader = (args: Route.LoaderArgs) =>
   authKitLoader(
     args,
-    async ({ params: { accountId } }) => {
+    async ({
+      params: { accountId },
+      context: {
+        auth: { user },
+      },
+    }) => {
       const account = await getAccount(dbClient(), accountId)
+      const wallets = await getWallets(dbClient(), user.id)
+      const initiators = await queryInitiators(
+        prefixAddress(account.chainId, account.address),
+      )
 
-      return { label: account.label || '' }
+      return {
+        label: account.label || '',
+        initiators: wallets.filter((wallet) =>
+          initiators.includes(wallet.address),
+        ),
+      }
     },
     {
       ensureSignedIn: true,
@@ -45,13 +60,25 @@ export const action = (args: Route.ActionArgs) =>
     },
   )
 
-const EditAccount = ({ loaderData: { label } }: Route.ComponentProps) => {
+const EditAccount = ({
+  loaderData: { label, initiators },
+}: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Edit Account</Page.Header>
       <Page.Main>
         <Form>
           <TextInput label="Label" name="label" defaultValue={label} />
+
+          <AddressSelect
+            isMulti={false}
+            label="Pilot Signer"
+            options={initiators.map(({ address, label }) => ({
+              address,
+              label,
+            }))}
+          />
+
           <Form.Actions>
             <PrimaryButton submit>Save</PrimaryButton>
           </Form.Actions>
