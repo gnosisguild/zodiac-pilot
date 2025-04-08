@@ -30,9 +30,10 @@ export function Footer() {
 
         <Text className="text-balance text-center text-sm">
           Zodiac Pilot is an open-source tool built by{' '}
-          <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>. All
-          information is for informational purposes only and does not constitute
-          legal, financial, or investment advice.{' '}
+          <TextLink to="https://gnosisguild.org">Gnosis Guild</TextLink>.
+          <br />
+          All information is for informational purposes only and does not
+          constitute legal, financial, or investment advice.{' '}
           <Strong>Use at your own risk.</Strong>
         </Text>
 

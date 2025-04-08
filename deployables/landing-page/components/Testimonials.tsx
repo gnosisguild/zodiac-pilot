@@ -24,7 +24,7 @@ const testimonials = [
   },
   {
     content:
-      'With smart contracts, developers can permissionlessly compose modular building blocks together to create powerful new functionality. But surfacing that functionality to real people is much harder. Pilot makes that so much easier, and as a result will unlock thousands of net new user-facing possibilities.',
+      'With smart contracts, developers can permissionlessly compose modular building blocks together to create new functionality. But surfacing that functionality to people is much harder. Pilot makes this so much easier, and as a result will unlock thousands of net new user-facing possibilities.',
     author: {
       name: 'Spencer Graham',
       role: 'Hats Protocol',

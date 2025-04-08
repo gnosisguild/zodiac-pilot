@@ -102,7 +102,7 @@ export function Hero({ children }: PropsWithChildren) {
                 </a>
               </li>
               <li className="flex justify-center">
-                <a href="https://www.karpatkey.com/">
+                <a href="https://kpk.io/">
                   <KarpatkeyLogo />
                 </a>
               </li>
