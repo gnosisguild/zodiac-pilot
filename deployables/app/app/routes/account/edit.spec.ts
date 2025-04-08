@@ -124,7 +124,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -135,6 +135,8 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('option', { name: 'Test Wallet' }),
       )
+
+      await waitForPendingLoaders()
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
@@ -160,7 +162,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -168,6 +170,9 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Remove Pilot Signer' }),
       )
+
+      await waitForPendingLoaders()
+
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
       await waitForPendingActions()
@@ -192,7 +197,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -203,6 +208,8 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('option', { name: 'Another wallet' }),
       )
+
+      await waitForPendingLoaders()
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 

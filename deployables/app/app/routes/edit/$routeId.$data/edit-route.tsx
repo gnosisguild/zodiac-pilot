@@ -9,14 +9,7 @@ import {
   WalletProvider,
 } from '@/components'
 import { useIsPending } from '@/hooks'
-import {
-  ChainSelect,
-  Route,
-  routeId,
-  Routes,
-  Waypoint,
-  Waypoints,
-} from '@/routes-ui'
+import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
@@ -36,18 +29,12 @@ import {
   updateLabel,
   updateStartingPoint,
 } from '@zodiac/modules'
-import {
-  type ExecutionRoute,
-  type Waypoints as WaypointsType,
-} from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import {
   Form,
-  Info,
-  Labeled,
   PrimaryButtonGroup,
   SecondaryLinkButton,
   TextInput,
-  Warning,
 } from '@zodiac/ui'
 import { useId } from 'react'
 import { href, redirect, useParams } from 'react-router'
@@ -386,122 +373,4 @@ const Chain = ({ chainId }: ChainProps) => {
       )}
     </Form>
   )
-}
-
-type RouteSelectProps = {
-  routes: ExecutionRoute[]
-  waypoints?: WaypointsType
-  defaultValue?: string
-  initiator?: PrefixedAddress
-  form?: string
-  name?: string
-}
-
-const RouteSelect = ({
-  routes,
-  defaultValue,
-  initiator,
-  form,
-  name,
-  waypoints,
-}: RouteSelectProps) => {
-  return (
-    <Labeled label="Selected route">
-      {({ inputId }) =>
-        routes.length === 0 ? (
-          <>
-            {initiator == null && (
-              <Info title="Missing initiator">
-                Once you select an initiator account you can select from all
-                possible routes between the initiator and the account.
-              </Info>
-            )}
-
-            {initiator != null && (
-              <>
-                <Warning title="Invalid route">
-                  We could not find any routes between the initiator and the
-                  selected account. Make you are using the correct chain.
-                </Warning>
-
-                {waypoints && (
-                  <Routes disabled orientation="horizontal">
-                    <Route>
-                      <Waypoints>
-                        {waypoints.map(({ account, ...waypoint }, index) => (
-                          <Waypoint
-                            key={`${account.address}-${index}`}
-                            account={account}
-                            connection={
-                              'connection' in waypoint
-                                ? waypoint.connection
-                                : undefined
-                            }
-                          />
-                        ))}
-                      </Waypoints>
-                    </Route>
-                  </Routes>
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          <Routes
-            key={initiator}
-            id={inputId}
-            form={form}
-            defaultValue={verifyDefaultValue(routes, defaultValue)}
-          >
-            {routes.map((route) => {
-              const { waypoints } = route
-
-              return (
-                <Route id={routeId(route)} key={route.id} name={name}>
-                  {waypoints && (
-                    <Waypoints>
-                      {waypoints.map(({ account, ...waypoint }, index) => (
-                        <Waypoint
-                          key={`${account.address}-${index}`}
-                          account={account}
-                          connection={
-                            'connection' in waypoint
-                              ? waypoint.connection
-                              : undefined
-                          }
-                        />
-                      ))}
-                    </Waypoints>
-                  )}
-                </Route>
-              )
-            })}
-          </Routes>
-        )
-      }
-    </Labeled>
-  )
-}
-
-const verifyDefaultValue = (
-  routes: ExecutionRoute[],
-  defaultValue?: string,
-) => {
-  if (defaultValue == null) {
-    return defaultValue
-  }
-
-  const valueIsValid = routes.some((route) => routeId(route) === defaultValue)
-
-  if (valueIsValid) {
-    return defaultValue
-  }
-
-  const [route] = routes
-
-  if (route == null) {
-    return
-  }
-
-  return routeId(route)
 }
