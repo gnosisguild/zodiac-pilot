@@ -8,7 +8,7 @@ export const getHexString = (data: FormData, key: string) =>
 export const getOptionalHexString = (data: FormData, key: string) => {
   const value = getOptionalString(data, key)
 
-  if (value == null) {
+  if (value == null || value === '') {
     return null
   }
 

@@ -1,4 +1,4 @@
-import { activateRoute, dbClient, getAccount } from '@/db'
+import { activateRoute, dbClient, getAccount, getActiveRoute } from '@/db'
 import {
   accountFactory,
   render,
@@ -109,5 +109,41 @@ describe('Edit account', () => {
 
       expect(await screen.findByText('Test Wallet')).toBeInTheDocument()
     })
+
+    it('is possible to add an initiator', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test Wallet' })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId', { accountId: account.id }),
+        { user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test Wallet' }),
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute).toHaveProperty('userId', user.id)
+      expect(activeRoute.route).toMatchObject({
+        fromId: wallet.id,
+        toId: account.id,
+      })
+    })
+
+    it.todo('is possible to remove the initiator')
+    it.todo('is possible to update the initiator')
   })
 })

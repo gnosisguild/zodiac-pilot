@@ -1,13 +1,16 @@
 import { Page } from '@/components'
 import {
+  activateRoute,
+  createRoute,
   dbClient,
+  findActiveRoute,
   getAccount,
-  getActiveRoute,
+  getWalletByAddress,
   getWallets,
   updateAccount,
 } from '@/db'
 import { authKitAction, authKitLoader } from '@/workOS/server'
-import { getString } from '@zodiac/form-data'
+import { getOptionalHexString, getString } from '@zodiac/form-data'
 import { AddressSelect, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
@@ -26,7 +29,7 @@ export const loader = (args: Route.LoaderArgs) =>
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
-      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+      const activeRoute = await findActiveRoute(dbClient(), user, account.id)
 
       return {
         label: account.label || '',
@@ -50,11 +53,30 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = (args: Route.ActionArgs) =>
   authKitAction(
     args,
-    async ({ request, params: { accountId } }) => {
+    async ({
+      request,
+      params: { accountId },
+      context: {
+        auth: { user },
+      },
+    }) => {
       const data = await request.formData()
 
-      await updateAccount(dbClient(), accountId, {
-        label: getString(data, 'label'),
+      await dbClient().transaction(async (tx) => {
+        const initiator = getOptionalHexString(data, 'initiator')
+
+        if (initiator != null) {
+          const wallet = await getWalletByAddress(tx, user, initiator)
+          const account = await getAccount(tx, accountId)
+
+          const route = await createRoute(tx, wallet, account)
+
+          await activateRoute(tx, user, route)
+        }
+
+        await updateAccount(tx, accountId, {
+          label: getString(data, 'label'),
+        })
       })
 
       return null
@@ -82,6 +104,7 @@ const EditAccount = ({
           <AddressSelect
             isMulti={false}
             label="Pilot Signer"
+            name="initiator"
             defaultValue={initiator}
             options={initiators.map(({ address, label }) => ({
               address,
