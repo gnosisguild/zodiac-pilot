@@ -177,6 +177,44 @@ describe('Edit account', () => {
       ).resolves.not.toBeDefined()
     })
 
-    it.todo('is possible to update the initiator')
+    it('is possible to update the initiator', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const walletA = await walletFactory.create(user)
+      const walletB = await walletFactory.create(user, {
+        label: 'Another wallet',
+      })
+
+      const route = await routeFactory.create(account, walletA)
+
+      await activateRoute(dbClient(), user, route)
+
+      mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId', { accountId: account.id }),
+        { user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Another wallet' }),
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute).toHaveProperty('userId', user.id)
+      expect(activeRoute.route).toMatchObject({
+        fromId: walletB.id,
+        toId: account.id,
+      })
+    })
   })
 })

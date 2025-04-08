@@ -74,13 +74,24 @@ export const action = (args: Route.ActionArgs) =>
       await dbClient().transaction(async (tx) => {
         const initiator = getOptionalHexString(data, 'initiator')
 
+        const activeRoute = await findActiveRoute(tx, user, accountId)
+
         if (initiator != null) {
-          const wallet = await getWalletByAddress(tx, user, initiator)
-          const account = await getAccount(tx, accountId)
+          if (
+            activeRoute == null ||
+            activeRoute.route.wallet.address !== initiator
+          ) {
+            const wallet = await getWalletByAddress(tx, user, initiator)
+            const account = await getAccount(tx, accountId)
 
-          const route = await createRoute(tx, wallet, account)
+            const route = await createRoute(tx, wallet, account)
 
-          await activateRoute(tx, user, route)
+            if (activeRoute != null) {
+              await removeActiveRoute(tx, user, accountId)
+            }
+
+            await activateRoute(tx, user, route)
+          }
         } else {
           await removeActiveRoute(tx, user, accountId)
         }
