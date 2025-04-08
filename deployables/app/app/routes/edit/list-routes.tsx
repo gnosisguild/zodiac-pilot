@@ -36,7 +36,7 @@ import { LocalAccount } from './LocalAccount'
 import { RemoteAccount } from './RemoteAccount'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
-  { title: routeTitle(matches, 'Accounts') },
+  { title: routeTitle(matches, 'Safe Accounts') },
 ]
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -234,12 +234,11 @@ const ListRoutes = ({
                         </Await>
                       </Suspense>
                     ) : (
-                      <Info title="You haven't created any accounts, yet.">
-                        Accounts let you quickly impersonate other safes and
-                        record transaction bundles for them.
+                      <Info title="You haven't added any Safe Accounts, yet.">
+                        Add your Safe to start recording transactions for it.
                         <div className="mt-4 flex">
                           <SecondaryLinkButton to="/create">
-                            Create an account
+                            Add Safe Account
                           </SecondaryLinkButton>
                         </div>
                       </Info>

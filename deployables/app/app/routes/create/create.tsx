@@ -28,7 +28,7 @@ import { type ChainId } from 'ser-kit'
 import type { Route } from './+types/create'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
-  { title: routeTitle(matches, 'New Account') },
+  { title: routeTitle(matches, 'New SafeAccount') },
 ]
 
 export const loader = (args: Route.LoaderArgs) => authkitLoader(args)
@@ -143,7 +143,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
           />
         }
       >
-        New Account
+        New Safe Account
       </Page.Header>
 
       <Page.Main>
