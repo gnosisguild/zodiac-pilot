@@ -451,7 +451,7 @@ importers:
   deployables/landing-page:
     dependencies:
       '@duneanalytics/client-sdk':
-        specifier: ^0.2.5
+        specifier: 0.2.5
         version: 0.2.5(patch_hash=67965d6f25eb7981a19599df92d633a35566a2e8ef4296070394c50ee82bde42)
       '@epic-web/invariant':
         specifier: 1.0.0
@@ -496,7 +496,7 @@ importers:
         specifier: 7.5.0
         version: 7.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rough-notation:
-        specifier: ^0.5.1
+        specifier: 0.5.1
         version: 0.5.1
     devDependencies:
       '@cloudflare/workers-types':
