@@ -66,7 +66,8 @@ export function AddressSelect<Creatable extends boolean>({
           <div className="flex-1 flex-shrink-0">
             <Address
               label={
-                props.data.value === props.data.label
+                props.data.value === props.data.label ||
+                getValue(options, props.data.value) == null
                   ? undefined
                   : props.data.label
               }
@@ -91,7 +92,11 @@ const getValue = (options: Options, value: HexAddress) => {
     }
 
     if (typeof option === 'string') {
-      return { label: value, value }
+      if (option === value) {
+        return { label: value, value }
+      }
+
+      return finalValue
     }
 
     if (option.address === value) {
