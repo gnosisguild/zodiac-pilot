@@ -31,6 +31,7 @@ export function Hero({ children }: PropsWithChildren) {
       type: 'underline',
       strokeWidth: 7,
       iterations: 3,
+      padding: -5,
     })
 
     annotation.show()
