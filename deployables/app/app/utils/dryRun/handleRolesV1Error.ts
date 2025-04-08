@@ -15,7 +15,7 @@ export const handleRolesV1Error = (e: JsonRpcError, roleId: string) => {
         return null
 
       case 'NoMembership()':
-        return `The Pilot account is not a member of role #${roleId}.`
+        return `The connected account is not a member of role #${roleId}.`
 
       default:
     }

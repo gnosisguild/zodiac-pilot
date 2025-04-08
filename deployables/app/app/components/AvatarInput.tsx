@@ -48,7 +48,7 @@ export const AvatarInput = ({
 
   return (
     <AddressSelect
-      clearLabel="Clear piloted Safe"
+      clearLabel="Clear Safe Account"
       dropdownLabel="View all available Safes"
       placeholder="Paste an address or select from the list"
       {...props}
