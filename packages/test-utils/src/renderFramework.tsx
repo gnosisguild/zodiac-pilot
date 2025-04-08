@@ -205,12 +205,12 @@ function stubRoutes(
         // the test stub from react-router unfortunately
         // doesn't handle the clientLoader/loader hierarchy
         // so we built it ouselves.
-        loader(loaderArgs: LoaderFunctionArgs) {
+        async loader(loaderArgs: LoaderFunctionArgs) {
           const finishLoader = startLoader()
 
           try {
             if (clientLoader != null) {
-              return clientLoader({
+              return await clientLoader({
                 ...loaderArgs,
                 serverLoader:
                   loader == null ? undefined : () => loader(loaderArgs),
@@ -218,7 +218,7 @@ function stubRoutes(
             }
 
             if (loader != null) {
-              return loader(loaderArgs)
+              return await loader(loaderArgs)
             }
 
             return null

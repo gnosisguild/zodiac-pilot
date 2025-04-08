@@ -6,6 +6,7 @@ import {
   Address,
   Form,
   GhostButton,
+  GhostLinkButton,
   MeatballMenu,
   Modal,
   PrimaryButton,
@@ -16,6 +17,7 @@ import {
 import classNames from 'classnames'
 import { Play, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { href } from 'react-router'
 import { Intent } from './intents'
 
 type RemoteAccountProps = {
@@ -27,7 +29,7 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
-      // href={href('/edit/account/:accountId', { accountId: account.id })}
+      href={href('/account/:accountId', { accountId: account.id })}
     >
       <TableCell aria-describedby={account.id}>{account.label}</TableCell>
       <TableCell>
@@ -81,6 +83,9 @@ const Actions = ({ accountId }: { accountId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
+        <GhostLinkButton to={href('/account/:accountId', { accountId })}>
+          Edit
+        </GhostLinkButton>
         <Delete accountId={accountId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
@@ -94,13 +99,12 @@ const Launch = ({ accountId }: { accountId: string }) => {
   )
 
   return (
-    <Form intent={Intent.RemoteLaunch}>
+    <Form context={{ accountId }}>
       <GhostButton
         submit
         align="left"
         size="tiny"
-        name="accountId"
-        value={accountId}
+        intent={Intent.RemoteLaunch}
         busy={submitting}
         icon={Play}
       >
@@ -149,12 +153,11 @@ const Delete = ({
         open={confirmDelete}
         description="Are you sure you want to delete this account? This action cannot be undone."
       >
-        <Form intent={Intent.RemoteDelete}>
+        <Form context={{ accountId }}>
           <Modal.Actions>
             <PrimaryButton
               submit
-              name="accountId"
-              value={accountId}
+              intent={Intent.RemoteDelete}
               busy={submitting}
             >
               Delete

@@ -1,5 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import { dbClient, getAccounts } from '@/db'
+import { activateAccount, dbClient, getAccounts, getActiveAccount } from '@/db'
 import {
   accountFactory,
   loadAndActivateRoute,
@@ -47,58 +47,64 @@ describe.sequential('List Routes', () => {
     })
   })
 
-  describe('Active route', () => {
-    it('indicates which route is currently active', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-
-      await render(href('/edit'), {
-        version: '3.6.0',
-        availableRoutes: [route],
-      })
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: route.id,
-      })
-
-      expect(
-        await screen.findByRole('cell', { name: 'Test route' }),
-      ).toHaveAccessibleDescription('Active')
-    })
-  })
-
   describe('Edit', () => {
-    it('is possible to edit a route', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
+    describe('Logged in', () => {
+      it('is possible to edit a route', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
 
-      await render(href('/edit'), {
-        availableRoutes: [route],
-        version: '3.6.0',
+        const account = await accountFactory.create(user)
+
+        await render(href('/edit'), {
+          user,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+        await expectRouteToBe(
+          href('/account/:accountId', {
+            accountId: account.id,
+          }),
+        )
       })
+    })
 
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: route.id,
+    describe('Logged out', () => {
+      it('is possible to edit a route', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+
+        await render(href('/edit'), {
+          availableRoutes: [route],
+          version: '3.6.0',
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route,
+        })
+
+        await loadRoutes()
+
+        await expectRouteToBe(
+          href('/edit/:routeId/:data', {
+            routeId: route.id,
+            data: encode(route),
+          }),
+        )
       })
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
-
-      await loadRoutes()
-
-      await expectRouteToBe(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
-          data: encode(route),
-        }),
-      )
     })
   })
 
@@ -212,13 +218,13 @@ describe.sequential('List Routes', () => {
     })
   })
 
-  describe('Launch', () => {
+  describe('Activate', () => {
     describe('Logged in', () => {
-      it('is possible to launch a route', async () => {
+      it('is possible to activate an account', async () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        await accountFactory.create(user, {
+        const account = await accountFactory.create(user, {
           label: 'Test account',
         })
 
@@ -232,16 +238,33 @@ describe.sequential('List Routes', () => {
 
         await waitForPendingActions()
 
-        await waitFor(async () => {
-          expect(
-            await screen.findByRole('cell', { name: 'Test account' }),
-          ).toHaveAccessibleDescription('Active')
+        await expect(getActiveAccount(dbClient(), user)).resolves.toEqual(
+          account,
+        )
+      })
+
+      it('indicates which route is currently active', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+
+        const account = await accountFactory.create(user, {
+          label: 'Test account',
         })
+
+        await activateAccount(dbClient(), user, account.id)
+
+        await render(href('/edit'), {
+          user,
+        })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test account' }),
+        ).toHaveAccessibleDescription('Active')
       })
     })
 
     describe('Logged out', () => {
-      it('is possible to launch a route', async () => {
+      it('is possible to activate an account', async () => {
         const route = createMockExecutionRoute({ label: 'Test route' })
         const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -266,6 +289,24 @@ describe.sequential('List Routes', () => {
           } satisfies CompanionAppMessage,
           '*',
         )
+      })
+
+      it('indicates which route is currently active', async () => {
+        const route = createMockExecutionRoute({ label: 'Test route' })
+
+        await render(href('/edit'), {
+          version: '3.6.0',
+          availableRoutes: [route],
+        })
+
+        await postMessage({
+          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+          activeRouteId: route.id,
+        })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test route' }),
+        ).toHaveAccessibleDescription('Active')
       })
     })
   })

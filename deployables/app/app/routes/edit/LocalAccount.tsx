@@ -34,7 +34,7 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
       <TableCell aria-describedby={route.id}>{route.label}</TableCell>
       <TableCell>
         {active && (
-          <Tag aria-hidden id={route.id} color="green">
+          <Tag id={route.id} color="green">
             Active
           </Tag>
         )}
