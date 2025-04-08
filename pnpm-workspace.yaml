@@ -2,3 +2,5 @@ packages:
   - deployables/**
   - packages/**
   - configs/**
+onlyBuiltDependencies:
+  - esbuild

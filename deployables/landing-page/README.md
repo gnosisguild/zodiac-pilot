@@ -3,10 +3,7 @@
 ### To run locally
 
 run
-`yarn`
+`pnpm i`
 
 then
-`yarn start`
-
-to build production
-`yarn build`
+`pnpm dev`

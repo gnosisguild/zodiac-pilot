@@ -3,6 +3,7 @@ import { cloudflareDevProxy } from '@react-router/dev/vite/cloudflare'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import openGraph from 'vite-plugin-open-graph'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 // https://vite.dev/config/
 export default defineConfig(({ isSsrBuild }) => ({
@@ -14,6 +15,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     }),
     tailwindcss(),
     reactRouter(),
+    tsconfigPaths(),
     openGraph({
       basic: {
         type: 'website',
@@ -30,6 +32,7 @@ export default defineConfig(({ isSsrBuild }) => ({
   server: {
     port: 3050,
   },
+  assetsInclude: ['**/*.mp4'],
   build: {
     manifest: true,
     rollupOptions: isSsrBuild
