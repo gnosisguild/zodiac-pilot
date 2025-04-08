@@ -1,5 +1,6 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import { addressSchema, type HexAddress } from '@zodiac/schema'
+import classNames from 'classnames'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Blockie } from '../addresses'
 import { Input, type ComposableInputProps } from './Input'
@@ -76,7 +77,10 @@ export const AddressInput = ({
               }
             }
           }}
-          className="outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm"
+          className={classNames(
+            'outline-hidden w-full border-none bg-transparent px-4 py-2 font-mono text-sm',
+            disabled && 'cursor-not-allowed',
+          )}
         />
       </InputLayout>
     )}

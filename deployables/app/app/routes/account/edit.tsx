@@ -11,9 +11,11 @@ import {
   updateAccount,
 } from '@/db'
 import { useIsPending } from '@/hooks'
+import { ChainSelect } from '@/routes-ui'
 import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getOptionalHexString, getString } from '@zodiac/form-data'
 import {
+  AddressInput,
   AddressSelect,
   Form,
   GhostLinkButton,
@@ -47,6 +49,8 @@ export const loader = (args: Route.LoaderArgs) =>
         initiators: wallets.filter((wallet) =>
           initiators.includes(wallet.address),
         ),
+        account: account.address,
+        chainId: account.chainId,
       }
     },
     {
@@ -114,7 +118,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditAccount = ({
-  loaderData: { label, initiators, initiator },
+  loaderData: { label, initiators, initiator, account, chainId },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -123,12 +127,23 @@ const EditAccount = ({
         <Form>
           <TextInput label="Label" name="label" defaultValue={label} />
 
+          <div className="grid grid-cols-6 gap-4">
+            <div className="col-span-2">
+              <ChainSelect disabled value={chainId} />
+            </div>
+
+            <div className="col-span-4">
+              <AddressInput disabled label="Safe Account" value={account} />
+            </div>
+          </div>
+
           <AddressSelect
             isClearable
             isMulti={false}
             label="Pilot Signer"
             name="initiator"
             clearLabel="Remove Pilot Signer"
+            placeholder="Select a wallet form the list"
             defaultValue={initiator}
             options={initiators.map(({ address, label }) => ({
               address,
