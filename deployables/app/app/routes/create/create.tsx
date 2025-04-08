@@ -28,7 +28,7 @@ import { type ChainId } from 'ser-kit'
 import type { Route } from './+types/create'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
-  { title: routeTitle(matches, 'New Account') },
+  { title: routeTitle(matches, 'New SafeAccount') },
 ]
 
 export const loader = (args: Route.LoaderArgs) => authkitLoader(args)
@@ -138,12 +138,12 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
       <Page.Header
         action={
           <ConnectWalletButton
-            connectLabel="Connect signer wallet"
-            connectedLabel="Signer wallet"
+            connectLabel="Connect Pilot Signer"
+            connectedLabel="Pilot Signer"
           />
         }
       >
-        New Account
+        New Safe Account
       </Page.Header>
 
       <Page.Main>

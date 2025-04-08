@@ -9,7 +9,7 @@ export const EmptyAccount = ({ onConnect }: Props) => {
   return (
     <LaunchConnectKit onConnect={onConnect}>
       {({ show }) => (
-        <Labeled label="Pilot Account">
+        <Labeled label="Pilot Signer">
           <PrimaryButton onClick={show}>Connect wallet</PrimaryButton>
         </Labeled>
       )}

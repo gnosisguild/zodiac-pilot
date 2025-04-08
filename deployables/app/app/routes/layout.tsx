@@ -116,7 +116,7 @@ const PageLayout = ({
                         </Navigation.Link>
                       </Navigation.Section>
 
-                      <Navigation.Section title="Accounts">
+                      <Navigation.Section title="Safe Accounts">
                         <Navigation.Link
                           to={href('/edit')}
                           icon={List}
@@ -124,7 +124,7 @@ const PageLayout = ({
                             location.pathname.startsWith('/tokens')
                           }
                         >
-                          Accounts
+                          Safe Accounts
                         </Navigation.Link>
 
                         <Navigation.Link
@@ -134,7 +134,7 @@ const PageLayout = ({
                             location.pathname.startsWith('/tokens')
                           }
                         >
-                          New Account
+                          New Safe Account
                         </Navigation.Link>
                       </Navigation.Section>
 

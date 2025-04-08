@@ -79,7 +79,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
           isMulti={false}
           isSearchable={false}
           className="flex-1"
-          label="Accounts"
+          label="Safe Accounts"
           onChange={(option) => {
             if (option == null) {
               return

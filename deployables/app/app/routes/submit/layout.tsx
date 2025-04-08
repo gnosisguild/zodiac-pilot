@@ -7,8 +7,8 @@ const SubmitLayout = () => (
       <Page.Header
         action={
           <ConnectWalletButton
-            connectLabel="Connect signer wallet"
-            connectedLabel="Signer wallet"
+            connectLabel="Connect Pilot Signer"
+            connectedLabel="Pilot Signer"
           />
         }
       >

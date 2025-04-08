@@ -47,7 +47,7 @@ vi.mock('react-router', async (importOriginal) => {
 
 const mockRedirectDocument = vi.mocked(redirectDocument)
 
-describe.sequential('New Account', () => {
+describe.sequential('New SafeAccount', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
       Object.entries(CHAIN_NAME).map(([chainId, name]) =>

@@ -7,14 +7,14 @@ export const handleRolesV2Error = (e: JsonRpcError, roleKey: string) => {
   if (rolesError) {
     switch (rolesError.signature) {
       case 'NotAuthorized(address)':
-        return 'The Pilot account must be enabled as a module of the modifier.'
+        return 'The connected account must be enabled as a module of the modifier.'
 
       case 'ConditionViolation(uint8,bytes32)':
         // this is the expected error for a working Roles mod setup
         return null
 
       case 'NoMembership()':
-        return `The Pilot account is not a member of role ${decodeRoleKey(
+        return `The connected account is not a member of role ${decodeRoleKey(
           roleKey,
         )}.`
 

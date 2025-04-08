@@ -277,7 +277,7 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Section
-        title="Signer details"
+        title="Pilot Signer"
         description="Make sure that your wallet is connected to the route's operator account."
       >
         <ConnectWallet chainId={chainId} pilotAddress={initiator} />

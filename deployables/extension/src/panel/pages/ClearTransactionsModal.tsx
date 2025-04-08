@@ -17,7 +17,7 @@ export const ClearTransactionsModal = ({
       open={open}
       closeLabel="Cancel"
       title="Clear transactions"
-      description="Switching the Piloted Safe will empty your current transaction bundle."
+      description="Switching the Safe account will empty your current transaction bundle."
       onClose={onCancel}
     >
       <Modal.Actions>

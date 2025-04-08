@@ -18,6 +18,7 @@ import {
   useExtensionMessageHandler,
 } from '@zodiac/messages'
 import {
+  Feature,
   Info,
   SecondaryLinkButton,
   Table,
@@ -36,7 +37,7 @@ import { LocalAccount } from './LocalAccount'
 import { RemoteAccount } from './RemoteAccount'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
-  { title: routeTitle(matches, 'Accounts') },
+  { title: routeTitle(matches, 'Safe Accounts') },
 ]
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -181,7 +182,7 @@ const ListRoutes = ({
 }: Route.ComponentProps) => {
   return (
     <Page fullWidth>
-      <Page.Header>Accounts</Page.Header>
+      <Page.Header>Safe Accounts</Page.Header>
 
       <Page.Main>
         {remoteAccounts.length > 0 && (
@@ -211,14 +212,16 @@ const ListRoutes = ({
                                 activeRouteId={activeRouteId}
                               />
 
-                              <h2 className="my-6 text-xl">
-                                Local Accounts
-                                <p className="my-2 text-sm opacity-80">
-                                  Local accounts live only on your machine. They
-                                  are only usable when the Pilot browser
-                                  extension is installed and open.
-                                </p>
-                              </h2>
+                              <Feature feature="user-management">
+                                <h2 className="my-6 text-xl">
+                                  Local Accounts
+                                  <p className="my-2 text-sm opacity-80">
+                                    Local accounts live only on your machine.
+                                    They are only usable when the Pilot browser
+                                    extension is installed and open.
+                                  </p>
+                                </h2>
+                              </Feature>
 
                               <Accounts>
                                 {localAccounts.map((route) => (
@@ -234,12 +237,11 @@ const ListRoutes = ({
                         </Await>
                       </Suspense>
                     ) : (
-                      <Info title="You haven't created any accounts, yet.">
-                        Accounts let you quickly impersonate other safes and
-                        record transaction bundles for them.
+                      <Info title="You haven't added any Safe Accounts, yet.">
+                        Add your Safe to start recording transactions for it.
                         <div className="mt-4 flex">
                           <SecondaryLinkButton to="/create">
-                            Create an account
+                            Add Safe Account
                           </SecondaryLinkButton>
                         </div>
                       </Info>
@@ -270,8 +272,8 @@ const Accounts = ({ children }: PropsWithChildren) => {
             <span className="sr-only">Active</span>
           </TableHeader>
           <TableHeader>Chain</TableHeader>
-          <TableHeader>Operator</TableHeader>
-          <TableHeader>Account</TableHeader>
+          <TableHeader>Pilot Signer</TableHeader>
+          <TableHeader>Safe Account</TableHeader>
           <TableHeader className="relative w-0">
             <span className="sr-only">Actions</span>
           </TableHeader>
