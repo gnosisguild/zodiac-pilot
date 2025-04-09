@@ -36,7 +36,7 @@
     "vite": "6.2.5",
     "vite-plugin-open-graph": "2.0.6",
     "vite-tsconfig-paths": "5.1.4",
-    "wrangler": "4.8.0"
+    "wrangler": "4.9.1"
   },
   "scripts": {
     "build": "react-router build",
