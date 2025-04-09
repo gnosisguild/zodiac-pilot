@@ -44,7 +44,7 @@ export const loader = (args: Route.LoaderArgs) =>
     args,
     async ({
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       if (user == null) {
@@ -57,10 +57,10 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const [remoteAccounts, activeRemoteAccount] = await Promise.all([
         getAccounts(dbClient(), {
-          tenantId: user.tenantId,
+          tenantId: tenant.id,
           userId: user.id,
         }),
-        getActiveAccount(dbClient(), user),
+        getActiveAccount(dbClient(), tenant, user),
       ])
 
       return {
@@ -92,7 +92,7 @@ export const action = async (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -105,7 +105,12 @@ export const action = async (args: Route.ActionArgs) =>
         }
 
         case Intent.RemoteLaunch: {
-          await activateAccount(dbClient(), user, getString(data, 'accountId'))
+          await activateAccount(
+            dbClient(),
+            tenant,
+            user,
+            getString(data, 'accountId'),
+          )
 
           return null
         }

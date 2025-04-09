@@ -1,6 +1,6 @@
 import type { HexAddress } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
-import { WalletTable, type User } from '../schema'
+import { WalletTable, type Tenant, type User } from '../schema'
 
 type CreateWalletOptions = {
   label: string
@@ -9,6 +9,7 @@ type CreateWalletOptions = {
 
 export const createWallet = async (
   db: DBClient,
+  tenant: Tenant,
   user: User,
   { label, address }: CreateWalletOptions,
 ) => {
@@ -16,7 +17,7 @@ export const createWallet = async (
     address,
     belongsToId: user.id,
     label,
-    tenantId: user.tenantId,
+    tenantId: tenant.id,
   })
 
   return wallet

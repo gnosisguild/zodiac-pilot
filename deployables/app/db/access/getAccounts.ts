@@ -21,8 +21,8 @@ export const getAccounts = (
     },
     with: {
       activeRoutes: {
-        where(fields, { eq }) {
-          return eq(fields.userId, userId)
+        where(fields, { eq, and }) {
+          return and(eq(fields.userId, userId), eq(fields.tenantId, tenantId))
         },
 
         with: {

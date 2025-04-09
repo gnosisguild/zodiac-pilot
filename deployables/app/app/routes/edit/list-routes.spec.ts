@@ -42,11 +42,11 @@ describe.sequential('List Routes', () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        await accountFactory.create(user, {
+        await accountFactory.create(tenant, user, {
           label: 'Test account',
         })
 
-        await render(href('/edit'), { user })
+        await render(href('/edit'), { tenant, user })
 
         expect(
           await screen.findByRole('cell', { name: 'Test account' }),
@@ -56,15 +56,15 @@ describe.sequential('List Routes', () => {
       it('shows the currently active initiator', async () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
-        const account = await accountFactory.create(user)
-        const wallet = await walletFactory.create(user, {
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(tenant, user, {
           label: 'Test wallet',
         })
         const route = await routeFactory.create(account, wallet)
 
-        await activateRoute(dbClient(), user, route)
+        await activateRoute(dbClient(), tenant, user, route)
 
-        await render(href('/edit'), { user })
+        await render(href('/edit'), { tenant, user })
 
         expect(
           await screen.findByRole('cell', { name: 'Test wallet' }),
@@ -79,9 +79,10 @@ describe.sequential('List Routes', () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        const account = await accountFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
         await render(href('/edit'), {
+          tenant,
           user,
         })
 
@@ -140,9 +141,10 @@ describe.sequential('List Routes', () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        const account = await accountFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
         const { waitForPendingActions } = await render(href('/edit'), {
+          tenant,
           user,
         })
 
@@ -250,11 +252,12 @@ describe.sequential('List Routes', () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        const account = await accountFactory.create(user, {
+        const account = await accountFactory.create(tenant, user, {
           label: 'Test account',
         })
 
         const { waitForPendingActions } = await render(href('/edit'), {
+          tenant,
           user,
         })
 
@@ -264,22 +267,23 @@ describe.sequential('List Routes', () => {
 
         await waitForPendingActions()
 
-        await expect(getActiveAccount(dbClient(), user)).resolves.toEqual(
-          account,
-        )
+        await expect(
+          getActiveAccount(dbClient(), tenant, user),
+        ).resolves.toEqual(account)
       })
 
       it('indicates which route is currently active', async () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
-        const account = await accountFactory.create(user, {
+        const account = await accountFactory.create(tenant, user, {
           label: 'Test account',
         })
 
-        await activateAccount(dbClient(), user, account.id)
+        await activateAccount(dbClient(), tenant, user, account.id)
 
         await render(href('/edit'), {
+          tenant,
           user,
         })
 

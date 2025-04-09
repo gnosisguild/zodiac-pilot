@@ -82,6 +82,7 @@ vi.mock('@/workOS/server', async (importOriginal) => {
   return {
     ...module,
 
+    getOrganization: vi.fn(),
     createOrganization: vi.fn(),
     getOrganizationForUser: vi.fn(),
   }

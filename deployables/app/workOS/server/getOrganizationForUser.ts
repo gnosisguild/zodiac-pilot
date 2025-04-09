@@ -1,9 +1,6 @@
 import { invariant } from '@epic-web/invariant'
-import { WorkOS, type Organization } from '@workos-inc/node'
-
-type VerifiedOrganization = Omit<Organization, 'externalId'> & {
-  externalId: string
-}
+import { WorkOS } from '@workos-inc/node'
+import type { VerifiedOrganization } from './getOrganization'
 
 export const getOrganizationForUser = async (
   userId: string,

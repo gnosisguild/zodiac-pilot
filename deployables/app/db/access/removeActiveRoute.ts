@@ -1,9 +1,10 @@
 import { and, eq } from 'drizzle-orm'
 import type { DBClient } from '../dbClient'
-import { ActiveRouteTable, type User } from '../schema'
+import { ActiveRouteTable, type Tenant, type User } from '../schema'
 
 export const removeActiveRoute = (
   db: DBClient,
+  tenant: Tenant,
   user: User,
   accountId: string,
 ) =>
@@ -11,7 +12,7 @@ export const removeActiveRoute = (
     .delete(ActiveRouteTable)
     .where(
       and(
-        eq(ActiveRouteTable.tenantId, user.tenantId),
+        eq(ActiveRouteTable.tenantId, tenant.id),
         eq(ActiveRouteTable.userId, user.id),
         eq(ActiveRouteTable.accountId, accountId),
       ),

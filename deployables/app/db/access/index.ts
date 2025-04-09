@@ -1,5 +1,6 @@
 export { activateAccount } from './activateAccount'
 export { activateRoute } from './activateRoute'
+export { addUserToTenant } from './addUserToTenant'
 export { createAccount } from './createAccount'
 export { createRoute } from './createRoute'
 export { createTenant } from './createTenant'

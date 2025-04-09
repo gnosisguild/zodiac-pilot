@@ -63,7 +63,7 @@ describe.sequential('New SafeAccount', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
 
-      await render('/create', { user })
+      await render('/create', { tenant, user })
 
       const address = randomAddress()
 

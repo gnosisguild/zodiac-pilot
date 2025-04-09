@@ -58,7 +58,7 @@ export const action = (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -81,7 +81,7 @@ export const action = (args: Route.ActionArgs) =>
 
       if (user != null) {
         try {
-          await createAccount(dbClient(), user, {
+          await createAccount(dbClient(), tenant, user, {
             label,
             chainId,
             address: avatar,

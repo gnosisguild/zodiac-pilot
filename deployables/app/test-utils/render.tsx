@@ -1,11 +1,12 @@
 import { ProvideExtensionVersion } from '@/components'
-import type { User } from '@/db'
-import { getOrganizationForUser } from '@/workOS/server'
+import type { Tenant, User } from '@/db'
+import { getOrganization, getOrganizationForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type {
   AuthorizedData,
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
+import type { Organization } from '@workos-inc/node'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -27,13 +28,14 @@ import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
 
 const mockGetOrganizationForUser = vi.mocked(getOrganizationForUser)
+const mockGetOrganization = vi.mocked(getOrganization)
 
 const baseRender = await createRenderFramework(
   new URL('../app', import.meta.url),
   routes,
 )
 
-type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
+type CommonOptions = Omit<RenderFrameworkOptions, 'loadActions'> & {
   /**
    * Determines whether or not the app should render in a
    * state where it is connected to the browser extension.
@@ -61,12 +63,26 @@ type Options = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * @default undefined
    */
   activeRouteId?: string | null
+}
+
+type SignedInOptions = CommonOptions & {
+  /**
+   * Render the route in a logged in context
+   */
+  tenant: Tenant
 
   /**
    * Render the route in a logged in context
    */
-  user?: User | null
+  user: User
 }
+
+type SignedOutOptions = CommonOptions & {
+  tenant?: null
+  user?: null
+}
+
+type Options = SignedInOptions | SignedOutOptions
 
 const versionRef: Ref<string> = { current: null }
 
@@ -97,13 +113,14 @@ export const render = async (
     version = null,
     availableRoutes = [],
     activeRouteId = null,
+    tenant = null,
     user = null,
     ...options
   }: Options = {},
 ) => {
   versionRef.current = version
 
-  const workOsUser = mockWorkOs(user)
+  const workOsUser = mockWorkOs(tenant, user)
 
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
     const auth = createAuth(workOsUser)
@@ -176,12 +193,12 @@ const createAuth = (user?: AuthorizedData['user'] | null) => {
   } satisfies AuthorizedData
 }
 
-const mockWorkOs = (user?: User | null) => {
-  if (user == null) {
+const mockWorkOs = (tenant?: Tenant | null, user?: User | null) => {
+  if (user == null || tenant == null) {
     return null
   }
 
-  mockGetOrganizationForUser.mockResolvedValue({
+  const mockOrganization = {
     allowProfilesOutsideOrganization: false,
     createdAt: user.createdAt.toISOString(),
     domains: [],
@@ -190,8 +207,11 @@ const mockWorkOs = (user?: User | null) => {
     name: 'Test Org',
     object: 'organization',
     updatedAt: user.createdAt.toISOString(),
-    externalId: user.tenantId,
-  })
+    externalId: tenant.id,
+  } satisfies Organization
+
+  mockGetOrganizationForUser.mockResolvedValue(mockOrganization)
+  mockGetOrganization.mockResolvedValue(mockOrganization)
 
   return {
     createdAt: user.createdAt.toISOString(),

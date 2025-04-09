@@ -1,19 +1,24 @@
 import { and, eq } from 'drizzle-orm'
 import type { DBClient } from '../dbClient'
-import { ActiveAccountTable, type User } from '../schema'
+import { ActiveAccountTable, type Tenant, type User } from '../schema'
 
-export const activateAccount = (db: DBClient, user: User, accountId: string) =>
+export const activateAccount = (
+  db: DBClient,
+  tenant: Tenant,
+  user: User,
+  accountId: string,
+) =>
   db.transaction(async (tx) => {
     await tx
       .delete(ActiveAccountTable)
       .where(
         and(
-          eq(ActiveAccountTable.tenantId, user.tenantId),
+          eq(ActiveAccountTable.tenantId, tenant.id),
           eq(ActiveAccountTable.userId, user.id),
         ),
       )
 
     await tx
       .insert(ActiveAccountTable)
-      .values({ accountId, tenantId: user.tenantId, userId: user.id })
+      .values({ accountId, tenantId: tenant.id, userId: user.id })
   })

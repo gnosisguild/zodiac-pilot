@@ -12,7 +12,10 @@ describe('Profile', () => {
     const tenant = await tenantFactory.create()
     const user = await userFactory.create(tenant)
 
-    const { waitForPendingActions } = await render(href('/profile'), { user })
+    const { waitForPendingActions } = await render(href('/profile'), {
+      tenant,
+      user,
+    })
 
     const address = randomAddress()
 
@@ -45,9 +48,9 @@ describe('Profile', () => {
 
     const address = randomAddress()
 
-    await walletFactory.create(user, { label: 'User wallet', address })
+    await walletFactory.create(tenant, user, { label: 'User wallet', address })
 
-    await render(href('/profile'), { user })
+    await render(href('/profile'), { tenant, user })
 
     expect(
       await screen.findByRole('cell', { name: 'User wallet' }),
@@ -60,11 +63,14 @@ describe('Profile', () => {
   it('is possible to remove a wallet', async () => {
     const tenant = await tenantFactory.create()
     const user = await userFactory.create(tenant)
-    const wallet = await walletFactory.create(user, {
+    const wallet = await walletFactory.create(tenant, user, {
       label: 'User wallet',
     })
 
-    const { waitForPendingActions } = await render(href('/profile'), { user })
+    const { waitForPendingActions } = await render(href('/profile'), {
+      tenant,
+      user,
+    })
 
     await userEvent.click(
       await screen.findByRole('button', { name: 'Remove wallet' }),
