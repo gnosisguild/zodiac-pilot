@@ -97,7 +97,7 @@ export function Hero({ children }: PropsWithChildren) {
 
         <ul className="mt-24 flex flex-col items-center justify-center gap-8 2xl:mt-44">
           <li>
-            <ul className="grid grid-cols-3 flex-col items-center gap-8 sm:flex-row sm:gap-x-12 sm:gap-y-0 xl:flex">
+            <ul className="grid grid-cols-2 flex-col items-center gap-8 sm:gap-12 xl:grid-cols-6">
               <li className="flex justify-center">
                 <a href="https://safe.global/">
                   <SafeLogo />
@@ -128,15 +128,11 @@ export function Hero({ children }: PropsWithChildren) {
                   <EnsLogo />
                 </a>
               </li>
-              <li className="col-span-3 flex justify-center">
+              <li className="flex justify-center">
                 <a href="https://www.gnosis.io/dao">
                   <GnosisLogo />
                 </a>
               </li>
-            </ul>
-          </li>
-          <li>
-            <ul className="grid grid-cols-3 flex-col items-center gap-8 sm:flex-row sm:gap-x-12 sm:gap-y-0 xl:flex">
               <li className="flex justify-center">
                 <a href="https://arbitrum.io/">
                   <ArbitrumOne />
@@ -166,7 +162,7 @@ export function Hero({ children }: PropsWithChildren) {
                   <Tally />
                 </a>
               </li>
-              <li className="flex justify-center">
+              <li className="col-span-2 flex justify-center xl:col-span-6">
                 <a href="https://lagoon.finance/">
                   <Lagoon />
                 </a>
