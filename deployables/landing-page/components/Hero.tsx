@@ -109,7 +109,7 @@ export function Hero({ children }: PropsWithChildren) {
                 </a>
               </li>
               <li className="flex justify-center">
-                <a href="https://hats.finance/">
+                <a href="https://www.hatsprotocol.xyz//">
                   <HatsLogo />
                 </a>
               </li>
