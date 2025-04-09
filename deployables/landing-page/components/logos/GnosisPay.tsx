@@ -5,7 +5,7 @@ export const GnosisPay = () => (
     viewBox="0 0 106 29"
     fill="currentColor"
   >
-    <g clip-path="url(#clip0_336_1957)">
+    <g clipPath="url(#clip0_336_1957)">
       <path
         d="M8.23974 16.3708C9.04541 16.3708 9.83143 16.1014 10.4668 15.6086L5.35766 10.4836C4.12623 12.0803 4.42099 14.3799 6.01268 15.6152C6.6546 16.1014 7.43407 16.3708 8.23974 16.3708Z"
         fill="currentColor"

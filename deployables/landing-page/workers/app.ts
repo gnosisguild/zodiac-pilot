@@ -25,7 +25,9 @@ export default {
   fetch(request, env, ctx) {
     const url = new URL(request.url)
 
+    console.log(url.pathname)
     if (url.pathname.startsWith('/assets')) {
+      console.log('LOAD ASSET')
       return env.ASSETS.fetch(request)
     }
 
