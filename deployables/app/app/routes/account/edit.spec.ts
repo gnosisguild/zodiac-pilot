@@ -15,10 +15,14 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { randomAddress } from '@zodiac/test-utils'
+import {
+  createMockRoute,
+  createMockWaypoints,
+  randomAddress,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { queryInitiators } from 'ser-kit'
-import { describe, expect, it, vi } from 'vitest'
+import { queryInitiators, queryRoutes } from 'ser-kit'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -27,12 +31,18 @@ vi.mock('ser-kit', async (importOriginal) => {
     ...module,
 
     queryInitiators: vi.fn(),
+    queryRoutes: vi.fn(),
   }
 })
 
 const mockQueryInitiators = vi.mocked(queryInitiators)
+const mockQueryRoutes = vi.mocked(queryRoutes)
 
 describe('Edit account', () => {
+  beforeEach(() => {
+    mockQueryRoutes.mockResolvedValue([])
+  })
+
   describe('Label', () => {
     it('displays the current label', async () => {
       const tenant = await tenantFactory.create()
@@ -222,6 +232,49 @@ describe('Edit account', () => {
         fromId: walletB.id,
         toId: account.id,
       })
+    })
+  })
+
+  describe('Route', () => {
+    it('is auto-selects the first route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test wallet' })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+      })
+
+      const newRoute = createMockRoute({ id: 'first', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([newRoute])
+
+      const { waitForPendingLoaders, waitForPendingActions } = await render(
+        href('/account/:accountId', {
+          accountId: account.id,
+        }),
+        { user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test wallet' }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute.route).toHaveProperty('waypoints', waypoints)
     })
   })
 })

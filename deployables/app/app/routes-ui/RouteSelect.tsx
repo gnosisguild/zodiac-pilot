@@ -79,7 +79,7 @@ export const RouteSelect = ({
               const { waypoints } = route
 
               return (
-                <Route id={routeId(route)} key={route.id} name={name}>
+                <Route id={routeId(route.waypoints)} key={route.id} name={name}>
                   {waypoints && (
                     <Waypoints>
                       {waypoints.map(({ account, ...waypoint }, index) => (
@@ -113,7 +113,9 @@ const verifyDefaultValue = (
     return defaultValue
   }
 
-  const valueIsValid = routes.some((route) => routeId(route) === defaultValue)
+  const valueIsValid = routes.some(
+    (route) => routeId(route.waypoints) === defaultValue,
+  )
 
   if (valueIsValid) {
     return defaultValue
@@ -125,5 +127,5 @@ const verifyDefaultValue = (
     return
   }
 
-  return routeId(route)
+  return routeId(route.waypoints)
 }

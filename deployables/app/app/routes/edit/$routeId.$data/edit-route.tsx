@@ -56,7 +56,8 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 
   return {
     currentRoute: {
-      comparableId: route.initiator == null ? undefined : routeId(route),
+      comparableId:
+        route.initiator == null ? undefined : routeId(route.waypoints),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
@@ -148,7 +149,7 @@ const findSelectedRoute = async (
     return
   }
 
-  if (selectedRouteId === routeId(route)) {
+  if (selectedRouteId === routeId(route.waypoints)) {
     return route
   }
 
@@ -158,7 +159,7 @@ const findSelectedRoute = async (
       : await queryRoutes(route.initiator, route.avatar)
 
   const selectedRoute = queryRoutesResult.routes.find(
-    (route) => routeId(route) === selectedRouteId,
+    (route) => routeId(route.waypoints) === selectedRouteId,
   )
 
   return selectedRoute

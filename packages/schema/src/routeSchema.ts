@@ -139,7 +139,9 @@ const startingPointSchema = z.object({
 
 export type StartingWaypoint = z.infer<typeof startingPointSchema>
 
-const waypointsSchema = z.tuple([startingPointSchema]).rest(waypointSchema)
+export const waypointsSchema = z
+  .tuple([startingPointSchema])
+  .rest(waypointSchema)
 
 export type Waypoints = z.infer<typeof waypointsSchema>
 

@@ -1,7 +1,7 @@
 import { Page } from '@/components'
 import {
   activateRoute,
-  createRoute,
+  createRoute as baseCreateRoute,
   dbClient,
   findActiveRoute,
   getAccount,
@@ -9,14 +9,20 @@ import {
   getWallets,
   removeActiveRoute,
   updateAccount,
+  type DBClient,
   type User,
 } from '@/db'
 import { useIsPending } from '@/hooks'
-import { ChainSelect, RouteSelect } from '@/routes-ui'
+import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
 import { authKitAction, authKitLoader } from '@/workOS/server'
-import { getOptionalHexString, getString } from '@zodiac/form-data'
+import { invariantResponse } from '@epic-web/invariant'
+import {
+  getOptionalHexString,
+  getOptionalString,
+  getString,
+} from '@zodiac/form-data'
 import { queryRoutes } from '@zodiac/modules'
-import { addressSchema } from '@zodiac/schema'
+import { addressSchema, type HexAddress } from '@zodiac/schema'
 import {
   AddressInput,
   AddressSelect,
@@ -53,21 +59,30 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const routesResult =
         initiator == null
-          ? undefined
+          ? { routes: [] }
           : await queryRoutes(
               prefixAddress(undefined, initiator.address),
               prefixAddress(account.chainId, account.address),
             )
 
+      const activeRoute = await findActiveRoute(dbClient(), user, account.id)
+      const [defaultRoute] = routesResult.routes
+
       return {
         label: account.label || '',
+        comparableId:
+          activeRoute == null
+            ? defaultRoute == null
+              ? undefined
+              : routeId(defaultRoute.waypoints)
+            : routeId(activeRoute.route.waypoints),
         initiatorWallet: initiator == null ? undefined : initiator,
         initiators: wallets.filter((wallet) =>
           initiators.includes(wallet.address),
         ),
         account: account.address,
         chainId: account.chainId,
-        routes: routesResult == null ? [] : routesResult.routes,
+        routes: routesResult.routes,
       }
     },
     {
@@ -102,10 +117,11 @@ export const action = (args: Route.ActionArgs) =>
             activeRoute == null ||
             activeRoute.route.wallet.address !== initiator
           ) {
-            const wallet = await getWalletByAddress(tx, user, initiator)
-            const account = await getAccount(tx, accountId)
-
-            const route = await createRoute(tx, wallet, account)
+            const route = await createRoute(tx, user, {
+              accountId,
+              initiator,
+              selectedRouteId: getOptionalString(data, 'routeId'),
+            })
 
             if (activeRoute != null) {
               await removeActiveRoute(tx, user, accountId)
@@ -135,7 +151,15 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditAccount = ({
-  loaderData: { label, initiators, initiatorWallet, account, chainId, routes },
+  loaderData: {
+    label,
+    initiators,
+    initiatorWallet,
+    account,
+    chainId,
+    routes,
+    comparableId,
+  },
 }: Route.ComponentProps) => {
   const formId = useId()
 
@@ -182,6 +206,9 @@ const EditAccount = ({
 
           <RouteSelect
             routes={routes}
+            defaultValue={comparableId}
+            form={formId}
+            name="routeId"
             initiator={
               initiatorWallet == null
                 ? undefined
@@ -241,4 +268,38 @@ const getInitiator = async (
   }
 
   return activeRoute.route.wallet
+}
+
+type CreateRouteOptions = {
+  initiator: HexAddress
+  accountId: string
+  selectedRouteId: string | undefined
+}
+
+const createRoute = async (
+  db: DBClient,
+  user: User,
+  { accountId, initiator, selectedRouteId }: CreateRouteOptions,
+) => {
+  const wallet = await getWalletByAddress(db, user, initiator)
+  const account = await getAccount(db, accountId)
+
+  if (selectedRouteId == null) {
+    return baseCreateRoute(db, wallet, account)
+  }
+
+  const { routes } = await queryRoutes(
+    prefixAddress(undefined, wallet.address),
+    prefixAddress(account.chainId, account.address),
+  )
+
+  const selectedRoute = routes.find(
+    (route) => routeId(route.waypoints) === selectedRouteId,
+  )
+
+  invariantResponse(selectedRoute != null, 'Could not find selected route')
+
+  return baseCreateRoute(db, wallet, account, {
+    waypoints: selectedRoute.waypoints,
+  })
 }
