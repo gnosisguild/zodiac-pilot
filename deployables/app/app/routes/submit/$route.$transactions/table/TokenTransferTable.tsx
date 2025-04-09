@@ -1,8 +1,10 @@
 import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
+import { isHexAddress } from '@zodiac/schema'
 import {
   Address,
   NumberValue,
+  Popover,
   Table,
   TableBody,
   TableCell,
@@ -60,56 +62,66 @@ export const TokenTransferTable = ({
           </TableRow>
         )}
 
-        {tokens.map(({ symbol, from, to, logoUrl, amount }, index) => {
-          const fromAvatar = from.toLowerCase() === avatarAddress
-          const toAvatar = to.toLowerCase() === avatarAddress
-          const isMint = from === ZeroAddress
-          const isBurn = to === ZeroAddress
+        {tokens.map(
+          ({ symbol, from, to, logoUrl, amount, contractId }, index) => {
+            const fromAvatar = from.toLowerCase() === avatarAddress
+            const toAvatar = to.toLowerCase() === avatarAddress
+            const isMint = from === ZeroAddress
+            const isBurn = to === ZeroAddress
 
-          return (
-            <TableRow key={index}>
-              <TableCell>
-                <Token logo={logoUrl}>{symbol}</Token>
-              </TableCell>
+            return (
+              <TableRow key={index}>
+                <TableCell>
+                  <Popover
+                    popover={
+                      isHexAddress(contractId) && (
+                        <span className="text-sm">{contractId}</span>
+                      )
+                    }
+                  >
+                    <Token logo={logoUrl}>{symbol}</Token>
+                  </Popover>
+                </TableCell>
 
-              <TableCell>
-                <div className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-2">
-                  {!fromAvatar && (
-                    <span className="whitespace-nowrap">
-                      {isMint ? (
-                        <span title={`${ZeroAddress} (mint)`}>🌱</span>
-                      ) : (
-                        <Address shorten size="small">
-                          {from}
-                        </Address>
-                      )}
-                    </span>
-                  )}
+                <TableCell>
+                  <div className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-2">
+                    {!fromAvatar && (
+                      <span className="whitespace-nowrap">
+                        {isMint ? (
+                          <span title={`${ZeroAddress} (mint)`}>🌱</span>
+                        ) : (
+                          <Address shorten size="small">
+                            {from}
+                          </Address>
+                        )}
+                      </span>
+                    )}
 
-                  {!fromAvatar && !toAvatar && (
-                    <span className="hidden sm:block">→</span>
-                  )}
+                    {!fromAvatar && !toAvatar && (
+                      <span className="hidden sm:block">→</span>
+                    )}
 
-                  {!toAvatar && (
-                    <span className="whitespace-nowrap">
-                      {isBurn ? (
-                        <span title={`${ZeroAddress} (burn)`}>🔥</span>
-                      ) : (
-                        <Address shorten size="small">
-                          {to}
-                        </Address>
-                      )}
-                    </span>
-                  )}
-                </div>
-              </TableCell>
+                    {!toAvatar && (
+                      <span className="whitespace-nowrap">
+                        {isBurn ? (
+                          <span title={`${ZeroAddress} (burn)`}>🔥</span>
+                        ) : (
+                          <Address shorten size="small">
+                            {to}
+                          </Address>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
 
-              <TableCell align="right" className="tabular-nums">
-                <NumberValue precision={4}>{amount}</NumberValue>
-              </TableCell>
-            </TableRow>
-          )
-        })}
+                <TableCell align="right" className="tabular-nums">
+                  <NumberValue precision={4}>{amount}</NumberValue>
+                </TableCell>
+              </TableRow>
+            )
+          },
+        )}
       </TableBody>
     </Table>
   )

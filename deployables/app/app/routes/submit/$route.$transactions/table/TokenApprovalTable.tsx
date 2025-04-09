@@ -1,5 +1,6 @@
 import { Token } from '@/components'
 import type { ApprovalTransaction } from '@/simulation-server'
+import { isHexAddress } from '@zodiac/schema'
 import {
   Address,
   Popover,
@@ -49,11 +50,29 @@ export function TokenApprovalTable({
         )}
 
         {approvals.map(
-          ({ symbol, logoUrl, spender, approvalAmount, decimals }, index) => {
+          (
+            {
+              symbol,
+              logoUrl,
+              spender,
+              tokenAddress,
+              approvalAmount,
+              decimals,
+            },
+            index,
+          ) => {
             return (
               <TableRow key={index}>
                 <TableCell>
-                  <Token logo={logoUrl}>{symbol}</Token>
+                  <Popover
+                    popover={
+                      isHexAddress(tokenAddress) && (
+                        <span className="text-sm">{tokenAddress}</span>
+                      )
+                    }
+                  >
+                    <Token logo={logoUrl}>{symbol}</Token>
+                  </Popover>
                 </TableCell>
 
                 <TableCell>
