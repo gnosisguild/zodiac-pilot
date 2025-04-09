@@ -52,7 +52,6 @@ import {
 import { useId } from 'react'
 import { href, redirect, useParams } from 'react-router'
 import { rankRoutes, type ChainId, type PrefixedAddress } from 'ser-kit'
-
 import type { Route as RouteType } from './+types/edit-route'
 import { Intent } from './intents'
 
