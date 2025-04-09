@@ -30,6 +30,7 @@ import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,
   createRouteId,
+  queryRoutes,
   updateAvatar,
   updateChainId,
   updateLabel,
@@ -50,14 +51,7 @@ import {
 } from '@zodiac/ui'
 import { useId } from 'react'
 import { href, redirect, useParams } from 'react-router'
-import {
-  queryRoutes,
-  rankRoutes,
-  unprefixAddress,
-  type ChainId,
-  type PrefixedAddress,
-} from 'ser-kit'
-
+import { rankRoutes, type ChainId, type PrefixedAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit-route'
 import { Intent } from './intents'
 
@@ -68,10 +62,10 @@ export const meta: RouteType.MetaFunction = ({ data, matches }) => [
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
   const route = parseRouteData(params.data)
 
-  const routes =
+  const queryRoutesResult =
     route.initiator == null
-      ? []
-      : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+      ? { routes: [] }
+      : await queryRoutes(route.initiator, route.avatar)
 
   return {
     currentRoute: {
@@ -79,10 +73,11 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
-      waypoints: routes.length === 0 ? route.waypoints : undefined,
+      waypoints:
+        queryRoutesResult.routes.length === 0 ? route.waypoints : undefined,
     },
 
-    possibleRoutes: rankRoutes(routes),
+    possibleRoutes: rankRoutes(queryRoutesResult.routes),
   }
 }
 
@@ -170,12 +165,12 @@ const findSelectedRoute = async (
     return route
   }
 
-  const possibleRoutes =
+  const queryRoutesResult =
     route.initiator == null
-      ? []
-      : await queryRoutes(unprefixAddress(route.initiator), route.avatar)
+      ? { routes: [] }
+      : await queryRoutes(route.initiator, route.avatar)
 
-  const selectedRoute = possibleRoutes.find(
+  const selectedRoute = queryRoutesResult.routes.find(
     (route) => routeId(route) === selectedRouteId,
   )
 
