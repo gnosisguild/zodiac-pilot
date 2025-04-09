@@ -18,6 +18,11 @@ export const meta: Route.MetaFunction = () => [
     name: 'og:title',
     content: 'Zodiac Pilot',
   },
+  {
+    name: 'og:description',
+    content:
+      'Zodiac Pilot: A browser tool for Safe accounts to simulate, batch, and execute multi-dapp transactions',
+  },
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
