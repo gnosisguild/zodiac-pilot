@@ -13,6 +13,7 @@ import {
   GnosisPay,
   HatsLogo,
   KarpatkeyLogo,
+  Lagoon,
   OneInch,
   RethinkLogo,
   SafeLogo,
@@ -163,6 +164,11 @@ export function Hero({ children }: PropsWithChildren) {
               <li className="flex justify-center">
                 <a href="https://www.tally.xyz/">
                   <Tally />
+                </a>
+              </li>
+              <li className="flex justify-center">
+                <a href="https://lagoon.finance/">
+                  <Lagoon />
                 </a>
               </li>
             </ul>
