@@ -10,3 +10,6 @@ enabled = true
 [assets]
 directory = './build/client'
 binding = "ASSETS"
+
+[placement]
+mode = "smart"
