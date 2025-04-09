@@ -11,7 +11,7 @@ import { createFactory } from './createFactory'
 export const accountFactory = createFactory<
   AccountCreateInput,
   Account,
-  [User]
+  [owner: User]
 >({
   build(user, account) {
     return {

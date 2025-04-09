@@ -6,7 +6,6 @@ import {
   getAccount,
   getAccounts,
   getActiveAccount,
-  type Account,
 } from '@/db'
 import { routeTitle } from '@/utils'
 import { authKitAction, authKitLoader } from '@/workOS/server'
@@ -51,7 +50,7 @@ export const loader = (args: Route.LoaderArgs) =>
       if (user == null) {
         return {
           loggedIn: false,
-          remoteAccounts: [] as Account[],
+          remoteAccounts: [],
           activeRemoteAccountId: null,
         }
       }
@@ -187,13 +186,30 @@ const ListRoutes = ({
       <Page.Main>
         {remoteAccounts.length > 0 && (
           <Accounts>
-            {remoteAccounts.map((account) => (
-              <RemoteAccount
-                key={account.id}
-                account={account}
-                active={activeRemoteAccountId === account.id}
-              />
-            ))}
+            {remoteAccounts.map((account) => {
+              const [activeRoute] = account.activeRoutes
+
+              if (activeRoute != null) {
+                const { wallet } = activeRoute.route
+
+                return (
+                  <RemoteAccount
+                    key={account.id}
+                    account={account}
+                    active={activeRemoteAccountId === account.id}
+                    wallet={wallet}
+                  />
+                )
+              }
+
+              return (
+                <RemoteAccount
+                  key={account.id}
+                  account={account}
+                  active={activeRemoteAccountId === account.id}
+                />
+              )
+            })}
           </Accounts>
         )}
 

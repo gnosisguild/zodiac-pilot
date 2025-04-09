@@ -121,6 +121,10 @@ export const AccountTable = pgTable(
 export type Account = typeof AccountTable.$inferSelect
 export type AccountCreateInput = typeof AccountTable.$inferInsert
 
+const AccountRelations = relations(AccountTable, ({ many }) => ({
+  activeRoutes: many(ActiveRouteTable),
+}))
+
 export const WalletTable = pgTable(
   'Wallet',
   {
@@ -207,6 +211,11 @@ const ActiveRouteRelations = relations(ActiveRouteTable, ({ one }) => ({
     fields: [ActiveRouteTable.routeId],
     references: [RouteTable.id],
   }),
+
+  account: one(AccountTable, {
+    fields: [ActiveRouteTable.accountId],
+    references: [AccountTable.id],
+  }),
 }))
 
 export const ActiveAccountTable = pgTable(
@@ -254,6 +263,7 @@ export const schema = {
   TenantRelations,
   FeatureRelations,
   RouteRelations,
+  AccountRelations,
   ActiveFeatureRelations,
   ActiveRouteRelations,
   ActiveAccountRelations,

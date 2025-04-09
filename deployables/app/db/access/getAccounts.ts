@@ -23,4 +23,21 @@ export const getAccounts = (
 
       return where
     },
+    with: {
+      activeRoutes: {
+        where(fields, { eq }) {
+          if (userId) {
+            return eq(fields.userId, userId)
+          }
+        },
+
+        with: {
+          route: {
+            with: {
+              wallet: true,
+            },
+          },
+        },
+      },
+    },
   })
