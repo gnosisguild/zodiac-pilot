@@ -167,7 +167,7 @@ export function Hero({ children }: PropsWithChildren) {
                 </a>
               </li>
               <li className="flex justify-center">
-                <a href="https://www.tally.xyz/">
+                <a href="https://lagoon.finance/">
                   <Lagoon />
                 </a>
               </li>
