@@ -7,7 +7,16 @@ export const meta: Route.MetaFunction = () => [
   { title: 'Zodiac Pilot' },
   {
     name: 'description',
-    content: 'Zodiac Pilot — Batch and simulate transactions',
+    content:
+      'Zodiac Pilot: A browser tool for Safe accounts to simulate, batch, and execute multi-dapp transactions',
+  },
+  {
+    name: 'og:site_name',
+    content: 'Zodiac OS',
+  },
+  {
+    name: 'og:title',
+    content: 'Zodiac Pilot',
   },
 ]
 
