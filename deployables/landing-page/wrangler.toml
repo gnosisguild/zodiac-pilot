@@ -6,6 +6,7 @@ main = "./build/server/index.js"
 
 [observability.logs]
 enabled = true
+invocation_logs = true
 
 [assets]
 directory = './build/client'
