@@ -26,8 +26,12 @@ export default {
     const url = new URL(request.url)
 
     if (url.pathname.startsWith('/assets')) {
+      console.log('Serving asset using ASSETS binding', url.pathname)
+
       return env.ASSETS.fetch(request)
     }
+
+    console.log('Serving non-asset', url.pathname)
 
     return requestHandler(request, {
       cloudflare: { env, ctx },
