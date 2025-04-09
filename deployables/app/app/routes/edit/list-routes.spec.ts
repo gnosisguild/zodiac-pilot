@@ -1,13 +1,21 @@
 import { getAvailableChains } from '@/balances-server'
-import { activateAccount, dbClient, getAccounts, getActiveAccount } from '@/db'
+import {
+  activateAccount,
+  activateRoute,
+  dbClient,
+  getAccounts,
+  getActiveAccount,
+} from '@/db'
 import {
   accountFactory,
   loadAndActivateRoute,
   loadRoutes,
   postMessage,
   render,
+  routeFactory,
   tenantFactory,
   userFactory,
+  walletFactory,
 } from '@/test-utils'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -30,7 +38,7 @@ describe.sequential('List Routes', () => {
 
   describe('List', () => {
     describe('Logged in', () => {
-      it('lists all routes', async () => {
+      it('lists all accounts', async () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
 
@@ -42,6 +50,24 @@ describe.sequential('List Routes', () => {
 
         expect(
           await screen.findByRole('cell', { name: 'Test account' }),
+        ).toBeInTheDocument()
+      })
+
+      it('shows the currently active initiator', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(user)
+        const wallet = await walletFactory.create(user, {
+          label: 'Test wallet',
+        })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), user, route)
+
+        await render(href('/edit'), { user })
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test wallet' }),
         ).toBeInTheDocument()
       })
     })

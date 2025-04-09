@@ -2,7 +2,7 @@ import type { DBClient } from '../dbClient'
 
 type GetAccountsOptions = {
   tenantId: string
-  userId?: string
+  userId: string
   deleted?: boolean
 }
 
@@ -17,10 +17,21 @@ export const getAccounts = (
         eq(fields.deleted, deleted),
       )
 
-      if (userId != null) {
-        return and(where, eq(fields.createdById, userId))
-      }
-
       return where
+    },
+    with: {
+      activeRoutes: {
+        where(fields, { eq }) {
+          return eq(fields.userId, userId)
+        },
+
+        with: {
+          route: {
+            with: {
+              wallet: true,
+            },
+          },
+        },
+      },
     },
   })

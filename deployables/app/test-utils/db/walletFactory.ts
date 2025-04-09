@@ -7,7 +7,11 @@ import {
 import { randomAddress } from '@zodiac/test-utils'
 import { createFactory } from './createFactory'
 
-export const walletFactory = createFactory<WalletCreateInput, Wallet, [User]>({
+export const walletFactory = createFactory<
+  WalletCreateInput,
+  Wallet,
+  [owner: User]
+>({
   build(user, wallet) {
     return {
       address: randomAddress(),

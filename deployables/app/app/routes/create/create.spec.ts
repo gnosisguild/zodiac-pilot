@@ -83,7 +83,10 @@ describe.sequential('New SafeAccount', () => {
         }),
       })
 
-      const [account] = await getAccounts(dbClient(), { tenantId: tenant.id })
+      const [account] = await getAccounts(dbClient(), {
+        tenantId: tenant.id,
+        userId: user.id,
+      })
 
       expect(account).toHaveProperty('address', address)
       expect(account).toHaveProperty('chainId', Chain.ETH)
