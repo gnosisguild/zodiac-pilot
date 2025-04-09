@@ -3,7 +3,10 @@ name = "pilot-landing-page"
 compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 main = "./build/server/index.js"
-assets = { directory = "./build/client/" }
 
 [observability.logs]
 enabled = true
+
+[assets]
+directory = './build/client'
+binding = "ASSETS"
