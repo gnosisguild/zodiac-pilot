@@ -15,10 +15,16 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { randomAddress } from '@zodiac/test-utils'
+import {
+  createMockEoaAccount,
+  createMockRoute,
+  createMockStartingWaypoint,
+  createMockWaypoints,
+  randomAddress,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { queryInitiators } from 'ser-kit'
-import { describe, expect, it, vi } from 'vitest'
+import { queryInitiators, queryRoutes } from 'ser-kit'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -27,12 +33,18 @@ vi.mock('ser-kit', async (importOriginal) => {
     ...module,
 
     queryInitiators: vi.fn(),
+    queryRoutes: vi.fn(),
   }
 })
 
 const mockQueryInitiators = vi.mocked(queryInitiators)
+const mockQueryRoutes = vi.mocked(queryRoutes)
 
 describe('Edit account', () => {
+  beforeEach(() => {
+    mockQueryRoutes.mockResolvedValue([])
+  })
+
   describe('Label', () => {
     it('displays the current label', async () => {
       const tenant = await tenantFactory.create()
@@ -124,7 +136,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -135,6 +147,8 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('option', { name: 'Test Wallet' }),
       )
+
+      await waitForPendingLoaders()
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
@@ -160,7 +174,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -168,6 +182,9 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Remove Pilot Signer' }),
       )
+
+      await waitForPendingLoaders()
+
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
       await waitForPendingActions()
@@ -192,7 +209,7 @@ describe('Edit account', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId', { accountId: account.id }),
         { user },
       )
@@ -203,6 +220,8 @@ describe('Edit account', () => {
       await userEvent.click(
         await screen.findByRole('option', { name: 'Another wallet' }),
       )
+
+      await waitForPendingLoaders()
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
@@ -215,6 +234,100 @@ describe('Edit account', () => {
         fromId: walletB.id,
         toId: account.id,
       })
+    })
+  })
+
+  describe('Route', () => {
+    it('is auto-selects the first route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test wallet' })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+      })
+
+      const newRoute = createMockRoute({ id: 'first', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([newRoute])
+
+      const { waitForPendingLoaders, waitForPendingActions } = await render(
+        href('/account/:accountId', {
+          accountId: account.id,
+        }),
+        { user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test wallet' }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute.route).toHaveProperty('waypoints', waypoints)
+    })
+
+    it('is possible to change the selected route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test wallet' })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+        start: createMockStartingWaypoint(
+          createMockEoaAccount({ address: randomAddress() }),
+        ),
+      })
+
+      const firstRoute = createMockRoute({
+        id: 'first',
+        waypoints: createMockWaypoints({
+          end: true,
+        }),
+      })
+
+      const route = await routeFactory.create(account, wallet, {
+        waypoints: firstRoute.waypoints,
+      })
+
+      await activateRoute(dbClient(), user, route)
+
+      const secondRoute = createMockRoute({ id: 'second', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([firstRoute, secondRoute])
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId', {
+          accountId: account.id,
+        }),
+        { user },
+      )
+
+      // click last route in radio select
+      await userEvent.click((await screen.findAllByRole('radio'))[1])
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute.route).toHaveProperty('waypoints', waypoints)
     })
   })
 })

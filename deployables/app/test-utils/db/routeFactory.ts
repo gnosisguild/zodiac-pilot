@@ -10,7 +10,7 @@ import { createFactory } from './createFactory'
 export const routeFactory = createFactory<
   RouteCreateInput,
   Route,
-  [Account, Wallet]
+  [account: Account, wallet: Wallet]
 >({
   build(account, wallet, route) {
     return {

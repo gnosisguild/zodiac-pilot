@@ -14,6 +14,7 @@ export {
   isHexAddress,
   verifyHexAddress,
   verifyPrefixedAddress,
+  waypointsSchema,
 } from './routeSchema'
 export type {
   Account,

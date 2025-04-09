@@ -1,5 +1,5 @@
 import type { ChainId } from '@zodiac/chains'
-import type { HexAddress } from '@zodiac/schema'
+import type { HexAddress, Waypoints } from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -151,7 +151,7 @@ export const RouteTable = pgTable(
     toId: uuid()
       .notNull()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
-    waypoints: json(),
+    waypoints: json().$type<Waypoints>(),
 
     ...tenantReference,
     ...createdTimestamp,

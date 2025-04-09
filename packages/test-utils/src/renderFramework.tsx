@@ -120,6 +120,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
 
   const waitForPendingLoaders = async () => {
     await Promise.all(pendingLoaders)
+    await sleepTillIdle()
   }
 
   const waitForPendingActions = async () => {
