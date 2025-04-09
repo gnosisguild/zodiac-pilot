@@ -34,7 +34,7 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { useId } from 'react'
-import { href } from 'react-router'
+import { href, redirect } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
 
@@ -113,14 +113,17 @@ export const action = (args: Route.ActionArgs) =>
         const activeRoute = await findActiveRoute(tx, user, accountId)
 
         if (initiator != null) {
+          const selectedRouteId = getOptionalString(data, 'routeId')
+
           if (
             activeRoute == null ||
-            activeRoute.route.wallet.address !== initiator
+            activeRoute.route.wallet.address !== initiator ||
+            routeId(activeRoute.route.waypoints) !== selectedRouteId
           ) {
             const route = await createRoute(tx, user, {
               accountId,
               initiator,
-              selectedRouteId: getOptionalString(data, 'routeId'),
+              selectedRouteId,
             })
 
             if (activeRoute != null) {
@@ -138,7 +141,7 @@ export const action = (args: Route.ActionArgs) =>
         })
       })
 
-      return null
+      return redirect(href('/edit'))
     },
     {
       ensureSignedIn: true,

@@ -16,7 +16,9 @@ import {
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
+  createMockEoaAccount,
   createMockRoute,
+  createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
 } from '@zodiac/test-utils'
@@ -267,6 +269,57 @@ describe('Edit account', () => {
       )
 
       await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(dbClient(), user, account.id)
+
+      expect(activeRoute.route).toHaveProperty('waypoints', waypoints)
+    })
+
+    it('is possible to change the selected route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(user)
+      const wallet = await walletFactory.create(user, { label: 'Test wallet' })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+        start: createMockStartingWaypoint(
+          createMockEoaAccount({ address: randomAddress() }),
+        ),
+      })
+
+      const firstRoute = createMockRoute({
+        id: 'first',
+        waypoints: createMockWaypoints({
+          end: true,
+        }),
+      })
+
+      const route = await routeFactory.create(account, wallet, {
+        waypoints: firstRoute.waypoints,
+      })
+
+      await activateRoute(dbClient(), user, route)
+
+      const secondRoute = createMockRoute({ id: 'second', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([firstRoute, secondRoute])
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId', {
+          accountId: account.id,
+        }),
+        { user },
+      )
+
+      // click last route in radio select
+      await userEvent.click((await screen.findAllByRole('radio'))[1])
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
