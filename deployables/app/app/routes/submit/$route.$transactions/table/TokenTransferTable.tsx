@@ -1,10 +1,8 @@
 import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
-import { isHexAddress } from '@zodiac/schema'
 import {
   Address,
   NumberValue,
-  Popover,
   Table,
   TableBody,
   TableCell,
@@ -72,15 +70,9 @@ export const TokenTransferTable = ({
             return (
               <TableRow key={index}>
                 <TableCell>
-                  <Popover
-                    popover={
-                      isHexAddress(contractId) && (
-                        <span className="text-sm">{contractId}</span>
-                      )
-                    }
-                  >
-                    <Token logo={logoUrl}>{symbol}</Token>
-                  </Popover>
+                  <Token contract={contractId} logo={logoUrl}>
+                    {symbol}
+                  </Token>
                 </TableCell>
 
                 <TableCell>

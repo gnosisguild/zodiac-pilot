@@ -1,6 +1,5 @@
 import { Token } from '@/components'
 import type { ApprovalTransaction } from '@/simulation-server'
-import { isHexAddress } from '@zodiac/schema'
 import {
   Address,
   Popover,
@@ -64,15 +63,9 @@ export function TokenApprovalTable({
             return (
               <TableRow key={index}>
                 <TableCell>
-                  <Popover
-                    popover={
-                      isHexAddress(tokenAddress) && (
-                        <span className="text-sm">{tokenAddress}</span>
-                      )
-                    }
-                  >
-                    <Token logo={logoUrl}>{symbol}</Token>
-                  </Popover>
+                  <Token contract={tokenAddress} logo={logoUrl}>
+                    {symbol}
+                  </Token>
                 </TableCell>
 
                 <TableCell>

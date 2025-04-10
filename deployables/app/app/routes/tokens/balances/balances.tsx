@@ -1,12 +1,10 @@
 import { useTokenBalances } from '@/balances-client'
 import { Token } from '@/components'
-import { isHexAddress } from '@zodiac/schema'
 import {
   Empty,
   Error as ErrorAlert,
   GhostLinkButton,
   Info,
-  Popover,
   SkeletonText,
   Table,
   TableBody,
@@ -70,15 +68,9 @@ const Balances = () => {
             }) => (
               <TableRow key={contractId} className="group">
                 <TableCell>
-                  <Popover
-                    popover={
-                      isHexAddress(contractId) && (
-                        <span className="text-sm">{contractId}</span>
-                      )
-                    }
-                  >
-                    <Token logo={logoUrl}>{name}</Token>
-                  </Popover>
+                  <Token contract={contractId} logo={logoUrl}>
+                    {name}
+                  </Token>
                 </TableCell>
                 <TableCell align="right">
                   <TokenValue symbol={symbol} delta={diff?.amount}>
