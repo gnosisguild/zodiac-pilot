@@ -170,10 +170,10 @@ export function TableCell({
           target={target}
           aria-label={title}
           tabIndex={cellRef?.previousElementSibling === null ? 0 : -1}
-          className="focus:outline-hidden absolute inset-0"
+          className="focus:outline-hidden absolute inset-0 z-0"
         />
       )}
-      {children}
+      <div className="z-1 pointer-events-auto relative">{children}</div>
     </td>
   )
 }
