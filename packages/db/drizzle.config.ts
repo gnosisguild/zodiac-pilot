@@ -2,7 +2,7 @@ import { getDBConnectionString } from '@zodiac/env'
 import { defineConfig } from 'drizzle-kit'
 
 export default defineConfig({
-  schema: './db/schema',
+  schema: './src/schema',
   out: './supabase/migrations',
   dialect: 'postgresql',
   dbCredentials: {

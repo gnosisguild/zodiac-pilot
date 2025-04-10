@@ -3,7 +3,7 @@ import {
   type User,
   type Wallet,
   type WalletCreateInput,
-} from '@/db'
+} from '@zodiac/db'
 import { randomAddress } from '@zodiac/test-utils'
 import { createFactory } from './createFactory'
 

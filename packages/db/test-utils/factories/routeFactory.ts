@@ -4,7 +4,7 @@ import {
   type Route,
   type RouteCreateInput,
   type Wallet,
-} from '@/db'
+} from '@zodiac/db'
 import { createFactory } from './createFactory'
 
 export const routeFactory = createFactory<

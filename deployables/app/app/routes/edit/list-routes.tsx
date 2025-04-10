@@ -1,5 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth'
 import { fromVersion, OnlyConnected, Page } from '@/components'
+import { routeTitle } from '@/utils'
 import {
   activateAccount,
   dbClient,
@@ -7,8 +8,7 @@ import {
   getAccount,
   getAccounts,
   getActiveAccount,
-} from '@/db'
-import { routeTitle } from '@/utils'
+} from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,

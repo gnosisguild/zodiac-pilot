@@ -1,6 +1,6 @@
-import { dbClient, getFeatures, getTenant } from '@/db'
 import { getOrganization } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
+import { dbClient, getFeatures, getTenant } from '@zodiac/db'
 import type { Route } from './+types/features'
 
 export const loader = (args: Route.LoaderArgs) =>

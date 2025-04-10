@@ -1,3 +1,6 @@
+import { getOrganizationsForUser, updateExternalUserId } from '@/workOS/server'
+import { authLoader, signOut } from '@workos-inc/authkit-react-router'
+import type { User } from '@workos-inc/node'
 import {
   addUserToTenant,
   createUser,
@@ -5,10 +8,7 @@ import {
   getTenant,
   getUser,
   type DBClient,
-} from '@/db'
-import { getOrganizationsForUser, updateExternalUserId } from '@/workOS/server'
-import { authLoader, signOut } from '@workos-inc/authkit-react-router'
-import type { User } from '@workos-inc/node'
+} from '@zodiac/db'
 import type { Route } from './+types/callback'
 
 export const loader = ({ request, ...options }: Route.LoaderArgs) => {

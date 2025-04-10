@@ -5,7 +5,6 @@ import {
   PilotStatus,
   ProvidePilotStatus,
 } from '@/components'
-import { dbClient, getFeatures, getTenant } from '@/db'
 import { ProvideChains } from '@/routes-ui'
 import { getOrganization } from '@/workOS/server'
 import {
@@ -13,6 +12,7 @@ import {
   getSignInUrl,
   signOut,
 } from '@workos-inc/authkit-react-router'
+import { dbClient, getFeatures, getTenant } from '@zodiac/db'
 import {
   Divider,
   Feature,

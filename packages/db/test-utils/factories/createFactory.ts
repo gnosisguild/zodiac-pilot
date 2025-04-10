@@ -1,4 +1,4 @@
-import { dbClient, type DBClient } from '@/db'
+import { dbClient, type DBClient } from '@zodiac/db'
 
 type FactoryOptions<Input, Output, BuildArgs extends Array<unknown>> = {
   build: (...data: [...BuildArgs, Partial<Input>?]) => Input

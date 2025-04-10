@@ -6,12 +6,12 @@ import {
   OnlyConnectedWhenLoggedOut,
   Page,
 } from '@/components'
-import { createAccount, dbClient } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
+import { createAccount, dbClient } from '@zodiac/db'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {

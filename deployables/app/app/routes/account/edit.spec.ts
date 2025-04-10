@@ -1,20 +1,20 @@
+import { render } from '@/test-utils'
+import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   activateRoute,
   dbClient,
   findActiveRoute,
   getAccount,
   getActiveRoute,
-} from '@/db'
+} from '@zodiac/db'
 import {
   accountFactory,
-  render,
   routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
-} from '@/test-utils'
-import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+} from '@zodiac/db/test-utils'
 import {
   createMockEoaAccount,
   createMockRoute,

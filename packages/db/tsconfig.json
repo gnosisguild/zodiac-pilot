@@ -1,0 +1,7 @@
+{
+  "extends": "@zodiac/typescript-config",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"]
+  },
+  "include": ["./src/**/*", "./test-utils/**/*"]
+}

@@ -15,7 +15,6 @@ import {
   mockViewport,
 } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
-import { dbClient, deleteAllFeatures, deleteAllTenants } from './db'
 import { createMockChain } from './test-utils/createMockChain'
 import { createMockToken } from './test-utils/createMockToken'
 
@@ -97,15 +96,11 @@ const mockIsValidToken = vi.mocked(isValidToken)
 beforeEach(async () => {
   vi.spyOn(window, 'postMessage')
 
-  const db = dbClient()
-
   mockGetAvailableChains.mockResolvedValue([])
   mockGetTokenBalances.mockResolvedValue([])
   mockGetTokenByAddress.mockResolvedValue(createMockToken())
   mockGetChain.mockResolvedValue(createMockChain())
   mockIsValidToken.mockResolvedValue(true)
-
-  await Promise.all([deleteAllTenants(db), deleteAllFeatures(db)])
 })
 
 afterEach(async () => {

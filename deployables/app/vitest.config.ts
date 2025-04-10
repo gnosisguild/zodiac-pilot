@@ -20,7 +20,11 @@ export default defineConfig({
   test: {
     alias,
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts', '@zodiac/test-utils/setup-chrome-mock'],
+    setupFiles: [
+      './vitest.setup.ts',
+      '@zodiac/test-utils/setup-chrome-mock',
+      '@zodiac/db/setup-tests',
+    ],
     include: ['./{app,db}/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,

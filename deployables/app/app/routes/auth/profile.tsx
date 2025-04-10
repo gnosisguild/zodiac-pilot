@@ -1,5 +1,9 @@
 import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
+import { useAfterSubmit, useIsPending } from '@/hooks'
+import { Widgets } from '@/workOS/client'
+import { signOut } from '@workos-inc/authkit-react-router'
+import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import {
   createWallet,
   dbClient,
@@ -7,11 +11,7 @@ import {
   findWalletByAddress,
   getWallet,
   getWallets,
-} from '@/db'
-import { useAfterSubmit, useIsPending } from '@/hooks'
-import { Widgets } from '@/workOS/client'
-import { signOut } from '@workos-inc/authkit-react-router'
-import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
+} from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import {
   Address,
