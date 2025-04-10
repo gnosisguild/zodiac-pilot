@@ -1,3 +1,4 @@
+import { getAccounts } from '@/companion'
 import {
   chromeMock,
   createMockRoute,
@@ -23,8 +24,11 @@ vi.mock('@/companion', async (importOriginal) => {
     ...module,
 
     getUser: vi.fn().mockResolvedValue(null),
+    getAccounts: vi.fn().mockResolvedValue([]),
   }
 })
+
+const mockGetAccounts = vi.mocked(getAccounts)
 
 describe('Transactions', () => {
   describe('Route switch', () => {
@@ -58,6 +62,10 @@ describe('Transactions', () => {
       )
 
       await expectRouteToBe('/first-route/clear-transactions/second-route')
+    })
+
+    it('lists routes from the zodiac os', async () => {
+      mockGetAccounts.mockResolvedValue([])
     })
   })
 
