@@ -1,7 +1,7 @@
-import { z } from 'zod'
+import { accountSchema } from '@zodiac/db'
 import { api, type FetchOptions } from './api'
 
-const accountsSchema = z.object({ label: z.string(), id: z.string() }).array()
+const schema = accountSchema.array()
 
 export const getAccounts = ({ signal }: FetchOptions) =>
-  api('/extension/accounts', { schema: accountsSchema, signal })
+  api('/extension/accounts', { schema, signal })

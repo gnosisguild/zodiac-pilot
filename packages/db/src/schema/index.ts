@@ -138,6 +138,8 @@ export const AccountTable = pgTable(
 export type Account = typeof AccountTable.$inferSelect
 export type AccountCreateInput = typeof AccountTable.$inferInsert
 
+export const accountSchema = createSelectSchema(AccountTable)
+
 const AccountRelations = relations(AccountTable, ({ many }) => ({
   activeRoutes: many(ActiveRouteTable),
 }))
