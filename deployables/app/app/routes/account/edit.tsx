@@ -14,9 +14,8 @@ import {
   removeActiveRoute,
   updateAccount,
   type DBClient,
-  type Tenant,
-  type User,
 } from '@zodiac/db'
+import type { Tenant, User } from '@zodiac/db/schema'
 import {
   getOptionalHexString,
   getOptionalString,

@@ -6,13 +6,8 @@ import type {
   UnauthorizedData as WorkOsUnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import {
-  dbClient,
-  getTenant,
-  getUser,
-  type Tenant,
-  type User,
-} from '@zodiac/db'
+import { dbClient, getTenant, getUser } from '@zodiac/db'
+import type { Tenant, User } from '@zodiac/db/schema'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   user: User
