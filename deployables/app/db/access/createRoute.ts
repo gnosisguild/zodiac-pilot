@@ -17,7 +17,7 @@ export const createRoute = async (
     .values({
       fromId: wallet.id,
       toId: account.id,
-      tenantId: wallet.tenantId,
+      tenantId: account.tenantId,
       waypoints,
     })
     .returning()

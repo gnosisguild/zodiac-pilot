@@ -48,7 +48,7 @@ describe('Profile', () => {
 
     const address = randomAddress()
 
-    await walletFactory.create(tenant, user, { label: 'User wallet', address })
+    await walletFactory.create(user, { label: 'User wallet', address })
 
     await render(href('/profile'), { tenant, user })
 
@@ -63,7 +63,7 @@ describe('Profile', () => {
   it('is possible to remove a wallet', async () => {
     const tenant = await tenantFactory.create()
     const user = await userFactory.create(tenant)
-    const wallet = await walletFactory.create(tenant, user, {
+    const wallet = await walletFactory.create(user, {
       label: 'User wallet',
     })
 
@@ -88,5 +88,45 @@ describe('Profile', () => {
       deleted: true,
       deletedById: user.id,
     })
+  })
+
+  it('is not possible to create duplicate wallets', async () => {
+    const tenant = await tenantFactory.create()
+    const user = await userFactory.create(tenant)
+
+    const address = randomAddress()
+
+    await walletFactory.create(user, {
+      address,
+      label: 'Existing wallet',
+    })
+
+    const { waitForPendingActions } = await render(href('/profile'), {
+      tenant,
+      user,
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Add Wallet' }),
+    )
+
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Label' }),
+      'Test',
+    )
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Address' }),
+      address,
+    )
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+
+    await waitForPendingActions()
+
+    expect(
+      await screen.findByRole('alert', { name: 'Wallet already exists' }),
+    ).toHaveAccessibleDescription(
+      `A wallet with this address already exists under the name "Existing wallet".`,
+    )
   })
 })

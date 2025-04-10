@@ -57,7 +57,7 @@ describe.sequential('List Routes', () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
         const account = await accountFactory.create(tenant, user)
-        const wallet = await walletFactory.create(tenant, user, {
+        const wallet = await walletFactory.create(user, {
           label: 'Test wallet',
         })
         const route = await routeFactory.create(account, wallet)
