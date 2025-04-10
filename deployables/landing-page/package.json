@@ -10,7 +10,7 @@
     "@react-router/serve": "7.5.0",
     "@headlessui/react": "2.2.0",
     "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.1",
+    "@types/react-dom": "19.1.2",
     "@zodiac/env": "workspace:*",
     "@zodiac/ui": "workspace:*",
     "classnames": "2.5.1",
