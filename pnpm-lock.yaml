@@ -606,7 +606,7 @@ importers:
         specifier: 0.41.0
         version: 0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.5)
       drizzle-zod:
-        specifier: ^0.7.1
+        specifier: 0.7.1
         version: 0.7.1(drizzle-orm@0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.5))(zod@3.24.2)
       postgres:
         specifier: 3.4.5
@@ -622,7 +622,7 @@ importers:
         specifier: 1.39.1
         version: 1.39.1
       '@faker-js/faker':
-        specifier: ^9.6.0
+        specifier: 9.6.0
         version: 9.6.0
       '@types/node':
         specifier: 22.14.0
@@ -646,7 +646,7 @@ importers:
         specifier: 9.24.0
         version: 9.24.0(jiti@2.4.2)
       eslint-plugin-drizzle:
-        specifier: ^0.2.3
+        specifier: 0.2.3
         version: 0.2.3(eslint@9.24.0(jiti@2.4.2))
       vitest:
         specifier: 3.1.1
@@ -15927,7 +15927,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.6(ws@8.18.1):
     dependencies:
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -18261,7 +18261,7 @@ snapshots:
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.2)
-      isows: 1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.6(ws@8.18.1)
       ox: 0.6.9(typescript@5.8.3)(zod@3.24.2)
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:

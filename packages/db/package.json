@@ -42,13 +42,13 @@
     "@zodiac/env": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "drizzle-orm": "0.41.0",
-    "drizzle-zod": "^0.7.1",
+    "drizzle-zod": "0.7.1",
     "postgres": "3.4.5",
     "zod": "3.24.2"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.39.1",
-    "@faker-js/faker": "^9.6.0",
+    "@faker-js/faker": "9.6.0",
     "@types/node": "22.14.0",
     "@types/react": "19.1.0",
     "@zodiac/eslint-config": "workspace:*",
@@ -56,7 +56,7 @@
     "@zodiac/typescript-config": "workspace:*",
     "drizzle-kit": "0.30.6",
     "eslint": "9.24.0",
-    "eslint-plugin-drizzle": "^0.2.3",
+    "eslint-plugin-drizzle": "0.2.3",
     "vitest": "3.1.1"
   },
   "peerDependencies": {
