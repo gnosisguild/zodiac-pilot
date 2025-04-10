@@ -20,6 +20,11 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./schema": {
+      "types": "./schema/index.ts",
+      "import": "./schema/index.ts",
+      "default": "./schema/index.ts"
+    },
     "./test-utils": {
       "types": "./test-utils/index.ts",
       "import": "./test-utils/index.ts",
@@ -37,10 +42,13 @@
     "@zodiac/env": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "drizzle-orm": "0.41.0",
-    "postgres": "3.4.5"
+    "drizzle-zod": "^0.7.1",
+    "postgres": "3.4.5",
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.39.1",
+    "@faker-js/faker": "^9.6.0",
     "@types/node": "22.14.0",
     "@types/react": "19.1.0",
     "@zodiac/eslint-config": "workspace:*",

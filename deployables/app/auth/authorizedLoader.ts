@@ -21,8 +21,15 @@ export async function authorizedLoader<
 >(
   args: Args,
   fn: Fn,
-  options?: GetAuthOptions<Args['params']>,
+  options: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>>
+export async function authorizedLoader<
+  Args extends LoaderFunctionArgs,
+  Fn extends LoaderFunction<
+    Args['params'],
+    { auth: AuthorizedData | UnauthorizedData }
+  >,
+>(args: Args, fn: Fn): Promise<Awaited<ReturnType<typeof fn>>>
 export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
   Fn extends LoaderFunction<

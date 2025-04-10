@@ -1,5 +1,10 @@
 import type { ChainId } from '@zodiac/chains'
-import type { HexAddress, Waypoints } from '@zodiac/schema'
+import {
+  addressSchema,
+  chainIdSchema,
+  type HexAddress,
+  type Waypoints,
+} from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -13,6 +18,8 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core'
+import { createSelectSchema } from 'drizzle-zod'
+import { z } from 'zod'
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -80,6 +87,10 @@ export const FeatureTable = pgTable(
   (table) => [unique().on(table.name)],
 )
 
+export const featureSchema = createSelectSchema(FeatureTable, {
+  createdAt: z.coerce.date(),
+})
+
 export const FeatureRelations = relations(FeatureTable, ({ many }) => ({
   activeOnTenants: many(ActiveFeatureTable),
 }))
@@ -134,6 +145,12 @@ export const AccountTable = pgTable(
 
 export type Account = typeof AccountTable.$inferSelect
 export type AccountCreateInput = typeof AccountTable.$inferInsert
+
+export const accountSchema = createSelectSchema(AccountTable, {
+  chainId: chainIdSchema,
+  address: addressSchema,
+  createdAt: z.coerce.date(),
+})
 
 const AccountRelations = relations(AccountTable, ({ many }) => ({
   activeRoutes: many(ActiveRouteTable),

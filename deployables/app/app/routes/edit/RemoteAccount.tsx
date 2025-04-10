@@ -1,7 +1,7 @@
 import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
-import type { Account, Wallet } from '@zodiac/db'
+import type { Account, Wallet } from '@zodiac/db/schema'
 import {
   Address,
   Form,

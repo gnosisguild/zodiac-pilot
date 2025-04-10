@@ -1,13 +1,13 @@
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
 import { Transition } from '@headlessui/react'
-import { CHAIN_NAME, getChainId } from '@zodiac/chains'
+import { CHAIN_NAME, type ChainId } from '@zodiac/chains'
 import {
   getPilotAddress,
   getRolesWaypoint,
   getStartingWaypoint,
 } from '@zodiac/modules'
-import { type ExecutionRoute, type HexAddress } from '@zodiac/schema'
+import { type HexAddress } from '@zodiac/schema'
 import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
 import { List, Pencil } from 'lucide-react'
 import { useState } from 'react'
@@ -19,8 +19,14 @@ import { ConnectionStack } from '../../ConnectionStack'
 import { useLaunchRoute } from '../../useLaunchRoute'
 import { Intent } from './intents'
 
+export type Account = {
+  id: string
+  label?: string | null
+  chainId: ChainId
+}
+
 type AccountSelectProps = {
-  accounts: ExecutionRoute[]
+  accounts: Account[]
 }
 
 export const AccountSelect = ({ accounts }: AccountSelectProps) => {
@@ -88,7 +94,9 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
             launchRoute(option.value)
           }}
           value={{ value: route.id }}
-          options={accounts.map((account) => ({ value: account.id }))}
+          options={accounts
+            .toSorted(sortAccounts)
+            .map((account) => ({ value: account.id }))}
         >
           {({ data: { value } }) => {
             const account = accounts.find(({ id }) => id === value)
@@ -102,9 +110,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
                     <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                       {account.label}
                     </span>
-                    <Tag color="gray">
-                      {CHAIN_NAME[getChainId(account.avatar)]}
-                    </Tag>
+                    <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
                   </div>
                 )}
               </span>
@@ -175,3 +181,19 @@ const Blockies = ({
     </div>
   </div>
 )
+
+export const sortAccounts = (accountA: Account, accountB: Account) => {
+  if (accountA.label == null && accountB.label == null) {
+    return 0
+  }
+
+  if (accountA.label == null) {
+    return -1
+  }
+
+  if (accountB.label == null) {
+    return 1
+  }
+
+  return accountA.label.localeCompare(accountB.label)
+}

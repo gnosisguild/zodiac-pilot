@@ -1,5 +1,6 @@
 import { invariant } from '@epic-web/invariant'
-import { FeatureTable, type DBClient } from '@zodiac/db'
+import type { DBClient } from '@zodiac/db'
+import { FeatureTable } from '@zodiac/db/schema'
 
 export const deleteAllFeatures = (db: DBClient) => {
   invariant(

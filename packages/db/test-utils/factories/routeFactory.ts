@@ -4,7 +4,8 @@ import {
   type Route,
   type RouteCreateInput,
   type Wallet,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
+import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
 export const routeFactory = createFactory<
@@ -25,5 +26,11 @@ export const routeFactory = createFactory<
     const [route] = await db.insert(RouteTable).values(data).returning()
 
     return route
+  },
+  createWithoutDb(data) {
+    return Object.assign(
+      { id: randomUUID(), createdAt: new Date(), waypoints: null },
+      data,
+    )
   },
 })

@@ -1,5 +1,5 @@
+import { ActiveFeatureTable } from '@zodiac/db/schema'
 import type { DBClient } from '../dbClient'
-import { ActiveFeatureTable } from '../schema'
 
 type ActivateFeatureOptions = {
   tenantId: string

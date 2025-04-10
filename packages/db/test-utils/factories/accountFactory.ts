@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import { Chain } from '@zodiac/chains'
 import {
   AccountTable,
@@ -5,8 +6,9 @@ import {
   type AccountCreateInput,
   type Tenant,
   type User,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
 import { randomAddress } from '@zodiac/test-utils'
+import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
 export const accountFactory = createFactory<
@@ -28,5 +30,18 @@ export const accountFactory = createFactory<
     const [account] = await db.insert(AccountTable).values(data).returning()
 
     return account
+  },
+  createWithoutDb(data) {
+    return Object.assign(
+      {
+        id: randomUUID(),
+        createdAt: new Date(),
+        label: faker.company.buzzNoun(),
+        deleted: false,
+        deletedById: null,
+        deletedAt: null,
+      },
+      data,
+    )
   },
 })

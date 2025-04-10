@@ -3,8 +3,9 @@ import {
   type User,
   type Wallet,
   type WalletCreateInput,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
 import { randomAddress } from '@zodiac/test-utils'
+import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
 export const walletFactory = createFactory<
@@ -25,5 +26,17 @@ export const walletFactory = createFactory<
     const [wallet] = await db.insert(WalletTable).values(data).returning()
 
     return wallet
+  },
+  createWithoutDb(data) {
+    return Object.assign(
+      {
+        id: randomUUID(),
+        createdAt: new Date(),
+        deleted: false,
+        deletedById: null,
+        deletedAt: null,
+      },
+      data,
+    )
   },
 })

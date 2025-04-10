@@ -19,6 +19,9 @@ export const getAccounts = (
 
       return where
     },
+    orderBy(fields, { asc }) {
+      return asc(fields.label)
+    },
     with: {
       activeRoutes: {
         where(fields, { eq, and }) {

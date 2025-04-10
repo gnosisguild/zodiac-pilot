@@ -1,7 +1,7 @@
 import type { ChainId } from '@zodiac/chains'
+import { AccountTable, type Tenant, type User } from '@zodiac/db/schema'
 import type { HexAddress } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
-import { AccountTable, type Tenant, type User } from '../schema'
 
 type CreateAccountOptions = {
   label?: string

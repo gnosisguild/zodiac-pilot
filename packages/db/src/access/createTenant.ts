@@ -1,5 +1,5 @@
+import { TenantTable } from '@zodiac/db/schema'
 import type { DBClient } from '../dbClient'
-import { TenantTable } from '../schema'
 
 type CreateTenantOptions = {
   name: string

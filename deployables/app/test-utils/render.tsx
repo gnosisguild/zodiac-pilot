@@ -6,7 +6,7 @@ import type {
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import type { Tenant, User } from '@zodiac/db'
+import type { Tenant, User } from '@zodiac/db/schema'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,

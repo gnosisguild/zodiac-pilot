@@ -1,5 +1,9 @@
+import {
+  TenantMembershipTable,
+  type Tenant,
+  type User,
+} from '@zodiac/db/schema'
 import type { DBClient } from '../dbClient'
-import { TenantMembershipTable, type Tenant, type User } from '../schema'
 
 export const addUserToTenant = (db: DBClient, tenant: Tenant, user: User) => {
   return db

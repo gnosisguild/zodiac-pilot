@@ -21,8 +21,15 @@ export async function authorizedAction<
 >(
   args: Args,
   fn: Fn,
-  options?: GetAuthOptions<Args['params']>,
+  options: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>>
+export async function authorizedAction<
+  Args extends ActionFunctionArgs,
+  Fn extends ActionFunction<
+    Args['params'],
+    { auth: AuthorizedData | UnauthorizedData }
+  >,
+>(args: Args, fn: Fn): Promise<Awaited<ReturnType<typeof fn>>>
 export async function authorizedAction<
   Args extends ActionFunctionArgs,
   Fn extends ActionFunction<
