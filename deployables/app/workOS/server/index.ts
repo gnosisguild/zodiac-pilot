@@ -1,5 +1,3 @@
-export { authKitAction } from './authKitAction'
-export { authKitLoader } from './authKitLoader'
 export { createOrganization } from './createOrganization'
 export { getOrganization } from './getOrganization'
 export { getOrganizationForUser } from './getOrganizationForUser'

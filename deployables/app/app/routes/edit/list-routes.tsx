@@ -1,3 +1,4 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { fromVersion, OnlyConnected, Page } from '@/components'
 import {
   activateAccount,
@@ -8,7 +9,6 @@ import {
   getActiveAccount,
 } from '@/db'
 import { routeTitle } from '@/utils'
-import { authKitAction, authKitLoader } from '@/workOS/server'
 import { getString } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
@@ -40,7 +40,7 @@ export const meta: Route.MetaFunction = ({ matches }) => [
 ]
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       context: {
@@ -87,7 +87,7 @@ export const clientLoader = async ({
 clientLoader.hydrate = true as const
 
 export const action = async (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,

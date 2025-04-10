@@ -242,6 +242,9 @@ importers:
       jsdom-testing-mocks:
         specifier: 1.13.1
         version: 1.13.1
+      madge:
+        specifier: 8.0.0
+        version: 8.0.0(typescript@5.8.3)
       postcss:
         specifier: 8.5.3
         version: 8.5.3

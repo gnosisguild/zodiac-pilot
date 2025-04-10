@@ -1,3 +1,4 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
 import {
   createWallet,
@@ -8,7 +9,6 @@ import {
 } from '@/db'
 import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
-import { authKitAction, authKitLoader } from '@/workOS/server'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import { getHexString, getString } from '@zodiac/form-data'
@@ -35,7 +35,7 @@ import { useState } from 'react'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       context: {
@@ -54,7 +54,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 export const action = async (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,

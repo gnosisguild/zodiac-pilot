@@ -1,3 +1,4 @@
+import { authorizedAction } from '@/auth'
 import {
   AvatarInput,
   ConnectWalletButton,
@@ -9,7 +10,6 @@ import { createAccount, dbClient } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
-import { authKitAction } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
@@ -53,7 +53,7 @@ export const clientLoader = async ({
 clientLoader.hydrate = true as const
 
 export const action = (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,

@@ -15,7 +15,7 @@ type LoaderFunction<Params, Context> = (args: {
   context: Context
 }) => ReturnType<ReactRouteRLoaderFunction<Context>>
 
-export async function authKitLoader<
+export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
   Fn extends LoaderFunction<Args['params'], { auth: AuthorizedData }>,
 >(
@@ -23,7 +23,7 @@ export async function authKitLoader<
   fn: Fn,
   options?: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>>
-export async function authKitLoader<
+export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
   Fn extends LoaderFunction<
     Args['params'],

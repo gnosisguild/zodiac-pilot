@@ -1,3 +1,4 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
 import {
   activateRoute,
@@ -15,7 +16,6 @@ import {
 } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
-import { authKitAction, authKitLoader } from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   getOptionalHexString,
@@ -40,7 +40,7 @@ import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       request,
@@ -107,7 +107,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 export const action = (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,

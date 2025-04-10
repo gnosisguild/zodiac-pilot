@@ -1,4 +1,5 @@
 import { dbClient, getTenant, getUser, type Tenant, type User } from '@/db'
+import { getOrganization } from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type {
@@ -6,7 +7,6 @@ import type {
   UnauthorizedData as WorkOsUnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import { getOrganization } from './getOrganization'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   user: User
