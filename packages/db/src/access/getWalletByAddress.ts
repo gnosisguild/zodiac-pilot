@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
+import type { User } from '@zodiac/db/schema'
 import type { HexAddress } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
-import type { User } from '../schema'
 import { findWalletByAddress } from './findWalletByAddress'
 
 export const getWalletByAddress = async (

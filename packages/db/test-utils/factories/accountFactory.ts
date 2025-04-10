@@ -6,7 +6,7 @@ import {
   type AccountCreateInput,
   type Tenant,
   type User,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
 import { randomAddress } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'

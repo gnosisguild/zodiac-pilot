@@ -1,5 +1,10 @@
 import type { ChainId } from '@zodiac/chains'
-import type { HexAddress, Waypoints } from '@zodiac/schema'
+import {
+  addressSchema,
+  chainIdSchema,
+  type HexAddress,
+  type Waypoints,
+} from '@zodiac/schema'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -138,7 +143,10 @@ export const AccountTable = pgTable(
 export type Account = typeof AccountTable.$inferSelect
 export type AccountCreateInput = typeof AccountTable.$inferInsert
 
-export const accountSchema = createSelectSchema(AccountTable)
+export const accountSchema = createSelectSchema(AccountTable, {
+  chainId: chainIdSchema,
+  address: addressSchema,
+})
 
 const AccountRelations = relations(AccountTable, ({ many }) => ({
   activeRoutes: many(ActiveRouteTable),

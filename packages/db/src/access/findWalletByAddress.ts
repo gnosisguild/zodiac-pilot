@@ -1,6 +1,6 @@
+import type { User } from '@zodiac/db/schema'
 import type { HexAddress } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
-import type { User } from '../schema'
 
 export const findWalletByAddress = async (
   db: DBClient,

@@ -20,6 +20,11 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./schema": {
+      "types": "./schema/index.ts",
+      "import": "./schema/index.ts",
+      "default": "./schema/index.ts"
+    },
     "./test-utils": {
       "types": "./test-utils/index.ts",
       "import": "./test-utils/index.ts",

@@ -1,4 +1,4 @@
-import { accountSchema } from '@zodiac/db'
+import { accountSchema } from '@zodiac/db/schema'
 import { api, type FetchOptions } from './api'
 
 const schema = accountSchema.array()

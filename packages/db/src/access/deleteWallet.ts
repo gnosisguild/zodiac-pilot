@@ -1,6 +1,6 @@
+import { WalletTable, type User } from '@zodiac/db/schema'
 import { and, eq } from 'drizzle-orm'
 import type { DBClient } from '../dbClient'
-import { WalletTable, type User } from '../schema'
 
 export const deleteWallet = (db: DBClient, user: User, walletId: string) =>
   db

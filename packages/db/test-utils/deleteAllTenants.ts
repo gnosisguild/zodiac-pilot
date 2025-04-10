@@ -1,5 +1,6 @@
 import { invariant } from '@epic-web/invariant'
-import { TenantTable, type DBClient } from '@zodiac/db'
+import type { DBClient } from '@zodiac/db'
+import { TenantTable } from '@zodiac/db/schema'
 
 export const deleteAllTenants = (db: DBClient) => {
   invariant(

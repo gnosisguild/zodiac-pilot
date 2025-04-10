@@ -1,6 +1,6 @@
+import { ActiveAccountTable, type Tenant, type User } from '@zodiac/db/schema'
 import { and, eq } from 'drizzle-orm'
 import type { DBClient } from '../dbClient'
-import { ActiveAccountTable, type Tenant, type User } from '../schema'
 
 export const activateAccount = (
   db: DBClient,

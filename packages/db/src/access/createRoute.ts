@@ -1,6 +1,6 @@
+import { RouteTable, type Account, type Wallet } from '@zodiac/db/schema'
 import type { Waypoints } from '@zodiac/schema'
 import type { DBClient } from '../dbClient'
-import { RouteTable, type Account, type Wallet } from '../schema'
 
 type CreateRouteOptions = {
   waypoints?: Waypoints

@@ -4,7 +4,7 @@ import {
   type Route,
   type RouteCreateInput,
   type Wallet,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 

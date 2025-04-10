@@ -1,4 +1,4 @@
-import { featureSchema } from '@zodiac/db'
+import { featureSchema } from '@zodiac/db/schema'
 import { api, type FetchOptions } from './api'
 
 const schema = featureSchema.array()

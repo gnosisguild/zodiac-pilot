@@ -19,7 +19,7 @@ import {
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, loader, Transactions } from './Transactions'
 
 vi.mock('@/companion', async (importOriginal) => {
@@ -36,6 +36,10 @@ vi.mock('@/companion', async (importOriginal) => {
 const mockGetAccounts = vi.mocked(getAccounts)
 
 describe('Transactions', () => {
+  beforeEach(() => {
+    mockGetAccounts.mockResolvedValue([])
+  })
+
   describe('Route switch', () => {
     it('is possible to switch the active route', async () => {
       const [selectedRoute] = await mockRoutes(
@@ -72,9 +76,35 @@ describe('Transactions', () => {
     it('lists routes from the zodiac os', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
-      const account = accountFactory.createWithoutDb(tenant, user)
+      const account = accountFactory.createWithoutDb(tenant, user, {
+        label: 'Remote account',
+      })
 
       mockGetAccounts.mockResolvedValue([account])
+
+      await render(
+        '/first-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          initialSelectedRoute: await mockRoute({ id: 'first-route' }),
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      await userEvent.click(
+        screen.getByRole('combobox', { name: 'Safe Accounts' }),
+      )
+
+      expect(
+        await screen.findByRole('option', { name: 'Remote account' }),
+      ).toBeInTheDocument()
     })
   })
 

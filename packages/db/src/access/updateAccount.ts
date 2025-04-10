@@ -1,6 +1,6 @@
+import { AccountTable } from '@zodiac/db/schema'
 import { eq } from 'drizzle-orm'
 import type { DBClient } from '../dbClient'
-import { AccountTable } from '../schema'
 
 type UpdateAccountOptions = {
   label?: string

@@ -1,5 +1,9 @@
 import { faker } from '@faker-js/faker'
-import { TenantTable, type Tenant, type TenantCreateInput } from '@zodiac/db'
+import {
+  TenantTable,
+  type Tenant,
+  type TenantCreateInput,
+} from '@zodiac/db/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 

@@ -1,8 +1,8 @@
+import { schema } from '@zodiac/db/schema'
 import { getDBConnectionString } from '@zodiac/env'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { default as postgres } from 'postgres'
 import type { Ref } from 'react'
-import { schema } from './schema'
 
 const clientRef: Ref<ReturnType<typeof postgres>> = { current: null }
 

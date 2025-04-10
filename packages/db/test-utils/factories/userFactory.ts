@@ -3,7 +3,7 @@ import {
   type Tenant,
   type User,
   type UserCreateInput,
-} from '@zodiac/db'
+} from '@zodiac/db/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
