@@ -184,7 +184,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user)
       const route = await routeFactory.create(account, wallet)
 
       await activateRoute(dbClient(), tenant, user, route)
@@ -215,7 +215,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const walletA = await walletFactory.create(tenant, user)
+      const walletA = await walletFactory.create(user)
       const walletB = await walletFactory.create(user, {
         label: 'Another wallet',
       })
