@@ -14,7 +14,7 @@
     "@zodiac/env": "workspace:*",
     "@zodiac/ui": "workspace:*",
     "classnames": "2.5.1",
-    "isbot": "5.1.25",
+    "isbot": "5.1.26",
     "lucide-react": "0.487.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
