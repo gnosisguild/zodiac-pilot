@@ -1,4 +1,6 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { fromVersion, OnlyConnected, Page } from '@/components'
+import { routeTitle } from '@/utils'
 import {
   activateAccount,
   dbClient,
@@ -6,9 +8,7 @@ import {
   getAccount,
   getAccounts,
   getActiveAccount,
-} from '@/db'
-import { routeTitle } from '@/utils'
-import { authKitAction, authKitLoader } from '@/workOS/server'
+} from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
@@ -40,11 +40,11 @@ export const meta: Route.MetaFunction = ({ matches }) => [
 ]
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       if (user == null) {
@@ -57,10 +57,10 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const [remoteAccounts, activeRemoteAccount] = await Promise.all([
         getAccounts(dbClient(), {
-          tenantId: user.tenantId,
+          tenantId: tenant.id,
           userId: user.id,
         }),
-        getActiveAccount(dbClient(), user),
+        getActiveAccount(dbClient(), tenant, user),
       ])
 
       return {
@@ -87,12 +87,12 @@ export const clientLoader = async ({
 clientLoader.hydrate = true as const
 
 export const action = async (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -105,7 +105,12 @@ export const action = async (args: Route.ActionArgs) =>
         }
 
         case Intent.RemoteLaunch: {
-          await activateAccount(dbClient(), user, getString(data, 'accountId'))
+          await activateAccount(
+            dbClient(),
+            tenant,
+            user,
+            getString(data, 'accountId'),
+          )
 
           return null
         }

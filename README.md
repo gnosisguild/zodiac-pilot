@@ -5,7 +5,7 @@
 [![Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/tests.yaml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/tests.yaml)
 [![Live Tests](https://github.com/gnosisguild/zodiac-pilot/actions/workflows/live-tests.yaml/badge.svg)](https://github.com/gnosiguild/zodiac-pilot/actions/workflows/live-tests.yaml)
 
-Chrome extension to simulate Dapp interactions and record transactions. [Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb?hl=en&authuser=0)
+Zodiac Pilot is a browser-based tool for Safe accounts that enables users to build and execute multi-step transactions across multiple dapps. It combines modular batching, programmable permissions, and a built-in sandbox environment to simulate transactions before they’re sent onchain. Designed to streamline treasury, governance, and DeFi workflows, Pilot reduces risk and coordination overhead by letting users manage execution directly from a side panel interface. [Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb?hl=en&authuser=0)
 
 ## Contribute
 

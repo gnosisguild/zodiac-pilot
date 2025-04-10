@@ -1,17 +1,16 @@
 import { getAvailableChains } from '@/balances-server'
-import { dbClient, getAccounts } from '@/db'
 import {
   createMockChain,
   expectMessage,
   postMessage,
   render,
-  tenantFactory,
-  userFactory,
 } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { dbClient, getAccounts } from '@zodiac/db'
+import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -63,7 +62,7 @@ describe.sequential('New SafeAccount', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
 
-      await render('/create', { user })
+      await render('/create', { tenant, user })
 
       const address = randomAddress()
 

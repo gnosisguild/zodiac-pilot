@@ -15,7 +15,7 @@
       "@/simulation-server": ["./app/simulation/server/index.ts"],
       "@/wagmi": ["./app/wagmi/index.ts"],
       "@/routes-ui": ["./app/routes-ui/index.ts"],
-      "@/db": ["./db/index.ts"],
+      "@/auth": ["./auth/index.ts"],
       "@/workOS/client": ["./workOS/client/index.ts"],
       "@/workOS/server": ["./workOS/server/index.ts"]
     }
@@ -32,6 +32,7 @@
     "server/**/*",
     "test-utils/**/*",
     "db/**/*",
+    "auth/**/*",
     "workOS/**/*"
   ]
 }

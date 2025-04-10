@@ -1,4 +1,4 @@
-import { getUser, useCompanionAppUrl } from '@/companion'
+import { getAccounts, getUser, useCompanionAppUrl } from '@/companion'
 import { getRoute, getRoutes, useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -43,8 +43,18 @@ import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const accounts = await getAccounts({ signal: request.signal })
+  const routes = await getRoutes()
+
   return {
-    routes: await getRoutes(),
+    routes: [
+      ...accounts,
+      ...routes.map((route) => ({
+        id: route.id,
+        chainId: getChainId(route.avatar),
+        label: route.label,
+      })),
+    ],
     user: await getUser({ signal: request.signal }),
   }
 }

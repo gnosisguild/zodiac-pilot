@@ -1,3 +1,4 @@
+import { getAccounts } from '@/companion'
 import {
   chromeMock,
   createMockRoute,
@@ -10,10 +11,15 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { action, loader, Transactions } from './Transactions'
 
 vi.mock('@/companion', async (importOriginal) => {
@@ -23,10 +29,17 @@ vi.mock('@/companion', async (importOriginal) => {
     ...module,
 
     getUser: vi.fn().mockResolvedValue(null),
+    getAccounts: vi.fn().mockResolvedValue([]),
   }
 })
 
+const mockGetAccounts = vi.mocked(getAccounts)
+
 describe('Transactions', () => {
+  beforeEach(() => {
+    mockGetAccounts.mockResolvedValue([])
+  })
+
   describe('Route switch', () => {
     it('is possible to switch the active route', async () => {
       const [selectedRoute] = await mockRoutes(
@@ -58,6 +71,40 @@ describe('Transactions', () => {
       )
 
       await expectRouteToBe('/first-route/clear-transactions/second-route')
+    })
+
+    it('lists routes from the zodiac os', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+      const account = accountFactory.createWithoutDb(tenant, user, {
+        label: 'Remote account',
+      })
+
+      mockGetAccounts.mockResolvedValue([account])
+
+      await render(
+        '/first-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          initialSelectedRoute: await mockRoute({ id: 'first-route' }),
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      await userEvent.click(
+        screen.getByRole('combobox', { name: 'Safe Accounts' }),
+      )
+
+      expect(
+        await screen.findByRole('option', { name: 'Remote account' }),
+      ).toBeInTheDocument()
     })
   })
 

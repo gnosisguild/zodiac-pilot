@@ -5,14 +5,14 @@ import {
   PilotStatus,
   ProvidePilotStatus,
 } from '@/components'
-import { dbClient, getFeatures, getTenant } from '@/db'
 import { ProvideChains } from '@/routes-ui'
-import { getOrganizationForUser } from '@/workOS/server'
+import { getOrganization } from '@/workOS/server'
 import {
   authkitLoader,
   getSignInUrl,
   signOut,
 } from '@workos-inc/authkit-react-router'
+import { dbClient, getFeatures, getTenant } from '@zodiac/db'
 import {
   Divider,
   Feature,
@@ -40,13 +40,13 @@ import { href, NavLink, Outlet } from 'react-router'
 import type { Route } from './+types/layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
-  authkitLoader(args, async ({ auth: { user }, request }) => {
+  authkitLoader(args, async ({ auth: { organizationId }, request }) => {
     const url = new URL(request.url)
     const routeFeatures = url.searchParams.getAll('feature')
 
     const chains = await getAvailableChains()
 
-    if (user == null) {
+    if (organizationId == null) {
       return {
         chains,
         features: routeFeatures,
@@ -56,7 +56,7 @@ export const loader = async (args: Route.LoaderArgs) =>
 
     const db = dbClient()
 
-    const organization = await getOrganizationForUser(user.id)
+    const organization = await getOrganization(organizationId)
 
     try {
       const tenant = await getTenant(db, organization.externalId)

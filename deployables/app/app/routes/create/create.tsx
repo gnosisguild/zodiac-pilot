@@ -1,3 +1,4 @@
+import { authorizedAction } from '@/auth'
 import {
   AvatarInput,
   ConnectWalletButton,
@@ -5,13 +6,12 @@ import {
   OnlyConnectedWhenLoggedOut,
   Page,
 } from '@/components'
-import { createAccount, dbClient } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
-import { authKitAction } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
+import { createAccount, dbClient } from '@zodiac/db'
 import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
@@ -53,12 +53,12 @@ export const clientLoader = async ({
 clientLoader.hydrate = true as const
 
 export const action = (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -81,7 +81,7 @@ export const action = (args: Route.ActionArgs) =>
 
       if (user != null) {
         try {
-          await createAccount(dbClient(), user, {
+          await createAccount(dbClient(), tenant, user, {
             label,
             chainId,
             address: avatar,

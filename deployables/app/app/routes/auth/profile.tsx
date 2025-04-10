@@ -1,20 +1,22 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
+import { useAfterSubmit, useIsPending } from '@/hooks'
+import { Widgets } from '@/workOS/client'
+import { signOut } from '@workos-inc/authkit-react-router'
+import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import {
   createWallet,
   dbClient,
   deleteWallet,
+  findWalletByAddress,
   getWallet,
   getWallets,
-} from '@/db'
-import { useAfterSubmit, useIsPending } from '@/hooks'
-import { Widgets } from '@/workOS/client'
-import { authKitAction, authKitLoader } from '@/workOS/server'
-import { signOut } from '@workos-inc/authkit-react-router'
-import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
+} from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import {
   Address,
   AddressInput,
+  Error,
   Form,
   FormLayout,
   GhostButton,
@@ -32,10 +34,11 @@ import {
 } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useActionData } from 'react-router'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       context: {
@@ -54,7 +57,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 export const action = async (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,
@@ -72,6 +75,18 @@ export const action = async (args: Route.ActionArgs) =>
         case Intent.AddWallet: {
           const label = getString(data, 'label')
           const address = getHexString(data, 'address')
+
+          const existingWallet = await findWalletByAddress(
+            dbClient(),
+            user,
+            address,
+          )
+
+          if (existingWallet != null) {
+            return {
+              error: `A wallet with this address already exists under the name "${existingWallet.label}".`,
+            }
+          }
 
           await createWallet(dbClient(), user, { label, address })
 
@@ -199,7 +214,13 @@ const Profile = ({
 const AddWallet = () => {
   const [open, setOpen] = useState(false)
 
-  useAfterSubmit(Intent.AddWallet, () => setOpen(false))
+  useAfterSubmit<typeof action>(Intent.AddWallet, (actionData) => {
+    if (actionData == null) {
+      setOpen(false)
+    }
+  })
+
+  const actionData = useActionData<typeof action>()
 
   return (
     <>
@@ -214,6 +235,10 @@ const AddWallet = () => {
         title="Add Wallet"
       >
         <Form intent={Intent.AddWallet}>
+          {actionData != null && (
+            <Error title="Wallet already exists">{actionData.error}</Error>
+          )}
+
           <TextInput required label="Label" name="label" placeholder="Label" />
           <AddressInput required label="Address" name="address" />
 

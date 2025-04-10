@@ -1,13 +1,14 @@
+import { featureSchema } from '@zodiac/db/schema'
 import { z } from 'zod'
 import { api, type FetchOptions } from './api'
 
-const featureSchema = z.object({ features: z.string().array() })
+const schema = z.object({ features: featureSchema.array() })
 
 export const getFeatures = async ({ signal }: FetchOptions = {}) => {
   const { features } = await api('/extension/features', {
-    schema: featureSchema,
+    schema,
     signal,
   })
 
-  return features
+  return features.map((feature) => feature.name)
 }

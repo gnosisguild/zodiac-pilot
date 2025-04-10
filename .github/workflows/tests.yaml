@@ -68,9 +68,6 @@ jobs:
           POSTGRES_USER: postgres
         ports:
           - 5432:5432
-    defaults:
-      run:
-        working-directory: ./deployables/app
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -80,7 +77,33 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - run: pnpm db:migrate-test
+      - run: pnpm --filter=@zodiac/db migrate-test
+      - run: pnpm --filter=@zodiac/pilot-app test
+
+  db:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: zodiac-os-test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+    defaults:
+      run:
+        working-directory: ./packages/db
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+      - run: pnpm install --prefer-offline
+      - run: pnpm migrate-test
       - run: pnpm test
 
   modules-package:
