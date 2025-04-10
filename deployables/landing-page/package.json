@@ -22,7 +22,7 @@
     "rough-notation": "0.5.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250409.0",
+    "@cloudflare/workers-types": "4.20250410.0",
     "@react-router/dev": "7.5.0",
     "@tailwindcss/vite": "4.1.3",
     "@vitejs/plugin-react": "4.3.4",
