@@ -11,7 +11,7 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     }) => {
       if (tenant == null) {
-        return []
+        return { features: [] }
       }
 
       const db = dbClient()
