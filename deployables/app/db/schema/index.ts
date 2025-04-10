@@ -43,18 +43,32 @@ export const TenantRelations = relations(TenantTable, ({ many }) => ({
   activeFeatures: many(ActiveFeatureTable),
 }))
 
-export const UserTable = pgTable(
-  'User',
-  {
-    id: uuid().notNull().defaultRandom().primaryKey(),
-    ...tenantReference,
-    ...createdTimestamp,
-  },
-  (table) => [index().on(table.tenantId)],
-)
+export const UserTable = pgTable('User', {
+  id: uuid().notNull().defaultRandom().primaryKey(),
+  ...createdTimestamp,
+})
 
 export type User = typeof UserTable.$inferSelect
 export type UserCreateInput = typeof UserTable.$inferInsert
+
+export const TenantMembershipTable = pgTable(
+  'TenantMembership',
+  {
+    tenantId: uuid()
+      .notNull()
+      .references(() => TenantTable.id, { onDelete: 'cascade' }),
+    userId: uuid()
+      .notNull()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+
+    ...createdTimestamp,
+  },
+  (table) => [
+    primaryKey({ columns: [table.tenantId, table.userId] }),
+    index().on(table.tenantId),
+    index().on(table.userId),
+  ],
+)
 
 export const FeatureTable = pgTable(
   'Feature',
@@ -252,6 +266,7 @@ const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
+  tenantMembership: TenantMembershipTable,
   feature: FeatureTable,
   activeFeature: ActiveFeatureTable,
   account: AccountTable,

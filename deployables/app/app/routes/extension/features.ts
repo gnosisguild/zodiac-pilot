@@ -1,17 +1,17 @@
 import { dbClient, getFeatures, getTenant } from '@/db'
-import { getOrganizationForUser } from '@/workOS/server'
+import { getOrganization } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type { Route } from './+types/features'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authkitLoader(args, async ({ auth: { user } }) => {
-    if (user == null) {
+  authkitLoader(args, async ({ auth: { organizationId } }) => {
+    if (organizationId == null) {
       return { features: [] }
     }
 
     const db = dbClient()
 
-    const organization = await getOrganizationForUser(user.id)
+    const organization = await getOrganization(organizationId)
     const tenant = await getTenant(dbClient(), organization.externalId)
 
     const features = await getFeatures(db, tenant.id)

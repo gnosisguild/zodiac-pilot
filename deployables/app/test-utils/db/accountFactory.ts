@@ -2,6 +2,7 @@ import {
   AccountTable,
   type Account,
   type AccountCreateInput,
+  type Tenant,
   type User,
 } from '@/db'
 import { Chain } from '@zodiac/chains'
@@ -11,14 +12,14 @@ import { createFactory } from './createFactory'
 export const accountFactory = createFactory<
   AccountCreateInput,
   Account,
-  [owner: User]
+  [tenant: Tenant, owner: User]
 >({
-  build(user, account) {
+  build(tenant, user, account) {
     return {
       address: randomAddress(),
       chainId: Chain.ETH,
       createdById: user.id,
-      tenantId: user.tenantId,
+      tenantId: tenant.id,
 
       ...account,
     }

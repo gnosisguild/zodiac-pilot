@@ -1,10 +1,14 @@
 import type { DBClient } from '../dbClient'
-import type { User } from '../schema'
+import type { Tenant, User } from '../schema'
 
-export const getActiveAccount = async (db: DBClient, user: User) => {
+export const getActiveAccount = async (
+  db: DBClient,
+  tenant: Tenant,
+  user: User,
+) => {
   const result = await db.query.activeAccount.findFirst({
     where(fields, { eq, and }) {
-      return and(eq(fields.tenantId, user.tenantId), eq(fields.userId, user.id))
+      return and(eq(fields.tenantId, tenant.id), eq(fields.userId, user.id))
     },
     with: {
       account: true,

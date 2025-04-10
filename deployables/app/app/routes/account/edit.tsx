@@ -1,3 +1,4 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
 import {
   activateRoute,
@@ -10,11 +11,11 @@ import {
   removeActiveRoute,
   updateAccount,
   type DBClient,
+  type Tenant,
   type User,
 } from '@/db'
 import { useIsPending } from '@/hooks'
 import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
-import { authKitAction, authKitLoader } from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   getOptionalHexString,
@@ -39,13 +40,13 @@ import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/edit'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authKitLoader(
+  authorizedLoader(
     args,
     async ({
       request,
       params: { accountId },
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const url = new URL(request.url)
@@ -55,7 +56,12 @@ export const loader = (args: Route.LoaderArgs) =>
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
-      const initiator = await getInitiator(user, account.id, url.searchParams)
+      const initiator = await getInitiator(
+        tenant,
+        user,
+        account.id,
+        url.searchParams,
+      )
 
       const routesResult =
         initiator == null
@@ -65,7 +71,12 @@ export const loader = (args: Route.LoaderArgs) =>
               prefixAddress(account.chainId, account.address),
             )
 
-      const activeRoute = await findActiveRoute(dbClient(), user, account.id)
+      const activeRoute = await findActiveRoute(
+        dbClient(),
+        tenant,
+        user,
+        account.id,
+      )
       const [defaultRoute] = routesResult.routes
 
       return {
@@ -96,13 +107,13 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 export const action = (args: Route.ActionArgs) =>
-  authKitAction(
+  authorizedAction(
     args,
     async ({
       request,
       params: { accountId },
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -110,7 +121,7 @@ export const action = (args: Route.ActionArgs) =>
       await dbClient().transaction(async (tx) => {
         const initiator = getOptionalHexString(data, 'initiator')
 
-        const activeRoute = await findActiveRoute(tx, user, accountId)
+        const activeRoute = await findActiveRoute(tx, tenant, user, accountId)
 
         if (initiator != null) {
           const selectedRouteId = getOptionalString(data, 'routeId')
@@ -127,13 +138,13 @@ export const action = (args: Route.ActionArgs) =>
             })
 
             if (activeRoute != null) {
-              await removeActiveRoute(tx, user, accountId)
+              await removeActiveRoute(tx, tenant, user, accountId)
             }
 
-            await activateRoute(tx, user, route)
+            await activateRoute(tx, tenant, user, route)
           }
         } else {
-          await removeActiveRoute(tx, user, accountId)
+          await removeActiveRoute(tx, tenant, user, accountId)
         }
 
         await updateAccount(tx, accountId, {
@@ -248,6 +259,7 @@ enum Intent {
 }
 
 const getInitiator = async (
+  tenant: Tenant,
   user: User,
   accountId: string,
   searchParams: URLSearchParams,
@@ -264,7 +276,7 @@ const getInitiator = async (
     return getWalletByAddress(dbClient(), user, address)
   }
 
-  const activeRoute = await findActiveRoute(dbClient(), user, accountId)
+  const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
 
   if (activeRoute == null) {
     return null

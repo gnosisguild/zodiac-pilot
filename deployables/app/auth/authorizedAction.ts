@@ -15,7 +15,7 @@ type ActionFunction<Params, Context> = (args: {
   context: Context
 }) => ReturnType<ReactRouterActionFunction<Context>>
 
-export async function authKitAction<
+export async function authorizedAction<
   Args extends ActionFunctionArgs,
   Fn extends ActionFunction<Args['params'], { auth: AuthorizedData }>,
 >(
@@ -23,7 +23,7 @@ export async function authKitAction<
   fn: Fn,
   options?: GetAuthOptions<Args['params']>,
 ): Promise<Awaited<ReturnType<typeof fn>>>
-export async function authKitAction<
+export async function authorizedAction<
   Args extends ActionFunctionArgs,
   Fn extends ActionFunction<
     Args['params'],

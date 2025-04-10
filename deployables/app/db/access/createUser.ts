@@ -1,11 +1,8 @@
 import type { DBClient } from '../dbClient'
-import { UserTable, type Tenant } from '../schema'
+import { UserTable } from '../schema'
 
-export const createUser = async (db: DBClient, tenant: Tenant) => {
-  const [user] = await db
-    .insert(UserTable)
-    .values({ tenantId: tenant.id })
-    .returning()
+export const createUser = async (db: DBClient) => {
+  const [user] = await db.insert(UserTable).values({}).returning()
 
   return user
 }

@@ -8,11 +8,11 @@ describe('Activate account', () => {
     const tenant = await tenantFactory.create()
     const user = await userFactory.create(tenant)
 
-    const accountA = await accountFactory.create(user)
-    const accountB = await accountFactory.create(user)
+    const accountA = await accountFactory.create(tenant, user)
+    const accountB = await accountFactory.create(tenant, user)
 
-    await activateAccount(dbClient(), user, accountA.id)
-    await activateAccount(dbClient(), user, accountB.id)
+    await activateAccount(dbClient(), tenant, user, accountA.id)
+    await activateAccount(dbClient(), tenant, user, accountB.id)
 
     const activatedAccounts = await dbClient().query.activeAccount.findMany({
       where(fields, { eq }) {
