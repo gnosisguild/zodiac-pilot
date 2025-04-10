@@ -77,8 +77,8 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - run: pnpm migrate-test --filter=@zodiac/db
-      - run: pnpm test --filter=@zodiac/pilot-app
+      - run: pnpm --filter=@zodiac/db migrate-test
+      - run: pnpm --filter=@zodiac/pilot-app test
 
   db:
     runs-on: ubuntu-latest
