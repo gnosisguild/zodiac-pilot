@@ -73,6 +73,7 @@
     "@workos-inc/authkit-react": "0.9.0",
     "@workos-inc/node": "7.46.0",
     "@zodiac/chains": "workspace:*",
+    "@zodiac/db": "workspace:*",
     "@zodiac/env": "workspace:*",
     "@zodiac/form-data": "workspace:*",
     "@zodiac/messages": "workspace:*",

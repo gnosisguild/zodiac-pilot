@@ -13,6 +13,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core'
+import { createSelectSchema } from 'drizzle-zod'
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -79,6 +80,8 @@ export const FeatureTable = pgTable(
   },
   (table) => [unique().on(table.name)],
 )
+
+export const featureSchema = createSelectSchema(FeatureTable)
 
 export const FeatureRelations = relations(FeatureTable, ({ many }) => ({
   activeOnTenants: many(ActiveFeatureTable),

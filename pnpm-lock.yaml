@@ -278,6 +278,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
+      '@zodiac/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@zodiac/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -602,6 +605,9 @@ importers:
       drizzle-orm:
         specifier: 0.41.0
         version: 0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(postgres@3.4.5)
+      drizzle-zod:
+        specifier: ^0.7.1
+        version: 0.7.1(drizzle-orm@0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(postgres@3.4.5))(zod@3.24.2)
       postgres:
         specifier: 3.4.5
         version: 3.4.5
@@ -5562,6 +5568,12 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-zod@0.7.1:
+    resolution: {integrity: sha512-nZzALOdz44/AL2U005UlmMqaQ1qe5JfanvLujiTHiiT8+vZJTBFhj3pY4Vk+L6UWyKFfNmLhk602Hn4kCTynKQ==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: '>=3.0.0'
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -14503,6 +14515,11 @@ snapshots:
       gel: 2.0.1
       postgres: 3.4.5
 
+  drizzle-zod@0.7.1(drizzle-orm@0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(postgres@3.4.5))(zod@3.24.2):
+    dependencies:
+      drizzle-orm: 0.41.0(@cloudflare/workers-types@4.20250410.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(postgres@3.4.5)
+      zod: 3.24.2
+
   dunder-proto@1.0.1:
     dependencies:
       call-bind-apply-helpers: 1.0.1
@@ -15874,7 +15891,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.6(ws@8.18.1):
     dependencies:
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -18181,7 +18198,7 @@ snapshots:
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.2)
-      isows: 1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.6(ws@8.18.1)
       ox: 0.6.9(typescript@5.8.3)(zod@3.24.2)
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:

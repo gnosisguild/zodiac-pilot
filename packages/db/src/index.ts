@@ -7,6 +7,7 @@ export {
   TenantTable,
   UserTable,
   WalletTable,
+  featureSchema,
 } from './schema'
 export type {
   Account,
