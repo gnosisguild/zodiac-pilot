@@ -84,7 +84,7 @@ export const action = async (args: Route.ActionArgs) =>
 
           if (existingWallet != null) {
             return {
-              error: `A wallet with this already exists under the name "${existingWallet.label}".`,
+              error: `A wallet with this address already exists under the name "${existingWallet.label}".`,
             }
           }
 
