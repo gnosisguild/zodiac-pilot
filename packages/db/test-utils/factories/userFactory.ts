@@ -4,6 +4,7 @@ import {
   type User,
   type UserCreateInput,
 } from '@zodiac/db'
+import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
 export const userFactory = createFactory<
@@ -22,5 +23,8 @@ export const userFactory = createFactory<
     const [user] = await db.insert(UserTable).values(data).returning()
 
     return user
+  },
+  createWithoutDb(data) {
+    return Object.assign({ id: randomUUID(), createdAt: new Date() }, data)
   },
 })

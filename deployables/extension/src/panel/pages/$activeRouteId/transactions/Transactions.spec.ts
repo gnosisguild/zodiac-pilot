@@ -11,6 +11,11 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
@@ -65,7 +70,11 @@ describe('Transactions', () => {
     })
 
     it('lists routes from the zodiac os', async () => {
-      mockGetAccounts.mockResolvedValue([])
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      mockGetAccounts.mockResolvedValue([account])
     })
   })
 

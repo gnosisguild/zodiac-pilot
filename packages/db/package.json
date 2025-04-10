@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.39.1",
+    "@faker-js/faker": "^9.6.0",
     "@types/node": "22.14.0",
     "@types/react": "19.1.0",
     "@zodiac/eslint-config": "workspace:*",

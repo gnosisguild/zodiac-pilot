@@ -1,10 +1,12 @@
+import { faker } from '@faker-js/faker'
 import { TenantTable, type Tenant, type TenantCreateInput } from '@zodiac/db'
+import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
 export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
   build(tenant) {
     return {
-      name: 'Test tenant',
+      name: faker.company.name(),
       ...tenant,
     }
   },
@@ -12,5 +14,14 @@ export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
     const [tenant] = await db.insert(TenantTable).values(data).returning()
 
     return tenant
+  },
+  createWithoutDb(data) {
+    return Object.assign(
+      {
+        createdAt: new Date(),
+        id: randomUUID(),
+      },
+      data,
+    )
   },
 })
