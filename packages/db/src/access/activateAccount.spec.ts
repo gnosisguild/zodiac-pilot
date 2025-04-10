@@ -1,4 +1,8 @@
-import { accountFactory, tenantFactory, userFactory } from '@/test-utils'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { describe, expect, it } from 'vitest'
 import { dbClient } from '../dbClient'
 import { activateAccount } from './activateAccount'

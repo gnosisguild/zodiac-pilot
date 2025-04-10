@@ -1,7 +1,12 @@
-import { dbClient, getWallets } from '@/db'
-import { render, tenantFactory, userFactory, walletFactory } from '@/test-utils'
+import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { dbClient, getWallets } from '@zodiac/db'
+import {
+  tenantFactory,
+  userFactory,
+  walletFactory,
+} from '@zodiac/db/test-utils'
 import { randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { getAddress } from 'viem'

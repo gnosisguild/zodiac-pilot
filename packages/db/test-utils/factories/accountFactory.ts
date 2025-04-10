@@ -1,11 +1,11 @@
+import { Chain } from '@zodiac/chains'
 import {
   AccountTable,
   type Account,
   type AccountCreateInput,
   type Tenant,
   type User,
-} from '@/db'
-import { Chain } from '@zodiac/chains'
+} from '@zodiac/db'
 import { randomAddress } from '@zodiac/test-utils'
 import { createFactory } from './createFactory'
 

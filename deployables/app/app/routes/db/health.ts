@@ -1,4 +1,4 @@
-import { dbClient, getTenants } from '@/db'
+import { dbClient, getTenants } from '@zodiac/db'
 
 export const loader = async () => {
   await getTenants(dbClient())

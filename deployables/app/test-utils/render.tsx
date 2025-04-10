@@ -1,5 +1,4 @@
 import { ProvideExtensionVersion } from '@/components'
-import type { Tenant, User } from '@/db'
 import { getOrganization, getOrganizationsForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type {
@@ -7,6 +6,7 @@ import type {
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
+import type { Tenant, User } from '@zodiac/db'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,

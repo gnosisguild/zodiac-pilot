@@ -1,4 +1,4 @@
-import type { DBClient } from '@/db'
+import type { DBClient } from '@zodiac/db'
 
 declare module 'react-router' {
   export interface AppLoadContext {

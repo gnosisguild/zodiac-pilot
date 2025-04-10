@@ -1,24 +1,26 @@
 import { getAvailableChains } from '@/balances-server'
 import {
+  loadAndActivateRoute,
+  loadRoutes,
+  postMessage,
+  render,
+} from '@/test-utils'
+import { screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import {
   activateAccount,
   activateRoute,
   dbClient,
   getAccounts,
   getActiveAccount,
-} from '@/db'
+} from '@zodiac/db'
 import {
   accountFactory,
-  loadAndActivateRoute,
-  loadRoutes,
-  postMessage,
-  render,
   routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
-} from '@/test-utils'
-import { screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+} from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,

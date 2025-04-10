@@ -1,0 +1,56 @@
+{
+  "name": "@zodiac/db",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": false,
+  "packageManager": "pnpm@10.8.0",
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "check-types": "tsc",
+    "start": "docker-compose up db",
+    "test": "dotenvx run --env-file=.env.test -- vitest",
+    "create-migration": "drizzle-kit generate --name $1",
+    "migrate": "dotenvx run -- drizzle-kit push",
+    "migrate-test": "dotenvx run --env-file=.env.test -- drizzle-kit push"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./test-utils": {
+      "types": "./test-utils/index.ts",
+      "import": "./test-utils/index.ts",
+      "default": "./test-utils/index.ts"
+    },
+    "./setup-tests": {
+      "types": "./test-utils/setupTests.ts",
+      "import": "./test-utils/setupTests.ts",
+      "default": "./test-utils/setupTests.ts"
+    }
+  },
+  "dependencies": {
+    "@epic-web/invariant": "1.0.0",
+    "@zodiac/chains": "workspace:*",
+    "@zodiac/env": "workspace:*",
+    "@zodiac/schema": "workspace:*",
+    "drizzle-orm": "0.41.0",
+    "postgres": "3.4.5"
+  },
+  "devDependencies": {
+    "@dotenvx/dotenvx": "1.39.1",
+    "@types/node": "22.14.0",
+    "@types/react": "19.1.0",
+    "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/test-utils": "workspace:*",
+    "@zodiac/typescript-config": "workspace:*",
+    "drizzle-kit": "0.30.6",
+    "eslint": "9.24.0",
+    "vitest": "3.1.1"
+  },
+  "peerDependencies": {
+    "react": "19.1.0"
+  }
+}

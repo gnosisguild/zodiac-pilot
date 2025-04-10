@@ -1,4 +1,4 @@
-import { TenantTable, type Tenant, type TenantCreateInput } from '@/db'
+import { TenantTable, type Tenant, type TenantCreateInput } from '@zodiac/db'
 import { createFactory } from './createFactory'
 
 export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
