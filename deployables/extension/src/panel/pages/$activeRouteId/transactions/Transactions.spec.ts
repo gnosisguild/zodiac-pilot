@@ -63,6 +63,71 @@ describe('Transactions', () => {
         await screen.findByRole('option', { name: 'Remote account' }),
       ).toBeInTheDocument()
     })
+
+    it('is possible to activate an account from zodiac os', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+      const account = accountFactory.createWithoutDb(tenant, user, {
+        id: 'second-account',
+        label: 'Remote account',
+      })
+
+      mockGetAccounts.mockResolvedValue([account])
+
+      await render(
+        '/first-route/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          initialSelectedRoute: await mockRoute({ id: 'first-route' }),
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      await userEvent.click(
+        screen.getByRole('combobox', { name: 'Safe Accounts' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Remote account' }),
+      )
+
+      await expectRouteToBe('/first-route/clear-transactions/second-account')
+    })
+
+    it('renders when an account from zodiac os is active', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+      const account = accountFactory.createWithoutDb(tenant, user, {
+        id: 'test-account',
+        label: 'Remote account',
+      })
+
+      mockGetAccounts.mockResolvedValue([account])
+
+      await render(
+        '/test-account/transactions',
+        [
+          {
+            path: '/:activeRouteId/transactions',
+            Component: Transactions,
+            action,
+            loader,
+          },
+        ],
+        {
+          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
+        },
+      )
+
+      expect(await screen.findByText('Remote account')).toBeInTheDocument()
+    })
   })
 
   describe('Recording state', () => {
