@@ -19,6 +19,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
+import { z } from 'zod'
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -86,7 +87,9 @@ export const FeatureTable = pgTable(
   (table) => [unique().on(table.name)],
 )
 
-export const featureSchema = createSelectSchema(FeatureTable)
+export const featureSchema = createSelectSchema(FeatureTable, {
+  createdAt: z.coerce.date(),
+})
 
 export const FeatureRelations = relations(FeatureTable, ({ many }) => ({
   activeOnTenants: many(ActiveFeatureTable),
@@ -146,6 +149,7 @@ export type AccountCreateInput = typeof AccountTable.$inferInsert
 export const accountSchema = createSelectSchema(AccountTable, {
   chainId: chainIdSchema,
   address: addressSchema,
+  createdAt: z.coerce.date(),
 })
 
 const AccountRelations = relations(AccountTable, ({ many }) => ({

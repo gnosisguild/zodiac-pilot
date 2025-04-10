@@ -43,7 +43,8 @@
     "@zodiac/schema": "workspace:*",
     "drizzle-orm": "0.41.0",
     "drizzle-zod": "^0.7.1",
-    "postgres": "3.4.5"
+    "postgres": "3.4.5",
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.39.1",

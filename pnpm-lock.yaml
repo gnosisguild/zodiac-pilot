@@ -614,6 +614,9 @@ importers:
       react:
         specifier: 19.1.0
         version: 19.1.0
+      zod:
+        specifier: 3.24.2
+        version: 3.24.2
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.39.1

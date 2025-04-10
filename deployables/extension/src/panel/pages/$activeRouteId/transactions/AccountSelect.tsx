@@ -94,7 +94,9 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
             launchRoute(option.value)
           }}
           value={{ value: route.id }}
-          options={accounts.map((account) => ({ value: account.id }))}
+          options={accounts
+            .toSorted(sortAccounts)
+            .map((account) => ({ value: account.id }))}
         >
           {({ data: { value } }) => {
             const account = accounts.find(({ id }) => id === value)
@@ -179,3 +181,19 @@ const Blockies = ({
     </div>
   </div>
 )
+
+export const sortAccounts = (accountA: Account, accountB: Account) => {
+  if (accountA.label == null && accountB.label == null) {
+    return 0
+  }
+
+  if (accountA.label == null) {
+    return -1
+  }
+
+  if (accountB.label == null) {
+    return 1
+  }
+
+  return accountA.label.localeCompare(accountB.label)
+}
