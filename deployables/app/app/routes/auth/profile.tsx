@@ -62,7 +62,7 @@ export const action = async (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user, tenant },
+        auth: { user },
       },
     }) => {
       const data = await request.formData()
@@ -88,7 +88,7 @@ export const action = async (args: Route.ActionArgs) =>
             }
           }
 
-          await createWallet(dbClient(), tenant, user, { label, address })
+          await createWallet(dbClient(), user, { label, address })
 
           return null
         }

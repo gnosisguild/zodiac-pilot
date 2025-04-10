@@ -148,6 +148,13 @@
       "when": 1744205710544,
       "tag": "0020_tenant-to-users",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1744275266786,
+      "tag": "0021_remove tenant from wallet",
+      "breakpoints": true
     }
   ]
 }

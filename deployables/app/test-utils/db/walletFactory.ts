@@ -1,6 +1,5 @@
 import {
   WalletTable,
-  type Tenant,
   type User,
   type Wallet,
   type WalletCreateInput,
@@ -11,14 +10,13 @@ import { createFactory } from './createFactory'
 export const walletFactory = createFactory<
   WalletCreateInput,
   Wallet,
-  [tenant: Tenant, owner: User]
+  [owner: User]
 >({
-  build(tenant, user, wallet) {
+  build(user, wallet) {
     return {
       address: randomAddress(),
       belongsToId: user.id,
       label: 'Test wallet',
-      tenantId: tenant.id,
 
       ...wallet,
     }

@@ -96,7 +96,7 @@ describe('Edit account', () => {
 
       const address = randomAddress()
 
-      await walletFactory.create(tenant, user, {
+      await walletFactory.create(user, {
         label: 'Test Wallet',
         address,
       })
@@ -121,7 +121,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(tenant, user, {
+      const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
       })
       const route = await routeFactory.create(account, wallet)
@@ -142,7 +142,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(tenant, user, {
+      const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
       })
 
@@ -216,7 +216,7 @@ describe('Edit account', () => {
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
       const walletA = await walletFactory.create(tenant, user)
-      const walletB = await walletFactory.create(tenant, user, {
+      const walletB = await walletFactory.create(user, {
         label: 'Another wallet',
       })
 
@@ -264,7 +264,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(tenant, user, {
+      const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
       })
 
@@ -312,7 +312,7 @@ describe('Edit account', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(tenant, user, {
+      const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
       })
 

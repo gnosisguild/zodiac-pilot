@@ -48,7 +48,7 @@ describe('Profile', () => {
 
     const address = randomAddress()
 
-    await walletFactory.create(tenant, user, { label: 'User wallet', address })
+    await walletFactory.create(user, { label: 'User wallet', address })
 
     await render(href('/profile'), { tenant, user })
 
@@ -63,7 +63,7 @@ describe('Profile', () => {
   it('is possible to remove a wallet', async () => {
     const tenant = await tenantFactory.create()
     const user = await userFactory.create(tenant)
-    const wallet = await walletFactory.create(tenant, user, {
+    const wallet = await walletFactory.create(user, {
       label: 'User wallet',
     })
 
@@ -96,7 +96,7 @@ describe('Profile', () => {
 
     const address = randomAddress()
 
-    await walletFactory.create(tenant, user, {
+    await walletFactory.create(user, {
       address,
       label: 'Existing wallet',
     })
