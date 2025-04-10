@@ -1,6 +1,6 @@
 import { ProvideExtensionVersion } from '@/components'
 import type { Tenant, User } from '@/db'
-import { getOrganization, getOrganizationForUser } from '@/workOS/server'
+import { getOrganization, getOrganizationsForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type {
   AuthorizedData,
@@ -27,7 +27,7 @@ import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
 
-const mockGetOrganizationForUser = vi.mocked(getOrganizationForUser)
+const mockGetOrganizationsForUser = vi.mocked(getOrganizationsForUser)
 const mockGetOrganization = vi.mocked(getOrganization)
 
 const baseRender = await createRenderFramework(
@@ -210,7 +210,7 @@ const mockWorkOs = (tenant?: Tenant | null, user?: User | null) => {
     externalId: tenant.id,
   } satisfies Organization
 
-  mockGetOrganizationForUser.mockResolvedValue(mockOrganization)
+  mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
   mockGetOrganization.mockResolvedValue(mockOrganization)
 
   return {
