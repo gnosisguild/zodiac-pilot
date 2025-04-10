@@ -16,6 +16,8 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const db = dbClient()
 
-      return await getFeatures(db, tenant.id)
+      const features = await getFeatures(db, tenant.id)
+
+      return { features }
     },
   )
