@@ -11,11 +11,13 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     }) => {
       if (tenant == null) {
-        return []
+        return { features: [] }
       }
 
       const db = dbClient()
 
-      return await getFeatures(db, tenant.id)
+      const features = await getFeatures(db, tenant.id)
+
+      return { features }
     },
   )
