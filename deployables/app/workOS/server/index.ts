@@ -1,4 +1,4 @@
 export { createOrganization } from './createOrganization'
 export { getOrganization } from './getOrganization'
-export { getOrganizationForUser } from './getOrganizationForUser'
+export { getOrganizationsForUser } from './getOrganizationsForUser'
 export { updateExternalUserId } from './updateExternalUserId'
