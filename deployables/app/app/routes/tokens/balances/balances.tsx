@@ -68,7 +68,9 @@ const Balances = () => {
             }) => (
               <TableRow key={contractId} className="group">
                 <TableCell>
-                  <Token logo={logoUrl}>{name}</Token>
+                  <Token contract={contractId} logo={logoUrl}>
+                    {name}
+                  </Token>
                 </TableCell>
                 <TableCell align="right">
                   <TokenValue symbol={symbol} delta={diff?.amount}>

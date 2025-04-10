@@ -49,11 +49,23 @@ export function TokenApprovalTable({
         )}
 
         {approvals.map(
-          ({ symbol, logoUrl, spender, approvalAmount, decimals }, index) => {
+          (
+            {
+              symbol,
+              logoUrl,
+              spender,
+              tokenAddress,
+              approvalAmount,
+              decimals,
+            },
+            index,
+          ) => {
             return (
               <TableRow key={index}>
                 <TableCell>
-                  <Token logo={logoUrl}>{symbol}</Token>
+                  <Token contract={tokenAddress} logo={logoUrl}>
+                    {symbol}
+                  </Token>
                 </TableCell>
 
                 <TableCell>
