@@ -32,7 +32,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - name: Typecheck
+      - name: Lint
         run: pnpm lint
 
   check-cycles:
@@ -46,7 +46,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - name: Typecheck
+      - name: Check cycles
         run: pnpm check-cycles
 
   check-format:
@@ -60,7 +60,7 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - name: Typecheck
+      - name: Check format
         run: pnpm check-format
 
   check-spelling:
@@ -74,5 +74,5 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
-      - name: Typecheck
+      - name: Check spelling
         run: pnpm check-spelling
