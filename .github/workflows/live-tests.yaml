@@ -84,17 +84,17 @@ jobs:
 
       - name: Install dependencies for extension
         run: pnpm install --prefer-offline
-        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}
+        working-directory: ./zodiac-pilot
 
       - name: Build extension
         run: pnpm build
-        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension
+        working-directory: ./zodiac-pilot/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
         run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
-        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension
+        working-directory: ./zodiac-pilot/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
@@ -106,7 +106,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
-          PILOT_EXTENSION_DIRECTORY: ../../../../zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension/public
+          PILOT_EXTENSION_DIRECTORY: ../../../../zodiac-pilot/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
