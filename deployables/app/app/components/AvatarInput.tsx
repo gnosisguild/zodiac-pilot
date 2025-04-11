@@ -48,6 +48,7 @@ export const AvatarInput = ({
 
   return (
     <AddressSelect
+      key={`avatar-${state}`}
       clearLabel="Clear Safe Account"
       dropdownLabel="View all available Safes"
       placeholder="Paste an address or select from the list"
