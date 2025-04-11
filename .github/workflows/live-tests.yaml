@@ -75,18 +75,14 @@ jobs:
       - name: release-downloader
         uses: robinraju/release-downloader@v1.12
         with:
-          extract: true
           latest: true
           zipBall: true
-          out-file-path: latest-release
 
-      - name: Replace string
-        id: get-version
-        uses: frabert/replace-string-action@v2.5.1
+      - name: Extract Action
+        uses: ihiroky/extract-action@v1
         with:
-          pattern: 'v'
-          replace-with: ''
-          string: ${{ steps.fetch-latest-release.outputs.latest-release }}
+          file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+          extract_dir: latest-release
 
       - run: ls -lsa
         working-directory: latest-release
