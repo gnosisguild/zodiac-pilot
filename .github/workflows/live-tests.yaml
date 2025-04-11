@@ -36,6 +36,8 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
+      - run: ls -lsa
+
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
         working-directory: ./deployables/app
