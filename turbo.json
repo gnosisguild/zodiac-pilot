@@ -11,7 +11,7 @@
     },
     "build": {
       "dependsOn": ["clean"],
-      "inputs": [
+      "env": [
         "SENTRY_PROJECT",
         "SENTRY_DSN",
         "SENTRY_AUTH_TOKEN",
