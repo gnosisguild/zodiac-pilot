@@ -77,23 +77,28 @@ export function TokenApprovalTable({
                 <TableCell align="right">
                   {revokeAll ? (
                     <div className="flex flex-col items-center justify-end gap-1 tabular-nums sm:flex-row sm:items-center sm:gap-2">
-                      <del className="mr-2">
-                        <ApprovalDisplay
-                          approvalAmount={approvalAmount}
-                          decimals={decimals}
-                        />
-                      </del>
+                      {approvalAmount > 0n && (
+                        <del className="mr-2">
+                          <ApprovalDisplay
+                            approvalAmount={approvalAmount}
+                            decimals={decimals}
+                          />
+                        </del>
+                      )}
 
-                      {/* <span className="hidden sm:block">→</span> */}
                       <span className="text-green-700 dark:text-green-500">
                         0
                       </span>
                     </div>
-                  ) : (
+                  ) : approvalAmount > 0n ? (
                     <ApprovalDisplay
                       approvalAmount={approvalAmount}
                       decimals={decimals}
                     />
+                  ) : (
+                    <span className="text-green-700 dark:text-green-500">
+                      0
+                    </span>
                   )}
                 </TableCell>
               </TableRow>

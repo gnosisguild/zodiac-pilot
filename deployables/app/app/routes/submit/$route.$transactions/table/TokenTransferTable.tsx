@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import { ZeroAddress } from 'ethers'
+import { formatUnits, parseUnits, ZeroAddress } from 'ethers'
 import type { LucideIcon } from 'lucide-react'
 import { unprefixAddress, type PrefixedAddress } from 'ser-kit'
 
@@ -30,6 +30,8 @@ export const TokenTransferTable = ({
   avatar,
 }: TokenTransferTable) => {
   const avatarAddress = unprefixAddress(avatar).toLowerCase()
+
+  const aggregated = aggregateTokenTransfers(tokens)
 
   return (
     <Table dense>
@@ -60,7 +62,7 @@ export const TokenTransferTable = ({
           </TableRow>
         )}
 
-        {tokens.map(
+        {aggregated.map(
           ({ symbol, from, to, logoUrl, amount, contractId }, index) => {
             const fromAvatar = from.toLowerCase() === avatarAddress
             const toAvatar = to.toLowerCase() === avatarAddress
@@ -117,4 +119,25 @@ export const TokenTransferTable = ({
       </TableBody>
     </Table>
   )
+}
+
+const aggregateTokenTransfers = (tokens: TokenTransfer[]): TokenTransfer[] => {
+  const aggregated = tokens.reduce(
+    (acc: { [key: string]: TokenTransfer }, token) => {
+      const aggKey = `${token.contractId}-${token.from}-${token.to}`
+      if (!acc[aggKey]) {
+        acc[aggKey] = { ...token }
+      } else {
+        acc[aggKey].amount = formatUnits(
+          parseUnits(acc[aggKey].amount, token.decimals) +
+            parseUnits(token.amount, token.decimals),
+          token.decimals,
+        ) as `${number}`
+      }
+      return acc
+    },
+    {},
+  )
+
+  return Object.values(aggregated)
 }
