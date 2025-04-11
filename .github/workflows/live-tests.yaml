@@ -79,6 +79,14 @@ jobs:
           latest: true
           zipBall: true
 
+      - name: Replace string
+        id: get-version
+        uses: frabert/replace-string-action@v2.5.1
+        with:
+          pattern: 'v'
+          replace-with: ''
+          string: ${{ steps.fetch-latest-release.outputs.latest-release }}
+
       - name: Install dependencies
         run: pnpm install --prefer-offline
 
@@ -88,13 +96,13 @@ jobs:
 
       - name: Build extension
         run: pnpm build
-        working-directory: ./zodiac-pilot/deployables/extension
+        working-directory: ./zodiac-pilot-${{ steps.get-version.outputs.replaced }}/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
         run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
-        working-directory: ./zodiac-pilot/deployables/extension
+        working-directory: ./zodiac-pilot-${{ steps.get-version.outputs.replaced }}/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
@@ -106,7 +114,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
-          PILOT_EXTENSION_DIRECTORY: ../../../../zodiac-pilot/deployables/extension/public
+          PILOT_EXTENSION_DIRECTORY: ../../../../zodiac-pilot-${{ steps.get-version.outputs.replaced }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
