@@ -20,11 +20,12 @@ import {
   updateChainId,
   updateLabel,
 } from '@zodiac/modules'
-import { type ExecutionRoute } from '@zodiac/schema'
+import { isHexAddress, type ExecutionRoute } from '@zodiac/schema'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
-import { type ChainId } from 'ser-kit'
+import { prefixAddress, type ChainId } from 'ser-kit'
+import { useAccount } from 'wagmi'
 import type { Route } from './+types/create'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
@@ -132,6 +133,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(ChainEnum.ETH),
   )
+  const { address } = useAccount()
 
   return (
     <Page>
@@ -173,6 +175,11 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
                   required
                   isClearable
                   label="Address"
+                  initiator={
+                    isHexAddress(address)
+                      ? prefixAddress(undefined, address)
+                      : undefined
+                  }
                   chainId={selectedChainId}
                   name="avatar"
                   knownRoutes={'routes' in loaderData ? loaderData.routes : []}
