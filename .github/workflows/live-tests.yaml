@@ -92,7 +92,7 @@ jobs:
 
       - name: Install dependencies for extension
         run: pnpm install --prefer-offline
-        working-directory: ./zodiac-pilot
+        working-directory: ./zodiac-pilot-${{ steps.get-version.outputs.replaced }}
 
       - name: Build extension
         run: pnpm build
