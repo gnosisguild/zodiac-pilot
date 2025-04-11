@@ -11,11 +11,12 @@
     }
   },
   "scripts": {
-    "check-types": "turbo check-types",
+    "build": "turbo run build --affected",
+    "check-types": "turbo check-types --affected",
     "check-format": "prettier ./**/* --list-different",
     "check-spelling": "cspell \"**\"",
-    "check-cycles": "turbo check-cycles",
-    "lint": "turbo lint",
+    "check-cycles": "turbo check-cycles --affected",
+    "lint": "turbo lint --affected",
     "fix-format": "prettier ./**/* --write"
   },
   "devDependencies": {

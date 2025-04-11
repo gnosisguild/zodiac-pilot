@@ -130,6 +130,7 @@
     "**/*.config.js",
     "**/*.config.mjs",
     "**/*.config.ts",
+    "**/turbo.json",
     "**/entry.server.tsx",
     "**/dist/**",
     "**/public/build/**",
