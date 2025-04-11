@@ -127,6 +127,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
-          path: ${{ github.workspace }}/**/playwright-report/**/*
+          name: playwright-report-local
+          path: ${{ github.workspace }}/**/latest-release/${{ steps.extract-folder.outcome.folder-name }}/**/playwright-report/**/*
           retention-days: 30
