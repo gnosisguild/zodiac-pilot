@@ -119,7 +119,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
-          PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outcome.folder-name }}deployables/extension/public
+          PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outputs.folder-name }}deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
@@ -128,5 +128,5 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-local
-          path: ${{ github.workspace }}/**/latest-release/${{ steps.extract-folder.outcome.folder-name }}/**/playwright-report/**/*
+          path: ${{ github.workspace }}/**/latest-release/${{ steps.extract-folder.outputs.folder-name }}/**/playwright-report/**/*
           retention-days: 30
