@@ -38,7 +38,7 @@
     },
     "build": {
       "dependsOn": ["clean"],
-      "outputs": ["build/**", "public/**"]
+      "outputs": ["build/**", "public/**", "react-router-config.ts"]
     }
   }
 }
