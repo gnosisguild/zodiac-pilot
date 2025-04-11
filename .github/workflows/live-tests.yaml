@@ -86,28 +86,28 @@ jobs:
 
       - run: |
           RELEASE_HASH=$(git show-ref --hash=7 ${{ steps.fetch-latest-release.outputs.latest-release }})
-          echo "::set-output name=folder-name::gnosisguild-zodiac-pilot-$RELEASE_HASH"
+          echo "folder-name=gnosisguild-zodiac-pilot-$RELEASE_HASH" => $GITHUB_OUTPUT
         id: extract-folder
 
       - run: ls -lsa
-        working-directory: ./latest-release/${{ steps.extract-folder.outcome.folder-name }}
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}
 
       - name: Install dependencies
         run: pnpm install --prefer-offline
 
       - name: Install dependencies for extension
         run: pnpm install --prefer-offline
-        working-directory: ./latest-release/${{ steps.extract-folder.outcome.folder-name }}
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}
 
       - name: Build extension
         run: pnpm build
-        working-directory: ./latest-release/${{ steps.extract-folder.outcome.folder-name }}deployables/extension
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
         run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
-        working-directory: ./latest-release/${{ steps.extract-folder.outcome.folder-name }}deployables/extension
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
