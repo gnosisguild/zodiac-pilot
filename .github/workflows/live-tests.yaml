@@ -125,5 +125,5 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-local
-          path: ${{ github.workspace }}/**/latest-release/${{ steps.extract-folder.outputs.folder-name }}/**/playwright-report/**/*
+          path: ${{ github.workspace }}/latest-release/${{ steps.extract-folder.outputs.folder-name }}/**/playwright-report/**/*
           retention-days: 30
