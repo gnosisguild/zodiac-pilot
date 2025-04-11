@@ -36,14 +36,6 @@
       "persistent": true,
       "cache": false
     },
-    "build": {
-      "dependsOn": ["clean"],
-      "outputs": [
-        "build/**",
-        "public/**",
-        "react-router-config.ts",
-        ".vercel/output/**"
-      ]
-    }
+    "build": {}
   }
 }
