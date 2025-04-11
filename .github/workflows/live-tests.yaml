@@ -77,7 +77,7 @@ jobs:
         with:
           extract: true
           latest: true
-          fileName: ${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+          fileName: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
 
       - name: Install dependencies
         run: pnpm install --prefer-offline
