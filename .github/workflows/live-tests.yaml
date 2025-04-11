@@ -69,9 +69,6 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
 
-      - name: Install dependencies
-        run: pnpm install --prefer-offline
-
       - uses: reloc8/action-latest-release-version@1.0.0
         id: fetch-latest-release
 
@@ -80,12 +77,24 @@ jobs:
         with:
           extract: true
           latest: true
-          fileName: zodiac-pilot.zip
-          out-file-path: ./deployables/extension
+          fileName: ${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+
+      - name: Install dependencies
+        run: pnpm install --prefer-offline
+
+      - name: Install dependencies for extension
+        run: pnpm install --prefer-offline
+        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}
+
+      - name: Build extension
+        run: pnpm build
+        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension
+        env:
+          COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
-        run: node --experimental-strip-types manifest-util.ts -t ./src/manifest.template.json -o ./zodiac-pilot/manifest.json -v ${{ steps.fetch-latest-release.outputs.latest-release }}
-        working-directory: ./deployables/extension
+        run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
+        working-directory: ./zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
@@ -97,7 +106,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
-          PILOT_EXTENSION_DIRECTORY: zodiac-pilot
+          PILOT_EXTENSION_DIRECTORY: ../../../../zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}

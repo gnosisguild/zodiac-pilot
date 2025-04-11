@@ -2,7 +2,8 @@
 import { test as base, chromium, type BrowserContext } from '@playwright/test'
 import { fileURLToPath } from 'url'
 
-const extensionDirectory = process.env.PILOT_EXTENSION_DIRECTORY || 'public'
+const extensionDirectory =
+  process.env.PILOT_EXTENSION_DIRECTORY || '../../../extension/public'
 
 export const test = base.extend<{
   context: BrowserContext
@@ -10,7 +11,7 @@ export const test = base.extend<{
 }>({
   context: async ({}, use) => {
     const pathToExtension = fileURLToPath(
-      new URL(`../../../extension/${extensionDirectory}`, import.meta.url),
+      new URL(extensionDirectory, import.meta.url),
     )
 
     const context = await chromium.launchPersistentContext('', {
