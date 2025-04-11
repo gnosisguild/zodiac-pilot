@@ -11,6 +11,7 @@
     },
     "build": {
       "dependsOn": ["clean"],
+      "outputs": ["build/**", "public/**"],
       "env": [
         "SENTRY_PROJECT",
         "SENTRY_DSN",
