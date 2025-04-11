@@ -1,5 +1,32 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "ENABLE_EXPERIMENTAL_COREPACK",
+    "POSTGRES_URL",
+    "POSTGRES_PRISMA_URL",
+    "SUPABASE_URL",
+    "POSTGRES_URL_NON_POOLING",
+    "SUPABASE_JWT_SECRET",
+    "POSTGRES_USER",
+    "POSTGRES_PASSWORD",
+    "POSTGRES_DATABASE",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "POSTGRES_HOST",
+    "SUPABASE_ANON_KEY"
+  ],
+  "globalEnv": [
+    "SENTRY_PROJECT",
+    "SENTRY_DSN",
+    "SENTRY_ORG",
+    "SENTRY_AUTH_TOKEN",
+    "DEBANK_API_KEY",
+    "TENDERLY_PROJECT",
+    "TENDERLY_USER",
+    "TENDERLY_ACCESS_KEY",
+    "WORKOS_CLIENT_ID",
+    "WORKOS_API_KEY",
+    "WORKOS_COOKIE_PASSWORD"
+  ],
   "tasks": {
     "check-types": {},
     "check-cycles": {},
@@ -11,32 +38,7 @@
     },
     "build": {
       "dependsOn": ["clean"],
-      "outputs": ["build/**", "public/**"],
-      "env": [
-        "SENTRY_PROJECT",
-        "SENTRY_DSN",
-        "SENTRY_ORG",
-        "SENTRY_AUTH_TOKEN",
-        "DEBANK_API_KEY",
-        "ENABLE_EXPERIMENTAL_COREPACK",
-        "TENDERLY_PROJECT",
-        "TENDERLY_USER",
-        "TENDERLY_ACCESS_KEY",
-        "POSTGRES_URL",
-        "POSTGRES_PRISMA_URL",
-        "SUPABASE_URL",
-        "POSTGRES_URL_NON_POOLING",
-        "SUPABASE_JWT_SECRET",
-        "POSTGRES_USER",
-        "POSTGRES_PASSWORD",
-        "POSTGRES_DATABASE",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "POSTGRES_HOST",
-        "SUPABASE_ANON_KEY",
-        "WORKOS_CLIENT_ID",
-        "WORKOS_API_KEY",
-        "WORKOS_COOKIE_PASSWORD"
-      ]
+      "outputs": ["build/**", "public/**"]
     }
   }
 }
