@@ -36,8 +36,6 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      - run: ls -lsa
-
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
         working-directory: ./deployables/app
@@ -88,6 +86,8 @@ jobs:
           pattern: 'v'
           replace-with: ''
           string: ${{ steps.fetch-latest-release.outputs.latest-release }}
+
+      - run: ls -lsa
 
       - name: Install dependencies
         run: pnpm install --prefer-offline
