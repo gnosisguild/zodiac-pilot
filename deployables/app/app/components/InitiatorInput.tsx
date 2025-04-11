@@ -32,6 +32,7 @@ export const InitiatorInput = ({
 
   return (
     <AddressSelect
+      key={`initiator-${state}`}
       isMulti={false}
       isDisabled={state === 'loading'}
       placeholder="Select an initiator"
