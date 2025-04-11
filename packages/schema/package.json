@@ -20,7 +20,7 @@
     "@epic-web/invariant": "1.0.0",
     "@safe-global/types-kit": "2.0.1",
     "ser-kit": "3.6.0",
-    "viem": "2.26.2",
+    "viem": "2.26.3",
     "zod": "3.24.2"
   },
   "devDependencies": {
