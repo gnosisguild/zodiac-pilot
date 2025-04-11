@@ -14,6 +14,8 @@ export const test = base.extend<{
       new URL(extensionDirectory, import.meta.url),
     )
 
+    console.log({ pathToExtension })
+
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
