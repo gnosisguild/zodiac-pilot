@@ -89,6 +89,9 @@ jobs:
           echo "::set-output name=folder-name::gnosisguild-zodiac-pilot-$RELEASE_HASH"
         id: extract-folder
 
+      - run: ls -lsa
+        working-directory: ./latest-release/${{ steps.extract-folder.outcome.folder-name }}
+
       - name: Install dependencies
         run: pnpm install --prefer-offline
 
