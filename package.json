@@ -11,6 +11,7 @@
     }
   },
   "scripts": {
+    "build": "turbo run build --affected",
     "check-types": "turbo check-types --affected",
     "check-format": "prettier ./**/* --list-different",
     "check-spelling": "cspell \"**\"",

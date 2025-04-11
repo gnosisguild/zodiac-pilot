@@ -4,9 +4,13 @@
     "check-types": {},
     "check-cycles": {},
     "lint": {},
+    "clean": { "cache": false },
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "build": {
+      "dependsOn": ["clean"]
     }
   }
 }
