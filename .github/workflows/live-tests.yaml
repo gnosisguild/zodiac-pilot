@@ -101,13 +101,13 @@ jobs:
 
       - name: Build extension
         run: pnpm build
-        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}deployables/extension
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
         run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
-        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}deployables/extension
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
@@ -119,7 +119,7 @@ jobs:
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
         env:
-          PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outcome.folder-name }}deployables/extension/public
+          PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outcome.folder-name }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
