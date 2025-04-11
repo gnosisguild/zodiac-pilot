@@ -777,10 +777,10 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 3.0.1
-        version: 3.0.1(typescript@5.8.3)(zod@3.24.2)
+        version: 3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       '@safe-global/protocol-kit':
-        specifier: 6.0.2
-        version: 6.0.2(typescript@5.8.3)(zod@3.24.2)
+        specifier: 6.0.3
+        version: 6.0.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -3802,8 +3802,8 @@ packages:
   '@safe-global/protocol-kit@5.2.4':
     resolution: {integrity: sha512-HqEIoclgeit1xsNyZfnscUA3q3uwr0VwoDAnLpVpOTY3y/oh8AEwsFFYs5UGZ05zfQb5t2yfvDSZt0ye+8y86g==}
 
-  '@safe-global/protocol-kit@6.0.2':
-    resolution: {integrity: sha512-Bdj78qra3lOXe/H/6WM+w3oe149rdyVNCYRjNkFVWlqvWYYLMficE8E1x3OmNrduik2g8Ca+qZblNJ16T8pMBQ==}
+  '@safe-global/protocol-kit@6.0.3':
+    resolution: {integrity: sha512-2FLDWgbKSxq1hZAY9qj7hqyPQLxPq7sWn9+uuJz0tkZZLccvcCvxA/sHagBj+6GAZR4qhrnHIJPahyFRA9cZug==}
 
   '@safe-global/safe-apps-provider@0.18.5':
     resolution: {integrity: sha512-9v9wjBi3TwLsEJ3C2ujYoexp3pFJ0omDLH/GX91e2QB+uwCKTBYyhxFSrTQ9qzoyQd+bfsk4gjOGW87QcJhf7g==}
@@ -3814,8 +3814,8 @@ packages:
   '@safe-global/safe-deployments@1.37.30':
     resolution: {integrity: sha512-fARm/2VkT4Om/EoaVG4G/TvxaXnVfJZQrsXi/3eDcIB0NwkjgTHoku7FfdY4Gl3EINCaUHnWT9t7CNMPJu/I5w==}
 
-  '@safe-global/safe-deployments@1.37.31':
-    resolution: {integrity: sha512-9ab33ttfSTiWCYKwI7n7eky9bNPQD0f21cCTu/nn4+OwjZvYUrcYfmxNvjXy3JERDToHbalAZ1KHUjfA0teN4A==}
+  '@safe-global/safe-deployments@1.37.32':
+    resolution: {integrity: sha512-3XRy6TnVz0uymPxMNo7WkaK88sL12ZpIMKOfrNHkODUZCxCO4GFA0FFfjByAPS1LAXfmV7Mulk9Zx1n9vqR8Cg==}
 
   '@safe-global/safe-gateway-typescript-sdk@3.22.9':
     resolution: {integrity: sha512-7ojVK/crhOaGowEO8uYWaopZzcr5rR76emgllGIfjCLR70aY4PbASpi9Pbs+7jIRzPDBBkM0RBo+zYx5UduX8Q==}
@@ -12189,9 +12189,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.2)':
+  '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
     dependencies:
-      '@safe-global/protocol-kit': 6.0.2(typescript@5.8.3)(zod@3.24.2)
+      '@safe-global/protocol-kit': 6.0.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       '@safe-global/types-kit': 2.0.0(typescript@5.8.3)(zod@3.24.2)
       node-fetch: 2.7.0
       viem: 2.26.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -12219,9 +12219,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/protocol-kit@6.0.2(typescript@5.8.3)(zod@3.24.2)':
+  '@safe-global/protocol-kit@6.0.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
     dependencies:
-      '@safe-global/safe-deployments': 1.37.31
+      '@safe-global/safe-deployments': 1.37.32
       '@safe-global/safe-modules-deployments': 2.2.7
       '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@3.24.2)
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.2)
@@ -12260,7 +12260,7 @@ snapshots:
     dependencies:
       semver: 7.7.1
 
-  '@safe-global/safe-deployments@1.37.31':
+  '@safe-global/safe-deployments@1.37.32':
     dependencies:
       semver: 7.7.1
 
