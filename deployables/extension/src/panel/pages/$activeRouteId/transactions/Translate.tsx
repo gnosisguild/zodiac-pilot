@@ -5,9 +5,11 @@ import { GhostButton } from '@zodiac/ui'
 
 type Props = {
   transactionId: string
+  iconOnly?: boolean
+  fluid?: boolean
 }
 
-export const Translate = ({ transactionId }: Props) => {
+export const Translate = ({ transactionId, iconOnly, fluid }: Props) => {
   const provider = useProvider()
   const translation = useApplicableTranslation(transactionId)
 
@@ -22,8 +24,9 @@ export const Translate = ({ transactionId }: Props) => {
 
   return (
     <GhostButton
-      iconOnly
-      size="small"
+      fluid={fluid}
+      iconOnly={iconOnly}
+      size={iconOnly ? 'small' : 'base'}
       icon={translation.icon}
       onClick={translation.apply}
     >

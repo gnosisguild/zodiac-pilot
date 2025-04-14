@@ -5,13 +5,7 @@ import { useApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import type { ExecutionRoute } from '@zodiac/schema'
-import {
-  CopyToClipboard,
-  errorToast,
-  GhostButton,
-  GhostLinkButton,
-  Tag,
-} from '@zodiac/ui'
+import { errorToast, GhostButton, GhostLinkButton, Tag } from '@zodiac/ui'
 import {
   CassetteTape,
   Check,
@@ -166,24 +160,14 @@ export const RolePermissionCheck = ({
               {error}
             </Tag>
           )}
-
-          {error && translationAvailable && (
-            <Translate transactionId={transactionState.id} />
-          )}
-
-          {error && (
-            <CopyToClipboard
-              iconOnly
-              size="small"
-              data={transactionState.transaction}
-            >
-              Copy transaction data to the clipboard
-            </CopyToClipboard>
-          )}
         </div>
       </div>
 
-      {error && roleToRecordTo && (
+      {error && translationAvailable && (
+        <Translate fluid transactionId={transactionState.id} />
+      )}
+
+      {error && !translationAvailable && roleToRecordTo && (
         <div className="flex gap-2">
           {recordCallState === RecordCallState.Done ? (
             <GhostButton fluid icon={Check} disabled>

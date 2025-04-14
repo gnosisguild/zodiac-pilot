@@ -122,7 +122,7 @@ const TransactionHeader = ({
         )}
 
         <div className="flex">
-          <Translate transactionId={transactionState.id} />
+          <Translate iconOnly transactionId={transactionState.id} />
           <CopyToClipboard
             iconOnly
             size="small"
