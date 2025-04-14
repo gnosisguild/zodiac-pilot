@@ -237,9 +237,19 @@ type RecordCallsQueueEntry = {
 
 const recordCallsQueue = new Map<string, RecordCallsQueueEntry>()
 
+/**
+ * Fetch the owner of the given rolesMod.
+ * Returns undefined if the rolesMod is not a Safe.
+ *
+ * This function is memoized to avoid unnecessary RPC calls.
+ */
 async function fetchOwnerSafe(
   rolesMod: PrefixedAddress,
 ): Promise<PrefixedAddress | undefined> {
+  if (ownerSafeCache.has(rolesMod)) {
+    return ownerSafeCache.get(rolesMod)
+  }
+
   const [chain, address] = splitPrefixedAddress(rolesMod)
   invariant(chain, 'Invalid rolesMod')
   const rpc = RPC[chain]
@@ -265,7 +275,10 @@ async function fetchOwnerSafe(
     ] as const,
     functionName: 'owner',
   })) as Address
-  return (await isSafeAccount(chain, owner))
+  const result = (await isSafeAccount(chain, owner))
     ? prefixAddress(chain, owner)
     : undefined
+  ownerSafeCache.set(rolesMod, result)
+  return result
 }
+const ownerSafeCache = new Map<PrefixedAddress, PrefixedAddress | undefined>()
