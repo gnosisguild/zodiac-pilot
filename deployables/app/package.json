@@ -56,7 +56,7 @@
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.0.313",
     "@types/node": "22.14.0",
-    "@types/react": "19.1.0",
+    "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
     "@vercel/react-router": "1.1.0",
     "@wagmi/core": "2.16.7",

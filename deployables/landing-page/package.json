@@ -9,7 +9,7 @@
     "@icons-pack/react-simple-icons": "12.5.0",
     "@react-router/serve": "7.5.0",
     "@headlessui/react": "2.2.0",
-    "@types/react": "19.1.0",
+    "@types/react": "19.1.2",
     "@types/react-dom": "19.1.2",
     "@zodiac/env": "workspace:*",
     "@zodiac/ui": "workspace:*",
