@@ -14,45 +14,48 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
   const transactions = useTransactions()
-
   const onLaunchRef = useStableHandler(onLaunch)
 
   const launchRoute = useCallback(
     async (routeId: string, tabId?: number) => {
       const activeRouteId = await getLastUsedRouteId()
 
-      if (activeRouteId != null) {
-        const activeRoute = await getRoute(activeRouteId)
-        const newRoute = await getRoute(routeId)
-
-        if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
-          setPendingRouteId(routeId)
-
-          return
+      if (activeRouteId == null || activeRouteId !== routeId) {
+        if (onLaunchRef.current) {
+          onLaunchRef.current(routeId, tabId)
         }
+
+        navigate(`/${routeId}`)
+        return
       }
 
-      if (onLaunchRef.current != null) {
+      const activeRoute = await getRoute(activeRouteId)
+      const newRoute = await getRoute(routeId)
+      if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
+        setPendingRouteId(routeId)
+        return
+      }
+
+      if (onLaunchRef.current) {
         onLaunchRef.current(routeId, tabId)
       }
+
+      navigate(`/${activeRouteId}/clear-transactions/${routeId}`)
     },
-    [onLaunchRef, transactions.length],
+    [onLaunchRef, transactions.length, navigate],
   )
 
   const cancelLaunch = useCallback(() => setPendingRouteId(null), [])
 
   const proceedWithLaunch = useCallback(async () => {
     const activeRouteId = await getLastUsedRouteId()
-
-    setPendingRouteId(null)
-
     invariant(pendingRouteId != null, 'No route launch was pending')
-
-    if (onLaunchRef.current != null) {
+    if (onLaunchRef.current) {
       onLaunchRef.current(pendingRouteId)
     }
 
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
+    setPendingRouteId(null)
   }, [navigate, onLaunchRef, pendingRouteId])
 
   return [
