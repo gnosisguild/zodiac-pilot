@@ -44,8 +44,6 @@ import { Intent } from './intents'
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
 
-  console.log({ accounts })
-
   return {
     accounts,
     user: await getUser({ signal: request.signal }),

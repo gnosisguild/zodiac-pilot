@@ -102,7 +102,7 @@ describe('Transactions', () => {
       await expectRouteToBe('/first-route/clear-transactions/second-account')
     })
 
-    it.only('renders when an account from zodiac os is active', async () => {
+    it('renders when an account from zodiac os is active', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
       const account = accountFactory.createWithoutDb(tenant, user, {
@@ -110,6 +110,7 @@ describe('Transactions', () => {
         label: 'Remote account',
       })
 
+      mockGetRemoteAccount.mockResolvedValue(account)
       mockGetRemoteAccounts.mockResolvedValue([account])
 
       await render('/test-account/transactions')
