@@ -25,7 +25,8 @@
     "TENDERLY_ACCESS_KEY",
     "WORKOS_CLIENT_ID",
     "WORKOS_API_KEY",
-    "WORKOS_COOKIE_PASSWORD"
+    "WORKOS_COOKIE_PASSWORD",
+    "PILOT_EXTENSION_ID"
   ],
   "tasks": {
     "check-types": {},
