@@ -2,14 +2,15 @@ import type { Env } from './types'
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const { pathname } = new URL(request.url)
-    const tenderlyForkApi = `https://api.tenderly.co/api/v1/account/${env.TENDERLY_USER}/project/${env.TENDERLY_PROJECT}/vnets`
+    if (request.method !== 'POST') {
+      return Response.json(
+        { error: 'only POST requests are supported' },
+        { status: 405 },
+      )
+    }
 
-    let path = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
-    // coerce the path, so that users won't be able to call some other Tenderly API endpoints
-    path = path.replace(/[^a-z0-9\-/]/gi, '')
-
-    const tenderlyRequest = new Request(`${tenderlyForkApi}${path}`, request)
+    const tenderlyVnetApi = `https://api.tenderly.co/api/v1/account/${env.TENDERLY_USER}/project/${env.TENDERLY_PROJECT}/vnets`
+    const tenderlyRequest = new Request(`${tenderlyVnetApi}`, request)
     tenderlyRequest.headers.set('X-Access-Key', env.TENDERLY_ACCESS_KEY)
     const tenderlyResponse = await fetch(tenderlyRequest)
 
