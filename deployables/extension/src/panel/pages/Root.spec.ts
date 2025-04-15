@@ -21,19 +21,7 @@ import {
 } from '@zodiac/messages'
 import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
 import type { MockTab } from '@zodiac/test-utils/chrome'
-import { Outlet } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
-import { action, loader, Root } from './Root'
-
-vi.mock('@/companion', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/companion')>()
-
-  return {
-    ...module,
-
-    getFeatures: vi.fn().mockResolvedValue([]),
-  }
-})
 
 describe('Root', () => {
   describe('Launch route', () => {
@@ -53,14 +41,13 @@ describe('Root', () => {
       await mockRoute({ id: 'test-route' })
       const activeTab = createMockTab()
 
-      await render('/', [{ path: '/', Component: Root, loader, action }], {
-        inspectRoutes: ['/:activeRouteId'],
+      await render('/', {
         activeTab,
       })
 
-      mockIncomingLaunch('test-route', activeTab)
+      await mockIncomingLaunch('test-route', activeTab)
 
-      await expectRouteToBe('/test-route')
+      await expectRouteToBe('/test-route/transactions')
     })
 
     it('communicates the new route id', async () => {
@@ -68,21 +55,9 @@ describe('Root', () => {
 
       await mockRoute({ id: 'test-route' })
 
-      await render(
-        '/',
-        [
-          {
-            path: '/',
-            Component: Root,
-            loader,
-            action,
-            children: [{ path: ':activeRouteId', Component: Outlet }],
-          },
-        ],
-        {
-          activeTab,
-        },
-      )
+      await render('/', {
+        activeTab,
+      })
 
       await mockIncomingLaunch('test-route', activeTab)
 
@@ -111,10 +86,9 @@ describe('Root', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      await render('/', [{ path: '/', Component: Root, loader, action }], {
+      await render('/', {
         initialState: [createTransaction()],
         activeTab,
-        inspectRoutes: ['/:activeRouteId/clear-transactions/:newRootId'],
       })
 
       await mockIncomingLaunch('secondRoute', activeTab)
@@ -143,7 +117,7 @@ describe('Root', () => {
         })
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader, action }], {
+        await render('/', {
           initialState: [createTransaction()],
           activeTab,
         })
@@ -171,12 +145,9 @@ describe('Root', () => {
         })
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader, action }], {
+        await render('/', {
           initialState: [createTransaction()],
           activeTab,
-          inspectRoutes: [
-            '/:activeRouteId/clear-transactions/:newActiveRouteId',
-          ],
         })
 
         await mockIncomingLaunch('secondRoute', activeTab)
@@ -203,10 +174,7 @@ describe('Root', () => {
 
         await saveLastUsedRouteId(selectedRoute.id)
 
-        await render('/', [{ path: '/', Component: Root, loader, action }], {
-          inspectRoutes: [
-            '/:activeRouteId/clear-transactions/:newActiveRouteId',
-          ],
+        await render('/', {
           activeTab,
         })
 
@@ -236,7 +204,7 @@ describe('Root', () => {
       await mockRoutes({ id: 'test-route' })
       const tab = createMockTab()
 
-      await render('/', [{ path: '/', Component: Root, loader, action }], {
+      await render('/', {
         activeTab: tab,
       })
 
@@ -263,9 +231,7 @@ describe('Root', () => {
     }
 
     it('stores route data it receives from the companion app', async () => {
-      const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader, action },
-      ])
+      const { mockedTab } = await render('/')
 
       const route = createMockRoute()
 
@@ -278,13 +244,9 @@ describe('Root', () => {
       const route = await mockRoute()
       await saveLastUsedRouteId(route.id)
 
-      const { mockedTab } = await render(
-        '/',
-        [{ path: '/', Component: Root, loader, action }],
-        {
-          initialState: [createTransaction()],
-        },
-      )
+      const { mockedTab } = await render('/', {
+        initialState: [createTransaction()],
+      })
 
       const updatedRoute = { ...route, label: 'Changed label' }
 
@@ -294,9 +256,7 @@ describe('Root', () => {
     })
 
     it('provides the saved route back', async () => {
-      const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader, action },
-      ])
+      const { mockedTab } = await render('/')
 
       const route = createMockRoute()
 
@@ -320,20 +280,9 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         await mockIncomingRouteUpdate(
           {
@@ -357,23 +306,9 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-            inspectRoutes: [
-              '/:activeRouteId/clear-transactions/:newActiveRouteId',
-            ],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         await mockIncomingRouteUpdate(
           {
@@ -397,20 +332,9 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         await mockIncomingRouteUpdate(
           createMockRoute({
@@ -428,20 +352,9 @@ describe('Root', () => {
       it('does not warn when no route is currently selected', async () => {
         await saveLastUsedRouteId(null)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         await mockIncomingRouteUpdate(
           createMockRoute({
@@ -465,14 +378,7 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render('/', [
-          {
-            path: '/',
-            Component: Root,
-            loader,
-            action,
-          },
-        ])
+        const { mockedTab } = await render('/')
 
         await mockIncomingRouteUpdate(
           {
@@ -493,23 +399,9 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-            inspectRoutes: [
-              '/:activeRouteId/clear-transactions/:newActiveRouteId',
-            ],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         const updatedRoute = {
           ...currentRoute,
@@ -531,23 +423,9 @@ describe('Root', () => {
         await mockRoutes(currentRoute)
         await saveLastUsedRouteId(currentRoute.id)
 
-        const { mockedTab } = await render(
-          '/',
-          [
-            {
-              path: '/',
-              Component: Root,
-              loader,
-              action,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-            inspectRoutes: [
-              '/:activeRouteId/clear-transactions/:newActiveRouteId',
-            ],
-          },
-        )
+        const { mockedTab } = await render('/', {
+          initialState: [createTransaction()],
+        })
 
         const updatedRoute = {
           ...currentRoute,
@@ -573,9 +451,7 @@ describe('Root', () => {
 
       await saveLastUsedRouteId('test-route')
 
-      const { mockedTab } = await render('/', [
-        { path: '/', Component: Root, loader, action },
-      ])
+      const { mockedTab } = await render('/')
 
       await callListeners(
         chromeMock.runtime.onMessage,

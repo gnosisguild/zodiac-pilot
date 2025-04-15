@@ -19,27 +19,12 @@ import {
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { action, loader, Transactions } from './Transactions'
-
-vi.mock('@/companion', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/companion')>()
-
-  return {
-    ...module,
-
-    getUser: vi.fn().mockResolvedValue(null),
-    getAccounts: vi.fn().mockResolvedValue([]),
-  }
-})
+import { describe, expect, it, vi } from 'vitest'
+import { action, loader } from './Transactions'
 
 const mockGetAccounts = vi.mocked(getAccounts)
 
 describe('Transactions', () => {
-  beforeEach(() => {
-    mockGetAccounts.mockResolvedValue([])
-  })
-
   describe('Route switch', () => {
     it('is possible to switch the active route', async () => {
       const [selectedRoute] = await mockRoutes(

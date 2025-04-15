@@ -1,12 +1,12 @@
 import type { TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import {
-  render as baseRender,
-  type RenderOptions,
-  type Route,
+  createRenderDataMode,
+  type RenderDataOptions,
 } from '@zodiac/test-utils'
 import { ToastContainer } from '@zodiac/ui'
-import { type PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import { routes } from '../src/panel/routes'
 import {
   createMockPort,
   mockActiveTab,
@@ -15,7 +15,7 @@ import {
 } from './chrome'
 import { RenderWrapper } from './RenderWrapper'
 
-type Options = RenderOptions & {
+type Options = RenderDataOptions & {
   /** Can be used to change the attributes of the currently active tab */
   activeTab?: Partial<chrome.tabs.Tab>
   /**
@@ -28,13 +28,13 @@ type Options = RenderOptions & {
   initialSelectedRoute?: ExecutionRoute | null
 }
 
+const baseRender = createRenderDataMode(routes)
+
 export const render = async (
   currentPath: string,
-  routes: Route[],
   {
     activeTab,
     initialState,
-    initialSelectedRoute,
     wrapper: Wrapper = ({ children }: PropsWithChildren) => <>{children}</>,
 
     ...options
@@ -49,18 +49,17 @@ export const render = async (
 
   const FinalRenderWrapper = ({ children }: PropsWithChildren) => (
     <Wrapper>
-      <RenderWrapper
-        initialSelectedRoute={initialSelectedRoute}
-        initialState={initialState}
-      >
+      <RenderWrapper initialState={initialState}>
         {children}
+
         <ToastContainer />
       </RenderWrapper>
     </Wrapper>
   )
 
-  const result = await baseRender(currentPath, routes, {
+  const result = await baseRender(currentPath, {
     ...options,
+
     wrapper: FinalRenderWrapper,
   })
 
