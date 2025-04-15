@@ -1,4 +1,4 @@
-import { getRoute, getRoutes, saveLastUsedRouteId } from '@/execution-routes'
+import { getRoute, getRoutes, saveLastUsedAccountId } from '@/execution-routes'
 import {
   callListeners,
   chromeMock,
@@ -78,7 +78,7 @@ describe('Root', () => {
         label: 'First route',
       })
 
-      await saveLastUsedRouteId('firstRoute')
+      await saveLastUsedAccountId('firstRoute')
 
       mockRoutes(selectedRoute, {
         id: 'secondRoute',
@@ -115,7 +115,7 @@ describe('Root', () => {
           id: 'secondRoute',
           label: 'Second route',
         })
-        await saveLastUsedRouteId(selectedRoute.id)
+        await saveLastUsedAccountId(selectedRoute.id)
 
         await render('/', {
           initialState: [createTransaction()],
@@ -143,7 +143,7 @@ describe('Root', () => {
           label: 'Second route',
           avatar: ETH_ZERO_ADDRESS,
         })
-        await saveLastUsedRouteId(selectedRoute.id)
+        await saveLastUsedAccountId(selectedRoute.id)
 
         await render('/', {
           initialState: [createTransaction()],
@@ -172,7 +172,7 @@ describe('Root', () => {
           avatar: randomPrefixedAddress(),
         })
 
-        await saveLastUsedRouteId(selectedRoute.id)
+        await saveLastUsedAccountId(selectedRoute.id)
 
         await render('/', {
           activeTab,
@@ -242,7 +242,7 @@ describe('Root', () => {
 
     it('saves the route when there are transactions but the route stays the same and the avatar has not changed', async () => {
       const route = await mockRoute()
-      await saveLastUsedRouteId(route.id)
+      await saveLastUsedAccountId(route.id)
 
       const { mockedTab } = await render('/', {
         initialState: [createTransaction()],
@@ -278,7 +278,7 @@ describe('Root', () => {
         })
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -304,7 +304,7 @@ describe('Root', () => {
         })
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -330,7 +330,7 @@ describe('Root', () => {
         })
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -350,7 +350,7 @@ describe('Root', () => {
       })
 
       it('does not warn when no route is currently selected', async () => {
-        await saveLastUsedRouteId(null)
+        await saveLastUsedAccountId(null)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -376,7 +376,7 @@ describe('Root', () => {
         })
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/')
 
@@ -397,7 +397,7 @@ describe('Root', () => {
         const currentRoute = createMockRoute()
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -421,7 +421,7 @@ describe('Root', () => {
         const currentRoute = createMockRoute()
 
         await mockRoutes(currentRoute)
-        await saveLastUsedRouteId(currentRoute.id)
+        await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
           initialState: [createTransaction()],
@@ -449,7 +449,7 @@ describe('Root', () => {
     it('answers when queried for the currently active route', async () => {
       await mockRoute({ id: 'test-route' })
 
-      await saveLastUsedRouteId('test-route')
+      await saveLastUsedAccountId('test-route')
 
       const { mockedTab } = await render('/')
 

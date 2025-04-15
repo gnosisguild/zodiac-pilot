@@ -18,8 +18,11 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
   const submit = useSubmit()
   const [launchRoute, { isLaunchPending, cancelLaunch, proceedWithLaunch }] =
     useLaunchRoute({
-      onLaunch(routeId) {
-        submit({ intent: Intent.LaunchRoute, routeId }, { method: 'POST' })
+      onLaunch(accountId) {
+        submit(
+          { intent: Intent.ActivateAccount, accountId },
+          { method: 'POST' },
+        )
       },
     })
 

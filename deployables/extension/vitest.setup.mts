@@ -1,6 +1,11 @@
 import { getAccount, getAccounts, getFeatures, getUser } from '@/companion'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
@@ -34,8 +39,11 @@ const mockGetAccounts = vi.mocked(getAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
 beforeEach(() => {
+  const tenant = tenantFactory.createWithoutDb()
+  const user = userFactory.createWithoutDb(tenant)
+
   mockGetUser.mockResolvedValue(null)
-  mockGetAccount.mockResolvedValue(null)
+  mockGetAccount.mockResolvedValue(accountFactory.createWithoutDb(tenant, user))
   mockGetAccounts.mockResolvedValue([])
   mockGetFeatures.mockResolvedValue([])
 })

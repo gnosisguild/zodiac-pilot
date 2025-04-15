@@ -1,4 +1,4 @@
-import { getAccounts } from '@/companion'
+import { getAccount, getAccounts } from '@/companion'
 import {
   chromeMock,
   createTransaction,
@@ -20,6 +20,7 @@ import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 
+const mockGetAccount = vi.mocked(getAccount)
 const mockGetAccounts = vi.mocked(getAccounts)
 
 describe('Transactions', () => {
@@ -72,6 +73,7 @@ describe('Transactions', () => {
         label: 'Remote account',
       })
 
+      mockGetAccount.mockResolvedValue(account)
       mockGetAccounts.mockResolvedValue([account])
 
       await mockRoute({ id: 'first-route' })

@@ -1,5 +1,5 @@
 import { getFeatures, ProvideCompanionAppContext } from '@/companion'
-import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
+import { getLastUsedRouteId, saveLastUsedAccountId } from '@/execution-routes'
 import {
   formData,
   getActiveTab,
@@ -43,7 +43,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const routeId = getString(data, 'routeId')
   const lastUsedRouteId = await getLastUsedRouteId()
 
-  await saveLastUsedRouteId(routeId)
+  await saveLastUsedAccountId(routeId)
 
   const activeTab = await getActiveTab()
 

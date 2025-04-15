@@ -1,4 +1,4 @@
-import { saveLastUsedRouteId } from '@/execution-routes'
+import { saveLastUsedAccountId } from '@/execution-routes'
 import {
   mockCompanionAppUrl,
   mockProviderRequest,
@@ -14,7 +14,7 @@ describe('No routes', () => {
   describe('Default redirects', () => {
     it('redirects to the last used route if one is present', async () => {
       await mockRoute({ id: 'test-route' })
-      await saveLastUsedRouteId('test-route')
+      await saveLastUsedAccountId('test-route')
 
       await render('/')
 

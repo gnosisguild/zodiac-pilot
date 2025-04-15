@@ -17,7 +17,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, Component: NoRoutes.default, loader: NoRoutes.loader },
       {
-        path: ':activeRouteId',
+        path: ':activeAccountId',
         Component: ActiveRoute.default,
         loader: ActiveRoute.loader,
         children: [
@@ -29,7 +29,7 @@ export const routes: RouteObject[] = [
             action: Transactions.action,
           },
           {
-            path: 'clear-transactions/:newActiveRouteId',
+            path: 'clear-transactions/:newActiveAccountId',
             Component: ClearTransactions.default,
             action: ClearTransactions.action,
           },

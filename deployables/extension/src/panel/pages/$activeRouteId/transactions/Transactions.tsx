@@ -43,7 +43,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { getActiveRouteId } from '../getActiveRouteId'
+import { getActiveAccountId } from '../getActiveAccountId'
 import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
@@ -114,11 +114,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       return null
     }
 
-    case Intent.LaunchRoute: {
-      const routeId = getString(data, 'routeId')
-      const activeRouteId = getActiveRouteId(params)
+    case Intent.ActivateAccount: {
+      const accountId = getString(data, 'accountId')
+      const activeAccountId = getActiveAccountId(params)
 
-      return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
+      return redirect(`/${activeAccountId}/clear-transactions/${accountId}`)
     }
 
     case Intent.Login: {

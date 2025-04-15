@@ -1,8 +1,8 @@
-import { ProvideAccount } from '@/companion'
+import { getAccount, ProvideAccount } from '@/companion'
 import {
   getRoute,
   ProvideExecutionRoute,
-  saveLastUsedRouteId,
+  saveLastUsedAccountId,
   toAccount,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
@@ -15,31 +15,34 @@ import {
   useLoaderData,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { getActiveRouteId } from './getActiveRouteId'
+import { getActiveAccountId } from './getActiveAccountId'
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
-  const activeRouteId = getActiveRouteId(params)
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const activeAccountId = getActiveAccountId(params)
 
   try {
-    const route = await getRoute(activeRouteId)
+    const account = await getAccount(activeAccountId, {
+      signal: request.signal,
+    })
+    const route = await getRoute(activeAccountId)
 
-    await saveLastUsedRouteId(route.id)
+    await saveLastUsedAccountId(account.id)
 
     const activeTab = await getActiveTab()
 
     if (activeTab.id != null) {
       await sendMessageToCompanionApp(activeTab.id, {
         type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: route.id,
+        activeRouteId: account.id,
       })
     }
 
     return {
       route,
-      account: toAccount(route),
+      account: account ?? toAccount(route),
     }
   } catch (error) {
-    await saveLastUsedRouteId(null)
+    await saveLastUsedAccountId(null)
 
     sentry.captureException(error)
 
