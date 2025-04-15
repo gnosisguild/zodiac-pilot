@@ -20,6 +20,9 @@ export enum Chain {
   ARB1 = 42161,
   AVAX = 43114,
   BASE = 8453,
+  CELO = 42220,
+  SONIC = 146,
+  BERACHAIN = 80094,
 }
 
 export const RPC: Record<ChainId, string> = {
@@ -31,6 +34,9 @@ export const RPC: Record<ChainId, string> = {
   [Chain.ARB1]: 'https://airlock.gnosisguild.org/api/v1/42161/rpc',
   [Chain.AVAX]: 'https://airlock.gnosisguild.org/api/v1/43114/rpc',
   [Chain.SEP]: 'https://airlock.gnosisguild.org/api/v1/11155111/rpc',
+  [Chain.CELO]: 'https://airlock.gnosisguild.org/api/v1/42220/rpc',
+  [Chain.SONIC]: 'https://airlock.gnosisguild.org/api/v1/146/rpc',
+  [Chain.BERACHAIN]: 'https://airlock.gnosisguild.org/api/v1/80094/rpc',
 }
 
 export const EXPLORER_URL: Record<ChainId, string> = {
@@ -42,28 +48,9 @@ export const EXPLORER_URL: Record<ChainId, string> = {
   [Chain.ARB1]: 'https://arbiscan.io',
   [Chain.AVAX]: 'https://snowtrace.io',
   [Chain.SEP]: 'https://sepolia.etherscan.io',
-}
-
-export const EXPLORER_API_URL: Record<ChainId, string> = {
-  [Chain.ETH]: 'https://api.etherscan.io/api',
-  [Chain.OETH]: 'https://api-optimistic.etherscan.io/api',
-  [Chain.GNO]: 'https://api.gnosisscan.io/api',
-  [Chain.MATIC]: 'https://api.polygonscan.com/api',
-  [Chain.BASE]: 'https://api.basescan.org/api',
-  [Chain.ARB1]: 'https://api.arbiscan.io/api',
-  [Chain.AVAX]: 'https://api.snowtrace.io/api',
-  [Chain.SEP]: 'https://api-sepolia.etherscan.io/api',
-}
-
-export const EXPLORER_API_KEY: Record<ChainId, string> = {
-  [Chain.ETH]: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
-  [Chain.OETH]: 'SM2FQ62U49I6H9V9CCEGFS34QGBK4IIJPH',
-  [Chain.GNO]: 'W575K6DTMSTVB7UFUSNW7GWQ4UWUARTJ7Z',
-  [Chain.MATIC]: 'NM937M1IZXVQ6QVDXS73XMF8JSAB677JWQ',
-  [Chain.BASE]: 'KCC7EQHE17IAQZA9TICUS6BQTJGZUDRNIY',
-  [Chain.ARB1]: 'SJ5BEYBBC3DNSKTH5BAEPFJXUZDAJ133UI',
-  [Chain.AVAX]: 'notrequired',
-  [Chain.SEP]: 'N53BKW6ABNX7CNUK8QIXGRAQS2NME92YAN',
+  [Chain.CELO]: 'https://celoscan.io',
+  [Chain.SONIC]: 'https://sonicscan.org',
+  [Chain.BERACHAIN]: 'https://berascan.com',
 }
 
 export const CHAIN_PREFIX: Record<ChainId, string> = {
@@ -75,6 +62,9 @@ export const CHAIN_PREFIX: Record<ChainId, string> = {
   [Chain.ARB1]: 'arb1',
   [Chain.AVAX]: 'avax',
   [Chain.SEP]: 'sep',
+  [Chain.CELO]: 'celo',
+  [Chain.SONIC]: 'sonic',
+  [Chain.BERACHAIN]: 'berachain',
 }
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
@@ -86,6 +76,9 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   [Chain.ARB1]: 'ETH',
   [Chain.AVAX]: 'AVAX',
   [Chain.SEP]: 'ETH',
+  [Chain.CELO]: 'CELO',
+  [Chain.SONIC]: 'S',
+  [Chain.BERACHAIN]: 'BERA',
 }
 
 export const CHAIN_NAME: Record<ChainId, string> = {
@@ -97,4 +90,7 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.ARB1]: 'Arbitrum One',
   [Chain.AVAX]: 'Avalanche C-Chain',
   [Chain.SEP]: 'Sepolia',
+  [Chain.CELO]: 'Celo',
+  [Chain.SONIC]: 'Sonic',
+  [Chain.BERACHAIN]: 'Berachain',
 }
