@@ -1,5 +1,15 @@
-import { getAccounts, getUser, useCompanionAppUrl } from '@/companion'
-import { getRoute, getRoutes, useExecutionRoute } from '@/execution-routes'
+import {
+  getAccounts,
+  getUser,
+  useAccount,
+  useCompanionAppUrl,
+} from '@/companion'
+import {
+  getRoute,
+  getRoutes,
+  toAccount,
+  useExecutionRoute,
+} from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -7,7 +17,6 @@ import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
 import { encode } from '@zodiac/schema'
@@ -34,7 +43,6 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { unprefixAddress } from 'ser-kit'
 import { getActiveRouteId } from '../getActiveRouteId'
 import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -47,14 +55,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const routes = await getRoutes()
 
   return {
-    routes: [
-      ...accounts,
-      ...routes.map((route) => ({
-        id: route.id,
-        chainId: getChainId(route.avatar),
-        label: route.label,
-      })),
-    ],
+    accounts: [...accounts, ...routes.map(toAccount)],
     user: await getUser({ signal: request.signal }),
   }
 }
@@ -135,14 +136,15 @@ const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
+  const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
-  const { routes, user } = useLoaderData<typeof loader>()
+  const { accounts, user } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
-    chainId: getChainId(route.avatar),
-    account: unprefixAddress(route.avatar),
+    chainId: account.chainId,
+    account: account.address,
   })
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
@@ -173,7 +175,7 @@ const Transactions = () => {
   return (
     <Page>
       <Page.Header>
-        <AccountSelect accounts={routes} />
+        <AccountSelect accounts={accounts} />
       </Page.Header>
 
       <div className="flex p-2">

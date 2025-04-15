@@ -1,15 +1,10 @@
-import { useExecutionRoute } from '@/execution-routes'
+import { useAccount } from '@/companion'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
-import { getChainId } from '@zodiac/chains'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
-import {
-  type ChainId,
-  type MetaTransactionRequest,
-  unprefixAddress,
-} from 'ser-kit'
+import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,
@@ -21,9 +16,7 @@ export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
 
   const dispatch = useDispatch()
-  const { avatar } = useExecutionRoute()
-  const chainId = getChainId(avatar)
-  const avatarAddress = unprefixAddress(avatar)
+  const account = useAccount()
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
@@ -78,8 +71,8 @@ export const useGloballyApplicableTranslation = () => {
     const run = async () => {
       const translation = await findGloballyApplicableTranslation(
         transactions,
-        chainId,
-        avatarAddress,
+        account.chainId,
+        account.address,
       )
       if (canceled) {
         return
@@ -99,7 +92,7 @@ export const useGloballyApplicableTranslation = () => {
     return () => {
       canceled = true
     }
-  }, [transactions, chainId, avatarAddress, apply])
+  }, [transactions, account.chainId, account.address, apply])
 }
 
 const findGloballyApplicableTranslation = async (

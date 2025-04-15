@@ -1,7 +1,9 @@
+import { ProvideAccount } from '@/companion'
 import {
   getRoute,
   ProvideExecutionRoute,
   saveLastUsedRouteId,
+  toAccount,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
@@ -32,7 +34,10 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       })
     }
 
-    return { route }
+    return {
+      route,
+      account: toAccount(route),
+    }
   } catch (error) {
     await saveLastUsedRouteId(null)
 
@@ -43,14 +48,16 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route } = useLoaderData<typeof loader>()
+  const { route, account } = useLoaderData<typeof loader>()
 
   return (
-    <ProvideExecutionRoute route={route}>
-      <ProvideProvider>
-        <Outlet />
-      </ProvideProvider>
-    </ProvideExecutionRoute>
+    <ProvideAccount account={account}>
+      <ProvideExecutionRoute route={route}>
+        <ProvideProvider>
+          <Outlet />
+        </ProvideProvider>
+      </ProvideExecutionRoute>
+    </ProvideAccount>
   )
 }
 

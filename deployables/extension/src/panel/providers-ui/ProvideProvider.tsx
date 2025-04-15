@@ -1,8 +1,8 @@
+import { useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { Eip1193Provider } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
 import type { Hex } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
@@ -26,13 +26,12 @@ const ProviderContext = createContext<
 >(null)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
-  const route = useExecutionRoute()
-  const chainId = getChainId(route.avatar)
+  const { chainId, address } = useAccount()
+  const { waypoints } = useExecutionRoute()
 
   const dispatch = useDispatch()
 
-  const avatarAddress = unprefixAddress(route.avatar)
-  const avatarWaypoint = route.waypoints?.[route.waypoints.length - 1]
+  const avatarWaypoint = waypoints?.[waypoints.length - 1]
   const connectionType =
     avatarWaypoint &&
     'connection' in avatarWaypoint &&
@@ -104,7 +103,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       if (
         isExecutionFailure(
           receipt.logs[receipt.logs.length - 1],
-          avatarAddress,
+          address,
           moduleAddress,
         )
       ) {
@@ -125,7 +124,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
         })
       }
     },
-    [dispatch, avatarAddress, moduleAddress],
+    [dispatch, address, moduleAddress],
   )
 
   const onTransactionError = useCallback(
@@ -149,7 +148,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const forkProvider = new ForkProvider({
       chainId,
-      avatarAddress,
+      avatarAddress: address,
       moduleAddress,
       ownerAddress,
       onBeforeTransactionSend,
@@ -164,7 +163,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     }
   }, [
     chainId,
-    avatarAddress,
+    address,
     moduleAddress,
     ownerAddress,
     onBeforeTransactionSend,
