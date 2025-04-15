@@ -54,3 +54,76 @@ jobs:
           name: playwright-report
           path: ${{ github.workspace }}/**/playwright-report/**/*
           retention-days: 30
+
+  e2e-latest-release:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - uses: reloc8/action-latest-release-version@1.0.0
+        id: fetch-latest-release
+
+      - name: release-downloader
+        uses: robinraju/release-downloader@v1.12
+        with:
+          latest: true
+          zipBall: true
+
+      - name: Extract Action
+        uses: ihiroky/extract-action@v1
+        with:
+          file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+          extract_dir: latest-release
+
+      - run: |
+          RELEASE_HASH=$(git show-ref --hash=7 ${{ steps.fetch-latest-release.outputs.latest-release }})
+          echo "folder-name=gnosisguild-zodiac-pilot-$RELEASE_HASH" >> $GITHUB_OUTPUT
+        id: extract-folder
+
+      - name: Install dependencies
+        run: pnpm install --prefer-offline
+
+      - name: Install dependencies for extension
+        run: pnpm install --prefer-offline
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}
+
+      - name: Build extension
+        run: pnpm build
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension
+        env:
+          COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
+
+      - name: 'Update manifest'
+        run: pnpm update-manifest -v ${{ steps.fetch-latest-release.outputs.latest-release }}
+        working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension
+        env:
+          COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
+
+      - name: Install Playwright Browsers
+        run: pnpm playwright install --with-deps chromium
+        working-directory: ./deployables/app
+
+      - name: Companion E2E
+        run: xvfb-run pnpm playwright test
+        working-directory: ./deployables/app
+        env:
+          PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension/public
+          PW_CHROMIUM_ATTACH_TO_OTHER: 1
+          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          VERCEL_PROTECTION_BYPASS: ${{ secrets.VERCEL_PROTECTION_BYPASS }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-local
+          path: ${{ github.workspace }}/latest-release/${{ steps.extract-folder.outputs.folder-name }}/**/playwright-report/**/*
+          retention-days: 30
