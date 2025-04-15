@@ -15,10 +15,9 @@ mockCompanionAppUrl('http://companion-app.com')
 
 describe('Active Route', () => {
   it('communicates the new active route', async () => {
-    const route = await mockRoute({ id: 'first-route', label: 'First route' })
+    await mockRoute({ id: 'first-route', label: 'First route' })
 
     const { mockedTab } = await render('/first-route', {
-      initialSelectedRoute: route,
       activeTab: { url: getCompanionAppUrl() },
     })
 
