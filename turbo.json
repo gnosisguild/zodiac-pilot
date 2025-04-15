@@ -36,7 +36,6 @@
     "dev": {
       "persistent": true,
       "cache": false
-    },
-    "build": {}
+    }
   }
 }
