@@ -20,17 +20,24 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
     async (routeId: string, tabId?: number) => {
       const activeRouteId = await getLastUsedRouteId()
 
-      if (activeRouteId != null) {
-        const activeRoute = await getRoute(activeRouteId)
-        const newRoute = await getRoute(routeId)
-
-        if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
-          setPendingRouteId(routeId)
-          return
+      if (activeRouteId == null || activeRouteId !== routeId) {
+        if (onLaunchRef.current) {
+          onLaunchRef.current(routeId, tabId)
         }
+
+        navigate(`/${routeId}`)
+        return
       }
 
-      if (onLaunchRef.current != null) {
+      const activeRoute = await getRoute(activeRouteId)
+      const newRoute = await getRoute(routeId)
+
+      if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
+        setPendingRouteId(routeId)
+        return
+      }
+
+      if (onLaunchRef.current) {
         onLaunchRef.current(routeId, tabId)
       }
 
