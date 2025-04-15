@@ -79,6 +79,7 @@ export default [
     route('heartbeat', 'routes/extension/heartbeat.ts'),
     route('features', 'routes/extension/features.ts'),
     route('accounts', 'routes/extension/accounts.ts'),
+    route('account/:accountId', 'routes/extension/account.ts'),
   ]),
 
   route('/dev/decode/:data', 'routes/dev/decode.tsx'),

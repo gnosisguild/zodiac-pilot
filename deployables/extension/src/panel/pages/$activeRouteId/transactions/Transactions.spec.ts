@@ -99,7 +99,7 @@ describe('Transactions', () => {
         await screen.findByRole('option', { name: 'Remote account' }),
       )
 
-      await expectRouteToBe('/first-route/clear-transactions/second-account')
+      await expectRouteToBe('/second-account/transactions')
     })
 
     it('renders when an account from zodiac os is active', async () => {
