@@ -6,7 +6,7 @@
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
   "author": "Jan-Felix <jan@gnosisguild.org>",
-  "license": "GPLv3",
+  "license": "UNLICENSED",
   "private": true,
   "sideEffects": false,
   "scripts": {
