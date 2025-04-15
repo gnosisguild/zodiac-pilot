@@ -1,7 +1,7 @@
 {
   "name": "@zodiac-os/pilot-root",
   "private": true,
-  "packageManager": "pnpm@10.8.0",
+  "packageManager": "pnpm@10.8.1",
   "pnpm": {
     "patchedDependencies": {
       "vitest-chrome": "patches/vitest-chrome.patch",
