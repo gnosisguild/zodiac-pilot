@@ -16,6 +16,9 @@ export const chainIdSchema = z.union([
   z.literal(chains[5].chainId),
   z.literal(chains[6].chainId),
   z.literal(chains[7].chainId),
+  z.literal(chains[8].chainId),
+  z.literal(chains[9].chainId),
+  z.literal(chains[10].chainId),
 ])
 
 export type HexAddress = Lowercase<Hex>

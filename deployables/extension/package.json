@@ -6,7 +6,7 @@
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
   "author": "Jan-Felix <jan@gnosisguild.org>",
-  "license": "GPLv3",
+  "license": "UNLICENSED",
   "private": true,
   "sideEffects": false,
   "scripts": {
@@ -90,7 +90,7 @@
     "react-dom": "19.1.0",
     "react-router": "7.5.0",
     "react-stick": "5.0.6",
-    "ser-kit": "3.6.0",
+    "ser-kit": "3.7.0",
     "zod": "3.24.2"
   }
 }

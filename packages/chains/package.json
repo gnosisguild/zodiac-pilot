@@ -20,12 +20,12 @@
     "@zodiac/schema": "workspace:*"
   },
   "peerDependencies": {
-    "ser-kit": "3.6.0"
+    "ser-kit": "3.7.0"
   },
   "devDependencies": {
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.24.0",
-    "ser-kit": "3.6.0"
+    "ser-kit": "3.7.0"
   }
 }

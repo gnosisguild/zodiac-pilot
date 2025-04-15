@@ -50,8 +50,8 @@ export const SimulationStatus = ({ transactionState, mini = false }: Props) => {
             </Tag>
           )}
           {transactionState.status === ExecutionStatus.FAILED && (
-            <Tag head={<TriangleAlert size={16} />} color="red">
-              Failed
+            <Tag head={<TriangleAlert size={16} />} color="amber">
+              Unavailable
             </Tag>
           )}
           {transactionState.status ===
