@@ -34,9 +34,9 @@ export const RPC: Record<ChainId, string> = {
   [Chain.ARB1]: 'https://airlock.gnosisguild.org/api/v1/42161/rpc',
   [Chain.AVAX]: 'https://airlock.gnosisguild.org/api/v1/43114/rpc',
   [Chain.SEP]: 'https://airlock.gnosisguild.org/api/v1/11155111/rpc',
-  [Chain.CELO]: 'https://airlock.gnosisguild.org/api/v1/42220/rpc',
-  [Chain.SONIC]: 'https://airlock.gnosisguild.org/api/v1/146/rpc',
-  [Chain.BERACHAIN]: 'https://airlock.gnosisguild.org/api/v1/80094/rpc',
+  [Chain.CELO]: 'https://forno.celo.org',
+  [Chain.SONIC]: 'https://rpc.soniclabs.com',
+  [Chain.BERACHAIN]: 'https://rpc.berachain.com',
 }
 
 export const EXPLORER_URL: Record<ChainId, string> = {
