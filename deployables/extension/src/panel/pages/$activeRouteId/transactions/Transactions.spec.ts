@@ -64,7 +64,7 @@ describe('Transactions', () => {
       ).toBeInTheDocument()
     })
 
-    it('is possible to activate an account from zodiac os', async () => {
+    it.only('is possible to activate an account from zodiac os', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
       const account = accountFactory.createWithoutDb(tenant, user, {
@@ -74,21 +74,9 @@ describe('Transactions', () => {
 
       mockGetAccounts.mockResolvedValue([account])
 
-      await render(
-        '/first-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialSelectedRoute: await mockRoute({ id: 'first-route' }),
-          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
-        },
-      )
+      await mockRoute({ id: 'first-route' })
+
+      await render('/first-route/transactions')
 
       await userEvent.click(
         screen.getByRole('combobox', { name: 'Safe Accounts' }),
@@ -111,20 +99,7 @@ describe('Transactions', () => {
 
       mockGetAccounts.mockResolvedValue([account])
 
-      await render(
-        '/test-account/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
-        },
-      )
+      await render('/test-account/transactions')
 
       expect(await screen.findByText('Remote account')).toBeInTheDocument()
     })

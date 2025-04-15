@@ -1,4 +1,4 @@
-import { getAccounts, getFeatures, getUser } from '@/companion'
+import { getAccount, getAccounts, getFeatures, getUser } from '@/companion'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { sleepTillIdle } from '@zodiac/test-utils'
@@ -22,17 +22,20 @@ vi.mock('@/companion', async (importOriginal) => {
     ...module,
 
     getUser: vi.fn().mockResolvedValue(null),
+    getAccount: vi.fn().mockResolvedValue(null),
     getAccounts: vi.fn().mockResolvedValue([]),
     getFeatures: vi.fn().mockResolvedValue([]),
   }
 })
 
 const mockGetUser = vi.mocked(getUser)
+const mockGetAccount = vi.mocked(getAccount)
 const mockGetAccounts = vi.mocked(getAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
 beforeEach(() => {
   mockGetUser.mockResolvedValue(null)
+  mockGetAccount.mockResolvedValue(null)
   mockGetAccounts.mockResolvedValue([])
   mockGetFeatures.mockResolvedValue([])
 })
