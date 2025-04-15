@@ -43,7 +43,7 @@ describe('Transactions', () => {
       const routeId: string = 'second-route'
       const expectedPath =
         activeRouteId == null || activeRouteId !== routeId
-          ? `/${routeId}`
+          ? `/${routeId}/transactions`
           : `/${activeRouteId}/clear-transactions/${routeId}`
 
       await expectRouteToBe(expectedPath)
