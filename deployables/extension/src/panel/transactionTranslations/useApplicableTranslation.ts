@@ -1,16 +1,11 @@
-import { useExecutionRoute } from '@/execution-routes'
+import { useAccount } from '@/companion'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
-import {
-  type ChainId,
-  type MetaTransactionRequest,
-  unprefixAddress,
-} from 'ser-kit'
+import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,
@@ -24,8 +19,7 @@ export const useApplicableTranslation = (transactionId: string) => {
   const metaTransaction = transactionState.transaction
 
   const dispatch = useDispatch()
-  const { avatar } = useExecutionRoute()
-  const avatarAddress = unprefixAddress(avatar)
+  const account = useAccount()
 
   const [translation, setTranslation] = useState<
     ApplicableTranslation | undefined
@@ -63,15 +57,13 @@ export const useApplicableTranslation = (transactionId: string) => {
     [transactions, transactionId, provider, dispatch],
   )
 
-  const chainId = getChainId(avatar)
-
   useEffect(() => {
     let canceled = false
     const run = async () => {
       const translation = await findApplicableTranslation(
         metaTransaction,
-        chainId,
-        avatarAddress,
+        account.chainId,
+        account.address,
       )
       if (canceled) return
 
@@ -85,7 +77,7 @@ export const useApplicableTranslation = (transactionId: string) => {
     return () => {
       canceled = true
     }
-  }, [metaTransaction, chainId, avatarAddress, apply])
+  }, [metaTransaction, account.chainId, account.address, apply])
 
   return translation && !translation.autoApply
     ? {

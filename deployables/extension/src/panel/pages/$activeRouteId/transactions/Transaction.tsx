@@ -1,3 +1,4 @@
+import { useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import type { TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'
@@ -161,8 +162,7 @@ const TransactionStatus = ({
 type EtherValueProps = { value: bigint }
 
 const EtherValue = ({ value }: EtherValueProps) => {
-  const { avatar } = useExecutionRoute()
-  const chainId = getChainId(avatar)
+  const { chainId } = useAccount()
 
   return (
     <TextInput

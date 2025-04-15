@@ -1,4 +1,9 @@
 export {
+  ProvideAccount,
+  useAccount,
+  type PartialAccount as Account,
+} from './AccountContext'
+export {
   ProvideCompanionAppContext,
   useCompanionAppUrl,
 } from './CompanionAppSupport'
