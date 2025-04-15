@@ -19,7 +19,7 @@ export const loader = async () => {
   }
 }
 
-export const NoRoutes = () => {
+const NoRoutes = () => {
   useBridgeError('To use Zodiac Pilot with a dApp you need to create a route.')
 
   return (
@@ -47,3 +47,5 @@ export const NoRoutes = () => {
     </Page>
   )
 }
+
+export default NoRoutes

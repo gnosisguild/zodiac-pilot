@@ -1,8 +1,9 @@
+import { getAccounts, getFeatures, getUser } from '@/companion'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
-import { afterAll, afterEach, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 
 vi.mock('@zodiac/env', async (importOriginal) => {
   const module = await importOriginal<typeof import('@zodiac/env')>()
@@ -12,6 +13,28 @@ vi.mock('@zodiac/env', async (importOriginal) => {
 
     getCompanionAppUrl: vi.fn(),
   }
+})
+
+vi.mock('@/companion', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/companion')>()
+
+  return {
+    ...module,
+
+    getUser: vi.fn().mockResolvedValue(null),
+    getAccounts: vi.fn().mockResolvedValue([]),
+    getFeatures: vi.fn().mockResolvedValue([]),
+  }
+})
+
+const mockGetUser = vi.mocked(getUser)
+const mockGetAccounts = vi.mocked(getAccounts)
+const mockGetFeatures = vi.mocked(getFeatures)
+
+beforeEach(() => {
+  mockGetUser.mockResolvedValue(null)
+  mockGetAccounts.mockResolvedValue([])
+  mockGetFeatures.mockResolvedValue([])
 })
 
 configMocks({ afterEach, afterAll })

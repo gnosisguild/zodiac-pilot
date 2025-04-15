@@ -11,7 +11,7 @@ export const action = async ({ params }: ActionFunctionArgs) => {
   return redirect(`/${newActiveRouteId}`)
 }
 
-export const ClearTransactions = () => {
+const ClearTransactions = () => {
   const clearTransactions = useClearTransactions()
   const submit = useSubmit()
 
@@ -21,3 +21,5 @@ export const ClearTransactions = () => {
 
   return null
 }
+
+export default ClearTransactions

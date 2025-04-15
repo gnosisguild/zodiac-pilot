@@ -1,7 +1,6 @@
 import { getAccounts } from '@/companion'
 import {
   chromeMock,
-  createMockRoute,
   createTransaction,
   mockCompanionAppUrl,
   mockRoute,
@@ -19,49 +18,19 @@ import {
 import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { action, loader, Transactions } from './Transactions'
-
-vi.mock('@/companion', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/companion')>()
-
-  return {
-    ...module,
-
-    getUser: vi.fn().mockResolvedValue(null),
-    getAccounts: vi.fn().mockResolvedValue([]),
-  }
-})
+import { describe, expect, it, vi } from 'vitest'
 
 const mockGetAccounts = vi.mocked(getAccounts)
 
 describe('Transactions', () => {
-  beforeEach(() => {
-    mockGetAccounts.mockResolvedValue([])
-  })
-
   describe('Route switch', () => {
     it('is possible to switch the active route', async () => {
-      const [selectedRoute] = await mockRoutes(
+      await mockRoutes(
         { id: 'first-route', label: 'First route' },
         { id: 'second-route', label: 'Second route' },
       )
 
-      await render(
-        '/first-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialSelectedRoute: selectedRoute,
-          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
-        },
-      )
+      await render('/first-route/transactions')
 
       await userEvent.click(
         screen.getByRole('combobox', { name: 'Safe Accounts' }),
@@ -82,21 +51,9 @@ describe('Transactions', () => {
 
       mockGetAccounts.mockResolvedValue([account])
 
-      await render(
-        '/first-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialSelectedRoute: await mockRoute({ id: 'first-route' }),
-          inspectRoutes: ['/:currentRouteId/clear-transactions/:newRouteId'],
-        },
-      )
+      await mockRoute({ id: 'first-route' })
+
+      await render('/first-route/transactions')
 
       await userEvent.click(
         screen.getByRole('combobox', { name: 'Safe Accounts' }),
@@ -110,18 +67,9 @@ describe('Transactions', () => {
 
   describe('Recording state', () => {
     it('hides the info when Pilot is ready', async () => {
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        { initialSelectedRoute: createMockRoute({ id: 'test-route' }) },
-      )
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions')
 
       expect(
         screen.getByRole('heading', { name: 'Recording transactions' }),
@@ -131,21 +79,11 @@ describe('Transactions', () => {
 
   describe('List', () => {
     it('lists transactions', async () => {
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [createTransaction()],
-          initialSelectedRoute: createMockRoute({ id: 'test-route' }),
-        },
-      )
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions', {
+        initialState: [createTransaction()],
+      })
 
       expect(
         screen.getByRole('region', { name: 'Raw transaction' }),
@@ -155,30 +93,15 @@ describe('Transactions', () => {
 
   describe('Submit', () => {
     it('disables the submit button when there are no transactions', async () => {
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [],
-          initialSelectedRoute: createMockRoute({
-            id: 'test-route',
-            initiator: randomPrefixedAddress(),
-          }),
-        },
-      )
+      await mockRoute({ id: 'test-route', initiator: randomPrefixedAddress() })
+
+      await render('/test-route/transactions')
 
       expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
     })
 
     it('encodes the route and transaction state into the target of the submit button', async () => {
-      const route = createMockRoute({
+      const route = await mockRoute({
         id: 'test-route',
         initiator: randomPrefixedAddress(),
       })
@@ -186,21 +109,9 @@ describe('Transactions', () => {
 
       mockCompanionAppUrl('http://localhost')
 
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [transaction],
-          initialSelectedRoute: route,
-        },
-      )
+      await render('/test-route/transactions', {
+        initialState: [transaction],
+      })
 
       expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
         'href',
@@ -215,21 +126,7 @@ describe('Transactions', () => {
 
       mockCompanionAppUrl('http://localhost')
 
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [],
-          initialSelectedRoute: route,
-        },
-      )
+      await render('/test-route/transactions')
 
       await userEvent.click(
         screen.getByRole('button', { name: 'Complete route setup to submit' }),
@@ -249,21 +146,9 @@ describe('Transactions', () => {
 
         mockCompanionAppUrl('http://localhost')
 
-        await render(
-          '/test-route/transactions',
-          [
-            {
-              path: '/:activeRouteId/transactions',
-              Component: Transactions,
-              action,
-              loader,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-            initialSelectedRoute: route,
-          },
-        )
+        await render('/test-route/transactions', {
+          initialState: [createTransaction()],
+        })
 
         await userEvent.click(
           screen.getByRole('button', { name: 'Edit account' }),
@@ -283,21 +168,9 @@ describe('Transactions', () => {
           url: `http://localhost/edit/${route.id}/some-old-route-data`,
         })
 
-        await render(
-          '/test-route/transactions',
-          [
-            {
-              path: '/:activeRouteId/transactions',
-              Component: Transactions,
-              action,
-              loader,
-            },
-          ],
-          {
-            initialState: [createTransaction()],
-            initialSelectedRoute: route,
-          },
-        )
+        await render('/test-route/transactions', {
+          initialState: [createTransaction()],
+        })
 
         await userEvent.click(
           screen.getByRole('button', { name: 'Edit account' }),
@@ -312,24 +185,10 @@ describe('Transactions', () => {
 
     describe('List all routes', () => {
       it('is possible to see all routes', async () => {
-        const route = await mockRoute({ id: 'test-route' })
+        await mockRoute({ id: 'test-route' })
         mockCompanionAppUrl('http://localhost')
 
-        await render(
-          '/test-route/transactions',
-          [
-            {
-              path: '/:activeRouteId/transactions',
-              Component: Transactions,
-              action,
-              loader,
-            },
-          ],
-          {
-            initialState: [],
-            initialSelectedRoute: route,
-          },
-        )
+        await render('/test-route/transactions')
 
         await userEvent.click(
           screen.getByRole('button', { name: 'List accounts' }),
@@ -342,7 +201,7 @@ describe('Transactions', () => {
       })
 
       it('activates an existing tab when it already exists', async () => {
-        const route = await mockRoute({ id: 'test-route' })
+        await mockRoute({ id: 'test-route' })
 
         mockCompanionAppUrl('http://localhost')
 
@@ -350,21 +209,7 @@ describe('Transactions', () => {
           url: `http://localhost/edit`,
         })
 
-        await render(
-          '/test-route/transactions',
-          [
-            {
-              path: '/:activeRouteId/transactions',
-              Component: Transactions,
-              action,
-              loader,
-            },
-          ],
-          {
-            initialState: [],
-            initialSelectedRoute: route,
-          },
-        )
+        await render('/test-route/transactions')
 
         await userEvent.click(
           screen.getByRole('button', { name: 'List accounts' }),
@@ -379,25 +224,13 @@ describe('Transactions', () => {
 
   describe('Token actions', () => {
     it('shows a link to view the current balances', async () => {
-      const route = await mockRoute({ id: 'test-route' })
+      await mockRoute({ id: 'test-route' })
 
       mockCompanionAppUrl('http://localhost')
 
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [createTransaction()],
-          initialSelectedRoute: route,
-        },
-      )
+      await render('/test-route/transactions', {
+        initialState: [createTransaction()],
+      })
 
       expect(
         screen.getByRole('link', { name: 'View balances' }),
@@ -405,25 +238,13 @@ describe('Transactions', () => {
     })
 
     it('offers to send tokens', async () => {
-      const route = await mockRoute({ id: 'test-route' })
+      await mockRoute({ id: 'test-route' })
 
       mockCompanionAppUrl('http://localhost')
 
-      await render(
-        '/test-route/transactions',
-        [
-          {
-            path: '/:activeRouteId/transactions',
-            Component: Transactions,
-            action,
-            loader,
-          },
-        ],
-        {
-          initialState: [createTransaction()],
-          initialSelectedRoute: route,
-        },
-      )
+      await render('/test-route/transactions', {
+        initialState: [createTransaction()],
+      })
 
       expect(screen.getByRole('link', { name: 'Send tokens' })).toHaveAttribute(
         'href',

@@ -61,7 +61,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   return redirect(`/${routeId}`)
 }
 
-export const Root = () => {
+const Root = () => {
   const submit = useSubmit()
 
   const { lastUsedRouteId, companionAppUrl, features } =
@@ -128,3 +128,5 @@ export const Root = () => {
     </FeatureProvider>
   )
 }
+
+export default Root

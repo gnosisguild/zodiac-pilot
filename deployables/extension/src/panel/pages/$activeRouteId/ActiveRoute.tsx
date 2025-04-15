@@ -1,6 +1,5 @@
 import {
   getRoute,
-  markRouteAsUsed,
   ProvideExecutionRoute,
   saveLastUsedRouteId,
 } from '@/execution-routes'
@@ -33,7 +32,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       })
     }
 
-    return { route: await markRouteAsUsed(route) }
+    return { route }
   } catch (error) {
     await saveLastUsedRouteId(null)
 
@@ -43,7 +42,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   }
 }
 
-export const ActiveRoute = () => {
+const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
 
   return (
@@ -54,3 +53,5 @@ export const ActiveRoute = () => {
     </ProvideExecutionRoute>
   )
 }
+
+export default ActiveRoute
