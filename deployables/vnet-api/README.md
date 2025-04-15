@@ -1,6 +1,6 @@
-# Fork API
+# VNet API
 
-This is a simple wrapper around Tenderly's Simulation API, so we can keep our Tenderly access token private.
+This is a simple wrapper around Tenderly's VNet API, so we can keep our Tenderly access token private.
 
 ## Env Vars
 
