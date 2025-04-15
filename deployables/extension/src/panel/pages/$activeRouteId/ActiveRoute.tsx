@@ -43,7 +43,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   }
 }
 
-export const ActiveRoute = () => {
+const ActiveRoute = () => {
   const { route } = useLoaderData<typeof loader>()
 
   return (
@@ -54,3 +54,5 @@ export const ActiveRoute = () => {
     </ProvideExecutionRoute>
   )
 }
+
+export default ActiveRoute

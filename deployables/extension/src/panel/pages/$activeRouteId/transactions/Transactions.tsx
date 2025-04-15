@@ -131,7 +131,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 }
 
-export const Transactions = () => {
+const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const provider = useProvider()
@@ -308,3 +308,5 @@ const useScrollIntoView = () => {
 
   return scrollContainerRef
 }
+
+export default Transactions

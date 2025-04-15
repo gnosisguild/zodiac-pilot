@@ -8,11 +8,11 @@ import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createHashRouter, RouterProvider } from 'react-router'
 import '../global.css'
-import { pages } from './pages'
 import { ProvidePort } from './port-handling'
+import { routes } from './routes'
 import { ProvideState } from './state'
 
-const router = createHashRouter(pages)
+const router = createHashRouter(routes)
 
 const Root = () => {
   useEffect(() => {
