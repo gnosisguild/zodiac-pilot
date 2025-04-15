@@ -1,5 +1,4 @@
 import type { TransactionState } from '@/state'
-import type { ExecutionRoute } from '@/types'
 import {
   createRenderDataMode,
   type RenderDataOptions,
@@ -22,10 +21,6 @@ type Options = RenderDataOptions & {
    * Initial transaction state when the component renders
    */
   initialState?: TransactionState[]
-  /**
-   * Pass a route id here to define the currently launched route
-   */
-  initialSelectedRoute?: ExecutionRoute | null
 }
 
 const baseRender = createRenderDataMode(routes)
