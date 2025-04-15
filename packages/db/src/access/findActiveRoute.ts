@@ -17,6 +17,7 @@ export const findActiveRoute = async (
       )
     },
     with: {
+      account: true,
       route: {
         with: {
           wallet: true,

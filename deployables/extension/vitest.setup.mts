@@ -1,12 +1,20 @@
-import { getAccount, getAccounts, getFeatures, getUser } from '@/companion'
+import {
+  getFeatures,
+  getRemoteAccount,
+  getRemoteAccounts,
+  getRemoteActiveRoute,
+  getUser,
+} from '@/companion'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
+import { toExecutionRoute } from '@zodiac/db'
 import {
   accountFactory,
   tenantFactory,
   userFactory,
+  walletFactory,
 } from '@zodiac/db/test-utils'
-import { sleepTillIdle } from '@zodiac/test-utils'
+import { createMockWaypoints, sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 
@@ -26,25 +34,32 @@ vi.mock('@/companion', async (importOriginal) => {
   return {
     ...module,
 
-    getUser: vi.fn().mockResolvedValue(null),
-    getAccount: vi.fn().mockResolvedValue(null),
-    getAccounts: vi.fn().mockResolvedValue([]),
-    getFeatures: vi.fn().mockResolvedValue([]),
+    getUser: vi.fn(),
+    getRemoteActiveRoute: vi.fn(),
+    getRemoteAccount: vi.fn(),
+    getRemoteAccounts: vi.fn(),
+    getFeatures: vi.fn(),
   }
 })
 
+const mockGetRemoteActiveRoute = vi.mocked(getRemoteActiveRoute)
 const mockGetUser = vi.mocked(getUser)
-const mockGetAccount = vi.mocked(getAccount)
-const mockGetAccounts = vi.mocked(getAccounts)
+const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
+const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
 beforeEach(() => {
   const tenant = tenantFactory.createWithoutDb()
   const user = userFactory.createWithoutDb(tenant)
+  const account = accountFactory.createWithoutDb(tenant, user)
+  const wallet = walletFactory.createWithoutDb(user)
 
+  mockGetRemoteActiveRoute.mockResolvedValue(
+    toExecutionRoute({ wallet, account, waypoints: createMockWaypoints() }),
+  )
   mockGetUser.mockResolvedValue(null)
-  mockGetAccount.mockResolvedValue(accountFactory.createWithoutDb(tenant, user))
-  mockGetAccounts.mockResolvedValue([])
+  mockGetRemoteAccount.mockResolvedValue(account)
+  mockGetRemoteAccounts.mockResolvedValue([])
   mockGetFeatures.mockResolvedValue([])
 })
 

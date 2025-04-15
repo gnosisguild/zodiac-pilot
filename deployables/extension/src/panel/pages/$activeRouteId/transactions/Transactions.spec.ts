@@ -1,4 +1,8 @@
-import { getAccount, getAccounts } from '@/companion'
+import {
+  getRemoteAccount,
+  getRemoteAccounts,
+  getRemoteActiveRoute,
+} from '@/companion'
 import {
   chromeMock,
   createTransaction,
@@ -10,18 +14,21 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { toExecutionRoute } from '@zodiac/db'
 import {
   accountFactory,
   tenantFactory,
   userFactory,
+  walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
-import { expectRouteToBe } from '@zodiac/test-utils'
+import { createMockWaypoints, expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 
-const mockGetAccount = vi.mocked(getAccount)
-const mockGetAccounts = vi.mocked(getAccounts)
+const mockGetRemoteActiveRoute = vi.mocked(getRemoteActiveRoute)
+const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
+const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 
 describe('Transactions', () => {
   describe('Route switch', () => {
@@ -50,7 +57,7 @@ describe('Transactions', () => {
         label: 'Remote account',
       })
 
-      mockGetAccounts.mockResolvedValue([account])
+      mockGetRemoteAccounts.mockResolvedValue([account])
 
       await mockRoute({ id: 'first-route' })
 
@@ -65,16 +72,20 @@ describe('Transactions', () => {
       ).toBeInTheDocument()
     })
 
-    it.only('is possible to activate an account from zodiac os', async () => {
+    it('is possible to activate an account from zodiac os', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
+      const wallet = walletFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user, {
         id: 'second-account',
         label: 'Remote account',
       })
 
-      mockGetAccount.mockResolvedValue(account)
-      mockGetAccounts.mockResolvedValue([account])
+      mockGetRemoteActiveRoute.mockResolvedValue(
+        toExecutionRoute({ account, wallet, waypoints: createMockWaypoints() }),
+      )
+      mockGetRemoteAccount.mockResolvedValue(account)
+      mockGetRemoteAccounts.mockResolvedValue([account])
 
       await mockRoute({ id: 'first-route' })
 
@@ -91,7 +102,7 @@ describe('Transactions', () => {
       await expectRouteToBe('/first-route/clear-transactions/second-account')
     })
 
-    it('renders when an account from zodiac os is active', async () => {
+    it.only('renders when an account from zodiac os is active', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
       const account = accountFactory.createWithoutDb(tenant, user, {
@@ -99,7 +110,7 @@ describe('Transactions', () => {
         label: 'Remote account',
       })
 
-      mockGetAccounts.mockResolvedValue([account])
+      mockGetRemoteAccounts.mockResolvedValue([account])
 
       await render('/test-account/transactions')
 

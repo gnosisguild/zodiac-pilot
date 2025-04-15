@@ -2,6 +2,7 @@ export {
   ProvideExecutionRoute,
   useExecutionRoute,
 } from './ExecutionRouteContext'
+export { findRoute } from './findRoute'
 export { getLastUsedRouteId } from './getLastUsedRouteId'
 export { getRoute } from './getRoute'
 export { getRoutes } from './getRoutes'

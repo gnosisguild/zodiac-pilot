@@ -18,3 +18,5 @@ export const getActiveRoute = async (
 
   return route
 }
+
+export type ActiveRoute = Awaited<ReturnType<typeof getActiveRoute>>

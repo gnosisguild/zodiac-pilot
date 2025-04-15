@@ -1,15 +1,6 @@
-import {
-  getAccounts,
-  getUser,
-  useAccount,
-  useCompanionAppUrl,
-} from '@/companion'
-import {
-  getRoute,
-  getRoutes,
-  toAccount,
-  useExecutionRoute,
-} from '@/execution-routes'
+import { getAccounts, getActiveRoute } from '@/accounts'
+import { getUser, useAccount, useCompanionAppUrl } from '@/companion'
+import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -52,10 +43,11 @@ import { Intent } from './intents'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
-  const routes = await getRoutes()
+
+  console.log({ accounts })
 
   return {
-    accounts: [...accounts, ...routes.map(toAccount)],
+    accounts,
     user: await getUser({ signal: request.signal }),
   }
 }
@@ -70,24 +62,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const windowId = getInt(data, 'windowId')
       const tabs = await chrome.tabs.query({ windowId })
 
-      const routeId = getString(data, 'routeId')
-      const route = await getRoute(routeId)
+      const accountId = getString(data, 'accountId')
+      const route = await getActiveRoute(accountId)
 
       const existingTab = tabs.find(
         (tab) =>
           tab.url != null &&
-          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
+          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
       )
 
       if (existingTab != null && existingTab.id != null) {
         await chrome.tabs.update(existingTab.id, {
           active: true,
-          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
         })
       } else {
         await chrome.tabs.create({
           active: true,
-          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
         })
       }
 

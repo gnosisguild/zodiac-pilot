@@ -1,9 +1,8 @@
-import { getAccount, ProvideAccount } from '@/companion'
+import { getAccount, getActiveRoute } from '@/accounts'
+import { ProvideAccount } from '@/companion'
 import {
-  getRoute,
   ProvideExecutionRoute,
   saveLastUsedAccountId,
-  toAccount,
 } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
@@ -24,7 +23,9 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const account = await getAccount(activeAccountId, {
       signal: request.signal,
     })
-    const route = await getRoute(activeAccountId)
+    const route = await getActiveRoute(activeAccountId, {
+      signal: request.signal,
+    })
 
     await saveLastUsedAccountId(account.id)
 
@@ -39,7 +40,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
     return {
       route,
-      account: account ?? toAccount(route),
+      account,
     }
   } catch (error) {
     await saveLastUsedAccountId(null)
