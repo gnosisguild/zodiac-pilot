@@ -270,8 +270,8 @@ importers:
         specifier: 9.12.0
         version: 9.12.0
       '@workos-inc/authkit-react':
-        specifier: 0.9.0
-        version: 0.9.0(react@19.1.0)
+        specifier: 0.9.1
+        version: 0.9.1(react@19.1.0)
       '@workos-inc/node':
         specifier: 7.46.0
         version: 7.46.0(express@4.21.2)
@@ -4573,8 +4573,8 @@ packages:
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
 
-  '@workos-inc/authkit-js@0.9.0':
-    resolution: {integrity: sha512-zcl2W9LpmoIqDTnFnv6vHfWKJjZUTxZIdw5IfPL5DDTKrvH49qIRudmMIP4dCWYXIKcnMVA5lGU/PuHsimTjDQ==}
+  '@workos-inc/authkit-js@0.10.1':
+    resolution: {integrity: sha512-31JRllSL+m4bu0GtCyZOoipi4PkVdzYNqy/IJL2k4bfhtcRnHN3eEUo95j047HY2VykmTTL4FlZ52rFbCm6a2w==}
 
   '@workos-inc/authkit-react-router@0.2.0':
     resolution: {integrity: sha512-odorV9EZmwovrMlykdHsXEg0K9QqvqWNn4XgZu8Lfgnn3kFfcQYuuIUiFbgG9KpI1jSFOC3pLe8F0VgAuY5ntg==}
@@ -4584,8 +4584,8 @@ packages:
       react-dom: ^18.0 || ^19.0.0
       react-router: ^7.2.0
 
-  '@workos-inc/authkit-react@0.9.0':
-    resolution: {integrity: sha512-5JJOGwslFw5eL5uEr5vYZghS/BxTWY66d4nAnopk/L46HLqUNIgjfnVBzztGWOZk1pGUFx8s5DSoXFsdGWt0gw==}
+  '@workos-inc/authkit-react@0.9.1':
+    resolution: {integrity: sha512-cg3WUmY9MT2T+UsiVeyMMPeCKwiKJp9cOwlwoSPqRDGQgPp2ypTGjHjyV2Zuc5VTQM8iGoxiJjdnawWIV+nF3w==}
     peerDependencies:
       react: '>=17'
 
@@ -13472,7 +13472,7 @@ snapshots:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
 
-  '@workos-inc/authkit-js@0.9.0': {}
+  '@workos-inc/authkit-js@0.10.1': {}
 
   '@workos-inc/authkit-react-router@0.2.0(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -13487,9 +13487,9 @@ snapshots:
       - koa
       - next
 
-  '@workos-inc/authkit-react@0.9.0(react@19.1.0)':
+  '@workos-inc/authkit-react@0.9.1(react@19.1.0)':
     dependencies:
-      '@workos-inc/authkit-js': 0.9.0
+      '@workos-inc/authkit-js': 0.10.1
       react: 19.1.0
 
   '@workos-inc/node@7.46.0(express@4.21.2)':
