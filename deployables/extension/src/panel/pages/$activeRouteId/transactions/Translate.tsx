@@ -1,13 +1,14 @@
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { useApplicableTranslation } from '@/transaction-translation'
-import { GhostButton } from '@zodiac/ui'
+import { GhostButton, SecondaryButton } from '@zodiac/ui'
 
 type Props = {
   transactionId: string
+  mini?: boolean
 }
 
-export const Translate = ({ transactionId }: Props) => {
+export const Translate = ({ transactionId, mini }: Props) => {
   const provider = useProvider()
   const translation = useApplicableTranslation(transactionId)
 
@@ -20,8 +21,9 @@ export const Translate = ({ transactionId }: Props) => {
     return null
   }
 
-  return (
+  return mini ? (
     <GhostButton
+      fluid={mini}
       iconOnly
       size="small"
       icon={translation.icon}
@@ -29,5 +31,14 @@ export const Translate = ({ transactionId }: Props) => {
     >
       {translation.title}
     </GhostButton>
+  ) : (
+    <SecondaryButton
+      fluid
+      size="small"
+      icon={translation.icon}
+      onClick={translation.apply}
+    >
+      {translation.title}
+    </SecondaryButton>
   )
 }
