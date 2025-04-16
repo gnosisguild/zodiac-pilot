@@ -34,11 +34,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
         onLaunchRef.current(routeId, tabId)
       }
 
-      if (activeRouteId == null || activeRouteId !== routeId) {
-        navigate(`/${routeId}`)
-      } else {
-        navigate(`/${activeRouteId}/clear-transactions/${routeId}`)
-      }
+      navigate(`/${routeId}`)
     },
     [onLaunchRef, transactions.length, navigate],
   )
