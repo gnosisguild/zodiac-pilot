@@ -1,23 +1,16 @@
+import { invariant } from '@epic-web/invariant'
 import type { Tenant, User } from '@zodiac/db/schema'
 import type { DBClient } from '../dbClient'
+import { findActiveAccount } from './findActiveAccount'
 
 export const getActiveAccount = async (
   db: DBClient,
   tenant: Tenant,
   user: User,
 ) => {
-  const result = await db.query.activeAccount.findFirst({
-    where(fields, { eq, and }) {
-      return and(eq(fields.tenantId, tenant.id), eq(fields.userId, user.id))
-    },
-    with: {
-      account: true,
-    },
-  })
+  const account = await findActiveAccount(db, tenant, user)
 
-  if (result == null) {
-    return null
-  }
+  invariant(account != null, 'No active account found')
 
-  return result.account
+  return account
 }

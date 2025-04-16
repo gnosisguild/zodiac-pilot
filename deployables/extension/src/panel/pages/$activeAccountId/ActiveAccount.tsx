@@ -1,4 +1,4 @@
-import { getAccount, getActiveRoute } from '@/accounts'
+import { getAccount, getActiveRoute, saveActiveAccount } from '@/accounts'
 import { ProvideAccount } from '@/companion'
 import {
   ProvideExecutionRoute,
@@ -27,7 +27,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       signal: request.signal,
     })
 
-    await saveLastUsedAccountId(account.id)
+    await saveActiveAccount(account)
 
     const activeTab = await getActiveTab()
 

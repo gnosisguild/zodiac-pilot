@@ -6,7 +6,7 @@ export const getRemoteActiveRoute = async (
   accountId: string,
   { signal }: FetchOptions,
 ) => {
-  const activeRoute = await api(`/extension/activeRoute/${accountId}`, {
+  const activeRoute = await api(`/extension/active-route/${accountId}`, {
     schema: executionRouteSchema.nullable(),
     signal,
   })
