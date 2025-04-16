@@ -5,9 +5,9 @@ import {
   activateAccount,
   dbClient,
   deleteAccount,
+  findActiveAccount,
   getAccount,
   getAccounts,
-  getActiveAccount,
 } from '@zodiac/db'
 import { getString, getUUID } from '@zodiac/form-data'
 import {
@@ -60,7 +60,7 @@ export const loader = (args: Route.LoaderArgs) =>
           tenantId: tenant.id,
           userId: user.id,
         }),
-        getActiveAccount(dbClient(), tenant, user),
+        findActiveAccount(dbClient(), tenant, user),
       ])
 
       return {
