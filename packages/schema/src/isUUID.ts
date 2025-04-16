@@ -1,4 +1,4 @@
-import type { UUID } from 'node:crypto'
+import type { UUID } from 'crypto'
 import { z } from 'zod'
 
 const uuidSchema = z.string().uuid()
