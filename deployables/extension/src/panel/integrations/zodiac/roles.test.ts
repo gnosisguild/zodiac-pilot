@@ -1,27 +1,8 @@
 import { getRolesAppUrl } from '@zodiac/env'
 import type { MetaTransactionRequest } from '@zodiac/schema'
-import {
-  afterEach,
-  assert,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-  type Mock,
-} from 'vitest'
+import { assert, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { getStorageEntry, saveStorageEntry } from '../../utils'
 import { recordCalls } from './roles'
-
-// Use Vitest's mocking API to mock the storage utilities.
-vi.mock('../../utils', () => ({
-  getStorageEntry: vi.fn(),
-  saveStorageEntry: vi.fn(),
-}))
-
-// Grab strongly typed mocked functions
-const mockedGetStorageEntry = vi.mocked(getStorageEntry, true)
-const mockedSaveStorageEntry = vi.mocked(saveStorageEntry, true)
 
 const testTransaction: MetaTransactionRequest = {
   to: `0x0000000000000000000000000000000000000000`,
@@ -39,16 +20,7 @@ describe('recordCalls', () => {
     globalThis.fetch = fetchMock
   })
 
-  afterEach(() => {
-    // Reset all mocks after each test.
-    vi.restoreAllMocks()
-    vi.clearAllMocks()
-  })
-
   it('posts to the endpoint for a new record if no storage entry exists for the role', async () => {
-    // Arrange: simulate that no record exists.
-    mockedGetStorageEntry.mockResolvedValue({})
-
     // Prepare a fake record returned by the Roles app.
     const fakeRecord = { id: 'record1', authToken: 'secretToken' }
 
@@ -71,24 +43,22 @@ describe('recordCalls', () => {
       expect.anything(),
     )
 
-    // Finally, assert that saveStorageEntry was called to persist the new record.
-    expect(mockedSaveStorageEntry).toHaveBeenCalledTimes(1)
-    expect(mockedSaveStorageEntry).toHaveBeenCalledWith({
-      key: 'role-records',
-      value: {
-        'eth:0x0000000000000000000000000000000000000000:my-role': fakeRecord,
-      },
+    expect(await getStorageEntry({ key: 'role-records' })).toEqual({
+      'eth:0x0000000000000000000000000000000000000000:my-role': fakeRecord,
     })
   })
 
   it('uses stored record id and auth token for subsequent calls', async () => {
     // Arrange: simulate that a stored record exists.
-    const existingRecord = {
-      id: 'existingRecordId',
-      authToken: 'existingToken',
+    const storageEntry = {
+      'eth:0x0000000000000000000000000000000000000000:my-role': {
+        id: 'existingRecordId',
+        authToken: 'existingToken',
+      },
     }
-    mockedGetStorageEntry.mockResolvedValue({
-      'eth:0x0000000000000000000000000000000000000000:my-role': existingRecord,
+    await saveStorageEntry({
+      key: 'role-records',
+      value: storageEntry,
     })
 
     // Configure the fetch mock to return a successful response.
@@ -116,21 +86,11 @@ describe('recordCalls', () => {
       }),
     )
 
-    // Assert that saveStorageEntry was not called, since this is a subsequent call.
-    expect(mockedSaveStorageEntry).not.toHaveBeenCalled()
+    // Assert that storage was not updated
+    expect(await getStorageEntry({ key: 'role-records' })).toEqual(storageEntry)
   })
 
   it('batches 3 concurrent invocations into 2 serial fetch requests', async () => {
-    // Setup getStorageEntry so that:
-    // - First call returns empty storage (forcing record creation)
-    // - Subsequent calls return storage with the created record
-    mockedGetStorageEntry.mockResolvedValueOnce({}).mockResolvedValue({
-      'eth:0x0000000000000000000000000000000000000000:my-role': {
-        id: 'newRecord',
-        authToken: 'newAuthToken',
-      },
-    })
-
     // Create a deferred for the first fetch call.
     const { resolve: resolveFetchCall1, promise: fetchCall1Promise } =
       Promise.withResolvers()
