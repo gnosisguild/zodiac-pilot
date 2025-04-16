@@ -1,6 +1,6 @@
 {
   "name": "Zodiac Pilot",
-  "description": "Simulate dApp interactions and record transactions",
+  "description": "Zodiac Pilot is a powerful execution interface for Safe accounts",
   "version": "<VERSION>",
   "manifest_version": 3,
   "icons": {
