@@ -1,8 +1,8 @@
 import { authorizedLoader } from '@/auth'
 import {
   dbClient,
+  findActiveRoute,
   getAccount,
-  getActiveRoute,
   toExecutionRoute,
 } from '@zodiac/db'
 import type { Route } from './+types/activeRoute'
@@ -20,12 +20,18 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
-      const { account, route } = await getActiveRoute(
+      const activeRoute = await findActiveRoute(
         dbClient(),
         tenant,
         user,
         accountId,
       )
+
+      if (activeRoute == null) {
+        return null
+      }
+
+      const { account, route } = activeRoute
 
       if (route.waypoints == null) {
         return null
