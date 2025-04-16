@@ -165,7 +165,9 @@ const Transactions = () => {
   return (
     <Page>
       <Page.Header>
-        <AccountSelect accounts={accounts} />
+        <div className="my-2">
+          <AccountSelect accounts={accounts} />
+        </div>
       </Page.Header>
 
       <div className="flex p-2">

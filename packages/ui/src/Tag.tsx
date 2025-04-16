@@ -13,7 +13,7 @@ export const Tag = ({ id, head, children, color = 'blue' }: Props) => (
     aria-hidden
     id={id}
     className={classNames(
-      'rounded-xs inline-flex cursor-default select-none items-center justify-center gap-2 border font-semibold',
+      'rounded-xs inline-flex cursor-default select-none items-center justify-center gap-2 whitespace-nowrap border font-semibold',
       color === 'red' &&
         'border-red-400/80 bg-red-50/80 text-red-600 dark:border-red-800/80 dark:bg-red-900/10 dark:text-red-500/80',
       color === 'green' &&
