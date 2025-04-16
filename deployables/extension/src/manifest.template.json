@@ -16,9 +16,7 @@
     "default_path": "sidepanel.html"
   },
   "externally_connectable": {
-    "matches": [
-      "<all_urls>"
-    ]
+    "matches": ["<all_urls>"]
   },
   "permissions": [
     "sidePanel",
@@ -32,53 +30,31 @@
   "background": {
     "service_worker": "build/background/index.js"
   },
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "host_permissions": ["<all_urls>"],
   "content_scripts": [
     {
-      "matches": [
-        "<COMPANION_APP_URL>/*"
-      ],
+      "matches": ["<COMPANION_APP_URL>/*"],
       "run_at": "document_start",
       "all_frames": true,
-      "js": [
-        "build/companion/contentScripts/main.js"
-      ]
+      "js": ["build/companion/contentScripts/main.js"]
     },
     {
-      "matches": [
-        "<COMPANION_APP_URL>/*"
-      ],
+      "matches": ["<COMPANION_APP_URL>/*"],
       "run_at": "document_idle",
       "all_frames": true,
-      "js": [
-        "build/companion/contentScripts/fork-support.js"
-      ]
+      "js": ["build/companion/contentScripts/fork-support.js"]
     },
     {
-      "matches": [
-        "<all_urls>"
-      ],
-      "exclude_globs": [
-        "<COMPANION_APP_URL>/*",
-        "about:*",
-        "chrome:*"
-      ],
+      "matches": ["<all_urls>"],
+      "exclude_globs": ["<COMPANION_APP_URL>/*", "about:*", "chrome:*"],
       "run_at": "document_start",
-      "js": [
-        "build/monitor/contentScript/main.js"
-      ]
+      "js": ["build/monitor/contentScript/main.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["*"],
+      "matches": ["<all_urls>"]
     }
   ]
 }
