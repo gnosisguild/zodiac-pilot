@@ -11,6 +11,7 @@ export {
 export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
+export { getRemoteActiveAccount } from './getRemoteActiveAccount'
 export { getRemoteActiveRoute } from './getRemoteActiveRoute'
 export { getUser } from './getUser'
 export { toAccount } from './toAccount'

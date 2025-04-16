@@ -1,21 +1,21 @@
+import { getAccounts, getActiveAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { getLastUsedRouteId, getRoutes } from '@/execution-routes'
 import { useBridgeError } from '@/inject-bridge'
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
 export const loader = async () => {
-  const lastUsedRouteId = await getLastUsedRouteId()
+  const activeAccount = await getActiveAccount()
 
-  if (lastUsedRouteId != null) {
-    return redirect(`/${lastUsedRouteId}`)
+  if (activeAccount != null) {
+    return redirect(`/${activeAccount.id}`)
   }
 
-  const [route] = await getRoutes()
+  const [account] = await getAccounts()
 
-  if (route != null) {
-    return redirect(`/${route.id}`)
+  if (account != null) {
+    return redirect(`/${account.id}`)
   }
 }
 

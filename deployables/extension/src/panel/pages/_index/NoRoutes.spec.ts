@@ -1,3 +1,4 @@
+import { getRemoteAccounts, getRemoteActiveAccount } from '@/companion'
 import { saveLastUsedAccountId } from '@/execution-routes'
 import {
   mockCompanionAppUrl,
@@ -7,26 +8,66 @@ import {
   render,
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
+const mockGetRemoteActiveAccount = vi.mocked(getRemoteActiveAccount)
 
 describe('No routes', () => {
   describe('Default redirects', () => {
-    it('redirects to the last used route if one is present', async () => {
-      await mockRoute({ id: 'test-route' })
-      await saveLastUsedAccountId('test-route')
+    describe('Logged out', () => {
+      it('redirects to the last used route if one is present', async () => {
+        await mockRoute({ id: 'test-route' })
+        await saveLastUsedAccountId('test-route')
 
-      await render('/')
+        await render('/')
 
-      await expectRouteToBe('/test-route/transactions')
+        await expectRouteToBe('/test-route/transactions')
+      })
+
+      it('redirects to the first route if no route was last used', async () => {
+        await mockRoutes({ id: 'first-route' }, { id: 'second-route' })
+
+        await render('/')
+
+        await expectRouteToBe('/first-route/transactions')
+      })
     })
 
-    it('redirects to the first route if no route was last used', async () => {
-      await mockRoutes({ id: 'first-route' }, { id: 'second-route' })
+    describe('Logged in', () => {
+      it('redirects to the last used route if one is present', async () => {
+        const tenant = tenantFactory.createWithoutDb()
+        const user = userFactory.createWithoutDb(tenant)
+        const account = accountFactory.createWithoutDb(tenant, user, {
+          id: 'test-account',
+        })
 
-      await render('/')
+        mockGetRemoteActiveAccount.mockResolvedValue(account)
 
-      await expectRouteToBe('/first-route/transactions')
+        await render('/')
+
+        await expectRouteToBe('/test-account/transactions')
+      })
+
+      it('redirects to the first route if no route was last used', async () => {
+        const tenant = tenantFactory.createWithoutDb()
+        const user = userFactory.createWithoutDb(tenant)
+        const account = accountFactory.createWithoutDb(tenant, user, {
+          id: 'test-account',
+        })
+
+        mockGetRemoteAccounts.mockResolvedValue([account])
+
+        await render('/')
+
+        await expectRouteToBe('/test-account/transactions')
+      })
     })
   })
 

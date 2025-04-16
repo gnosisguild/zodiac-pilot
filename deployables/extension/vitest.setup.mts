@@ -2,6 +2,7 @@ import {
   getFeatures,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteActiveAccount,
   getRemoteActiveRoute,
   getUser,
 } from '@/companion'
@@ -36,6 +37,7 @@ vi.mock('@/companion', async (importOriginal) => {
 
     getUser: vi.fn(),
     getRemoteActiveRoute: vi.fn(),
+    getRemoteActiveAccount: vi.fn(),
     getRemoteAccount: vi.fn(),
     getRemoteAccounts: vi.fn(),
     getFeatures: vi.fn(),
@@ -45,6 +47,7 @@ vi.mock('@/companion', async (importOriginal) => {
 const mockGetRemoteActiveRoute = vi.mocked(getRemoteActiveRoute)
 const mockGetUser = vi.mocked(getUser)
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
+const mockGetRemoteActiveAccount = vi.mocked(getRemoteActiveAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
@@ -57,6 +60,7 @@ beforeEach(() => {
   mockGetRemoteActiveRoute.mockResolvedValue(
     toExecutionRoute({ wallet, account, waypoints: createMockWaypoints() }),
   )
+  mockGetRemoteActiveAccount.mockResolvedValue(null)
   mockGetUser.mockResolvedValue(null)
   mockGetRemoteAccount.mockResolvedValue(account)
   mockGetRemoteAccounts.mockResolvedValue([])
