@@ -4,8 +4,16 @@ import type { TransactionState } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
+import { getRolesAppUrl } from '@zodiac/env'
+import { decodeRoleKey } from '@zodiac/modules'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { errorToast, GhostButton, GhostLinkButton, Tag } from '@zodiac/ui'
+import {
+  errorToast,
+  GhostLinkButton,
+  SecondaryButton,
+  SecondaryLinkButton,
+  Tag,
+} from '@zodiac/ui'
 import {
   CassetteTape,
   Check,
@@ -111,6 +119,9 @@ export const RolePermissionCheck = ({
         }
       : undefined
 
+  const rolePageLink =
+    roleToRecordTo &&
+    `${getRolesAppUrl()}/${roleToRecordTo.rolesMod}/roles/${decodeRoleKey(roleToRecordTo.roleKey)}`
   const roleRecordLink = useRoleRecordLink(roleToRecordTo)
 
   const [recordCallState, setRecordCallState] = useState(
@@ -160,40 +171,53 @@ export const RolePermissionCheck = ({
               {error}
             </Tag>
           )}
+
+          {rolePageLink && (
+            <GhostLinkButton
+              openInNewWindow
+              iconOnly
+              size="small"
+              icon={SquareArrowOutUpRight}
+              to={rolePageLink}
+            >
+              View role permissions
+            </GhostLinkButton>
+          )}
         </div>
       </div>
 
       {error && translationAvailable && (
-        <Translate fluid transactionId={transactionState.id} />
+        <Translate transactionId={transactionState.id} />
       )}
 
       {error && !translationAvailable && roleToRecordTo && (
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
           {recordCallState === RecordCallState.Done ? (
-            <GhostButton disabled icon={Check} size="small">
+            <SecondaryButton fluid disabled icon={Check} size="small">
               Request recorded
-            </GhostButton>
+            </SecondaryButton>
           ) : (
-            <GhostButton
+            <SecondaryButton
+              fluid
               icon={CassetteTape}
               size="small"
               onClick={recordCall}
               busy={recordCallState === RecordCallState.Pending}
             >
               Request permission
-            </GhostButton>
+            </SecondaryButton>
           )}
 
           {roleRecordLink && (
-            <GhostLinkButton
+            <SecondaryLinkButton
+              fluid
               openInNewWindow
-              iconOnly
               size="small"
               icon={SquareArrowOutUpRight}
               to={roleRecordLink}
             >
-              View permissions
-            </GhostLinkButton>
+              View requested permissions
+            </SecondaryLinkButton>
           )}
         </div>
       )}
