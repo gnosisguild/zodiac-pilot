@@ -191,7 +191,7 @@ export const RolePermissionCheck = ({
       )}
 
       {error && !translationAvailable && roleToRecordTo && (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {recordCallState === RecordCallState.Done ? (
             <SecondaryButton fluid disabled icon={Check} size="small">
               Request recorded
