@@ -1,7 +1,8 @@
-import { findRoute, toAccount } from '@/execution-routes'
+import { findRoute } from '@/execution-routes'
 import { invariant } from '@epic-web/invariant'
 import { accountSchema } from '@zodiac/db/schema'
 import { api, type FetchOptions } from './api'
+import { toAccount } from './toAccount'
 
 export const getRemoteAccount = async (
   accountId: string,

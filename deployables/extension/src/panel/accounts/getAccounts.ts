@@ -1,5 +1,5 @@
-import { getRemoteAccounts, type FetchOptions } from '@/companion'
-import { getRoutes, toAccount } from '@/execution-routes'
+import { getRemoteAccounts, toAccount, type FetchOptions } from '@/companion'
+import { getRoutes } from '@/execution-routes'
 import { sortAccounts } from './sortAccounts'
 
 export const getAccounts = async (options: FetchOptions = {}) => {

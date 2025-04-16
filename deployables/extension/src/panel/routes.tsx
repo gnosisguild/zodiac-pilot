@@ -2,7 +2,7 @@ import { SentryErrorBoundary } from '@/sentry'
 import { redirect, type RouteObject } from 'react-router'
 import * as ActiveAccount from './pages/$activeAccountId/ActiveAccount'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
-import * as Transactions from './pages/$activeRouteId/transactions/Transactions'
+import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
 import * as Root from './pages/Root'
 import * as NoRoutes from './pages/_index/NoRoutes'
 
