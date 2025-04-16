@@ -38,7 +38,7 @@ describe('Transactions', () => {
       await userEvent.click(
         screen.getByRole('option', { name: 'Second route' }),
       )
-  
+
       const routeId: string = 'second-route'
       await expectRouteToBe(`/${routeId}/transactions`)
     })
