@@ -8,6 +8,7 @@ import type {
 import type { Organization } from '@workos-inc/node'
 import { dbClient, getTenant, getUser } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
+import { isUUID } from '@zodiac/schema'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   user: User
@@ -73,6 +74,10 @@ export const getAuth = <Params>(
         })
       } else {
         invariantResponse(auth.user.externalId != null, 'User does not exist.')
+        invariantResponse(
+          isUUID(auth.user.externalId),
+          '"externalId" is not a UUID',
+        )
 
         const user = await getUser(dbClient(), auth.user.externalId)
 

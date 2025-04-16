@@ -77,7 +77,6 @@ describe('Transactions', () => {
       const user = userFactory.createWithoutDb(tenant)
       const wallet = walletFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user, {
-        id: 'second-account',
         label: 'Remote account',
       })
 
@@ -99,21 +98,20 @@ describe('Transactions', () => {
         await screen.findByRole('option', { name: 'Remote account' }),
       )
 
-      await expectRouteToBe('/second-account/transactions')
+      await expectRouteToBe(`/${account.id}/transactions`)
     })
 
     it('renders when an account from zodiac os is active', async () => {
       const tenant = tenantFactory.createWithoutDb()
       const user = userFactory.createWithoutDb(tenant)
       const account = accountFactory.createWithoutDb(tenant, user, {
-        id: 'test-account',
         label: 'Remote account',
       })
 
       mockGetRemoteAccount.mockResolvedValue(account)
       mockGetRemoteAccounts.mockResolvedValue([account])
 
-      await render('/test-account/transactions')
+      await render(`/${account.id}/transactions`)
 
       expect(await screen.findByText('Remote account')).toBeInTheDocument()
     })

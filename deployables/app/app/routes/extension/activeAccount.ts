@@ -5,9 +5,11 @@ import {
   findActiveAccount,
   getAccount,
   getActiveAccount,
+  removeActiveAccount,
 } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
-import type { Route } from './+types/active-account'
+import { isUUID } from '@zodiac/schema'
+import type { Route } from './+types/activeAccount'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -39,15 +41,17 @@ export const action = (args: Route.ActionArgs) =>
       }
 
       const data = await request.formData()
+      const accountId = getString(data, 'accountId')
 
-      await activateAccount(
-        dbClient(),
-        tenant,
-        user,
-        getString(data, 'accountId'),
-      )
+      if (isUUID(accountId)) {
+        await activateAccount(dbClient(), tenant, user, accountId)
 
-      return await getActiveAccount(dbClient(), tenant, user)
+        return await getActiveAccount(dbClient(), tenant, user)
+      }
+
+      await removeActiveAccount(dbClient(), tenant, user)
+
+      return null
     },
     {
       async hasAccess({ tenant, request }) {
@@ -56,10 +60,13 @@ export const action = (args: Route.ActionArgs) =>
         }
 
         const data = await request.formData()
-        const account = await getAccount(
-          dbClient(),
-          getString(data, 'accountId'),
-        )
+        const accountId = getString(data, 'accountId')
+
+        if (!isUUID(accountId)) {
+          return true
+        }
+
+        const account = await getAccount(dbClient(), accountId)
 
         return account.tenantId === tenant.id
       },

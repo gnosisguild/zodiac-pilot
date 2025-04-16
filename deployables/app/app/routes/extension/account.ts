@@ -1,5 +1,7 @@
 import { authorizedLoader } from '@/auth'
+import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount } from '@zodiac/db'
+import { isUUID } from '@zodiac/schema'
 import type { Route } from './+types/account'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -15,6 +17,8 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
+      invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
       return await getAccount(dbClient(), accountId)
     },
     {
@@ -22,6 +26,8 @@ export const loader = (args: Route.LoaderArgs) =>
         if (tenant == null) {
           return true
         }
+
+        invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
         const account = await getAccount(dbClient(), accountId)
 

@@ -44,29 +44,25 @@ describe('No routes', () => {
       it('redirects to the last used route if one is present', async () => {
         const tenant = tenantFactory.createWithoutDb()
         const user = userFactory.createWithoutDb(tenant)
-        const account = accountFactory.createWithoutDb(tenant, user, {
-          id: 'test-account',
-        })
+        const account = accountFactory.createWithoutDb(tenant, user)
 
         mockGetRemoteActiveAccount.mockResolvedValue(account)
 
         await render('/')
 
-        await expectRouteToBe('/test-account/transactions')
+        await expectRouteToBe(`/${account.id}/transactions`)
       })
 
       it('redirects to the first route if no route was last used', async () => {
         const tenant = tenantFactory.createWithoutDb()
         const user = userFactory.createWithoutDb(tenant)
-        const account = accountFactory.createWithoutDb(tenant, user, {
-          id: 'test-account',
-        })
+        const account = accountFactory.createWithoutDb(tenant, user)
 
         mockGetRemoteAccounts.mockResolvedValue([account])
 
         await render('/')
 
-        await expectRouteToBe('/test-account/transactions')
+        await expectRouteToBe(`/${account.id}/transactions`)
       })
     })
   })

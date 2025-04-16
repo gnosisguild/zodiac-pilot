@@ -1,8 +1,9 @@
+import type { UUID } from 'crypto'
 import type { DBClient } from '../dbClient'
 
 type GetAccountsOptions = {
-  tenantId: string
-  userId: string
+  tenantId: UUID
+  userId: UUID
   deleted?: boolean
 }
 

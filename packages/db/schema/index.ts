@@ -5,6 +5,7 @@ import {
   type HexAddress,
   type Waypoints,
 } from '@zodiac/schema'
+import type { UUID } from 'crypto'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -27,12 +28,14 @@ const createdTimestamp = {
 
 const deletable = {
   deleted: boolean().default(false).notNull(),
-  deletedById: uuid().references(() => UserTable.id, { onDelete: 'set null' }),
+  deletedById: uuid()
+    .$type<UUID>()
+    .references(() => UserTable.id, { onDelete: 'set null' }),
   deletedAt: timestamp({ withTimezone: true }),
 }
 
 export const TenantTable = pgTable('Tenant', {
-  id: uuid().notNull().defaultRandom().primaryKey(),
+  id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
   name: text().notNull(),
   ...createdTimestamp,
 })
@@ -40,6 +43,7 @@ export const TenantTable = pgTable('Tenant', {
 const tenantReference = {
   tenantId: uuid()
     .notNull()
+    .$type<UUID>()
     .references(() => TenantTable.id, { onDelete: 'cascade' }),
 }
 
@@ -51,7 +55,7 @@ export const TenantRelations = relations(TenantTable, ({ many }) => ({
 }))
 
 export const UserTable = pgTable('User', {
-  id: uuid().notNull().defaultRandom().primaryKey(),
+  id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
   ...createdTimestamp,
 })
 
@@ -63,9 +67,11 @@ export const TenantMembershipTable = pgTable(
   {
     tenantId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => TenantTable.id, { onDelete: 'cascade' }),
     userId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
 
     ...createdTimestamp,
@@ -80,7 +86,7 @@ export const TenantMembershipTable = pgTable(
 export const FeatureTable = pgTable(
   'Feature',
   {
-    id: uuid().notNull().defaultRandom().primaryKey(),
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     name: text().notNull(),
     ...createdTimestamp,
   },
@@ -100,6 +106,7 @@ export const ActiveFeatureTable = pgTable(
   {
     featureId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => FeatureTable.id, { onDelete: 'cascade' }),
     ...tenantReference,
     ...createdTimestamp,
@@ -128,9 +135,10 @@ export const ActiveFeatureRelations = relations(
 export const AccountTable = pgTable(
   'Account',
   {
-    id: uuid().notNull().defaultRandom().primaryKey(),
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     createdById: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text(),
     chainId: integer().$type<ChainId>().notNull(),
@@ -159,9 +167,10 @@ const AccountRelations = relations(AccountTable, ({ many }) => ({
 export const WalletTable = pgTable(
   'Wallet',
   {
-    id: uuid().notNull().defaultRandom().primaryKey(),
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     belongsToId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text().notNull(),
     address: text().$type<HexAddress>().notNull(),
@@ -178,12 +187,14 @@ export type WalletCreateInput = typeof WalletTable.$inferInsert
 export const RouteTable = pgTable(
   'Route',
   {
-    id: uuid().notNull().defaultRandom().primaryKey(),
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     fromId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => WalletTable.id, { onDelete: 'set null' }),
     toId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
     waypoints: json().$type<Waypoints>(),
 
@@ -216,12 +227,15 @@ export const ActiveRouteTable = pgTable(
   {
     userId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     accountId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
     routeId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => RouteTable.id, { onDelete: 'cascade' }),
 
     ...tenantReference,
@@ -253,9 +267,11 @@ export const ActiveAccountTable = pgTable(
   {
     userId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     accountId: uuid()
       .notNull()
+      .$type<UUID>()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
 
     ...tenantReference,

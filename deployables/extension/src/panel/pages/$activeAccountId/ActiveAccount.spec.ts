@@ -39,13 +39,11 @@ describe('Active Account', () => {
     const tenant = tenantFactory.createWithoutDb()
     const user = userFactory.createWithoutDb(tenant)
 
-    const account = accountFactory.createWithoutDb(tenant, user, {
-      id: 'test-account',
-    })
+    const account = accountFactory.createWithoutDb(tenant, user)
 
     mockGetRemoteAccount.mockResolvedValue(account)
 
-    await render('/test-account')
+    await render(`/${account.id}`)
 
     expect(saveRemoteActiveAccount).toHaveBeenCalledWith(
       account,

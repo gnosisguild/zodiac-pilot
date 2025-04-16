@@ -1,4 +1,5 @@
 import { getOrganizationsForUser, updateExternalUserId } from '@/workOS/server'
+import { invariant } from '@epic-web/invariant'
 import { authLoader, signOut } from '@workos-inc/authkit-react-router'
 import type { User } from '@workos-inc/node'
 import {
@@ -9,6 +10,7 @@ import {
   getUser,
   type DBClient,
 } from '@zodiac/db'
+import { isUUID } from '@zodiac/schema'
 import type { Route } from './+types/callback'
 
 export const loader = ({ request, ...options }: Route.LoaderArgs) => {
@@ -49,6 +51,8 @@ const upsertUser = async (db: DBClient, workOSUser: User) => {
 
     return user
   }
+
+  invariant(isUUID(workOSUser.externalId), '"externalId" is not a UUID')
 
   return getUser(db, workOSUser.externalId)
 }

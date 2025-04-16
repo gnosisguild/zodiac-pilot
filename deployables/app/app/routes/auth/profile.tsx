@@ -12,7 +12,7 @@ import {
   getWallet,
   getWallets,
 } from '@zodiac/db'
-import { getHexString, getString } from '@zodiac/form-data'
+import { getHexString, getString, getUUID } from '@zodiac/form-data'
 import {
   Address,
   AddressInput,
@@ -94,7 +94,7 @@ export const action = async (args: Route.ActionArgs) =>
         }
 
         case Intent.DeleteWallet: {
-          const walletId = getString(data, 'walletId')
+          const walletId = getUUID(data, 'walletId')
 
           await deleteWallet(dbClient(), user, walletId)
 
@@ -111,7 +111,7 @@ export const action = async (args: Route.ActionArgs) =>
           case Intent.DeleteWallet: {
             const wallet = await getWallet(
               dbClient(),
-              getString(data, 'walletId'),
+              getUUID(data, 'walletId'),
             )
 
             return wallet.belongsToId === user.id
