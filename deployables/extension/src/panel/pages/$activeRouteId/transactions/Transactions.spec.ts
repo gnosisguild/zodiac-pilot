@@ -38,15 +38,9 @@ describe('Transactions', () => {
       await userEvent.click(
         screen.getByRole('option', { name: 'Second route' }),
       )
-
-      const activeRouteId: string = 'first-route'
+  
       const routeId: string = 'second-route'
-      const expectedPath =
-        activeRouteId == null || activeRouteId !== routeId
-          ? `/${routeId}/transactions`
-          : `/${activeRouteId}/clear-transactions/${routeId}`
-
-      await expectRouteToBe(expectedPath)
+      await expectRouteToBe(`/${routeId}/transactions`)
     })
 
     it('lists routes from the zodiac os', async () => {
