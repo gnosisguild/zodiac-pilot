@@ -137,12 +137,18 @@ describe('recordCalls', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
 
     // The first fetch call should be to create a new record.
-    expect(fetchMock.mock.calls[0][0]).toBe(`${getRolesAppUrl()}/api/records`)
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      `${getRolesAppUrl()}/api/records`,
+      expect.anything(),
+    )
 
     // The second fetch call should use the stored record's details,
     // batching the transactions from the second and third invocations.
-    expect(fetchMock.mock.calls[1][0]).toBe(
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
       `${getRolesAppUrl()}/api/records/newRecord/calls`,
+      expect.anything(),
     )
     const secondCallBody = JSON.parse(fetchMock.mock.calls[1][1]?.body)
     expect(secondCallBody).toHaveLength(2)
