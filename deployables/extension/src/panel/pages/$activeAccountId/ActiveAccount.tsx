@@ -4,7 +4,11 @@ import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
 import { getActiveTab, sendMessageToCompanionApp } from '@/utils'
-import { CompanionResponseMessageType } from '@zodiac/messages'
+import {
+  CompanionAppMessageType,
+  CompanionResponseMessageType,
+  useTabMessageHandler,
+} from '@zodiac/messages'
 import {
   Outlet,
   redirect,
@@ -52,6 +56,16 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 const ActiveRoute = () => {
   const { route, account } = useLoaderData<typeof loader>()
+
+  useTabMessageHandler(
+    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+    async (_, { tabId }) => {
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: account.id,
+      })
+    },
+  )
 
   return (
     <ProvideAccount account={account}>

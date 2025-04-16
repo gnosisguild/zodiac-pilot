@@ -314,7 +314,7 @@ const RevalidateWhenActiveRouteChanges = ({
     CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
     ({ activeRouteId: newActiveRouteId }) => {
       if (state === 'idle' && activeRouteId !== newActiveRouteId) {
-        revalidate()
+        setTimeout(() => revalidate(), 500)
       }
     },
   )

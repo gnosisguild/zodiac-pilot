@@ -7,11 +7,7 @@ import {
   sendMessageToCompanionApp,
 } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  useTabMessageHandler,
-} from '@zodiac/messages'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import { FeatureProvider } from '@zodiac/ui'
 import {
   Outlet,
@@ -84,16 +80,6 @@ const Root = () => {
         submit(formData({ accountId }), { method: 'POST' })
       },
     })
-
-  useTabMessageHandler(
-    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
-    async (_, { tabId }) => {
-      await sendMessageToCompanionApp(tabId, {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: activeAccountId,
-      })
-    },
-  )
 
   const navigate = useNavigate()
 
