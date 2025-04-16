@@ -1,7 +1,7 @@
 {
   "name": "@zodiac/pilot-extension",
   "version": "0.0.0",
-  "description": "Chrome extension to simulate dApp interactions and record transactions",
+  "description": "Zodiac Pilot is a powerful execution interface for Safe accounts",
   "type": "module",
   "main": "index.js",
   "repository": "https://github.com/gnosisguild/zodiac-pilot.git",
