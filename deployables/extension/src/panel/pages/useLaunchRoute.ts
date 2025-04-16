@@ -1,5 +1,4 @@
-import { getAccount } from '@/accounts'
-import { getLastUsedRouteId } from '@/execution-routes'
+import { getAccount, getActiveAccount } from '@/accounts'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
@@ -20,10 +19,9 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
 
   const launchRoute = useCallback(
     async (accountId: string, tabId?: number) => {
-      const activeAccountId = await getLastUsedRouteId()
+      const activeAccount = await getActiveAccount()
 
-      if (activeAccountId != null) {
-        const activeAccount = await getAccount(activeAccountId)
+      if (activeAccount != null) {
         const newAccount = await getAccount(accountId)
 
         if (
@@ -49,7 +47,7 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const cancelLaunch = useCallback(() => setPendingAccountId(null), [])
 
   const proceedWithLaunch = useCallback(async () => {
-    const activeRouteId = await getLastUsedRouteId()
+    const activeAccount = await getActiveAccount()
 
     setPendingAccountId(null)
 
@@ -59,7 +57,11 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
       onLaunchRef.current(pendingAccountId)
     }
 
-    navigate(`/${activeRouteId}/clear-transactions/${pendingAccountId}`)
+    if (activeAccount == null) {
+      navigate(`/${pendingAccountId}`)
+    } else {
+      navigate(`/${activeAccount.id}/clear-transactions/${pendingAccountId}`)
+    }
   }, [navigate, onLaunchRef, pendingAccountId])
 
   return [

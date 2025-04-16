@@ -9,19 +9,25 @@ export type FetchOptions = {
 
 type ApiOptions<Schema extends ZodTypeAny> = {
   schema: Schema
+  method?: RequestInit['method']
   body?: Record<string, string | number>
 } & FetchOptions
 
 export const api = async <Schema extends ZodTypeAny>(
   pathname: string,
-  { schema, signal, body }: ApiOptions<Schema>,
+  {
+    schema,
+    signal,
+    body,
+    method = body == null ? 'GET' : 'POST',
+  }: ApiOptions<Schema>,
 ) => {
   const url = new URL(pathname, getCompanionAppUrl())
 
   const response = await fetch(url, {
     signal,
+    method,
     body: body == null ? undefined : formData(body),
-    method: body == null ? 'GET' : 'POST',
   })
 
   invariant(

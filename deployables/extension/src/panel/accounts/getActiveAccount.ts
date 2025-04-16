@@ -1,4 +1,8 @@
-import { getRemoteActiveAccount, type FetchOptions } from '@/companion'
+import {
+  getRemoteActiveAccount,
+  toAccount,
+  type FetchOptions,
+} from '@/companion'
 import { getLastUsedRouteId, getRoutes } from '@/execution-routes'
 
 export const getActiveAccount = async (options: FetchOptions = {}) => {
@@ -11,5 +15,11 @@ export const getActiveAccount = async (options: FetchOptions = {}) => {
   const routes = await getRoutes()
   const activeAccountId = await getLastUsedRouteId()
 
-  return routes.find((route) => route.id === activeAccountId)
+  const route = routes.find((route) => route.id === activeAccountId)
+
+  if (route == null) {
+    return null
+  }
+
+  return toAccount(route)
 }

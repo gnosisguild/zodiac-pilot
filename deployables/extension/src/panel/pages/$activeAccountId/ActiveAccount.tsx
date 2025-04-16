@@ -1,9 +1,6 @@
 import { getAccount, getActiveRoute, saveActiveAccount } from '@/accounts'
 import { ProvideAccount } from '@/companion'
-import {
-  ProvideExecutionRoute,
-  saveLastUsedAccountId,
-} from '@/execution-routes'
+import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
 import { getActiveTab, sendMessageToCompanionApp } from '@/utils'
@@ -43,7 +40,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       account,
     }
   } catch (error) {
-    await saveLastUsedAccountId(null)
+    await saveActiveAccount(null)
 
     sentry.captureException(error)
 

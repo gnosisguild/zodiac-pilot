@@ -6,11 +6,11 @@ import {
 import { saveLastUsedAccountId } from '@/execution-routes'
 
 export const saveActiveAccount = async (
-  account: Account,
+  account: Account | null,
   options: FetchOptions = {},
 ) => {
   await Promise.all([
     saveRemoteActiveAccount(account, options),
-    saveLastUsedAccountId(account.id),
+    saveLastUsedAccountId(account == null ? null : account.id),
   ])
 }
