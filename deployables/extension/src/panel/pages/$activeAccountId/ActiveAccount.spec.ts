@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 
 mockCompanionAppUrl('http://companion-app.com')
 
-describe('Active Route', () => {
+describe('Active Account', () => {
   it('communicates the new active route', async () => {
     await mockRoute({ id: 'first-route', label: 'First route' })
 
