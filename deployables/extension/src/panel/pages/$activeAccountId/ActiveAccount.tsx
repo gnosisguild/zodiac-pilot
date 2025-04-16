@@ -17,12 +17,14 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const activeAccountId = getActiveAccountId(params)
 
   try {
-    const account = await getAccount(activeAccountId, {
-      signal: request.signal,
-    })
-    const route = await getActiveRoute(activeAccountId, {
-      signal: request.signal,
-    })
+    const [account, route] = await Promise.all([
+      getAccount(activeAccountId, {
+        signal: request.signal,
+      }),
+      getActiveRoute(activeAccountId, {
+        signal: request.signal,
+      }),
+    ])
 
     await saveActiveAccount(account)
 
