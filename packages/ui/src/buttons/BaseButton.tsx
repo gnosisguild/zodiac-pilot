@@ -65,6 +65,7 @@ export const BaseButton = ({
       fluid && 'flex-1',
       getPadding({ iconOnly, size }),
       className,
+      iconOnly && 'shrink-0',
     )}
   >
     <span
@@ -143,6 +144,7 @@ export const BaseLinkButton = ({
         align === 'left' && 'justify-start',
         align === 'center' && 'justify-center',
         align === 'right' && 'justify-end',
+        iconOnly && 'shrink-0',
         className,
       )}
     >

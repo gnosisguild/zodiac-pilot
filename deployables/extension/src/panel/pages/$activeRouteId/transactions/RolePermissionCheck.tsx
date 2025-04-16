@@ -168,15 +168,15 @@ export const RolePermissionCheck = ({
       )}
 
       {error && !translationAvailable && roleToRecordTo && (
-        <div className="flex gap-2">
+        <div className="flex items-center justify-between gap-2">
           {recordCallState === RecordCallState.Done ? (
-            <GhostButton fluid icon={Check} disabled>
+            <GhostButton disabled icon={Check} size="small">
               Request recorded
             </GhostButton>
           ) : (
             <GhostButton
-              fluid
               icon={CassetteTape}
+              size="small"
               onClick={recordCall}
               busy={recordCallState === RecordCallState.Pending}
             >
