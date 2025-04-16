@@ -578,6 +578,9 @@ importers:
         specifier: workspace:*
         version: link:../schema
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -686,6 +689,9 @@ importers:
         specifier: workspace:*
         version: link:../schema
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -711,6 +717,9 @@ importers:
       '@types/chrome':
         specifier: 0.0.315
         version: 0.0.315
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@types/react':
         specifier: 19.1.2
         version: 19.1.2
@@ -791,6 +800,9 @@ importers:
         specifier: workspace:*
         version: link:../chains
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
