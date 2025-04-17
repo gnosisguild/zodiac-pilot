@@ -1,4 +1,3 @@
-import { MinimumVersion } from '@/components'
 import { useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
@@ -74,9 +73,8 @@ const Actions = ({ routeId }: { routeId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
-      <MinimumVersion version="3.6.0">
-        <Launch routeId={routeId} />
-      </MinimumVersion>
+      <Launch routeId={routeId} />
+
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -86,9 +84,7 @@ const Actions = ({ routeId }: { routeId: string }) => {
       >
         <Edit routeId={routeId} />
 
-        <MinimumVersion version="3.6.0">
-          <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
-        </MinimumVersion>
+        <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
   )
