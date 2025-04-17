@@ -90,7 +90,7 @@ jobs:
       #     file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
       #     extract_dir: latest-release
       - run: |
-          apt-get install unzip
+          sudo apt-get install unzip
           unzip zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip -d latest-release
 
       - run: |
