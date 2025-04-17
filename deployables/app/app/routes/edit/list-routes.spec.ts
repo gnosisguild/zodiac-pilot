@@ -7,13 +7,7 @@ import {
 } from '@/test-utils'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {
-  activateAccount,
-  activateRoute,
-  dbClient,
-  getAccounts,
-  getActiveAccount,
-} from '@zodiac/db'
+import { activateRoute, dbClient, getAccounts } from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -244,101 +238,6 @@ describe.sequential('List Routes', () => {
             screen.queryByRole('dialog', { name: 'Confirm delete' }),
           ).not.toBeInTheDocument()
         })
-      })
-    })
-  })
-
-  describe('Activate', () => {
-    describe('Logged in', () => {
-      it('is possible to activate an account', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
-
-        const account = await accountFactory.create(tenant, user, {
-          label: 'Test account',
-        })
-
-        const { waitForPendingActions } = await render(href('/edit'), {
-          tenant,
-          user,
-        })
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Launch' }),
-        )
-
-        await waitForPendingActions()
-
-        await expect(
-          getActiveAccount(dbClient(), tenant, user),
-        ).resolves.toEqual(account)
-      })
-
-      it('indicates which route is currently active', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
-
-        const account = await accountFactory.create(tenant, user, {
-          label: 'Test account',
-        })
-
-        await activateAccount(dbClient(), tenant, user, account.id)
-
-        await render(href('/edit'), {
-          tenant,
-          user,
-        })
-
-        expect(
-          await screen.findByRole('cell', { name: 'Test account' }),
-        ).toHaveAccessibleDescription('Active')
-      })
-    })
-
-    describe('Logged out', () => {
-      it('is possible to activate an account', async () => {
-        const route = createMockExecutionRoute({ label: 'Test route' })
-        const mockPostMessage = vi.spyOn(window, 'postMessage')
-
-        await render(href('/edit'), {
-          version: '3.6.0',
-          availableRoutes: [route],
-        })
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        })
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Launch' }),
-        )
-
-        expect(mockPostMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.LAUNCH_ROUTE,
-            routeId: route.id,
-          } satisfies CompanionAppMessage,
-          '*',
-        )
-      })
-
-      it('indicates which route is currently active', async () => {
-        const route = createMockExecutionRoute({ label: 'Test route' })
-
-        await render(href('/edit'), {
-          version: '3.6.0',
-          availableRoutes: [route],
-        })
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        })
-
-        expect(
-          await screen.findByRole('cell', { name: 'Test route' }),
-        ).toHaveAccessibleDescription('Active')
       })
     })
   })

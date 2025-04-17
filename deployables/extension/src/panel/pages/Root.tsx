@@ -1,26 +1,17 @@
-import { getAccount, getActiveAccount, saveActiveAccount } from '@/accounts'
+import { getActiveAccount } from '@/accounts'
 import { getFeatures, ProvideCompanionAppContext } from '@/companion'
-import {
-  formData,
-  getActiveTab,
-  getString,
-  sendMessageToCompanionApp,
-} from '@/utils'
+import { sendMessageToCompanionApp } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { CompanionResponseMessageType } from '@zodiac/messages'
 import { FeatureProvider } from '@zodiac/ui'
 import {
   Outlet,
-  redirect,
   useLoaderData,
   useNavigate,
-  useSubmit,
-  type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
-import { useLaunchRouteOnMessage } from './useLaunchRoute'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -33,34 +24,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const data = await request.formData()
-
-  const accountId = getString(data, 'accountId')
-  const activeAccount = await getActiveAccount({ signal: request.signal })
-  const account = await getAccount(accountId, { signal: request.signal })
-
-  await saveActiveAccount(account)
-
-  const activeTab = await getActiveTab()
-
-  if (activeTab.id != null) {
-    sendMessageToCompanionApp(activeTab.id, {
-      type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-      activeRouteId: accountId,
-    })
-  }
-
-  if (activeAccount != null) {
-    return redirect(`/${activeAccount.id}/clear-transactions/${accountId}`)
-  }
-
-  return redirect(`/${accountId}`)
-}
-
 const Root = () => {
-  const submit = useSubmit()
-
   const { activeAccountId, companionAppUrl, features } =
     useLoaderData<typeof loader>()
   const [saveOptions, saveAndLaunchOptions] = useSaveRoute(activeAccountId, {
@@ -74,25 +38,12 @@ const Root = () => {
 
   useDeleteRoute()
 
-  const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
-    useLaunchRouteOnMessage({
-      onLaunch(accountId) {
-        submit(formData({ accountId }), { method: 'POST' })
-      },
-    })
-
   const navigate = useNavigate()
 
   return (
     <FeatureProvider features={features}>
       <ProvideCompanionAppContext url={companionAppUrl}>
         <Outlet />
-
-        <ClearTransactionsModal
-          open={isLaunchPending}
-          onCancel={cancelLaunch}
-          onAccept={proceedWithLaunch}
-        />
 
         <ClearTransactionsModal
           open={saveAndLaunchOptions.isLaunchPending}

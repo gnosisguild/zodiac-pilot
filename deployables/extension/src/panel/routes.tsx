@@ -13,7 +13,6 @@ export const routes: RouteObject[] = [
     ErrorBoundary: SentryErrorBoundary,
     hasErrorBoundary: true,
     loader: Root.loader,
-    action: Root.action,
     children: [
       { index: true, Component: NoRoutes.default, loader: NoRoutes.loader },
       {

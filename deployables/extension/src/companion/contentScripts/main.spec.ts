@@ -88,13 +88,6 @@ describe('Companion App Content Script', () => {
         } satisfies CompanionAppMessage,
       ],
       [
-        CompanionAppMessageType.LAUNCH_ROUTE,
-        {
-          type: CompanionAppMessageType.LAUNCH_ROUTE,
-          routeId: 'test-route',
-        } satisfies CompanionAppMessage,
-      ],
-      [
         CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
         {
           type: CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,

@@ -15,7 +15,7 @@ import {
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Play, Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { href } from 'react-router'
 import { Intent } from './intents'
@@ -81,8 +81,6 @@ const Actions = ({ accountId }: { accountId: string }) => {
         submitting || menuOpen ? 'opacity-100' : 'opacity-0',
       )}
     >
-      <Launch accountId={accountId} />
-
       <MeatballMenu
         open={menuOpen || confirmingDelete}
         size="tiny"
@@ -101,28 +99,6 @@ const Actions = ({ accountId }: { accountId: string }) => {
         <Delete accountId={accountId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
-  )
-}
-
-const Launch = ({ accountId }: { accountId: string }) => {
-  const submitting = useIsPending(
-    Intent.RemoteLaunch,
-    (data) => data.get('accountId') === accountId,
-  )
-
-  return (
-    <Form context={{ accountId }}>
-      <GhostButton
-        submit
-        align="left"
-        size="tiny"
-        intent={Intent.RemoteLaunch}
-        busy={submitting}
-        icon={Play}
-      >
-        Launch
-      </GhostButton>
-    </Form>
   )
 }
 

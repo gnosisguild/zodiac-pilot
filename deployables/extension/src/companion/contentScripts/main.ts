@@ -21,7 +21,6 @@ window.addEventListener(
       case CompanionAppMessageType.REQUEST_ROUTES:
       case CompanionAppMessageType.REQUEST_ROUTE:
       case CompanionAppMessageType.DELETE_ROUTE:
-      case CompanionAppMessageType.LAUNCH_ROUTE:
       case CompanionAppMessageType.REQUEST_ACTIVE_ROUTE:
       case CompanionAppMessageType.PING: {
         await chrome.runtime.sendMessage<CompanionAppMessage>(event.data)

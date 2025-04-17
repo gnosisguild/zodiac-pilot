@@ -25,8 +25,6 @@ const requestResponseTypes = {
     CompanionResponseMessageType.PROVIDE_ROUTE,
   [CompanionAppMessageType.DELETE_ROUTE]:
     CompanionResponseMessageType.DELETED_ROUTE,
-  [CompanionAppMessageType.LAUNCH_ROUTE]:
-    CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
   [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]:
     CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
 } as const

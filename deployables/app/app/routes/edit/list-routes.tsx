@@ -2,7 +2,6 @@ import { authorizedAction, authorizedLoader } from '@/auth'
 import { OnlyConnected, Page } from '@/components'
 import { routeTitle } from '@/utils'
 import {
-  activateAccount,
   dbClient,
   deleteAccount,
   findActiveAccount,
@@ -92,7 +91,7 @@ export const action = async (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user, tenant },
+        auth: { user },
       },
     }) => {
       const data = await request.formData()
@@ -100,17 +99,6 @@ export const action = async (args: Route.ActionArgs) =>
       switch (getString(data, 'intent')) {
         case Intent.RemoteDelete: {
           await deleteAccount(dbClient(), user, getUUID(data, 'accountId'))
-
-          return null
-        }
-
-        case Intent.RemoteLaunch: {
-          await activateAccount(
-            dbClient(),
-            tenant,
-            user,
-            getUUID(data, 'accountId'),
-          )
 
           return null
         }
@@ -141,22 +129,6 @@ export const clientAction = async ({
       companionRequest(
         {
           type: CompanionAppMessageType.DELETE_ROUTE,
-          routeId: getString(data, 'routeId'),
-        },
-        () => resolve(),
-      )
-
-      await promise
-
-      return null
-    }
-
-    case Intent.Launch: {
-      const { promise, resolve } = Promise.withResolvers<void>()
-
-      companionRequest(
-        {
-          type: CompanionAppMessageType.LAUNCH_ROUTE,
           routeId: getString(data, 'routeId'),
         },
         () => resolve(),
