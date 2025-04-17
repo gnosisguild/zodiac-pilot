@@ -1,12 +1,8 @@
-import { type ExecutionRoute } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { getStorageEntry } from '../utils'
+import { findRoute } from './findRoute'
 
 export const getRoute = async (routeId: string) => {
-  const route = await getStorageEntry<ExecutionRoute | undefined>({
-    collection: 'routes',
-    key: routeId,
-  })
+  const route = await findRoute(routeId)
 
   invariant(route != null, `Could not find route with id "${routeId}"`)
 

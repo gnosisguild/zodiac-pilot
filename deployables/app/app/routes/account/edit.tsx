@@ -22,7 +22,7 @@ import {
   getString,
 } from '@zodiac/form-data'
 import { queryRoutes } from '@zodiac/modules'
-import { addressSchema, type HexAddress } from '@zodiac/schema'
+import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressInput,
   AddressSelect,
@@ -33,6 +33,7 @@ import {
   PrimaryButton,
   TextInput,
 } from '@zodiac/ui'
+import type { UUID } from 'crypto'
 import { useId } from 'react'
 import { href, redirect } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
@@ -49,6 +50,8 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     }) => {
       const url = new URL(request.url)
+
+      invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       const account = await getAccount(dbClient(), accountId)
       const wallets = await getWallets(dbClient(), user.id)
@@ -98,6 +101,8 @@ export const loader = (args: Route.LoaderArgs) =>
     {
       ensureSignedIn: true,
       async hasAccess({ user, params: { accountId } }) {
+        invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
         const account = await getAccount(dbClient(), accountId)
 
         return account.createdById === user.id
@@ -116,6 +121,8 @@ export const action = (args: Route.ActionArgs) =>
       },
     }) => {
       const data = await request.formData()
+
+      invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       await dbClient().transaction(async (tx) => {
         const initiator = getOptionalHexString(data, 'initiator')
@@ -156,6 +163,8 @@ export const action = (args: Route.ActionArgs) =>
     {
       ensureSignedIn: true,
       async hasAccess({ user, params: { accountId } }) {
+        invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
         const account = await getAccount(dbClient(), accountId)
 
         return account.createdById === user.id
@@ -260,7 +269,7 @@ enum Intent {
 const getInitiator = async (
   tenant: Tenant,
   user: User,
-  accountId: string,
+  accountId: UUID,
   searchParams: URLSearchParams,
 ) => {
   if (searchParams.has('initiator')) {
@@ -286,7 +295,7 @@ const getInitiator = async (
 
 type CreateRouteOptions = {
   initiator: HexAddress
-  accountId: string
+  accountId: UUID
   selectedRouteId: string | undefined
 }
 

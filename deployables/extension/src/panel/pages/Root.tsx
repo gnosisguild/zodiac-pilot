@@ -1,5 +1,5 @@
+import { getAccount, getActiveAccount, saveActiveAccount } from '@/accounts'
 import { getFeatures, ProvideCompanionAppContext } from '@/companion'
-import { getLastUsedRouteId, saveLastUsedRouteId } from '@/execution-routes'
 import {
   formData,
   getActiveTab,
@@ -7,11 +7,7 @@ import {
   sendMessageToCompanionApp,
 } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
-import {
-  CompanionAppMessageType,
-  CompanionResponseMessageType,
-  useTabMessageHandler,
-} from '@zodiac/messages'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import { FeatureProvider } from '@zodiac/ui'
 import {
   Outlet,
@@ -28,10 +24,10 @@ import { useLaunchRouteOnMessage } from './useLaunchRoute'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const lastUsedRouteId = await getLastUsedRouteId()
+  const activeAccount = await getActiveAccount()
 
   return {
-    lastUsedRouteId,
+    activeAccountId: activeAccount == null ? null : activeAccount.id,
     companionAppUrl: getCompanionAppUrl(),
     features: await getFeatures({ signal: request.signal }),
   }
@@ -40,33 +36,34 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
 
-  const routeId = getString(data, 'routeId')
-  const lastUsedRouteId = await getLastUsedRouteId()
+  const accountId = getString(data, 'accountId')
+  const activeAccount = await getActiveAccount({ signal: request.signal })
+  const account = await getAccount(accountId, { signal: request.signal })
 
-  await saveLastUsedRouteId(routeId)
+  await saveActiveAccount(account)
 
   const activeTab = await getActiveTab()
 
   if (activeTab.id != null) {
     sendMessageToCompanionApp(activeTab.id, {
       type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-      activeRouteId: routeId,
+      activeRouteId: accountId,
     })
   }
 
-  if (lastUsedRouteId != null) {
-    return redirect(`/${lastUsedRouteId}/clear-transactions/${routeId}`)
+  if (activeAccount != null) {
+    return redirect(`/${activeAccount.id}/clear-transactions/${accountId}`)
   }
 
-  return redirect(`/${routeId}`)
+  return redirect(`/${accountId}`)
 }
 
 const Root = () => {
   const submit = useSubmit()
 
-  const { lastUsedRouteId, companionAppUrl, features } =
+  const { activeAccountId, companionAppUrl, features } =
     useLoaderData<typeof loader>()
-  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(lastUsedRouteId, {
+  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(activeAccountId, {
     onSave: (route, tabId) => {
       sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
@@ -79,20 +76,10 @@ const Root = () => {
 
   const { isLaunchPending, cancelLaunch, proceedWithLaunch } =
     useLaunchRouteOnMessage({
-      onLaunch(routeId) {
-        submit(formData({ routeId }), { method: 'POST' })
+      onLaunch(accountId) {
+        submit(formData({ accountId }), { method: 'POST' })
       },
     })
-
-  useTabMessageHandler(
-    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
-    async (_, { tabId }) => {
-      await sendMessageToCompanionApp(tabId, {
-        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-        activeRouteId: lastUsedRouteId,
-      })
-    },
-  )
 
   const navigate = useNavigate()
 

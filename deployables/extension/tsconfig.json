@@ -19,6 +19,7 @@
       ],
       "@/safe": ["./src/panel/integrations/safe/index.ts"],
       "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"],
+      "@/accounts": ["./src/panel/accounts/index.ts"],
       "@/sentry": ["./src/sentry/index.ts"]
     }
   },

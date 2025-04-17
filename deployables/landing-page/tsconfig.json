@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
-    "types": ["@cloudflare/workers-types", "vite/client"],
+    "types": ["@cloudflare/workers-types", "vite/client", "node"],
     "lib": ["dom", "dom.iterable", "esnext"],
     "rootDirs": [".", "./.react-router/types"],
     "paths": {

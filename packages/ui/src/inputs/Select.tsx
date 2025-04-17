@@ -55,7 +55,7 @@ export function selectStyles<Option = unknown>({
         'text-sm',
         isSelected != null &&
           'hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50 cursor-pointer',
-        inline ? 'px-2 py-1' : 'px-4 py-2',
+        inline ? 'px-2 py-1 overflow-hidden' : 'px-4 py-2',
       ),
     indicatorsContainer: () =>
       classNames('shrink-0 flex gap-1', !inline && 'mr-2'),

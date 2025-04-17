@@ -1,8 +1,8 @@
 import { useAccount, type Account } from '@/companion'
 import { useWindowId } from '@/inject-bridge'
 import { CHAIN_NAME } from '@zodiac/chains'
-import { Form, GhostButton, Select, Tag } from '@zodiac/ui'
-import { List, Pencil, Route } from 'lucide-react'
+import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
+import { List, Pencil } from 'lucide-react'
 import { useSubmit } from 'react-router'
 import { ClearTransactionsModal } from '../../ClearTransactionsModal'
 import { useLaunchRoute } from '../../useLaunchRoute'
@@ -18,15 +18,18 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
   const submit = useSubmit()
   const [launchRoute, { isLaunchPending, cancelLaunch, proceedWithLaunch }] =
     useLaunchRoute({
-      onLaunch(routeId) {
-        submit({ intent: Intent.LaunchRoute, routeId }, { method: 'POST' })
+      onLaunch(accountId) {
+        submit(
+          { intent: Intent.ActivateAccount, accountId },
+          { method: 'POST' },
+        )
       },
     })
 
   return (
     <>
       <div className="flex items-center gap-2 pl-4">
-        <Route size={16} />
+        <Blockie address={account.address} className="size-6" />
 
         <Select
           inline
@@ -43,32 +46,26 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
             launchRoute(option.value)
           }}
           value={{ value: account.id }}
-          options={accounts
-            .toSorted(sortAccounts)
-            .map((account) => ({ value: account.id }))}
+          options={accounts.map((account) => ({ value: account.id }))}
         >
           {({ data: { value } }) => {
             const account = accounts.find(({ id }) => id === value)
 
-            return (
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                {account == null ? (
-                  'Unnamed route'
-                ) : (
-                  <div className="flex items-center justify-between gap-2 overflow-hidden">
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {account.label}
-                    </span>
-                    <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
-                  </div>
-                )}
-              </span>
+            return account == null ? (
+              'Unnamed route'
+            ) : (
+              <div className="flex max-w-full items-center justify-between gap-2 overflow-hidden">
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {account.label}
+                </span>
+                <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
+              </div>
             )
           }}
         </Select>
 
         <div className="mr-4 flex shrink-0 items-center gap-1">
-          <Form context={{ routeId: account.id, windowId }}>
+          <Form context={{ accountId: account.id, windowId }}>
             <GhostButton
               submit
               iconOnly
@@ -101,20 +98,4 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
       />
     </>
   )
-}
-
-export const sortAccounts = (accountA: Account, accountB: Account) => {
-  if (accountA.label == null && accountB.label == null) {
-    return 0
-  }
-
-  if (accountA.label == null) {
-    return -1
-  }
-
-  if (accountB.label == null) {
-    return 1
-  }
-
-  return accountA.label.localeCompare(accountB.label)
 }

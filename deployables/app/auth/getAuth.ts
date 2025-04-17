@@ -8,6 +8,7 @@ import type {
 import type { Organization } from '@workos-inc/node'
 import { dbClient, getTenant, getUser } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
+import { isUUID } from '@zodiac/schema'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   user: User
@@ -23,17 +24,33 @@ export type UnauthorizedData = Omit<WorkOsUnauthorizedData, 'user'> & {
   workOsUser: WorkOsUnauthorizedData['user']
 }
 
-type AccessFn<Params> = (options: {
-  user: User
-  tenant: Tenant
-  request: Request
-  params: Params
-}) => boolean | Promise<boolean>
+type AuthorizedAccessFn<Params> = (
+  options: AuthorizedData & {
+    request: Request
+    params: Params
+  },
+) => boolean | Promise<boolean>
 
-export type GetAuthOptions<Params> = {
+type MaybeAuthorizedAccessFn<Params> = (
+  options: (AuthorizedData | UnauthorizedData) & {
+    request: Request
+    params: Params
+  },
+) => boolean | Promise<boolean>
+
+type AuthorizedOptions<Params> = {
   ensureSignedIn: true
-  hasAccess?: AccessFn<Params>
+  hasAccess?: AuthorizedAccessFn<Params>
 }
+
+type MaybeAuthorizedOptions<Params> = {
+  ensureSignedIn?: false
+  hasAccess?: MaybeAuthorizedAccessFn<Params>
+}
+
+export type GetAuthOptions<Params> =
+  | AuthorizedOptions<Params>
+  | MaybeAuthorizedOptions<Params>
 
 export const getAuth = <Params>(
   request: Request,
@@ -57,6 +74,10 @@ export const getAuth = <Params>(
         })
       } else {
         invariantResponse(auth.user.externalId != null, 'User does not exist.')
+        invariantResponse(
+          isUUID(auth.user.externalId),
+          '"externalId" is not a UUID',
+        )
 
         const user = await getUser(dbClient(), auth.user.externalId)
 
@@ -76,8 +97,11 @@ export const getAuth = <Params>(
           invariantResponse(
             await Promise.resolve(
               options.hasAccess({
+                ...auth,
                 user,
                 tenant,
+                workOsUser: auth.user,
+                workOsOrganization,
                 request: request.clone(),
                 params,
               }),

@@ -23,6 +23,7 @@
     "ser-kit": "3.7.0"
   },
   "devDependencies": {
+    "@types/node": "22.14.1",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.24.0",

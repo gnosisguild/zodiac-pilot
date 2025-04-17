@@ -465,12 +465,6 @@ importers:
       '@react-router/serve':
         specifier: 7.5.0
         version: 7.5.0(react-router@7.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
-      '@types/react':
-        specifier: 19.1.2
-        version: 19.1.2
-      '@types/react-dom':
-        specifier: 19.1.2
-        version: 19.1.2(@types/react@19.1.2)
       '@zodiac/env':
         specifier: workspace:*
         version: link:../../packages/env
@@ -508,6 +502,15 @@ importers:
       '@tailwindcss/vite':
         specifier: 4.1.4
         version: 4.1.4(vite@6.3.1(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.1))
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
+      '@types/react':
+        specifier: 19.1.2
+        version: 19.1.2
+      '@types/react-dom':
+        specifier: 19.1.2
+        version: 19.1.2(@types/react@19.1.2)
       '@vitejs/plugin-react':
         specifier: 4.4.0
         version: 4.4.0(vite@6.3.1(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.1))
@@ -578,6 +581,9 @@ importers:
         specifier: workspace:*
         version: link:../schema
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -617,6 +623,9 @@ importers:
       react:
         specifier: 19.1.0
         version: 19.1.0
+      ser-kit:
+        specifier: 3.7.0
+        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.3)
       zod:
         specifier: 3.24.3
         version: 3.24.3
@@ -683,6 +692,9 @@ importers:
         specifier: workspace:*
         version: link:../schema
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -708,6 +720,9 @@ importers:
       '@types/chrome':
         specifier: 0.0.315
         version: 0.0.315
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@types/react':
         specifier: 19.1.2
         version: 19.1.2
@@ -788,6 +803,9 @@ importers:
         specifier: workspace:*
         version: link:../chains
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -816,6 +834,9 @@ importers:
         specifier: 3.24.3
         version: 3.24.3
     devDependencies:
+      '@types/node':
+        specifier: 22.14.1
+        version: 22.14.1
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint

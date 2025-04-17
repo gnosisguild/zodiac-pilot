@@ -1,4 +1,4 @@
-import { useCompanionAppUrl } from '@/companion'
+import { useAccount, useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
 import { useDispatch, useTransactions } from '@/state'
@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { Intent } from './intents'
 
 export const Submit = () => {
+  const account = useAccount()
   const route = useExecutionRoute()
   const dispatch = useDispatch()
   const { initiator } = route
@@ -56,7 +57,7 @@ export const Submit = () => {
       />
     </>
   ) : (
-    <Form context={{ routeId: route.id, windowId }}>
+    <Form context={{ accountId: account.id, windowId }}>
       <PrimaryButton fluid submit intent={Intent.EditAccount}>
         Complete route setup to submit
       </PrimaryButton>

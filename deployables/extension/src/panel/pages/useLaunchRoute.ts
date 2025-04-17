@@ -1,10 +1,11 @@
-import { getLastUsedRouteId, getRoute } from '@/execution-routes'
+import { getAccount, getActiveAccount } from '@/accounts'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { useStableHandler } from '@zodiac/ui'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 
 type OnLaunchOptions = {
   onLaunch?: (routeId: string, tabId?: number) => void
@@ -12,50 +13,61 @@ type OnLaunchOptions = {
 
 export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
-  const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
+  const [pendingAccountId, setPendingAccountId] = useState<string | null>(null)
   const transactions = useTransactions()
   const onLaunchRef = useStableHandler(onLaunch)
 
   const launchRoute = useCallback(
-    async (routeId: string, tabId?: number) => {
-      const activeRouteId = await getLastUsedRouteId()
+    async (accountId: string, tabId?: number) => {
+      const activeAccount = await getActiveAccount()
 
-      if (activeRouteId != null) {
-        const activeRoute = await getRoute(activeRouteId)
-        const newRoute = await getRoute(routeId)
+      if (activeAccount != null) {
+        const newAccount = await getAccount(accountId)
 
-        if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
-          setPendingRouteId(routeId)
+        if (
+          transactions.length > 0 &&
+          prefixAddress(activeAccount.chainId, activeAccount.address) !==
+            prefixAddress(newAccount.chainId, newAccount.address)
+        ) {
+          setPendingAccountId(accountId)
+
           return
         }
       }
 
       if (onLaunchRef.current != null) {
-        onLaunchRef.current(routeId, tabId)
+        onLaunchRef.current(accountId, tabId)
       }
 
-      navigate(`/${routeId}`)
+      navigate(`/${accountId}`)
     },
     [onLaunchRef, transactions.length, navigate],
   )
 
-  const cancelLaunch = useCallback(() => setPendingRouteId(null), [])
+  const cancelLaunch = useCallback(() => setPendingAccountId(null), [])
 
   const proceedWithLaunch = useCallback(async () => {
-    const activeRouteId = await getLastUsedRouteId()
-    invariant(pendingRouteId != null, 'No route launch was pending')
-    if (onLaunchRef.current) {
-      onLaunchRef.current(pendingRouteId)
+    const activeAccount = await getActiveAccount()
+
+    setPendingAccountId(null)
+
+    invariant(pendingAccountId != null, 'No route launch was pending')
+
+    if (onLaunchRef.current != null) {
+      onLaunchRef.current(pendingAccountId)
     }
 
-    navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
-    setPendingRouteId(null)
-  }, [navigate, onLaunchRef, pendingRouteId])
+    if (activeAccount == null) {
+      navigate(`/${pendingAccountId}`)
+    } else {
+      navigate(`/${activeAccount.id}/clear-transactions/${pendingAccountId}`)
+    }
+  }, [navigate, onLaunchRef, pendingAccountId])
 
   return [
     launchRoute,
     {
-      isLaunchPending: pendingRouteId != null,
+      isLaunchPending: pendingAccountId != null,
       cancelLaunch,
       proceedWithLaunch,
     },

@@ -1,9 +1,10 @@
 import { ActiveFeatureTable } from '@zodiac/db/schema'
+import type { UUID } from 'crypto'
 import type { DBClient } from '../dbClient'
 
 type ActivateFeatureOptions = {
-  tenantId: string
-  featureId: string
+  tenantId: UUID
+  featureId: UUID
 }
 
 export const activateFeature = (

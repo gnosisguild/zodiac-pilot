@@ -1,3 +1,4 @@
+import type { UUID } from 'crypto'
 import type { DBClient } from '../dbClient'
 
 type GetWalletsOptions = {
@@ -6,7 +7,7 @@ type GetWalletsOptions = {
 
 export const getWallets = (
   db: DBClient,
-  userId: string,
+  userId: UUID,
   { deleted = false }: GetWalletsOptions = {},
 ) =>
   db.query.wallet.findMany({

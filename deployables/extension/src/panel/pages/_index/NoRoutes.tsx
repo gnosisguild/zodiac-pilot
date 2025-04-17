@@ -1,26 +1,42 @@
+import { getAccounts, getActiveAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { getLastUsedRouteId, getRoutes } from '@/execution-routes'
 import { useBridgeError } from '@/inject-bridge'
+import { sendMessageToCompanionApp } from '@/utils'
+import {
+  CompanionAppMessageType,
+  CompanionResponseMessageType,
+  useTabMessageHandler,
+} from '@zodiac/messages'
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
 export const loader = async () => {
-  const lastUsedRouteId = await getLastUsedRouteId()
+  const activeAccount = await getActiveAccount()
 
-  if (lastUsedRouteId != null) {
-    return redirect(`/${lastUsedRouteId}`)
+  if (activeAccount != null) {
+    return redirect(`/${activeAccount.id}`)
   }
 
-  const [route] = await getRoutes()
+  const [account] = await getAccounts()
 
-  if (route != null) {
-    return redirect(`/${route.id}`)
+  if (account != null) {
+    return redirect(`/${account.id}`)
   }
 }
 
 const NoRoutes = () => {
   useBridgeError('To use Zodiac Pilot with a dApp you need to create a route.')
+
+  useTabMessageHandler(
+    CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
+    async (_, { tabId }) => {
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: null,
+      })
+    },
+  )
 
   return (
     <Page>

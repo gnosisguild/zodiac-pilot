@@ -1,6 +1,6 @@
 export enum Intent {
   EditAccount = 'EditAccount',
   ListAccounts = 'ListAccounts',
-  LaunchRoute = 'LaunchRoute',
+  ActivateAccount = 'ActivateAccount',
   Login = 'Login',
 }

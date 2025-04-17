@@ -5,11 +5,11 @@ import {
   activateAccount,
   dbClient,
   deleteAccount,
+  findActiveAccount,
   getAccount,
   getAccounts,
-  getActiveAccount,
 } from '@zodiac/db'
-import { getString } from '@zodiac/form-data'
+import { getString, getUUID } from '@zodiac/form-data'
 import {
   CompanionAppMessageType,
   companionRequest,
@@ -60,7 +60,7 @@ export const loader = (args: Route.LoaderArgs) =>
           tenantId: tenant.id,
           userId: user.id,
         }),
-        getActiveAccount(dbClient(), tenant, user),
+        findActiveAccount(dbClient(), tenant, user),
       ])
 
       return {
@@ -99,7 +99,7 @@ export const action = async (args: Route.ActionArgs) =>
 
       switch (getString(data, 'intent')) {
         case Intent.RemoteDelete: {
-          await deleteAccount(dbClient(), user, getString(data, 'accountId'))
+          await deleteAccount(dbClient(), user, getUUID(data, 'accountId'))
 
           return null
         }
@@ -109,7 +109,7 @@ export const action = async (args: Route.ActionArgs) =>
             dbClient(),
             tenant,
             user,
-            getString(data, 'accountId'),
+            getUUID(data, 'accountId'),
           )
 
           return null
@@ -120,10 +120,7 @@ export const action = async (args: Route.ActionArgs) =>
       ensureSignedIn: true,
       async hasAccess({ user, request }) {
         const data = await request.formData()
-        const account = await getAccount(
-          dbClient(),
-          getString(data, 'accountId'),
-        )
+        const account = await getAccount(dbClient(), getUUID(data, 'accountId'))
 
         return account.createdById === user.id
       },
@@ -317,7 +314,7 @@ const RevalidateWhenActiveRouteChanges = ({
     CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
     ({ activeRouteId: newActiveRouteId }) => {
       if (state === 'idle' && activeRouteId !== newActiveRouteId) {
-        revalidate()
+        setTimeout(() => revalidate(), 500)
       }
     },
   )

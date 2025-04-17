@@ -1,15 +1,6 @@
-import {
-  getAccounts,
-  getUser,
-  useAccount,
-  useCompanionAppUrl,
-} from '@/companion'
-import {
-  getRoute,
-  getRoutes,
-  toAccount,
-  useExecutionRoute,
-} from '@/execution-routes'
+import { getAccounts, getActiveRoute } from '@/accounts'
+import { getUser, useAccount, useCompanionAppUrl } from '@/companion'
+import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
@@ -43,7 +34,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { getActiveRouteId } from '../getActiveRouteId'
+import { getActiveAccountId } from '../getActiveAccountId'
 import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
@@ -52,10 +43,9 @@ import { Intent } from './intents'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
-  const routes = await getRoutes()
 
   return {
-    accounts: [...accounts, ...routes.map(toAccount)],
+    accounts,
     user: await getUser({ signal: request.signal }),
   }
 }
@@ -70,24 +60,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const windowId = getInt(data, 'windowId')
       const tabs = await chrome.tabs.query({ windowId })
 
-      const routeId = getString(data, 'routeId')
-      const route = await getRoute(routeId)
+      const accountId = getString(data, 'accountId')
+      const route = await getActiveRoute(accountId)
 
       const existingTab = tabs.find(
         (tab) =>
           tab.url != null &&
-          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${routeId}`),
+          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
       )
 
       if (existingTab != null && existingTab.id != null) {
         await chrome.tabs.update(existingTab.id, {
           active: true,
-          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
         })
       } else {
         await chrome.tabs.create({
           active: true,
-          url: `${getCompanionAppUrl()}/edit/${routeId}/${encode(route)}`,
+          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
         })
       }
 
@@ -114,11 +104,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       return null
     }
 
-    case Intent.LaunchRoute: {
-      const routeId = getString(data, 'routeId')
-      const activeRouteId = getActiveRouteId(params)
+    case Intent.ActivateAccount: {
+      const accountId = getString(data, 'accountId')
+      const activeAccountId = getActiveAccountId(params)
 
-      return redirect(`/${activeRouteId}/clear-transactions/${routeId}`)
+      return redirect(`/${activeAccountId}/clear-transactions/${accountId}`)
     }
 
     case Intent.Login: {
@@ -175,7 +165,9 @@ const Transactions = () => {
   return (
     <Page>
       <Page.Header>
-        <AccountSelect accounts={accounts} />
+        <div className="my-2">
+          <AccountSelect accounts={accounts} />
+        </div>
       </Page.Header>
 
       <div className="flex p-2">

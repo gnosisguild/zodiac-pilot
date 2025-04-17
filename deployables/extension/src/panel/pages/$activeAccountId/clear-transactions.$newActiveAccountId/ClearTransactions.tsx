@@ -4,11 +4,14 @@ import { redirect, useSubmit, type ActionFunctionArgs } from 'react-router'
 import { useClearTransactions } from './useClearTransactions'
 
 export const action = async ({ params }: ActionFunctionArgs) => {
-  const { newActiveRouteId } = params
+  const { newActiveAccountId } = params
 
-  invariantResponse(newActiveRouteId != null, 'No new active route id provided')
+  invariantResponse(
+    newActiveAccountId != null,
+    'No new active route id provided',
+  )
 
-  return redirect(`/${newActiveRouteId}`)
+  return redirect(`/${newActiveAccountId}`)
 }
 
 const ClearTransactions = () => {
