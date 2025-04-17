@@ -39,8 +39,7 @@ describe('Transactions', () => {
         screen.getByRole('option', { name: 'Second route' }),
       )
 
-      const routeId: string = 'second-route'
-      await expectRouteToBe(`/${routeId}/transactions`)
+      await expectRouteToBe(`/second-route/transactions`)
     })
 
     it('lists routes from the zodiac os', async () => {
