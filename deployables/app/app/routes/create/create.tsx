@@ -2,7 +2,6 @@ import { authorizedAction } from '@/auth'
 import {
   AvatarInput,
   ConnectWalletButton,
-  fromVersion,
   OnlyConnectedWhenLoggedOut,
   Page,
 } from '@/components'
@@ -107,21 +106,9 @@ export const clientAction = async ({
 
   const { promise, resolve } = Promise.withResolvers<void>()
 
-  fromVersion(
-    '3.8.2',
-    () =>
-      companionRequest(
-        { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
-        () => resolve(),
-      ),
-    () => {
-      window.postMessage(
-        { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
-        '*',
-      )
-
-      resolve()
-    },
+  companionRequest(
+    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
+    () => resolve(),
   )
 
   await promise
