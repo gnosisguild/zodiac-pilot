@@ -14,7 +14,6 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
   const [pendingRouteId, setPendingRouteId] = useState<string | null>(null)
   const transactions = useTransactions()
-
   const onLaunchRef = useStableHandler(onLaunch)
 
   const launchRoute = useCallback(
@@ -27,7 +26,6 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
 
         if (transactions.length > 0 && activeRoute.avatar !== newRoute.avatar) {
           setPendingRouteId(routeId)
-
           return
         }
       }
@@ -35,24 +33,23 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
       if (onLaunchRef.current != null) {
         onLaunchRef.current(routeId, tabId)
       }
+
+      navigate(`/${routeId}`)
     },
-    [onLaunchRef, transactions.length],
+    [onLaunchRef, transactions.length, navigate],
   )
 
   const cancelLaunch = useCallback(() => setPendingRouteId(null), [])
 
   const proceedWithLaunch = useCallback(async () => {
     const activeRouteId = await getLastUsedRouteId()
-
-    setPendingRouteId(null)
-
     invariant(pendingRouteId != null, 'No route launch was pending')
-
-    if (onLaunchRef.current != null) {
+    if (onLaunchRef.current) {
       onLaunchRef.current(pendingRouteId)
     }
 
     navigate(`/${activeRouteId}/clear-transactions/${pendingRouteId}`)
+    setPendingRouteId(null)
   }, [navigate, onLaunchRef, pendingRouteId])
 
   return [
