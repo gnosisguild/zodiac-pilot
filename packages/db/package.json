@@ -47,7 +47,7 @@
     "zod": "3.24.3"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "1.40.0",
+    "@dotenvx/dotenvx": "1.40.1",
     "@faker-js/faker": "9.7.0",
     "@types/node": "22.14.1",
     "@types/react": "19.1.2",
