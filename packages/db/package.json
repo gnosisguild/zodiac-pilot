@@ -9,6 +9,7 @@
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc",
     "start": "docker-compose up db",
+    "stop": "docker-compose down db",
     "test": "dotenvx run --env-file=.env.test -- vitest",
     "create-migration": "drizzle-kit generate --name $1",
     "migrate": "dotenvx run -- drizzle-kit push",
