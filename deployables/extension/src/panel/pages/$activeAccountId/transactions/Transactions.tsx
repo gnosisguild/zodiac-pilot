@@ -1,4 +1,4 @@
-import { getAccounts, getActiveRoute } from '@/accounts'
+import { getAccount, getAccounts, getActiveRoute } from '@/accounts'
 import { getUser, useAccount, useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
@@ -61,24 +61,46 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const tabs = await chrome.tabs.query({ windowId })
 
       const accountId = getString(data, 'accountId')
-      const route = await getActiveRoute(accountId)
+      const account = await getAccount(accountId, { signal: request.signal })
 
-      const existingTab = tabs.find(
-        (tab) =>
-          tab.url != null &&
-          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
-      )
+      if (account.remote) {
+        const existingTab = tabs.find(
+          (tab) =>
+            tab.url != null &&
+            tab.url.startsWith(`${getCompanionAppUrl()}/account/${accountId}`),
+        )
 
-      if (existingTab != null && existingTab.id != null) {
-        await chrome.tabs.update(existingTab.id, {
-          active: true,
-          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-        })
+        if (existingTab != null && existingTab.id != null) {
+          await chrome.tabs.update(existingTab.id, {
+            active: true,
+            url: `${getCompanionAppUrl()}/account/${accountId}`,
+          })
+        } else {
+          await chrome.tabs.create({
+            active: true,
+            url: `${getCompanionAppUrl()}/account/${accountId}`,
+          })
+        }
       } else {
-        await chrome.tabs.create({
-          active: true,
-          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-        })
+        const route = await getActiveRoute(accountId)
+
+        const existingTab = tabs.find(
+          (tab) =>
+            tab.url != null &&
+            tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
+        )
+
+        if (existingTab != null && existingTab.id != null) {
+          await chrome.tabs.update(existingTab.id, {
+            active: true,
+            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
+          })
+        } else {
+          await chrome.tabs.create({
+            active: true,
+            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
+          })
+        }
       }
 
       return null

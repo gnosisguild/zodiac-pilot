@@ -193,44 +193,96 @@ describe('Transactions', () => {
 
   describe('Edit', () => {
     describe('Current route', () => {
-      it('is possible to edit the current route', async () => {
-        const route = await mockRoute({ id: 'test-route' })
+      describe('Local accounts', () => {
+        it('is possible to edit the current route', async () => {
+          const route = await mockRoute({ id: 'test-route' })
 
-        mockCompanionAppUrl('http://localhost')
+          mockCompanionAppUrl('http://localhost')
 
-        await render('/test-route/transactions', {
-          initialState: [createTransaction()],
+          await render('/test-route/transactions', {
+            initialState: [createTransaction()],
+          })
+
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Edit account' }),
+          )
+
+          expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+            active: true,
+            url: `http://localhost/edit/${route.id}/${encode(route)}`,
+          })
         })
 
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Edit account' }),
-        )
+        it('activates an existing tab when it already exists', async () => {
+          const route = await mockRoute({ id: 'test-route' })
+          mockCompanionAppUrl('http://localhost')
 
-        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
-          active: true,
-          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+          const tab = mockTab({
+            url: `http://localhost/edit/${route.id}/some-old-route-data`,
+          })
+
+          await render('/test-route/transactions', {
+            initialState: [createTransaction()],
+          })
+
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Edit account' }),
+          )
+
+          expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
+            active: true,
+            url: `http://localhost/edit/${route.id}/${encode(route)}`,
+          })
         })
       })
 
-      it('activates an existing tab when it already exists', async () => {
-        const route = await mockRoute({ id: 'test-route' })
-        mockCompanionAppUrl('http://localhost')
+      describe('Remote accounts', () => {
+        it('is possible to edit the current route', async () => {
+          const tenant = tenantFactory.createWithoutDb()
+          const user = userFactory.createWithoutDb(tenant)
+          const account = accountFactory.createWithoutDb(tenant, user)
 
-        const tab = mockTab({
-          url: `http://localhost/edit/${route.id}/some-old-route-data`,
+          mockGetRemoteAccount.mockResolvedValue(account)
+          mockGetRemoteAccounts.mockResolvedValue([account])
+
+          mockCompanionAppUrl('http://localhost')
+
+          await render(`/${account.id}/transactions`)
+
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Edit account' }),
+          )
+
+          expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+            active: true,
+            url: `http://localhost/account/${account.id}`,
+          })
         })
 
-        await render('/test-route/transactions', {
-          initialState: [createTransaction()],
-        })
+        it('activates an existing tab when it already exists', async () => {
+          const tenant = tenantFactory.createWithoutDb()
+          const user = userFactory.createWithoutDb(tenant)
+          const account = accountFactory.createWithoutDb(tenant, user)
 
-        await userEvent.click(
-          screen.getByRole('button', { name: 'Edit account' }),
-        )
+          mockGetRemoteAccount.mockResolvedValue(account)
+          mockGetRemoteAccounts.mockResolvedValue([account])
 
-        expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
-          active: true,
-          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+          mockCompanionAppUrl('http://localhost')
+
+          const tab = mockTab({
+            url: `http://localhost/account/${account.id}`,
+          })
+
+          await render(`/${account.id}/transactions`)
+
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Edit account' }),
+          )
+
+          expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
+            active: true,
+            url: `http://localhost/account/${account.id}`,
+          })
         })
       })
     })

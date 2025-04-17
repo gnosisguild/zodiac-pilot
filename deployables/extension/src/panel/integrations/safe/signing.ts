@@ -30,7 +30,6 @@ export const signMessage = (message: string): MetaTransactionRequest => ({
 
 export const typedDataHash = (data: EIP712TypedData): string => {
   // We need to remove EIP712Domain from the types object since ethers does not like it
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { EIP712Domain: _, ...types } = data.types
 
   return TypedDataEncoder.hash(data.domain as any, types, data.message)
