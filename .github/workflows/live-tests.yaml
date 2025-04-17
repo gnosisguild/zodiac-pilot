@@ -88,11 +88,12 @@ jobs:
           latest: true
           zipBall: true
 
-      - name: Extract Action
-        uses: ihiroky/extract-action@v1
-        with:
-          file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
-          extract_dir: latest-release
+      # - name: Extract Action
+      #   uses: ihiroky/extract-action@v1
+      #   with:
+      #     file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+      #     extract_dir: latest-release
+      - run: unzip zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip -d latest-release
 
       - run: |
           RELEASE_HASH=$(git show-ref --hash=7 ${{ steps.fetch-latest-release.outputs.latest-release }})
