@@ -8,3 +8,6 @@ playwright-report
 *.patch
 
 **/migrations/**/*.json
+
+pnpm-lock.yaml
+pre-commit

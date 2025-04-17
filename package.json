@@ -17,14 +17,20 @@
     "check-spelling": "cspell \"**\"",
     "check-cycles": "turbo check-cycles --affected",
     "lint": "turbo lint --affected",
-    "fix-format": "prettier ./**/* --write"
+    "fix-format": "prettier ./**/* --write",
+    "prepare": "husky"
   },
   "devDependencies": {
     "cspell": "8.19.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "prettier": "3.5.3",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.11",
     "turbo": "2.5.0",
     "typescript": "5.8.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mts,js,json,html,css}": "prettier --write"
   }
 }
