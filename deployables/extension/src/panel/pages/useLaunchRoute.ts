@@ -1,7 +1,6 @@
 import { getAccount, getActiveAccount } from '@/accounts'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { useStableHandler } from '@zodiac/ui'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -72,15 +71,4 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
       proceedWithLaunch,
     },
   ] as const
-}
-
-export const useLaunchRouteOnMessage = (launchOptions: OnLaunchOptions) => {
-  const [launchRoute, options] = useLaunchRoute(launchOptions)
-
-  useTabMessageHandler(
-    CompanionAppMessageType.LAUNCH_ROUTE,
-    async ({ routeId }) => launchRoute(routeId),
-  )
-
-  return options
 }
