@@ -6,8 +6,10 @@ services:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
 volumes:
   pgdata:
