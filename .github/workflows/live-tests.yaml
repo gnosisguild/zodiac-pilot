@@ -7,6 +7,9 @@ jobs:
   e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.51.1-noble
+      options: --user 1001
     if: github.event.deployment_status.state == 'success'
 
     steps:
@@ -36,9 +39,9 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      - name: Install Playwright Browsers
-        run: pnpm playwright install --with-deps chromium
-        working-directory: ./deployables/app
+      # - name: Install Playwright Browsers
+      #   run: pnpm playwright install --with-deps chromium
+      #   working-directory: ./deployables/app
 
       - name: Companion E2E
         run: xvfb-run pnpm playwright test
@@ -58,6 +61,9 @@ jobs:
   e2e-latest-release:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.51.1-noble
+      options: --user 1001
     if: github.event.deployment_status.state == 'success'
 
     steps:
@@ -108,9 +114,9 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      - name: Install Playwright Browsers
-        run: pnpm playwright install --with-deps chromium
-        working-directory: ./deployables/app
+      # - name: Install Playwright Browsers
+      #   run: pnpm playwright install --with-deps chromium
+      #   working-directory: ./deployables/app
 
       - name: Companion E2E
         run: xvfb-run pnpm playwright test
