@@ -118,7 +118,7 @@ jobs:
       - name: Companion E2E
         uses: docker://mcr.microsoft.com/playwright:v1.51.1-noble
         with:
-          args: cd deployables/app && xvfb-run pnpm playwright test
+          args: xvfb-run pnpm --filter=pilot-app test:e2e
         env:
           PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
