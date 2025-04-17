@@ -111,14 +111,13 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      # - name: Install Playwright Browsers
-      #   run: pnpm playwright install --with-deps chromium
-      #   working-directory: ./deployables/app
+      - name: Install Playwright Browsers
+        run: pnpm playwright install --with-deps chromium
+        working-directory: ./deployables/app
 
       - name: Companion E2E
-        uses: docker://mcr.microsoft.com/playwright:v1.51.1-noble
-        with:
-          args: xvfb-run pnpm --filter=pilot-app test:e2e
+        run: xvfb-run pnpm playwright test
+        working-directory: ./deployables/app
         env:
           PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
