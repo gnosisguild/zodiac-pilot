@@ -74,6 +74,8 @@ jobs:
           node-version: 22.14.0
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
+      - name: Setup Python
+        uses: actions/setup-python@v5.5.0
 
       - uses: reloc8/action-latest-release-version@1.0.0
         id: fetch-latest-release
