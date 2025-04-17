@@ -39,10 +39,6 @@ jobs:
         env:
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
-      # - name: Install Playwright Browsers
-      #   run: pnpm playwright install --with-deps chromium
-      #   working-directory: ./deployables/app
-
       - name: Companion E2E
         run: xvfb-run pnpm playwright test
         working-directory: ./deployables/app
