@@ -61,9 +61,6 @@ jobs:
   e2e-latest-release:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.51.1-noble
-      options: --user 1001
     if: github.event.deployment_status.state == 'success'
 
     steps:
@@ -89,9 +86,6 @@ jobs:
       #   with:
       #     file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
       #     extract_dir: latest-release
-      - run: |
-          sudo apt-get install unzip
-          unzip zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip -d latest-release
 
       - run: |
           RELEASE_HASH=$(git show-ref --hash=7 ${{ steps.fetch-latest-release.outputs.latest-release }})
@@ -122,8 +116,9 @@ jobs:
       #   working-directory: ./deployables/app
 
       - name: Companion E2E
-        run: xvfb-run pnpm playwright test
-        working-directory: ./deployables/app
+        uses: docker://mcr.microsoft.com/playwright:v1.51.1-noble
+        with:
+          args: cd deployables/app && xvfb-run pnpm playwright test
         env:
           PILOT_EXTENSION_DIRECTORY: ../../../../latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension/public
           PW_CHROMIUM_ATTACH_TO_OTHER: 1
