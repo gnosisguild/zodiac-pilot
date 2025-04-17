@@ -1,7 +1,6 @@
 import {
   AvatarInput,
   ConnectWalletButton,
-  fromVersion,
   InitiatorInput,
   Page,
   useConnected,
@@ -184,22 +183,9 @@ export const clientAction = async ({
         'Route save was not processed correctly on the server',
       )
 
-      await fromVersion(
-        '3.8.2',
-        () => {
-          companionRequest(
-            { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
-            () => resolve(),
-          )
-        },
-        () => {
-          window.postMessage(
-            { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
-            '*',
-          )
-
-          resolve()
-        },
+      companionRequest(
+        { type: CompanionAppMessageType.SAVE_ROUTE, data: serverResult },
+        () => resolve(),
       )
 
       await promise

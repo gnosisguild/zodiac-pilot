@@ -1,5 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth'
-import { fromVersion, OnlyConnected, Page } from '@/components'
+import { OnlyConnected, Page } from '@/components'
 import { routeTitle } from '@/utils'
 import {
   activateAccount,
@@ -80,7 +80,7 @@ export const clientLoader = async ({
   return {
     ...serverData,
     localAccounts: loadRoutes(),
-    activeRouteId: fromVersion('3.6.0', () => loadActiveRouteId()),
+    activeRouteId: loadActiveRouteId(),
   }
 }
 
