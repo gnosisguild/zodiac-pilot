@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
-    "@headlessui/react": "2.2.1",
+    "@headlessui/react": "2.2.2",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
