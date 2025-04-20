@@ -101,8 +101,8 @@ importers:
         specifier: 5.74.4
         version: 5.74.4(react@19.1.0)
       '@workos-inc/authkit-react-router':
-        specifier: 0.2.0
-        version: 0.2.0(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: 0.3.0
+        version: 0.3.0(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@workos-inc/node':
         specifier: 7.46.0
         version: 7.46.0(express@4.21.2)
@@ -4323,8 +4323,8 @@ packages:
   '@workos-inc/authkit-js@0.10.1':
     resolution: {integrity: sha512-31JRllSL+m4bu0GtCyZOoipi4PkVdzYNqy/IJL2k4bfhtcRnHN3eEUo95j047HY2VykmTTL4FlZ52rFbCm6a2w==}
 
-  '@workos-inc/authkit-react-router@0.2.0':
-    resolution: {integrity: sha512-odorV9EZmwovrMlykdHsXEg0K9QqvqWNn4XgZu8Lfgnn3kFfcQYuuIUiFbgG9KpI1jSFOC3pLe8F0VgAuY5ntg==}
+  '@workos-inc/authkit-react-router@0.3.0':
+    resolution: {integrity: sha512-QLJ+IsEg6d2lP6RDEaGC0vUoMgKnYL7zIk89ecq5fFHReHvVoTHn4wVg6gQo1Okb/4FOtqWe6gbr3P6f4slolA==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0.0
@@ -13204,7 +13204,7 @@ snapshots:
 
   '@workos-inc/authkit-js@0.10.1': {}
 
-  '@workos-inc/authkit-react-router@0.2.0(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@workos-inc/authkit-react-router@0.3.0(express@4.21.2)(react-dom@19.1.0(react@19.1.0))(react-router@7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@workos-inc/node': 7.46.0(express@4.21.2)
       iron-session: 8.0.4
