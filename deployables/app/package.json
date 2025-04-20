@@ -14,7 +14,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
-    "@icons-pack/react-simple-icons": "12.6.0",
+    "@icons-pack/react-simple-icons": "12.7.0",
     "@radix-ui/themes": "3.2.1",
     "@react-router/node": "7.5.1",
     "@sentry/react-router": "9.12.0",
