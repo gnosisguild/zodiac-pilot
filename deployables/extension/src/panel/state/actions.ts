@@ -51,6 +51,7 @@ interface RemoveTransactionAction {
 
 interface ClearTransactionsAction {
   type: 'CLEAR_TRANSACTIONS'
+  payload: { id: string }
 }
 
 export type Action =

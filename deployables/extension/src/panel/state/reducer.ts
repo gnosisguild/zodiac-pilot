@@ -43,14 +43,13 @@ export const rootReducer = (
 
     case 'REMOVE_TRANSACTION': {
       const { id } = action.payload
-      return state.slice(
-        0,
-        state.findIndex((item) => item.id === id),
-      )
+      return state.filter((item) => item.id !== id)
     }
 
     case 'CLEAR_TRANSACTIONS': {
-      return []
+      const { id } = action.payload
+      const idx = state.findIndex((item) => item.id === id)
+      return idx >= 0 ? state.slice(0, idx) : state
     }
   }
 }

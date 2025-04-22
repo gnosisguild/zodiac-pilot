@@ -45,7 +45,7 @@ export const useGloballyApplicableTranslation = () => {
       if (firstDifferenceIndex !== -1) {
         // remove all transactions from the store starting at the first difference
         dispatch({
-          type: 'REMOVE_TRANSACTION',
+          type: 'CLEAR_TRANSACTIONS',
           payload: { id: transactions[firstDifferenceIndex].id },
         })
 
