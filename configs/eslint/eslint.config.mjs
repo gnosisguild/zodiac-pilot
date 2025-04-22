@@ -23,6 +23,10 @@ export default tsEslint.config(
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^_' },
+      ],
     },
   },
 )

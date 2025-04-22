@@ -1,16 +1,22 @@
-import {
-  saveRemoteActiveAccount,
-  type Account,
-  type FetchOptions,
-} from '@/companion'
+import { saveRemoteActiveAccount, type FetchOptions } from '@/companion'
 import { saveLastUsedAccountId } from '@/execution-routes'
+import type { TaggedAccount } from './TaggedAccount'
 
 export const saveActiveAccount = async (
-  account: Account | null,
+  taggedAccount: TaggedAccount | null,
   options: FetchOptions = {},
 ) => {
-  await Promise.all([
+  if (taggedAccount == null) {
+    return Promise.all([
+      saveRemoteActiveAccount(null, options),
+      saveLastUsedAccountId(null),
+    ])
+  }
+
+  const { remote: _remote, ...account } = taggedAccount
+
+  return Promise.all([
     saveRemoteActiveAccount(account, options),
-    saveLastUsedAccountId(account == null ? null : account.id),
+    saveLastUsedAccountId(account.id),
   ])
 }

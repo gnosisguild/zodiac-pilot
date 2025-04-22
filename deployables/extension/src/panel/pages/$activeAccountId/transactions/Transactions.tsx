@@ -1,5 +1,5 @@
-import { getAccounts, getActiveRoute } from '@/accounts'
-import { getUser, useAccount, useCompanionAppUrl } from '@/companion'
+import { editAccount, getAccount } from '@/accounts'
+import { getUser, useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -10,112 +10,54 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
-import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
   Feature,
   GhostButton,
-  GhostLinkButton,
   Info,
   InlineForm,
   Page,
 } from '@zodiac/ui'
-import {
-  ArrowUpFromLine,
-  Cloud,
-  CloudOff,
-  Landmark,
-  RefreshCcw,
-} from 'lucide-react'
+import { Cloud, CloudOff, RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import {
-  redirect,
   useLoaderData,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { getActiveAccountId } from '../getActiveAccountId'
-import { AccountSelect } from './AccountSelect'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const accounts = await getAccounts({ signal: request.signal })
-
   return {
-    accounts,
     user: await getUser({ signal: request.signal }),
   }
 }
 
-export const action = async ({ request, params }: ActionFunctionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
 
   const intent = getString(data, 'intent')
 
   switch (intent) {
-    case Intent.EditAccount: {
-      const windowId = getInt(data, 'windowId')
-      const tabs = await chrome.tabs.query({ windowId })
-
-      const accountId = getString(data, 'accountId')
-      const route = await getActiveRoute(accountId)
-
-      const existingTab = tabs.find(
-        (tab) =>
-          tab.url != null &&
-          tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
-      )
-
-      if (existingTab != null && existingTab.id != null) {
-        await chrome.tabs.update(existingTab.id, {
-          active: true,
-          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-        })
-      } else {
-        await chrome.tabs.create({
-          active: true,
-          url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-        })
-      }
-
-      return null
-    }
-
-    case Intent.ListAccounts: {
-      const windowId = getInt(data, 'windowId')
-      const tabs = await chrome.tabs.query({ windowId })
-
-      const existingTab = tabs.find(
-        (tab) => tab.url != null && tab.url === `${getCompanionAppUrl()}/edit`,
-      )
-
-      if (existingTab != null && existingTab.id != null) {
-        await chrome.tabs.update(existingTab.id, { active: true })
-      } else {
-        await chrome.tabs.create({
-          active: true,
-          url: `${getCompanionAppUrl()}/edit`,
-        })
-      }
-
-      return null
-    }
-
-    case Intent.ActivateAccount: {
-      const accountId = getString(data, 'accountId')
-      const activeAccountId = getActiveAccountId(params)
-
-      return redirect(`/${activeAccountId}/clear-transactions/${accountId}`)
-    }
-
     case Intent.Login: {
       await chrome.identity.launchWebAuthFlow({
         url: `${getCompanionAppUrl()}/extension/sign-in`,
         interactive: true,
       })
+
+      return null
+    }
+
+    case Intent.EditAccount: {
+      const windowId = getInt(data, 'windowId')
+
+      const accountId = getString(data, 'accountId')
+      const account = await getAccount(accountId, { signal: request.signal })
+
+      await editAccount(windowId, account)
 
       return null
     }
@@ -129,7 +71,7 @@ const Transactions = () => {
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
-  const { accounts, user } = useLoaderData<typeof loader>()
+  const { user } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
@@ -163,35 +105,7 @@ const Transactions = () => {
   }
 
   return (
-    <Page>
-      <Page.Header>
-        <div className="my-2">
-          <AccountSelect accounts={accounts} />
-        </div>
-      </Page.Header>
-
-      <div className="flex p-2">
-        <GhostLinkButton
-          fluid
-          openInNewWindow
-          size="small"
-          icon={ArrowUpFromLine}
-          to={`${useCompanionAppUrl()}/tokens/send`}
-        >
-          Send tokens
-        </GhostLinkButton>
-
-        <GhostLinkButton
-          fluid
-          openInNewWindow
-          size="small"
-          icon={Landmark}
-          to={`${useCompanionAppUrl()}/tokens/balances`}
-        >
-          View balances
-        </GhostLinkButton>
-      </div>
-
+    <>
       <Page.Content ref={scrollContainerRef}>
         <div className="flex items-center justify-between gap-2">
           <RecordingIndicator />
@@ -266,7 +180,7 @@ const Transactions = () => {
 
         <Submit />
       </Page.Footer>
-    </Page>
+    </>
   )
 }
 

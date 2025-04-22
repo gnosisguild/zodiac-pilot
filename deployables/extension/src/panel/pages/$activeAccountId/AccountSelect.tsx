@@ -4,8 +4,8 @@ import { CHAIN_NAME } from '@zodiac/chains'
 import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
 import { List, Pencil } from 'lucide-react'
 import { useSubmit } from 'react-router'
-import { ClearTransactionsModal } from '../../ClearTransactionsModal'
-import { useLaunchRoute } from '../../useLaunchRoute'
+import { ClearTransactionsModal } from '../ClearTransactionsModal'
+import { useLaunchRoute } from '../useLaunchRoute'
 import { Intent } from './intents'
 
 type AccountSelectProps = {
