@@ -17,7 +17,7 @@
     "@icons-pack/react-simple-icons": "12.7.0",
     "@radix-ui/themes": "3.2.1",
     "@react-router/node": "7.5.1",
-    "@sentry/react-router": "9.12.0",
+    "@sentry/react-router": "9.13.0",
     "@tanstack/react-query": "5.74.4",
     "@workos-inc/authkit-react-router": "0.3.0",
     "@workos-inc/node": "7.46.0",
