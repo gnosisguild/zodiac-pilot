@@ -19,6 +19,7 @@ export const routes: RouteObject[] = [
         path: ':activeAccountId',
         Component: ActiveAccount.default,
         loader: ActiveAccount.loader,
+        action: ActiveAccount.action,
         children: [
           { index: true, loader: () => redirect('transactions') },
           {
