@@ -716,6 +716,9 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
+      '@zodiac/db':
+        specifier: workspace:*
+        version: link:../db
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema

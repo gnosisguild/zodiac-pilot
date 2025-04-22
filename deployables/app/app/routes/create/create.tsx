@@ -81,11 +81,13 @@ export const action = (args: Route.ActionArgs) =>
 
       if (user != null) {
         try {
-          await createAccount(dbClient(), tenant, user, {
+          const account = await createAccount(dbClient(), tenant, user, {
             label,
             chainId,
             address: avatar,
           })
+
+          return { account, route }
         } catch {
           return { error: 'An account with this address already exists.' }
         }
@@ -98,7 +100,7 @@ export const action = (args: Route.ActionArgs) =>
 export const clientAction = async ({
   serverAction,
 }: Route.ClientActionArgs) => {
-  const { route, error } = await serverAction()
+  const { route, error, account } = await serverAction()
 
   if (error != null) {
     return { error }
@@ -107,7 +109,7 @@ export const clientAction = async ({
   const { promise, resolve } = Promise.withResolvers<void>()
 
   companionRequest(
-    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
+    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route, account },
     () => resolve(),
   )
 
