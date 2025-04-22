@@ -1,3 +1,4 @@
+import { getActiveRoute } from '@/accounts'
 import { getRoute, saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
@@ -6,7 +7,7 @@ import type { ExecutionRoute } from '@zodiac/schema'
 import { useStableHandler } from '@zodiac/ui'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
-import { useLaunchRoute } from './useLaunchRoute'
+import { useActivateAccount } from './useActivateAccount'
 
 type UseSaveOptions = {
   onSave?: (route: ExecutionRoute, tabId: number) => void
@@ -22,12 +23,12 @@ export const useSaveRoute = (
     incomingRoute: ExecutionRoute
     tabId: number
   } | null>(null)
-  const [launchRoute, launchOptions] = useLaunchRoute({
-    onLaunch: async (routeId, tabId) => {
+  const [launchRoute, launchOptions] = useActivateAccount({
+    onActivate: async (accountId, tabId) => {
       if (onSaveRef.current) {
         invariant(tabId != null, `tabId was not provided to launchRoute`)
 
-        onSaveRef.current(await getRoute(routeId), tabId)
+        onSaveRef.current(await getActiveRoute(accountId), tabId)
       }
     },
   })
