@@ -1,4 +1,5 @@
 import {
+  editAccount,
   getAccount,
   getAccounts,
   getActiveRoute,
@@ -20,7 +21,6 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { encode } from '@zodiac/schema'
 import { GhostLinkButton, Page } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
@@ -79,50 +79,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   switch (getString(data, 'intent')) {
     case Intent.EditAccount: {
       const windowId = getInt(data, 'windowId')
-      const tabs = await chrome.tabs.query({ windowId })
 
       const accountId = getString(data, 'accountId')
       const account = await getAccount(accountId, { signal: request.signal })
 
-      if (account.remote) {
-        const existingTab = tabs.find(
-          (tab) =>
-            tab.url != null &&
-            tab.url.startsWith(`${getCompanionAppUrl()}/account/${accountId}`),
-        )
-
-        if (existingTab != null && existingTab.id != null) {
-          await chrome.tabs.update(existingTab.id, {
-            active: true,
-            url: `${getCompanionAppUrl()}/account/${accountId}`,
-          })
-        } else {
-          await chrome.tabs.create({
-            active: true,
-            url: `${getCompanionAppUrl()}/account/${accountId}`,
-          })
-        }
-      } else {
-        const route = await getActiveRoute(accountId)
-
-        const existingTab = tabs.find(
-          (tab) =>
-            tab.url != null &&
-            tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
-        )
-
-        if (existingTab != null && existingTab.id != null) {
-          await chrome.tabs.update(existingTab.id, {
-            active: true,
-            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-          })
-        } else {
-          await chrome.tabs.create({
-            active: true,
-            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-          })
-        }
-      }
+      await editAccount(windowId, account)
 
       return null
     }

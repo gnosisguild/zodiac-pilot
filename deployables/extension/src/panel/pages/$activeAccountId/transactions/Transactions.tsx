@@ -1,4 +1,4 @@
-import { getAccount, getActiveRoute } from '@/accounts'
+import { editAccount, getAccount } from '@/accounts'
 import { getUser, useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
@@ -10,7 +10,6 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
-import { encode } from '@zodiac/schema'
 import {
   CopyToClipboard,
   Feature,
@@ -54,50 +53,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
     case Intent.EditAccount: {
       const windowId = getInt(data, 'windowId')
-      const tabs = await chrome.tabs.query({ windowId })
 
       const accountId = getString(data, 'accountId')
       const account = await getAccount(accountId, { signal: request.signal })
 
-      if (account.remote) {
-        const existingTab = tabs.find(
-          (tab) =>
-            tab.url != null &&
-            tab.url.startsWith(`${getCompanionAppUrl()}/account/${accountId}`),
-        )
-
-        if (existingTab != null && existingTab.id != null) {
-          await chrome.tabs.update(existingTab.id, {
-            active: true,
-            url: `${getCompanionAppUrl()}/account/${accountId}`,
-          })
-        } else {
-          await chrome.tabs.create({
-            active: true,
-            url: `${getCompanionAppUrl()}/account/${accountId}`,
-          })
-        }
-      } else {
-        const route = await getActiveRoute(accountId)
-
-        const existingTab = tabs.find(
-          (tab) =>
-            tab.url != null &&
-            tab.url.startsWith(`${getCompanionAppUrl()}/edit/${accountId}`),
-        )
-
-        if (existingTab != null && existingTab.id != null) {
-          await chrome.tabs.update(existingTab.id, {
-            active: true,
-            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-          })
-        } else {
-          await chrome.tabs.create({
-            active: true,
-            url: `${getCompanionAppUrl()}/edit/${accountId}/${encode(route)}`,
-          })
-        }
-      }
+      await editAccount(windowId, account)
 
       return null
     }

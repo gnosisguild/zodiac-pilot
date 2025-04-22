@@ -1,3 +1,4 @@
+export { editAccount } from './editAccount'
 export { getAccount } from './getAccount'
 export { getAccounts } from './getAccounts'
 export { getActiveAccount } from './getActiveAccount'
