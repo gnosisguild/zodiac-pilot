@@ -24,6 +24,11 @@
       "matchPackageNames": ["/^@safe-global/"],
       "automerge": true,
       "groupName": "Safe"
+    },
+    {
+      "matchPackageNames": ["/^@playwright/", "/^mcr.microsoft.com/"],
+      "automerge": true,
+      "groupName": "Playwright"
     }
   ]
 }
