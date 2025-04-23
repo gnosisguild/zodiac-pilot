@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
-    "@zodiac/schema": "workspace:*"
+    "@zodiac/schema": "workspace:*",
+    "react-router": "7.5.1"
   },
   "devDependencies": {
     "@types/node": "22.14.1",

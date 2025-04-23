@@ -2,7 +2,7 @@ import { useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import type { TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'
-import { CHAIN_CURRENCY, getChainId } from '@zodiac/chains'
+import { CHAIN_CURRENCY } from '@zodiac/chains'
 import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
 import { useState } from 'react'
@@ -22,8 +22,8 @@ interface Props {
 
 export const Transaction = ({ transactionState }: Props) => {
   const [expanded, setExpanded] = useState(true)
+  const { chainId } = useAccount()
   const route = useExecutionRoute()
-  const chainId = getChainId(route.avatar)
   const decoded = useDecodedFunctionData(transactionState)
   const showRoles = routeGoesThroughRoles(route)
 
@@ -174,7 +174,12 @@ const EtherValue = ({ value }: EtherValueProps) => {
   )
 }
 
-const routeGoesThroughRoles = (route: ExecutionRoute) =>
-  route.waypoints?.some(
+const routeGoesThroughRoles = (route: ExecutionRoute | null) => {
+  if (route == null) {
+    return false
+  }
+
+  return route.waypoints?.some(
     (waypoint) => waypoint.account.type === AccountType.ROLES,
   )
+}

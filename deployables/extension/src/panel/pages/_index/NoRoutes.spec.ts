@@ -1,4 +1,4 @@
-import { getRemoteAccounts, getRemoteActiveAccount } from '@/companion'
+import { findRemoteActiveAccount, getRemoteAccounts } from '@/companion'
 import { saveLastUsedAccountId } from '@/execution-routes'
 import {
   mockCompanionAppUrl,
@@ -17,7 +17,7 @@ import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
-const mockGetRemoteActiveAccount = vi.mocked(getRemoteActiveAccount)
+const mockFindRemoteActiveAccount = vi.mocked(findRemoteActiveAccount)
 
 describe('No routes', () => {
   describe('Default redirects', () => {
@@ -46,7 +46,7 @@ describe('No routes', () => {
         const user = userFactory.createWithoutDb(tenant)
         const account = accountFactory.createWithoutDb(tenant, user)
 
-        mockGetRemoteActiveAccount.mockResolvedValue(account)
+        mockFindRemoteActiveAccount.mockResolvedValue(account)
 
         await render('/')
 

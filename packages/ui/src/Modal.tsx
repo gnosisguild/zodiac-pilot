@@ -8,12 +8,11 @@ import {
 } from './catalyst'
 
 type ModalProps = PropsWithChildren<{
-  title: string
-  closeLabel: string
+  title?: string
   description?: string
   open: boolean
 
-  onClose: () => void
+  onClose?: () => void
 }>
 
 export const Modal = ({
@@ -21,11 +20,11 @@ export const Modal = ({
   title,
   description,
   children,
-  onClose,
+  onClose = () => null,
 }: ModalProps) => {
   return (
     <Alert open={open} onClose={onClose}>
-      <AlertTitle>{title}</AlertTitle>
+      {title && <AlertTitle>{title}</AlertTitle>}
 
       {description && <AlertDescription>{description}</AlertDescription>}
 

@@ -1,7 +1,7 @@
 import {
+  findRemoteActiveRoute,
   getRemoteAccount,
   getRemoteAccounts,
-  getRemoteActiveRoute,
   saveRemoteActiveAccount,
 } from '@/companion'
 import {
@@ -35,7 +35,7 @@ mockCompanionAppUrl('http://companion-app.com')
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
-const mockGetRemoteActiveRoute = vi.mocked(getRemoteActiveRoute)
+const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
 
 describe('Active Account', () => {
   describe('Account switch', () => {
@@ -87,7 +87,7 @@ describe('Active Account', () => {
         label: 'Remote account',
       })
 
-      mockGetRemoteActiveRoute.mockResolvedValue(
+      mockFindRemoteActiveRoute.mockResolvedValue(
         toExecutionRoute({ account, wallet, waypoints: createMockWaypoints() }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)

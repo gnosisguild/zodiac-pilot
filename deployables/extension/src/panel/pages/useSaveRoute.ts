@@ -1,6 +1,6 @@
 import {
+  findActiveRoute,
   getAccount,
-  getActiveRoute,
   toLocalAccount,
   toRemoteAccount,
   type TaggedAccount,
@@ -9,20 +9,20 @@ import { toAccount } from '@/companion'
 import { saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
+import { useStableHandler } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   useTabMessageHandler,
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { useStableHandler } from '@zodiac/ui'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { useActivateAccount } from './useActivateAccount'
 
 type UseSaveOptions = {
-  onSave?: (route: ExecutionRoute, tabId: number) => void
+  onSave?: (route: ExecutionRoute | null, tabId: number) => void
 }
 
 export const useSaveRoute = (
@@ -32,7 +32,7 @@ export const useSaveRoute = (
   const transactions = useTransactions()
   const { revalidate } = useRevalidator()
   const [pendingUpdate, setPendingUpdate] = useState<{
-    incomingRoute: ExecutionRoute
+    incomingRoute: ExecutionRoute | null
     incomingAccount: TaggedAccount
     tabId: number
   } | null>(null)
@@ -41,7 +41,7 @@ export const useSaveRoute = (
       if (onSaveRef.current) {
         invariant(tabId != null, `tabId was not provided to launchRoute`)
 
-        onSaveRef.current(await getActiveRoute(accountId), tabId)
+        onSaveRef.current(await findActiveRoute(accountId), tabId)
       }
     },
   })
@@ -83,6 +83,11 @@ export const useSaveRoute = (
         return
       }
 
+      invariant(
+        incomingRoute != null,
+        'Cannot save and/or launch route because no active route is defined',
+      )
+
       saveRoute(incomingRoute).then(() => {
         revalidate()
 
@@ -105,17 +110,24 @@ export const useSaveRoute = (
       'Tried to save a route when no save was pending',
     )
 
-    const { incomingRoute, tabId } = pendingUpdate
+    const { incomingRoute, incomingAccount, tabId } = pendingUpdate
 
     setPendingUpdate(null)
 
-    await saveRoute(incomingRoute)
+    if (!incomingAccount.remote) {
+      invariant(
+        incomingRoute != null,
+        'Incoming account is local but does not define a route',
+      )
+
+      await saveRoute(incomingRoute)
+    }
 
     if (onSaveRef.current) {
       onSaveRef.current(incomingRoute, tabId)
     }
 
-    return incomingRoute
+    return incomingAccount
   }, [onSaveRef, pendingUpdate])
 
   return [
@@ -130,7 +142,7 @@ export const useSaveRoute = (
 
 const getIncomingAccountAndRoute = async (
   message: CompanionAppMessage,
-): Promise<[account: TaggedAccount, route: ExecutionRoute]> => {
+): Promise<[account: TaggedAccount, route: ExecutionRoute | null]> => {
   if (message.type === CompanionAppMessageType.SAVE_ROUTE) {
     return [toLocalAccount(toAccount(message.data)), message.data]
   }
@@ -139,7 +151,7 @@ const getIncomingAccountAndRoute = async (
     if (message.account != null) {
       return [
         toRemoteAccount(message.account),
-        await getActiveRoute(message.account.id),
+        await findActiveRoute(message.account.id),
       ]
     }
 

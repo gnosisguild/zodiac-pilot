@@ -76,6 +76,7 @@
     "@zodiac/db": "workspace:*",
     "@zodiac/env": "workspace:*",
     "@zodiac/form-data": "workspace:*",
+    "@zodiac/hooks": "workspace:*",
     "@zodiac/messages": "workspace:*",
     "@zodiac/modules": "workspace:*",
     "@zodiac/safe": "workspace:*",

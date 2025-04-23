@@ -6,7 +6,6 @@ import {
   Page,
   useConnected,
 } from '@/components'
-import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
@@ -17,6 +16,7 @@ import {
   getInt,
   getOptionalString,
 } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createBlankRoute,

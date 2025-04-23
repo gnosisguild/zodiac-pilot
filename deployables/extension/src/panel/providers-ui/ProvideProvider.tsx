@@ -1,7 +1,7 @@
 import { useAccount } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
-import type { Eip1193Provider } from '@/types'
+import type { Eip1193Provider, ExecutionRoute } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import type { Hex } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
@@ -27,24 +27,12 @@ const ProviderContext = createContext<
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const { chainId, address } = useAccount()
-  const { waypoints } = useExecutionRoute()
+  const route = useExecutionRoute()
 
   const dispatch = useDispatch()
 
-  const avatarWaypoint = waypoints?.[waypoints.length - 1]
-  const connectionType =
-    avatarWaypoint &&
-    'connection' in avatarWaypoint &&
-    avatarWaypoint.connection.type
-  const connectedFrom =
-    avatarWaypoint && 'connection' in avatarWaypoint
-      ? unprefixAddress(avatarWaypoint.connection.from)
-      : undefined
-
-  const moduleAddress =
-    connectionType === ConnectionType.IS_ENABLED ? connectedFrom : undefined
-  const ownerAddress =
-    connectionType === ConnectionType.OWNS ? connectedFrom : undefined
+  const moduleAddress = getModuleAddress(route)
+  const ownerAddress = getOwnerAddress(route)
 
   const onBeforeTransactionSend = useCallback(
     async (id: string, transaction: MetaTransactionRequest) => {
@@ -211,4 +199,52 @@ const isExecutionFailure = (
   }
 
   return log.topics[0] === id('ExecutionFailure(bytes32, uint256)')
+}
+
+const getModuleAddress = (route: ExecutionRoute | null) => {
+  if (route == null) {
+    return
+  }
+
+  const { waypoints } = route
+
+  if (waypoints == null) {
+    return
+  }
+
+  const avatarWaypoint = waypoints[waypoints.length - 1]
+
+  if (!('connection' in avatarWaypoint)) {
+    return
+  }
+
+  if (avatarWaypoint.connection.type !== ConnectionType.IS_ENABLED) {
+    return
+  }
+
+  return unprefixAddress(avatarWaypoint.connection.from)
+}
+
+const getOwnerAddress = (route: ExecutionRoute | null) => {
+  if (route == null) {
+    return
+  }
+
+  const { waypoints } = route
+
+  if (waypoints == null) {
+    return
+  }
+
+  const avatarWaypoint = waypoints[waypoints.length - 1]
+
+  if (!('connection' in avatarWaypoint)) {
+    return
+  }
+
+  if (avatarWaypoint.connection.type !== ConnectionType.OWNS) {
+    return
+  }
+
+  return unprefixAddress(avatarWaypoint.connection.from)
 }

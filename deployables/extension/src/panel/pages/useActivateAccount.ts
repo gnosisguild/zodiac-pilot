@@ -1,7 +1,7 @@
-import { getAccount, getActiveAccount } from '@/accounts'
+import { findActiveAccount, getAccount } from '@/accounts'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { useStableHandler } from '@zodiac/ui'
+import { useStableHandler } from '@zodiac/hooks'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -18,7 +18,7 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
 
   const activateAccount = useCallback(
     async (accountId: string, tabId?: number) => {
-      const activeAccount = await getActiveAccount()
+      const activeAccount = await findActiveAccount()
 
       if (activeAccount != null) {
         const newAccount = await getAccount(accountId)
@@ -46,7 +46,7 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
   const cancelActivation = useCallback(() => setPendingAccountId(null), [])
 
   const proceedWithActivation = useCallback(async () => {
-    const activeAccount = await getActiveAccount()
+    const activeAccount = await findActiveAccount()
 
     setPendingAccountId(null)
 

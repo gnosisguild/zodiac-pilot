@@ -1,7 +1,7 @@
-import { useStableHandler } from '@zodiac/ui'
 import { useEffect, useRef } from 'react'
 import { useActionData } from 'react-router'
 import { useIsPending } from './useIsPending'
+import { useStableHandler } from './useStableHandler'
 
 type CallbackFn<T> = (actionData: T) => void
 

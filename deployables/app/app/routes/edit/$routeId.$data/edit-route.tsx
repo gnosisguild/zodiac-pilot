@@ -7,7 +7,6 @@ import {
   useIsDev,
   WalletProvider,
 } from '@/components'
-import { useIsPending } from '@/hooks'
 import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
@@ -18,6 +17,7 @@ import {
   getOptionalString,
   getString,
 } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createAccount,

@@ -1,10 +1,10 @@
+import { useStableHandler } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   createWindowMessageHandler,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import { useStableHandler } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useActiveWhenVisible } from './useActiveWhenVisible'
 
