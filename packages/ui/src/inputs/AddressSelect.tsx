@@ -13,7 +13,7 @@ type Option = {
 }
 
 type LabeledAddress = {
-  label: string
+  label: string | null
   address: HexAddress
 }
 
@@ -49,7 +49,10 @@ export function AddressSelect<Creatable extends boolean>({
           return { label: option, value: option }
         }
 
-        return { label: option.label, value: option.address }
+        return {
+          label: option.label || 'Unnamed account',
+          value: option.address,
+        }
       })}
       isValidNewOption={(value) => validateAddress(value) != null}
       value={
@@ -100,7 +103,7 @@ const getValue = (options: Options, value: HexAddress) => {
     }
 
     if (option.address === value) {
-      return { label: option.label, value: option.address }
+      return { label: option.label || 'Unnamed account', value: option.address }
     }
 
     return finalValue

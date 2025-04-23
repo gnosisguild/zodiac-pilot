@@ -1,19 +1,10 @@
-import { ETH_ZERO_ADDRESS, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
-import type {
-  ExecutionRoute,
-  HexAddress,
-  PrefixedAddress,
-} from '@zodiac/schema'
+import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
+import type { Account } from '@zodiac/db/schema'
+import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
 import { AddressSelect, type AddressSelectProps } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
-import {
-  prefixAddress,
-  splitPrefixedAddress,
-  unprefixAddress,
-  type ChainId,
-} from 'ser-kit'
-import { KnownFromRoutes } from './KnownFromRoutes'
+import { splitPrefixedAddress, type ChainId } from 'ser-kit'
 
 type Props = Omit<
   AddressSelectProps<true>,
@@ -21,13 +12,13 @@ type Props = Omit<
 > & {
   chainId: ChainId
   initiator?: PrefixedAddress
-  knownRoutes?: ExecutionRoute[]
+  knownAccounts?: Account[]
 }
 
 export const AvatarInput = ({
   chainId,
   initiator = ETH_ZERO_ADDRESS,
-  knownRoutes = [],
+  knownAccounts = [],
   ...props
 }: Props) => {
   const { load, state, data } = useFetcher<HexAddress[]>()
@@ -58,24 +49,9 @@ export const AvatarInput = ({
       isDisabled={state === 'loading'}
       options={
         data == null
-          ? Array.from(
-              new Set(
-                knownRoutes
-                  .filter((route) => getChainId(route.avatar) === chainId)
-                  .map((route) => unprefixAddress(route.avatar)),
-              ),
-            )
+          ? knownAccounts.filter((account) => account.chainId === chainId)
           : data
       }
-    >
-      {({ data: { value }, isSelected }) =>
-        isSelected != null && (
-          <KnownFromRoutes
-            routes={knownRoutes}
-            address={prefixAddress(chainId, value)}
-          />
-        )
-      }
-    </AddressSelect>
+    />
   )
 }
