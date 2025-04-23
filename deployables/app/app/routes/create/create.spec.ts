@@ -62,9 +62,10 @@ describe.sequential('New SafeAccount', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
 
-      await render('/create', {
+      const { waitForPendingActions } = await render('/create', {
         tenant,
         user,
+        connected: false,
       })
 
       const address = randomAddress()
@@ -78,14 +79,7 @@ describe.sequential('New SafeAccount', () => {
       )
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-      await expectMessage(
-        expect.objectContaining({
-          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-          data: expect.objectContaining({
-            avatar: prefixAddress(Chain.ETH, address),
-          }),
-        }),
-      )
+      await waitForPendingActions()
 
       const [account] = await getAccounts(dbClient(), {
         tenantId: tenant.id,

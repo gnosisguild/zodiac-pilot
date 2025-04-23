@@ -11,7 +11,7 @@ type FormProps = Omit<
   'className' | 'children'
 > & {
   intent?: string
-  context?: Record<string, string | number | null | undefined>
+  context?: Record<string, string | number | boolean | null | undefined>
   children?: ReactNode | ((props: RenderProps) => ReactNode)
 }
 
@@ -39,7 +39,18 @@ export const Form = ({
         {Object.entries(context).map(
           ([key, value]) =>
             value != null && (
-              <input type="hidden" key={key} name={key} value={value} />
+              <input
+                type="hidden"
+                key={key}
+                name={key}
+                value={
+                  typeof value === 'boolean'
+                    ? value === true
+                      ? 'on'
+                      : 'off'
+                    : value
+                }
+              />
             ),
         )}
 
