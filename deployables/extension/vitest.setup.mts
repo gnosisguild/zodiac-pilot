@@ -1,9 +1,9 @@
 import {
+  findRemoteActiveAccount,
   findRemoteActiveRoute,
   getFeatures,
   getRemoteAccount,
   getRemoteAccounts,
-  getRemoteActiveAccount,
   getUser,
 } from '@/companion'
 import '@testing-library/jest-dom/vitest'
@@ -35,7 +35,7 @@ vi.mock('@/companion', async (importOriginal) => {
 
     getUser: vi.fn(),
     findRemoteActiveRoute: vi.fn(),
-    getRemoteActiveAccount: vi.fn(),
+    findRemoteActiveAccount: vi.fn(),
     getRemoteAccount: vi.fn(),
     getRemoteAccounts: vi.fn(),
     getFeatures: vi.fn(),
@@ -47,7 +47,7 @@ vi.mock('@/companion', async (importOriginal) => {
 const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
 const mockGetUser = vi.mocked(getUser)
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
-const mockGetRemoteActiveAccount = vi.mocked(getRemoteActiveAccount)
+const mockFindRemoteActiveAccount = vi.mocked(findRemoteActiveAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
@@ -57,7 +57,7 @@ beforeEach(() => {
   const account = accountFactory.createWithoutDb(tenant, user)
 
   mockFindRemoteActiveRoute.mockResolvedValue(null)
-  mockGetRemoteActiveAccount.mockResolvedValue(null)
+  mockFindRemoteActiveAccount.mockResolvedValue(null)
   mockGetUser.mockResolvedValue(null)
   mockGetRemoteAccount.mockResolvedValue(account)
   mockGetRemoteAccounts.mockResolvedValue([])

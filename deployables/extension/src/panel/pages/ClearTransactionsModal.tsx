@@ -15,7 +15,6 @@ export const ClearTransactionsModal = ({
   return (
     <Modal
       open={open}
-      closeLabel="Cancel"
       title="Clear transactions"
       description="Switching the Safe account will empty your current transaction bundle."
       onClose={onCancel}

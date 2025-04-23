@@ -76,12 +76,7 @@ type Props = {
   onClose(): void
 }
 const AwaitingSignatureModal = ({ isOpen, onClose }: Props) => (
-  <Modal
-    open={isOpen}
-    title="Sign the batch transaction"
-    closeLabel="Abort transaction"
-    onClose={onClose}
-  >
+  <Modal open={isOpen} title="Sign the batch transaction" onClose={onClose}>
     <div className="flex items-center gap-2">
       <Spinner /> Awaiting your signature ...
     </div>
