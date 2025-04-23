@@ -42,15 +42,11 @@ interface RemoveTransactionAction {
   }
 }
 
-interface RemoveTransactionAction {
-  type: 'REMOVE_TRANSACTION'
+interface ClearTransactionsAction {
+  type: 'CLEAR_TRANSACTIONS'
   payload: {
     id: string
   }
-}
-
-interface ClearTransactionsAction {
-  type: 'CLEAR_TRANSACTIONS'
 }
 
 export type Action =

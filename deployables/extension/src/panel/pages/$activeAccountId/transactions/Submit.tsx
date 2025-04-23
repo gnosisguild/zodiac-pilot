@@ -34,9 +34,12 @@ export const Submit = () => {
 
     setSubmitPending(false)
 
-    dispatch({
-      type: 'CLEAR_TRANSACTIONS',
-    })
+    if (transactions.length > 0) {
+      dispatch({
+        type: 'CLEAR_TRANSACTIONS',
+        payload: { id: transactions[0].id },
+      })
+    }
   })
 
   return initiator != null ? (

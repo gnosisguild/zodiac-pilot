@@ -87,7 +87,7 @@ const Transactions = () => {
   const reforkAndRerun = async () => {
     // remove all transactions from the store
     dispatch({
-      type: 'REMOVE_TRANSACTION',
+      type: 'CLEAR_TRANSACTIONS',
       payload: { id: transactions[0].id },
     })
 

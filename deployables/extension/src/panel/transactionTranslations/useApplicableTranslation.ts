@@ -40,7 +40,7 @@ export const useApplicableTranslation = (transactionId: string) => {
 
       // remove the transaction and all later ones from the store
       dispatch({
-        type: 'REMOVE_TRANSACTION',
+        type: 'CLEAR_TRANSACTIONS',
         payload: { id: transactionState.id },
       })
 
