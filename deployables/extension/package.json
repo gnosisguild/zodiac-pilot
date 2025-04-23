@@ -47,7 +47,7 @@
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
     "chalk": "5.4.1",
-    "esbuild": "0.25.2",
+    "esbuild": "0.25.3",
     "esbuild-style-plugin": "1.6.3",
     "eslint": "9.25.1",
     "ethers": "6.13.5",
