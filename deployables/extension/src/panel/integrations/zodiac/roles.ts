@@ -147,9 +147,6 @@ export const useRoleRecordLink = (props?: {
 }) => {
   const { rolesMod, roleKey } = props ?? {}
   const [record, setRecord] = useState<Record | undefined>(undefined)
-  const [ownerSafe, setOwnerSafe] = useState<PrefixedAddress | undefined>(
-    undefined,
-  )
 
   useEffect(() => {
     if (!rolesMod || !roleKey) return
@@ -174,24 +171,12 @@ export const useRoleRecordLink = (props?: {
     }
   }, [rolesMod, roleKey])
 
-  useEffect(() => {
-    if (!rolesMod) return
-
-    fetchOwnerSafe(rolesMod).then(setOwnerSafe)
-  }, [rolesMod])
-
-  const rolesAppUrl =
+  return (
     rolesMod &&
     roleKey &&
     record &&
     `${getRolesAppUrl()}/${rolesMod}/roles/${decodeRoleKey(roleKey)}/records/${record.id}/auth/${record.authToken}`
-
-  if (!rolesAppUrl) return null
-
-  // If owned by a Safe open as Safe app
-  return ownerSafe
-    ? `https://app.safe.global/apps/open?safe=${ownerSafe}&appUrl=${encodeURIComponent(rolesAppUrl)}`
-    : rolesAppUrl
+  )
 }
 
 /**
