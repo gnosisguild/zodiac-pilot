@@ -17,7 +17,7 @@ type LabeledAddress = {
   address: HexAddress
 }
 
-type Options = HexAddress[] | LabeledAddress[]
+type Options = (HexAddress | LabeledAddress)[]
 
 export type AddressSelectProps<Creatable extends boolean> = Omit<
   SelectProps<Option, Creatable>,

@@ -1,4 +1,4 @@
-import { authorizedAction } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth'
 import {
   AvatarInput,
   ConnectWalletButton,
@@ -9,9 +9,8 @@ import {
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
-import { createAccount, dbClient } from '@zodiac/db'
+import { createAccount, dbClient, getAccounts } from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -37,7 +36,27 @@ export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'New SafeAccount') },
 ]
 
-export const loader = (args: Route.LoaderArgs) => authkitLoader(args)
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      context: {
+        auth: { workOsUser, user, tenant },
+      },
+    }) => {
+      if (user == null) {
+        return { user: workOsUser, accounts: [] }
+      }
+
+      return {
+        user: workOsUser,
+        accounts: await getAccounts(dbClient(), {
+          tenantId: tenant.id,
+          userId: user.id,
+        }),
+      }
+    },
+  )
 
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
@@ -110,7 +129,10 @@ export const clientAction = async ({
   return redirectDocument(href(`/tokens/balances`))
 }
 
-const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
+const Start = ({
+  loaderData: { user, accounts },
+  actionData,
+}: Route.ComponentProps) => {
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(ChainEnum.ETH),
   )
@@ -131,7 +153,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
       </Page.Header>
 
       <Page.Main>
-        <OnlyConnectedWhenLoggedOut user={loaderData.user}>
+        <OnlyConnectedWhenLoggedOut user={user}>
           <Form context={{ connected }}>
             {actionData && (
               <Error title="Could not create account">{actionData.error}</Error>
@@ -164,6 +186,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
                   }
                   chainId={selectedChainId}
                   name="avatar"
+                  knownAccounts={accounts}
                 />
               </div>
             </div>
