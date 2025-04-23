@@ -1,5 +1,5 @@
+import { useStableHandler } from '@zodiac/hooks'
 import { PilotMessageType, type Message } from '@zodiac/messages'
-import { useStableHandler } from '@zodiac/ui'
 import { useEffect } from 'react'
 
 type ConnectChangeOnPilotEventOptions = {

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useStableHandler } from '@zodiac/hooks'
+import { useEffect } from 'react'
 import { type AllMessages } from './createTabMessageHandler'
 import {
   createWindowMessageHandler,
@@ -9,11 +10,7 @@ export function useExtensionMessageHandler<
   Type extends AllMessages['type'],
   Message = Extract<AllMessages, { type: Type }>,
 >(type: Type, onMessage: HandlerFn<Message>) {
-  const onMessageRef = useRef(onMessage)
-
-  useEffect(() => {
-    onMessageRef.current = onMessage
-  }, [onMessage])
+  const onMessageRef = useStableHandler(onMessage)
 
   useEffect(() => {
     const handleMessage = createWindowMessageHandler(type, (message) =>
@@ -25,5 +22,5 @@ export function useExtensionMessageHandler<
     return () => {
       window.removeEventListener('message', handleMessage)
     }
-  }, [type])
+  }, [onMessageRef, type])
 }

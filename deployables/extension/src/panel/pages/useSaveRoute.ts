@@ -9,13 +9,13 @@ import { toAccount } from '@/companion'
 import { saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
+import { useStableHandler } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   useTabMessageHandler,
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { useStableHandler } from '@zodiac/ui'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'

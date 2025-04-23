@@ -1,11 +1,12 @@
 {
-  "name": "@zodiac/messages",
+  "name": "@zodiac/hooks",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
   "packageManager": "pnpm@10.9.0",
   "scripts": {
+    "test": "vitest",
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc"
   },
@@ -16,20 +17,23 @@
     }
   },
   "dependencies": {
-    "@zodiac/chains": "workspace:*",
-    "@zodiac/db": "workspace:*",
-    "@zodiac/hooks": "workspace:*",
-    "@zodiac/schema": "workspace:*"
+    "react-router": "7.5.1"
   },
   "devDependencies": {
-    "@types/node": "22.14.1",
-    "@types/chrome": "0.0.316",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
     "@types/react": "19.1.2",
     "@zodiac/eslint-config": "workspace:*",
+    "@zodiac/form-data": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.25.1"
+    "eslint": "9.25.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "vitest": "3.1.2"
   },
   "peerDependencies": {
-    "react": "19.1.0"
+    "react": "19.1.0",
+    "react-router": "7.5.1"
   }
 }

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useStableHandler } from '@zodiac/hooks'
+import { useEffect } from 'react'
 import {
   createTabMessageHandler,
   type AllMessages,
@@ -9,11 +10,7 @@ export function useTabMessageHandler<
   Type extends AllMessages['type'],
   Message = Extract<AllMessages, { type: Type }>,
 >(type: Type | Type[], onMessage: HandlerFn<Message>) {
-  const onMessageRef = useRef(onMessage)
-
-  useEffect(() => {
-    onMessageRef.current = onMessage
-  }, [onMessage])
+  const onMessageRef = useStableHandler(onMessage)
 
   useEffect(() => {
     const handleMessage = createTabMessageHandler(type, (message, options) =>
@@ -25,5 +22,5 @@ export function useTabMessageHandler<
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage)
     }
-  }, [type])
+  }, [onMessageRef, type])
 }

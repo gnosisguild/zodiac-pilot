@@ -1,7 +1,7 @@
 import { getAccount, getActiveAccount } from '@/accounts'
 import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
-import { useStableHandler } from '@zodiac/ui'
+import { useStableHandler } from '@zodiac/hooks'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'

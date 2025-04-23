@@ -1,7 +1,7 @@
-import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import type { Account, Wallet } from '@zodiac/db/schema'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Address,
   Form,
@@ -136,7 +136,6 @@ const Delete = ({
 
       <Modal
         title="Confirm delete"
-        closeLabel="Cancel"
         onClose={() => setConfirmDelete(false)}
         open={confirmDelete}
         description="Are you sure you want to delete this account? This action cannot be undone."

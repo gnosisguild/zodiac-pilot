@@ -3,27 +3,23 @@ import { useWindowId } from '@/inject-bridge'
 import { CHAIN_NAME } from '@zodiac/chains'
 import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
 import { List, Pencil } from 'lucide-react'
-import { useSubmit } from 'react-router'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { useActivateAccount } from '../useActivateAccount'
 import { Intent } from './intents'
 
 type AccountSelectProps = {
   accounts: Account[]
+  onSelect: (accountId: string) => void
 }
 
-export const AccountSelect = ({ accounts }: AccountSelectProps) => {
+export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
   const account = useAccount()
   const windowId = useWindowId()
-  const submit = useSubmit()
+
   const [
     activateAccount,
     { isActivationPending, cancelActivation, proceedWithActivation },
-  ] = useActivateAccount({
-    onActivate(accountId) {
-      submit({ intent: Intent.ActivateAccount, accountId }, { method: 'POST' })
-    },
-  })
+  ] = useActivateAccount({ onActivate: onSelect })
 
   return (
     <>

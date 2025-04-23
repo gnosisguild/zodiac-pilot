@@ -1,5 +1,4 @@
 import { ConnectWallet } from '@/components'
-import { useIsPending } from '@/hooks'
 import { simulateTransactionBundle } from '@/simulation-server'
 import {
   jsonRpcProvider,
@@ -10,6 +9,7 @@ import {
 import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
 import { getBoolean } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,

@@ -27,6 +27,7 @@ import {
   Outlet,
   redirect,
   useLoaderData,
+  useSubmit,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
@@ -119,6 +120,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 const ActiveRoute = () => {
   const { route, account, accounts } = useLoaderData<typeof loader>()
+  const submit = useSubmit()
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -137,7 +139,15 @@ const ActiveRoute = () => {
           <Page>
             <Page.Header>
               <div className="my-2">
-                <AccountSelect accounts={accounts} />
+                <AccountSelect
+                  accounts={accounts}
+                  onSelect={(accountId) =>
+                    submit(
+                      { intent: Intent.ActivateAccount, accountId },
+                      { method: 'POST' },
+                    )
+                  }
+                />
               </div>
             </Page.Header>
 

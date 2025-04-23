@@ -8,7 +8,6 @@
       "@/test-utils": ["./test-utils/index.ts"],
       "@/components": ["./app/components/index.ts"],
       "@/utils": ["./app/utils/index.ts"],
-      "@/hooks": ["./app/hooks/index.ts"],
       "@/balances-client": ["./app/balances/client/index.ts"],
       "@/balances-server": ["./app/balances/server/index.ts"],
       "@/vnet-server": ["./app/vnet/server/index.ts"],

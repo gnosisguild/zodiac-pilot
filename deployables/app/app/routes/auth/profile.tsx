@@ -1,6 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth'
 import { Page } from '@/components'
-import { useAfterSubmit, useIsPending } from '@/hooks'
 import { Widgets } from '@/workOS/client'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
@@ -13,6 +12,7 @@ import {
   getWallets,
 } from '@zodiac/db'
 import { getHexString, getString, getUUID } from '@zodiac/form-data'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Address,
   AddressInput,
@@ -228,12 +228,7 @@ const AddWallet = () => {
         Add Wallet
       </SecondaryButton>
 
-      <Modal
-        open={open}
-        closeLabel="Cancel"
-        onClose={() => setOpen(false)}
-        title="Add Wallet"
-      >
+      <Modal open={open} onClose={() => setOpen(false)} title="Add Wallet">
         <Form intent={Intent.AddWallet}>
           {actionData != null && (
             <Error title="Wallet already exists">{actionData.error}</Error>

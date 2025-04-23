@@ -121,6 +121,9 @@ importers:
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
+      '@zodiac/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@zodiac/messages':
         specifier: workspace:*
         version: link:../../packages/messages
@@ -293,6 +296,9 @@ importers:
       '@zodiac/form-data':
         specifier: workspace:*
         version: link:../../packages/form-data
+      '@zodiac/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@zodiac/messages':
         specifier: workspace:*
         version: link:../../packages/messages
@@ -697,6 +703,9 @@ importers:
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
+      react-router:
+        specifier: 7.5.1
+        version: 7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@types/node':
         specifier: 22.14.1
@@ -711,6 +720,46 @@ importers:
         specifier: 9.25.1
         version: 9.25.1(jiti@2.4.2)
 
+  packages/hooks:
+    dependencies:
+      react-router:
+        specifier: 7.5.1
+        version: 7.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 6.6.3
+        version: 6.6.3
+      '@testing-library/react':
+        specifier: 16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@testing-library/user-event':
+        specifier: 14.6.1
+        version: 14.6.1(@testing-library/dom@10.4.0)
+      '@types/react':
+        specifier: 19.1.2
+        version: 19.1.2
+      '@zodiac/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@zodiac/form-data':
+        specifier: workspace:*
+        version: link:../form-data
+      '@zodiac/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript
+      eslint:
+        specifier: 9.25.1
+        version: 9.25.1(jiti@2.4.2)
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      vitest:
+        specifier: 3.1.2
+        version: 3.1.2(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.4.4)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.1)
+
   packages/messages:
     dependencies:
       '@zodiac/chains':
@@ -719,6 +768,9 @@ importers:
       '@zodiac/db':
         specifier: workspace:*
         version: link:../db
+      '@zodiac/hooks':
+        specifier: workspace:*
+        version: link:../hooks
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
