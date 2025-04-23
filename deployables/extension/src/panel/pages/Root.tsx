@@ -1,4 +1,4 @@
-import { getActiveAccount } from '@/accounts'
+import { findActiveAccount } from '@/accounts'
 import { getFeatures, ProvideCompanionAppContext } from '@/companion'
 import { sendMessageToCompanionApp } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
@@ -15,7 +15,7 @@ import { useDeleteRoute } from './useDeleteRoute'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const activeAccount = await getActiveAccount()
+  const activeAccount = await findActiveAccount()
 
   return {
     activeAccountId: activeAccount == null ? null : activeAccount.id,

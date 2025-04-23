@@ -1,4 +1,4 @@
-import { getAccounts, getActiveAccount } from '@/accounts'
+import { findActiveAccount, getAccounts } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useBridgeError } from '@/inject-bridge'
 import { sendMessageToCompanionApp } from '@/utils'
@@ -12,7 +12,7 @@ import { Plus } from 'lucide-react'
 import { redirect } from 'react-router'
 
 export const loader = async () => {
-  const activeAccount = await getActiveAccount()
+  const activeAccount = await findActiveAccount()
 
   if (activeAccount != null) {
     return redirect(`/${activeAccount.id}`)
