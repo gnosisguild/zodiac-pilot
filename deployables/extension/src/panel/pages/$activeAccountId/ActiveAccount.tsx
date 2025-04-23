@@ -21,12 +21,13 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { GhostLinkButton, Page } from '@zodiac/ui'
+import { GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
   Outlet,
   redirect,
   useLoaderData,
+  useNavigation,
   useSubmit,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
@@ -121,6 +122,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 const ActiveRoute = () => {
   const { route, account, accounts } = useLoaderData<typeof loader>()
   const submit = useSubmit()
+  const navigation = useNavigation()
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -133,51 +135,59 @@ const ActiveRoute = () => {
   )
 
   return (
-    <ProvideAccount account={account}>
-      <ProvideExecutionRoute route={route}>
-        <ProvideProvider>
-          <Page>
-            <Page.Header>
-              <div className="my-2">
-                <AccountSelect
-                  accounts={accounts}
-                  onSelect={(accountId) =>
-                    submit(
-                      { intent: Intent.ActivateAccount, accountId },
-                      { method: 'POST' },
-                    )
-                  }
-                />
+    <>
+      <ProvideAccount account={account}>
+        <ProvideExecutionRoute route={route}>
+          <ProvideProvider>
+            <Page>
+              <Page.Header>
+                <div className="my-2">
+                  <AccountSelect
+                    accounts={accounts}
+                    onSelect={(accountId) =>
+                      submit(
+                        { intent: Intent.ActivateAccount, accountId },
+                        { method: 'POST' },
+                      )
+                    }
+                  />
+                </div>
+              </Page.Header>
+
+              <div className="flex p-2">
+                <GhostLinkButton
+                  fluid
+                  openInNewWindow
+                  size="small"
+                  icon={ArrowUpFromLine}
+                  to={`${useCompanionAppUrl()}/tokens/send`}
+                >
+                  Send tokens
+                </GhostLinkButton>
+
+                <GhostLinkButton
+                  fluid
+                  openInNewWindow
+                  size="small"
+                  icon={Landmark}
+                  to={`${useCompanionAppUrl()}/tokens/balances`}
+                >
+                  View balances
+                </GhostLinkButton>
               </div>
-            </Page.Header>
 
-            <div className="flex p-2">
-              <GhostLinkButton
-                fluid
-                openInNewWindow
-                size="small"
-                icon={ArrowUpFromLine}
-                to={`${useCompanionAppUrl()}/tokens/send`}
-              >
-                Send tokens
-              </GhostLinkButton>
+              <Outlet />
+            </Page>
+          </ProvideProvider>
+        </ProvideExecutionRoute>
+      </ProvideAccount>
 
-              <GhostLinkButton
-                fluid
-                openInNewWindow
-                size="small"
-                icon={Landmark}
-                to={`${useCompanionAppUrl()}/tokens/balances`}
-              >
-                View balances
-              </GhostLinkButton>
-            </div>
-
-            <Outlet />
-          </Page>
-        </ProvideProvider>
-      </ProvideExecutionRoute>
-    </ProvideAccount>
+      <Modal open={navigation.state === 'loading'} title="Switching account...">
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      </Modal>
+    </>
   )
 }
 
