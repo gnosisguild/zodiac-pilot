@@ -33,7 +33,11 @@ type ForkUpdated = {
 
 type ProvideRoute = {
   type: CompanionResponseMessageType.PROVIDE_ROUTE
-  route: ExecutionRoute
+  /**
+   * can be null as an answer to a new account that does not yet
+   * define an active route
+   */
+  route: ExecutionRoute | null
 }
 
 type DeletedRoute = {

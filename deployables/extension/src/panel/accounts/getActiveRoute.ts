@@ -1,15 +1,17 @@
-import { getRemoteActiveRoute, type FetchOptions } from '@/companion'
-import { findRoute } from '@/execution-routes'
+import type { FetchOptions } from '@/companion'
+import { invariant } from '@epic-web/invariant'
+import { findActiveRoute } from './findActiveRoute'
 
 export const getActiveRoute = async (
   accountId: string,
   options: FetchOptions = {},
 ) => {
-  const route = await findRoute(accountId)
+  const activeRoute = await findActiveRoute(accountId, options)
 
-  if (route != null) {
-    return route
-  }
+  invariant(
+    activeRoute != null,
+    `Could not find active route for account with id "${accountId}"`,
+  )
 
-  return getRemoteActiveRoute(accountId, options)
+  return activeRoute
 }

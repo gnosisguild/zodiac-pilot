@@ -1,4 +1,5 @@
 export { editAccount } from './editAccount'
+export { findActiveRoute } from './findActiveRoute'
 export { getAccount } from './getAccount'
 export { getAccounts } from './getAccounts'
 export { getActiveAccount } from './getActiveAccount'

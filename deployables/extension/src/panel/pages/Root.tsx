@@ -55,9 +55,9 @@ const Root = () => {
           open={saveOptions.isUpdatePending}
           onCancel={saveOptions.cancelUpdate}
           onAccept={() => {
-            saveOptions.saveUpdate().then((updatedRoute) => {
+            saveOptions.saveUpdate().then((updatedAccount) => {
               navigate(
-                `/${updatedRoute.id}/clear-transactions/${updatedRoute.id}`,
+                `/${updatedAccount.id}/clear-transactions/${updatedAccount.id}`,
               )
             })
           }}

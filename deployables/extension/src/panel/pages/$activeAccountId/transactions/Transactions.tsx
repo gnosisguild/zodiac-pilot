@@ -169,7 +169,7 @@ const Transactions = () => {
       </Page.Content>
 
       <Page.Footer>
-        {!route.initiator && pilotIsReady && (
+        {(route == null || route.initiator == null) && pilotIsReady && (
           <CopyToClipboard
             data={transactions.map((txState) => txState.transaction)}
             disabled={transactions.length === 0}

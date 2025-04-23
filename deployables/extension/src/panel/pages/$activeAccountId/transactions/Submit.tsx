@@ -18,7 +18,6 @@ export const Submit = () => {
   const account = useAccount()
   const route = useExecutionRoute()
   const dispatch = useDispatch()
-  const { initiator } = route
   const windowId = useWindowId()
 
   const transactions = useTransactions()
@@ -42,24 +41,28 @@ export const Submit = () => {
     }
   })
 
-  return initiator != null ? (
-    <>
-      <PrimaryLinkButton
-        fluid
-        openInNewWindow
-        to={`${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`}
-        disabled={transactions.length === 0}
-        onClick={() => setSubmitPending(true)}
-      >
-        Submit
-      </PrimaryLinkButton>
+  if (route != null && route.initiator != null) {
+    return (
+      <>
+        <PrimaryLinkButton
+          fluid
+          openInNewWindow
+          to={`${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`}
+          disabled={transactions.length === 0}
+          onClick={() => setSubmitPending(true)}
+        >
+          Submit
+        </PrimaryLinkButton>
 
-      <AwaitingSignatureModal
-        isOpen={submitPending}
-        onClose={() => setSubmitPending(false)}
-      />
-    </>
-  ) : (
+        <AwaitingSignatureModal
+          isOpen={submitPending}
+          onClose={() => setSubmitPending(false)}
+        />
+      </>
+    )
+  }
+
+  return (
     <Form context={{ accountId: account.id, windowId }}>
       <PrimaryButton fluid submit intent={Intent.EditAccount}>
         Complete route setup to submit

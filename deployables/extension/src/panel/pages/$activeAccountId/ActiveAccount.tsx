@@ -1,8 +1,8 @@
 import {
   editAccount,
+  findActiveRoute,
   getAccount,
   getAccounts,
-  getActiveRoute,
   saveActiveAccount,
 } from '@/accounts'
 import { ProvideAccount, useCompanionAppUrl } from '@/companion'
@@ -43,7 +43,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
-      getActiveRoute(activeAccountId, {
+      findActiveRoute(activeAccountId, {
         signal: request.signal,
       }),
     ])

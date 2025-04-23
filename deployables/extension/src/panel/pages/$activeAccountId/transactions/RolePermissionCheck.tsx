@@ -35,7 +35,11 @@ import {
 } from '../../../integrations/zodiac/roles'
 import { Translate } from './Translate'
 
-const extractRoles = (route: ExecutionRoute) => {
+const extractRoles = (route: ExecutionRoute | null) => {
+  if (route == null) {
+    return []
+  }
+
   return (
     route.waypoints?.flatMap((wp) => {
       if (
@@ -81,6 +85,10 @@ export const RolePermissionCheck = ({
   useEffect(() => {
     let canceled = false
     if (provider == null) {
+      return
+    }
+
+    if (route == null) {
       return
     }
 

@@ -8,11 +8,11 @@ export {
   ProvideCompanionAppContext,
   useCompanionAppUrl,
 } from './CompanionAppSupport'
+export { findRemoteActiveRoute } from './findRemoteActiveRoute'
 export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
 export { getRemoteActiveAccount } from './getRemoteActiveAccount'
-export { getRemoteActiveRoute } from './getRemoteActiveRoute'
 export { getUser } from './getUser'
 export { saveRemoteActiveAccount } from './saveRemoteActiveAccount'
 export { toAccount } from './toAccount'
