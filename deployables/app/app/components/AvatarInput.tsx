@@ -52,7 +52,8 @@ export const AvatarInput = ({
           ? knownAccounts.filter((account) => account.chainId === chainId)
           : data.map((address) => {
               const account = knownAccounts.find(
-                (account) => account.address === address,
+                (account) =>
+                  account.address === address && account.chainId === chainId,
               )
 
               if (account == null) {
