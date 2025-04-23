@@ -246,11 +246,7 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
             waypoints={waypoints}
           />
 
-          <Avatar
-            avatar={avatar}
-            initiator={initiator}
-            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-          />
+          <Avatar avatar={avatar} initiator={initiator} />
 
           <Form id={formId}>
             <Form.Actions>
@@ -328,10 +324,9 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
 type AvatarProps = {
   avatar: PrefixedAddress
   initiator?: PrefixedAddress
-  knownRoutes: ExecutionRoute[]
 }
 
-const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
+const Avatar = ({ initiator, avatar }: AvatarProps) => {
   return (
     <Form intent={Intent.UpdateAvatar}>
       {({ submit }) => (
@@ -342,7 +337,6 @@ const Avatar = ({ initiator, avatar, knownRoutes }: AvatarProps) => {
           chainId={getChainId(avatar)}
           name="avatar"
           defaultValue={avatar}
-          knownRoutes={knownRoutes}
           onChange={submit}
         />
       )}

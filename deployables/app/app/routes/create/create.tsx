@@ -1,17 +1,22 @@
-import { authorizedAction } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth'
 import {
   AvatarInput,
   ConnectWalletButton,
   OnlyConnectedWhenLoggedOut,
   Page,
+  useConnected,
 } from '@/components'
 import { useIsPending } from '@/hooks'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
-import { createAccount, dbClient } from '@zodiac/db'
-import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
+import { createAccount, dbClient, getAccounts } from '@zodiac/db'
+import {
+  getBoolean,
+  getHexString,
+  getInt,
+  getOptionalString,
+} from '@zodiac/form-data'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   createBlankRoute,
@@ -19,7 +24,7 @@ import {
   updateChainId,
   updateLabel,
 } from '@zodiac/modules'
-import { isHexAddress, type ExecutionRoute } from '@zodiac/schema'
+import { isHexAddress } from '@zodiac/schema'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
@@ -31,26 +36,27 @@ export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'New SafeAccount') },
 ]
 
-export const loader = (args: Route.LoaderArgs) => authkitLoader(args)
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      context: {
+        auth: { workOsUser, user, tenant },
+      },
+    }) => {
+      if (user == null) {
+        return { user: workOsUser, accounts: [] }
+      }
 
-export const clientLoader = async ({
-  serverLoader,
-}: Route.ClientLoaderArgs) => {
-  const { promise, resolve } = Promise.withResolvers<ExecutionRoute[]>()
-
-  const { user } = await serverLoader()
-
-  companionRequest(
-    {
-      type: CompanionAppMessageType.REQUEST_ROUTES,
+      return {
+        user: workOsUser,
+        accounts: await getAccounts(dbClient(), {
+          tenantId: tenant.id,
+          userId: user.id,
+        }),
+      }
     },
-    (response) => resolve(response.routes),
   )
-
-  return { routes: await promise, user }
-}
-
-clientLoader.hydrate = true as const
 
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
@@ -81,11 +87,13 @@ export const action = (args: Route.ActionArgs) =>
 
       if (user != null) {
         try {
-          await createAccount(dbClient(), tenant, user, {
+          const account = await createAccount(dbClient(), tenant, user, {
             label,
             chainId,
             address: avatar,
           })
+
+          return { account, route }
         } catch {
           return { error: 'An account with this address already exists.' }
         }
@@ -96,31 +104,40 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 export const clientAction = async ({
+  request,
   serverAction,
 }: Route.ClientActionArgs) => {
-  const { route, error } = await serverAction()
+  const data = await request.clone().formData()
+
+  const { route, error, account } = await serverAction()
 
   if (error != null) {
     return { error }
   }
 
-  const { promise, resolve } = Promise.withResolvers<void>()
+  if (getBoolean(data, 'connected')) {
+    const { promise, resolve } = Promise.withResolvers<void>()
 
-  companionRequest(
-    { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route },
-    () => resolve(),
-  )
+    companionRequest(
+      { type: CompanionAppMessageType.SAVE_AND_LAUNCH, data: route, account },
+      () => resolve(),
+    )
 
-  await promise
+    await promise
+  }
 
   return redirectDocument(href(`/tokens/balances`))
 }
 
-const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
+const Start = ({
+  loaderData: { user, accounts },
+  actionData,
+}: Route.ComponentProps) => {
   const [selectedChainId, setSelectedChainId] = useState<ChainId>(
     verifyChainId(ChainEnum.ETH),
   )
   const { address } = useAccount()
+  const connected = useConnected()
 
   return (
     <Page>
@@ -136,8 +153,8 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
       </Page.Header>
 
       <Page.Main>
-        <OnlyConnectedWhenLoggedOut user={loaderData.user}>
-          <Form>
+        <OnlyConnectedWhenLoggedOut user={user}>
+          <Form context={{ connected }}>
             {actionData && (
               <Error title="Could not create account">{actionData.error}</Error>
             )}
@@ -169,7 +186,7 @@ const Start = ({ loaderData, actionData }: Route.ComponentProps) => {
                   }
                   chainId={selectedChainId}
                   name="avatar"
-                  knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+                  knownAccounts={accounts}
                 />
               </div>
             </div>

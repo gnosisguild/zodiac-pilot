@@ -5,7 +5,7 @@ import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
 import { List, Pencil } from 'lucide-react'
 import { useSubmit } from 'react-router'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
-import { useLaunchRoute } from '../useLaunchRoute'
+import { useActivateAccount } from '../useActivateAccount'
 import { Intent } from './intents'
 
 type AccountSelectProps = {
@@ -16,15 +16,14 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
   const account = useAccount()
   const windowId = useWindowId()
   const submit = useSubmit()
-  const [launchRoute, { isLaunchPending, cancelLaunch, proceedWithLaunch }] =
-    useLaunchRoute({
-      onLaunch(accountId) {
-        submit(
-          { intent: Intent.ActivateAccount, accountId },
-          { method: 'POST' },
-        )
-      },
-    })
+  const [
+    activateAccount,
+    { isActivationPending, cancelActivation, proceedWithActivation },
+  ] = useActivateAccount({
+    onActivate(accountId) {
+      submit({ intent: Intent.ActivateAccount, accountId }, { method: 'POST' })
+    },
+  })
 
   return (
     <>
@@ -43,7 +42,7 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
               return
             }
 
-            launchRoute(option.value)
+            activateAccount(option.value)
           }}
           value={{ value: account.id }}
           options={accounts.map((account) => ({ value: account.id }))}
@@ -92,9 +91,9 @@ export const AccountSelect = ({ accounts }: AccountSelectProps) => {
       </div>
 
       <ClearTransactionsModal
-        open={isLaunchPending}
-        onCancel={cancelLaunch}
-        onAccept={proceedWithLaunch}
+        open={isActivationPending}
+        onCancel={cancelActivation}
+        onAccept={proceedWithActivation}
       />
     </>
   )

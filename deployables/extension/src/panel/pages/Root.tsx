@@ -27,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const Root = () => {
   const { activeAccountId, companionAppUrl, features } =
     useLoaderData<typeof loader>()
-  const [saveOptions, saveAndLaunchOptions] = useSaveRoute(activeAccountId, {
+  const [saveOptions, saveAndActivateOptions] = useSaveRoute(activeAccountId, {
     onSave: (route, tabId) => {
       sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
@@ -46,9 +46,9 @@ const Root = () => {
         <Outlet />
 
         <ClearTransactionsModal
-          open={saveAndLaunchOptions.isLaunchPending}
-          onCancel={saveAndLaunchOptions.cancelLaunch}
-          onAccept={saveAndLaunchOptions.proceedWithLaunch}
+          open={saveAndActivateOptions.isActivationPending}
+          onCancel={saveAndActivateOptions.cancelActivation}
+          onAccept={saveAndActivateOptions.proceedWithActivation}
         />
 
         <ClearTransactionsModal

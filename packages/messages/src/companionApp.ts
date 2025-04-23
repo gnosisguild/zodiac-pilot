@@ -1,3 +1,4 @@
+import type { Account } from '@zodiac/db/schema'
 import type { ExecutionRoute } from '@zodiac/schema'
 
 export enum CompanionAppMessageType {
@@ -50,6 +51,7 @@ type CompanionAppRequestRouteMessage = {
 
 type CompanionAppSaveAndLaunchMessage = {
   type: CompanionAppMessageType.SAVE_AND_LAUNCH
+  account?: Account
   data: ExecutionRoute
 }
 

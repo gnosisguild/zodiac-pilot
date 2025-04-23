@@ -12,13 +12,23 @@ import {
 import type { ExecutionRoute } from '@/types'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { Account } from '@zodiac/db/schema'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   type CompanionAppMessage,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { expectRouteToBe, randomPrefixedAddress } from '@zodiac/test-utils'
+import {
+  createMockExecutionRoute,
+  expectRouteToBe,
+  randomPrefixedAddress,
+} from '@zodiac/test-utils'
 import type { MockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -278,6 +288,39 @@ describe('Root', () => {
           `/${currentRoute.id}/clear-transactions/${currentRoute.id}`,
         )
       })
+    })
+  })
+
+  describe('Save and launch', () => {
+    const mockIncomingAccountLaunch = async (
+      { route, account }: { route: ExecutionRoute; account?: Account },
+      tab: MockTab = createMockTab(),
+    ) => {
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+          data: route,
+          account,
+        },
+        { id: chromeMock.runtime.id, tab },
+        vi.fn(),
+      )
+    }
+
+    it('is possible to save and launch a remote account', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      const { mockedTab } = await render('/')
+
+      mockIncomingAccountLaunch(
+        { route: createMockExecutionRoute(), account },
+        mockedTab,
+      )
+
+      await expectRouteToBe(`/${account.id}/transactions`)
     })
   })
 

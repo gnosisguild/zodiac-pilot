@@ -7,16 +7,16 @@ import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 
 type OnLaunchOptions = {
-  onLaunch?: (routeId: string, tabId?: number) => void
+  onActivate?: (accountId: string, tabId?: number) => void
 }
 
-export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
+export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
   const [pendingAccountId, setPendingAccountId] = useState<string | null>(null)
   const transactions = useTransactions()
-  const onLaunchRef = useStableHandler(onLaunch)
+  const onActivateRef = useStableHandler(onActivate)
 
-  const launchRoute = useCallback(
+  const activateAccount = useCallback(
     async (accountId: string, tabId?: number) => {
       const activeAccount = await getActiveAccount()
 
@@ -34,26 +34,26 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
         }
       }
 
-      if (onLaunchRef.current != null) {
-        onLaunchRef.current(accountId, tabId)
+      if (onActivateRef.current != null) {
+        onActivateRef.current(accountId, tabId)
       }
 
       navigate(`/${accountId}`)
     },
-    [onLaunchRef, transactions.length, navigate],
+    [onActivateRef, transactions.length, navigate],
   )
 
-  const cancelLaunch = useCallback(() => setPendingAccountId(null), [])
+  const cancelActivation = useCallback(() => setPendingAccountId(null), [])
 
-  const proceedWithLaunch = useCallback(async () => {
+  const proceedWithActivation = useCallback(async () => {
     const activeAccount = await getActiveAccount()
 
     setPendingAccountId(null)
 
     invariant(pendingAccountId != null, 'No route launch was pending')
 
-    if (onLaunchRef.current != null) {
-      onLaunchRef.current(pendingAccountId)
+    if (onActivateRef.current != null) {
+      onActivateRef.current(pendingAccountId)
     }
 
     if (activeAccount == null) {
@@ -61,14 +61,14 @@ export const useLaunchRoute = ({ onLaunch }: OnLaunchOptions = {}) => {
     } else {
       navigate(`/${activeAccount.id}/clear-transactions/${pendingAccountId}`)
     }
-  }, [navigate, onLaunchRef, pendingAccountId])
+  }, [navigate, onActivateRef, pendingAccountId])
 
   return [
-    launchRoute,
+    activateAccount,
     {
-      isLaunchPending: pendingAccountId != null,
-      cancelLaunch,
-      proceedWithLaunch,
+      isActivationPending: pendingAccountId != null,
+      cancelActivation,
+      proceedWithActivation,
     },
   ] as const
 }

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@zodiac/chains": "workspace:*",
+    "@zodiac/db": "workspace:*",
     "@zodiac/schema": "workspace:*"
   },
   "devDependencies": {
