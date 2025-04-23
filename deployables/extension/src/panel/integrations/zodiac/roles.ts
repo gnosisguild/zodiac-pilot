@@ -1,17 +1,8 @@
-import { isSafeAccount } from '@/safe'
-import { invariant } from '@epic-web/invariant'
-import { RPC } from '@zodiac/chains'
 import { getRolesAppUrl } from '@zodiac/env'
 import { decodeRoleKey } from '@zodiac/modules'
 import { jsonStringify, type MetaTransactionRequest } from '@zodiac/schema'
 import { useEffect, useState } from 'react'
-import {
-  prefixAddress,
-  splitPrefixedAddress,
-  type Address,
-  type PrefixedAddress,
-} from 'ser-kit'
-import { createPublicClient, http } from 'viem'
+import { type PrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import { getStorageEntry, saveStorageEntry } from '../../utils'
 
@@ -221,49 +212,3 @@ type RecordCallsQueueEntry = {
 }
 
 const recordCallsQueue = new Map<string, RecordCallsQueueEntry>()
-
-/**
- * Fetch the owner of the given rolesMod.
- * Returns undefined if the rolesMod is not a Safe.
- *
- * This function is memoized to avoid unnecessary RPC calls.
- */
-async function fetchOwnerSafe(
-  rolesMod: PrefixedAddress,
-): Promise<PrefixedAddress | undefined> {
-  if (ownerSafeCache.has(rolesMod)) {
-    return ownerSafeCache.get(rolesMod)
-  }
-
-  const [chain, address] = splitPrefixedAddress(rolesMod)
-  invariant(chain, 'Invalid rolesMod')
-  const rpc = RPC[chain]
-  const publicClient = createPublicClient({
-    transport: http(rpc),
-  })
-  const owner = (await publicClient.readContract({
-    address,
-    abi: [
-      {
-        inputs: [],
-        name: 'owner',
-        outputs: [
-          {
-            internalType: 'address',
-            name: '',
-            type: 'address',
-          },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-      },
-    ] as const,
-    functionName: 'owner',
-  })) as Address
-  const result = (await isSafeAccount(chain, owner))
-    ? prefixAddress(chain, owner)
-    : undefined
-  ownerSafeCache.set(rolesMod, result)
-  return result
-}
-const ownerSafeCache = new Map<PrefixedAddress, PrefixedAddress | undefined>()
