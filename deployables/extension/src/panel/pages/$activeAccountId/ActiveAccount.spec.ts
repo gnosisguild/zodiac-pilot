@@ -17,6 +17,7 @@ import userEvent from '@testing-library/user-event'
 import { toExecutionRoute } from '@zodiac/db'
 import {
   accountFactory,
+  routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
@@ -27,7 +28,7 @@ import {
   type CompanionResponseMessage,
 } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
-import { createMockWaypoints, expectRouteToBe } from '@zodiac/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -86,9 +87,10 @@ describe('Active Account', () => {
       const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
+      const route = routeFactory.createWithoutDb(account, wallet)
 
       mockFindRemoteActiveRoute.mockResolvedValue(
-        toExecutionRoute({ account, wallet, waypoints: createMockWaypoints() }),
+        toExecutionRoute({ account, wallet, route }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)
       mockGetRemoteAccounts.mockResolvedValue([account])
