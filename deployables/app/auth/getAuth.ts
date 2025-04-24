@@ -65,6 +65,31 @@ export const getAuth = <Params>(
     { request, params: {}, context: {} },
     async ({ auth }) => {
       if (auth.user == null) {
+        if (options && options.hasAccess != null) {
+          invariantResponse(
+            options.ensureSignedIn == null || options.ensureSignedIn === false,
+            'User must be signed in.',
+          )
+
+          const hasAccess = await Promise.resolve(
+            options.hasAccess({
+              ...auth,
+              user: null,
+              tenant: null,
+              workOsUser: null,
+              workOsOrganization: null,
+              request: request.clone(),
+              params,
+            }),
+          )
+
+          if (!hasAccess) {
+            reject(new Response('User has no access', { status: 401 }))
+
+            return
+          }
+        }
+
         resolve({
           ...auth,
           tenant: null,
@@ -94,23 +119,29 @@ export const getAuth = <Params>(
         )
 
         if (options && options.hasAccess != null) {
-          invariantResponse(
-            await Promise.resolve(
-              options.hasAccess({
-                ...auth,
-                user,
-                tenant,
-                workOsUser: auth.user,
-                workOsOrganization,
-                request: request.clone(),
-                params,
-              }),
-            ),
-            'User has no access',
-            {
-              status: 401,
-            },
+          if (options.ensureSignedIn && tenant == null) {
+            reject(new Response('User has no access', { status: 401 }))
+
+            return
+          }
+
+          const hasAccess = await Promise.resolve(
+            options.hasAccess({
+              ...auth,
+              user,
+              tenant,
+              workOsUser: auth.user,
+              workOsOrganization,
+              request: request.clone(),
+              params,
+            }),
           )
+
+          if (!hasAccess) {
+            reject(new Response('User has no access', { status: 401 }))
+
+            return
+          }
         }
 
         resolve({

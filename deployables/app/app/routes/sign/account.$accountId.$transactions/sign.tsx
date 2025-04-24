@@ -75,15 +75,10 @@ export const loader = async (args: Route.LoaderArgs) =>
         accountId,
       )
 
-      invariantResponse(
-        route.waypoints != null,
-        'Route does not provide any waypoints',
-      )
-
       const executionRoute = toExecutionRoute({
         wallet: route.wallet,
         account,
-        waypoints: route.waypoints,
+        route,
       })
 
       const [plan, queryRoutesResult, permissionCheckResult] =
@@ -173,15 +168,10 @@ export const action = async (args: Route.ActionArgs) =>
         accountId,
       )
 
-      invariantResponse(
-        route.waypoints != null,
-        'Route does not specify any waypoints',
-      )
-
       const executionRoute = toExecutionRoute({
         wallet: route.wallet,
         account,
-        waypoints: route.waypoints,
+        route,
       })
 
       const data = await request.formData()

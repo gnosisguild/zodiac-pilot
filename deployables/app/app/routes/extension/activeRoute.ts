@@ -37,14 +37,10 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const { account, route } = activeRoute
 
-      if (route.waypoints == null) {
-        return null
-      }
-
       return toExecutionRoute({
         wallet: route.wallet,
         account: account,
-        waypoints: route.waypoints,
+        route,
       })
     },
     {

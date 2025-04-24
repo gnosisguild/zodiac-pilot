@@ -2,7 +2,7 @@ import { simulateTransactionBundle } from '@/simulation-server'
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
-import { activateRoute, dbClient } from '@zodiac/db'
+import { activateRoute, dbClient, toExecutionRoute } from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -11,21 +11,13 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
-import {
-  createMockExecutionRoute,
-  createMockSerRoute,
-  createMockTransaction,
-  randomAddress,
-  randomPrefixedAddress,
-} from '@zodiac/test-utils'
+import { createMockTransaction, randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import {
   checkPermissions,
   PermissionViolation,
   planExecution,
-  prefixAddress,
   queryRoutes,
-  unprefixAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, useConnectorClient } from 'wagmi'
@@ -73,7 +65,7 @@ const mockSimulateTransactionBundle = vi.mocked(simulateTransactionBundle)
 
 describe('Sign', () => {
   const chainId = Chain.ETH
-  const initiator = randomPrefixedAddress({ chainId: undefined })
+  const initiator = randomAddress()
 
   beforeEach(() => {
     // @ts-expect-error We only needs an empty array
@@ -81,7 +73,7 @@ describe('Sign', () => {
 
     // @ts-expect-error We really only want to use this subset
     mockUseAccount.mockReturnValue({
-      address: unprefixAddress(initiator),
+      address: initiator,
       chainId,
     })
 
@@ -104,11 +96,11 @@ describe('Sign', () => {
     })
 
     describe('Unknown route', () => {
-      it.only('shows a warning to the user', async () => {
+      it('shows a warning to the user', async () => {
         const tenant = await tenantFactory.create()
         const user = await userFactory.create(tenant)
         const account = await accountFactory.create(tenant, user)
-        const wallet = await walletFactory.create(user)
+        const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
 
         await activateRoute(dbClient(), tenant, user, route)
@@ -135,32 +127,48 @@ describe('Sign', () => {
 
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot query routes', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await expect(
           render(
-            href('/submit/:route/:transactions', {
-              route: encode(currentRoute),
+            href('/submit/account/:accountId/:transactions', {
+              accountId: account.id,
               transactions: encode([transaction]),
             }),
+            { tenant, user },
           ),
         ).resolves.not.toThrow()
       })
 
       it('shows a warning when ser is unavailable', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
+          href('/submit/account/:accountId/:transactions', {
+            accountId: account.id,
             transactions: encode([transaction]),
           }),
+          { tenant, user },
         )
 
         expect(
@@ -173,16 +181,24 @@ describe('Sign', () => {
       })
 
       it('enables the "Sign" button when ser is unavailable', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
+          href('/submit/account/:accountId/:transactions', {
+            accountId: account.id,
             transactions: encode([transaction]),
           }),
+          { tenant, user },
         )
 
         expect(
@@ -193,27 +209,36 @@ describe('Sign', () => {
   })
 
   describe('Permissions', () => {
-    const route = createMockSerRoute({ initiator })
-
     beforeEach(() => {
       // @ts-expect-error We only needs an empty array
       vi.mocked(planExecution).mockResolvedValue([])
-      mockQueryRoutes.mockResolvedValue([route])
     })
 
     it('shows the permission error', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
       const transaction = createMockTransaction()
 
+      mockQueryRoutes.mockResolvedValue([
+        toExecutionRoute({ wallet, account, route }),
+      ])
       mockCheckPermissions.mockResolvedValue({
         success: false,
         error: PermissionViolation.AllowanceExceeded,
       })
 
       await render(
-        href('/submit/:route/:transactions', {
-          route: encode(route),
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
           transactions: encode([transaction]),
         }),
+        { tenant, user },
       )
 
       expect(
@@ -223,32 +248,54 @@ describe('Sign', () => {
 
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot check permissions', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
+        mockQueryRoutes.mockResolvedValue([
+          toExecutionRoute({ wallet, account, route }),
+        ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await expect(
           render(
-            href('/submit/:route/:transactions', {
-              route: encode(currentRoute),
+            href('/submit/account/:accountId/:transactions', {
+              accountId: account.id,
               transactions: encode([transaction]),
             }),
+            { tenant, user },
           ),
         ).resolves.not.toThrow()
       })
 
       it('shows a warning when ser is unavailable', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
+        mockQueryRoutes.mockResolvedValue([
+          toExecutionRoute({ wallet, account, route }),
+        ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
+          href('/submit/account/:accountId/:transactions', {
+            accountId: account.id,
             transactions: encode([transaction]),
           }),
+          { tenant, user },
         )
 
         expect(
@@ -261,16 +308,27 @@ describe('Sign', () => {
       })
 
       it('enables the "Sign" button when ser is unavailable', async () => {
-        const currentRoute = createMockSerRoute({ initiator })
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+
+        await activateRoute(dbClient(), tenant, user, route)
+
         const transaction = createMockTransaction()
 
+        mockQueryRoutes.mockResolvedValue([
+          toExecutionRoute({ wallet, account, route }),
+        ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
-            route: encode(currentRoute),
+          href('/submit/account/:accountId/:transactions', {
+            accountId: account.id,
             transactions: encode([transaction]),
           }),
+          { tenant, user },
         )
 
         expect(
@@ -293,6 +351,14 @@ describe('Sign', () => {
     })
 
     it('does not revoke approvals by default', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
       mockSimulateTransactionBundle.mockResolvedValue({
         error: null,
         approvals: [
@@ -309,14 +375,11 @@ describe('Sign', () => {
       })
 
       await render(
-        href('/submit/:route/:transactions', {
-          route: encode(
-            createMockExecutionRoute({
-              initiator: prefixAddress(undefined, randomAddress()),
-            }),
-          ),
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
           transactions: encode([createMockTransaction()]),
         }),
+        { tenant, user },
       )
 
       expect(
