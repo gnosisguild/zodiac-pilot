@@ -196,7 +196,7 @@ export const RouteTable = pgTable(
       .notNull()
       .$type<UUID>()
       .references(() => AccountTable.id, { onDelete: 'cascade' }),
-    waypoints: json().$type<Waypoints>(),
+    waypoints: json().$type<Waypoints>().notNull(),
 
     ...tenantReference,
     ...createdTimestamp,

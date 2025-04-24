@@ -21,7 +21,12 @@ import {
   getString,
 } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { queryRoutes } from '@zodiac/modules'
+import {
+  createEoaStartingPoint,
+  createOwnsConnection,
+  createSafeWaypoint,
+  queryRoutes,
+} from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressInput,
@@ -308,7 +313,18 @@ const createRoute = async (
   const account = await getAccount(db, accountId)
 
   if (selectedRouteId == null) {
-    return baseCreateRoute(db, wallet, account)
+    return baseCreateRoute(db, wallet, account, {
+      waypoints: [
+        createEoaStartingPoint({ address: wallet.address }),
+        createSafeWaypoint({
+          chainId: account.chainId,
+          safe: account.address,
+          connection: createOwnsConnection(
+            prefixAddress(undefined, wallet.address),
+          ),
+        }),
+      ],
+    })
   }
 
   const { routes } = await queryRoutes(
