@@ -1,6 +1,6 @@
 import type { Account, Wallet } from '@zodiac/db/schema'
-import type { ExecutionRoute, Waypoints } from '@zodiac/schema'
-import { prefixAddress } from 'ser-kit'
+import type { Waypoints } from '@zodiac/schema'
+import { prefixAddress, type Route } from 'ser-kit'
 
 type ToExecutionRouteOptions = {
   wallet: Wallet
@@ -12,7 +12,7 @@ export const toExecutionRoute = ({
   wallet,
   account,
   waypoints,
-}: ToExecutionRouteOptions): ExecutionRoute => ({
+}: ToExecutionRouteOptions): Route => ({
   id: account.id,
   avatar: prefixAddress(account.chainId, account.address),
   initiator: prefixAddress(undefined, wallet.address),

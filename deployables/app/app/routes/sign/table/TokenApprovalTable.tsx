@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { type PrefixedAddress } from 'ser-kit'
-import { formatApprovalAmount } from '../helper'
+import { formatApprovalAmount } from './formatApprovalAmount'
 
 type TokenApprovalTableProps = {
   approvals: ApprovalTransaction[]

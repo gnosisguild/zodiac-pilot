@@ -54,11 +54,17 @@ export default [
       ]),
 
       ...prefix('/submit', [
-        layout('routes/submit/layout.tsx', [
-          index('routes/submit/index.tsx'),
+        layout('routes/sign/layout.tsx', [
+          index('routes/sign/index.tsx'),
+
+          route(
+            'account/:accountId/:transactions',
+            'routes/sign/account.$accountId.$transactions/sign.tsx',
+          ),
+
           route(
             ':route/:transactions',
-            'routes/submit/$route.$transactions/sign.tsx',
+            'routes/sign/$route.$transactions/sign.tsx',
           ),
         ]),
       ]),
