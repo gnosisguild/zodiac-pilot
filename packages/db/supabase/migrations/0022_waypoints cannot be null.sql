@@ -1,0 +1,1 @@
+ALTER TABLE "Route" ALTER COLUMN "waypoints" SET NOT NULL;

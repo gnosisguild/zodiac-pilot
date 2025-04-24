@@ -155,6 +155,13 @@
       "when": 1744275266786,
       "tag": "0021_remove tenant from wallet",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1745494529131,
+      "tag": "0022_waypoints cannot be null",
+      "breakpoints": true
     }
   ]
 }
