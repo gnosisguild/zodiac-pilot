@@ -22,7 +22,7 @@
     "@shazow/whatsabi": "0.21.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
-    "ethers": "6.13.5",
+    "ethers": "6.13.7",
     "evm-proxy-detection": "2.0.3",
     "nanoid": "5.1.5",
     "ser-kit": "3.7.0",
