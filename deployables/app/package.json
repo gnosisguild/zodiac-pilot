@@ -35,7 +35,7 @@
     "classnames": "2.5.1",
     "compare-versions": "6.1.1",
     "connectkit": "1.9.0",
-    "ethers": "6.13.5",
+    "ethers": "6.13.7",
     "highlight.js": "11.11.1",
     "isbot": "5.1.27",
     "lucide-react": "0.503.0",
