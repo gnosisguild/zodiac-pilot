@@ -818,8 +818,8 @@ importers:
         specifier: 6.13.7
         version: 6.13.7(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       evm-proxy-detection:
-        specifier: 2.0.3
-        version: 2.0.3(patch_hash=e0152836e6d32926586c6e42de2a576ec1d47551bbddcfca14a9ea6c77e1199d)
+        specifier: 2.1.0
+        version: 2.1.0(patch_hash=e0152836e6d32926586c6e42de2a576ec1d47551bbddcfca14a9ea6c77e1199d)
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
@@ -5843,8 +5843,8 @@ packages:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
 
-  evm-proxy-detection@2.0.3:
-    resolution: {integrity: sha512-knfA9fRzxdfiELyP+NX+02ANhgs/TQRbQ8rs8YlLYsK23Upfxt3NeXhdTmPPHtiaxAfWQsos8Aj7cSmo4SBIEQ==}
+  evm-proxy-detection@2.1.0:
+    resolution: {integrity: sha512-6mOJrYVYoKRsLgiyt07zK6iSorK1l8YH8J4/0TsA+UNwZdQJuRlrr2eJw+7h5X2V99qSJXMUsixAz7Z+Ttj2Pw==}
 
   evp_bytestokey@1.0.3:
     resolution: {integrity: sha512-/f2Go4TognH/KvCISP7OUsHn85hT9nUkxxA9BEWxFn+Oj9o8ZNLm/40hdlgSLyuOimsrTKLUMEorQexp/aPQeA==}
@@ -15127,7 +15127,7 @@ snapshots:
 
   events@3.3.0: {}
 
-  evm-proxy-detection@2.0.3(patch_hash=e0152836e6d32926586c6e42de2a576ec1d47551bbddcfca14a9ea6c77e1199d): {}
+  evm-proxy-detection@2.1.0(patch_hash=e0152836e6d32926586c6e42de2a576ec1d47551bbddcfca14a9ea6c77e1199d): {}
 
   evp_bytestokey@1.0.3:
     dependencies:
