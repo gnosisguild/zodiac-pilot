@@ -3,8 +3,8 @@ import { JsonRpcProvider } from 'ethers'
 
 export const jsonRpcProvider = (
   chainId: ChainId,
-  rpcAddress: string = RPC[chainId],
+  rpcAddress: URL = RPC[chainId],
 ) =>
-  new JsonRpcProvider(rpcAddress, chainId, {
+  new JsonRpcProvider(rpcAddress.toString(), chainId, {
     staticNetwork: true,
   })

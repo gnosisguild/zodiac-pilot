@@ -14,7 +14,7 @@ export const getReadOnlyProvider = (chainId: ChainId): JsonRpcProvider => {
     return readOnlyProviderCache.get(chainId)!
   }
 
-  const provider = new JsonRpcProvider(RPC[chainId], chainId, {
+  const provider = new JsonRpcProvider(RPC[chainId].toString(), chainId, {
     staticNetwork: true,
   })
   readOnlyProviderCache.set(chainId, provider)

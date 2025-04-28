@@ -25,32 +25,34 @@ export enum Chain {
   BERACHAIN = 80094,
 }
 
-export const RPC: Record<ChainId, string> = {
-  [Chain.ETH]: 'https://airlock.gnosisguild.org/api/v1/1/rpc',
-  [Chain.OETH]: 'https://airlock.gnosisguild.org/api/v1/10/rpc',
-  [Chain.GNO]: 'https://airlock.gnosisguild.org/api/v1/100/rpc',
-  [Chain.MATIC]: 'https://airlock.gnosisguild.org/api/v1/137/rpc',
-  [Chain.BASE]: 'https://airlock.gnosisguild.org/api/v1/8453/rpc',
-  [Chain.ARB1]: 'https://airlock.gnosisguild.org/api/v1/42161/rpc',
-  [Chain.AVAX]: 'https://airlock.gnosisguild.org/api/v1/43114/rpc',
-  [Chain.SEP]: 'https://airlock.gnosisguild.org/api/v1/11155111/rpc',
-  [Chain.CELO]: 'https://forno.celo.org',
-  [Chain.SONIC]: 'https://rpc.soniclabs.com',
-  [Chain.BERACHAIN]: 'https://rpc.berachain.com',
+const airlock = 'https://airlock.gnosisguild.org/api/v1'
+
+export const RPC: Record<ChainId, URL> = {
+  [Chain.ETH]: new URL('1/rpc', airlock),
+  [Chain.OETH]: new URL('10/rpc', airlock),
+  [Chain.GNO]: new URL('100/rpc', airlock),
+  [Chain.MATIC]: new URL('1337/rpc', airlock),
+  [Chain.BASE]: new URL('8453/rpc', airlock),
+  [Chain.ARB1]: new URL('42161/rpc', airlock),
+  [Chain.AVAX]: new URL('43114/rpc', airlock),
+  [Chain.SEP]: new URL('11155111/rpc', airlock),
+  [Chain.CELO]: new URL('https://forno.celo.org'),
+  [Chain.SONIC]: new URL('https://rpc.soniclabs.com'),
+  [Chain.BERACHAIN]: new URL('https://rpc.berachain.com'),
 }
 
-export const EXPLORER_URL: Record<ChainId, string> = {
-  [Chain.ETH]: 'https://etherscan.io',
-  [Chain.OETH]: 'https://optimistic.etherscan.io',
-  [Chain.GNO]: 'https://gnosisscan.io',
-  [Chain.MATIC]: 'https://polygonscan.com',
-  [Chain.BASE]: 'https://basescan.org',
-  [Chain.ARB1]: 'https://arbiscan.io',
-  [Chain.AVAX]: 'https://snowtrace.io',
-  [Chain.SEP]: 'https://sepolia.etherscan.io',
-  [Chain.CELO]: 'https://celoscan.io',
-  [Chain.SONIC]: 'https://sonicscan.org',
-  [Chain.BERACHAIN]: 'https://berascan.com',
+export const EXPLORER_URL: Record<ChainId, URL> = {
+  [Chain.ETH]: new URL('https://etherscan.io'),
+  [Chain.OETH]: new URL('https://optimistic.etherscan.io'),
+  [Chain.GNO]: new URL('https://gnosisscan.io'),
+  [Chain.MATIC]: new URL('https://polygonscan.com'),
+  [Chain.BASE]: new URL('https://basescan.org'),
+  [Chain.ARB1]: new URL('https://arbiscan.io'),
+  [Chain.AVAX]: new URL('https://snowtrace.io'),
+  [Chain.SEP]: new URL('https://sepolia.etherscan.io'),
+  [Chain.CELO]: new URL('https://celoscan.io'),
+  [Chain.SONIC]: new URL('https://sonicscan.org'),
+  [Chain.BERACHAIN]: new URL('https://berascan.com'),
 }
 
 export const CHAIN_PREFIX: Record<ChainId, string> = {

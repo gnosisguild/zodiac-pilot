@@ -12,6 +12,6 @@ export const initSafeProtocolKit = (
 ): Promise<SafeProtocolKit> =>
   SafeProtocolKit.init({
     // we must pass the RPC endpoint as a string. If we pass an EIP1193 provider, Safe will send eth_requestAccounts calls (which will fail)
-    provider: RPC[chainId],
+    provider: RPC[chainId].toString(),
     safeAddress,
   })

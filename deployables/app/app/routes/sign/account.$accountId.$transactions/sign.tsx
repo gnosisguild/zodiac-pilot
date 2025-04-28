@@ -17,7 +17,6 @@ import {
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
-import { waitForMultisigExecution } from '@zodiac/safe'
 import { isUUID } from '@zodiac/schema'
 import {
   Error,
@@ -339,40 +338,8 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
                 action.type === ExecutionActionType.PROPOSE_TRANSACTION,
             )
           ]
-        const txHash =
-          safeTxHash == null
-            ? state[
-                plan.findLastIndex(
-                  (action) =>
-                    action.type === ExecutionActionType.EXECUTE_TRANSACTION,
-                )
-              ]
-            : undefined
 
-        if (txHash) {
-          console.debug(
-            `Transaction batch has been submitted with transaction hash ${txHash}`,
-          )
-          const receipt =
-            await jsonRpcProvider(chainId).waitForTransaction(txHash)
-          console.debug(`Transaction ${txHash} has been executed`, receipt)
-          successToast({
-            title: 'Transaction batch has been executed',
-            message: (
-              <a
-                href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-                className="inline-flex items-center gap-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <SquareArrowOutUpRight size={16} />
-                View in block explorer
-              </a>
-            ),
-          })
-        }
-
-        if (safeTxHash) {
+        if (safeTxHash != null) {
           console.debug(
             `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
           )
@@ -399,25 +366,42 @@ const SubmitTransaction = ({ disabled = false }: SubmitTransactionProps) => {
               </a>
             ),
           })
-          // In case the other safe owners are quick enough to sign while the Pilot session is still open, we can show a toast with an execution confirmation
-          const txHash = await waitForMultisigExecution(chainId, safeTxHash)
-          console.debug(
-            `Proposed transaction batch with safeTxHash ${safeTxHash} has been confirmed and executed with transaction hash ${txHash}`,
-          )
-          successToast({
-            title: 'Proposed Safe transaction has been confirmed and executed',
-            message: (
-              <a
-                href={`${EXPLORER_URL[chainId]}/tx/${txHash}`}
-                className="inline-flex items-center gap-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <SquareArrowOutUpRight size={16} />
-                View in block explorer
-              </a>
-            ),
-          })
+        } else {
+          const txHash =
+            state[
+              plan.findLastIndex(
+                (action) =>
+                  action.type === ExecutionActionType.EXECUTE_TRANSACTION,
+              )
+            ]
+
+          if (txHash) {
+            console.debug(
+              `Transaction batch has been submitted with transaction hash ${txHash}`,
+            )
+            const receipt =
+              await jsonRpcProvider(chainId).waitForTransaction(txHash)
+
+            console.debug(`Transaction ${txHash} has been executed`, receipt)
+
+            successToast({
+              title: 'Transaction batch has been executed',
+              message: (
+                <a
+                  href={new URL(
+                    `tx/${txHash}`,
+                    EXPLORER_URL[chainId],
+                  ).toString()}
+                  className="inline-flex items-center gap-1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SquareArrowOutUpRight size={16} />
+                  View in block explorer
+                </a>
+              ),
+            })
+          }
         }
 
         window.postMessage({
