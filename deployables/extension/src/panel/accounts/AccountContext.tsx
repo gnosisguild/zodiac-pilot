@@ -1,6 +1,6 @@
-import type { TaggedAccount } from '@/accounts'
 import { invariant } from '@epic-web/invariant'
 import { createContext, useContext, type PropsWithChildren } from 'react'
+import type { TaggedAccount } from './TaggedAccount'
 
 const Context = createContext<TaggedAccount | null>(null)
 
