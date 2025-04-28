@@ -1,8 +1,3 @@
-export {
-  ProvideAccount,
-  useAccount,
-  type PartialAccount as Account,
-} from './AccountContext'
 export type { FetchOptions } from './api'
 export {
   ProvideCompanionAppContext,
@@ -14,5 +9,6 @@ export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
 export { getUser } from './getUser'
+export type { PartialAccount as Account } from './PartialAccount'
 export { saveRemoteActiveAccount } from './saveRemoteActiveAccount'
 export { toAccount } from './toAccount'

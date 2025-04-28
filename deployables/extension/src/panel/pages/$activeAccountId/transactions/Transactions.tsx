@@ -1,5 +1,5 @@
-import { editAccount, getAccount } from '@/accounts'
-import { getUser, useAccount } from '@/companion'
+import { editAccount, getAccount, useAccount } from '@/accounts'
+import { getUser } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'

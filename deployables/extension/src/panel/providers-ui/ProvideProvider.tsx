@@ -1,4 +1,4 @@
-import { useAccount } from '@/companion'
+import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { Eip1193Provider, ExecutionRoute } from '@/types'

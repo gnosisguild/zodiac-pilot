@@ -1,4 +1,5 @@
-import { useAccount, type Account } from '@/companion'
+import { useAccount } from '@/accounts'
+import { type Account } from '@/companion'
 import { useWindowId } from '@/inject-bridge'
 import { CHAIN_NAME } from '@zodiac/chains'
 import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'

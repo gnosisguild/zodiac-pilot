@@ -1,4 +1,4 @@
-import { useAccount } from '@/companion'
+import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import type { TransactionState } from '@/state'
 import type { ExecutionRoute } from '@/types'

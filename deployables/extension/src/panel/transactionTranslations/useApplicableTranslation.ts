@@ -1,4 +1,4 @@
-import { useAccount } from '@/companion'
+import { useAccount } from '@/accounts'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import { type TransactionState, useDispatch, useTransactions } from '@/state'

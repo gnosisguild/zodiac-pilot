@@ -3,9 +3,10 @@ import {
   findActiveRoute,
   getAccount,
   getAccounts,
+  ProvideAccount,
   saveActiveAccount,
 } from '@/accounts'
-import { ProvideAccount, useCompanionAppUrl } from '@/companion'
+import { useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'

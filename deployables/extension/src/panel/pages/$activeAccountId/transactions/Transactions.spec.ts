@@ -1,3 +1,4 @@
+import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
 import {
   chromeMock,
   createTransaction,
@@ -8,8 +9,19 @@ import {
 } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { toExecutionRoute } from '@zodiac/db'
+import {
+  accountFactory,
+  routeFactory,
+  tenantFactory,
+  userFactory,
+  walletFactory,
+} from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
+const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
 
 describe('Transactions', () => {
   describe('Recording state', () => {
@@ -39,49 +51,126 @@ describe('Transactions', () => {
   })
 
   describe('Submit', () => {
-    it('disables the submit button when there are no transactions', async () => {
-      await mockRoute({ id: 'test-route', initiator: randomPrefixedAddress() })
+    describe('Logged out', () => {
+      it('disables the submit button when there are no transactions', async () => {
+        await mockRoute({
+          id: 'test-route',
+          initiator: randomPrefixedAddress(),
+        })
 
-      await render('/test-route/transactions')
+        await render('/test-route/transactions')
 
-      expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+      })
+
+      it('encodes the route and transaction state into the target of the submit button', async () => {
+        const route = await mockRoute({
+          id: 'test-route',
+          initiator: randomPrefixedAddress(),
+        })
+        const transaction = createTransaction()
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render('/test-route/transactions', {
+          initialState: [transaction],
+        })
+
+        expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
+          'href',
+          `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
+        )
+      })
+
+      it('offers a link to complete the route setup when no initiator is defined', async () => {
+        const route = await mockRoute({
+          id: 'test-route',
+        })
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render('/test-route/transactions')
+
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Complete route setup to submit',
+          }),
+        )
+
+        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+          active: true,
+          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        })
+      })
     })
 
-    it('encodes the route and transaction state into the target of the submit button', async () => {
-      const route = await mockRoute({
-        id: 'test-route',
-        initiator: randomPrefixedAddress(),
-      })
-      const transaction = createTransaction()
+    describe('Logged in', () => {
+      it('disables the submit button when there are no transactions', async () => {
+        const tenant = tenantFactory.createWithoutDb()
+        const user = userFactory.createWithoutDb(tenant)
+        const wallet = walletFactory.createWithoutDb(user)
+        const account = accountFactory.createWithoutDb(tenant, user)
 
-      mockCompanionAppUrl('http://localhost')
+        const route = routeFactory.createWithoutDb(account, wallet)
 
-      await render('/test-route/transactions', {
-        initialState: [transaction],
-      })
+        mockGetRemoteAccount.mockResolvedValue(account)
+        mockFindRemoteActiveRoute.mockResolvedValue(
+          toExecutionRoute({ route, wallet, account }),
+        )
 
-      expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
-        'href',
-        `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
-      )
-    })
+        await render(`/${account.id}/transactions`)
 
-    it('offers a link to complete the route setup when no initiator is defined', async () => {
-      const route = await mockRoute({
-        id: 'test-route',
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
       })
 
-      mockCompanionAppUrl('http://localhost')
+      it('links to the logged in sign in page', async () => {
+        const tenant = tenantFactory.createWithoutDb()
+        const user = userFactory.createWithoutDb(tenant)
+        const wallet = walletFactory.createWithoutDb(user)
+        const account = accountFactory.createWithoutDb(tenant, user)
 
-      await render('/test-route/transactions')
+        const route = routeFactory.createWithoutDb(account, wallet)
 
-      await userEvent.click(
-        screen.getByRole('button', { name: 'Complete route setup to submit' }),
-      )
+        mockGetRemoteAccount.mockResolvedValue(account)
+        mockFindRemoteActiveRoute.mockResolvedValue(
+          toExecutionRoute({ route, wallet, account }),
+        )
 
-      expect(chromeMock.tabs.create).toHaveBeenCalledWith({
-        active: true,
-        url: `http://localhost/edit/${route.id}/${encode(route)}`,
+        const transaction = createTransaction()
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render(`/${account.id}/transactions`, {
+          initialState: [transaction],
+        })
+
+        expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
+          'href',
+          `http://localhost/submit/account/${account.id}/${encode([transaction.transaction])}`,
+        )
+      })
+
+      it('offers a link to complete the route setup when no active route was found', async () => {
+        const tenant = tenantFactory.createWithoutDb()
+        const user = userFactory.createWithoutDb(tenant)
+        const account = accountFactory.createWithoutDb(tenant, user)
+
+        mockGetRemoteAccount.mockResolvedValue(account)
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render(`/${account.id}/transactions`)
+
+        await userEvent.click(
+          screen.getByRole('button', {
+            name: 'Complete route setup to submit',
+          }),
+        )
+
+        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+          active: true,
+          url: `http://localhost/account/${account.id}`,
+        })
       })
     })
   })

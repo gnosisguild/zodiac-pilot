@@ -1,7 +1,7 @@
 import { accountSchema } from '@zodiac/db/schema'
 import { z } from 'zod'
-import type { PartialAccount } from './AccountContext'
 import { api, type FetchOptions } from './api'
+import type { PartialAccount } from './PartialAccount'
 
 export const saveRemoteActiveAccount = async (
   account: PartialAccount | null,
