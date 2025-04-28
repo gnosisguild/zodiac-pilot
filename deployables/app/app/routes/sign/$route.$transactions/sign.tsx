@@ -8,13 +8,13 @@ import {
 } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { EXPLORER_URL, getChainId } from '@zodiac/chains'
-import { getBoolean } from '@zodiac/form-data'
+import { getBoolean, getNumberMap } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import { checkPermissions, queryRoutes } from '@zodiac/modules'
+import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import {
   Error,
@@ -38,13 +38,12 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
-  prefixAddress,
   unprefixAddress,
   type ExecutionState,
-  type PrefixedAddress,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import { appendRevokeApprovals } from '../appendRevokeApprovals'
+import { getDefaultNonces } from '../getDefaultNonces'
 import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route as RouteType } from './+types/sign'
@@ -73,23 +72,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     checkPermissions(route, metaTransactions),
   ])
 
-  // when planning without setting options, planExecution will populate the default nonces
-  const safeTransactions = plan.filter(
-    (action) =>
-      action.type === ExecutionActionType.SAFE_TRANSACTION ||
-      action.type === ExecutionActionType.PROPOSE_TRANSACTION,
-  )
-
-  const defaultSafeNonces = Object.fromEntries(
-    safeTransactions.map(
-      (safeTransaction) =>
-        [
-          prefixAddress(safeTransaction.chain, safeTransaction.safe),
-          safeTransaction.safeTransaction.nonce,
-        ] as const,
-    ),
-  )
-
   const simulate = async () => {
     const { error, tokenFlows, approvals } = await simulateTransactionBundle(
       route.avatar,
@@ -104,8 +86,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   }
 
   return {
-    isValidRoute:
-      queryRoutesResult.error != null || queryRoutesResult.routes.length > 0,
+    isValidRoute: isValidRoute(queryRoutesResult),
     hasQueryRoutesError: queryRoutesResult.error != null,
     id: route.id,
     initiator: unprefixAddress(route.initiator),
@@ -115,7 +96,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     permissionCheck: permissionCheckResult.permissionCheck,
     waypoints: route.waypoints,
     metaTransactions,
-    defaultSafeNonces,
+    defaultSafeNonces: getDefaultNonces(plan),
   }
 }
 
@@ -128,25 +109,6 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
   invariantResponse(waypoints != null, 'Route does not provide any waypoints')
 
   const data = await request.formData()
-  const rawSafeNonceMap: Record<string, { nonce: number } | null> = Array.from(
-    data.keys(),
-  )
-    .filter((key) => key.startsWith('customSafeNonce['))
-    .reduce(
-      (acc, key) => {
-        const safeAddress = key.slice('customSafeNonce['.length, -1)
-        const nonceValue = data.get(key)
-        acc[safeAddress] =
-          nonceValue && !isNaN(Number(nonceValue))
-            ? { nonce: Number(nonceValue) }
-            : null
-        return acc
-      },
-      {} as Record<string, { nonce: number } | null>,
-    )
-  const safeTransactionProperties = Object.fromEntries(
-    Object.entries(rawSafeNonceMap).filter(([, value]) => value !== null),
-  ) as { [safe: PrefixedAddress]: { nonce: number } }
 
   let finalMetaTransactions = metaTransactions
   if (getBoolean(data, 'revokeApprovals')) {
@@ -168,7 +130,11 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
         waypoints,
         ...route,
       },
-      { safeTransactionProperties },
+      {
+        safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
+          mapValue: (nonce) => ({ nonce }),
+        }),
+      },
     ),
   }
 }

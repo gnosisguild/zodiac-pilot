@@ -8,7 +8,7 @@ import {
 type SuccessResult = { error: null; routes: Route[] }
 type ErrorResult = { error: unknown; routes: never[] }
 
-type QueryRoutesResult = SuccessResult | ErrorResult
+export type QueryRoutesResult = SuccessResult | ErrorResult
 
 export const queryRoutes = async (
   initiator: PrefixedAddress,

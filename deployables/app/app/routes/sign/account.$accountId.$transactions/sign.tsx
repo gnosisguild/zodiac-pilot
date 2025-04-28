@@ -3,20 +3,20 @@ import { ConnectWallet } from '@/components'
 import { simulateTransactionBundle } from '@/simulation-server'
 import { jsonRpcProvider, parseTransactionData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { EXPLORER_URL, getChainId } from '@zodiac/chains'
+import { EXPLORER_URL } from '@zodiac/chains'
 import {
   dbClient,
   getAccount,
   getActiveRoute,
   toExecutionRoute,
 } from '@zodiac/db'
-import { getBoolean } from '@zodiac/form-data'
+import { getBoolean, getNumberMap } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import { checkPermissions, queryRoutes } from '@zodiac/modules'
+import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
 import { isUUID } from '@zodiac/schema'
 import {
@@ -41,13 +41,12 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
-  prefixAddress,
   unprefixAddress,
   type ExecutionState,
-  type PrefixedAddress,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 import { appendRevokeApprovals } from '../appendRevokeApprovals'
+import { getDefaultNonces } from '../getDefaultNonces'
 import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route } from './+types/sign'
@@ -88,23 +87,6 @@ export const loader = async (args: Route.LoaderArgs) =>
           checkPermissions(executionRoute, metaTransactions),
         ])
 
-      // when planning without setting options, planExecution will populate the default nonces
-      const safeTransactions = plan.filter(
-        (action) =>
-          action.type === ExecutionActionType.SAFE_TRANSACTION ||
-          action.type === ExecutionActionType.PROPOSE_TRANSACTION,
-      )
-
-      const defaultSafeNonces = Object.fromEntries(
-        safeTransactions.map(
-          (safeTransaction) =>
-            [
-              prefixAddress(safeTransaction.chain, safeTransaction.safe),
-              safeTransaction.safeTransaction.nonce,
-            ] as const,
-        ),
-      )
-
       const simulate = async () => {
         const { error, tokenFlows, approvals } =
           await simulateTransactionBundle(
@@ -120,19 +102,17 @@ export const loader = async (args: Route.LoaderArgs) =>
       }
 
       return {
-        isValidRoute:
-          queryRoutesResult.error != null ||
-          queryRoutesResult.routes.length > 0,
+        isValidRoute: isValidRoute(queryRoutesResult),
         hasQueryRoutesError: queryRoutesResult.error != null,
         id: route.id,
-        initiator: unprefixAddress(executionRoute.initiator),
+        initiator: route.wallet.address,
         avatar: executionRoute.avatar,
-        chainId: getChainId(executionRoute.avatar),
+        chainId: account.chainId,
         simulation: simulate(),
         permissionCheck: permissionCheckResult.permissionCheck,
         waypoints: route.waypoints,
         metaTransactions,
-        defaultSafeNonces,
+        defaultSafeNonces: getDefaultNonces(plan),
       }
     },
     {
@@ -175,24 +155,6 @@ export const action = async (args: Route.ActionArgs) =>
       })
 
       const data = await request.formData()
-      const rawSafeNonceMap: Record<string, { nonce: number } | null> =
-        Array.from(data.keys())
-          .filter((key) => key.startsWith('customSafeNonce['))
-          .reduce(
-            (acc, key) => {
-              const safeAddress = key.slice('customSafeNonce['.length, -1)
-              const nonceValue = data.get(key)
-              acc[safeAddress] =
-                nonceValue && !isNaN(Number(nonceValue))
-                  ? { nonce: Number(nonceValue) }
-                  : null
-              return acc
-            },
-            {} as Record<string, { nonce: number } | null>,
-          )
-      const safeTransactionProperties = Object.fromEntries(
-        Object.entries(rawSafeNonceMap).filter(([, value]) => value !== null),
-      ) as { [safe: PrefixedAddress]: { nonce: number } }
 
       let finalMetaTransactions = metaTransactions
       if (getBoolean(data, 'revokeApprovals')) {
@@ -211,7 +173,9 @@ export const action = async (args: Route.ActionArgs) =>
 
       return {
         plan: await planExecution(finalMetaTransactions, executionRoute, {
-          safeTransactionProperties,
+          safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
+            mapValue: (nonce) => ({ nonce }),
+          }),
         }),
       }
     },
