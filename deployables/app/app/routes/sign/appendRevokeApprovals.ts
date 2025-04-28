@@ -1,5 +1,5 @@
 import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
-import { encodeFunctionData, erc20Abi, formatUnits } from 'viem'
+import { encodeFunctionData, erc20Abi } from 'viem'
 
 export const appendRevokeApprovals = (
   metaTxs: MetaTransactionRequest[],
@@ -22,26 +22,4 @@ export const appendRevokeApprovals = (
   )
 
   return [...metaTxs, ...approvalCalls]
-}
-
-const MAX_UINT256 = (1n << 256n) - 1n
-const THRESHOLD = (MAX_UINT256 * 99n) / 100n
-
-export const formatApprovalAmount = (
-  approvalAmount: bigint,
-  decimals: number,
-  precision: number = 4,
-): { display: string; tooltip: string } => {
-  const amountBigInt = BigInt(approvalAmount)
-  const amount = formatUnits(amountBigInt, decimals)
-  if (amountBigInt >= THRESHOLD) {
-    return {
-      display: '∞',
-      tooltip: amount,
-    }
-  }
-  return {
-    display: parseFloat(amount).toFixed(precision),
-    tooltip: amount,
-  }
 }

@@ -1,4 +1,5 @@
-import { useAccount, useCompanionAppUrl } from '@/companion'
+import { useAccount } from '@/accounts'
+import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
 import { useDispatch, useTransactions } from '@/state'
@@ -47,7 +48,11 @@ export const Submit = () => {
         <PrimaryLinkButton
           fluid
           openInNewWindow
-          to={`${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`}
+          to={
+            account.remote
+              ? `${companionAppUrl}/submit/account/${account.id}/${encode(metaTransactions)}`
+              : `${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`
+          }
           disabled={transactions.length === 0}
           onClick={() => setSubmitPending(true)}
         >

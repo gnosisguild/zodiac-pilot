@@ -1,18 +1,13 @@
 import { invariant } from '@epic-web/invariant'
-import type { Account } from '@zodiac/db/schema'
-import type { UUID } from 'crypto'
 import { createContext, useContext, type PropsWithChildren } from 'react'
+import type { TaggedAccount } from './TaggedAccount'
 
-export type PartialAccount = Pick<Account, 'label' | 'address' | 'chainId'> & {
-  id: UUID | string
-}
-
-const Context = createContext<PartialAccount | null>(null)
+const Context = createContext<TaggedAccount | null>(null)
 
 export const ProvideAccount = ({
   children,
   account,
-}: PropsWithChildren<{ account: PartialAccount }>) => (
+}: PropsWithChildren<{ account: TaggedAccount }>) => (
   <Context value={account}>{children}</Context>
 )
 

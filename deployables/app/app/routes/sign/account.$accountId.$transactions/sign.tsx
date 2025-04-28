@@ -1,21 +1,24 @@
+import { authorizedAction, authorizedLoader } from '@/auth'
 import { ConnectWallet } from '@/components'
 import { simulateTransactionBundle } from '@/simulation-server'
-import {
-  jsonRpcProvider,
-  parseRouteData,
-  parseTransactionData,
-  routeTitle,
-} from '@/utils'
+import { jsonRpcProvider, parseTransactionData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { EXPLORER_URL, getChainId } from '@zodiac/chains'
-import { getBoolean } from '@zodiac/form-data'
+import { EXPLORER_URL } from '@zodiac/chains'
+import {
+  dbClient,
+  getAccount,
+  getActiveRoute,
+  toExecutionRoute,
+} from '@zodiac/db'
+import { getBoolean, getNumberMap } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import { checkPermissions, queryRoutes } from '@zodiac/modules'
+import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { waitForMultisigExecution } from '@zodiac/safe'
+import { isUUID } from '@zodiac/schema'
 import {
   Error,
   errorToast,
@@ -41,139 +44,151 @@ import {
   prefixAddress,
   unprefixAddress,
   type ExecutionState,
-  type PrefixedAddress,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import type { Route as RouteType } from './+types/sign'
-import { appendRevokeApprovals } from './helper'
-import { ApprovalOverviewSection } from './sections/ApprovalOverviewSection'
-import { ReviewAccountSection } from './sections/ReviewAccountSection'
-import { SkeletonFlowTable } from './table/SkeletonFlowTable'
-import { TokenTransferTable } from './table/TokenTransferTable'
+import { getDefaultNonces } from '../getDefaultNonces'
+import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
+import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
+import { SkeletonFlowTable, TokenTransferTable } from '../table'
+import type { Route } from './+types/sign'
 
-export const meta: RouteType.MetaFunction = ({ matches }) => [
+export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Sign transaction bundle') },
 ]
 
-export const loader = async ({ params }: RouteType.LoaderArgs) => {
-  const metaTransactions = parseTransactionData(params.transactions)
-  const route = parseRouteData(params.route)
-
-  invariantResponse(route.initiator != null, 'Route needs an initiator')
-  invariantResponse(
-    route.waypoints != null,
-    'Route does not provide any waypoints',
-  )
-
-  const [plan, queryRoutesResult, permissionCheckResult] = await Promise.all([
-    planExecution(metaTransactions, {
-      initiator: route.initiator,
-      waypoints: route.waypoints,
-      ...route,
-    }),
-    queryRoutes(route.initiator, route.avatar),
-    checkPermissions(route, metaTransactions),
-  ])
-
-  // when planning without setting options, planExecution will populate the default nonces
-  const safeTransactions = plan.filter(
-    (action) =>
-      action.type === ExecutionActionType.SAFE_TRANSACTION ||
-      action.type === ExecutionActionType.PROPOSE_TRANSACTION,
-  )
-
-  const defaultSafeNonces = Object.fromEntries(
-    safeTransactions.map(
-      (safeTransaction) =>
-        [
-          prefixAddress(safeTransaction.chain, safeTransaction.safe),
-          safeTransaction.safeTransaction.nonce,
-        ] as const,
-    ),
-  )
-
-  const simulate = async () => {
-    const { error, tokenFlows, approvals } = await simulateTransactionBundle(
-      route.avatar,
-      metaTransactions,
-    )
-
-    return {
-      error,
-      tokenFlows,
-      approvals,
-    }
-  }
-
-  return {
-    isValidRoute:
-      queryRoutesResult.error != null || queryRoutesResult.routes.length > 0,
-    hasQueryRoutesError: queryRoutesResult.error != null,
-    id: route.id,
-    initiator: unprefixAddress(route.initiator),
-    avatar: route.avatar,
-    chainId: getChainId(route.avatar),
-    simulation: simulate(),
-    permissionCheck: permissionCheckResult.permissionCheck,
-    waypoints: route.waypoints,
-    metaTransactions,
-    defaultSafeNonces,
-  }
-}
-
-export const action = async ({ params, request }: RouteType.ActionArgs) => {
-  const metaTransactions = parseTransactionData(params.transactions)
-
-  const { initiator, waypoints, ...route } = parseRouteData(params.route)
-
-  invariantResponse(initiator != null, 'Route needs an initiator')
-  invariantResponse(waypoints != null, 'Route does not provide any waypoints')
-
-  const data = await request.formData()
-  const rawSafeNonceMap: Record<string, { nonce: number } | null> = Array.from(
-    data.keys(),
-  )
-    .filter((key) => key.startsWith('customSafeNonce['))
-    .reduce(
-      (acc, key) => {
-        const safeAddress = key.slice('customSafeNonce['.length, -1)
-        const nonceValue = data.get(key)
-        acc[safeAddress] =
-          nonceValue && !isNaN(Number(nonceValue))
-            ? { nonce: Number(nonceValue) }
-            : null
-        return acc
+export const loader = async (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      params: { transactions, accountId },
+      context: {
+        auth: { tenant, user },
       },
-      {} as Record<string, { nonce: number } | null>,
-    )
-  const safeTransactionProperties = Object.fromEntries(
-    Object.entries(rawSafeNonceMap).filter(([, value]) => value !== null),
-  ) as { [safe: PrefixedAddress]: { nonce: number } }
+    }) => {
+      invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
 
-  let finalMetaTransactions = metaTransactions
-  if (getBoolean(data, 'revokeApprovals')) {
-    const { approvals } = await simulateTransactionBundle(
-      route.avatar,
-      metaTransactions,
-      { omitTokenFlows: true },
-    )
-    if (approvals.length > 0) {
-      finalMetaTransactions = appendRevokeApprovals(metaTransactions, approvals)
-    }
-  }
+      const metaTransactions = parseTransactionData(transactions)
+      const { route, account } = await getActiveRoute(
+        dbClient(),
+        tenant,
+        user,
+        accountId,
+      )
 
-  return {
-    plan: await planExecution(
-      finalMetaTransactions,
-      {
-        initiator,
-        waypoints,
-        ...route,
+      const executionRoute = toExecutionRoute({
+        wallet: route.wallet,
+        account,
+        route,
+      })
+
+      const [plan, queryRoutesResult, permissionCheckResult] =
+        await Promise.all([
+          planExecution(metaTransactions, executionRoute),
+          queryRoutes(executionRoute.initiator, executionRoute.avatar),
+          checkPermissions(executionRoute, metaTransactions),
+        ])
+
+      const simulate = async () => {
+        const { error, tokenFlows, approvals } =
+          await simulateTransactionBundle(
+            executionRoute.avatar,
+            metaTransactions,
+          )
+
+        return {
+          error,
+          tokenFlows,
+          approvals,
+        }
+      }
+
+      return {
+        isValidRoute: isValidRoute(queryRoutesResult),
+        hasQueryRoutesError: queryRoutesResult.error != null,
+        id: route.id,
+        initiator: route.wallet.address,
+        avatar: executionRoute.avatar,
+        chainId: account.chainId,
+        simulation: simulate(),
+        permissionCheck: permissionCheckResult.permissionCheck,
+        waypoints: route.waypoints,
+        metaTransactions,
+        defaultSafeNonces: getDefaultNonces(plan),
+      }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ tenant, params: { accountId } }) {
+        invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+
+        const account = await getAccount(dbClient(), accountId)
+
+        return account.tenantId === tenant.id
       },
-      { safeTransactionProperties },
-    ),
-  }
-}
+    },
+  )
+
+export const action = async (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({
+      request,
+      params: { transactions, accountId },
+      context: {
+        auth: { tenant, user },
+      },
+    }) => {
+      invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+
+      const { route, account } = await getActiveRoute(
+        dbClient(),
+        tenant,
+        user,
+        accountId,
+      )
+
+      const data = await request.formData()
+
+      const metaTransactions = await revokeApprovalIfNeeded(
+        prefixAddress(account.chainId, account.address),
+        parseTransactionData(transactions),
+        {
+          revokeApprovals: getBoolean(data, 'revokeApprovals'),
+        },
+      )
+
+      return {
+        plan: await planExecution(
+          metaTransactions,
+          toExecutionRoute({
+            wallet: route.wallet,
+            account,
+            route,
+          }),
+          {
+            safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
+              mapValue: (nonce) => ({ nonce }),
+            }),
+          },
+        ),
+      }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ user, tenant, params: { accountId } }) {
+        invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+
+        const { route } = await getActiveRoute(
+          dbClient(),
+          tenant,
+          user,
+          accountId,
+        )
+
+        return route.wallet.belongsToId === user.id
+      },
+    },
+  )
 
 const SubmitPage = ({
   loaderData: {
@@ -188,7 +203,7 @@ const SubmitPage = ({
     hasQueryRoutesError,
     defaultSafeNonces,
   },
-}: RouteType.ComponentProps) => {
+}: Route.ComponentProps) => {
   return (
     <Form>
       <Form.Section
