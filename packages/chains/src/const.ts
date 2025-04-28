@@ -25,7 +25,7 @@ export enum Chain {
   BERACHAIN = 80094,
 }
 
-const airlock = 'https://airlock.gnosisguild.org/api/v1'
+const airlock = 'https://airlock.gnosisguild.org/api/v1/'
 
 export const RPC: Record<ChainId, URL> = {
   [Chain.ETH]: new URL('1/rpc', airlock),
