@@ -1,5 +1,6 @@
 import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
+import type { HexAddress } from '@zodiac/schema'
 import {
   Address,
   NumberValue,
@@ -12,14 +13,13 @@ import {
 } from '@zodiac/ui'
 import { formatUnits, parseUnits, ZeroAddress } from 'ethers'
 import type { LucideIcon } from 'lucide-react'
-import { unprefixAddress, type PrefixedAddress } from 'ser-kit'
 
 type TokenTransferTable = {
   icon: LucideIcon
   title: string
   columnTitle: string
   tokens: TokenTransfer[]
-  avatar: PrefixedAddress
+  avatar: HexAddress
 }
 
 export const TokenTransferTable = ({
@@ -29,8 +29,6 @@ export const TokenTransferTable = ({
   tokens,
   avatar,
 }: TokenTransferTable) => {
-  const avatarAddress = unprefixAddress(avatar).toLowerCase()
-
   const aggregated = aggregateTokenTransfers(tokens)
 
   return (
@@ -64,8 +62,8 @@ export const TokenTransferTable = ({
 
         {aggregated.map(
           ({ symbol, from, to, logoUrl, amount, contractId }, index) => {
-            const fromAvatar = from.toLowerCase() === avatarAddress
-            const toAvatar = to.toLowerCase() === avatarAddress
+            const fromAvatar = from.toLowerCase() === avatar
+            const toAvatar = to.toLowerCase() === avatar
             const isMint = from === ZeroAddress
             const isBurn = to === ZeroAddress
 
