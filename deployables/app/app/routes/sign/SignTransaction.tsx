@@ -5,7 +5,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
+import type { HexAddress } from '@zodiac/schema'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
 import type { Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -13,7 +13,7 @@ import { useEffect } from 'react'
 import {
   execute,
   ExecutionActionType,
-  unprefixAddress,
+  prefixAddress,
   type ChainId,
   type ExecutionPlan,
   type ExecutionState,
@@ -23,7 +23,7 @@ import { useAccount, useConnectorClient } from 'wagmi'
 type SignTransactionProps = {
   chainId: ChainId
   walletAddress: HexAddress
-  safeAddress: PrefixedAddress
+  safeAddress: HexAddress
   executionPlan: ExecutionPlan | null
 }
 
@@ -68,11 +68,8 @@ export const SignTransaction = ({
 
           const url = new URL('/transactions/tx', 'https://app.safe.global')
 
-          url.searchParams.set('safe', safeAddress)
-          url.searchParams.set(
-            'id',
-            `multisig_${unprefixAddress(safeAddress)}_${safeTxHash}`,
-          )
+          url.searchParams.set('safe', prefixAddress(chainId, safeAddress))
+          url.searchParams.set('id', `multisig_${safeAddress}_${safeTxHash}`)
 
           successToast({
             title: 'Transaction batch has been proposed for execution',

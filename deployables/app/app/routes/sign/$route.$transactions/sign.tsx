@@ -59,7 +59,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     hasQueryRoutesError: queryRoutesResult.error != null,
     id: route.id,
     initiator: unprefixAddress(route.initiator),
-    avatar: route.avatar,
+    safeAddress: unprefixAddress(route.avatar),
     chainId: getChainId(route.avatar),
     simulation: simulate(),
     permissionCheck: permissionCheckResult.permissionCheck,
@@ -104,7 +104,7 @@ const SubmitPage = ({
     initiator,
     chainId,
     id,
-    avatar,
+    safeAddress,
     waypoints,
     isValidRoute,
     permissionCheck,
@@ -130,7 +130,7 @@ const SubmitPage = ({
                   <TokenTransferTable
                     title="Tokens Sent"
                     columnTitle="To"
-                    avatar={unprefixAddress(avatar)}
+                    avatar={safeAddress}
                     icon={ArrowUpFromLine}
                     tokens={sent}
                   />
@@ -138,7 +138,7 @@ const SubmitPage = ({
                   <TokenTransferTable
                     title="Tokens Received"
                     columnTitle="From"
-                    avatar={unprefixAddress(avatar)}
+                    avatar={safeAddress}
                     icon={ArrowDownToLine}
                     tokens={received}
                   />
@@ -146,7 +146,7 @@ const SubmitPage = ({
                   <TokenTransferTable
                     title="Other Token Movements"
                     columnTitle="From → To"
-                    avatar={unprefixAddress(avatar)}
+                    avatar={safeAddress}
                     icon={ArrowLeftRight}
                     tokens={other}
                   />
@@ -212,7 +212,7 @@ const SubmitPage = ({
         <SignTransaction
           chainId={chainId}
           walletAddress={initiator}
-          safeAddress={avatar}
+          safeAddress={safeAddress}
           executionPlan={actionData == null ? null : actionData.plan}
         />
       </Form.Actions>

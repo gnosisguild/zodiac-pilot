@@ -275,7 +275,7 @@ const SubmitPage = ({
         <SignTransaction
           chainId={account.chainId}
           walletAddress={wallet.address}
-          safeAddress={prefixAddress(account.chainId, account.address)}
+          safeAddress={account.address}
           executionPlan={actionData == null ? null : actionData.plan}
         />
       </Form.Actions>
