@@ -41,12 +41,13 @@ import {
   execute,
   ExecutionActionType,
   planExecution,
+  prefixAddress,
   unprefixAddress,
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import { appendRevokeApprovals } from '../appendRevokeApprovals'
 import { getDefaultNonces } from '../getDefaultNonces'
+import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
 import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route } from './+types/sign'
@@ -137,8 +138,6 @@ export const action = async (args: Route.ActionArgs) =>
         auth: { tenant, user },
       },
     }) => {
-      const metaTransactions = parseTransactionData(transactions)
-
       invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
 
       const { route, account } = await getActiveRoute(
@@ -148,35 +147,30 @@ export const action = async (args: Route.ActionArgs) =>
         accountId,
       )
 
-      const executionRoute = toExecutionRoute({
-        wallet: route.wallet,
-        account,
-        route,
-      })
-
       const data = await request.formData()
 
-      let finalMetaTransactions = metaTransactions
-      if (getBoolean(data, 'revokeApprovals')) {
-        const { approvals } = await simulateTransactionBundle(
-          executionRoute.avatar,
-          metaTransactions,
-          { omitTokenFlows: true },
-        )
-        if (approvals.length > 0) {
-          finalMetaTransactions = appendRevokeApprovals(
-            metaTransactions,
-            approvals,
-          )
-        }
-      }
+      const metaTransactions = await revokeApprovalIfNeeded(
+        prefixAddress(account.chainId, account.address),
+        parseTransactionData(transactions),
+        {
+          revokeApprovals: getBoolean(data, 'revokeApprovals'),
+        },
+      )
 
       return {
-        plan: await planExecution(finalMetaTransactions, executionRoute, {
-          safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
-            mapValue: (nonce) => ({ nonce }),
+        plan: await planExecution(
+          metaTransactions,
+          toExecutionRoute({
+            wallet: route.wallet,
+            account,
+            route,
           }),
-        }),
+          {
+            safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
+              mapValue: (nonce) => ({ nonce }),
+            }),
+          },
+        ),
       }
     },
     {

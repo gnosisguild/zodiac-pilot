@@ -42,8 +42,8 @@ import {
   type ExecutionState,
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
-import { appendRevokeApprovals } from '../appendRevokeApprovals'
 import { getDefaultNonces } from '../getDefaultNonces'
+import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
 import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route as RouteType } from './+types/sign'
@@ -101,8 +101,6 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
 }
 
 export const action = async ({ params, request }: RouteType.ActionArgs) => {
-  const metaTransactions = parseTransactionData(params.transactions)
-
   const { initiator, waypoints, ...route } = parseRouteData(params.route)
 
   invariantResponse(initiator != null, 'Route needs an initiator')
@@ -110,21 +108,15 @@ export const action = async ({ params, request }: RouteType.ActionArgs) => {
 
   const data = await request.formData()
 
-  let finalMetaTransactions = metaTransactions
-  if (getBoolean(data, 'revokeApprovals')) {
-    const { approvals } = await simulateTransactionBundle(
-      route.avatar,
-      metaTransactions,
-      { omitTokenFlows: true },
-    )
-    if (approvals.length > 0) {
-      finalMetaTransactions = appendRevokeApprovals(metaTransactions, approvals)
-    }
-  }
+  const metaTransactions = await revokeApprovalIfNeeded(
+    route.avatar,
+    parseTransactionData(params.transactions),
+    { revokeApprovals: getBoolean(data, 'revokeApprovals') },
+  )
 
   return {
     plan: await planExecution(
-      finalMetaTransactions,
+      metaTransactions,
       {
         initiator,
         waypoints,
