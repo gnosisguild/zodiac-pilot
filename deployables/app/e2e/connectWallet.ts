@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test'
 import type { Hex } from '@zodiac/schema'
-import { defaultMockAccount } from '@zodiac/test-utils/e2e'
+import { defaultMockAccount } from '@zodiac/test-utils/web3'
 import { getAddress } from 'viem'
 
 export const connectWallet = async (
