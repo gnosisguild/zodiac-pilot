@@ -22,7 +22,7 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
+import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
   Outlet,
@@ -154,16 +154,20 @@ const ActiveRoute = () => {
           <ProvideProvider>
             <Page>
               <Page.Header>
-                <div className="my-2 mr-4 flex gap-2">
-                  <AccountSelect
-                    accounts={accounts}
-                    onSelect={(accountId) =>
-                      submit(
-                        { intent: Intent.ActivateAccount, accountId },
-                        { method: 'POST' },
-                      )
-                    }
-                  />
+                <div className="mx-4 my-2 flex items-center gap-2">
+                  <Blockie address={account.address} className="size-6" />
+
+                  <div className="flex-1">
+                    <AccountSelect
+                      accounts={accounts}
+                      onSelect={(accountId) =>
+                        submit(
+                          { intent: Intent.ActivateAccount, accountId },
+                          { method: 'POST' },
+                        )
+                      }
+                    />
+                  </div>
 
                   <AccountActions />
                 </div>

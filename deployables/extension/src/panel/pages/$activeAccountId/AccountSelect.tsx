@@ -1,7 +1,7 @@
 import { useAccount } from '@/accounts'
 import { type Account } from '@/companion'
 import { CHAIN_NAME } from '@zodiac/chains'
-import { Blockie, Select, Tag } from '@zodiac/ui'
+import { Select, Tag } from '@zodiac/ui'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { useActivateAccount } from '../useActivateAccount'
 
@@ -20,42 +20,37 @@ export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
 
   return (
     <>
-      <div className="flex items-center gap-2 pl-4">
-        <Blockie address={account.address} className="size-6" />
+      <Select
+        inline
+        isClearable={false}
+        isMulti={false}
+        isSearchable={false}
+        label="Safe Accounts"
+        onChange={(option) => {
+          if (option == null) {
+            return
+          }
 
-        <Select
-          inline
-          isClearable={false}
-          isMulti={false}
-          isSearchable={false}
-          className="flex-1"
-          label="Safe Accounts"
-          onChange={(option) => {
-            if (option == null) {
-              return
-            }
+          activateAccount(option.value)
+        }}
+        value={{ value: account.id }}
+        options={accounts.map((account) => ({ value: account.id }))}
+      >
+        {({ data: { value } }) => {
+          const account = accounts.find(({ id }) => id === value)
 
-            activateAccount(option.value)
-          }}
-          value={{ value: account.id }}
-          options={accounts.map((account) => ({ value: account.id }))}
-        >
-          {({ data: { value } }) => {
-            const account = accounts.find(({ id }) => id === value)
-
-            return account == null ? (
-              'Unnamed route'
-            ) : (
-              <div className="flex max-w-full items-center justify-between gap-2 overflow-hidden">
-                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                  {account.label}
-                </span>
-                <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
-              </div>
-            )
-          }}
-        </Select>
-      </div>
+          return account == null ? (
+            'Unnamed route'
+          ) : (
+            <div className="flex max-w-full items-center justify-between gap-2 overflow-hidden">
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {account.label}
+              </span>
+              <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
+            </div>
+          )
+        }}
+      </Select>
 
       <ClearTransactionsModal
         open={isActivationPending}
