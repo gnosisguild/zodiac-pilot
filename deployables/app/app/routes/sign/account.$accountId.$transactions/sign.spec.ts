@@ -101,8 +101,9 @@ describe('Sign', () => {
   const initiator = randomAddress()
 
   beforeEach(() => {
-    // @ts-expect-error We only needs an empty array
-    vi.mocked(planExecution).mockResolvedValue([])
+    vi.mocked(planExecution).mockResolvedValue([
+      createMockExecuteTransactionAction(),
+    ])
 
     mockJsonRpcProvider.mockReturnValue(new MockJsonRpcProvider())
 

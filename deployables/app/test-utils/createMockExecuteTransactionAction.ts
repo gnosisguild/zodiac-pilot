@@ -8,7 +8,7 @@ type ExecuteTransactionAction = Extract<
 >
 
 export const createMockExecuteTransactionAction = (
-  action: Partial<Omit<ExecuteTransactionAction, 'type'>>,
+  action: Partial<Omit<ExecuteTransactionAction, 'type'>> = {},
 ): ExecuteTransactionAction => ({
   type: ExecutionActionType.EXECUTE_TRANSACTION,
   chain: Chain.ETH,
