@@ -1,5 +1,9 @@
 import { simulateTransactionBundle } from '@/simulation-server'
-import { createMockExecuteTransactionAction, render } from '@/test-utils'
+import {
+  createMockExecuteTransactionAction,
+  createMockProposeTransactionAction,
+  render,
+} from '@/test-utils'
 import { jsonRpcProvider } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -30,6 +34,7 @@ import {
   execute,
   PermissionViolation,
   planExecution,
+  prefixAddress,
   queryRoutes,
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -419,7 +424,7 @@ describe('Sign', () => {
   })
 
   describe('Sign', () => {
-    it.only('stores a reference to the transaction.', async () => {
+    it('stores a reference to the transaction.', async () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
@@ -462,6 +467,52 @@ describe('Sign', () => {
       })
     })
 
-    it.todo('stores a reference to the multisig.')
+    it('stores a reference to the multisig.', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const testHash = randomHex(18)
+
+      mockQueryRoutes.mockResolvedValue([])
+      mockPlanExecution.mockResolvedValue([
+        createMockProposeTransactionAction({
+          proposer: wallet.address,
+          safe: account.address,
+        }),
+      ])
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
+          transactions: encode([createMockTransaction()]),
+        }),
+        { user, tenant },
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitFor(async () => {
+        await waitForPendingActions()
+
+        const [transaction] = await getTransactions(dbClient(), account.id)
+
+        const url = new URL(`/transactions/tx`, 'https://app.safe.global')
+        url.searchParams.set(
+          'safe',
+          prefixAddress(account.chainId, account.address),
+        )
+        url.searchParams.set('id', `multisig_${account.address}_${testHash}`)
+
+        expect(transaction).toHaveProperty('safeWalletUrl', url.toString())
+      })
+    })
   })
 })
