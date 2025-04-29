@@ -27,9 +27,9 @@
       "types": "./src/e2e/index.ts",
       "import": "./src/e2e/index.ts"
     },
-    "./web3": {
-      "types": "./src/web3/index.ts",
-      "import": "./src/web3/index.ts"
+    "./rpc": {
+      "types": "./src/rpc/index.ts",
+      "import": "./src/rpc/index.ts"
     }
   },
   "dependencies": {

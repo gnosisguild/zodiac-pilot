@@ -24,10 +24,10 @@ import {
 import { encode } from '@zodiac/schema'
 import {
   createMockTransaction,
-  MockJsonRpcProvider,
   randomAddress,
   randomHex,
 } from '@zodiac/test-utils'
+import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { href } from 'react-router'
 import {
   checkPermissions,

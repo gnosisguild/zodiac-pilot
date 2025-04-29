@@ -1,6 +1,6 @@
 import test, { expect } from '@playwright/test'
 import { encode } from '@zodiac/schema'
-import { mockWeb3 } from '@zodiac/test-utils/web3'
+import { mockWeb3 } from '@zodiac/test-utils/e2e'
 import { href } from 'react-router'
 import { getAddress } from 'viem'
 import { connectWallet } from '../connectWallet'
