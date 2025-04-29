@@ -124,13 +124,6 @@ describe('Sign', () => {
   })
 
   describe('Route', () => {
-    beforeEach(() => {
-      mockCheckPermissions.mockResolvedValue({
-        success: true,
-        error: undefined,
-      })
-    })
-
     describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
         const tenant = await tenantFactory.create()
@@ -245,11 +238,6 @@ describe('Sign', () => {
   })
 
   describe('Permissions', () => {
-    beforeEach(() => {
-      // @ts-expect-error We only needs an empty array
-      vi.mocked(planExecution).mockResolvedValue([])
-    })
-
     it('shows the permission error', async () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
@@ -376,14 +364,7 @@ describe('Sign', () => {
 
   describe('Approvals', () => {
     beforeEach(() => {
-      // @ts-expect-error We only needs an empty array
-      vi.mocked(planExecution).mockResolvedValue([])
-
       mockQueryRoutes.mockResolvedValue([])
-      mockCheckPermissions.mockResolvedValue({
-        error: undefined,
-        success: true,
-      })
     })
 
     it('does not revoke approvals by default', async () => {
