@@ -54,5 +54,5 @@ export const usePingWhileDisconnected = ({
       window.removeEventListener('message', handlePong)
       clearInterval(interval)
     }
-  }, [active, connected, onConnectRef])
+  }, [active, connected, onConnectRef, signedIn])
 }
