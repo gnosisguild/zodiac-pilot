@@ -9,13 +9,16 @@ import { useEffect } from 'react'
 import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type PingWhileDisconnectedOptions = {
+  signedIn: boolean
+  connected: boolean
   onConnect: () => void
 }
 
-export const usePingWhileDisconnected = (
-  connected: boolean,
-  { onConnect }: PingWhileDisconnectedOptions,
-) => {
+export const usePingWhileDisconnected = ({
+  onConnect,
+  connected,
+  signedIn,
+}: PingWhileDisconnectedOptions) => {
   const onConnectRef = useStableHandler(onConnect)
   const active = useActiveWhenVisible()
 
@@ -32,6 +35,7 @@ export const usePingWhileDisconnected = (
       window.postMessage(
         {
           type: CompanionAppMessageType.PING,
+          signedIn,
         } satisfies CompanionAppMessage,
         '*',
       )

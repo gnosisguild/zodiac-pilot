@@ -9,13 +9,16 @@ import { useEffect } from 'react'
 import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type DisconnectWhenUnreachableOptions = {
+  signedIn: boolean
+  connected: boolean
   onDisconnect: () => void
 }
 
-export const useDisconnectWhenUnreachable = (
-  connected: boolean,
-  { onDisconnect }: DisconnectWhenUnreachableOptions,
-) => {
+export const useDisconnectWhenUnreachable = ({
+  onDisconnect,
+  connected,
+  signedIn,
+}: DisconnectWhenUnreachableOptions) => {
   const onDisconnectRef = useStableHandler(onDisconnect)
   const active = useActiveWhenVisible()
 
@@ -32,7 +35,10 @@ export const useDisconnectWhenUnreachable = (
 
     const probeConnection = () => {
       window.postMessage(
-        { type: CompanionAppMessageType.PING } satisfies CompanionAppMessage,
+        {
+          type: CompanionAppMessageType.PING,
+          signedIn,
+        } satisfies CompanionAppMessage,
         '*',
       )
 
@@ -59,5 +65,5 @@ export const useDisconnectWhenUnreachable = (
 
       clearInterval(interval)
     }
-  }, [active, connected, onDisconnectRef])
+  }, [active, connected, onDisconnectRef, signedIn])
 }

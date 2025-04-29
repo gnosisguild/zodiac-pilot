@@ -80,7 +80,7 @@ const PageLayout = ({
     <FakeBrowser>
       <FeatureProvider features={features}>
         <ProvideChains chains={chains}>
-          <ProvidePilotStatus>
+          <ProvidePilotStatus signedIn={user != null}>
             <SidebarLayout
               navbar={null}
               sidebar={
