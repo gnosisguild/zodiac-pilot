@@ -25,7 +25,7 @@ export default defineConfig({
       '@zodiac/test-utils/setup-chrome-mock',
       '@zodiac/db/setup-tests',
     ],
-    include: ['./{app,db}/**/*.{spec,test}.{ts,tsx}'],
+    include: ['./app/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,
 
