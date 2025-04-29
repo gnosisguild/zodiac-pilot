@@ -1,8 +1,15 @@
 import { simulateTransactionBundle } from '@/simulation-server'
-import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
-import { Chain } from '@zodiac/chains'
-import { activateRoute, dbClient, toExecutionRoute } from '@zodiac/db'
+import { createMockExecuteTransactionAction, render } from '@/test-utils'
+import { jsonRpcProvider } from '@/utils'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Chain, EXPLORER_URL } from '@zodiac/chains'
+import {
+  activateRoute,
+  dbClient,
+  getTransactions,
+  toExecutionRoute,
+} from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -11,10 +18,16 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
-import { createMockTransaction, randomAddress } from '@zodiac/test-utils'
+import {
+  createMockTransaction,
+  MockJsonRpcProvider,
+  randomAddress,
+  randomHex,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
 import {
   checkPermissions,
+  execute,
   PermissionViolation,
   planExecution,
   queryRoutes,
@@ -28,12 +41,15 @@ vi.mock('ser-kit', async (importOriginal) => {
   return {
     ...module,
 
+    execute: vi.fn(),
     planExecution: vi.fn(),
     queryRoutes: vi.fn(),
     checkPermissions: vi.fn(),
   }
 })
 
+const mockExecute = vi.mocked(execute)
+const mockPlanExecution = vi.mocked(planExecution)
 const mockQueryRoutes = vi.mocked(queryRoutes)
 const mockCheckPermissions = vi.mocked(checkPermissions)
 
@@ -63,6 +79,18 @@ vi.mock('@/simulation-server', async (importOriginal) => {
 
 const mockSimulateTransactionBundle = vi.mocked(simulateTransactionBundle)
 
+vi.mock('@/utils', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/utils')>()
+
+  return {
+    ...module,
+
+    jsonRpcProvider: vi.fn(),
+  }
+})
+
+const mockJsonRpcProvider = vi.mocked(jsonRpcProvider)
+
 describe('Sign', () => {
   const chainId = Chain.ETH
   const initiator = randomAddress()
@@ -70,6 +98,8 @@ describe('Sign', () => {
   beforeEach(() => {
     // @ts-expect-error We only needs an empty array
     vi.mocked(planExecution).mockResolvedValue([])
+
+    mockJsonRpcProvider.mockReturnValue(new MockJsonRpcProvider())
 
     // @ts-expect-error We really only want to use this subset
     mockUseAccount.mockReturnValue({
@@ -386,5 +416,52 @@ describe('Sign', () => {
         await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
       ).not.toBeChecked()
     })
+  })
+
+  describe('Sign', () => {
+    it.only('stores a reference to the transaction.', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const testHash = randomHex(18)
+
+      mockQueryRoutes.mockResolvedValue([])
+      mockPlanExecution.mockResolvedValue([
+        createMockExecuteTransactionAction({
+          from: wallet.address,
+        }),
+      ])
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
+          transactions: encode([createMockTransaction()]),
+        }),
+        { user, tenant },
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitFor(async () => {
+        await waitForPendingActions()
+
+        const [transaction] = await getTransactions(dbClient(), account.id)
+
+        expect(transaction).toHaveProperty(
+          'explorerUrl',
+          new URL(`tx/${testHash}`, EXPLORER_URL[account.chainId]).toString(),
+        )
+      })
+    })
+
+    it.todo('stores a reference to the multisig.')
   })
 })

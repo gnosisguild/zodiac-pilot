@@ -306,6 +306,8 @@ export const SignedTransactionTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     transaction: json().$type<MetaTransactionRequest[]>().notNull(),
+    explorerUrl: text(),
+    safeWalletUrl: text(),
 
     ...walletReference,
     ...accountReference,
