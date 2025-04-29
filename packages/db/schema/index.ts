@@ -3,6 +3,7 @@ import {
   addressSchema,
   chainIdSchema,
   type HexAddress,
+  type MetaTransactionRequest,
   type Waypoints,
 } from '@zodiac/schema'
 import type { UUID } from 'crypto'
@@ -59,21 +60,21 @@ export const UserTable = pgTable('User', {
   ...createdTimestamp,
 })
 
+const userReference = {
+  userId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => UserTable.id, { onDelete: 'cascade' }),
+}
+
 export type User = typeof UserTable.$inferSelect
 export type UserCreateInput = typeof UserTable.$inferInsert
 
 export const TenantMembershipTable = pgTable(
   'TenantMembership',
   {
-    tenantId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => TenantTable.id, { onDelete: 'cascade' }),
-    userId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => UserTable.id, { onDelete: 'cascade' }),
-
+    ...tenantReference,
+    ...userReference,
     ...createdTimestamp,
   },
   (table) => [
@@ -151,6 +152,13 @@ export const AccountTable = pgTable(
   (table) => [index().on(table.tenantId), index().on(table.createdById)],
 )
 
+const accountReference = {
+  accountId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => AccountTable.id, { onDelete: 'cascade' }),
+}
+
 export type Account = typeof AccountTable.$inferSelect
 export type AccountCreateInput = typeof AccountTable.$inferInsert
 
@@ -181,6 +189,13 @@ export const WalletTable = pgTable(
   (table) => [index().on(table.belongsToId)],
 )
 
+const walletReference = {
+  walletId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => WalletTable.id, { onDelete: 'cascade' }),
+}
+
 export type Wallet = typeof WalletTable.$inferSelect
 export type WalletCreateInput = typeof WalletTable.$inferInsert
 
@@ -208,6 +223,13 @@ export const RouteTable = pgTable(
   ],
 )
 
+const routeReference = {
+  routeId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => RouteTable.id, { onDelete: 'cascade' }),
+}
+
 export type Route = typeof RouteTable.$inferSelect
 export type RouteCreateInput = typeof RouteTable.$inferInsert
 
@@ -225,19 +247,9 @@ const RouteRelations = relations(RouteTable, ({ one }) => ({
 export const ActiveRouteTable = pgTable(
   'ActiveRoute',
   {
-    userId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => UserTable.id, { onDelete: 'cascade' }),
-    accountId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => AccountTable.id, { onDelete: 'cascade' }),
-    routeId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => RouteTable.id, { onDelete: 'cascade' }),
-
+    ...userReference,
+    ...accountReference,
+    ...routeReference,
     ...tenantReference,
     ...createdTimestamp,
   },
@@ -265,15 +277,8 @@ const ActiveRouteRelations = relations(ActiveRouteTable, ({ one }) => ({
 export const ActiveAccountTable = pgTable(
   'ActiveAccount',
   {
-    userId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => UserTable.id, { onDelete: 'cascade' }),
-    accountId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => AccountTable.id, { onDelete: 'cascade' }),
-
+    ...userReference,
+    ...accountReference,
     ...tenantReference,
     ...createdTimestamp,
   },
@@ -295,6 +300,31 @@ const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
   }),
 }))
 
+export const SignedTransactionTable = pgTable(
+  'SignedTransaction',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    transaction: json().$type<MetaTransactionRequest[]>().notNull(),
+    explorerUrl: text(),
+    safeWalletUrl: text(),
+
+    ...walletReference,
+    ...accountReference,
+    ...userReference,
+    ...routeReference,
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.accountId),
+    index().on(table.routeId),
+    index().on(table.tenantId),
+    index().on(table.userId),
+    index().on(table.walletId),
+  ],
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -306,6 +336,7 @@ export const schema = {
   route: RouteTable,
   activeRoute: ActiveRouteTable,
   activeAccount: ActiveAccountTable,
+  signedTransaction: SignedTransactionTable,
 
   TenantRelations,
   FeatureRelations,

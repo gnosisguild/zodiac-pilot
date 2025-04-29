@@ -167,7 +167,6 @@ describe('Edit route', () => {
           routeId: route.id,
           data: encode(route),
         }),
-        { version: '3.8.2' },
       )
 
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))

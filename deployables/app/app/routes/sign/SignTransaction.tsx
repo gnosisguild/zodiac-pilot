@@ -1,6 +1,6 @@
 import { jsonRpcProvider } from '@/utils'
 import { EXPLORER_URL } from '@zodiac/chains'
-import { useIsPending } from '@zodiac/hooks'
+import { useIsPending, useStableHandler } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -20,11 +20,24 @@ import {
 } from 'ser-kit'
 import { useAccount, useConnectorClient } from 'wagmi'
 
+type MultiSigResult = {
+  safeWalletUrl: string
+}
+
+type TransactionResult = {
+  explorerUrl: string
+}
+
+type OnSignOptions = MultiSigResult | TransactionResult
+
 type SignTransactionProps = {
   chainId: ChainId
   walletAddress: HexAddress
   safeAddress: HexAddress
   executionPlan: ExecutionPlan | null
+
+  intent?: string
+  onSign?: (options: OnSignOptions) => void
 }
 
 export const SignTransaction = ({
@@ -32,9 +45,13 @@ export const SignTransaction = ({
   walletAddress,
   safeAddress,
   executionPlan,
+  intent,
+  onSign,
 }: SignTransactionProps) => {
   const walletAccount = useAccount()
   const { data: connectorClient } = useConnectorClient()
+
+  const onSignRef = useStableHandler(onSign)
 
   useEffect(() => {
     if (executionPlan == null) {
@@ -71,6 +88,10 @@ export const SignTransaction = ({
           url.searchParams.set('safe', prefixAddress(chainId, safeAddress))
           url.searchParams.set('id', `multisig_${safeAddress}_${safeTxHash}`)
 
+          if (onSignRef.current) {
+            onSignRef.current({ safeWalletUrl: url.toString() })
+          }
+
           successToast({
             title: 'Transaction batch has been proposed for execution',
             message: (
@@ -103,14 +124,17 @@ export const SignTransaction = ({
 
             console.debug(`Transaction ${txHash} has been executed`, receipt)
 
+            const url = new URL(`tx/${txHash}`, EXPLORER_URL[chainId])
+
+            if (onSignRef.current) {
+              onSignRef.current({ explorerUrl: url.toString() })
+            }
+
             successToast({
               title: 'Transaction batch has been executed',
               message: (
                 <a
-                  href={new URL(
-                    `tx/${txHash}`,
-                    EXPLORER_URL[chainId],
-                  ).toString()}
+                  href={url.toString()}
                   className="inline-flex items-center gap-1"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -123,9 +147,12 @@ export const SignTransaction = ({
           }
         }
 
-        window.postMessage({
-          type: CompanionAppMessageType.SUBMIT_SUCCESS,
-        } satisfies CompanionAppMessage)
+        window.postMessage(
+          {
+            type: CompanionAppMessageType.SUBMIT_SUCCESS,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
       } catch (error) {
         console.debug({ error })
         errorToast({
@@ -136,7 +163,7 @@ export const SignTransaction = ({
     }
 
     executePlan()
-  }, [chainId, connectorClient, executionPlan, safeAddress])
+  }, [chainId, connectorClient, executionPlan, onSignRef, safeAddress])
 
   const isSubmitting = useIsPending()
 
@@ -149,7 +176,7 @@ export const SignTransaction = ({
   }
 
   return (
-    <PrimaryButton submit busy={isSubmitting}>
+    <PrimaryButton submit intent={intent} busy={isSubmitting}>
       Sign
     </PrimaryButton>
   )

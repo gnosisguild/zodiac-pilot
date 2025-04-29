@@ -928,6 +928,9 @@ importers:
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
+      ethers:
+        specifier: 6.13.7
+        version: 6.13.7(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       react:
         specifier: 19.1.0
         version: 19.1.0

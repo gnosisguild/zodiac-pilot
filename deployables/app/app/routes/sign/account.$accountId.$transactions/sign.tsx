@@ -7,15 +7,22 @@ import {
   dbClient,
   getAccount,
   getActiveRoute,
+  saveTransaction,
   toExecutionRoute,
 } from '@zodiac/db'
-import { getBoolean, getNumberMap } from '@zodiac/form-data'
+import {
+  formData,
+  getBoolean,
+  getNumberMap,
+  getOptionalString,
+  getString,
+} from '@zodiac/form-data'
 import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
 import { Error, Form, Success, Warning } from '@zodiac/ui'
 import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine } from 'lucide-react'
 import { Suspense } from 'react'
-import { Await } from 'react-router'
+import { Await, useSubmit } from 'react-router'
 import { planExecution, prefixAddress } from 'ser-kit'
 import { getDefaultNonces } from '../getDefaultNonces'
 import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
@@ -127,20 +134,39 @@ export const action = async (args: Route.ActionArgs) =>
         },
       )
 
-      return {
-        plan: await planExecution(
-          metaTransactions,
-          toExecutionRoute({
-            wallet: route.wallet,
-            account,
-            route,
-          }),
-          {
-            safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
-              mapValue: (nonce) => ({ nonce }),
+      switch (getString(data, 'intent')) {
+        case Intent.PlanExecution: {
+          const plan = await planExecution(
+            metaTransactions,
+            toExecutionRoute({
+              wallet: route.wallet,
+              account,
+              route,
             }),
-          },
-        ),
+            {
+              safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
+                mapValue: (nonce) => ({ nonce }),
+              }),
+            },
+          )
+
+          return { plan }
+        }
+
+        case Intent.SignTransaction: {
+          await saveTransaction(dbClient(), tenant, user, {
+            accountId,
+            walletId: route.wallet.id,
+            routeId: route.id,
+
+            transaction: metaTransactions,
+
+            safeWalletUrl: getOptionalString(data, 'safeWalletUrl'),
+            explorerUrl: getOptionalString(data, 'explorerUrl'),
+          })
+
+          return null
+        }
       }
     },
     {
@@ -174,6 +200,8 @@ const SubmitPage = ({
   },
   actionData,
 }: Route.ComponentProps) => {
+  const submit = useSubmit()
+
   return (
     <Form>
       <Form.Section
@@ -273,10 +301,16 @@ const SubmitPage = ({
 
       <Form.Actions>
         <SignTransaction
+          intent={Intent.PlanExecution}
           chainId={account.chainId}
           walletAddress={wallet.address}
           safeAddress={account.address}
           executionPlan={actionData == null ? null : actionData.plan}
+          onSign={(options) => {
+            submit(formData({ intent: Intent.SignTransaction, ...options }), {
+              method: 'POST',
+            })
+          }}
         />
       </Form.Actions>
     </Form>
@@ -284,3 +318,8 @@ const SubmitPage = ({
 }
 
 export default SubmitPage
+
+enum Intent {
+  PlanExecution = 'PlanExecution',
+  SignTransaction = 'SignTransaction',
+}

@@ -1,3 +1,4 @@
+export { OperationType } from '@safe-global/types-kit'
 export { type PrefixedAddress } from 'ser-kit'
 export { decode } from './decode'
 export { encode } from './encode'

@@ -162,6 +162,20 @@
       "when": 1745494529131,
       "tag": "0022_waypoints cannot be null",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1745830178984,
+      "tag": "0023_add signed transaction table",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1745839773069,
+      "tag": "0024_add explorer urls",
+      "breakpoints": true
     }
   ]
 }

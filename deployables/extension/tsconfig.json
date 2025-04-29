@@ -25,7 +25,6 @@
   },
   "include": [
     "./src/**/*",
-    "./e2e/**/*",
     "./test-utils/**/*",
     "./vitest.setup.mts",
     "abitype.d.ts"

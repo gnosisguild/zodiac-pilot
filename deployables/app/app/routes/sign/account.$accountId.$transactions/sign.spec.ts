@@ -1,8 +1,19 @@
 import { simulateTransactionBundle } from '@/simulation-server'
-import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
-import { Chain } from '@zodiac/chains'
-import { activateRoute, dbClient, toExecutionRoute } from '@zodiac/db'
+import {
+  createMockExecuteTransactionAction,
+  createMockProposeTransactionAction,
+  render,
+} from '@/test-utils'
+import { jsonRpcProvider } from '@/utils'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Chain, EXPLORER_URL } from '@zodiac/chains'
+import {
+  activateRoute,
+  dbClient,
+  getTransactions,
+  toExecutionRoute,
+} from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -11,12 +22,19 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
-import { createMockTransaction, randomAddress } from '@zodiac/test-utils'
+import {
+  createMockTransaction,
+  randomAddress,
+  randomHex,
+} from '@zodiac/test-utils'
+import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { href } from 'react-router'
 import {
   checkPermissions,
+  execute,
   PermissionViolation,
   planExecution,
+  prefixAddress,
   queryRoutes,
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -28,12 +46,15 @@ vi.mock('ser-kit', async (importOriginal) => {
   return {
     ...module,
 
+    execute: vi.fn(),
     planExecution: vi.fn(),
     queryRoutes: vi.fn(),
     checkPermissions: vi.fn(),
   }
 })
 
+const mockExecute = vi.mocked(execute)
+const mockPlanExecution = vi.mocked(planExecution)
 const mockQueryRoutes = vi.mocked(queryRoutes)
 const mockCheckPermissions = vi.mocked(checkPermissions)
 
@@ -63,13 +84,28 @@ vi.mock('@/simulation-server', async (importOriginal) => {
 
 const mockSimulateTransactionBundle = vi.mocked(simulateTransactionBundle)
 
+vi.mock('@/utils', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/utils')>()
+
+  return {
+    ...module,
+
+    jsonRpcProvider: vi.fn(),
+  }
+})
+
+const mockJsonRpcProvider = vi.mocked(jsonRpcProvider)
+
 describe('Sign', () => {
   const chainId = Chain.ETH
   const initiator = randomAddress()
 
   beforeEach(() => {
-    // @ts-expect-error We only needs an empty array
-    vi.mocked(planExecution).mockResolvedValue([])
+    vi.mocked(planExecution).mockResolvedValue([
+      createMockExecuteTransactionAction(),
+    ])
+
+    mockJsonRpcProvider.mockReturnValue(new MockJsonRpcProvider())
 
     // @ts-expect-error We really only want to use this subset
     mockUseAccount.mockReturnValue({
@@ -88,13 +124,6 @@ describe('Sign', () => {
   })
 
   describe('Route', () => {
-    beforeEach(() => {
-      mockCheckPermissions.mockResolvedValue({
-        success: true,
-        error: undefined,
-      })
-    })
-
     describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
         const tenant = await tenantFactory.create()
@@ -209,11 +238,6 @@ describe('Sign', () => {
   })
 
   describe('Permissions', () => {
-    beforeEach(() => {
-      // @ts-expect-error We only needs an empty array
-      vi.mocked(planExecution).mockResolvedValue([])
-    })
-
     it('shows the permission error', async () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
@@ -340,14 +364,7 @@ describe('Sign', () => {
 
   describe('Approvals', () => {
     beforeEach(() => {
-      // @ts-expect-error We only needs an empty array
-      vi.mocked(planExecution).mockResolvedValue([])
-
       mockQueryRoutes.mockResolvedValue([])
-      mockCheckPermissions.mockResolvedValue({
-        error: undefined,
-        success: true,
-      })
     })
 
     it('does not revoke approvals by default', async () => {
@@ -385,6 +402,99 @@ describe('Sign', () => {
       expect(
         await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
       ).not.toBeChecked()
+    })
+  })
+
+  describe('Sign', () => {
+    it('stores a reference to the transaction.', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const testHash = randomHex(18)
+
+      mockQueryRoutes.mockResolvedValue([])
+      mockPlanExecution.mockResolvedValue([
+        createMockExecuteTransactionAction({
+          from: wallet.address,
+        }),
+      ])
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
+          transactions: encode([createMockTransaction()]),
+        }),
+        { user, tenant },
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitFor(async () => {
+        await waitForPendingActions()
+
+        const [transaction] = await getTransactions(dbClient(), account.id)
+
+        expect(transaction).toHaveProperty(
+          'explorerUrl',
+          new URL(`tx/${testHash}`, EXPLORER_URL[account.chainId]).toString(),
+        )
+      })
+    })
+
+    it('stores a reference to the multisig.', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const testHash = randomHex(18)
+
+      mockQueryRoutes.mockResolvedValue([])
+      mockPlanExecution.mockResolvedValue([
+        createMockProposeTransactionAction({
+          proposer: wallet.address,
+          safe: account.address,
+        }),
+      ])
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/submit/account/:accountId/:transactions', {
+          accountId: account.id,
+          transactions: encode([createMockTransaction()]),
+        }),
+        { user, tenant },
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitFor(async () => {
+        await waitForPendingActions()
+
+        const [transaction] = await getTransactions(dbClient(), account.id)
+
+        const url = new URL(`/transactions/tx`, 'https://app.safe.global')
+        url.searchParams.set(
+          'safe',
+          prefixAddress(account.chainId, account.address),
+        )
+        url.searchParams.set('id', `multisig_${account.address}_${testHash}`)
+
+        expect(transaction).toHaveProperty('safeWalletUrl', url.toString())
+      })
     })
   })
 })

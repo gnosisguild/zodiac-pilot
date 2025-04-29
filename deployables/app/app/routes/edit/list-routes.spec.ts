@@ -101,7 +101,6 @@ describe.sequential('List Routes', () => {
 
         await render(href('/edit'), {
           availableRoutes: [route],
-          version: '3.6.0',
         })
 
         await postMessage({
@@ -180,7 +179,6 @@ describe.sequential('List Routes', () => {
         const mockPostMessage = vi.spyOn(window, 'postMessage')
 
         await render(href('/edit'), {
-          version: '3.6.0',
           availableRoutes: [route],
         })
 
@@ -213,7 +211,6 @@ describe.sequential('List Routes', () => {
 
         await render(href('/edit'), {
           availableRoutes: [route],
-          version: '3.6.0',
         })
 
         await loadAndActivateRoute(route)

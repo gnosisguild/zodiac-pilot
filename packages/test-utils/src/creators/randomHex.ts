@@ -1,7 +1,7 @@
 import type { HexAddress } from '@zodiac/schema'
 import { prefixAddress, type ChainId } from 'ser-kit'
 
-export const randomHex = (size: number): HexAddress => {
+export const randomHex = (size: number = 0): HexAddress => {
   const hex = [...Array(size)]
     .map(() => Math.floor(Math.random() * 16).toString(16))
     .join('')

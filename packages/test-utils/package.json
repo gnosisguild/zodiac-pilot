@@ -26,6 +26,10 @@
     "./e2e": {
       "types": "./src/e2e/index.ts",
       "import": "./src/e2e/index.ts"
+    },
+    "./rpc": {
+      "types": "./src/rpc/index.ts",
+      "import": "./src/rpc/index.ts"
     }
   },
   "dependencies": {
@@ -35,6 +39,7 @@
     "@testing-library/react": "16.3.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
+    "ethers": "6.13.7",
     "vitest": "3.1.2",
     "vitest-chrome": "0.1.0"
   },
