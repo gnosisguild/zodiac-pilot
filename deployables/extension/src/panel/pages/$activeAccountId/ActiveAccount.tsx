@@ -33,6 +33,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
+import { AccountActions } from './AccountActions'
 import { AccountSelect } from './AccountSelect'
 import { getActiveAccountId } from './getActiveAccountId'
 import { Intent } from './intents'
@@ -142,7 +143,7 @@ const ActiveRoute = () => {
           <ProvideProvider>
             <Page>
               <Page.Header>
-                <div className="my-2">
+                <div className="my-2 mr-4 flex gap-2">
                   <AccountSelect
                     accounts={accounts}
                     onSelect={(accountId) =>
@@ -152,6 +153,8 @@ const ActiveRoute = () => {
                       )
                     }
                   />
+
+                  <AccountActions />
                 </div>
               </Page.Header>
 

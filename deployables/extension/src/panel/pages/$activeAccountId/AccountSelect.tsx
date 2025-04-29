@@ -1,12 +1,9 @@
 import { useAccount } from '@/accounts'
 import { type Account } from '@/companion'
-import { useWindowId } from '@/inject-bridge'
 import { CHAIN_NAME } from '@zodiac/chains'
-import { Blockie, Form, GhostButton, Select, Tag } from '@zodiac/ui'
-import { List, Pencil } from 'lucide-react'
+import { Blockie, Select, Tag } from '@zodiac/ui'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { useActivateAccount } from '../useActivateAccount'
-import { Intent } from './intents'
 
 type AccountSelectProps = {
   accounts: Account[]
@@ -15,7 +12,6 @@ type AccountSelectProps = {
 
 export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
   const account = useAccount()
-  const windowId = useWindowId()
 
   const [
     activateAccount,
@@ -59,32 +55,6 @@ export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
             )
           }}
         </Select>
-
-        <div className="mr-4 flex shrink-0 items-center gap-1">
-          <Form context={{ accountId: account.id, windowId }}>
-            <GhostButton
-              submit
-              iconOnly
-              intent={Intent.EditAccount}
-              icon={Pencil}
-              size="small"
-            >
-              Edit account
-            </GhostButton>
-          </Form>
-
-          <Form context={{ windowId }}>
-            <GhostButton
-              submit
-              iconOnly
-              intent={Intent.ListAccounts}
-              icon={List}
-              size="small"
-            >
-              List accounts
-            </GhostButton>
-          </Form>
-        </div>
       </div>
 
       <ClearTransactionsModal

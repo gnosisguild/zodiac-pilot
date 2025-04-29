@@ -49,7 +49,7 @@ describe('Active Account', () => {
       await render('/first-route')
 
       await userEvent.click(
-        screen.getByRole('combobox', { name: 'Safe Accounts' }),
+        await screen.findByRole('combobox', { name: 'Safe Accounts' }),
       )
       await userEvent.click(
         screen.getByRole('option', { name: 'Second route' }),
@@ -168,6 +168,9 @@ describe('Active Account', () => {
           })
 
           await userEvent.click(
+            screen.getByRole('button', { name: 'Account actions' }),
+          )
+          await userEvent.click(
             screen.getByRole('button', { name: 'Edit account' }),
           )
 
@@ -189,6 +192,9 @@ describe('Active Account', () => {
             initialState: [createTransaction()],
           })
 
+          await userEvent.click(
+            screen.getByRole('button', { name: 'Account actions' }),
+          )
           await userEvent.click(
             screen.getByRole('button', { name: 'Edit account' }),
           )
@@ -214,6 +220,9 @@ describe('Active Account', () => {
           await render(`/${account.id}`)
 
           await userEvent.click(
+            screen.getByRole('button', { name: 'Account actions' }),
+          )
+          await userEvent.click(
             screen.getByRole('button', { name: 'Edit account' }),
           )
 
@@ -240,6 +249,9 @@ describe('Active Account', () => {
           await render(`/${account.id}`)
 
           await userEvent.click(
+            screen.getByRole('button', { name: 'Account actions' }),
+          )
+          await userEvent.click(
             screen.getByRole('button', { name: 'Edit account' }),
           )
 
@@ -258,6 +270,9 @@ describe('Active Account', () => {
 
         await render('/test-route')
 
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Account actions' }),
+        )
         await userEvent.click(
           screen.getByRole('button', { name: 'List accounts' }),
         )
@@ -279,6 +294,9 @@ describe('Active Account', () => {
 
         await render('/test-route')
 
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Account actions' }),
+        )
         await userEvent.click(
           screen.getByRole('button', { name: 'List accounts' }),
         )
