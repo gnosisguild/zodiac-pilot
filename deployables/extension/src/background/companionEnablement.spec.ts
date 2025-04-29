@@ -103,7 +103,10 @@ describe('Companion Enablement', () => {
 
       await callListeners(
         chromeMock.runtime.onMessage,
-        { type: CompanionAppMessageType.PING } satisfies CompanionAppMessage,
+        {
+          type: CompanionAppMessageType.PING,
+          signedIn: false,
+        } satisfies CompanionAppMessage,
         { tab },
         vi.fn(),
       )
@@ -124,7 +127,10 @@ describe('Companion Enablement', () => {
 
       await callListeners(
         chromeMock.runtime.onMessage,
-        { type: CompanionAppMessageType.PING } satisfies CompanionAppMessage,
+        {
+          type: CompanionAppMessageType.PING,
+          signedIn: false,
+        } satisfies CompanionAppMessage,
         { tab },
         vi.fn(),
       )
