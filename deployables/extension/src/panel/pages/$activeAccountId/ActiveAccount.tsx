@@ -6,7 +6,7 @@ import {
   ProvideAccount,
   saveActiveAccount,
 } from '@/accounts'
-import { useCompanionAppUrl } from '@/companion'
+import { getUser, useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
@@ -43,13 +43,14 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
 
   try {
-    const [account, route] = await Promise.all([
+    const [account, route, user] = await Promise.all([
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
       findActiveRoute(activeAccountId, {
         signal: request.signal,
       }),
+      getUser({ signal: request.signal }),
     ])
 
     await saveActiveAccount(account)
@@ -65,6 +66,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
     return {
       route,
+      user,
       account,
       accounts,
     }
@@ -117,6 +119,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const activeAccountId = getActiveAccountId(params)
 
       return redirect(`/${activeAccountId}/clear-transactions/${accountId}`)
+    }
+
+    case Intent.Login: {
+      await chrome.identity.launchWebAuthFlow({
+        url: `${getCompanionAppUrl()}/extension/sign-in`,
+        interactive: true,
+      })
+
+      return null
     }
   }
 }

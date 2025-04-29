@@ -1,5 +1,4 @@
 import { editAccount, getAccount, useAccount } from '@/accounts'
-import { getUser } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
@@ -8,33 +7,15 @@ import { useProvider } from '@/providers-ui'
 import { useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
-import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
-import {
-  CopyToClipboard,
-  Feature,
-  GhostButton,
-  Info,
-  InlineForm,
-  Page,
-} from '@zodiac/ui'
-import { Cloud, CloudOff, RefreshCcw } from 'lucide-react'
+import { CopyToClipboard, GhostButton, Info, Page } from '@zodiac/ui'
+import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import {
-  useLoaderData,
-  type ActionFunctionArgs,
-  type LoaderFunctionArgs,
-} from 'react-router'
+import { type ActionFunctionArgs } from 'react-router'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  return {
-    user: await getUser({ signal: request.signal }),
-  }
-}
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
@@ -42,15 +23,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const intent = getString(data, 'intent')
 
   switch (intent) {
-    case Intent.Login: {
-      await chrome.identity.launchWebAuthFlow({
-        url: `${getCompanionAppUrl()}/extension/sign-in`,
-        interactive: true,
-      })
-
-      return null
-    }
-
     case Intent.EditAccount: {
       const windowId = getInt(data, 'windowId')
 
@@ -71,7 +43,6 @@ const Transactions = () => {
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
-  const { user } = useLoaderData<typeof loader>()
 
   useProviderBridge({
     provider,
@@ -129,26 +100,6 @@ const Transactions = () => {
             >
               Re-simulate on current blockchain head
             </GhostButton>
-
-            <Feature feature="user-management">
-              <InlineForm>
-                {user == null ? (
-                  <GhostButton
-                    iconOnly
-                    submit
-                    intent={Intent.Login}
-                    size="small"
-                    icon={CloudOff}
-                  >
-                    Log into Zodiac OS
-                  </GhostButton>
-                ) : (
-                  <GhostButton iconOnly size="small" icon={Cloud}>
-                    View Profile
-                  </GhostButton>
-                )}
-              </InlineForm>
-            </Feature>
           </div>
         </div>
 
