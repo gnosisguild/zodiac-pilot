@@ -1,6 +1,7 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUser } from '@/companion'
 import { useWindowId } from '@/inject-bridge'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Divider,
   Feature,
@@ -19,6 +20,10 @@ export const AccountActions = () => {
   const windowId = useWindowId()
   const [open, setOpen] = useState(false)
 
+  useAfterSubmit([Intent.EditAccount, Intent.ListAccounts], () =>
+    setOpen(false),
+  )
+
   return (
     <div className="flex shrink-0 items-center gap-1">
       <MeatballMenu
@@ -32,6 +37,7 @@ export const AccountActions = () => {
           <GhostButton
             submit
             align="left"
+            busy={useIsPending(Intent.EditAccount)}
             intent={Intent.EditAccount}
             icon={Pencil}
             size="small"
@@ -44,6 +50,7 @@ export const AccountActions = () => {
           <GhostButton
             submit
             align="left"
+            busy={useIsPending(Intent.ListAccounts)}
             intent={Intent.ListAccounts}
             icon={List}
             size="small"

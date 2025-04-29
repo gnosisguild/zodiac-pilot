@@ -201,7 +201,10 @@ const ActiveRoute = () => {
         </ProvideExecutionRoute>
       </ProvideAccount>
 
-      <Modal open={navigation.state === 'loading'} title="Switching account...">
+      <Modal
+        open={navigation.state === 'loading' && navigation.formData == null}
+        title="Switching account..."
+      >
         <div className="flex justify-center">
           <Spinner />
         </div>
