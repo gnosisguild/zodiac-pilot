@@ -12,6 +12,7 @@ import {
 } from 'react-router'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
+import { useRevalidateOnSignIn } from './useRevalidateOnSignIn'
 import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -42,6 +43,7 @@ const Root = () => {
   })
 
   useDeleteRoute()
+  useRevalidateOnSignIn(user != null)
 
   const navigate = useNavigate()
 

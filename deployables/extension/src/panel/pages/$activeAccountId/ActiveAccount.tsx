@@ -6,7 +6,7 @@ import {
   ProvideAccount,
   saveActiveAccount,
 } from '@/accounts'
-import { getUser, useCompanionAppUrl } from '@/companion'
+import { useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
@@ -43,14 +43,13 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
 
   try {
-    const [account, route, user] = await Promise.all([
+    const [account, route] = await Promise.all([
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
       findActiveRoute(activeAccountId, {
         signal: request.signal,
       }),
-      getUser({ signal: request.signal }),
     ])
 
     await saveActiveAccount(account)
@@ -66,7 +65,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
     return {
       route,
-      user,
       account,
       accounts,
     }

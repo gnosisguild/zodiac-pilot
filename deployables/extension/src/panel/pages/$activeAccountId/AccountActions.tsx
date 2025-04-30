@@ -2,15 +2,8 @@ import { useAccount } from '@/accounts'
 import { useCompanionAppUser } from '@/companion'
 import { useWindowId } from '@/inject-bridge'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
-import {
-  Divider,
-  Feature,
-  Form,
-  GhostButton,
-  InlineForm,
-  MeatballMenu,
-} from '@zodiac/ui'
-import { Cloud, CloudOff, List, Pencil } from 'lucide-react'
+import { Divider, Feature, Form, GhostButton, MeatballMenu } from '@zodiac/ui'
+import { CloudOff, List, Pencil, User } from 'lucide-react'
 import { useState } from 'react'
 import { Intent } from './intents'
 
@@ -61,7 +54,8 @@ export const AccountActions = () => {
 
         <Feature feature="user-management">
           <Divider />
-          <InlineForm>
+
+          <Form>
             {user == null ? (
               <GhostButton
                 submit
@@ -73,11 +67,11 @@ export const AccountActions = () => {
                 Log into Zodiac OS
               </GhostButton>
             ) : (
-              <GhostButton size="small" align="left" icon={Cloud}>
+              <GhostButton size="small" align="left" icon={User}>
                 View Profile
               </GhostButton>
             )}
-          </InlineForm>
+          </Form>
         </Feature>
       </MeatballMenu>
     </div>
