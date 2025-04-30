@@ -58,6 +58,7 @@ describe('Companion App Content Script', () => {
         CompanionAppMessageType.PING,
         {
           type: CompanionAppMessageType.PING,
+          signedIn: false,
         } satisfies CompanionAppMessage,
       ],
       [

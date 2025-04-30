@@ -22,7 +22,7 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
+import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
   Outlet,
@@ -33,6 +33,7 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from 'react-router'
+import { AccountActions } from './AccountActions'
 import { AccountSelect } from './AccountSelect'
 import { getActiveAccountId } from './getActiveAccountId'
 import { Intent } from './intents'
@@ -117,6 +118,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       return redirect(`/${activeAccountId}/clear-transactions/${accountId}`)
     }
+
+    case Intent.Login: {
+      await chrome.identity.launchWebAuthFlow({
+        url: `${getCompanionAppUrl()}/extension/sign-in`,
+        interactive: true,
+      })
+
+      return null
+    }
   }
 }
 
@@ -142,16 +152,22 @@ const ActiveRoute = () => {
           <ProvideProvider>
             <Page>
               <Page.Header>
-                <div className="my-2">
-                  <AccountSelect
-                    accounts={accounts}
-                    onSelect={(accountId) =>
-                      submit(
-                        { intent: Intent.ActivateAccount, accountId },
-                        { method: 'POST' },
-                      )
-                    }
-                  />
+                <div className="mx-4 my-2 flex items-center gap-2">
+                  <Blockie address={account.address} className="size-6" />
+
+                  <div className="flex-1">
+                    <AccountSelect
+                      accounts={accounts}
+                      onSelect={(accountId) =>
+                        submit(
+                          { intent: Intent.ActivateAccount, accountId },
+                          { method: 'POST' },
+                        )
+                      }
+                    />
+                  </div>
+
+                  <AccountActions />
                 </div>
               </Page.Header>
 
@@ -183,7 +199,10 @@ const ActiveRoute = () => {
         </ProvideExecutionRoute>
       </ProvideAccount>
 
-      <Modal open={navigation.state === 'loading'} title="Switching account...">
+      <Modal
+        open={navigation.state === 'loading' && navigation.formData == null}
+        title="Switching account..."
+      >
         <div className="flex justify-center">
           <Spinner />
         </div>

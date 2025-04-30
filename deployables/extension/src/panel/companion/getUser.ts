@@ -10,6 +10,8 @@ const authSchema = z.object({
     .nullable(),
 })
 
+export type User = z.infer<typeof authSchema>['user']
+
 export const getUser = async ({ signal }: FetchOptions = {}) => {
   const { user } = await api('/extension/heartbeat', {
     schema: authSchema,

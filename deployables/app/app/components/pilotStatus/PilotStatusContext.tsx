@@ -10,21 +10,32 @@ import { usePingWhileDisconnected } from './usePingWhileDisconnected'
 
 const PilotStatusContext = createContext(false)
 
-export const ProvidePilotStatus = ({ children }: PropsWithChildren) => (
-  <PilotStatusContext value={useUpToDateConnectedStatus()}>
+type ProvidePilotStatusProps = PropsWithChildren<{ signedIn: boolean }>
+
+export const ProvidePilotStatus = ({
+  children,
+  signedIn,
+}: ProvidePilotStatusProps) => (
+  <PilotStatusContext value={useUpToDateConnectedStatus(signedIn)}>
     {children}
   </PilotStatusContext>
 )
 
-const useUpToDateConnectedStatus = () => {
+const useUpToDateConnectedStatus = (signedIn: boolean) => {
   const [connected, setConnected] = useState(false)
 
   useConnectChangeOnPilotEvents({
     onConnect: () => setConnected(true),
     onDisconnect: () => setConnected(false),
   })
-  usePingWhileDisconnected(connected, { onConnect: () => setConnected(true) })
-  useDisconnectWhenUnreachable(connected, {
+  usePingWhileDisconnected({
+    connected,
+    signedIn,
+    onConnect: () => setConnected(true),
+  })
+  useDisconnectWhenUnreachable({
+    connected,
+    signedIn,
     onDisconnect: () => setConnected(false),
   })
 

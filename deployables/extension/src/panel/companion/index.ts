@@ -2,6 +2,7 @@ export type { FetchOptions } from './api'
 export {
   ProvideCompanionAppContext,
   useCompanionAppUrl,
+  useCompanionAppUser,
 } from './CompanionAppSupport'
 export { findRemoteActiveAccount } from './findRemoteActiveAccount'
 export { findRemoteActiveRoute } from './findRemoteActiveRoute'

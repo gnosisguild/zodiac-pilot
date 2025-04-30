@@ -31,7 +31,7 @@ describe('Transactions', () => {
       await render('/test-route/transactions')
 
       expect(
-        screen.getByRole('heading', { name: 'Recording transactions' }),
+        await screen.findByRole('heading', { name: 'Recording transactions' }),
       ).not.toHaveAccessibleDescription()
     })
   })
@@ -45,7 +45,7 @@ describe('Transactions', () => {
       })
 
       expect(
-        screen.getByRole('region', { name: 'Raw transaction' }),
+        await screen.findByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
     })
   })

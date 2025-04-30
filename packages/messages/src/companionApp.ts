@@ -34,6 +34,7 @@ type CompanionAppRequestForkInfoMessage = {
 
 type CompanionAppPingMessage = {
   type: CompanionAppMessageType.PING
+  signedIn: boolean
 }
 
 type CompanionAppRequestVersionMessage = {

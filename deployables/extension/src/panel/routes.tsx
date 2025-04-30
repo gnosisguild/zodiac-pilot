@@ -25,7 +25,6 @@ export const routes: RouteObject[] = [
           {
             path: 'transactions',
             Component: Transactions.default,
-            loader: Transactions.loader,
             action: Transactions.action,
           },
           {

@@ -1,4 +1,5 @@
 import { mockRoutes, render } from '@/test-utils'
+import { waitFor } from '@testing-library/react'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -20,7 +21,9 @@ describe('Clear transactions', () => {
 
     await render('/test-route/clear-transactions/new-route')
 
-    expect(mockClearTransactions).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(mockClearTransactions).toHaveBeenCalled()
+    })
   })
 
   it('redirects to the new active route', async () => {

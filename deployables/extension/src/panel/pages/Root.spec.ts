@@ -1,3 +1,4 @@
+import { getUser } from '@/companion'
 import { getRoute, getRoutes, saveLastUsedAccountId } from '@/execution-routes'
 import {
   callListeners,
@@ -31,6 +32,8 @@ import {
 } from '@zodiac/test-utils'
 import type { MockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
+
+const mockGetUser = vi.mocked(getUser)
 
 describe('Root', () => {
   describe('Delete route', () => {
@@ -345,6 +348,30 @@ describe('Root', () => {
         type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
         activeRouteId: 'test-route',
       } satisfies CompanionResponseMessage)
+    })
+  })
+
+  describe('User', () => {
+    it('fetches the current user, when a ping signals a change of the signed in state', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await saveLastUsedAccountId('test-route')
+
+      const { mockedTab } = await render('/')
+
+      const callCount = mockGetUser.mock.calls.length
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        {
+          type: CompanionAppMessageType.PING,
+          signedIn: true,
+        } satisfies CompanionAppMessage,
+        { id: chromeMock.runtime.id, tab: mockedTab },
+        vi.fn(),
+      )
+
+      expect(mockGetUser).toHaveBeenCalledTimes(callCount + 1)
     })
   })
 })
