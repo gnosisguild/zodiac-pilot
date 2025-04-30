@@ -97,6 +97,8 @@ const Upload = ({ routeId }: { routeId: string }) => {
 
   return (
     <GhostButton
+      size="tiny"
+      align="left"
       intent={Intent.Upload}
       icon={UploadIcon}
       onClick={async () => {
