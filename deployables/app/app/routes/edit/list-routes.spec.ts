@@ -32,6 +32,7 @@ import {
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
@@ -284,7 +285,46 @@ describe.sequential('List Routes', () => {
       expect(account).toHaveProperty('label', 'Test account')
     })
 
-    it.todo('reuses existing accounts')
+    it.only('reuses existing accounts', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+
+      const avatar = prefixAddress(account.chainId, account.address)
+
+      const route = createMockExecutionRoute({ avatar, label: 'Test account' })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(await findByRole('button', { name: 'Upload' }))
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await waitForPendingActions()
+
+      await expect(getAccountByAddress(dbClient(), avatar)).resolves.toEqual(
+        account,
+      )
+    })
+
     it.todo('creates a wallet for the initiator')
     it.todo('reuses existing wallets')
     it.todo('stores the selected route')

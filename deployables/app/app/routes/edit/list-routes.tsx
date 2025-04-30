@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import { Suspense, type PropsWithChildren } from 'react'
+import { Suspense, useId, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/list-routes'
@@ -184,6 +184,9 @@ const ListRoutes = ({
     ...clientData
   },
 }: Route.ComponentProps) => {
+  const localAccountsHeadingId = useId()
+  const localAccountsDescriptionId = useId()
+
   return (
     <Page fullWidth>
       <Page.Header>Safe Accounts</Page.Header>
@@ -227,34 +230,47 @@ const ListRoutes = ({
                     {localAccounts.length > 0 ? (
                       <Suspense>
                         <Await resolve={clientData.activeRouteId}>
-                          {(activeRouteId) => (
-                            <>
-                              <RevalidateWhenActiveRouteChanges
-                                activeRouteId={activeRouteId}
-                              />
+                          {(activeRouteId) => {
+                            console.log('HEY', { activeRouteId })
+                            return (
+                              <section
+                                aria-labelledby={localAccountsHeadingId}
+                                aria-describedby={localAccountsDescriptionId}
+                              >
+                                <RevalidateWhenActiveRouteChanges
+                                  activeRouteId={activeRouteId}
+                                />
 
-                              <Feature feature="user-management">
-                                <h2 className="my-6 text-xl">
-                                  Local Accounts
-                                  <p className="my-2 text-sm opacity-80">
-                                    Local accounts live only on your machine.
-                                    They are only usable when the Pilot browser
-                                    extension is installed and open.
-                                  </p>
-                                </h2>
-                              </Feature>
+                                <Feature feature="user-management">
+                                  <h2
+                                    id={localAccountsHeadingId}
+                                    className="my-6 text-xl"
+                                  >
+                                    Local Accounts
+                                    <p
+                                      aria-hidden
+                                      id={localAccountsDescriptionId}
+                                      className="my-2 text-sm opacity-80"
+                                    >
+                                      Local accounts live only on your machine.
+                                      They are only usable when the Pilot
+                                      browser extension is installed and open.
+                                    </p>
+                                  </h2>
+                                </Feature>
 
-                              <Accounts>
-                                {localAccounts.map((route) => (
-                                  <LocalAccount
-                                    key={route.id}
-                                    route={route}
-                                    active={route.id === activeRouteId}
-                                  />
-                                ))}
-                              </Accounts>
-                            </>
-                          )}
+                                <Accounts>
+                                  {localAccounts.map((route) => (
+                                    <LocalAccount
+                                      key={route.id}
+                                      route={route}
+                                      active={route.id === activeRouteId}
+                                    />
+                                  ))}
+                                </Accounts>
+                              </section>
+                            )
+                          }}
                         </Await>
                       </Suspense>
                     ) : (

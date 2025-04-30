@@ -6,6 +6,7 @@ import type {
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
+import { activateFeature, createFeature, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import {
   CompanionAppMessageType,
@@ -75,6 +76,11 @@ type SignedInOptions = CommonOptions & {
    * Render the route in a logged in context
    */
   user: User
+
+  /**
+   * Activates the given set of feautres for a tenant.
+   */
+  features?: string[]
 }
 
 type SignedOutOptions = CommonOptions & {
@@ -113,26 +119,42 @@ export const render = async (
     version = null,
     availableRoutes = [],
     activeRouteId = null,
-    tenant = null,
-    user = null,
     ...options
   }: Options = {},
 ) => {
   versionRef.current = version
 
-  const workOsUser = mockWorkOs(tenant, user)
+  if (options.tenant != null) {
+    const { tenant, user, features } = options
 
-  mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
-    const auth = createAuth(workOsUser)
+    const workOsUser = mockWorkOs(tenant, user)
 
-    if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
-      const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
+    mockAuthKitLoader.mockImplementation(
+      async (loaderArgs, loaderOrOptions) => {
+        const auth = createAuth(workOsUser)
 
-      return data({ ...loaderResult, ...auth })
+        if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
+          const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
+
+          return data({ ...loaderResult, ...auth })
+        }
+
+        return data({ ...auth })
+      },
+    )
+
+    if (features != null) {
+      await Promise.all(
+        features.map(async (name) => {
+          const feature = await createFeature(dbClient(), name)
+          await activateFeature(dbClient(), {
+            tenantId: tenant.id,
+            featureId: feature.id,
+          })
+        }),
+      )
     }
-
-    return data({ ...auth })
-  })
+  }
 
   const renderResult = await baseRender(path, {
     ...options,
