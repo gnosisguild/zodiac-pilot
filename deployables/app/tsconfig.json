@@ -16,7 +16,8 @@
       "@/routes-ui": ["./app/routes-ui/index.ts"],
       "@/auth": ["./auth/index.ts"],
       "@/workOS/client": ["./workOS/client/index.ts"],
-      "@/workOS/server": ["./workOS/server/index.ts"]
+      "@/workOS/server": ["./workOS/server/index.ts"],
+      "@/sentry": ["./app/sentry/index.ts"]
     }
   },
   "include": [

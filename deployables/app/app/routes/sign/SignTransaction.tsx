@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { jsonRpcProvider } from '@/utils'
 import { EXPLORER_URL } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'
@@ -155,9 +156,12 @@ export const SignTransaction = ({
         )
       } catch (error) {
         console.debug({ error })
+
+        sentry.captureException(error)
+
         errorToast({
-          title: 'Error',
-          message: 'Submitting the transaction batch failed',
+          title: 'Signing the transaction batch failed',
+          message: error instanceof Error ? error.message : undefined,
         })
       }
     }
