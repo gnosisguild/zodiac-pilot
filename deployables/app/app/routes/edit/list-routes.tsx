@@ -230,47 +230,44 @@ const ListRoutes = ({
                     {localAccounts.length > 0 ? (
                       <Suspense>
                         <Await resolve={clientData.activeRouteId}>
-                          {(activeRouteId) => {
-                            console.log('HEY', { activeRouteId })
-                            return (
-                              <section
-                                aria-labelledby={localAccountsHeadingId}
-                                aria-describedby={localAccountsDescriptionId}
-                              >
-                                <RevalidateWhenActiveRouteChanges
-                                  activeRouteId={activeRouteId}
-                                />
+                          {(activeRouteId) => (
+                            <section
+                              aria-labelledby={localAccountsHeadingId}
+                              aria-describedby={localAccountsDescriptionId}
+                            >
+                              <RevalidateWhenActiveRouteChanges
+                                activeRouteId={activeRouteId}
+                              />
 
-                                <Feature feature="user-management">
-                                  <h2
-                                    id={localAccountsHeadingId}
-                                    className="my-6 text-xl"
+                              <Feature feature="user-management">
+                                <h2
+                                  id={localAccountsHeadingId}
+                                  className="my-6 text-xl"
+                                >
+                                  Local Accounts
+                                  <p
+                                    aria-hidden
+                                    id={localAccountsDescriptionId}
+                                    className="my-2 text-sm opacity-80"
                                   >
-                                    Local Accounts
-                                    <p
-                                      aria-hidden
-                                      id={localAccountsDescriptionId}
-                                      className="my-2 text-sm opacity-80"
-                                    >
-                                      Local accounts live only on your machine.
-                                      They are only usable when the Pilot
-                                      browser extension is installed and open.
-                                    </p>
-                                  </h2>
-                                </Feature>
+                                    Local accounts live only on your machine.
+                                    They are only usable when the Pilot browser
+                                    extension is installed and open.
+                                  </p>
+                                </h2>
+                              </Feature>
 
-                                <Accounts>
-                                  {localAccounts.map((route) => (
-                                    <LocalAccount
-                                      key={route.id}
-                                      route={route}
-                                      active={route.id === activeRouteId}
-                                    />
-                                  ))}
-                                </Accounts>
-                              </section>
-                            )
-                          }}
+                              <Accounts>
+                                {localAccounts.map((route) => (
+                                  <LocalAccount
+                                    key={route.id}
+                                    route={route}
+                                    active={route.id === activeRouteId}
+                                  />
+                                ))}
+                              </Accounts>
+                            </section>
+                          )}
                         </Await>
                       </Suspense>
                     ) : (

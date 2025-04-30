@@ -124,24 +124,22 @@ export const render = async (
 ) => {
   versionRef.current = version
 
+  const workOsUser = mockWorkOs(options.tenant, options.user)
+
+  mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
+    const auth = createAuth(workOsUser)
+
+    if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
+      const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
+
+      return data({ ...loaderResult, ...auth })
+    }
+
+    return data({ ...auth })
+  })
+
   if (options.tenant != null) {
-    const { tenant, user, features } = options
-
-    const workOsUser = mockWorkOs(tenant, user)
-
-    mockAuthKitLoader.mockImplementation(
-      async (loaderArgs, loaderOrOptions) => {
-        const auth = createAuth(workOsUser)
-
-        if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
-          const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
-
-          return data({ ...loaderResult, ...auth })
-        }
-
-        return data({ ...auth })
-      },
-    )
+    const { tenant, features } = options
 
     if (features != null) {
       await Promise.all(

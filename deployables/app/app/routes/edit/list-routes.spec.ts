@@ -280,12 +280,12 @@ describe.sequential('List Routes', () => {
 
       await waitForPendingActions()
 
-      const account = await getAccountByAddress(dbClient(), avatar)
+      const account = await getAccountByAddress(dbClient(), tenant.id, avatar)
 
       expect(account).toHaveProperty('label', 'Test account')
     })
 
-    it.only('reuses existing accounts', async () => {
+    it('reuses existing accounts', async () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
       const account = await accountFactory.create(tenant, user)
@@ -311,7 +311,9 @@ describe.sequential('List Routes', () => {
         await findByRole('button', { name: 'Account options' }),
       )
 
-      await userEvent.click(await findByRole('button', { name: 'Upload' }))
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
 
       await postMessage({
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
@@ -320,9 +322,9 @@ describe.sequential('List Routes', () => {
 
       await waitForPendingActions()
 
-      await expect(getAccountByAddress(dbClient(), avatar)).resolves.toEqual(
-        account,
-      )
+      await expect(
+        getAccounts(dbClient(), { tenantId: tenant.id, userId: user.id }),
+      ).resolves.toHaveLength(1)
     })
 
     it.todo('creates a wallet for the initiator')
