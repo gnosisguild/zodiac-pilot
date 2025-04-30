@@ -18,6 +18,7 @@ export const findAccountByAddress = async (
         eq(field.address, address),
         eq(field.chainId, chainId),
         eq(field.tenantId, tenantId),
+        eq(field.deleted, false),
       )
     },
   })
