@@ -13,6 +13,7 @@ import {
   getAccountByAddress,
   getAccounts,
   getWalletByAddress,
+  getWallets,
 } from '@zodiac/db'
 import {
   accountFactory,
@@ -380,7 +381,48 @@ describe.sequential('List Routes', () => {
       ).resolves.toBeDefined()
     })
 
-    it.todo('reuses existing wallets')
+    it('reuses existing wallets', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const wallet = await walletFactory.create(user)
+
+      const initiator = wallet.address
+
+      const route = createMockExecutionRoute({
+        initiator: prefixAddress(undefined, initiator),
+      })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await waitForPendingActions()
+
+      await expect(getWallets(dbClient(), user.id)).resolves.toHaveLength(1)
+    })
+
     it.todo('stores the selected route')
     it.todo('marks the route as active')
     it.todo('does not create duplicates')
