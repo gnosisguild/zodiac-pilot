@@ -12,6 +12,7 @@ import {
   dbClient,
   getAccountByAddress,
   getAccounts,
+  getWalletByAddress,
 } from '@zodiac/db'
 import {
   accountFactory,
@@ -29,6 +30,7 @@ import { encode } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   expectRouteToBe,
+  randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -255,7 +257,11 @@ describe.sequential('List Routes', () => {
       const user = await userFactory.create(tenant)
 
       const avatar = randomPrefixedAddress()
-      const route = createMockExecutionRoute({ avatar, label: 'Test account' })
+      const route = createMockExecutionRoute({
+        avatar,
+        initiator: prefixAddress(undefined, randomAddress()),
+        label: 'Test account',
+      })
 
       const { waitForPendingActions } = await render(href('/edit'), {
         availableRoutes: [route],
@@ -292,7 +298,11 @@ describe.sequential('List Routes', () => {
 
       const avatar = prefixAddress(account.chainId, account.address)
 
-      const route = createMockExecutionRoute({ avatar, label: 'Test account' })
+      const route = createMockExecutionRoute({
+        avatar,
+        initiator: prefixAddress(undefined, randomAddress()),
+        label: 'Test account',
+      })
 
       const { waitForPendingActions } = await render(href('/edit'), {
         availableRoutes: [route],
@@ -327,12 +337,55 @@ describe.sequential('List Routes', () => {
       ).resolves.toHaveLength(1)
     })
 
-    it.todo('creates a wallet for the initiator')
+    it('creates a wallet for the initiator', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const initiator = randomAddress()
+
+      const route = createMockExecutionRoute({
+        initiator: prefixAddress(undefined, initiator),
+      })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await waitForPendingActions()
+
+      await expect(
+        getWalletByAddress(dbClient(), user, initiator),
+      ).resolves.toBeDefined()
+    })
+
     it.todo('reuses existing wallets')
     it.todo('stores the selected route')
     it.todo('marks the route as active')
     it.todo('does not create duplicates')
     it.todo('removes the local account')
     it.todo('does not remove the local account when the server action fails')
+    it.todo('does not offer the upload options when no user is logged in')
   })
 })
