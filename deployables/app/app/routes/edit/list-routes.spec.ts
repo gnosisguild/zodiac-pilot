@@ -12,6 +12,7 @@ import {
   dbClient,
   getAccountByAddress,
   getAccounts,
+  getActiveRoute,
   getRoutes,
   getWalletByAddress,
   getWallets,
@@ -476,7 +477,62 @@ describe.sequential('List Routes', () => {
 
       expect(remoteRoute).toHaveProperty('waypoints', route.waypoints)
     })
-    it.todo('marks the route as active')
+
+    it('marks the route as active', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const initiator = randomAddress()
+
+      const route = createMockExecutionRoute({
+        initiator: prefixAddress(undefined, initiator),
+      })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await waitForPendingActions()
+
+      const wallet = await getWalletByAddress(dbClient(), user, initiator)
+      const account = await getAccountByAddress(
+        dbClient(),
+        tenant.id,
+        route.avatar,
+      )
+
+      const [remoteRoute] = await getRoutes(dbClient(), tenant.id, {
+        walletId: wallet.id,
+        accountId: account.id,
+      })
+
+      await expect(
+        getActiveRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', remoteRoute.id)
+    })
+
     it.todo('does not create duplicates')
     it.todo('removes the local account')
     it.todo('does not remove the local account when the server action fails')

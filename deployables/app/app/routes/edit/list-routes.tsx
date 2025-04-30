@@ -3,6 +3,7 @@ import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  activateRoute,
   createAccount,
   createRoute,
   createWallet,
@@ -132,11 +133,13 @@ export const action = async (args: Route.ActionArgs) =>
             })
 
             if (route.waypoints != null) {
-              await createRoute(tx, tenant.id, {
+              const remoteRoute = await createRoute(tx, tenant.id, {
                 walletId: wallet.id,
                 accountId: account.id,
                 waypoints: route.waypoints,
-              }).catch(console.error)
+              })
+
+              await activateRoute(tx, tenant, user, remoteRoute)
             }
           })
 
