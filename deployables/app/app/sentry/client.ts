@@ -10,7 +10,7 @@ const client = new BrowserClient({
   dsn: 'https://c39d76bbc73d7a511713c23ef37f1e94@o4508675621912576.ingest.us.sentry.io/4508676926078976',
   transport: makeFetchTransport,
   stackParser: defaultStackParser,
-  integrations: getDefaultIntegrations(),
+  integrations: getDefaultIntegrations({}),
 })
 
 const scope = new Scope()
