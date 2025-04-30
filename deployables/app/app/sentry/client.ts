@@ -11,6 +11,7 @@ const client = new BrowserClient({
   transport: makeFetchTransport,
   stackParser: defaultStackParser,
   integrations: getDefaultIntegrations({}),
+  maxValueLength: 5000, // enable capturing entire submit & route urls
 })
 
 const scope = new Scope()
