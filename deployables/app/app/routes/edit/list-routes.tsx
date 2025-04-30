@@ -4,6 +4,7 @@ import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   createAccount,
+  createRoute,
   createWallet,
   dbClient,
   deleteAccount,
@@ -115,7 +116,7 @@ export const action = async (args: Route.ActionArgs) =>
           invariantResponse(chainId != null, 'Cannot use EOA as avatar')
 
           await dbClient().transaction(async (tx) => {
-            await createAccount(tx, tenant, user, {
+            const account = await createAccount(tx, tenant, user, {
               chainId,
               address,
               label: route.label,
@@ -125,10 +126,18 @@ export const action = async (args: Route.ActionArgs) =>
 
             const [, initiator] = splitPrefixedAddress(route.initiator)
 
-            await createWallet(tx, user, {
+            const wallet = await createWallet(tx, user, {
               label: 'Unnamed wallet',
               address: initiator,
             })
+
+            if (route.waypoints != null) {
+              await createRoute(tx, tenant.id, {
+                walletId: wallet.id,
+                accountId: account.id,
+                waypoints: route.waypoints,
+              }).catch(console.error)
+            }
           })
 
           return null

@@ -19,11 +19,14 @@ export const createWallet = async (
     return existingWallet
   }
 
-  const [wallet] = await db.insert(WalletTable).values({
-    address,
-    belongsToId: user.id,
-    label,
-  })
+  const [wallet] = await db
+    .insert(WalletTable)
+    .values({
+      address,
+      belongsToId: user.id,
+      label,
+    })
+    .returning()
 
   return wallet
 }
