@@ -7,8 +7,6 @@ const Main = () => <Outlet />
 export default Main
 
 export const ErrorBoundary = () => {
-  const isDev = useIsDev()
-
   return (
     <Page fullWidth>
       <Page.Main>
@@ -19,7 +17,7 @@ export const ErrorBoundary = () => {
             for further assistance.
           </ErrorAlert>
 
-          {isDev && <ErrorMessage />}
+          <ErrorMessage />
         </div>
       </Page.Main>
     </Page>
@@ -28,6 +26,7 @@ export const ErrorBoundary = () => {
 
 const ErrorMessage = () => {
   const error = useRouteError()
+  const isDev = useIsDev()
 
   if (isRouteErrorResponse(error)) {
     return (
@@ -40,9 +39,11 @@ const ErrorMessage = () => {
   if (error instanceof Error) {
     return (
       <Info title={error.message}>
-        <div className="max-w-full overflow-scroll">
-          <pre>{error.stack}</pre>
-        </div>
+        {isDev && (
+          <div className="max-w-full overflow-scroll">
+            <pre>{error.stack}</pre>
+          </div>
+        )}
       </Info>
     )
   }
