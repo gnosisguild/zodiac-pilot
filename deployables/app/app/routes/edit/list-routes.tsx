@@ -1,7 +1,9 @@
 import { authorizedAction, authorizedLoader } from '@/auth'
 import { OnlyConnected, Page } from '@/components'
-import { routeTitle } from '@/utils'
+import { parseRouteData, routeTitle } from '@/utils'
+import { invariantResponse } from '@epic-web/invariant'
 import {
+  createAccount,
   dbClient,
   deleteAccount,
   findActiveAccount,
@@ -27,6 +29,7 @@ import {
 } from '@zodiac/ui'
 import { Suspense, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
+import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -91,7 +94,7 @@ export const action = async (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -102,15 +105,43 @@ export const action = async (args: Route.ActionArgs) =>
 
           return null
         }
+
+        case Intent.Upload: {
+          const route = parseRouteData(getString(data, 'route'))
+
+          const [chainId, address] = splitPrefixedAddress(route.avatar)
+
+          invariantResponse(chainId != null, 'Cannot use EOA as avatar')
+
+          await createAccount(dbClient(), tenant, user, {
+            chainId,
+            address,
+            label: route.label,
+          })
+
+          return null
+        }
       }
     },
     {
       ensureSignedIn: true,
       async hasAccess({ user, request }) {
         const data = await request.formData()
-        const account = await getAccount(dbClient(), getUUID(data, 'accountId'))
 
-        return account.createdById === user.id
+        switch (getString(data, 'intent')) {
+          case Intent.Delete: {
+            const account = await getAccount(
+              dbClient(),
+              getUUID(data, 'accountId'),
+            )
+
+            return account.createdById === user.id
+          }
+
+          default: {
+            return true
+          }
+        }
       },
     },
   )

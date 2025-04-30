@@ -7,7 +7,12 @@ import {
 } from '@/test-utils'
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { activateRoute, dbClient, getAccounts } from '@zodiac/db'
+import {
+  activateRoute,
+  dbClient,
+  getAccountByAddress,
+  getAccounts,
+} from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -21,7 +26,11 @@ import {
   type CompanionAppMessage,
 } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
-import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
+import {
+  createMockExecutionRoute,
+  expectRouteToBe,
+  randomPrefixedAddress,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -237,5 +246,51 @@ describe.sequential('List Routes', () => {
         })
       })
     })
+  })
+
+  describe('Upload', () => {
+    it('is possible to migrate a local account to the cloud', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const avatar = randomPrefixedAddress()
+      const route = createMockExecutionRoute({ avatar, label: 'Test account' })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+      })
+
+      await loadAndActivateRoute(route)
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await waitForPendingActions()
+
+      const account = await getAccountByAddress(dbClient(), avatar)
+
+      expect(account).toHaveProperty('label', 'Test account')
+    })
+
+    it.todo('reuses existing accounts')
+    it.todo('creates a wallet for the initiator')
+    it.todo('reuses existing wallets')
+    it.todo('stores the selected route')
+    it.todo('marks the route as active')
+    it.todo('does not create duplicates')
+    it.todo('removes the local account')
+    it.todo('does not remove the local account when the server action fails')
   })
 })

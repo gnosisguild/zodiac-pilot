@@ -1,7 +1,9 @@
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { formData } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import type { ExecutionRoute } from '@zodiac/schema'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
+import { encode, type ExecutionRoute } from '@zodiac/schema'
 import {
   Address,
   Form,
@@ -15,9 +17,9 @@ import {
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, UploadIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { href } from 'react-router'
+import { href, useSubmit } from 'react-router'
 import { Intent } from './intents'
 
 type LocalAccountProps = { route: ExecutionRoute; active: boolean }
@@ -80,11 +82,47 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
+        <Upload routeId={routeId} />
+
         <Edit routeId={routeId} />
 
         <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
+  )
+}
+
+const Upload = ({ routeId }: { routeId: string }) => {
+  const submit = useSubmit()
+
+  return (
+    <GhostButton
+      intent={Intent.Upload}
+      icon={UploadIcon}
+      onClick={async () => {
+        const { promise, resolve, reject } =
+          Promise.withResolvers<ExecutionRoute>()
+
+        companionRequest(
+          { type: CompanionAppMessageType.REQUEST_ROUTE, routeId },
+          ({ route }) => {
+            if (route == null) {
+              reject(`Route with id "${routeId}" not found`)
+            } else {
+              resolve(route)
+            }
+          },
+        )
+
+        const route = await promise
+
+        submit(formData({ route: encode(route), intent: Intent.Upload }), {
+          method: 'POST',
+        })
+      }}
+    >
+      Upload
+    </GhostButton>
   )
 }
 
