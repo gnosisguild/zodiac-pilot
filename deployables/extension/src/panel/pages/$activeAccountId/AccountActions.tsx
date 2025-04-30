@@ -1,8 +1,15 @@
 import { useAccount } from '@/accounts'
-import { useCompanionAppUser } from '@/companion'
+import { useCompanionAppUrl, useCompanionAppUser } from '@/companion'
 import { useWindowId } from '@/inject-bridge'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
-import { Divider, Feature, Form, GhostButton, MeatballMenu } from '@zodiac/ui'
+import {
+  Divider,
+  Feature,
+  Form,
+  GhostButton,
+  GhostLinkButton,
+  MeatballMenu,
+} from '@zodiac/ui'
 import { CloudOff, List, Pencil, User } from 'lucide-react'
 import { useState } from 'react'
 import { Intent } from './intents'
@@ -10,6 +17,7 @@ import { Intent } from './intents'
 export const AccountActions = () => {
   const account = useAccount()
   const user = useCompanionAppUser()
+  const appUrl = useCompanionAppUrl()
   const windowId = useWindowId()
   const [open, setOpen] = useState(false)
 
@@ -67,9 +75,16 @@ export const AccountActions = () => {
                 Log into Zodiac OS
               </GhostButton>
             ) : (
-              <GhostButton size="small" align="left" icon={User}>
+              <GhostLinkButton
+                openInNewWindow
+                to={`${appUrl}/profile`}
+                size="small"
+                align="left"
+                icon={User}
+                onClick={() => setOpen(false)}
+              >
                 View Profile
-              </GhostButton>
+              </GhostLinkButton>
             )}
           </Form>
         </Feature>
