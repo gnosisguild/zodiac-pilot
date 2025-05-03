@@ -7,7 +7,8 @@
   "packageManager": "pnpm@10.10.0",
   "scripts": {
     "lint": "eslint . --max-warnings=0",
-    "check-types": "tsc"
+    "check-types": "tsc",
+    "test": "vitest"
   },
   "exports": {
     ".": {
@@ -24,6 +25,7 @@
     "@types/node": "22.14.1",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.25.1"
+    "eslint": "9.25.1",
+    "vitest": "3.1.2"
   }
 }

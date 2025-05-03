@@ -1,13 +1,13 @@
 import { invariant } from '@epic-web/invariant'
+import { getOptionalNumber } from './getOptionalNumber'
 
 export const getNumber = (data: FormData, key: string): number => {
-  const value = data.get(key)
+  const value = getOptionalNumber(data, key)
 
-  invariant(value != null, `Value under "${key}" is null.`)
+  invariant(
+    value != null,
+    `Value under "${key}" could not be parsed to a number`,
+  )
 
-  const numberValue = Number(value)
-
-  invariant(!Number.isNaN(numberValue), `Value under '${key}" is not a number.`)
-
-  return numberValue
+  return value
 }
