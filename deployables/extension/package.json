@@ -71,7 +71,7 @@
     "@headlessui/react": "2.2.2",
     "@sentry/browser": "9.14.0",
     "@workos-inc/authkit-react": "0.9.1",
-    "@workos-inc/node": "7.48.0",
+    "@workos-inc/node": "7.49.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/db": "workspace:*",
     "@zodiac/env": "workspace:*",
