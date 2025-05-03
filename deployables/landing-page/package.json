@@ -13,7 +13,7 @@
     "@zodiac/ui": "workspace:*",
     "classnames": "2.5.1",
     "isbot": "5.1.27",
-    "lucide-react": "0.503.0",
+    "lucide-react": "0.507.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-router": "7.5.3",
