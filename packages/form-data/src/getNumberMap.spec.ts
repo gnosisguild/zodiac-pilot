@@ -14,4 +14,16 @@ describe('getNumberMap', () => {
 
     expect(getNumberMap(data, 'testMap')).toEqual({})
   })
+
+  it('omits non-number values', () => {
+    const data = formData({ 'testMap[testField]': 'not-a-number' })
+
+    expect(getNumberMap(data, 'testMap')).toEqual({})
+  })
+
+  it('parses floats', () => {
+    const data = formData({ 'testMap[testField]': '4.20' })
+
+    expect(getNumberMap(data, 'testMap')).toEqual({ testField: 4.2 })
+  })
 })
