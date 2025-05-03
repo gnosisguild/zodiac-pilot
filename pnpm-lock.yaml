@@ -722,6 +722,9 @@ importers:
       eslint:
         specifier: 9.25.1
         version: 9.25.1(jiti@2.4.2)
+      vitest:
+        specifier: 3.1.2
+        version: 3.1.2(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.4.6)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.1)
 
   packages/hooks:
     dependencies:
