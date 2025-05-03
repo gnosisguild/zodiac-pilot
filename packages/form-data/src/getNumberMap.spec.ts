@@ -9,7 +9,7 @@ describe('getNumberMap', () => {
     expect(getNumberMap(data, 'testMap')).toEqual({ testField: 2 })
   })
 
-  it.only('omits empty values', () => {
+  it('omits empty values', () => {
     const data = formData({ 'testMap[testField]': '' })
 
     expect(getNumberMap(data, 'testMap')).toEqual({})
