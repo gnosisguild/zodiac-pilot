@@ -23,6 +23,6 @@
     "@types/node": "22.14.1",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.25.1"
+    "eslint": "9.26.0"
   }
 }
