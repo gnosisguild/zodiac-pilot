@@ -92,14 +92,23 @@ const DeleteWallet = ({
         <Divider />
 
         <p className="text-sm">
-          <h2 id={accountListId} className="mb-2 font-semibold">
-            Used to access these accounts
-          </h2>
-          <ul aria-labelledby={accountListId} className="list-inside list-disc">
-            {accounts.map((account) => (
-              <li key={account.id}>{account.label}</li>
-            ))}
-          </ul>
+          {accounts.length > 0 ? (
+            <>
+              <h2 id={accountListId} className="mb-2 font-semibold">
+                Used to access these accounts
+              </h2>
+              <ul
+                aria-labelledby={accountListId}
+                className="list-inside list-disc"
+              >
+                {accounts.map((account) => (
+                  <li key={account.id}>{account.label}</li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <strong>Not used in any accounts</strong>
+          )}
         </p>
       </div>
 
