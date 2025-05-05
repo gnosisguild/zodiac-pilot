@@ -28,14 +28,14 @@ export enum Chain {
 const airlock = 'https://airlock.gnosisguild.org/api/v1/'
 
 export const RPC: Record<ChainId, URL> = {
-  [Chain.ETH]: new URL('1/rpc', airlock),
-  [Chain.OETH]: new URL('10/rpc', airlock),
-  [Chain.GNO]: new URL('100/rpc', airlock),
-  [Chain.MATIC]: new URL('1337/rpc', airlock),
-  [Chain.BASE]: new URL('8453/rpc', airlock),
-  [Chain.ARB1]: new URL('42161/rpc', airlock),
-  [Chain.AVAX]: new URL('43114/rpc', airlock),
-  [Chain.SEP]: new URL('11155111/rpc', airlock),
+  [Chain.ETH]: new URL(`${Chain.ETH}/rpc`, airlock),
+  [Chain.OETH]: new URL(`${Chain.OETH}/rpc`, airlock),
+  [Chain.GNO]: new URL(`${Chain.GNO}/rpc`, airlock),
+  [Chain.MATIC]: new URL(`${Chain.MATIC}/rpc`, airlock),
+  [Chain.BASE]: new URL(`${Chain.BASE}/rpc`, airlock),
+  [Chain.ARB1]: new URL(`${Chain.ARB1}/rpc`, airlock),
+  [Chain.AVAX]: new URL(`${Chain.AVAX}/rpc`, airlock),
+  [Chain.SEP]: new URL(`${Chain.SEP}/rpc`, airlock),
   [Chain.CELO]: new URL('https://forno.celo.org'),
   [Chain.SONIC]: new URL('https://rpc.soniclabs.com'),
   [Chain.BERACHAIN]: new URL('https://rpc.berachain.com'),
