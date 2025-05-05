@@ -10,7 +10,9 @@ import {
   findWalletByAddress,
   getWallet,
   getWallets,
+  updateWalletLabel,
 } from '@zodiac/db'
+import type { Wallet } from '@zodiac/db/schema'
 import { getHexString, getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
@@ -32,8 +34,8 @@ import {
   TableRow,
   TextInput,
 } from '@zodiac/ui'
-import { Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Check, Edit, Trash2 } from 'lucide-react'
+import { useId, useState } from 'react'
 import { useActionData } from 'react-router'
 import type { Route } from './+types/profile'
 
@@ -97,6 +99,18 @@ export const action = async (args: Route.ActionArgs) =>
           const walletId = getUUID(data, 'walletId')
 
           await deleteWallet(dbClient(), user, walletId)
+
+          return null
+        }
+
+        case Intent.RenameWallet: {
+          const walletId = getUUID(data, 'walletId')
+
+          await updateWalletLabel(
+            dbClient(),
+            walletId,
+            getString(data, 'label'),
+          )
 
           return null
         }
@@ -174,15 +188,7 @@ const Profile = ({
                   )}
 
                   {wallets.map((wallet) => (
-                    <TableRow key={wallet.id}>
-                      <TableCell>{wallet.label}</TableCell>
-                      <TableCell>
-                        <Address>{wallet.address}</Address>
-                      </TableCell>
-                      <TableCell>
-                        <DeleteWallet walletId={wallet.id} />
-                      </TableCell>
-                    </TableRow>
+                    <Wallet key={wallet.id} wallet={wallet} />
                   ))}
                 </TableBody>
               </Table>
@@ -208,6 +214,73 @@ const Profile = ({
         </Widgets>
       </Page.Main>
     </Page>
+  )
+}
+
+const Wallet = ({ wallet }: { wallet: Wallet }) => {
+  const [editing, setEditing] = useState(false)
+
+  const formId = useId()
+
+  const busy = useIsPending(
+    Intent.RenameWallet,
+    (data) => data.get('walletId') === wallet.id,
+  )
+
+  useAfterSubmit(
+    Intent.RenameWallet,
+    () => setEditing(false),
+    (data) => data.get('walletId') === wallet.id,
+  )
+
+  return (
+    <TableRow>
+      <TableCell>
+        {editing ? (
+          <TextInput
+            hideLabel
+            form={formId}
+            defaultValue={wallet.label}
+            label="Label"
+            name="label"
+          />
+        ) : (
+          wallet.label
+        )}
+      </TableCell>
+      <TableCell>
+        <Address>{wallet.address}</Address>
+      </TableCell>
+      <TableCell>
+        <div className="flex gap-2">
+          {editing ? (
+            <InlineForm id={formId} context={{ walletId: wallet.id }}>
+              <GhostButton
+                submit
+                iconOnly
+                icon={Check}
+                size="tiny"
+                busy={busy}
+                intent={Intent.RenameWallet}
+              >
+                Save
+              </GhostButton>
+            </InlineForm>
+          ) : (
+            <GhostButton
+              iconOnly
+              icon={Edit}
+              size="tiny"
+              onClick={() => setEditing(true)}
+            >
+              Edit wallet
+            </GhostButton>
+          )}
+
+          <DeleteWallet walletId={wallet.id} />
+        </div>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -257,7 +330,14 @@ const DeleteWallet = ({ walletId }: { walletId: string }) => {
 
   return (
     <InlineForm intent={Intent.DeleteWallet} context={{ walletId }}>
-      <GhostButton submit iconOnly busy={pending} size="small" icon={Trash2}>
+      <GhostButton
+        submit
+        iconOnly
+        busy={pending}
+        size="small"
+        icon={Trash2}
+        style="critical"
+      >
         Remove wallet
       </GhostButton>
     </InlineForm>
@@ -270,4 +350,5 @@ enum Intent {
   SignOut = 'SignOut',
   AddWallet = 'AddWallet',
   DeleteWallet = 'DeleteWallet',
+  RenameWallet = 'RenameWallet',
 }

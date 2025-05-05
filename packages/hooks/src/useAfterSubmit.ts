@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useActionData } from 'react-router'
-import { useIsPending } from './useIsPending'
+import { useIsPending, type CheckFn } from './useIsPending'
 import { useStableHandler } from './useStableHandler'
 
 type CallbackFn<T> = (actionData: T) => void
@@ -14,8 +14,9 @@ export const useAfterSubmit = <
 >(
   intent: string | string[] = [],
   callback: CallbackFn<D>,
+  ...checkFns: CheckFn[]
 ) => {
-  const pending = useIsPending(intent)
+  const pending = useIsPending(intent, ...checkFns)
   const pendingRef = useRef(pending)
 
   const actionData = useActionData<T>() as ReturnType<F>

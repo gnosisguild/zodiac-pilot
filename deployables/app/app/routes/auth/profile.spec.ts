@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getWallets } from '@zodiac/db'
+import { dbClient, getWallet, getWallets } from '@zodiac/db'
 import {
   tenantFactory,
   userFactory,
@@ -132,6 +132,39 @@ describe('Profile', () => {
       await screen.findByRole('alert', { name: 'Wallet already exists' }),
     ).toHaveAccessibleDescription(
       `A wallet with this address already exists under the name "Existing wallet".`,
+    )
+  })
+
+  it('is possible to rename a wallet', async () => {
+    const tenant = await tenantFactory.create()
+    const user = await userFactory.create(tenant)
+
+    const address = randomAddress()
+
+    const wallet = await walletFactory.create(user, {
+      address,
+      label: 'Existing wallet',
+    })
+
+    const { waitForPendingActions } = await render(href('/profile'), {
+      tenant,
+      user,
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Edit wallet' }),
+    )
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Label' }),
+      ' updated',
+    )
+    await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+    await waitForPendingActions()
+
+    await expect(getWallet(dbClient(), wallet.id)).resolves.toHaveProperty(
+      'label',
+      'Existing wallet updated',
     )
   })
 })
