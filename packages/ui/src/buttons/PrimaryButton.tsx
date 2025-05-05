@@ -25,9 +25,11 @@ export const PrimaryButton = ({
   <BaseButton
     {...props}
     className={cn(
-      'font-bold ring-2 ring-transparent',
+      'border-transparent font-bold ring-2 ring-transparent focus:border-white focus:ring-indigo-600 dark:focus:border-transparent dark:focus:ring-teal-400',
       style === 'regular' &&
-        'border-transparent bg-zinc-900 text-zinc-50 focus:border-white focus:ring-indigo-600 enabled:hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:focus:border-transparent dark:focus:ring-teal-400 dark:enabled:hover:bg-zinc-50',
+        'bg-zinc-900 text-zinc-50 enabled:hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:enabled:hover:bg-zinc-50',
+      style === 'critical' &&
+        'bg-red-600 text-white enabled:hover:bg-red-500 dark:bg-red-500 dark:enabled:hover:bg-red-600',
     )}
   />
 )
@@ -111,9 +113,11 @@ export const PrimaryLinkButton = ({
   <BaseLinkButton
     {...props}
     className={cn(
-      'font-bold ring-2 ring-transparent',
+      'border-transparent font-bold ring-2 ring-transparent focus:border-white focus:ring-indigo-600 dark:focus:border-transparent dark:focus:ring-teal-400',
       style === 'regular' &&
-        'border-transparent bg-zinc-900 text-zinc-50 hover:bg-zinc-800 focus:border-white focus:ring-indigo-600 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-50 dark:focus:border-transparent dark:focus:ring-teal-400',
+        'bg-zinc-900 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-50',
+      style === 'critical' &&
+        'bg-red-600 text-white hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-600',
     )}
   />
 )

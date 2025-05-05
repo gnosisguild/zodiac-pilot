@@ -20,7 +20,10 @@ export default [
         route('success', 'routes/auth/sign-up.success.tsx'),
       ]),
 
-      route('/profile', 'routes/auth/profile.tsx'),
+      route('/profile', 'routes/auth/profile.tsx', [
+        route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
+      ]),
+
       route('/admin', 'routes/auth/admin.tsx'),
 
       route('/tokens', 'routes/tokens/index.tsx', [

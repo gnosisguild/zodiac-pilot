@@ -6,9 +6,7 @@ import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import {
   createWallet,
   dbClient,
-  deleteWallet,
   findWalletByAddress,
-  getWallet,
   getWallets,
   updateWalletLabel,
 } from '@zodiac/db'
@@ -22,6 +20,7 @@ import {
   Form,
   FormLayout,
   GhostButton,
+  GhostLinkButton,
   InlineForm,
   Modal,
   PrimaryButton,
@@ -36,7 +35,7 @@ import {
 } from '@zodiac/ui'
 import { Check, Edit, Trash2 } from 'lucide-react'
 import { useId, useState } from 'react'
-import { useActionData } from 'react-router'
+import { href, Outlet, useActionData } from 'react-router'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -95,14 +94,6 @@ export const action = async (args: Route.ActionArgs) =>
           return null
         }
 
-        case Intent.DeleteWallet: {
-          const walletId = getUUID(data, 'walletId')
-
-          await deleteWallet(dbClient(), user, walletId)
-
-          return null
-        }
-
         case Intent.RenameWallet: {
           const walletId = getUUID(data, 'walletId')
 
@@ -118,24 +109,6 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, request }) {
-        const data = await request.formData()
-
-        switch (getString(data, 'intent')) {
-          case Intent.DeleteWallet: {
-            const wallet = await getWallet(
-              dbClient(),
-              getUUID(data, 'walletId'),
-            )
-
-            return wallet.belongsToId === user.id
-          }
-
-          default: {
-            return true
-          }
-        }
-      },
     },
   )
 
@@ -213,6 +186,8 @@ const Profile = ({
           </FormLayout>
         </Widgets>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
@@ -323,24 +298,16 @@ const AddWallet = () => {
 }
 
 const DeleteWallet = ({ walletId }: { walletId: string }) => {
-  const pending = useIsPending(
-    Intent.DeleteWallet,
-    (data) => data.get('walletId') === walletId,
-  )
-
   return (
-    <InlineForm intent={Intent.DeleteWallet} context={{ walletId }}>
-      <GhostButton
-        submit
-        iconOnly
-        busy={pending}
-        size="small"
-        icon={Trash2}
-        style="critical"
-      >
-        Remove wallet
-      </GhostButton>
-    </InlineForm>
+    <GhostLinkButton
+      iconOnly
+      to={href('/profile/delete-wallet/:walletId', { walletId })}
+      size="small"
+      icon={Trash2}
+      style="critical"
+    >
+      Remove wallet
+    </GhostLinkButton>
   )
 }
 
@@ -349,6 +316,5 @@ export default Profile
 enum Intent {
   SignOut = 'SignOut',
   AddWallet = 'AddWallet',
-  DeleteWallet = 'DeleteWallet',
   RenameWallet = 'RenameWallet',
 }
