@@ -1,8 +1,10 @@
 import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { dbClient, getWallet, getWallets } from '@zodiac/db'
 import {
+  accountFactory,
+  routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
@@ -142,6 +144,38 @@ describe('Profile', () => {
         deleted: true,
         deletedById: user.id,
       })
+    })
+
+    it('lists accounts that use this wallet', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user, {
+        label: 'Test account',
+      })
+      const wallet = await walletFactory.create(user, {
+        label: 'User wallet',
+      })
+
+      await routeFactory.create(account, wallet)
+
+      await render(href('/profile'), {
+        tenant,
+        user,
+      })
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Remove wallet' }),
+      )
+
+      const { getByRole } = within(
+        await screen.findByRole('list', {
+          name: 'Used to access these accounts',
+        }),
+      )
+
+      expect(
+        getByRole('listitem', { name: 'Test account' }),
+      ).toBeInTheDocument()
     })
   })
 
