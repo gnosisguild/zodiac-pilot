@@ -1,7 +1,6 @@
 import { useIsSignedIn } from '@/auth-client'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
-import { formData } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
@@ -97,12 +96,12 @@ const Upload = ({ routeId }: { routeId: string }) => {
   const submit = useSubmit()
 
   return (
-    <GhostButton
-      size="tiny"
-      align="left"
+    <Form
       intent={Intent.Upload}
-      icon={UploadIcon}
-      onClick={async () => {
+      context={{ routeId }}
+      onSubmit={(event) => {
+        const data = new FormData(event.currentTarget)
+
         const { promise, resolve, reject } =
           Promise.withResolvers<ExecutionRoute>()
 
@@ -117,18 +116,26 @@ const Upload = ({ routeId }: { routeId: string }) => {
           },
         )
 
-        const route = await promise
+        promise.then((route) => {
+          data.set('route', encode(route))
 
-        submit(
-          formData({ route: encode(route), routeId, intent: Intent.Upload }),
-          {
-            method: 'POST',
-          },
-        )
+          submit(data, { method: 'POST' })
+        })
+
+        event.preventDefault()
+        event.stopPropagation()
       }}
     >
-      Upload
-    </GhostButton>
+      <GhostButton
+        submit
+        size="tiny"
+        align="left"
+        busy={useIsPending(Intent.Upload)}
+        icon={UploadIcon}
+      >
+        Upload
+      </GhostButton>
+    </Form>
   )
 }
 
