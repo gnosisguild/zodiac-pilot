@@ -247,7 +247,7 @@ export const clientAction = async ({
 
       await promise
 
-      return null
+      return uploadResult
     }
 
     default: {

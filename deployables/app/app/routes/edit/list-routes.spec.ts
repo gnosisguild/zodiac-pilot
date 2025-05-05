@@ -657,7 +657,55 @@ describe.sequential('List Routes', () => {
         routeId: route.id,
       })
     })
-    it.todo('does not remove the local account when the server action fails')
+
+    it('does not remove the local account when the server action fails', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress(),
+      })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await waitForPendingActions()
+
+      expect(window.postMessage).not.toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: route.id,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
+    })
     it.todo('does not offer the upload options when no user is logged in')
   })
 })

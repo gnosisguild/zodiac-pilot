@@ -66,6 +66,10 @@ type CommonOptions = Omit<RenderFrameworkOptions, 'loadActions'> & {
    */
   activeRouteId?: string | null
 
+  /**
+   * Sets up listeners for certain companion app message events
+   * and automatically responds with the provided data
+   */
   autoRespond?: Partial<RequestResponseTypes>
 }
 
