@@ -13,6 +13,7 @@ import {
   CompanionResponseMessageType,
   createWindowMessageHandler,
   PilotMessageType,
+  type RequestResponseTypes,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import {
@@ -64,6 +65,8 @@ type CommonOptions = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * @default undefined
    */
   activeRouteId?: string | null
+
+  autoRespond?: Partial<RequestResponseTypes>
 }
 
 type SignedInOptions = CommonOptions & {
@@ -102,11 +105,21 @@ const handleVersionRequest = createWindowMessageHandler(
   },
 )
 
+type AnyFn = (...args: any[]) => void
+
+const activeHandlers: Ref<AnyFn[]> = { current: [] }
+
 beforeEach(() => {
+  activeHandlers.current = []
+
   window.addEventListener('message', handleVersionRequest)
 })
 
 afterEach(() => {
+  activeHandlers.current?.forEach((handler) => {
+    window.removeEventListener('message', handler)
+  })
+
   window.removeEventListener('message', handleVersionRequest)
 })
 
@@ -119,6 +132,7 @@ export const render = async (
     version = null,
     availableRoutes = [],
     activeRouteId = null,
+    autoRespond = {},
     ...options
   }: Options = {},
 ) => {
@@ -153,6 +167,17 @@ export const render = async (
       )
     }
   }
+
+  Object.entries(autoRespond).map(([request, data]) => {
+    const handleRequest = createWindowMessageHandler(request, () => {
+      // @ts-expect-error the type is a bit too borad but that is fine
+      postMessage(data)
+    })
+
+    activeHandlers.current?.push(handleRequest)
+
+    window.addEventListener('message', handleRequest)
+  })
 
   const renderResult = await baseRender(path, {
     ...options,

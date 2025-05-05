@@ -271,6 +271,15 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -282,11 +291,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -313,6 +317,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -328,11 +341,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -356,6 +364,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -371,11 +388,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -400,6 +412,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -415,11 +436,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -441,6 +457,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -456,11 +481,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -494,6 +514,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -509,11 +538,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
 
       await waitForPendingActions()
 
@@ -555,6 +579,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route: executionRoute,
+          },
+        },
       })
 
       await loadAndActivateRoute(executionRoute)
@@ -570,11 +603,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route: executionRoute,
-      })
 
       await waitForPendingActions()
 
@@ -599,6 +627,15 @@ describe.sequential('List Routes', () => {
         tenant,
         user,
         features: ['user-management'],
+        autoRespond: {
+          [CompanionAppMessageType.DELETE_ROUTE]: {
+            type: CompanionResponseMessageType.DELETED_ROUTE,
+          },
+          [CompanionAppMessageType.REQUEST_ROUTE]: {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route,
+          },
+        },
       })
 
       await loadAndActivateRoute(route)
@@ -614,13 +651,6 @@ describe.sequential('List Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Upload' }),
       )
-
-      await postMessage({
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route: route,
-      })
-
-      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
 
       await expectMessage({
         type: CompanionAppMessageType.DELETE_ROUTE,

@@ -25,6 +25,7 @@
     "vitest.setup.ts",
     "drizzle.config.ts",
     "abitype.d.ts",
+    "object.entries.d.ts",
     "e2e/**/*",
     "app/**/*",
     "app/**/.server/**/*",
