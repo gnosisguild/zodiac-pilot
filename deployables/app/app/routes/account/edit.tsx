@@ -1,4 +1,4 @@
-import { authorizedAction, authorizedLoader } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
@@ -313,7 +313,9 @@ const createRoute = async (
   const account = await getAccount(db, accountId)
 
   if (selectedRouteId == null) {
-    return baseCreateRoute(db, wallet, account, {
+    return baseCreateRoute(db, account.tenantId, {
+      walletId: wallet.id,
+      accountId,
       waypoints: [
         createEoaStartingPoint({ address: wallet.address }),
         createSafeWaypoint({
@@ -338,7 +340,9 @@ const createRoute = async (
 
   invariantResponse(selectedRoute != null, 'Could not find selected route')
 
-  return baseCreateRoute(db, wallet, account, {
+  return baseCreateRoute(db, account.tenantId, {
+    walletId: wallet.id,
+    accountId,
     waypoints: selectedRoute.waypoints,
   })
 }

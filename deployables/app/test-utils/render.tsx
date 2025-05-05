@@ -6,12 +6,14 @@ import type {
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
+import { activateFeature, createFeature, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
   createWindowMessageHandler,
   PilotMessageType,
+  type RequestResponseTypes,
 } from '@zodiac/messages'
 import type { ExecutionRoute } from '@zodiac/schema'
 import {
@@ -22,6 +24,7 @@ import {
 import { randomUUID } from 'crypto'
 import type { PropsWithChildren, Ref } from 'react'
 import { data } from 'react-router'
+import type { Entries } from 'type-fest'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
@@ -63,6 +66,12 @@ type CommonOptions = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * @default undefined
    */
   activeRouteId?: string | null
+
+  /**
+   * Sets up listeners for certain companion app message events
+   * and automatically responds with the provided data
+   */
+  autoRespond?: Partial<RequestResponseTypes>
 }
 
 type SignedInOptions = CommonOptions & {
@@ -75,6 +84,11 @@ type SignedInOptions = CommonOptions & {
    * Render the route in a logged in context
    */
   user: User
+
+  /**
+   * Activates the given set of feautres for a tenant.
+   */
+  features?: string[]
 }
 
 type SignedOutOptions = CommonOptions & {
@@ -96,11 +110,21 @@ const handleVersionRequest = createWindowMessageHandler(
   },
 )
 
+type AnyFn = (...args: any[]) => void
+
+const activeHandlers: Ref<AnyFn[]> = { current: [] }
+
 beforeEach(() => {
+  activeHandlers.current = []
+
   window.addEventListener('message', handleVersionRequest)
 })
 
 afterEach(() => {
+  activeHandlers.current?.forEach((handler) => {
+    window.removeEventListener('message', handler)
+  })
+
   window.removeEventListener('message', handleVersionRequest)
 })
 
@@ -113,14 +137,13 @@ export const render = async (
     version = null,
     availableRoutes = [],
     activeRouteId = null,
-    tenant = null,
-    user = null,
+    autoRespond = {},
     ...options
   }: Options = {},
 ) => {
   versionRef.current = version
 
-  const workOsUser = mockWorkOs(tenant, user)
+  const workOsUser = mockWorkOs(options.tenant, options.user)
 
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
     const auth = createAuth(workOsUser)
@@ -133,6 +156,35 @@ export const render = async (
 
     return data({ ...auth })
   })
+
+  if (options.tenant != null) {
+    const { tenant, features } = options
+
+    if (features != null) {
+      await Promise.all(
+        features.map(async (name) => {
+          const feature = await createFeature(dbClient(), name)
+          await activateFeature(dbClient(), {
+            tenantId: tenant.id,
+            featureId: feature.id,
+          })
+        }),
+      )
+    }
+  }
+
+  ;(Object.entries(autoRespond) as Entries<RequestResponseTypes>).map(
+    ([request, data]) => {
+      const handleRequest = createWindowMessageHandler(request, () => {
+        // @ts-expect-error the type is a bit too borad but that is fine
+        postMessage(data)
+      })
+
+      activeHandlers.current?.push(handleRequest)
+
+      window.addEventListener('message', handleRequest)
+    },
+  )
 
   const renderResult = await baseRender(path, {
     ...options,

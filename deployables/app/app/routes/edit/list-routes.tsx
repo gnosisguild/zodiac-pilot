@@ -1,10 +1,18 @@
-import { authorizedAction, authorizedLoader } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { OnlyConnected, Page } from '@/components'
-import { routeTitle } from '@/utils'
+import { parseRouteData, routeTitle } from '@/utils'
+import { invariantResponse } from '@epic-web/invariant'
 import {
+  activateRoute,
+  createAccount,
+  createRoute,
+  createWallet,
   dbClient,
   deleteAccount,
+  findAccountByAddress,
   findActiveAccount,
+  findActiveRoute,
+  findWalletByAddress,
   getAccount,
   getAccounts,
 } from '@zodiac/db'
@@ -16,6 +24,7 @@ import {
   useExtensionMessageHandler,
 } from '@zodiac/messages'
 import {
+  Error,
   Feature,
   Info,
   SecondaryLinkButton,
@@ -25,8 +34,9 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import { Suspense, type PropsWithChildren } from 'react'
+import { Suspense, useId, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
+import { splitPrefixedAddress, unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -91,7 +101,7 @@ export const action = async (args: Route.ActionArgs) =>
     async ({
       request,
       context: {
-        auth: { user },
+        auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
@@ -102,15 +112,94 @@ export const action = async (args: Route.ActionArgs) =>
 
           return null
         }
+
+        case Intent.Upload: {
+          const route = parseRouteData(getString(data, 'route'))
+
+          const [chainId, address] = splitPrefixedAddress(route.avatar)
+
+          invariantResponse(chainId != null, 'Cannot use EOA as avatar')
+
+          return await dbClient().transaction(async (tx) => {
+            if (route.initiator == null) {
+              return { error: 'Route has no initiator' }
+            }
+
+            const existingAccount = await findAccountByAddress(
+              tx,
+              tenant.id,
+              route.avatar,
+            )
+            const existingWallet = await findWalletByAddress(
+              tx,
+              user,
+              unprefixAddress(route.initiator),
+            )
+
+            if (existingAccount != null && existingWallet != null) {
+              const existingActiveRoute = await findActiveRoute(
+                tx,
+                tenant,
+                user,
+                existingAccount.id,
+              )
+
+              if (existingActiveRoute != null) {
+                if (existingActiveRoute.route.fromId === existingWallet.id) {
+                  return {
+                    error: `The upload was canceled because it would conflict with the account configuration for the account "${existingAccount.label}"`,
+                  }
+                }
+              }
+            }
+
+            const account = await createAccount(tx, tenant, user, {
+              chainId,
+              address,
+              label: route.label,
+            })
+
+            const [, initiator] = splitPrefixedAddress(route.initiator)
+
+            const wallet = await createWallet(tx, user, {
+              label: 'Unnamed wallet',
+              address: initiator,
+            })
+
+            if (route.waypoints != null) {
+              const remoteRoute = await createRoute(tx, tenant.id, {
+                walletId: wallet.id,
+                accountId: account.id,
+                waypoints: route.waypoints,
+              })
+
+              await activateRoute(tx, tenant, user, remoteRoute)
+            }
+
+            return null
+          })
+        }
       }
     },
     {
       ensureSignedIn: true,
       async hasAccess({ user, request }) {
         const data = await request.formData()
-        const account = await getAccount(dbClient(), getUUID(data, 'accountId'))
 
-        return account.createdById === user.id
+        switch (getString(data, 'intent')) {
+          case Intent.Delete: {
+            const account = await getAccount(
+              dbClient(),
+              getUUID(data, 'accountId'),
+            )
+
+            return account.createdById === user.id
+          }
+
+          default: {
+            return true
+          }
+        }
       },
     },
   )
@@ -139,6 +228,28 @@ export const clientAction = async ({
       return null
     }
 
+    case Intent.Upload: {
+      const uploadResult = await serverAction()
+
+      if (uploadResult != null) {
+        return uploadResult
+      }
+
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      companionRequest(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        () => resolve(),
+      )
+
+      await promise
+
+      return uploadResult
+    }
+
     default: {
       return await serverAction()
     }
@@ -152,12 +263,20 @@ const ListRoutes = ({
     loggedIn,
     ...clientData
   },
+  actionData,
 }: Route.ComponentProps) => {
+  const localAccountsHeadingId = useId()
+  const localAccountsDescriptionId = useId()
+
   return (
     <Page fullWidth>
       <Page.Header>Safe Accounts</Page.Header>
 
       <Page.Main>
+        {actionData != null && (
+          <Error title="Upload not possible">{actionData.error}</Error>
+        )}
+
         {remoteAccounts.length > 0 && (
           <Accounts>
             {remoteAccounts.map((account) => {
@@ -197,15 +316,25 @@ const ListRoutes = ({
                       <Suspense>
                         <Await resolve={clientData.activeRouteId}>
                           {(activeRouteId) => (
-                            <>
+                            <section
+                              aria-labelledby={localAccountsHeadingId}
+                              aria-describedby={localAccountsDescriptionId}
+                            >
                               <RevalidateWhenActiveRouteChanges
                                 activeRouteId={activeRouteId}
                               />
 
                               <Feature feature="user-management">
-                                <h2 className="my-6 text-xl">
+                                <h2
+                                  id={localAccountsHeadingId}
+                                  className="my-6 text-xl"
+                                >
                                   Local Accounts
-                                  <p className="my-2 text-sm opacity-80">
+                                  <p
+                                    aria-hidden
+                                    id={localAccountsDescriptionId}
+                                    className="my-2 text-sm opacity-80"
+                                  >
                                     Local accounts live only on your machine.
                                     They are only usable when the Pilot browser
                                     extension is installed and open.
@@ -222,7 +351,7 @@ const ListRoutes = ({
                                   />
                                 ))}
                               </Accounts>
-                            </>
+                            </section>
                           )}
                         </Await>
                       </Suspense>

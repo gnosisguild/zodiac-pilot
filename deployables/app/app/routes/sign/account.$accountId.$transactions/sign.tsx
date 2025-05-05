@@ -1,4 +1,4 @@
-import { authorizedAction, authorizedLoader } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { ConnectWallet } from '@/components'
 import { simulateTransactionBundle } from '@/simulation-server'
 import { parseTransactionData, routeTitle } from '@/utils'

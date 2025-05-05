@@ -1,4 +1,4 @@
-import { authorizedLoader } from '@/auth'
+import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'

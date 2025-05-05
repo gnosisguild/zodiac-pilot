@@ -29,17 +29,56 @@ const requestResponseTypes = {
     CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
 } as const
 
-type RequestResponse = typeof requestResponseTypes
+export type RequestResponseTypes = {
+  [CompanionAppMessageType.SAVE_ROUTE]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PROVIDE_ROUTE }
+  >
+  [CompanionAppMessageType.SAVE_AND_LAUNCH]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PROVIDE_ROUTE }
+  >
+  [CompanionAppMessageType.OPEN_PILOT]: null
+  [CompanionAppMessageType.SUBMIT_SUCCESS]: null
+  [CompanionAppMessageType.REQUEST_FORK_INFO]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.FORK_UPDATED }
+  >
+  [CompanionAppMessageType.PING]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PONG }
+  >
+  [CompanionAppMessageType.REQUEST_VERSION]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PROVIDE_VERSION }
+  >
+  [CompanionAppMessageType.REQUEST_ROUTES]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.LIST_ROUTES }
+  >
+  [CompanionAppMessageType.REQUEST_ROUTE]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PROVIDE_ROUTE }
+  >
+  [CompanionAppMessageType.DELETE_ROUTE]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.DELETED_ROUTE }
+  >
+  [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: Extract<
+    CompanionResponseMessage,
+    { type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE }
+  >
+}
 
-type Handler<Type extends CompanionResponseMessageType | null> = (
-  response: Type extends null
-    ? null
-    : Extract<CompanionResponseMessage, { type: Type }>,
+export type RequestResponse = typeof requestResponseTypes
+
+export type Handler<Type extends CompanionAppMessageType> = (
+  response: Type extends null ? null : RequestResponseTypes[Type],
 ) => void
 
 export function companionRequest<Type extends CompanionAppMessageType>(
   message: Extract<CompanionAppMessage, { type: Type }>,
-  handler: Handler<RequestResponse[Type]>,
+  handler: Handler<Type>,
 ) {
   const expectedResponseType = requestResponseTypes[message.type]
 

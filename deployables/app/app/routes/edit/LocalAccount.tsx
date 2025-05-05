@@ -1,7 +1,9 @@
+import { useIsSignedIn } from '@/auth-client'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { useIsPending } from '@zodiac/hooks'
-import type { ExecutionRoute } from '@zodiac/schema'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
+import { encode, type ExecutionRoute } from '@zodiac/schema'
 import {
   Address,
   Form,
@@ -15,9 +17,9 @@ import {
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, UploadIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { href } from 'react-router'
+import { href, useSubmit } from 'react-router'
 import { Intent } from './intents'
 
 type LocalAccountProps = { route: ExecutionRoute; active: boolean }
@@ -80,11 +82,60 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
+        {useIsSignedIn() && <Upload routeId={routeId} />}
+
         <Edit routeId={routeId} />
 
         <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
       </MeatballMenu>
     </div>
+  )
+}
+
+const Upload = ({ routeId }: { routeId: string }) => {
+  const submit = useSubmit()
+
+  return (
+    <Form
+      intent={Intent.Upload}
+      context={{ routeId }}
+      onSubmit={(event) => {
+        const data = new FormData(event.currentTarget)
+
+        const { promise, resolve, reject } =
+          Promise.withResolvers<ExecutionRoute>()
+
+        companionRequest(
+          { type: CompanionAppMessageType.REQUEST_ROUTE, routeId },
+          ({ route }) => {
+            if (route == null) {
+              reject(`Route with id "${routeId}" not found`)
+            } else {
+              resolve(route)
+            }
+          },
+        )
+
+        promise.then((route) => {
+          data.set('route', encode(route))
+
+          submit(data, { method: 'POST' })
+        })
+
+        event.preventDefault()
+        event.stopPropagation()
+      }}
+    >
+      <GhostButton
+        submit
+        size="tiny"
+        align="left"
+        busy={useIsPending(Intent.Upload)}
+        icon={UploadIcon}
+      >
+        Upload
+      </GhostButton>
+    </Form>
   )
 }
 

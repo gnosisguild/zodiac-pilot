@@ -1,3 +1,4 @@
+import { useIsSignedIn } from '@/auth-client'
 import {
   createContext,
   useContext,
@@ -10,19 +11,17 @@ import { usePingWhileDisconnected } from './usePingWhileDisconnected'
 
 const PilotStatusContext = createContext(false)
 
-type ProvidePilotStatusProps = PropsWithChildren<{ signedIn: boolean }>
+type ProvidePilotStatusProps = PropsWithChildren
 
-export const ProvidePilotStatus = ({
-  children,
-  signedIn,
-}: ProvidePilotStatusProps) => (
-  <PilotStatusContext value={useUpToDateConnectedStatus(signedIn)}>
+export const ProvidePilotStatus = ({ children }: ProvidePilotStatusProps) => (
+  <PilotStatusContext value={useUpToDateConnectedStatus()}>
     {children}
   </PilotStatusContext>
 )
 
-const useUpToDateConnectedStatus = (signedIn: boolean) => {
+const useUpToDateConnectedStatus = () => {
   const [connected, setConnected] = useState(false)
+  const signedIn = useIsSignedIn()
 
   useConnectChangeOnPilotEvents({
     onConnect: () => setConnected(true),

@@ -1,4 +1,4 @@
-import { authorizedLoader } from '@/auth'
+import { authorizedLoader } from '@/auth-server'
 import { dbClient, getAccounts } from '@zodiac/db'
 import type { Route } from './+types/accounts'
 
