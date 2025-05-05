@@ -1,3 +1,4 @@
+import { useIsSignedIn } from '@/auth-client'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { formData } from '@zodiac/form-data'
@@ -82,7 +83,7 @@ const Actions = ({ routeId }: { routeId: string }) => {
         onRequestShow={() => setMenuOpen(true)}
         onRequestHide={() => setMenuOpen(false)}
       >
-        <Upload routeId={routeId} />
+        {useIsSignedIn() && <Upload routeId={routeId} />}
 
         <Edit routeId={routeId} />
 

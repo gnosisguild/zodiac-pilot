@@ -1,4 +1,4 @@
-import { authorizedAction, authorizedLoader } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { Widgets } from '@/workOS/client'
 import { signOut } from '@workos-inc/authkit-react-router'

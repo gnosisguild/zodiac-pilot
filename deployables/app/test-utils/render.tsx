@@ -24,6 +24,7 @@ import {
 import { randomUUID } from 'crypto'
 import type { PropsWithChildren, Ref } from 'react'
 import { data } from 'react-router'
+import type { Entries } from 'type-fest'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
@@ -172,16 +173,18 @@ export const render = async (
     }
   }
 
-  Object.entries(autoRespond).map(([request, data]) => {
-    const handleRequest = createWindowMessageHandler(request, () => {
-      // @ts-expect-error the type is a bit too borad but that is fine
-      postMessage(data)
-    })
+  ;(Object.entries(autoRespond) as Entries<RequestResponseTypes>).map(
+    ([request, data]) => {
+      const handleRequest = createWindowMessageHandler(request, () => {
+        // @ts-expect-error the type is a bit too borad but that is fine
+        postMessage(data)
+      })
 
-    activeHandlers.current?.push(handleRequest)
+      activeHandlers.current?.push(handleRequest)
 
-    window.addEventListener('message', handleRequest)
-  })
+      window.addEventListener('message', handleRequest)
+    },
+  )
 
   const renderResult = await baseRender(path, {
     ...options,

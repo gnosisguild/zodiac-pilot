@@ -1,4 +1,4 @@
-import { authorizedAction } from '@/auth'
+import { authorizedAction } from '@/auth-server'
 import { dbClient, removeActiveAccount } from '@zodiac/db'
 import type { Route } from './+types/removeActiveAccount'
 

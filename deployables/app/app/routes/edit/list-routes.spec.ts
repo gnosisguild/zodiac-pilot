@@ -706,6 +706,25 @@ describe.sequential('List Routes', () => {
         '*',
       )
     })
-    it.todo('does not offer the upload options when no user is logged in')
+
+    it('does not offer the upload options when no user is logged in', async () => {
+      const route = createMockExecutionRoute({
+        avatar: randomPrefixedAddress(),
+      })
+
+      await render(href('/edit'), {
+        availableRoutes: [route],
+      })
+
+      await loadAndActivateRoute(route)
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+
+      expect(
+        screen.queryByRole('button', { name: 'Upload' }),
+      ).not.toBeInTheDocument()
+    })
   })
 })

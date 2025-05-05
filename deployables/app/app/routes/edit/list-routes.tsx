@@ -1,4 +1,4 @@
-import { authorizedAction, authorizedLoader } from '@/auth'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
