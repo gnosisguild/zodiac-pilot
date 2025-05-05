@@ -9,7 +9,10 @@ import {
   createWallet,
   dbClient,
   deleteAccount,
+  findAccountByAddress,
   findActiveAccount,
+  findActiveRoute,
+  findWalletByAddress,
   getAccount,
   getAccounts,
 } from '@zodiac/db'
@@ -21,6 +24,7 @@ import {
   useExtensionMessageHandler,
 } from '@zodiac/messages'
 import {
+  Error,
   Feature,
   Info,
   SecondaryLinkButton,
@@ -32,7 +36,7 @@ import {
 } from '@zodiac/ui'
 import { Suspense, useId, type PropsWithChildren } from 'react'
 import { Await, useRevalidator } from 'react-router'
-import { splitPrefixedAddress } from 'ser-kit'
+import { splitPrefixedAddress, unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -116,14 +120,44 @@ export const action = async (args: Route.ActionArgs) =>
 
           invariantResponse(chainId != null, 'Cannot use EOA as avatar')
 
-          await dbClient().transaction(async (tx) => {
+          return await dbClient().transaction(async (tx) => {
+            if (route.initiator == null) {
+              return { error: 'Route has no initiator' }
+            }
+
+            const existingAccount = await findAccountByAddress(
+              tx,
+              tenant.id,
+              route.avatar,
+            )
+            const existingWallet = await findWalletByAddress(
+              tx,
+              user,
+              unprefixAddress(route.initiator),
+            )
+
+            if (existingAccount != null && existingWallet != null) {
+              const existingActiveRoute = await findActiveRoute(
+                tx,
+                tenant,
+                user,
+                existingAccount.id,
+              )
+
+              if (existingActiveRoute != null) {
+                if (existingActiveRoute.route.fromId === existingWallet.id) {
+                  return {
+                    error: `The upload was canceled because it would conflict with the account configuration for the account "${existingAccount.label}"`,
+                  }
+                }
+              }
+            }
+
             const account = await createAccount(tx, tenant, user, {
               chainId,
               address,
               label: route.label,
             })
-
-            invariantResponse(route.initiator != null, 'Route has no initiator')
 
             const [, initiator] = splitPrefixedAddress(route.initiator)
 
@@ -141,9 +175,9 @@ export const action = async (args: Route.ActionArgs) =>
 
               await activateRoute(tx, tenant, user, remoteRoute)
             }
-          })
 
-          return null
+            return null
+          })
         }
       }
     },
@@ -194,6 +228,28 @@ export const clientAction = async ({
       return null
     }
 
+    case Intent.Upload: {
+      const uploadResult = await serverAction()
+
+      if (uploadResult != null) {
+        return uploadResult
+      }
+
+      const { promise, resolve } = Promise.withResolvers<void>()
+
+      companionRequest(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: getString(data, 'routeId'),
+        },
+        () => resolve(),
+      )
+
+      await promise
+
+      return null
+    }
+
     default: {
       return await serverAction()
     }
@@ -207,6 +263,7 @@ const ListRoutes = ({
     loggedIn,
     ...clientData
   },
+  actionData,
 }: Route.ComponentProps) => {
   const localAccountsHeadingId = useId()
   const localAccountsDescriptionId = useId()
@@ -216,6 +273,10 @@ const ListRoutes = ({
       <Page.Header>Safe Accounts</Page.Header>
 
       <Page.Main>
+        {actionData != null && (
+          <Error title="Upload not possible">{actionData.error}</Error>
+        )}
+
         {remoteAccounts.length > 0 && (
           <Accounts>
             {remoteAccounts.map((account) => {

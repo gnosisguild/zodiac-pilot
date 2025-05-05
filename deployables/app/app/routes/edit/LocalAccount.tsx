@@ -118,9 +118,12 @@ const Upload = ({ routeId }: { routeId: string }) => {
 
         const route = await promise
 
-        submit(formData({ route: encode(route), intent: Intent.Upload }), {
-          method: 'POST',
-        })
+        submit(
+          formData({ route: encode(route), routeId, intent: Intent.Upload }),
+          {
+            method: 'POST',
+          },
+        )
       }}
     >
       Upload

@@ -1,5 +1,6 @@
 import { getAvailableChains } from '@/balances-server'
 import {
+  expectMessage,
   loadAndActivateRoute,
   loadRoutes,
   postMessage,
@@ -533,8 +534,99 @@ describe.sequential('List Routes', () => {
       ).resolves.toHaveProperty('routeId', remoteRoute.id)
     })
 
-    it.todo('does not create duplicates')
-    it.todo('removes the local account')
+    it('does not create duplicates', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user, {
+        label: 'Test account',
+      })
+      const route = await routeFactory.create(account, wallet)
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const executionRoute = createMockExecutionRoute({
+        initiator: prefixAddress(undefined, wallet.address),
+        avatar: prefixAddress(account.chainId, account.address),
+      })
+
+      const { waitForPendingActions } = await render(href('/edit'), {
+        availableRoutes: [executionRoute],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(executionRoute)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route: executionRoute,
+      })
+
+      await waitForPendingActions()
+
+      expect(
+        await screen.findByRole('alert', { name: 'Upload not possible' }),
+      ).toHaveAccessibleDescription(
+        `The upload was canceled because it would conflict with the account configuration for the account "${account.label}"`,
+      )
+    })
+
+    it('removes the local account', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const route = createMockExecutionRoute({
+        initiator: prefixAddress(undefined, randomAddress()),
+        avatar: randomPrefixedAddress(),
+      })
+
+      await render(href('/edit'), {
+        availableRoutes: [route],
+        tenant,
+        user,
+        features: ['user-management'],
+      })
+
+      await loadAndActivateRoute(route)
+
+      const { findByRole } = within(
+        await screen.findByRole('region', { name: 'Local Accounts' }),
+      )
+
+      await userEvent.click(
+        await findByRole('button', { name: 'Account options' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Upload' }),
+      )
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route: route,
+      })
+
+      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
+
+      await expectMessage({
+        type: CompanionAppMessageType.DELETE_ROUTE,
+        routeId: route.id,
+      })
+    })
     it.todo('does not remove the local account when the server action fails')
     it.todo('does not offer the upload options when no user is logged in')
   })
