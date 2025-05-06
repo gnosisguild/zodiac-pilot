@@ -200,7 +200,7 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
                 submit
                 iconOnly
                 icon={Check}
-                size="tiny"
+                size="small"
                 busy={busy}
                 intent={Intent.RenameWallet}
               >
@@ -211,7 +211,7 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
             <GhostButton
               iconOnly
               icon={Edit}
-              size="tiny"
+              size="small"
               onClick={() => setEditing(true)}
             >
               Edit wallet
