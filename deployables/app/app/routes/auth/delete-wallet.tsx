@@ -91,7 +91,7 @@ const DeleteWallet = ({
 
         <Divider />
 
-        <p className="text-sm">
+        <div className="text-sm">
           {accounts.length > 0 ? (
             <>
               <h2 id={accountListId} className="mb-2 font-semibold">
@@ -102,14 +102,16 @@ const DeleteWallet = ({
                 className="list-inside list-disc"
               >
                 {accounts.map((account) => (
-                  <li key={account.id}>{account.label}</li>
+                  <li key={account.id} aria-label={account.label ?? undefined}>
+                    {account.label}
+                  </li>
                 ))}
               </ul>
             </>
           ) : (
             <strong>Not used in any accounts</strong>
           )}
-        </p>
+        </div>
       </div>
 
       <Modal.Actions>
