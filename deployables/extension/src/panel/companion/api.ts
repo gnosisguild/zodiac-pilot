@@ -32,7 +32,7 @@ export const api = async <Schema extends ZodTypeAny>(
 
   invariant(
     response.ok,
-    `Failed to fetch from companion app: ${response.status}`,
+    `Failed to fetch from companion app(${url.toString()}): ${response.status}\n${await response.text()}`,
   )
 
   const json = await response.json()
