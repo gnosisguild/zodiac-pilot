@@ -1,7 +1,7 @@
 import { RouteTable } from '@zodiac/db/schema'
 import type { Waypoints } from '@zodiac/schema'
 import type { UUID } from 'crypto'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 type CreateRouteOptions = {
   walletId: UUID

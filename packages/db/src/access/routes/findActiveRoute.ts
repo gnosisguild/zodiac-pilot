@@ -1,7 +1,7 @@
 import type { Tenant, User } from '@zodiac/db/schema'
 import { waypointsSchema } from '@zodiac/schema'
 import type { UUID } from 'crypto'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 export const findActiveRoute = async (
   db: DBClient,

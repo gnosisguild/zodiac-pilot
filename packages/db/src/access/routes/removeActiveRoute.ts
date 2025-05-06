@@ -1,7 +1,7 @@
 import { ActiveRouteTable, type Tenant, type User } from '@zodiac/db/schema'
 import type { UUID } from 'crypto'
 import { and, eq } from 'drizzle-orm'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 export const removeActiveRoute = (
   db: DBClient,

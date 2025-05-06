@@ -4,7 +4,7 @@ import {
   type Tenant,
   type User,
 } from '@zodiac/db/schema'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 export const activateRoute = async (
   db: DBClient,
