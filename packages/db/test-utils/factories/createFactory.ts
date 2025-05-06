@@ -1,14 +1,14 @@
 import { dbClient, type DBClient } from '@zodiac/db'
 
 type FactoryOptions<Input, Output, BuildArgs extends Array<unknown>> = {
-  build: (...data: [...BuildArgs, Partial<Input>?]) => Input
-  create: (db: DBClient, data: Input) => Promise<Output>
-  createWithoutDb: (data: Input) => Output
+  build: (...data: [...BuildArgs, input?: Partial<Input>]) => Input
+  create: (db: DBClient, input: Input) => Promise<Output>
+  createWithoutDb: (input: Input) => Output
 }
 
 type Factory<Input, Output, BuildArgs extends Array<unknown>> = {
-  createWithoutDb: (...data: [...BuildArgs, Partial<Input>?]) => Output
-  create: (...data: [...BuildArgs, Partial<Input>?]) => Promise<Output>
+  createWithoutDb: (...data: [...BuildArgs, input?: Partial<Input>]) => Output
+  create: (...data: [...BuildArgs, input?: Partial<Input>]) => Promise<Output>
 }
 
 export const createFactory = <

@@ -94,6 +94,9 @@ export const FeatureTable = pgTable(
   (table) => [unique().on(table.name)],
 )
 
+export type Feature = typeof FeatureTable.$inferSelect
+export type FeatureCreateInput = typeof FeatureTable.$inferInsert
+
 export const featureSchema = createSelectSchema(FeatureTable, {
   createdAt: z.coerce.date(),
 })

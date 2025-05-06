@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc",
+    "check-cycles": "madge -c --warning --ts-config tsconfig.json ./src/index.ts ./schema/index.ts",
     "start": "docker-compose up db",
     "stop": "docker-compose down db",
     "test": "dotenvx run --env-file=.env.test -- vitest",
@@ -59,6 +60,7 @@
     "drizzle-kit": "0.31.1",
     "eslint": "9.26.0",
     "eslint-plugin-drizzle": "0.2.3",
+    "madge": "8.0.0",
     "vitest": "3.1.2"
   },
   "peerDependencies": {

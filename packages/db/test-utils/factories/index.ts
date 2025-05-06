@@ -1,4 +1,5 @@
 export { accountFactory } from './accountFactory'
+export { featureFactory } from './featureFactory'
 export { routeFactory } from './routeFactory'
 export { tenantFactory } from './tenantFactory'
 export { userFactory } from './userFactory'
