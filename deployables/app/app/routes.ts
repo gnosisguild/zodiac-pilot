@@ -21,6 +21,7 @@ export default [
       ]),
 
       route('/profile', 'routes/auth/profile.tsx', [
+        route('add-wallet', 'routes/auth/add-wallet.tsx'),
         route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
       ]),
 

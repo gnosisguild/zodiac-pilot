@@ -48,7 +48,7 @@ describe('Profile', () => {
       const address = randomAddress()
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Add Wallet' }),
+        await screen.findByRole('link', { name: 'Add Wallet' }),
       )
 
       await userEvent.type(
@@ -87,7 +87,7 @@ describe('Profile', () => {
       })
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Add Wallet' }),
+        await screen.findByRole('link', { name: 'Add Wallet' }),
       )
 
       await userEvent.type(
