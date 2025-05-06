@@ -1,6 +1,6 @@
 import { invariant } from '@epic-web/invariant'
 import type { Tenant, User } from '@zodiac/db/schema'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 import { findActiveAccount } from './findActiveAccount'
 
 export const getActiveAccount = async (

@@ -1,7 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import type { UUID } from 'crypto'
 import { type PrefixedAddress } from 'ser-kit'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 import { findAccountByAddress } from './findAccountByAddress'
 
 export const getAccountByAddress = async (

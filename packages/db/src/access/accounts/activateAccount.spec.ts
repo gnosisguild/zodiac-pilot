@@ -4,7 +4,7 @@ import {
   userFactory,
 } from '@zodiac/db/test-utils'
 import { describe, expect, it } from 'vitest'
-import { dbClient } from '../dbClient'
+import { dbClient } from '../../dbClient'
 import { activateAccount } from './activateAccount'
 
 describe('Activate account', () => {

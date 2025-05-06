@@ -1,5 +1,5 @@
 import type { Tenant, User } from '@zodiac/db/schema'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 export const findActiveAccount = async (
   db: DBClient,

@@ -7,7 +7,7 @@ import {
 } from '@zodiac/db/schema'
 import type { UUID } from 'crypto'
 import { and, asc, eq } from 'drizzle-orm'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 
 export const getAccountsByWalletId = async (
   db: DBClient,
