@@ -613,7 +613,7 @@ importers:
         version: 9.26.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.7.0
-        version: 3.7.0(typescript@5.8.3)
+        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
 
   packages/db:
     dependencies:
@@ -1002,8 +1002,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       framer-motion:
-        specifier: 12.9.4
-        version: 12.9.4(@emotion/is-prop-valid@1.3.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 12.9.7
+        version: 12.9.7(@emotion/is-prop-valid@1.3.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lucide-react:
         specifier: 0.507.0
         version: 0.507.0(react@19.1.0)
@@ -6247,8 +6247,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@12.9.4:
-    resolution: {integrity: sha512-yaeGDmGQ3eCQEwZ95/pRQMaSh/Q4E2CK6JYOclG/PdjyQad0MULJ+JFVV8911Fl5a6tF6o0wgW8Dpl5Qx4Adjg==}
+  framer-motion@12.9.7:
+    resolution: {integrity: sha512-Eo5TYU6sEPPy82GDx32PJm++G+AkBCrzxtEQOWLnpQX896Q3LFrsYhMZ5YO5ct4wL7wyHU6hqlrpYXeexKAevg==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -7333,8 +7333,8 @@ packages:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
     engines: {node: '>= 0.8.0'}
 
-  motion-dom@12.9.4:
-    resolution: {integrity: sha512-25TWkQPj5I18m+qVjXGtCsxboY11DaRC5HMjd29tHKExazW4Zf4XtAagBdLpyKsVuAxEQ6cx5/E4AB21PFpLnQ==}
+  motion-dom@12.9.6:
+    resolution: {integrity: sha512-IK9pm5zU8BIp3FCoUGF3T7AHVLVOlXxlwco/bIbcnpBtyYb2gDQhdOzUh2KSDJVjYl1MZ9vdq8tnFTTahX2lfg==}
 
   motion-utils@12.9.4:
     resolution: {integrity: sha512-BW3I65zeM76CMsfh3kHid9ansEJk9Qvl+K5cu4DVHKGsI52n76OJ4z2CUJUV+Mn3uEP9k1JJA3tClG0ggSrRcg==}
@@ -12776,19 +12776,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@2.5.11(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      node-fetch: 2.7.0
-      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.3(typescript@5.8.3)(zod@3.24.4)
@@ -12827,23 +12814,6 @@ snapshots:
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       semver: 7.7.1
       viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    optionalDependencies:
-      '@noble/curves': 1.8.2
-      '@peculiar/asn1-schema': 2.3.15
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@5.2.4(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/safe-modules-deployments': 2.2.7
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      semver: 7.7.1
-      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     optionalDependencies:
       '@noble/curves': 1.8.2
       '@peculiar/asn1-schema': 2.3.15
@@ -16226,9 +16196,9 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@12.9.4(@emotion/is-prop-valid@1.3.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  framer-motion@12.9.7(@emotion/is-prop-valid@1.3.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      motion-dom: 12.9.4
+      motion-dom: 12.9.6
       motion-utils: 12.9.4
       tslib: 2.8.1
     optionalDependencies:
@@ -17339,7 +17309,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  motion-dom@12.9.4:
+  motion-dom@12.9.6:
     dependencies:
       motion-utils: 12.9.4
 
@@ -18550,21 +18520,6 @@ snapshots:
       '@safe-global/safe-deployments': 1.37.32
       '@safe-global/types-kit': 1.0.4(typescript@5.8.3)(zod@3.24.4)
       viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  ser-kit@3.7.0(typescript@5.8.3):
-    dependencies:
-      '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 2.5.11(typescript@5.8.3)
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
