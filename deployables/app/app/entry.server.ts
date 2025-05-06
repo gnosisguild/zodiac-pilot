@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry-server'
 import { createReadableStreamFromReadable } from '@react-router/node'
 import * as Sentry from '@sentry/react-router'
 import { isbot } from 'isbot'
@@ -94,10 +95,15 @@ function handleRequestVercel(
           pipe(body)
         },
         onShellError(error: unknown) {
+          sentry.captureException(error)
+
           reject(error)
         },
         onError(error: unknown) {
           responseStatusCode = 500
+
+          sentry.captureException(error)
+
           // Log streaming rendering errors from inside the shell.  Don't log
           // errors encountered during initial shell rendering since they'll
           // reject and get logged in handleDocumentRequest.

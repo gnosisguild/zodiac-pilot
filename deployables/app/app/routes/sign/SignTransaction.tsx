@@ -1,4 +1,4 @@
-import { sentry } from '@/sentry'
+import { sentry } from '@/sentry-client'
 import { jsonRpcProvider } from '@/utils'
 import { EXPLORER_URL } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'

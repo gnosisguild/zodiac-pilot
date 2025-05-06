@@ -97,6 +97,9 @@ importers:
       '@sentry/browser':
         specifier: 9.15.0
         version: 9.15.0
+      '@sentry/node':
+        specifier: 9.15.0
+        version: 9.15.0
       '@sentry/react-router':
         specifier: 9.15.0
         version: 9.15.0(@react-router/node@7.5.3(react-router@7.5.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(react-router@7.5.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
