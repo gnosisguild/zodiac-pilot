@@ -50,7 +50,7 @@ export const AddressInput = ({
         <input
           {...props}
           type="text"
-          pattern="0x\w+"
+          pattern="0x\w{40}"
           id={inputId}
           disabled={disabled}
           value={value == null ? undefined : value}

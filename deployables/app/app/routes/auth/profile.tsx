@@ -3,29 +3,18 @@ import { Page } from '@/components'
 import { Widgets } from '@/workOS/client'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
-import {
-  createWallet,
-  dbClient,
-  deleteWallet,
-  findWalletByAddress,
-  getWallet,
-  getWallets,
-  updateWalletLabel,
-} from '@zodiac/db'
+import { dbClient, getWallets, updateWalletLabel } from '@zodiac/db'
 import type { Wallet } from '@zodiac/db/schema'
-import { getHexString, getString, getUUID } from '@zodiac/form-data'
+import { getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Address,
-  AddressInput,
-  Error,
-  Form,
   FormLayout,
   GhostButton,
+  GhostLinkButton,
   InlineForm,
-  Modal,
-  PrimaryButton,
   SecondaryButton,
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -36,7 +25,7 @@ import {
 } from '@zodiac/ui'
 import { Check, Edit, Trash2 } from 'lucide-react'
 import { useId, useState } from 'react'
-import { useActionData } from 'react-router'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/profile'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -61,46 +50,12 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = async (args: Route.ActionArgs) =>
   authorizedAction(
     args,
-    async ({
-      request,
-      context: {
-        auth: { user },
-      },
-    }) => {
+    async ({ request }) => {
       const data = await request.formData()
 
       switch (getString(data, 'intent')) {
         case Intent.SignOut: {
           return await signOut(request)
-        }
-
-        case Intent.AddWallet: {
-          const label = getString(data, 'label')
-          const address = getHexString(data, 'address')
-
-          const existingWallet = await findWalletByAddress(
-            dbClient(),
-            user,
-            address,
-          )
-
-          if (existingWallet != null) {
-            return {
-              error: `A wallet with this address already exists under the name "${existingWallet.label}".`,
-            }
-          }
-
-          await createWallet(dbClient(), user, { label, address })
-
-          return null
-        }
-
-        case Intent.DeleteWallet: {
-          const walletId = getUUID(data, 'walletId')
-
-          await deleteWallet(dbClient(), user, walletId)
-
-          return null
         }
 
         case Intent.RenameWallet: {
@@ -118,24 +73,6 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, request }) {
-        const data = await request.formData()
-
-        switch (getString(data, 'intent')) {
-          case Intent.DeleteWallet: {
-            const wallet = await getWallet(
-              dbClient(),
-              getUUID(data, 'walletId'),
-            )
-
-            return wallet.belongsToId === user.id
-          }
-
-          default: {
-            return true
-          }
-        }
-      },
     },
   )
 
@@ -194,7 +131,9 @@ const Profile = ({
               </Table>
 
               <div className="flex justify-end">
-                <AddWallet />
+                <SecondaryLinkButton to={href('/profile/add-wallet')}>
+                  Add Wallet
+                </SecondaryLinkButton>
               </div>
             </FormLayout.Section>
 
@@ -213,6 +152,8 @@ const Profile = ({
           </FormLayout>
         </Widgets>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
@@ -259,7 +200,7 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
                 submit
                 iconOnly
                 icon={Check}
-                size="tiny"
+                size="small"
                 busy={busy}
                 intent={Intent.RenameWallet}
               >
@@ -270,77 +211,27 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
             <GhostButton
               iconOnly
               icon={Edit}
-              size="tiny"
+              size="small"
               onClick={() => setEditing(true)}
             >
               Edit wallet
             </GhostButton>
           )}
 
-          <DeleteWallet walletId={wallet.id} />
+          <GhostLinkButton
+            iconOnly
+            to={href('/profile/delete-wallet/:walletId', {
+              walletId: wallet.id,
+            })}
+            size="small"
+            icon={Trash2}
+            style="critical"
+          >
+            Remove wallet
+          </GhostLinkButton>
         </div>
       </TableCell>
     </TableRow>
-  )
-}
-
-const AddWallet = () => {
-  const [open, setOpen] = useState(false)
-
-  useAfterSubmit<typeof action>(Intent.AddWallet, (actionData) => {
-    if (actionData == null) {
-      setOpen(false)
-    }
-  })
-
-  const actionData = useActionData<typeof action>()
-
-  return (
-    <>
-      <SecondaryButton onClick={() => setOpen(true)}>
-        Add Wallet
-      </SecondaryButton>
-
-      <Modal open={open} onClose={() => setOpen(false)} title="Add Wallet">
-        <Form intent={Intent.AddWallet}>
-          {actionData != null && (
-            <Error title="Wallet already exists">{actionData.error}</Error>
-          )}
-
-          <TextInput required label="Label" name="label" placeholder="Label" />
-          <AddressInput required label="Address" name="address" />
-
-          <Modal.Actions>
-            <PrimaryButton submit busy={useIsPending(Intent.AddWallet)}>
-              Add
-            </PrimaryButton>
-            <GhostButton onClick={() => setOpen(false)}>Cancel</GhostButton>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
-  )
-}
-
-const DeleteWallet = ({ walletId }: { walletId: string }) => {
-  const pending = useIsPending(
-    Intent.DeleteWallet,
-    (data) => data.get('walletId') === walletId,
-  )
-
-  return (
-    <InlineForm intent={Intent.DeleteWallet} context={{ walletId }}>
-      <GhostButton
-        submit
-        iconOnly
-        busy={pending}
-        size="small"
-        icon={Trash2}
-        style="critical"
-      >
-        Remove wallet
-      </GhostButton>
-    </InlineForm>
   )
 }
 
@@ -348,7 +239,5 @@ export default Profile
 
 enum Intent {
   SignOut = 'SignOut',
-  AddWallet = 'AddWallet',
-  DeleteWallet = 'DeleteWallet',
   RenameWallet = 'RenameWallet',
 }
