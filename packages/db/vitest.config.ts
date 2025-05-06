@@ -9,5 +9,6 @@ export default defineConfig({
     include: ['./src/**/*.{spec,test}.{ts,tsx}'],
     mockReset: true,
     clearMocks: true,
+    fileParallelism: false,
   },
 })
