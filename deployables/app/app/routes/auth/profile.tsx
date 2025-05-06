@@ -218,24 +218,20 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
             </GhostButton>
           )}
 
-          <DeleteWallet walletId={wallet.id} />
+          <GhostLinkButton
+            iconOnly
+            to={href('/profile/delete-wallet/:walletId', {
+              walletId: wallet.id,
+            })}
+            size="small"
+            icon={Trash2}
+            style="critical"
+          >
+            Remove wallet
+          </GhostLinkButton>
         </div>
       </TableCell>
     </TableRow>
-  )
-}
-
-const DeleteWallet = ({ walletId }: { walletId: string }) => {
-  return (
-    <GhostLinkButton
-      iconOnly
-      to={href('/profile/delete-wallet/:walletId', { walletId })}
-      size="small"
-      icon={Trash2}
-      style="critical"
-    >
-      Remove wallet
-    </GhostLinkButton>
   )
 }
 
