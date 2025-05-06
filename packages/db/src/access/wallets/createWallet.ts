@@ -1,6 +1,6 @@
 import { WalletTable, type User } from '@zodiac/db/schema'
 import type { HexAddress } from '@zodiac/schema'
-import type { DBClient } from '../dbClient'
+import type { DBClient } from '../../dbClient'
 import { findWalletByAddress } from './findWalletByAddress'
 
 type CreateWalletOptions = {

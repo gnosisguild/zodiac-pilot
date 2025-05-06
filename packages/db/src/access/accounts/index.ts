@@ -1,5 +1,6 @@
 export { activateAccount } from './activateAccount'
 export { createAccount } from './createAccount'
+export { deleteAccount } from './deleteAccount'
 export { findAccountByAddress } from './findAccountByAddress'
 export { findActiveAccount } from './findActiveAccount'
 export { getAccount } from './getAccount'
