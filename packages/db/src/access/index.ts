@@ -1,7 +1,5 @@
 export * from './accounts'
-export { activateFeature } from './activateFeature'
-export { createFeature } from './createFeature'
-export { getFeatures } from './getFeatures'
+export * from './features'
 export { getTransactions } from './getTransactions'
 export * from './routes'
 export { saveTransaction } from './saveTransaction'

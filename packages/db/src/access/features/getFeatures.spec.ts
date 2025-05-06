@@ -1,6 +1,6 @@
+import { featureFactory, tenantFactory } from '@zodiac/db/test-utils'
 import { describe, expect, it } from 'vitest'
-import { featureFactory, tenantFactory } from '../../test-utils'
-import { dbClient } from '../dbClient'
+import { dbClient } from '../../dbClient'
 import { activateFeature } from './activateFeature'
 import { getFeatures } from './getFeatures'
 
