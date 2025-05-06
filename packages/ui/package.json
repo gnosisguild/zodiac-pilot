@@ -23,7 +23,7 @@
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
     "ethereum-blockies-base64": "1.0.2",
-    "framer-motion": "12.9.4",
+    "framer-motion": "12.9.7",
     "lucide-react": "0.507.0",
     "nanoid": "5.1.5",
     "react-select": "5.10.1",
