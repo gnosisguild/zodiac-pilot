@@ -1,6 +1,7 @@
 import { PILOT_PANEL_PORT } from '@/port-handling'
 import { isCompanionApp, isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { PilotMessageType, type Message } from '@zodiac/messages'
+import { format } from 'date-fns'
 import type { RefObject } from 'react'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
@@ -40,14 +41,24 @@ export const trackSessions = (
       }
 
       windowIdRef.current = message.windowId
-      console.debug('Sidepanel opened.', message.windowId)
+      console.debug(
+        'Sidepanel opened.',
+        message.windowId,
+        format(new Date(), 'HH:mm:ss'),
+      )
+
+      const currentSession = sessions.get(message.windowId)
+      const isExistingSessionForTab =
+        currentSession != null &&
+        message.tabId != null &&
+        currentSession.isTracked(message.tabId)
 
       startPilotSession(sessions, trackRequests, {
         windowId: message.windowId,
         tabId: message.tabId,
       })
 
-      if (message.tabId) {
+      if (message.tabId && !isExistingSessionForTab) {
         reloadTab(message.tabId)
       }
     })

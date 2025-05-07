@@ -1,6 +1,7 @@
 import { captureLastError } from '@/sentry'
 import { useActiveTab } from '@/utils'
 import { type Message, PilotMessageType } from '@zodiac/messages'
+import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 
 // we use a port to communicate between the panel app and the background script as this allows us to track when the panel is closed
@@ -39,6 +40,8 @@ export const usePilotPort = () => {
     }
 
     const handleDisconnect = () => {
+      console.log('Port disconnected', format(new Date(), 'HH:mm:ss'))
+
       setPort(null)
     }
 
@@ -58,15 +61,27 @@ type ConnectPortOptions = {
 }
 
 const connectPort = ({ tabId, windowId }: ConnectPortOptions) => {
+  console.log('Attempt to open port', format(new Date(), 'HH:mm:ss'))
+
   const port = chrome.runtime.connect({ name: PILOT_PANEL_PORT })
 
   captureLastError()
+
+  console.log('Send panel opened message', format(new Date(), 'HH:mm:ss'))
 
   port.postMessage({
     type: PilotMessageType.PILOT_PANEL_OPENED,
     windowId,
     tabId,
   } satisfies Message)
+
+  const interval = setInterval(() => {
+    port.postMessage({
+      type: PilotMessageType.PILOT_KEEP_ALIVE,
+    } satisfies Message)
+  }, 5_000)
+
+  port.onDisconnect.addListener(() => clearInterval(interval))
 
   captureLastError()
 

@@ -5,19 +5,28 @@ export enum PilotMessageType {
   PILOT_CONNECT = 'PILOT_CONNECT',
   /** sent when the panel is closed */
   PILOT_DISCONNECT = 'PILOT_DISCONNECT',
+  PILOT_KEEP_ALIVE = 'EXTENSION::KEEP_ALIVE',
 }
 
-interface PilotConnect {
+type PilotConnect = {
   type: PilotMessageType.PILOT_CONNECT
 }
-interface PilotDisconnect {
+type PilotDisconnect = {
   type: PilotMessageType.PILOT_DISCONNECT
 }
 
-interface PilotPanelOpened {
+type PilotPanelOpened = {
   type: PilotMessageType.PILOT_PANEL_OPENED
   windowId: number
   tabId?: number
 }
 
-export type Message = PilotConnect | PilotDisconnect | PilotPanelOpened
+type PilotKeepAlive = {
+  type: PilotMessageType.PILOT_KEEP_ALIVE
+}
+
+export type Message =
+  | PilotConnect
+  | PilotDisconnect
+  | PilotPanelOpened
+  | PilotKeepAlive
