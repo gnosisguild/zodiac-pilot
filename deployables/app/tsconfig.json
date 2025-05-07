@@ -18,7 +18,7 @@
       "@/auth-client": ["./app/auth/client/index.ts"],
       "@/workOS/client": ["./workOS/client/index.ts"],
       "@/workOS/server": ["./workOS/server/index.ts"],
-      "@/sentry": ["./app/sentry/index.ts"]
+      "@/sentry-client": ["./app/sentry/client/index.ts"]
     }
   },
   "include": [

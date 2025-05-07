@@ -1,4 +1,3 @@
-import { invariant } from '@epic-web/invariant'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { formData } from '@zodiac/form-data'
 import type { z, ZodTypeAny } from 'zod'
@@ -30,10 +29,11 @@ export const api = async <Schema extends ZodTypeAny>(
     body: body == null ? undefined : formData(body),
   })
 
-  invariant(
-    response.ok,
-    `Failed to fetch from companion app: ${response.status}`,
-  )
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch from companion app(${url.toString()}): ${response.status}\n${await response.text()}`,
+    )
+  }
 
   const json = await response.json()
 
