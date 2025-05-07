@@ -1,4 +1,3 @@
-import sentryEsbuildPlugin from '@sentry/esbuild-plugin'
 import tailwindcss from '@tailwindcss/postcss'
 import esbuild from 'esbuild'
 import postCssPlugin from 'esbuild-style-plugin'
@@ -72,12 +71,12 @@ esbuild
           ],
         },
       }),
-      process.env.NODE_ENV === 'production' &&
-        sentryEsbuildPlugin({
-          authToken: process.env.SENTRY_AUTH_TOKEN,
-          org: 'gnosis-guild',
-          project: 'pilot-extension',
-        }),
+      // process.env.NODE_ENV === 'production' &&
+      //   sentryEsbuildPlugin({
+      //     authToken: process.env.SENTRY_AUTH_TOKEN,
+      //     org: 'gnosis-guild',
+      //     project: 'pilot-extension',
+      //   }),
     ].filter(Boolean),
     logLevel: 'info',
   })
