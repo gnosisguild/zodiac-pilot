@@ -41,8 +41,8 @@ importers:
         specifier: 0.6.11
         version: 0.6.11(prettier-plugin-organize-imports@4.1.0(prettier@3.5.3)(typescript@5.8.3))(prettier@3.5.3)
       turbo:
-        specifier: 2.5.2
-        version: 2.5.2
+        specifier: 2.5.3
+        version: 2.5.3
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -613,7 +613,7 @@ importers:
         version: 9.26.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.7.0
-        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+        version: 3.7.0(typescript@5.8.3)
 
   packages/db:
     dependencies:
@@ -8867,41 +8867,41 @@ packages:
   tty-browserify@0.0.1:
     resolution: {integrity: sha512-C3TaO7K81YvjCgQH9Q1S3R3P3BtN3RIM8n+OvX4il1K1zgE8ZhI0op7kClgkxtutIE8hQrcrHBXvIheqKUUCxw==}
 
-  turbo-darwin-64@2.5.2:
-    resolution: {integrity: sha512-2aIl0Sx230nLk+Cg2qSVxvPOBWCZpwKNuAMKoROTvWKif6VMpkWWiR9XEPoz7sHeLmCOed4GYGMjL1bqAiIS/g==}
+  turbo-darwin-64@2.5.3:
+    resolution: {integrity: sha512-YSItEVBUIvAGPUDpAB9etEmSqZI3T6BHrkBkeSErvICXn3dfqXUfeLx35LfptLDEbrzFUdwYFNmt8QXOwe9yaw==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.5.2:
-    resolution: {integrity: sha512-MrFYhK/jYu8N6QlqZtqSHi3e4QVxlzqU3ANHTKn3/tThuwTLbNHEvzBPWSj5W7nZcM58dCqi6gYrfRz6bJZyAA==}
+  turbo-darwin-arm64@2.5.3:
+    resolution: {integrity: sha512-5PefrwHd42UiZX7YA9m1LPW6x9YJBDErXmsegCkVp+GjmWrADfEOxpFrGQNonH3ZMj77WZB2PVE5Aw3gA+IOhg==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.5.2:
-    resolution: {integrity: sha512-LxNqUE2HmAJQ/8deoLgMUDzKxd5bKxqH0UBogWa+DF+JcXhtze3UTMr6lEr0dEofdsEUYK1zg8FRjglmwlN5YA==}
+  turbo-linux-64@2.5.3:
+    resolution: {integrity: sha512-M9xigFgawn5ofTmRzvjjLj3Lqc05O8VHKuOlWNUlnHPUltFquyEeSkpQNkE/vpPdOR14AzxqHbhhxtfS4qvb1w==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.5.2:
-    resolution: {integrity: sha512-0MI1Ao1q8zhd+UUbIEsrM+yLq1BsrcJQRGZkxIsHFlGp7WQQH1oR3laBgfnUCNdCotCMD6w4moc9pUbXdOR3bg==}
+  turbo-linux-arm64@2.5.3:
+    resolution: {integrity: sha512-auJRbYZ8SGJVqvzTikpg1bsRAsiI9Tk0/SDkA5Xgg0GdiHDH/BOzv1ZjDE2mjmlrO/obr19Dw+39OlMhwLffrw==}
     cpu: [arm64]
     os: [linux]
 
   turbo-stream@2.4.0:
     resolution: {integrity: sha512-FHncC10WpBd2eOmGwpmQsWLDoK4cqsA/UT/GqNoaKOQnT8uzhtCbg3EoUDMvqpOSAI0S26mr0rkjzbOO6S3v1g==}
 
-  turbo-windows-64@2.5.2:
-    resolution: {integrity: sha512-hOLcbgZzE5ttACHHyc1ajmWYq4zKT42IC3G6XqgiXxMbS+4eyVYTL+7UvCZBd3Kca1u4TLQdLQjeO76zyDJc2A==}
+  turbo-windows-64@2.5.3:
+    resolution: {integrity: sha512-arLQYohuHtIEKkmQSCU9vtrKUg+/1TTstWB9VYRSsz+khvg81eX6LYHtXJfH/dK7Ho6ck+JaEh5G+QrE1jEmCQ==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.5.2:
-    resolution: {integrity: sha512-fMU41ABhSLa18H8V3Z7BMCGynQ8x+wj9WyBMvWm1jeyRKgkvUYJsO2vkIsy8m0vrwnIeVXKOIn6eSe1ddlBVqw==}
+  turbo-windows-arm64@2.5.3:
+    resolution: {integrity: sha512-3JPn66HAynJ0gtr6H+hjY4VHpu1RPKcEwGATvGUTmLmYSYBQieVlnGDRMMoYN066YfyPqnNGCfhYbXfH92Cm0g==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.5.2:
-    resolution: {integrity: sha512-Qo5lfuStr6LQh3sPQl7kIi243bGU4aHGDQJUf6ylAdGwks30jJFloc9NYHP7Y373+gGU9OS0faA4Mb5Sy8X9Xw==}
+  turbo@2.5.3:
+    resolution: {integrity: sha512-iHuaNcq5GZZnr3XDZNuu2LSyCzAOPwDuo5Qt+q64DfsTP1i3T2bKfxJhni2ZQxsvAoxRbuUK5QetJki4qc5aYA==}
     hasBin: true
 
   type-check@0.4.0:
@@ -12776,6 +12776,19 @@ snapshots:
       - utf-8-validate
       - zod
 
+  '@safe-global/api-kit@2.5.11(typescript@5.8.3)':
+    dependencies:
+      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      node-fetch: 2.7.0
+      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
   '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.3(typescript@5.8.3)(zod@3.24.4)
@@ -12814,6 +12827,23 @@ snapshots:
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       semver: 7.7.1
       viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+    optionalDependencies:
+      '@noble/curves': 1.8.2
+      '@peculiar/asn1-schema': 2.3.15
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@safe-global/protocol-kit@5.2.4(typescript@5.8.3)':
+    dependencies:
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/safe-modules-deployments': 2.2.7
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
+      semver: 7.7.1
+      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     optionalDependencies:
       '@noble/curves': 1.8.2
       '@peculiar/asn1-schema': 2.3.15
@@ -18527,6 +18557,21 @@ snapshots:
       - utf-8-validate
       - zod
 
+  ser-kit@3.7.0(typescript@5.8.3):
+    dependencies:
+      '@epic-web/invariant': 1.0.0
+      '@safe-global/api-kit': 2.5.11(typescript@5.8.3)
+      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      viem: 2.28.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
   serve-static@1.16.2:
     dependencies:
       encodeurl: 2.0.0
@@ -19021,34 +19066,34 @@ snapshots:
 
   tty-browserify@0.0.1: {}
 
-  turbo-darwin-64@2.5.2:
+  turbo-darwin-64@2.5.3:
     optional: true
 
-  turbo-darwin-arm64@2.5.2:
+  turbo-darwin-arm64@2.5.3:
     optional: true
 
-  turbo-linux-64@2.5.2:
+  turbo-linux-64@2.5.3:
     optional: true
 
-  turbo-linux-arm64@2.5.2:
+  turbo-linux-arm64@2.5.3:
     optional: true
 
   turbo-stream@2.4.0: {}
 
-  turbo-windows-64@2.5.2:
+  turbo-windows-64@2.5.3:
     optional: true
 
-  turbo-windows-arm64@2.5.2:
+  turbo-windows-arm64@2.5.3:
     optional: true
 
-  turbo@2.5.2:
+  turbo@2.5.3:
     optionalDependencies:
-      turbo-darwin-64: 2.5.2
-      turbo-darwin-arm64: 2.5.2
-      turbo-linux-64: 2.5.2
-      turbo-linux-arm64: 2.5.2
-      turbo-windows-64: 2.5.2
-      turbo-windows-arm64: 2.5.2
+      turbo-darwin-64: 2.5.3
+      turbo-darwin-arm64: 2.5.3
+      turbo-linux-64: 2.5.3
+      turbo-linux-arm64: 2.5.3
+      turbo-windows-64: 2.5.3
+      turbo-windows-arm64: 2.5.3
 
   type-check@0.4.0:
     dependencies:
