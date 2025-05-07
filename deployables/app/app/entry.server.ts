@@ -1,6 +1,9 @@
-import { sentry } from '@/sentry-server'
 import { createReadableStreamFromReadable } from '@react-router/node'
 import * as Sentry from '@sentry/react-router'
+import {
+  getMetaTagTransformer,
+  wrapSentryHandleRequest,
+} from '@sentry/react-router'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
 import { createElement } from 'react'
@@ -27,7 +30,7 @@ export const handleError: HandleErrorFunction = (error, { request }) => {
   }
 }
 
-export default async function handleRequest(
+async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -44,6 +47,8 @@ export default async function handleRequest(
 
   return response
 }
+
+export default wrapSentryHandleRequest(handleRequest)
 
 export type RenderOptions = {
   [K in keyof RenderToReadableStreamOptions &
@@ -92,17 +97,13 @@ function handleRequestVercel(
             }),
           )
 
-          pipe(body)
+          pipe(getMetaTagTransformer(body))
         },
         onShellError(error: unknown) {
-          sentry.captureException(error)
-
           reject(error)
         },
         onError(error: unknown) {
           responseStatusCode = 500
-
-          sentry.captureException(error)
 
           // Log streaming rendering errors from inside the shell.  Don't log
           // errors encountered during initial shell rendering since they'll

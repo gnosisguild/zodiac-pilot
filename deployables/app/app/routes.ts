@@ -95,5 +95,13 @@ export default [
     route('active-route/:accountId', 'routes/extension/activeRoute.ts'),
   ]),
 
-  route('/dev/decode/:data', 'routes/dev/decode.tsx'),
+  ...prefix('/dev', [
+    route('decode/:data', 'routes/dev/decode.tsx'),
+
+    ...prefix('errors', [
+      route('loader', 'routes/dev/errors/loader-error.ts'),
+      route('action', 'routes/dev/errors/action-error.tsx'),
+      route('component', 'routes/dev/errors/component-error.tsx'),
+    ]),
+  ]),
 ] satisfies RouteConfig
