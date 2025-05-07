@@ -6,11 +6,24 @@ import {
   mockCompanionAppUrl,
   startPilotSession,
 } from '@/test-utils'
+import { reloadTab } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { PilotMessageType } from '@zodiac/messages'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
+
+vi.mock('@/utils', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/utils')>()
+
+  return {
+    ...module,
+
+    reloadTab: vi.fn(),
+  }
+})
+
+const mockReloadTab = vi.mocked(reloadTab)
 
 describe('Session tracking', () => {
   beforeEach(() => {
@@ -52,6 +65,17 @@ describe('Session tracking', () => {
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(1, {
         type: PilotMessageType.PILOT_CONNECT,
       })
+    })
+
+    it('only reloads a tab once', async () => {
+      trackSessions(trackRequests())
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+      await startPilotSession({ windowId: 1 }, tab)
+
+      expect(mockReloadTab).toHaveBeenCalledTimes(1)
     })
   })
 
