@@ -28,6 +28,7 @@ jobs:
         run: pnpm build
         working-directory: ./deployables/extension
         env:
+          NODE_ENV: production
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - uses: reloc8/action-latest-release-version@1.0.0
@@ -99,6 +100,7 @@ jobs:
         run: pnpm build
         working-directory: ./latest-release/${{ steps.extract-folder.outputs.folder-name }}/deployables/extension
         env:
+          NODE_ENV: production
           COMPANION_APP_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 'Update manifest'
