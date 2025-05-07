@@ -21,15 +21,6 @@ import {
 
 export const streamTimeout = 30_000
 
-if (process.env.NODE_ENV !== 'development') {
-  Sentry.init({
-    dsn: 'https://c39d76bbc73d7a511713c23ef37f1e94@o4508675621912576.ingest.us.sentry.io/4508676926078976',
-    integrations: [],
-    sendDefaultPii: true,
-    maxValueLength: 5000, // enable capturing entire submit & route urls
-  })
-}
-
 export const handleError: HandleErrorFunction = (error, { request }) => {
   // React Router may abort some interrupted requests, report those
   if (!request.signal.aborted) {
@@ -46,6 +37,15 @@ async function handleRequest(
   routerContext: EntryContext,
   loadContext?: AppLoadContext,
 ): Promise<Response> {
+  if (process.env.NODE_ENV !== 'development') {
+    Sentry.init({
+      dsn: 'https://c39d76bbc73d7a511713c23ef37f1e94@o4508675621912576.ingest.us.sentry.io/4508676926078976',
+      integrations: [],
+      sendDefaultPii: true,
+      maxValueLength: 5000, // enable capturing entire submit & route urls
+    })
+  }
+
   const response = await handleRequestVercel(
     request,
     responseStatusCode,
