@@ -818,8 +818,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@shazow/whatsabi':
-        specifier: 0.21.0
-        version: 0.21.0(@noble/hashes@1.7.2)(typescript@5.8.3)(zod@3.24.4)
+        specifier: 0.21.1
+        version: 0.21.1(@noble/hashes@1.7.2)(typescript@5.8.3)(zod@3.24.4)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -4155,8 +4155,8 @@ packages:
     resolution: {integrity: sha512-ZRn5TLlq5xtwKOqaWP+XqS1PYVfbBCgsbMk7wW2Ly6EgF9wYePvtLqKgYnE3hwPg2LpBnRPR2ti1ohlUkR+wXA==}
     engines: {node: '>= 14'}
 
-  '@shazow/whatsabi@0.21.0':
-    resolution: {integrity: sha512-Vorz8zzTj8wm+2d9CnH0+PoKw4fpkxNVhUfFqEq0/aOnVoW9lcsb21pqHMcqGpEe4u4MVKfleSyag098BS1nhA==}
+  '@shazow/whatsabi@0.21.1':
+    resolution: {integrity: sha512-eXG77nTGTiLy2Zf/TvY6DPkSx4G+bZWdwHwajTELLG+rTeNUWMop+IiFTSdpXlXEaLyTfImfNYsk/RWnU/0UKQ==}
     peerDependencies:
       '@noble/hashes': ^1
 
@@ -7555,14 +7555,6 @@ packages:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
     engines: {node: '>= 0.4'}
 
-  ox@0.6.10:
-    resolution: {integrity: sha512-B3rYmtaDF5smwQcVKSar+1wuYX8VlQ82Nxp5i6q/FaXskXY9tbJNTnwZ2f7uMfqTZIPx1lPzDUdjrCTPeC5LXQ==}
-    peerDependencies:
-      typescript: '>=5.4.0'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   ox@0.6.7:
     resolution: {integrity: sha512-17Gk/eFsFRAZ80p5eKqv89a57uXjd3NgIf1CaXojATPBuujVc/fQSVhBeAU9JCRB+k7J50WQAyWTxK19T9GgbA==}
     peerDependencies:
@@ -7573,6 +7565,14 @@ packages:
 
   ox@0.6.9:
     resolution: {integrity: sha512-wi5ShvzE4eOcTwQVsIPdFr+8ycyX+5le/96iAJutaZAvCes1J0+RvpEPg5QDPDiaR0XQQAvZVl7AwqQcINuUug==}
+    peerDependencies:
+      typescript: '>=5.4.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  ox@0.7.0:
+    resolution: {integrity: sha512-mgRXlQdaNukQcsvGsPENGbyFvr7glob8UmOusDfWTw7A6LcjI+9OCelQ6NoAiSk6iM77R667qyUzn+n2Cr4SJw==}
     peerDependencies:
       typescript: '>=5.4.0'
     peerDependenciesMeta:
@@ -13150,10 +13150,10 @@ snapshots:
       - encoding
       - supports-color
 
-  '@shazow/whatsabi@0.21.0(@noble/hashes@1.7.2)(typescript@5.8.3)(zod@3.24.4)':
+  '@shazow/whatsabi@0.21.1(@noble/hashes@1.7.2)(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@noble/hashes': 1.7.2
-      ox: 0.6.10(typescript@5.8.3)(zod@3.24.4)
+      ox: 0.7.0(typescript@5.8.3)(zod@3.24.4)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -17550,20 +17550,6 @@ snapshots:
       object-keys: 1.1.1
       safe-push-apply: 1.0.0
 
-  ox@0.6.10(typescript@5.8.3)(zod@3.24.4):
-    dependencies:
-      '@adraffy/ens-normalize': 1.11.0
-      '@noble/curves': 1.8.2
-      '@noble/hashes': 1.7.2
-      '@scure/bip32': 1.6.2
-      '@scure/bip39': 1.5.4
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
-      eventemitter3: 5.0.1
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - zod
-
   ox@0.6.7(typescript@5.8.3)(zod@3.24.4):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
@@ -17593,6 +17579,20 @@ snapshots:
       - zod
 
   ox@0.6.9(typescript@5.8.3)(zod@3.24.4):
+    dependencies:
+      '@adraffy/ens-normalize': 1.11.0
+      '@noble/curves': 1.8.2
+      '@noble/hashes': 1.7.2
+      '@scure/bip32': 1.6.2
+      '@scure/bip39': 1.5.4
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
+      eventemitter3: 5.0.1
+    optionalDependencies:
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - zod
+
+  ox@0.7.0(typescript@5.8.3)(zod@3.24.4):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
