@@ -37,7 +37,7 @@
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
-    "@types/chrome": "0.0.320",
+    "@types/chrome": "0.0.321",
     "@types/events": "3.0.3",
     "@types/node": "22.14.1",
     "@types/react": "19.1.3",
