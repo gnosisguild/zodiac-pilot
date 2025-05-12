@@ -105,3 +105,5 @@ if (alreadyInjected === false) {
     ),
   )
 }
+
+export default {}

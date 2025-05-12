@@ -21,4 +21,4 @@ chrome.runtime.onMessage.addListener((message: Message) => {
   }
 })
 
-export {}
+export default {}

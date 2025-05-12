@@ -13,3 +13,5 @@ window.addEventListener('click', (event) => {
 
   window.postMessage({ type: CompanionAppMessageType.OPEN_PILOT }, '*')
 })
+
+export default {}

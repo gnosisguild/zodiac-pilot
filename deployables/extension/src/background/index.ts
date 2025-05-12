@@ -15,3 +15,5 @@ enableExternalPanelOpen()
 chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error) => sentry.captureException(error))
+
+export default {}
