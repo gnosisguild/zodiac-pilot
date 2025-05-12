@@ -102,7 +102,10 @@ const findApplicableTranslation = async (
 
   const tryApplyingTranslations = async () => {
     for (const translation of translations) {
-      if (!('translate' in translation)) continue
+      if (!('translate' in translation)) {
+        continue
+      }
+
       const result = await translation.translate(
         metaTransaction,
         chainId,
@@ -115,7 +118,6 @@ const findApplicableTranslation = async (
           icon: translation.icon,
           result,
         }
-        break
       }
     }
   }

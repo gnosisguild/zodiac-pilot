@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import {
   createContext,
   type Dispatch,
@@ -11,6 +12,21 @@ import { rootReducer, type TransactionState } from './reducer'
 const TransactionsContext = createContext<TransactionState[]>([])
 
 export const useTransactions = () => useContext(TransactionsContext)
+
+export const useTransaction = (transactionId: string) => {
+  const transactions = useTransactions()
+
+  const transaction = transactions.find(
+    (transaction) => transaction.id === transactionId,
+  )
+
+  invariant(
+    transaction != null,
+    `Could not find transaction with id "${transactionId}"`,
+  )
+
+  return transaction
+}
 
 const DispatchContext = createContext<{ dispatch: Dispatch<Action> }>({
   dispatch() {

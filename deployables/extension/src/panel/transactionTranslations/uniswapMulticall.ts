@@ -37,7 +37,7 @@ export const uniswapMulticall = {
         functionCalls = uniswapMulticallInterface.decodeFunctionData(
           fragment as FunctionFragment,
           data,
-        ).data as HexAddress[]
+        ).data
         break
       } catch {
         continue
