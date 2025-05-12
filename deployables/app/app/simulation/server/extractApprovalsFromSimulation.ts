@@ -40,7 +40,7 @@ const approvalLogSchema = z.object({
   raw: z.object({
     address: addressSchema,
   }),
-  inputs: z.tuple([ownerSchema, spenderSchema, valueSchema]),
+  inputs: z.tuple([ownerSchema, spenderSchema, valueSchema]).rest(z.any()),
 })
 
 export type ApprovalLog = z.infer<typeof approvalLogSchema>
