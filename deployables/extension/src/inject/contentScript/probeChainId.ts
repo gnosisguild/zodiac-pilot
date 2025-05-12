@@ -1,3 +1,5 @@
+import { sentry } from '@/sentry'
+
 export const probeChainId = async (url: string) => {
   try {
     const response = await fetch(url, {
@@ -21,6 +23,8 @@ export const probeChainId = async (url: string) => {
       return chainId
     }
   } catch (e) {
+    sentry.captureException(e)
+
     console.error('Failed to determine chainId for endpoint', url, e)
   }
 }

@@ -174,7 +174,9 @@ const detectNetworkOfRpcUrl = async (
     )
 
     return { newEndpoint: true }
-  } catch {
+  } catch (error) {
+    sentry.captureException(error)
+
     chainIdPromiseByRpcUrl.delete(url)
 
     return { newEndpoint: false }
