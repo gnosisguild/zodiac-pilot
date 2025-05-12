@@ -111,7 +111,7 @@ const Transactions = () => {
 
         {transactions.length === 0 && (
           <div className="mt-32 flex flex-col gap-32">
-            <Info>
+            <Info title="No transactions">
               As you interact with apps in the browser, transactions will be
               recorded here. You can then sign and submit them as a batch.
             </Info>
