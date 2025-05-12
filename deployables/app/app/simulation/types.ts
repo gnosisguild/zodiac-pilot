@@ -38,7 +38,7 @@ const transactionSchema = z.object({
 })
 
 const simulationRunResultSchema = z.object({
-  transaction: transactionSchema,
+  transaction: transactionSchema.nullable(),
 })
 
 export const simulationResultSchema = z.object({

@@ -5,7 +5,7 @@ import {
   type MetaTransactionRequest,
   type PrefixedAddress,
 } from 'ser-kit'
-import { simulationResultSchema } from '../types'
+import { simulationResultSchema, type SimulatedTransaction } from '../types'
 import { api } from './api'
 import {
   extractApprovalsFromSimulation,
@@ -50,9 +50,15 @@ export const simulateTransactionBundle = async (
       },
     })
 
-    const simulatedTransactions = result.simulation_results.map(
-      ({ transaction }) => transaction,
-    )
+    const simulatedTransactions = result.simulation_results.reduce<
+      SimulatedTransaction[]
+    >((result, { transaction }) => {
+      if (transaction == null) {
+        return result
+      }
+
+      return [...result, transaction]
+    }, [])
 
     return {
       error: null,
@@ -67,6 +73,7 @@ export const simulateTransactionBundle = async (
   } catch (error) {
     console.error(error)
     Sentry.captureException(error)
+
     return {
       error,
       tokenFlows: { sent: [], received: [], other: [] },
