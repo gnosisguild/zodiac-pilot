@@ -10,6 +10,7 @@ import {
   Outlet,
   useActionData,
   useLoaderData,
+  useMatches,
   useParams,
 } from 'react-router'
 import type {
@@ -165,13 +166,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
   }
 }
 
-type StubRoute = {
-  path?: string
-  clientLoader?: Func
-  loader?: Func
-  action?: Func
-  Component?: ComponentType
-}
+type StubRoute = Parameters<typeof createRoutesStub>[0]
 
 type StubRoutesOptions = {
   startAction: () => ResolveFn
@@ -182,7 +177,7 @@ function stubRoutes(
   basePath: URL,
   routes: RouteConfigEntry[],
   { startAction, startLoader }: StubRoutesOptions,
-): Promise<StubRoute[]> {
+): Promise<StubRoute> {
   return Promise.all(
     routes.map(async (route) => {
       const {
@@ -253,21 +248,16 @@ function stubRoutes(
         Component:
           Component == null
             ? undefined
-            : () => {
-                const loaderData = useLoaderData()
-                const actionData = useActionData()
-                const params = useParams()
-
-                return (
-                  // @ts-expect-error we're not yet suppliying all required props
-                  <Component
-                    loaderData={loaderData}
-                    actionData={actionData}
-                    params={params}
-                  />
-                )
-              },
-
+            : () => (
+                <Component
+                  loaderData={useLoaderData()}
+                  actionData={useActionData()}
+                  params={useParams()}
+                  // @ts-expect-error in this scenario we can't be 100% type-safe
+                  // but that should be fine for a test-util
+                  matches={useMatches()}
+                />
+              ),
         children:
           route.children != null
             ? await stubRoutes(basePath, route.children, {
