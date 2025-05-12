@@ -1,8 +1,6 @@
 export type { VnetTransaction } from '../types'
+export { applyDeltaToBalances } from './applyDeltaToBalances'
+export { computeNativeDiff } from './computeNativeDiff'
 export { getVnetIdByRpc } from './getVnetIdByRpc'
 export { getVnetTransactionDelta } from './getVnetTransactionDelta'
-export {
-  applyDeltaToBalances,
-  computeNativeDiff,
-  processTransferLogs,
-} from './helper'
+export { processTransferLogs } from './processTransferLogs'

@@ -11,7 +11,6 @@ import {
   createPublicClient,
   erc20Abi,
   formatUnits,
-  getAddress,
   http,
   type PublicClient,
 } from 'viem'
@@ -38,7 +37,7 @@ export const loader = async ({
       const deltas = await getVnetTransactionDelta(
         vnetId,
         fork,
-        getAddress(address),
+        verifyHexAddress(address),
         allBalances,
         chain.id,
       )

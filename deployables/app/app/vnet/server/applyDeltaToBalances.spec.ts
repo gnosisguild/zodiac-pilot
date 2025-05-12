@@ -1,8 +1,7 @@
 import { getTokenByAddress, type TokenBalance } from '@/balances-server'
-import { describe, expect, it, vi } from 'vitest'
-
 import { parseUnits } from 'viem'
-import { applyDeltaToBalances } from './helper'
+import { describe, expect, it, vi } from 'vitest'
+import { applyDeltaToBalances } from './applyDeltaToBalances'
 
 const mockGetTokenByAddress = vi.mocked(getTokenByAddress)
 
