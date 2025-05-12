@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { injectScript } from '@/utils'
 import {
   createClientMessageHandler,
@@ -97,7 +98,9 @@ if (alreadyInjected === false) {
       ({ url }, { sendResponse }) => {
         console.debug(`Probing chain ID using URL "${url}"`)
 
-        probeChainId(url).then(sendResponse)
+        probeChainId(url)
+          .then(sendResponse)
+          .catch((error) => sentry.captureException(error))
 
         // without this the response won't be sent
         return true
