@@ -76,3 +76,5 @@ const getWorkOSClientId = () => {
 
   return WORKOS_CLIENT_ID
 }
+
+export default {}

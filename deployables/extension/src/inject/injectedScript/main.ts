@@ -42,3 +42,5 @@ try {
 } catch (e) {
   sentry.captureException(e, { data: 'Could not inject provider' })
 }
+
+export default {}

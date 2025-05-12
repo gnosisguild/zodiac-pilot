@@ -75,3 +75,5 @@ chrome.runtime.onMessage.addListener(
 )
 
 injectScript('./build/companion/injectedScripts/main.js')
+
+export default {}

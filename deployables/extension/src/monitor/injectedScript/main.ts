@@ -52,3 +52,5 @@ window.addEventListener('message', (event: MessageEvent) => {
     check()
   }
 })
+
+export default {}

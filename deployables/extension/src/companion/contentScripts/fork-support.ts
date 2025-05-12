@@ -6,3 +6,5 @@ import {
 chrome.runtime.sendMessage<CompanionAppMessage>({
   type: CompanionAppMessageType.REQUEST_FORK_INFO,
 })
+
+export default {}
