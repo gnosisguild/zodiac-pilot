@@ -9,6 +9,8 @@ import {
 export default [
   index('routes/index.tsx'),
 
+  route('/robots.txt', 'routes/robots.ts'),
+
   route('/callback', 'routes/auth/callback.ts'),
 
   layout('routes/layout.tsx', [
