@@ -1,4 +1,5 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
+import { ExecutionStatus } from '@/state'
 import {
   chromeMock,
   createTransaction,
@@ -7,6 +8,7 @@ import {
   randomPrefixedAddress,
   render,
 } from '@/test-utils'
+import { useApplicableTranslation } from '@/transaction-translation'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toExecutionRoute } from '@zodiac/db'
@@ -18,10 +20,24 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
+import { User } from 'lucide-react'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+
+vi.mock('@/transaction-translation', async (importOriginal) => {
+  const module =
+    await importOriginal<typeof import('@/transaction-translation')>()
+
+  return {
+    ...module,
+
+    useApplicableTranslation: vi.fn(),
+  }
+})
+
+const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
 
 describe('Transactions', () => {
   describe('Recording state', () => {
@@ -47,6 +63,27 @@ describe('Transactions', () => {
       expect(
         await screen.findByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('Translations', () => {
+    it('disables the translate button while the simulation is pending', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      mockUseApplicableTranslation.mockReturnValue({
+        title: 'Translate',
+        apply: () => Promise.resolve(),
+        icon: User,
+        result: [],
+      })
+
+      await render(`/test-route`, {
+        initialState: [createTransaction({ status: ExecutionStatus.PENDING })],
+      })
+
+      expect(
+        await screen.findByRole('button', { name: 'Translate' }),
+      ).toBeDisabled()
     })
   })
 
