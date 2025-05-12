@@ -1,3 +1,4 @@
+import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
 import type { Log } from 'viem'
 
 /**
@@ -10,10 +11,10 @@ import type { Log } from 'viem'
  * @returns The updated deltas record with the amounts transferred to the specified address.
  */
 export const processTransferLogs = (
-  currentDeltas: Record<string, bigint>,
+  currentDeltas: Record<HexAddress, bigint>,
   logs: Log[],
-  address: string, //avatar address
-): Record<string, bigint> =>
+  address: HexAddress, //avatar address
+): Record<HexAddress, bigint> =>
   logs.reduce((newDeltas, log) => {
     const [topic] = log.topics
 
@@ -22,16 +23,16 @@ export const processTransferLogs = (
     }
 
     const { to, from, value } = decodeTransferLog(log)
-    const token = log.address.toLowerCase()
+    const token = verifyHexAddress(log.address)
     const amount = BigInt(value)
 
     if (to.toLowerCase() === address.toLowerCase()) {
-      // Avatar receives tokens => increment delta
+      // Avatar receives tokens => increase delta
       return { ...newDeltas, [token]: (newDeltas[token] ?? 0n) + amount }
     }
 
     if (from.toLowerCase() === address.toLowerCase()) {
-      // Avatar sends tokens => increment delta
+      // Avatar sends tokens => decrease delta
       return {
         ...newDeltas,
         [token]: (newDeltas[token] = (newDeltas[token] ?? 0n) - amount),
@@ -41,13 +42,18 @@ export const processTransferLogs = (
     return newDeltas
   }, currentDeltas)
 
-const ERC20_TRANSFER_TOPIC =
+export const ERC20_TRANSFER_TOPIC =
   '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
 
 const decodeTransferLog = (log: Log) => {
   const from = '0x' + (log.topics[1]?.slice(26) || '')
   const to = '0x' + (log.topics[2]?.slice(26) || '')
   const valueHex = log.data
+
+  if (log.data === '0x') {
+    return { from, to, value: 0n.toString() }
+  }
+
   const value = BigInt(valueHex).toString()
   return { from, to, value }
 }
