@@ -51,15 +51,28 @@ describe('Root', () => {
 
     it('removes the route', async () => {
       await mockRoutes({ id: 'test-route' })
-      const tab = createMockTab()
 
-      await render('/', {
-        activeTab: tab,
-      })
+      const { mockedTab } = await render('/')
 
-      await mockIncomingDelete('test-route', tab)
+      await mockIncomingDelete('test-route', mockedTab)
 
       await expect(getRoutes()).resolves.toEqual([])
+    })
+
+    it('clears all current transactions', async () => {
+      await mockRoutes({ id: 'test-route' }, { id: 'another-route' })
+
+      const { mockedTab } = await render('/', {
+        initialState: [createTransaction()],
+      })
+
+      await mockIncomingDelete('test-route', mockedTab)
+
+      expect(
+        await screen.findByRole('alert', { name: 'No transactions' }),
+      ).toHaveAccessibleDescription(
+        'As you interact with apps in the browser, transactions will be recorded here. You can then sign and submit them as a batch.',
+      )
     })
   })
 

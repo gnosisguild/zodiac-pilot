@@ -8,6 +8,7 @@ import {
   Outlet,
   useLoaderData,
   useNavigate,
+  useRevalidator,
   type LoaderFunctionArgs,
 } from 'react-router'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
@@ -42,10 +43,20 @@ const Root = () => {
     },
   })
 
-  useDeleteRoute()
-  useRevalidateOnSignIn(user != null)
-
+  const { revalidate } = useRevalidator()
   const navigate = useNavigate()
+
+  useDeleteRoute({
+    onDelete: (deletedAccountId) => {
+      if (deletedAccountId === activeAccountId) {
+        navigate(`/${activeAccountId}/clear-transactions/${activeAccountId}`)
+      } else {
+        revalidate()
+      }
+    },
+  })
+
+  useRevalidateOnSignIn(user != null)
 
   return (
     <FeatureProvider features={features}>
