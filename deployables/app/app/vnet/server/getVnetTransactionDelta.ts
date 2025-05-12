@@ -1,8 +1,9 @@
 import type { TokenBalance } from '@/balances-server'
 import { createPublicClient, http } from 'viem'
+import { computeNativeDiff } from './computeNativeDiff'
 import { getVnetTransactions } from './getVnetTransactions'
 import { getVnetTxReceipt } from './getVnetTxReceipt'
-import { computeNativeDiff, processTransferLogs } from './helper'
+import { processTransferLogs } from './processTransferLogs'
 
 export const getVnetTransactionDelta = async (
   vnetId: string,
