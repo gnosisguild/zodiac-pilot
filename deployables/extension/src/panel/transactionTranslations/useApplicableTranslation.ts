@@ -1,6 +1,5 @@
 import { useAccount } from '@/accounts'
-import { ForkProvider } from '@/providers'
-import { useProvider, useSendTransaction } from '@/providers-ui'
+import { useRevertToSnapshot, useSendTransaction } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -8,7 +7,6 @@ import {
   useTransaction,
   useTransactions,
 } from '@/state'
-import { invariant } from '@epic-web/invariant'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
 import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
@@ -19,10 +17,10 @@ import {
 import { translations } from './translations'
 
 export const useApplicableTranslation = (transactionId: string) => {
-  const provider = useProvider()
   const transactions = useTransactions()
   const transaction = useTransaction(transactionId)
   const sendTransaction = useSendTransaction()
+  const revertToSnapshot = useRevertToSnapshot()
 
   const dispatch = useDispatch()
   const account = useAccount()
@@ -36,18 +34,11 @@ export const useApplicableTranslation = (transactionId: string) => {
       const index = transactions.indexOf(transaction)
       const laterTransactions = transactions.slice(index + 1)
 
-      invariant(
-        provider instanceof ForkProvider,
-        'Transaction translation is only supported when using ForkProvider',
-      )
-
       // remove the transaction and all later ones from the store
       dispatch(clearTransactions({ fromId: transaction.id }))
 
       if (isConfirmedTransaction(transaction)) {
-        // revert to checkpoint before the transaction to remove
-        const checkpoint = transaction.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
-        await provider.request({ method: 'evm_revert', params: [checkpoint] })
+        await revertToSnapshot(transaction)
       }
 
       // re-simulate all transactions starting with the translated ones
@@ -56,7 +47,7 @@ export const useApplicableTranslation = (transactionId: string) => {
         sendTransaction(tx)
       }
     },
-    [dispatch, provider, sendTransaction, transaction, transactions],
+    [dispatch, revertToSnapshot, sendTransaction, transaction, transactions],
   )
 
   useEffect(() => {

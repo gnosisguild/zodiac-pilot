@@ -1,6 +1,5 @@
 import { useAccount } from '@/accounts'
-import { ForkProvider } from '@/providers'
-import { useProvider, useSendTransaction } from '@/providers-ui'
+import { useRevertToSnapshot, useSendTransaction } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -18,21 +17,15 @@ import {
 import { translations } from './translations'
 
 export const useGloballyApplicableTranslation = () => {
-  const provider = useProvider()
   const transactions = useTransactions()
   const sendTransaction = useSendTransaction()
+  const revertToSnapshot = useRevertToSnapshot()
 
   const dispatch = useDispatch()
   const account = useAccount()
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
-      if (!(provider instanceof ForkProvider)) {
-        throw new Error(
-          'Transaction translation is only supported when using ForkProvider',
-        )
-      }
-
       const newTransactions = translation.result
       const firstDifferenceIndex = transactions.findIndex(
         (tx, index) => !transactionsEqual(tx, newTransactions[index]),
@@ -57,9 +50,7 @@ export const useGloballyApplicableTranslation = () => {
         const transaction = transactions[firstDifferenceIndex]
 
         if (isConfirmedTransaction(transaction)) {
-          // revert to checkpoint before first difference
-          const checkpoint = transaction.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
-          await provider.request({ method: 'evm_revert', params: [checkpoint] })
+          await revertToSnapshot(transaction)
         }
       }
 
@@ -72,7 +63,7 @@ export const useGloballyApplicableTranslation = () => {
         sendTransaction(tx)
       }
     },
-    [provider, transactions, dispatch, sendTransaction],
+    [dispatch, revertToSnapshot, sendTransaction, transactions],
   )
 
   useEffect(() => {

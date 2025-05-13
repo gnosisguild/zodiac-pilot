@@ -1,5 +1,4 @@
 import { useExecutionRoute } from '@/execution-routes'
-import { useProvider } from '@/providers-ui'
 import { useTransaction } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
@@ -75,16 +74,12 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
     undefined,
   )
   const route = useExecutionRoute()
-  const provider = useProvider()
 
   const transaction = useTransaction(transactionId)
   const translationAvailable = !!useApplicableTranslation(transaction.id)
 
   useEffect(() => {
     let canceled = false
-    if (provider == null) {
-      return
-    }
 
     if (route == null) {
       return
@@ -109,7 +104,7 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
     return () => {
       canceled = true
     }
-  }, [transaction, route, provider])
+  }, [transaction, route])
 
   // if the role is unambiguous and from a v2 Roles module, we can record a permissions request to the Roles app
   const roleToRecordToCandidates = extractRoles(route).filter(

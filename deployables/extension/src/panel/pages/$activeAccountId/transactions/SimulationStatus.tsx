@@ -1,4 +1,4 @@
-import { useProvider } from '@/providers-ui'
+import { useGetTransactionLink } from '@/providers-ui'
 import {
   ExecutionStatus,
   isConfirmedTransaction,
@@ -19,9 +19,9 @@ type Props = {
 }
 
 export const SimulationStatus = ({ transactionId, mini = false }: Props) => {
-  const provider = useProvider()
   const transaction = useTransaction(transactionId)
   const status = useTransactionStatus(transaction)
+  const getTransactionLink = useGetTransactionLink()
 
   if (mini) {
     return (
@@ -72,7 +72,7 @@ export const SimulationStatus = ({ transactionId, mini = false }: Props) => {
               iconOnly
               size="small"
               icon={SquareArrowOutUpRight}
-              to={provider?.getTransactionLink(transaction.transactionHash)}
+              to={getTransactionLink(transaction.transactionHash)}
             >
               View in Tenderly
             </GhostLinkButton>

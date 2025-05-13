@@ -1,3 +1,5 @@
 export { ProvideProvider, useProvider } from './ProvideProvider'
 export { useDeleteFork } from './useDeleteFork'
+export { useGetTransactionLink } from './useGetTransactionLink'
+export { useRevertToSnapshot } from './useRevertToSnapshot'
 export { useSendTransaction } from './useSendTransaction'

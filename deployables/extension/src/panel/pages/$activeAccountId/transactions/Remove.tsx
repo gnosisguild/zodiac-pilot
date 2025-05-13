@@ -1,4 +1,8 @@
-import { useDeleteFork, useProvider, useSendTransaction } from '@/providers-ui'
+import {
+  useDeleteFork,
+  useRevertToSnapshot,
+  useSendTransaction,
+} from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -14,12 +18,12 @@ type Props = {
 }
 
 export const Remove = ({ transactionId }: Props) => {
-  const provider = useProvider()
   const dispatch = useDispatch()
   const transaction = useTransaction(transactionId)
   const transactions = useTransactions()
   const sendTransaction = useSendTransaction()
   const deleteFork = useDeleteFork()
+  const revertToSnapshot = useRevertToSnapshot()
 
   return (
     <GhostButton
@@ -41,10 +45,7 @@ export const Remove = ({ transactionId }: Props) => {
 
         if (isConfirmedTransaction(transaction)) {
           // revert to checkpoint before the transaction to remove
-          await provider.request({
-            method: 'evm_revert',
-            params: [transaction.snapshotId],
-          })
+          await revertToSnapshot(transaction)
         }
 
         // re-simulate all transactions after the removed one
