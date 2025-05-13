@@ -2,7 +2,7 @@ import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
-import { useDeleteFork, useProvider, useSendTransaction } from '@/providers-ui'
+import { useDeleteFork, useSendTransaction } from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
@@ -38,7 +38,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
-  const provider = useProvider()
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
@@ -46,7 +45,6 @@ const Transactions = () => {
   const deleteFork = useDeleteFork()
 
   useProviderBridge({
-    provider,
     chainId: account.chainId,
     account: account.address,
   })

@@ -1,3 +1,4 @@
+import { useProvider } from '@/providers-ui'
 import type { Eip1193Provider } from '@/types'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
@@ -26,16 +27,16 @@ const emitEvent = async (eventName: string, eventData: any) => {
 }
 
 type UseProviderBridgeOptions = {
-  provider: Eip1193Provider
   chainId?: ChainId
   account?: Hex
 }
 
 export const useProviderBridge = ({
-  provider,
   chainId,
   account,
-}: UseProviderBridgeOptions) => {
+}: UseProviderBridgeOptions = {}) => {
+  const provider = useProvider()
+
   useHandleProviderRequests(provider)
 
   const chainIdRef = useRef<ChainId | null>(null)

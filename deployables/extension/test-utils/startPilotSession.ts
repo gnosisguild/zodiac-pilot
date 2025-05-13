@@ -1,4 +1,3 @@
-import { PILOT_PANEL_PORT } from '@/port-handling'
 import { invariant } from '@epic-web/invariant'
 import { type Message, PilotMessageType } from '@zodiac/messages'
 import {
@@ -35,7 +34,7 @@ export const startPilotSession = async (
     trackedTabs.set(tab.id, tab)
   }
 
-  const port = createMockPort({ name: PILOT_PANEL_PORT })
+  const port = createMockPort({ name: 'PILOT_PANEL_PORT' })
 
   await callListeners(chromeMock.runtime.onConnect, port)
 

@@ -1,14 +1,19 @@
+import { ProvideAccount, toRemoteAccount } from '@/accounts'
+import { ProvideProvider } from '@/providers-ui'
 import {
   chromeMock,
   createMockTab,
   mockActiveTab,
-  MockProvider,
   mockProviderRequest,
   renderHook,
 } from '@/test-utils'
-import type { Eip1193Provider } from '@/types'
 import { cleanup, waitFor } from '@testing-library/react'
 import { ZERO_ADDRESS } from '@zodiac/chains'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { InjectedProviderMessageTyp } from '@zodiac/messages'
 import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
@@ -16,20 +21,43 @@ import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProvideBridgeContext } from './BridgeContext'
+import { MockProvider } from './MockProvider'
 import { useProviderBridge } from './useProviderBridge'
 
+vi.mock('@/providers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers')>()
+
+  const { MockProvider } =
+    await vi.importActual<typeof import('./MockProvider')>('./MockProvider')
+
+  return {
+    ...module,
+
+    ForkProvider: MockProvider,
+  }
+})
+
 describe('Bridge', () => {
-  const Wrapper = ({ children }: PropsWithChildren) => (
-    <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>
-  )
+  const Wrapper = ({ children }: PropsWithChildren) => {
+    const tenant = tenantFactory.createWithoutDb()
+    const user = userFactory.createWithoutDb(tenant)
+
+    return (
+      <ProvideAccount
+        account={toRemoteAccount(accountFactory.createWithoutDb(tenant, user))}
+      >
+        <ProvideProvider>
+          <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>
+        </ProvideProvider>
+      </ProvideAccount>
+    )
+  }
 
   afterEach(cleanup)
 
   describe('Provider handling', () => {
     it('relays requests to the provider', async () => {
-      const provider = new MockProvider()
-
-      await renderHook(() => useProviderBridge({ provider }), {
+      await renderHook(() => useProviderBridge(), {
         wrapper: Wrapper,
         activeTab: mockActiveTab({ windowId: 1 }),
       })
@@ -41,20 +69,18 @@ describe('Bridge', () => {
         tab: createMockTab({ windowId: 1 }),
       })
 
-      expect(provider.request).toHaveBeenCalledWith(request)
+      expect(MockProvider.getInstance().request).toHaveBeenCalledWith(request)
     })
 
     it('forwards the response from the provider', async () => {
-      const provider = new MockProvider()
-
       const response = { data: 'test' }
 
-      provider.request.mockResolvedValue(response)
-
-      await renderHook(() => useProviderBridge({ provider }), {
+      await renderHook(() => useProviderBridge(), {
         wrapper: Wrapper,
         activeTab: mockActiveTab({ windowId: 1 }),
       })
+
+      MockProvider.getInstance().request.mockResolvedValue(response)
 
       const request = { method: 'eth_chainId' }
 
@@ -75,16 +101,14 @@ describe('Bridge', () => {
     })
 
     it('catches and forwards errors from the provider', async () => {
-      const provider = new MockProvider()
-
       const error = { message: 'Something went wrong', code: 666 }
 
-      provider.request.mockRejectedValue(error)
-
-      await renderHook(() => useProviderBridge({ provider }), {
+      await renderHook(() => useProviderBridge(), {
         wrapper: Wrapper,
         activeTab: mockActiveTab({ windowId: 1 }),
       })
+
+      MockProvider.getInstance().request.mockRejectedValue(error)
 
       const request = { method: 'eth_chainId' }
 
@@ -103,45 +127,16 @@ describe('Bridge', () => {
         }),
       )
     })
-
-    it('only calls the current provider', async () => {
-      const providerA = new MockProvider()
-      const providerB = new MockProvider()
-
-      const request = { method: 'eth_chainId' }
-
-      const { rerender } = await renderHook(
-        ({ provider }: { provider: Eip1193Provider }) =>
-          useProviderBridge({ provider }),
-        {
-          initialProps: { provider: providerA },
-          wrapper: Wrapper,
-          activeTab: mockActiveTab({ windowId: 1 }),
-        },
-      )
-
-      rerender({ provider: providerB })
-
-      await mockProviderRequest({
-        request,
-        tab: createMockTab({ windowId: 1 }),
-      })
-
-      expect(providerA.request).not.toHaveBeenCalled()
-      expect(providerB.request).toHaveBeenCalledWith(request)
-    })
   })
 
   describe('Account handling', () => {
-    const provider = new MockProvider()
-
     it('emits an "accountsChanged" event when the hook initially renders with an account', async () => {
       const tab = mockActiveTab()
 
-      await renderHook(
-        () => useProviderBridge({ provider, account: ZERO_ADDRESS }),
-        { wrapper: Wrapper, activeTab: tab },
-      )
+      await renderHook(() => useProviderBridge({ account: ZERO_ADDRESS }), {
+        wrapper: Wrapper,
+        activeTab: tab,
+      })
 
       await waitFor(() => {
         expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
@@ -153,7 +148,7 @@ describe('Bridge', () => {
     })
 
     it('does not emit an "accountsChanged" event when there is no account on the first render', async () => {
-      await renderHook(() => useProviderBridge({ provider }), {
+      await renderHook(() => useProviderBridge(), {
         wrapper: Wrapper,
       })
 
@@ -164,7 +159,7 @@ describe('Bridge', () => {
       const tab = mockActiveTab()
 
       const { rerender } = await renderHook<void, { account: Hex | undefined }>(
-        ({ account }) => useProviderBridge({ provider, account }),
+        ({ account }) => useProviderBridge({ account }),
         {
           initialProps: { account: ZERO_ADDRESS },
           wrapper: Wrapper,
@@ -185,12 +180,10 @@ describe('Bridge', () => {
   })
 
   describe('Chain handling', () => {
-    const provider = new MockProvider()
-
     it('emits a "connect" event when the chainId is initially set', async () => {
       const tab = mockActiveTab()
 
-      await renderHook(() => useProviderBridge({ provider, chainId: 1 }), {
+      await renderHook(() => useProviderBridge({ chainId: 1 }), {
         wrapper: Wrapper,
         activeTab: tab,
       })
@@ -208,7 +201,7 @@ describe('Bridge', () => {
       const tab = mockActiveTab()
 
       const { rerender } = await renderHook<void, { chainId: ChainId }>(
-        ({ chainId }) => useProviderBridge({ provider, chainId }),
+        ({ chainId }) => useProviderBridge({ chainId }),
         { initialProps: { chainId: 1 }, wrapper: Wrapper, activeTab: tab },
       )
 
