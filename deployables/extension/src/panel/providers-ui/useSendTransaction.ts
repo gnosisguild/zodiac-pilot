@@ -7,8 +7,8 @@ import {
   finishTransaction,
   revertTransaction,
   useDispatch,
-  type UnconfirmedTransaction,
 } from '@/state'
+import type { MetaTransactionRequest } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useCallback } from 'react'
@@ -26,7 +26,7 @@ export const useSendTransaction = () => {
   const moduleAddress = getModuleAddress(route)
 
   return useCallback(
-    async (transaction: UnconfirmedTransaction) => {
+    async (transaction: MetaTransactionRequest) => {
       const id = nanoid()
 
       // Immediately update the state with the transaction so that the UI can show it as pending.
