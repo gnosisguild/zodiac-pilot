@@ -1,6 +1,6 @@
 import { findActiveAccount, getAccounts } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { useBridgeError } from '@/inject-bridge'
+import { useBridgeError } from '@/providers-ui'
 import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,

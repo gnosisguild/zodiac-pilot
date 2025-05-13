@@ -1,8 +1,11 @@
 import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
-import { useDeleteFork, useSendTransaction } from '@/providers-ui'
+import {
+  useDeleteFork,
+  useProviderBridge,
+  useSendTransaction,
+} from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'

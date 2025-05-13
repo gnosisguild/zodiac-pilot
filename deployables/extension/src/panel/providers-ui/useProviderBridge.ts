@@ -1,4 +1,3 @@
-import { useProvider } from '@/providers-ui'
 import type { Eip1193Provider } from '@/types'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
@@ -13,6 +12,7 @@ import { toQuantity } from 'ethers'
 import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
 import { useWindowId } from './BridgeContext'
+import { useProvider } from './ProvideProvider'
 
 const emitEvent = async (eventName: string, eventData: any) => {
   const tab = await getActiveTab()
