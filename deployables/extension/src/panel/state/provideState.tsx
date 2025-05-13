@@ -7,7 +7,7 @@ import {
   useReducer,
 } from 'react'
 import type { TransactionAction } from './actions'
-import { rootReducer, type TransactionState } from './reducer'
+import { transactionsReducer, type TransactionState } from './reducer'
 
 const TransactionsContext = createContext<TransactionState[]>([])
 
@@ -50,7 +50,7 @@ export const ProvideState = ({
   children,
   initialState = [],
 }: ProvideStateProps) => {
-  const [state, dispatch] = useReducer(rootReducer, initialState)
+  const [state, dispatch] = useReducer(transactionsReducer, initialState)
 
   return (
     <DispatchContext.Provider value={{ dispatch }}>

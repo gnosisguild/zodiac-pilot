@@ -44,7 +44,7 @@ export const useApplicableTranslation = (transactionId: string) => {
       )
 
       // remove the transaction and all later ones from the store
-      dispatch(clearTransactions({ id: transactionState.id }))
+      dispatch(clearTransactions({ fromId: transactionState.id }))
 
       // revert to checkpoint before the transaction to remove
       const checkpoint = transactionState.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions

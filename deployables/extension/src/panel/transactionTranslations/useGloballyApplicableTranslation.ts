@@ -50,7 +50,7 @@ export const useGloballyApplicableTranslation = () => {
       if (firstDifferenceIndex !== -1) {
         // remove all transactions from the store starting at the first difference
         dispatch(
-          clearTransactions({ id: transactions[firstDifferenceIndex].id }),
+          clearTransactions({ fromId: transactions[firstDifferenceIndex].id }),
         )
 
         // revert to checkpoint before first difference

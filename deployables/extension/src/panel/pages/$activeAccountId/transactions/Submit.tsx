@@ -35,7 +35,7 @@ export const Submit = () => {
     setSubmitPending(false)
 
     if (transactions.length > 0) {
-      dispatch(clearTransactions({ id: transactions[0].id }))
+      dispatch(clearTransactions())
     }
   })
 

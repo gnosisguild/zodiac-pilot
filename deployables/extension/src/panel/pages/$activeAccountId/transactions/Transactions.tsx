@@ -78,7 +78,7 @@ const Transactions = () => {
               disabled={transactions.length === 0}
               onClick={async () => {
                 // remove all transactions from the store
-                dispatch(clearTransactions({ id: transactions[0].id }))
+                dispatch(clearTransactions())
 
                 invariant(
                   provider instanceof ForkProvider,

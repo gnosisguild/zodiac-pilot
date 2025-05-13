@@ -12,44 +12,53 @@ export interface TransactionState {
   transactionHash?: string
 }
 
-export const rootReducer = (
+export const transactionsReducer = (
   state: TransactionState[],
-  action: TransactionAction,
+  { type, payload }: TransactionAction,
 ): TransactionState[] => {
-  switch (action.type) {
+  switch (type) {
     case Action.Append: {
-      const { id, transaction } = action.payload
+      const { id, transaction } = payload
       return [...state, { id, transaction, status: ExecutionStatus.PENDING }]
     }
 
     case Action.Decode: {
-      const { id, contractInfo } = action.payload
+      const { id, contractInfo } = payload
       return state.map((item) =>
         item.id === id ? { ...item, contractInfo } : item,
       )
     }
 
     case Action.Confirm: {
-      const { id, snapshotId, transactionHash } = action.payload
+      const { id, snapshotId, transactionHash } = payload
       return state.map((item) =>
         item.id === id ? { ...item, snapshotId, transactionHash } : item,
       )
     }
 
     case Action.UpdateStatus: {
-      const { id, status } = action.payload
+      const { id, status } = payload
       return state.map((item) => (item.id === id ? { ...item, status } : item))
     }
 
     case Action.Remove: {
-      const { id } = action.payload
+      const { id } = payload
       return state.filter((item) => item.id !== id)
     }
 
     case Action.Clear: {
-      const { id } = action.payload
-      const idx = state.findIndex((item) => item.id === id)
-      return idx >= 0 ? state.slice(0, idx) : state
+      if (payload == null) {
+        return []
+      }
+
+      const { fromId } = payload
+      const index = state.findIndex((item) => item.id === fromId)
+
+      if (index === -1) {
+        return state
+      }
+
+      return state.slice(0, index)
     }
   }
 }

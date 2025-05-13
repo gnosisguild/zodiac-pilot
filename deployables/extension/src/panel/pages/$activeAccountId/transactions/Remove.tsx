@@ -33,7 +33,7 @@ export const Remove = ({ transactionState }: Props) => {
         const laterTransactions = transactions.slice(index + 1)
 
         // remove the transaction and all later ones from the store
-        dispatch(clearTransactions({ id: transactionState.id }))
+        dispatch(clearTransactions({ fromId: transactionState.id }))
 
         if (transactions.length === 1) {
           // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
