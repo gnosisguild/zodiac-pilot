@@ -8,7 +8,7 @@ import {
   revertTransaction,
   useDispatch,
 } from '@/state'
-import type { MetaTransactionRequest } from '@zodiac/schema'
+import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useCallback } from 'react'
@@ -85,8 +85,8 @@ export const useSendTransaction = () => {
 
 const isExecutionFailure = (
   log: TransactionReceipt['logs'][0],
-  avatarAddress: string,
-  moduleAddress?: string,
+  avatarAddress: HexAddress,
+  moduleAddress?: HexAddress,
 ) => {
   if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) {
     return false
