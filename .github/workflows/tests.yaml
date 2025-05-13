@@ -122,6 +122,8 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
       - run: pnpm test
+        env:
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
 
   hooks-package:
     runs-on: ubuntu-latest
