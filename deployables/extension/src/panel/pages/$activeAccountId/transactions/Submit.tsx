@@ -34,9 +34,7 @@ export const Submit = () => {
 
     setSubmitPending(false)
 
-    if (transactions.length > 0) {
-      dispatch(clearTransactions())
-    }
+    dispatch(clearTransactions())
   })
 
   if (route != null && route.initiator != null) {
