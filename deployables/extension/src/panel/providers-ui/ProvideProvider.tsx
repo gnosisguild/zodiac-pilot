@@ -22,10 +22,13 @@ import {
   appendTransaction,
   confirmTransaction,
   decodeTransaction,
-  ExecutionStatus,
-  updateTransactionStatus,
   useDispatch,
 } from '../state'
+import {
+  failTransaction,
+  finishTransaction,
+  revertTransaction,
+} from '../state/actions'
 import { fetchContractInfo } from '../utils/abi'
 
 const ProviderContext = createContext<
@@ -80,12 +83,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
         transactionHash,
       )
       if (!receipt?.status) {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.FAILED,
-          }),
-        )
+        dispatch(failTransaction({ id }))
         return
       }
 
@@ -96,19 +94,9 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
           moduleAddress,
         )
       ) {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.META_TRANSACTION_REVERTED,
-          }),
-        )
+        dispatch(revertTransaction({ id }))
       } else {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.SUCCESS,
-          }),
-        )
+        dispatch(finishTransaction({ id }))
       }
     },
     [dispatch, address, moduleAddress],
@@ -116,12 +104,7 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   const onTransactionError = useCallback(
     (id: string, error: unknown) => {
-      dispatch(
-        updateTransactionStatus({
-          id,
-          status: ExecutionStatus.FAILED,
-        }),
-      )
+      dispatch(failTransaction({ id }))
 
       console.debug(`Transaction ${id} failed`, { error })
     },

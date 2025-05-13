@@ -1,14 +1,15 @@
 import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
-import { ExecutionStatus } from './executionStatus'
 
 export enum Action {
   Append = 'Append',
   Decode = 'Decode',
   Confirm = 'Confirm',
-  UpdateStatus = 'UpdateStatus',
   Remove = 'Remove',
   Clear = 'Clear',
+  Fail = 'Fail',
+  Finish = 'Finish',
+  Revert = 'Revert',
 }
 
 interface AppendTransactionAction {
@@ -48,17 +49,37 @@ export const confirmTransaction = (
   payload: ConfirmTransactionAction['payload'],
 ): ConfirmTransactionAction => ({ type: Action.Confirm, payload })
 
-interface UpdateTransactionStatusAction {
-  type: Action.UpdateStatus
+type FailTransactionAction = {
+  type: Action.Fail
   payload: {
     id: string
-    status: ExecutionStatus
   }
 }
 
-export const updateTransactionStatus = (
-  payload: UpdateTransactionStatusAction['payload'],
-): UpdateTransactionStatusAction => ({ type: Action.UpdateStatus, payload })
+export const failTransaction = (
+  payload: FailTransactionAction['payload'],
+): FailTransactionAction => ({
+  type: Action.Fail,
+  payload,
+})
+
+type FinishTransactionAction = {
+  type: Action.Finish
+  payload: { id: string }
+}
+
+export const finishTransaction = (
+  payload: FinishTransactionAction['payload'],
+): FinishTransactionAction => ({ type: Action.Finish, payload })
+
+type RevertTransactionAction = {
+  type: Action.Revert
+  payload: { id: string }
+}
+
+export const revertTransaction = (
+  payload: RevertTransactionAction['payload'],
+): RevertTransactionAction => ({ type: Action.Revert, payload })
 
 interface RemoveTransactionAction {
   type: Action.Remove
@@ -86,6 +107,8 @@ export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
-  | UpdateTransactionStatusAction
   | RemoveTransactionAction
   | ClearTransactionsAction
+  | FailTransactionAction
+  | FinishTransactionAction
+  | RevertTransactionAction

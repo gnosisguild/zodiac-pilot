@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
@@ -60,11 +61,6 @@ export const transactionsReducer = (
       }
     }
 
-    case Action.UpdateStatus: {
-      const { id, status } = payload
-      return state.map((item) => (item.id === id ? { ...item, status } : item))
-    }
-
     case Action.Remove: {
       const { id } = payload
 
@@ -97,6 +93,44 @@ export const transactionsReducer = (
 
       return { ...state, done: state.done.slice(0, index) }
     }
+
+    case Action.Fail: {
+      const { id } = payload
+
+      const transaction = getTransaction(state.pending, id)
+
+      return {
+        ...state,
+
+        pending: removeTransaction(state.pending, id),
+        failed: [...state.failed, transaction],
+      }
+    }
+
+    case Action.Finish: {
+      const { id } = payload
+
+      const transaction = getTransaction(state.pending, id)
+
+      return {
+        ...state,
+
+        pending: removeTransaction(state.pending, id),
+        done: [...state.done, transaction],
+      }
+    }
+
+    case Action.Revert: {
+      const { id } = payload
+
+      const transaction = getTransaction(state.pending, id)
+
+      return {
+        ...state,
+        pending: removeTransaction(state.pending, id),
+        reverted: [...state.reverted, transaction],
+      }
+    }
   }
 }
 
@@ -111,3 +145,11 @@ const decodeTransaction = (
 
 const removeTransaction = (transactions: Transaction[], id: string) =>
   transactions.filter((transaction) => transaction.id !== id)
+
+const getTransaction = (transactions: Transaction[], id: string) => {
+  const transaction = transactions.find((transaction) => transaction.id === id)
+
+  invariant(transaction != null, `Could not find transaction with id "${id}"`)
+
+  return transaction
+}

@@ -3,8 +3,9 @@ export {
   clearTransactions,
   confirmTransaction,
   decodeTransaction,
+  finishTransaction,
   removeTransaction,
-  updateTransactionStatus,
+  revertTransaction,
 } from './actions'
 export { ExecutionStatus } from './executionStatus'
 export {
