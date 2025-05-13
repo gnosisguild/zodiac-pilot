@@ -26,15 +26,10 @@ class UnsupportedMethodError extends Error {
   code = 4200
 }
 
-interface Handlers {
-  onBeforeTransactionSend(id: string, metaTx: MetaTransactionRequest): void
-  onTransactionSent(
-    id: string,
-    checkpointId: string,
-    hash: string,
-    provider: Eip1193Provider,
-  ): void
-  onTransactionError: (id: string, error: unknown) => void
+type TransactionResult = {
+  transactionId: string
+  checkpointId: string
+  hash: string
 }
 
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
@@ -46,12 +41,10 @@ export class ForkProvider extends EventEmitter {
   private moduleAddress: HexAddress | undefined
   private ownerAddress: HexAddress | undefined
 
-  private handlers: Handlers
-
   private blockGasLimitPromise: Promise<bigint>
   private isSafePromise: Promise<boolean>
 
-  private pendingMetaTransaction: Promise<any> | undefined
+  private pendingMetaTransaction: Promise<TransactionResult> | undefined
   private isInitialized = false
 
   constructor({
@@ -59,8 +52,6 @@ export class ForkProvider extends EventEmitter {
     avatarAddress,
     moduleAddress,
     ownerAddress,
-
-    ...handlers
   }: {
     chainId: ChainId
     avatarAddress: HexAddress
@@ -68,14 +59,13 @@ export class ForkProvider extends EventEmitter {
     moduleAddress?: HexAddress
     /** If set, will enable the the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
     ownerAddress?: HexAddress
-  } & Handlers) {
+  }) {
     super()
     this.chainId = chainId
     this.provider = new TenderlyProvider(chainId)
     this.avatarAddress = avatarAddress
     this.moduleAddress = moduleAddress
     this.ownerAddress = ownerAddress
-    this.handlers = handlers
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
 
@@ -195,11 +185,10 @@ export class ForkProvider extends EventEmitter {
    */
   async sendMetaTransaction(
     metaTx: MetaTransactionRequest,
-  ): Promise<string | null> {
+  ): Promise<TransactionResult> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
     const id = nanoid()
-    this.handlers.onBeforeTransactionSend(id, metaTx)
 
     // If there's a pending request, wait for it to finish before sending the next one
     const send = this.pendingMetaTransaction
@@ -212,19 +201,13 @@ export class ForkProvider extends EventEmitter {
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
 
-    try {
-      return await this.pendingMetaTransaction
-    } catch (error) {
-      this.handlers.onTransactionError(id, error)
-
-      return null
-    }
+    return this.pendingMetaTransaction
   }
 
   private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionRequest,
     id: string,
-  ): Promise<string> {
+  ): Promise<TransactionResult> {
     if (!this.isInitialized) {
       // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
       await this.initFork()
@@ -286,8 +269,8 @@ export class ForkProvider extends EventEmitter {
       method: 'eth_sendTransaction',
       params: [tx],
     })
-    this.handlers.onTransactionSent(id, checkpointId, hash, this.provider)
-    return hash
+
+    return { transactionId: id, checkpointId, hash }
   }
 
   async initFork(): Promise<void> {

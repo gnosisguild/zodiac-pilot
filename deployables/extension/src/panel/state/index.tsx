@@ -3,6 +3,7 @@ export {
   clearTransactions,
   confirmTransaction,
   decodeTransaction,
+  failTransaction,
   finishTransaction,
   removeTransaction,
   revertTransaction,

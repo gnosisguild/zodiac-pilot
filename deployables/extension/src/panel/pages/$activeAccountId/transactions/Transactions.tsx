@@ -3,7 +3,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
-import { useProvider } from '@/providers-ui'
+import { useProvider, useSendTransaction } from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
@@ -43,6 +43,7 @@ const Transactions = () => {
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
+  const sendTransaction = useSendTransaction()
 
   useProviderBridge({
     provider,
@@ -89,7 +90,7 @@ const Transactions = () => {
 
                 // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
                 for (const transaction of transactions) {
-                  await provider.sendMetaTransaction(transaction)
+                  await sendTransaction(transaction)
                 }
               }}
             >

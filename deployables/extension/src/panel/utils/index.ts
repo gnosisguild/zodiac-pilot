@@ -1,3 +1,4 @@
+export { fetchContractInfo } from './abi'
 export { getStorageEntries } from './getStorageEntries'
 export { getStorageEntry } from './getStorageEntry'
 export { removeStorageEntry } from './removeStorageEntry'

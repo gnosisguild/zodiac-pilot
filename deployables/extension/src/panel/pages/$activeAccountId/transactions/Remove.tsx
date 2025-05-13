@@ -1,5 +1,5 @@
 import { ForkProvider } from '@/providers'
-import { useProvider } from '@/providers-ui'
+import { useProvider, useSendTransaction } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -19,6 +19,7 @@ export const Remove = ({ transactionId }: Props) => {
   const dispatch = useDispatch()
   const transaction = useTransaction(transactionId)
   const transactions = useTransactions()
+  const sendTransaction = useSendTransaction()
 
   if (!(provider instanceof ForkProvider)) {
     // Removing transactions is only supported when using ForkProvider
@@ -53,7 +54,7 @@ export const Remove = ({ transactionId }: Props) => {
 
         // re-simulate all transactions after the removed one
         for (const transaction of laterTransactions) {
-          await provider.sendMetaTransaction(transaction)
+          await sendTransaction(transaction)
         }
       }}
     >

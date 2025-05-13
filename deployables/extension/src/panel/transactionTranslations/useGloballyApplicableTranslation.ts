@@ -1,6 +1,6 @@
 import { useAccount } from '@/accounts'
 import { ForkProvider } from '@/providers'
-import { useProvider } from '@/providers-ui'
+import { useProvider, useSendTransaction } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -20,6 +20,7 @@ import { translations } from './translations'
 export const useGloballyApplicableTranslation = () => {
   const provider = useProvider()
   const transactions = useTransactions()
+  const sendTransaction = useSendTransaction()
 
   const dispatch = useDispatch()
   const account = useAccount()
@@ -68,10 +69,10 @@ export const useGloballyApplicableTranslation = () => {
           ? newTransactions.slice(transactions.length)
           : newTransactions.slice(firstDifferenceIndex)
       for (const tx of replayTransaction) {
-        provider.sendMetaTransaction(tx)
+        sendTransaction(tx)
       }
     },
-    [provider, dispatch, transactions],
+    [provider, transactions, dispatch, sendTransaction],
   )
 
   useEffect(() => {
