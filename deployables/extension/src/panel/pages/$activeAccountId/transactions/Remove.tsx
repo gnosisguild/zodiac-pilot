@@ -1,5 +1,4 @@
-import { ForkProvider } from '@/providers'
-import { useProvider, useSendTransaction } from '@/providers-ui'
+import { useDeleteFork, useProvider, useSendTransaction } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -20,11 +19,7 @@ export const Remove = ({ transactionId }: Props) => {
   const transaction = useTransaction(transactionId)
   const transactions = useTransactions()
   const sendTransaction = useSendTransaction()
-
-  if (!(provider instanceof ForkProvider)) {
-    // Removing transactions is only supported when using ForkProvider
-    return null
-  }
+  const deleteFork = useDeleteFork()
 
   return (
     <GhostButton
@@ -40,7 +35,7 @@ export const Remove = ({ transactionId }: Props) => {
 
         if (transactions.length === 1) {
           // no more recorded transaction remains: we can delete the fork and will create a fresh one once we receive the next transaction
-          await provider.deleteFork()
+          await deleteFork()
           return
         }
 

@@ -22,30 +22,30 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const moduleAddress = getModuleAddress(route)
   const ownerAddress = getOwnerAddress(route)
 
-  const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
+  const [provider, setProvider] = useState<ForkProvider | null>(null)
 
   // whenever anything changes in the connection settings, we delete the current fork and start afresh
   useEffect(() => {
-    const forkProvider = new ForkProvider({
+    const provider = new ForkProvider({
       chainId,
       avatarAddress: address,
       moduleAddress,
       ownerAddress,
     })
 
-    setForkProvider(forkProvider)
+    setProvider(provider)
 
     return () => {
-      forkProvider.deleteFork()
+      provider.deleteFork()
     }
   }, [chainId, address, moduleAddress, ownerAddress])
 
-  if (forkProvider == null) {
+  if (provider == null) {
     return null
   }
 
   return (
-    <ProviderContext.Provider value={forkProvider}>
+    <ProviderContext.Provider value={provider}>
       {children}
     </ProviderContext.Provider>
   )

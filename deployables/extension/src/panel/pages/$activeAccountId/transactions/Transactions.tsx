@@ -2,8 +2,7 @@ import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
-import { ForkProvider } from '@/providers'
-import { useProvider, useSendTransaction } from '@/providers-ui'
+import { useDeleteFork, useProvider, useSendTransaction } from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
@@ -44,6 +43,7 @@ const Transactions = () => {
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
   const sendTransaction = useSendTransaction()
+  const deleteFork = useDeleteFork()
 
   useProviderBridge({
     provider,
@@ -81,12 +81,7 @@ const Transactions = () => {
                 // remove all transactions from the store
                 dispatch(clearTransactions())
 
-                invariant(
-                  provider instanceof ForkProvider,
-                  'This is only supported when using ForkProvider',
-                )
-
-                await provider.deleteFork()
+                await deleteFork()
 
                 // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
                 for (const transaction of transactions) {
