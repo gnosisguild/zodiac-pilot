@@ -1,15 +1,15 @@
-import { ExecutionStatus, type TransactionState } from '@/state'
+import { type Transaction } from '@/state'
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import { createMockTransaction } from '@zodiac/test-utils'
+import { createMockTransactionRequest } from '@zodiac/test-utils'
 import { nanoid } from 'nanoid'
 
 export const createTransaction = (
-  transaction: Partial<TransactionState> = {},
-): TransactionState => ({
+  transaction: Partial<Transaction> = {},
+): Transaction => ({
   id: nanoid(),
   contractInfo: { address: ZERO_ADDRESS, verified: true },
-  status: ExecutionStatus.PENDING,
-  transaction: createMockTransaction(transaction.transaction),
+  createdAt: new Date(),
 
+  ...createMockTransactionRequest(transaction),
   ...transaction,
 })

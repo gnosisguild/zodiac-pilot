@@ -1,9 +1,9 @@
 import { ProvidePort } from '@/port-handling'
-import { ProvideState, type TransactionState } from '@/state'
+import { ProvideState, type State } from '@/state'
 import { type PropsWithChildren } from 'react'
 
 type RenderWraperProps = PropsWithChildren<{
-  initialState?: TransactionState[]
+  initialState?: State
 }>
 
 export const RenderWrapper = ({

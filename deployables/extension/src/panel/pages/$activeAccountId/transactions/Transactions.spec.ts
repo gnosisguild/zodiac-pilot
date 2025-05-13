@@ -1,5 +1,4 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
-import { ExecutionStatus } from '@/state'
 import {
   chromeMock,
   createTransaction,
@@ -57,7 +56,7 @@ describe('Transactions', () => {
       await mockRoute({ id: 'test-route' })
 
       await render('/test-route/transactions', {
-        initialState: [createTransaction()],
+        initialState: { done: [createTransaction()] },
       })
 
       expect(
@@ -78,7 +77,7 @@ describe('Transactions', () => {
       })
 
       await render(`/test-route`, {
-        initialState: [createTransaction({ status: ExecutionStatus.PENDING })],
+        initialState: { pending: [createTransaction()] },
       })
 
       expect(
@@ -110,12 +109,12 @@ describe('Transactions', () => {
         mockCompanionAppUrl('http://localhost')
 
         await render('/test-route/transactions', {
-          initialState: [transaction],
+          initialState: { done: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
+          `http://localhost/submit/${encode(route)}/${encode([transaction])}`,
         )
       })
 
@@ -178,12 +177,12 @@ describe('Transactions', () => {
         mockCompanionAppUrl('http://localhost')
 
         await render(`/${account.id}/transactions`, {
-          initialState: [transaction],
+          initialState: { done: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/account/${account.id}/${encode([transaction.transaction])}`,
+          `http://localhost/submit/account/${account.id}/${encode([transaction])}`,
         )
       })
 

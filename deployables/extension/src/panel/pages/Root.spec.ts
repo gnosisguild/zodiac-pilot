@@ -63,7 +63,7 @@ describe('Root', () => {
       await mockRoutes({ id: 'test-route' }, { id: 'another-route' })
 
       const { mockedTab } = await render('/', {
-        initialState: [createTransaction()],
+        initialState: { done: [createTransaction()] },
       })
 
       await mockIncomingDelete('test-route', mockedTab)
@@ -107,7 +107,7 @@ describe('Root', () => {
       await saveLastUsedAccountId(route.id)
 
       const { mockedTab } = await render('/', {
-        initialState: [createTransaction()],
+        initialState: { done: [createTransaction()] },
       })
 
       const updatedRoute = { ...route, label: 'Changed label' }
@@ -143,7 +143,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         await mockIncomingRouteUpdate(
@@ -169,7 +169,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         await mockIncomingRouteUpdate(
@@ -195,7 +195,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         await mockIncomingRouteUpdate(
@@ -215,7 +215,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(null)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         await mockIncomingRouteUpdate(
@@ -262,7 +262,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         const updatedRoute = {
@@ -286,7 +286,7 @@ describe('Root', () => {
         await saveLastUsedAccountId(currentRoute.id)
 
         const { mockedTab } = await render('/', {
-          initialState: [createTransaction()],
+          initialState: { done: [createTransaction()] },
         })
 
         const updatedRoute = {

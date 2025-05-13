@@ -1,6 +1,6 @@
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { ExecutionStatus, useTransaction } from '@/state'
+import { ExecutionStatus, useTransaction, useTransactionStatus } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
 import { SecondaryButton } from '@zodiac/ui'
 
@@ -13,6 +13,7 @@ export const Translate = ({ transactionId, mini }: Props) => {
   const provider = useProvider()
   const translation = useApplicableTranslation(transactionId)
   const transaction = useTransaction(transactionId)
+  const status = useTransactionStatus(transaction)
 
   if (!(provider instanceof ForkProvider)) {
     // Transaction translation is only supported when using ForkProvider
@@ -28,7 +29,7 @@ export const Translate = ({ transactionId, mini }: Props) => {
       fluid
       iconOnly={mini}
       size="small"
-      disabled={transaction.status === ExecutionStatus.PENDING}
+      disabled={status === ExecutionStatus.PENDING}
       icon={translation.icon}
       onClick={translation.apply}
     >

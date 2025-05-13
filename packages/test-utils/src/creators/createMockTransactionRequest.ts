@@ -1,7 +1,7 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { MetaTransactionRequest } from 'ser-kit'
 
-export const createMockTransaction = (
+export const createMockTransactionRequest = (
   transaction: Partial<MetaTransactionRequest> = {},
 ): MetaTransactionRequest => ({
   data: '0x',

@@ -3,7 +3,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import {
   clearTransactions,
-  type TransactionState,
+  type Transaction,
   useDispatch,
   useTransactions,
 } from '@/state'
@@ -33,8 +33,7 @@ export const useGloballyApplicableTranslation = () => {
 
       const newTransactions = translation.result
       const firstDifferenceIndex = transactions.findIndex(
-        (tx, index) =>
-          !transactionsEqual(tx.transaction, newTransactions[index]),
+        (tx, index) => !transactionsEqual(tx, newTransactions[index]),
       )
 
       if (
@@ -100,7 +99,7 @@ export const useGloballyApplicableTranslation = () => {
 }
 
 const findGloballyApplicableTranslation = async (
-  transactions: TransactionState[],
+  transactions: Transaction[],
   chainId: ChainId,
   avatarAddress: Hex,
 ): Promise<ApplicableTranslation | undefined> => {
@@ -119,7 +118,7 @@ const findGloballyApplicableTranslation = async (
       }
 
       const result = await translation.translateGlobal(
-        transactions.map((txState) => txState.transaction),
+        transactions,
         chainId,
         avatarAddress,
       )
@@ -140,7 +139,7 @@ const findGloballyApplicableTranslation = async (
 }
 
 const cacheKeyGlobal = (
-  transactions: TransactionState[],
+  transactions: Transaction[],
   chainId: ChainId,
   avatarAddress: Hex,
 ) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`

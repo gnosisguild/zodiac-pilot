@@ -2,7 +2,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import {
   clearTransactions,
-  type TransactionState,
+  type Transaction,
   useDispatch,
   useTransactions,
 } from '@/state'
@@ -10,7 +10,7 @@ import { GhostButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 
 type Props = {
-  transactionState: TransactionState
+  transactionState: Transaction
 }
 
 export const Remove = ({ transactionState }: Props) => {
@@ -49,7 +49,7 @@ export const Remove = ({ transactionState }: Props) => {
 
         // re-simulate all transactions after the removed one
         for (const transaction of laterTransactions) {
-          await provider.sendMetaTransaction(transaction.transaction)
+          await provider.sendMetaTransaction(transaction)
         }
       }}
     >

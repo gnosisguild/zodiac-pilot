@@ -66,7 +66,7 @@ const Transactions = () => {
               iconOnly
               disabled={transactions.length === 0}
               size="small"
-              data={transactions.map((txState) => txState.transaction)}
+              data={transactions}
             >
               Copy batch transaction data to clipboard
             </CopyToClipboard>
@@ -89,7 +89,7 @@ const Transactions = () => {
 
                 // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
                 for (const transaction of transactions) {
-                  await provider.sendMetaTransaction(transaction.transaction)
+                  await provider.sendMetaTransaction(transaction)
                 }
               }}
             >
@@ -100,7 +100,7 @@ const Transactions = () => {
 
         {transactions.map((transactionState) => (
           <div id={`t-${transactionState.id}`} key={transactionState.id}>
-            <Transaction transactionState={transactionState} />
+            <Transaction transactionId={transactionState.id} />
           </div>
         ))}
 
@@ -117,7 +117,7 @@ const Transactions = () => {
       <Page.Footer>
         {(route == null || route.initiator == null) && pilotIsReady && (
           <CopyToClipboard
-            data={transactions.map((txState) => txState.transaction)}
+            data={transactions}
             disabled={transactions.length === 0}
           >
             Copy transaction data

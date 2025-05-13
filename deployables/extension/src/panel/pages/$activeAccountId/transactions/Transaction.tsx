@@ -1,11 +1,11 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import type { TransactionState } from '@/state'
+import { useTransaction } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { CHAIN_CURRENCY } from '@zodiac/chains'
 import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
-import { useState } from 'react'
+import { useState, type PropsWithChildren } from 'react'
 import { AccountType } from 'ser-kit'
 import { ContractAddress } from './ContractAddress'
 import { DecodedTransaction } from './DecodedTransaction'
@@ -17,40 +17,55 @@ import { Translate } from './Translate'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
 
 interface Props {
-  transactionState: TransactionState
+  transactionId: string
 }
 
-export const Transaction = ({ transactionState }: Props) => {
+export const Transaction = ({ transactionId }: Props) => {
+  const transaction = useTransaction(transactionId)
   const [expanded, setExpanded] = useState(true)
   const { chainId } = useAccount()
   const route = useExecutionRoute()
-  const decoded = useDecodedFunctionData(transactionState)
+  const decoded = useDecodedFunctionData(transactionId)
   const showRoles = routeGoesThroughRoles(route)
 
   return (
     <section
-      aria-labelledby={transactionState.id}
+      aria-labelledby={transaction.id}
       className="flex flex-col rounded-md border border-zinc-300/80 dark:border-zinc-500/60"
     >
       <div className="bg-zinc-100/80 p-2 dark:bg-zinc-500/20">
         <TransactionHeader
-          transactionState={transactionState}
+          transactionId={transactionId}
+          isDelegateCall={transaction.operation === 1}
           functionFragment={decoded?.functionFragment}
           expanded={expanded}
           onExpandToggle={() => setExpanded(!expanded)}
-          showRoles={showRoles}
-        />
+        >
+          <SimulationStatus transactionId={transactionId} mini />
+
+          {showRoles && (
+            <RolePermissionCheck transactionId={transactionId} mini />
+          )}
+
+          <div className="flex">
+            <Translate mini transactionId={transactionId} />
+            <CopyToClipboard iconOnly size="small" data={transaction}>
+              Copy transaction data to clipboard
+            </CopyToClipboard>
+            <Remove transactionState={transaction} />
+          </div>
+        </TransactionHeader>
       </div>
 
       {expanded && (
         <div className="flex flex-col gap-3 border-t border-zinc-300 bg-zinc-200/80 px-2 py-4 text-sm dark:border-zinc-500/80 dark:bg-zinc-500/30">
           <ContractAddress
             chainId={chainId}
-            address={transactionState.transaction.to}
-            contractInfo={transactionState.contractInfo}
+            address={transaction.to}
+            contractInfo={transaction.contractInfo}
           />
 
-          <EtherValue value={transactionState.transaction.value} />
+          <EtherValue value={transaction.value} />
 
           {decoded ? (
             <DecodedTransaction {...decoded}>
@@ -60,14 +75,14 @@ export const Transaction = ({ transactionState }: Props) => {
             <>
               <Divider />
 
-              <RawTransaction data={transactionState.transaction.data} />
+              <RawTransaction data={transaction.data} />
             </>
           )}
 
           <Divider />
 
           <TransactionStatus
-            transactionState={transactionState}
+            transactionId={transactionId}
             showRoles={showRoles}
           />
         </div>
@@ -76,20 +91,21 @@ export const Transaction = ({ transactionState }: Props) => {
   )
 }
 
-interface HeaderProps {
-  transactionState: TransactionState
+type HeaderProps = PropsWithChildren<{
+  transactionId: string
   functionFragment?: Fragment
   onExpandToggle(): void
   expanded: boolean
-  showRoles?: boolean
-}
+  isDelegateCall: boolean
+}>
 
 const TransactionHeader = ({
-  transactionState,
+  transactionId,
+  isDelegateCall,
   functionFragment,
   onExpandToggle,
   expanded,
-  showRoles = false,
+  children,
 }: HeaderProps) => {
   return (
     <div className="flex items-center justify-between gap-4">
@@ -98,7 +114,7 @@ const TransactionHeader = ({
 
         <div className="flex flex-col gap-1 overflow-hidden">
           <h5
-            id={transactionState.id}
+            id={transactionId}
             className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
           >
             {functionFragment
@@ -106,7 +122,7 @@ const TransactionHeader = ({
               : 'Raw transaction'}
           </h5>
 
-          {transactionState.transaction.operation === 1 && (
+          {isDelegateCall && (
             <span className="text-xs font-normal uppercase opacity-75">
               delegatecall
             </span>
@@ -114,46 +130,28 @@ const TransactionHeader = ({
         </div>
       </label>
 
-      <div className="flex items-center justify-end gap-2">
-        <SimulationStatus transactionState={transactionState} mini />
-
-        {showRoles && (
-          <RolePermissionCheck transactionState={transactionState} mini />
-        )}
-
-        <div className="flex">
-          <Translate mini transactionId={transactionState.id} />
-          <CopyToClipboard
-            iconOnly
-            size="small"
-            data={transactionState.transaction}
-          >
-            Copy transaction data to clipboard
-          </CopyToClipboard>
-          <Remove transactionState={transactionState} />
-        </div>
-      </div>
+      <div className="flex items-center justify-end gap-2">{children}</div>
     </div>
   )
 }
 
 interface StatusProps {
-  transactionState: TransactionState
+  transactionId: string
   showRoles?: boolean
 }
 
 const TransactionStatus = ({
-  transactionState,
+  transactionId,
   showRoles = false,
 }: StatusProps) => (
   <>
-    <SimulationStatus transactionState={transactionState} />
+    <SimulationStatus transactionId={transactionId} />
 
     {showRoles && (
       <>
         <Divider />
 
-        <RolePermissionCheck transactionState={transactionState} />
+        <RolePermissionCheck transactionId={transactionId} />
       </>
     )}
   </>

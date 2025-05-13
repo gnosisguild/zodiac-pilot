@@ -22,7 +22,6 @@ export const Submit = () => {
   const windowId = useWindowId()
 
   const transactions = useTransactions()
-  const metaTransactions = transactions.map((tx) => tx.transaction)
   const [submitPending, setSubmitPending] = useState(false)
 
   const companionAppUrl = useCompanionAppUrl()
@@ -45,8 +44,8 @@ export const Submit = () => {
           openInNewWindow
           to={
             account.remote
-              ? `${companionAppUrl}/submit/account/${account.id}/${encode(metaTransactions)}`
-              : `${companionAppUrl}/submit/${encode(route)}/${encode(metaTransactions)}`
+              ? `${companionAppUrl}/submit/account/${account.id}/${encode(transactions)}`
+              : `${companionAppUrl}/submit/${encode(route)}/${encode(transactions)}`
           }
           disabled={transactions.length === 0}
           onClick={() => setSubmitPending(true)}

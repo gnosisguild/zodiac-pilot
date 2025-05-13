@@ -11,6 +11,7 @@ export {
   ProvideState,
   useDispatch,
   useTransaction,
+  useTransactionStatus,
   useTransactions,
 } from './provideState'
-export type { TransactionState } from './reducer'
+export type { State, Transaction } from './reducer'
