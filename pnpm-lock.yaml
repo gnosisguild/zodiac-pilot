@@ -279,8 +279,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@headlessui/react':
-        specifier: 2.2.2
-        version: 2.2.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.3
+        version: 2.2.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sentry/browser':
         specifier: 9.17.0
         version: 9.17.0
@@ -475,8 +475,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.2
-        version: 2.2.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.3
+        version: 2.2.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@icons-pack/react-simple-icons':
         specifier: 12.7.0
         version: 12.7.0(react@19.1.0)
@@ -613,7 +613,7 @@ importers:
         version: 9.26.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.7.0
-        version: 3.7.0(typescript@5.8.3)
+        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
 
   packages/db:
     dependencies:
@@ -987,8 +987,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.2
-        version: 2.2.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.3
+        version: 2.2.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -2272,8 +2272,8 @@ packages:
   '@gnosis.pm/zodiac@4.0.3':
     resolution: {integrity: sha512-yliHytBRlb4wNkeiYsaaAvYZC5VwiUBVfJ+HLEmjnWPG2EHB5tvAOUboDU7XvSQ4GUJAz8h2YUrph0XkH+/xfA==}
 
-  '@headlessui/react@2.2.2':
-    resolution: {integrity: sha512-zbniWOYBQ8GHSUIOPY7BbdIn6PzUOq0z41RFrF30HbjsxG6Rrfk+6QulR8Kgf2Vwj2a/rE6i62q5vo+2gI5dJA==}
+  '@headlessui/react@2.2.3':
+    resolution: {integrity: sha512-hgOJGXPifPlOczIeSwX8OjLWRJ5XdYApZFf7DeCbCrO1PXHkPhNTRrA9ZwJsgAG7SON1i2JcvIreF/kbgtJeaQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -3603,26 +3603,29 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@react-aria/focus@3.19.0':
-    resolution: {integrity: sha512-hPF9EXoUQeQl1Y21/rbV2H4FdUR2v+4/I0/vB+8U3bT1CJ+1AFj1hc/rqx2DqEwDlEwOHN+E4+mRahQmlybq0A==}
+  '@react-aria/focus@3.20.2':
+    resolution: {integrity: sha512-Q3rouk/rzoF/3TuH6FzoAIKrl+kzZi9LHmr8S5EqLAOyP9TXIKG34x2j42dZsAhrw7TbF9gA8tBKwnCNH4ZV+Q==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  '@react-aria/interactions@3.22.5':
-    resolution: {integrity: sha512-kMwiAD9E0TQp+XNnOs13yVJghiy8ET8L0cbkeuTgNI96sOAp/63EJ1FSrDf17iD8sdjt41LafwX/dKXW9nCcLQ==}
+  '@react-aria/interactions@3.25.0':
+    resolution: {integrity: sha512-GgIsDLlO8rDU/nFn6DfsbP9rfnzhm8QFjZkB9K9+r+MTSCn7bMntiWQgMM+5O6BiA8d7C7x4zuN4bZtc0RBdXQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  '@react-aria/ssr@3.9.7':
-    resolution: {integrity: sha512-GQygZaGlmYjmYM+tiNBA5C6acmiDWF52Nqd40bBp0Znk4M4hP+LTmI0lpI1BuKMw45T8RIhrAsICIfKwZvi2Gg==}
+  '@react-aria/ssr@3.9.8':
+    resolution: {integrity: sha512-lQDE/c9uTfBSDOjaZUJS8xP2jCKVk4zjQeIlCH90xaLhHDgbpCdns3xvFpJJujfj3nI4Ll9K7A+ONUBDCASOuw==}
     engines: {node: '>= 12'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  '@react-aria/utils@3.26.0':
-    resolution: {integrity: sha512-LkZouGSjjQ0rEqo4XJosS4L3YC/zzQkfRM3KoqK6fUOmUJ9t0jQ09WjiF+uOoG9u+p30AVg3TrZRUWmoTS+koQ==}
+  '@react-aria/utils@3.28.2':
+    resolution: {integrity: sha512-J8CcLbvnQgiBn54eeEvQQbIOfBF3A1QizxMw9P4cl9MkeR03ug7RnjTIdJY/n2p7t59kLeAB3tqiczhcj+Oi5w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
   '@react-router/dev@7.6.0':
     resolution: {integrity: sha512-XSxEslex0ddJPxNNgdU1Eqmc9lsY/lhcLNCcRLAtlrOPyOz3Y8kIPpAf5T/U2AG3HGXFVBa9f8aQ7wXU3wTJSw==}
@@ -3670,13 +3673,16 @@ packages:
     peerDependencies:
       react-router: 7.6.0
 
-  '@react-stately/utils@3.10.5':
-    resolution: {integrity: sha512-iMQSGcpaecghDIh3mZEpZfoFH3ExBwTtuBEcvZ2XnGzCgQjeYXcMdIUwAfVQLXFTdHUHGF6Gu6/dFrYsCzySBQ==}
+  '@react-stately/flags@3.1.1':
+    resolution: {integrity: sha512-XPR5gi5LfrPdhxZzdIlJDz/B5cBf63l4q6/AzNqVWFKgd0QqY5LvWJftXkklaIUpKSJkIKQb8dphuZXDtkWNqg==}
+
+  '@react-stately/utils@3.10.6':
+    resolution: {integrity: sha512-O76ip4InfTTzAJrg8OaZxKU4vvjMDOpfA/PGNOytiXwBbkct2ZeZwaimJ8Bt9W1bj5VsZ81/o/tW4BacbdDOMA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
-  '@react-types/shared@3.26.0':
-    resolution: {integrity: sha512-6FuPqvhmjjlpEDLTiYx29IJCbCNWPlsyO+ZUmCUXzhUv2ttShOXfw8CmeHWHftT/b2KweAWuzqSlfeXPR76jpw==}
+  '@react-types/shared@3.29.0':
+    resolution: {integrity: sha512-IDQYu/AHgZimObzCFdNl1LpZvQW/xcfLt3v20sorl5qRucDVj4S9os98sVTZ4IRIBjmS+MkjqpR5E70xan7ooA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
 
@@ -10712,11 +10718,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@headlessui/react@2.2.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@headlessui/react@2.2.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@react-aria/focus': 3.19.0(react@19.1.0)
-      '@react-aria/interactions': 3.22.5(react@19.1.0)
+      '@react-aria/focus': 3.20.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@react-aria/interactions': 3.25.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tanstack/react-virtual': 3.13.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -12219,36 +12225,41 @@ snapshots:
       '@types/react': 19.1.4
       '@types/react-dom': 19.1.4(@types/react@19.1.4)
 
-  '@react-aria/focus@3.19.0(react@19.1.0)':
+  '@react-aria/focus@3.20.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@react-aria/interactions': 3.22.5(react@19.1.0)
-      '@react-aria/utils': 3.26.0(react@19.1.0)
-      '@react-types/shared': 3.26.0(react@19.1.0)
+      '@react-aria/interactions': 3.25.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@react-aria/utils': 3.28.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@react-types/shared': 3.29.0(react@19.1.0)
       '@swc/helpers': 0.5.15
       clsx: 2.1.1
       react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  '@react-aria/interactions@3.22.5(react@19.1.0)':
+  '@react-aria/interactions@3.25.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@react-aria/ssr': 3.9.7(react@19.1.0)
-      '@react-aria/utils': 3.26.0(react@19.1.0)
-      '@react-types/shared': 3.26.0(react@19.1.0)
+      '@react-aria/ssr': 3.9.8(react@19.1.0)
+      '@react-aria/utils': 3.28.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@react-stately/flags': 3.1.1
+      '@react-types/shared': 3.29.0(react@19.1.0)
+      '@swc/helpers': 0.5.15
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  '@react-aria/ssr@3.9.8(react@19.1.0)':
+    dependencies:
       '@swc/helpers': 0.5.15
       react: 19.1.0
 
-  '@react-aria/ssr@3.9.7(react@19.1.0)':
+  '@react-aria/utils@3.28.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@swc/helpers': 0.5.15
-      react: 19.1.0
-
-  '@react-aria/utils@3.26.0(react@19.1.0)':
-    dependencies:
-      '@react-aria/ssr': 3.9.7(react@19.1.0)
-      '@react-stately/utils': 3.10.5(react@19.1.0)
-      '@react-types/shared': 3.26.0(react@19.1.0)
+      '@react-aria/ssr': 3.9.8(react@19.1.0)
+      '@react-stately/flags': 3.1.1
+      '@react-stately/utils': 3.10.6(react@19.1.0)
+      '@react-types/shared': 3.29.0(react@19.1.0)
       '@swc/helpers': 0.5.15
       clsx: 2.1.1
       react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@react-router/dev@7.6.0(@react-router/serve@7.6.0(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(@types/node@22.14.1)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.29.2)(sass@1.82.0)(stylus@0.62.0)(yaml@2.7.1))(wrangler@4.14.4(@cloudflare/workers-types@4.20250510.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.7.1)':
     dependencies:
@@ -12333,12 +12344,16 @@ snapshots:
       - supports-color
       - typescript
 
-  '@react-stately/utils@3.10.5(react@19.1.0)':
+  '@react-stately/flags@3.1.1':
+    dependencies:
+      '@swc/helpers': 0.5.15
+
+  '@react-stately/utils@3.10.6(react@19.1.0)':
     dependencies:
       '@swc/helpers': 0.5.15
       react: 19.1.0
 
-  '@react-types/shared@3.26.0(react@19.1.0)':
+  '@react-types/shared@3.29.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -12622,19 +12637,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@2.5.11(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      node-fetch: 2.7.0
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.3(typescript@5.8.3)(zod@3.24.4)
@@ -12673,23 +12675,6 @@ snapshots:
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       semver: 7.7.1
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    optionalDependencies:
-      '@noble/curves': 1.8.2
-      '@peculiar/asn1-schema': 2.3.15
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@5.2.4(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/safe-modules-deployments': 2.2.7
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      semver: 7.7.1
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     optionalDependencies:
       '@noble/curves': 1.8.2
       '@peculiar/asn1-schema': 2.3.15
@@ -18383,21 +18368,6 @@ snapshots:
       '@safe-global/safe-deployments': 1.37.32
       '@safe-global/types-kit': 1.0.4(typescript@5.8.3)(zod@3.24.4)
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  ser-kit@3.7.0(typescript@5.8.3):
-    dependencies:
-      '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 2.5.11(typescript@5.8.3)
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding

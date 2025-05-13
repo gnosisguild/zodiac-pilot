@@ -8,7 +8,7 @@
     "@epic-web/invariant": "1.0.0",
     "@icons-pack/react-simple-icons": "12.7.0",
     "@react-router/serve": "7.6.0",
-    "@headlessui/react": "2.2.2",
+    "@headlessui/react": "2.2.3",
     "@zodiac/env": "workspace:*",
     "@zodiac/ui": "workspace:*",
     "classnames": "2.5.1",
