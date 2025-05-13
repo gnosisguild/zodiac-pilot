@@ -52,7 +52,7 @@
     "@react-router/dev": "7.6.0",
     "@types/chrome": "0.0.322",
     "@types/react": "19.1.4",
-    "@types/react-dom": "19.1.4",
+    "@types/react-dom": "19.1.5",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.26.0",
