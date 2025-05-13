@@ -24,6 +24,7 @@ export const useTransactions = () => {
 
   return [
     ...state.pending,
+    ...state.confirmed,
     ...state.done,
     ...state.reverted,
     ...state.failed,
