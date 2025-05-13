@@ -4,7 +4,7 @@ import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { useDispatch, useTransactions } from '@/state'
+import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
@@ -55,26 +55,6 @@ const Transactions = () => {
 
   const scrollContainerRef = useScrollIntoView()
 
-  const reforkAndRerun = async () => {
-    // remove all transactions from the store
-    dispatch({
-      type: 'CLEAR_TRANSACTIONS',
-      payload: { id: transactions[0].id },
-    })
-
-    invariant(
-      provider instanceof ForkProvider,
-      'This is only supported when using ForkProvider',
-    )
-
-    await provider.deleteFork()
-
-    // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
-    for (const transaction of transactions) {
-      await provider.sendMetaTransaction(transaction.transaction)
-    }
-  }
-
   return (
     <>
       <Page.Content ref={scrollContainerRef}>
@@ -96,7 +76,22 @@ const Transactions = () => {
               size="small"
               icon={RefreshCcw}
               disabled={transactions.length === 0}
-              onClick={reforkAndRerun}
+              onClick={async () => {
+                // remove all transactions from the store
+                dispatch(clearTransactions())
+
+                invariant(
+                  provider instanceof ForkProvider,
+                  'This is only supported when using ForkProvider',
+                )
+
+                await provider.deleteFork()
+
+                // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
+                for (const transaction of transactions) {
+                  await provider.sendMetaTransaction(transaction.transaction)
+                }
+              }}
             >
               Re-simulate on current blockchain head
             </GhostButton>

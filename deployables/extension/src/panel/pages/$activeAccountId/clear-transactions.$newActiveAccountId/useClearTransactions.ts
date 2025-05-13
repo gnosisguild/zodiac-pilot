@@ -1,6 +1,6 @@
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { useDispatch, useTransactions } from '@/state'
+import { removeTransaction, useDispatch, useTransactions } from '@/state'
 import { useCallback } from 'react'
 
 export const useClearTransactions = () => {
@@ -13,10 +13,7 @@ export const useClearTransactions = () => {
       return
     }
 
-    dispatch({
-      type: 'REMOVE_TRANSACTION',
-      payload: { id: transactions[0].id },
-    })
+    dispatch(removeTransaction({ id: transactions[0].id }))
 
     if (provider instanceof ForkProvider) {
       await provider.deleteFork()

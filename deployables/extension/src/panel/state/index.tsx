@@ -1,3 +1,11 @@
+export {
+  appendTransaction,
+  clearTransactions,
+  confirmTransaction,
+  decodeTransaction,
+  removeTransaction,
+  updateTransactionStatus,
+} from './actions'
 export { ExecutionStatus } from './executionStatus'
 export {
   ProvideState,
