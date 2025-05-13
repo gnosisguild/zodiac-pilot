@@ -1,7 +1,12 @@
 import { useAccount } from '@/accounts'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { type TransactionState, useDispatch, useTransactions } from '@/state'
+import {
+  clearTransactions,
+  type TransactionState,
+  useDispatch,
+  useTransactions,
+} from '@/state'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
 import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
@@ -44,10 +49,9 @@ export const useGloballyApplicableTranslation = () => {
 
       if (firstDifferenceIndex !== -1) {
         // remove all transactions from the store starting at the first difference
-        dispatch({
-          type: 'CLEAR_TRANSACTIONS',
-          payload: { id: transactions[firstDifferenceIndex].id },
-        })
+        dispatch(
+          clearTransactions({ id: transactions[firstDifferenceIndex].id }),
+        )
 
         // revert to checkpoint before first difference
         const checkpoint = transactions[firstDifferenceIndex].snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions

@@ -1,7 +1,12 @@
 import { useAccount } from '@/accounts'
 import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
-import { type TransactionState, useDispatch, useTransactions } from '@/state'
+import {
+  clearTransactions,
+  type TransactionState,
+  useDispatch,
+  useTransactions,
+} from '@/state'
 import { invariant } from '@epic-web/invariant'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
@@ -39,10 +44,7 @@ export const useApplicableTranslation = (transactionId: string) => {
       )
 
       // remove the transaction and all later ones from the store
-      dispatch({
-        type: 'CLEAR_TRANSACTIONS',
-        payload: { id: transactionState.id },
-      })
+      dispatch(clearTransactions({ id: transactionState.id }))
 
       // revert to checkpoint before the transaction to remove
       const checkpoint = transactionState.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions

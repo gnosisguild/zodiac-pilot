@@ -1,6 +1,6 @@
 import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
-import type { Action } from './actions'
+import { Action, type TransactionAction } from './actions'
 import { ExecutionStatus } from './executionStatus'
 
 export interface TransactionState {
@@ -14,39 +14,39 @@ export interface TransactionState {
 
 export const rootReducer = (
   state: TransactionState[],
-  action: Action,
+  action: TransactionAction,
 ): TransactionState[] => {
   switch (action.type) {
-    case 'APPEND_TRANSACTION': {
+    case Action.Append: {
       const { id, transaction } = action.payload
       return [...state, { id, transaction, status: ExecutionStatus.PENDING }]
     }
 
-    case 'DECODE_TRANSACTION': {
+    case Action.Decode: {
       const { id, contractInfo } = action.payload
       return state.map((item) =>
         item.id === id ? { ...item, contractInfo } : item,
       )
     }
 
-    case 'CONFIRM_TRANSACTION': {
+    case Action.Confirm: {
       const { id, snapshotId, transactionHash } = action.payload
       return state.map((item) =>
         item.id === id ? { ...item, snapshotId, transactionHash } : item,
       )
     }
 
-    case 'UPDATE_TRANSACTION_STATUS': {
+    case Action.UpdateStatus: {
       const { id, status } = action.payload
       return state.map((item) => (item.id === id ? { ...item, status } : item))
     }
 
-    case 'REMOVE_TRANSACTION': {
+    case Action.Remove: {
       const { id } = action.payload
       return state.filter((item) => item.id !== id)
     }
 
-    case 'CLEAR_TRANSACTIONS': {
+    case Action.Clear: {
       const { id } = action.payload
       const idx = state.findIndex((item) => item.id === id)
       return idx >= 0 ? state.slice(0, idx) : state

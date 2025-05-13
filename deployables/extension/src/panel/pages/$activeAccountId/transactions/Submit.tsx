@@ -2,7 +2,7 @@ import { useAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/inject-bridge'
-import { useDispatch, useTransactions } from '@/state'
+import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import {
@@ -35,10 +35,7 @@ export const Submit = () => {
     setSubmitPending(false)
 
     if (transactions.length > 0) {
-      dispatch({
-        type: 'CLEAR_TRANSACTIONS',
-        payload: { id: transactions[0].id },
-      })
+      dispatch(clearTransactions({ id: transactions[0].id }))
     }
   })
 

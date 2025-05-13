@@ -18,7 +18,14 @@ import {
   unprefixAddress,
   type MetaTransactionRequest,
 } from 'ser-kit'
-import { ExecutionStatus, useDispatch } from '../state'
+import {
+  appendTransaction,
+  confirmTransaction,
+  decodeTransaction,
+  ExecutionStatus,
+  updateTransactionStatus,
+  useDispatch,
+} from '../state'
 import { fetchContractInfo } from '../utils/abi'
 
 const ProviderContext = createContext<
@@ -37,23 +44,19 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const onBeforeTransactionSend = useCallback(
     async (id: string, transaction: MetaTransactionRequest) => {
       // Immediately update the state with the transaction so that the UI can show it as pending.
-      dispatch({
-        type: 'APPEND_TRANSACTION',
-        payload: { transaction, id },
-      })
+      dispatch(appendTransaction({ transaction, id }))
 
       // Now we can take some time decoding the transaction and we update the state once that's done.
       const contractInfo = await fetchContractInfo(
         transaction.to as Hex,
         chainId,
       )
-      dispatch({
-        type: 'DECODE_TRANSACTION',
-        payload: {
+      dispatch(
+        decodeTransaction({
           id,
           contractInfo,
-        },
-      })
+        }),
+      )
     },
     [chainId, dispatch],
   )
@@ -65,26 +68,24 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
       transactionHash: string,
       provider: Eip1193Provider,
     ) => {
-      dispatch({
-        type: 'CONFIRM_TRANSACTION',
-        payload: {
+      dispatch(
+        confirmTransaction({
           id,
           snapshotId,
           transactionHash,
-        },
-      })
+        }),
+      )
 
       const receipt = await new BrowserProvider(provider).getTransactionReceipt(
         transactionHash,
       )
       if (!receipt?.status) {
-        dispatch({
-          type: 'UPDATE_TRANSACTION_STATUS',
-          payload: {
+        dispatch(
+          updateTransactionStatus({
             id,
             status: ExecutionStatus.FAILED,
-          },
-        })
+          }),
+        )
         return
       }
 
@@ -95,21 +96,19 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
           moduleAddress,
         )
       ) {
-        dispatch({
-          type: 'UPDATE_TRANSACTION_STATUS',
-          payload: {
+        dispatch(
+          updateTransactionStatus({
             id,
             status: ExecutionStatus.META_TRANSACTION_REVERTED,
-          },
-        })
+          }),
+        )
       } else {
-        dispatch({
-          type: 'UPDATE_TRANSACTION_STATUS',
-          payload: {
+        dispatch(
+          updateTransactionStatus({
             id,
             status: ExecutionStatus.SUCCESS,
-          },
-        })
+          }),
+        )
       }
     },
     [dispatch, address, moduleAddress],
@@ -117,13 +116,12 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
 
   const onTransactionError = useCallback(
     (id: string, error: unknown) => {
-      dispatch({
-        type: 'UPDATE_TRANSACTION_STATUS',
-        payload: {
+      dispatch(
+        updateTransactionStatus({
           id,
           status: ExecutionStatus.FAILED,
-        },
-      })
+        }),
+      )
 
       console.debug(`Transaction ${id} failed`, { error })
     },

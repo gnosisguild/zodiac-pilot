@@ -6,7 +6,7 @@ import {
   useContext,
   useReducer,
 } from 'react'
-import type { Action } from './actions'
+import type { TransactionAction } from './actions'
 import { rootReducer, type TransactionState } from './reducer'
 
 const TransactionsContext = createContext<TransactionState[]>([])
@@ -28,7 +28,9 @@ export const useTransaction = (transactionId: string) => {
   return transaction
 }
 
-const DispatchContext = createContext<{ dispatch: Dispatch<Action> }>({
+const DispatchContext = createContext<{
+  dispatch: Dispatch<TransactionAction>
+}>({
   dispatch() {
     throw new Error('must be wrapped in <ProvideState>')
   },
