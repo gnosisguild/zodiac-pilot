@@ -1,6 +1,7 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
 import {
   chromeMock,
+  createConfirmedTransaction,
   createTransaction,
   mockCompanionAppUrl,
   mockRoute,
@@ -56,7 +57,7 @@ describe('Transactions', () => {
       await mockRoute({ id: 'test-route' })
 
       await render('/test-route/transactions', {
-        initialState: { done: [createTransaction()] },
+        initialState: { done: [createConfirmedTransaction()] },
       })
 
       expect(
@@ -104,7 +105,7 @@ describe('Transactions', () => {
           id: 'test-route',
           initiator: randomPrefixedAddress(),
         })
-        const transaction = createTransaction()
+        const transaction = createConfirmedTransaction()
 
         mockCompanionAppUrl('http://localhost')
 
@@ -172,7 +173,7 @@ describe('Transactions', () => {
           toExecutionRoute({ route, wallet, account }),
         )
 
-        const transaction = createTransaction()
+        const transaction = createConfirmedTransaction()
 
         mockCompanionAppUrl('http://localhost')
 

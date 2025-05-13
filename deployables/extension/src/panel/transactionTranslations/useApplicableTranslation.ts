@@ -3,6 +3,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import {
   clearTransactions,
+  isConfirmedTransaction,
   useDispatch,
   useTransaction,
   useTransactions,
@@ -42,9 +43,11 @@ export const useApplicableTranslation = (transactionId: string) => {
       // remove the transaction and all later ones from the store
       dispatch(clearTransactions({ fromId: transaction.id }))
 
-      // revert to checkpoint before the transaction to remove
-      const checkpoint = transaction.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
-      await provider.request({ method: 'evm_revert', params: [checkpoint] })
+      if (isConfirmedTransaction(transaction)) {
+        // revert to checkpoint before the transaction to remove
+        const checkpoint = transaction.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
+        await provider.request({ method: 'evm_revert', params: [checkpoint] })
+      }
 
       // re-simulate all transactions starting with the translated ones
       const replayTransaction = [...translation.result, ...laterTransactions]

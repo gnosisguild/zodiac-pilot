@@ -1,15 +1,14 @@
-import { type Transaction } from '@/state'
-import { ZERO_ADDRESS } from '@zodiac/chains'
+import { type UnconfirmedTransaction } from '@/state'
 import { createMockTransactionRequest } from '@zodiac/test-utils'
 import { nanoid } from 'nanoid'
 
 export const createTransaction = (
-  transaction: Partial<Transaction> = {},
-): Transaction => ({
+  transaction: Partial<UnconfirmedTransaction> = {},
+): UnconfirmedTransaction => ({
+  ...createMockTransactionRequest(transaction),
+
   id: nanoid(),
-  contractInfo: { address: ZERO_ADDRESS, verified: true },
   createdAt: new Date(),
 
-  ...createMockTransactionRequest(transaction),
   ...transaction,
 })

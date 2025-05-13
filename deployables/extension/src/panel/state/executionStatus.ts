@@ -5,4 +5,5 @@ export enum ExecutionStatus {
   FAILED,
   /** Submitting the transaction succeeded, but the Safe meta transaction reverted. */
   META_TRANSACTION_REVERTED,
+  CONFIRMED,
 }

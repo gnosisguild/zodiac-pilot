@@ -52,7 +52,7 @@ export const Transaction = ({ transactionId }: Props) => {
             <CopyToClipboard iconOnly size="small" data={transaction}>
               Copy transaction data to clipboard
             </CopyToClipboard>
-            <Remove transactionState={transaction} />
+            <Remove transactionId={transactionId} />
           </div>
         </TransactionHeader>
       </div>

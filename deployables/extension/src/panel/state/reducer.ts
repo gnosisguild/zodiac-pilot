@@ -3,19 +3,25 @@ import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
 
-export type Transaction = MetaTransactionRequest & {
+export type UnconfirmedTransaction = MetaTransactionRequest & {
   id: string
   createdAt: Date
-  snapshotId?: string
   contractInfo?: ContractInfo
-  transactionHash?: string
 }
 
+export type ConfirmedTransaction = UnconfirmedTransaction & {
+  snapshotId: string
+  transactionHash: string
+}
+
+export type Transaction = UnconfirmedTransaction | ConfirmedTransaction
+
 export type State = {
-  pending: Transaction[]
-  done: Transaction[]
-  failed: Transaction[]
-  reverted: Transaction[]
+  pending: UnconfirmedTransaction[]
+  confirmed: ConfirmedTransaction[]
+  done: ConfirmedTransaction[]
+  failed: ConfirmedTransaction[]
+  reverted: ConfirmedTransaction[]
 }
 
 export const transactionsReducer = (
@@ -50,14 +56,16 @@ export const transactionsReducer = (
     case Action.Confirm: {
       const { id, snapshotId, transactionHash } = payload
 
+      const transaction = getTransaction(state.pending, id)
+
       return {
         ...state,
 
-        pending: state.pending.map((transaction) =>
-          transaction.id === id
-            ? { ...transaction, snapshotId, transactionHash }
-            : transaction,
-        ),
+        pending: removeTransaction(state.pending, id),
+        confirmed: [
+          ...state.confirmed,
+          { ...transaction, snapshotId, transactionHash },
+        ],
       }
     }
 
@@ -67,8 +75,9 @@ export const transactionsReducer = (
       return {
         ...state,
 
-        done: removeTransaction(state.done, id),
         pending: removeTransaction(state.pending, id),
+        confirmed: removeTransaction(state.confirmed, id),
+        done: removeTransaction(state.done, id),
         failed: removeTransaction(state.failed, id),
         reverted: removeTransaction(state.reverted, id),
       }
@@ -78,6 +87,7 @@ export const transactionsReducer = (
       if (payload == null) {
         return {
           pending: [],
+          confirmed: [],
           done: [],
           failed: [],
           reverted: [],
@@ -97,12 +107,12 @@ export const transactionsReducer = (
     case Action.Fail: {
       const { id } = payload
 
-      const transaction = getTransaction(state.pending, id)
+      const transaction = getTransaction(state.confirmed, id)
 
       return {
         ...state,
 
-        pending: removeTransaction(state.pending, id),
+        confirmed: removeTransaction(state.confirmed, id),
         failed: [...state.failed, transaction],
       }
     }
@@ -110,12 +120,12 @@ export const transactionsReducer = (
     case Action.Finish: {
       const { id } = payload
 
-      const transaction = getTransaction(state.pending, id)
+      const transaction = getTransaction(state.confirmed, id)
 
       return {
         ...state,
 
-        pending: removeTransaction(state.pending, id),
+        confirmed: removeTransaction(state.confirmed, id),
         done: [...state.done, transaction],
       }
     }
@@ -123,30 +133,36 @@ export const transactionsReducer = (
     case Action.Revert: {
       const { id } = payload
 
-      const transaction = getTransaction(state.pending, id)
+      const transaction = getTransaction(state.confirmed, id)
 
       return {
         ...state,
-        pending: removeTransaction(state.pending, id),
+
+        confirmed: removeTransaction(state.confirmed, id),
         reverted: [...state.reverted, transaction],
       }
     }
   }
 }
 
-const decodeTransaction = (
-  transactions: Transaction[],
+const decodeTransaction = <T extends Transaction>(
+  transactions: T[],
   id: string,
   contractInfo: ContractInfo,
-) =>
+): T[] =>
   transactions.map((transaction) =>
     transaction.id === id ? { ...transaction, contractInfo } : transaction,
   )
 
-const removeTransaction = (transactions: Transaction[], id: string) =>
-  transactions.filter((transaction) => transaction.id !== id)
+const removeTransaction = <T extends Transaction>(
+  transactions: T[],
+  id: string,
+): T[] => transactions.filter((transaction) => transaction.id !== id)
 
-const getTransaction = (transactions: Transaction[], id: string) => {
+const getTransaction = <T extends Transaction>(
+  transactions: T[],
+  id: string,
+): T => {
   const transaction = transactions.find((transaction) => transaction.id === id)
 
   invariant(transaction != null, `Could not find transaction with id "${id}"`)

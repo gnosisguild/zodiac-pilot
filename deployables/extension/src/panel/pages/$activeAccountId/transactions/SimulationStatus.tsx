@@ -1,5 +1,10 @@
 import { useProvider } from '@/providers-ui'
-import { ExecutionStatus, useTransaction, useTransactionStatus } from '@/state'
+import {
+  ExecutionStatus,
+  isConfirmedTransaction,
+  useTransaction,
+  useTransactionStatus,
+} from '@/state'
 import { GhostLinkButton, Spinner, Tag } from '@zodiac/ui'
 import {
   Check,
@@ -61,7 +66,7 @@ export const SimulationStatus = ({ transactionId, mini = false }: Props) => {
             </Tag>
           )}
 
-          {transaction.transactionHash && (
+          {isConfirmedTransaction(transaction) && (
             <GhostLinkButton
               openInNewWindow
               iconOnly

@@ -1,9 +1,10 @@
-import { createTransaction } from '@/test-utils'
+import { createConfirmedTransaction, createTransaction } from '@/test-utils'
 import { createMockTransactionRequest } from '@zodiac/test-utils'
 import { describe, expect, it } from 'vitest'
 import {
   appendTransaction,
   clearTransactions,
+  confirmTransaction,
   failTransaction,
   finishTransaction,
   revertTransaction,
@@ -13,6 +14,7 @@ import { transactionsReducer, type State } from './reducer'
 describe('Transactions reducer', () => {
   const createState = (initialState: Partial<State> = {}): State => ({
     pending: [],
+    confirmed: [],
     done: [],
     failed: [],
     reverted: [],
@@ -35,10 +37,32 @@ describe('Transactions reducer', () => {
     })
   })
 
+  describe('Confirm', () => {
+    it('moves a transaction from the pending to the confirmed state', () => {
+      const transaction = createTransaction()
+
+      expect(
+        transactionsReducer(
+          createState({ pending: [transaction] }),
+          confirmTransaction({
+            id: transaction.id,
+            snapshotId: 'test',
+            transactionHash: 'test',
+          }),
+        ),
+      ).toMatchObject({
+        pending: [],
+        confirmed: [
+          { ...transaction, snapshotId: 'test', transactionHash: 'test' },
+        ],
+      })
+    })
+  })
+
   describe('Clear', () => {
     it('is possible to remove all transactions', () => {
       const initialState = createState({
-        done: [createTransaction(), createTransaction()],
+        done: [createConfirmedTransaction(), createConfirmedTransaction()],
       })
 
       expect(
@@ -47,9 +71,9 @@ describe('Transactions reducer', () => {
     })
 
     it('is possible to remove all transactions to a given end point', () => {
-      const transactionA = createTransaction()
-      const transactionB = createTransaction()
-      const transactionC = createTransaction()
+      const transactionA = createConfirmedTransaction()
+      const transactionB = createConfirmedTransaction()
+      const transactionC = createConfirmedTransaction()
 
       const initialState = createState({
         done: [transactionA, transactionB, transactionC],
@@ -66,11 +90,11 @@ describe('Transactions reducer', () => {
 
   describe('Failure', () => {
     it('moves a transaction from the pending state into the failed state', () => {
-      const transaction = createTransaction()
+      const transaction = createConfirmedTransaction()
 
       expect(
         transactionsReducer(
-          createState({ pending: [transaction] }),
+          createState({ confirmed: [transaction] }),
           failTransaction({ id: transaction.id }),
         ),
       ).toMatchObject({ pending: [], failed: [transaction] })
@@ -79,11 +103,11 @@ describe('Transactions reducer', () => {
 
   describe('Success', () => {
     it('moves a transaction from the pending state to the done state', () => {
-      const transaction = createTransaction()
+      const transaction = createConfirmedTransaction()
 
       expect(
         transactionsReducer(
-          createState({ pending: [transaction] }),
+          createState({ confirmed: [transaction] }),
           finishTransaction({ id: transaction.id }),
         ),
       ).toMatchObject({
@@ -95,11 +119,11 @@ describe('Transactions reducer', () => {
 
   describe('Revert', () => {
     it('moves a transaction from the pending to the reverted state', () => {
-      const transaction = createTransaction()
+      const transaction = createConfirmedTransaction()
 
       expect(
         transactionsReducer(
-          createState({ pending: [transaction] }),
+          createState({ confirmed: [transaction] }),
           revertTransaction({ id: transaction.id }),
         ),
       ).toMatchObject({ pending: [], reverted: [transaction] })

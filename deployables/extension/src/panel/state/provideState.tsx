@@ -8,10 +8,12 @@ import {
 } from 'react'
 import type { TransactionAction } from './actions'
 import { ExecutionStatus } from './executionStatus'
+import { isConfirmedTransaction } from './isConfirmedTransaction'
 import { transactionsReducer, type State, type Transaction } from './reducer'
 
 const TransactionsContext = createContext<State>({
   pending: [],
+  confirmed: [],
   done: [],
   failed: [],
   reverted: [],
@@ -46,10 +48,20 @@ export const useTransaction = (transactionId: string) => {
 export const useTransactionStatus = (
   transaction: Transaction,
 ): ExecutionStatus => {
-  const { pending, done, failed, reverted } = useContext(TransactionsContext)
+  const { pending, done, failed, reverted, confirmed } =
+    useContext(TransactionsContext)
 
   if (pending.includes(transaction)) {
     return ExecutionStatus.PENDING
+  }
+
+  invariant(
+    isConfirmedTransaction(transaction),
+    'Transaction is not pending but also not confirmed',
+  )
+
+  if (confirmed.includes(transaction)) {
+    return ExecutionStatus.CONFIRMED
   }
 
   if (done.includes(transaction)) {
@@ -87,7 +99,13 @@ type ProvideStateProps = PropsWithChildren<{
 
 export const ProvideState = ({
   children,
-  initialState = { pending: [], done: [], reverted: [], failed: [] },
+  initialState = {
+    pending: [],
+    confirmed: [],
+    done: [],
+    reverted: [],
+    failed: [],
+  },
 }: ProvideStateProps) => {
   const [state, dispatch] = useReducer(transactionsReducer, initialState)
 

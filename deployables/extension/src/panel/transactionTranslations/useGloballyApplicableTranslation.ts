@@ -3,6 +3,7 @@ import { ForkProvider } from '@/providers'
 import { useProvider } from '@/providers-ui'
 import {
   clearTransactions,
+  isConfirmedTransaction,
   type Transaction,
   useDispatch,
   useTransactions,
@@ -52,9 +53,13 @@ export const useGloballyApplicableTranslation = () => {
           clearTransactions({ fromId: transactions[firstDifferenceIndex].id }),
         )
 
-        // revert to checkpoint before first difference
-        const checkpoint = transactions[firstDifferenceIndex].snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
-        await provider.request({ method: 'evm_revert', params: [checkpoint] })
+        const transaction = transactions[firstDifferenceIndex]
+
+        if (isConfirmedTransaction(transaction)) {
+          // revert to checkpoint before first difference
+          const checkpoint = transaction.snapshotId // the ForkProvider uses checkpoints as IDs for the recorded transactions
+          await provider.request({ method: 'evm_revert', params: [checkpoint] })
+        }
       }
 
       // re-simulate all transactions starting at the first difference
