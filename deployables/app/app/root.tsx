@@ -3,7 +3,9 @@ import {
   ProvideExtensionVersion,
 } from '@/components'
 import * as Sentry from '@sentry/react-router'
+import { inject } from '@vercel/analytics'
 import { ToastContainer } from '@zodiac/ui'
+import { useEffect } from 'react'
 import {
   isRouteErrorResponse,
   Links,
@@ -24,6 +26,14 @@ export const loader = () => {
 }
 
 export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return
+    }
+
+    inject({ mode: isDev ? 'development' : 'production' })
+  }, [isDev])
+
   return (
     <html lang="en" className="h-full">
       <head>
