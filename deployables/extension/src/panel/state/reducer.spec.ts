@@ -10,6 +10,7 @@ import {
   finishTransaction,
   revertTransaction,
   rollbackTransaction,
+  translateTransaction,
 } from './actions'
 import { transactionsReducer, type State } from './reducer'
 
@@ -210,5 +211,29 @@ describe('Transactions reducer', () => {
 
   describe('Refresh', () => {
     it.todo('handles refresh state')
+  })
+
+  describe('Apply translation', () => {
+    it('enqueues all new transactions and rolls back the current transaction being translated', () => {
+      const transactionA = createConfirmedTransaction()
+      const transactionB = createConfirmedTransaction()
+
+      const translation = createMockTransactionRequest()
+
+      const initialState = createState({ done: [transactionA, transactionB] })
+
+      expect(
+        transactionsReducer(
+          initialState,
+          translateTransaction({
+            id: transactionA.id,
+            translations: [translation],
+          }),
+        ),
+      ).toMatchObject({
+        rollback: transactionA,
+        pending: [expect.objectContaining(translation), transactionB],
+      })
+    })
   })
 })

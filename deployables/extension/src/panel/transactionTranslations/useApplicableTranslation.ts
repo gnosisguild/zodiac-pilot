@@ -1,12 +1,5 @@
 import { useAccount } from '@/accounts'
-import { useRevertToSnapshot, useSendTransaction } from '@/providers-ui'
-import {
-  clearTransactions,
-  isConfirmedTransaction,
-  useDispatch,
-  useTransaction,
-  useTransactions,
-} from '@/state'
+import { translateTransaction, useDispatch, useTransaction } from '@/state'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
 import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
@@ -17,11 +10,7 @@ import {
 import { translations } from './translations'
 
 export const useApplicableTranslation = (transactionId: string) => {
-  const transactions = useTransactions()
   const transaction = useTransaction(transactionId)
-  const sendTransaction = useSendTransaction()
-  const revertToSnapshot = useRevertToSnapshot()
-
   const dispatch = useDispatch()
   const account = useAccount()
 
@@ -31,23 +20,14 @@ export const useApplicableTranslation = (transactionId: string) => {
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
-      const index = transactions.indexOf(transaction)
-      const laterTransactions = transactions.slice(index + 1)
-
-      // remove the transaction and all later ones from the store
-      dispatch(clearTransactions({ fromId: transaction.id }))
-
-      if (isConfirmedTransaction(transaction)) {
-        await revertToSnapshot(transaction)
-      }
-
-      // re-simulate all transactions starting with the translated ones
-      const replayTransaction = [...translation.result, ...laterTransactions]
-      for (const tx of replayTransaction) {
-        sendTransaction(tx)
-      }
+      dispatch(
+        translateTransaction({
+          id: transaction.id,
+          translations: translation.result,
+        }),
+      )
     },
-    [dispatch, revertToSnapshot, sendTransaction, transaction, transactions],
+    [dispatch, transaction],
   )
 
   useEffect(() => {
@@ -72,14 +52,16 @@ export const useApplicableTranslation = (transactionId: string) => {
     }
   }, [account.address, account.chainId, apply, transaction])
 
-  return translation && !translation.autoApply
-    ? {
-        title: translation.title,
-        result: translation.result,
-        icon: translation.icon,
-        apply: () => apply(translation),
-      }
-    : undefined
+  if (translation == null || translation.autoApply) {
+    return
+  }
+
+  return {
+    title: translation.title,
+    result: translation.result,
+    icon: translation.icon,
+    apply: () => apply(translation),
+  }
 }
 
 const findApplicableTranslation = async (

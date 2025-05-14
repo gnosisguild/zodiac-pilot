@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
+import { isConfirmedTransaction } from './isConfirmedTransaction'
 
 export type UnconfirmedTransaction = MetaTransactionRequest & {
   id: string
@@ -151,20 +152,7 @@ export const transactionsReducer = (
     case Action.Rollback: {
       const { id } = payload
 
-      const transaction = getTransaction(state.done, id)
-
-      const invalidatedTransactions = state.done.slice(
-        state.done.indexOf(transaction) + 1,
-      )
-
-      return {
-        ...state,
-
-        done: state.done.slice(0, state.done.indexOf(transaction)),
-        pending: [...state.pending, ...invalidatedTransactions],
-
-        rollback: transaction,
-      }
+      return rollback(state, id)
     }
 
     case Action.ConfirmRollback: {
@@ -181,6 +169,25 @@ export const transactionsReducer = (
 
         rollback: null,
       }
+    }
+
+    case Action.Translate: {
+      const { id, translations } = payload
+
+      return rollback(
+        {
+          ...state,
+          pending: [
+            ...state.pending,
+            ...translations.map((translation) => ({
+              ...translation,
+              id: nanoid(),
+              createdAt: new Date(),
+            })),
+          ],
+        },
+        id,
+      )
     }
   }
 }
@@ -203,9 +210,47 @@ const getTransaction = <T extends Transaction>(
   transactions: T[],
   id: string,
 ): T => {
-  const transaction = transactions.find((transaction) => transaction.id === id)
+  const transaction = findTransaction(transactions, id)
 
   invariant(transaction != null, `Could not find transaction with id "${id}"`)
 
   return transaction
+}
+
+const findTransaction = <T extends Transaction>(
+  transactions: T[],
+  id: string,
+): T | undefined => {
+  const transaction = transactions.find((transaction) => transaction.id === id)
+
+  return transaction
+}
+
+const rollback = (
+  state: State,
+  id: string,
+  key: keyof Omit<State, 'rollback'> = 'done',
+): State => {
+  const transaction = findTransaction(state[key], id)
+
+  if (transaction == null) {
+    return rollback(state, id, 'failed')
+  }
+
+  invariant(
+    isConfirmedTransaction(transaction),
+    'Can only roll back transaction that have been confirmed before',
+  )
+
+  const index = state[key].findIndex(({ id }) => transaction.id === id)
+  const invalidatedTransactions = state[key].slice(index + 1)
+
+  return {
+    ...state,
+
+    [key]: state[key].slice(0, index),
+    pending: [...state.pending, ...invalidatedTransactions],
+
+    rollback: transaction,
+  }
 }

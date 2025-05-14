@@ -12,6 +12,7 @@ export enum Action {
   Revert = 'Revert',
   Rollback = 'Rollback',
   ConfirmRollback = 'ConfirmRollback',
+  Translate = 'Translate',
 }
 
 interface AppendTransactionAction {
@@ -129,6 +130,18 @@ export const confirmRollbackTransaction = (
   payload,
 })
 
+type TranslateTransactionAction = {
+  type: Action.Translate
+  payload: {
+    id: string
+    translations: MetaTransactionRequest[]
+  }
+}
+
+export const translateTransaction = (
+  payload: TranslateTransactionAction['payload'],
+): TranslateTransactionAction => ({ type: Action.Translate, payload })
+
 export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
@@ -140,3 +153,4 @@ export type TransactionAction =
   | RevertTransactionAction
   | RollbackTransactionType
   | ConfirmRollbackTransactionAction
+  | TranslateTransactionAction
