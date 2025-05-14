@@ -1,9 +1,9 @@
-import { authorizedLoader } from '@/auth-server'
+import { authorizedAction } from '@/auth-server'
 import { getSystemAuthToken } from '@zodiac/env'
 import type { Route } from './+types/get-plan'
 
 export const action = (args: Route.ActionArgs) =>
-  authorizedLoader(
+  authorizedAction(
     args,
     () => {
       return { currentPlan: 'open' }
