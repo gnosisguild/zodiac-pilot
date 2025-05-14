@@ -31,12 +31,9 @@ describe('Transactions reducer', () => {
       const transaction = createMockTransactionRequest()
 
       expect(
-        transactionsReducer(
-          createState(),
-          appendTransaction({ id: 'test', transaction }),
-        ),
+        transactionsReducer(createState(), appendTransaction({ transaction })),
       ).toMatchObject({
-        pending: [{ id: 'test', ...transaction }],
+        pending: [expect.objectContaining(transaction)],
       })
     })
   })
@@ -135,17 +132,6 @@ describe('Transactions reducer', () => {
   })
 
   describe('Rollback', () => {
-    it('puts a transaction into the rollback state', () => {
-      const transaction = createConfirmedTransaction()
-
-      expect(
-        transactionsReducer(
-          createState({ done: [transaction] }),
-          rollbackTransaction({ id: transaction.id }),
-        ),
-      ).toMatchObject({ rollback: transaction, done: [] })
-    })
-
     it('is possible to confirm a rollback', () => {
       const transaction = createConfirmedTransaction()
 
@@ -157,22 +143,72 @@ describe('Transactions reducer', () => {
       ).toMatchObject({ rollback: null })
     })
 
-    it('puts all transaction that came after the one that was rolled back into pending state', () => {
-      const transactionA = createConfirmedTransaction()
-      const transactionB = createConfirmedTransaction()
+    describe('Successful transaction', () => {
+      it('puts a transaction into the rollback state', () => {
+        const transaction = createConfirmedTransaction()
 
-      const initialState = createState({ done: [transactionA, transactionB] })
+        expect(
+          transactionsReducer(
+            createState({ done: [transaction] }),
+            rollbackTransaction({ id: transaction.id }),
+          ),
+        ).toMatchObject({ rollback: transaction, done: [] })
+      })
 
-      expect(
-        transactionsReducer(
-          initialState,
-          rollbackTransaction({ id: transactionA.id }),
-        ),
-      ).toMatchObject({
-        rollback: transactionA,
-        pending: [transactionB],
-        done: [],
+      it('puts all transaction that came after the one that was rolled back into pending state', () => {
+        const transactionA = createConfirmedTransaction()
+        const transactionB = createConfirmedTransaction()
+
+        const initialState = createState({ done: [transactionA, transactionB] })
+
+        expect(
+          transactionsReducer(
+            initialState,
+            rollbackTransaction({ id: transactionA.id }),
+          ),
+        ).toMatchObject({
+          rollback: transactionA,
+          pending: [transactionB],
+          done: [],
+        })
       })
     })
+
+    describe('Failed transaction', () => {
+      it('puts a transaction into the rollback state', () => {
+        const transaction = createConfirmedTransaction()
+
+        expect(
+          transactionsReducer(
+            createState({ failed: [transaction] }),
+            rollbackTransaction({ id: transaction.id }),
+          ),
+        ).toMatchObject({ rollback: transaction, failed: [] })
+      })
+
+      it('puts all transaction that came after the one that was rolled back into pending state', () => {
+        const transactionA = createConfirmedTransaction()
+        const transactionB = createConfirmedTransaction()
+
+        const initialState = createState({
+          failed: [transactionA, transactionB],
+        })
+
+        expect(
+          transactionsReducer(
+            initialState,
+            rollbackTransaction({ id: transactionA.id }),
+          ),
+        ).toMatchObject({
+          rollback: transactionA,
+          pending: [transactionB],
+          failed: [],
+        })
+      })
+    })
+  })
+
+  describe('Refresh', () => {
+    it.todo('handles refresh state')
   })
 })

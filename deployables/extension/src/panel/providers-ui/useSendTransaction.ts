@@ -1,16 +1,15 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import {
-  appendTransaction,
   confirmTransaction,
   decodeTransaction,
   finishTransaction,
   revertTransaction,
   useDispatch,
+  type UnconfirmedTransaction,
 } from '@/state'
-import type { HexAddress, MetaTransactionRequest } from '@zodiac/schema'
+import type { HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
-import { nanoid } from 'nanoid'
 import { useCallback } from 'react'
 import { failTransaction } from '../state'
 import { fetchContractInfo } from '../utils'
@@ -26,15 +25,10 @@ export const useSendTransaction = () => {
   const moduleAddress = getModuleAddress(route)
 
   return useCallback(
-    async (transaction: MetaTransactionRequest) => {
-      const id = nanoid()
-
-      // Immediately update the state with the transaction so that the UI can show it as pending.
-      dispatch(appendTransaction({ id, transaction }))
-
+    async (transaction: UnconfirmedTransaction) => {
       dispatch(
         decodeTransaction({
-          id,
+          id: transaction.id,
           // Now we can take some time decoding the transaction and we update the state once that's done.
           contractInfo: await fetchContractInfo(transaction.to, chainId),
         }),
@@ -46,7 +40,7 @@ export const useSendTransaction = () => {
 
         dispatch(
           confirmTransaction({
-            id,
+            id: transaction.id,
             snapshotId: checkpointId,
             transactionHash: hash,
           }),
@@ -57,7 +51,7 @@ export const useSendTransaction = () => {
         ).getTransactionReceipt(hash)
 
         if (receipt == null || receipt.status == null) {
-          dispatch(failTransaction({ id }))
+          dispatch(failTransaction({ id: transaction.id }))
 
           return
         }
@@ -69,14 +63,14 @@ export const useSendTransaction = () => {
             moduleAddress,
           )
         ) {
-          dispatch(revertTransaction({ id }))
+          dispatch(revertTransaction({ id: transaction.id }))
         } else {
-          dispatch(finishTransaction({ id }))
+          dispatch(finishTransaction({ id: transaction.id }))
         }
       } catch (error) {
-        console.debug(`Transaction ${id} failed`, { error })
+        console.debug(`Transaction ${transaction.id} failed`, { error })
 
-        dispatch(failTransaction({ id }))
+        dispatch(failTransaction({ id: transaction.id }))
       }
     },
     [address, chainId, dispatch, moduleAddress, provider],

@@ -122,3 +122,15 @@ export const ProvideState = ({
     </DispatchContext.Provider>
   )
 }
+
+export const useRollback = () => {
+  const { rollback } = useContext(TransactionsContext)
+
+  return rollback
+}
+
+export const usePendingTransactions = () => {
+  const { pending } = useContext(TransactionsContext)
+
+  return pending
+}

@@ -15,6 +15,8 @@ export { isConfirmedTransaction } from './isConfirmedTransaction'
 export {
   ProvideState,
   useDispatch,
+  usePendingTransactions,
+  useRollback,
   useTransaction,
   useTransactionStatus,
   useTransactions,

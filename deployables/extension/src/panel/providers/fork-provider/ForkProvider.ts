@@ -109,10 +109,10 @@ export class ForkProvider extends EventEmitter {
           throw new Error('personal_sign only supported for the avatar address')
         }
         const signTx = signMessage(message)
-        const safeTxHash = await this.sendMetaTransaction(signTx)
+
+        this.emit('transaction', signTx)
 
         console.debug('message signed', {
-          safeTxHash,
           messageHash: hashMessage(message),
         })
 
@@ -137,20 +137,19 @@ export class ForkProvider extends EventEmitter {
         // special handling for Snapshot vote signatures
         const snapshotVoteTx = translateSignSnapshotVote(data || {})
         if (snapshotVoteTx) {
-          const safeTxHash = await this.sendMetaTransaction(snapshotVoteTx)
+          this.emit('transaction', snapshotVoteTx)
 
           console.debug('Snapshot vote EIP-712 message signed', {
-            safeTxHash,
             safeMessageHash,
             typedDataHash: dataHash,
           })
         } else {
           // default EIP-712 signature handling
           const signTx = signTypedData(data)
-          const safeTxHash = await this.sendMetaTransaction(signTx)
+
+          this.emit('transaction', signTx)
 
           console.debug('EIP-712 message signed', {
-            safeTxHash,
             safeMessageHash,
             typedDataHash: dataHash,
           })
@@ -161,12 +160,15 @@ export class ForkProvider extends EventEmitter {
 
       case 'eth_sendTransaction': {
         const txData = params[0] as TransactionData
-        return await this.sendMetaTransaction({
+
+        this.emit('transaction', {
           to: txData.to || ZERO_ADDRESS,
           value: txData.value ? toBigInt(txData.value) : 0n,
           data: txData.data || '0x',
           operation: 0,
         })
+
+        return
       }
     }
 

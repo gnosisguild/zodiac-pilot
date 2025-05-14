@@ -1,4 +1,4 @@
-import type { MetaTransactionRequest } from 'ser-kit'
+import type { MetaTransactionRequest } from '@zodiac/schema'
 import type { ContractInfo } from '../utils/abi'
 
 export enum Action {
@@ -17,7 +17,6 @@ export enum Action {
 interface AppendTransactionAction {
   type: Action.Append
   payload: {
-    id: string
     transaction: MetaTransactionRequest
   }
 }

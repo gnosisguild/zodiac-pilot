@@ -1,4 +1,5 @@
 import { invariant } from '@epic-web/invariant'
+import { nanoid } from 'nanoid'
 import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
@@ -32,14 +33,14 @@ export const transactionsReducer = (
 ): State => {
   switch (type) {
     case Action.Append: {
-      const { id, transaction } = payload
+      const { transaction } = payload
 
       return {
         ...state,
 
         pending: [
           ...state.pending,
-          { ...transaction, id, createdAt: new Date() },
+          { ...transaction, id: nanoid(), createdAt: new Date() },
         ],
       }
     }

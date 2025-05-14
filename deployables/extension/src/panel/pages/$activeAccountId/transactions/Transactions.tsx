@@ -3,8 +3,11 @@ import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
   useDeleteFork,
+  useInterceptTransactions,
   useProviderBridge,
+  useRollbackTransaction,
   useSendTransaction,
+  useSendTransactions,
 } from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
@@ -45,7 +48,11 @@ const Transactions = () => {
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
   const sendTransaction = useSendTransaction()
-  const deleteFork = useDeleteFork()
+
+  useDeleteFork()
+  useSendTransactions()
+  useInterceptTransactions()
+  useRollbackTransaction()
 
   useProviderBridge({
     chainId: account.chainId,
@@ -82,7 +89,7 @@ const Transactions = () => {
                 // remove all transactions from the store
                 dispatch(clearTransactions())
 
-                await deleteFork()
+                // await deleteFork()
 
                 // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
                 for (const transaction of transactions) {
