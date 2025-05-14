@@ -1,17 +1,23 @@
-import { useRollback, useTransactions } from '@/state'
+import {
+  commitRefreshTransactions,
+  useDispatch,
+  useTransactions,
+} from '@/state'
 import { useEffect } from 'react'
 import { useProvider } from './ProvideProvider'
 
 export const useDeleteFork = () => {
   const provider = useProvider()
   const transactions = useTransactions()
-  const rollback = useRollback()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (transactions.length > 0) {
       return
     }
 
-    provider.deleteFork()
-  }, [provider, rollback, transactions.length])
+    provider.deleteFork().then(() => {
+      dispatch(commitRefreshTransactions())
+    })
+  }, [dispatch, provider, transactions.length])
 }

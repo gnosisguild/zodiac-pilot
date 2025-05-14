@@ -13,6 +13,8 @@ export enum Action {
   Rollback = 'Rollback',
   ConfirmRollback = 'ConfirmRollback',
   Translate = 'Translate',
+  Refresh = 'Refresh',
+  CommitRefresh = 'CommitRefresh',
 }
 
 interface AppendTransactionAction {
@@ -142,6 +144,26 @@ export const translateTransaction = (
   payload: TranslateTransactionAction['payload'],
 ): TranslateTransactionAction => ({ type: Action.Translate, payload })
 
+type RefreshTransactionsAction = {
+  type: Action.Refresh
+  payload: null
+}
+
+export const refreshTransactions = (): RefreshTransactionsAction => ({
+  type: Action.Refresh,
+  payload: null,
+})
+
+type CommitRefreshAction = {
+  type: Action.CommitRefresh
+  payload: null
+}
+
+export const commitRefreshTransactions = (): CommitRefreshAction => ({
+  type: Action.CommitRefresh,
+  payload: null,
+})
+
 export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
@@ -154,3 +176,5 @@ export type TransactionAction =
   | RollbackTransactionType
   | ConfirmRollbackTransactionAction
   | TranslateTransactionAction
+  | RefreshTransactionsAction
+  | CommitRefreshAction

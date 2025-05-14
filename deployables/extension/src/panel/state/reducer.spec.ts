@@ -1,13 +1,16 @@
 import { createConfirmedTransaction, createTransaction } from '@/test-utils'
 import { createMockTransactionRequest } from '@zodiac/test-utils'
+import { addMinutes } from 'date-fns'
 import { describe, expect, it } from 'vitest'
 import {
   appendTransaction,
   clearTransactions,
+  commitRefreshTransactions,
   confirmRollbackTransaction,
   confirmTransaction,
   failTransaction,
   finishTransaction,
+  refreshTransactions,
   revertTransaction,
   rollbackTransaction,
   translateTransaction,
@@ -23,6 +26,7 @@ describe('Transactions reducer', () => {
     reverted: [],
 
     rollback: null,
+    refresh: false,
 
     ...initialState,
   })
@@ -210,7 +214,53 @@ describe('Transactions reducer', () => {
   })
 
   describe('Refresh', () => {
-    it.todo('handles refresh state')
+    it('puts all transactions into pending state sorted by date', () => {
+      const now = new Date()
+
+      const transactionA = createConfirmedTransaction({ createdAt: now })
+      const transactionB = createConfirmedTransaction({
+        createdAt: addMinutes(now, 1),
+      })
+      const transactionC = createConfirmedTransaction({
+        createdAt: addMinutes(now, 2),
+      })
+      const transactionD = createConfirmedTransaction({
+        createdAt: addMinutes(now, 3),
+      })
+
+      const initialState = createState({
+        done: [transactionA],
+        failed: [transactionB],
+        confirmed: [transactionC],
+        reverted: [transactionD],
+      })
+
+      expect(
+        transactionsReducer(initialState, refreshTransactions()),
+      ).toMatchObject({
+        pending: [transactionA, transactionB, transactionC, transactionD],
+
+        done: [],
+        failed: [],
+        confirmed: [],
+        reverted: [],
+      })
+    })
+
+    it('sets the refresh flag', () => {
+      expect(
+        transactionsReducer(createState(), refreshTransactions()),
+      ).toMatchObject({ refresh: true })
+    })
+
+    it('is possible to commit a refresh', () => {
+      expect(
+        transactionsReducer(
+          createState({ refresh: true }),
+          commitRefreshTransactions(),
+        ),
+      ).toMatchObject({ refresh: false })
+    })
   })
 
   describe('Apply translation', () => {
@@ -235,5 +285,7 @@ describe('Transactions reducer', () => {
         pending: [expect.objectContaining(translation), transactionB],
       })
     })
+
+    it.todo('apply global translation')
   })
 })

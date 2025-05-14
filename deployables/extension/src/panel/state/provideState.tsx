@@ -19,6 +19,7 @@ const TransactionsContext = createContext<State>({
   reverted: [],
 
   rollback: null,
+  refresh: false,
 })
 
 export const useTransactions = () => {
@@ -110,6 +111,7 @@ export const ProvideState = ({
     failed: [],
 
     rollback: null,
+    refresh: false,
   },
 }: ProvideStateProps) => {
   const [state, dispatch] = useReducer(transactionsReducer, initialState)
@@ -133,4 +135,10 @@ export const usePendingTransactions = () => {
   const { pending } = useContext(TransactionsContext)
 
   return pending
+}
+
+export const useRefresh = () => {
+  const { refresh } = useContext(TransactionsContext)
+
+  return refresh
 }

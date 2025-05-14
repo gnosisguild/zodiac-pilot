@@ -1,4 +1,4 @@
-import { usePendingTransactions, useRollback } from '@/state'
+import { usePendingTransactions, useRefresh, useRollback } from '@/state'
 import { useEffect, useRef } from 'react'
 import { useSendTransaction } from './useSendTransaction'
 
@@ -6,6 +6,7 @@ export const useSendTransactions = () => {
   const pendingTransactions = usePendingTransactions()
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
+  const refresh = useRefresh()
 
   const progressRef = useRef(false)
 
@@ -21,6 +22,15 @@ export const useSendTransactions = () => {
       return
     }
 
+    // when we're refreshing the transactions
+    // we want to do this on a fresh fork.
+    // while the refresh flag is set to true
+    // we're still creating that new fork and
+    // should not start sending our transactions
+    if (refresh === true) {
+      return
+    }
+
     progressRef.current = true
 
     const submit = async () => {
@@ -32,5 +42,5 @@ export const useSendTransactions = () => {
     }
 
     submit()
-  }, [pendingTransactions, rollback, sendTransaction])
+  }, [pendingTransactions, refresh, rollback, sendTransaction])
 }

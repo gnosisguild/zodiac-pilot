@@ -8,7 +8,7 @@ import {
   useRollbackTransaction,
   useSendTransactions,
 } from '@/providers-ui'
-import { clearTransactions, useDispatch, useTransactions } from '@/state'
+import { refreshTransactions, useDispatch, useTransactions } from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
@@ -83,19 +83,7 @@ const Transactions = () => {
               size="small"
               icon={RefreshCcw}
               disabled={transactions.length === 0}
-              onClick={async () => {
-                //TODO: introduce new refresh mechanism
-
-                // remove all transactions from the store
-                dispatch(clearTransactions())
-
-                // await deleteFork()
-
-                // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
-                // for (const transaction of transactions) {
-                //   await sendTransaction(transaction)
-                // }
-              }}
+              onClick={() => dispatch(refreshTransactions())}
             >
               Re-simulate on current blockchain head
             </GhostButton>

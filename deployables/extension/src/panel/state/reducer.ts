@@ -26,6 +26,8 @@ export type State = {
   reverted: ConfirmedTransaction[]
 
   rollback: ConfirmedTransaction | null
+
+  refresh: boolean
 }
 
 export const transactionsReducer = (
@@ -97,6 +99,7 @@ export const transactionsReducer = (
           reverted: [],
 
           rollback: null,
+          refresh: false,
         }
       }
 
@@ -189,6 +192,30 @@ export const transactionsReducer = (
         id,
       )
     }
+
+    case Action.Refresh: {
+      return {
+        ...state,
+
+        pending: [
+          ...state.done,
+          ...state.reverted,
+          ...state.failed,
+          ...state.confirmed,
+        ].toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+
+        done: [],
+        reverted: [],
+        failed: [],
+        confirmed: [],
+
+        refresh: true,
+      }
+    }
+
+    case Action.CommitRefresh: {
+      return { ...state, refresh: false }
+    }
   }
 }
 
@@ -229,7 +256,7 @@ const findTransaction = <T extends Transaction>(
 const rollback = (
   state: State,
   id: string,
-  key: keyof Omit<State, 'rollback'> = 'done',
+  key: keyof Omit<State, 'rollback' | 'refresh'> = 'done',
 ): State => {
   const transaction = findTransaction(state[key], id)
 

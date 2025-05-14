@@ -8,6 +8,7 @@ export const createTransactionState = (state: Partial<State> = {}): State => ({
   reverted: [],
 
   rollback: null,
+  refresh: false,
 
   ...state,
 })
