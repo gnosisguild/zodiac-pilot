@@ -152,10 +152,15 @@ export const transactionsReducer = (
 
       const transaction = getTransaction(state.done, id)
 
+      const invalidatedTransactions = state.done.slice(
+        state.done.indexOf(transaction) + 1,
+      )
+
       return {
         ...state,
 
-        done: removeTransaction(state.done, id),
+        done: state.done.slice(0, state.done.indexOf(transaction)),
+        pending: [...state.pending, ...invalidatedTransactions],
 
         rollback: transaction,
       }

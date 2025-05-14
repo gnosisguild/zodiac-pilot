@@ -157,8 +157,22 @@ describe('Transactions reducer', () => {
       ).toMatchObject({ rollback: null })
     })
 
-    it.todo(
-      'puts all transaction that came after the one that was rolled back into pending state',
-    )
+    it('puts all transaction that came after the one that was rolled back into pending state', () => {
+      const transactionA = createConfirmedTransaction()
+      const transactionB = createConfirmedTransaction()
+
+      const initialState = createState({ done: [transactionA, transactionB] })
+
+      expect(
+        transactionsReducer(
+          initialState,
+          rollbackTransaction({ id: transactionA.id }),
+        ),
+      ).toMatchObject({
+        rollback: transactionA,
+        pending: [transactionB],
+        done: [],
+      })
+    })
   })
 })
