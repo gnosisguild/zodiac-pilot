@@ -22,6 +22,8 @@ export type State = {
   done: ConfirmedTransaction[]
   failed: ConfirmedTransaction[]
   reverted: ConfirmedTransaction[]
+
+  rollback: ConfirmedTransaction | null
 }
 
 export const transactionsReducer = (
@@ -91,6 +93,8 @@ export const transactionsReducer = (
           done: [],
           failed: [],
           reverted: [],
+
+          rollback: null,
         }
       }
 
@@ -140,6 +144,20 @@ export const transactionsReducer = (
 
         confirmed: removeTransaction(state.confirmed, id),
         reverted: [...state.reverted, transaction],
+      }
+    }
+
+    case Action.Rollback: {
+      const { id } = payload
+
+      const transaction = getTransaction(state.done, id)
+
+      return {
+        ...state,
+
+        done: removeTransaction(state.done, id),
+
+        rollback: transaction,
       }
     }
   }

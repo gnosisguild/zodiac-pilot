@@ -17,6 +17,8 @@ const TransactionsContext = createContext<State>({
   done: [],
   failed: [],
   reverted: [],
+
+  rollback: null,
 })
 
 export const useTransactions = () => {
@@ -106,6 +108,8 @@ export const ProvideState = ({
     done: [],
     reverted: [],
     failed: [],
+
+    rollback: null,
   },
 }: ProvideStateProps) => {
   const [state, dispatch] = useReducer(transactionsReducer, initialState)

@@ -10,6 +10,7 @@ export enum Action {
   Fail = 'Fail',
   Finish = 'Finish',
   Revert = 'Revert',
+  Rollback = 'Rollback',
 }
 
 interface AppendTransactionAction {
@@ -103,6 +104,17 @@ export const clearTransactions = (
   payload?: ClearTransactionsAction['payload'],
 ): ClearTransactionsAction => ({ type: Action.Clear, payload })
 
+type RollbackTransactionType = {
+  type: Action.Rollback
+  payload: {
+    id: string
+  }
+}
+
+export const rollbackTransaction = (
+  payload: RollbackTransactionType['payload'],
+): RollbackTransactionType => ({ type: Action.Rollback, payload })
+
 export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
@@ -112,3 +124,4 @@ export type TransactionAction =
   | FailTransactionAction
   | FinishTransactionAction
   | RevertTransactionAction
+  | RollbackTransactionType

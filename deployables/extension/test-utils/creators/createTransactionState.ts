@@ -7,5 +7,7 @@ export const createTransactionState = (state: Partial<State> = {}): State => ({
   failed: [],
   reverted: [],
 
+  rollback: null,
+
   ...state,
 })

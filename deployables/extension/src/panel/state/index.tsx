@@ -7,6 +7,7 @@ export {
   finishTransaction,
   removeTransaction,
   revertTransaction,
+  rollbackTransaction,
 } from './actions'
 export { ExecutionStatus } from './executionStatus'
 export { isConfirmedTransaction } from './isConfirmedTransaction'

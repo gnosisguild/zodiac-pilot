@@ -8,6 +8,7 @@ import {
   failTransaction,
   finishTransaction,
   revertTransaction,
+  rollbackTransaction,
 } from './actions'
 import { transactionsReducer, type State } from './reducer'
 
@@ -18,6 +19,8 @@ describe('Transactions reducer', () => {
     done: [],
     failed: [],
     reverted: [],
+
+    rollback: null,
 
     ...initialState,
   })
@@ -128,5 +131,23 @@ describe('Transactions reducer', () => {
         ),
       ).toMatchObject({ pending: [], reverted: [transaction] })
     })
+  })
+
+  describe('Rollback', () => {
+    it('puts a transaction into the rollback state', () => {
+      const transaction = createConfirmedTransaction()
+
+      expect(
+        transactionsReducer(
+          createState({ done: [transaction] }),
+          rollbackTransaction({ id: transaction.id }),
+        ),
+      ).toMatchObject({ rollback: transaction, done: [] })
+    })
+
+    it.todo('is possible to confirm a rollback')
+    it.todo(
+      'puts all transaction that came after the one that was rolled back into pending state',
+    )
   })
 })
