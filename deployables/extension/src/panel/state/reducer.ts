@@ -160,6 +160,22 @@ export const transactionsReducer = (
         rollback: transaction,
       }
     }
+
+    case Action.ConfirmRollback: {
+      const { id } = payload
+
+      invariant(state.rollback != null, 'No transaction rollback in progress')
+      invariant(
+        state.rollback.id === id,
+        'Confirmed rollback id does not match transaction currently being rolled back',
+      )
+
+      return {
+        ...state,
+
+        rollback: null,
+      }
+    }
   }
 }
 

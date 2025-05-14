@@ -1,6 +1,7 @@
 export {
   appendTransaction,
   clearTransactions,
+  confirmRollbackTransaction,
   confirmTransaction,
   decodeTransaction,
   failTransaction,

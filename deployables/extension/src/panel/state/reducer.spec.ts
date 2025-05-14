@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import {
   appendTransaction,
   clearTransactions,
+  confirmRollbackTransaction,
   confirmTransaction,
   failTransaction,
   finishTransaction,
@@ -145,7 +146,17 @@ describe('Transactions reducer', () => {
       ).toMatchObject({ rollback: transaction, done: [] })
     })
 
-    it.todo('is possible to confirm a rollback')
+    it('is possible to confirm a rollback', () => {
+      const transaction = createConfirmedTransaction()
+
+      expect(
+        transactionsReducer(
+          createState({ rollback: transaction }),
+          confirmRollbackTransaction({ id: transaction.id }),
+        ),
+      ).toMatchObject({ rollback: null })
+    })
+
     it.todo(
       'puts all transaction that came after the one that was rolled back into pending state',
     )

@@ -11,6 +11,7 @@ export enum Action {
   Finish = 'Finish',
   Revert = 'Revert',
   Rollback = 'Rollback',
+  ConfirmRollback = 'ConfirmRollback',
 }
 
 interface AppendTransactionAction {
@@ -115,6 +116,20 @@ export const rollbackTransaction = (
   payload: RollbackTransactionType['payload'],
 ): RollbackTransactionType => ({ type: Action.Rollback, payload })
 
+type ConfirmRollbackTransactionAction = {
+  type: Action.ConfirmRollback
+  payload: {
+    id: string
+  }
+}
+
+export const confirmRollbackTransaction = (
+  payload: ConfirmRollbackTransactionAction['payload'],
+): ConfirmRollbackTransactionAction => ({
+  type: Action.ConfirmRollback,
+  payload,
+})
+
 export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
@@ -125,3 +140,4 @@ export type TransactionAction =
   | FinishTransactionAction
   | RevertTransactionAction
   | RollbackTransactionType
+  | ConfirmRollbackTransactionAction
