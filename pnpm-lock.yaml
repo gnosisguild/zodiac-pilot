@@ -104,7 +104,7 @@ importers:
         specifier: 5.75.7
         version: 5.75.7(react@19.1.0)
       '@vercel/analytics':
-        specifier: ^1.5.0
+        specifier: 1.5.0
         version: 1.5.0(react@19.1.0)
       '@workos-inc/authkit-react-router':
         specifier: 0.3.0
@@ -616,7 +616,7 @@ importers:
         version: 9.26.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.7.0
-        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+        version: 3.7.0(typescript@5.8.3)
 
   packages/db:
     dependencies:
@@ -12673,6 +12673,19 @@ snapshots:
       - utf-8-validate
       - zod
 
+  '@safe-global/api-kit@2.5.11(typescript@5.8.3)':
+    dependencies:
+      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      node-fetch: 2.7.0
+      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
   '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.4(typescript@5.8.3)(zod@3.24.4)
@@ -12711,6 +12724,23 @@ snapshots:
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       semver: 7.7.1
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+    optionalDependencies:
+      '@noble/curves': 1.8.2
+      '@peculiar/asn1-schema': 2.3.15
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@safe-global/protocol-kit@5.2.4(typescript@5.8.3)':
+    dependencies:
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/safe-modules-deployments': 2.2.7
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
+      semver: 7.7.1
+      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     optionalDependencies:
       '@noble/curves': 1.8.2
       '@peculiar/asn1-schema': 2.3.15
@@ -18412,6 +18442,21 @@ snapshots:
       '@safe-global/safe-deployments': 1.37.32
       '@safe-global/types-kit': 1.0.4(typescript@5.8.3)(zod@3.24.4)
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
+  ser-kit@3.7.0(typescript@5.8.3):
+    dependencies:
+      '@epic-web/invariant': 1.0.0
+      '@safe-global/api-kit': 2.5.11(typescript@5.8.3)
+      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
+      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
