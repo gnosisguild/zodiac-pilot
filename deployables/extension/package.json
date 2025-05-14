@@ -27,7 +27,7 @@
     "fix:lint": "pnpm check:lint --fix"
   },
   "devDependencies": {
-    "@depay/web3-mock": "15.1.1",
+    "@depay/web3-mock": "15.2.0",
     "@dotenvx/dotenvx": "1.44.0",
     "@playwright/test": "1.52.0",
     "@safe-global/safe-gateway-typescript-sdk": "3.23.1",
