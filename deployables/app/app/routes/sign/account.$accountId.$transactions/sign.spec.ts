@@ -23,7 +23,7 @@ import {
 } from '@zodiac/db/test-utils'
 import { encode } from '@zodiac/schema'
 import {
-  createMockTransaction,
+  createMockTransactionRequest,
   randomAddress,
   randomHex,
 } from '@zodiac/test-utils'
@@ -134,7 +134,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([])
 
@@ -164,7 +164,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -188,7 +188,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -218,7 +218,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -247,7 +247,7 @@ describe('Sign', () => {
 
       await activateRoute(dbClient(), tenant, user, route)
 
-      const transaction = createMockTransaction()
+      const transaction = createMockTransactionRequest()
 
       mockQueryRoutes.mockResolvedValue([
         toExecutionRoute({ wallet, account, route }),
@@ -280,7 +280,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -307,7 +307,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -340,7 +340,7 @@ describe('Sign', () => {
 
         await activateRoute(dbClient(), tenant, user, route)
 
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -394,7 +394,7 @@ describe('Sign', () => {
       await render(
         href('/submit/account/:accountId/:transactions', {
           accountId: account.id,
-          transactions: encode([createMockTransaction()]),
+          transactions: encode([createMockTransactionRequest()]),
         }),
         { tenant, user },
       )
@@ -430,7 +430,7 @@ describe('Sign', () => {
       const { waitForPendingActions } = await render(
         href('/submit/account/:accountId/:transactions', {
           accountId: account.id,
-          transactions: encode([createMockTransaction()]),
+          transactions: encode([createMockTransactionRequest()]),
         }),
         { user, tenant },
       )
@@ -474,7 +474,7 @@ describe('Sign', () => {
       const { waitForPendingActions } = await render(
         href('/submit/account/:accountId/:transactions', {
           accountId: account.id,
-          transactions: encode([createMockTransaction()]),
+          transactions: encode([createMockTransactionRequest()]),
         }),
         { user, tenant },
       )

@@ -6,7 +6,7 @@ import { encode } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   createMockSerRoute,
-  createMockTransaction,
+  createMockTransactionRequest,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
@@ -98,7 +98,7 @@ describe('Sign', () => {
     describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([])
 
@@ -120,7 +120,7 @@ describe('Sign', () => {
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot query routes', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -136,7 +136,7 @@ describe('Sign', () => {
 
       it('shows a warning when ser is unavailable', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -158,7 +158,7 @@ describe('Sign', () => {
 
       it('enables the "Sign" button when ser is unavailable', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -186,7 +186,7 @@ describe('Sign', () => {
     })
 
     it('shows the permission error', async () => {
-      const transaction = createMockTransaction()
+      const transaction = createMockTransactionRequest()
 
       mockCheckPermissions.mockResolvedValue({
         success: false,
@@ -208,7 +208,7 @@ describe('Sign', () => {
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot check permissions', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
@@ -224,7 +224,7 @@ describe('Sign', () => {
 
       it('shows a warning when ser is unavailable', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
@@ -246,7 +246,7 @@ describe('Sign', () => {
 
       it('enables the "Sign" button when ser is unavailable', async () => {
         const currentRoute = createMockSerRoute({ initiator })
-        const transaction = createMockTransaction()
+        const transaction = createMockTransactionRequest()
 
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
@@ -299,7 +299,7 @@ describe('Sign', () => {
               initiator: prefixAddress(undefined, randomAddress()),
             }),
           ),
-          transactions: encode([createMockTransaction()]),
+          transactions: encode([createMockTransactionRequest()]),
         }),
       )
 
