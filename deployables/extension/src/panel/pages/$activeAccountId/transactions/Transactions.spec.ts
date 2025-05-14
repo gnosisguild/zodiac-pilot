@@ -39,6 +39,16 @@ vi.mock('@/transaction-translation', async (importOriginal) => {
 
 const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
 
+vi.mock('@/providers-ui', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers-ui')>()
+
+  return {
+    ...module,
+
+    useSendTransactions: vi.fn(),
+  }
+})
+
 describe('Transactions', () => {
   describe('Recording state', () => {
     it('hides the info when Pilot is ready', async () => {
@@ -63,6 +73,22 @@ describe('Transactions', () => {
       expect(
         await screen.findByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('Refresh', () => {
+    it('disables the refresh button when transactions are pending', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions', {
+        initialState: { pending: [createTransaction()] },
+      })
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'Re-simulate on current blockchain head',
+        }),
+      ).toBeDisabled()
     })
   })
 

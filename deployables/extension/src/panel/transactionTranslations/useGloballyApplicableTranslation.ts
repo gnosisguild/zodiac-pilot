@@ -1,5 +1,5 @@
 import { useAccount } from '@/accounts'
-import { useRevertToSnapshot, useSendTransaction } from '@/providers-ui'
+import { useRevertToSnapshot } from '@/providers-ui'
 import {
   clearTransactions,
   isConfirmedTransaction,
@@ -18,7 +18,6 @@ import { translations } from './translations'
 
 export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
-  const sendTransaction = useSendTransaction()
   const revertToSnapshot = useRevertToSnapshot()
 
   const dispatch = useDispatch()
@@ -60,10 +59,11 @@ export const useGloballyApplicableTranslation = () => {
           ? newTransactions.slice(transactions.length)
           : newTransactions.slice(firstDifferenceIndex)
       for (const tx of replayTransaction) {
-        sendTransaction(tx)
+        // TODO: handle this case!!!
+        // sendTransaction(tx)
       }
     },
-    [dispatch, revertToSnapshot, sendTransaction, transactions],
+    [dispatch, revertToSnapshot, transactions],
   )
 
   useEffect(() => {
