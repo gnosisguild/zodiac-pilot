@@ -11,6 +11,7 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
   request: MockedFunction<Eip1193Provider['request']>
 
   deleteFork: MockedFunction<ForkProvider['deleteFork']>
+  sendMetaTransaction: MockedFunction<ForkProvider['sendMetaTransaction']>
 
   static getInstance() {
     invariant(instanceRef.current != null, 'No active MockProvider instance')
@@ -23,6 +24,7 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
 
     this.request = vi.fn().mockResolvedValue(null)
     this.deleteFork = vi.fn().mockResolvedValue(null)
+    this.sendMetaTransaction = vi.fn().mockResolvedValue(null)
 
     instanceRef.current = this
   }

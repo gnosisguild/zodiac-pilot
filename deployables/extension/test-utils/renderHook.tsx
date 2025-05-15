@@ -1,42 +1,70 @@
-import type { ExecutionRoute } from '@/types'
+import { ProvideAccount, toLocalAccount, type TaggedAccount } from '@/accounts'
+import { toAccount } from '@/companion'
+import { ProvideProvider } from '@/providers-ui'
+import { ProvideTransactions, type State } from '@/state'
 import {
+  createMockExecutionRoute,
   renderHook as renderHookBase,
   type RenderHookOptions,
 } from '@zodiac/test-utils'
-import type { VitestChromeNamespace } from 'vitest-chrome/types'
-import {
-  createMockPort,
-  mockActiveTab,
-  mockRuntimeConnect,
-  mockTabConnect,
-} from './chrome'
-import { mockRoutes } from './executionRoutes'
+import { Fragment, type PropsWithChildren } from 'react'
+import { mockActiveTab, mockRuntimeConnect } from './chrome'
+import { createTransactionState } from './creators'
 
 type Fn<Result, Props> = (props: Props) => Result
 
 type ExtendedOptions = {
-  routes?: ExecutionRoute[]
   activeTab?: Partial<chrome.tabs.Tab>
-  port?: Partial<VitestChromeNamespace.runtime.Port>
+
+  account?: TaggedAccount
+
+  initialState?: Partial<State>
 }
 
 export const renderHook = async <Result, Props>(
   fn: Fn<Result, Props>,
   {
-    routes = [],
     activeTab,
-    port,
+    account = toLocalAccount(toAccount(createMockExecutionRoute())),
+    wrapper: Wrapper = Fragment,
+    initialState,
+
     ...options
   }: RenderHookOptions<Props> & ExtendedOptions = {},
 ) => {
   const mockedTab = mockActiveTab(activeTab)
-
   const mockedRuntimePort = mockRuntimeConnect()
-  const mockedPort = mockTabConnect(createMockPort(port))
 
-  mockRoutes(...routes)
+  const FinalWrapper = ({ children }: PropsWithChildren) => (
+    <RenderWrapper
+      account={account}
+      initialState={createTransactionState(initialState)}
+    >
+      <Wrapper>{children}</Wrapper>
+    </RenderWrapper>
+  )
 
-  const result = await renderHookBase<Result, Props>(fn, options)
+  const result = await renderHookBase<Result, Props>(fn, {
+    ...options,
+    wrapper: FinalWrapper,
+  })
 
-  return { ...result, mockedTab, mockedPort, mockedRuntimePort }
+  return { ...result, mockedTab, mockedRuntimePort }
 }
+
+type RenderWrapperProps = PropsWithChildren<{
+  account: TaggedAccount
+  initialState: State
+}>
+
+const RenderWrapper = ({
+  account,
+  initialState,
+  children,
+}: RenderWrapperProps) => (
+  <ProvideAccount account={account}>
+    <ProvideTransactions initialState={initialState}>
+      <ProvideProvider>{children}</ProvideProvider>
+    </ProvideTransactions>
+  </ProvideAccount>
+)
