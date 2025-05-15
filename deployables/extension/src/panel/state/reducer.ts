@@ -70,24 +70,13 @@ export const transactionsReducer = (
     }
 
     case Action.Clear: {
-      if (payload == null) {
-        return {
-          pending: [],
-          executed: [],
+      return {
+        pending: [],
+        executed: [],
 
-          rollback: null,
-          refresh: false,
-        }
+        rollback: null,
+        refresh: false,
       }
-
-      const { fromId } = payload
-      const index = state.executed.findIndex((item) => item.id === fromId)
-
-      if (index === -1) {
-        return state
-      }
-
-      return { ...state, executed: state.executed.slice(0, index) }
     }
 
     case Action.Fail: {
