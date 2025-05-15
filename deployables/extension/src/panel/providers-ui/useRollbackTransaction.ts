@@ -5,13 +5,13 @@ import {
   useTransactions,
 } from '@/state'
 import { useEffect } from 'react'
-import { useRevertToSnapshot } from './useRevertToSnapshot'
+import { useProvider } from './ProvideProvider'
 
 export const useRollbackTransaction = () => {
   const transactionToRollback = useRollback()
   const transactions = useTransactions()
   const dispatch = useDispatch()
-  const revertToSnapshot = useRevertToSnapshot()
+  const provider = useProvider()
 
   useEffect(() => {
     if (transactionToRollback == null) {
@@ -29,8 +29,13 @@ export const useRollbackTransaction = () => {
       return
     }
 
-    revertToSnapshot(transactionToRollback).then(() => {
-      dispatch(confirmRollbackTransaction({ id: transactionToRollback.id }))
-    })
-  }, [dispatch, revertToSnapshot, transactionToRollback, transactions.length])
+    provider
+      .request({
+        method: 'evm_revert',
+        params: [transactionToRollback.snapshotId],
+      })
+      .then(() => {
+        dispatch(confirmRollbackTransaction({ id: transactionToRollback.id }))
+      })
+  }, [dispatch, provider, transactionToRollback, transactions.length])
 }
