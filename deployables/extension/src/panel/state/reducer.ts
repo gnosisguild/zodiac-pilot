@@ -1,22 +1,13 @@
 import { invariant } from '@epic-web/invariant'
 import { nanoid } from 'nanoid'
-import type { MetaTransactionRequest } from 'ser-kit'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
-import { isConfirmedTransaction } from './isConfirmedTransaction'
-
-export type UnconfirmedTransaction = MetaTransactionRequest & {
-  id: string
-  createdAt: Date
-  contractInfo?: ContractInfo
-}
-
-export type ConfirmedTransaction = UnconfirmedTransaction & {
-  snapshotId: string
-  transactionHash: string
-}
-
-export type Transaction = UnconfirmedTransaction | ConfirmedTransaction
+import {
+  isConfirmedTransaction,
+  type ConfirmedTransaction,
+  type Transaction,
+  type UnconfirmedTransaction,
+} from './isConfirmedTransaction'
 
 export type State = {
   pending: UnconfirmedTransaction[]
