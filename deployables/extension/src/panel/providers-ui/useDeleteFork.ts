@@ -1,6 +1,7 @@
 import {
   commitRefreshTransactions,
   useDispatch,
+  useRefresh,
   useTransactions,
 } from '@/state'
 import { useEffect } from 'react'
@@ -10,14 +11,15 @@ export const useDeleteFork = () => {
   const provider = useProvider()
   const transactions = useTransactions()
   const dispatch = useDispatch()
+  const refresh = useRefresh()
 
   useEffect(() => {
-    if (transactions.length > 0) {
+    if (transactions.length > 0 && !refresh) {
       return
     }
 
     provider.deleteFork().then(() => {
       dispatch(commitRefreshTransactions())
     })
-  }, [dispatch, provider, transactions.length])
+  }, [dispatch, provider, refresh, transactions.length])
 }

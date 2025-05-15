@@ -8,7 +8,12 @@ import {
   useRollbackTransaction,
   useSendTransactions,
 } from '@/providers-ui'
-import { refreshTransactions, useDispatch, useTransactions } from '@/state'
+import {
+  refreshTransactions,
+  useDispatch,
+  usePendingTransactions,
+  useTransactions,
+} from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
@@ -46,6 +51,7 @@ const Transactions = () => {
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
+  const pendingTransactions = usePendingTransactions()
 
   useDeleteFork()
   useSendTransactions()
@@ -82,7 +88,9 @@ const Transactions = () => {
               iconOnly
               size="small"
               icon={RefreshCcw}
-              disabled={transactions.length === 0}
+              disabled={
+                transactions.length === 0 || pendingTransactions.length > 0
+              }
               onClick={() => dispatch(refreshTransactions())}
             >
               Re-simulate on current blockchain head
