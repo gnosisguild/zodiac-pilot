@@ -7,9 +7,9 @@ import {
   useDispatch,
   useTransactions,
 } from '@/state'
-import type { Hex } from '@zodiac/schema'
+import { type Hex, metaTransactionRequestEqual } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
-import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
+import { type ChainId } from 'ser-kit'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,
@@ -27,7 +27,7 @@ export const useGloballyApplicableTranslation = () => {
     async (translation: ApplicableTranslation) => {
       const newTransactions = translation.result
       const firstDifferenceIndex = transactions.findIndex(
-        (tx, index) => !transactionsEqual(tx, newTransactions[index]),
+        (tx, index) => !metaTransactionRequestEqual(tx, newTransactions[index]),
       )
 
       if (
@@ -140,12 +140,3 @@ const cacheKeyGlobal = (
   chainId: ChainId,
   avatarAddress: Hex,
 ) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`
-
-const transactionsEqual = (
-  a: MetaTransactionRequest,
-  b: MetaTransactionRequest,
-) =>
-  a.to.toLowerCase() === b.to.toLowerCase() &&
-  (a.value || 0n === b.value || 0n) &&
-  a.data === b.data &&
-  (a.operation || 0 === b.operation || 0)

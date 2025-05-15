@@ -6,7 +6,10 @@ export { isHex } from './hex'
 export type { Hex } from './hex'
 export { isUUID } from './isUUID'
 export { jsonStringify } from './jsonStringify'
-export { metaTransactionRequestSchema } from './metaTransactionRequestSchema'
+export {
+  metaTransactionRequestEqual,
+  metaTransactionRequestSchema,
+} from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
 export {
   addressSchema,

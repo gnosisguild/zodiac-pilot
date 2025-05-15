@@ -15,6 +15,7 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
+import { metaTransactionRequestEqual } from '@zodiac/schema'
 import { BrowserProvider, toBigInt, toQuantity } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
@@ -110,7 +111,7 @@ export class ForkProvider extends EventEmitter {
         }
         const signTx = signMessage(message)
 
-        this.emit('transaction', signTx)
+        await this.waitForTransaction(signTx)
 
         console.debug('message signed', {
           messageHash: hashMessage(message),
@@ -137,7 +138,7 @@ export class ForkProvider extends EventEmitter {
         // special handling for Snapshot vote signatures
         const snapshotVoteTx = translateSignSnapshotVote(data || {})
         if (snapshotVoteTx) {
-          this.emit('transaction', snapshotVoteTx)
+          await this.waitForTransaction(snapshotVoteTx)
 
           console.debug('Snapshot vote EIP-712 message signed', {
             safeMessageHash,
@@ -147,7 +148,7 @@ export class ForkProvider extends EventEmitter {
           // default EIP-712 signature handling
           const signTx = signTypedData(data)
 
-          this.emit('transaction', signTx)
+          await this.waitForTransaction(signTx)
 
           console.debug('EIP-712 message signed', {
             safeMessageHash,
@@ -161,18 +162,30 @@ export class ForkProvider extends EventEmitter {
       case 'eth_sendTransaction': {
         const txData = params[0] as TransactionData
 
-        this.emit('transaction', {
+        return await this.waitForTransaction({
           to: txData.to || ZERO_ADDRESS,
           value: txData.value ? toBigInt(txData.value) : 0n,
           data: txData.data || '0x',
           operation: 0,
         })
-
-        return
       }
     }
 
     return await this.provider.request(request)
+  }
+
+  waitForTransaction(transaction: MetaTransactionRequest) {
+    const { promise, resolve } = Promise.withResolvers<string>()
+
+    this.on('transactionEnd', (tx: MetaTransactionRequest, hash: string) => {
+      if (metaTransactionRequestEqual(tx, transaction)) {
+        resolve(hash)
+      }
+    })
+
+    this.emit('transaction', transaction)
+
+    return promise
   }
 
   /**

@@ -28,6 +28,8 @@ export const useSendTransaction = () => {
         const { checkpointId, hash } =
           await provider.sendMetaTransaction(transaction)
 
+        provider.emit('transactionEnd', transaction, hash)
+
         dispatch(
           confirmTransaction({
             id: transaction.id,
