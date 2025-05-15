@@ -1,4 +1,3 @@
-export { fetchContractInfo, type ContractInfo } from './abi'
 export { getStorageEntries } from './getStorageEntries'
 export { getStorageEntry } from './getStorageEntry'
 export { removeStorageEntry } from './removeStorageEntry'

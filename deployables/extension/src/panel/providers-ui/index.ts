@@ -1,4 +1,5 @@
 export { ProvideBridgeContext, useWindowId } from './BridgeContext'
+export { MockBrowserProvider } from './MockBrowserProvider'
 export { ProvideProvider } from './ProvideProvider'
 export { useBridgeError } from './useBridgeError'
 export { useDecodeTransactions } from './useDecodeTransactions'

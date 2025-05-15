@@ -1,5 +1,5 @@
 import type { MetaTransactionRequest } from '@zodiac/schema'
-import type { ContractInfo } from '../utils/abi'
+import type { ContractInfo } from './state'
 
 export enum Action {
   Append = 'Append',

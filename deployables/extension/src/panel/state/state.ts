@@ -1,5 +1,14 @@
-import type { MetaTransactionRequest } from '@zodiac/schema'
-import type { ContractInfo } from '../utils'
+import type { Hex, MetaTransactionRequest } from '@zodiac/schema'
+
+type AbiFragment = object
+
+export interface ContractInfo {
+  address: Hex
+  proxyTo?: Hex
+  verified: boolean
+  name?: string
+  abi?: AbiFragment[]
+}
 
 export type UnconfirmedTransaction = MetaTransactionRequest & {
   id: string

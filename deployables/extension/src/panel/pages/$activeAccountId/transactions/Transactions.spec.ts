@@ -19,7 +19,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
-import { encode } from '@zodiac/schema'
+import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import { User } from 'lucide-react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -45,6 +45,7 @@ vi.mock('@/providers-ui', async (importOriginal) => {
   return {
     ...module,
 
+    useDecodeTransactions: vi.fn(),
     useSendTransactions: vi.fn(),
   }
 })
@@ -141,7 +142,7 @@ describe('Transactions', () => {
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/${encode(route)}/${encode([transaction])}`,
+          `http://localhost/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 
@@ -209,7 +210,7 @@ describe('Transactions', () => {
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/account/${account.id}/${encode([transaction])}`,
+          `http://localhost/submit/account/${account.id}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 

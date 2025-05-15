@@ -17,6 +17,7 @@ export { ExecutionStatus } from './executionStatus'
 export { isConfirmedTransaction } from './isConfirmedTransaction'
 export type {
   ConfirmedTransaction,
+  ContractInfo,
   State,
   Transaction,
   UnconfirmedTransaction,

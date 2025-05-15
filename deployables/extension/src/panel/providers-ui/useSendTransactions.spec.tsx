@@ -3,8 +3,7 @@ import {
   createTransaction,
   renderHook,
 } from '@/test-utils'
-import type { BrowserProvider } from 'ethers'
-import { describe, expect, it, vi, type MockedFunction } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { MockProvider } from './MockProvider'
 import { useSendTransactions } from './useSendTransactions'
 
@@ -24,15 +23,9 @@ vi.mock('@/providers', async (importOriginal) => {
 vi.mock('ethers', async (importOriginal) => {
   const module = await importOriginal<typeof import('ethers')>()
 
-  class MockBrowserProvider {
-    getTransactionReceipt: MockedFunction<
-      BrowserProvider['getTransactionReceipt']
-    >
-
-    constructor() {
-      this.getTransactionReceipt = vi.fn().mockResolvedValue({})
-    }
-  }
+  const { MockBrowserProvider } = await vi.importActual<
+    typeof import('./MockBrowserProvider')
+  >('./MockBrowserProvider')
 
   return {
     ...module,

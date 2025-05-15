@@ -1,9 +1,8 @@
 import { invariant } from '@epic-web/invariant'
 import { nanoid } from 'nanoid'
-import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
 import { isConfirmedTransaction } from './isConfirmedTransaction'
-import type { State, Transaction } from './state'
+import type { ContractInfo, State, Transaction } from './state'
 
 export const transactionsReducer = (
   state: State,
@@ -31,6 +30,9 @@ export const transactionsReducer = (
 
         pending: decodeTransaction(state.pending, id, contractInfo),
         done: decodeTransaction(state.done, id, contractInfo),
+        failed: decodeTransaction(state.done, id, contractInfo),
+        confirmed: decodeTransaction(state.done, id, contractInfo),
+        reverted: decodeTransaction(state.done, id, contractInfo),
       }
     }
 
