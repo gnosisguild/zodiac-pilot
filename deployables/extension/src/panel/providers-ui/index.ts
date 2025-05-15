@@ -1,6 +1,7 @@
 export { ProvideBridgeContext, useWindowId } from './BridgeContext'
 export { ProvideProvider } from './ProvideProvider'
 export { useBridgeError } from './useBridgeError'
+export { useDecodeTransactions } from './useDecodeTransactions'
 export { useDeleteFork } from './useDeleteFork'
 export { useGetTransactionLink } from './useGetTransactionLink'
 export { useInterceptTransactions } from './useInterceptTransactions'

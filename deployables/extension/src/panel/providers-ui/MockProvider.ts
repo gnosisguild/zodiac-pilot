@@ -8,8 +8,10 @@ import { vi, type MockedFunction } from 'vitest'
 const instanceRef: RefObject<MockProvider | null> = { current: null }
 
 export class MockProvider extends EventEmitter implements Eip1193Provider {
+  // Default stuff
   request: MockedFunction<Eip1193Provider['request']>
 
+  // ForkProvider specific
   deleteFork: MockedFunction<ForkProvider['deleteFork']>
   sendMetaTransaction: MockedFunction<ForkProvider['sendMetaTransaction']>
 
@@ -22,9 +24,16 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
   constructor() {
     super()
 
-    this.request = vi.fn().mockResolvedValue(null)
-    this.deleteFork = vi.fn().mockResolvedValue(null)
-    this.sendMetaTransaction = vi.fn().mockResolvedValue(null)
+    this.request = vi.fn<ForkProvider['request']>().mockResolvedValue(null)
+
+    this.deleteFork = vi.fn<ForkProvider['deleteFork']>().mockResolvedValue()
+    this.sendMetaTransaction = vi
+      .fn<ForkProvider['sendMetaTransaction']>()
+      .mockResolvedValue({
+        checkpointId: 'test-checkpoint',
+        transactionId: 'test-transaction',
+        hash: 'test-hash',
+      })
 
     instanceRef.current = this
   }

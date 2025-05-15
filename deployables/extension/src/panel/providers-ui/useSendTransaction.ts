@@ -2,7 +2,6 @@ import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import {
   confirmTransaction,
-  decodeTransaction,
   finishTransaction,
   revertTransaction,
   useDispatch,
@@ -12,28 +11,19 @@ import type { HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { failTransaction } from '../state'
-import { fetchContractInfo } from '../utils'
 import { useProvider } from './ProvideProvider'
 import { getModuleAddress } from './getModuleAddress'
 
 export const useSendTransaction = () => {
   const provider = useProvider()
   const dispatch = useDispatch()
-  const { chainId, address } = useAccount()
+  const { address } = useAccount()
   const route = useExecutionRoute()
 
   const moduleAddress = getModuleAddress(route)
 
   return useCallback(
     async (transaction: UnconfirmedTransaction) => {
-      dispatch(
-        decodeTransaction({
-          id: transaction.id,
-          // Now we can take some time decoding the transaction and we update the state once that's done.
-          contractInfo: await fetchContractInfo(transaction.to, chainId),
-        }),
-      )
-
       try {
         const { checkpointId, hash } =
           await provider.sendMetaTransaction(transaction)
@@ -73,7 +63,7 @@ export const useSendTransaction = () => {
         dispatch(failTransaction({ id: transaction.id }))
       }
     },
-    [address, chainId, dispatch, moduleAddress, provider],
+    [address, dispatch, moduleAddress, provider],
   )
 }
 

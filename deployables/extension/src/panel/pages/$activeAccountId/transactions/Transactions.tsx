@@ -2,6 +2,7 @@ import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
+  useDecodeTransactions,
   useDeleteFork,
   useInterceptTransactions,
   useProviderBridge,
@@ -57,6 +58,7 @@ const Transactions = () => {
   useSendTransactions()
   useInterceptTransactions()
   useRollbackTransaction()
+  useDecodeTransactions()
 
   useProviderBridge({
     chainId: account.chainId,

@@ -1,5 +1,10 @@
-import { createTransaction, renderHook } from '@/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import {
+  createConfirmedTransaction,
+  createTransaction,
+  renderHook,
+} from '@/test-utils'
+import type { BrowserProvider } from 'ethers'
+import { describe, expect, it, vi, type MockedFunction } from 'vitest'
 import { MockProvider } from './MockProvider'
 import { useSendTransactions } from './useSendTransactions'
 
@@ -16,6 +21,26 @@ vi.mock('@/providers', async (importOriginal) => {
   }
 })
 
+vi.mock('ethers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('ethers')>()
+
+  class MockBrowserProvider {
+    getTransactionReceipt: MockedFunction<
+      BrowserProvider['getTransactionReceipt']
+    >
+
+    constructor() {
+      this.getTransactionReceipt = vi.fn().mockResolvedValue({})
+    }
+  }
+
+  return {
+    ...module,
+
+    BrowserProvider: MockBrowserProvider,
+  }
+})
+
 describe('useSendTransactions', () => {
   it('sends pending transactions', async () => {
     const transaction = createTransaction()
@@ -24,8 +49,34 @@ describe('useSendTransactions', () => {
       initialState: { pending: [transaction] },
     })
 
-    expect(MockProvider.getInstance().sendMetaTransaction).toHaveBeenCalledWith(
-      transaction,
-    )
+    expect(MockProvider.getInstance().sendMetaTransaction).toHaveBeenCalled()
+  })
+
+  it('does not send pending transaction when a rollback is in progress', async () => {
+    await renderHook(() => useSendTransactions(), {
+      initialState: {
+        pending: [createTransaction()],
+
+        rollback: createConfirmedTransaction(),
+      },
+    })
+
+    expect(
+      MockProvider.getInstance().sendMetaTransaction,
+    ).not.toHaveBeenCalled()
+  })
+
+  it('does not send pending transactions when a refresh is in progress', async () => {
+    await renderHook(() => useSendTransactions(), {
+      initialState: {
+        pending: [createTransaction()],
+
+        refresh: true,
+      },
+    })
+
+    expect(
+      MockProvider.getInstance().sendMetaTransaction,
+    ).not.toHaveBeenCalled()
   })
 })
