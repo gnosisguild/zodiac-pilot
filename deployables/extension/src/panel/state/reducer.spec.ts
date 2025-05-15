@@ -15,7 +15,8 @@ import {
   rollbackTransaction,
   translateTransaction,
 } from './actions'
-import { transactionsReducer, type State } from './reducer'
+import { transactionsReducer } from './reducer'
+import type { State } from './state'
 
 describe('Transactions reducer', () => {
   const createState = (initialState: Partial<State> = {}): State => ({

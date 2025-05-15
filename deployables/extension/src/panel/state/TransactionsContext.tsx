@@ -9,9 +9,12 @@ import {
 import type { TransactionAction } from './actions'
 import { ExecutionStatus } from './executionStatus'
 import { isConfirmedTransaction } from './isConfirmedTransaction'
-import { transactionsReducer, type State, type Transaction } from './reducer'
+import { transactionsReducer } from './reducer'
+import type { State, Transaction } from './state'
 
-const TransactionsContext = createContext<State>({
+const TransactionsContext = createContext<
+  State & { dispatch: Dispatch<TransactionAction> }
+>({
   pending: [],
   confirmed: [],
   done: [],
@@ -20,7 +23,43 @@ const TransactionsContext = createContext<State>({
 
   rollback: null,
   refresh: false,
+
+  dispatch() {
+    throw new Error('must be wrapped in <ProvideTransactions>')
+  },
 })
+
+type ProvideTransactionsProps = PropsWithChildren<{
+  initialState?: State
+}>
+
+export const ProvideTransactions = ({
+  children,
+  initialState = {
+    pending: [],
+    confirmed: [],
+    done: [],
+    reverted: [],
+    failed: [],
+
+    rollback: null,
+    refresh: false,
+  },
+}: ProvideTransactionsProps) => {
+  const [state, dispatch] = useReducer(transactionsReducer, initialState)
+
+  return (
+    <TransactionsContext value={{ ...state, dispatch }}>
+      {children}
+    </TransactionsContext>
+  )
+}
+
+export const useDispatch = () => {
+  const { dispatch } = useContext(TransactionsContext)
+
+  return dispatch
+}
 
 export const useTransactions = () => {
   const state = useContext(TransactionsContext)
@@ -81,48 +120,6 @@ export const useTransactionStatus = (
   }
 
   throw new Error(`Transaction with id "${transaction.id}" could not be found`)
-}
-
-const DispatchContext = createContext<{
-  dispatch: Dispatch<TransactionAction>
-}>({
-  dispatch() {
-    throw new Error('must be wrapped in <ProvideState>')
-  },
-})
-
-export const useDispatch = () => {
-  const { dispatch } = useContext(DispatchContext)
-
-  return dispatch
-}
-
-type ProvideStateProps = PropsWithChildren<{
-  initialState?: State
-}>
-
-export const ProvideState = ({
-  children,
-  initialState = {
-    pending: [],
-    confirmed: [],
-    done: [],
-    reverted: [],
-    failed: [],
-
-    rollback: null,
-    refresh: false,
-  },
-}: ProvideStateProps) => {
-  const [state, dispatch] = useReducer(transactionsReducer, initialState)
-
-  return (
-    <DispatchContext.Provider value={{ dispatch }}>
-      <TransactionsContext.Provider value={state}>
-        {children}
-      </TransactionsContext.Provider>
-    </DispatchContext.Provider>
-  )
 }
 
 export const useRollback = () => {

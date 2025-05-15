@@ -2,24 +2,8 @@ import { invariant } from '@epic-web/invariant'
 import { nanoid } from 'nanoid'
 import type { ContractInfo } from '../utils/abi'
 import { Action, type TransactionAction } from './actions'
-import {
-  isConfirmedTransaction,
-  type ConfirmedTransaction,
-  type Transaction,
-  type UnconfirmedTransaction,
-} from './isConfirmedTransaction'
-
-export type State = {
-  pending: UnconfirmedTransaction[]
-  confirmed: ConfirmedTransaction[]
-  done: ConfirmedTransaction[]
-  failed: ConfirmedTransaction[]
-  reverted: ConfirmedTransaction[]
-
-  rollback: ConfirmedTransaction | null
-
-  refresh: boolean
-}
+import { isConfirmedTransaction } from './isConfirmedTransaction'
+import type { State, Transaction } from './state'
 
 export const transactionsReducer = (
   state: State,

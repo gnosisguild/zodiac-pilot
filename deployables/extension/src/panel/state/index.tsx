@@ -17,11 +17,12 @@ export { ExecutionStatus } from './executionStatus'
 export { isConfirmedTransaction } from './isConfirmedTransaction'
 export type {
   ConfirmedTransaction,
+  State,
   Transaction,
   UnconfirmedTransaction,
-} from './isConfirmedTransaction'
+} from './state'
 export {
-  ProvideState,
+  ProvideTransactions,
   useDispatch,
   usePendingTransactions,
   useRefresh,
@@ -29,5 +30,4 @@ export {
   useTransaction,
   useTransactionStatus,
   useTransactions,
-} from './provideState'
-export type { State } from './reducer'
+} from './TransactionsContext'
