@@ -273,13 +273,12 @@ const rollback = (state: State, id: string): State => {
   const transaction = getTransaction(state.executed, id)
 
   const index = state.executed.indexOf(transaction)
-  const invalidatedTransactions = state.executed.slice(index + 1)
 
   return {
     ...state,
 
     executed: state.executed.slice(0, index),
-    pending: [...state.pending, ...invalidatedTransactions],
+    pending: [...state.pending, ...state.executed.slice(index + 1)],
 
     rollback: transaction,
   }
