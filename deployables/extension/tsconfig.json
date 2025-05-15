@@ -4,6 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
       "@/utils": ["./src/utils/index.ts"],
+      "@/storage": ["./src/panel/storage/index.ts"],
       "@/types": ["./src/types.ts"],
       "@/companion": ["./src/panel/companion/index.ts"],
       "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
