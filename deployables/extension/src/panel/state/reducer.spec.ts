@@ -79,23 +79,6 @@ describe('Transactions reducer', () => {
         transactionsReducer(initialState, clearTransactions()),
       ).toMatchObject({ executed: [] })
     })
-
-    it('is possible to remove all transactions to a given end point', () => {
-      const transactionA = createConfirmedTransaction()
-      const transactionB = createConfirmedTransaction()
-      const transactionC = createConfirmedTransaction()
-
-      const initialState = createState({
-        executed: [transactionA, transactionB, transactionC],
-      })
-
-      expect(
-        transactionsReducer(
-          initialState,
-          clearTransactions({ fromId: transactionB.id }),
-        ),
-      ).toMatchObject({ executed: [transactionA] })
-    })
   })
 
   describe('Failure', () => {

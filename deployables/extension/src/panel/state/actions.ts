@@ -99,14 +99,13 @@ export const removeTransaction = (
 
 interface ClearTransactionsAction {
   type: Action.Clear
-  payload?: {
-    fromId: string
-  }
+  payload: null
 }
 
-export const clearTransactions = (
-  payload?: ClearTransactionsAction['payload'],
-): ClearTransactionsAction => ({ type: Action.Clear, payload })
+export const clearTransactions = (): ClearTransactionsAction => ({
+  type: Action.Clear,
+  payload: null,
+})
 
 type RollbackTransactionType = {
   type: Action.Rollback

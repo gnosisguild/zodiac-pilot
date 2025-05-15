@@ -1,29 +1,19 @@
-import { mockRoutes, render } from '@/test-utils'
-import { waitFor } from '@testing-library/react'
+import { createConfirmedTransaction, mockRoutes, render } from '@/test-utils'
+import { screen } from '@testing-library/react'
 import { expectRouteToBe } from '@zodiac/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-const { mockClearTransactions } = vi.hoisted(() => ({
-  mockClearTransactions: vi.fn(),
-}))
-
-vi.mock('./useClearTransactions', () => ({
-  useClearTransactions: () => mockClearTransactions,
-}))
+import { describe, expect, it } from 'vitest'
 
 describe('Clear transactions', () => {
-  beforeEach(() => {
-    mockClearTransactions.mockResolvedValue(undefined)
-  })
-
   it('clears all transactions', async () => {
     await mockRoutes({ id: 'test-route' }, { id: 'new-route' })
 
-    await render('/test-route/clear-transactions/new-route')
-
-    await waitFor(() => {
-      expect(mockClearTransactions).toHaveBeenCalled()
+    await render('/test-route/clear-transactions/new-route', {
+      initialState: { executed: [createConfirmedTransaction()] },
     })
+
+    expect(
+      await screen.findByRole('alert', { name: 'No transactions' }),
+    ).toBeInTheDocument()
   })
 
   it('redirects to the new active route', async () => {
