@@ -16,10 +16,7 @@ const TransactionsContext = createContext<
   State & { dispatch: Dispatch<TransactionAction> }
 >({
   pending: [],
-  confirmed: [],
-  done: [],
-  failed: [],
-  reverted: [],
+  executed: [],
 
   rollback: null,
   refresh: false,
@@ -37,10 +34,7 @@ export const ProvideTransactions = ({
   children,
   initialState = {
     pending: [],
-    confirmed: [],
-    done: [],
-    reverted: [],
-    failed: [],
+    executed: [],
 
     rollback: null,
     refresh: false,
@@ -64,13 +58,9 @@ export const useDispatch = () => {
 export const useTransactions = () => {
   const state = useContext(TransactionsContext)
 
-  return [
-    ...state.pending,
-    ...state.confirmed,
-    ...state.done,
-    ...state.reverted,
-    ...state.failed,
-  ].toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+  return [...state.pending, ...state.executed].toSorted(
+    (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+  )
 }
 
 export const useTransaction = (transactionId: string) => {
@@ -91,8 +81,7 @@ export const useTransaction = (transactionId: string) => {
 export const useTransactionStatus = (
   transaction: Transaction,
 ): ExecutionStatus => {
-  const { pending, done, failed, reverted, confirmed } =
-    useContext(TransactionsContext)
+  const { pending } = useContext(TransactionsContext)
 
   if (pending.includes(transaction)) {
     return ExecutionStatus.PENDING
@@ -103,23 +92,7 @@ export const useTransactionStatus = (
     'Transaction is not pending but also not confirmed',
   )
 
-  if (confirmed.includes(transaction)) {
-    return ExecutionStatus.CONFIRMED
-  }
-
-  if (done.includes(transaction)) {
-    return ExecutionStatus.SUCCESS
-  }
-
-  if (failed.includes(transaction)) {
-    return ExecutionStatus.FAILED
-  }
-
-  if (reverted.includes(transaction)) {
-    return ExecutionStatus.META_TRANSACTION_REVERTED
-  }
-
-  throw new Error(`Transaction with id "${transaction.id}" could not be found`)
+  return transaction.status
 }
 
 export const useRollback = () => {

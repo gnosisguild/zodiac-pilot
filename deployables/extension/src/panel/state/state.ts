@@ -1,4 +1,5 @@
 import type { Hex, MetaTransactionRequest } from '@zodiac/schema'
+import type { ExecutionStatus } from './executionStatus'
 
 type AbiFragment = object
 
@@ -19,16 +20,14 @@ export type UnconfirmedTransaction = MetaTransactionRequest & {
 export type ConfirmedTransaction = UnconfirmedTransaction & {
   snapshotId: string
   transactionHash: string
+  status: ExecutionStatus
 }
 
 export type Transaction = UnconfirmedTransaction | ConfirmedTransaction
 
 export type State = {
   pending: UnconfirmedTransaction[]
-  confirmed: ConfirmedTransaction[]
-  done: ConfirmedTransaction[]
-  failed: ConfirmedTransaction[]
-  reverted: ConfirmedTransaction[]
+  executed: ConfirmedTransaction[]
 
   rollback: ConfirmedTransaction | null
 

@@ -68,7 +68,7 @@ describe('Transactions', () => {
       await mockRoute({ id: 'test-route' })
 
       await render('/test-route/transactions', {
-        initialState: { done: [createConfirmedTransaction()] },
+        initialState: { executed: [createConfirmedTransaction()] },
       })
 
       expect(
@@ -137,7 +137,7 @@ describe('Transactions', () => {
         mockCompanionAppUrl('http://localhost')
 
         await render('/test-route/transactions', {
-          initialState: { done: [transaction] },
+          initialState: { executed: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
@@ -205,7 +205,7 @@ describe('Transactions', () => {
         mockCompanionAppUrl('http://localhost')
 
         await render(`/${account.id}/transactions`, {
-          initialState: { done: [transaction] },
+          initialState: { executed: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(

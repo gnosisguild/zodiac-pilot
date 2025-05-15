@@ -3,7 +3,7 @@ import { metaTransactionRequestEqual } from '@zodiac/schema'
 import { nanoid } from 'nanoid'
 import type { MetaTransactionRequest } from 'ser-kit'
 import { Action, type TransactionAction } from './actions'
-import { isConfirmedTransaction } from './isConfirmedTransaction'
+import { ExecutionStatus } from './executionStatus'
 import type {
   ContractInfo,
   State,
@@ -22,10 +22,7 @@ export const transactionsReducer = (
       return {
         ...state,
 
-        pending: [
-          ...state.pending,
-          { ...transaction, id: nanoid(), createdAt: new Date() },
-        ],
+        pending: [...state.pending, createTransaction(transaction)],
       }
     }
 
@@ -36,10 +33,7 @@ export const transactionsReducer = (
         ...state,
 
         pending: decodeTransaction(state.pending, id, contractInfo),
-        done: decodeTransaction(state.done, id, contractInfo),
-        failed: decodeTransaction(state.done, id, contractInfo),
-        confirmed: decodeTransaction(state.done, id, contractInfo),
-        reverted: decodeTransaction(state.done, id, contractInfo),
+        executed: decodeTransaction(state.executed, id, contractInfo),
       }
     }
 
@@ -52,9 +46,14 @@ export const transactionsReducer = (
         ...state,
 
         pending: removeTransaction(state.pending, id),
-        confirmed: [
-          ...state.confirmed,
-          { ...transaction, snapshotId, transactionHash },
+        executed: [
+          ...state.executed,
+          {
+            ...transaction,
+            snapshotId,
+            transactionHash,
+            status: ExecutionStatus.CONFIRMED,
+          },
         ],
       }
     }
@@ -66,10 +65,7 @@ export const transactionsReducer = (
         ...state,
 
         pending: removeTransaction(state.pending, id),
-        confirmed: removeTransaction(state.confirmed, id),
-        done: removeTransaction(state.done, id),
-        failed: removeTransaction(state.failed, id),
-        reverted: removeTransaction(state.reverted, id),
+        executed: removeTransaction(state.executed, id),
       }
     }
 
@@ -77,10 +73,7 @@ export const transactionsReducer = (
       if (payload == null) {
         return {
           pending: [],
-          confirmed: [],
-          done: [],
-          failed: [],
-          reverted: [],
+          executed: [],
 
           rollback: null,
           refresh: false,
@@ -88,51 +81,54 @@ export const transactionsReducer = (
       }
 
       const { fromId } = payload
-      const index = state.done.findIndex((item) => item.id === fromId)
+      const index = state.executed.findIndex((item) => item.id === fromId)
 
       if (index === -1) {
         return state
       }
 
-      return { ...state, done: state.done.slice(0, index) }
+      return { ...state, executed: state.executed.slice(0, index) }
     }
 
     case Action.Fail: {
       const { id } = payload
 
-      const transaction = getTransaction(state.confirmed, id)
-
       return {
         ...state,
 
-        confirmed: removeTransaction(state.confirmed, id),
-        failed: [...state.failed, transaction],
+        executed: updateTransactionStatus(
+          state.executed,
+          id,
+          ExecutionStatus.FAILED,
+        ),
       }
     }
 
     case Action.Finish: {
       const { id } = payload
 
-      const transaction = getTransaction(state.confirmed, id)
-
       return {
         ...state,
 
-        confirmed: removeTransaction(state.confirmed, id),
-        done: [...state.done, transaction],
+        executed: updateTransactionStatus(
+          state.executed,
+          id,
+          ExecutionStatus.SUCCESS,
+        ),
       }
     }
 
     case Action.Revert: {
       const { id } = payload
 
-      const transaction = getTransaction(state.confirmed, id)
-
       return {
         ...state,
 
-        confirmed: removeTransaction(state.confirmed, id),
-        reverted: [...state.reverted, transaction],
+        executed: updateTransactionStatus(
+          state.executed,
+          id,
+          ExecutionStatus.META_TRANSACTION_REVERTED,
+        ),
       }
     }
 
@@ -173,13 +169,13 @@ export const transactionsReducer = (
     case Action.GlobalTranslate: {
       const { translations } = payload
 
-      const firstDifferenceIndex = state.done.findIndex(
+      const firstDifferenceIndex = state.executed.findIndex(
         (tx, index) => !metaTransactionRequestEqual(tx, translations[index]),
       )
 
       if (
         firstDifferenceIndex === -1 &&
-        translations.length === state.done.length
+        translations.length === state.executed.length
       ) {
         console.warn(
           'Global translations returned the original set of transactions. It should return undefined in that case.',
@@ -191,7 +187,7 @@ export const transactionsReducer = (
       if (firstDifferenceIndex !== -1) {
         const updatedState = rollback(
           state,
-          state.done[firstDifferenceIndex].id,
+          state.executed[firstDifferenceIndex].id,
         )
 
         return {
@@ -209,7 +205,7 @@ export const transactionsReducer = (
 
         pending: [
           ...state.pending,
-          ...translations.slice(state.done.length).map(createTransaction),
+          ...translations.slice(state.executed.length).map(createTransaction),
         ],
       }
     }
@@ -218,17 +214,8 @@ export const transactionsReducer = (
       return {
         ...state,
 
-        pending: [
-          ...state.done,
-          ...state.reverted,
-          ...state.failed,
-          ...state.confirmed,
-        ].toSorted((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
-
-        done: [],
-        reverted: [],
-        failed: [],
-        confirmed: [],
+        pending: state.executed,
+        executed: [],
 
         refresh: true,
       }
@@ -282,31 +269,31 @@ const findTransaction = <T extends Transaction>(
   return transaction
 }
 
-const rollback = (
-  state: State,
-  id: string,
-  key: keyof Omit<State, 'rollback' | 'refresh'> = 'done',
-): State => {
-  const transaction = findTransaction(state[key], id)
+const rollback = (state: State, id: string): State => {
+  const transaction = getTransaction(state.executed, id)
 
-  if (transaction == null) {
-    return rollback(state, id, 'failed')
-  }
-
-  invariant(
-    isConfirmedTransaction(transaction),
-    'Can only roll back transaction that have been confirmed before',
-  )
-
-  const index = state[key].findIndex(({ id }) => transaction.id === id)
-  const invalidatedTransactions = state[key].slice(index + 1)
+  const index = state.executed.indexOf(transaction)
+  const invalidatedTransactions = state.executed.slice(index + 1)
 
   return {
     ...state,
 
-    [key]: state[key].slice(0, index),
+    executed: state.executed.slice(0, index),
     pending: [...state.pending, ...invalidatedTransactions],
 
     rollback: transaction,
   }
 }
+
+const updateTransactionStatus = <T extends Transaction>(
+  transactions: T[],
+  id: string,
+  status: ExecutionStatus,
+): T[] =>
+  transactions.map((transaction) => {
+    if (transaction.id === id) {
+      return { ...transaction, status }
+    }
+
+    return transaction
+  })

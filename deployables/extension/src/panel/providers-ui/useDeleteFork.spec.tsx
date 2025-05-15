@@ -25,7 +25,7 @@ describe('useDeleteFork', () => {
   it('does not delete the fork, when there are transactions', async () => {
     await renderHook(() => useDeleteFork(), {
       initialState: {
-        done: [createConfirmedTransaction()],
+        executed: [createConfirmedTransaction()],
       },
     })
 
@@ -34,7 +34,7 @@ describe('useDeleteFork', () => {
 
   it('deletes the fork when transactions exist and a refresh has been requested', async () => {
     await renderHook(() => useDeleteFork(), {
-      initialState: { done: [createConfirmedTransaction()], refresh: true },
+      initialState: { executed: [createConfirmedTransaction()], refresh: true },
     })
 
     expect(MockProvider.getInstance().deleteFork).toHaveBeenCalled()
