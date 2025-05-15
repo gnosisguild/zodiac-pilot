@@ -15,6 +15,7 @@ export enum Action {
   Translate = 'Translate',
   Refresh = 'Refresh',
   CommitRefresh = 'CommitRefresh',
+  GlobalTranslate = 'GlobalTranslate',
 }
 
 interface AppendTransactionAction {
@@ -164,6 +165,18 @@ export const commitRefreshTransactions = (): CommitRefreshAction => ({
   payload: null,
 })
 
+type GlobalTranslateTransactionsAction = {
+  type: Action.GlobalTranslate
+  payload: { translations: MetaTransactionRequest[] }
+}
+
+export const globalTranslateTransactions = (
+  payload: GlobalTranslateTransactionsAction['payload'],
+): GlobalTranslateTransactionsAction => ({
+  type: Action.GlobalTranslate,
+  payload,
+})
+
 export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
@@ -178,3 +191,4 @@ export type TransactionAction =
   | TranslateTransactionAction
   | RefreshTransactionsAction
   | CommitRefreshAction
+  | GlobalTranslateTransactionsAction

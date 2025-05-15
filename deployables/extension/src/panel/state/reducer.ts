@@ -1,8 +1,15 @@
 import { invariant } from '@epic-web/invariant'
+import { metaTransactionRequestEqual } from '@zodiac/schema'
 import { nanoid } from 'nanoid'
+import type { MetaTransactionRequest } from 'ser-kit'
 import { Action, type TransactionAction } from './actions'
 import { isConfirmedTransaction } from './isConfirmedTransaction'
-import type { ContractInfo, State, Transaction } from './state'
+import type {
+  ContractInfo,
+  State,
+  Transaction,
+  UnconfirmedTransaction,
+} from './state'
 
 export const transactionsReducer = (
   state: State,
@@ -157,17 +164,54 @@ export const transactionsReducer = (
       return rollback(
         {
           ...state,
-          pending: [
-            ...state.pending,
-            ...translations.map((translation) => ({
-              ...translation,
-              id: nanoid(),
-              createdAt: new Date(),
-            })),
-          ],
+          pending: [...state.pending, ...translations.map(createTransaction)],
         },
         id,
       )
+    }
+
+    case Action.GlobalTranslate: {
+      const { translations } = payload
+
+      const firstDifferenceIndex = state.done.findIndex(
+        (tx, index) => !metaTransactionRequestEqual(tx, translations[index]),
+      )
+
+      if (
+        firstDifferenceIndex === -1 &&
+        translations.length === state.done.length
+      ) {
+        console.warn(
+          'Global translations returned the original set of transactions. It should return undefined in that case.',
+        )
+
+        return state
+      }
+
+      if (firstDifferenceIndex !== -1) {
+        const updatedState = rollback(
+          state,
+          state.done[firstDifferenceIndex].id,
+        )
+
+        return {
+          ...updatedState,
+
+          pending: [
+            ...state.pending,
+            ...translations.slice(firstDifferenceIndex).map(createTransaction),
+          ],
+        }
+      }
+
+      return {
+        ...state,
+
+        pending: [
+          ...state.pending,
+          ...translations.slice(state.done.length).map(createTransaction),
+        ],
+      }
     }
 
     case Action.Refresh: {
@@ -195,6 +239,14 @@ export const transactionsReducer = (
     }
   }
 }
+
+const createTransaction = (
+  transaction: MetaTransactionRequest,
+): UnconfirmedTransaction => ({
+  ...transaction,
+  id: nanoid(),
+  createdAt: new Date(),
+})
 
 const decodeTransaction = <T extends Transaction>(
   transactions: T[],

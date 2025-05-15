@@ -7,6 +7,7 @@ export {
   decodeTransaction,
   failTransaction,
   finishTransaction,
+  globalTranslateTransactions,
   refreshTransactions,
   removeTransaction,
   revertTransaction,

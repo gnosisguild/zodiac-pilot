@@ -1,13 +1,11 @@
 import { useAccount } from '@/accounts'
-import { useRevertToSnapshot } from '@/providers-ui'
 import {
-  clearTransactions,
-  isConfirmedTransaction,
+  globalTranslateTransactions,
   type Transaction,
   useDispatch,
   useTransactions,
 } from '@/state'
-import { type Hex, metaTransactionRequestEqual } from '@zodiac/schema'
+import { type Hex } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
 import { type ChainId } from 'ser-kit'
 import {
@@ -18,52 +16,16 @@ import { translations } from './translations'
 
 export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
-  const revertToSnapshot = useRevertToSnapshot()
-
   const dispatch = useDispatch()
   const account = useAccount()
 
   const apply = useCallback(
-    async (translation: ApplicableTranslation) => {
-      const newTransactions = translation.result
-      const firstDifferenceIndex = transactions.findIndex(
-        (tx, index) => !metaTransactionRequestEqual(tx, newTransactions[index]),
-      )
+    (translation: ApplicableTranslation) =>
+      dispatch(
+        globalTranslateTransactions({ translations: translation.result }),
+      ),
 
-      if (
-        firstDifferenceIndex === -1 &&
-        newTransactions.length === transactions.length
-      ) {
-        console.warn(
-          'Global translations returned the original set of transactions. It should return undefined in that case.',
-        )
-        return
-      }
-
-      if (firstDifferenceIndex !== -1) {
-        // remove all transactions from the store starting at the first difference
-        dispatch(
-          clearTransactions({ fromId: transactions[firstDifferenceIndex].id }),
-        )
-
-        const transaction = transactions[firstDifferenceIndex]
-
-        if (isConfirmedTransaction(transaction)) {
-          await revertToSnapshot(transaction)
-        }
-      }
-
-      // re-simulate all transactions starting at the first difference
-      const replayTransaction =
-        firstDifferenceIndex === -1
-          ? newTransactions.slice(transactions.length)
-          : newTransactions.slice(firstDifferenceIndex)
-      for (const tx of replayTransaction) {
-        // TODO: handle this case!!!
-        // sendTransaction(tx)
-      }
-    },
-    [dispatch, revertToSnapshot, transactions],
+    [dispatch],
   )
 
   useEffect(() => {
