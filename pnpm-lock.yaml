@@ -86,8 +86,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@icons-pack/react-simple-icons':
-        specifier: 12.7.0
-        version: 12.7.0(react@19.1.0)
+        specifier: 12.8.0
+        version: 12.8.0(react@19.1.0)
       '@radix-ui/themes':
         specifier: 3.2.1
         version: 3.2.1(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -481,8 +481,8 @@ importers:
         specifier: 2.2.3
         version: 2.2.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@icons-pack/react-simple-icons':
-        specifier: 12.7.0
-        version: 12.7.0(react@19.1.0)
+        specifier: 12.8.0
+        version: 12.8.0(react@19.1.0)
       '@react-router/serve':
         specifier: 7.6.0
         version: 7.6.0(react-router@7.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
@@ -616,7 +616,7 @@ importers:
         version: 9.26.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.7.0
-        version: 3.7.0(typescript@5.8.3)
+        version: 3.7.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
 
   packages/db:
     dependencies:
@@ -2302,8 +2302,8 @@ packages:
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
 
-  '@icons-pack/react-simple-icons@12.7.0':
-    resolution: {integrity: sha512-XpG7e8buAco8AbvCar+4LX5do0L98d/NaeHoTuW4awyUH33id7HQiiMomK+cS1MRxfLNMmhW2W0223/fMC0unw==}
+  '@icons-pack/react-simple-icons@12.8.0':
+    resolution: {integrity: sha512-Xj6tBadpPYVaoDaXqKpSJc5AXtcXSBk+se+GsceRouYin9XvKv2at0fO5GSr1dNDc3WfZSVc1Gs7KGwUY8PfHA==}
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
@@ -10777,7 +10777,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@icons-pack/react-simple-icons@12.7.0(react@19.1.0)':
+  '@icons-pack/react-simple-icons@12.8.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -12673,19 +12673,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@2.5.11(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      node-fetch: 2.7.0
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@safe-global/api-kit@3.0.1(typescript@5.8.3)(zod@3.24.4)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.4(typescript@5.8.3)(zod@3.24.4)
@@ -12724,23 +12711,6 @@ snapshots:
       abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
       semver: 7.7.1
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    optionalDependencies:
-      '@noble/curves': 1.8.2
-      '@peculiar/asn1-schema': 2.3.15
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@5.2.4(typescript@5.8.3)':
-    dependencies:
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/safe-modules-deployments': 2.2.7
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      semver: 7.7.1
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     optionalDependencies:
       '@noble/curves': 1.8.2
       '@peculiar/asn1-schema': 2.3.15
@@ -18442,21 +18412,6 @@ snapshots:
       '@safe-global/safe-deployments': 1.37.32
       '@safe-global/types-kit': 1.0.4(typescript@5.8.3)(zod@3.24.4)
       viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  ser-kit@3.7.0(typescript@5.8.3):
-    dependencies:
-      '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 2.5.11(typescript@5.8.3)
-      '@safe-global/protocol-kit': 5.2.4(typescript@5.8.3)
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/types-kit': 1.0.4(typescript@5.8.3)
-      viem: 2.29.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
