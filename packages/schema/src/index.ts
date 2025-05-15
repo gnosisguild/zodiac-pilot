@@ -9,6 +9,7 @@ export { jsonStringify } from './jsonStringify'
 export {
   metaTransactionRequestEqual,
   metaTransactionRequestSchema,
+  toMetaTransactionRequest,
 } from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
 export {

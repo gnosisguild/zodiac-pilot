@@ -4,7 +4,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/providers-ui'
 import { clearTransactions, useDispatch, useTransactions } from '@/state'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
-import { encode } from '@zodiac/schema'
+import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import {
   Form,
   Modal,
@@ -44,8 +44,8 @@ export const Submit = () => {
           openInNewWindow
           to={
             account.remote
-              ? `${companionAppUrl}/submit/account/${account.id}/${encode(transactions)}`
-              : `${companionAppUrl}/submit/${encode(route)}/${encode(transactions)}`
+              ? `${companionAppUrl}/submit/account/${account.id}/${encode(transactions.map(toMetaTransactionRequest))}`
+              : `${companionAppUrl}/submit/${encode(route)}/${encode(transactions.map(toMetaTransactionRequest))}`
           }
           disabled={transactions.length === 0}
           onClick={() => setSubmitPending(true)}
