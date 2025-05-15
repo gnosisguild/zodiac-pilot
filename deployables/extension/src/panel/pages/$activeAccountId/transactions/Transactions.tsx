@@ -18,6 +18,7 @@ import {
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
+import { toMetaTransactionRequest } from '@zodiac/schema'
 import { CopyToClipboard, GhostButton, Info, Page } from '@zodiac/ui'
 import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
@@ -81,7 +82,7 @@ const Transactions = () => {
               iconOnly
               disabled={transactions.length === 0}
               size="small"
-              data={transactions}
+              data={transactions.map(toMetaTransactionRequest)}
             >
               Copy batch transaction data to clipboard
             </CopyToClipboard>
@@ -100,9 +101,9 @@ const Transactions = () => {
           </div>
         </div>
 
-        {transactions.map((transactionState) => (
-          <div id={`t-${transactionState.id}`} key={transactionState.id}>
-            <Transaction transactionId={transactionState.id} />
+        {transactions.map((transaction) => (
+          <div id={`t-${transaction.id}`} key={transaction.id}>
+            <Transaction transactionId={transaction.id} />
           </div>
         ))}
 
@@ -119,7 +120,7 @@ const Transactions = () => {
       <Page.Footer>
         {(route == null || route.initiator == null) && pilotIsReady && (
           <CopyToClipboard
-            data={transactions}
+            data={transactions.map(toMetaTransactionRequest)}
             disabled={transactions.length === 0}
           >
             Copy transaction data

@@ -3,6 +3,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { useTransaction } from '@/state'
 import type { ExecutionRoute } from '@/types'
 import { CHAIN_CURRENCY } from '@zodiac/chains'
+import { toMetaTransactionRequest } from '@zodiac/schema'
 import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
 import { useState, type PropsWithChildren } from 'react'
@@ -49,7 +50,11 @@ export const Transaction = ({ transactionId }: Props) => {
 
           <div className="flex">
             <Translate mini transactionId={transactionId} />
-            <CopyToClipboard iconOnly size="small" data={transaction}>
+            <CopyToClipboard
+              iconOnly
+              size="small"
+              data={toMetaTransactionRequest(transaction)}
+            >
               Copy transaction data to clipboard
             </CopyToClipboard>
             <Remove transactionId={transactionId} />
