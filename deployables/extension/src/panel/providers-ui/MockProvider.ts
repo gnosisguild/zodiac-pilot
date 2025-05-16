@@ -32,7 +32,6 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
       .fn<ForkProvider['sendMetaTransaction']>()
       .mockResolvedValue({
         checkpointId: 'test-checkpoint',
-        transactionId: 'test-transaction',
         hash: 'test-hash',
       })
     this.getTransactionLink = vi

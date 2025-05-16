@@ -18,7 +18,6 @@ import {
 import { metaTransactionRequestEqual } from '@zodiac/schema'
 import { BrowserProvider, toBigInt, toQuantity } from 'ethers'
 import EventEmitter from 'events'
-import { nanoid } from 'nanoid'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 import { TenderlyProvider } from './TenderlyProvider'
 import { translateSignSnapshotVote } from './translateSignSnapshotVote'
@@ -28,7 +27,6 @@ class UnsupportedMethodError extends Error {
 }
 
 type TransactionResult = {
-  transactionId: string
   checkpointId: string
   hash: string
 }
@@ -207,15 +205,13 @@ export class ForkProvider extends EventEmitter {
   ): Promise<TransactionResult> {
     // If this function is called concurrently we need to serialize the requests so we can take a snapshot in between each call
 
-    const id = nanoid()
-
     // If there's a pending request, wait for it to finish before sending the next one
     const send = this.pendingMetaTransaction
       ? async () => {
           await this.pendingMetaTransaction
-          return await this.sendMetaTransactionInSeries(metaTx, id)
+          return await this.sendMetaTransactionInSeries(metaTx)
         }
-      : async () => await this.sendMetaTransactionInSeries(metaTx, id)
+      : async () => await this.sendMetaTransactionInSeries(metaTx)
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
     this.pendingMetaTransaction = send()
@@ -225,7 +221,6 @@ export class ForkProvider extends EventEmitter {
 
   private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionRequest,
-    id: string,
   ): Promise<TransactionResult> {
     if (!this.isInitialized) {
       // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
@@ -289,7 +284,7 @@ export class ForkProvider extends EventEmitter {
       params: [tx],
     })
 
-    return { transactionId: id, checkpointId, hash }
+    return { checkpointId, hash }
   }
 
   async initFork(): Promise<void> {
