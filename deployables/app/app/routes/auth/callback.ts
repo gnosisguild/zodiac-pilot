@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry-client'
 import { getOrganizationsForUser, updateExternalUserId } from '@/workOS/server'
 import { invariant } from '@epic-web/invariant'
 import { authLoader, signOut } from '@workos-inc/authkit-react-router'
@@ -30,7 +31,11 @@ export const loader = ({ request, ...options }: Route.LoaderArgs) => {
               return addUserToTenant(db, tenant, user)
             }),
           )
-        } catch {
+        } catch (error) {
+          sentry.captureException(error)
+
+          console.error(error)
+
           throw await signOut(request)
         }
       })

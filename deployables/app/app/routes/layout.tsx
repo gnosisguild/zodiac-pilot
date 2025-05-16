@@ -7,6 +7,7 @@ import {
   ProvidePilotStatus,
 } from '@/components'
 import { ProvideChains } from '@/routes-ui'
+import { sentry } from '@/sentry-client'
 import { getOrganization } from '@/workOS/server'
 import {
   authkitLoader,
@@ -14,6 +15,7 @@ import {
   signOut,
 } from '@workos-inc/authkit-react-router'
 import { dbClient, getFeatures, getTenant } from '@zodiac/db'
+import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
   Feature,
@@ -33,6 +35,7 @@ import {
   Landmark,
   List,
   Plus,
+  Shield,
   ShieldUser,
   Signature,
   User,
@@ -52,6 +55,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         chains,
         features: routeFeatures,
         signInUrl: await getSignInUrl(),
+        isSystemAdmin: false,
       }
     }
 
@@ -68,14 +72,19 @@ export const loader = async (args: Route.LoaderArgs) =>
         chains,
         features: [...features.map(({ name }) => name), ...routeFeatures],
         signInUrl: await getSignInUrl(),
+        isSystemAdmin: getAdminOrganizationId() === organization.id,
       }
-    } catch {
+    } catch (error) {
+      sentry.captureException(error)
+
+      console.error(error)
+
       throw await signOut(request)
     }
   })
 
 const PageLayout = ({
-  loaderData: { chains, user, features, signInUrl, role },
+  loaderData: { chains, user, features, signInUrl, role, isSystemAdmin },
 }: Route.ComponentProps) => {
   return (
     <FakeBrowser>
@@ -161,6 +170,17 @@ const PageLayout = ({
                             </Navigation.Section>
                           )}
                         </Feature>
+
+                        {isSystemAdmin && (
+                          <Navigation.Section title="System">
+                            <Navigation.Link
+                              to={href('/system-admin')}
+                              icon={Shield}
+                            >
+                              System admin
+                            </Navigation.Link>
+                          </Navigation.Section>
+                        )}
                       </Navigation>
                     </SidebarBody>
 
