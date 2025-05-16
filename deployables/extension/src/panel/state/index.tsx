@@ -9,7 +9,6 @@ export {
   finishTransaction,
   globalTranslateTransactions,
   refreshTransactions,
-  removeTransaction,
   revertTransaction,
   rollbackTransaction,
   translateTransaction,

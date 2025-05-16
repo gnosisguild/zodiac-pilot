@@ -5,7 +5,6 @@ export enum Action {
   Append = 'Append',
   Decode = 'Decode',
   Confirm = 'Confirm',
-  Remove = 'Remove',
   Clear = 'Clear',
   Fail = 'Fail',
   Finish = 'Finish',
@@ -85,17 +84,6 @@ type RevertTransactionAction = {
 export const revertTransaction = (
   payload: RevertTransactionAction['payload'],
 ): RevertTransactionAction => ({ type: Action.Revert, payload })
-
-interface RemoveTransactionAction {
-  type: Action.Remove
-  payload: {
-    id: string
-  }
-}
-
-export const removeTransaction = (
-  payload: RemoveTransactionAction['payload'],
-): RemoveTransactionAction => ({ type: Action.Remove, payload })
 
 interface ClearTransactionsAction {
   type: Action.Clear
@@ -180,7 +168,6 @@ export type TransactionAction =
   | AppendTransactionAction
   | DecodeTransactionAction
   | ConfirmTransactionAction
-  | RemoveTransactionAction
   | ClearTransactionsAction
   | FailTransactionAction
   | FinishTransactionAction

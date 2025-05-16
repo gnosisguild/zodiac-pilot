@@ -58,17 +58,6 @@ export const transactionsReducer = (
       }
     }
 
-    case Action.Remove: {
-      const { id } = payload
-
-      return {
-        ...state,
-
-        pending: removeTransaction(state.pending, id),
-        executed: removeTransaction(state.executed, id),
-      }
-    }
-
     case Action.Clear: {
       return {
         pending: [],
