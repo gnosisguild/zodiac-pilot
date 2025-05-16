@@ -128,7 +128,7 @@ export class ForkProvider extends EventEmitter {
         const data = JSON.parse(dataString)
 
         const dataHash = typedDataHash(data)
-        const safeMessageHash = await safeInterface.encodeFunctionData(
+        const safeMessageHash = safeInterface.encodeFunctionData(
           'getMessageHashForSafe',
           [this.avatarAddress, dataHash],
         )
