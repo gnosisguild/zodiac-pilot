@@ -92,6 +92,7 @@ const CombinedTestElement = () => (
 )
 
 type ResolveFn = () => void
+type RejectFn = (error: unknown) => void
 
 export async function createRenderFramework<Config extends RouteConfig>(
   basePath: URL,
@@ -111,11 +112,11 @@ export async function createRenderFramework<Config extends RouteConfig>(
       return resolve
     },
     startAction: () => {
-      const { resolve, promise } = Promise.withResolvers<void>()
+      const { resolve, reject, promise } = Promise.withResolvers<void>()
 
       pendingActions.push(promise)
 
-      return resolve
+      return { resolve, reject }
     },
   })
 
@@ -169,7 +170,7 @@ export async function createRenderFramework<Config extends RouteConfig>(
 type StubRoute = Parameters<typeof createRoutesStub>[0]
 
 type StubRoutesOptions = {
-  startAction: () => ResolveFn
+  startAction: () => { resolve: ResolveFn; reject: RejectFn }
   startLoader: () => ResolveFn
 }
 
@@ -226,7 +227,9 @@ function stubRoutes(
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
         async action(actionArgs: ActionFunctionArgs) {
-          const finishAction = startAction()
+          const { resolve, reject } = startAction()
+
+          let hasErrored = false
 
           try {
             if (clientAction != null) {
@@ -241,8 +244,16 @@ function stubRoutes(
             }
 
             return null
+          } catch (error) {
+            hasErrored = true
+
+            reject(error)
+
+            throw error
           } finally {
-            finishAction()
+            if (!hasErrored) {
+              resolve()
+            }
           }
         },
         Component:

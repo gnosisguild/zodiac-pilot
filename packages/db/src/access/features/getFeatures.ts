@@ -1,15 +1,8 @@
-import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
-export const getFeatures = async (db: DBClient, tenantId: UUID) => {
-  const activeFeatures = await db.query.activeFeature.findMany({
-    where(fields, { eq }) {
-      return eq(fields.tenantId, tenantId)
-    },
-    with: {
-      feature: true,
+export const getFeatures = (db: DBClient) =>
+  db.query.feature.findMany({
+    orderBy(fields, { asc }) {
+      return asc(fields.name)
     },
   })
-
-  return activeFeatures.map(({ feature }) => feature)
-}

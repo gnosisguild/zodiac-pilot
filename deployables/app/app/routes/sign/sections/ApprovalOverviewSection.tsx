@@ -32,11 +32,12 @@ export function ApprovalOverviewSection({
               <TokenApprovalTable approvals={approvals} revokeAll={revokeAll} />
 
               <Checkbox
-                label="Revoke all approvals"
                 name="revokeApprovals"
                 checked={revokeAll}
                 onChange={(e) => setRevokeAll(e.target.checked)}
-              />
+              >
+                Revoke all approvals
+              </Checkbox>
             </>
           ) : (
             <Success title="No recorded approvals" />

@@ -14,7 +14,7 @@ import {
   getSignInUrl,
   signOut,
 } from '@workos-inc/authkit-react-router'
-import { dbClient, getFeatures, getTenant } from '@zodiac/db'
+import { dbClient, getActiveFeatures, getTenant } from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
@@ -66,7 +66,7 @@ export const loader = async (args: Route.LoaderArgs) =>
     try {
       const tenant = await getTenant(db, organization.externalId)
 
-      const features = await getFeatures(db, tenant.id)
+      const features = await getActiveFeatures(db, tenant.id)
 
       return {
         chains,
