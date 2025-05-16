@@ -6,7 +6,7 @@ export const action = (args: Route.ActionArgs) =>
   authorizedAction(
     args,
     () => {
-      return { currentPlan: 'open' }
+      return { currentPlan: 'none' }
     },
     {
       hasAccess({ request }) {
