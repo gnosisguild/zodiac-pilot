@@ -14,6 +14,7 @@ import {
   signOut,
 } from '@workos-inc/authkit-react-router'
 import { dbClient, getFeatures, getTenant } from '@zodiac/db'
+import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
   Feature,
@@ -33,6 +34,7 @@ import {
   Landmark,
   List,
   Plus,
+  Shield,
   ShieldUser,
   Signature,
   User,
@@ -52,6 +54,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         chains,
         features: routeFeatures,
         signInUrl: await getSignInUrl(),
+        isSystemAdmin: false,
       }
     }
 
@@ -68,6 +71,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         chains,
         features: [...features.map(({ name }) => name), ...routeFeatures],
         signInUrl: await getSignInUrl(),
+        isSystemAdmin: getAdminOrganizationId() === organization.id,
       }
     } catch {
       throw await signOut(request)
@@ -75,7 +79,7 @@ export const loader = async (args: Route.LoaderArgs) =>
   })
 
 const PageLayout = ({
-  loaderData: { chains, user, features, signInUrl, role },
+  loaderData: { chains, user, features, signInUrl, role, isSystemAdmin },
 }: Route.ComponentProps) => {
   return (
     <FakeBrowser>
@@ -161,6 +165,17 @@ const PageLayout = ({
                             </Navigation.Section>
                           )}
                         </Feature>
+
+                        {isSystemAdmin && (
+                          <Navigation.Section title="System">
+                            <Navigation.Link
+                              to={href('/system-admin')}
+                              icon={Shield}
+                            >
+                              System admin
+                            </Navigation.Link>
+                          </Navigation.Section>
+                        )}
                       </Navigation>
                     </SidebarBody>
 

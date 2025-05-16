@@ -77,6 +77,14 @@ export default [
     ]),
   ]),
 
+  layout('routes/system-admin/layout.tsx', [
+    ...prefix('/system-admin', [
+      index('routes/system-admin/_index.ts'),
+
+      route('tenants', 'routes/system-admin/tenants.tsx'),
+    ]),
+  ]),
+
   ...prefix('/:address/:chainId', [
     route('available-safes', 'routes/$address.$chainId/available-safes.ts'),
     route('initiators', 'routes/$address.$chainId/initiators.ts'),

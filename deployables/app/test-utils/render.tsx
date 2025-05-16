@@ -27,6 +27,7 @@ import { data } from 'react-router'
 import type { Entries } from 'type-fest'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
+import { createMockWorkOsOrganization } from './createMockWorkOsOrganization'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
 
@@ -89,11 +90,18 @@ type SignedInOptions = CommonOptions & {
    * Activates the given set of feautres for a tenant.
    */
   features?: string[]
+
+  /**
+   * Stub for the work OS organization that should
+   * belong to the tenant
+   */
+  workOsOrganization?: Partial<Organization>
 }
 
 type SignedOutOptions = CommonOptions & {
   tenant?: null
   user?: null
+  workOsOrganization?: null
 }
 
 type Options = SignedInOptions | SignedOutOptions
@@ -143,7 +151,11 @@ export const render = async (
 ) => {
   versionRef.current = version
 
-  const workOsUser = mockWorkOs(options.tenant, options.user)
+  const workOsUser = mockWorkOs(
+    options.tenant,
+    options.user,
+    options.workOsOrganization,
+  )
 
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
     const auth = createAuth(workOsUser)
@@ -245,22 +257,22 @@ const createAuth = (user?: AuthorizedData['user'] | null) => {
   } satisfies AuthorizedData
 }
 
-const mockWorkOs = (tenant?: Tenant | null, user?: User | null) => {
+const mockWorkOs = (
+  tenant?: Tenant | null,
+  user?: User | null,
+  workOsOrganization?: Partial<Organization> | null,
+) => {
   if (user == null || tenant == null) {
     return null
   }
 
-  const mockOrganization = {
-    allowProfilesOutsideOrganization: false,
+  const mockOrganization = createMockWorkOsOrganization({
     createdAt: user.createdAt.toISOString(),
-    domains: [],
-    id: randomUUID(),
-    metadata: {},
-    name: 'Test Org',
-    object: 'organization',
     updatedAt: user.createdAt.toISOString(),
     externalId: tenant.id,
-  } satisfies Organization
+
+    ...workOsOrganization,
+  })
 
   mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
   mockGetOrganization.mockResolvedValue(mockOrganization)

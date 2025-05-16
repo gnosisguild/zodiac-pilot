@@ -1,3 +1,4 @@
+export { getAdminOrganizationId } from './getAdminOrganizationId.ts'
 export { getCompanionAppUrl } from './getCompanionAppUrl.ts'
 export { getDBConnectionString } from './getDBConnectionString.ts'
 export { getDeBankApiKey } from './getDeBankApiKey.ts'
