@@ -177,11 +177,15 @@ export class ForkProvider extends EventEmitter {
   waitForTransaction(transaction: MetaTransactionRequest) {
     const { promise, resolve } = Promise.withResolvers<string>()
 
-    this.on('transactionEnd', (tx: MetaTransactionRequest, hash: string) => {
+    const handleTransactionEnd = (tx: MetaTransactionRequest, hash: string) => {
       if (metaTransactionRequestEqual(tx, transaction)) {
+        this.off('transactionEnd', handleTransactionEnd)
+
         resolve(hash)
       }
-    })
+    }
+
+    this.on('transactionEnd', handleTransactionEnd)
 
     this.emit('transaction', transaction)
 
