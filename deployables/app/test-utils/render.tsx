@@ -8,6 +8,7 @@ import type {
 import type { Organization } from '@workos-inc/node'
 import { activateFeature, createFeature, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
+import { getAdminOrganizationId } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -33,6 +34,7 @@ import { postMessage } from './postMessage'
 
 const mockGetOrganizationsForUser = vi.mocked(getOrganizationsForUser)
 const mockGetOrganization = vi.mocked(getOrganization)
+const mockGetAdminOrgId = vi.mocked(getAdminOrganizationId)
 
 const baseRender = await createRenderFramework(
   new URL('../app', import.meta.url),
@@ -96,12 +98,16 @@ type SignedInOptions = CommonOptions & {
    * belong to the tenant
    */
   workOsOrganization?: Partial<Organization>
+
+  /** Setup org in a way that user is considered a system admin */
+  isSystemAdmin?: boolean
 }
 
 type SignedOutOptions = CommonOptions & {
   tenant?: null
   user?: null
   workOsOrganization?: null
+  isSystemAdmin?: false
 }
 
 type Options = SignedInOptions | SignedOutOptions
@@ -151,11 +157,7 @@ export const render = async (
 ) => {
   versionRef.current = version
 
-  const workOsUser = mockWorkOs(
-    options.tenant,
-    options.user,
-    options.workOsOrganization,
-  )
+  const workOsUser = mockWorkOs(options)
 
   mockAuthKitLoader.mockImplementation(async (loaderArgs, loaderOrOptions) => {
     const auth = createAuth(workOsUser)
@@ -257,11 +259,19 @@ const createAuth = (user?: AuthorizedData['user'] | null) => {
   } satisfies AuthorizedData
 }
 
-const mockWorkOs = (
-  tenant?: Tenant | null,
-  user?: User | null,
-  workOsOrganization?: Partial<Organization> | null,
-) => {
+type MockWorkOsOptions = {
+  tenant?: Tenant | null
+  user?: User | null
+  workOsOrganization?: Partial<Organization> | null
+  isSystemAdmin?: boolean
+}
+
+const mockWorkOs = ({
+  tenant,
+  user,
+  workOsOrganization,
+  isSystemAdmin = false,
+}: MockWorkOsOptions) => {
   if (user == null || tenant == null) {
     return null
   }
@@ -273,6 +283,10 @@ const mockWorkOs = (
 
     ...workOsOrganization,
   })
+
+  if (isSystemAdmin) {
+    mockGetAdminOrgId.mockReturnValue(mockOrganization.id)
+  }
 
   mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
   mockGetOrganization.mockResolvedValue(mockOrganization)

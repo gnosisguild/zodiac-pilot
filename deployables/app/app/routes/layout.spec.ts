@@ -10,12 +10,10 @@ describe('Layout', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
 
-      process.env.ADMIN_ORG_ID = 'test-org'
-
       await render(href('/'), {
         user,
         tenant,
-        workOsOrganization: { id: 'test-org' },
+        isSystemAdmin: true,
       })
 
       expect(
@@ -27,12 +25,10 @@ describe('Layout', () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
 
-      process.env.ADMIN_ORG_ID = 'test-org'
-
       await render(href('/'), {
         user,
         tenant,
-        workOsOrganization: { id: 'another-org' },
+        isSystemAdmin: false,
       })
 
       expect(

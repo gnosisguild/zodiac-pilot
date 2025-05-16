@@ -8,6 +8,7 @@ import type {
 import type { Organization } from '@workos-inc/node'
 import { dbClient, getTenant, getUser } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
+import { getAdminOrganizationId } from '@zodiac/env'
 import { isUUID } from '@zodiac/schema'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
@@ -15,6 +16,7 @@ export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   tenant: Tenant
   workOsUser: WorkOsAuthorizedData['user']
   workOsOrganization: Organization
+  isSystemAdmin: boolean
 }
 
 export type UnauthorizedData = Omit<WorkOsUnauthorizedData, 'user'> & {
@@ -22,6 +24,7 @@ export type UnauthorizedData = Omit<WorkOsUnauthorizedData, 'user'> & {
   tenant: null
   workOsOrganization: null
   workOsUser: WorkOsUnauthorizedData['user']
+  isSystemAdmin: false
 }
 
 type AuthorizedAccessFn<Params> = (
@@ -80,6 +83,7 @@ export const getAuth = <Params>(
               workOsOrganization: null,
               request: request.clone(),
               params,
+              isSystemAdmin: false,
             }),
           )
 
@@ -96,6 +100,7 @@ export const getAuth = <Params>(
           user: null,
           workOsUser: null,
           workOsOrganization: null,
+          isSystemAdmin: false,
         })
       } else {
         invariantResponse(auth.user.externalId != null, 'User does not exist.')
@@ -118,6 +123,8 @@ export const getAuth = <Params>(
           workOsOrganization.externalId,
         )
 
+        const isSystemAdmin = getAdminOrganizationId() === workOsOrganization.id
+
         if (options && options.hasAccess != null) {
           if (options.ensureSignedIn && tenant == null) {
             reject(new Response('User has no access', { status: 401 }))
@@ -134,6 +141,7 @@ export const getAuth = <Params>(
               workOsOrganization,
               request: request.clone(),
               params,
+              isSystemAdmin,
             }),
           )
 
@@ -150,6 +158,7 @@ export const getAuth = <Params>(
           user,
           workOsUser: auth.user,
           workOsOrganization,
+          isSystemAdmin,
         })
       }
 
