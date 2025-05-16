@@ -26,6 +26,16 @@ mockViewport({ width: 1024, height: 768 })
 
 Element.prototype.scrollIntoView = vi.fn()
 
+vi.mock('@zodiac/env', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/env')>()
+
+  return {
+    ...module,
+
+    getAdminOrganizationId: vi.fn(),
+  }
+})
+
 vi.mock('@/simulation-server', async () => {
   const actual = await vi.importActual<typeof import('@/simulation-server')>(
     '@/simulation-server',
