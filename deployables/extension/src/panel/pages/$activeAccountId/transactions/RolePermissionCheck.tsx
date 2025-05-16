@@ -1,6 +1,5 @@
 import { useExecutionRoute } from '@/execution-routes'
-import { useProvider } from '@/providers-ui'
-import type { TransactionState } from '@/state'
+import { useTransaction } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
@@ -60,7 +59,7 @@ const extractRoles = (route: ExecutionRoute | null) => {
 }
 
 type Props = {
-  transactionState: TransactionState
+  transactionId: string
   mini?: boolean
 }
 
@@ -70,23 +69,17 @@ enum RecordCallState {
   Done,
 }
 
-export const RolePermissionCheck = ({
-  transactionState,
-  mini = false,
-}: Props) => {
+export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
   const [error, setError] = useState<PermissionViolation | false | undefined>(
     undefined,
   )
   const route = useExecutionRoute()
-  const provider = useProvider()
 
-  const translationAvailable = !!useApplicableTranslation(transactionState.id)
+  const transaction = useTransaction(transactionId)
+  const translationAvailable = !!useApplicableTranslation(transaction.id)
 
   useEffect(() => {
     let canceled = false
-    if (provider == null) {
-      return
-    }
 
     if (route == null) {
       return
@@ -102,7 +95,7 @@ export const RolePermissionCheck = ({
       initiator: route.initiator ?? EOA_ZERO_ADDRESS,
     } satisfies SerRoute
 
-    checkPermissions([transactionState.transaction], checkableRoute).then(
+    checkPermissions([transaction], checkableRoute).then(
       ({ success, error }) => {
         if (!canceled) setError(success ? false : error)
       },
@@ -111,7 +104,7 @@ export const RolePermissionCheck = ({
     return () => {
       canceled = true
     }
-  }, [transactionState, route, provider])
+  }, [transaction, route])
 
   // if the role is unambiguous and from a v2 Roles module, we can record a permissions request to the Roles app
   const roleToRecordToCandidates = extractRoles(route).filter(
@@ -139,7 +132,7 @@ export const RolePermissionCheck = ({
     invariant(roleToRecordTo, 'No role to record to')
     setRecordCallState(RecordCallState.Pending)
     try {
-      await recordCalls([transactionState.transaction], roleToRecordTo)
+      await recordCalls([transaction], roleToRecordTo)
       setRecordCallState(RecordCallState.Done)
     } catch (e) {
       errorToast({
@@ -195,7 +188,7 @@ export const RolePermissionCheck = ({
       </div>
 
       {error && translationAvailable && (
-        <Translate transactionId={transactionState.id} />
+        <Translate transactionId={transaction.id} />
       )}
 
       {error && !translationAvailable && roleToRecordTo && (

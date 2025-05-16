@@ -1,6 +1,6 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl, useCompanionAppUser } from '@/companion'
-import { useWindowId } from '@/inject-bridge'
+import { useWindowId } from '@/providers-ui'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Divider,

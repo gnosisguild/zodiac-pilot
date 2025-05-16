@@ -18,3 +18,27 @@ export const metaTransactionRequestSchema = z.object({
 export type MetaTransactionRequest = z.infer<
   typeof metaTransactionRequestSchema
 >
+
+export const metaTransactionRequestEqual = (
+  a: MetaTransactionRequest,
+  b: MetaTransactionRequest,
+) =>
+  a.to.toLowerCase() === b.to.toLowerCase() &&
+  (a.value || 0n === b.value || 0n) &&
+  a.data === b.data &&
+  (a.operation || 0 === b.operation || 0)
+
+// This looks stupid, but will remove any additional properties
+// from types that conform to the MetaTransactionRequest type
+// but carry additional information
+export const toMetaTransactionRequest = ({
+  to,
+  data,
+  value,
+  operation,
+}: MetaTransactionRequest): MetaTransactionRequest => ({
+  to,
+  data,
+  value,
+  operation,
+})

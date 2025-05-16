@@ -1,7 +1,7 @@
+import { getStorageEntry, saveStorageEntry } from '@/storage'
 import { getRolesAppUrl } from '@zodiac/env'
 import type { MetaTransactionRequest } from '@zodiac/schema'
 import { assert, beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
-import { getStorageEntry, saveStorageEntry } from '../../utils'
 import { recordCalls } from './roles'
 
 const testTransaction: MetaTransactionRequest = {

@@ -1,4 +1,4 @@
-import type { TransactionState } from '@/state'
+import type { State } from '@/state'
 import {
   createRenderDataMode,
   type RenderDataOptions,
@@ -12,6 +12,7 @@ import {
   mockRuntimeConnect,
   mockTabConnect,
 } from './chrome'
+import { createTransactionState } from './creators'
 import { RenderWrapper } from './RenderWrapper'
 
 type Options = RenderDataOptions & {
@@ -20,7 +21,7 @@ type Options = RenderDataOptions & {
   /**
    * Initial transaction state when the component renders
    */
-  initialState?: TransactionState[]
+  initialState?: Partial<State>
 }
 
 const baseRender = createRenderDataMode(routes)
@@ -44,7 +45,7 @@ export const render = async (
 
   const FinalRenderWrapper = ({ children }: PropsWithChildren) => (
     <Wrapper>
-      <RenderWrapper initialState={initialState}>
+      <RenderWrapper initialState={createTransactionState(initialState)}>
         {children}
 
         <ToastContainer />

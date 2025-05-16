@@ -1,16 +1,34 @@
 export {
   appendTransaction,
   clearTransactions,
+  commitRefreshTransactions,
+  confirmRollbackTransaction,
   confirmTransaction,
   decodeTransaction,
-  removeTransaction,
-  updateTransactionStatus,
+  failTransaction,
+  finishTransaction,
+  globalTranslateTransactions,
+  refreshTransactions,
+  revertTransaction,
+  rollbackTransaction,
+  translateTransaction,
 } from './actions'
 export { ExecutionStatus } from './executionStatus'
+export { isConfirmedTransaction } from './isConfirmedTransaction'
+export type {
+  ConfirmedTransaction,
+  ContractInfo,
+  State,
+  Transaction,
+  UnconfirmedTransaction,
+} from './state'
 export {
-  ProvideState,
+  ProvideTransactions,
   useDispatch,
+  usePendingTransactions,
+  useRefresh,
+  useRollback,
   useTransaction,
+  useTransactionStatus,
   useTransactions,
-} from './provideState'
-export type { TransactionState } from './reducer'
+} from './TransactionsContext'

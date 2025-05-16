@@ -1,13 +1,24 @@
 import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import { useProviderBridge } from '@/inject-bridge'
 import { usePilotIsReady } from '@/port-handling'
-import { ForkProvider } from '@/providers'
-import { useProvider } from '@/providers-ui'
-import { clearTransactions, useDispatch, useTransactions } from '@/state'
+import {
+  useDecodeTransactions,
+  useDeleteFork,
+  useInterceptTransactions,
+  useProviderBridge,
+  useRollbackTransaction,
+  useSendTransactions,
+} from '@/providers-ui'
+import {
+  refreshTransactions,
+  useDispatch,
+  usePendingTransactions,
+  useTransactions,
+} from '@/state'
 import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
+import { toMetaTransactionRequest } from '@zodiac/schema'
 import { CopyToClipboard, GhostButton, Info, Page } from '@zodiac/ui'
 import { RefreshCcw } from 'lucide-react'
 import { useEffect, useRef } from 'react'
@@ -39,13 +50,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 const Transactions = () => {
   const transactions = useTransactions()
   const dispatch = useDispatch()
-  const provider = useProvider()
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
+  const pendingTransactions = usePendingTransactions()
+
+  useDeleteFork()
+  useSendTransactions()
+  useInterceptTransactions()
+  useRollbackTransaction()
+  useDecodeTransactions()
 
   useProviderBridge({
-    provider,
     chainId: account.chainId,
     account: account.address,
   })
@@ -66,7 +82,7 @@ const Transactions = () => {
               iconOnly
               disabled={transactions.length === 0}
               size="small"
-              data={transactions.map((txState) => txState.transaction)}
+              data={transactions.map(toMetaTransactionRequest)}
             >
               Copy batch transaction data to clipboard
             </CopyToClipboard>
@@ -75,32 +91,19 @@ const Transactions = () => {
               iconOnly
               size="small"
               icon={RefreshCcw}
-              disabled={transactions.length === 0}
-              onClick={async () => {
-                // remove all transactions from the store
-                dispatch(clearTransactions())
-
-                invariant(
-                  provider instanceof ForkProvider,
-                  'This is only supported when using ForkProvider',
-                )
-
-                await provider.deleteFork()
-
-                // re-simulate all new transactions (assuming the already submitted ones have already been mined on the fresh fork)
-                for (const transaction of transactions) {
-                  await provider.sendMetaTransaction(transaction.transaction)
-                }
-              }}
+              disabled={
+                transactions.length === 0 || pendingTransactions.length > 0
+              }
+              onClick={() => dispatch(refreshTransactions())}
             >
               Re-simulate on current blockchain head
             </GhostButton>
           </div>
         </div>
 
-        {transactions.map((transactionState) => (
-          <div id={`t-${transactionState.id}`} key={transactionState.id}>
-            <Transaction transactionState={transactionState} />
+        {transactions.map((transaction) => (
+          <div id={`t-${transaction.id}`} key={transaction.id}>
+            <Transaction transactionId={transaction.id} />
           </div>
         ))}
 
@@ -117,7 +120,7 @@ const Transactions = () => {
       <Page.Footer>
         {(route == null || route.initiator == null) && pilotIsReady && (
           <CopyToClipboard
-            data={transactions.map((txState) => txState.transaction)}
+            data={transactions.map(toMetaTransactionRequest)}
             disabled={transactions.length === 0}
           >
             Copy transaction data

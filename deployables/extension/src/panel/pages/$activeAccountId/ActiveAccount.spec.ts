@@ -6,7 +6,6 @@ import {
 } from '@/companion'
 import {
   chromeMock,
-  createTransaction,
   mockCompanionAppUrl,
   mockRoute,
   mockRoutes,
@@ -163,9 +162,7 @@ describe('Active Account', () => {
 
           mockCompanionAppUrl('http://localhost')
 
-          await render('/test-route', {
-            initialState: [createTransaction()],
-          })
+          await render('/test-route')
 
           await userEvent.click(
             screen.getByRole('button', { name: 'Account actions' }),
@@ -188,9 +185,7 @@ describe('Active Account', () => {
             url: `http://localhost/edit/${route.id}/some-old-route-data`,
           })
 
-          await render('/test-route', {
-            initialState: [createTransaction()],
-          })
+          await render('/test-route')
 
           await userEvent.click(
             screen.getByRole('button', { name: 'Account actions' }),
@@ -314,9 +309,7 @@ describe('Active Account', () => {
 
       mockCompanionAppUrl('http://localhost')
 
-      await render('/test-route', {
-        initialState: [createTransaction()],
-      })
+      await render('/test-route')
 
       expect(
         screen.getByRole('link', { name: 'View balances' }),
@@ -328,9 +321,7 @@ describe('Active Account', () => {
 
       mockCompanionAppUrl('http://localhost')
 
-      await render('/test-route', {
-        initialState: [createTransaction()],
-      })
+      await render('/test-route')
 
       expect(screen.getByRole('link', { name: 'Send tokens' })).toHaveAttribute(
         'href',

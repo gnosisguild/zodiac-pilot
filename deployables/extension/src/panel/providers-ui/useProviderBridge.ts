@@ -12,6 +12,7 @@ import { toQuantity } from 'ethers'
 import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
 import { useWindowId } from './BridgeContext'
+import { useProvider } from './ProvideProvider'
 
 const emitEvent = async (eventName: string, eventData: any) => {
   const tab = await getActiveTab()
@@ -26,16 +27,16 @@ const emitEvent = async (eventName: string, eventData: any) => {
 }
 
 type UseProviderBridgeOptions = {
-  provider: Eip1193Provider
   chainId?: ChainId
   account?: Hex
 }
 
 export const useProviderBridge = ({
-  provider,
   chainId,
   account,
-}: UseProviderBridgeOptions) => {
+}: UseProviderBridgeOptions = {}) => {
+  const provider = useProvider()
+
   useHandleProviderRequests(provider)
 
   const chainIdRef = useRef<ChainId | null>(null)

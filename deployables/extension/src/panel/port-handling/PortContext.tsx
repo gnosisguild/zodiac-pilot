@@ -1,4 +1,4 @@
-import { ProvideBridgeContext } from '@/inject-bridge'
+import { ProvideBridgeContext } from '@/providers-ui'
 import { createContext, useContext, type PropsWithChildren } from 'react'
 import { useCompanionAppPort } from './useCompanionAppPort'
 import { usePilotPort } from './usePilotPort'

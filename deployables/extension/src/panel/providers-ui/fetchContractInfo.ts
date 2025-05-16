@@ -1,16 +1,8 @@
+import { sentry } from '@/sentry'
+import type { ContractInfo } from '@/state'
 import type { Hex } from '@zodiac/schema'
 import { getAddress } from 'ethers'
 import type { ChainId } from 'ser-kit'
-
-type AbiFragment = object
-
-export interface ContractInfo {
-  address: Hex
-  proxyTo?: Hex
-  verified: boolean
-  name?: string
-  abi?: AbiFragment[]
-}
 
 export const fetchContractInfo = async (
   address: Hex,
@@ -43,15 +35,22 @@ const memoizedFetchJson = async (url: string) => {
   if (fetchCache.has(url)) {
     return fetchCache.get(url)
   }
-  const res = await fetch(url)
 
-  if (!res.ok) {
-    console.error('Failed to fetch contract info', url, res.status)
-    fetchCache.set(url, null)
+  try {
+    const res = await fetch(url)
+
+    if (!res.ok) {
+      console.error('Failed to fetch contract info', url, res.status)
+      fetchCache.set(url, null)
+      return null
+    }
+
+    const json = await res.json()
+    fetchCache.set(url, json)
+    return json
+  } catch (error) {
+    sentry.captureException(error)
+
     return null
   }
-
-  const json = await res.json()
-  fetchCache.set(url, json)
-  return json
 }

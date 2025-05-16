@@ -1,168 +1,51 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
-import type { Eip1193Provider, ExecutionRoute } from '@/types'
+import type { ExecutionRoute } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import type { Hex } from '@zodiac/schema'
-import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
   type PropsWithChildren,
 } from 'react'
-import {
-  ConnectionType,
-  unprefixAddress,
-  type MetaTransactionRequest,
-} from 'ser-kit'
-import {
-  appendTransaction,
-  confirmTransaction,
-  decodeTransaction,
-  ExecutionStatus,
-  updateTransactionStatus,
-  useDispatch,
-} from '../state'
-import { fetchContractInfo } from '../utils/abi'
+import { ConnectionType, unprefixAddress } from 'ser-kit'
+import { getModuleAddress } from './getModuleAddress'
 
-const ProviderContext = createContext<
-  (Eip1193Provider & { getTransactionLink(txHash: string): string }) | null
->(null)
+const ProviderContext = createContext<ForkProvider | null>(null)
 
 export const ProvideProvider = ({ children }: PropsWithChildren) => {
   const { chainId, address } = useAccount()
   const route = useExecutionRoute()
 
-  const dispatch = useDispatch()
-
   const moduleAddress = getModuleAddress(route)
   const ownerAddress = getOwnerAddress(route)
 
-  const onBeforeTransactionSend = useCallback(
-    async (id: string, transaction: MetaTransactionRequest) => {
-      // Immediately update the state with the transaction so that the UI can show it as pending.
-      dispatch(appendTransaction({ transaction, id }))
-
-      // Now we can take some time decoding the transaction and we update the state once that's done.
-      const contractInfo = await fetchContractInfo(
-        transaction.to as Hex,
-        chainId,
-      )
-      dispatch(
-        decodeTransaction({
-          id,
-          contractInfo,
-        }),
-      )
-    },
-    [chainId, dispatch],
-  )
-
-  const onTransactionSent = useCallback(
-    async (
-      id: string,
-      snapshotId: string,
-      transactionHash: string,
-      provider: Eip1193Provider,
-    ) => {
-      dispatch(
-        confirmTransaction({
-          id,
-          snapshotId,
-          transactionHash,
-        }),
-      )
-
-      const receipt = await new BrowserProvider(provider).getTransactionReceipt(
-        transactionHash,
-      )
-      if (!receipt?.status) {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.FAILED,
-          }),
-        )
-        return
-      }
-
-      if (
-        isExecutionFailure(
-          receipt.logs[receipt.logs.length - 1],
-          address,
-          moduleAddress,
-        )
-      ) {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.META_TRANSACTION_REVERTED,
-          }),
-        )
-      } else {
-        dispatch(
-          updateTransactionStatus({
-            id,
-            status: ExecutionStatus.SUCCESS,
-          }),
-        )
-      }
-    },
-    [dispatch, address, moduleAddress],
-  )
-
-  const onTransactionError = useCallback(
-    (id: string, error: unknown) => {
-      dispatch(
-        updateTransactionStatus({
-          id,
-          status: ExecutionStatus.FAILED,
-        }),
-      )
-
-      console.debug(`Transaction ${id} failed`, { error })
-    },
-    [dispatch],
-  )
-
-  const [forkProvider, setForkProvider] = useState<ForkProvider | null>(null)
+  const [provider, setProvider] = useState<ForkProvider | null>(null)
 
   // whenever anything changes in the connection settings, we delete the current fork and start afresh
   useEffect(() => {
-    const forkProvider = new ForkProvider({
+    const provider = new ForkProvider({
       chainId,
       avatarAddress: address,
       moduleAddress,
       ownerAddress,
-      onBeforeTransactionSend,
-      onTransactionSent,
-      onTransactionError,
     })
 
-    setForkProvider(forkProvider)
+    setProvider(provider)
 
     return () => {
-      forkProvider.deleteFork()
+      provider.deleteFork()
     }
-  }, [
-    chainId,
-    address,
-    moduleAddress,
-    ownerAddress,
-    onBeforeTransactionSend,
-    onTransactionSent,
-    onTransactionError,
-  ])
+  }, [chainId, address, moduleAddress, ownerAddress])
 
-  if (forkProvider == null) {
+  if (provider == null) {
     return null
   }
 
   return (
-    <ProviderContext.Provider value={forkProvider}>
+    <ProviderContext.Provider value={provider}>
       {children}
     </ProviderContext.Provider>
   )
@@ -177,50 +60,6 @@ export const useProvider = () => {
   )
 
   return provider
-}
-
-const isExecutionFailure = (
-  log: TransactionReceipt['logs'][0],
-  avatarAddress: string,
-  moduleAddress?: string,
-) => {
-  if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) {
-    return false
-  }
-
-  if (moduleAddress) {
-    return (
-      log.topics[0] === id('ExecutionFromModuleFailure(address)') &&
-      log.topics[1] ===
-        AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress])
-    )
-  }
-
-  return log.topics[0] === id('ExecutionFailure(bytes32, uint256)')
-}
-
-const getModuleAddress = (route: ExecutionRoute | null) => {
-  if (route == null) {
-    return
-  }
-
-  const { waypoints } = route
-
-  if (waypoints == null) {
-    return
-  }
-
-  const avatarWaypoint = waypoints[waypoints.length - 1]
-
-  if (!('connection' in avatarWaypoint)) {
-    return
-  }
-
-  if (avatarWaypoint.connection.type !== ConnectionType.IS_ENABLED) {
-    return
-  }
-
-  return unprefixAddress(avatarWaypoint.connection.from)
 }
 
 const getOwnerAddress = (route: ExecutionRoute | null) => {

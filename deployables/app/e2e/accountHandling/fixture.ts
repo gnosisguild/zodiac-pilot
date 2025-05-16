@@ -5,7 +5,7 @@ import {
   createMockExecutionRoute,
   createMockOwnsConnection,
   createMockStartingWaypoint,
-  createMockTransaction,
+  createMockTransactionRequest,
   createMockWaypoints,
 } from '@zodiac/test-utils'
 import { prefixAddress, unprefixAddress } from 'ser-kit'
@@ -33,4 +33,4 @@ export const route = createMockExecutionRoute({
     }),
   }),
 })
-export const transaction = createMockTransaction()
+export const transaction = createMockTransactionRequest()

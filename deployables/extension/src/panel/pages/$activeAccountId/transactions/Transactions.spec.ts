@@ -1,7 +1,8 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
-import { ExecutionStatus } from '@/state'
+import { MockProvider } from '@/providers-ui'
 import {
   chromeMock,
+  createConfirmedTransaction,
   createTransaction,
   mockCompanionAppUrl,
   mockRoute,
@@ -19,7 +20,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
-import { encode } from '@zodiac/schema'
+import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import { User } from 'lucide-react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -39,6 +40,31 @@ vi.mock('@/transaction-translation', async (importOriginal) => {
 
 const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
 
+vi.mock('@/providers-ui', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers-ui')>()
+
+  return {
+    ...module,
+
+    useDecodeTransactions: vi.fn(),
+    useSendTransactions: vi.fn(),
+  }
+})
+
+vi.mock('@/providers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers')>()
+
+  const { MockProvider } = await vi.importActual<
+    typeof import('../../../providers-ui/MockProvider')
+  >('../../../providers-ui/MockProvider')
+
+  return {
+    ...module,
+
+    ForkProvider: MockProvider,
+  }
+})
+
 describe('Transactions', () => {
   describe('Recording state', () => {
     it('hides the info when Pilot is ready', async () => {
@@ -50,6 +76,18 @@ describe('Transactions', () => {
         await screen.findByRole('heading', { name: 'Recording transactions' }),
       ).not.toHaveAccessibleDescription()
     })
+
+    it('intercepts transactions from the provider', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions')
+
+      MockProvider.getInstance().emit('transaction', createTransaction())
+
+      expect(
+        await screen.findByRole('region', { name: 'Raw transaction' }),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('List', () => {
@@ -57,12 +95,28 @@ describe('Transactions', () => {
       await mockRoute({ id: 'test-route' })
 
       await render('/test-route/transactions', {
-        initialState: [createTransaction()],
+        initialState: { executed: [createConfirmedTransaction()] },
       })
 
       expect(
         await screen.findByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('Refresh', () => {
+    it('disables the refresh button when transactions are pending', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions', {
+        initialState: { pending: [createTransaction()] },
+      })
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'Re-simulate on current blockchain head',
+        }),
+      ).toBeDisabled()
     })
   })
 
@@ -78,7 +132,7 @@ describe('Transactions', () => {
       })
 
       await render(`/test-route`, {
-        initialState: [createTransaction({ status: ExecutionStatus.PENDING })],
+        initialState: { pending: [createTransaction()] },
       })
 
       expect(
@@ -105,17 +159,17 @@ describe('Transactions', () => {
           id: 'test-route',
           initiator: randomPrefixedAddress(),
         })
-        const transaction = createTransaction()
+        const transaction = createConfirmedTransaction()
 
         mockCompanionAppUrl('http://localhost')
 
         await render('/test-route/transactions', {
-          initialState: [transaction],
+          initialState: { executed: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/${encode(route)}/${encode([transaction.transaction])}`,
+          `http://localhost/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 
@@ -173,17 +227,17 @@ describe('Transactions', () => {
           toExecutionRoute({ route, wallet, account }),
         )
 
-        const transaction = createTransaction()
+        const transaction = createConfirmedTransaction()
 
         mockCompanionAppUrl('http://localhost')
 
         await render(`/${account.id}/transactions`, {
-          initialState: [transaction],
+          initialState: { executed: [transaction] },
         })
 
         expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/account/${account.id}/${encode([transaction.transaction])}`,
+          `http://localhost/submit/account/${account.id}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 

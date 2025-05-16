@@ -10,7 +10,7 @@ import { createHashRouter, RouterProvider } from 'react-router'
 import '../global.css'
 import { ProvidePort } from './port-handling'
 import { routes } from './routes'
-import { ProvideState } from './state'
+import { ProvideTransactions } from './state'
 
 const router = createHashRouter(routes)
 
@@ -33,13 +33,13 @@ const Root = () => {
         redirectUri={`https://${chrome.runtime.id}.chromiumapp.org/callback`}
       >
         <ProvidePort>
-          <ProvideState>
+          <ProvideTransactions>
             <div className="flex h-full flex-1 flex-col">
               <RouterProvider router={router} />
             </div>
 
             <ToastContainer position="top-center" />
-          </ProvideState>
+          </ProvideTransactions>
         </ProvidePort>
       </AuthKitProvider>
     </StrictMode>
