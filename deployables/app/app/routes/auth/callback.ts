@@ -1,10 +1,15 @@
 import { sentry } from '@/sentry-client'
-import { getOrganizationsForUser, updateExternalUserId } from '@/workOS/server'
+import {
+  getOrganizationsForUser,
+  updateExternalTenantId,
+  updateExternalUserId,
+} from '@/workOS/server'
 import { invariant } from '@epic-web/invariant'
 import { authLoader, signOut } from '@workos-inc/authkit-react-router'
-import type { User } from '@workos-inc/node'
+import type { Organization, User } from '@workos-inc/node'
 import {
   addUserToTenant,
+  createTenant,
   createUser,
   dbClient,
   getTenant,
@@ -26,7 +31,7 @@ export const loader = ({ request, ...options }: Route.LoaderArgs) => {
 
           await Promise.all(
             organizations.map(async (organization) => {
-              const tenant = await getTenant(db, organization.externalId)
+              const tenant = await upsertTenant(db, organization)
 
               return addUserToTenant(db, tenant, user)
             }),
@@ -60,4 +65,21 @@ const upsertUser = async (db: DBClient, workOSUser: User) => {
   invariant(isUUID(workOSUser.externalId), '"externalId" is not a UUID')
 
   return getUser(db, workOSUser.externalId)
+}
+
+const upsertTenant = async (db: DBClient, workOSOrganization: Organization) => {
+  if (workOSOrganization.externalId == null) {
+    const tenant = await createTenant(db, { name: workOSOrganization.name })
+
+    await updateExternalTenantId({
+      organizationId: workOSOrganization.id,
+      externalId: tenant.id,
+    })
+
+    return tenant
+  }
+
+  invariant(isUUID(workOSOrganization.externalId), '"externalId" is not a UUID')
+
+  return getTenant(db, workOSOrganization.externalId)
 }
