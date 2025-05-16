@@ -1,13 +1,14 @@
-import { useId, type ComponentPropsWithoutRef } from 'react'
+import {
+  useId,
+  type ComponentPropsWithoutRef,
+  type PropsWithChildren,
+} from 'react'
 
-type CheckboxProps = Omit<
-  ComponentPropsWithoutRef<'input'>,
-  'type' | 'id' | 'className'
-> & {
-  label: string
-}
+type CheckboxProps = PropsWithChildren<
+  Omit<ComponentPropsWithoutRef<'input'>, 'type' | 'id' | 'className'>
+>
 
-export const Checkbox = ({ label, ...props }: CheckboxProps) => {
+export const Checkbox = ({ children, ...props }: CheckboxProps) => {
   const id = useId()
 
   return (
@@ -23,7 +24,7 @@ export const Checkbox = ({ label, ...props }: CheckboxProps) => {
         htmlFor={id}
         className="ml-2 cursor-pointer select-none text-sm dark:text-gray-50"
       >
-        {label}
+        {children}
       </label>
     </div>
   )
