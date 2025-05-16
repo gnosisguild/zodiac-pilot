@@ -6,7 +6,7 @@ import type {
   UnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import { activateFeature, createFeature, dbClient } from '@zodiac/db'
+import { activateFeatures, createFeature, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import { getAdminOrganizationId } from '@zodiac/env'
 import {
@@ -175,15 +175,14 @@ export const render = async (
     const { tenant, features } = options
 
     if (features != null) {
-      await Promise.all(
-        features.map(async (name) => {
-          const feature = await createFeature(dbClient(), name)
-          await activateFeature(dbClient(), {
-            tenantId: tenant.id,
-            featureId: feature.id,
-          })
-        }),
+      const dbFeatures = await Promise.all(
+        features.map(async (name) => createFeature(dbClient(), name)),
       )
+
+      await activateFeatures(dbClient(), {
+        tenantId: tenant.id,
+        featureIds: dbFeatures.map(({ id }) => id),
+      })
     }
   }
 

@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { activateFeature, dbClient, getActiveFeatures } from '@zodiac/db'
+import { activateFeatures, dbClient, getActiveFeatures } from '@zodiac/db'
 import {
   featureFactory,
   tenantFactory,
@@ -41,9 +41,9 @@ describe('Tenant', () => {
       const user = await userFactory.create(tenant)
       const feature = await featureFactory.create({ name: 'Test feature' })
 
-      await activateFeature(dbClient(), {
+      await activateFeatures(dbClient(), {
         tenantId: tenant.id,
-        featureId: feature.id,
+        featureIds: [feature.id],
       })
 
       const { waitForPendingActions } = await render(

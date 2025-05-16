@@ -1,7 +1,7 @@
 import { featureFactory, tenantFactory } from '@zodiac/db/test-utils'
 import { describe, expect, it } from 'vitest'
 import { dbClient } from '../../dbClient'
-import { activateFeature } from './activateFeature'
+import { activateFeatures } from './activateFeatures'
 import { getActiveFeatures } from './getActiveFeatures'
 
 describe('getActiveFeatures', () => {
@@ -9,9 +9,9 @@ describe('getActiveFeatures', () => {
     const tenant = await tenantFactory.create()
     const feature = await featureFactory.create()
 
-    await activateFeature(dbClient(), {
+    await activateFeatures(dbClient(), {
       tenantId: tenant.id,
-      featureId: feature.id,
+      featureIds: [feature.id],
     })
 
     await expect(getActiveFeatures(dbClient(), tenant.id)).resolves.toEqual([

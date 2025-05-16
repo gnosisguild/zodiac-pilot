@@ -2,7 +2,7 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  activateFeature,
+  activateFeatures,
   dbClient,
   deactivateFeature,
   getActiveFeatures,
@@ -51,9 +51,10 @@ export const action = (args: Route.ActionArgs) =>
         (feature) => featureStatus[feature.id],
       )
 
-      for (const feature of featuresToActivate) {
-        await activateFeature(dbClient(), { tenantId, featureId: feature.id })
-      }
+      await activateFeatures(dbClient(), {
+        tenantId,
+        featureIds: featuresToActivate.map(({ id }) => id),
+      })
 
       const featuresToDeactivate = features.filter(
         (feature) => !featuresToActivate.includes(feature),

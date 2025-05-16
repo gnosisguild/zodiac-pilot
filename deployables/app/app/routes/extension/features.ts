@@ -1,5 +1,5 @@
 import { authorizedLoader } from '@/auth-server'
-import { dbClient, getFeatures } from '@zodiac/db'
+import { dbClient, getActiveFeatures } from '@zodiac/db'
 import type { Route } from './+types/features'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -16,7 +16,7 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const db = dbClient()
 
-      const features = await getFeatures(db, tenant.id)
+      const features = await getActiveFeatures(db, tenant.id)
 
       return { features }
     },
