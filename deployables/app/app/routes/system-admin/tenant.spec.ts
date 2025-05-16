@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getActiveFeatures } from '@zodiac/db'
+import { activateFeature, dbClient, getActiveFeatures } from '@zodiac/db'
 import {
   featureFactory,
   tenantFactory,
@@ -34,6 +34,35 @@ describe('Tenant', () => {
       await expect(getActiveFeatures(dbClient(), tenant.id)).resolves.toEqual([
         feature,
       ])
+    })
+
+    it('is possible to deactivate a feature', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const feature = await featureFactory.create({ name: 'Test feature' })
+
+      await activateFeature(dbClient(), {
+        tenantId: tenant.id,
+        featureId: feature.id,
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
+        { user, tenant, isSystemAdmin: true },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('checkbox', { name: 'Test feature' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Save features' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(getActiveFeatures(dbClient(), tenant.id)).resolves.toEqual(
+        [],
+      )
     })
   })
 })

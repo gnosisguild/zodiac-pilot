@@ -4,6 +4,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   activateFeature,
   dbClient,
+  deactivateFeature,
   getActiveFeatures,
   getFeatures,
   getTenant,
@@ -52,6 +53,14 @@ export const action = (args: Route.ActionArgs) =>
 
       for (const feature of featuresToActivate) {
         await activateFeature(dbClient(), { tenantId, featureId: feature.id })
+      }
+
+      const featuresToDeactivate = features.filter(
+        (feature) => !featuresToActivate.includes(feature),
+      )
+
+      for (const feature of featuresToDeactivate) {
+        await deactivateFeature(dbClient(), { tenantId, featureId: feature.id })
       }
     },
     {
