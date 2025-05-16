@@ -18,4 +18,5 @@ export const activateFeatures = (
   return db
     .insert(ActiveFeatureTable)
     .values(featureIds.map((featureId) => ({ tenantId, featureId })))
+    .onConflictDoNothing()
 }

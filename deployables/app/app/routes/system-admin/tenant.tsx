@@ -10,6 +10,7 @@ import {
   getTenant,
 } from '@zodiac/db'
 import { getBoolean, getMap } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Checkbox, Form, SecondaryButton } from '@zodiac/ui'
 import type { Route } from './+types/tenant'
@@ -95,7 +96,13 @@ const Tenant = ({
           ))}
 
           <Form.Actions>
-            <SecondaryButton submit>Save features</SecondaryButton>
+            <SecondaryButton
+              intent={Intent.UpdateFeatures}
+              submit
+              busy={useIsPending(Intent.UpdateFeatures)}
+            >
+              Save features
+            </SecondaryButton>
           </Form.Actions>
         </Form>
       </Page.Main>
@@ -104,3 +111,7 @@ const Tenant = ({
 }
 
 export default Tenant
+
+enum Intent {
+  UpdateFeatures = 'UpdateFeatures',
+}
