@@ -7,6 +7,7 @@ import {
   ProvidePilotStatus,
 } from '@/components'
 import { ProvideChains } from '@/routes-ui'
+import { sentry } from '@/sentry-client'
 import { getOrganization } from '@/workOS/server'
 import {
   authkitLoader,
@@ -73,7 +74,11 @@ export const loader = async (args: Route.LoaderArgs) =>
         signInUrl: await getSignInUrl(),
         isSystemAdmin: getAdminOrganizationId() === organization.id,
       }
-    } catch {
+    } catch (error) {
+      sentry.captureException(error)
+
+      console.error(error)
+
       throw await signOut(request)
     }
   })
