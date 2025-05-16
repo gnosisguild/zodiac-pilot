@@ -1,4 +1,5 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
+import { MockProvider } from '@/providers-ui'
 import {
   chromeMock,
   createConfirmedTransaction,
@@ -50,6 +51,20 @@ vi.mock('@/providers-ui', async (importOriginal) => {
   }
 })
 
+vi.mock('@/providers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/providers')>()
+
+  const { MockProvider } = await vi.importActual<
+    typeof import('../../../providers-ui/MockProvider')
+  >('../../../providers-ui/MockProvider')
+
+  return {
+    ...module,
+
+    ForkProvider: MockProvider,
+  }
+})
+
 describe('Transactions', () => {
   describe('Recording state', () => {
     it('hides the info when Pilot is ready', async () => {
@@ -60,6 +75,18 @@ describe('Transactions', () => {
       expect(
         await screen.findByRole('heading', { name: 'Recording transactions' }),
       ).not.toHaveAccessibleDescription()
+    })
+
+    it('intercepts transactions from the provider', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      await render('/test-route/transactions')
+
+      MockProvider.getInstance().emit('transaction', createTransaction())
+
+      expect(
+        await screen.findByRole('region', { name: 'Raw transaction' }),
+      ).toBeInTheDocument()
     })
   })
 

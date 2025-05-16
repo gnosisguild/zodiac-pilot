@@ -14,6 +14,7 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
   // ForkProvider specific
   deleteFork: MockedFunction<ForkProvider['deleteFork']>
   sendMetaTransaction: MockedFunction<ForkProvider['sendMetaTransaction']>
+  getTransactionLink: MockedFunction<ForkProvider['getTransactionLink']>
 
   static getInstance() {
     invariant(instanceRef.current != null, 'No active MockProvider instance')
@@ -34,6 +35,9 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
         transactionId: 'test-transaction',
         hash: 'test-hash',
       })
+    this.getTransactionLink = vi
+      .fn<ForkProvider['getTransactionLink']>()
+      .mockReturnValue('http://test.com')
 
     instanceRef.current = this
   }
