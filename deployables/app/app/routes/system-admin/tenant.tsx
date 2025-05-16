@@ -82,29 +82,33 @@ const Tenant = ({
       <Page.Header>{tenant.name}</Page.Header>
 
       <Page.Main>
-        <Form>
-          <h2>Features</h2>
+        <div className="grid grid-cols-6">
+          <div className="col-start-5">
+            <Form>
+              <h2 className="font-semibold">Features</h2>
 
-          {features.map((feature) => (
-            <Checkbox
-              key={feature.id}
-              name={`feature[${feature.id}]`}
-              defaultChecked={activeFeatures.includes(feature.id)}
-            >
-              {feature.name}
-            </Checkbox>
-          ))}
+              {features.map((feature) => (
+                <Checkbox
+                  key={feature.id}
+                  name={`feature[${feature.id}]`}
+                  defaultChecked={activeFeatures.includes(feature.id)}
+                >
+                  {feature.name}
+                </Checkbox>
+              ))}
 
-          <Form.Actions>
-            <SecondaryButton
-              intent={Intent.UpdateFeatures}
-              submit
-              busy={useIsPending(Intent.UpdateFeatures)}
-            >
-              Save features
-            </SecondaryButton>
-          </Form.Actions>
-        </Form>
+              <Form.Actions>
+                <SecondaryButton
+                  intent={Intent.UpdateFeatures}
+                  submit
+                  busy={useIsPending(Intent.UpdateFeatures)}
+                >
+                  Save features
+                </SecondaryButton>
+              </Form.Actions>
+            </Form>
+          </div>
+        </div>
       </Page.Main>
     </Page>
   )
