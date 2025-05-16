@@ -10,7 +10,12 @@ type ActivateFeaturesOptions = {
 export const activateFeatures = (
   db: DBClient,
   { tenantId, featureIds }: ActivateFeaturesOptions,
-) =>
-  db
+) => {
+  if (featureIds.length === 0) {
+    return
+  }
+
+  return db
     .insert(ActiveFeatureTable)
     .values(featureIds.map((featureId) => ({ tenantId, featureId })))
+}

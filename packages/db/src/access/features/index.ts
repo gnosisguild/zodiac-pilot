@@ -1,5 +1,5 @@
 export { activateFeatures } from './activateFeatures'
 export { createFeature } from './createFeature'
-export { deactivateFeature } from './deactivateFeature'
+export { deactivateFeatures } from './deactivateFeatures'
 export { getActiveFeatures } from './getActiveFeatures'
 export { getFeatures } from './getFeatures'

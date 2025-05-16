@@ -1,22 +1,22 @@
 import type { UUID } from 'crypto'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { ActiveFeatureTable } from '../../../schema'
 import type { DBClient } from '../../dbClient'
 
-type DeactivateFeatureOptions = {
+type DeactivateFeaturesOptions = {
   tenantId: UUID
-  featureId: UUID
+  featureIds: UUID[]
 }
 
-export const deactivateFeature = (
+export const deactivateFeatures = (
   db: DBClient,
-  { tenantId, featureId }: DeactivateFeatureOptions,
+  { tenantId, featureIds }: DeactivateFeaturesOptions,
 ) =>
   db
     .delete(ActiveFeatureTable)
     .where(
       and(
         eq(ActiveFeatureTable.tenantId, tenantId),
-        eq(ActiveFeatureTable.featureId, featureId),
+        inArray(ActiveFeatureTable.featureId, featureIds),
       ),
     )
