@@ -3,6 +3,7 @@ import {
   createTransaction,
   renderHook,
 } from '@/test-utils'
+import { waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { MockProvider } from './MockProvider'
 import { useSendTransactions } from './useSendTransactions'
@@ -36,13 +37,15 @@ vi.mock('ethers', async (importOriginal) => {
 
 describe('useSendTransactions', () => {
   it('sends pending transactions', async () => {
-    const transaction = createTransaction()
-
     await renderHook(() => useSendTransactions(), {
-      initialState: { pending: [transaction] },
+      initialState: { pending: [createTransaction(), createTransaction()] },
     })
 
-    expect(MockProvider.getInstance().sendMetaTransaction).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(
+        MockProvider.getInstance().sendMetaTransaction,
+      ).toHaveBeenCalledTimes(2)
+    })
   })
 
   it('does not send pending transaction when a rollback is in progress', async () => {

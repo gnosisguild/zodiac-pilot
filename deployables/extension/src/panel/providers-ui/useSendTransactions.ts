@@ -1,17 +1,20 @@
-import { usePendingTransactions, useRefresh, useRollback } from '@/state'
-import { useEffect, useRef } from 'react'
+import {
+  usePendingTransactions,
+  useRefresh,
+  useRollback,
+  type UnconfirmedTransaction,
+} from '@/state'
+import { useCallback, useEffect, useState } from 'react'
 import { useSendTransaction } from './useSendTransaction'
 
 export const useSendTransactions = () => {
-  const pendingTransactions = usePendingTransactions()
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
   const refresh = useRefresh()
-
-  const progressRef = useRef(false)
+  const { nextTransaction, markDone } = useNextTransactionToExecute()
 
   useEffect(() => {
-    if (progressRef.current) {
+    if (nextTransaction == null) {
       return
     }
 
@@ -31,16 +34,30 @@ export const useSendTransactions = () => {
       return
     }
 
-    progressRef.current = true
+    sendTransaction(nextTransaction).then(markDone)
+  }, [markDone, nextTransaction, refresh, rollback, sendTransaction])
+}
 
-    const submit = async () => {
-      for (const transaction of pendingTransactions) {
-        await sendTransaction(transaction)
-      }
+const useNextTransactionToExecute = () => {
+  const [pendingTransaction] = usePendingTransactions()
+  const [nextTransaction, setNextTransaction] =
+    useState<UnconfirmedTransaction | null>(null)
 
-      progressRef.current = false
+  const markDone = useCallback(() => {
+    setNextTransaction(null)
+  }, [])
+
+  useEffect(() => {
+    if (nextTransaction != null) {
+      return
     }
 
-    submit()
-  }, [pendingTransactions, refresh, rollback, sendTransaction])
+    if (pendingTransaction == null) {
+      return
+    }
+
+    setNextTransaction(pendingTransaction)
+  }, [nextTransaction, pendingTransaction])
+
+  return { nextTransaction, markDone }
 }
