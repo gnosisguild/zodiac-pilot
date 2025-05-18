@@ -30,7 +30,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
-    "eslint": "9.26.0",
+    "eslint": "9.27.0",
     "postcss": "8.5.3",
     "tailwindcss": "4.1.7",
     "typescript": "5.8.3",
