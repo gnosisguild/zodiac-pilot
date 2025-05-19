@@ -7,6 +7,7 @@ import { inject } from '@vercel/analytics'
 import { ToastContainer } from '@zodiac/ui'
 import { useEffect } from 'react'
 import {
+  data,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -20,9 +21,12 @@ import './app.css'
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
 
 export const loader = () => {
-  return {
-    isDev: process.env.NODE_ENV === 'development',
-  }
+  return data(
+    {
+      isDev: process.env.NODE_ENV === 'development',
+    },
+    { headers: { 'Document-Policy': 'js-profiling' } },
+  )
 }
 
 export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
