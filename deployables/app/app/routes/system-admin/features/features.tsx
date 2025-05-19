@@ -2,6 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { dbClient, getFeatures } from '@zodiac/db'
 import {
+  DateValue,
   GhostLinkButton,
   SecondaryLinkButton,
   Table,
@@ -50,6 +51,7 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
           <TableHead>
             <TableRow>
               <TableHeader>Feature</TableHeader>
+              <TableHeader>Created at</TableHeader>
               <TableHeader className="relative w-0">
                 <span className="sr-only">Actions</span>
               </TableHeader>
@@ -60,6 +62,9 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
             {features.map((feature) => (
               <TableRow key={feature.id}>
                 <TableCell>{feature.name}</TableCell>
+                <TableCell>
+                  <DateValue>{feature.createdAt}</DateValue>
+                </TableCell>
                 <TableCell>
                   <GhostLinkButton
                     iconOnly
