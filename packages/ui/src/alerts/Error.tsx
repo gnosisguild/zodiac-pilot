@@ -20,3 +20,5 @@ export const Error = ({ children, title }: ErrorProps) => (
     {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )
+
+Error.Actions = BaseAlert.Actions

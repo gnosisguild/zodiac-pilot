@@ -27,6 +27,7 @@ import {
   Error,
   Feature,
   Info,
+  PrimaryLinkButton,
   SecondaryLinkButton,
   Table,
   TableBody,
@@ -35,7 +36,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Suspense, useId, type PropsWithChildren } from 'react'
-import { Await, useRevalidator } from 'react-router'
+import { Await, href, useRevalidator } from 'react-router'
 import { splitPrefixedAddress, unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/list-routes'
 import { Intent } from './intents'
@@ -64,23 +65,19 @@ export const loader = (args: Route.LoaderArgs) =>
         }
       }
 
-      try {
-        const [remoteAccounts, activeRemoteAccount] = await Promise.all([
-          getAccounts(dbClient(), {
-            tenantId: tenant.id,
-            userId: user.id,
-          }),
-          findActiveAccount(dbClient(), tenant, user),
-        ])
+      const [remoteAccounts, activeRemoteAccount] = await Promise.all([
+        getAccounts(dbClient(), {
+          tenantId: tenant.id,
+          userId: user.id,
+        }),
+        findActiveAccount(dbClient(), tenant, user),
+      ])
 
-        return {
-          loggedIn: true,
-          remoteAccounts,
-          activeRemoteAccountId:
-            activeRemoteAccount == null ? null : activeRemoteAccount.id,
-        }
-      } catch (error) {
-        console.log({ error })
+      return {
+        loggedIn: true,
+        remoteAccounts,
+        activeRemoteAccountId:
+          activeRemoteAccount == null ? null : activeRemoteAccount.id,
       }
     },
   )
@@ -279,6 +276,17 @@ const ListRoutes = ({
       <Page.Main>
         {actionData != null && (
           <Error title="Upload not possible">{actionData.error}</Error>
+        )}
+
+        {remoteAccounts.length === 0 && loggedIn && (
+          <Info title="No accounts">
+            You haven't created any accounts, yet.
+            <Info.Actions>
+              <PrimaryLinkButton size="small" to={href('/create')}>
+                Create your first account
+              </PrimaryLinkButton>
+            </Info.Actions>
+          </Info>
         )}
 
         {remoteAccounts.length > 0 && (
