@@ -8,7 +8,7 @@ import {
 } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
-import { Chain as ChainEnum, verifyChainId } from '@zodiac/chains'
+import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
 import { createAccount, dbClient, getAccounts } from '@zodiac/db'
 import {
   getBoolean,
@@ -24,7 +24,7 @@ import {
   updateChainId,
   updateLabel,
 } from '@zodiac/modules'
-import { isHexAddress } from '@zodiac/schema'
+import { isHexAddress, verifyPrefixedAddress } from '@zodiac/schema'
 import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
@@ -40,6 +40,7 @@ export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
+      params: { prefixedAddress },
       context: {
         auth: { workOsUser, user, tenant },
       },
@@ -54,6 +55,10 @@ export const loader = (args: Route.LoaderArgs) =>
           tenantId: tenant.id,
           userId: user.id,
         }),
+        defaultChainId:
+          prefixedAddress != null
+            ? getChainId(verifyPrefixedAddress(prefixedAddress))
+            : undefined,
       }
     },
   )
@@ -130,12 +135,11 @@ export const clientAction = async ({
 }
 
 const Start = ({
-  loaderData: { user, accounts },
+  loaderData: { user, accounts, defaultChainId = Chain.ETH },
   actionData,
 }: Route.ComponentProps) => {
-  const [selectedChainId, setSelectedChainId] = useState<ChainId>(
-    verifyChainId(ChainEnum.ETH),
-  )
+  const [selectedChainId, setSelectedChainId] =
+    useState<ChainId>(defaultChainId)
   const { address } = useAccount()
   const connected = useConnected()
 

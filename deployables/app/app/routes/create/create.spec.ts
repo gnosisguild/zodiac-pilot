@@ -15,7 +15,11 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
 } from '@zodiac/messages'
-import { createMockExecutionRoute, randomAddress } from '@zodiac/test-utils'
+import {
+  createMockExecutionRoute,
+  randomAddress,
+  randomPrefixedAddress,
+} from '@zodiac/test-utils'
 import { href, redirectDocument } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { getAddress } from 'viem'
@@ -196,6 +200,22 @@ describe.sequential('New SafeAccount', () => {
           href('/tokens/balances'),
         )
       })
+    })
+  })
+
+  describe('Predefined account', () => {
+    it('is possible to preset the chain', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const prefixedAddress = randomPrefixedAddress({ chainId: Chain.GNO })
+
+      await render(href('/create/:prefixedAddress?', { prefixedAddress }), {
+        user,
+        tenant,
+      })
+
+      expect(await screen.findByText('Gnosis')).toBeInTheDocument()
     })
   })
 })
