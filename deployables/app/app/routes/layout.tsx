@@ -1,4 +1,5 @@
 import { ProvideUser } from '@/auth-client'
+import { authorizedLoader } from '@/auth-server'
 import { getAvailableChains } from '@/balances-server'
 import {
   FakeBrowser,
@@ -7,14 +8,8 @@ import {
   ProvidePilotStatus,
 } from '@/components'
 import { ProvideChains } from '@/routes-ui'
-import { sentry } from '@/sentry-client'
-import { getOrganization } from '@/workOS/server'
-import {
-  authkitLoader,
-  getSignInUrl,
-  signOut,
-} from '@workos-inc/authkit-react-router'
-import { dbClient, getActiveFeatures, getTenant } from '@zodiac/db'
+import { getSignInUrl } from '@workos-inc/authkit-react-router'
+import { dbClient, getActiveFeatures } from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
@@ -44,44 +39,44 @@ import { href, NavLink, Outlet } from 'react-router'
 import type { Route } from './+types/layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
-  authkitLoader(args, async ({ auth: { organizationId }, request }) => {
-    const url = new URL(request.url)
-    const routeFeatures = url.searchParams.getAll('feature')
+  authorizedLoader(
+    args,
+    async ({
+      context: {
+        auth: { tenant, workOsOrganization, workOsUser, role },
+      },
+      request,
+    }) => {
+      const url = new URL(request.url)
+      const routeFeatures = url.searchParams.getAll('feature')
 
-    const chains = await getAvailableChains()
+      const chains = await getAvailableChains()
 
-    if (organizationId == null) {
-      return {
-        chains,
-        features: routeFeatures,
-        signInUrl: await getSignInUrl(),
-        isSystemAdmin: false,
+      if (tenant == null) {
+        return {
+          chains,
+          user: null,
+          role: null,
+          features: routeFeatures,
+          signInUrl: await getSignInUrl(),
+          isSystemAdmin: false,
+        }
       }
-    }
 
-    const db = dbClient()
-
-    const organization = await getOrganization(organizationId)
-
-    try {
-      const tenant = await getTenant(db, organization.externalId)
+      const db = dbClient()
 
       const features = await getActiveFeatures(db, tenant.id)
 
       return {
         chains,
+        user: workOsUser,
+        role,
         features: [...features.map(({ name }) => name), ...routeFeatures],
         signInUrl: await getSignInUrl(),
-        isSystemAdmin: getAdminOrganizationId() === organization.id,
+        isSystemAdmin: getAdminOrganizationId() === workOsOrganization.id,
       }
-    } catch (error) {
-      sentry.captureException(error)
-
-      console.error(error)
-
-      throw await signOut(request)
-    }
-  })
+    },
+  )
 
 const PageLayout = ({
   loaderData: { chains, user, features, signInUrl, role, isSystemAdmin },

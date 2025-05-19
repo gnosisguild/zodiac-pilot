@@ -1,5 +1,5 @@
 export { createOrganization } from './createOrganization'
-export { getOrganization, type VerifiedOrganization } from './getOrganization'
+export { getOrganization } from './getOrganization'
 export { getOrganizationsForUser } from './getOrganizationsForUser'
 export { updateExternalTenantId } from './updateExternalTenantId'
 export { updateExternalUserId } from './updateExternalUserId'

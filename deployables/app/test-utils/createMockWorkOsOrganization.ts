@@ -1,12 +1,9 @@
-import { type VerifiedOrganization } from '@/workOS/server'
 import type { Organization } from '@workos-inc/node'
-import { isUUID } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 
-export const createMockWorkOsOrganization = ({
-  externalId,
-  ...organization
-}: Partial<Organization> = {}): VerifiedOrganization => ({
+export const createMockWorkOsOrganization = (
+  organization: Partial<Organization> = {},
+): Organization => ({
   allowProfilesOutsideOrganization: false,
   createdAt: new Date().toISOString(),
   domains: [],
@@ -15,8 +12,7 @@ export const createMockWorkOsOrganization = ({
   name: 'Test Org',
   object: 'organization',
   updatedAt: new Date().toISOString(),
-  externalId:
-    externalId == null || !isUUID(externalId) ? randomUUID() : externalId,
+  externalId: null,
 
   ...organization,
 })

@@ -1,4 +1,4 @@
-import { WorkOS } from '@workos-inc/node'
+import { getWorkOS } from '@workos-inc/authkit-react-router'
 
 type CreateOrganizationOptions = {
   name: string
@@ -11,7 +11,7 @@ export const createOrganization = async ({
   externalId,
   adminEmail,
 }: CreateOrganizationOptions) => {
-  const workOS = new WorkOS()
+  const workOS = getWorkOS()
 
   const organization = await workOS.organizations.createOrganization({
     name,
