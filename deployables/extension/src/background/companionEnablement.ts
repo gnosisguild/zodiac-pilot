@@ -1,6 +1,7 @@
 import { getRoute, getRoutes } from '@/execution-routes'
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
+import { getLastTransactionExecutedAt } from '@/state'
 import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,
@@ -94,16 +95,11 @@ export const companionEnablement = (
 
     const handlePing = createTabMessageHandler(
       CompanionAppMessageType.PING,
-      (_, { tabId }) => {
-        sendMessageToCompanionApp(
-          tabId,
-          {
-            type: CompanionResponseMessageType.PONG,
-          },
-          // bypass some tab validity checks so that this
-          // message finds the companion app regardless of what
-          // page the user is currently on
-        )
+      async (_, { tabId }) => {
+        sendMessageToCompanionApp(tabId, {
+          type: CompanionResponseMessageType.PONG,
+          lastTransactionExecutedAt: await getLastTransactionExecutedAt(),
+        })
       },
     )
 

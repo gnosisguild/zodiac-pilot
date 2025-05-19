@@ -14,6 +14,7 @@ export {
   translateTransaction,
 } from './actions'
 export { ExecutionStatus } from './executionStatus'
+export { getLastTransactionExecutedAt } from './getLastTransactionExecutedAt'
 export { isConfirmedTransaction } from './isConfirmedTransaction'
 export type {
   ConfirmedTransaction,

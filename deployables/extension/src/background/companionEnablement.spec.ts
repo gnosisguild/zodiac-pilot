@@ -113,6 +113,7 @@ describe('Companion Enablement', () => {
 
       expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(tab.id, {
         type: CompanionResponseMessageType.PONG,
+        lastTransactionExecutedAt: null,
       } satisfies CompanionResponseMessage)
     })
 
@@ -137,6 +138,7 @@ describe('Companion Enablement', () => {
 
       expect(chromeMock.tabs.sendMessage).not.toHaveBeenCalledWith(tab.id, {
         type: CompanionResponseMessageType.PONG,
+        lastTransactionExecutedAt: null,
       } satisfies CompanionResponseMessage)
     })
   })

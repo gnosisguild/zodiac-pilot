@@ -129,6 +129,7 @@ describe('Companion App Content Script', () => {
         CompanionResponseMessageType.PONG,
         {
           type: CompanionResponseMessageType.PONG,
+          lastTransactionExecutedAt: new Date().toISOString(),
         } satisfies CompanionResponseMessage,
       ],
       [
