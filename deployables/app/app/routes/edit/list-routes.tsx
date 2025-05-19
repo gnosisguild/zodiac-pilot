@@ -64,19 +64,23 @@ export const loader = (args: Route.LoaderArgs) =>
         }
       }
 
-      const [remoteAccounts, activeRemoteAccount] = await Promise.all([
-        getAccounts(dbClient(), {
-          tenantId: tenant.id,
-          userId: user.id,
-        }),
-        findActiveAccount(dbClient(), tenant, user),
-      ])
+      try {
+        const [remoteAccounts, activeRemoteAccount] = await Promise.all([
+          getAccounts(dbClient(), {
+            tenantId: tenant.id,
+            userId: user.id,
+          }),
+          findActiveAccount(dbClient(), tenant, user),
+        ])
 
-      return {
-        loggedIn: true,
-        remoteAccounts,
-        activeRemoteAccountId:
-          activeRemoteAccount == null ? null : activeRemoteAccount.id,
+        return {
+          loggedIn: true,
+          remoteAccounts,
+          activeRemoteAccountId:
+            activeRemoteAccount == null ? null : activeRemoteAccount.id,
+        }
+      } catch (error) {
+        console.log({ error })
       }
     },
   )
