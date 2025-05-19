@@ -52,6 +52,7 @@ export const transactionsReducer = (
             ...transaction,
             snapshotId,
             transactionHash,
+            executedAt: new Date(),
             status: ExecutionStatus.CONFIRMED,
           },
         ],

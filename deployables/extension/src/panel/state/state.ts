@@ -20,6 +20,7 @@ export type UnconfirmedTransaction = MetaTransactionRequest & {
 export type ConfirmedTransaction = UnconfirmedTransaction & {
   snapshotId: string
   transactionHash: string
+  executedAt: Date
   status: ExecutionStatus
 }
 
