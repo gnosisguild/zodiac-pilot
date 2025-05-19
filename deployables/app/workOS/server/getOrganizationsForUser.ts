@@ -1,11 +1,12 @@
 import { invariant } from '@epic-web/invariant'
-import { WorkOS } from '@workos-inc/node'
-import { getOrganization, type VerifiedOrganization } from './getOrganization'
+import { getWorkOS } from '@workos-inc/authkit-react-router'
+import { type Organization } from '@workos-inc/node'
+import { getOrganization } from './getOrganization'
 
 export const getOrganizationsForUser = async (
   userId: string,
-): Promise<VerifiedOrganization[]> => {
-  const workOS = new WorkOS()
+): Promise<Organization[]> => {
+  const workOS = getWorkOS()
 
   const { data: memberships } =
     await workOS.userManagement.listOrganizationMemberships({

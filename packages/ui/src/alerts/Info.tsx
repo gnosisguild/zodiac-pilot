@@ -17,3 +17,5 @@ export const Info = ({ title, children }: InfoProps) => (
     {children && <BaseAlert.Description>{children}</BaseAlert.Description>}
   </BaseAlert>
 )
+
+Info.Actions = BaseAlert.Actions

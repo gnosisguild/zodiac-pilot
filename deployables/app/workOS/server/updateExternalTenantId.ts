@@ -1,4 +1,4 @@
-import { WorkOS } from '@workos-inc/node'
+import { getWorkOS } from '@workos-inc/authkit-react-router'
 import type { UUID } from 'crypto'
 
 type UpdateExternalTenantIdOptions = {
@@ -10,7 +10,7 @@ export const updateExternalTenantId = ({
   organizationId,
   externalId,
 }: UpdateExternalTenantIdOptions) =>
-  new WorkOS().organizations.updateOrganization({
+  getWorkOS().organizations.updateOrganization({
     organization: organizationId,
     externalId,
   })

@@ -6,10 +6,11 @@ import type {
   UnauthorizedData as WorkOsUnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import { dbClient, getTenant, getUser } from '@zodiac/db'
+import { dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import { getAdminOrganizationId } from '@zodiac/env'
-import { isUUID } from '@zodiac/schema'
+import { upsertTenant } from './upsertTenant'
+import { upsertUser } from './upsertUser'
 
 export type AuthorizedData = Omit<WorkOsAuthorizedData, 'user'> & {
   user: User
@@ -103,13 +104,7 @@ export const getAuth = <Params>(
           isSystemAdmin: false,
         })
       } else {
-        invariantResponse(auth.user.externalId != null, 'User does not exist.')
-        invariantResponse(
-          isUUID(auth.user.externalId),
-          '"externalId" is not a UUID',
-        )
-
-        const user = await getUser(dbClient(), auth.user.externalId)
+        const user = await upsertUser(dbClient(), auth.user)
 
         invariantResponse(
           auth.organizationId != null,
@@ -117,11 +112,7 @@ export const getAuth = <Params>(
         )
 
         const workOsOrganization = await getOrganization(auth.organizationId)
-
-        const tenant = await getTenant(
-          dbClient(),
-          workOsOrganization.externalId,
-        )
+        const tenant = await upsertTenant(dbClient(), workOsOrganization)
 
         const isSystemAdmin = getAdminOrganizationId() === workOsOrganization.id
 
