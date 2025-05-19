@@ -1,17 +1,19 @@
-import { saveLastTransactionExecutedAt, useExecutedTransactions } from '@/state'
+import {
+  clearLastTransactionExecuted,
+  saveLastTransactionExecutedAt,
+  useExecutedTransactions,
+} from '@/state'
 import { useEffect } from 'react'
-import { useTransactionQueue } from './useTransactionQueue'
 
 export const useStoreLastExecutedTransaction = () => {
-  const { nextTransaction, markDone } = useTransactionQueue(
-    useExecutedTransactions(),
-  )
+  const executedTransactions = useExecutedTransactions()
+  const lastTransaction = executedTransactions.at(-1)
 
   useEffect(() => {
-    if (nextTransaction == null) {
-      return
+    if (lastTransaction == null) {
+      clearLastTransactionExecuted()
+    } else {
+      saveLastTransactionExecutedAt(lastTransaction)
     }
-
-    saveLastTransactionExecutedAt(nextTransaction).then(markDone)
-  }, [markDone, nextTransaction])
+  }, [lastTransaction])
 }

@@ -11,7 +11,7 @@ import { useActiveWhenVisible } from './useActiveWhenVisible'
 type PingWhileDisconnectedOptions = {
   signedIn: boolean
   connected: boolean
-  onConnect: () => void
+  onConnect: (lastTransactionExecutedAt: string | null) => void
 }
 
 export const usePingWhileDisconnected = ({
@@ -43,8 +43,8 @@ export const usePingWhileDisconnected = ({
 
     const handlePong = createWindowMessageHandler(
       CompanionResponseMessageType.PONG,
-      () => {
-        onConnectRef.current()
+      ({ lastTransactionExecutedAt }) => {
+        onConnectRef.current(lastTransactionExecutedAt)
       },
     )
 

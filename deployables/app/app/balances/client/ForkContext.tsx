@@ -32,6 +32,7 @@ const useListenForForkInfo = () => {
     forkUrl: null,
     vnetId: null,
   })
+
   useEffect(() => {
     return companionRequest(
       {
