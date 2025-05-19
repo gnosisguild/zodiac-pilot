@@ -1,6 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { dbClient, getFeatures } from '@zodiac/db'
 import {
   featureFactory,
   tenantFactory,
@@ -54,6 +55,34 @@ describe('Features', () => {
       expect(
         await screen.findByRole('cell', { name: 'New feature' }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('Remove', () => {
+    it('is possible to remove a feature', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      await featureFactory.create({ name: 'Test feature' })
+
+      const { waitForPendingActions } = await render(
+        href('/system-admin/features'),
+        {
+          user,
+          tenant,
+          isSystemAdmin: true,
+        },
+      )
+
+      await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(getFeatures(dbClient())).resolves.toEqual([])
     })
   })
 })

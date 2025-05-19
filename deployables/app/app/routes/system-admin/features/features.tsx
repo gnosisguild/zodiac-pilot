@@ -2,6 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { dbClient, getFeatures } from '@zodiac/db'
 import {
+  GhostLinkButton,
   SecondaryLinkButton,
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { Trash2 } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/features'
 
@@ -48,6 +50,9 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
           <TableHead>
             <TableRow>
               <TableHeader>Feature</TableHeader>
+              <TableHeader className="relative w-0">
+                <span className="sr-only">Actions</span>
+              </TableHeader>
             </TableRow>
           </TableHead>
 
@@ -55,6 +60,19 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
             {features.map((feature) => (
               <TableRow key={feature.id}>
                 <TableCell>{feature.name}</TableCell>
+                <TableCell>
+                  <GhostLinkButton
+                    iconOnly
+                    icon={Trash2}
+                    size="tiny"
+                    style="critical"
+                    to={href('/system-admin/features/remove/:featureId', {
+                      featureId: feature.id,
+                    })}
+                  >
+                    Remove
+                  </GhostLinkButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

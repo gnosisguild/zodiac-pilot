@@ -86,6 +86,7 @@ export default [
 
       route('/features', 'routes/system-admin/features/features.tsx', [
         route('create', 'routes/system-admin/features/create.tsx'),
+        route('remove/:featureId', 'routes/system-admin/features/remove.tsx'),
       ]),
     ]),
   ]),
