@@ -1,5 +1,6 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
 import { MockProvider } from '@/providers-ui'
+import { getLastTransactionExecutedAt } from '@/state'
 import {
   chromeMock,
   createConfirmedTransaction,
@@ -21,6 +22,7 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { encode, toMetaTransactionRequest } from '@zodiac/schema'
+import { randomHex } from '@zodiac/test-utils'
 import { User } from 'lucide-react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -47,7 +49,6 @@ vi.mock('@/providers-ui', async (importOriginal) => {
     ...module,
 
     useDecodeTransactions: vi.fn(),
-    useSendTransactions: vi.fn(),
   }
 })
 
@@ -62,6 +63,20 @@ vi.mock('@/providers', async (importOriginal) => {
     ...module,
 
     ForkProvider: MockProvider,
+  }
+})
+
+vi.mock('ethers', async (importOriginal) => {
+  const module = await importOriginal<typeof import('ethers')>()
+
+  const { MockBrowserProvider } = await vi.importActual<
+    typeof import('../../../providers-ui/MockBrowserProvider')
+  >('../../../providers-ui/MockBrowserProvider')
+
+  return {
+    ...module,
+
+    BrowserProvider: MockBrowserProvider,
   }
 })
 
@@ -102,11 +117,32 @@ describe('Transactions', () => {
         await screen.findByRole('region', { name: 'Raw transaction' }),
       ).toBeInTheDocument()
     })
+
+    it('stores when the last transaction was executed', async () => {
+      await mockRoute({ id: 'test-route' })
+
+      const now = new Date()
+
+      await render('/test-route/transactions', {
+        initialState: {
+          executed: [createConfirmedTransaction({ executedAt: now })],
+        },
+      })
+
+      await expect(getLastTransactionExecutedAt()).resolves.toEqual(
+        now.toISOString(),
+      )
+    })
   })
 
   describe('Refresh', () => {
     it('disables the refresh button when transactions are pending', async () => {
       await mockRoute({ id: 'test-route' })
+
+      MockProvider.setNextTransactionResult({
+        checkpointId: 'test-checkpoint',
+        hash: randomHex(),
+      })
 
       await render('/test-route/transactions', {
         initialState: { pending: [createTransaction()] },
@@ -129,6 +165,11 @@ describe('Transactions', () => {
         apply: () => Promise.resolve(),
         icon: User,
         result: [],
+      })
+
+      MockProvider.setNextTransactionResult({
+        checkpointId: 'test-checkpoint',
+        hash: randomHex(),
       })
 
       await render(`/test-route`, {

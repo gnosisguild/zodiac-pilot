@@ -12,14 +12,17 @@ type DisconnectWhenUnreachableOptions = {
   signedIn: boolean
   connected: boolean
   onDisconnect: () => void
+  onHeartBeat: (lastTransactionExecutedAt: string | null) => void
 }
 
 export const useDisconnectWhenUnreachable = ({
   onDisconnect,
+  onHeartBeat,
   connected,
   signedIn,
 }: DisconnectWhenUnreachableOptions) => {
   const onDisconnectRef = useStableHandler(onDisconnect)
+  const onHeartBeatRef = useStableHandler(onHeartBeat)
   const active = useActiveWhenVisible()
 
   useEffect(() => {
@@ -34,14 +37,6 @@ export const useDisconnectWhenUnreachable = ({
     let cancelled = false
 
     const probeConnection = () => {
-      window.postMessage(
-        {
-          type: CompanionAppMessageType.PING,
-          signedIn,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
-
       const disconnectTimeout = setTimeout(() => {
         if (cancelled) {
           return
@@ -52,10 +47,22 @@ export const useDisconnectWhenUnreachable = ({
 
       const handlePong = createWindowMessageHandler(
         CompanionResponseMessageType.PONG,
-        () => clearTimeout(disconnectTimeout),
+        ({ lastTransactionExecutedAt }) => {
+          clearTimeout(disconnectTimeout)
+
+          onHeartBeatRef.current(lastTransactionExecutedAt)
+        },
       )
 
       window.addEventListener('message', handlePong)
+
+      window.postMessage(
+        {
+          type: CompanionAppMessageType.PING,
+          signedIn,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
     }
 
     const interval = setInterval(probeConnection, 1000)
@@ -65,5 +72,5 @@ export const useDisconnectWhenUnreachable = ({
 
       clearInterval(interval)
     }
-  }, [active, connected, onDisconnectRef, signedIn])
+  }, [active, connected, onDisconnectRef, onHeartBeatRef, signedIn])
 }

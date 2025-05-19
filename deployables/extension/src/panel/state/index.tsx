@@ -13,8 +13,11 @@ export {
   rollbackTransaction,
   translateTransaction,
 } from './actions'
+export { clearLastTransactionExecuted } from './clearLastTransactionExecuted'
 export { ExecutionStatus } from './executionStatus'
+export { getLastTransactionExecutedAt } from './getLastTransactionExecutedAt'
 export { isConfirmedTransaction } from './isConfirmedTransaction'
+export { saveLastTransactionExecutedAt } from './saveLastTransactionExecutedAt'
 export type {
   ConfirmedTransaction,
   ContractInfo,
@@ -25,6 +28,7 @@ export type {
 export {
   ProvideTransactions,
   useDispatch,
+  useExecutedTransactions,
   usePendingTransactions,
   useRefresh,
   useRollback,

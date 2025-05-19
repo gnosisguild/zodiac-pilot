@@ -1,17 +1,20 @@
-import {
-  usePendingTransactions,
-  useRefresh,
-  useRollback,
-  type UnconfirmedTransaction,
-} from '@/state'
-import { useCallback, useEffect, useState } from 'react'
+import { usePendingTransactions, useRefresh, useRollback } from '@/state'
+import { useEffect } from 'react'
+import { useInterceptTransactions } from './useInterceptTransactions'
 import { useSendTransaction } from './useSendTransaction'
+import { useStoreLastExecutedTransaction } from './useStoreLastExecutedTransaction'
+import { useTransactionQueue } from './useTransactionQueue'
 
 export const useSendTransactions = () => {
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
   const refresh = useRefresh()
-  const { nextTransaction, markDone } = useNextTransactionToExecute()
+  const { nextTransaction, markDone } = useTransactionQueue(
+    usePendingTransactions(),
+  )
+
+  useStoreLastExecutedTransaction()
+  useInterceptTransactions()
 
   useEffect(() => {
     if (nextTransaction == null) {
@@ -36,28 +39,4 @@ export const useSendTransactions = () => {
 
     sendTransaction(nextTransaction).then(markDone)
   }, [markDone, nextTransaction, refresh, rollback, sendTransaction])
-}
-
-const useNextTransactionToExecute = () => {
-  const [pendingTransaction] = usePendingTransactions()
-  const [nextTransaction, setNextTransaction] =
-    useState<UnconfirmedTransaction | null>(null)
-
-  const markDone = useCallback(() => {
-    setNextTransaction(null)
-  }, [])
-
-  useEffect(() => {
-    if (nextTransaction != null) {
-      return
-    }
-
-    if (pendingTransaction == null) {
-      return
-    }
-
-    setNextTransaction(pendingTransaction)
-  }, [nextTransaction, pendingTransaction])
-
-  return { nextTransaction, markDone }
 }

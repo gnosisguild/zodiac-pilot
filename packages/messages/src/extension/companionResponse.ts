@@ -13,6 +13,7 @@ export enum CompanionResponseMessageType {
 
 type Pong = {
   type: CompanionResponseMessageType.PONG
+  lastTransactionExecutedAt: string | null
 }
 
 type ProvideVersion = {

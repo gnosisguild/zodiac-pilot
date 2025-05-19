@@ -26,7 +26,7 @@ class UnsupportedMethodError extends Error {
   code = 4200
 }
 
-type TransactionResult = {
+export type TransactionResult = {
   checkpointId: string
   hash: string
 }

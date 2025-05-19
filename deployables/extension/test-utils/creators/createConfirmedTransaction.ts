@@ -10,6 +10,7 @@ export const createConfirmedTransaction = (
 
   transactionHash: randomHex(),
   snapshotId: randomUUID(),
+  executedAt: new Date(),
   status: ExecutionStatus.CONFIRMED,
 
   ...transaction,

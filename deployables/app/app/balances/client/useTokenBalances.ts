@@ -1,3 +1,4 @@
+import { useLastTransactionExecutedAt } from '@/components'
 import { useEffect, useMemo } from 'react'
 import { useFetcher } from 'react-router'
 import { useAccount } from 'wagmi'
@@ -7,6 +8,7 @@ import { useForkUrl } from './ForkContext'
 export const useTokenBalances = () => {
   const { address, chainId } = useAccount()
   const { forkUrl, vnetId } = useForkUrl()
+  const lastTransactionExecutedAt = useLastTransactionExecutedAt()
   const { load, data = [], state } = useFetcher<TokenBalance[]>()
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export const useTokenBalances = () => {
     }
 
     load(`${url.pathname}${url.search}`)
-  }, [address, chainId, forkUrl, vnetId, load])
+  }, [address, chainId, forkUrl, vnetId, load, lastTransactionExecutedAt])
 
   const tokenBalanceByAddress = useMemo(
     () =>

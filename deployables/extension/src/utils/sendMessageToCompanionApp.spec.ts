@@ -11,6 +11,8 @@ vi.mock('./sendMessageToTab', () => ({
 }))
 
 describe('Send message to companion app', () => {
+  const now = new Date()
+
   beforeEach(() => {
     mockCompanionAppUrl('http://companion-app.com')
   })
@@ -20,10 +22,12 @@ describe('Send message to companion app', () => {
 
     await sendMessageToCompanionApp(tab.id, {
       type: CompanionResponseMessageType.PONG,
+      lastTransactionExecutedAt: now.toISOString(),
     })
 
     expect(sendMessageToTab).toHaveBeenCalledWith(tab.id, {
       type: CompanionResponseMessageType.PONG,
+      lastTransactionExecutedAt: now.toISOString(),
     })
   })
 
@@ -32,6 +36,7 @@ describe('Send message to companion app', () => {
 
     await sendMessageToCompanionApp(tab.id, {
       type: CompanionResponseMessageType.PONG,
+      lastTransactionExecutedAt: now.toISOString(),
     })
 
     expect(sendMessageToTab).not.toHaveBeenCalled()

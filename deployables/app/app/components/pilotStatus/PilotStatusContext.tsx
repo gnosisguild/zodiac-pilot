@@ -9,7 +9,15 @@ import { useConnectChangeOnPilotEvents } from './useConnectChangeOnPilotEvents'
 import { useDisconnectWhenUnreachable } from './useDisconnectWhenUnreachable'
 import { usePingWhileDisconnected } from './usePingWhileDisconnected'
 
-const PilotStatusContext = createContext(false)
+type StatusContext = {
+  connected: boolean
+  lastTransactionExecutedAt: string | null
+}
+
+const PilotStatusContext = createContext<StatusContext>({
+  connected: false,
+  lastTransactionExecutedAt: null,
+})
 
 type ProvidePilotStatusProps = PropsWithChildren
 
@@ -21,6 +29,9 @@ export const ProvidePilotStatus = ({ children }: ProvidePilotStatusProps) => (
 
 const useUpToDateConnectedStatus = () => {
   const [connected, setConnected] = useState(false)
+  const [lastTransactionExecutedAt, setLastTransactionExecutedAt] = useState<
+    string | null
+  >(null)
   const signedIn = useIsSignedIn()
 
   useConnectChangeOnPilotEvents({
@@ -30,15 +41,28 @@ const useUpToDateConnectedStatus = () => {
   usePingWhileDisconnected({
     connected,
     signedIn,
-    onConnect: () => setConnected(true),
+    onConnect: (lastTransactionExecutedAt) => {
+      setConnected(true)
+      setLastTransactionExecutedAt(lastTransactionExecutedAt)
+    },
   })
   useDisconnectWhenUnreachable({
     connected,
     signedIn,
     onDisconnect: () => setConnected(false),
+    onHeartBeat: setLastTransactionExecutedAt,
   })
+
+  return { connected, lastTransactionExecutedAt }
+}
+
+export const useConnected = () => {
+  const { connected } = useContext(PilotStatusContext)
 
   return connected
 }
+export const useLastTransactionExecutedAt = () => {
+  const { lastTransactionExecutedAt } = useContext(PilotStatusContext)
 
-export const useConnected = () => useContext(PilotStatusContext)
+  return lastTransactionExecutedAt
+}
