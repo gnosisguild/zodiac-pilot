@@ -112,3 +112,9 @@ export const useRefresh = () => {
 
   return refresh
 }
+
+export const useExecutedTransactions = () => {
+  const { executed } = useContext(TransactionsContext)
+
+  return executed
+}

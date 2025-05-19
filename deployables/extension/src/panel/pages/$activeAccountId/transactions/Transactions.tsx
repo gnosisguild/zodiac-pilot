@@ -4,7 +4,6 @@ import { usePilotIsReady } from '@/port-handling'
 import {
   useDecodeTransactions,
   useDeleteFork,
-  useInterceptTransactions,
   useProviderBridge,
   useRollbackTransaction,
   useSendTransactions,
@@ -57,7 +56,6 @@ const Transactions = () => {
 
   useDeleteFork()
   useSendTransactions()
-  useInterceptTransactions()
   useRollbackTransaction()
   useDecodeTransactions()
 
