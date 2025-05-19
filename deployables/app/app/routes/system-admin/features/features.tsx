@@ -2,6 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { dbClient, getFeatures } from '@zodiac/db'
 import {
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/features'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -28,7 +30,15 @@ export const loader = (args: Route.LoaderArgs) =>
 const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Features</Page.Header>
+      <Page.Header
+        action={
+          <SecondaryLinkButton to={href('/system-admin/features/create')}>
+            Create new feature
+          </SecondaryLinkButton>
+        }
+      >
+        Features
+      </Page.Header>
 
       <Page.Main>
         <Table
@@ -50,6 +60,8 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
           </TableBody>
         </Table>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
