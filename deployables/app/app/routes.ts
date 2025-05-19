@@ -83,6 +83,7 @@ export default [
 
       route('tenants', 'routes/system-admin/tenants.tsx'),
       route('tenant/:tenantId', 'routes/system-admin/tenant.tsx'),
+      route('features', 'routes/system-admin/features.tsx'),
     ]),
   ]),
 

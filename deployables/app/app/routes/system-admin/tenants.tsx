@@ -33,7 +33,10 @@ const Tenants = ({ loaderData: { tenants } }: Route.ComponentProps) => {
       <Page.Header>Tenants</Page.Header>
 
       <Page.Main>
-        <Table>
+        <Table
+          bleed
+          className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
+        >
           <TableHead>
             <TableRow>
               <TableHeader>Name</TableHeader>
