@@ -22,7 +22,6 @@ import {
 } from '@zodiac/test-utils'
 import { href, redirectDocument } from 'react-router'
 import { prefixAddress } from 'ser-kit'
-import { getAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/utils', async (importOriginal) => {
@@ -50,7 +49,7 @@ vi.mock('react-router', async (importOriginal) => {
 
 const mockRedirectDocument = vi.mocked(redirectDocument)
 
-describe.sequential('New SafeAccount', () => {
+describe('New SafeAccount', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
       Object.entries(CHAIN_NAME).map(([chainId, name]) =>
@@ -75,12 +74,10 @@ describe.sequential('New SafeAccount', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Address' }),
+        screen.getByRole('textbox', { name: 'Address' }),
         address,
       )
-      await userEvent.click(
-        screen.getByRole('option', { name: getAddress(address) }),
-      )
+
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
       await waitForPendingActions()
@@ -103,12 +100,10 @@ describe.sequential('New SafeAccount', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Address' }),
+        screen.getByRole('textbox', { name: 'Address' }),
         address,
       )
-      await userEvent.click(
-        screen.getByRole('option', { name: getAddress(address) }),
-      )
+
       await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
       await expectMessage({
@@ -125,11 +120,8 @@ describe.sequential('New SafeAccount', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Address' }),
+        screen.getByRole('textbox', { name: 'Address' }),
         address,
-      )
-      await userEvent.click(
-        screen.getByRole('option', { name: getAddress(address) }),
       )
 
       await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
@@ -153,11 +145,8 @@ describe.sequential('New SafeAccount', () => {
       const address = randomAddress()
 
       await userEvent.type(
-        screen.getByRole('combobox', { name: 'Address' }),
+        screen.getByRole('textbox', { name: 'Address' }),
         address,
-      )
-      await userEvent.click(
-        screen.getByRole('option', { name: getAddress(address) }),
       )
 
       await userEvent.type(
@@ -182,11 +171,8 @@ describe.sequential('New SafeAccount', () => {
         const address = randomAddress()
 
         await userEvent.type(
-          screen.getByRole('combobox', { name: 'Address' }),
+          screen.getByRole('textbox', { name: 'Address' }),
           address,
-        )
-        await userEvent.click(
-          screen.getByRole('option', { name: getAddress(address) }),
         )
 
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
@@ -216,6 +202,27 @@ describe.sequential('New SafeAccount', () => {
       })
 
       expect(await screen.findByText('Gnosis')).toBeInTheDocument()
+    })
+
+    it('is possible to preset the address', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const address = randomAddress()
+
+      await render(
+        href('/create/:prefixedAddress?', {
+          prefixedAddress: randomPrefixedAddress({ address }),
+        }),
+        {
+          user,
+          tenant,
+        },
+      )
+
+      expect(
+        await screen.findByRole('textbox', { name: 'Address' }),
+      ).toHaveValue(address)
     })
   })
 })

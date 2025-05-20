@@ -1,6 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import {
-  AvatarInput,
   ConnectWalletButton,
   OnlyConnectedWhenLoggedOut,
   Page,
@@ -9,7 +8,7 @@ import {
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
-import { createAccount, dbClient, getAccounts } from '@zodiac/db'
+import { createAccount, dbClient } from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -24,12 +23,11 @@ import {
   updateChainId,
   updateLabel,
 } from '@zodiac/modules'
-import { isHexAddress, verifyPrefixedAddress } from '@zodiac/schema'
-import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { verifyPrefixedAddress } from '@zodiac/schema'
+import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
-import { prefixAddress, type ChainId } from 'ser-kit'
-import { useAccount } from 'wagmi'
+import { unprefixAddress, type ChainId } from 'ser-kit'
 import type { Route } from './+types/create'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
@@ -42,22 +40,22 @@ export const loader = (args: Route.LoaderArgs) =>
     async ({
       params: { prefixedAddress },
       context: {
-        auth: { workOsUser, user, tenant },
+        auth: { workOsUser, user },
       },
     }) => {
       if (user == null) {
-        return { user: workOsUser, accounts: [] }
+        return { user: workOsUser, defaultChainId: Chain.ETH }
       }
 
       return {
         user: workOsUser,
-        accounts: await getAccounts(dbClient(), {
-          tenantId: tenant.id,
-          userId: user.id,
-        }),
         defaultChainId:
           prefixedAddress != null
             ? getChainId(verifyPrefixedAddress(prefixedAddress))
+            : Chain.ETH,
+        defaultAddress:
+          prefixedAddress != null
+            ? unprefixAddress(verifyPrefixedAddress(prefixedAddress))
             : undefined,
       }
     },
@@ -135,12 +133,11 @@ export const clientAction = async ({
 }
 
 const Start = ({
-  loaderData: { user, accounts, defaultChainId = Chain.ETH },
+  loaderData: { user, defaultChainId, defaultAddress },
   actionData,
 }: Route.ComponentProps) => {
   const [selectedChainId, setSelectedChainId] =
     useState<ChainId>(defaultChainId)
-  const { address } = useAccount()
   const connected = useConnected()
 
   return (
@@ -179,18 +176,11 @@ const Start = ({
               </div>
 
               <div className="col-span-4">
-                <AvatarInput
+                <AddressInput
                   required
-                  isClearable
                   label="Address"
-                  initiator={
-                    isHexAddress(address)
-                      ? prefixAddress(undefined, address)
-                      : undefined
-                  }
-                  chainId={selectedChainId}
                   name="avatar"
-                  knownAccounts={accounts}
+                  defaultValue={defaultAddress}
                 />
               </div>
             </div>
