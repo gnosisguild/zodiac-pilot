@@ -46,7 +46,7 @@
     "drizzle-orm": "0.43.1",
     "drizzle-zod": "0.7.1",
     "postgres": "3.4.6",
-    "ser-kit": "3.7.0",
+    "ser-kit": "3.8.0",
     "zod": "3.25.13"
   },
   "devDependencies": {
