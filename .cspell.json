@@ -119,7 +119,8 @@
     "worldchain",
     "xcall",
     "xdai",
-    "xmlhttprequest"
+    "xmlhttprequest",
+    "Paginatable"
   ],
   "flagWords": [],
   "ignorePaths": [
