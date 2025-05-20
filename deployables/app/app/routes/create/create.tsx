@@ -25,9 +25,8 @@ import {
 } from '@zodiac/modules'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
-import { useState } from 'react'
 import { href, redirectDocument } from 'react-router'
-import { unprefixAddress, type ChainId } from 'ser-kit'
+import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/create'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
@@ -136,8 +135,6 @@ const Start = ({
   loaderData: { user, defaultChainId, defaultAddress },
   actionData,
 }: Route.ComponentProps) => {
-  const [selectedChainId, setSelectedChainId] =
-    useState<ChainId>(defaultChainId)
   const connected = useConnected()
 
   return (
@@ -168,11 +165,7 @@ const Start = ({
 
             <div className="grid grid-cols-6 gap-4">
               <div className="col-span-2">
-                <ChainSelect
-                  name="chainId"
-                  value={selectedChainId}
-                  onChange={setSelectedChainId}
-                />
+                <ChainSelect name="chainId" defaultValue={defaultChainId} />
               </div>
 
               <div className="col-span-4">
