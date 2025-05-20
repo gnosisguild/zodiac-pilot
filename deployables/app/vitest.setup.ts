@@ -16,8 +16,8 @@ import {
   mockViewport,
 } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
-import { createMockListResult } from './test-utils'
 import { createMockChain } from './test-utils/createMockChain'
+import { createMockListResult } from './test-utils/createMockListResult'
 import { createMockToken } from './test-utils/createMockToken'
 
 configMocks({ afterEach, afterAll })
@@ -87,6 +87,7 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
 
   return {
     ...module,
+
     authkitLoader: vi.fn(),
     getSignInUrl: vi.fn().mockResolvedValue('http://workos-test.com/sign-in'),
 
