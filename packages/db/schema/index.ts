@@ -57,6 +57,7 @@ export const TenantRelations = relations(TenantTable, ({ many }) => ({
 
 export const UserTable = pgTable('User', {
   id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+  fullName: text().notNull().default(''),
   ...createdTimestamp,
 })
 

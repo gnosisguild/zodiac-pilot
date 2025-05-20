@@ -2,7 +2,10 @@ import { dbClient, type DBClient } from '@zodiac/db'
 
 type FactoryOptions<Input, Output, BuildArgs extends Array<unknown>> = {
   build: (...data: [...BuildArgs, input?: Partial<Input>]) => Input
-  create: (db: DBClient, input: Input) => Promise<Output>
+  create: (
+    db: DBClient,
+    ...input: [data: Input, ...BuildArgs, input?: Partial<Input>]
+  ) => Promise<Output>
   createWithoutDb: (input: Input) => Output
 }
 
@@ -29,7 +32,7 @@ export const createFactory = <
       return createWithoutDb(build(...data))
     },
     create(...data) {
-      return create(dbClient(), build(...data))
+      return create(dbClient(), build(...data), ...data)
     },
   }
 }
