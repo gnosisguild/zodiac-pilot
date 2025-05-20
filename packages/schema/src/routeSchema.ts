@@ -1,7 +1,9 @@
+import { invariant } from '@epic-web/invariant'
 import {
   AccountType,
   chains,
   ConnectionType,
+  type ChainId,
   type PrefixedAddress,
 } from 'ser-kit'
 import { z } from 'zod'
@@ -19,7 +21,20 @@ export const chainIdSchema = z.union([
   z.literal(chains[8].chainId),
   z.literal(chains[9].chainId),
   z.literal(chains[10].chainId),
+  z.literal(chains[11].chainId),
+  z.literal(chains[12].chainId),
+  z.literal(chains[13].chainId),
 ])
+
+invariant(
+  chainIdSchema.options.length === chains.length,
+  'chainIdSchema is not exhaustive',
+)
+
+export type ChainId2 =
+  ChainId extends z.infer<typeof chainIdSchema>
+    ? z.infer<typeof chainIdSchema>
+    : never
 
 export type HexAddress = Lowercase<Hex>
 export const isHexAddress = (address: unknown): address is HexAddress =>
