@@ -12,7 +12,7 @@ export const loader = ({ request, ...options }: Route.LoaderArgs) => {
         try {
           const [user, organizations] = await Promise.all([
             upsertUser(db, workOSUser),
-            getOrganizationsForUser(workOSUser.id),
+            getOrganizationsForUser(workOSUser),
           ])
 
           await Promise.all(
