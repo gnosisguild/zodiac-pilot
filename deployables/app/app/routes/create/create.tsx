@@ -7,6 +7,7 @@ import {
 } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
+import { getSignInUrl } from '@workos-inc/authkit-react-router'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
 import { createAccount, dbClient } from '@zodiac/db'
 import {
@@ -25,7 +26,7 @@ import {
 } from '@zodiac/modules'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
-import { href, redirectDocument } from 'react-router'
+import { href, redirect, redirectDocument } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/create'
 
@@ -37,12 +38,19 @@ export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
+      request,
       params: { prefixedAddress },
       context: {
         auth: { workOsUser, user },
       },
     }) => {
       if (user == null) {
+        if (prefixedAddress != null) {
+          const url = new URL(request.url)
+
+          return redirect(await getSignInUrl(url.pathname))
+        }
+
         return { user: workOsUser, defaultChainId: Chain.ETH }
       }
 
