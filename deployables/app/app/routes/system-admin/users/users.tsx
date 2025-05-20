@@ -6,6 +6,7 @@ import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
+  GhostLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { Trash2 } from 'lucide-react'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/users'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -72,6 +75,9 @@ const Users = ({
                   <TableHeader>ID</TableHeader>
                   <TableHeader>External ID</TableHeader>
                   <TableHeader>Created</TableHeader>
+                  <TableHeader className="relative w-0">
+                    <span className="sr-only">Actions</span>
+                  </TableHeader>
                 </TableRow>
               </TableHead>
 
@@ -91,6 +97,19 @@ const Users = ({
                     </TableCell>
                     <TableCell>
                       <DateValue>{new Date(user.createdAt)}</DateValue>
+                    </TableCell>
+                    <TableCell>
+                      <GhostLinkButton
+                        iconOnly
+                        icon={Trash2}
+                        size="tiny"
+                        style="critical"
+                        to={href('/system-admin/users/remove/:workOsUserId', {
+                          workOsUserId: user.id,
+                        })}
+                      >
+                        Remove
+                      </GhostLinkButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -129,6 +148,8 @@ const Users = ({
           </Table>
         </section>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }

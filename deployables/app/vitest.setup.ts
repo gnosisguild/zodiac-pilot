@@ -81,6 +81,9 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
     await importOriginal<typeof import('@workos-inc/authkit-react-router')>()
 
   const listUsers = vi.fn()
+  const updateUser = vi.fn()
+  const getUser = vi.fn()
+  const deleteUser = vi.fn()
 
   return {
     ...module,
@@ -90,6 +93,9 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
     getWorkOS: () => ({
       userManagement: {
         listUsers,
+        updateUser,
+        getUser,
+        deleteUser,
       },
     }),
   }
