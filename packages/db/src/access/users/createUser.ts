@@ -1,8 +1,15 @@
 import { UserTable } from '@zodiac/db/schema'
 import type { DBClient } from '../../dbClient'
 
-export const createUser = async (db: DBClient) => {
-  const [user] = await db.insert(UserTable).values({}).returning()
+type UserCreateOptions = {
+  fullName: string
+}
+
+export const createUser = async (
+  db: DBClient,
+  { fullName }: UserCreateOptions,
+) => {
+  const [user] = await db.insert(UserTable).values({ fullName }).returning()
 
   return user
 }

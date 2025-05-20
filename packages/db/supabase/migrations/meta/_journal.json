@@ -176,6 +176,13 @@
       "when": 1745839773069,
       "tag": "0024_add explorer urls",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1747736616757,
+      "tag": "0025_add full name to user",
+      "breakpoints": true
     }
   ]
 }

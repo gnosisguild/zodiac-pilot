@@ -1,4 +1,6 @@
+import { faker } from '@faker-js/faker'
 import {
+  TenantMembershipTable,
   UserTable,
   type Tenant,
   type User,
@@ -12,19 +14,30 @@ export const userFactory = createFactory<
   User,
   [tenant: Tenant]
 >({
-  build(tenant, data) {
+  build(_, data) {
     return {
-      tenantId: tenant.id,
+      fullName: faker.person.fullName(),
 
       ...data,
     }
   },
-  async create(db, data) {
+  async create(db, data, tenant) {
     const [user] = await db.insert(UserTable).values(data).returning()
+
+    await db
+      .insert(TenantMembershipTable)
+      .values({ tenantId: tenant.id, userId: user.id })
 
     return user
   },
   createWithoutDb(data) {
-    return Object.assign({ id: randomUUID(), createdAt: new Date() }, data)
+    return Object.assign(
+      {
+        id: randomUUID(),
+        createdAt: new Date(),
+        fullName: faker.person.fullName(),
+      },
+      data,
+    )
   },
 })

@@ -7,6 +7,7 @@ import {
 } from '@/balances-server'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
+import { getWorkOS } from '@workos-inc/authkit-react-router'
 import { sleepTillIdle } from '@zodiac/test-utils'
 import {
   configMocks,
@@ -16,6 +17,7 @@ import {
 } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 import { createMockChain } from './test-utils/createMockChain'
+import { createMockListResult } from './test-utils/createMockListResult'
 import { createMockToken } from './test-utils/createMockToken'
 
 configMocks({ afterEach, afterAll })
@@ -78,12 +80,29 @@ vi.mock('@workos-inc/authkit-react-router', async (importOriginal) => {
   const module =
     await importOriginal<typeof import('@workos-inc/authkit-react-router')>()
 
+  const listUsers = vi.fn()
+  const updateUser = vi.fn()
+  const getUser = vi.fn()
+  const deleteUser = vi.fn()
+
   return {
     ...module,
+
     authkitLoader: vi.fn(),
     getSignInUrl: vi.fn().mockResolvedValue('http://workos-test.com/sign-in'),
+
+    getWorkOS: () => ({
+      userManagement: {
+        listUsers,
+        updateUser,
+        getUser,
+        deleteUser,
+      },
+    }),
   }
 })
+
+const mockListUsers = vi.mocked(getWorkOS().userManagement.listUsers)
 
 vi.mock('@/workOS/server', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/workOS/server')>()
@@ -111,6 +130,8 @@ beforeEach(async () => {
   mockGetTokenByAddress.mockResolvedValue(createMockToken())
   mockGetChain.mockResolvedValue(createMockChain())
   mockIsValidToken.mockResolvedValue(true)
+
+  mockListUsers.mockResolvedValue(createMockListResult())
 })
 
 afterEach(async () => {

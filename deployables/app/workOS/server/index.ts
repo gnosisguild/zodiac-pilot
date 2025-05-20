@@ -1,5 +1,8 @@
 export { createOrganization } from './createOrganization'
 export { getOrganization } from './getOrganization'
 export { getOrganizationsForUser } from './getOrganizationsForUser'
+export { getUser } from './getUser'
+export { getUsers } from './getUsers'
+export { removeUser } from './removeUser'
 export { updateExternalTenantId } from './updateExternalTenantId'
 export { updateExternalUserId } from './updateExternalUserId'

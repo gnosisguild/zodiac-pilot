@@ -17,6 +17,13 @@ const SystemAdminLayout = () => (
               >
                 Tenants
               </Navigation.Link>
+
+              <Navigation.Link
+                to={href('/system-admin/users')}
+                icon={Building2}
+              >
+                Users
+              </Navigation.Link>
             </Navigation.Section>
 
             <Navigation.Section title="System management">
