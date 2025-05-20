@@ -6,7 +6,9 @@ import { isUUID } from '@zodiac/schema'
 
 export const upsertUser = async (db: DBClient, workOSUser: User) => {
   if (workOSUser.externalId == null) {
-    const user = await createUser(db)
+    const user = await createUser(db, {
+      fullName: `${workOSUser.firstName} ${workOSUser.lastName}`,
+    })
 
     await updateExternalUserId({
       userId: workOSUser.id,
