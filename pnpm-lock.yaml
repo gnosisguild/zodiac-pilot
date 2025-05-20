@@ -79,6 +79,12 @@ importers:
 
   deployables/app:
     dependencies:
+      '@cowprotocol/widget-lib':
+        specifier: ^0.18.0
+        version: 0.18.0
+      '@cowprotocol/widget-react':
+        specifier: ^0.13.0
+        version: 0.13.0
       '@epic-web/invariant':
         specifier: 1.0.0
         version: 1.0.0
@@ -1301,6 +1307,21 @@ packages:
 
   '@coinbase/wallet-sdk@4.3.0':
     resolution: {integrity: sha512-T3+SNmiCw4HzDm4we9wCHCxlP0pqCiwKe4sOwPH3YAK2KSKjxPRydKu6UQJrdONFVLG7ujXvbd/6ZqmvJb8rkw==}
+
+  '@cowprotocol/events@1.5.0':
+    resolution: {integrity: sha512-n7HTpd6ADSZrjwdtT9e79dfl1OWCqVHavm8l96FucW/De8ZCdFhPMsxLLdjdJlhWos3oFgpLjQNmthJvpzEl8A==}
+
+  '@cowprotocol/iframe-transport@1.1.0':
+    resolution: {integrity: sha512-sT3B8WwmJqz1FhIgDtpmEZcDg3EFkTGevsPddLShSwdcaqV7fYsVeYv4JgB/b0fwIIVLO0dHdrUhoQh9DTihog==}
+
+  '@cowprotocol/types@1.2.0':
+    resolution: {integrity: sha512-K/jOyLtffgEFs52hRKX7tyDHtIA3asnsB9So6lINCPfNetr1GhM818+kf+f3sPtOHWsBpL3pTkjJphzDVCQntQ==}
+
+  '@cowprotocol/widget-lib@0.18.0':
+    resolution: {integrity: sha512-uv4FBAqnoTEPwF7x7g1X65owuMRKfSoFSiDx3BRPvBBCIN3tvRMeOC9ZFlBEiJT677YnS4JWLItOIwQbwKxFrg==}
+
+  '@cowprotocol/widget-react@0.13.0':
+    resolution: {integrity: sha512-kYyio+nF0kjK5CZzM5GesFeZLbbV87wz1JgnCtzcMSf7iDDK/buyw5kQQloyz5Xkli6J8yayO1g11yH5ZuFk8Q==}
 
   '@cspell/cspell-bundled-dicts@9.0.2':
     resolution: {integrity: sha512-gGFSfVIvYtO95O3Yhcd1o0sOZHjVaCPwYq3MnaNsBBzaMviIZli4FZW9Z+XNKsgo1zRzbl2SdOXJPP0VcyAY0A==}
@@ -9758,6 +9779,23 @@ snapshots:
       clsx: 1.2.1
       eventemitter3: 5.0.1
       preact: 10.25.4
+
+  '@cowprotocol/events@1.5.0':
+    dependencies:
+      '@cowprotocol/types': 1.2.0
+
+  '@cowprotocol/iframe-transport@1.1.0': {}
+
+  '@cowprotocol/types@1.2.0': {}
+
+  '@cowprotocol/widget-lib@0.18.0':
+    dependencies:
+      '@cowprotocol/events': 1.5.0
+      '@cowprotocol/iframe-transport': 1.1.0
+
+  '@cowprotocol/widget-react@0.13.0':
+    dependencies:
+      '@cowprotocol/widget-lib': 0.18.0
 
   '@cspell/cspell-bundled-dicts@9.0.2':
     dependencies:
