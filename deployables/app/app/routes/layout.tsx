@@ -134,7 +134,7 @@ const PageLayout = ({
                           </Navigation.Link>
 
                           <Navigation.Link
-                            to={href('/create')}
+                            to={href('/create/:prefixedAddress?')}
                             icon={Plus}
                             reloadDocument={(location) =>
                               location.pathname.startsWith('/tokens')

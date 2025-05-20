@@ -55,7 +55,7 @@ export default [
         'routes/legacy-redirects/old-edit-redirect.ts',
       ),
 
-      ...prefix('/create', [
+      ...prefix('/create/:prefixedAddress?', [
         layout('routes/create/layout.tsx', [index('routes/create/create.tsx')]),
       ]),
 
