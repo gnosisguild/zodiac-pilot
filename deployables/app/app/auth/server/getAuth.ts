@@ -1,12 +1,20 @@
-import { getOrganization } from '@/workOS/server'
+import {
+  createPersonalOrganization,
+  getOrganization,
+  getOrganizationMemberships,
+} from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
+import {
+  authkitLoader,
+  getSignInUrl,
+  signOut,
+} from '@workos-inc/authkit-react-router'
 import type {
   AuthorizedData as WorkOsAuthorizedData,
   UnauthorizedData as WorkOsUnauthorizedData,
 } from '@workos-inc/authkit-react-router/dist/cjs/interfaces'
 import type { Organization } from '@workos-inc/node'
-import { dbClient } from '@zodiac/db'
+import { addUserToTenant, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import { getAdminOrganizationId } from '@zodiac/env'
 import { upsertTenant } from './upsertTenant'
@@ -105,14 +113,10 @@ export const getAuth = <Params>(
         })
       } else {
         const user = await upsertUser(dbClient(), auth.user)
-
-        invariantResponse(
-          auth.organizationId != null,
-          'User is not logged into any organization',
-        )
-
-        const workOsOrganization = await getOrganization(auth.organizationId)
+        const workOsOrganization = await getOrganizationFromAuth(request, auth)
         const tenant = await upsertTenant(dbClient(), workOsOrganization)
+
+        await addUserToTenant(dbClient(), tenant, user)
 
         const isSystemAdmin = getAdminOrganizationId() === workOsOrganization.id
 
@@ -159,4 +163,36 @@ export const getAuth = <Params>(
   ).catch(reject)
 
   return promise
+}
+
+const getOrganizationFromAuth = async (
+  request: Request,
+  auth: WorkOsAuthorizedData,
+) => {
+  if (auth.organizationId != null) {
+    return getOrganization(auth.organizationId)
+  }
+
+  const memberships = await getOrganizationMemberships(auth.user)
+
+  if (memberships.length === 0) {
+    // This should not happen but is a safety to prevent any
+    // race condition with code of the login callback which
+    // should also create these orgs on demand. So, if the
+    // current session doesn't mention an org, we'll check
+    // for org memberships and if there are _really_ none
+    // then we'll create a personal org.
+    await createPersonalOrganization(auth.user)
+  }
+
+  const url = new URL(request.url)
+
+  // even though we've just created an organization
+  // the local session isn't updated and we'd create
+  // more and more organizations. That's why we
+  // break the flow here and force a new sign in of
+  // the user. We'll redirect them back to where they
+  // were but this time around they'll come back with their
+  // proper organization.
+  throw await signOut(request, { returnTo: await getSignInUrl(url.pathname) })
 }

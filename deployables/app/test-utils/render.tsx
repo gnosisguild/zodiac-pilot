@@ -22,15 +22,14 @@ import {
   sleepTillIdle,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
-import { randomUUID } from 'crypto'
 import type { PropsWithChildren, Ref } from 'react'
 import { data } from 'react-router'
 import type { Entries } from 'type-fest'
 import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
-import { createMockWorkOsOrganization } from './createMockWorkOsOrganization'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
+import { createMockWorkOsOrganization, createMockWorkOsUser } from './workOS'
 
 const mockGetOrganizationsForUser = vi.mocked(getOrganizationsForUser)
 const mockGetOrganization = vi.mocked(getOrganization)
@@ -290,18 +289,12 @@ const mockWorkOs = ({
   mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
   mockGetOrganization.mockResolvedValue(mockOrganization)
 
-  return {
+  return createMockWorkOsUser({
     createdAt: user.createdAt.toISOString(),
     email: 'john@doe.com',
-    emailVerified: true,
     externalId: user.id,
     firstName: 'John',
     lastName: 'Doe',
-    id: randomUUID(),
-    lastSignInAt: null,
-    metadata: {},
-    object: 'user',
-    profilePictureUrl: null,
     updatedAt: user.createdAt.toISOString(),
-  } satisfies AuthorizedData['user']
+  })
 }
