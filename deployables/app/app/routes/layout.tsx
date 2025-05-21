@@ -57,7 +57,7 @@ export const loader = async (args: Route.LoaderArgs) =>
           user: null,
           role: null,
           features: routeFeatures,
-          signInUrl: await getSignInUrl(),
+          signInUrl: await getSignInUrl(url.pathname),
           isSystemAdmin: false,
         }
       }
@@ -71,7 +71,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         user: workOsUser,
         role,
         features: [...features.map(({ name }) => name), ...routeFeatures],
-        signInUrl: await getSignInUrl(),
+        signInUrl: await getSignInUrl(url.pathname),
         isSystemAdmin: getAdminOrganizationId() === workOsOrganization.id,
       }
     },
