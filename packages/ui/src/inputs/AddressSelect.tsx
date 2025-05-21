@@ -89,23 +89,35 @@ export function AddressSelect<Creatable extends boolean>({
 }
 
 const getValue = (options: Options, value: HexAddress) => {
-  return options.reduce<Option | undefined>((finalValue, option) => {
-    if (finalValue != null) {
-      return finalValue
-    }
+  const existingValue = options.reduce<Option | undefined>(
+    (finalValue, option) => {
+      if (finalValue != null) {
+        return finalValue
+      }
 
-    if (typeof option === 'string') {
-      if (option === value) {
-        return { label: value, value }
+      if (typeof option === 'string') {
+        if (option === value) {
+          return { label: value, value }
+        }
+
+        return finalValue
+      }
+
+      if (option.address === value) {
+        return {
+          label: option.label || 'Unnamed account',
+          value: option.address,
+        }
       }
 
       return finalValue
-    }
+    },
+    undefined,
+  )
 
-    if (option.address === value) {
-      return { label: option.label || 'Unnamed account', value: option.address }
-    }
+  if (existingValue != null) {
+    return existingValue
+  }
 
-    return finalValue
-  }, undefined)
+  return { label: value, value }
 }
