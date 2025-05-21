@@ -2,6 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { dbClient, getSubscriptionPlans } from '@zodiac/db'
 import {
+  DateValue,
   SecondaryLinkButton,
   Table,
   TableBody,
@@ -41,7 +42,7 @@ const SubscriptionPlans = ({
           </SecondaryLinkButton>
         }
       >
-        Subscription Plans
+        Plans
       </Page.Header>
 
       <Page.Main>
@@ -49,6 +50,7 @@ const SubscriptionPlans = ({
           <TableHead>
             <TableRow>
               <TableHeader>Name</TableHeader>
+              <TableHeader>Created</TableHeader>
             </TableRow>
           </TableHead>
 
@@ -56,6 +58,9 @@ const SubscriptionPlans = ({
             {subscriptionPlans.map((subscriptionPlan) => (
               <TableRow key={subscriptionPlan.id}>
                 <TableCell>{subscriptionPlan.name}</TableCell>
+                <TableCell>
+                  <DateValue>{subscriptionPlan.createdAt}</DateValue>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -1,6 +1,6 @@
 import { Navigation } from '@/components'
 import { Sidebar, SidebarBody, SidebarLayout } from '@zodiac/ui'
-import { Building2, ListTodo, Users } from 'lucide-react'
+import { Building2, ListTodo, SquareKanban, Users } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 
 const SystemAdminLayout = () => (
@@ -24,6 +24,12 @@ const SystemAdminLayout = () => (
             </Navigation.Section>
 
             <Navigation.Section title="System management">
+              <Navigation.Link
+                to={href('/system-admin/subscriptionPlans')}
+                icon={SquareKanban}
+              >
+                Plans
+              </Navigation.Link>
               <Navigation.Link
                 to={href('/system-admin/features')}
                 icon={ListTodo}
