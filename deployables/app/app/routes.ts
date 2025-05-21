@@ -82,7 +82,9 @@ export default [
       index('routes/system-admin/_index.ts'),
 
       route('tenants', 'routes/system-admin/tenants/tenants.tsx'),
-      route('tenant/:tenantId', 'routes/system-admin/tenants/tenant.tsx'),
+      route('tenant/:tenantId', 'routes/system-admin/tenants/tenant.tsx', [
+        route('add-plan', 'routes/system-admin/tenants/add-plan.tsx'),
+      ]),
 
       route('users', 'routes/system-admin/users/users.tsx', [
         route('remove/:workOsUserId', 'routes/system-admin/users/remove.tsx'),

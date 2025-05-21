@@ -1,9 +1,15 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { activateFeatures, dbClient, getActiveFeatures } from '@zodiac/db'
+import {
+  activateFeatures,
+  dbClient,
+  getActiveFeatures,
+  getActivePlan,
+} from '@zodiac/db'
 import {
   featureFactory,
+  subscriptionPlanFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
@@ -95,6 +101,31 @@ describe('Tenant', () => {
         featureA,
         featureB,
       ])
+    })
+  })
+
+  describe('Plans', () => {
+    it('is possible to assign a plan to a tenant', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const plan = await subscriptionPlanFactory.create()
+
+      await render(
+        href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
+        { tenant, user, isSystemAdmin: true },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add plan' }),
+      )
+      await userEvent.selectOptions(
+        await screen.findByRole('combobox', { name: 'Plan' }),
+        plan.id,
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+
+      await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
     })
   })
 })

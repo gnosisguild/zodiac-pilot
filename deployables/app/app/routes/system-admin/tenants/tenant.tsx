@@ -12,7 +12,13 @@ import {
 import { getBoolean, getMap } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Checkbox, Form, SecondaryButton } from '@zodiac/ui'
+import {
+  Checkbox,
+  Form,
+  SecondaryButton,
+  SecondaryLinkButton,
+} from '@zodiac/ui'
+import { href } from 'react-router'
 import type { Route } from './+types/tenant'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -83,6 +89,16 @@ const Tenant = ({
 
       <Page.Main>
         <div className="grid grid-cols-6">
+          <div className="col-span-4">
+            <SecondaryLinkButton
+              to={href('/system-admin/tenant/:tenantId/add-plan', {
+                tenantId: tenant.id,
+              })}
+            >
+              Add plan
+            </SecondaryLinkButton>
+          </div>
+
           <div className="col-start-5">
             <Form>
               <h2 className="font-semibold">Features</h2>
