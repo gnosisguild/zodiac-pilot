@@ -21,6 +21,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
+import { multisigTransactionUrl } from '@zodiac/safe'
 import { encode } from '@zodiac/schema'
 import {
   createMockTransactionRequest,
@@ -34,7 +35,6 @@ import {
   execute,
   PermissionViolation,
   planExecution,
-  prefixAddress,
   queryRoutes,
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -486,12 +486,7 @@ describe('Sign', () => {
 
         const [transaction] = await getTransactions(dbClient(), account.id)
 
-        const url = new URL(`/transactions/tx`, 'https://app.safe.global')
-        url.searchParams.set(
-          'safe',
-          prefixAddress(account.chainId, account.address),
-        )
-        url.searchParams.set('id', `multisig_${account.address}_${testHash}`)
+        const url = multisigTransactionUrl(chainId, account.address, testHash)
 
         expect(transaction).toHaveProperty('safeWalletUrl', url.toString())
       })

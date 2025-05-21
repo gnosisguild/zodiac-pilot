@@ -878,6 +878,12 @@ importers:
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
+      '@zodiac/schema':
+        specifier: workspace:*
+        version: link:../schema
+      ser-kit:
+        specifier: 3.8.0
+        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13)
     devDependencies:
       '@types/node':
         specifier: 22.14.1
