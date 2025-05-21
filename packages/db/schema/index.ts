@@ -137,6 +137,50 @@ export const ActiveFeatureRelations = relations(
   }),
 )
 
+export const SubscriptionPlanTable = pgTable(
+  'SubscriptionPlan',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    name: text().notNull(),
+
+    ...createdTimestamp,
+    ...deletable,
+  },
+  (table) => [index().on(table.deletedById)],
+)
+
+export type SubscriptionPlan = typeof SubscriptionPlanTable.$inferSelect
+export type SubscriptionPlanCreateInput =
+  typeof SubscriptionPlanTable.$inferInsert
+
+export const ActiveSubscriptionTable = pgTable(
+  'ActiveSubscription',
+  {
+    subscriptionPlanId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => SubscriptionPlanTable.id, { onDelete: 'cascade' }),
+
+    validFrom: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    validThrough: timestamp({ withTimezone: true }),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [index().on(table.subscriptionPlanId), index().on(table.tenantId)],
+)
+
+const ActiveSubscriptionRelations = relations(
+  ActiveSubscriptionTable,
+  ({ one }) => ({
+    subscriptionPlan: one(SubscriptionPlanTable, {
+      fields: [ActiveSubscriptionTable.subscriptionPlanId],
+      references: [SubscriptionPlanTable.id],
+    }),
+  }),
+)
+
 export const AccountTable = pgTable(
   'Account',
   {
@@ -342,6 +386,8 @@ export const schema = {
   activeRoute: ActiveRouteTable,
   activeAccount: ActiveAccountTable,
   signedTransaction: SignedTransactionTable,
+  subscriptionPlans: SubscriptionPlanTable,
+  activeSubscriptionPlans: ActiveSubscriptionTable,
 
   TenantRelations,
   FeatureRelations,
@@ -350,4 +396,5 @@ export const schema = {
   ActiveFeatureRelations,
   ActiveRouteRelations,
   ActiveAccountRelations,
+  ActiveSubscriptionRelations,
 }
