@@ -1,4 +1,5 @@
 export { createOrganization } from './createOrganization'
+export { createPersonalOrganization } from './createPersonalOrganization'
 export { getOrganization } from './getOrganization'
 export { getOrganizationsForUser } from './getOrganizationsForUser'
 export { getUser } from './getUser'

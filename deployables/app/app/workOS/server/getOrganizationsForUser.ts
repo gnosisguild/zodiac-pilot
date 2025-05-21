@@ -1,5 +1,6 @@
 import { getWorkOS } from '@workos-inc/authkit-react-router'
 import { type Organization, type User } from '@workos-inc/node'
+import { createPersonalOrganization } from './createPersonalOrganization'
 import { getOrganization } from './getOrganization'
 
 export const getOrganizationsForUser = async (
@@ -13,15 +14,7 @@ export const getOrganizationsForUser = async (
     })
 
   if (memberships.length === 0) {
-    const organization = await workOS.organizations.createOrganization({
-      name: `${user.firstName}'s Zodiac OS space`,
-    })
-
-    await workOS.userManagement.createOrganizationMembership({
-      organizationId: organization.id,
-      userId: user.id,
-      roleSlug: 'admin',
-    })
+    const organization = await createPersonalOrganization(user)
 
     return [organization]
   }

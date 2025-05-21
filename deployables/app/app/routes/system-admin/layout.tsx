@@ -1,6 +1,6 @@
 import { Navigation } from '@/components'
 import { Sidebar, SidebarBody, SidebarLayout } from '@zodiac/ui'
-import { Building2, ListTodo } from 'lucide-react'
+import { Building2, ListTodo, Users } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 
 const SystemAdminLayout = () => (
@@ -18,10 +18,7 @@ const SystemAdminLayout = () => (
                 Tenants
               </Navigation.Link>
 
-              <Navigation.Link
-                to={href('/system-admin/users')}
-                icon={Building2}
-              >
+              <Navigation.Link to={href('/system-admin/users')} icon={Users}>
                 Users
               </Navigation.Link>
             </Navigation.Section>
