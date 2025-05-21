@@ -4,8 +4,11 @@ import type { DBClient } from '../../dbClient'
 
 export const getActivePlan = async (db: DBClient, tenantId: UUID) => {
   const activePlan = await db.query.activeSubscriptionPlans.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.tenantId, tenantId)
+    where(fields, { eq, lte, and }) {
+      return and(
+        eq(fields.tenantId, tenantId),
+        lte(fields.validFrom, new Date()),
+      )
     },
     with: {
       subscriptionPlan: true,

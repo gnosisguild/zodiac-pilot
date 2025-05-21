@@ -5,9 +5,13 @@ import type { DBClient } from '../../dbClient'
 type ActivatePlanOptions = {
   tenantId: UUID
   subscriptionPlanId: UUID
+  validFrom?: Date
 }
 
 export const activatePlan = (
   db: DBClient,
-  { tenantId, subscriptionPlanId }: ActivatePlanOptions,
-) => db.insert(ActiveSubscriptionTable).values({ subscriptionPlanId, tenantId })
+  { tenantId, subscriptionPlanId, validFrom }: ActivatePlanOptions,
+) =>
+  db
+    .insert(ActiveSubscriptionTable)
+    .values({ subscriptionPlanId, tenantId, validFrom })

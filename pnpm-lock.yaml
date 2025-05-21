@@ -616,7 +616,7 @@ importers:
         version: 9.27.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13)
+        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
 
   packages/db:
     dependencies:
@@ -672,6 +672,9 @@ importers:
       '@zodiac/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
+      date-fns:
+        specifier: 4.1.0
+        version: 4.1.0
       drizzle-kit:
         specifier: 0.31.1
         version: 0.31.1
@@ -988,7 +991,7 @@ importers:
         version: 9.27.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13)
+        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
 
   packages/ui:
     dependencies:
@@ -12565,6 +12568,19 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.40.0':
     optional: true
 
+  '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
+      node-fetch: 2.7.0
+      viem: 2.29.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
   '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13)
@@ -12574,6 +12590,23 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@safe-global/protocol-kit@6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/safe-modules-deployments': 2.2.8
+      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
+      semver: 7.7.1
+      viem: 2.29.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    optionalDependencies:
+      '@noble/curves': 1.8.2
+      '@peculiar/asn1-schema': 2.3.15
+    transitivePeerDependencies:
+      - bufferutil
       - typescript
       - utf-8-validate
       - zod
@@ -12622,6 +12655,13 @@ snapshots:
   '@safe-global/safe-gateway-typescript-sdk@3.23.1': {}
 
   '@safe-global/safe-modules-deployments@2.2.8': {}
+
+  '@safe-global/types-kit@2.0.1(typescript@5.8.3)':
+    dependencies:
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
+    transitivePeerDependencies:
+      - typescript
+      - zod
 
   '@safe-global/types-kit@2.0.1(typescript@5.8.3)(zod@3.25.13)':
     dependencies:
@@ -18225,6 +18265,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
     optional: true
+
+  ser-kit@3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10):
+    dependencies:
+      '@epic-web/invariant': 1.0.0
+      '@safe-global/api-kit': 3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+      '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
+      viem: 2.29.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - typescript
+      - utf-8-validate
+      - zod
 
   ser-kit@3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.13):
     dependencies:
