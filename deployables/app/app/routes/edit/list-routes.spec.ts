@@ -316,7 +316,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -363,7 +362,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -411,7 +409,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -456,7 +453,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -513,7 +509,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -578,7 +573,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [executionRoute],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -626,7 +620,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,
@@ -670,7 +663,6 @@ describe.sequential('List Routes', () => {
         availableRoutes: [route],
         tenant,
         user,
-        features: ['user-management'],
         autoRespond: {
           [CompanionAppMessageType.DELETE_ROUTE]: {
             type: CompanionResponseMessageType.DELETED_ROUTE,

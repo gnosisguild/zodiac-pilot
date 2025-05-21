@@ -25,7 +25,8 @@
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback",
     "webRequest",
-    "storage"
+    "storage",
+    "identity"
   ],
   "background": {
     "service_worker": "build/background/index.js"

@@ -25,7 +25,6 @@ import {
 } from '@zodiac/messages'
 import {
   Error,
-  Feature,
   Info,
   PrimaryLinkButton,
   SecondaryLinkButton,
@@ -339,23 +338,21 @@ const ListRoutes = ({
                                 activeRouteId={activeRouteId}
                               />
 
-                              <Feature feature="user-management">
-                                <h2
-                                  id={localAccountsHeadingId}
-                                  className="my-6 text-xl"
+                              <h2
+                                id={localAccountsHeadingId}
+                                className="my-6 text-xl"
+                              >
+                                Local Accounts
+                                <p
+                                  aria-hidden
+                                  id={localAccountsDescriptionId}
+                                  className="my-2 text-sm opacity-80"
                                 >
-                                  Local Accounts
-                                  <p
-                                    aria-hidden
-                                    id={localAccountsDescriptionId}
-                                    className="my-2 text-sm opacity-80"
-                                  >
-                                    Local accounts live only on your machine.
-                                    They are only usable when the Pilot browser
-                                    extension is installed and open.
-                                  </p>
-                                </h2>
-                              </Feature>
+                                  Local accounts live only on your machine. They
+                                  are only usable when the Pilot browser
+                                  extension is installed and open.
+                                </p>
+                              </h2>
 
                               <Accounts>
                                 {localAccounts.map((route) => (

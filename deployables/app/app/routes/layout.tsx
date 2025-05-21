@@ -13,7 +13,6 @@ import { dbClient, getActiveFeatures } from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
-  Feature,
   FeatureProvider,
   GhostLinkButton,
   PilotType,
@@ -153,18 +152,16 @@ const PageLayout = ({
                           </Navigation.Link>
                         </Navigation.Section>
 
-                        <Feature feature="user-management">
-                          {role === 'admin' && (
-                            <Navigation.Section title="Organization">
-                              <Navigation.Link
-                                to={href('/admin')}
-                                icon={ShieldUser}
-                              >
-                                User Management
-                              </Navigation.Link>
-                            </Navigation.Section>
-                          )}
-                        </Feature>
+                        {role === 'admin' && (
+                          <Navigation.Section title="Organization">
+                            <Navigation.Link
+                              to={href('/admin')}
+                              icon={ShieldUser}
+                            >
+                              User Management
+                            </Navigation.Link>
+                          </Navigation.Section>
+                        )}
 
                         {isSystemAdmin && (
                           <Navigation.Section title="System">
@@ -184,55 +181,53 @@ const PageLayout = ({
                         <PilotStatus />
                       </div>
 
-                      <Feature feature="user-management">
-                        <div className="flex flex-col gap-4">
-                          <Divider />
+                      <div className="flex flex-col gap-4">
+                        <Divider />
 
-                          {user ? (
-                            <NavLink
-                              to={href('/profile')}
-                              className="group flex items-center gap-x-2 text-sm/6 font-semibold text-zinc-950 dark:text-white"
+                        {user ? (
+                          <NavLink
+                            to={href('/profile')}
+                            className="group flex items-center gap-x-2 text-sm/6 font-semibold text-zinc-950 dark:text-white"
+                          >
+                            {user.profilePictureUrl ? (
+                              <img
+                                alt=""
+                                src={user.profilePictureUrl}
+                                className="size-8 rounded-full bg-zinc-800"
+                              />
+                            ) : (
+                              <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
+                                <User size={16} />
+                              </div>
+                            )}
+                            <span className="sr-only">Your profile</span>
+                            <span
+                              aria-hidden="true"
+                              className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
                             >
-                              {user.profilePictureUrl ? (
-                                <img
-                                  alt=""
-                                  src={user.profilePictureUrl}
-                                  className="size-8 rounded-full bg-zinc-800"
-                                />
-                              ) : (
-                                <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
-                                  <User size={16} />
-                                </div>
-                              )}
-                              <span className="sr-only">Your profile</span>
-                              <span
-                                aria-hidden="true"
-                                className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
-                              >
-                                {user.firstName} {user.lastName}
-                              </span>
-                            </NavLink>
-                          ) : (
-                            <div className="flex gap-2">
-                              <GhostLinkButton
-                                fluid
-                                to={href('/sign-up')}
-                                size="small"
-                              >
-                                Sign Up
-                              </GhostLinkButton>
+                              {user.firstName} {user.lastName}
+                            </span>
+                          </NavLink>
+                        ) : (
+                          <div className="flex gap-2">
+                            <GhostLinkButton
+                              fluid
+                              to={href('/sign-up')}
+                              size="small"
+                            >
+                              Sign Up
+                            </GhostLinkButton>
 
-                              <PrimaryLinkButton
-                                fluid
-                                to={signInUrl}
-                                size="small"
-                              >
-                                Sign In
-                              </PrimaryLinkButton>
-                            </div>
-                          )}
-                        </div>
-                      </Feature>
+                            <PrimaryLinkButton
+                              fluid
+                              to={signInUrl}
+                              size="small"
+                            >
+                              Sign In
+                            </PrimaryLinkButton>
+                          </div>
+                        )}
+                      </div>
                     </SidebarFooter>
                   </Sidebar>
                 }
