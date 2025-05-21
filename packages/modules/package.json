@@ -19,7 +19,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
-    "@shazow/whatsabi": "0.22.1",
+    "@shazow/whatsabi": "0.22.2",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "ethers": "6.14.1",
