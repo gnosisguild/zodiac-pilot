@@ -6,12 +6,18 @@ type ActivatePlanOptions = {
   tenantId: UUID
   subscriptionPlanId: UUID
   validFrom?: Date
+  validThrough?: Date
 }
 
 export const activatePlan = (
   db: DBClient,
-  { tenantId, subscriptionPlanId, validFrom }: ActivatePlanOptions,
+  {
+    tenantId,
+    subscriptionPlanId,
+    validFrom,
+    validThrough,
+  }: ActivatePlanOptions,
 ) =>
   db
     .insert(ActiveSubscriptionTable)
-    .values({ subscriptionPlanId, tenantId, validFrom })
+    .values({ subscriptionPlanId, tenantId, validFrom, validThrough })
