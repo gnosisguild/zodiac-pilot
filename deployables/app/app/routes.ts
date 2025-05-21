@@ -92,6 +92,11 @@ export default [
         route('create', 'routes/system-admin/features/create.tsx'),
         route('remove/:featureId', 'routes/system-admin/features/remove.tsx'),
       ]),
+
+      route(
+        'subscriptionPlan',
+        'routes/system-admin/subscriptionPlans/subscriptionPlans.tsx',
+      ),
     ]),
   ]),
 

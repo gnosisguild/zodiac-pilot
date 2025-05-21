@@ -1,0 +1,1 @@
+export { getSubscriptionPlans } from './getSubscriptionPlans'

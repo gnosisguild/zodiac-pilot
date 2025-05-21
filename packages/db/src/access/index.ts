@@ -1,6 +1,7 @@
 export * from './accounts'
 export * from './features'
 export * from './routes'
+export * from './subscriptionPlans'
 export * from './tenants'
 export * from './transactions'
 export * from './users'
