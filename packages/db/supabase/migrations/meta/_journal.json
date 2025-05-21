@@ -183,6 +183,13 @@
       "when": 1747736616757,
       "tag": "0025_add full name to user",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1747825630536,
+      "tag": "0026_add plans",
+      "breakpoints": true
     }
   ]
 }

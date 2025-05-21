@@ -137,6 +137,36 @@ export const ActiveFeatureRelations = relations(
   }),
 )
 
+export const SubscriptionPlanTable = pgTable(
+  'SubscriptionPlan',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    name: text(),
+
+    ...createdTimestamp,
+    ...deletable,
+  },
+  (table) => [index().on(table.deletedById)],
+)
+
+export const ActiveSubscriptionTable = pgTable(
+  'ActiveSubscription',
+  {
+    subscriptionPlanId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => SubscriptionPlanTable.id, { onDelete: 'cascade' }),
+
+    validFrom: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    validThrough: timestamp({ withTimezone: true }),
+
+    ...tenantReference,
+    ...createdTimestamp,
+  },
+  (table) => [index().on(table.subscriptionPlanId), index().on(table.tenantId)],
+)
+
 export const AccountTable = pgTable(
   'Account',
   {
@@ -342,6 +372,8 @@ export const schema = {
   activeRoute: ActiveRouteTable,
   activeAccount: ActiveAccountTable,
   signedTransaction: SignedTransactionTable,
+  subscriptionPlans: SubscriptionPlanTable,
+  activeSubscriptionPlans: ActiveSubscriptionTable,
 
   TenantRelations,
   FeatureRelations,
