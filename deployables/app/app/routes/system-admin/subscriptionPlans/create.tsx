@@ -1,5 +1,27 @@
+import { authorizedAction } from '@/auth-server'
+import { createSubscriptionPlan, dbClient } from '@zodiac/db'
+import { getString } from '@zodiac/form-data'
 import { Form, GhostButton, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
-import { href, useNavigate } from 'react-router'
+import { href, redirect, useNavigate } from 'react-router'
+import type { Route } from './+types/create'
+
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({ request }) => {
+      const data = await request.formData()
+
+      await createSubscriptionPlan(dbClient(), getString(data, 'name'))
+
+      return redirect(href('/system-admin/subscriptionPlans'))
+    },
+    {
+      ensureSignedIn: true,
+      hasAccess({ isSystemAdmin }) {
+        return isSystemAdmin
+      },
+    },
+  )
 
 const CreateSubscriptionPlan = () => {
   const navigate = useNavigate()
