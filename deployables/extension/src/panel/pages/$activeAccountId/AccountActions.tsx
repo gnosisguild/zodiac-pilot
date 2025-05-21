@@ -4,7 +4,6 @@ import { useWindowId } from '@/providers-ui'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   Divider,
-  Feature,
   Form,
   GhostButton,
   GhostLinkButton,
@@ -20,6 +19,7 @@ export const AccountActions = () => {
   const appUrl = useCompanionAppUrl()
   const windowId = useWindowId()
   const [open, setOpen] = useState(false)
+  const loggingIn = useIsPending(Intent.Login)
 
   useAfterSubmit([Intent.EditAccount, Intent.ListAccounts], () =>
     setOpen(false),
@@ -60,34 +60,33 @@ export const AccountActions = () => {
           </GhostButton>
         </Form>
 
-        <Feature feature="user-management">
-          <Divider />
+        <Divider />
 
-          <Form>
-            {user == null ? (
-              <GhostButton
-                submit
-                align="left"
-                intent={Intent.Login}
-                size="small"
-                icon={CloudOff}
-              >
-                Log into Zodiac OS
-              </GhostButton>
-            ) : (
-              <GhostLinkButton
-                openInNewWindow
-                to={`${appUrl}/profile`}
-                size="small"
-                align="left"
-                icon={User}
-                onClick={() => setOpen(false)}
-              >
-                View Profile
-              </GhostLinkButton>
-            )}
-          </Form>
-        </Feature>
+        <Form>
+          {user == null ? (
+            <GhostButton
+              submit
+              align="left"
+              intent={Intent.Login}
+              size="small"
+              icon={CloudOff}
+              busy={loggingIn}
+            >
+              Log into Zodiac OS
+            </GhostButton>
+          ) : (
+            <GhostLinkButton
+              openInNewWindow
+              to={`${appUrl}/profile`}
+              size="small"
+              align="left"
+              icon={User}
+              onClick={() => setOpen(false)}
+            >
+              View Profile
+            </GhostLinkButton>
+          )}
+        </Form>
       </MeatballMenu>
     </div>
   )
