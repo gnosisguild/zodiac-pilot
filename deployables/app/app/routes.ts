@@ -94,8 +94,9 @@ export default [
       ]),
 
       route(
-        'subscriptionPlan',
+        'subscriptionPlans',
         'routes/system-admin/subscriptionPlans/subscriptionPlans.tsx',
+        [route('create', 'routes/system-admin/subscriptionPlans/create.tsx')],
       ),
     ]),
   ]),

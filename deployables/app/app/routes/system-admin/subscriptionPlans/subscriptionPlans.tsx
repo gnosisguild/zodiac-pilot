@@ -2,6 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { dbClient, getSubscriptionPlans } from '@zodiac/db'
 import {
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/subscriptionPlans'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -30,7 +32,17 @@ const SubscriptionPlans = ({
 }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Subscription Plans</Page.Header>
+      <Page.Header
+        action={
+          <SecondaryLinkButton
+            to={href('/system-admin/subscriptionPlans/create')}
+          >
+            Add new plan
+          </SecondaryLinkButton>
+        }
+      >
+        Subscription Plans
+      </Page.Header>
 
       <Page.Main>
         <Table>
@@ -49,6 +61,8 @@ const SubscriptionPlans = ({
           </TableBody>
         </Table>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
