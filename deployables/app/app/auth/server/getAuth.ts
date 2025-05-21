@@ -1,4 +1,8 @@
-import { createPersonalOrganization, getOrganization } from '@/workOS/server'
+import {
+  createPersonalOrganization,
+  getOrganization,
+  getOrganizationMemberships,
+} from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   authkitLoader,
@@ -169,7 +173,17 @@ const getOrganizationFromAuth = async (
     return getOrganization(auth.organizationId)
   }
 
-  await createPersonalOrganization(auth.user)
+  const memberships = await getOrganizationMemberships(auth.user)
+
+  if (memberships.length === 0) {
+    // This should not happen but is a safety to prevent any
+    // race condition with code of the login callback which
+    // should also create these orgs on demand. So, if the
+    // current session doesn't mention an org, we'll check
+    // for org memberships and if there are _really_ none
+    // then we'll create a personal org.
+    await createPersonalOrganization(auth.user)
+  }
 
   const url = new URL(request.url)
 
