@@ -45,7 +45,7 @@
     "@zodiac/schema": "workspace:*",
     "drizzle-orm": "0.43.1",
     "drizzle-zod": "0.7.1",
-    "postgres": "3.4.5",
+    "postgres": "3.4.6",
     "ser-kit": "3.7.0",
     "zod": "3.25.7"
   },
