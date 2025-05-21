@@ -142,13 +142,17 @@ export const SubscriptionPlanTable = pgTable(
   {
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
-    name: text(),
+    name: text().notNull(),
 
     ...createdTimestamp,
     ...deletable,
   },
   (table) => [index().on(table.deletedById)],
 )
+
+export type SubscriptionPlan = typeof SubscriptionPlanTable.$inferSelect
+export type SubscriptionPlanCreateInput =
+  typeof SubscriptionPlanTable.$inferInsert
 
 export const ActiveSubscriptionTable = pgTable(
   'ActiveSubscription',
@@ -165,6 +169,16 @@ export const ActiveSubscriptionTable = pgTable(
     ...createdTimestamp,
   },
   (table) => [index().on(table.subscriptionPlanId), index().on(table.tenantId)],
+)
+
+const ActiveSubscriptionRelations = relations(
+  ActiveSubscriptionTable,
+  ({ one }) => ({
+    subscriptionPlan: one(SubscriptionPlanTable, {
+      fields: [ActiveSubscriptionTable.subscriptionPlanId],
+      references: [SubscriptionPlanTable.id],
+    }),
+  }),
 )
 
 export const AccountTable = pgTable(
@@ -382,4 +396,5 @@ export const schema = {
   ActiveFeatureRelations,
   ActiveRouteRelations,
   ActiveAccountRelations,
+  ActiveSubscriptionRelations,
 }

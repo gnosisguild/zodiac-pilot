@@ -8,7 +8,7 @@ CREATE TABLE "ActiveSubscription" (
 --> statement-breakpoint
 CREATE TABLE "SubscriptionPlan" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" text,
+	"name" text NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
 	"deleted" boolean DEFAULT false NOT NULL,
 	"deletedById" uuid,
