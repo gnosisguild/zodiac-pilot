@@ -23,6 +23,9 @@ export enum Chain {
   CELO = 42220,
   SONIC = 146,
   BERACHAIN = 80094,
+  UNICHAIN = 130,
+  WORLDCHAIN = 480,
+  BOB = 60808,
 }
 
 const airlock = 'https://airlock.gnosisguild.org/api/v1/'
@@ -39,6 +42,11 @@ export const RPC: Record<ChainId, URL> = {
   [Chain.CELO]: new URL('https://forno.celo.org'),
   [Chain.SONIC]: new URL('https://rpc.soniclabs.com'),
   [Chain.BERACHAIN]: new URL('https://rpc.berachain.com'),
+  [Chain.UNICHAIN]: new URL('https://mainnet.unichain.org'),
+  [Chain.WORLDCHAIN]: new URL(
+    'https://worldchain-mainnet.g.alchemy.com/public',
+  ),
+  [Chain.BOB]: new URL('https://rpc.gobob.xyz'),
 }
 
 export const EXPLORER_URL: Record<ChainId, URL> = {
@@ -53,20 +61,9 @@ export const EXPLORER_URL: Record<ChainId, URL> = {
   [Chain.CELO]: new URL('https://celoscan.io'),
   [Chain.SONIC]: new URL('https://sonicscan.org'),
   [Chain.BERACHAIN]: new URL('https://berascan.com'),
-}
-
-export const CHAIN_PREFIX: Record<ChainId, string> = {
-  [Chain.ETH]: 'eth',
-  [Chain.OETH]: 'oeth',
-  [Chain.GNO]: 'gno',
-  [Chain.MATIC]: 'matic',
-  [Chain.BASE]: 'base',
-  [Chain.ARB1]: 'arb1',
-  [Chain.AVAX]: 'avax',
-  [Chain.SEP]: 'sep',
-  [Chain.CELO]: 'celo',
-  [Chain.SONIC]: 'sonic',
-  [Chain.BERACHAIN]: 'berachain',
+  [Chain.UNICHAIN]: new URL('https://uniscan.xyz'),
+  [Chain.WORLDCHAIN]: new URL('https://worldscan.org'),
+  [Chain.BOB]: new URL('https://explorer.gobob.xyz'),
 }
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
@@ -81,6 +78,9 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   [Chain.CELO]: 'CELO',
   [Chain.SONIC]: 'S',
   [Chain.BERACHAIN]: 'BERA',
+  [Chain.UNICHAIN]: 'ETH',
+  [Chain.WORLDCHAIN]: 'ETH',
+  [Chain.BOB]: 'ETH',
 }
 
 export const CHAIN_NAME: Record<ChainId, string> = {
@@ -95,4 +95,7 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.CELO]: 'Celo',
   [Chain.SONIC]: 'Sonic',
   [Chain.BERACHAIN]: 'Berachain',
+  [Chain.UNICHAIN]: 'Unichain',
+  [Chain.WORLDCHAIN]: 'World Chain',
+  [Chain.BOB]: 'BOB',
 }

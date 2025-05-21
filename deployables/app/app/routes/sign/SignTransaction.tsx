@@ -6,6 +6,7 @@ import {
   CompanionAppMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { multisigTransactionUrl } from '@zodiac/safe'
 import type { HexAddress } from '@zodiac/schema'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
 import type { Eip1193Provider } from 'ethers'
@@ -14,7 +15,6 @@ import { useEffect } from 'react'
 import {
   execute,
   ExecutionActionType,
-  prefixAddress,
   type ChainId,
   type ExecutionPlan,
   type ExecutionState,
@@ -84,10 +84,7 @@ export const SignTransaction = ({
             `Transaction batch has been proposed with safeTxHash ${safeTxHash}`,
           )
 
-          const url = new URL('/transactions/tx', 'https://app.safe.global')
-
-          url.searchParams.set('safe', prefixAddress(chainId, safeAddress))
-          url.searchParams.set('id', `multisig_${safeAddress}_${safeTxHash}`)
+          const url = multisigTransactionUrl(chainId, safeAddress, safeTxHash)
 
           if (onSignRef.current) {
             onSignRef.current({ safeWalletUrl: url.toString() })
