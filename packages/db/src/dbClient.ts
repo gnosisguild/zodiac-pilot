@@ -14,6 +14,16 @@ export const dbClient = () => {
   return drizzle({ client: clientRef.current, schema })
 }
 
+export const closeCurrentClient = async () => {
+  if (clientRef.current == null) {
+    return
+  }
+
+  await clientRef.current.end()
+
+  clientRef.current = null
+}
+
 type DefaultClient = ReturnType<typeof dbClient>
 type TransactionClient = Parameters<
   Parameters<DefaultClient['transaction']>[0]

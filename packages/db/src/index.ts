@@ -1,3 +1,3 @@
 export * from './access'
-export { dbClient, type DBClient } from './dbClient'
+export { closeCurrentClient, dbClient, type DBClient } from './dbClient'
 export * from './transforms'
