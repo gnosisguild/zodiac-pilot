@@ -35,11 +35,17 @@ const deletable = {
   deletedAt: timestamp({ withTimezone: true }),
 }
 
-export const TenantTable = pgTable('Tenant', {
-  id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
-  name: text().notNull(),
-  ...createdTimestamp,
-})
+export const TenantTable = pgTable(
+  'Tenant',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    name: text().notNull(),
+    externalId: text(),
+
+    ...createdTimestamp,
+  },
+  (table) => [index().on(table.externalId)],
+)
 
 const tenantReference = {
   tenantId: uuid()
@@ -55,11 +61,16 @@ export const TenantRelations = relations(TenantTable, ({ many }) => ({
   activeFeatures: many(ActiveFeatureTable),
 }))
 
-export const UserTable = pgTable('User', {
-  id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
-  fullName: text().notNull().default(''),
-  ...createdTimestamp,
-})
+export const UserTable = pgTable(
+  'User',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    fullName: text().notNull().default(''),
+    externalId: text(),
+    ...createdTimestamp,
+  },
+  (table) => [index().on(table.externalId)],
+)
 
 const userReference = {
   userId: uuid()

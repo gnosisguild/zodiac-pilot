@@ -663,6 +663,9 @@ importers:
       '@types/react':
         specifier: 19.1.4
         version: 19.1.4
+      '@workos-inc/node':
+        specifier: 7.50.1
+        version: 7.50.1(express@5.1.0)
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint

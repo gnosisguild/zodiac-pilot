@@ -1,4 +1,5 @@
 export { addUserToTenant } from './addUserToTenant'
 export { createTenant } from './createTenant'
+export { findTenantByExternalId } from './findTenantByExternalId'
 export { getTenant } from './getTenant'
 export { getTenants } from './getTenants'

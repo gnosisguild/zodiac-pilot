@@ -275,6 +275,7 @@ const mockWorkOs = ({
   }
 
   const mockOrganization = createMockWorkOsOrganization({
+    id: tenant.externalId ?? undefined,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.createdAt.toISOString(),
     externalId: tenant.id,
@@ -290,6 +291,7 @@ const mockWorkOs = ({
   mockGetOrganization.mockResolvedValue(mockOrganization)
 
   return createMockWorkOsUser({
+    id: user.externalId ?? undefined,
     createdAt: user.createdAt.toISOString(),
     email: 'john@doe.com',
     externalId: user.id,
