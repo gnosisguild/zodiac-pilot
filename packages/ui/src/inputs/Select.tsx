@@ -112,14 +112,11 @@ export function Select<Option = unknown, Creatable extends boolean = false>({
               components={{
                 ClearIndicator,
                 DropdownIndicator,
-                ...(children == null
-                  ? {}
-                  : {
-                      Option: createOptionRenderer<Option>(children),
-                      SingleValue: createOptionRenderer<Option>(children, {
-                        isValue: true,
-                      }),
-                    }),
+
+                Option: createOptionRenderer<Option>(children),
+                SingleValue: createOptionRenderer<Option>(children, {
+                  isValue: true,
+                }),
               }}
               classNames={selectStyles<Option>({ inline })}
             />
@@ -161,9 +158,21 @@ type CreateOptionRendererOptions = {
 }
 
 function createOptionRenderer<Option>(
-  children: OptionRenderProps<Option>,
+  children: OptionRenderProps<Option> | undefined,
   { isValue = false }: CreateOptionRendererOptions = {},
 ) {
+  if (children == null) {
+    return (props: OptionProps<Option>) => (
+      <div
+        {...props.innerProps}
+        className={props.getClassNames('option', props)}
+        style={isValue ? { gridArea: '1 / 1 / 2 / 3 ' } : {}}
+      >
+        {props.data.label}
+      </div>
+    )
+  }
+
   return (props: OptionProps<Option>) => (
     <div
       {...props.innerProps}

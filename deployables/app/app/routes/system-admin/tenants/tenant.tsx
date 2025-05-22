@@ -16,6 +16,7 @@ import { isUUID } from '@zodiac/schema'
 import {
   Checkbox,
   DateValue,
+  Empty,
   Form,
   SecondaryButton,
   SecondaryLinkButton,
@@ -107,26 +108,36 @@ const Tenant = ({
                 <TableRow>
                   <TableHeader>Name</TableHeader>
                   <TableHeader>Valid from</TableHeader>
+                  <TableHeader>Valid through</TableHeader>
                 </TableRow>
               </TableHead>
 
               <TableBody>
                 {subscriptionPlans.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={2} align="center">
+                    <TableCell colSpan={3} align="center">
                       No plans are active for this tenant
                     </TableCell>
                   </TableRow>
                 )}
 
-                {subscriptionPlans.map(({ validFrom, subscriptionPlan }) => (
-                  <TableRow key={subscriptionPlan.id}>
-                    <TableCell>{subscriptionPlan.name}</TableCell>
-                    <TableCell>
-                      <DateValue>{validFrom}</DateValue>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {subscriptionPlans.map(
+                  ({ validFrom, validThrough, subscriptionPlan }) => (
+                    <TableRow key={subscriptionPlan.id}>
+                      <TableCell>{subscriptionPlan.name}</TableCell>
+                      <TableCell>
+                        <DateValue>{validFrom}</DateValue>
+                      </TableCell>
+                      <TableCell>
+                        {validThrough == null ? (
+                          <Empty />
+                        ) : (
+                          <DateValue>{validThrough}</DateValue>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
               </TableBody>
             </Table>
 
