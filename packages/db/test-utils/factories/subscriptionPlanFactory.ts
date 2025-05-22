@@ -33,6 +33,7 @@ export const subscriptionPlanFactory = createFactory<
       deleted: false,
       deletedAt: null,
       deletedById: null,
+      isDefault: false,
 
       ...input,
     }

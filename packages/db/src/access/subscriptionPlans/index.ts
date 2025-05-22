@@ -1,5 +1,7 @@
 export { activatePlan } from './activatePlan'
 export { createSubscriptionPlan } from './createSubscriptionPlan'
 export { getActivePlan } from './getActivePlan'
+export { getDefaultSubscriptionPlan } from './getDefaultSubscriptionPlan'
 export { getSubscriptionPlans } from './getSubscriptionPlans'
 export { getSubscriptionPlansForTenant } from './getSubscriptionPlansForTenant'
+export { setDefaultSubscriptionPlan } from './setDefaultSubscriptionPlan'

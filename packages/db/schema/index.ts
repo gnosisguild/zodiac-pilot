@@ -154,6 +154,7 @@ export const SubscriptionPlanTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     name: text().notNull(),
+    isDefault: boolean().notNull().default(false),
 
     ...createdTimestamp,
     ...deletable,

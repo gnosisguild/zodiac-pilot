@@ -1,0 +1,1 @@
+ALTER TABLE "SubscriptionPlan" ADD COLUMN "isDefault" boolean DEFAULT false NOT NULL;

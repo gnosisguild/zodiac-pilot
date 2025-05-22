@@ -49,12 +49,9 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
           className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
         >
           <TableHead>
-            <TableRow>
+            <TableRow withActions>
               <TableHeader>Feature</TableHeader>
               <TableHeader>Created at</TableHeader>
-              <TableHeader className="relative w-0">
-                <span className="sr-only">Actions</span>
-              </TableHeader>
             </TableRow>
           </TableHead>
 

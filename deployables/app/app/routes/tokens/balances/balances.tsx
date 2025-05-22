@@ -45,13 +45,10 @@ const Balances = () => {
         className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
       >
         <TableHead>
-          <TableRow>
+          <TableRow withActions>
             <TableHeader>Token</TableHeader>
             <TableHeader align="right">Balance</TableHeader>
             <TableHeader align="right">USD</TableHeader>
-            <TableHeader className="relative w-16">
-              <span className="sr-only">Actions</span>
-            </TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
