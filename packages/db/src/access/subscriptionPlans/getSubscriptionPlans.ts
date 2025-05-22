@@ -1,6 +1,6 @@
 import type { DBClient } from '../../dbClient'
 
-export const getSubscriptionPlans = (db: DBClient) =>
+export const getSubscriptionPlans = async (db: DBClient) =>
   db.query.subscriptionPlans.findMany({
     where(fields, { eq }) {
       return eq(fields.deleted, false)

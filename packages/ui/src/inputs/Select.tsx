@@ -22,11 +22,13 @@ const useInline = () => {
   return inline
 }
 
+type BaseOption = { label?: string; value: unknown }
+
 type SelectStylesOptions = {
   inline?: boolean
 }
 
-export function selectStyles<Option = unknown>({
+export function selectStyles<Option extends BaseOption = BaseOption>({
   inline,
 }: SelectStylesOptions = {}): ClassNamesConfig<
   Option,
@@ -64,7 +66,7 @@ export function selectStyles<Option = unknown>({
   }
 }
 
-type SelectBaseProps<Option, Creatable extends boolean> = {
+type SelectBaseProps<Option extends BaseOption, Creatable extends boolean> = {
   label: string
   clearLabel?: string
   dropdownLabel?: string
@@ -74,14 +76,17 @@ type SelectBaseProps<Option, Creatable extends boolean> = {
 }
 
 export type SelectProps<
-  Option,
+  Option extends BaseOption,
   Creatable extends boolean,
 > = Creatable extends true
   ? CreatableProps<Option, false, GroupBase<Option>> &
       SelectBaseProps<Option, Creatable>
   : Props<Option, false> & SelectBaseProps<Option, Creatable>
 
-export function Select<Option = unknown, Creatable extends boolean = false>({
+export function Select<
+  Option extends BaseOption = BaseOption,
+  Creatable extends boolean = false,
+>({
   label,
   clearLabel,
   dropdownLabel,
@@ -104,7 +109,7 @@ export function Select<Option = unknown, Creatable extends boolean = false>({
       >
         {({ inputId }) => (
           <Layout disabled={isDisabled}>
-            <Component
+            <Component<Option>
               {...props}
               unstyled
               isDisabled={isDisabled}
@@ -112,14 +117,11 @@ export function Select<Option = unknown, Creatable extends boolean = false>({
               components={{
                 ClearIndicator,
                 DropdownIndicator,
-                ...(children == null
-                  ? {}
-                  : {
-                      Option: createOptionRenderer<Option>(children),
-                      SingleValue: createOptionRenderer<Option>(children, {
-                        isValue: true,
-                      }),
-                    }),
+
+                Option: createOptionRenderer<Option>(children),
+                SingleValue: createOptionRenderer<Option>(children, {
+                  isValue: true,
+                }),
               }}
               classNames={selectStyles<Option>({ inline })}
             />
@@ -160,10 +162,22 @@ type CreateOptionRendererOptions = {
   isValue?: boolean
 }
 
-function createOptionRenderer<Option>(
-  children: OptionRenderProps<Option>,
+function createOptionRenderer<Option extends BaseOption>(
+  children: OptionRenderProps<Option> | undefined,
   { isValue = false }: CreateOptionRendererOptions = {},
 ) {
+  if (children == null) {
+    return (props: OptionProps<Option>) => (
+      <div
+        {...props.innerProps}
+        className={props.getClassNames('option', props)}
+        style={isValue ? { gridArea: '1 / 1 / 2 / 3 ' } : {}}
+      >
+        {props.data.label}
+      </div>
+    )
+  }
+
   return (props: OptionProps<Option>) => (
     <div
       {...props.innerProps}
