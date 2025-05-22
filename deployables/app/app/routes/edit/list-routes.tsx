@@ -125,11 +125,10 @@ export const action = async (args: Route.ActionArgs) =>
               return { error: 'Route has no initiator' }
             }
 
-            const existingAccount = await findAccountByAddress(
-              tx,
-              tenant.id,
-              route.avatar,
-            )
+            const existingAccount = await findAccountByAddress(tx, {
+              tenantId: tenant.id,
+              prefixedAddress: route.avatar,
+            })
             const existingWallet = await findWalletByAddress(
               tx,
               user,

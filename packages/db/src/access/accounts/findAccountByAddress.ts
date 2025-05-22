@@ -3,10 +3,14 @@ import type { UUID } from 'crypto'
 import { splitPrefixedAddress, type PrefixedAddress } from 'ser-kit'
 import type { DBClient } from '../../dbClient'
 
+type FindAccountByAddressOptions = {
+  tenantId: UUID
+  prefixedAddress: PrefixedAddress
+}
+
 export const findAccountByAddress = async (
   db: DBClient,
-  tenantId: UUID,
-  prefixedAddress: PrefixedAddress,
+  { tenantId, prefixedAddress }: FindAccountByAddressOptions,
 ) => {
   const [chainId, address] = splitPrefixedAddress(prefixedAddress)
 

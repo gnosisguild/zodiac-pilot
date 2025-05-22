@@ -1,18 +1,33 @@
-import { authorizedAction } from '@/auth-server'
-import { getSystemAuthToken } from '@zodiac/env'
+import { dbClient, getAccountsByAddress, getActivePlan } from '@zodiac/db'
+import type { SubscriptionPlan } from '@zodiac/db/schema'
+import { getString } from '@zodiac/form-data'
+import { verifyPrefixedAddress } from '@zodiac/schema'
 import type { Route } from './+types/get-plan'
 
-export const action = (args: Route.ActionArgs) =>
-  authorizedAction(
-    args,
-    () => {
-      return { currentPlan: 'none' }
-    },
-    {
-      hasAccess({ request }) {
-        const authHeader = request.headers.get('Authorization')
+export const action = async ({ request }: Route.ActionArgs) => {
+  const data = await request.formData()
 
-        return authHeader === `Bearer ${getSystemAuthToken()}`
-      },
-    },
+  const prefixedAddress = verifyPrefixedAddress(getString(data, 'address'))
+
+  const accounts = await getAccountsByAddress(dbClient(), prefixedAddress)
+  const activePlans = await Promise.all(
+    accounts.map((account) => getActivePlan(dbClient(), account.tenantId)),
   )
+
+  const highestPlan = activePlans.reduce<SubscriptionPlan | null>(
+    (result, plan) => {
+      if (result != null && plan.priority > result.priority) {
+        return plan
+      }
+
+      return result
+    },
+    null,
+  )
+
+  if (highestPlan == null) {
+    return { currentPlan: 'none' }
+  }
+
+  return { currentPlan: highestPlan.name }
+}

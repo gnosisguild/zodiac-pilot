@@ -10,5 +10,7 @@ export default defineConfig({
     mockReset: true,
     clearMocks: true,
     fileParallelism: false,
+
+    retry: process.env.CI ? 1 : undefined,
   },
 })

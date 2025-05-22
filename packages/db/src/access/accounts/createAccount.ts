@@ -17,11 +17,10 @@ export const createAccount = async (
   user: User,
   { chainId, label, address }: CreateAccountOptions,
 ) => {
-  const existingAccount = await findAccountByAddress(
-    db,
-    tenant.id,
-    prefixAddress(chainId, address),
-  )
+  const existingAccount = await findAccountByAddress(db, {
+    tenantId: tenant.id,
+    prefixedAddress: prefixAddress(chainId, address),
+  })
 
   if (existingAccount) {
     return existingAccount

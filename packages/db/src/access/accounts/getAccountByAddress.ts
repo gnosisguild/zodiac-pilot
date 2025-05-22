@@ -4,12 +4,16 @@ import { type PrefixedAddress } from 'ser-kit'
 import type { DBClient } from '../../dbClient'
 import { findAccountByAddress } from './findAccountByAddress'
 
+type GetAccountByAddressOptions = {
+  tenantId: UUID
+  prefixedAddress: PrefixedAddress
+}
+
 export const getAccountByAddress = async (
   db: DBClient,
-  tenantId: UUID,
-  prefixedAddress: PrefixedAddress,
+  { tenantId, prefixedAddress }: GetAccountByAddressOptions,
 ) => {
-  const account = await findAccountByAddress(db, tenantId, prefixedAddress)
+  const account = await findAccountByAddress(db, { tenantId, prefixedAddress })
 
   invariant(
     account != null,
