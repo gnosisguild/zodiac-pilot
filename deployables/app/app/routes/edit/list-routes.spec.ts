@@ -294,7 +294,10 @@ describe.sequential('List Routes', () => {
 
       await waitForPendingActions()
 
-      const account = await getAccountByAddress(dbClient(), tenant.id, avatar)
+      const account = await getAccountByAddress(dbClient(), {
+        tenantId: tenant.id,
+        prefixedAddress: avatar,
+      })
 
       expect(account).toHaveProperty('label', 'Test account')
     })
@@ -481,11 +484,10 @@ describe.sequential('List Routes', () => {
       await waitForPendingActions()
 
       const wallet = await getWalletByAddress(dbClient(), user, initiator)
-      const account = await getAccountByAddress(
-        dbClient(),
-        tenant.id,
-        route.avatar,
-      )
+      const account = await getAccountByAddress(dbClient(), {
+        tenantId: tenant.id,
+        prefixedAddress: route.avatar,
+      })
 
       const [remoteRoute] = await getRoutes(dbClient(), tenant.id, {
         walletId: wallet.id,
@@ -537,11 +539,10 @@ describe.sequential('List Routes', () => {
       await waitForPendingActions()
 
       const wallet = await getWalletByAddress(dbClient(), user, initiator)
-      const account = await getAccountByAddress(
-        dbClient(),
-        tenant.id,
-        route.avatar,
-      )
+      const account = await getAccountByAddress(dbClient(), {
+        tenantId: tenant.id,
+        prefixedAddress: route.avatar,
+      })
 
       const [remoteRoute] = await getRoutes(dbClient(), tenant.id, {
         walletId: wallet.id,

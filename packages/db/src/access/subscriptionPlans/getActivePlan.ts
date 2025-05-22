@@ -29,7 +29,7 @@ export const getActivePlan = async (db: DBClient, tenantId: UUID) => {
     .limit(1)
 
   invariant(
-    activePlan != null,
+    activePlan != null && activePlan.SubscriptionPlan != null,
     `Tenant with id "${tenantId}" has no active plan`,
   )
 
