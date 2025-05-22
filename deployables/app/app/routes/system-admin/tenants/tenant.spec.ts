@@ -110,7 +110,7 @@ describe('Tenant', () => {
       const user = await userFactory.create(tenant)
       const plan = await subscriptionPlanFactory.create()
 
-      await render(
+      const { waitForPendingActions } = await render(
         href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
         { tenant, user, isSystemAdmin: true },
       )
@@ -118,12 +118,16 @@ describe('Tenant', () => {
       await userEvent.click(
         await screen.findByRole('link', { name: 'Add plan' }),
       )
-      await userEvent.selectOptions(
+      await userEvent.click(
         await screen.findByRole('combobox', { name: 'Plan' }),
-        plan.id,
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: plan.name }),
       )
 
       await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+
+      await waitForPendingActions()
 
       await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
     })

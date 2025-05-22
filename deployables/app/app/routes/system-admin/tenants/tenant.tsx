@@ -18,7 +18,7 @@ import {
   SecondaryButton,
   SecondaryLinkButton,
 } from '@zodiac/ui'
-import { href } from 'react-router'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/tenant'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -126,6 +126,8 @@ const Tenant = ({
           </div>
         </div>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
