@@ -105,12 +105,9 @@ const Profile = ({
             <FormLayout.Section title="Wallets">
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow withActions>
                     <TableHeader>Label</TableHeader>
                     <TableHeader>Address</TableHeader>
-                    <TableHeader className="relative w-0">
-                      <span className="sr-only">Actions</span>
-                    </TableHeader>
                   </TableRow>
                 </TableHead>
                 <TableBody>

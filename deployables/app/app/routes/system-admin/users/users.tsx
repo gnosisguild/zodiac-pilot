@@ -60,14 +60,11 @@ const Users = ({
               className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
             >
               <TableHead>
-                <TableRow>
+                <TableRow withActions>
                   <TableHeader>Name</TableHeader>
                   <TableHeader>ID</TableHeader>
                   <TableHeader>External ID</TableHeader>
                   <TableHeader>Created</TableHeader>
-                  <TableHeader className="relative w-0">
-                    <span className="sr-only">Actions</span>
-                  </TableHeader>
                 </TableRow>
               </TableHead>
 

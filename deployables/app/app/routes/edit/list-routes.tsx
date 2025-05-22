@@ -397,7 +397,7 @@ const Accounts = ({ children }: PropsWithChildren) => {
       className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
     >
       <TableHead>
-        <TableRow>
+        <TableRow withActions>
           <TableHeader>Name</TableHeader>
           <TableHeader className="relative w-0">
             <span className="sr-only">Active</span>
@@ -405,9 +405,6 @@ const Accounts = ({ children }: PropsWithChildren) => {
           <TableHeader>Chain</TableHeader>
           <TableHeader>Pilot Signer</TableHeader>
           <TableHeader>Safe Account</TableHeader>
-          <TableHeader className="relative w-0">
-            <span className="sr-only">Actions</span>
-          </TableHeader>
         </TableRow>
       </TableHead>
 

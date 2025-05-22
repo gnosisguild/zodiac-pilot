@@ -91,11 +91,14 @@ export function TableRow({
   target,
   title,
   className,
+  withActions,
+  children,
   ...props
 }: {
   href?: string
   target?: string
   title?: string
+  withActions?: boolean
 } & ComponentPropsWithoutRef<'tr'>) {
   const { striped } = useContext(TableContext)
 
@@ -115,7 +118,15 @@ export function TableRow({
             !striped &&
             'hover:bg-zinc-950/[2.5%] dark:hover:bg-white/[2.5%]',
         )}
-      />
+      >
+        {children}
+
+        {withActions && (
+          <TableHeader className="relative w-0">
+            <span className="sr-only">Actions</span>
+          </TableHeader>
+        )}
+      </tr>
     </TableRowContext.Provider>
   )
 }
