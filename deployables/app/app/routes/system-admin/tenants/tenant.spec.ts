@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   activateFeatures,
+  activatePlan,
   dbClient,
   getActiveFeatures,
   getActivePlan,
@@ -130,6 +131,26 @@ describe('Tenant', () => {
       await waitForPendingActions()
 
       await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
+    })
+
+    it('shows the plans that are assigned to a tenant', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const plan = await subscriptionPlanFactory.create({ name: 'Open' })
+
+      await activatePlan(dbClient(), {
+        tenantId: tenant.id,
+        subscriptionPlanId: plan.id,
+      })
+
+      await render(
+        href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
+        { tenant, user, isSystemAdmin: true },
+      )
+
+      expect(
+        await screen.findByRole('cell', { name: 'Open' }),
+      ).toBeInTheDocument()
     })
   })
 })

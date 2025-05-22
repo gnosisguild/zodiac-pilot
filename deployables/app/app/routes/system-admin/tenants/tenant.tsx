@@ -7,6 +7,7 @@ import {
   deactivateFeatures,
   getActiveFeatures,
   getFeatures,
+  getSubscriptionPlansForTenant,
   getTenant,
 } from '@zodiac/db'
 import { getBoolean, getMap } from '@zodiac/form-data'
@@ -14,9 +15,16 @@ import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   Checkbox,
+  DateValue,
   Form,
   SecondaryButton,
   SecondaryLinkButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@zodiac/ui'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/tenant'
@@ -30,6 +38,10 @@ export const loader = (args: Route.LoaderArgs) =>
       return {
         tenant: await getTenant(dbClient(), tenantId),
         features: await getFeatures(dbClient()),
+        subscriptionPlans: await getSubscriptionPlansForTenant(
+          dbClient(),
+          tenantId,
+        ),
         activeFeatures: (await getActiveFeatures(dbClient(), tenantId)).map(
           ({ id }) => id,
         ),
@@ -81,22 +93,52 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const Tenant = ({
-  loaderData: { tenant, features, activeFeatures },
+  loaderData: { tenant, features, activeFeatures, subscriptionPlans },
 }: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>{tenant.name}</Page.Header>
 
       <Page.Main>
-        <div className="grid grid-cols-6">
-          <div className="col-span-4">
-            <SecondaryLinkButton
-              to={href('/system-admin/tenant/:tenantId/add-plan', {
-                tenantId: tenant.id,
-              })}
-            >
-              Add plan
-            </SecondaryLinkButton>
+        <div className="grid grid-cols-6 gap-8">
+          <div className="col-span-2">
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeader>Name</TableHeader>
+                  <TableHeader>Valid from</TableHeader>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {subscriptionPlans.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={2} align="center">
+                      No plans are active for this tenant
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {subscriptionPlans.map(({ validFrom, subscriptionPlan }) => (
+                  <TableRow key={subscriptionPlan.id}>
+                    <TableCell>{subscriptionPlan.name}</TableCell>
+                    <TableCell>
+                      <DateValue>{validFrom}</DateValue>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <div className="mt-4 flex justify-end">
+              <SecondaryLinkButton
+                to={href('/system-admin/tenant/:tenantId/add-plan', {
+                  tenantId: tenant.id,
+                })}
+              >
+                Add plan
+              </SecondaryLinkButton>
+            </div>
           </div>
 
           <div className="col-start-5">
