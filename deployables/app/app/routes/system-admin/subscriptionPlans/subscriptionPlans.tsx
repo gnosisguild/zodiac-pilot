@@ -2,6 +2,7 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import {
   dbClient,
+  decreasePriority,
   getSubscriptionPlans,
   increasePriority,
   setDefaultSubscriptionPlan,
@@ -23,7 +24,7 @@ import {
   Tag,
 } from '@zodiac/ui'
 import type { UUID } from 'crypto'
-import { ArrowUp, Star } from 'lucide-react'
+import { ArrowDown, ArrowUp, Star } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/subscriptionPlans'
 
@@ -57,6 +58,11 @@ export const action = (args: Route.ActionArgs) =>
 
         case Intent.IncreasePriority: {
           await increasePriority(dbClient(), subscriptionPlanId)
+
+          return null
+        }
+        case Intent.DecreasePriority: {
+          await decreasePriority(dbClient(), subscriptionPlanId)
 
           return null
         }
@@ -124,6 +130,9 @@ const SubscriptionPlans = ({
                     <IncreasePriority
                       subscriptionPlanId={subscriptionPlan.id}
                     />
+                    <DecreasePriority
+                      subscriptionPlanId={subscriptionPlan.id}
+                    />
                     <MakeDefault
                       subscriptionPlanId={subscriptionPlan.id}
                       disabled={subscriptionPlan.isDefault}
@@ -165,6 +174,28 @@ const IncreasePriority = ({
   </InlineForm>
 )
 
+const DecreasePriority = ({
+  subscriptionPlanId,
+}: {
+  subscriptionPlanId: UUID
+}) => (
+  <InlineForm context={{ subscriptionPlanId }}>
+    <GhostButton
+      iconOnly
+      submit
+      icon={ArrowDown}
+      size="tiny"
+      intent={Intent.DecreasePriority}
+      busy={useIsPending(
+        Intent.DecreasePriority,
+        (data) => data.get('subscriptionPlanId') === subscriptionPlanId,
+      )}
+    >
+      Decrease priority
+    </GhostButton>
+  </InlineForm>
+)
+
 const MakeDefault = ({
   subscriptionPlanId,
   disabled,
@@ -193,4 +224,5 @@ const MakeDefault = ({
 enum Intent {
   MakeDefault = 'MakeDefault',
   IncreasePriority = 'IncreasePriority',
+  DecreasePriority = 'DecreasePriority',
 }

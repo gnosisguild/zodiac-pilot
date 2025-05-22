@@ -129,5 +129,31 @@ describe('Subscription plans', () => {
         getSubscriptionPlan(dbClient(), plan.id),
       ).resolves.toHaveProperty('priority', 2)
     })
+
+    it('is possible to decrease the priority of a plan', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const plan = await subscriptionPlanFactory.create({ priority: 2 })
+
+      const { waitForPendingActions } = await render(
+        href('/system-admin/subscriptionPlans'),
+        {
+          user,
+          tenant,
+          isSystemAdmin: true,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Decrease priority' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getSubscriptionPlan(dbClient(), plan.id),
+      ).resolves.toHaveProperty('priority', 1)
+    })
   })
 })

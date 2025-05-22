@@ -1,5 +1,6 @@
 export { activatePlan } from './activatePlan'
 export { createSubscriptionPlan } from './createSubscriptionPlan'
+export { decreasePriority } from './decreasePriority'
 export { getActivePlan } from './getActivePlan'
 export { getDefaultSubscriptionPlan } from './getDefaultSubscriptionPlan'
 export { getSubscriptionPlan } from './getSubscriptionPlan'
