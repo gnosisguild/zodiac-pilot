@@ -197,6 +197,13 @@
       "when": 1747900902881,
       "tag": "0027_store external ids",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1747910107420,
+      "tag": "0028_add default flag to plan",
+      "breakpoints": true
     }
   ]
 }

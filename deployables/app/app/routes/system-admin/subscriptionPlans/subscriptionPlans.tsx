@@ -10,6 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tag,
 } from '@zodiac/ui'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/subscriptionPlans'
@@ -57,7 +58,15 @@ const SubscriptionPlans = ({
           <TableBody>
             {subscriptionPlans.map((subscriptionPlan) => (
               <TableRow key={subscriptionPlan.id}>
-                <TableCell>{subscriptionPlan.name}</TableCell>
+                <TableCell aria-describedby={subscriptionPlan.id}>
+                  {subscriptionPlan.name}
+
+                  {subscriptionPlan.isDefault && (
+                    <Tag id={subscriptionPlan.id} color="green">
+                      Default
+                    </Tag>
+                  )}
+                </TableCell>
                 <TableCell>
                   <DateValue>{subscriptionPlan.createdAt}</DateValue>
                 </TableCell>
