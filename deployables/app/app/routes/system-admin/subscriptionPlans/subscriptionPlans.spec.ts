@@ -1,7 +1,11 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getDefaultSubscriptionPlan } from '@zodiac/db'
+import {
+  dbClient,
+  getDefaultSubscriptionPlan,
+  getSubscriptionPlan,
+} from '@zodiac/db'
 import {
   subscriptionPlanFactory,
   tenantFactory,
@@ -96,6 +100,60 @@ describe('Subscription plans', () => {
       await expect(
         getDefaultSubscriptionPlan(dbClient()),
       ).resolves.toHaveProperty('id', plan.id)
+    })
+  })
+
+  describe('Priority', () => {
+    it('is possible to increase the priority of a plan', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const plan = await subscriptionPlanFactory.create({ priority: 1 })
+
+      const { waitForPendingActions } = await render(
+        href('/system-admin/subscriptionPlans'),
+        {
+          user,
+          tenant,
+          isSystemAdmin: true,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Increase priority' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getSubscriptionPlan(dbClient(), plan.id),
+      ).resolves.toHaveProperty('priority', 2)
+    })
+
+    it('is possible to decrease the priority of a plan', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const plan = await subscriptionPlanFactory.create({ priority: 2 })
+
+      const { waitForPendingActions } = await render(
+        href('/system-admin/subscriptionPlans'),
+        {
+          user,
+          tenant,
+          isSystemAdmin: true,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Decrease priority' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getSubscriptionPlan(dbClient(), plan.id),
+      ).resolves.toHaveProperty('priority', 1)
     })
   })
 })

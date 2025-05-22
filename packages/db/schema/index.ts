@@ -155,6 +155,7 @@ export const SubscriptionPlanTable = pgTable(
 
     name: text().notNull(),
     isDefault: boolean().notNull().default(false),
+    priority: integer().notNull().default(0),
 
     ...createdTimestamp,
     ...deletable,

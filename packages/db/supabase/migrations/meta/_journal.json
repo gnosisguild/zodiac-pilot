@@ -204,6 +204,13 @@
       "when": 1747910107420,
       "tag": "0028_add default flag to plan",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1747914920120,
+      "tag": "0029_add plan priority",
+      "breakpoints": true
     }
   ]
 }

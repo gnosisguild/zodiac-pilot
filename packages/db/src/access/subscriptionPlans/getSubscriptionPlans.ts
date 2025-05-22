@@ -5,7 +5,7 @@ export const getSubscriptionPlans = async (db: DBClient) =>
     where(fields, { eq }) {
       return eq(fields.deleted, false)
     },
-    orderBy(fields, { asc }) {
-      return asc(fields.name)
+    orderBy(fields, { asc, desc }) {
+      return [desc(fields.priority), asc(fields.name)]
     },
   })

@@ -3,7 +3,7 @@ import { Popover } from '../overlays'
 import { Delta } from './Delta'
 
 type NumberValueProps = {
-  children: `${number}`
+  children: number | Intl.StringNumericLiteral
   delta?: `${number}`
   precision?: number
 }

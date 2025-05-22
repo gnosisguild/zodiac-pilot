@@ -2,15 +2,18 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import {
   dbClient,
+  decreasePriority,
   getSubscriptionPlans,
+  increasePriority,
   setDefaultSubscriptionPlan,
 } from '@zodiac/db'
-import { getUUID } from '@zodiac/form-data'
+import { getString, getUUID } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import {
   DateValue,
   GhostButton,
   InlineForm,
+  NumberValue,
   SecondaryLinkButton,
   Table,
   TableBody,
@@ -20,7 +23,8 @@ import {
   TableRow,
   Tag,
 } from '@zodiac/ui'
-import { Star } from 'lucide-react'
+import type { UUID } from 'crypto'
+import { ArrowDown, ArrowUp, Star } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/subscriptionPlans'
 
@@ -45,9 +49,24 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       const subscriptionPlanId = getUUID(data, 'subscriptionPlanId')
 
-      await setDefaultSubscriptionPlan(dbClient(), subscriptionPlanId)
+      switch (getString(data, 'intent')) {
+        case Intent.MakeDefault: {
+          await setDefaultSubscriptionPlan(dbClient(), subscriptionPlanId)
 
-      return null
+          return null
+        }
+
+        case Intent.IncreasePriority: {
+          await increasePriority(dbClient(), subscriptionPlanId)
+
+          return null
+        }
+        case Intent.DecreasePriority: {
+          await decreasePriority(dbClient(), subscriptionPlanId)
+
+          return null
+        }
+      }
     },
     {
       ensureSignedIn: true,
@@ -79,6 +98,7 @@ const SubscriptionPlans = ({
           <TableHead>
             <TableRow withActions>
               <TableHeader>Name</TableHeader>
+              <TableHeader>Priority</TableHeader>
               <TableHeader>Created</TableHeader>
             </TableRow>
           </TableHead>
@@ -98,13 +118,26 @@ const SubscriptionPlans = ({
                   </div>
                 </TableCell>
                 <TableCell>
+                  <NumberValue precision={0}>
+                    {subscriptionPlan.priority}
+                  </NumberValue>
+                </TableCell>
+                <TableCell>
                   <DateValue>{subscriptionPlan.createdAt}</DateValue>
                 </TableCell>
                 <TableCell>
-                  <MakeDefault
-                    subscriptionPlanId={subscriptionPlan.id}
-                    disabled={subscriptionPlan.isDefault}
-                  />
+                  <div className="flex gap-2">
+                    <IncreasePriority
+                      subscriptionPlanId={subscriptionPlan.id}
+                    />
+                    <DecreasePriority
+                      subscriptionPlanId={subscriptionPlan.id}
+                    />
+                    <MakeDefault
+                      subscriptionPlanId={subscriptionPlan.id}
+                      disabled={subscriptionPlan.isDefault}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -119,11 +152,55 @@ const SubscriptionPlans = ({
 
 export default SubscriptionPlans
 
+const IncreasePriority = ({
+  subscriptionPlanId,
+}: {
+  subscriptionPlanId: UUID
+}) => (
+  <InlineForm context={{ subscriptionPlanId }}>
+    <GhostButton
+      iconOnly
+      submit
+      icon={ArrowUp}
+      size="tiny"
+      intent={Intent.IncreasePriority}
+      busy={useIsPending(
+        Intent.IncreasePriority,
+        (data) => data.get('subscriptionPlanId') === subscriptionPlanId,
+      )}
+    >
+      Increase priority
+    </GhostButton>
+  </InlineForm>
+)
+
+const DecreasePriority = ({
+  subscriptionPlanId,
+}: {
+  subscriptionPlanId: UUID
+}) => (
+  <InlineForm context={{ subscriptionPlanId }}>
+    <GhostButton
+      iconOnly
+      submit
+      icon={ArrowDown}
+      size="tiny"
+      intent={Intent.DecreasePriority}
+      busy={useIsPending(
+        Intent.DecreasePriority,
+        (data) => data.get('subscriptionPlanId') === subscriptionPlanId,
+      )}
+    >
+      Decrease priority
+    </GhostButton>
+  </InlineForm>
+)
+
 const MakeDefault = ({
   subscriptionPlanId,
   disabled,
 }: {
-  subscriptionPlanId: string
+  subscriptionPlanId: UUID
   disabled: boolean
 }) => (
   <InlineForm context={{ subscriptionPlanId }}>
@@ -146,4 +223,6 @@ const MakeDefault = ({
 
 enum Intent {
   MakeDefault = 'MakeDefault',
+  IncreasePriority = 'IncreasePriority',
+  DecreasePriority = 'DecreasePriority',
 }
