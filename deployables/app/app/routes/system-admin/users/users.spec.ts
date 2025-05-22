@@ -3,7 +3,7 @@ import {
   createMockWorkOsUser,
   render,
 } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getWorkOS } from '@workos-inc/authkit-react-router'
 import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
@@ -55,14 +55,14 @@ describe('Users', () => {
     })
 
     it('does not show users that have a matching user in our system', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
-
       const workOsUser = createMockWorkOsUser({
         firstName: 'John',
         lastName: 'Doe',
+      })
 
-        externalId: user.id,
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant, {
+        externalId: workOsUser.id,
       })
 
       mockListUsers.mockResolvedValue(createMockListResult([workOsUser]))
@@ -72,10 +72,11 @@ describe('Users', () => {
         tenant,
         isSystemAdmin: true,
       })
+      const { queryByRole } = within(
+        await screen.findByRole('region', { name: 'WorkOS Users' }),
+      )
 
-      expect(
-        screen.queryByRole('cell', { name: 'John Doe' }),
-      ).not.toBeInTheDocument()
+      expect(queryByRole('cell', { name: 'John Doe' })).not.toBeInTheDocument()
     })
 
     it('is possible to remove a work os user', async () => {

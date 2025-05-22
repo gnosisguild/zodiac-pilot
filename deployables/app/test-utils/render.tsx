@@ -290,13 +290,14 @@ const mockWorkOs = ({
   mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
   mockGetOrganization.mockResolvedValue(mockOrganization)
 
+  const [firstName, lastName] = user.fullName.split(' ')
+
   return createMockWorkOsUser({
     id: user.externalId ?? undefined,
     createdAt: user.createdAt.toISOString(),
-    email: 'john@doe.com',
     externalId: user.id,
-    firstName: 'John',
-    lastName: 'Doe',
+    firstName,
+    lastName,
     updatedAt: user.createdAt.toISOString(),
   })
 }
