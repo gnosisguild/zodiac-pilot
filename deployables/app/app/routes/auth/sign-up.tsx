@@ -2,7 +2,6 @@ import { Page } from '@/components'
 import { routeTitle } from '@/utils'
 import { createOrganization } from '@/workOS/server'
 import * as Sentry from '@sentry/react-router'
-import { createTenant, dbClient } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { EmailInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
@@ -20,14 +19,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
   const email = getString(data, 'email')
 
   try {
-    await dbClient().transaction(async (tx) => {
-      const tenant = await createTenant(tx, { name: tenantName })
-
-      await createOrganization({
-        name: tenantName,
-        adminEmail: email,
-        externalId: tenant.id,
-      })
+    await createOrganization({
+      name: tenantName,
+      adminEmail: email,
     })
 
     return redirect(href('/sign-up/success'))

@@ -17,6 +17,7 @@ export const userFactory = createFactory<
   build(_, data) {
     return {
       fullName: faker.person.fullName(),
+      externalId: randomUUID(),
 
       ...data,
     }
@@ -36,6 +37,7 @@ export const userFactory = createFactory<
         id: randomUUID(),
         createdAt: new Date(),
         fullName: faker.person.fullName(),
+        externalId: randomUUID(),
       },
       data,
     )

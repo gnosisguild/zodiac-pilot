@@ -1,5 +1,5 @@
-import { dbClient } from '@zodiac/db'
-import { beforeEach } from 'vitest'
+import { closeCurrentClient, dbClient } from '@zodiac/db'
+import { afterAll, beforeEach } from 'vitest'
 import { deleteAllFeatures } from './deleteAllFeatures'
 import { deleteAllSubscriptionPlans } from './deleteAllSubscriptionPlans'
 import { deleteAllTenants } from './deleteAllTenants'
@@ -15,3 +15,5 @@ beforeEach(async () => {
     deleteAllSubscriptionPlans(db),
   ])
 })
+
+afterAll(() => closeCurrentClient())

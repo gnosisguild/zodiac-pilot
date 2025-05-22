@@ -2,11 +2,11 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { getUsers as getWorkOsUsers } from '@/workOS/server'
 import { dbClient, getUsers } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
   GhostLinkButton,
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -23,23 +23,15 @@ export const loader = (args: Route.LoaderArgs) =>
     args,
     async () => {
       const users = await getUsers(dbClient())
-      const userIds = users.map(({ id }) => id)
+      const externalUserIds = users.map(({ externalId }) => externalId)
 
       const workOsUsers = await getWorkOsUsers()
 
       return {
         users,
-        workOsUsers: workOsUsers.filter((user) => {
-          if (user.externalId == null) {
-            return true
-          }
-
-          if (!isUUID(user.externalId)) {
-            return true
-          }
-
-          return !userIds.includes(user.externalId)
-        }),
+        workOsUsers: workOsUsers.filter(
+          (user) => !externalUserIds.includes(user.id),
+        ),
       }
     },
     {
@@ -58,13 +50,11 @@ const Users = ({
       <Page.Header>Users</Page.Header>
 
       <Page.Main className="gap-8">
-        {workOsUsers.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold">Work OS users</h2>
-            <p className="mb-8 text-sm opacity-75">
-              These users exist in Work OS but not in our system
-            </p>
-
+        <Section
+          title="WorkOS Users"
+          description="These users exist in Work OS but not in our system"
+        >
+          {workOsUsers.length > 0 && (
             <Table
               bleed
               className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
@@ -115,11 +105,10 @@ const Users = ({
                 ))}
               </TableBody>
             </Table>
-          </section>
-        )}
+          )}
+        </Section>
 
-        <section>
-          <h2 className="text-lg font-semibold">Zodiac OS users</h2>
+        <Section title="Zodiac OS Users">
           <Table
             bleed
             className="[--gutter:--spacing(8)] sm:[--gutter:--spacing(16)]"
@@ -146,7 +135,7 @@ const Users = ({
               ))}
             </TableBody>
           </Table>
-        </section>
+        </Section>
       </Page.Main>
 
       <Outlet />

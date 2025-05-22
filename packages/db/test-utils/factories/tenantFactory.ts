@@ -11,6 +11,7 @@ export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
   build(tenant) {
     return {
       name: faker.company.name(),
+      externalId: randomUUID(),
       ...tenant,
     }
   },
@@ -24,6 +25,7 @@ export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
       {
         createdAt: new Date(),
         id: randomUUID(),
+        externalId: randomUUID(),
       },
       data,
     )

@@ -3,13 +3,17 @@ import type { DBClient } from '../../dbClient'
 
 type UserCreateOptions = {
   fullName: string
+  externalId: string
 }
 
 export const createUser = async (
   db: DBClient,
-  { fullName }: UserCreateOptions,
+  { fullName, externalId }: UserCreateOptions,
 ) => {
-  const [user] = await db.insert(UserTable).values({ fullName }).returning()
+  const [user] = await db
+    .insert(UserTable)
+    .values({ fullName, externalId })
+    .returning()
 
   return user
 }

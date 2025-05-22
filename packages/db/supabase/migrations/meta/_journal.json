@@ -190,6 +190,13 @@
       "when": 1747825951640,
       "tag": "0026_add plans",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1747900902881,
+      "tag": "0027_store external ids",
+      "breakpoints": true
     }
   ]
 }

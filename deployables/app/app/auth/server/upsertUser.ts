@@ -1,24 +1,27 @@
-import { updateExternalUserId } from '@/workOS/server'
-import { invariant } from '@epic-web/invariant'
 import type { User } from '@workos-inc/node'
-import { createUser, getUser, type DBClient } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
+import {
+  createUser,
+  findUserByExternalId,
+  updateUser,
+  type DBClient,
+} from '@zodiac/db'
 
 export const upsertUser = async (db: DBClient, workOSUser: User) => {
-  if (workOSUser.externalId == null) {
-    const user = await createUser(db, {
-      fullName: `${workOSUser.firstName} ${workOSUser.lastName}`,
-    })
+  const existingUser = await findUserByExternalId(db, workOSUser.id)
 
-    await updateExternalUserId({
-      userId: workOSUser.id,
-      externalId: user.id,
-    })
+  if (existingUser != null) {
+    const fullName =
+      `${workOSUser.firstName ?? ''} ${workOSUser.lastName ?? ''}`.trim()
 
-    return user
+    if (fullName === existingUser.fullName) {
+      return existingUser
+    }
+
+    return updateUser(db, existingUser.id, { fullName })
   }
 
-  invariant(isUUID(workOSUser.externalId), '"externalId" is not a UUID')
-
-  return getUser(db, workOSUser.externalId)
+  return createUser(db, {
+    fullName: `${workOSUser.firstName} ${workOSUser.lastName}`,
+    externalId: workOSUser.id,
+  })
 }

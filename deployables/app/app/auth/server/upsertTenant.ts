@@ -1,25 +1,18 @@
-import { updateExternalTenantId } from '@/workOS/server'
-import { invariant } from '@epic-web/invariant'
 import type { Organization } from '@workos-inc/node'
-import { createTenant, getTenant, type DBClient } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
+import { createTenant, findTenantByExternalId, type DBClient } from '@zodiac/db'
 
 export const upsertTenant = async (
   db: DBClient,
   workOSOrganization: Organization,
 ) => {
-  if (workOSOrganization.externalId == null) {
-    const tenant = await createTenant(db, { name: workOSOrganization.name })
+  const existingTenant = await findTenantByExternalId(db, workOSOrganization.id)
 
-    await updateExternalTenantId({
-      organizationId: workOSOrganization.id,
-      externalId: tenant.id,
-    })
-
-    return tenant
+  if (existingTenant != null) {
+    return existingTenant
   }
 
-  invariant(isUUID(workOSOrganization.externalId), '"externalId" is not a UUID')
-
-  return getTenant(db, workOSOrganization.externalId)
+  return createTenant(db, {
+    name: workOSOrganization.name,
+    externalId: workOSOrganization.id,
+  })
 }
