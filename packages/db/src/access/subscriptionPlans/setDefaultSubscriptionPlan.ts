@@ -3,12 +3,17 @@ import type { UUID } from 'crypto'
 import { eq } from 'drizzle-orm'
 import type { DBClient } from '../../dbClient'
 
-export const setDefaultSubscriptionPlan = (
+export const setDefaultSubscriptionPlan = async (
   db: DBClient,
   subscriptionPlanId: UUID,
 ) =>
-  db
-    .update(SubscriptionPlanTable)
-    .set({ isDefault: true })
-    .where(eq(SubscriptionPlanTable.id, subscriptionPlanId))
-    .returning()
+  db.transaction(async (tx) => {
+    await tx
+      .update(SubscriptionPlanTable)
+      .set({ isDefault: false })
+      .where(eq(SubscriptionPlanTable.isDefault, true))
+    await tx
+      .update(SubscriptionPlanTable)
+      .set({ isDefault: true })
+      .where(eq(SubscriptionPlanTable.id, subscriptionPlanId))
+  })
