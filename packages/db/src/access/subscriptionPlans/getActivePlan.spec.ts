@@ -55,4 +55,22 @@ describe('getActivePlan', () => {
 
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(planB)
   })
+
+  it('retrieves the pan with the highest priority', async () => {
+    const tenant = await tenantFactory.create()
+    const planA = await subscriptionPlanFactory.create({ priority: 1 })
+    const planB = await subscriptionPlanFactory.create({ priority: 2 })
+
+    await activatePlan(dbClient(), {
+      tenantId: tenant.id,
+      subscriptionPlanId: planA.id,
+    })
+
+    await activatePlan(dbClient(), {
+      tenantId: tenant.id,
+      subscriptionPlanId: planB.id,
+    })
+
+    await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(planB)
+  })
 })

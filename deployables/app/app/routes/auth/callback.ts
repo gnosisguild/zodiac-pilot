@@ -7,6 +7,7 @@ import type { Route } from './+types/callback'
 
 export const loader = ({ request, ...options }: Route.LoaderArgs) => {
   const response = authLoader({
+    returnPathname: '/',
     async onSuccess({ user: workOSUser }) {
       await dbClient().transaction(async (db) => {
         try {
