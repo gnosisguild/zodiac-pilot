@@ -1,5 +1,6 @@
 import { TenantTable } from '@zodiac/db/schema'
 import type { DBClient } from '../../dbClient'
+import { activatePlan, getDefaultSubscriptionPlan } from '../subscriptionPlans'
 
 type CreateTenantOptions = {
   name: string
@@ -9,11 +10,19 @@ type CreateTenantOptions = {
 export const createTenant = async (
   db: DBClient,
   { name, externalId }: CreateTenantOptions,
-) => {
-  const [tenant] = await db
-    .insert(TenantTable)
-    .values({ name, externalId })
-    .returning()
+) =>
+  db.transaction(async (tx) => {
+    const [tenant] = await tx
+      .insert(TenantTable)
+      .values({ name, externalId })
+      .returning()
 
-  return tenant
-}
+    const defaultSubscriptionPlan = await getDefaultSubscriptionPlan(tx)
+
+    await activatePlan(tx, {
+      tenantId: tenant.id,
+      subscriptionPlanId: defaultSubscriptionPlan.id,
+    })
+
+    return tenant
+  })
