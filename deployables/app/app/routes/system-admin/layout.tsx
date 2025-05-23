@@ -1,6 +1,18 @@
 import { Navigation } from '@/components'
-import { Sidebar, SidebarBody, SidebarLayout } from '@zodiac/ui'
-import { Building2, ListTodo, SquareKanban, Users } from 'lucide-react'
+import {
+  GhostLinkButton,
+  Sidebar,
+  SidebarBody,
+  SidebarFooter,
+  SidebarLayout,
+} from '@zodiac/ui'
+import {
+  ArrowLeft,
+  Building2,
+  ListTodo,
+  SquareKanban,
+  Users,
+} from 'lucide-react'
 import { href, Outlet } from 'react-router'
 
 const SystemAdminLayout = () => (
@@ -39,6 +51,12 @@ const SystemAdminLayout = () => (
             </Navigation.Section>
           </Navigation>
         </SidebarBody>
+
+        <SidebarFooter>
+          <GhostLinkButton fluid to={href('/')} icon={ArrowLeft}>
+            Back to app
+          </GhostLinkButton>
+        </SidebarFooter>
       </Sidebar>
     }
   >
