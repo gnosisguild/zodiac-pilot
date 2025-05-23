@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { CHAIN_HIDDEN, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
+import { CHAIN_NAME, HIDDEN_CHAINS, verifyChainId } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { Chain } from './Chain'
@@ -18,7 +18,7 @@ const allOptions = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
 }))
 
 const visibleOptions = allOptions.filter(
-  (op) => !CHAIN_HIDDEN[op.value as keyof typeof CHAIN_HIDDEN],
+  (op) => !HIDDEN_CHAINS.includes(op.value),
 )
 
 export const ChainSelect = ({
