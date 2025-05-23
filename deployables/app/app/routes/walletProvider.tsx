@@ -1,10 +1,10 @@
 import { WalletProvider } from '@/components'
 import { Outlet } from 'react-router'
 
-const CreateLayout = () => (
+const WalletLayout = () => (
   <WalletProvider>
     <Outlet />
   </WalletProvider>
 )
 
-export default CreateLayout
+export default WalletLayout
