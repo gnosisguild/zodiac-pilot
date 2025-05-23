@@ -3,7 +3,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, deleteFeature, getFeature } from '@zodiac/db'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { GhostButton, InlineForm, Modal, PrimaryButton } from '@zodiac/ui'
+import { InlineForm, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/remove'
 
@@ -63,9 +63,7 @@ const RemoveFeature = ({ loaderData: { feature } }: Route.ComponentProps) => {
           </PrimaryButton>
         </InlineForm>
 
-        <GhostButton onClick={() => navigate(href('/system-admin/features'))}>
-          Cancel
-        </GhostButton>
+        <Modal.CloseAction>Cancel</Modal.CloseAction>
       </Modal.Actions>
     </Modal>
   )

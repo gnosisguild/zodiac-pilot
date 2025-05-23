@@ -3,7 +3,7 @@ import { getUser, removeUser } from '@/workOS/server'
 import { invariantResponse } from '@epic-web/invariant'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { Form, GhostButton, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/remove'
 
@@ -74,9 +74,7 @@ const RemoveUser = ({ loaderData: { user } }: Route.ComponentProps) => {
           >
             Remove
           </PrimaryButton>
-          <GhostButton onClick={() => navigate(href('/system-admin/users'))}>
-            Cancel
-          </GhostButton>
+          <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>
       </Form>
     </Modal>
