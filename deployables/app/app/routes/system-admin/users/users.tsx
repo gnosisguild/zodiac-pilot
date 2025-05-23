@@ -63,7 +63,6 @@ const Users = ({
                 <TableRow withActions>
                   <TableHeader>Name</TableHeader>
                   <TableHeader>ID</TableHeader>
-                  <TableHeader>External ID</TableHeader>
                   <TableHeader>Created</TableHeader>
                 </TableRow>
               </TableHead>
@@ -72,15 +71,17 @@ const Users = ({
                 {workOsUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
-                      {`${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || (
-                        <Empty />
-                      )}
+                      <div className="flex flex-col">
+                        {`${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || (
+                          <Empty />
+                        )}
+                        <span aria-hidden className="text-sm opacity-75">
+                          {user.email}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
                       {user.id}
-                    </TableCell>
-                    <TableCell className="font-mono tabular-nums">
-                      {user.externalId}
                     </TableCell>
                     <TableCell>
                       <DateValue>{new Date(user.createdAt)}</DateValue>
@@ -114,6 +115,7 @@ const Users = ({
               <TableRow>
                 <TableHeader>Name</TableHeader>
                 <TableHeader>ID</TableHeader>
+                <TableHeader>External ID</TableHeader>
                 <TableHeader>Created</TableHeader>
               </TableRow>
             </TableHead>
@@ -125,6 +127,7 @@ const Users = ({
                   <TableCell className="font-mono tabular-nums">
                     {user.id}
                   </TableCell>
+                  <TableCell>{user.externalId}</TableCell>
                   <TableCell>
                     <DateValue>{user.createdAt}</DateValue>
                   </TableCell>
