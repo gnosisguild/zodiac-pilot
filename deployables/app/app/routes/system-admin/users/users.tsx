@@ -63,7 +63,6 @@ const Users = ({
                 <TableRow withActions>
                   <TableHeader>Name</TableHeader>
                   <TableHeader>ID</TableHeader>
-                  <TableHeader>External ID</TableHeader>
                   <TableHeader>Created</TableHeader>
                 </TableRow>
               </TableHead>
@@ -83,9 +82,6 @@ const Users = ({
                     </TableCell>
                     <TableCell className="font-mono tabular-nums">
                       {user.id}
-                    </TableCell>
-                    <TableCell className="font-mono tabular-nums">
-                      {user.externalId}
                     </TableCell>
                     <TableCell>
                       <DateValue>{new Date(user.createdAt)}</DateValue>
