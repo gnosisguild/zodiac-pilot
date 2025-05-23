@@ -6,6 +6,7 @@ import {
   Navigation,
   PilotStatus,
   ProvidePilotStatus,
+  WalletProvider,
 } from '@/components'
 import { ProvideChains } from '@/routes-ui'
 import { getSignInUrl } from '@workos-inc/authkit-react-router'
@@ -232,7 +233,9 @@ const PageLayout = ({
                   </Sidebar>
                 }
               >
-                <Outlet />
+                <WalletProvider>
+                  <Outlet />
+                </WalletProvider>
               </SidebarLayout>
             </ProvidePilotStatus>
           </ProvideChains>
