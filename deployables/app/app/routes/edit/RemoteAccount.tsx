@@ -150,9 +150,7 @@ const Delete = ({
               Delete
             </PrimaryButton>
 
-            <GhostButton onClick={() => setConfirmDelete(false)}>
-              Cancel
-            </GhostButton>
+            <Modal.CloseAction>Cancel</Modal.CloseAction>
           </Modal.Actions>
         </Form>
       </Modal>

@@ -1,4 +1,4 @@
-import { GhostButton, Modal, PrimaryButton } from '@zodiac/ui'
+import { Modal, PrimaryButton } from '@zodiac/ui'
 
 type ClearTransactionsModalProps = {
   open: boolean
@@ -21,7 +21,7 @@ export const ClearTransactionsModal = ({
     >
       <Modal.Actions>
         <PrimaryButton onClick={onAccept}>Clear transactions</PrimaryButton>
-        <GhostButton onClick={onCancel}>Cancel</GhostButton>
+        <Modal.CloseAction>Cancel</Modal.CloseAction>
       </Modal.Actions>
     </Modal>
   )

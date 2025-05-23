@@ -8,7 +8,7 @@ import {
 } from '@zodiac/db'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Divider, Form, GhostButton, Modal, PrimaryButton } from '@zodiac/ui'
+import { Divider, Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { useId } from 'react'
 import { href, useNavigate } from 'react-router'
 import type { Route } from './+types/delete-wallet'
@@ -126,9 +126,7 @@ const DeleteWallet = ({
           </PrimaryButton>
         </Form>
 
-        <GhostButton onClick={() => navigate(href('/profile'))}>
-          Cancel
-        </GhostButton>
+        <Modal.CloseAction>Cancel</Modal.CloseAction>
       </Modal.Actions>
     </Modal>
   )

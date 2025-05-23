@@ -6,7 +6,6 @@ import {
   AddressInput,
   Error,
   Form,
-  GhostButton,
   Modal,
   PrimaryButton,
   TextInput,
@@ -64,9 +63,8 @@ const AddWallet = ({ actionData }: Route.ComponentProps) => {
           <PrimaryButton submit busy={useIsPending(Intent.AddWallet)}>
             Add
           </PrimaryButton>
-          <GhostButton onClick={() => navigate(href('/profile'))}>
-            Cancel
-          </GhostButton>
+
+          <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>
       </Form>
     </Modal>

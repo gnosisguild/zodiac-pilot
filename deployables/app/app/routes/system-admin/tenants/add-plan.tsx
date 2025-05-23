@@ -4,7 +4,7 @@ import { activatePlan, dbClient, getSubscriptionPlans } from '@zodiac/db'
 import { getUUID } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, GhostButton, Modal, PrimaryButton, Select } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, Select } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/add-plan'
 
@@ -76,13 +76,7 @@ const AddPlan = ({
           >
             Add
           </PrimaryButton>
-          <GhostButton
-            onClick={() =>
-              navigate(href('/system-admin/tenant/:tenantId', { tenantId }))
-            }
-          >
-            Cancel
-          </GhostButton>
+          <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>
       </Form>
     </Modal>
