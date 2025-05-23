@@ -9,6 +9,7 @@ import {
   useSendTransactions,
 } from '@/providers-ui'
 import {
+  clearTransactions,
   refreshTransactions,
   useDispatch,
   usePendingTransactions,
@@ -18,9 +19,16 @@ import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
 import { toMetaTransactionRequest } from '@zodiac/schema'
-import { CopyToClipboard, GhostButton, Info, Page } from '@zodiac/ui'
-import { RefreshCcw } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import {
+  CopyToClipboard,
+  GhostButton,
+  Info,
+  Modal,
+  Page,
+  PrimaryButton,
+} from '@zodiac/ui'
+import { RefreshCcw, Trash2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { type ActionFunctionArgs } from 'react-router'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
@@ -96,6 +104,12 @@ const Transactions = () => {
             >
               Re-simulate on current blockchain head
             </GhostButton>
+
+            <ClearTransactions
+              disabled={
+                transactions.length === 0 || pendingTransactions.length > 0
+              }
+            />
           </div>
         </div>
 
@@ -165,3 +179,46 @@ const useScrollIntoView = () => {
 }
 
 export default Transactions
+
+const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
+  const [confirm, setConfirm] = useState(false)
+  const dispatch = useDispatch()
+
+  return (
+    <>
+      <GhostButton
+        iconOnly
+        icon={Trash2}
+        style="critical"
+        size="small"
+        disabled={disabled}
+        onClick={() => setConfirm(true)}
+      >
+        Clear transactions
+      </GhostButton>
+
+      <Modal
+        open={confirm}
+        onClose={() => setConfirm(false)}
+        title="Clear transaction batch"
+      >
+        Are you sure you want to clear the transaction batch? This action cannot
+        be undone.
+        <Modal.Actions>
+          <PrimaryButton
+            style="critical"
+            onClick={() => {
+              dispatch(clearTransactions())
+
+              setConfirm(false)
+            }}
+          >
+            Clear
+          </PrimaryButton>
+
+          <Modal.CloseAction>Cancel</Modal.CloseAction>
+        </Modal.Actions>
+      </Modal>
+    </>
+  )
+}
