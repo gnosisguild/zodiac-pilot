@@ -5,7 +5,6 @@ import {
   Page,
   useConnected,
   useIsDev,
-  WalletProvider,
 } from '@/components'
 import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
@@ -208,75 +207,73 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
   const connected = useConnected()
 
   return (
-    <WalletProvider>
-      <Page>
-        <Page.Header
-          action={
-            <ConnectWalletButton
-              connectedLabel="Wallet"
-              connectLabel="Connect wallet"
-            />
-          }
-        >
-          Edit Account
-        </Page.Header>
-
-        <Page.Main className="max-w-5xl">
-          <TextInput
-            form={formId}
-            label="Label"
-            name="label"
-            defaultValue={label}
+    <Page>
+      <Page.Header
+        action={
+          <ConnectWalletButton
+            connectedLabel="Wallet"
+            connectLabel="Connect wallet"
           />
+        }
+      >
+        Edit Account
+      </Page.Header>
 
-          <Chain chainId={getChainId(avatar)} />
+      <Page.Main className="max-w-5xl">
+        <TextInput
+          form={formId}
+          label="Label"
+          name="label"
+          defaultValue={label}
+        />
 
-          <Initiator
-            avatar={avatar}
-            initiator={initiator}
-            knownRoutes={'routes' in loaderData ? loaderData.routes : []}
-          />
+        <Chain chainId={getChainId(avatar)} />
 
-          <RouteSelect
-            form={formId}
-            name="selectedRouteId"
-            defaultValue={comparableId}
-            routes={possibleRoutes}
-            initiator={initiator}
-            waypoints={waypoints}
-          />
+        <Initiator
+          avatar={avatar}
+          initiator={initiator}
+          knownRoutes={'routes' in loaderData ? loaderData.routes : []}
+        />
 
-          <Avatar avatar={avatar} initiator={initiator} />
+        <RouteSelect
+          form={formId}
+          name="selectedRouteId"
+          defaultValue={comparableId}
+          routes={possibleRoutes}
+          initiator={initiator}
+          waypoints={waypoints}
+        />
 
-          <Form id={formId}>
-            <Form.Actions>
-              <PrimaryButtonGroup
-                submit
-                intent={Intent.Save}
-                disabled={!connected}
-                groupLabel="Show save options"
-                group={(GroupOption) => (
-                  <GroupOption submit intent={Intent.SaveAsCopy}>
-                    Save as copy
-                  </GroupOption>
-                )}
-                busy={useIsPending([Intent.Save, Intent.SaveAsCopy])}
-              >
-                Save
-              </PrimaryButtonGroup>
+        <Avatar avatar={avatar} initiator={initiator} />
 
-              {!connected && (
-                <div className="text-balance text-xs opacity-75">
-                  The Pilot extension must be open to save.
-                </div>
+        <Form id={formId}>
+          <Form.Actions>
+            <PrimaryButtonGroup
+              submit
+              intent={Intent.Save}
+              disabled={!connected}
+              groupLabel="Show save options"
+              group={(GroupOption) => (
+                <GroupOption submit intent={Intent.SaveAsCopy}>
+                  Save as copy
+                </GroupOption>
               )}
+              busy={useIsPending([Intent.Save, Intent.SaveAsCopy])}
+            >
+              Save
+            </PrimaryButtonGroup>
 
-              {isDev && <DebugRouteData />}
-            </Form.Actions>
-          </Form>
-        </Page.Main>
-      </Page>
-    </WalletProvider>
+            {!connected && (
+              <div className="text-balance text-xs opacity-75">
+                The Pilot extension must be open to save.
+              </div>
+            )}
+
+            {isDev && <DebugRouteData />}
+          </Form.Actions>
+        </Form>
+      </Page.Main>
+    </Page>
   )
 }
 

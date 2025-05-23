@@ -8,7 +8,7 @@ import {
   PrimaryButton,
 } from '@zodiac/ui'
 import { useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { href, useNavigate } from 'react-router'
 import { erc20Abi } from 'viem'
 import { useSendTransaction, useWriteContract } from 'wagmi'
 import type { Route } from './+types/send'
@@ -38,7 +38,7 @@ const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate('../balances')
+      navigate(href('/tokens/balances'))
     }
   }, [isSuccess, navigate])
 
