@@ -37,7 +37,7 @@ export const Address = ({
 }: AddressProps) => {
   const [chainId, address] = splitPrefixedAddress(children)
 
-  const { data } = useEnsName({ address, chainId })
+  const { data: ensName } = useEnsName({ address, chainId })
 
   if (address === ZERO_ADDRESS) {
     return (
@@ -64,15 +64,13 @@ export const Address = ({
           size === 'tiny' && 'size-3',
         )}
       />
-
       {label && <span className="font-semibold">{label}</span>}
-
       <code
         aria-hidden={label != null}
         className={classNames(
           'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default',
-          shorten && data == null && 'uppercase',
+          shorten && ensName == null && 'uppercase',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',
           label != null && 'opacity-50',
@@ -83,13 +81,12 @@ export const Address = ({
             position="bottom"
             popover={<Address size="small">{children}</Address>}
           >
-            {data == null ? <ShortAddress>{address}</ShortAddress> : data}
+            {ensName == null ? <ShortAddress>{address}</ShortAddress> : ensName}
           </Popover>
         ) : (
           getAddress(address)
         )}
       </code>
-
       {allowCopy && (
         <CopyToClipboard iconOnly data={address} size="tiny">
           Copy address
