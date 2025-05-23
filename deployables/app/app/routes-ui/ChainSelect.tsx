@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { CHAIN_NAME, verifyChainId } from '@zodiac/chains'
+import { CHAIN_NAME, HIDDEN_CHAINS, verifyChainId } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
 import { Chain } from './Chain'
@@ -12,10 +12,14 @@ type ChainSelectProps = {
   name?: string
 }
 
-const options = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
+const allOptions = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
   value: verifyChainId(parseInt(chainId)),
   label: name,
 }))
+
+const visibleOptions = allOptions.filter(
+  (op) => !HIDDEN_CHAINS.includes(op.value),
+)
 
 export const ChainSelect = ({
   defaultValue,
@@ -23,26 +27,36 @@ export const ChainSelect = ({
   disabled,
   name,
   onChange,
-}: ChainSelectProps) => (
-  <Select
-    label="Chain"
-    isDisabled={disabled}
-    dropdownLabel="Select a different chain"
-    isMulti={false}
-    options={options}
-    name={name}
-    value={options.find((op) => op.value === value)}
-    defaultValue={options.find((op) => op.value === defaultValue)}
-    onChange={(option) => {
-      invariant(option != null, 'Empty value selected as chain')
+}: ChainSelectProps) => {
+  const valueOption = allOptions.find((op) => op.value === value)
+  const defaultValueOption = allOptions.find((op) => op.value === defaultValue)
+  const optionToShow = valueOption ?? defaultValueOption
+  const options =
+    !optionToShow || visibleOptions.includes(optionToShow)
+      ? visibleOptions
+      : [...visibleOptions, optionToShow]
 
-      if (onChange != null) {
-        onChange(option.value)
-      }
-    }}
-  >
-    {({ data: { label, value } }) => (
-      <Chain chainId={value}>{label || `#${value}`}</Chain>
-    )}
-  </Select>
-)
+  return (
+    <Select
+      label="Chain"
+      isDisabled={disabled}
+      dropdownLabel="Select a different chain"
+      isMulti={false}
+      options={options}
+      name={name}
+      value={valueOption}
+      defaultValue={defaultValueOption}
+      onChange={(option) => {
+        invariant(option != null, 'Empty value selected as chain')
+
+        if (onChange != null) {
+          onChange(option.value)
+        }
+      }}
+    >
+      {({ data: { label, value } }) => (
+        <Chain chainId={value}>{label || `#${value}`}</Chain>
+      )}
+    </Select>
+  )
+}

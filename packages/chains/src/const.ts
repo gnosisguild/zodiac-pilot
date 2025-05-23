@@ -99,3 +99,9 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.WORLDCHAIN]: 'World Chain',
   [Chain.BOB]: 'BOB',
 }
+
+/**
+ * As long as ser does not support querying routes for a chain, we hide it from the chain select field.
+ * That way we can support chains as long as users manually import their route using https://github.com/gnosisguild/build-pilot-route, for example.
+ **/
+export const HIDDEN_CHAINS = [Chain.UNICHAIN, Chain.WORLDCHAIN, Chain.BOB]
