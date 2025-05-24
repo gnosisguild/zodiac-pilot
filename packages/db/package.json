@@ -54,7 +54,7 @@
     "@faker-js/faker": "9.8.0",
     "@types/node": "22.14.1",
     "@types/react": "19.1.5",
-    "@workos-inc/node": "7.50.1",
+    "@workos-inc/node": "7.51.0",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
