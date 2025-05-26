@@ -22,56 +22,64 @@ export default [
         route('success', 'routes/auth/sign-up.success.tsx'),
       ]),
 
-      route('/profile', 'routes/auth/profile.tsx', [
-        route('add-wallet', 'routes/auth/add-wallet.tsx'),
-        route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
-      ]),
-
       route('/admin', 'routes/auth/admin.tsx'),
 
-      route('/tokens', 'routes/tokens/index.tsx', [
-        layout('routes/tokens/balances/layout.tsx', [
-          route('balances', 'routes/tokens/balances/balances.tsx'),
+      layout('routes/tokens/index.tsx', [
+        ...prefix('/tokens', [
+          layout('routes/tokens/balances/layout.tsx', [
+            route('balances', 'routes/tokens/balances/balances.tsx'),
+          ]),
+          layout('routes/tokens/send/layout.tsx', [
+            route('send/:chain?/:token?', 'routes/tokens/send/send.tsx'),
+          ]),
         ]),
-        layout('routes/tokens/send/layout.tsx', [
-          route('send/:chain?/:token?', 'routes/tokens/send/send.tsx'),
+      ]),
+
+      layout('routes/walletProvider.tsx', [
+        route('/profile', 'routes/auth/profile.tsx', [
+          route('add-wallet', 'routes/auth/add-wallet.tsx'),
+          route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
-      ]),
 
-      route('/new-route', 'routes/legacy-redirects/old-new-route-redirect.ts'),
+        route(
+          '/new-route',
+          'routes/legacy-redirects/old-new-route-redirect.ts',
+        ),
 
-      route('/account/:accountId', 'routes/account/edit.tsx'),
+        route('/account/:accountId', 'routes/account/edit.tsx'),
 
-      ...prefix('/edit', [
-        index('routes/edit/list-routes.tsx'),
-        route(':routeId', 'routes/edit/$routeId/load-route.ts'),
-        route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
-
-        route(':data', 'routes/legacy-redirects/extract-route-id-from-edit.ts'),
-      ]),
-
-      route(
-        '/edit-route/:data',
-        'routes/legacy-redirects/old-edit-redirect.ts',
-      ),
-
-      ...prefix('/create/:prefixedAddress?', [
-        layout('routes/create/layout.tsx', [index('routes/create/create.tsx')]),
-      ]),
-
-      ...prefix('/submit', [
-        layout('routes/sign/layout.tsx', [
-          index('routes/sign/index.tsx'),
+        ...prefix('/edit', [
+          index('routes/edit/list-routes.tsx'),
+          route(':routeId', 'routes/edit/$routeId/load-route.ts'),
+          route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
 
           route(
-            'account/:accountId/:transactions',
-            'routes/sign/account.$accountId.$transactions/sign.tsx',
+            ':data',
+            'routes/legacy-redirects/extract-route-id-from-edit.ts',
           ),
+        ]),
 
-          route(
-            ':route/:transactions',
-            'routes/sign/$route.$transactions/sign.tsx',
-          ),
+        route(
+          '/edit-route/:data',
+          'routes/legacy-redirects/old-edit-redirect.ts',
+        ),
+
+        route('/create/:prefixedAddress?', 'routes/create/create.tsx'),
+
+        ...prefix('/submit', [
+          layout('routes/sign/layout.tsx', [
+            index('routes/sign/index.tsx'),
+
+            route(
+              'account/:accountId/:transactions',
+              'routes/sign/account.$accountId.$transactions/sign.tsx',
+            ),
+
+            route(
+              ':route/:transactions',
+              'routes/sign/$route.$transactions/sign.tsx',
+            ),
+          ]),
         ]),
       ]),
     ]),
