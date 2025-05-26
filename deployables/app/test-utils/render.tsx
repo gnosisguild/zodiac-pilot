@@ -23,6 +23,7 @@ import {
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
 import type { PropsWithChildren, Ref } from 'react'
+import type { Register } from 'react-router'
 import { data } from 'react-router'
 import type { Entries } from 'type-fest'
 import { afterEach, beforeEach, vi } from 'vitest'
@@ -35,7 +36,7 @@ const mockGetOrganizationsForUser = vi.mocked(getOrganizationsForUser)
 const mockGetOrganization = vi.mocked(getOrganization)
 const mockGetAdminOrgId = vi.mocked(getAdminOrganizationId)
 
-const baseRender = await createRenderFramework(
+const baseRender = await createRenderFramework<Register, typeof routes>(
   new URL('../app', import.meta.url),
   routes,
 )

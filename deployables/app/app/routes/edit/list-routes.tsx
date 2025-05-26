@@ -280,10 +280,7 @@ const ListRoutes = ({
           <Info title="No accounts">
             You haven't created any accounts, yet.
             <Info.Actions>
-              <PrimaryLinkButton
-                size="small"
-                to={href('/create/:prefixedAddress?')}
-              >
+              <PrimaryLinkButton size="small" to={href('/create')}>
                 Create your first account
               </PrimaryLinkButton>
             </Info.Actions>

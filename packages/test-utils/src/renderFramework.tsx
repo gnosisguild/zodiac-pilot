@@ -4,7 +4,11 @@ import {
 } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  Register,
+} from 'react-router'
 import {
   createRoutesStub,
   Outlet,
@@ -13,12 +17,7 @@ import {
   useMatches,
   useParams,
 } from 'react-router'
-import type {
-  CreateActionData,
-  CreateComponentProps,
-  CreateLoaderData,
-  CreateServerLoaderArgs,
-} from 'react-router/route-module'
+import type { GetAnnotations, GetInfo } from 'react-router/internal'
 import { getCurrentPath } from './getCurrentPath'
 import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
@@ -41,41 +40,6 @@ export type RouteModule = {
   [key: string]: unknown
 }
 
-type Info<Module extends RouteModule> = {
-  parents: [
-    {
-      parents: []
-      id: 'root'
-      file: 'root.tsx'
-      path: ''
-      params: {} & { [key: string]: string | undefined }
-      module: Module
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      loaderData: CreateLoaderData<{}>
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      actionData: CreateActionData<{}>
-    },
-  ]
-  id: any
-  file: any
-  path: any
-  params: {} & { [key: string]: string | undefined }
-  module: Module
-  loaderData: CreateLoaderData<Module>
-  actionData: CreateActionData<Module>
-}
-
-export type FrameworkRoute<
-  Module extends RouteModule,
-  Loader extends Func | undefined = Module['loader'],
-> = {
-  path: string
-  Component: ComponentType<CreateComponentProps<Info<Module>>>
-  loader?: Loader extends Func
-    ? (args: CreateServerLoaderArgs<Info<Module>>) => ReturnType<Loader>
-    : never
-}
-
 export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
   loadActions?: () => Promise<unknown>
 }
@@ -94,16 +58,16 @@ const CombinedTestElement = () => (
 type ResolveFn = () => void
 type RejectFn = (error: unknown) => void
 
-export async function createRenderFramework<Config extends RouteConfig>(
-  basePath: URL,
-  routeConfig: Config,
-) {
+export async function createRenderFramework<
+  R extends Register,
+  Config extends RouteConfig,
+>(basePath: URL, routeConfig: Config) {
   const routes = await Promise.resolve(routeConfig)
 
   const pendingLoaders: Promise<void>[] = []
   const pendingActions: Promise<void>[] = []
 
-  const stubbedRoutes = await stubRoutes(basePath, routes, {
+  const stubbedRoutes = await stubRoutes<R>(basePath, routes, {
     startLoader: () => {
       const { resolve, promise } = Promise.withResolvers<void>()
 
@@ -129,10 +93,8 @@ export async function createRenderFramework<Config extends RouteConfig>(
     await Promise.all(pendingActions)
   }
 
-  return async function renderFramework<
-    Paths extends Awaited<RouteConfig>[number]['path'],
-  >(
-    currentPath: NonNullable<Paths>,
+  return async function renderFramework(
+    currentPath: string,
     { searchParams = {}, loadActions, ...options }: RenderFrameworkOptions = {},
   ): Promise<RenderFrameworkResult> {
     const { promise, resolve } = Promise.withResolvers<void>()
@@ -174,11 +136,24 @@ type StubRoutesOptions = {
   startLoader: () => ResolveFn
 }
 
-function stubRoutes(
+type AnyRouteFiles = Record<
+  string,
+  {
+    id: string
+    page: string
+  }
+>
+function stubRoutes<R extends Register>(
   basePath: URL,
   routes: RouteConfigEntry[],
   { startAction, startLoader }: StubRoutesOptions,
 ): Promise<StubRoute> {
+  type RouteFiles = R extends {
+    routeFiles: infer Registered extends AnyRouteFiles
+  }
+    ? Registered
+    : AnyRouteFiles
+
   return Promise.all(
     routes.map(async (route) => {
       const {
@@ -191,8 +166,25 @@ function stubRoutes(
         new URL(route.file, `${basePath}/`).pathname
       )
 
+      const _routeModule = {
+        clientLoader,
+        loader,
+        clientAction,
+        action,
+        default: RouteComponent as Func,
+      }
+
+      type Annotations = GetAnnotations<
+        // @ts-expect-error In this util we can't yet properly infer the
+        // info for the actual route data
+        GetInfo<{ file: keyof RouteFiles; module: typeof _routeModule }> & {
+          module: typeof _routeModule
+          matches: []
+        }
+      >
+
       const Component = RouteComponent as ComponentType<
-        CreateComponentProps<Info<RouteModule>>
+        Annotations['ComponentProps']
       >
 
       return {
@@ -261,11 +253,15 @@ function stubRoutes(
             ? undefined
             : () => (
                 <Component
-                  loaderData={useLoaderData()}
-                  actionData={useActionData()}
+                  loaderData={useLoaderData<
+                    Annotations['ComponentProps']['loaderData']
+                  >()}
+                  actionData={useActionData<
+                    Annotations['ComponentProps']['actionData']
+                  >()}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   params={useParams()}
-                  // @ts-expect-error in this scenario we can't be 100% type-safe
-                  // but that should be fine for a test-util
                   matches={useMatches()}
                 />
               ),

@@ -196,7 +196,7 @@ describe('New SafeAccount', () => {
 
       const prefixedAddress = randomPrefixedAddress({ chainId: Chain.GNO })
 
-      await render(href('/create/:prefixedAddress?', { prefixedAddress }), {
+      await render(href('/create/:prefixedAddress', { prefixedAddress }), {
         user,
         tenant,
       })
@@ -211,7 +211,7 @@ describe('New SafeAccount', () => {
       const address = randomAddress()
 
       await render(
-        href('/create/:prefixedAddress?', {
+        href('/create/:prefixedAddress', {
           prefixedAddress: randomPrefixedAddress({ address }),
         }),
         {
