@@ -3,7 +3,7 @@ import { expect, loadExtension, test } from '../utils'
 
 test.describe('Create new account', () => {
   test('it is possible to create a new route', async ({ page }) => {
-    await page.goto(href('/create/:prefixedAddress?'))
+    await page.goto(href('/create'))
 
     const extension = await loadExtension(page)
 

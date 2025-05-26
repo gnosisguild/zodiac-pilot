@@ -1,7 +1,7 @@
-import type { CreateMetaArgs } from 'react-router/route-module'
+import type { GetAnnotations } from 'react-router/internal'
 
 export const routeTitle = (
-  matches: CreateMetaArgs<any>['matches'],
+  matches: GetAnnotations<any>['MetaArgs']['matches'],
   title: string,
 ) => {
   const titles = new Set<string>()

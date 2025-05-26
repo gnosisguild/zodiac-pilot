@@ -42,7 +42,7 @@ import type { Route as RouteType } from './+types/edit-route'
 import { Intent } from './intents'
 
 export const meta: RouteType.MetaFunction = ({ data, matches }) => [
-  { title: routeTitle(matches, data.currentRoute.label || 'Unnamed route') },
+  { title: routeTitle(matches, data?.currentRoute.label || 'Unnamed route') },
 ]
 
 export const loader = async ({ params }: RouteType.LoaderArgs) => {
