@@ -4,7 +4,11 @@ import {
 } from '@react-router/dev/routes'
 import { render, type RenderResult } from '@testing-library/react'
 import type { ComponentType } from 'react'
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
+import type {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  Register,
+} from 'react-router'
 import {
   createRoutesStub,
   Outlet,
@@ -54,16 +58,16 @@ const CombinedTestElement = () => (
 type ResolveFn = () => void
 type RejectFn = (error: unknown) => void
 
-export async function createRenderFramework<Config extends RouteConfig>(
-  basePath: URL,
-  routeConfig: Config,
-) {
+export async function createRenderFramework<
+  R extends Register,
+  Config extends RouteConfig,
+>(basePath: URL, routeConfig: Config) {
   const routes = await Promise.resolve(routeConfig)
 
   const pendingLoaders: Promise<void>[] = []
   const pendingActions: Promise<void>[] = []
 
-  const stubbedRoutes = await stubRoutes(basePath, routes, {
+  const stubbedRoutes = await stubRoutes<R>(basePath, routes, {
     startLoader: () => {
       const { resolve, promise } = Promise.withResolvers<void>()
 
@@ -89,10 +93,8 @@ export async function createRenderFramework<Config extends RouteConfig>(
     await Promise.all(pendingActions)
   }
 
-  return async function renderFramework<
-    Paths extends Awaited<RouteConfig>[number]['path'],
-  >(
-    currentPath: NonNullable<Paths>,
+  return async function renderFramework(
+    currentPath: string,
     { searchParams = {}, loadActions, ...options }: RenderFrameworkOptions = {},
   ): Promise<RenderFrameworkResult> {
     const { promise, resolve } = Promise.withResolvers<void>()
@@ -134,11 +136,24 @@ type StubRoutesOptions = {
   startLoader: () => ResolveFn
 }
 
-function stubRoutes(
+type AnyRouteFiles = Record<
+  string,
+  {
+    id: string
+    page: string
+  }
+>
+function stubRoutes<R extends Register>(
   basePath: URL,
   routes: RouteConfigEntry[],
   { startAction, startLoader }: StubRoutesOptions,
 ): Promise<StubRoute> {
+  type RouteFiles = R extends {
+    routeFiles: infer Registered extends AnyRouteFiles
+  }
+    ? Registered
+    : AnyRouteFiles
+
   return Promise.all(
     routes.map(async (route) => {
       const {
@@ -160,7 +175,9 @@ function stubRoutes(
       }
 
       type Annotations = GetAnnotations<
-        GetInfo<{ file: typeof route.file; module: typeof _routeModule }> & {
+        // @ts-expect-error In this util we can't yet properly infer the
+        // info for the actual route data
+        GetInfo<{ file: keyof RouteFiles; module: typeof _routeModule }> & {
           module: typeof _routeModule
           matches: []
         }
@@ -236,8 +253,14 @@ function stubRoutes(
             ? undefined
             : () => (
                 <Component
-                  loaderData={useLoaderData()}
-                  actionData={useActionData()}
+                  loaderData={useLoaderData<
+                    Annotations['ComponentProps']['loaderData']
+                  >()}
+                  actionData={useActionData<
+                    Annotations['ComponentProps']['actionData']
+                  >()}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
                   params={useParams()}
                   matches={useMatches()}
                 />
