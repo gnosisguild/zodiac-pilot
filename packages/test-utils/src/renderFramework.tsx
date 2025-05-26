@@ -13,12 +13,7 @@ import {
   useMatches,
   useParams,
 } from 'react-router'
-import type {
-  CreateActionData,
-  CreateComponentProps,
-  CreateLoaderData,
-  CreateServerLoaderArgs,
-} from 'react-router/route-module'
+import type { GetAnnotations, GetInfo } from 'react-router/internal'
 import { getCurrentPath } from './getCurrentPath'
 import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
@@ -39,41 +34,6 @@ export type RouteModule = {
   default?: unknown
   ErrorBoundary?: unknown
   [key: string]: unknown
-}
-
-type Info<Module extends RouteModule> = {
-  parents: [
-    {
-      parents: []
-      id: 'root'
-      file: 'root.tsx'
-      path: ''
-      params: {} & { [key: string]: string | undefined }
-      module: Module
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      loaderData: CreateLoaderData<{}>
-      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-      actionData: CreateActionData<{}>
-    },
-  ]
-  id: any
-  file: any
-  path: any
-  params: {} & { [key: string]: string | undefined }
-  module: Module
-  loaderData: CreateLoaderData<Module>
-  actionData: CreateActionData<Module>
-}
-
-export type FrameworkRoute<
-  Module extends RouteModule,
-  Loader extends Func | undefined = Module['loader'],
-> = {
-  path: string
-  Component: ComponentType<CreateComponentProps<Info<Module>>>
-  loader?: Loader extends Func
-    ? (args: CreateServerLoaderArgs<Info<Module>>) => ReturnType<Loader>
-    : never
 }
 
 export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
@@ -191,8 +151,23 @@ function stubRoutes(
         new URL(route.file, `${basePath}/`).pathname
       )
 
+      const _routeModule = {
+        clientLoader,
+        loader,
+        clientAction,
+        action,
+        default: RouteComponent as Func,
+      }
+
+      type Annotations = GetAnnotations<
+        GetInfo<{ file: typeof route.file; module: typeof _routeModule }> & {
+          module: typeof _routeModule
+          matches: []
+        }
+      >
+
       const Component = RouteComponent as ComponentType<
-        CreateComponentProps<Info<RouteModule>>
+        Annotations['ComponentProps']
       >
 
       return {
@@ -264,8 +239,6 @@ function stubRoutes(
                   loaderData={useLoaderData()}
                   actionData={useActionData()}
                   params={useParams()}
-                  // @ts-expect-error in this scenario we can't be 100% type-safe
-                  // but that should be fine for a test-util
                   matches={useMatches()}
                 />
               ),

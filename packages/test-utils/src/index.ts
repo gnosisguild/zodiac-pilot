@@ -8,7 +8,7 @@ export {
   type RenderFrameworkOptions,
   type RenderFrameworkResult,
 } from './renderFramework'
-export type { FrameworkRoute, RouteModule } from './renderFramework'
+export type { RouteModule } from './renderFramework'
 export { renderHook } from './renderHook'
 export type { RenderHookOptions } from './renderHook'
 export { sleepTillIdle } from './sleepTillIdle'
