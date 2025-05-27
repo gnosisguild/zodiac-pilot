@@ -1,9 +1,7 @@
 export {
   clearTransactions,
-  globalTranslateTransactions,
   refreshTransactions,
   rollbackTransaction,
-  translateTransaction,
 } from './actions'
 export { ExecutionStatus } from './executionStatus'
 export { getLastTransactionExecutedAt } from './getLastTransactionExecutedAt'
@@ -24,6 +22,7 @@ export {
   useTransactionStatus,
   useTransactions,
 } from './TransactionsContext'
+export * from './translations'
 export { useDecodeTransactions } from './useDecodeTransactions'
 export { useDeleteFork } from './useDeleteFork'
 export { useGetTransactionLink } from './useGetTransactionLink'

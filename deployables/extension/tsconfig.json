@@ -13,9 +13,6 @@
       "@/port-handling": ["./src/panel/port-handling/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
-      "@/transaction-translation": [
-        "./src/panel/transactionTranslations/index.ts"
-      ],
       "@/safe": ["./src/panel/integrations/safe/index.ts"],
       "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"],
       "@/accounts": ["./src/panel/accounts/index.ts"],

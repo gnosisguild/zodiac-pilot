@@ -8,8 +8,11 @@ import {
   randomPrefixedAddress,
   render,
 } from '@/test-utils'
-import { useApplicableTranslation } from '@/transaction-translation'
-import { getLastTransactionExecutedAt, MockProvider } from '@/transactions'
+import {
+  getLastTransactionExecutedAt,
+  MockProvider,
+  useApplicableTranslation,
+} from '@/transactions'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toExecutionRoute } from '@zodiac/db'
@@ -28,28 +31,18 @@ import { describe, expect, it, vi } from 'vitest'
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
 
-vi.mock('@/transaction-translation', async (importOriginal) => {
-  const module =
-    await importOriginal<typeof import('@/transaction-translation')>()
-
-  return {
-    ...module,
-
-    useApplicableTranslation: vi.fn(),
-  }
-})
-
-const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
-
 vi.mock('@/transactions', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/transactions')>()
 
   return {
     ...module,
 
+    useApplicableTranslation: vi.fn(),
     useDecodeTransactions: vi.fn(),
   }
 })
+
+const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()

@@ -1,13 +1,13 @@
 import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
-import { useGloballyApplicableTranslation } from '@/transaction-translation'
 import {
   clearTransactions,
   refreshTransactions,
   useDecodeTransactions,
   useDeleteFork,
   useDispatch,
+  useGloballyApplicableTranslation,
   usePendingTransactions,
   useProviderBridge,
   useRollbackTransaction,

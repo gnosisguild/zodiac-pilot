@@ -1,12 +1,9 @@
 import { useAccount } from '@/accounts'
-import {
-  translateTransaction,
-  useDispatch,
-  useTransaction,
-} from '@/transactions'
 import type { Hex } from '@zodiac/schema'
 import { useCallback, useEffect, useState } from 'react'
 import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
+import { useDispatch, useTransaction } from '../TransactionsContext'
+import { translateTransaction } from '../actions'
 import {
   type ApplicableTranslation,
   applicableTranslationsCache,

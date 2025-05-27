@@ -1,6 +1,6 @@
-import { useApplicableTranslation } from '@/transaction-translation'
 import {
   ExecutionStatus,
+  useApplicableTranslation,
   useTransaction,
   useTransactionStatus,
 } from '@/transactions'
