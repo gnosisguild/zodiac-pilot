@@ -32,6 +32,9 @@ export default [
           layout('routes/tokens/send/layout.tsx', [
             route('send/:chain?/:token?', 'routes/tokens/send/send.tsx'),
           ]),
+          layout('routes/tokens/swap/layout.tsx', [
+            route('swap', 'routes/tokens/swap/swap.tsx'),
+          ]),
         ]),
       ]),
 

@@ -71,7 +71,7 @@ export const cowswapSetPreSignature = {
     const order: CowswapOrder = await fetch(`${COW_SWAP_URL}/${orderUid}`).then(
       (response) => response.json(),
     )
-
+    console.log(`${COW_SWAP_URL}/${orderUid}`, { order })
     const validDuration = order.validTo - Math.floor(Date.now() / 1000)
     const feeAmountBP = Math.ceil(
       (parseInt(order.feeAmount) / parseInt(order.sellAmount)) * 10000,

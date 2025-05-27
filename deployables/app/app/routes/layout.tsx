@@ -25,6 +25,7 @@ import {
   ZodiacOsPlain,
 } from '@zodiac/ui'
 import {
+  ArrowRightLeft,
   ArrowUpFromLine,
   Landmark,
   List,
@@ -118,6 +119,16 @@ const PageLayout = ({
                             icon={Landmark}
                           >
                             Balances
+                          </Navigation.Link>
+
+                          <Navigation.Link
+                            reloadDocument={(location) =>
+                              !location.pathname.startsWith('/tokens')
+                            }
+                            to={href('/tokens/swap')}
+                            icon={ArrowRightLeft}
+                          >
+                            Swap
                           </Navigation.Link>
                         </Navigation.Section>
 
