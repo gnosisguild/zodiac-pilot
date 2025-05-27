@@ -8,7 +8,7 @@
       "@/types": ["./src/types.ts"],
       "@/companion": ["./src/panel/companion/index.ts"],
       "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
-      "@/transactions": ["./src/panel/transactions/index.tsx"],
+      "@/transactions": ["./src/panel/transactions/index.ts"],
       "@/providers": ["./src/panel/providers/index.ts"],
       "@/port-handling": ["./src/panel/port-handling/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],

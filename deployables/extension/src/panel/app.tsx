@@ -1,7 +1,6 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { sentry } from '@/sentry'
-import { ProvideTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { AuthKitProvider } from '@workos-inc/authkit-react'
 import { ToastContainer } from '@zodiac/ui'
@@ -33,13 +32,11 @@ const Root = () => {
         redirectUri={`https://${chrome.runtime.id}.chromiumapp.org/callback`}
       >
         <ProvidePort>
-          <ProvideTransactions>
-            <div className="flex h-full flex-1 flex-col">
-              <RouterProvider router={router} />
-            </div>
+          <div className="flex h-full flex-1 flex-col">
+            <RouterProvider router={router} />
+          </div>
 
-            <ToastContainer position="top-center" />
-          </ProvideTransactions>
+          <ToastContainer position="top-center" />
         </ProvidePort>
       </AuthKitProvider>
     </StrictMode>

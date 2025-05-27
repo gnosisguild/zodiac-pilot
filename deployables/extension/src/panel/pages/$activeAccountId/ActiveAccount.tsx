@@ -9,6 +9,7 @@ import {
 import { useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
+import { ProvideTransactions } from '@/transactions'
 import {
   getActiveTab,
   getInt,
@@ -191,7 +192,9 @@ const ActiveRoute = () => {
               </GhostLinkButton>
             </div>
 
-            <Outlet />
+            <ProvideTransactions>
+              <Outlet />
+            </ProvideTransactions>
           </Page>
         </ProvideExecutionRoute>
       </ProvideAccount>

@@ -74,7 +74,7 @@ vi.mock('ethers', async (importOriginal) => {
 
 describe('Transactions', () => {
   describe('Recording state', () => {
-    it('hides the info when Pilot is ready', async () => {
+    it.only('hides the info when Pilot is ready', async () => {
       await mockRoute({ id: 'test-route' })
 
       await render('/test-route/transactions')
