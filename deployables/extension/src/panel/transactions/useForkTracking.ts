@@ -3,7 +3,7 @@ import { useProvider } from './ProvideProvider'
 import { useDispatch, useRefresh, useTransactions } from './TransactionsContext'
 import { commitRefreshTransactions } from './actions'
 
-export const useDeleteFork = () => {
+export const useForkTracking = () => {
   const provider = useProvider()
   const transactions = useTransactions()
   const dispatch = useDispatch()

@@ -2,17 +2,13 @@ import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
-  clearTransactions,
-  refreshTransactions,
-  useDecodeTransactions,
-  useDeleteFork,
-  useDispatch,
+  useClearTransactions,
   useGloballyApplicableTranslation,
   usePendingTransactions,
   useProviderBridge,
-  useRollbackTransaction,
-  useSendTransactions,
+  useRefreshTransactions,
   useTransactions,
+  useTransactionTracking,
 } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
@@ -54,16 +50,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 const Transactions = () => {
   const transactions = useTransactions()
-  const dispatch = useDispatch()
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
   const pendingTransactions = usePendingTransactions()
+  const refreshTransactions = useRefreshTransactions()
 
-  useDeleteFork()
-  useSendTransactions()
-  useRollbackTransaction()
-  useDecodeTransactions()
+  useTransactionTracking()
 
   useProviderBridge({
     chainId: account.chainId,
@@ -98,7 +91,7 @@ const Transactions = () => {
               disabled={
                 transactions.length === 0 || pendingTransactions.length > 0
               }
-              onClick={() => dispatch(refreshTransactions())}
+              onClick={() => refreshTransactions()}
             >
               Re-simulate on current blockchain head
             </GhostButton>
@@ -180,7 +173,7 @@ export default Transactions
 
 const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
   const [confirm, setConfirm] = useState(false)
-  const dispatch = useDispatch()
+  const clearTransactions = useClearTransactions()
 
   return (
     <>
@@ -206,7 +199,7 @@ const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
           <PrimaryButton
             style="critical"
             onClick={() => {
-              dispatch(clearTransactions())
+              clearTransactions()
 
               setConfirm(false)
             }}

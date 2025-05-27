@@ -1,4 +1,4 @@
-import { clearTransactions, useDispatch } from '@/transactions'
+import { useClearTransactions } from '@/transactions'
 import { invariantResponse } from '@epic-web/invariant'
 import { useEffect } from 'react'
 import { redirect, useSubmit, type ActionFunctionArgs } from 'react-router'
@@ -15,14 +15,15 @@ export const action = async ({ params }: ActionFunctionArgs) => {
 }
 
 const ClearTransactions = () => {
-  const dispatch = useDispatch()
   const submit = useSubmit()
 
+  const clearTransactions = useClearTransactions()
+
   useEffect(() => {
-    dispatch(clearTransactions())
+    clearTransactions()
 
     submit(null, { method: 'post' })
-  }, [dispatch, submit])
+  }, [clearTransactions, submit])
 
   return null
 }

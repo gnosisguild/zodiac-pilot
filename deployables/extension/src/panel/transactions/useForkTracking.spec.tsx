@@ -1,7 +1,7 @@
 import { createConfirmedTransaction, renderHook } from '@/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { MockProvider } from './MockProvider'
-import { useDeleteFork } from './useDeleteFork'
+import { useForkTracking } from './useForkTracking'
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
@@ -15,15 +15,15 @@ vi.mock('@/providers', async (importOriginal) => {
   }
 })
 
-describe('useDeleteFork', () => {
+describe('useForkTracking', () => {
   it('deletes the current fork', async () => {
-    await renderHook(() => useDeleteFork())
+    await renderHook(() => useForkTracking())
 
     expect(MockProvider.getInstance().deleteFork).toHaveBeenCalled()
   })
 
   it('does not delete the fork, when there are transactions', async () => {
-    await renderHook(() => useDeleteFork(), {
+    await renderHook(() => useForkTracking(), {
       initialState: {
         executed: [createConfirmedTransaction()],
       },
@@ -33,7 +33,7 @@ describe('useDeleteFork', () => {
   })
 
   it('deletes the fork when transactions exist and a refresh has been requested', async () => {
-    await renderHook(() => useDeleteFork(), {
+    await renderHook(() => useForkTracking(), {
       initialState: { executed: [createConfirmedTransaction()], refresh: true },
     })
 

@@ -9,7 +9,7 @@ import { useSendTransaction } from './useSendTransaction'
 import { useStoreLastExecutedTransaction } from './useStoreLastExecutedTransaction'
 import { useTransactionQueue } from './useTransactionQueue'
 
-export const useSendTransactions = () => {
+export const useExecutionTracking = () => {
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
   const refresh = useRefresh()

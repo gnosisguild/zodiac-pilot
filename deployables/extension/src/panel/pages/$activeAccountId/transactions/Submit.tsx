@@ -2,7 +2,7 @@ import { useAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/port-handling'
-import { clearTransactions, useDispatch, useTransactions } from '@/transactions'
+import { useClearTransactions, useTransactions } from '@/transactions'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import {
@@ -18,13 +18,13 @@ import { Intent } from './intents'
 export const Submit = () => {
   const account = useAccount()
   const route = useExecutionRoute()
-  const dispatch = useDispatch()
   const windowId = useWindowId()
 
   const transactions = useTransactions()
   const [submitPending, setSubmitPending] = useState(false)
 
   const companionAppUrl = useCompanionAppUrl()
+  const clearTransactions = useClearTransactions()
 
   useTabMessageHandler(CompanionAppMessageType.SUBMIT_SUCCESS, () => {
     if (submitPending === false) {
@@ -33,7 +33,7 @@ export const Submit = () => {
 
     setSubmitPending(false)
 
-    dispatch(clearTransactions())
+    clearTransactions()
   })
 
   if (route != null && route.initiator != null) {

@@ -6,7 +6,7 @@ import {
 import { waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { MockProvider } from './MockProvider'
-import { useSendTransactions } from './useSendTransactions'
+import { useExecutionTracking } from './useExecutionTracking'
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
@@ -35,9 +35,9 @@ vi.mock('ethers', async (importOriginal) => {
   }
 })
 
-describe('useSendTransactions', () => {
+describe('useExecutionTracking', () => {
   it('sends pending transactions', async () => {
-    await renderHook(() => useSendTransactions(), {
+    await renderHook(() => useExecutionTracking(), {
       initialState: { pending: [createTransaction(), createTransaction()] },
     })
 
@@ -49,7 +49,7 @@ describe('useSendTransactions', () => {
   })
 
   it('does not send pending transaction when a rollback is in progress', async () => {
-    await renderHook(() => useSendTransactions(), {
+    await renderHook(() => useExecutionTracking(), {
       initialState: {
         pending: [createTransaction()],
 
@@ -63,7 +63,7 @@ describe('useSendTransactions', () => {
   })
 
   it('does not send pending transactions when a refresh is in progress', async () => {
-    await renderHook(() => useSendTransactions(), {
+    await renderHook(() => useExecutionTracking(), {
       initialState: {
         pending: [createTransaction()],
 
