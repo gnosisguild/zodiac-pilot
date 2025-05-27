@@ -3,9 +3,7 @@ import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
   useClearTransactions,
-  useGloballyApplicableTranslation,
   usePendingTransactions,
-  useProviderBridge,
   useRefreshTransactions,
   useTransactions,
   useTransactionTracking,
@@ -56,15 +54,7 @@ const Transactions = () => {
   const pendingTransactions = usePendingTransactions()
   const refreshTransactions = useRefreshTransactions()
 
-  useTransactionTracking()
-
-  useProviderBridge({
-    chainId: account.chainId,
-    account: account.address,
-  })
-
-  // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
-  useGloballyApplicableTranslation()
+  useTransactionTracking(account)
 
   const scrollContainerRef = useScrollIntoView()
 

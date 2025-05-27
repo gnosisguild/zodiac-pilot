@@ -20,7 +20,6 @@ export {
 export * from './translations'
 export { useClearTransactions } from './useClearTransactions'
 export { useGetTransactionLink } from './useGetTransactionLink'
-export { useProviderBridge } from './useProviderBridge'
 export { useRefreshTransactions } from './useRefreshTransactions'
 export { useRollbackTransaction } from './useRollbackTransaction'
 export { useTransactionTracking } from './useTransactionTracking'
