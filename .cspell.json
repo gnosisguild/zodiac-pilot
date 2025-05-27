@@ -23,6 +23,7 @@
     "Checksummed",
     "Chromewebstore",
     "connectkit",
+    "cowprotocol",
     "cowswap",
     "debank",
     "Delegatecall",
@@ -64,6 +65,7 @@
     "Omni",
     "omnibridge",
     "outdir",
+    "Paginatable",
     "paraswap",
     "Pathfinding",
     "permissioning",
@@ -119,8 +121,7 @@
     "worldchain",
     "xcall",
     "xdai",
-    "xmlhttprequest",
-    "Paginatable"
+    "xmlhttprequest"
   ],
   "flagWords": [],
   "ignorePaths": [
