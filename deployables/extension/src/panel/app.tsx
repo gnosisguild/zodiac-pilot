@@ -1,6 +1,7 @@
 // This is the entrypoint to the panel app.
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { sentry } from '@/sentry'
+import { ProvideTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { AuthKitProvider } from '@workos-inc/authkit-react'
 import { ToastContainer } from '@zodiac/ui'
@@ -10,7 +11,6 @@ import { createHashRouter, RouterProvider } from 'react-router'
 import '../global.css'
 import { ProvidePort } from './port-handling'
 import { routes } from './routes'
-import { ProvideTransactions } from './state'
 
 const router = createHashRouter(routes)
 

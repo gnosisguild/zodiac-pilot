@@ -1,6 +1,6 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import { useTransaction } from '@/state'
+import { useTransaction } from '@/transactions'
 import type { ExecutionRoute } from '@/types'
 import { CHAIN_CURRENCY } from '@zodiac/chains'
 import { toMetaTransactionRequest } from '@zodiac/schema'

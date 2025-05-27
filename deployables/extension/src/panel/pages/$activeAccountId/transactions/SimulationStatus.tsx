@@ -1,10 +1,10 @@
-import { useGetTransactionLink } from '@/providers-ui'
 import {
   ExecutionStatus,
   isConfirmedTransaction,
+  useGetTransactionLink,
   useTransaction,
   useTransactionStatus,
-} from '@/state'
+} from '@/transactions'
 import { GhostLinkButton, Spinner, Tag } from '@zodiac/ui'
 import {
   Check,

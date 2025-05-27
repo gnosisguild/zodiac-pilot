@@ -4,7 +4,7 @@ import {
   type Transaction,
   useDispatch,
   useTransactions,
-} from '@/state'
+} from '@/transactions'
 import { type Hex } from '@zodiac/schema'
 import { useCallback, useEffect } from 'react'
 import { type ChainId } from 'ser-kit'

@@ -1,9 +1,7 @@
-import {
-  clearLastTransactionExecuted,
-  saveLastTransactionExecutedAt,
-  useExecutedTransactions,
-} from '@/state'
 import { useEffect } from 'react'
+import { useExecutedTransactions } from './TransactionsContext'
+import { clearLastTransactionExecuted } from './clearLastTransactionExecuted'
+import { saveLastTransactionExecutedAt } from './saveLastTransactionExecutedAt'
 
 export const useStoreLastExecutedTransaction = () => {
   const executedTransactions = useExecutedTransactions()

@@ -1,5 +1,5 @@
 import { findActiveAccount, getAccount } from '@/accounts'
-import { useTransactions } from '@/state'
+import { useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { useStableHandler } from '@zodiac/hooks'
 import { useCallback, useState } from 'react'

@@ -1,6 +1,6 @@
 import { useExecutionRoute } from '@/execution-routes'
-import { useTransaction } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
+import { useTransaction } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import { getRolesAppUrl } from '@zodiac/env'

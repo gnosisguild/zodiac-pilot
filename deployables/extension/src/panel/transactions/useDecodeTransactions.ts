@@ -1,8 +1,9 @@
 import { useAccount } from '@/accounts'
 import { sentry } from '@/sentry'
-import { decodeTransaction, useDispatch, usePendingTransactions } from '@/state'
 import { useEffect } from 'react'
+import { decodeTransaction } from './actions'
 import { fetchContractInfo } from './fetchContractInfo'
+import { useDispatch, usePendingTransactions } from './TransactionsContext'
 
 export const useDecodeTransactions = () => {
   const pendingTransactions = usePendingTransactions()

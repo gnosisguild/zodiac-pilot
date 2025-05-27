@@ -1,3 +1,5 @@
+export { ProvideBridgeContext, useWindowId } from './BridgeContext'
 export { ProvidePort, usePilotIsReady } from './PortContext'
+export { useBridgeError } from './useBridgeError'
 export { COMPANION_APP_PORT } from './useCompanionAppPort'
 export { PILOT_PANEL_PORT } from './usePilotPort'

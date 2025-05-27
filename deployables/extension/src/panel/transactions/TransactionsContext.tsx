@@ -9,6 +9,7 @@ import {
 import type { TransactionAction } from './actions'
 import { ExecutionStatus } from './executionStatus'
 import { isConfirmedTransaction } from './isConfirmedTransaction'
+import { ProvideProvider } from './ProvideProvider'
 import { transactionsReducer } from './reducer'
 import type { State, Transaction } from './state'
 
@@ -44,7 +45,7 @@ export const ProvideTransactions = ({
 
   return (
     <TransactionsContext value={{ ...state, dispatch }}>
-      {children}
+      <ProvideProvider>{children}</ProvideProvider>
     </TransactionsContext>
   )
 }

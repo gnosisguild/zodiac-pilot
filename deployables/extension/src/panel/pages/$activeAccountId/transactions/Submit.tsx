@@ -1,8 +1,8 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
-import { useWindowId } from '@/providers-ui'
-import { clearTransactions, useDispatch, useTransactions } from '@/state'
+import { useWindowId } from '@/port-handling'
+import { clearTransactions, useDispatch, useTransactions } from '@/transactions'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import {

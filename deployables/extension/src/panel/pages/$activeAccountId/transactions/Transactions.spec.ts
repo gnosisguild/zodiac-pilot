@@ -1,6 +1,4 @@
 import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
-import { MockProvider } from '@/providers-ui'
-import { getLastTransactionExecutedAt } from '@/state'
 import {
   chromeMock,
   createConfirmedTransaction,
@@ -11,6 +9,7 @@ import {
   render,
 } from '@/test-utils'
 import { useApplicableTranslation } from '@/transaction-translation'
+import { getLastTransactionExecutedAt, MockProvider } from '@/transactions'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toExecutionRoute } from '@zodiac/db'
@@ -42,8 +41,8 @@ vi.mock('@/transaction-translation', async (importOriginal) => {
 
 const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
 
-vi.mock('@/providers-ui', async (importOriginal) => {
-  const module = await importOriginal<typeof import('@/providers-ui')>()
+vi.mock('@/transactions', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/transactions')>()
 
   return {
     ...module,
@@ -56,8 +55,8 @@ vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
 
   const { MockProvider } = await vi.importActual<
-    typeof import('../../../providers-ui/MockProvider')
-  >('../../../providers-ui/MockProvider')
+    typeof import('../../../transactions/MockProvider')
+  >('../../../transactions/MockProvider')
 
   return {
     ...module,
@@ -70,8 +69,8 @@ vi.mock('ethers', async (importOriginal) => {
   const module = await importOriginal<typeof import('ethers')>()
 
   const { MockBrowserProvider } = await vi.importActual<
-    typeof import('../../../providers-ui/MockBrowserProvider')
-  >('../../../providers-ui/MockBrowserProvider')
+    typeof import('../../../transactions/MockBrowserProvider')
+  >('../../../transactions/MockBrowserProvider')
 
   return {
     ...module,

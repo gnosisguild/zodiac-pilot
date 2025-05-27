@@ -1,7 +1,6 @@
 import { ProvideAccount, toLocalAccount, type TaggedAccount } from '@/accounts'
 import { toAccount } from '@/companion'
-import { ProvideProvider } from '@/providers-ui'
-import { ProvideTransactions, type State } from '@/state'
+import { ProvideTransactions, type State } from '@/transactions'
 import {
   createMockExecutionRoute,
   renderHook as renderHookBase,
@@ -64,7 +63,7 @@ const RenderWrapper = ({
 }: RenderWrapperProps) => (
   <ProvideAccount account={account}>
     <ProvideTransactions initialState={initialState}>
-      <ProvideProvider>{children}</ProvideProvider>
+      {children}
     </ProvideTransactions>
   </ProvideAccount>
 )

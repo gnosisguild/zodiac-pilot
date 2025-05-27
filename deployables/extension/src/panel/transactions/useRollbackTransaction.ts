@@ -1,11 +1,11 @@
+import { useEffect } from 'react'
+import { useProvider } from './ProvideProvider'
 import {
-  confirmRollbackTransaction,
   useDispatch,
   useRollback,
   useTransactions,
-} from '@/state'
-import { useEffect } from 'react'
-import { useProvider } from './ProvideProvider'
+} from './TransactionsContext'
+import { confirmRollbackTransaction } from './actions'
 
 export const useRollbackTransaction = () => {
   const transactionToRollback = useRollback()

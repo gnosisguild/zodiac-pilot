@@ -1,5 +1,9 @@
-import { ExecutionStatus, useTransaction, useTransactionStatus } from '@/state'
 import { useApplicableTranslation } from '@/transaction-translation'
+import {
+  ExecutionStatus,
+  useTransaction,
+  useTransactionStatus,
+} from '@/transactions'
 import { SecondaryButton } from '@zodiac/ui'
 
 type Props = {

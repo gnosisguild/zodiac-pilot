@@ -1,4 +1,4 @@
-import type { State } from '@/state'
+import type { State } from '@/transactions'
 import {
   createRenderDataMode,
   type RenderDataOptions,

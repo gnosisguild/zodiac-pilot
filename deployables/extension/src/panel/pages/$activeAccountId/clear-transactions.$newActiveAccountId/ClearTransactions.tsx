@@ -1,4 +1,4 @@
-import { clearTransactions, useDispatch } from '@/state'
+import { clearTransactions, useDispatch } from '@/transactions'
 import { invariantResponse } from '@epic-web/invariant'
 import { useEffect } from 'react'
 import { redirect, useSubmit, type ActionFunctionArgs } from 'react-router'

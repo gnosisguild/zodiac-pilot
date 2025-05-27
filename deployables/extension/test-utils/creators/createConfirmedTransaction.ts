@@ -1,4 +1,4 @@
-import { ExecutionStatus, type ConfirmedTransaction } from '@/state'
+import { ExecutionStatus, type ConfirmedTransaction } from '@/transactions'
 import { randomHex } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
 import { createTransaction } from './createTransaction'

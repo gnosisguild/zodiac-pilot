@@ -1,4 +1,4 @@
-import type { State } from '@/state'
+import type { State } from '@/transactions'
 
 export const createTransactionState = (state: Partial<State> = {}): State => ({
   pending: [],

@@ -2,7 +2,7 @@ import {
   rollbackTransaction,
   useDispatch,
   usePendingTransactions,
-} from '@/state'
+} from '@/transactions'
 import { GhostButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 

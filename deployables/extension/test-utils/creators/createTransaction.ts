@@ -1,4 +1,4 @@
-import { type UnconfirmedTransaction } from '@/state'
+import { type UnconfirmedTransaction } from '@/transactions'
 import { createMockTransactionRequest } from '@zodiac/test-utils'
 import { nanoid } from 'nanoid'
 

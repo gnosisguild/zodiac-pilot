@@ -1,5 +1,5 @@
 import { ProvidePort } from '@/port-handling'
-import { ProvideTransactions, type State } from '@/state'
+import { ProvideTransactions, type State } from '@/transactions'
 import { type PropsWithChildren } from 'react'
 
 type RenderWraperProps = PropsWithChildren<{
