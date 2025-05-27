@@ -1,10 +1,7 @@
-import {
-  ExecutionStatus,
-  useApplicableTranslation,
-  useTransaction,
-  useTransactionStatus,
-} from '@/transactions'
 import { SecondaryButton } from '@zodiac/ui'
+import { useTransaction, useTransactionStatus } from '../TransactionsContext'
+import { ExecutionStatus } from '../executionStatus'
+import { useApplicableTranslation } from './useApplicableTranslation'
 
 type Props = {
   transactionId: string
@@ -16,7 +13,7 @@ export const Translate = ({ transactionId, mini }: Props) => {
   const transaction = useTransaction(transactionId)
   const status = useTransactionStatus(transaction)
 
-  if (!translation) {
+  if (translation == null) {
     return null
   }
 
