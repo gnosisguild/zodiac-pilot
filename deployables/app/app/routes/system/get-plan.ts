@@ -1,15 +1,15 @@
 import { dbClient, getAccountsByAddress, getActivePlan } from '@zodiac/db'
 import type { SubscriptionPlan } from '@zodiac/db/schema'
-import { getString } from '@zodiac/form-data'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import type { Route } from './+types/get-plan'
 
-export const action = async ({ request }: Route.ActionArgs) => {
-  const data = await request.formData()
-
-  const prefixedAddress = verifyPrefixedAddress(getString(data, 'address'))
-
-  const accounts = await getAccountsByAddress(dbClient(), prefixedAddress)
+export const loader = async ({
+  params: { prefixedAddress },
+}: Route.LoaderArgs) => {
+  const accounts = await getAccountsByAddress(
+    dbClient(),
+    verifyPrefixedAddress(prefixedAddress),
+  )
   const activePlans = await Promise.all(
     accounts.map((account) => getActivePlan(dbClient(), account.tenantId)),
   )
