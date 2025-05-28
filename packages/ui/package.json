@@ -30,7 +30,7 @@
     "react-stick": "5.0.6",
     "react-toastify": "11.0.5",
     "ser-kit": "3.8.0",
-    "viem": "2.30.1",
+    "viem": "2.30.5",
     "wagmi": "2.15.4"
   },
   "devDependencies": {
