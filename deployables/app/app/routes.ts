@@ -134,7 +134,9 @@ export default [
     route('active-route/:accountId', 'routes/extension/activeRoute.ts'),
   ]),
 
-  ...prefix('/system', [route('get-plan', 'routes/system/get-plan.ts')]),
+  ...prefix('/system', [
+    route('get-plan/:prefixedAddress', 'routes/system/get-plan.ts'),
+  ]),
 
   ...prefix('/dev', [
     route('decode/:data', 'routes/dev/decode.tsx'),
