@@ -1,13 +1,17 @@
 import { dbClient, getAccountsByAddress, getActivePlan } from '@zodiac/db'
 import type { SubscriptionPlan } from '@zodiac/db/schema'
-import { getString } from '@zodiac/form-data'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import type { Route } from './+types/get-plan'
 
-export const action = async ({ request }: Route.ActionArgs) => {
-  const data = await request.formData()
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url)
+  const address = url.searchParams.get('address')
 
-  const prefixedAddress = verifyPrefixedAddress(getString(data, 'address'))
+  if (!address) {
+    throw new Response('Address parameter is required', { status: 400 })
+  }
+
+  const prefixedAddress = verifyPrefixedAddress(address)
 
   const accounts = await getAccountsByAddress(dbClient(), prefixedAddress)
   const activePlans = await Promise.all(
