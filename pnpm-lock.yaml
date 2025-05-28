@@ -80,10 +80,10 @@ importers:
   deployables/app:
     dependencies:
       '@cowprotocol/widget-lib':
-        specifier: ^0.18.0
+        specifier: 0.18.0
         version: 0.18.0
       '@cowprotocol/widget-react':
-        specifier: ^0.13.0
+        specifier: 0.13.0
         version: 0.13.0
       '@epic-web/invariant':
         specifier: 1.0.0
