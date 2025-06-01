@@ -23,7 +23,7 @@
     "@sentry/react-router": "9.22.0",
     "@tanstack/react-query": "5.79.0",
     "@vercel/analytics": "1.5.0",
-    "@workos-inc/authkit-react-router": "0.3.0",
+    "@workos-inc/authkit-react-router": "0.4.1",
     "@workos-inc/node": "7.52.0",
     "@workos-inc/widgets": "1.1.5",
     "@zodiac/chains": "workspace:*",
