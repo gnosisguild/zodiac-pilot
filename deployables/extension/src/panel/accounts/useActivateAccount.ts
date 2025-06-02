@@ -1,10 +1,11 @@
-import { findActiveAccount, getAccount } from '@/accounts'
 import { useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { useStableHandler } from '@zodiac/hooks'
 import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'
+import { findActiveAccount } from './findActiveAccount'
+import { getAccount } from './getAccount'
 
 type OnLaunchOptions = {
   onActivate?: (accountId: string, tabId?: number) => void

@@ -21,13 +21,13 @@ export const useBridgeError = (errorMessage: string) => {
 
       errorToast({
         id: toastId,
-        title: 'No active route',
+        title: 'No active account',
         message: errorMessage,
       })
 
       sendResponse({
         type: InjectedProviderMessageTyp.INJECTED_PROVIDER_ERROR,
-        error: { code: 4100, message: 'No active route' },
+        error: { code: 4100, message: 'No active account' },
         requestId: message.requestId,
       } satisfies InjectedProviderMessage)
 

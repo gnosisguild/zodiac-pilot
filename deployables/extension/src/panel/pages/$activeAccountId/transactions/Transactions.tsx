@@ -1,4 +1,4 @@
-import { editAccount, getAccount, useAccount } from '@/accounts'
+import { editAccount, getAccount, useAccount, useSaveAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
@@ -29,7 +29,6 @@ import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
-import { useSaveRoute } from './useSaveRoute'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
@@ -64,7 +63,7 @@ const Transactions = () => {
 
   const scrollContainerRef = useScrollIntoView()
 
-  const [saveOptions, saveAndActivateOptions] = useSaveRoute(account.id, {
+  const [saveOptions, saveAndActivateOptions] = useSaveAccount(account.id, {
     onSave: (route, tabId) => {
       sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,

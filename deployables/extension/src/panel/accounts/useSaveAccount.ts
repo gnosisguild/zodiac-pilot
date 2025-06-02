@@ -1,10 +1,3 @@
-import {
-  findActiveRoute,
-  getAccount,
-  toLocalAccount,
-  toRemoteAccount,
-  type TaggedAccount,
-} from '@/accounts'
 import { toAccount } from '@/companion'
 import { saveRoute } from '@/execution-routes'
 import { useTransactions } from '@/transactions'
@@ -19,13 +12,18 @@ import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'
-import { useActivateAccount } from '../../useActivateAccount'
+import type { TaggedAccount } from './TaggedAccount'
+import { findActiveRoute } from './findActiveRoute'
+import { getAccount } from './getAccount'
+import { toLocalAccount } from './toLocalAccount'
+import { toRemoteAccount } from './toRemoteAccount'
+import { useActivateAccount } from './useActivateAccount'
 
 type UseSaveOptions = {
   onSave?: (route: ExecutionRoute | null, tabId: number) => void
 }
 
-export const useSaveRoute = (
+export const useSaveAccount = (
   lastUsedAccountId: string | null,
   { onSave }: UseSaveOptions = {},
 ) => {

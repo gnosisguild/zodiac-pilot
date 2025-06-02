@@ -2,6 +2,7 @@ import { findRemoteActiveAccount, getRemoteAccounts } from '@/companion'
 import { saveLastUsedAccountId } from '@/execution-routes'
 import {
   mockCompanionAppUrl,
+  mockIncomingAccountLaunch,
   mockProviderRequest,
   mockRoute,
   mockRoutes,
@@ -13,7 +14,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { expectRouteToBe } from '@zodiac/test-utils'
+import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
@@ -73,7 +74,7 @@ describe('No routes', () => {
 
       await render('/')
 
-      expect(screen.getByRole('link', { name: 'Add route' })).toHaveAttribute(
+      expect(screen.getByRole('link', { name: 'Add account' })).toHaveAttribute(
         'href',
         'http://localhost/create',
       )
@@ -85,10 +86,44 @@ describe('No routes', () => {
       await mockProviderRequest()
 
       expect(
-        screen.getByRole('alert', { name: 'No active route' }),
+        screen.getByRole('alert', { name: 'No active account' }),
       ).toHaveAccessibleDescription(
-        'To use Zodiac Pilot with a dApp you need to create a route.',
+        'To use Zodiac Pilot with a dApp you need to create an account.',
       )
+    })
+
+    describe('Incoming route', () => {
+      describe('Logged in', () => {
+        it('redirects the a new account when one is saved', async () => {
+          const tenant = tenantFactory.createWithoutDb()
+          const user = userFactory.createWithoutDb(tenant)
+          const account = accountFactory.createWithoutDb(tenant, user)
+
+          const { mockedTab } = await render('/')
+
+          await mockIncomingAccountLaunch(
+            {
+              account,
+              route: createMockExecutionRoute(),
+            },
+            mockedTab,
+          )
+
+          await expectRouteToBe(`/${account.id}/transactions`)
+        })
+      })
+
+      describe('Logged out', () => {
+        it('redirects the a new account when one is saved', async () => {
+          const { mockedTab } = await render('/')
+
+          const route = createMockExecutionRoute()
+
+          await mockIncomingAccountLaunch({ route }, mockedTab)
+
+          await expectRouteToBe(`/${route.id}/transactions`)
+        })
+      })
     })
   })
 })
