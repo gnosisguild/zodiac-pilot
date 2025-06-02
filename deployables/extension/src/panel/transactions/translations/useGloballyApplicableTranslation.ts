@@ -22,14 +22,15 @@ export const useGloballyApplicableTranslation = () => {
   )
 
   useEffect(() => {
-    let canceled = false
+    const abortController = new AbortController()
+
     const run = async () => {
       const translation = await findGloballyApplicableTranslation(
         transactions,
         account.chainId,
         account.address,
       )
-      if (canceled) {
+      if (abortController.signal.aborted) {
         return
       }
 
@@ -45,7 +46,7 @@ export const useGloballyApplicableTranslation = () => {
     }
     run()
     return () => {
-      canceled = true
+      abortController.abort()
     }
   }, [transactions, account.chainId, account.address, apply])
 }

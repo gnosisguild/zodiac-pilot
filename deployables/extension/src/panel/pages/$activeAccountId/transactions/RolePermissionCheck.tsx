@@ -78,7 +78,7 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
   const translation = useApplicableTranslation(transaction.id)
 
   useEffect(() => {
-    let canceled = false
+    const abortController = new AbortController()
 
     if (route == null) {
       return
@@ -96,12 +96,16 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
 
     checkPermissions([transaction], checkableRoute).then(
       ({ success, error }) => {
-        if (!canceled) setError(success ? false : error)
+        if (abortController.signal.aborted) {
+          return
+        }
+
+        setError(success ? false : error)
       },
     )
 
     return () => {
-      canceled = true
+      abortController.abort()
     }
   }, [transaction, route])
 
