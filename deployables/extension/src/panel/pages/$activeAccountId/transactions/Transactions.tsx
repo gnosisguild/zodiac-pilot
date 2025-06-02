@@ -72,8 +72,6 @@ const Transactions = () => {
     },
   })
 
-  console.log({ transactions })
-
   return (
     <>
       <Page.Content ref={scrollContainerRef}>

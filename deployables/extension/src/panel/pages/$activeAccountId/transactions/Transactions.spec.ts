@@ -12,12 +12,9 @@ import {
   randomPrefixedAddress,
   render,
 } from '@/test-utils'
-import {
-  getLastTransactionExecutedAt,
-  MockProvider,
-  useApplicableTranslation,
-} from '@/transactions'
-import { screen, within } from '@testing-library/react'
+import { getLastTransactionExecutedAt, MockProvider } from '@/transactions'
+import { findApplicableTranslation } from '@/translations'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { toExecutionRoute } from '@zodiac/db'
 import {
@@ -27,6 +24,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
+import { getCompanionAppUrl } from '@zodiac/env'
 import {
   CompanionResponseMessageType,
   type CompanionResponseMessage,
@@ -52,12 +50,21 @@ vi.mock('@/transactions', async (importOriginal) => {
   return {
     ...module,
 
-    useApplicableTranslation: vi.fn(),
     useDecodeTransactions: vi.fn(),
   }
 })
 
-const mockUseApplicableTranslation = vi.mocked(useApplicableTranslation)
+vi.mock('@/translations', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/translations')>()
+
+  return {
+    ...module,
+
+    findApplicableTranslation: vi.fn(),
+  }
+})
+
+const mockFindApplicableTranslation = vi.mocked(findApplicableTranslation)
 
 vi.mock('@/providers', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/providers')>()
@@ -176,7 +183,7 @@ describe('Transactions', () => {
   })
 
   describe('Translations', () => {
-    it.only('disables the translate button while the simulation is pending', async () => {
+    it('disables the translate button while the simulation is pending', async () => {
       await mockRoute({
         id: 'test-route',
         waypoints: createMockWaypoints({
@@ -189,9 +196,9 @@ describe('Transactions', () => {
         error: PermissionViolation.AllowanceExceeded,
       })
 
-      mockUseApplicableTranslation.mockReturnValue({
+      mockFindApplicableTranslation.mockResolvedValue({
         title: 'Translate',
-        apply: () => Promise.resolve(),
+        autoApply: false,
         icon: User,
         result: [],
       })
@@ -368,14 +375,18 @@ describe('Transactions', () => {
     it('provides the saved route back', async () => {
       const currentRoute = await mockRoute({ id: 'test-route' })
 
-      const { mockedTab } = await render('/test-route/transactions')
+      const { mockedTab } = await render('/test-route/transactions', {
+        activeTab: { url: getCompanionAppUrl() },
+      })
 
       await mockIncomingRouteUpdate(currentRoute, mockedTab)
 
-      expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route: currentRoute,
-      } satisfies CompanionResponseMessage)
+      await waitFor(() => {
+        expect(chromeMock.tabs.sendMessage).toHaveBeenCalledWith(mockedTab.id, {
+          type: CompanionResponseMessageType.PROVIDE_ROUTE,
+          route: currentRoute,
+        } satisfies CompanionResponseMessage)
+      })
     })
 
     describe('Clearing transactions', () => {

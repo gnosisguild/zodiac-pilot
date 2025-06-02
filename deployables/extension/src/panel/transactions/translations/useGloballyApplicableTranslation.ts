@@ -1,15 +1,11 @@
 import { useAccount } from '@/accounts'
-import { type Hex } from '@zodiac/schema'
+import {
+  findGloballyApplicableTranslation,
+  type ApplicableTranslation,
+} from '@/translations'
 import { useCallback, useEffect } from 'react'
-import { type ChainId } from 'ser-kit'
 import { useDispatch, useTransactions } from '../TransactionsContext'
 import { globalTranslateTransactions } from '../actions'
-import type { Transaction } from '../state'
-import {
-  type ApplicableTranslation,
-  applicableTranslationsCache,
-} from './applicableTranslationCache'
-import { translations } from './translations'
 
 export const useGloballyApplicableTranslation = () => {
   const transactions = useTransactions()
@@ -53,49 +49,3 @@ export const useGloballyApplicableTranslation = () => {
     }
   }, [transactions, account.chainId, account.address, apply])
 }
-
-const findGloballyApplicableTranslation = async (
-  transactions: Transaction[],
-  chainId: ChainId,
-  avatarAddress: Hex,
-): Promise<ApplicableTranslation | undefined> => {
-  if (transactions.length === 0) return undefined
-
-  // we cache the result of the translation to avoid test-running translation functions over and over again
-  const key = cacheKeyGlobal(transactions, chainId, avatarAddress)
-  if (applicableTranslationsCache.has(key)) {
-    return await applicableTranslationsCache.get(key)
-  }
-
-  const tryApplyingTranslations = async () => {
-    for (const translation of translations) {
-      if (!('translateGlobal' in translation)) {
-        continue
-      }
-
-      const result = await translation.translateGlobal(
-        transactions,
-        chainId,
-        avatarAddress,
-      )
-      if (result) {
-        return {
-          title: translation.title,
-          autoApply: translation.autoApply,
-          icon: translation.icon,
-          result,
-        }
-      }
-    }
-  }
-  const resultPromise = tryApplyingTranslations()
-  applicableTranslationsCache.set(key, resultPromise)
-
-  return await resultPromise
-}
-
-const cacheKeyGlobal = (
-  transactions: Transaction[],
-  chainId: ChainId,
-  avatarAddress: Hex,
-) => `${chainId}:${avatarAddress}:${transactions.map((tx) => tx.id).join(',')}`

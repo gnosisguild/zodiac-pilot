@@ -1,23 +1,18 @@
 import { useAccount } from '@/accounts'
-import type { Hex } from '@zodiac/schema'
+import type { ApplicableTranslation } from '@/translations'
+import { findApplicableTranslation } from '@/translations'
 import { useCallback, useEffect, useState } from 'react'
-import { type ChainId, type MetaTransactionRequest } from 'ser-kit'
 import { useDispatch, useTransaction } from '../TransactionsContext'
 import { translateTransaction } from '../actions'
-import {
-  type ApplicableTranslation,
-  applicableTranslationsCache,
-} from './applicableTranslationCache'
-import { translations } from './translations'
 
 export const useApplicableTranslation = (transactionId: string) => {
   const transaction = useTransaction(transactionId)
   const dispatch = useDispatch()
   const account = useAccount()
 
-  const [translation, setTranslation] = useState<
-    ApplicableTranslation | undefined
-  >(undefined)
+  const [translation, setTranslation] = useState<ApplicableTranslation | null>(
+    null,
+  )
 
   const apply = useCallback(
     async (translation: ApplicableTranslation) => {
@@ -32,26 +27,46 @@ export const useApplicableTranslation = (transactionId: string) => {
   )
 
   useEffect(() => {
-    let canceled = false
+    const abortController = new AbortController()
+
     const run = async () => {
       const translation = await findApplicableTranslation(
         transaction,
         account.chainId,
         account.address,
       )
-      if (canceled) return
 
-      if (translation?.autoApply) {
-        apply(translation)
-      } else {
-        setTranslation(translation)
+      if (abortController.signal.aborted) {
+        return
       }
+
+      if (translation == null) {
+        setTranslation(null)
+
+        return
+      }
+
+      setTranslation(translation)
     }
+
     run()
+
     return () => {
-      canceled = true
+      abortController.abort()
     }
   }, [account.address, account.chainId, apply, transaction])
+
+  useEffect(() => {
+    if (translation == null) {
+      return
+    }
+
+    if (translation.autoApply == null || translation.autoApply === false) {
+      return
+    }
+
+    apply(translation)
+  }, [apply, translation])
 
   if (translation == null || translation.autoApply) {
     return
@@ -64,50 +79,3 @@ export const useApplicableTranslation = (transactionId: string) => {
     apply: () => apply(translation),
   }
 }
-
-const findApplicableTranslation = async (
-  metaTransaction: MetaTransactionRequest,
-  chainId: ChainId,
-  avatarAddress: Hex,
-): Promise<ApplicableTranslation | undefined> => {
-  // we cache the result of the translation to avoid test-running translation functions over and over again
-  const key = cacheKey(metaTransaction, chainId, avatarAddress)
-  if (applicableTranslationsCache.has(key)) {
-    return await applicableTranslationsCache.get(key)
-  }
-
-  const tryApplyingTranslations = async () => {
-    for (const translation of translations) {
-      if (!('translate' in translation)) {
-        continue
-      }
-
-      const result = await translation.translate(
-        metaTransaction,
-        chainId,
-        avatarAddress,
-      )
-      if (result) {
-        return {
-          title: translation.title,
-          autoApply: translation.autoApply,
-          icon: translation.icon,
-          result,
-        }
-      }
-    }
-  }
-  const resultPromise = tryApplyingTranslations()
-  applicableTranslationsCache.set(key, resultPromise)
-
-  return await resultPromise
-}
-
-const cacheKey = (
-  transaction: MetaTransactionRequest,
-  chainId: ChainId,
-  avatarAddress: Hex,
-) =>
-  `${chainId}:${avatarAddress}:${transaction.to}:${transaction.value}:${transaction.data}:${
-    transaction.operation || 0
-  }`
