@@ -1,52 +1,34 @@
 import { getTokenBalances } from '@/balances-server'
-import {
-  connectWallet,
-  createMockTokenBalance,
-  disconnectWallet,
-  render,
-} from '@/test-utils'
+import { createMockTokenBalance, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import { Chain } from '@zodiac/chains'
 import { randomAddress } from '@zodiac/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useAccount } from 'wagmi'
 
-vi.mock('@/wagmi', async () => {
-  const { mock, custom, createConfig } =
-    await vi.importActual<typeof import('wagmi')>('wagmi')
-  const { mainnet } =
-    await vi.importActual<typeof import('wagmi/chains')>('wagmi/chains')
-
-  const config = createConfig({
-    chains: [mainnet],
-    storage: null,
-    transports: {
-      [mainnet.id]: custom({
-        request() {
-          return Promise.resolve(null)
-        },
-      }),
-    },
-    connectors: [
-      mock({
-        accounts: ['0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'],
-        features: {
-          reconnect: true,
-        },
-      }),
-    ],
-  })
+vi.mock('wagmi', async (importOriginal) => {
+  const module = await importOriginal<typeof import('wagmi')>()
 
   return {
-    getWagmiConfig: () => config,
+    ...module,
+
+    useAccount: vi.fn(module.useAccount),
+    useConnectorClient: vi.fn(module.useConnectorClient),
   }
 })
+
+const mockUseAccount = vi.mocked(useAccount)
 
 const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
 describe('Token balances', () => {
   beforeEach(async () => {
-    await connectWallet()
+    // @ts-expect-error OK for this test
+    mockUseAccount.mockReturnValue({
+      address: randomAddress(),
+      chainId: Chain.ETH,
+    })
   })
-  afterEach(() => disconnectWallet())
 
   it('is possible to send funds of a token', async () => {
     const address = randomAddress()
