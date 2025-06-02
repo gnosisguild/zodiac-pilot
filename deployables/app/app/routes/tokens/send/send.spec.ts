@@ -1,46 +1,24 @@
 import { getChain, getTokenBalances, isValidToken } from '@/balances-server'
-import {
-  connectWallet,
-  createMockChain,
-  createMockTokenBalance,
-  disconnectWallet,
-  render,
-} from '@/test-utils'
+import { createMockChain, createMockTokenBalance, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Chain } from '@zodiac/chains'
 import { randomAddress } from '@zodiac/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useAccount } from 'wagmi'
 
-vi.mock('@/wagmi', async () => {
-  const { mock, custom, createConfig } =
-    await vi.importActual<typeof import('wagmi')>('wagmi')
-  const { mainnet } =
-    await vi.importActual<typeof import('wagmi/chains')>('wagmi/chains')
-
-  const config = createConfig({
-    chains: [mainnet],
-    storage: null,
-    transports: {
-      [mainnet.id]: custom({
-        request() {
-          return Promise.resolve(null)
-        },
-      }),
-    },
-    connectors: [
-      mock({
-        accounts: ['0xd6be23396764a212e04399ca31c0ad7b7a3df8fc'],
-        features: {
-          reconnect: true,
-        },
-      }),
-    ],
-  })
+vi.mock('wagmi', async (importOriginal) => {
+  const module = await importOriginal<typeof import('wagmi')>()
 
   return {
-    getWagmiConfig: () => config,
+    ...module,
+
+    useAccount: vi.fn(module.useAccount),
+    useConnectorClient: vi.fn(module.useConnectorClient),
   }
 })
+
+const mockUseAccount = vi.mocked(useAccount)
 
 const mockGetChain = vi.mocked(getChain)
 const mockIsValidToken = vi.mocked(isValidToken)
@@ -48,12 +26,15 @@ const mockGetTokenBalances = vi.mocked(getTokenBalances)
 
 describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
   beforeEach(async () => {
-    await connectWallet()
+    // @ts-expect-error OK for this test
+    mockUseAccount.mockReturnValue({
+      address: randomAddress(),
+      chainId: Chain.ETH,
+    })
 
     mockGetChain.mockResolvedValue(createMockChain())
     mockIsValidToken.mockResolvedValue(true)
   })
-  afterEach(() => disconnectWallet())
 
   it('is possible to select the token you want to send', async () => {
     mockGetTokenBalances.mockResolvedValue([
@@ -63,11 +44,17 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
     await render('/tokens/send')
 
     await userEvent.click(
-      await screen.findByRole('combobox', { name: 'Available tokens' }),
+      await screen.findByRole('combobox', {
+        name: 'Available tokens',
+      }),
     )
 
     expect(
-      await screen.findByRole('option', { name: 'Test token' }),
+      await screen.findByRole(
+        'option',
+        { name: 'Test token' },
+        { timeout: 3_000 },
+      ),
     ).toBeInTheDocument()
   })
 
