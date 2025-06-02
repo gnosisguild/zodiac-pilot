@@ -64,13 +64,21 @@ const Transactions = () => {
   const scrollContainerRef = useScrollIntoView()
 
   const [saveOptions, saveAndActivateOptions] = useSaveAccount(account.id, {
-    onSave: (route, tabId) => {
-      sendMessageToCompanionApp(tabId, {
+    async onSave(route, account, tabId) {
+      await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
         route,
       })
+
+      navigate(`/${account.id}/clear-transactions/${account.id}`)
     },
   })
+
+  useEffect(() => {
+    if (saveOptions.isUpdatePending && transactions.length === 0) {
+      saveOptions.saveUpdate()
+    }
+  }, [saveOptions, transactions.length])
 
   return (
     <>
@@ -146,13 +154,7 @@ const Transactions = () => {
       <ClearTransactionsModal
         open={saveOptions.isUpdatePending}
         onCancel={saveOptions.cancelUpdate}
-        onAccept={() => {
-          saveOptions.saveUpdate().then((updatedAccount) => {
-            navigate(
-              `/${updatedAccount.id}/clear-transactions/${updatedAccount.id}`,
-            )
-          })
-        }}
+        onAccept={saveOptions.saveUpdate}
       />
     </>
   )

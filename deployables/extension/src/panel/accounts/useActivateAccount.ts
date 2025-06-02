@@ -1,4 +1,3 @@
-import { useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { useStableHandler } from '@zodiac/hooks'
 import { useCallback, useState } from 'react'
@@ -14,7 +13,6 @@ type OnLaunchOptions = {
 export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
   const [pendingAccountId, setPendingAccountId] = useState<string | null>(null)
-  const transactions = useTransactions()
   const onActivateRef = useStableHandler(onActivate)
 
   const activateAccount = useCallback(
@@ -25,9 +23,8 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
         const newAccount = await getAccount(accountId)
 
         if (
-          transactions.length > 0 &&
           prefixAddress(activeAccount.chainId, activeAccount.address) !==
-            prefixAddress(newAccount.chainId, newAccount.address)
+          prefixAddress(newAccount.chainId, newAccount.address)
         ) {
           setPendingAccountId(accountId)
 
@@ -41,7 +38,7 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
 
       navigate(`/${accountId}`)
     },
-    [onActivateRef, transactions.length, navigate],
+    [onActivateRef, navigate],
   )
 
   const cancelActivation = useCallback(() => setPendingAccountId(null), [])

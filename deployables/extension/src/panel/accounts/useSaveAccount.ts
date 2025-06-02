@@ -1,6 +1,5 @@
 import { toAccount } from '@/companion'
 import { saveRoute } from '@/execution-routes'
-import { useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { useStableHandler } from '@zodiac/hooks'
 import {
@@ -20,14 +19,17 @@ import { toRemoteAccount } from './toRemoteAccount'
 import { useActivateAccount } from './useActivateAccount'
 
 type UseSaveOptions = {
-  onSave?: (route: ExecutionRoute | null, tabId: number) => void
+  onSave?: (
+    route: ExecutionRoute | null,
+    account: TaggedAccount,
+    tabId: number,
+  ) => void
 }
 
 export const useSaveAccount = (
   lastUsedAccountId: string | null,
   { onSave }: UseSaveOptions = {},
 ) => {
-  const transactions = useTransactions()
   const { revalidate } = useRevalidator()
   const [pendingUpdate, setPendingUpdate] = useState<{
     incomingRoute: ExecutionRoute | null
@@ -41,7 +43,11 @@ export const useSaveAccount = (
       if (onSaveRef.current) {
         invariant(tabId != null, `tabId was not provided to launchRoute`)
 
-        onSaveRef.current(await findActiveRoute(accountId), tabId)
+        onSaveRef.current(
+          await findActiveRoute(accountId),
+          await getAccount(accountId),
+          tabId,
+        )
       }
     },
   })
@@ -57,8 +63,7 @@ export const useSaveAccount = (
 
       if (
         lastUsedAccountId != null &&
-        lastUsedAccountId === incomingAccount.id &&
-        transactions.length > 0
+        lastUsedAccountId === incomingAccount.id
       ) {
         const currentAccount = await getAccount(lastUsedAccountId)
 
@@ -93,7 +98,7 @@ export const useSaveAccount = (
           launchRoute(incomingAccount.id, tabId)
         } else {
           if (onSaveRef.current) {
-            onSaveRef.current(incomingRoute, tabId)
+            onSaveRef.current(incomingRoute, incomingAccount, tabId)
           }
         }
       })
@@ -122,7 +127,7 @@ export const useSaveAccount = (
     }
 
     if (onSaveRef.current) {
-      onSaveRef.current(incomingRoute, tabId)
+      onSaveRef.current(incomingRoute, incomingAccount, tabId)
     }
 
     return incomingAccount

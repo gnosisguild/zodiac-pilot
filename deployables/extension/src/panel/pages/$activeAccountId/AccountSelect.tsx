@@ -1,7 +1,9 @@
 import { useAccount, useActivateAccount } from '@/accounts'
 import { type Account } from '@/companion'
+import { useTransactions } from '@/transactions'
 import { CHAIN_NAME } from '@zodiac/chains'
 import { Select, Tag } from '@zodiac/ui'
+import { useEffect } from 'react'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
 
 type AccountSelectProps = {
@@ -11,11 +13,18 @@ type AccountSelectProps = {
 
 export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
   const account = useAccount()
+  const transactions = useTransactions()
 
   const [
     activateAccount,
     { isActivationPending, cancelActivation, proceedWithActivation },
   ] = useActivateAccount({ onActivate: onSelect })
+
+  useEffect(() => {
+    if (isActivationPending && transactions.length === 0) {
+      proceedWithActivation()
+    }
+  }, [isActivationPending, proceedWithActivation, transactions.length])
 
   return (
     <>

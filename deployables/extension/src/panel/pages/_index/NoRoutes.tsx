@@ -41,7 +41,7 @@ const NoRoutes = () => {
   )
 
   useSaveAccount(null, {
-    async onSave(route, tabId) {
+    async onSave(route, _, tabId) {
       await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
         route,
