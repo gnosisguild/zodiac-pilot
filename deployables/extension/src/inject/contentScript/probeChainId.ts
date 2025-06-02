@@ -47,4 +47,6 @@ const fastTrack = {
   'https://mainnet.infura.io/v3': Chain.ETH,
   'https://optimism-mainnet.infura.io/v3': Chain.OETH,
   'https://polygon-mainnet.infura.io/v3': Chain.MATIC,
+
+  'https://eth.merkle.io': Chain.ETH,
 }

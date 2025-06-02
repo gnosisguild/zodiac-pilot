@@ -100,8 +100,8 @@ export const TokenValueInput = ({
               required={required}
               isMulti={false}
               isSearchable={false}
-              isDisabled={state === 'loading'}
               label="Available tokens"
+              dropdownLabel="Show available tokens"
               placeholder={
                 state === 'loading' ? 'Loading tokens...' : 'Select token'
               }
@@ -127,6 +127,7 @@ export const TokenValueInput = ({
                 }
 
                 const { logoUrl, name } = tokenBalanceByAddress[value]
+
                 return (
                   <div className="text-xs">
                     <Token logo={logoUrl}>{name}</Token>
