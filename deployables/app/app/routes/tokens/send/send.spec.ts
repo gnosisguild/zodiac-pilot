@@ -50,11 +50,7 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
     )
 
     expect(
-      await screen.findByRole(
-        'option',
-        { name: 'Test token' },
-        { timeout: 3_000 },
-      ),
+      await screen.findByRole('option', { name: 'Test token' }),
     ).toBeInTheDocument()
   })
 
