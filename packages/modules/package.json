@@ -33,7 +33,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.27.0",
+    "eslint": "9.28.0",
     "vitest": "3.1.4"
   }
 }
