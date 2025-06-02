@@ -17,7 +17,6 @@ export { loadRoutes } from './loadRoutes'
 export { postMessage } from './postMessage'
 export { regexEscape } from './regexEscape'
 export { render } from './render'
-export * from './wallet'
 export * from './workOS'
 
 export const expectMessage = await createExpectMessage<
