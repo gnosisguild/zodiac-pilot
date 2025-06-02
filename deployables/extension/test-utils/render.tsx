@@ -1,4 +1,4 @@
-import type { State } from '@/transactions'
+import { persistTransactionState, type State } from '@/transactions'
 import {
   createRenderDataMode,
   type RenderDataOptions,
@@ -43,9 +43,11 @@ export const render = async (
   mockRuntimeConnect(mockedRuntimePort)
   mockTabConnect(mockedPort)
 
+  await persistTransactionState(createTransactionState(initialState))
+
   const FinalRenderWrapper = ({ children }: PropsWithChildren) => (
     <Wrapper>
-      <RenderWrapper initialState={createTransactionState(initialState)}>
+      <RenderWrapper>
         {children}
 
         <ToastContainer />

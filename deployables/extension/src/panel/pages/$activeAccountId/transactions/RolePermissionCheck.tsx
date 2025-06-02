@@ -4,6 +4,7 @@ import {
   useApplicableTranslation,
   useTransaction,
 } from '@/transactions'
+import { recordCalls, useRoleRecordLink } from '@/zodiac'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import { getRolesAppUrl } from '@zodiac/env'
@@ -31,10 +32,6 @@ import {
   PermissionViolation,
   type Route as SerRoute,
 } from 'ser-kit'
-import {
-  recordCalls,
-  useRoleRecordLink,
-} from '../../../integrations/zodiac/roles'
 
 const extractRoles = (route: ExecutionRoute | null) => {
   if (route == null) {
@@ -146,7 +143,9 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
     }
   }
 
-  if (error === undefined) return null
+  if (error == null) {
+    return null
+  }
 
   if (mini) {
     return (

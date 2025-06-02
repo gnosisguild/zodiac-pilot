@@ -9,7 +9,10 @@ import {
 import { useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
-import { ProvideTransactions } from '@/transactions'
+import {
+  getPersistedTransactionState,
+  ProvideTransactions,
+} from '@/transactions'
 import {
   getActiveTab,
   getInt,
@@ -67,6 +70,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       route,
       account,
       accounts,
+      initialTransactionsSate: await getPersistedTransactionState(),
     }
   } catch (error) {
     await saveActiveAccount(null)
@@ -131,7 +135,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route, account, accounts } = useLoaderData<typeof loader>()
+  const { route, account, accounts, initialTransactionsSate } =
+    useLoaderData<typeof loader>()
   const submit = useSubmit()
   const navigation = useNavigation()
 
@@ -192,7 +197,9 @@ const ActiveRoute = () => {
               </GhostLinkButton>
             </div>
 
-            <ProvideTransactions>
+            <ProvideTransactions
+              initialState={initialTransactionsSate ?? undefined}
+            >
               <Outlet />
             </ProvideTransactions>
           </Page>

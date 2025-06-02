@@ -2,8 +2,8 @@ import { useAccount } from '@/accounts'
 import { type Account } from '@/companion'
 import { CHAIN_NAME } from '@zodiac/chains'
 import { Select, Tag } from '@zodiac/ui'
-import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { useActivateAccount } from '../useActivateAccount'
+import { ClearTransactionsModal } from './ClearTransactionsModal'
 
 type AccountSelectProps = {
   accounts: Account[]

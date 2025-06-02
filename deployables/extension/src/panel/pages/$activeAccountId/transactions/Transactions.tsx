@@ -2,14 +2,16 @@ import { editAccount, getAccount, useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
-  useClearTransactions,
+  useDecodeTransactions,
   usePendingTransactions,
   useRefreshTransactions,
   useTransactions,
   useTransactionTracking,
 } from '@/transactions'
+import { sendMessageToCompanionApp } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import { toMetaTransactionRequest } from '@zodiac/schema'
 import {
   CopyToClipboard,
@@ -17,15 +19,17 @@ import {
   Info,
   Modal,
   Page,
-  PrimaryButton,
+  PrimaryLinkButton,
 } from '@zodiac/ui'
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { type ActionFunctionArgs } from 'react-router'
+import { useNavigate, type ActionFunctionArgs } from 'react-router'
+import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 import { Intent } from './intents'
+import { useSaveRoute } from './useSaveRoute'
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData()
@@ -53,10 +57,23 @@ const Transactions = () => {
   const pilotIsReady = usePilotIsReady()
   const pendingTransactions = usePendingTransactions()
   const refreshTransactions = useRefreshTransactions()
+  const navigate = useNavigate()
 
   useTransactionTracking(account)
+  useDecodeTransactions()
 
   const scrollContainerRef = useScrollIntoView()
+
+  const [saveOptions, saveAndActivateOptions] = useSaveRoute(account.id, {
+    onSave: (route, tabId) => {
+      sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+    },
+  })
+
+  console.log({ transactions })
 
   return (
     <>
@@ -122,6 +139,24 @@ const Transactions = () => {
 
         <Submit />
       </Page.Footer>
+
+      <ClearTransactionsModal
+        open={saveAndActivateOptions.isActivationPending}
+        onCancel={saveAndActivateOptions.cancelActivation}
+        onAccept={saveAndActivateOptions.proceedWithActivation}
+      />
+
+      <ClearTransactionsModal
+        open={saveOptions.isUpdatePending}
+        onCancel={saveOptions.cancelUpdate}
+        onAccept={() => {
+          saveOptions.saveUpdate().then((updatedAccount) => {
+            navigate(
+              `/${updatedAccount.id}/clear-transactions/${updatedAccount.id}`,
+            )
+          })
+        }}
+      />
     </>
   )
 }
@@ -163,7 +198,7 @@ export default Transactions
 
 const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
   const [confirm, setConfirm] = useState(false)
-  const clearTransactions = useClearTransactions()
+  const account = useAccount()
 
   return (
     <>
@@ -186,16 +221,12 @@ const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
         Are you sure you want to clear the transaction batch? This action cannot
         be undone.
         <Modal.Actions>
-          <PrimaryButton
+          <PrimaryLinkButton
             style="critical"
-            onClick={() => {
-              clearTransactions()
-
-              setConfirm(false)
-            }}
+            to={`/${account.id}/clear-transactions/${account.id}`}
           >
             Clear
-          </PrimaryButton>
+          </PrimaryLinkButton>
 
           <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>

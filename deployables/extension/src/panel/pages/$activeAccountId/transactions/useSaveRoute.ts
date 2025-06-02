@@ -19,7 +19,7 @@ import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'
-import { useActivateAccount } from './useActivateAccount'
+import { useActivateAccount } from '../../useActivateAccount'
 
 type UseSaveOptions = {
   onSave?: (route: ExecutionRoute | null, tabId: number) => void
@@ -36,6 +36,8 @@ export const useSaveRoute = (
     incomingAccount: TaggedAccount
     tabId: number
   } | null>(null)
+  const onSaveRef = useStableHandler(onSave)
+
   const [launchRoute, launchOptions] = useActivateAccount({
     onActivate: async (accountId, tabId) => {
       if (onSaveRef.current) {
@@ -45,8 +47,6 @@ export const useSaveRoute = (
       }
     },
   })
-
-  const onSaveRef = useStableHandler(onSave)
 
   useTabMessageHandler(
     [

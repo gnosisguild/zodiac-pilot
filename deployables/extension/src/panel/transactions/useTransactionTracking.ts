@@ -1,6 +1,5 @@
 import type { Account } from '@/companion'
 import { useGloballyApplicableTranslation } from './translations'
-import { useDecodeTransactions } from './useDecodeTransactions'
 import { useExecutionTracking } from './useExecutionTracking'
 import { useForkTracking } from './useForkTracking'
 import { useProviderBridge } from './useProviderBridge'
@@ -15,7 +14,6 @@ export const useTransactionTracking = (account: Account) => {
   useForkTracking()
   useExecutionTracking()
   useRollbackTracking()
-  useDecodeTransactions()
 
   // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
   useGloballyApplicableTranslation()

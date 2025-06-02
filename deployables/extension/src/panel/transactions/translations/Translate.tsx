@@ -13,6 +13,8 @@ export const Translate = ({ transactionId, mini }: Props) => {
   const transaction = useTransaction(transactionId)
   const status = useTransactionStatus(transaction)
 
+  console.log({ translation })
+
   if (translation == null) {
     return null
   }
