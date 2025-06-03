@@ -49,6 +49,8 @@ export const trackRequests = (): TrackRequestsResult => {
           }
         })
         .catch((error) => sentry.captureException(error))
+
+      return undefined
     },
     {
       urls: ['<all_urls>'],
@@ -81,7 +83,7 @@ type TrackRequestResult = {
 
 const trackRequest = async (
   state: TrackingState,
-  { tabId, url, method, requestBody }: chrome.webRequest.WebRequestBodyDetails,
+  { tabId, url, method, requestBody }: chrome.webRequest.OnBeforeRequestDetails,
 ): Promise<TrackRequestResult> => {
   const hasActiveSession = state.trackedTabs.has(tabId)
 
