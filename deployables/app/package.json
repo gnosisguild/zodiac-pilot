@@ -21,7 +21,7 @@
     "@react-router/node": "7.6.1",
     "@sentry/browser": "9.24.0",
     "@sentry/react-router": "9.24.0",
-    "@tanstack/react-query": "5.79.0",
+    "@tanstack/react-query": "5.79.2",
     "@vercel/analytics": "1.5.0",
     "@workos-inc/authkit-react-router": "0.4.1",
     "@workos-inc/node": "7.53.0",
