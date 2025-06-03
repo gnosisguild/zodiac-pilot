@@ -61,7 +61,7 @@ export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
       </Select>
 
       <ClearTransactionsModal
-        open={isActivationPending}
+        open={isActivationPending && transactions.length > 0}
         onCancel={cancelActivation}
         onAccept={proceedWithActivation}
       />

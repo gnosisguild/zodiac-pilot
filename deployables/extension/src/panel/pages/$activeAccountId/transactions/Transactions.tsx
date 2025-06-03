@@ -146,13 +146,15 @@ const Transactions = () => {
       </Page.Footer>
 
       <ClearTransactionsModal
-        open={saveAndActivateOptions.isActivationPending}
+        open={
+          saveAndActivateOptions.isActivationPending && transactions.length > 0
+        }
         onCancel={saveAndActivateOptions.cancelActivation}
         onAccept={saveAndActivateOptions.proceedWithActivation}
       />
 
       <ClearTransactionsModal
-        open={saveOptions.isUpdatePending}
+        open={saveOptions.isUpdatePending && transactions.length > 0}
         onCancel={saveOptions.cancelUpdate}
         onAccept={saveOptions.saveUpdate}
       />
