@@ -14,5 +14,7 @@ test('login', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Password' }).fill(password)
   await page.getByRole('button', { name: 'Sign in', exact: true }).click()
 
-  await expect(page.getByRole('link', { name: 'Test User' })).toBeInViewport()
+  await expect(
+    page.getByRole('link', { name: 'Your profile' }),
+  ).toBeInViewport()
 })
