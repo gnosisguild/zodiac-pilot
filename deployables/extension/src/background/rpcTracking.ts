@@ -158,6 +158,13 @@ const detectNetworkOfRpcUrl = async (
     const result = await chainIdPromiseByRpcUrl.get(url)
 
     if (result == null || chainIdByRpcUrl.has(url)) {
+      if (result == null) {
+        sentry.captureMessage(
+          `Could not determine network for endpoint: ${url}`,
+          'error',
+        )
+      }
+
       console.debug(
         `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
       )
