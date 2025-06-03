@@ -6,6 +6,7 @@ import {
   DateValue,
   Empty,
   GhostLinkButton,
+  Kbd,
   Section,
   Table,
   TableBody,
@@ -80,8 +81,8 @@ const Users = ({
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono tabular-nums">
-                      {user.id}
+                    <TableCell>
+                      <Kbd>{user.id}</Kbd>
                     </TableCell>
                     <TableCell>
                       <DateValue>{new Date(user.createdAt)}</DateValue>
@@ -124,10 +125,16 @@ const Users = ({
               {users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.fullName || <Empty />}</TableCell>
-                  <TableCell className="font-mono tabular-nums">
-                    {user.id}
+                  <TableCell>
+                    <Kbd>{user.id}</Kbd>
                   </TableCell>
-                  <TableCell>{user.externalId}</TableCell>
+                  <TableCell>
+                    {user.externalId == null ? (
+                      <Empty />
+                    ) : (
+                      <Kbd>{user.externalId}</Kbd>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <DateValue>{user.createdAt}</DateValue>
                   </TableCell>

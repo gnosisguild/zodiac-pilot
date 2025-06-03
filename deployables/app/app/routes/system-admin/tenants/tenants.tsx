@@ -3,6 +3,8 @@ import { Page } from '@/components'
 import { dbClient, getTenants } from '@zodiac/db'
 import {
   DateValue,
+  Empty,
+  Kbd,
   Table,
   TableBody,
   TableCell,
@@ -40,6 +42,8 @@ const Tenants = ({ loaderData: { tenants } }: Route.ComponentProps) => {
           <TableHead>
             <TableRow>
               <TableHeader>Name</TableHeader>
+              <TableHeader>ID</TableHeader>
+              <TableHeader>External ID</TableHeader>
               <TableHeader>Created</TableHeader>
             </TableRow>
           </TableHead>
@@ -54,6 +58,16 @@ const Tenants = ({ loaderData: { tenants } }: Route.ComponentProps) => {
                   >
                     {tenant.name}
                   </Link>
+                </TableCell>
+                <TableCell>
+                  <Kbd>{tenant.id}</Kbd>
+                </TableCell>
+                <TableCell>
+                  {tenant.externalId == null ? (
+                    <Empty />
+                  ) : (
+                    <Kbd>{tenant.externalId}</Kbd>
+                  )}
                 </TableCell>
                 <TableCell>
                   <DateValue>{tenant.createdAt}</DateValue>
