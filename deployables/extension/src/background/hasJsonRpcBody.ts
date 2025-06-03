@@ -6,7 +6,7 @@ const rpcSchema = z.object({ jsonrpc: z.literal('2.0') })
 const schema = z.union([rpcSchema.array(), rpcSchema])
 
 export const hasJsonRpcBody = (
-  requestBody: chrome.webRequest.WebRequestBody | null,
+  requestBody: chrome.webRequest.OnBeforeRequestDetails['requestBody'],
 ) => {
   if (requestBody == null) {
     return false
