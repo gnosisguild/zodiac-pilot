@@ -4,7 +4,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.11.1",
   "scripts": {
     "test": "vitest",
     "lint": "eslint . --max-warnings=0",
