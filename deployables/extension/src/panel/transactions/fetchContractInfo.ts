@@ -1,8 +1,8 @@
 import { sentry } from '@/sentry'
-import type { ContractInfo } from '@/state'
 import type { Hex } from '@zodiac/schema'
 import { getAddress } from 'ethers'
 import type { ChainId } from 'ser-kit'
+import type { ContractInfo } from './state'
 
 export const fetchContractInfo = async (
   address: Hex,

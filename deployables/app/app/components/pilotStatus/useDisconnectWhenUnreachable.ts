@@ -34,11 +34,11 @@ export const useDisconnectWhenUnreachable = ({
       return
     }
 
-    let cancelled = false
+    const abortController = new AbortController()
 
     const probeConnection = () => {
       const disconnectTimeout = setTimeout(() => {
-        if (cancelled) {
+        if (abortController.signal.aborted) {
           return
         }
 
@@ -68,7 +68,7 @@ export const useDisconnectWhenUnreachable = ({
     const interval = setInterval(probeConnection, 1000)
 
     return () => {
-      cancelled = true
+      abortController.abort()
 
       clearInterval(interval)
     }

@@ -8,18 +8,15 @@
       "@/types": ["./src/types.ts"],
       "@/companion": ["./src/panel/companion/index.ts"],
       "@/execution-routes": ["./src/panel/execution-routes/index.ts"],
-      "@/state": ["./src/panel/state/index.tsx"],
+      "@/transactions": ["./src/panel/transactions/index.ts"],
       "@/providers": ["./src/panel/providers/index.ts"],
-      "@/providers-ui": ["./src/panel/providers-ui/index.ts"],
       "@/port-handling": ["./src/panel/port-handling/index.ts"],
       "@/e2e-utils": ["./e2e/utils/index.ts"],
       "@/test-utils": ["./test-utils/index.ts"],
-      "@/transaction-translation": [
-        "./src/panel/transactionTranslations/index.ts"
-      ],
       "@/safe": ["./src/panel/integrations/safe/index.ts"],
       "@/zodiac": ["./src/panel/integrations/zodiac/index.ts"],
       "@/accounts": ["./src/panel/accounts/index.ts"],
+      "@/translations": ["./src/panel/translations/index.ts"],
       "@/sentry": ["./src/sentry/index.ts"]
     }
   },

@@ -6,6 +6,7 @@ import {
   getRemoteAccounts,
   getUser,
 } from '@/companion'
+import { removeStorageEntry } from '@/storage'
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import {
@@ -86,6 +87,7 @@ Object.defineProperty(window, 'matchMedia', {
 
 afterEach(async () => {
   await sleepTillIdle()
+  await removeStorageEntry({ key: 'transactionState' })
 
   cleanup()
 })

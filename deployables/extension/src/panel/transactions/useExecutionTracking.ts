@@ -1,11 +1,15 @@
-import { usePendingTransactions, useRefresh, useRollback } from '@/state'
 import { useEffect } from 'react'
+import {
+  usePendingTransactions,
+  useRefresh,
+  useRollback,
+} from './TransactionsContext'
 import { useInterceptTransactions } from './useInterceptTransactions'
 import { useSendTransaction } from './useSendTransaction'
 import { useStoreLastExecutedTransaction } from './useStoreLastExecutedTransaction'
 import { useTransactionQueue } from './useTransactionQueue'
 
-export const useSendTransactions = () => {
+export const useExecutionTracking = () => {
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
   const refresh = useRefresh()

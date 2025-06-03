@@ -1,5 +1,5 @@
-import type { Transaction } from '@/state'
 import { useCallback, useEffect, useState } from 'react'
+import type { Transaction } from './state'
 
 export const useTransactionQueue = <T extends Transaction>(
   transactions: T[],

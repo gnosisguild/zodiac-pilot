@@ -1,13 +1,5 @@
-import {
-  findActiveRoute,
-  getAccount,
-  toLocalAccount,
-  toRemoteAccount,
-  type TaggedAccount,
-} from '@/accounts'
 import { toAccount } from '@/companion'
 import { saveRoute } from '@/execution-routes'
-import { useTransactions } from '@/state'
 import { invariant } from '@epic-web/invariant'
 import { useStableHandler } from '@zodiac/hooks'
 import {
@@ -19,34 +11,46 @@ import type { ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'
+import type { TaggedAccount } from './TaggedAccount'
+import { findActiveRoute } from './findActiveRoute'
+import { getAccount } from './getAccount'
+import { toLocalAccount } from './toLocalAccount'
+import { toRemoteAccount } from './toRemoteAccount'
 import { useActivateAccount } from './useActivateAccount'
 
 type UseSaveOptions = {
-  onSave?: (route: ExecutionRoute | null, tabId: number) => void
+  onSave?: (
+    route: ExecutionRoute | null,
+    account: TaggedAccount,
+    tabId: number,
+  ) => void
 }
 
-export const useSaveRoute = (
+export const useSaveAccount = (
   lastUsedAccountId: string | null,
   { onSave }: UseSaveOptions = {},
 ) => {
-  const transactions = useTransactions()
   const { revalidate } = useRevalidator()
   const [pendingUpdate, setPendingUpdate] = useState<{
     incomingRoute: ExecutionRoute | null
     incomingAccount: TaggedAccount
     tabId: number
   } | null>(null)
+  const onSaveRef = useStableHandler(onSave)
+
   const [launchRoute, launchOptions] = useActivateAccount({
     onActivate: async (accountId, tabId) => {
       if (onSaveRef.current) {
         invariant(tabId != null, `tabId was not provided to launchRoute`)
 
-        onSaveRef.current(await findActiveRoute(accountId), tabId)
+        onSaveRef.current(
+          await findActiveRoute(accountId),
+          await getAccount(accountId),
+          tabId,
+        )
       }
     },
   })
-
-  const onSaveRef = useStableHandler(onSave)
 
   useTabMessageHandler(
     [
@@ -59,8 +63,7 @@ export const useSaveRoute = (
 
       if (
         lastUsedAccountId != null &&
-        lastUsedAccountId === incomingAccount.id &&
-        transactions.length > 0
+        lastUsedAccountId === incomingAccount.id
       ) {
         const currentAccount = await getAccount(lastUsedAccountId)
 
@@ -95,7 +98,7 @@ export const useSaveRoute = (
           launchRoute(incomingAccount.id, tabId)
         } else {
           if (onSaveRef.current) {
-            onSaveRef.current(incomingRoute, tabId)
+            onSaveRef.current(incomingRoute, incomingAccount, tabId)
           }
         }
       })
@@ -124,7 +127,7 @@ export const useSaveRoute = (
     }
 
     if (onSaveRef.current) {
-      onSaveRef.current(incomingRoute, tabId)
+      onSaveRef.current(incomingRoute, incomingAccount, tabId)
     }
 
     return incomingAccount

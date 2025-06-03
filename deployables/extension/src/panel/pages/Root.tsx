@@ -1,8 +1,6 @@
 import { findActiveAccount } from '@/accounts'
 import { getFeatures, getUser, ProvideCompanionAppContext } from '@/companion'
-import { sendMessageToCompanionApp } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
-import { CompanionResponseMessageType } from '@zodiac/messages'
 import { FeatureProvider } from '@zodiac/ui'
 import {
   Outlet,
@@ -11,10 +9,8 @@ import {
   useRevalidator,
   type LoaderFunctionArgs,
 } from 'react-router'
-import { ClearTransactionsModal } from './ClearTransactionsModal'
 import { useDeleteRoute } from './useDeleteRoute'
 import { useRevalidateOnSignIn } from './useRevalidateOnSignIn'
-import { useSaveRoute } from './useSaveRoute'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const [activeAccount, features, user] = await Promise.all([
@@ -34,14 +30,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 const Root = () => {
   const { activeAccountId, companionAppUrl, features, user } =
     useLoaderData<typeof loader>()
-  const [saveOptions, saveAndActivateOptions] = useSaveRoute(activeAccountId, {
-    onSave: (route, tabId) => {
-      sendMessageToCompanionApp(tabId, {
-        type: CompanionResponseMessageType.PROVIDE_ROUTE,
-        route,
-      })
-    },
-  })
 
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
@@ -62,24 +50,6 @@ const Root = () => {
     <FeatureProvider features={features}>
       <ProvideCompanionAppContext url={companionAppUrl} user={user}>
         <Outlet />
-
-        <ClearTransactionsModal
-          open={saveAndActivateOptions.isActivationPending}
-          onCancel={saveAndActivateOptions.cancelActivation}
-          onAccept={saveAndActivateOptions.proceedWithActivation}
-        />
-
-        <ClearTransactionsModal
-          open={saveOptions.isUpdatePending}
-          onCancel={saveOptions.cancelUpdate}
-          onAccept={() => {
-            saveOptions.saveUpdate().then((updatedAccount) => {
-              navigate(
-                `/${updatedAccount.id}/clear-transactions/${updatedAccount.id}`,
-              )
-            })
-          }}
-        />
       </ProvideCompanionAppContext>
     </FeatureProvider>
   )

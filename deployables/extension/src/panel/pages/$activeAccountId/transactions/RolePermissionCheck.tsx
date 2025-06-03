@@ -1,6 +1,10 @@
 import { useExecutionRoute } from '@/execution-routes'
-import { useTransaction } from '@/state'
-import { useApplicableTranslation } from '@/transaction-translation'
+import {
+  Translate,
+  useApplicableTranslation,
+  useTransaction,
+} from '@/transactions'
+import { recordCalls, useRoleRecordLink } from '@/zodiac'
 import { invariant } from '@epic-web/invariant'
 import { EOA_ZERO_ADDRESS } from '@zodiac/chains'
 import { getRolesAppUrl } from '@zodiac/env'
@@ -28,11 +32,6 @@ import {
   PermissionViolation,
   type Route as SerRoute,
 } from 'ser-kit'
-import {
-  recordCalls,
-  useRoleRecordLink,
-} from '../../../integrations/zodiac/roles'
-import { Translate } from './Translate'
 
 const extractRoles = (route: ExecutionRoute | null) => {
   if (route == null) {
@@ -76,10 +75,10 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
   const route = useExecutionRoute()
 
   const transaction = useTransaction(transactionId)
-  const translationAvailable = !!useApplicableTranslation(transaction.id)
+  const translation = useApplicableTranslation(transaction.id)
 
   useEffect(() => {
-    let canceled = false
+    const abortController = new AbortController()
 
     if (route == null) {
       return
@@ -97,12 +96,16 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
 
     checkPermissions([transaction], checkableRoute).then(
       ({ success, error }) => {
-        if (!canceled) setError(success ? false : error)
+        if (abortController.signal.aborted) {
+          return
+        }
+
+        setError(success ? false : error)
       },
     )
 
     return () => {
-      canceled = true
+      abortController.abort()
     }
   }, [transaction, route])
 
@@ -144,7 +147,9 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
     }
   }
 
-  if (error === undefined) return null
+  if (error == null) {
+    return null
+  }
 
   if (mini) {
     return (
@@ -187,11 +192,9 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
         </div>
       </div>
 
-      {error && translationAvailable && (
-        <Translate transactionId={transaction.id} />
-      )}
+      {error && <Translate transactionId={transaction.id} />}
 
-      {error && !translationAvailable && roleToRecordTo && (
+      {error && translation == null && roleToRecordTo && (
         <div className="flex flex-wrap items-center gap-2">
           {recordCallState === RecordCallState.Done ? (
             <SecondaryButton fluid disabled icon={Check} size="small">

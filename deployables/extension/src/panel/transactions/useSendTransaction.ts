@@ -1,18 +1,18 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import {
-  confirmTransaction,
-  finishTransaction,
-  revertTransaction,
-  useDispatch,
-  type UnconfirmedTransaction,
-} from '@/state'
 import type { HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
-import { failTransaction } from '../state'
 import { useProvider } from './ProvideProvider'
+import { useDispatch } from './TransactionsContext'
+import {
+  confirmTransaction,
+  failTransaction,
+  finishTransaction,
+  revertTransaction,
+} from './actions'
 import { getModuleAddress } from './getModuleAddress'
+import type { UnconfirmedTransaction } from './state'
 
 export const useSendTransaction = () => {
   const provider = useProvider()

@@ -1,6 +1,6 @@
-import { findActiveAccount, getAccounts } from '@/accounts'
+import { findActiveAccount, getAccounts, useSaveAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { useBridgeError } from '@/providers-ui'
+import { useBridgeError } from '@/port-handling'
 import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,
@@ -26,7 +26,9 @@ export const loader = async () => {
 }
 
 const NoRoutes = () => {
-  useBridgeError('To use Zodiac Pilot with a dApp you need to create a route.')
+  useBridgeError(
+    'To use Zodiac Pilot with a dApp you need to create an account.',
+  )
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -37,6 +39,15 @@ const NoRoutes = () => {
       })
     },
   )
+
+  useSaveAccount(null, {
+    async onSave(route, _, tabId) {
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+    },
+  })
 
   return (
     <Page>
@@ -57,7 +68,7 @@ const NoRoutes = () => {
           icon={Plus}
           to={`${useCompanionAppUrl()}/create`}
         >
-          Add route
+          Add account
         </PrimaryLinkButton>
       </Page.Footer>
     </Page>

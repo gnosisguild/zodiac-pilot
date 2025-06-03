@@ -1,8 +1,4 @@
-import {
-  rollbackTransaction,
-  useDispatch,
-  usePendingTransactions,
-} from '@/state'
+import { usePendingTransactions, useRollbackTransaction } from '@/transactions'
 import { GhostButton } from '@zodiac/ui'
 import { Trash2 } from 'lucide-react'
 
@@ -11,8 +7,8 @@ type Props = {
 }
 
 export const Remove = ({ transactionId }: Props) => {
-  const dispatch = useDispatch()
   const pendingTransactions = usePendingTransactions()
+  const rollbackTransaction = useRollbackTransaction()
 
   return (
     <GhostButton
@@ -20,7 +16,7 @@ export const Remove = ({ transactionId }: Props) => {
       size="small"
       icon={Trash2}
       disabled={pendingTransactions.length > 0}
-      onClick={() => dispatch(rollbackTransaction({ id: transactionId }))}
+      onClick={() => rollbackTransaction(transactionId)}
     >
       Remove transaction
     </GhostButton>

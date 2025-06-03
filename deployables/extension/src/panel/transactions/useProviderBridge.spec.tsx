@@ -1,5 +1,5 @@
 import { ProvideAccount, toRemoteAccount } from '@/accounts'
-import { ProvideProvider } from '@/providers-ui'
+import { ProvideBridgeContext } from '@/port-handling'
 import {
   chromeMock,
   createMockTab,
@@ -20,8 +20,8 @@ import { toQuantity } from 'ethers'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ProvideBridgeContext } from './BridgeContext'
 import { MockProvider } from './MockProvider'
+import { ProvideProvider } from './ProvideProvider'
 import { useProviderBridge } from './useProviderBridge'
 
 vi.mock('@/providers', async (importOriginal) => {

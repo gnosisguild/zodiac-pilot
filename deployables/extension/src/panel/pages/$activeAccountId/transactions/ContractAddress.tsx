@@ -1,4 +1,4 @@
-import type { ContractInfo } from '@/state'
+import type { ContractInfo } from '@/transactions'
 import { EXPLORER_URL } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { AddressInput, GhostLinkButton } from '@zodiac/ui'

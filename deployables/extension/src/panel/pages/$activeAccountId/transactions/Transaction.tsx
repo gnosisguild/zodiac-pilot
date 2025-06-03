@@ -1,6 +1,6 @@
 import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
-import { useTransaction } from '@/state'
+import { Translate, useTransaction } from '@/transactions'
 import type { ExecutionRoute } from '@/types'
 import { CHAIN_CURRENCY } from '@zodiac/chains'
 import { toMetaTransactionRequest } from '@zodiac/schema'
@@ -14,7 +14,6 @@ import { RawTransaction } from './RawTransaction'
 import { Remove } from './Remove'
 import { RolePermissionCheck } from './RolePermissionCheck'
 import { SimulationStatus } from './SimulationStatus'
-import { Translate } from './Translate'
 import { useDecodedFunctionData } from './useDecodedFunctionData'
 
 interface Props {
@@ -50,6 +49,7 @@ export const Transaction = ({ transactionId }: Props) => {
 
           <div className="flex">
             <Translate mini transactionId={transactionId} />
+
             <CopyToClipboard
               iconOnly
               size="small"

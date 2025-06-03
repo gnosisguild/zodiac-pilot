@@ -1,7 +1,7 @@
 import { getRoute, getRoutes } from '@/execution-routes'
 import { COMPANION_APP_PORT } from '@/port-handling'
 import { captureLastError } from '@/sentry'
-import { getLastTransactionExecutedAt } from '@/state'
+import { getLastTransactionExecutedAt } from '@/transactions'
 import { sendMessageToCompanionApp } from '@/utils'
 import {
   CompanionAppMessageType,

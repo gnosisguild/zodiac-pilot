@@ -1,23 +1,17 @@
-import { editAccount, getAccount, useAccount } from '@/accounts'
+import { editAccount, getAccount, useAccount, useSaveAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
   useDecodeTransactions,
-  useDeleteFork,
-  useProviderBridge,
-  useRollbackTransaction,
-  useSendTransactions,
-} from '@/providers-ui'
-import {
-  clearTransactions,
-  refreshTransactions,
-  useDispatch,
   usePendingTransactions,
+  useRefreshTransactions,
   useTransactions,
-} from '@/state'
-import { useGloballyApplicableTranslation } from '@/transaction-translation'
+  useTransactionTracking,
+} from '@/transactions'
+import { sendMessageToCompanionApp } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { getInt, getString } from '@zodiac/form-data'
+import { CompanionResponseMessageType } from '@zodiac/messages'
 import { toMetaTransactionRequest } from '@zodiac/schema'
 import {
   CopyToClipboard,
@@ -25,11 +19,12 @@ import {
   Info,
   Modal,
   Page,
-  PrimaryButton,
+  PrimaryLinkButton,
 } from '@zodiac/ui'
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { type ActionFunctionArgs } from 'react-router'
+import { useNavigate, type ActionFunctionArgs } from 'react-router'
+import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Submit } from './Submit'
 import { Transaction } from './Transaction'
@@ -56,26 +51,34 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 const Transactions = () => {
   const transactions = useTransactions()
-  const dispatch = useDispatch()
   const account = useAccount()
   const route = useExecutionRoute()
   const pilotIsReady = usePilotIsReady()
   const pendingTransactions = usePendingTransactions()
+  const refreshTransactions = useRefreshTransactions()
+  const navigate = useNavigate()
 
-  useDeleteFork()
-  useSendTransactions()
-  useRollbackTransaction()
+  useTransactionTracking(account)
   useDecodeTransactions()
 
-  useProviderBridge({
-    chainId: account.chainId,
-    account: account.address,
+  const scrollContainerRef = useScrollIntoView()
+
+  const [saveOptions, saveAndActivateOptions] = useSaveAccount(account.id, {
+    async onSave(route, account, tabId) {
+      await sendMessageToCompanionApp(tabId, {
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      navigate(`/${account.id}/clear-transactions/${account.id}`)
+    },
   })
 
-  // for now we assume global translations are generally auto-applied, so we don't need to show a button for them
-  useGloballyApplicableTranslation()
-
-  const scrollContainerRef = useScrollIntoView()
+  useEffect(() => {
+    if (saveOptions.isUpdatePending && transactions.length === 0) {
+      saveOptions.saveUpdate()
+    }
+  }, [saveOptions, transactions.length])
 
   return (
     <>
@@ -100,7 +103,7 @@ const Transactions = () => {
               disabled={
                 transactions.length === 0 || pendingTransactions.length > 0
               }
-              onClick={() => dispatch(refreshTransactions())}
+              onClick={() => refreshTransactions()}
             >
               Re-simulate on current blockchain head
             </GhostButton>
@@ -141,6 +144,20 @@ const Transactions = () => {
 
         <Submit />
       </Page.Footer>
+
+      <ClearTransactionsModal
+        open={
+          saveAndActivateOptions.isActivationPending && transactions.length > 0
+        }
+        onCancel={saveAndActivateOptions.cancelActivation}
+        onAccept={saveAndActivateOptions.proceedWithActivation}
+      />
+
+      <ClearTransactionsModal
+        open={saveOptions.isUpdatePending && transactions.length > 0}
+        onCancel={saveOptions.cancelUpdate}
+        onAccept={saveOptions.saveUpdate}
+      />
     </>
   )
 }
@@ -182,7 +199,7 @@ export default Transactions
 
 const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
   const [confirm, setConfirm] = useState(false)
-  const dispatch = useDispatch()
+  const account = useAccount()
 
   return (
     <>
@@ -205,16 +222,12 @@ const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
         Are you sure you want to clear the transaction batch? This action cannot
         be undone.
         <Modal.Actions>
-          <PrimaryButton
+          <PrimaryLinkButton
             style="critical"
-            onClick={() => {
-              dispatch(clearTransactions())
-
-              setConfirm(false)
-            }}
+            to={`/${account.id}/clear-transactions/${account.id}`}
           >
             Clear
-          </PrimaryButton>
+          </PrimaryLinkButton>
 
           <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>

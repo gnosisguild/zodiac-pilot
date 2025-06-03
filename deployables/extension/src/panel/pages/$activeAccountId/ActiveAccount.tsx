@@ -8,8 +8,11 @@ import {
 } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { ProvideExecutionRoute } from '@/execution-routes'
-import { ProvideProvider } from '@/providers-ui'
 import { sentry } from '@/sentry'
+import {
+  getPersistedTransactionState,
+  ProvideTransactions,
+} from '@/transactions'
 import {
   getActiveTab,
   getInt,
@@ -67,6 +70,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       route,
       account,
       accounts,
+      initialTransactionsSate: await getPersistedTransactionState(),
     }
   } catch (error) {
     await saveActiveAccount(null)
@@ -131,7 +135,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route, account, accounts } = useLoaderData<typeof loader>()
+  const { route, account, accounts, initialTransactionsSate } =
+    useLoaderData<typeof loader>()
   const submit = useSubmit()
   const navigation = useNavigation()
 
@@ -149,53 +154,55 @@ const ActiveRoute = () => {
     <>
       <ProvideAccount account={account}>
         <ProvideExecutionRoute route={route}>
-          <ProvideProvider>
-            <Page>
-              <Page.Header>
-                <div className="mx-4 my-2 flex items-center gap-2">
-                  <Blockie address={account.address} className="size-6" />
+          <Page>
+            <Page.Header>
+              <div className="mx-4 my-2 flex items-center gap-2">
+                <Blockie address={account.address} className="size-6" />
 
-                  <div className="flex-1">
-                    <AccountSelect
-                      accounts={accounts}
-                      onSelect={(accountId) =>
-                        submit(
-                          { intent: Intent.ActivateAccount, accountId },
-                          { method: 'POST' },
-                        )
-                      }
-                    />
-                  </div>
-
-                  <AccountActions />
+                <div className="flex-1">
+                  <AccountSelect
+                    accounts={accounts}
+                    onSelect={(accountId) =>
+                      submit(
+                        { intent: Intent.ActivateAccount, accountId },
+                        { method: 'POST' },
+                      )
+                    }
+                  />
                 </div>
-              </Page.Header>
 
-              <div className="flex p-2">
-                <GhostLinkButton
-                  fluid
-                  openInNewWindow
-                  size="small"
-                  icon={ArrowUpFromLine}
-                  to={`${useCompanionAppUrl()}/tokens/send`}
-                >
-                  Send tokens
-                </GhostLinkButton>
-
-                <GhostLinkButton
-                  fluid
-                  openInNewWindow
-                  size="small"
-                  icon={Landmark}
-                  to={`${useCompanionAppUrl()}/tokens/balances`}
-                >
-                  View balances
-                </GhostLinkButton>
+                <AccountActions />
               </div>
+            </Page.Header>
 
+            <div className="flex p-2">
+              <GhostLinkButton
+                fluid
+                openInNewWindow
+                size="small"
+                icon={ArrowUpFromLine}
+                to={`${useCompanionAppUrl()}/tokens/send`}
+              >
+                Send tokens
+              </GhostLinkButton>
+
+              <GhostLinkButton
+                fluid
+                openInNewWindow
+                size="small"
+                icon={Landmark}
+                to={`${useCompanionAppUrl()}/tokens/balances`}
+              >
+                View balances
+              </GhostLinkButton>
+            </div>
+
+            <ProvideTransactions
+              initialState={initialTransactionsSate ?? undefined}
+            >
               <Outlet />
-            </Page>
-          </ProvideProvider>
+            </ProvideTransactions>
+          </Page>
         </ProvideExecutionRoute>
       </ProvideAccount>
 

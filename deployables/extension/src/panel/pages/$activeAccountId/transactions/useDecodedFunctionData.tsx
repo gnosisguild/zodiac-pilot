@@ -1,4 +1,4 @@
-import { useTransaction } from '@/state'
+import { useTransaction } from '@/transactions'
 import { Interface } from 'ethers'
 import { useMemo } from 'react'
 
