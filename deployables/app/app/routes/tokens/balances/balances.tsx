@@ -86,7 +86,7 @@ const Balances = () => {
                     <GhostLinkButton
                       icon={ArrowUpFromLine}
                       size="tiny"
-                      to={href('/tokens/send/:chain/:token', {
+                      to={href('/tokens/send/:chain?/:token?', {
                         chain,
                         token: contractId,
                       })}
