@@ -10,7 +10,7 @@ import {
   GhostLinkButton,
   PilotType,
   SecondaryLinkButton,
-  ZodiacOsPlain,
+  ZodiacOsIcon,
 } from '@zodiac/ui'
 import { Menu } from 'lucide-react'
 import { Container } from './Container'
@@ -50,7 +50,7 @@ export function Header() {
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
             <a href="/#" className="flex items-center gap-4" aria-label="Home">
-              <ZodiacOsPlain className="h-10 w-auto" />
+              <ZodiacOsIcon className="h-10 w-auto" />
               <PilotType className="h-6 dark:invert" />
             </a>
             <div className="hidden md:flex md:gap-x-6">

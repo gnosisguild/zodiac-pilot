@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-export const ZodiacOsPlain = (props: ComponentPropsWithoutRef<'svg'>) => (
+export const ZodiacOsIcon = (props: ComponentPropsWithoutRef<'svg'>) => (
   <svg
     {...props}
     viewBox="0 0 183 183"

@@ -15,14 +15,13 @@ import {
   Divider,
   FeatureProvider,
   GhostLinkButton,
-  PilotType,
   PrimaryLinkButton,
   Sidebar,
   SidebarBody,
   SidebarFooter,
   SidebarHeader,
   SidebarLayout,
-  ZodiacOsPlain,
+  ZodiacOsLogo,
 } from '@zodiac/ui'
 import {
   ArrowRightLeft,
@@ -93,8 +92,7 @@ const PageLayout = ({
                   <Sidebar>
                     <SidebarHeader>
                       <div className="my-8 flex items-center justify-center gap-2">
-                        <ZodiacOsPlain className="h-6" />
-                        <PilotType className="h-7 dark:invert" />
+                        <ZodiacOsLogo className="h-6" />
                       </div>
                     </SidebarHeader>
 
