@@ -1,10 +1,6 @@
 import type { ChainId } from 'ser-kit'
-import {
-  callListeners,
-  chromeMock,
-  createMockTab,
-  createMockWebRequest,
-} from '../chrome'
+import { chromeMock, createMockTab } from '../chrome'
+import { mockWebRequest } from './mockWebRequest'
 
 type MockRpcRequestOptions = {
   chainId: ChainId
@@ -29,13 +25,9 @@ export const mockRpcRequest = async (
     return chainId
   })
 
-  return callListeners(
-    chromeMock.webRequest.onBeforeRequest,
-    createMockWebRequest({
-      tabId: currentTab.id,
-      method: 'POST',
-      url,
-      requestBody: { jsonrpc: '2.0' },
-    }),
-  )
+  return mockWebRequest(currentTab, {
+    method: 'POST',
+    url,
+    requestBody: { jsonrpc: '2.0' },
+  })
 }

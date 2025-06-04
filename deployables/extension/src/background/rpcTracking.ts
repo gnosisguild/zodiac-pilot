@@ -1,19 +1,14 @@
 import { sentry } from '@/sentry'
-import { sendMessageToTab } from '@/utils'
-import { RpcMessageType } from '@zodiac/messages'
 import type { ChainId } from 'ser-kit'
 import { createEventListener } from './createEventListener'
+import {
+  detectNetworkOfRpcUrl,
+  type DetectNetworkResult,
+} from './detectNetworkOfRpcUrl'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
+import { createRpcTrackingState, type TrackingState } from './rpcTrackingState'
 import type { Event } from './types'
-
-type TrackingState = {
-  trackedTabs: Set<number>
-  chainIdByRpcUrl: Map<string, number>
-  chainIdPromiseByRpcUrl: Map<string, Promise<number | undefined>>
-
-  rpcUrlsByTabId: Map<number, Set<string>>
-}
 
 type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
@@ -31,12 +26,7 @@ export type TrackRequestsResult = {
 export const trackRequests = (): TrackRequestsResult => {
   enableRpcDebugLogging()
 
-  const state: TrackingState = {
-    trackedTabs: new Set(),
-    chainIdByRpcUrl: new Map(),
-    chainIdPromiseByRpcUrl: new Map(),
-    rpcUrlsByTabId: new Map(),
-  }
+  const state = createRpcTrackingState()
 
   const onNewRpcEndpointDetected = createEventListener()
 
@@ -65,7 +55,7 @@ export const trackRequests = (): TrackRequestsResult => {
 
   return {
     getTrackedRpcUrlsForChainId({ chainId }) {
-      return getTabIdsByRPCUrl(state, { chainId })
+      return getTabIdsByRpcUrl(state, { chainId })
     },
     trackTab(tabId) {
       state.trackedTabs.add(tabId)
@@ -77,14 +67,10 @@ export const trackRequests = (): TrackRequestsResult => {
   }
 }
 
-type TrackRequestResult = {
-  newEndpoint: boolean
-}
-
 const trackRequest = async (
   state: TrackingState,
   { tabId, url, method, requestBody }: chrome.webRequest.OnBeforeRequestDetails,
-): Promise<TrackRequestResult> => {
+): Promise<DetectNetworkResult> => {
   const hasActiveSession = state.trackedTabs.has(tabId)
 
   // only handle requests in tracked tabs
@@ -92,7 +78,6 @@ const trackRequest = async (
     return { newEndpoint: false }
   }
 
-  // only consider POST requests
   if (method !== 'POST') {
     return { newEndpoint: false }
   }
@@ -114,7 +99,7 @@ type GetRpcUrlsOptions = {
   chainId: ChainId
 }
 
-const getTabIdsByRPCUrl = (
+const getTabIdsByRpcUrl = (
   { rpcUrlsByTabId, chainIdByRpcUrl }: TrackingState,
   { chainId }: GetRpcUrlsOptions,
 ) => {
@@ -134,86 +119,3 @@ const getTabIdsByRPCUrl = (
 
   return tabIdsByRpcUrl
 }
-
-type DetectNetworkOfRpcOptions = {
-  url: string
-  tabId: number
-}
-
-const detectNetworkOfRpcUrl = async (
-  state: TrackingState,
-  { url, tabId }: DetectNetworkOfRpcOptions,
-): Promise<TrackRequestResult> => {
-  const { chainIdPromiseByRpcUrl, chainIdByRpcUrl } = state
-
-  if (!chainIdPromiseByRpcUrl.has(url)) {
-    chainIdPromiseByRpcUrl.set(
-      url,
-      timeout(
-        sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
-        `Could not probe chain ID for url "${url}".`,
-      ),
-    )
-  }
-
-  try {
-    const result = await chainIdPromiseByRpcUrl.get(url)
-
-    if (result == null || chainIdByRpcUrl.has(url)) {
-      if (result == null) {
-        sentry.captureMessage(
-          `Could not determine network for endpoint: ${url}`,
-          'error',
-        )
-      }
-
-      console.debug(
-        `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
-      )
-
-      return { newEndpoint: false }
-    }
-
-    trackRpcUrl(state, { tabId, url })
-
-    chainIdByRpcUrl.set(url, result)
-
-    console.debug(
-      `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
-    )
-
-    return { newEndpoint: true }
-  } catch (error) {
-    sentry.captureException(error)
-
-    chainIdPromiseByRpcUrl.delete(url)
-
-    return { newEndpoint: false }
-  }
-}
-
-type TrackRpcUrlOptions = {
-  tabId: number
-  url: string
-}
-
-const trackRpcUrl = (
-  { rpcUrlsByTabId }: TrackingState,
-  { tabId, url }: TrackRpcUrlOptions,
-) => {
-  const urls = rpcUrlsByTabId.get(tabId)
-
-  if (urls == null) {
-    rpcUrlsByTabId.set(tabId, new Set([url]))
-  } else {
-    urls.add(url)
-  }
-}
-
-const timeout = <T>(promise: Promise<T>, errorMessage: string) =>
-  Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(errorMessage), 10_000),
-    ),
-  ])
