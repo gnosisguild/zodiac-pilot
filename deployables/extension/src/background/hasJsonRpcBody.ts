@@ -1,6 +1,5 @@
 import { z } from 'zod'
-
-const decoder = new TextDecoder('utf-8')
+import { parseRequestBody } from './parseRequestBody'
 
 const rpcSchema = z.object({ jsonrpc: z.literal('2.0') })
 const schema = z.union([rpcSchema.array(), rpcSchema])
@@ -8,26 +7,14 @@ const schema = z.union([rpcSchema.array(), rpcSchema])
 export const hasJsonRpcBody = (
   requestBody: chrome.webRequest.OnBeforeRequestDetails['requestBody'],
 ) => {
-  if (requestBody == null) {
-    return false
-  }
-
-  if (requestBody.raw == null) {
-    return false
-  }
-
-  const [data] = requestBody.raw
+  const data = parseRequestBody(requestBody)
 
   if (data == null) {
     return false
   }
 
-  if (data.bytes == null) {
-    return false
-  }
-
   try {
-    const json = JSON.parse(decodeURIComponent(decoder.decode(data.bytes)))
+    const json = JSON.parse(data)
 
     schema.parse(json)
 

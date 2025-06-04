@@ -2,6 +2,7 @@ import { sentry } from '@/sentry'
 import { sendMessageToTab } from '@/utils'
 import { RpcMessageType } from '@zodiac/messages'
 import type { TrackingState } from './rpcTrackingState'
+import { trackRpcUrl } from './trackRpcUrl'
 
 type DetectNetworkOfRpcOptions = {
   url: string
@@ -61,24 +62,6 @@ export const detectNetworkOfRpcUrl = async (
     chainIdPromiseByRpcUrl.delete(url)
 
     return { newEndpoint: false }
-  }
-}
-
-type TrackRpcUrlOptions = {
-  tabId: number
-  url: string
-}
-
-const trackRpcUrl = (
-  { rpcUrlsByTabId }: TrackingState,
-  { tabId, url }: TrackRpcUrlOptions,
-) => {
-  const urls = rpcUrlsByTabId.get(tabId)
-
-  if (urls == null) {
-    rpcUrlsByTabId.set(tabId, new Set([url]))
-  } else {
-    urls.add(url)
   }
 }
 
