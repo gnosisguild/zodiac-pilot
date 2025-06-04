@@ -82,10 +82,12 @@ const trackRpcUrl = (
   }
 }
 
+const CHAIN_ID_PROBING_TIMEOUT = 10_000
+
 const timeout = <T>(promise: Promise<T>, errorMessage: string) =>
   Promise.race([
     promise,
     new Promise<T>((_, reject) =>
-      setTimeout(() => reject(errorMessage), 10_000),
+      setTimeout(() => reject(errorMessage), CHAIN_ID_PROBING_TIMEOUT),
     ),
   ])
