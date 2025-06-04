@@ -277,7 +277,7 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0))
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
   deployables/extension:
     dependencies:
@@ -445,8 +445,8 @@ importers:
         specifier: 16.2.0
         version: 16.2.0
       happy-dom:
-        specifier: 17.5.8
-        version: 17.5.8
+        specifier: 17.6.3
+        version: 17.6.3
       jsdom-testing-mocks:
         specifier: 1.13.1
         version: 1.13.1
@@ -470,7 +470,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
       vitest-chrome:
         specifier: 0.1.0
         version: 0.1.0(patch_hash=4c425dc298490122c5c006daa58aa6569fb31412eb6e4971138b4b504804f975)
@@ -622,7 +622,7 @@ importers:
         version: 9.28.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.50)
 
   packages/db:
     dependencies:
@@ -698,7 +698,7 @@ importers:
         version: 8.0.0(typescript@5.8.3)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
   packages/env:
     dependencies:
@@ -745,7 +745,7 @@ importers:
         version: 9.28.0(jiti@2.4.2)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
   packages/hooks:
     dependencies:
@@ -785,7 +785,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
   packages/messages:
     dependencies:
@@ -874,7 +874,7 @@ importers:
         version: 9.28.0(jiti@2.4.2)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
   packages/safe:
     dependencies:
@@ -972,7 +972,7 @@ importers:
         version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
       vitest-chrome:
         specifier: 0.1.0
         version: 0.1.0(patch_hash=4c425dc298490122c5c006daa58aa6569fb31412eb6e4971138b4b504804f975)
@@ -1000,7 +1000,7 @@ importers:
         version: 9.28.0(jiti@2.4.2)
       ser-kit:
         specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
+        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.50)
 
   packages/ui:
     dependencies:
@@ -1082,7 +1082,7 @@ importers:
         version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vitest:
         specifier: 3.1.4
-        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
+        version: 3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
 
 packages:
 
@@ -6542,9 +6542,9 @@ packages:
   h3@1.13.0:
     resolution: {integrity: sha512-vFEAu/yf8UMUcB4s43OaDaigcqpQd14yanmOsn+NcRX3/guSKncyE2rOYhq8RIchgJrPSs/QiIddnTTR1ddiAg==}
 
-  happy-dom@17.5.8:
-    resolution: {integrity: sha512-PMjqkKRDW8z3oaTw73yfLj6axrEyOYPeBbQBaJlPTYR6G6rqkpBiSXbrXzHPadyBqcL5644CYGOA8/IeWM6jXQ==}
-    engines: {node: '>=18.0.0'}
+  happy-dom@17.6.3:
+    resolution: {integrity: sha512-UVIHeVhxmxedbWPCfgS55Jg2rDfwf2BCKeylcPSqazLz5w3Kri7Q4xdBJubsr/+VUzFLh0VjIvh13RaDA2/Xug==}
+    engines: {node: '>=20.0.0'}
 
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
@@ -12899,19 +12899,6 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.40.0':
     optional: true
 
-  '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
-      node-fetch: 2.7.0
-      viem: 2.30.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.50)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.50)
@@ -12921,23 +12908,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/safe-modules-deployments': 2.2.8
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      semver: 7.7.1
-      viem: 2.30.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    optionalDependencies:
-      '@noble/curves': 1.8.2
-      '@peculiar/asn1-schema': 2.3.15
-    transitivePeerDependencies:
-      - bufferutil
       - typescript
       - utf-8-validate
       - zod
@@ -12986,13 +12956,6 @@ snapshots:
   '@safe-global/safe-gateway-typescript-sdk@3.23.1': {}
 
   '@safe-global/safe-modules-deployments@2.2.8': {}
-
-  '@safe-global/types-kit@2.0.1(typescript@5.8.3)':
-    dependencies:
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-    transitivePeerDependencies:
-      - typescript
-      - zod
 
   '@safe-global/types-kit@2.0.1(typescript@5.8.3)(zod@3.25.50)':
     dependencies:
@@ -16580,7 +16543,7 @@ snapshots:
       uncrypto: 0.1.3
       unenv: 1.10.0
 
-  happy-dom@17.5.8:
+  happy-dom@17.6.3:
     dependencies:
       webidl-conversions: 7.0.0
       whatwg-mimetype: 3.0.0
@@ -18639,21 +18602,6 @@ snapshots:
       - supports-color
     optional: true
 
-  ser-kit@3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10):
-    dependencies:
-      '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
-      '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)
-      viem: 2.30.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.22.4)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
   ser-kit@3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.50):
     dependencies:
       '@epic-web/invariant': 1.0.0
@@ -19549,7 +19497,7 @@ snapshots:
     dependencies:
       '@types/chrome': 0.0.114
 
-  vitest@3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.5.8)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0):
+  vitest@3.1.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@17.6.3)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0):
     dependencies:
       '@vitest/expect': 3.1.4
       '@vitest/mocker': 3.1.4(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0))
@@ -19575,7 +19523,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 22.14.1
-      happy-dom: 17.5.8
+      happy-dom: 17.6.3
       jsdom: 26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - jiti
