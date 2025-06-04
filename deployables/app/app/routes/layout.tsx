@@ -105,7 +105,7 @@ const PageLayout = ({
                             reloadDocument={(location) =>
                               !location.pathname.startsWith('/tokens')
                             }
-                            to={href('/tokens/send')}
+                            to={href('/tokens/send/:chain?/:token?')}
                             icon={ArrowUpFromLine}
                           >
                             Send Tokens
@@ -144,7 +144,7 @@ const PageLayout = ({
                           </Navigation.Link>
 
                           <Navigation.Link
-                            to={href('/create')}
+                            to={href('/create/:prefixedAddress?')}
                             icon={Plus}
                             reloadDocument={(location) =>
                               location.pathname.startsWith('/tokens')
