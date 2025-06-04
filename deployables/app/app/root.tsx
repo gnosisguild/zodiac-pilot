@@ -18,7 +18,7 @@ import {
 import type { Route } from './+types/root'
 import './app.css'
 
-export const meta: Route.MetaFunction = () => [{ title: 'Pilot' }]
+export const meta: Route.MetaFunction = () => [{ title: 'Zodiac OS' }]
 
 export const loader = () => {
   return data(

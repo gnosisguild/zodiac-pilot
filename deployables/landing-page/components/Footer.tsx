@@ -5,7 +5,7 @@ import {
   Strong,
   Text,
   TextLink,
-  ZodiacOsPlain,
+  ZodiacOsIcon,
 } from '@zodiac/ui'
 import { Container } from './Container'
 
@@ -15,7 +15,7 @@ export function Footer() {
       <Container>
         <div className="py-16">
           <div className="flex items-center justify-center gap-4">
-            <ZodiacOsPlain className="h-10 w-auto" />
+            <ZodiacOsIcon className="h-10 w-auto" />
             <PilotType className="h-6 dark:invert" />
           </div>
 

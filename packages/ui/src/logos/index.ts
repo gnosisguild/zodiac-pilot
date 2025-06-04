@@ -1,2 +1,3 @@
 export { PilotType } from './PilotType'
-export { ZodiacOsPlain } from './ZodiacOsPlain'
+export { ZodiacOsIcon } from './ZodiacOsIcon'
+export { ZodiacOsLogo } from './ZodiacOsLogo'
