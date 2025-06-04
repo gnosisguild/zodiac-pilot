@@ -4,6 +4,7 @@ import {
   mockWebRequest,
   startPilotSession,
 } from '@/test-utils'
+import { Chain } from '@zodiac/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { detectNetworkOfRpcUrl } from './detectNetworkOfRpcUrl'
 import { trackRequests } from './rpcTracking'
@@ -175,6 +176,53 @@ describe('RPC Tracking', () => {
       })
 
       expect(handler).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Immediate chain extraction', () => {
+    beforeEach(() => {
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: false })
+    })
+
+    it('extract the chainId from the request body if also a method is present', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      await mockWebRequest(tab, {
+        url: 'http://test-rpc.com',
+        method: 'POST',
+        requestBody: { chainId: Chain.ETH, method: 'eth_call' },
+      })
+
+      const trackedUrls = result.getTrackedRpcUrlsForChainId({
+        chainId: Chain.ETH,
+      })
+
+      expect(trackedUrls.has('http://test-rpc.com')).toBeTruthy()
+    })
+
+    it('notifies about new endpoints', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+
+      await mockWebRequest(tab, {
+        method: 'POST',
+        requestBody: { chainId: Chain.ETH, method: 'eth_call' },
+      })
+
+      expect(handler).toHaveBeenCalledWith()
     })
   })
 })

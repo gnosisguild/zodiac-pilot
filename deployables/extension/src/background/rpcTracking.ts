@@ -6,6 +6,7 @@ import {
   type DetectNetworkResult,
 } from './detectNetworkOfRpcUrl'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
+import { parseNetworkFromRequestBody } from './parseNetworkFromRequestBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
 import { createRpcTrackingState, type TrackingState } from './rpcTrackingState'
 import type { Event } from './types'
@@ -89,7 +90,7 @@ const trackRequest = async (
 
   // only consider requests with a JSON Rpc body
   if (!hasJsonRpcBody(requestBody)) {
-    return { newEndpoint: false }
+    return parseNetworkFromRequestBody(state, { requestBody, url, tabId })
   }
 
   return detectNetworkOfRpcUrl(state, { url, tabId })
