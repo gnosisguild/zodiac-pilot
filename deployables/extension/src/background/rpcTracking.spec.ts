@@ -1,66 +1,180 @@
-import { createMockTab, mockRpcRequest, startPilotSession } from '@/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import {
+  createMockTab,
+  mockRpcRequest,
+  mockWebRequest,
+  startPilotSession,
+} from '@/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { detectNetworkOfRpcUrl } from './detectNetworkOfRpcUrl'
 import { trackRequests } from './rpcTracking'
 import { trackSessions } from './sessionTracking'
 
+vi.mock('./detectNetworkOfRpcUrl', () => ({
+  detectNetworkOfRpcUrl: vi.fn(),
+}))
+
+const mockDetectNetworkOfRpcUrl = vi.mocked(detectNetworkOfRpcUrl)
+
 describe('RPC Tracking', () => {
-  it('notifies when a new network has been tracked', async () => {
-    const result = trackRequests()
-    trackSessions(result)
-
-    const tab = createMockTab({ id: 1 })
-    await startPilotSession({ windowId: 1 }, tab)
-    const handler = vi.fn()
-
-    result.onNewRpcEndpointDetected.addListener(handler)
-
-    await mockRpcRequest(tab, {
-      chainId: 1,
-      url: 'http://test-json-rpc.com',
+  describe('Event handling', () => {
+    beforeEach(() => {
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
     })
 
-    expect(handler).toHaveBeenCalled()
+    it('notifies when a new network has been tracked', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+      await startPilotSession({ windowId: 1 }, tab)
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+
+      await mockRpcRequest(tab, {
+        chainId: 1,
+        url: 'http://test-json-rpc.com',
+      })
+
+      expect(handler).toHaveBeenCalled()
+    })
+
+    it('is possible to stop getting notified', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+      result.onNewRpcEndpointDetected.removeListener(handler)
+
+      await mockRpcRequest(tab, {
+        chainId: 1,
+        url: 'http://test-json-rpc.com',
+      })
+
+      expect(handler).not.toHaveBeenCalled()
+    })
+
+    it('is possible to remove all listeners', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+      result.onNewRpcEndpointDetected.removeAllListeners()
+
+      await mockRpcRequest(tab, {
+        chainId: 1,
+        url: 'http://test-json-rpc.com',
+      })
+
+      expect(handler).not.toHaveBeenCalled()
+    })
   })
 
-  it('is possible to stop getting notified', async () => {
-    const result = trackRequests()
-    trackSessions(result)
-
-    const tab = createMockTab({ id: 1 })
-
-    await startPilotSession({ windowId: 1 }, tab)
-
-    const handler = vi.fn()
-
-    result.onNewRpcEndpointDetected.addListener(handler)
-    result.onNewRpcEndpointDetected.removeListener(handler)
-
-    await mockRpcRequest(tab, {
-      chainId: 1,
-      url: 'http://test-json-rpc.com',
+  describe('Ignored from tracking', () => {
+    beforeEach(() => {
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
     })
 
-    expect(handler).not.toHaveBeenCalled()
-  })
+    it.each(['GET', 'OPTIONS', 'PUT'])(
+      'does not track %s requests',
+      async () => {
+        const result = trackRequests()
+        trackSessions(result)
 
-  it('is possible to remove all listeners', async () => {
-    const result = trackRequests()
-    trackSessions(result)
+        const tab = createMockTab({ id: 1 })
 
-    const tab = createMockTab({ id: 1 })
+        await startPilotSession({ windowId: 1 }, tab)
 
-    await startPilotSession({ windowId: 1 }, tab)
+        const handler = vi.fn()
 
-    const handler = vi.fn()
+        result.onNewRpcEndpointDetected.addListener(handler)
 
-    result.onNewRpcEndpointDetected.addListener(handler)
-    result.onNewRpcEndpointDetected.removeAllListeners()
+        mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
 
-    await mockRpcRequest(tab, {
-      chainId: 1,
-      url: 'http://test-json-rpc.com',
+        await mockWebRequest(tab, {
+          method: 'GET',
+          requestBody: { jsonrpc: '2.0' },
+        })
+
+        expect(handler).not.toHaveBeenCalled()
+      },
+    )
+
+    it('only considers requests with jsonrpc request bodies', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+
+      await mockWebRequest(tab, {
+        method: 'POST',
+        requestBody: 'Hello there!',
+      })
+
+      expect(handler).not.toHaveBeenCalled()
     })
 
-    expect(handler).not.toHaveBeenCalled()
+    it('only considers requests inside an active pilot session', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+
+      await mockWebRequest(tab, {
+        method: 'POST',
+        requestBody: { jsonrpc: '2.0' },
+      })
+
+      expect(handler).not.toHaveBeenCalled()
+    })
+
+    it('ignores requests against the Tenderly fork', async () => {
+      const result = trackRequests()
+      trackSessions(result)
+
+      const tab = createMockTab({ id: 1 })
+
+      await startPilotSession({ windowId: 1 }, tab)
+
+      const handler = vi.fn()
+
+      result.onNewRpcEndpointDetected.addListener(handler)
+
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+
+      await mockWebRequest(tab, {
+        method: 'POST',
+        url: 'https://virtual.mainnet.rpc.tenderly.co/',
+        requestBody: { jsonrpc: '2.0' },
+      })
+
+      expect(handler).not.toHaveBeenCalled()
+    })
   })
 })

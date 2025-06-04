@@ -3,12 +3,17 @@ import type { WebRequest } from 'vitest-chrome/types'
 
 const encoder = new TextEncoder()
 
+export type MockWebRequest = Omit<
+  WebRequest.WebRequestBodyDetails,
+  'requestBody'
+> & {
+  requestBody: unknown
+}
+
 export const createMockWebRequest = ({
   requestBody,
   ...request
-}: Partial<Omit<WebRequest.WebRequestBodyDetails, 'requestBody'>> & {
-  requestBody?: unknown
-} = {}): WebRequest.WebRequestBodyDetails => ({
+}: Partial<MockWebRequest> = {}): WebRequest.WebRequestBodyDetails => ({
   frameId: -1,
   method: 'GET',
   parentFrameId: -1,
