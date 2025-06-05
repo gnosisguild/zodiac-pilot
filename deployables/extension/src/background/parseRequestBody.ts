@@ -21,5 +21,9 @@ export const parseRequestBody = (
     return null
   }
 
-  return decodeURIComponent(decoder.decode(data.bytes))
+  try {
+    return decodeURIComponent(decoder.decode(data.bytes))
+  } catch {
+    return null
+  }
 }

@@ -1,7 +1,9 @@
+import type { ChainId } from '@zodiac/chains'
+
 export type TrackingState = {
   trackedTabs: Set<number>
   chainIdByRpcUrl: Map<string, number>
-  chainIdPromiseByRpcUrl: Map<string, Promise<number | undefined>>
+  chainIdPromiseByRpcUrl: Map<string, Promise<ChainId | undefined>>
 
   rpcUrlsByTabId: Map<number, Set<string>>
 }
