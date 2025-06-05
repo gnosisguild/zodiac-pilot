@@ -4,7 +4,7 @@ import {
 } from '@zodiac/messages'
 import type { Event } from '../events'
 import { createEventListener } from '../events'
-import type { TrackSessionsResult } from '../sessionTracking'
+import type { TrackSessionsResult } from '../sessions'
 import type { Fork } from '../types'
 import { updateBadge } from './updateBadge'
 

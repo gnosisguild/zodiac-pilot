@@ -3,10 +3,10 @@ import { randomUUID } from 'crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { companionEnablement } from './companionEnablement'
 import { trackRequests } from './rpcRedirects'
-import { trackSessions } from './sessionTracking'
+import { trackSessions } from './sessions'
 import { trackSimulations } from './simulations'
 
-vi.mock('./sessionTracking', () => ({
+vi.mock('./sessions', () => ({
   trackSessions: vi.fn(),
 }))
 

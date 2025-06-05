@@ -6,7 +6,7 @@ import {
 } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { trackSessions } from '../sessionTracking'
+import { trackSessions } from '../sessions'
 import { detectNetworkOfRpcUrl } from './detectNetworkOfRpcUrl'
 import { trackRequests } from './rpcTracking'
 

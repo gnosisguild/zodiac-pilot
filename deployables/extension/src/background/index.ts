@@ -2,7 +2,7 @@ import { sentry } from '@/sentry'
 import { companionEnablement } from './companionEnablement'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
 import { trackRequests } from './rpcRedirects'
-import { trackSessions } from './sessionTracking'
+import { trackSessions } from './sessions'
 import { trackSimulations } from './simulations'
 
 const trackRequestsResult = trackRequests()

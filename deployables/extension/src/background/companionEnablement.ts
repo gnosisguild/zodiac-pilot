@@ -8,7 +8,7 @@ import {
   CompanionResponseMessageType,
   createTabMessageHandler,
 } from '@zodiac/messages'
-import type { TrackSessionsResult } from './sessionTracking'
+import type { TrackSessionsResult } from './sessions'
 import type { TrackSimulationResult } from './simulations'
 
 export const companionEnablement = (
