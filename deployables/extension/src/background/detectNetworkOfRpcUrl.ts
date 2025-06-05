@@ -47,10 +47,6 @@ export const detectNetworkOfRpcUrl = async ({
       return { newEndpoint: false }
     }
 
-    console.debug(
-      `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${chainId}`,
-    )
-
     return { newEndpoint: true, chainId }
   } catch (error) {
     sentry.captureException(error)

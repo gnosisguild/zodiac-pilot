@@ -52,6 +52,10 @@ export const trackRequests = (): TrackRequestsResult => {
       trackRequest(details)
         .then((result) => {
           if (result.newEndpoint) {
+            console.debug(
+              `detected **new** network of JSON RPC endpoint ${details.url} in tab #${details.tabId}: ${result.chainId}`,
+            )
+
             state.chainIdByRpcUrl.set(details.url, result.chainId)
 
             trackRpcUrl(state, { tabId: details.tabId, url: details.url })
@@ -105,7 +109,7 @@ const trackRequest = async ({
 
   // only consider requests with a JSON Rpc body
   if (!hasJsonRpcBody(requestBody)) {
-    return parseNetworkFromRequestBody({ requestBody, url })
+    return parseNetworkFromRequestBody({ requestBody })
   }
 
   return detectNetworkOfRpcUrl({ url, tabId })
