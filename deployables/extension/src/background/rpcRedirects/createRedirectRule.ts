@@ -1,4 +1,4 @@
-import { REMOVE_CSP_RULE_ID } from '../cspHeaderRule'
+import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 
 type RedirectRuleOptions = {
   id?: number

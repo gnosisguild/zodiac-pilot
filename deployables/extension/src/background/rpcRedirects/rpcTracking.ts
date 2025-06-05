@@ -2,6 +2,7 @@ import { sentry } from '@/sentry'
 import type { ChainId } from 'ser-kit'
 import type { Event } from '../events'
 import { createEventListener } from '../events'
+import { updateCSPHeaderRule } from './cspHeaderRule'
 import {
   detectNetworkOfRpcUrl,
   type DetectNetworkResult,
@@ -20,8 +21,8 @@ export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions,
   ) => Map<string, number[]>
-  trackTab: (tabId: number) => void
-  untrackTab: (tabId: number) => void
+  trackTab: (tabId: number) => Promise<void>
+  untrackTab: (tabId: number) => Promise<void>
   onNewRpcEndpointDetected: Event
 }
 
@@ -82,11 +83,15 @@ export const trackRequests = (): TrackRequestsResult => {
     getTrackedRpcUrlsForChainId({ chainId }) {
       return getTabIdsByRpcUrl(state, { chainId })
     },
-    trackTab(tabId) {
+    async trackTab(tabId) {
       state.trackedTabs.add(tabId)
+
+      await updateCSPHeaderRule(state.trackedTabs)
     },
-    untrackTab(tabId) {
+    async untrackTab(tabId) {
       state.trackedTabs.delete(tabId)
+
+      await updateCSPHeaderRule(state.trackedTabs)
     },
     onNewRpcEndpointDetected: onNewRpcEndpointDetected.toEvent(),
   }
