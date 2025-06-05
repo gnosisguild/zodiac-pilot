@@ -1,16 +1,17 @@
 import { sentry } from '@/sentry'
 import type { ChainId } from 'ser-kit'
-import { createEventListener } from './createEventListener'
+import type { Event } from '../events'
+import { createEventListener } from '../events'
+import { updateCSPHeaderRule } from './cspHeaderRule'
 import {
   detectNetworkOfRpcUrl,
   type DetectNetworkResult,
 } from './detectNetworkOfRpcUrl'
+import { enableRpcDebugLogging } from './enableRpcDebugLogging'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { parseNetworkFromRequestBody } from './parseNetworkFromRequestBody'
-import { enableRpcDebugLogging } from './rpcRedirect'
 import { createRpcTrackingState, type TrackingState } from './rpcTrackingState'
 import { trackRpcUrl } from './trackRpcUrl'
-import type { Event } from './types'
 
 type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
@@ -20,8 +21,8 @@ export type TrackRequestsResult = {
   getTrackedRpcUrlsForChainId: (
     options: GetTrackedRpcUrlsForChainIdOptions,
   ) => Map<string, number[]>
-  trackTab: (tabId: number) => void
-  untrackTab: (tabId: number) => void
+  trackTab: (tabId: number) => Promise<void>
+  untrackTab: (tabId: number) => Promise<void>
   onNewRpcEndpointDetected: Event
 }
 
@@ -82,11 +83,15 @@ export const trackRequests = (): TrackRequestsResult => {
     getTrackedRpcUrlsForChainId({ chainId }) {
       return getTabIdsByRpcUrl(state, { chainId })
     },
-    trackTab(tabId) {
+    async trackTab(tabId) {
       state.trackedTabs.add(tabId)
+
+      await updateCSPHeaderRule(state.trackedTabs)
     },
-    untrackTab(tabId) {
+    async untrackTab(tabId) {
       state.trackedTabs.delete(tabId)
+
+      await updateCSPHeaderRule(state.trackedTabs)
     },
     onNewRpcEndpointDetected: onNewRpcEndpointDetected.toEvent(),
   }

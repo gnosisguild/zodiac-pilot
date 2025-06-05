@@ -10,7 +10,7 @@ import { reloadTab } from '@/utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import { PilotMessageType } from '@zodiac/messages'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { trackRequests } from './rpcTracking'
+import { trackRequests } from '../rpcRedirects'
 import { trackSessions } from './sessionTracking'
 
 vi.mock('@/utils', async (importOriginal) => {

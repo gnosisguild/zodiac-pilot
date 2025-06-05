@@ -2,10 +2,8 @@ import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { PilotMessageType, type Message } from '@zodiac/messages'
 import EventEmitter from 'events'
-import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
-import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
-import type { TrackRequestsResult } from './rpcTracking'
-import type { Fork } from './types'
+import type { Fork, TrackRequestsResult } from '../rpcRedirects'
+import { addRpcRedirectRules, removeAllRpcRedirectRules } from '../rpcRedirects'
 
 export type Sessions = Map<number, PilotSession>
 
@@ -37,9 +35,7 @@ export class PilotSession extends EventEmitter<{
   async trackTab(tabId: number) {
     this.tabs.add(tabId)
 
-    this.rpcTracking.trackTab(tabId)
-
-    await updateCSPHeaderRule(this.tabs)
+    await this.rpcTracking.trackTab(tabId)
 
     await sendMessageToTab(tabId, {
       type: PilotMessageType.PILOT_CONNECT,
@@ -49,9 +45,7 @@ export class PilotSession extends EventEmitter<{
   async untrackTab(tabId: number) {
     this.tabs.delete(tabId)
 
-    this.rpcTracking.untrackTab(tabId)
-
-    await updateCSPHeaderRule(this.tabs)
+    await this.rpcTracking.untrackTab(tabId)
   }
 
   async delete() {
@@ -63,7 +57,6 @@ export class PilotSession extends EventEmitter<{
 
     this.rpcTracking.onNewRpcEndpointDetected.removeAllListeners()
 
-    await removeCSPHeaderRule()
     await removeAllRpcRedirectRules()
   }
 

@@ -2,19 +2,19 @@ import { chromeMock } from '@/test-utils'
 import { randomUUID } from 'crypto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { companionEnablement } from './companionEnablement'
-import { trackRequests } from './rpcTracking'
-import { trackSessions } from './sessionTracking'
-import { trackSimulations } from './simulationTracking'
+import { trackRequests } from './rpcRedirects'
+import { trackSessions } from './sessions'
+import { trackSimulations } from './simulations'
 
-vi.mock('./sessionTracking', () => ({
+vi.mock('./sessions', () => ({
   trackSessions: vi.fn(),
 }))
 
-vi.mock('./rpcTracking', () => ({
+vi.mock('./rpcRedirects', () => ({
   trackRequests: vi.fn(),
 }))
 
-vi.mock('./simulationTracking', () => ({
+vi.mock('./simulations', () => ({
   trackSimulations: vi.fn(),
 }))
 

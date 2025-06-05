@@ -2,9 +2,10 @@ import {
   createInternalMessageHandler,
   PilotSimulationMessageType,
 } from '@zodiac/messages'
-import { createEventListener } from './createEventListener'
-import type { TrackSessionsResult } from './sessionTracking'
-import type { Event, Fork } from './types'
+import type { Event } from '../events'
+import { createEventListener } from '../events'
+import type { Fork } from '../rpcRedirects'
+import type { TrackSessionsResult } from '../sessions'
 import { updateBadge } from './updateBadge'
 
 type SimulationUpdateEventListener = (fork: Fork | null) => void
