@@ -6,7 +6,7 @@ import type { RefObject } from 'react'
 import { createEventListener } from './createEventListener'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession, type Sessions } from './PilotSession'
-import type { TrackRequestsResult } from './rpcTracking'
+import type { TrackRequestsResult } from './rpcRedirects'
 import type { Event } from './types'
 import { withPilotSession, type CallbackFn } from './withPilotSession'
 

@@ -1,7 +1,7 @@
 import { sentry } from '@/sentry'
 import { companionEnablement } from './companionEnablement'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
-import { trackRequests } from './rpcTracking'
+import { trackRequests } from './rpcRedirects'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 

@@ -10,7 +10,7 @@ import {
 } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { trackRequests } from './rpcTracking'
+import { trackRequests } from './rpcRedirects'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 

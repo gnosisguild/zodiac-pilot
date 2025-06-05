@@ -1,7 +1,7 @@
 import { Chain } from '@zodiac/chains'
 import { describe, expect, it, vi } from 'vitest'
 import { PilotSession } from './PilotSession'
-import { trackRequests } from './rpcTracking'
+import { trackRequests } from './rpcRedirects'
 
 describe('Pilot Session', () => {
   const trackRequestsResult = trackRequests()

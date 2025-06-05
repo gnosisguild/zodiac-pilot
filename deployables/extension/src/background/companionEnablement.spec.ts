@@ -20,7 +20,7 @@ import {
 import { mockActiveTab, mockTab, mockTabClose } from '@zodiac/test-utils/chrome'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { companionEnablement } from './companionEnablement'
-import { trackRequests } from './rpcTracking'
+import { trackRequests } from './rpcRedirects'
 import { trackSessions } from './sessionTracking'
 import { trackSimulations } from './simulationTracking'
 

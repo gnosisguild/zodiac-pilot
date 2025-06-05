@@ -1,7 +1,7 @@
 import { chromeMock } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
 import { describe, expect, it } from 'vitest'
-import { addRpcRedirectRules } from './addRcpRedirectRule'
+import { addRpcRedirectRules } from './addRpcRedirectRule'
 import { removeAllRpcRedirectRules } from './removeAllRpcRedirectRules'
 
 describe('RPC redirects', () => {
