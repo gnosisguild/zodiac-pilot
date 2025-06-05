@@ -3,7 +3,7 @@ import { companionEnablement } from './companionEnablement'
 import { enableExternalPanelOpen } from './enableExternalPanelOpen'
 import { trackRequests } from './rpcRedirects'
 import { trackSessions } from './sessionTracking'
-import { trackSimulations } from './simulationTracking'
+import { trackSimulations } from './simulations'
 
 const trackRequestsResult = trackRequests()
 const trackSessionsResult = trackSessions(trackRequestsResult)

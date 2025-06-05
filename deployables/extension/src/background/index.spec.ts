@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { companionEnablement } from './companionEnablement'
 import { trackRequests } from './rpcRedirects'
 import { trackSessions } from './sessionTracking'
-import { trackSimulations } from './simulationTracking'
+import { trackSimulations } from './simulations'
 
 vi.mock('./sessionTracking', () => ({
   trackSessions: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock('./rpcRedirects', () => ({
   trackRequests: vi.fn(),
 }))
 
-vi.mock('./simulationTracking', () => ({
+vi.mock('./simulations', () => ({
   trackSimulations: vi.fn(),
 }))
 
