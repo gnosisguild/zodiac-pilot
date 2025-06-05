@@ -3,11 +3,11 @@ import { isCompanionApp, isValidTab, reloadActiveTab, reloadTab } from '@/utils'
 import { PilotMessageType, type Message } from '@zodiac/messages'
 import { format } from 'date-fns'
 import type { RefObject } from 'react'
-import { createEventListener } from './createEventListener'
+import type { Event } from './events'
+import { createEventListener } from './events'
 import { getPilotSession } from './getPilotSession'
 import { PilotSession, type Sessions } from './PilotSession'
 import type { TrackRequestsResult } from './rpcRedirects'
-import type { Event } from './types'
 import { withPilotSession, type CallbackFn } from './withPilotSession'
 
 type SessionDeletedEventListener = (windowId: number) => void

@@ -1,7 +1,7 @@
 import { sentry } from '@/sentry'
 import type { ChainId } from 'ser-kit'
-import { createEventListener } from '../createEventListener'
-import type { Event } from '../types'
+import type { Event } from '../events'
+import { createEventListener } from '../events'
 import {
   detectNetworkOfRpcUrl,
   type DetectNetworkResult,
