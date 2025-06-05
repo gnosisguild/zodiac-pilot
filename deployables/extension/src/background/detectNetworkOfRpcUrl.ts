@@ -1,24 +1,30 @@
 import { sentry } from '@/sentry'
 import { sendMessageToTab } from '@/utils'
+import type { ChainId } from '@zodiac/chains'
 import { RpcMessageType } from '@zodiac/messages'
-import type { TrackingState } from './rpcTrackingState'
-import { trackRpcUrl } from './trackRpcUrl'
 
 type DetectNetworkOfRpcOptions = {
   url: string
   tabId: number
 }
 
-export type DetectNetworkResult = {
-  newEndpoint: boolean
+type NewNetworkDetected = {
+  newEndpoint: true
+  chainId: ChainId
 }
 
-export const detectNetworkOfRpcUrl = async (
-  state: TrackingState,
-  { url, tabId }: DetectNetworkOfRpcOptions,
-): Promise<DetectNetworkResult> => {
-  const { chainIdPromiseByRpcUrl, chainIdByRpcUrl } = state
+type ExistingNetworkDetected = {
+  newEndpoint: false
+}
 
+export type DetectNetworkResult = NewNetworkDetected | ExistingNetworkDetected
+
+const chainIdPromiseByRpcUrl = new Map<string, Promise<ChainId>>()
+
+export const detectNetworkOfRpcUrl = async ({
+  url,
+  tabId,
+}: DetectNetworkOfRpcOptions): Promise<DetectNetworkResult> => {
   if (!chainIdPromiseByRpcUrl.has(url)) {
     chainIdPromiseByRpcUrl.set(
       url,
@@ -30,32 +36,18 @@ export const detectNetworkOfRpcUrl = async (
   }
 
   try {
-    const result = await chainIdPromiseByRpcUrl.get(url)
+    const chainId = await chainIdPromiseByRpcUrl.get(url)
 
-    if (result == null || chainIdByRpcUrl.has(url)) {
-      if (result == null) {
-        sentry.captureMessage(
-          `Could not determine network for endpoint: ${url}`,
-          'error',
-        )
-      }
-
-      console.debug(
-        `detected already tracked network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
+    if (chainId == null) {
+      sentry.captureMessage(
+        `Could not determine network for endpoint: ${url}`,
+        'error',
       )
 
       return { newEndpoint: false }
     }
 
-    trackRpcUrl(state, { tabId, url })
-
-    chainIdByRpcUrl.set(url, result)
-
-    console.debug(
-      `detected **new** network of JSON RPC endpoint ${url} in tab #${tabId}: ${result}`,
-    )
-
-    return { newEndpoint: true }
+    return { newEndpoint: true, chainId }
   } catch (error) {
     sentry.captureException(error)
 

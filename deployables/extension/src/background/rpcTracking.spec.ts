@@ -19,7 +19,10 @@ const mockDetectNetworkOfRpcUrl = vi.mocked(detectNetworkOfRpcUrl)
 describe('RPC Tracking', () => {
   describe('Event handling', () => {
     beforeEach(() => {
-      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({
+        newEndpoint: true,
+        chainId: Chain.ETH,
+      })
     })
 
     it('notifies when a new network has been tracked', async () => {
@@ -85,7 +88,10 @@ describe('RPC Tracking', () => {
 
   describe('Ignored from tracking', () => {
     beforeEach(() => {
-      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({
+        newEndpoint: true,
+        chainId: Chain.ETH,
+      })
     })
 
     it.each(['GET', 'OPTIONS', 'PUT'])(
@@ -102,7 +108,10 @@ describe('RPC Tracking', () => {
 
         result.onNewRpcEndpointDetected.addListener(handler)
 
-        mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+        mockDetectNetworkOfRpcUrl.mockResolvedValue({
+          newEndpoint: true,
+          chainId: Chain.ETH,
+        })
 
         await mockWebRequest(tab, {
           method: 'GET',
@@ -125,7 +134,10 @@ describe('RPC Tracking', () => {
 
       result.onNewRpcEndpointDetected.addListener(handler)
 
-      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({
+        newEndpoint: true,
+        chainId: Chain.ETH,
+      })
 
       await mockWebRequest(tab, {
         method: 'POST',
@@ -145,7 +157,10 @@ describe('RPC Tracking', () => {
 
       result.onNewRpcEndpointDetected.addListener(handler)
 
-      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({
+        newEndpoint: true,
+        chainId: Chain.ETH,
+      })
 
       await mockWebRequest(tab, {
         method: 'POST',
@@ -167,7 +182,10 @@ describe('RPC Tracking', () => {
 
       result.onNewRpcEndpointDetected.addListener(handler)
 
-      mockDetectNetworkOfRpcUrl.mockResolvedValue({ newEndpoint: true })
+      mockDetectNetworkOfRpcUrl.mockResolvedValue({
+        newEndpoint: true,
+        chainId: Chain.ETH,
+      })
 
       await mockWebRequest(tab, {
         method: 'POST',

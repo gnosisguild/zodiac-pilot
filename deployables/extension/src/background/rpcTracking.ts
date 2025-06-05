@@ -9,6 +9,7 @@ import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { parseNetworkFromRequestBody } from './parseNetworkFromRequestBody'
 import { enableRpcDebugLogging } from './rpcRedirect'
 import { createRpcTrackingState, type TrackingState } from './rpcTrackingState'
+import { trackRpcUrl } from './trackRpcUrl'
 import type { Event } from './types'
 
 type GetTrackedRpcUrlsForChainIdOptions = {
@@ -33,9 +34,32 @@ export const trackRequests = (): TrackRequestsResult => {
 
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
-      trackRequest(state, details)
-        .then(({ newEndpoint }) => {
-          if (newEndpoint) {
+      if (state.chainIdByRpcUrl.has(details.url)) {
+        console.debug(
+          `detected already tracked network of JSON RPC endpoint ${details.url} in tab #${details.tabId}: ${state.chainIdByRpcUrl.get(details.url)}`,
+        )
+
+        return
+      }
+
+      const hasActiveSession = state.trackedTabs.has(details.tabId)
+
+      // only handle requests in tracked tabs
+      if (!hasActiveSession) {
+        return
+      }
+
+      trackRequest(details)
+        .then((result) => {
+          if (result.newEndpoint) {
+            console.debug(
+              `detected **new** network of JSON RPC endpoint ${details.url} in tab #${details.tabId}: ${result.chainId}`,
+            )
+
+            state.chainIdByRpcUrl.set(details.url, result.chainId)
+
+            trackRpcUrl(state, { tabId: details.tabId, url: details.url })
+
             onNewRpcEndpointDetected.callListeners()
           }
         })
@@ -68,17 +92,12 @@ export const trackRequests = (): TrackRequestsResult => {
   }
 }
 
-const trackRequest = async (
-  state: TrackingState,
-  { tabId, url, method, requestBody }: chrome.webRequest.OnBeforeRequestDetails,
-): Promise<DetectNetworkResult> => {
-  const hasActiveSession = state.trackedTabs.has(tabId)
-
-  // only handle requests in tracked tabs
-  if (!hasActiveSession) {
-    return { newEndpoint: false }
-  }
-
+const trackRequest = async ({
+  tabId,
+  url,
+  method,
+  requestBody,
+}: chrome.webRequest.OnBeforeRequestDetails): Promise<DetectNetworkResult> => {
   if (method !== 'POST') {
     return { newEndpoint: false }
   }
@@ -90,10 +109,10 @@ const trackRequest = async (
 
   // only consider requests with a JSON Rpc body
   if (!hasJsonRpcBody(requestBody)) {
-    return parseNetworkFromRequestBody(state, { requestBody, url, tabId })
+    return parseNetworkFromRequestBody({ requestBody })
   }
 
-  return detectNetworkOfRpcUrl(state, { url, tabId })
+  return detectNetworkOfRpcUrl({ url, tabId })
 }
 
 type GetRpcUrlsOptions = {
