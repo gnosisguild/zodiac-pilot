@@ -1,6 +1,6 @@
 import { captureLastError } from '@/sentry'
-import type { Fork } from '../types'
 import { createRedirectRule } from './createRedirectRule'
+import type { Fork } from './Fork'
 
 /**
  * Update the RPC redirect rules. This must be called for every update to activePilotSessions.

@@ -8,6 +8,7 @@ import { trackSimulations } from './simulations'
 const trackRequestsResult = trackRequests()
 const trackSessionsResult = trackSessions(trackRequestsResult)
 const trackSimulationsResult = trackSimulations(trackSessionsResult)
+
 companionEnablement(trackSessionsResult, trackSimulationsResult)
 
 enableExternalPanelOpen()

@@ -2,9 +2,8 @@ import { sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { PilotMessageType, type Message } from '@zodiac/messages'
 import EventEmitter from 'events'
-import type { TrackRequestsResult } from '../rpcRedirects'
+import type { Fork, TrackRequestsResult } from '../rpcRedirects'
 import { addRpcRedirectRules, removeAllRpcRedirectRules } from '../rpcRedirects'
-import type { Fork } from '../types'
 
 export type Sessions = Map<number, PilotSession>
 

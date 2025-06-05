@@ -4,8 +4,8 @@ import {
 } from '@zodiac/messages'
 import type { Event } from '../events'
 import { createEventListener } from '../events'
+import type { Fork } from '../rpcRedirects'
 import type { TrackSessionsResult } from '../sessions'
-import type { Fork } from '../types'
 import { updateBadge } from './updateBadge'
 
 type SimulationUpdateEventListener = (fork: Fork | null) => void

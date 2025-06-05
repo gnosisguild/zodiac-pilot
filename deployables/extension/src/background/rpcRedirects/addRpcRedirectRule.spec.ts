@@ -1,9 +1,10 @@
 import { chromeMock } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
 import { describe, expect, it } from 'vitest'
-import type { Fork } from '../types'
+
 import { addRpcRedirectRules } from './addRpcRedirectRule'
 import { createRedirectRule } from './createRedirectRule'
+import type { Fork } from './Fork'
 
 describe('RPC redirects', () => {
   const redirectUrl = 'https://test-rpc.com'
