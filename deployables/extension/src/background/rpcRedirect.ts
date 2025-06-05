@@ -1,6 +1,5 @@
 import { captureLastError } from '@/sentry'
 import { createRedirectRule } from './createRedirectRule'
-import { REMOVE_CSP_RULE_ID } from './cspHeaderRule'
 import type { Fork } from './types'
 
 export const removeAllRpcRedirectRules = async (forkUrl?: string) => {
@@ -97,18 +96,4 @@ export const addRpcRedirectRules = async (
   })
 
   return promise
-}
-
-export const enableRpcDebugLogging = () => {
-  // debug logging for RPC intercepts
-  // This API is only available in unpacked mode!
-  if (chrome.declarativeNetRequest.onRuleMatchedDebug == null) {
-    return
-  }
-
-  chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((details) => {
-    if (details.rule.ruleId !== REMOVE_CSP_RULE_ID) {
-      console.debug('rule matched on request', { details })
-    }
-  })
 }

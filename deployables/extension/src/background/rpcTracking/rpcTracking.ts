@@ -1,16 +1,16 @@
 import { sentry } from '@/sentry'
 import type { ChainId } from 'ser-kit'
-import { createEventListener } from './createEventListener'
+import { createEventListener } from '../createEventListener'
+import type { Event } from '../types'
 import {
   detectNetworkOfRpcUrl,
   type DetectNetworkResult,
 } from './detectNetworkOfRpcUrl'
+import { enableRpcDebugLogging } from './enableRpcDebugLogging'
 import { hasJsonRpcBody } from './hasJsonRpcBody'
 import { parseNetworkFromRequestBody } from './parseNetworkFromRequestBody'
-import { enableRpcDebugLogging } from './rpcRedirect'
 import { createRpcTrackingState, type TrackingState } from './rpcTrackingState'
 import { trackRpcUrl } from './trackRpcUrl'
-import type { Event } from './types'
 
 type GetTrackedRpcUrlsForChainIdOptions = {
   chainId: ChainId
