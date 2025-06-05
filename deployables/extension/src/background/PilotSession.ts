@@ -3,8 +3,8 @@ import { invariant } from '@epic-web/invariant'
 import { PilotMessageType, type Message } from '@zodiac/messages'
 import EventEmitter from 'events'
 import { removeCSPHeaderRule, updateCSPHeaderRule } from './cspHeaderRule'
-import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcRedirect'
 import type { TrackRequestsResult } from './rpcTracking'
+import { addRpcRedirectRules, removeAllRpcRedirectRules } from './rpcTracking'
 import type { Fork } from './types'
 
 export type Sessions = Map<number, PilotSession>
