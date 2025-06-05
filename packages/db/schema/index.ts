@@ -362,6 +362,31 @@ const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
   }),
 }))
 
+export const ProposedTransactionTable = pgTable(
+  'ProposedTransaction',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    transaction: json().$type<MetaTransactionRequest[]>().notNull(),
+
+    signedTransactionId: uuid()
+      .$type<UUID>()
+      .references(() => SignedTransactionTable.id, {
+        onDelete: 'cascade',
+      }),
+
+    ...userReference,
+    ...tenantReference,
+    ...accountReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.userId),
+    index().on(table.signedTransactionId),
+  ],
+)
+
 export const SignedTransactionTable = pgTable(
   'SignedTransaction',
   {
@@ -401,6 +426,7 @@ export const schema = {
   signedTransaction: SignedTransactionTable,
   subscriptionPlans: SubscriptionPlanTable,
   activeSubscriptionPlans: ActiveSubscriptionTable,
+  proposedTransactions: ProposedTransactionTable,
 
   TenantRelations,
   FeatureRelations,
