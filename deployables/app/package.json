@@ -49,7 +49,7 @@
     "ser-kit": "3.8.0",
     "viem": "2.30.6",
     "wagmi": "2.15.5",
-    "zod": "3.25.50"
+    "zod": "3.25.51"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.44.1",
