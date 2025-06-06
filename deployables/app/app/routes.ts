@@ -78,6 +78,8 @@ export default [
               'routes/sign/account.$accountId.$transactions/sign.tsx',
             ),
 
+            route('/proposal/:proposalId', 'routes/sign/proposal/sign.tsx'),
+
             route(
               ':route/:transactions',
               'routes/sign/$route.$transactions/sign.tsx',
@@ -132,6 +134,10 @@ export default [
     route('remove-active-account', 'routes/extension/removeActiveAccount.ts'),
     route('account/:accountId', 'routes/extension/account.ts'),
     route('active-route/:accountId', 'routes/extension/activeRoute.ts'),
+    route(
+      'propose-transaction/:accountId',
+      'routes/extension/propose-transaction.ts',
+    ),
   ]),
 
   ...prefix('/system', [

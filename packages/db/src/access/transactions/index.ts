@@ -1,2 +1,6 @@
+export { confirmTransactionProposal } from './confirmTransactionProposal'
+export { getProposedTransaction } from './getProposedTransaction'
+export { getProposedTransactions } from './getProposedTransactions'
 export { getTransactions } from './getTransactions'
+export { proposeTransaction } from './proposeTransaction'
 export { saveTransaction } from './saveTransaction'
