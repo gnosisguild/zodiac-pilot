@@ -60,7 +60,6 @@ esbuild
       global: 'window',
       'process.env.COMPANION_APP_URL': `"${process.env.COMPANION_APP_URL}"`,
       'process.env.ROLES_APP_URL': `"${process.env.ROLES_APP_URL || 'https://roles.gnosisguild.org'}"`,
-      'process.env.WORKOS_CLIENT_ID': `"${process.env.WORKOS_CLIENT_ID}"`,
     },
     plugins: [
       plugin(stdLibBrowser),
