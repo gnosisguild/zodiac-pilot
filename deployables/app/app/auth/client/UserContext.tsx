@@ -1,4 +1,4 @@
-import type { User } from '@workos-inc/node'
+import type { User } from '@zodiac/db/schema'
 import { createContext, useContext, type PropsWithChildren } from 'react'
 
 const UserContext = createContext<User | null>(null)

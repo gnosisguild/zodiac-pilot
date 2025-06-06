@@ -4,8 +4,8 @@ import { api, type FetchOptions } from './api'
 const authSchema = z.object({
   user: z
     .object({
-      firstName: z.string(),
-      lastName: z.string(),
+      firstName: z.string().nullable(),
+      lastName: z.string().nullable(),
     })
     .nullable(),
 })
