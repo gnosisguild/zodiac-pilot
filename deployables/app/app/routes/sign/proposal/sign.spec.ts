@@ -11,6 +11,7 @@ import { Chain, EXPLORER_URL } from '@zodiac/chains'
 import {
   activateRoute,
   dbClient,
+  getProposedTransaction,
   getTransactions,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -556,10 +557,9 @@ describe('Sign', () => {
 
         const [transaction] = await getTransactions(dbClient(), account.id)
 
-        expect(transaction).toHaveProperty(
-          'explorerUrl',
-          new URL(`tx/${testHash}`, EXPLORER_URL[account.chainId]).toString(),
-        )
+        await expect(
+          getProposedTransaction(dbClient(), proposal.id),
+        ).resolves.toHaveProperty('signedTransactionId', transaction.id)
       })
     })
   })
