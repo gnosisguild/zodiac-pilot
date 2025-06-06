@@ -387,6 +387,10 @@ export const ProposedTransactionTable = pgTable(
   ],
 )
 
+export type ProposedTransaction = typeof ProposedTransactionTable.$inferSelect
+export type ProposedTransactionCreateInput =
+  typeof ProposedTransactionTable.$inferInsert
+
 export const SignedTransactionTable = pgTable(
   'SignedTransaction',
   {

@@ -18,16 +18,12 @@ import {
   accountFactory,
   routeFactory,
   tenantFactory,
+  transactionProposalFactory,
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { multisigTransactionUrl } from '@zodiac/safe'
-import { encode } from '@zodiac/schema'
-import {
-  createMockTransactionRequest,
-  randomAddress,
-  randomHex,
-} from '@zodiac/test-utils'
+import { randomAddress, randomHex } from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { href } from 'react-router'
 import {
@@ -131,17 +127,19 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([])
 
         await render(
-          href('/submit/account/:accountId/:transactions', {
-            accountId: account.id,
-            transactions: encode([transaction]),
+          href('/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
           }),
           { tenant, user },
         )
@@ -161,18 +159,20 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await expect(
           render(
-            href('/submit/account/:accountId/:transactions', {
-              accountId: account.id,
-              transactions: encode([transaction]),
+            href('/submit/proposal/:proposalId', {
+              proposalId: proposal.id,
             }),
             { tenant, user },
           ),
@@ -185,17 +185,19 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/account/:accountId/:transactions', {
-            accountId: account.id,
-            transactions: encode([transaction]),
+          href('/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
           }),
           { tenant, user },
         )
@@ -215,17 +217,19 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/account/:accountId/:transactions', {
-            accountId: account.id,
-            transactions: encode([transaction]),
+          href('/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
           }),
           { tenant, user },
         )
@@ -244,10 +248,13 @@ describe('Sign', () => {
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
 
       await activateRoute(dbClient(), tenant, user, route)
-
-      const transaction = createMockTransactionRequest()
 
       mockQueryRoutes.mockResolvedValue([
         toExecutionRoute({ wallet, account, route }),
@@ -258,9 +265,8 @@ describe('Sign', () => {
       })
 
       await render(
-        href('/submit/account/:accountId/:transactions', {
-          accountId: account.id,
-          transactions: encode([transaction]),
+        href('/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
         }),
         { tenant, user },
       )
@@ -277,10 +283,13 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -289,9 +298,8 @@ describe('Sign', () => {
 
         await expect(
           render(
-            href('/submit/account/:accountId/:transactions', {
-              accountId: account.id,
-              transactions: encode([transaction]),
+            href('/submit/proposal/:proposalId', {
+              proposalId: proposal.id,
             }),
             { tenant, user },
           ),
@@ -304,10 +312,13 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -315,9 +326,8 @@ describe('Sign', () => {
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/account/:accountId/:transactions', {
-            accountId: account.id,
-            transactions: encode([transaction]),
+          href('/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
           }),
           { tenant, user },
         )
@@ -337,10 +347,13 @@ describe('Sign', () => {
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
 
         await activateRoute(dbClient(), tenant, user, route)
-
-        const transaction = createMockTransactionRequest()
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -348,9 +361,8 @@ describe('Sign', () => {
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/account/:accountId/:transactions', {
-            accountId: account.id,
-            transactions: encode([transaction]),
+          href('/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
           }),
           { tenant, user },
         )
@@ -373,6 +385,11 @@ describe('Sign', () => {
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
 
       await activateRoute(dbClient(), tenant, user, route)
 
@@ -392,9 +409,8 @@ describe('Sign', () => {
       })
 
       await render(
-        href('/submit/account/:accountId/:transactions', {
-          accountId: account.id,
-          transactions: encode([createMockTransactionRequest()]),
+        href('/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
         }),
         { tenant, user },
       )
@@ -412,6 +428,11 @@ describe('Sign', () => {
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
 
       await activateRoute(dbClient(), tenant, user, route)
 
@@ -428,9 +449,8 @@ describe('Sign', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/submit/account/:accountId/:transactions', {
-          accountId: account.id,
-          transactions: encode([createMockTransactionRequest()]),
+        href('/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
         }),
         { user, tenant },
       )
@@ -455,6 +475,11 @@ describe('Sign', () => {
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
 
       await activateRoute(dbClient(), tenant, user, route)
 
@@ -472,9 +497,8 @@ describe('Sign', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/submit/account/:accountId/:transactions', {
-          accountId: account.id,
-          transactions: encode([createMockTransactionRequest()]),
+        href('/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
         }),
         { user, tenant },
       )
@@ -489,6 +513,53 @@ describe('Sign', () => {
         const url = multisigTransactionUrl(chainId, account.address, testHash)
 
         expect(transaction).toHaveProperty('safeWalletUrl', url.toString())
+      })
+    })
+
+    it('links the proposal and the signed transaction', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      const testHash = randomHex(18)
+
+      mockQueryRoutes.mockResolvedValue([])
+      mockPlanExecution.mockResolvedValue([
+        createMockExecuteTransactionAction({
+          from: wallet.address,
+        }),
+      ])
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
+        }),
+        { user, tenant },
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitFor(async () => {
+        await waitForPendingActions()
+
+        const [transaction] = await getTransactions(dbClient(), account.id)
+
+        expect(transaction).toHaveProperty(
+          'explorerUrl',
+          new URL(`tx/${testHash}`, EXPLORER_URL[account.chainId]).toString(),
+        )
       })
     })
   })
