@@ -8,7 +8,11 @@
       "@gnosis.pm/zodiac": "patches/@gnosis.pm__zodiac.patch",
       "evm-proxy-detection": "patches/evm-proxy-detection.patch",
       "@duneanalytics/client-sdk": "patches/@duneanalytics__client-sdk.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "supabase"
+    ]
   },
   "scripts": {
     "build": "turbo run build --affected",

@@ -7,15 +7,6 @@ VALUES
   );
 
 INSERT INTO
-  "Feature" ("name")
+  "SubscriptionPlan" ("name", "isDefault", "priority")
 VALUES
-  ('user-management');
-
-INSERT INTO
-  "ActiveFeature" ("tenantId", "featureId")
-SELECT
-  "Tenant"."id",
-  "Feature"."id"
-FROM
-  "Tenant",
-  "Feature";
+  ('free', TRUE, 0);
