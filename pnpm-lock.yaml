@@ -354,8 +354,8 @@ importers:
         specifier: 7.6.2
         version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-stick:
-        specifier: 5.0.6
-        version: 5.0.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 5.0.7
+        version: 5.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ser-kit:
         specifier: 3.8.0
         version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.51)
@@ -1038,8 +1038,8 @@ importers:
         specifier: 5.10.1
         version: 5.10.1(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-stick:
-        specifier: 5.0.6
-        version: 5.0.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 5.0.7
+        version: 5.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-toastify:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -8310,8 +8310,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  react-stick@5.0.6:
-    resolution: {integrity: sha512-BLoA/TPCqBuWnpzMxpMvrVSokU6uLDR2Lv5WxIhuohv8kFKbYpVj0ITZc4qSbLJmOeLA8yXd+vF51QAMLZk27Q==}
+  react-stick@5.0.7:
+    resolution: {integrity: sha512-DFZgyC19QRKlk6kaFNBzwhaZkNbhSgDm9PsMzjkJfo5d3ocAGxh4k0RsH0bxjH25SqYO9z8xDajfKlkKaltx6Q==}
     engines: {node: '>=16.11', npm: '>=8.x'}
     peerDependencies:
       react: '>=16.8.0'
@@ -18381,7 +18381,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  react-stick@5.0.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-stick@5.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@types/invariant': 2.2.37
       invariant: 2.2.4
