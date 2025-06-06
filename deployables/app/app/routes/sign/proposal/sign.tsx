@@ -1,7 +1,7 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { ConnectWallet } from '@/components'
 import { simulateTransactionBundle } from '@/simulation-server'
-import { parseTransactionData, routeTitle } from '@/utils'
+import { routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
@@ -111,25 +111,27 @@ export const action = async (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { transactions, accountId },
+      params: { proposalId },
       context: {
         auth: { tenant, user },
       },
     }) => {
-      invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+      invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
+
+      const proposal = await getProposedTransaction(dbClient(), proposalId)
 
       const { route, account } = await getActiveRoute(
         dbClient(),
         tenant,
         user,
-        accountId,
+        proposal.accountId,
       )
 
       const data = await request.formData()
 
       const metaTransactions = await revokeApprovalIfNeeded(
         prefixAddress(account.chainId, account.address),
-        parseTransactionData(transactions),
+        proposal.transaction,
         {
           revokeApprovals: getBoolean(data, 'revokeApprovals'),
         },
@@ -156,7 +158,7 @@ export const action = async (args: Route.ActionArgs) =>
 
         case Intent.SignTransaction: {
           await saveTransaction(dbClient(), tenant, user, {
-            accountId,
+            accountId: proposal.accountId,
             walletId: route.wallet.id,
             routeId: route.id,
 
@@ -172,14 +174,16 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, tenant, params: { accountId } }) {
-        invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+      async hasAccess({ user, tenant, params: { proposalId } }) {
+        invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
+
+        const proposal = await getProposedTransaction(dbClient(), proposalId)
 
         const { route } = await getActiveRoute(
           dbClient(),
           tenant,
           user,
-          accountId,
+          proposal.accountId,
         )
 
         return route.wallet.belongsToId === user.id
