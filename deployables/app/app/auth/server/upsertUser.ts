@@ -8,11 +8,10 @@ import {
 
 export const upsertUser = async (db: DBClient, workOSUser: User) => {
   const existingUser = await findUserByExternalId(db, workOSUser.id)
+  const fullName =
+    `${workOSUser.firstName ?? ''} ${workOSUser.lastName ?? ''}`.trim()
 
   if (existingUser != null) {
-    const fullName =
-      `${workOSUser.firstName ?? ''} ${workOSUser.lastName ?? ''}`.trim()
-
     if (fullName === existingUser.fullName) {
       return existingUser
     }
@@ -21,7 +20,7 @@ export const upsertUser = async (db: DBClient, workOSUser: User) => {
   }
 
   return createUser(db, {
-    fullName: `${workOSUser.firstName} ${workOSUser.lastName}`,
+    fullName,
     externalId: workOSUser.id,
   })
 }
