@@ -124,10 +124,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
 
     case Intent.Login: {
-      await chrome.identity.launchWebAuthFlow({
-        url: `${getCompanionAppUrl()}/extension/sign-in`,
-        interactive: true,
-      })
+      try {
+        await chrome.identity.launchWebAuthFlow({
+          url: `${getCompanionAppUrl()}/extension/sign-in`,
+          interactive: true,
+        })
+      } catch {
+        console.debug('User did not log in')
+      }
 
       return null
     }
