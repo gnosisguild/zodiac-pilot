@@ -3,6 +3,7 @@ import { parseTransactionData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount, proposeTransaction } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
+import { href, redirect } from 'react-router'
 import type { Route } from './+types/sign'
 
 export const loader = async (args: Route.LoaderArgs) =>
@@ -16,12 +17,16 @@ export const loader = async (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
 
-      await proposeTransaction(dbClient(), {
+      const proposal = await proposeTransaction(dbClient(), {
         userId: user.id,
         tenantId: tenant.id,
         accountId,
         transaction: parseTransactionData(transactions),
       })
+
+      return redirect(
+        href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+      )
     },
     {
       ensureSignedIn: true,
