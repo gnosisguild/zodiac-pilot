@@ -52,7 +52,7 @@ export const useApplicableTranslation = (transactionId: string) => {
     run()
 
     return () => {
-      abortController.abort()
+      abortController.abort('Effect cancelled')
     }
   }, [account.address, account.chainId, apply, transaction])
 

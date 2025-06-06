@@ -68,7 +68,7 @@ export const useDisconnectWhenUnreachable = ({
     const interval = setInterval(probeConnection, 1000)
 
     return () => {
-      abortController.abort()
+      abortController.abort('Effect cancelled')
 
       clearInterval(interval)
     }

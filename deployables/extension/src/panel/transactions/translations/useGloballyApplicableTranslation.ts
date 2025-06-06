@@ -46,7 +46,7 @@ export const useGloballyApplicableTranslation = () => {
     }
     run()
     return () => {
-      abortController.abort()
+      abortController.abort('Effect cancelled')
     }
   }, [transactions, account.chainId, account.address, apply])
 }
