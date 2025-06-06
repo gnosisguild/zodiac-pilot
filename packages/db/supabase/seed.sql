@@ -9,4 +9,4 @@ VALUES
 INSERT INTO
   "SubscriptionPlan" ("name", "isDefault", "priority")
 VALUES
-  ("free", TRUE, "0");
+  ('free', TRUE, 0);
