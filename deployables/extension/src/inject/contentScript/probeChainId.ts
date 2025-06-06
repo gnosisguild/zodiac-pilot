@@ -49,4 +49,6 @@ const fastTrack = {
   'https://polygon-mainnet.infura.io/v3': Chain.MATIC,
 
   'https://eth.merkle.io': Chain.ETH,
+
+  'https://rpc.ankr.com/eth': Chain.ETH,
 }
