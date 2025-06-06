@@ -2,7 +2,6 @@
 // It has access to chrome.* APIs, but it can't interact with other extensions such as MetaMask.
 import { sentry } from '@/sentry'
 import { invariant } from '@epic-web/invariant'
-import { AuthKitProvider } from '@workos-inc/authkit-react'
 import { ToastContainer } from '@zodiac/ui'
 import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -27,18 +26,13 @@ const Root = () => {
 
   return (
     <StrictMode>
-      <AuthKitProvider
-        clientId={getWorkOSClientId()}
-        redirectUri={`https://${chrome.runtime.id}.chromiumapp.org/callback`}
-      >
-        <ProvidePort>
-          <div className="flex h-full flex-1 flex-col">
-            <RouterProvider router={router} />
-          </div>
+      <ProvidePort>
+        <div className="flex h-full flex-1 flex-col">
+          <RouterProvider router={router} />
+        </div>
 
-          <ToastContainer position="top-center" />
-        </ProvidePort>
-      </AuthKitProvider>
+        <ToastContainer position="top-center" />
+      </ProvidePort>
     </StrictMode>
   )
 }
@@ -62,16 +56,3 @@ if (process.env.LIVE_RELOAD) {
     }
   })
 }
-
-const getWorkOSClientId = () => {
-  const WORKOS_CLIENT_ID = process.env.WORKOS_CLIENT_ID
-
-  invariant(
-    WORKOS_CLIENT_ID != null,
-    '"WORKOS_CLIENT_ID" environment variable missing',
-  )
-
-  return WORKOS_CLIENT_ID
-}
-
-export default {}

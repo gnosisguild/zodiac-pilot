@@ -293,12 +293,6 @@ importers:
       '@sentry/browser':
         specifier: 9.29.0
         version: 9.29.0
-      '@workos-inc/authkit-react':
-        specifier: 0.10.0
-        version: 0.10.0(react@19.1.0)
-      '@workos-inc/node':
-        specifier: 7.54.0
-        version: 7.54.0(express@5.1.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../../packages/chains
@@ -4903,9 +4897,6 @@ packages:
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
 
-  '@workos-inc/authkit-js@0.11.0':
-    resolution: {integrity: sha512-RL05tPt6bTsmnubWvgjonjKwx9vHiQXz7ZdEibqMfNDM9Pxult3Y3k3i5RSEX1MsfELMv0y5OsEktyaYG0RsPw==}
-
   '@workos-inc/authkit-react-router@0.4.1':
     resolution: {integrity: sha512-l3dylC8Mha9LeZVtsBwXHhEoEWs0aiStzLBN7O/rLx2piuiDXbeditlcxSlN0McenfFv9yXTrA4Z1zVvw0uzLg==}
     engines: {node: '>=20.0.0'}
@@ -4913,11 +4904,6 @@ packages:
       react: ^18.0 || ^19.0.0
       react-dom: ^18.0 || ^19.0.0
       react-router: ^7.2.0
-
-  '@workos-inc/authkit-react@0.10.0':
-    resolution: {integrity: sha512-MW2Yi8ROAAzcoN708TmxDF9VTGYf7xUbzkU6B0u8MEgJcXANpr3pYalloJMH5xNd7apxXonHYtjR4O29oOLcNw==}
-    peerDependencies:
-      react: '>=17'
 
   '@workos-inc/node@7.54.0':
     resolution: {integrity: sha512-vcay7pewSoXBUow18O7E9G10uoNPJU0qlZPyx0P9FPLcqv5XE60JQ2DI79j+1IiVxFjmVdE8ntbq+Q+v5ie4PQ==}
@@ -14646,8 +14632,6 @@ snapshots:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
 
-  '@workos-inc/authkit-js@0.11.0': {}
-
   '@workos-inc/authkit-react-router@0.4.1(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@workos-inc/node': 7.54.0(express@5.1.0)
@@ -14660,11 +14644,6 @@ snapshots:
       - express
       - koa
       - next
-
-  '@workos-inc/authkit-react@0.10.0(react@19.1.0)':
-    dependencies:
-      '@workos-inc/authkit-js': 0.11.0
-      react: 19.1.0
 
   '@workos-inc/node@7.54.0(express@5.1.0)':
     dependencies:
