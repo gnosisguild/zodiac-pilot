@@ -1,3 +1,4 @@
+export { getProposedTransaction } from './getProposedTransaction'
 export { getProposedTransactions } from './getProposedTransactions'
 export { getTransactions } from './getTransactions'
 export { proposeTransaction } from './proposeTransaction'

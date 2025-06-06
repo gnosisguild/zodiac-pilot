@@ -5,8 +5,8 @@ import { parseTransactionData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  getAccount,
   getActiveRoute,
+  getProposedTransaction,
   saveTransaction,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -39,19 +39,20 @@ export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
-      params: { transactions, accountId },
+      params: { proposalId },
       context: {
         auth: { tenant, user },
       },
     }) => {
-      invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+      invariantResponse(isUUID(proposalId), 'Proposal ID is not a UUID')
 
-      const metaTransactions = parseTransactionData(transactions)
+      const proposal = await getProposedTransaction(dbClient(), proposalId)
+
       const { route, account } = await getActiveRoute(
         dbClient(),
         tenant,
         user,
-        accountId,
+        proposal.accountId,
       )
 
       const executionRoute = toExecutionRoute({
@@ -62,16 +63,16 @@ export const loader = async (args: Route.LoaderArgs) =>
 
       const [plan, queryRoutesResult, permissionCheckResult] =
         await Promise.all([
-          planExecution(metaTransactions, executionRoute),
+          planExecution(proposal.transaction, executionRoute),
           queryRoutes(executionRoute.initiator, executionRoute.avatar),
-          checkPermissions(executionRoute, metaTransactions),
+          checkPermissions(executionRoute, proposal.transaction),
         ])
 
       const simulate = async () => {
         const { error, tokenFlows, approvals } =
           await simulateTransactionBundle(
             executionRoute.avatar,
-            metaTransactions,
+            proposal.transaction,
           )
 
         return {
@@ -95,12 +96,12 @@ export const loader = async (args: Route.LoaderArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ tenant, params: { accountId } }) {
-        invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+      async hasAccess({ tenant, params: { proposalId } }) {
+        invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
 
-        const account = await getAccount(dbClient(), accountId)
+        const proposal = await getProposedTransaction(dbClient(), proposalId)
 
-        return account.tenantId === tenant.id
+        return proposal.tenantId === tenant.id
       },
     },
   )
