@@ -4,6 +4,7 @@ import { simulateTransactionBundle } from '@/simulation-server'
 import { routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  confirmTransactionProposal,
   dbClient,
   getActiveRoute,
   getProposedTransaction,
@@ -157,7 +158,7 @@ export const action = async (args: Route.ActionArgs) =>
         }
 
         case Intent.SignTransaction: {
-          await saveTransaction(dbClient(), tenant, user, {
+          const transaction = await saveTransaction(dbClient(), tenant, user, {
             accountId: proposal.accountId,
             walletId: route.wallet.id,
             routeId: route.id,
@@ -166,6 +167,11 @@ export const action = async (args: Route.ActionArgs) =>
 
             safeWalletUrl: getOptionalString(data, 'safeWalletUrl'),
             explorerUrl: getOptionalString(data, 'explorerUrl'),
+          })
+
+          await confirmTransactionProposal(dbClient(), {
+            proposalId: proposal.id,
+            signedTransactionId: transaction.id,
           })
 
           return null
