@@ -1,12 +1,11 @@
-# Zodiac Pilot Browser Extension
+# Zodiac Pilot
 
 The Zodiac Pilot browser extension is built using the [sidepanel](https://developer.chrome.com/docs/extensions/reference/api/sidePanel) model.
 It injects some code into web pages that allows it to, one the one hand, act as a wallet and record transactions, and on the other hand, connect to the user's default wallet extension for signing and executing transactions.
 
-To achieve this we use three pillars:
+To achieve this we use two pillars:
 
 - **[inject](./src/inject/)**: A script that is executed only for tracked tabs while the sidepanel is open and injects an EIP-1193 provider into the `window` object of apps to record transactions
-- **[connect](./src/connect/)**: A pair of [content scripts](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that allows the extension to connect to other wallet extensions installed in the browser.
 - **[monitor](./src/monitor/)**: A [content script](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts) that monitors if tabs need to reload to make sure apps properly reflect after simulated execution of recorded transactions
 
 ## Gotchas
@@ -17,12 +16,6 @@ They have access to `chrome.` APIs.
 To run code inside the page context we, therefore, **inject** more code from a content script into the page by dynamically creating a `script` node (see the [injectScript.ts](./src/utils/injectScript.ts) util for more info).
 The scripts that are injected in this way **cannot** access `chrome` APIs anymore.
 Communication between the injected code and the rest of the extension, therefore, uses `window.postMessage` and is relayed by the content script.
-
-## Communication
-
-As the extension needs to span multiple contexts, domains, and frames the communication of all involved parts is a bit tricky.
-[This diagram](https://link.excalidraw.com/readonly/aT6I8t4LkOMXoDkbYY5Q) aims to give a full overview over which parts exist, how they are created, and how they interact with each other.
-If you find a way to simplify this mechanism, please do!
 
 ## Background script
 
@@ -53,6 +46,29 @@ When a tab is tracked by a session the extension will also execute the [inject](
 When a simulation starts a fork will be created for the currently active session.
 At this time we're adding **redirect rules** for the tracked requests and ensure they go against our fork instead of their original target.
 While a fork is active the session will also ensure that the redirect rules are kept up to date when new requests are tracked.
+
+## Contribute
+
+### Prerequisites
+
+Copy the contents of `.env.template` into a local `.env` file.
+
+### Overview
+
+To run a development version of the extension:
+
+```bash
+pnpm dev
+```
+
+The build output is written to extension/public/build.
+The `dev` script will watch for changes and automatically rebuild.
+
+To enable the extension in Chrome, follow these steps:
+
+1. Open the Extension Management page by navigating to [chrome://extensions](chrome://extensions).
+2. Enable **Developer Mode** by clicking the toggle switch at the top right of the page.
+3. Click the **Load unpacked** button and select the `extension/public` directory.
 
 ## Testing
 
@@ -147,50 +163,4 @@ const { mockedTab, mockedPort } = await renderHook(() => useSomeHook(), {
 // it is returned as a ref that will point
 // to the most recent version
 mockedPort.current.postMessage('Test')
-```
-
-### E2E tests
-
-If you want to test a full integration you can write an E2E test using [`playwright`](https://playwright.dev/).
-In our pipeline the E2E tests always point to the example application we've created.
-If you want to cover more scenarios you might need to extend this application.
-We've created it so that we have full control over it and don't have to adapt our tests when someone else decides to update their app.
-
-The one thing "missing" is the real wallet of a user.
-However, since this is mostly also what we want to control we've opted to mock this away so that we can test all the interactions within our code without the need to mock any of it.
-
-#### `mockWeb3`
-
-Call this with the `page` object of a test to initialize the `Web3Mock` and to get access to some helpers that enable you to interact with the connected wallet.
-
-```ts
-import { mockWeb3 } from '@/e2e-utils'
-
-const {
-  // Simulate that the user has locked their wallet
-  lockWallet,
-
-  // Load new or additional accounts
-  loadAccounts,
-
-  // Switch the current chain
-  switchChain,
-} = mockWeb3(page)
-```
-
-#### `loadExtension`
-
-By default, you'll only have access to the example app.
-To load our extension and also get access to it (so that you can navigate around and click buttons) you can use the `loadExtension` helper.
-
-```ts
-import { loadExtension } from '@/e2e-utils'
-
-// makes sure that the extension is loaded
-// and returns a handle to the extension panel
-const extension = await loadExtension(page)
-
-// use the handle to interact with the
-// extension UI
-await extension.getByRole('button', { name: 'Submit' }).click()
 ```
