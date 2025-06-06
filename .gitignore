@@ -5,6 +5,7 @@ build
 dist
 coverage
 .turbo
+.temp/
 
 .env
 *.log
