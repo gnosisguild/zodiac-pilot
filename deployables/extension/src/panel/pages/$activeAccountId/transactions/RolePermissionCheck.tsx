@@ -105,7 +105,7 @@ export const RolePermissionCheck = ({ transactionId, mini = false }: Props) => {
     )
 
     return () => {
-      abortController.abort()
+      abortController.abort('Effect cancelled')
     }
   }, [transaction, route])
 
