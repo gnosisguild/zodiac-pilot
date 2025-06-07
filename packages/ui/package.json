@@ -44,7 +44,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-router": "7.6.2",
-    "vitest": "3.1.4"
+    "vitest": "3.2.2"
   },
   "peerDependencies": {
     "react": "19.1.0",
