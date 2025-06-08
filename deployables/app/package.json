@@ -16,7 +16,7 @@
     "@cowprotocol/widget-react": "0.13.0",
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
-    "@icons-pack/react-simple-icons": "13.0.0",
+    "@icons-pack/react-simple-icons": "13.1.0",
     "@radix-ui/themes": "3.2.1",
     "@react-router/node": "7.6.2",
     "@sentry/browser": "9.27.0",
