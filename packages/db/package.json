@@ -64,7 +64,7 @@
     "eslint-plugin-drizzle": "0.2.3",
     "madge": "8.0.0",
     "supabase": "2.24.3",
-    "vitest": "3.2.2"
+    "vitest": "3.2.3"
   },
   "peerDependencies": {
     "react": "19.1.0"
