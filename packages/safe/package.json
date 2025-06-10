@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
-    "@safe-global/api-kit": "3.0.1",
-    "@safe-global/protocol-kit": "6.0.4",
+    "@safe-global/api-kit": "3.0.2",
+    "@safe-global/protocol-kit": "6.0.5",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "ser-kit": "3.8.0"
