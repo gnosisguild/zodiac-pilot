@@ -26,7 +26,7 @@
     "@types/node": "22.14.1",
     "@types/react": "19.1.7",
     "@types/react-dom": "19.1.6",
-    "@vitejs/plugin-react": "4.5.1",
+    "@vitejs/plugin-react": "4.5.2",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
