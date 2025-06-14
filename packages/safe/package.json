@@ -21,7 +21,7 @@
     "@safe-global/protocol-kit": "6.0.5",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
-    "ser-kit": "3.8.0"
+    "ser-kit": "3.9.1"
   },
   "devDependencies": {
     "@types/node": "22.14.1",
