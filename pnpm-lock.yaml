@@ -182,8 +182,8 @@ importers:
         specifier: 7.6.2
         version: 7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       viem:
         specifier: 2.31.2
         version: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
@@ -357,8 +357,8 @@ importers:
         specifier: 5.0.7
         version: 5.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       viem:
         specifier: 2.31.2
         version: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
@@ -621,8 +621,8 @@ importers:
         specifier: 9.29.0
         version: 9.29.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
 
   packages/db:
     dependencies:
@@ -651,8 +651,8 @@ importers:
         specifier: 19.1.0
         version: 19.1.0
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       zod:
         specifier: 3.25.64
         version: 3.25.64
@@ -854,8 +854,8 @@ importers:
         specifier: 5.1.5
         version: 5.1.5
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       zod:
         specifier: 3.25.64
         version: 3.25.64
@@ -886,7 +886,7 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 3.0.2
-        version: 3.0.2(typescript@5.8.3)(zod@3.25.64)
+        version: 3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       '@safe-global/protocol-kit':
         specifier: 6.0.5
         version: 6.0.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
@@ -897,8 +897,8 @@ importers:
         specifier: workspace:*
         version: link:../schema
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
     devDependencies:
       '@types/node':
         specifier: 22.14.1
@@ -922,8 +922,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1(typescript@5.8.3)(zod@3.25.64)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       viem:
         specifier: 2.31.2
         version: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
@@ -1002,8 +1002,8 @@ importers:
         specifier: 9.29.0
         version: 9.29.0(jiti@2.4.2)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
 
   packages/ui:
     dependencies:
@@ -1044,8 +1044,8 @@ importers:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ser-kit:
-        specifier: 3.8.0
-        version: 3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+        specifier: 3.9.1
+        version: 3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       viem:
         specifier: 2.31.2
         version: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
@@ -4062,14 +4062,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@safe-global/api-kit@3.0.1':
-    resolution: {integrity: sha512-ks7vFMU3l/xl1TWKL2c+a8l5aQRCtOtSMMpxfJIMsJvtvPSTAUx/WDFKqtVlMhVP/QrqaL7YiTw8hM2vhkTdDQ==}
-
   '@safe-global/api-kit@3.0.2':
     resolution: {integrity: sha512-+DQm88HRe4bDOHsvi/9HKT3foXe1aS1iOKyu2yAqnJOAXURtdjhYmsMHzsseA/3qzlepC9SdC/ZBwr2Do0vzgQ==}
-
-  '@safe-global/protocol-kit@6.0.4':
-    resolution: {integrity: sha512-zwUk7qqtdcjgj+PoDziFXU/rIdAJ1sbwSJBJ48EwsRQIUwT0QdNje3xvvAm22gCOVTvOBTwOwECO5koLEJPqSw==}
 
   '@safe-global/protocol-kit@6.0.5':
     resolution: {integrity: sha512-CX6JrftdA51ZaN5qxyB43NogWHBwYOkFTGAJFTxtuiFipaEstvTpUrYLdyGF7+me5FQNefUbUVN6izqI9O+W0A==}
@@ -4080,18 +4074,12 @@ packages:
   '@safe-global/safe-apps-sdk@9.1.0':
     resolution: {integrity: sha512-N5p/ulfnnA2Pi2M3YeWjULeWbjo7ei22JwU/IXnhoHzKq3pYCN6ynL9mJBOlvDVv892EgLPCWCOwQk/uBT2v0Q==}
 
-  '@safe-global/safe-deployments@1.37.32':
-    resolution: {integrity: sha512-3XRy6TnVz0uymPxMNo7WkaK88sL12ZpIMKOfrNHkODUZCxCO4GFA0FFfjByAPS1LAXfmV7Mulk9Zx1n9vqR8Cg==}
-
   '@safe-global/safe-deployments@1.37.34':
     resolution: {integrity: sha512-ynBFymugc3sZJ63NZuUuRYjjp5LIVPJqt/kJV/lnB0nh0JeUjX+W7NPNTjO6dxxdIi5p547pEaLKYKnaS4pTCQ==}
 
   '@safe-global/safe-gateway-typescript-sdk@3.23.1':
     resolution: {integrity: sha512-6ORQfwtEJYpalCeVO21L4XXGSdbEMfyp2hEv6cP82afKXSwvse6d3sdelgaPWUxHIsFRkWvHDdzh8IyyKHZKxw==}
     engines: {node: '>=16'}
-
-  '@safe-global/safe-modules-deployments@2.2.8':
-    resolution: {integrity: sha512-XqRhEUzO8PNs5kCXztlPmQJBZO+YTDCRbiumCr5JBuS8RhU0pRSkG5Gs8qjKlZicxZvy3IdXZ14APVwb6+dj/Q==}
 
   '@safe-global/safe-modules-deployments@2.2.9':
     resolution: {integrity: sha512-3brLLX4RkLlH2vB+1CgGo1iA73kckmPpgroTLaweZnysr1lKHqpqY0VAA3gmjHq1Qiq1Cx0fccDHk3c2rqRfsw==}
@@ -8683,8 +8671,8 @@ packages:
     resolution: {integrity: sha512-uaW0WwXKpL9blXE2o0bRhoL2EGXIrZxQ2ZQ4mgcfoBxdFmQold+qWsD2jLrfZ0trjKL6vOw0j//eAwcALFjKSw==}
     engines: {node: '>= 18'}
 
-  ser-kit@3.8.0:
-    resolution: {integrity: sha512-qTGQp+vjhVUTQ+axDLTQvIBuW6CSGVbVdMlwLwqkuS9LhAkdjymf7Fs1Y1W7T/L/W/oON7XMPao4T1NZ4q2kHw==}
+  ser-kit@3.9.1:
+    resolution: {integrity: sha512-SN98qqSqGGoHXtloNIohMRk5eOkFXWCro/iFRc/5j/PijO+P6vHnymVtn2A9d2XWL8JsfzkYxU7WdZkV2HpkGg==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -13182,7 +13170,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.40.0':
     optional: true
 
-  '@safe-global/api-kit@3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)':
+  '@safe-global/api-kit@3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)':
     dependencies:
       '@safe-global/protocol-kit': 6.0.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
       '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@3.25.64)
@@ -13191,36 +13179,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/api-kit@3.0.2(typescript@5.8.3)(zod@3.25.64)':
-    dependencies:
-      '@safe-global/protocol-kit': 6.0.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@3.25.64)
-      node-fetch: 2.7.0
-      viem: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
-
-  '@safe-global/protocol-kit@6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)':
-    dependencies:
-      '@safe-global/safe-deployments': 1.37.32
-      '@safe-global/safe-modules-deployments': 2.2.8
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@3.25.64)
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.64)
-      semver: 7.7.2
-      viem: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
-    optionalDependencies:
-      '@noble/curves': 1.9.1
-      '@peculiar/asn1-schema': 2.3.15
-    transitivePeerDependencies:
-      - bufferutil
       - typescript
       - utf-8-validate
       - zod
@@ -13262,17 +13220,11 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/safe-deployments@1.37.32':
-    dependencies:
-      semver: 7.7.2
-
   '@safe-global/safe-deployments@1.37.34':
     dependencies:
       semver: 7.7.2
 
   '@safe-global/safe-gateway-typescript-sdk@3.23.1': {}
-
-  '@safe-global/safe-modules-deployments@2.2.8': {}
 
   '@safe-global/safe-modules-deployments@2.2.9': {}
 
@@ -17282,7 +17234,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2):
+  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -18992,12 +18944,12 @@ snapshots:
       - supports-color
     optional: true
 
-  ser-kit@3.8.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64):
+  ser-kit@3.9.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64):
     dependencies:
       '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 3.0.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
-      '@safe-global/protocol-kit': 6.0.4(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
-      '@safe-global/safe-deployments': 1.37.32
+      '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+      '@safe-global/protocol-kit': 6.0.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
+      '@safe-global/safe-deployments': 1.37.34
       '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@3.25.64)
       viem: 2.31.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.64)
     transitivePeerDependencies:
@@ -19822,7 +19774,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19839,7 +19791,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.64)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.64)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
