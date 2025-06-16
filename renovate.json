@@ -29,6 +29,11 @@
       "matchPackageNames": ["/^@playwright/", "/^mcr.microsoft.com/"],
       "automerge": true,
       "groupName": "Playwright"
+    },
+    {
+      "matchPackageNames": ["/^@wagmi/", "/^wagmi/"],
+      "automerge": true,
+      "groupName": "wagmi"
     }
   ]
 }
