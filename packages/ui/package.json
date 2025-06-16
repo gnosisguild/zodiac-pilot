@@ -29,7 +29,7 @@
     "react-select": "5.10.1",
     "react-stick": "5.0.7",
     "react-toastify": "11.0.5",
-    "ser-kit": "3.8.0",
+    "ser-kit": "3.9.1",
     "viem": "2.31.2",
     "wagmi": "2.15.5"
   },
