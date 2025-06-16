@@ -56,3 +56,5 @@ if (process.env.LIVE_RELOAD) {
     }
   })
 }
+
+export default {}
