@@ -86,7 +86,7 @@ const rolesSchema = z.object({
   address: addressSchema,
   prefixedAddress: prefixedAddressSchema,
   chain: chainIdSchema,
-  multisend: addressSchema.array(),
+  multisend: addressSchema.array().default([]),
   version: z.union([z.literal(1), z.literal(2)]),
 })
 
