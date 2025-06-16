@@ -11,6 +11,7 @@ import {
   celo,
   gnosis,
   mainnet,
+  mantle,
   optimism,
   polygon,
   sepolia,
@@ -38,6 +39,7 @@ const chains: Record<ChainId, Chain> = {
   [unichain.id]: unichain,
   [worldchain.id]: worldchain,
   [bob.id]: bob,
+  [mantle.id]: mantle,
 }
 
 export const getWagmiConfig = (injectedOnly: boolean) =>

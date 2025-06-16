@@ -24,6 +24,7 @@ export const chainIdSchema = z.union([
   z.literal(chains[11].chainId),
   z.literal(chains[12].chainId),
   z.literal(chains[13].chainId),
+  z.literal(chains[14].chainId),
 ])
 
 invariant(
