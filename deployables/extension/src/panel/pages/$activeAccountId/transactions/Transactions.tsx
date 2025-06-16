@@ -80,6 +80,15 @@ const Transactions = () => {
     }
   }, [saveOptions, transactions.length])
 
+  useEffect(() => {
+    if (
+      saveAndActivateOptions.isActivationPending &&
+      transactions.length === 0
+    ) {
+      saveAndActivateOptions.proceedWithActivation()
+    }
+  }, [saveAndActivateOptions, transactions.length])
+
   return (
     <>
       <Page.Content ref={scrollContainerRef}>
