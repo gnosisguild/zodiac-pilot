@@ -121,7 +121,8 @@
     "worldchain",
     "xcall",
     "xdai",
-    "xmlhttprequest"
+    "xmlhttprequest",
+    "supabase"
   ],
   "flagWords": [],
   "ignorePaths": [
