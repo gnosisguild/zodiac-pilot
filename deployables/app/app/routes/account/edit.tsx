@@ -5,6 +5,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   activateRoute,
   createRoute as baseCreateRoute,
+  createWallet,
   dbClient,
   findActiveRoute,
   getAccount,
@@ -63,7 +64,7 @@ export const loader = (args: Route.LoaderArgs) =>
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
-      const initiator = await getInitiator(
+      const initiatorAddress = await getInitiator(
         tenant,
         user,
         account.id,
@@ -71,10 +72,10 @@ export const loader = (args: Route.LoaderArgs) =>
       )
 
       const routesResult =
-        initiator == null
+        initiatorAddress == null
           ? { routes: [] }
           : await queryRoutes(
-              prefixAddress(undefined, initiator.address),
+              prefixAddress(undefined, initiatorAddress),
               prefixAddress(account.chainId, account.address),
             )
 
@@ -94,9 +95,12 @@ export const loader = (args: Route.LoaderArgs) =>
               ? undefined
               : routeId(defaultRoute.waypoints)
             : routeId(activeRoute.route.waypoints),
-        initiatorWallet: initiator == null ? undefined : initiator,
-        initiators: wallets.filter((wallet) =>
+        initiatorAddress,
+        initiatorWallets: wallets.filter((wallet) =>
           initiators.includes(wallet.address),
+        ),
+        initiatorAddresses: initiators.filter((address) =>
+          wallets.every((wallet) => wallet.address !== address),
         ),
         account: account.address,
         chainId: account.chainId,
@@ -136,6 +140,11 @@ export const action = (args: Route.ActionArgs) =>
 
         if (initiator != null) {
           const selectedRouteId = getOptionalString(data, 'routeId')
+
+          await createWallet(tx, user, {
+            address: initiator,
+            label: 'Unnamed wallet',
+          })
 
           if (
             activeRoute == null ||
@@ -180,8 +189,9 @@ export const action = (args: Route.ActionArgs) =>
 const EditAccount = ({
   loaderData: {
     label,
-    initiators,
-    initiatorWallet,
+    initiatorWallets,
+    initiatorAddresses,
+    initiatorAddress,
     account,
     chainId,
     routes,
@@ -221,11 +231,17 @@ const EditAccount = ({
                 clearLabel="Remove Pilot Signer"
                 name="initiator"
                 placeholder="Select a wallet form the list"
-                defaultValue={initiatorWallet?.address}
-                options={initiators.map(({ address, label }) => ({
-                  address,
-                  label,
-                }))}
+                defaultValue={initiatorAddress ?? undefined}
+                options={[
+                  ...initiatorWallets.map(({ address, label }) => ({
+                    address,
+                    label,
+                  })),
+                  ...initiatorAddresses.map((address) => ({
+                    address,
+                    label: address,
+                  })),
+                ]}
                 onChange={() => submit()}
               />
             )}
@@ -237,17 +253,14 @@ const EditAccount = ({
             form={formId}
             name="routeId"
             initiator={
-              initiatorWallet == null
+              initiatorAddress == null
                 ? undefined
-                : prefixAddress(undefined, initiatorWallet.address)
+                : prefixAddress(undefined, initiatorAddress)
             }
           />
 
           <FormLayout.Actions>
-            <InlineForm
-              id={formId}
-              context={{ initiator: initiatorWallet?.address }}
-            >
+            <InlineForm id={formId} context={{ initiator: initiatorAddress }}>
               <PrimaryButton
                 submit
                 intent={Intent.Save}
@@ -276,7 +289,7 @@ const getInitiator = async (
   user: User,
   accountId: UUID,
   searchParams: URLSearchParams,
-) => {
+): Promise<HexAddress | null> => {
   if (searchParams.has('initiator')) {
     const initiator = searchParams.get('initiator')
 
@@ -286,7 +299,7 @@ const getInitiator = async (
 
     const address = addressSchema.parse(initiator)
 
-    return getWalletByAddress(dbClient(), user, address)
+    return address
   }
 
   const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
@@ -295,7 +308,7 @@ const getInitiator = async (
     return null
   }
 
-  return activeRoute.route.wallet
+  return activeRoute.route.wallet.address
 }
 
 type CreateRouteOptions = {

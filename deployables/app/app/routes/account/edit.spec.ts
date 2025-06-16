@@ -7,6 +7,7 @@ import {
   findActiveRoute,
   getAccount,
   getActiveRoute,
+  getWalletByAddress,
 } from '@zodiac/db'
 import {
   accountFactory,
@@ -24,6 +25,7 @@ import {
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
+import { getAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
@@ -43,6 +45,7 @@ const mockQueryRoutes = vi.mocked(queryRoutes)
 describe('Edit account', () => {
   beforeEach(() => {
     mockQueryRoutes.mockResolvedValue([])
+    mockQueryInitiators.mockResolvedValue([])
   })
 
   describe('Label', () => {
@@ -256,6 +259,45 @@ describe('Edit account', () => {
         fromId: walletB.id,
         toId: account.id,
       })
+    })
+
+    it('is possible to create an initiator wallet on the fly', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+
+      const walletAddress = randomAddress()
+
+      mockQueryInitiators.mockResolvedValue([walletAddress])
+
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
+        href('/account/:accountId', { accountId: account.id }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: getAddress(walletAddress) }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const activeRoute = await getActiveRoute(
+        dbClient(),
+        tenant,
+        user,
+        account.id,
+      )
+
+      const wallet = await getWalletByAddress(dbClient(), user, walletAddress)
+
+      expect(activeRoute.route).toHaveProperty('wallet', wallet)
     })
   })
 
