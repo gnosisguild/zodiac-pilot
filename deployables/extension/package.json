@@ -53,7 +53,7 @@
     "ethers": "6.14.4",
     "events": "3.3.0",
     "globals": "16.2.0",
-    "happy-dom": "17.6.3",
+    "happy-dom": "18.0.1",
     "jsdom-testing-mocks": "1.13.1",
     "madge": "8.0.0",
     "postcss": "8.5.5",
