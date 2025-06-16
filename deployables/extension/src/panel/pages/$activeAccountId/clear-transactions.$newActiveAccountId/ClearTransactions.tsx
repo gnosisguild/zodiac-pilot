@@ -3,25 +3,18 @@ import {
   useClearTransactions,
   useTransactions,
 } from '@/transactions'
-import { invariantResponse } from '@epic-web/invariant'
+import { invariant } from '@epic-web/invariant'
 import { useEffect } from 'react'
-import { redirect, useSubmit, type ActionFunctionArgs } from 'react-router'
-
-export const action = async ({ params }: ActionFunctionArgs) => {
-  const { newActiveAccountId } = params
-
-  invariantResponse(
-    newActiveAccountId != null,
-    'No new active route id provided',
-  )
-
-  return redirect(`/${newActiveAccountId}`)
-}
+import { useNavigate, useParams, useSubmit } from 'react-router'
 
 const ClearTransactions = () => {
   const submit = useSubmit()
   const clearTransactions = useClearTransactions()
   const transactions = useTransactions()
+  const navigate = useNavigate()
+  const { newActiveAccountId } = useParams()
+
+  invariant(newActiveAccountId != null, 'No new active route id provided')
 
   useEffect(() => {
     clearTransactions()
@@ -32,10 +25,20 @@ const ClearTransactions = () => {
       return
     }
 
-    clearPersistedTransactionState().then(() =>
-      submit(null, { method: 'post' }),
-    )
-  }, [submit, transactions.length])
+    const abortController = new AbortController()
+
+    clearPersistedTransactionState().then(() => {
+      if (abortController.signal.aborted) {
+        return
+      }
+
+      navigate(`/${newActiveAccountId}`)
+    })
+
+    return () => {
+      abortController.abort('Newer submit')
+    }
+  }, [navigate, newActiveAccountId, submit, transactions.length])
 
   return null
 }

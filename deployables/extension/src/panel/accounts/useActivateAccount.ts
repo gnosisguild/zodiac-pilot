@@ -12,7 +12,10 @@ type OnLaunchOptions = {
 
 export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
   const navigate = useNavigate()
-  const [pendingAccountId, setPendingAccountId] = useState<string | null>(null)
+  const [pendingUpdate, setPendingUpdate] = useState<{
+    accountId: string
+    tabId?: number
+  } | null>(null)
   const onActivateRef = useStableHandler(onActivate)
 
   const activateAccount = useCallback(
@@ -26,7 +29,7 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
           prefixAddress(activeAccount.chainId, activeAccount.address) !==
           prefixAddress(newAccount.chainId, newAccount.address)
         ) {
-          setPendingAccountId(accountId)
+          setPendingUpdate({ accountId, tabId })
 
           return
         }
@@ -41,30 +44,32 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
     [onActivateRef, navigate],
   )
 
-  const cancelActivation = useCallback(() => setPendingAccountId(null), [])
+  const cancelActivation = useCallback(() => setPendingUpdate(null), [])
 
   const proceedWithActivation = useCallback(async () => {
     const activeAccount = await findActiveAccount()
 
-    setPendingAccountId(null)
+    setPendingUpdate(null)
 
-    invariant(pendingAccountId != null, 'No route launch was pending')
+    invariant(pendingUpdate != null, 'No route launch was pending')
 
     if (onActivateRef.current != null) {
-      onActivateRef.current(pendingAccountId)
+      onActivateRef.current(pendingUpdate.accountId, pendingUpdate.tabId)
     }
 
     if (activeAccount == null) {
-      navigate(`/${pendingAccountId}`)
+      navigate(`/${pendingUpdate.accountId}`)
     } else {
-      navigate(`/${activeAccount.id}/clear-transactions/${pendingAccountId}`)
+      navigate(
+        `/${activeAccount.id}/clear-transactions/${pendingUpdate.accountId}`,
+      )
     }
-  }, [navigate, onActivateRef, pendingAccountId])
+  }, [navigate, onActivateRef, pendingUpdate])
 
   return [
     activateAccount,
     {
-      isActivationPending: pendingAccountId != null,
+      isActivationPending: pendingUpdate != null,
       cancelActivation,
       proceedWithActivation,
     },

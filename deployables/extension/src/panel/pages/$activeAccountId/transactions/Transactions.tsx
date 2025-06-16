@@ -70,7 +70,11 @@ const Transactions = () => {
         route,
       })
 
-      navigate(`/${account.id}/clear-transactions/${account.id}`)
+      if (transactions.length === 0) {
+        navigate(`/${account.id}`)
+      } else {
+        navigate(`/${account.id}/clear-transactions/${account.id}`)
+      }
     },
   })
 
@@ -79,6 +83,15 @@ const Transactions = () => {
       saveOptions.saveUpdate()
     }
   }, [saveOptions, transactions.length])
+
+  useEffect(() => {
+    if (
+      saveAndActivateOptions.isActivationPending &&
+      transactions.length === 0
+    ) {
+      saveAndActivateOptions.proceedWithActivation()
+    }
+  }, [saveAndActivateOptions, transactions.length])
 
   return (
     <>
