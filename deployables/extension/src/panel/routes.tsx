@@ -30,7 +30,6 @@ export const routes: RouteObject[] = [
           {
             path: 'clear-transactions/:newActiveAccountId',
             Component: ClearTransactions.default,
-            action: ClearTransactions.action,
           },
         ],
       },
