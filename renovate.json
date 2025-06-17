@@ -34,6 +34,11 @@
       "matchPackageNames": ["/^@wagmi/", "/^wagmi/"],
       "automerge": true,
       "groupName": "wagmi"
+    },
+    {
+      "matchPackageNames": ["/^@cowprotocol/"],
+      "automerge": true,
+      "groupName": "cowprotocol"
     }
   ]
 }
