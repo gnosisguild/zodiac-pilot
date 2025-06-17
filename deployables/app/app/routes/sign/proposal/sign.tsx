@@ -8,6 +8,7 @@ import {
   dbClient,
   getActiveRoute,
   getProposedTransaction,
+  getSignedTransaction,
   saveTransaction,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -20,7 +21,7 @@ import {
 } from '@zodiac/form-data'
 import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Error, Form, Success, Warning } from '@zodiac/ui'
+import { DateValue, Error, Form, Info, Success, Warning } from '@zodiac/ui'
 import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine } from 'lucide-react'
 import { Suspense } from 'react'
 import { Await, useSubmit } from 'react-router'
@@ -93,6 +94,13 @@ export const loader = async (args: Route.LoaderArgs) =>
         permissionCheck: permissionCheckResult.permissionCheck,
         waypoints: route.waypoints,
         alreadySigned: proposal.signedTransactionId != null,
+        signedTransaction:
+          proposal.signedTransactionId == null
+            ? null
+            : await getSignedTransaction(
+                dbClient(),
+                proposal.signedTransactionId,
+              ),
         defaultSafeNonces: getDefaultNonces(plan),
       }
     },
@@ -209,7 +217,7 @@ const SubmitPage = ({
     simulation,
     hasQueryRoutesError,
     defaultSafeNonces,
-    alreadySigned,
+    signedTransaction,
   },
   actionData,
 }: Route.ComponentProps) => {
@@ -312,9 +320,17 @@ const SubmitPage = ({
         />
       </Form.Section>
 
+      {signedTransaction && (
+        <Info title="Transaction bundle already signed">
+          This transaction bundle has already been signed by{' '}
+          {signedTransaction.signer.fullName} on{' '}
+          <DateValue>{signedTransaction.createdAt}</DateValue>
+        </Info>
+      )}
+
       <Form.Actions>
         <SignTransaction
-          disabled={alreadySigned}
+          disabled={signedTransaction != null}
           intent={Intent.PlanExecution}
           chainId={account.chainId}
           walletAddress={wallet.address}

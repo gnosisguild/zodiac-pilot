@@ -597,5 +597,48 @@ describe('Sign', () => {
 
       expect(await screen.findByRole('button', { name: 'Sign' })).toBeDisabled()
     })
+
+    it('shows a message that the proposal has already been signed', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+      const signedTransaction = await signedTransactionFactory.create(
+        route,
+        user,
+      )
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+        {
+          transaction: signedTransaction.transaction,
+          signedTransactionId: signedTransaction.id,
+        },
+      )
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      mockQueryRoutes.mockResolvedValue([])
+
+      await render(
+        href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+        { user, tenant },
+      )
+
+      const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+      })
+
+      expect(
+        await screen.findByRole('alert', {
+          name: 'Transaction bundle already signed',
+        }),
+      ).toHaveAccessibleDescription(
+        `This transaction bundle has already been signed by ${user.fullName} on ${dateFormatter.format(signedTransaction.createdAt)}`,
+      )
+    })
   })
 })

@@ -420,6 +420,16 @@ export type SignedTransaction = typeof SignedTransactionTable.$inferSelect
 export type SignedTransactionCreateInput =
   typeof SignedTransactionTable.$inferInsert
 
+const SignedTransactionRelations = relations(
+  SignedTransactionTable,
+  ({ one }) => ({
+    signer: one(UserTable, {
+      fields: [SignedTransactionTable.userId],
+      references: [UserTable.id],
+    }),
+  }),
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -444,4 +454,5 @@ export const schema = {
   ActiveRouteRelations,
   ActiveAccountRelations,
   ActiveSubscriptionRelations,
+  SignedTransactionRelations,
 }
