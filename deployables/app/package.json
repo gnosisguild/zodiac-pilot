@@ -12,7 +12,7 @@
     "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
-    "@cowprotocol/widget-lib": "0.18.0",
+    "@cowprotocol/widget-lib": "0.20.0",
     "@cowprotocol/widget-react": "0.13.0",
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",

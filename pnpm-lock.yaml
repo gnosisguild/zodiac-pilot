@@ -80,8 +80,8 @@ importers:
   deployables/app:
     dependencies:
       '@cowprotocol/widget-lib':
-        specifier: 0.18.0
-        version: 0.18.0
+        specifier: 0.20.0
+        version: 0.20.0
       '@cowprotocol/widget-react':
         specifier: 0.13.0
         version: 0.13.0
@@ -1375,14 +1375,23 @@ packages:
   '@cowprotocol/events@1.5.0':
     resolution: {integrity: sha512-n7HTpd6ADSZrjwdtT9e79dfl1OWCqVHavm8l96FucW/De8ZCdFhPMsxLLdjdJlhWos3oFgpLjQNmthJvpzEl8A==}
 
+  '@cowprotocol/events@1.6.1':
+    resolution: {integrity: sha512-4ea0JYS5OE5FV58rxm5jUiwxzlMe96gpL2EaZIjov0MRincS5/RhlsfcBziWUQrPmTBTr1qxQ1Dbzw78D5eIbQ==}
+
   '@cowprotocol/iframe-transport@1.1.0':
     resolution: {integrity: sha512-sT3B8WwmJqz1FhIgDtpmEZcDg3EFkTGevsPddLShSwdcaqV7fYsVeYv4JgB/b0fwIIVLO0dHdrUhoQh9DTihog==}
+
+  '@cowprotocol/iframe-transport@1.1.1':
+    resolution: {integrity: sha512-kSMvYnYfYw3SNy1yCZnig+OYDKTJ1pDPrv67LvUFm4U8srdnNs5vmqJovU97WkQ07DhZmmwoqnXgtYPUBkkTiA==}
 
   '@cowprotocol/types@1.2.0':
     resolution: {integrity: sha512-K/jOyLtffgEFs52hRKX7tyDHtIA3asnsB9So6lINCPfNetr1GhM818+kf+f3sPtOHWsBpL3pTkjJphzDVCQntQ==}
 
   '@cowprotocol/widget-lib@0.18.0':
     resolution: {integrity: sha512-uv4FBAqnoTEPwF7x7g1X65owuMRKfSoFSiDx3BRPvBBCIN3tvRMeOC9ZFlBEiJT677YnS4JWLItOIwQbwKxFrg==}
+
+  '@cowprotocol/widget-lib@0.20.0':
+    resolution: {integrity: sha512-+iRFm8YeKP0qIjK0D08yfinRRHUNc/h0A0sRopIeJCRiKsIJR2legwD02BuzhNv3EiwxwH7aRmqdYpILYJzGUw==}
 
   '@cowprotocol/widget-react@0.13.0':
     resolution: {integrity: sha512-kYyio+nF0kjK5CZzM5GesFeZLbbV87wz1JgnCtzcMSf7iDDK/buyw5kQQloyz5Xkli6J8yayO1g11yH5ZuFk8Q==}
@@ -10207,7 +10216,13 @@ snapshots:
     dependencies:
       '@cowprotocol/types': 1.2.0
 
+  '@cowprotocol/events@1.6.1':
+    dependencies:
+      '@cowprotocol/types': 1.2.0
+
   '@cowprotocol/iframe-transport@1.1.0': {}
+
+  '@cowprotocol/iframe-transport@1.1.1': {}
 
   '@cowprotocol/types@1.2.0': {}
 
@@ -10215,6 +10230,11 @@ snapshots:
     dependencies:
       '@cowprotocol/events': 1.5.0
       '@cowprotocol/iframe-transport': 1.1.0
+
+  '@cowprotocol/widget-lib@0.20.0':
+    dependencies:
+      '@cowprotocol/events': 1.6.1
+      '@cowprotocol/iframe-transport': 1.1.1
 
   '@cowprotocol/widget-react@0.13.0':
     dependencies:
