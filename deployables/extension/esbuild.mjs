@@ -76,6 +76,9 @@ esbuild
           authToken: process.env.SENTRY_AUTH_TOKEN,
           org: 'gnosis-guild',
           project: 'pilot-extension',
+          release: {
+            create: process.env.SENTRY_RELEASE != null,
+          },
         }),
     ].filter(Boolean),
     logLevel: 'info',
