@@ -18,6 +18,7 @@ import {
 import {
   accountFactory,
   routeFactory,
+  signedTransactionFactory,
   tenantFactory,
   transactionProposalFactory,
   userFactory,
@@ -561,6 +562,40 @@ describe('Sign', () => {
           getProposedTransaction(dbClient(), proposal.id),
         ).resolves.toHaveProperty('signedTransactionId', transaction.id)
       })
+    })
+  })
+
+  describe('Signed proposal', () => {
+    it('disables the sign button', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, { address: initiator })
+      const route = await routeFactory.create(account, wallet)
+      const signedTransaction = await signedTransactionFactory.create(
+        route,
+        user,
+      )
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+        {
+          transaction: signedTransaction.transaction,
+          signedTransactionId: signedTransaction.id,
+        },
+      )
+
+      await activateRoute(dbClient(), tenant, user, route)
+
+      mockQueryRoutes.mockResolvedValue([])
+
+      await render(
+        href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+        { user, tenant },
+      )
+
+      expect(await screen.findByRole('button', { name: 'Sign' })).toBeDisabled()
     })
   })
 })

@@ -92,6 +92,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         simulation: simulate(),
         permissionCheck: permissionCheckResult.permissionCheck,
         waypoints: route.waypoints,
+        alreadySigned: proposal.signedTransactionId != null,
         defaultSafeNonces: getDefaultNonces(plan),
       }
     },
@@ -208,6 +209,7 @@ const SubmitPage = ({
     simulation,
     hasQueryRoutesError,
     defaultSafeNonces,
+    alreadySigned,
   },
   actionData,
 }: Route.ComponentProps) => {
@@ -312,6 +314,7 @@ const SubmitPage = ({
 
       <Form.Actions>
         <SignTransaction
+          disabled={alreadySigned}
           intent={Intent.PlanExecution}
           chainId={account.chainId}
           walletAddress={wallet.address}

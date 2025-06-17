@@ -1,6 +1,7 @@
 export { accountFactory } from './accountFactory'
 export { featureFactory } from './featureFactory'
 export { routeFactory } from './routeFactory'
+export { signedTransactionFactory } from './signedTransactionFactory'
 export { subscriptionPlanFactory } from './subscriptionPlanFactory'
 export { tenantFactory } from './tenantFactory'
 export { transactionProposalFactory } from './transactionProposalFactory'

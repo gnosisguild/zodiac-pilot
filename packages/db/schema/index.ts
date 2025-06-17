@@ -416,6 +416,10 @@ export const SignedTransactionTable = pgTable(
   ],
 )
 
+export type SignedTransaction = typeof SignedTransactionTable.$inferSelect
+export type SignedTransactionCreateInput =
+  typeof SignedTransactionTable.$inferInsert
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
