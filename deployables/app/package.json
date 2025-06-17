@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@cowprotocol/widget-lib": "0.18.0",
-    "@cowprotocol/widget-react": "0.13.0",
+    "@cowprotocol/widget-react": "0.14.0",
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
     "@icons-pack/react-simple-icons": "13.1.0",
