@@ -1,4 +1,5 @@
 import { editAccount, getAccount, useAccount, useSaveAccount } from '@/accounts'
+import { createProposal } from '@/companion'
 import { useExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
@@ -9,10 +10,15 @@ import {
   useTransactionTracking,
 } from '@/transactions'
 import { sendMessageToCompanionApp } from '@/utils'
-import { invariant } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import { getInt, getString } from '@zodiac/form-data'
 import { CompanionResponseMessageType } from '@zodiac/messages'
-import { toMetaTransactionRequest } from '@zodiac/schema'
+import {
+  isUUID,
+  parseTransactionData,
+  toMetaTransactionRequest,
+} from '@zodiac/schema'
 import {
   CopyToClipboard,
   GhostButton,
@@ -25,12 +31,15 @@ import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, type ActionFunctionArgs } from 'react-router'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
-import { RecordingIndicator } from './RecordingIndicator'
-import { Submit } from './Submit'
-import { Transaction } from './Transaction'
 import { Intent } from './intents'
+import { RecordingIndicator } from './RecordingIndicator'
+import { Sign } from './Sign'
+import { Transaction } from './Transaction'
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({
+  request,
+  params: { activeAccountId },
+}: ActionFunctionArgs) => {
   const data = await request.formData()
 
   const intent = getString(data, 'intent')
@@ -43,6 +52,30 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const account = await getAccount(accountId, { signal: request.signal })
 
       await editAccount(windowId, account)
+
+      return null
+    }
+
+    case Intent.CreateProposal: {
+      const transaction = parseTransactionData(getString(data, 'transaction'))
+
+      invariantResponse(
+        isUUID(activeAccountId),
+        'Can only create proposals for remote accounts',
+      )
+
+      const { proposalId } = await createProposal(
+        activeAccountId,
+        transaction,
+        {
+          signal: request.signal,
+        },
+      )
+
+      await chrome.tabs.create({
+        active: true,
+        url: `${getCompanionAppUrl()}/submit/proposal/${proposalId}`,
+      })
 
       return null
     }
@@ -155,7 +188,7 @@ const Transactions = () => {
           </CopyToClipboard>
         )}
 
-        <Submit />
+        <Sign />
       </Page.Footer>
 
       <ClearTransactionsModal

@@ -1,8 +1,7 @@
 import { authorizedLoader } from '@/auth-server'
-import { parseTransactionData } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount, proposeTransaction } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
+import { isUUID, parseTransactionData } from '@zodiac/schema'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/sign'
 
