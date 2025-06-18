@@ -47,7 +47,7 @@
     "drizzle-zod": "0.7.1",
     "postgres": "3.4.7",
     "ser-kit": "3.9.1",
-    "zod": "3.25.64"
+    "zod": "3.25.67"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.44.2",
