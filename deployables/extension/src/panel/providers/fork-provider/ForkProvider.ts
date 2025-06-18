@@ -56,7 +56,7 @@ export class ForkProvider extends EventEmitter {
     avatarAddress: HexAddress
     /** If set, will simulate transactions using respective `execTransactionFromModule` calls */
     moduleAddress?: HexAddress
-    /** If set, will enable the the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
+    /** If set, will enable the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
     ownerAddress?: HexAddress
   }) {
     super()
@@ -208,9 +208,9 @@ export class ForkProvider extends EventEmitter {
     // If there's a pending request, wait for it to finish before sending the next one
     const send = this.pendingMetaTransaction
       ? async () => {
-          await this.pendingMetaTransaction
-          return await this.sendMetaTransactionInSeries(metaTx)
-        }
+        await this.pendingMetaTransaction
+        return await this.sendMetaTransactionInSeries(metaTx)
+      }
       : async () => await this.sendMetaTransactionInSeries(metaTx)
 
     // Synchronously update `this.pendingMetaTransaction` so subsequent `sendMetaTransaction()` calls will go to the back of the queue
