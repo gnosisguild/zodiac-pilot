@@ -362,6 +362,35 @@ const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
   }),
 }))
 
+export const ProposedTransactionTable = pgTable(
+  'ProposedTransaction',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    transaction: json().$type<MetaTransactionRequest[]>().notNull(),
+
+    signedTransactionId: uuid()
+      .$type<UUID>()
+      .references(() => SignedTransactionTable.id, {
+        onDelete: 'cascade',
+      }),
+
+    ...userReference,
+    ...tenantReference,
+    ...accountReference,
+    ...createdTimestamp,
+  },
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.userId),
+    index().on(table.signedTransactionId),
+  ],
+)
+
+export type ProposedTransaction = typeof ProposedTransactionTable.$inferSelect
+export type ProposedTransactionCreateInput =
+  typeof ProposedTransactionTable.$inferInsert
+
 export const SignedTransactionTable = pgTable(
   'SignedTransaction',
   {
@@ -387,6 +416,20 @@ export const SignedTransactionTable = pgTable(
   ],
 )
 
+export type SignedTransaction = typeof SignedTransactionTable.$inferSelect
+export type SignedTransactionCreateInput =
+  typeof SignedTransactionTable.$inferInsert
+
+const SignedTransactionRelations = relations(
+  SignedTransactionTable,
+  ({ one }) => ({
+    signer: one(UserTable, {
+      fields: [SignedTransactionTable.userId],
+      references: [UserTable.id],
+    }),
+  }),
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -401,6 +444,7 @@ export const schema = {
   signedTransaction: SignedTransactionTable,
   subscriptionPlans: SubscriptionPlanTable,
   activeSubscriptionPlans: ActiveSubscriptionTable,
+  proposedTransactions: ProposedTransactionTable,
 
   TenantRelations,
   FeatureRelations,
@@ -410,4 +454,5 @@ export const schema = {
   ActiveRouteRelations,
   ActiveAccountRelations,
   ActiveSubscriptionRelations,
+  SignedTransactionRelations,
 }

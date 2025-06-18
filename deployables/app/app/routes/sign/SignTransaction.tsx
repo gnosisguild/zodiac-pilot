@@ -37,6 +37,7 @@ type SignTransactionProps = {
   safeAddress: HexAddress
   executionPlan: ExecutionPlan | null
 
+  disabled?: boolean
   intent?: string
   onSign?: (options: OnSignOptions) => void
 }
@@ -47,6 +48,7 @@ export const SignTransaction = ({
   safeAddress,
   executionPlan,
   intent,
+  disabled = false,
   onSign,
 }: SignTransactionProps) => {
   const walletAccount = useAccount()
@@ -169,6 +171,7 @@ export const SignTransaction = ({
   const isSubmitting = useIsPending()
 
   if (
+    disabled ||
     walletAccount.chainId !== chainId ||
     walletAccount.address?.toLowerCase() !== walletAddress.toLowerCase() ||
     connectorClient == null
