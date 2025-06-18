@@ -19,7 +19,7 @@ export const action = (args: Route.ActionArgs) =>
 
       const data = await request.formData()
 
-      const transaction = await proposeTransaction(dbClient(), {
+      const proposal = await proposeTransaction(dbClient(), {
         userId: user.id,
         tenantId: tenant.id,
         accountId,
@@ -28,7 +28,7 @@ export const action = (args: Route.ActionArgs) =>
           .parse(JSON.parse(getString(data, 'transaction'))),
       })
 
-      return { transactionId: transaction.id }
+      return { proposalId: proposal.id }
     },
     {
       ensureSignedIn: true,

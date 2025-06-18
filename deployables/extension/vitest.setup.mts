@@ -42,6 +42,8 @@ vi.mock('@/companion', async (importOriginal) => {
     getFeatures: vi.fn(),
 
     saveRemoteActiveAccount: vi.fn(),
+
+    createProposal: vi.fn(),
   }
 })
 

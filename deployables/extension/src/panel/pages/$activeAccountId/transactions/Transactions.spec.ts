@@ -1,4 +1,8 @@
-import { findRemoteActiveRoute, getRemoteAccount } from '@/companion'
+import {
+  createProposal,
+  findRemoteActiveRoute,
+  getRemoteAccount,
+} from '@/companion'
 import { getRoute, saveLastUsedAccountId } from '@/execution-routes'
 import {
   chromeMock,
@@ -79,6 +83,8 @@ vi.mock('@/providers', async (importOriginal) => {
     ForkProvider: MockProvider,
   }
 })
+
+const mockCreateProposal = vi.mocked(createProposal)
 
 vi.mock('ethers', async (importOriginal) => {
   const module = await importOriginal<typeof import('ethers')>()
@@ -218,9 +224,9 @@ describe('Transactions', () => {
     })
   })
 
-  describe('Submit', () => {
+  describe('Sign', () => {
     describe('Logged out', () => {
-      it('disables the submit button when there are no transactions', async () => {
+      it('disables the sign button when there are no transactions', async () => {
         await mockRoute({
           id: 'test-route',
           initiator: randomPrefixedAddress(),
@@ -228,10 +234,10 @@ describe('Transactions', () => {
 
         await render('/test-route/transactions')
 
-        expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
       })
 
-      it('encodes the route and transaction state into the target of the submit button', async () => {
+      it('encodes the route and transaction state into the target of the sign button', async () => {
         const route = await mockRoute({
           id: 'test-route',
           initiator: randomPrefixedAddress(),
@@ -244,7 +250,7 @@ describe('Transactions', () => {
           initialState: { executed: [transaction] },
         })
 
-        expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
+        expect(screen.getByRole('link', { name: 'Sign' })).toHaveAttribute(
           'href',
           `http://localhost/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
@@ -261,7 +267,7 @@ describe('Transactions', () => {
 
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Complete route setup to submit',
+            name: 'Complete route setup to sign',
           }),
         )
 
@@ -273,7 +279,7 @@ describe('Transactions', () => {
     })
 
     describe('Logged in', () => {
-      it('disables the submit button when there are no transactions', async () => {
+      it('disables the sign button when there are no transactions', async () => {
         const tenant = tenantFactory.createWithoutDb()
         const user = userFactory.createWithoutDb(tenant)
         const wallet = walletFactory.createWithoutDb(user)
@@ -288,7 +294,7 @@ describe('Transactions', () => {
 
         await render(`/${account.id}/transactions`)
 
-        expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
       })
 
       it('links to the logged in sign in page', async () => {
@@ -303,6 +309,7 @@ describe('Transactions', () => {
         mockFindRemoteActiveRoute.mockResolvedValue(
           toExecutionRoute({ route, wallet, account }),
         )
+        mockCreateProposal.mockResolvedValue({ proposalId: 'test-proposal-id' })
 
         const transaction = createConfirmedTransaction()
 
@@ -312,10 +319,12 @@ describe('Transactions', () => {
           initialState: { executed: [transaction] },
         })
 
-        expect(screen.getByRole('link', { name: 'Submit' })).toHaveAttribute(
-          'href',
-          `http://localhost/submit/account/${account.id}/${encode([toMetaTransactionRequest(transaction)])}`,
-        )
+        await userEvent.click(screen.getByRole('button', { name: 'Sign' }))
+
+        expect(chromeMock.tabs.create).toHaveBeenCalledWith({
+          active: true,
+          url: `http://localhost/submit/proposal/test-proposal-id`,
+        })
       })
 
       it('offers a link to complete the route setup when no active route was found', async () => {
@@ -331,7 +340,7 @@ describe('Transactions', () => {
 
         await userEvent.click(
           screen.getByRole('button', {
-            name: 'Complete route setup to submit',
+            name: 'Complete route setup to sign',
           }),
         )
 

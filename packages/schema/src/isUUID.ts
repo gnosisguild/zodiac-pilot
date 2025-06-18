@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 const uuidSchema = z.string().uuid()
 
-export const isUUID = (value: string): value is UUID => {
+export const isUUID = (value?: string): value is UUID => {
   try {
     uuidSchema.parse(value)
 

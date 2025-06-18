@@ -4,6 +4,7 @@ export {
   useCompanionAppUrl,
   useCompanionAppUser,
 } from './CompanionAppSupport'
+export { createProposal } from './createProposal'
 export { findRemoteActiveAccount } from './findRemoteActiveAccount'
 export { findRemoteActiveRoute } from './findRemoteActiveRoute'
 export { getFeatures } from './getFeatures'
