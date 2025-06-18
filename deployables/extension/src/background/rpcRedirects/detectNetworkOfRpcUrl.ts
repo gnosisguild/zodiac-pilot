@@ -1,7 +1,6 @@
 import { sentry } from '@/sentry'
-import { sendMessageToTab } from '@/utils'
 import type { ChainId } from '@zodiac/chains'
-import { RpcMessageType } from '@zodiac/messages'
+import { probeChainId } from './probeChainId'
 
 type DetectNetworkOfRpcOptions = {
   url: string
@@ -26,13 +25,7 @@ export const detectNetworkOfRpcUrl = async ({
   tabId,
 }: DetectNetworkOfRpcOptions): Promise<DetectNetworkResult> => {
   if (!chainIdPromiseByRpcUrl.has(url)) {
-    chainIdPromiseByRpcUrl.set(
-      url,
-      timeout(
-        sendMessageToTab(tabId, { type: RpcMessageType.PROBE_CHAIN_ID, url }),
-        `Could not probe chain ID for url "${url}".`,
-      ),
-    )
+    chainIdPromiseByRpcUrl.set(url, probeChainId(tabId, url))
   }
 
   try {
@@ -56,13 +49,3 @@ export const detectNetworkOfRpcUrl = async ({
     return { newEndpoint: false }
   }
 }
-
-const CHAIN_ID_PROBING_TIMEOUT = 10_000
-
-const timeout = <T>(promise: Promise<T>, errorMessage: string) =>
-  Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(errorMessage), CHAIN_ID_PROBING_TIMEOUT),
-    ),
-  ])
