@@ -691,8 +691,8 @@ importers:
         specifier: 8.0.0
         version: 8.0.0(typescript@5.8.3)
       supabase:
-        specifier: 2.24.3
-        version: 2.24.3
+        specifier: 2.26.9
+        version: 2.26.9
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.14.1)(happy-dom@18.0.1)(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0)
@@ -8965,8 +8965,8 @@ packages:
     peerDependencies:
       react: '>=16.8.3'
 
-  supabase@2.24.3:
-    resolution: {integrity: sha512-mh9pi4C5pM159GyYE+Rv9qL8kg1kqzimQ4FBr6UH/WhzB/VcDaA+vpn/VeRC3CGVKr+d89Ra5MjDWg+/UoPpXg==}
+  supabase@2.26.9:
+    resolution: {integrity: sha512-wHl7HtAD2iHMVXL8JZyfSjdI0WYM7EF0ydThp1tSvDANaD2JHCZc8GH1NdzglbwGqdHmjCYeSZ+H28fmucYl7Q==}
     engines: {npm: '>=8'}
     hasBin: true
 
@@ -19340,7 +19340,7 @@ snapshots:
       invariant: 2.2.4
       react: 19.1.0
 
-  supabase@2.24.3:
+  supabase@2.26.9:
     dependencies:
       bin-links: 5.0.0
       https-proxy-agent: 7.0.6
