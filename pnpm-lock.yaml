@@ -198,8 +198,8 @@ importers:
         specifier: 1.44.2
         version: 1.44.2
       '@playwright/test':
-        specifier: 1.53.0
-        version: 1.53.0
+        specifier: 1.53.1
+        version: 1.53.1
       '@react-router/dev':
         specifier: 7.6.2
         version: 7.6.2(@react-router/serve@7.6.2(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(@types/node@22.14.1)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.3)(vite@6.3.5(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0))(wrangler@4.20.3(@cloudflare/workers-types@4.20250614.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.8.0)
@@ -367,8 +367,8 @@ importers:
         specifier: 1.44.2
         version: 1.44.2
       '@playwright/test':
-        specifier: 1.53.0
-        version: 1.53.0
+        specifier: 1.53.1
+        version: 1.53.1
       '@safe-global/safe-gateway-typescript-sdk':
         specifier: 3.23.1
         version: 3.23.1
@@ -947,8 +947,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@playwright/test':
-        specifier: 1.53.0
-        version: 1.53.0
+        specifier: 1.53.1
+        version: 1.53.1
       '@testing-library/react':
         specifier: 16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3164,8 +3164,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@playwright/test@1.53.0':
-    resolution: {integrity: sha512-15hjKreZDcp7t6TL/7jkAo6Df5STZN09jGiv5dbP9A6vMVncXRqE7/B2SncsyOwrkZRBH2i6/TPOL8BVmm3c7w==}
+  '@playwright/test@1.53.1':
+    resolution: {integrity: sha512-Z4c23LHV0muZ8hfv4jw6HngPJkbbtZxTkxPNIg7cJcTc9C28N/p2q7g3JZS2SiKBBHJ3uM1dgDye66bB7LEk5w==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -8000,13 +8000,13 @@ packages:
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
 
-  playwright-core@1.53.0:
-    resolution: {integrity: sha512-mGLg8m0pm4+mmtB7M89Xw/GSqoNC+twivl8ITteqvAndachozYe2ZA7srU6uleV1vEdAHYqjq+SV8SNxRRFYBw==}
+  playwright-core@1.53.1:
+    resolution: {integrity: sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.53.0:
-    resolution: {integrity: sha512-ghGNnIEYZC4E+YtclRn4/p6oYbdPiASELBIYkBXfaTVKreQUYbMUYQDwS12a8F0/HtIjr/CkGjtwABeFPGcS4Q==}
+  playwright@1.53.1:
+    resolution: {integrity: sha512-LJ13YLr/ocweuwxyGf1XNFWIU4M2zUSo149Qbp+A4cpwDjsxRPj7k6H25LBrEHiEwxvRbD8HdwvQmRMSvquhYw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -12018,9 +12018,9 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@playwright/test@1.53.0':
+  '@playwright/test@1.53.1':
     dependencies:
-      playwright: 1.53.0
+      playwright: 1.53.1
 
   '@prisma/instrumentation@6.8.2(@opentelemetry/api@1.9.0)':
     dependencies:
@@ -18225,11 +18225,11 @@ snapshots:
       mlly: 1.7.4
       pathe: 2.0.3
 
-  playwright-core@1.53.0: {}
+  playwright-core@1.53.1: {}
 
-  playwright@1.53.0:
+  playwright@1.53.1:
     dependencies:
-      playwright-core: 1.53.0
+      playwright-core: 1.53.1
     optionalDependencies:
       fsevents: 2.3.2
 
