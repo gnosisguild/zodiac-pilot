@@ -2,6 +2,8 @@ import { href } from 'react-router'
 import { expect, loadExtension, signIn, test } from '../utils'
 
 test.describe('Create new account', () => {
+  test.describe.configure({ mode: 'serial' })
+
   test.describe('Logged out', () => {
     test('it is possible to create a new route', async ({ page }) => {
       await page.goto(href('/create/:prefixedAddress?'))
