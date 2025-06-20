@@ -31,6 +31,7 @@ const COWSWAP_SUPPORTED_NETWORK: Record<number, string> = {
   100: 'xdai',
   42161: 'arbitrum_one',
   11155111: 'sepolia',
+  8453: 'base',
 }
 
 export const cowswapSetPreSignature = {
