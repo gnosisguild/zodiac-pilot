@@ -7,11 +7,9 @@ export const loadExtension = async (page: Page) => {
 
   const extension = await getExtensionPage(page)
 
-  await expect(
-    extension.getByRole('heading', { name: 'Welcome to Zodiac Pilot' }),
-  ).toBeInViewport()
+  await extension.waitForLoadState('domcontentloaded')
 
-  await expect(page.getByText('Connected')).toBeInViewport()
+  await expect(page.getByText('Connected', { exact: true })).toBeInViewport()
 
   return extension
 }

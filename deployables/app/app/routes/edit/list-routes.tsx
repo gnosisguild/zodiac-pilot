@@ -367,14 +367,16 @@ const ListRoutes = ({
                         </Await>
                       </Suspense>
                     ) : (
-                      <Info title="You haven't added any Safe Accounts, yet.">
-                        Add your Safe to start recording transactions for it.
-                        <div className="mt-4 flex">
-                          <SecondaryLinkButton to="/create">
-                            Add Safe Account
-                          </SecondaryLinkButton>
-                        </div>
-                      </Info>
+                      !loggedIn && (
+                        <Info title="You haven't added any Safe Accounts, yet.">
+                          Add your Safe to start recording transactions for it.
+                          <div className="mt-4 flex">
+                            <SecondaryLinkButton to="/create">
+                              Add Safe Account
+                            </SecondaryLinkButton>
+                          </div>
+                        </Info>
+                      )
                     )}
                   </>
                 )}
