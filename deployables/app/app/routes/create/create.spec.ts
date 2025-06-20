@@ -17,10 +17,11 @@ import {
 } from '@zodiac/messages'
 import {
   createMockExecutionRoute,
+  expectRouteToBe,
   randomAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
-import { href, redirectDocument } from 'react-router'
+import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -46,8 +47,6 @@ vi.mock('react-router', async (importOriginal) => {
     redirectDocument: vi.fn(),
   }
 })
-
-const mockRedirectDocument = vi.mocked(redirectDocument)
 
 describe('New SafeAccount', () => {
   beforeEach(() => {
@@ -165,7 +164,7 @@ describe('New SafeAccount', () => {
     })
 
     describe('Save', () => {
-      it('does a full page redirect to the balances page', async () => {
+      it('redirects to the accounts page', async () => {
         await render('/create')
 
         const address = randomAddress()
@@ -182,9 +181,7 @@ describe('New SafeAccount', () => {
           route: createMockExecutionRoute(),
         })
 
-        expect(mockRedirectDocument).toHaveBeenCalledWith(
-          href('/tokens/balances'),
-        )
+        await expectRouteToBe(href('/edit'))
       })
     })
   })
