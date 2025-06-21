@@ -26,7 +26,7 @@ import {
 } from '@zodiac/modules'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
-import { href, redirect, redirectDocument } from 'react-router'
+import { href, redirect } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/create'
 
@@ -136,7 +136,7 @@ export const clientAction = async ({
     await promise
   }
 
-  return redirectDocument(href(`/tokens/balances`))
+  return redirect(href(`/edit`))
 }
 
 const Start = ({
