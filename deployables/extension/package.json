@@ -82,7 +82,7 @@
     "@zodiac/ui": "workspace:*",
     "classnames": "2.5.1",
     "date-fns": "4.1.0",
-    "lucide-react": "0.520.0",
+    "lucide-react": "0.522.0",
     "nanoid": "5.1.5",
     "node-stdlib-browser": "1.3.1",
     "react": "19.1.0",
