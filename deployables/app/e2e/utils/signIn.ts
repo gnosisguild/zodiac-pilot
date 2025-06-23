@@ -16,4 +16,6 @@ export const signIn = async (page: Page) => {
   await expect(
     page.getByRole('link', { name: 'Your profile' }),
   ).toBeInViewport()
+
+  await page.waitForLoadState('load')
 }
