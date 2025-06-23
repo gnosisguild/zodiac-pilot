@@ -30,9 +30,9 @@ test.describe('Create new account', () => {
       test('it is possible to create a new route', async ({ page }) => {
         await page.goto(href('/create/:prefixedAddress?'))
 
-        await signIn(page)
-
         const extension = await loadExtension(page)
+
+        await signIn(page)
 
         await page.getByRole('textbox', { name: 'Label' }).fill('New route')
 
