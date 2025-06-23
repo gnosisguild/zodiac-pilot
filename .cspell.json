@@ -122,7 +122,8 @@
     "xcall",
     "xdai",
     "xmlhttprequest",
-    "supabase"
+    "supabase",
+    "domcontentloaded"
   ],
   "flagWords": [],
   "ignorePaths": [

@@ -9,6 +9,7 @@ import {
 } from '@zodiac/messages'
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
+import { useEffect } from 'react'
 import { redirect } from 'react-router'
 
 export const loader = async () => {
@@ -40,7 +41,7 @@ const NoRoutes = () => {
     },
   )
 
-  useSaveAccount(null, {
+  const [saveOptions, saveAndLaunchOptions] = useSaveAccount(null, {
     async onSave(route, _, tabId) {
       await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
@@ -48,6 +49,18 @@ const NoRoutes = () => {
       })
     },
   })
+
+  useEffect(() => {
+    if (saveOptions.isUpdatePending) {
+      saveOptions.saveUpdate()
+    }
+  }, [saveOptions])
+
+  useEffect(() => {
+    if (saveAndLaunchOptions.isActivationPending) {
+      saveAndLaunchOptions.proceedWithActivation()
+    }
+  }, [saveAndLaunchOptions])
 
   return (
     <Page>
