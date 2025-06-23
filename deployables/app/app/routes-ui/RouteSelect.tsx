@@ -4,7 +4,7 @@ import type {
   Waypoints as WaypointsType,
 } from '@zodiac/schema'
 import { Info, Labeled, Warning } from '@zodiac/ui'
-import { routeId } from './routeId'
+import { getRouteId } from './getRouteId'
 import { Route, Routes } from './Routes'
 import { Waypoint, Waypoints } from './Waypoints'
 
@@ -79,7 +79,11 @@ export const RouteSelect = ({
               const { waypoints } = route
 
               return (
-                <Route id={routeId(route.waypoints)} key={route.id} name={name}>
+                <Route
+                  id={getRouteId(route.waypoints)}
+                  key={route.id}
+                  name={name}
+                >
                   {waypoints && (
                     <Waypoints>
                       {waypoints.map(({ account, ...waypoint }, index) => (
@@ -114,7 +118,7 @@ const verifyDefaultValue = (
   }
 
   const valueIsValid = routes.some(
-    (route) => routeId(route.waypoints) === defaultValue,
+    (route) => getRouteId(route.waypoints) === defaultValue,
   )
 
   if (valueIsValid) {
@@ -127,5 +131,5 @@ const verifyDefaultValue = (
     return
   }
 
-  return routeId(route.waypoints)
+  return getRouteId(route.waypoints)
 }

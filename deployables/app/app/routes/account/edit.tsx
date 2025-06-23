@@ -1,6 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
-import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
+import { ChainSelect, getRouteId } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   activateRoute,
@@ -10,12 +10,11 @@ import {
   findActiveRoute,
   getAccount,
   getWalletByAddress,
-  getWallets,
   removeActiveRoute,
   updateAccount,
   type DBClient,
 } from '@zodiac/db'
-import type { Tenant, User } from '@zodiac/db/schema'
+import type { User } from '@zodiac/db/schema'
 import {
   getOptionalHexString,
   getOptionalString,
@@ -28,11 +27,9 @@ import {
   createSafeWaypoint,
   queryRoutes,
 } from '@zodiac/modules'
-import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
+import { isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressInput,
-  AddressSelect,
-  Form,
   FormLayout,
   GhostLinkButton,
   InlineForm,
@@ -41,70 +38,22 @@ import {
 } from '@zodiac/ui'
 import type { UUID } from 'crypto'
 import { useId } from 'react'
-import { href, redirect } from 'react-router'
-import { prefixAddress, queryInitiators } from 'ser-kit'
+import { href, Outlet, redirect } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/edit'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({
-      request,
-      params: { accountId },
-      context: {
-        auth: { user, tenant },
-      },
-    }) => {
-      const url = new URL(request.url)
-
+    async ({ params: { accountId } }) => {
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       const account = await getAccount(dbClient(), accountId)
-      const wallets = await getWallets(dbClient(), user.id)
-      const initiators = await queryInitiators(
-        prefixAddress(account.chainId, account.address),
-      )
-      const initiatorAddress = await getInitiator(
-        tenant,
-        user,
-        account.id,
-        url.searchParams,
-      )
-
-      const routesResult =
-        initiatorAddress == null
-          ? { routes: [] }
-          : await queryRoutes(
-              prefixAddress(undefined, initiatorAddress),
-              prefixAddress(account.chainId, account.address),
-            )
-
-      const activeRoute = await findActiveRoute(
-        dbClient(),
-        tenant,
-        user,
-        account.id,
-      )
-      const [defaultRoute] = routesResult.routes
 
       return {
         label: account.label || '',
-        comparableId:
-          activeRoute == null
-            ? defaultRoute == null
-              ? undefined
-              : routeId(defaultRoute.waypoints)
-            : routeId(activeRoute.route.waypoints),
-        initiatorAddress,
-        initiatorWallets: wallets.filter((wallet) =>
-          initiators.includes(wallet.address),
-        ),
-        initiatorAddresses: initiators.filter((address) =>
-          wallets.every((wallet) => wallet.address !== address),
-        ),
         account: account.address,
         chainId: account.chainId,
-        routes: routesResult.routes,
       }
     },
     {
@@ -149,7 +98,7 @@ export const action = (args: Route.ActionArgs) =>
           if (
             activeRoute == null ||
             activeRoute.route.wallet.address !== initiator ||
-            routeId(activeRoute.route.waypoints) !== selectedRouteId
+            getRouteId(activeRoute.route.waypoints) !== selectedRouteId
           ) {
             const route = await createRoute(tx, user, {
               accountId,
@@ -187,16 +136,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditAccount = ({
-  loaderData: {
-    label,
-    initiatorWallets,
-    initiatorAddresses,
-    initiatorAddress,
-    account,
-    chainId,
-    routes,
-    comparableId,
-  },
+  loaderData: { label, account, chainId },
 }: Route.ComponentProps) => {
   const formId = useId()
 
@@ -222,45 +162,10 @@ const EditAccount = ({
             </div>
           </div>
 
-          <Form method="GET">
-            {({ submit }) => (
-              <AddressSelect
-                isClearable
-                isMulti={false}
-                label="Pilot Signer"
-                clearLabel="Remove Pilot Signer"
-                name="initiator"
-                placeholder="Select a wallet form the list"
-                defaultValue={initiatorAddress ?? undefined}
-                options={[
-                  ...initiatorWallets.map(({ address, label }) => ({
-                    address,
-                    label,
-                  })),
-                  ...initiatorAddresses.map((address) => ({
-                    address,
-                    label: address,
-                  })),
-                ]}
-                onChange={() => submit()}
-              />
-            )}
-          </Form>
-
-          <RouteSelect
-            routes={routes}
-            defaultValue={comparableId}
-            form={formId}
-            name="routeId"
-            initiator={
-              initiatorAddress == null
-                ? undefined
-                : prefixAddress(undefined, initiatorAddress)
-            }
-          />
+          <Outlet context={{ formId }} />
 
           <FormLayout.Actions>
-            <InlineForm id={formId} context={{ initiator: initiatorAddress }}>
+            <InlineForm id={formId}>
               <PrimaryButton
                 submit
                 intent={Intent.Save}
@@ -282,33 +187,6 @@ export default EditAccount
 
 enum Intent {
   Save = 'Save',
-}
-
-const getInitiator = async (
-  tenant: Tenant,
-  user: User,
-  accountId: UUID,
-  searchParams: URLSearchParams,
-): Promise<HexAddress | null> => {
-  if (searchParams.has('initiator')) {
-    const initiator = searchParams.get('initiator')
-
-    if (initiator === '') {
-      return null
-    }
-
-    const address = addressSchema.parse(initiator)
-
-    return address
-  }
-
-  const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
-
-  if (activeRoute == null) {
-    return null
-  }
-
-  return activeRoute.route.wallet.address
 }
 
 type CreateRouteOptions = {
@@ -348,7 +226,7 @@ const createRoute = async (
   )
 
   const selectedRoute = routes.find(
-    (route) => routeId(route.waypoints) === selectedRouteId,
+    (route) => getRouteId(route.waypoints) === selectedRouteId,
   )
 
   invariantResponse(selectedRoute != null, 'Could not find selected route')

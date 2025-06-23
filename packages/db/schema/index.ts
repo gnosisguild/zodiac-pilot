@@ -265,6 +265,7 @@ export const RouteTable = pgTable(
   'Route',
   {
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    label: text(),
     fromId: uuid()
       .notNull()
       .$type<UUID>()

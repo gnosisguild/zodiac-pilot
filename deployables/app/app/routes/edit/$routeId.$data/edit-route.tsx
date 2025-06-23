@@ -6,7 +6,7 @@ import {
   useConnected,
   useIsDev,
 } from '@/components'
-import { ChainSelect, routeId, RouteSelect } from '@/routes-ui'
+import { ChainSelect, getRouteId, RouteSelect } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
@@ -55,7 +55,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   return {
     currentRoute: {
       comparableId:
-        route.initiator == null ? undefined : routeId(route.waypoints),
+        route.initiator == null ? undefined : getRouteId(route.waypoints),
       label: route.label,
       initiator: route.initiator,
       avatar: route.avatar,
@@ -147,7 +147,7 @@ const findSelectedRoute = async (
     return
   }
 
-  if (selectedRouteId === routeId(route.waypoints)) {
+  if (selectedRouteId === getRouteId(route.waypoints)) {
     return route
   }
 
@@ -157,7 +157,7 @@ const findSelectedRoute = async (
       : await queryRoutes(route.initiator, route.avatar)
 
   const selectedRoute = queryRoutesResult.routes.find(
-    (route) => routeId(route.waypoints) === selectedRouteId,
+    (route) => getRouteId(route.waypoints) === selectedRouteId,
   )
 
   return selectedRoute
