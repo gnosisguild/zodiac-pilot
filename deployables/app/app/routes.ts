@@ -50,7 +50,8 @@ export default [
         ),
 
         route('/account/:accountId', 'routes/account/edit.tsx', [
-          route(':routeId?', 'routes/account/routes.tsx'),
+          index('routes/account/load-default-route.ts'),
+          route('route/:routeId?', 'routes/account/routes.tsx'),
         ]),
 
         ...prefix('/edit', [

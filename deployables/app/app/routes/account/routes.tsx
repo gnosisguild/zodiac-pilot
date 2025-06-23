@@ -2,13 +2,14 @@ import { authorizedLoader } from '@/auth-server'
 import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, findActiveRoute, getAccount, getWallets } from '@zodiac/db'
+import type { Tenant, User } from '@zodiac/db/schema'
 import { queryRoutes } from '@zodiac/modules'
-import { isUUID } from '@zodiac/schema'
+import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import { AddressSelect, Form } from '@zodiac/ui'
+import type { UUID } from 'crypto'
 import { useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
-import { findInitiator } from './findInitiator'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -91,7 +92,7 @@ const Routes = ({
         type="hidden"
         form={formId}
         name="initiator"
-        value={initiatorAddress ?? undefined}
+        value={initiatorAddress ?? ''}
       />
 
       <Form method="GET">
@@ -101,7 +102,7 @@ const Routes = ({
             isMulti={false}
             label="Pilot Signer"
             clearLabel="Remove Pilot Signer"
-            name="initiator"
+            name="transient-initiator"
             placeholder="Select a wallet form the list"
             defaultValue={initiatorAddress ?? undefined}
             options={[
@@ -135,3 +136,30 @@ const Routes = ({
 }
 
 export default Routes
+
+const findInitiator = async (
+  tenant: Tenant,
+  user: User,
+  accountId: UUID,
+  searchParams: URLSearchParams,
+): Promise<HexAddress | null> => {
+  if (searchParams.has('transient-initiator')) {
+    const initiator = searchParams.get('transient-initiator')
+
+    if (initiator === '') {
+      return null
+    }
+
+    const address = addressSchema.parse(initiator)
+
+    return address
+  }
+
+  const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
+
+  if (activeRoute == null) {
+    return null
+  }
+
+  return activeRoute.route.wallet.address
+}

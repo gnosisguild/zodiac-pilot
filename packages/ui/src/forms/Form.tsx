@@ -1,5 +1,5 @@
 import { useCallback, useRef, type ComponentProps, type ReactNode } from 'react'
-import { Form as BaseForm, useSubmit } from 'react-router'
+import { Form as BaseForm, useFormAction, useSubmit } from 'react-router'
 import { FormLayout } from './FormLayout'
 
 type RenderProps = {
@@ -25,10 +25,11 @@ export const Form = ({
   const formRef = useRef(null)
 
   const submit = useSubmit()
+  const action = useFormAction()
 
   const submitFromWithin = useCallback(
-    () => setTimeout(() => submit(formRef.current, { method }), 1),
-    [method, submit],
+    () => setTimeout(() => submit(formRef.current, { method, action }), 1),
+    [action, method, submit],
   )
 
   return (
