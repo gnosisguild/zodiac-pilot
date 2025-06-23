@@ -10,6 +10,7 @@ import { useState, type PropsWithChildren } from 'react'
 import { AccountType } from 'ser-kit'
 import { ContractAddress } from './ContractAddress'
 import { DecodedTransaction } from './DecodedTransaction'
+import { useFriendlyTransaction } from './friendly'
 import { RawTransaction } from './RawTransaction'
 import { Remove } from './Remove'
 import { RolePermissionCheck } from './RolePermissionCheck'
@@ -23,10 +24,11 @@ interface Props {
 export const Transaction = ({ transactionId }: Props) => {
   const transaction = useTransaction(transactionId)
   const [expanded, setExpanded] = useState(true)
-  const { chainId } = useAccount()
   const route = useExecutionRoute()
   const decoded = useDecodedFunctionData(transactionId)
-  const showRoles = routeGoesThroughRoles(route)
+  const showPermissionsCheck = routeGoesThroughRoles(route)
+
+  const { FriendlyTitle, FriendlyBody } = useFriendlyTransaction(transactionId)
 
   return (
     <section
@@ -40,59 +42,60 @@ export const Transaction = ({ transactionId }: Props) => {
           functionFragment={decoded?.functionFragment}
           expanded={expanded}
           onExpandToggle={() => setExpanded(!expanded)}
+          showPermissionsCheck={showPermissionsCheck}
         >
-          <SimulationStatus transactionId={transactionId} mini />
-
-          {showRoles && (
-            <RolePermissionCheck transactionId={transactionId} mini />
+          {FriendlyTitle ? (
+            <FriendlyTitle transactionId={transactionId} />
+          ) : (
+            <GenericTitle transactionId={transactionId} />
           )}
-
-          <div className="flex">
-            <Translate mini transactionId={transactionId} />
-
-            <CopyToClipboard
-              iconOnly
-              size="small"
-              data={toMetaTransactionRequest(transaction)}
-            >
-              Copy transaction data to clipboard
-            </CopyToClipboard>
-            <Remove transactionId={transactionId} />
-          </div>
         </TransactionHeader>
       </div>
 
       {expanded && (
         <div className="flex flex-col gap-3 border-t border-zinc-300 bg-zinc-200/80 px-2 py-4 text-sm dark:border-zinc-500/80 dark:bg-zinc-500/30">
-          <ContractAddress
-            chainId={chainId}
-            address={transaction.to}
-            contractInfo={transaction.contractInfo}
-          />
-
-          <EtherValue value={transaction.value} />
-
-          {decoded ? (
-            <DecodedTransaction {...decoded}>
-              <Divider />
-            </DecodedTransaction>
+          {FriendlyBody ? (
+            <FriendlyBody transactionId={transactionId} />
           ) : (
-            <>
-              <Divider />
-
-              <RawTransaction data={transaction.data} />
-            </>
+            <GenericBody transactionId={transactionId} />
           )}
-
           <Divider />
-
           <TransactionStatus
             transactionId={transactionId}
-            showRoles={showRoles}
+            showPermissionsCheck={showPermissionsCheck}
           />
         </div>
       )}
     </section>
+  )
+}
+
+const GenericBody = ({ transactionId }: { transactionId: string }) => {
+  const transaction = useTransaction(transactionId)
+  const decoded = useDecodedFunctionData(transactionId)
+  const { chainId } = useAccount()
+  return (
+    <>
+      <ContractAddress
+        chainId={chainId}
+        address={transaction.to}
+        contractInfo={transaction.contractInfo}
+      />
+
+      <EtherValue value={transaction.value} />
+
+      {decoded ? (
+        <DecodedTransaction {...decoded}>
+          <Divider />
+        </DecodedTransaction>
+      ) : (
+        <>
+          <Divider />
+
+          <RawTransaction data={transaction.data} />
+        </>
+      )}
+    </>
   )
 }
 
@@ -102,57 +105,85 @@ type HeaderProps = PropsWithChildren<{
   onExpandToggle(): void
   expanded: boolean
   isDelegateCall: boolean
+  showPermissionsCheck: boolean
+  children: React.ReactNode
 }>
 
 const TransactionHeader = ({
   transactionId,
-  isDelegateCall,
-  functionFragment,
   onExpandToggle,
   expanded,
+  showPermissionsCheck,
   children,
 }: HeaderProps) => {
+  const transaction = useTransaction(transactionId)
   return (
     <div className="flex items-center justify-between gap-4">
       <label className="flex cursor-pointer items-center gap-2 overflow-hidden">
         <ToggleButton expanded={expanded} onToggle={onExpandToggle} />
-
-        <div className="flex flex-col gap-1 overflow-hidden">
-          <h5
-            id={transactionId}
-            className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
-          >
-            {functionFragment
-              ? functionFragment.format('sighash').split('(')[0]
-              : 'Raw transaction'}
-          </h5>
-
-          {isDelegateCall && (
-            <span className="text-xs font-normal uppercase opacity-75">
-              delegatecall
-            </span>
-          )}
-        </div>
+        {children}
       </label>
 
-      <div className="flex items-center justify-end gap-2">{children}</div>
+      <div className="flex items-center justify-end gap-2">
+        <SimulationStatus transactionId={transactionId} mini />
+
+        {showPermissionsCheck && (
+          <RolePermissionCheck transactionId={transactionId} mini />
+        )}
+
+        <div className="flex">
+          <Translate mini transactionId={transactionId} />
+
+          <CopyToClipboard
+            iconOnly
+            size="small"
+            data={toMetaTransactionRequest(transaction)}
+          >
+            Copy transaction data to clipboard
+          </CopyToClipboard>
+          <Remove transactionId={transactionId} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const GenericTitle = ({ transactionId }: { transactionId: string }) => {
+  const transaction = useTransaction(transactionId)
+  const decoded = useDecodedFunctionData(transactionId)
+  return (
+    <div className="flex flex-col gap-1 overflow-hidden">
+      <h5
+        id={transactionId}
+        className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
+      >
+        {decoded?.functionFragment
+          ? decoded.functionFragment.format('sighash').split('(')[0]
+          : 'Raw transaction'}
+      </h5>
+
+      {transaction.operation === 1 && (
+        <span className="text-xs font-normal uppercase opacity-75">
+          delegatecall
+        </span>
+      )}
     </div>
   )
 }
 
 interface StatusProps {
   transactionId: string
-  showRoles?: boolean
+  showPermissionsCheck?: boolean
 }
 
 const TransactionStatus = ({
   transactionId,
-  showRoles = false,
+  showPermissionsCheck = false,
 }: StatusProps) => (
   <>
     <SimulationStatus transactionId={transactionId} />
 
-    {showRoles && (
+    {showPermissionsCheck && (
       <>
         <Divider />
 
@@ -182,7 +213,9 @@ const routeGoesThroughRoles = (route: ExecutionRoute | null) => {
     return false
   }
 
-  return route.waypoints?.some(
-    (waypoint) => waypoint.account.type === AccountType.ROLES,
+  return (
+    route.waypoints?.some(
+      (waypoint) => waypoint.account.type === AccountType.ROLES,
+    ) || false
   )
 }
