@@ -427,6 +427,7 @@ describe('Edit account', () => {
       await render(href('/account/:accountId', { accountId: account.id }), {
         user,
         tenant,
+        features: ['multiple-routes'],
       })
 
       expect(

@@ -1,13 +1,19 @@
 import { authorizedLoader } from '@/auth-server'
 import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
-import { dbClient, findActiveRoute, getAccount, getWallets } from '@zodiac/db'
+import {
+  dbClient,
+  findActiveRoute,
+  getAccount,
+  getRoutes,
+  getWallets,
+} from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import { AddressSelect, Form } from '@zodiac/ui'
+import { AddressSelect, Feature, Form } from '@zodiac/ui'
 import type { UUID } from 'crypto'
-import { useOutletContext } from 'react-router'
+import { href, Link, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
 
@@ -64,6 +70,7 @@ export const loader = (args: Route.LoaderArgs) =>
         ),
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
+        routes: await getRoutes(dbClient(), tenant.id, { accountId }),
         comparableId:
           activeRoute == null
             ? defaultRoute == null
@@ -82,12 +89,31 @@ const Routes = ({
     initiatorWallets,
     possibleRoutes,
     comparableId,
+    routes,
   },
+  params: { accountId },
 }: Route.ComponentProps) => {
   const { formId } = useOutletContext<{ formId: string }>()
 
   return (
     <>
+      <Feature feature="multiple-routes">
+        <div role="tablist">
+          {routes.map((route) => (
+            <Link
+              key={route.id}
+              to={href('/account/:accountId/route/:routeId?', {
+                accountId,
+                routeId: route.id,
+              })}
+              role="tab"
+            >
+              {route.label || 'Unnamed route'}
+            </Link>
+          ))}
+        </div>
+      </Feature>
+
       <input
         type="hidden"
         form={formId}
