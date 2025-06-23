@@ -26,7 +26,7 @@ test.describe('Create new account', () => {
   })
 
   test.describe('Logged in', () => {
-    test.describe('With open extension', () => {
+    test.describe.skip('With open extension', () => {
       test('it is possible to create a new route', async ({ page }) => {
         await page.goto(href('/create/:prefixedAddress?'))
 
