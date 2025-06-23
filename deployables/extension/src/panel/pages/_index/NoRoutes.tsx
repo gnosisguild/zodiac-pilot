@@ -41,7 +41,7 @@ const NoRoutes = () => {
     },
   )
 
-  const [, saveAndLaunchOptions] = useSaveAccount(null, {
+  const [saveOptions, saveAndLaunchOptions] = useSaveAccount(null, {
     async onSave(route, _, tabId) {
       await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
@@ -49,6 +49,12 @@ const NoRoutes = () => {
       })
     },
   })
+
+  useEffect(() => {
+    if (saveOptions.isUpdatePending) {
+      saveOptions.saveUpdate()
+    }
+  }, [saveOptions])
 
   useEffect(() => {
     if (saveAndLaunchOptions.isActivationPending) {
