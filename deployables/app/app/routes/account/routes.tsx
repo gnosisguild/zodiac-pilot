@@ -13,8 +13,9 @@ import type { Tenant, User } from '@zodiac/db/schema'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import { AddressSelect, Feature, Form } from '@zodiac/ui'
+import classNames from 'classnames'
 import type { UUID } from 'crypto'
-import { href, Link, useOutletContext } from 'react-router'
+import { href, NavLink, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
 
@@ -102,18 +103,29 @@ const Routes = ({
   return (
     <>
       <Feature feature="multiple-routes">
-        <div role="tablist">
+        <div
+          role="tablist"
+          className="flex items-center gap-2 border-b border-zinc-600"
+        >
           {routes.map((route) => (
-            <Link
+            <NavLink
               key={route.id}
               to={href('/account/:accountId/route/:routeId?', {
                 accountId,
                 routeId: route.id,
               })}
               role="tab"
+              className={({ isActive }) =>
+                classNames(
+                  'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
+                  isActive
+                    ? 'border-indigo-500 text-indigo-600 dark:border-teal-300 dark:text-teal-500'
+                    : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-50',
+                )
+              }
             >
               {route.label || 'Unnamed route'}
-            </Link>
+            </NavLink>
           ))}
         </div>
       </Feature>
