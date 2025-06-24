@@ -1,6 +1,6 @@
 import { simulateTransactionBundle } from '@/simulation-server'
 import { createMockExecuteTransactionAction, render } from '@/test-utils'
-import { activateRoute, dbClient, getProposedTransactions } from '@zodiac/db'
+import { dbClient, getProposedTransactions, setDefaultRoute } from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -63,7 +63,7 @@ describe('Sign', () => {
     const account = await accountFactory.create(tenant, user)
     const route = await routeFactory.create(account, wallet)
 
-    await activateRoute(dbClient(), tenant, user, route)
+    await setDefaultRoute(dbClient(), tenant, user, route)
 
     const transaction = createMockTransactionRequest()
 
@@ -91,7 +91,7 @@ describe('Sign', () => {
     const account = await accountFactory.create(tenant, user)
     const route = await routeFactory.create(account, wallet)
 
-    await activateRoute(dbClient(), tenant, user, route)
+    await setDefaultRoute(dbClient(), tenant, user, route)
 
     const transaction = createMockTransactionRequest()
 

@@ -9,14 +9,14 @@ import {
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
-  activateRoute,
   dbClient,
   getAccountByAddress,
   getAccounts,
-  getActiveRoute,
+  getDefaultRoute,
   getRoutes,
   getWalletByAddress,
   getWallets,
+  setDefaultRoute,
 } from '@zodiac/db'
 import {
   accountFactory,
@@ -75,7 +75,7 @@ describe.sequential('List Routes', () => {
         })
         const route = await routeFactory.create(account, wallet)
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         await render(href('/edit'), { tenant, user })
 
@@ -551,7 +551,7 @@ describe.sequential('List Routes', () => {
       })
 
       await expect(
-        getActiveRoute(dbClient(), tenant, user, account.id),
+        getDefaultRoute(dbClient(), tenant, user, account.id),
       ).resolves.toHaveProperty('routeId', remoteRoute.id)
     })
 
@@ -564,7 +564,7 @@ describe.sequential('List Routes', () => {
       })
       const route = await routeFactory.create(account, wallet)
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       const executionRoute = createMockExecutionRoute({
         initiator: prefixAddress(undefined, wallet.address),

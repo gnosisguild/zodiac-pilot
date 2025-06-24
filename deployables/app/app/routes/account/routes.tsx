@@ -3,7 +3,7 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  findActiveRoute,
+  findDefaultRoute,
   getAccount,
   getRoute,
   getRoutes,
@@ -71,7 +71,7 @@ export const loader = (args: Route.LoaderArgs) =>
               prefixAddress(account.chainId, account.address),
             )
 
-      const activeRoute = await findActiveRoute(
+      const activeRoute = await findDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -305,7 +305,12 @@ const findInitiator = async (
     return route.wallet.address
   }
 
-  const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
+  const activeRoute = await findDefaultRoute(
+    dbClient(),
+    tenant,
+    user,
+    accountId,
+  )
 
   if (activeRoute == null) {
     return null

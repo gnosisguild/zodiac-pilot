@@ -3,14 +3,14 @@ import { Page } from '@/components'
 import { ChainSelect, getRouteId } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  activateRoute,
   createRoute as baseCreateRoute,
   createWallet,
   dbClient,
-  findActiveRoute,
+  findDefaultRoute,
   getAccount,
   getWalletByAddress,
-  removeActiveRoute,
+  removeDefaultRoute,
+  setDefaultRoute,
   updateAccount,
   type DBClient,
 } from '@zodiac/db'
@@ -85,7 +85,7 @@ export const action = (args: Route.ActionArgs) =>
       await dbClient().transaction(async (tx) => {
         const initiator = getOptionalHexString(data, 'initiator')
 
-        const activeRoute = await findActiveRoute(tx, tenant, user, accountId)
+        const activeRoute = await findDefaultRoute(tx, tenant, user, accountId)
 
         if (initiator != null) {
           const selectedRouteId = getOptionalString(data, 'routeId')
@@ -107,13 +107,13 @@ export const action = (args: Route.ActionArgs) =>
             })
 
             if (activeRoute != null) {
-              await removeActiveRoute(tx, tenant, user, accountId)
+              await removeDefaultRoute(tx, tenant, user, accountId)
             }
 
-            await activateRoute(tx, tenant, user, route)
+            await setDefaultRoute(tx, tenant, user, route)
           }
         } else {
-          await removeActiveRoute(tx, tenant, user, accountId)
+          await removeDefaultRoute(tx, tenant, user, accountId)
         }
 
         await updateAccount(tx, accountId, {

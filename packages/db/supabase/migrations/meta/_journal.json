@@ -225,6 +225,13 @@
       "when": 1750678121760,
       "tag": "0031_add label to route",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1750757586244,
+      "tag": "0032_migrate-active-route-to-default-route",
+      "breakpoints": true
     }
   ]
 }

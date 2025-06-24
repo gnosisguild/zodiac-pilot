@@ -1,6 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { dbClient, findActiveRoute } from '@zodiac/db'
+import { dbClient, findDefaultRoute } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/load-default-route'
@@ -16,7 +16,7 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
-      const activeRoute = await findActiveRoute(
+      const activeRoute = await findDefaultRoute(
         dbClient(),
         tenant,
         user,

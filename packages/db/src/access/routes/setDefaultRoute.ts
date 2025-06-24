@@ -1,19 +1,19 @@
 import {
-  ActiveRouteTable,
+  DefaultRouteTable,
   type Route,
   type Tenant,
   type User,
 } from '@zodiac/db/schema'
 import type { DBClient } from '../../dbClient'
 
-export const activateRoute = async (
+export const setDefaultRoute = async (
   db: DBClient,
   tenant: Tenant,
   user: User,
   route: Route,
 ) => {
-  const [activeRoute] = await db
-    .insert(ActiveRouteTable)
+  const [defaultRoute] = await db
+    .insert(DefaultRouteTable)
     .values({
       accountId: route.toId,
       routeId: route.id,
@@ -22,5 +22,5 @@ export const activateRoute = async (
     })
     .returning()
 
-  return activeRoute
+  return defaultRoute
 }

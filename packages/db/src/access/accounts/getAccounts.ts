@@ -24,7 +24,7 @@ export const getAccounts = (
       return asc(fields.label)
     },
     with: {
-      activeRoutes: {
+      defaultRoutes: {
         where(fields, { eq, and }) {
           return and(eq(fields.userId, userId), eq(fields.tenantId, tenantId))
         },

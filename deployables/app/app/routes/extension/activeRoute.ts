@@ -2,7 +2,7 @@ import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  findActiveRoute,
+  findDefaultRoute,
   getAccount,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -24,18 +24,18 @@ export const loader = (args: Route.LoaderArgs) =>
 
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
-      const activeRoute = await findActiveRoute(
+      const defaultRoute = await findDefaultRoute(
         dbClient(),
         tenant,
         user,
         accountId,
       )
 
-      if (activeRoute == null) {
+      if (defaultRoute == null) {
         return null
       }
 
-      const { account, route } = activeRoute
+      const { account, route } = defaultRoute
 
       return toExecutionRoute({
         wallet: route.wallet,

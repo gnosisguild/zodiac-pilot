@@ -2,12 +2,12 @@ import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
-  activateRoute,
   dbClient,
-  findActiveRoute,
+  findDefaultRoute,
   getAccount,
-  getActiveRoute,
+  getDefaultRoute,
   getWalletByAddress,
+  setDefaultRoute,
 } from '@zodiac/db'
 import {
   accountFactory,
@@ -129,7 +129,7 @@ describe('Edit account', () => {
       })
       const route = await routeFactory.create(account, wallet)
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
@@ -169,7 +169,7 @@ describe('Edit account', () => {
 
       await waitForPendingActions()
 
-      const activeRoute = await getActiveRoute(
+      const activeRoute = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -190,7 +190,7 @@ describe('Edit account', () => {
       const wallet = await walletFactory.create(user)
       const route = await routeFactory.create(account, wallet)
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
@@ -210,7 +210,7 @@ describe('Edit account', () => {
       await waitForPendingActions()
 
       await expect(
-        findActiveRoute(dbClient(), tenant, user, account.id),
+        findDefaultRoute(dbClient(), tenant, user, account.id),
       ).resolves.not.toBeDefined()
     })
 
@@ -225,7 +225,7 @@ describe('Edit account', () => {
 
       const route = await routeFactory.create(account, walletA)
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
@@ -247,7 +247,7 @@ describe('Edit account', () => {
 
       await waitForPendingActions()
 
-      const activeRoute = await getActiveRoute(
+      const activeRoute = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -288,7 +288,7 @@ describe('Edit account', () => {
 
       await waitForPendingActions()
 
-      const activeRoute = await getActiveRoute(
+      const activeRoute = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -340,7 +340,7 @@ describe('Edit account', () => {
 
       await waitForPendingActions()
 
-      const activeRoute = await getActiveRoute(
+      const activeRoute = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -378,7 +378,7 @@ describe('Edit account', () => {
         waypoints: firstRoute.waypoints,
       })
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       const secondRoute = createMockRoute({ id: 'second', waypoints })
 
@@ -398,7 +398,7 @@ describe('Edit account', () => {
 
       await waitForPendingActions()
 
-      const activeRoute = await getActiveRoute(
+      const activeRoute = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -453,7 +453,7 @@ describe('Edit account', () => {
         label: 'Route B',
       })
 
-      await activateRoute(dbClient(), tenant, user, routeA)
+      await setDefaultRoute(dbClient(), tenant, user, routeA)
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 

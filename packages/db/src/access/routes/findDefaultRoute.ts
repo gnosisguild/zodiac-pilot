@@ -3,13 +3,13 @@ import { waypointsSchema } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
-export const findActiveRoute = async (
+export const findDefaultRoute = async (
   db: DBClient,
   tenant: Tenant,
   user: User,
   accountId: UUID,
 ) => {
-  const activeRoute = await db.query.activeRoute.findFirst({
+  const defaultRoute = await db.query.defaultRoute.findFirst({
     where(fields, { eq, and }) {
       return and(
         eq(fields.tenantId, tenant.id),
@@ -27,18 +27,18 @@ export const findActiveRoute = async (
     },
   })
 
-  if (activeRoute == null) {
-    return activeRoute
+  if (defaultRoute == null) {
+    return defaultRoute
   }
 
   return {
-    ...activeRoute,
+    ...defaultRoute,
     route: {
-      ...activeRoute.route,
+      ...defaultRoute.route,
       waypoints:
-        activeRoute.route.waypoints == null
-          ? activeRoute.route.waypoints
-          : waypointsSchema.parse(activeRoute.route.waypoints),
+        defaultRoute.route.waypoints == null
+          ? defaultRoute.route.waypoints
+          : waypointsSchema.parse(defaultRoute.route.waypoints),
     },
-  } satisfies typeof activeRoute
+  } satisfies typeof defaultRoute
 }

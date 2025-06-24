@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { activateRoute, dbClient, getWallet, getWallets } from '@zodiac/db'
+import { dbClient, getWallet, getWallets, setDefaultRoute } from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -158,7 +158,7 @@ describe('Profile', () => {
 
       const route = await routeFactory.create(account, wallet)
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       await render(href('/profile'), {
         tenant,
