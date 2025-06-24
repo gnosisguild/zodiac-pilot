@@ -1,7 +1,14 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getRoute, getRoutes, getWalletByAddress } from '@zodiac/db'
+import {
+  dbClient,
+  getDefaultRoute,
+  getRoute,
+  getRoutes,
+  getWalletByAddress,
+  setDefaultRoute,
+} from '@zodiac/db'
 import {
   accountFactory,
   routeFactory,
@@ -236,6 +243,85 @@ describe('Routes', () => {
       const wallet = await getWalletByAddress(dbClient(), user, walletAddress)
 
       expect(route).toHaveProperty('fromId', wallet.id)
+    })
+  })
+
+  describe('Default route', () => {
+    it('marks the first route as the default', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user, { label: 'Test Wallet' })
+      const account = await accountFactory.create(tenant, user)
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
+        href('/account/:accountId/route/:routeId?', { accountId: account.id }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test Wallet' }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const [route] = await getRoutes(dbClient(), tenant.id, {
+        accountId: account.id,
+      })
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', route.id)
+    })
+
+    it('leaves the default route untouched when it has already been defined', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const walletA = await walletFactory.create(user, { label: 'Wallet A' })
+      const walletB = await walletFactory.create(user, { label: 'Wallet B' })
+      const account = await accountFactory.create(tenant, user)
+
+      const routeA = await routeFactory.create(account, walletA)
+      const routeB = await routeFactory.create(account, walletB)
+
+      await setDefaultRoute(dbClient(), tenant, user, routeA)
+
+      mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
+
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: routeB.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Wallet A' }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', routeA.id)
     })
   })
 
