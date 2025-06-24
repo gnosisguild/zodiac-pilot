@@ -24,6 +24,7 @@ import {
   Form,
   GhostButton,
   Modal,
+  Popover,
   PrimaryButton,
   TextInput,
 } from '@zodiac/ui'
@@ -185,7 +186,7 @@ const Routes = ({
       <Feature feature="multiple-routes">
         <div
           role="tablist"
-          className="flex items-center gap-2 border-b border-zinc-600"
+          className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-600"
         >
           {routes.map((route) => (
             <NavLink
@@ -205,6 +206,14 @@ const Routes = ({
                 )
               }
             >
+              {defaultRouteId === route.id && (
+                <Popover
+                  popover={<span className="text-sm">Default route</span>}
+                >
+                  <div className="size-2 rounded-full bg-teal-500 dark:bg-indigo-500" />
+                </Popover>
+              )}
+
               <span id={route.id}>{route.label || 'Unnamed route'}</span>
 
               <Edit route={route} defaultRouteId={defaultRouteId} />
