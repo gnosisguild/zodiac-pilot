@@ -16,14 +16,14 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
-      const activeRoute = await findDefaultRoute(
+      const defaultRoute = await findDefaultRoute(
         dbClient(),
         tenant,
         user,
         accountId,
       )
 
-      if (activeRoute == null) {
+      if (defaultRoute == null) {
         return redirect(
           href('/account/:accountId/route/:routeId?', { accountId }),
         )
@@ -32,7 +32,7 @@ export const loader = (args: Route.LoaderArgs) =>
       return redirect(
         href('/account/:accountId/route/:routeId?', {
           accountId,
-          routeId: activeRoute.routeId,
+          routeId: defaultRoute.routeId,
         }),
       )
     },

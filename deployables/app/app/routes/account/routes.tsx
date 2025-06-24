@@ -3,14 +3,12 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  findDefaultRoute,
   getAccount,
   getRoute,
   getRoutes,
   getWallets,
   updateRouteLabel,
 } from '@zodiac/db'
-import type { Tenant, User } from '@zodiac/db/schema'
 import { getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
@@ -61,8 +59,7 @@ export const loader = (args: Route.LoaderArgs) =>
         prefixAddress(account.chainId, account.address),
       )
 
-      const initiatorAddress = await findInitiator(tenant, user, {
-        accountId: account.id,
+      const initiatorAddress = await findInitiator({
         routeId,
         searchParams: url.searchParams,
       })
@@ -276,16 +273,14 @@ const EditLabel = ({
 }
 
 type FindInitiatorOptions = {
-  accountId: UUID
   routeId?: UUID
   searchParams: URLSearchParams
 }
 
-const findInitiator = async (
-  tenant: Tenant,
-  user: User,
-  { accountId, routeId, searchParams }: FindInitiatorOptions,
-): Promise<HexAddress | null> => {
+const findInitiator = async ({
+  routeId,
+  searchParams,
+}: FindInitiatorOptions): Promise<HexAddress | null> => {
   if (searchParams.has('transient-initiator')) {
     const initiator = searchParams.get('transient-initiator')
 
@@ -304,18 +299,7 @@ const findInitiator = async (
     return route.wallet.address
   }
 
-  const activeRoute = await findDefaultRoute(
-    dbClient(),
-    tenant,
-    user,
-    accountId,
-  )
-
-  if (activeRoute == null) {
-    return null
-  }
-
-  return activeRoute.route.wallet.address
+  return null
 }
 
 enum Intent {
