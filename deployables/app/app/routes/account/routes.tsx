@@ -1,4 +1,4 @@
-import { authorizedLoader } from '@/auth-server'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
@@ -8,13 +8,26 @@ import {
   getRoute,
   getRoutes,
   getWallets,
+  updateRouteLabel,
 } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
+import { getString, getUUID } from '@zodiac/form-data'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import { AddressSelect, Feature, Form } from '@zodiac/ui'
+import {
+  AddressSelect,
+  Feature,
+  Form,
+  GhostButton,
+  Modal,
+  PrimaryButton,
+  TextInput,
+} from '@zodiac/ui'
 import classNames from 'classnames'
 import type { UUID } from 'crypto'
+import { Pencil } from 'lucide-react'
+import { useState } from 'react'
 import { href, NavLink, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
@@ -87,6 +100,39 @@ export const loader = (args: Route.LoaderArgs) =>
     { ensureSignedIn: true },
   )
 
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({ request }) => {
+      const data = await request.formData()
+
+      switch (getString(data, 'intent')) {
+        case Intent.EditLabel: {
+          const routeId = getUUID(data, 'routeId')
+          const label = getString(data, 'label')
+
+          await updateRouteLabel(dbClient(), routeId, label)
+
+          return null
+        }
+      }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ tenant, params: { routeId } }) {
+        if (routeId == null) {
+          return false
+        }
+
+        invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
+
+        const route = await getRoute(dbClient(), routeId)
+
+        return route.tenantId === tenant.id
+      },
+    },
+  )
+
 const Routes = ({
   loaderData: {
     initiatorAddress,
@@ -110,6 +156,7 @@ const Routes = ({
           {routes.map((route) => (
             <NavLink
               key={route.id}
+              aria-labelledby={route.id}
               to={href('/account/:accountId/route/:routeId?', {
                 accountId,
                 routeId: route.id,
@@ -117,14 +164,16 @@ const Routes = ({
               role="tab"
               className={({ isActive }) =>
                 classNames(
-                  'whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
+                  'flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
                   isActive
                     ? 'border-indigo-500 text-indigo-600 dark:border-teal-300 dark:text-teal-500'
                     : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-50',
                 )
               }
             >
-              {route.label || 'Unnamed route'}
+              <span id={route.id}>{route.label || 'Unnamed route'}</span>
+
+              <EditLabel routeId={route.id} defaultValue={route.label} />
             </NavLink>
           ))}
         </div>
@@ -180,6 +229,53 @@ const Routes = ({
 
 export default Routes
 
+const EditLabel = ({
+  routeId,
+  defaultValue,
+}: {
+  routeId: UUID
+  defaultValue: string | null
+}) => {
+  const [updating, setUpdating] = useState(false)
+
+  useAfterSubmit(Intent.EditLabel, () => setUpdating(false))
+
+  return (
+    <>
+      <GhostButton
+        iconOnly
+        size="tiny"
+        icon={Pencil}
+        onClick={() => setUpdating(true)}
+      >
+        Edit route label
+      </GhostButton>
+
+      <Modal open={updating} title="Update route label">
+        <Form context={{ routeId }}>
+          <TextInput
+            label="Label"
+            name="label"
+            placeholder="Route label"
+            defaultValue={defaultValue ?? ''}
+          />
+
+          <Modal.Actions>
+            <PrimaryButton
+              submit
+              intent={Intent.EditLabel}
+              busy={useIsPending(Intent.EditLabel)}
+            >
+              Update
+            </PrimaryButton>
+            <Modal.CloseAction>Cancel</Modal.CloseAction>
+          </Modal.Actions>
+        </Form>
+      </Modal>
+    </>
+  )
+}
+
 type FindInitiatorOptions = {
   accountId: UUID
   routeId?: UUID
@@ -216,4 +312,8 @@ const findInitiator = async (
   }
 
   return activeRoute.route.wallet.address
+}
+
+enum Intent {
+  EditLabel = 'EditLabel',
 }
