@@ -2,15 +2,15 @@ import { invariant } from '@epic-web/invariant'
 import type { Tenant, User } from '@zodiac/db/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
-import { findActiveRoute } from './findActiveRoute'
+import { findDefaultRoute } from './findDefaultRoute'
 
-export const getActiveRoute = async (
+export const getDefaultRoute = async (
   db: DBClient,
   tenant: Tenant,
   user: User,
   accountId: UUID,
 ) => {
-  const route = await findActiveRoute(db, tenant, user, accountId)
+  const route = await findDefaultRoute(db, tenant, user, accountId)
 
   invariant(
     route != null,
@@ -20,4 +20,4 @@ export const getActiveRoute = async (
   return route
 }
 
-export type ActiveRoute = Awaited<ReturnType<typeof getActiveRoute>>
+export type DefaultRoute = Awaited<ReturnType<typeof getDefaultRoute>>

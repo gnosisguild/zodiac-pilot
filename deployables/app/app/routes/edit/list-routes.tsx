@@ -3,7 +3,6 @@ import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  activateRoute,
   createAccount,
   createRoute,
   createWallet,
@@ -11,10 +10,11 @@ import {
   deleteAccount,
   findAccountByAddress,
   findActiveAccount,
-  findActiveRoute,
+  findDefaultRoute,
   findWalletByAddress,
   getAccount,
   getAccounts,
+  setDefaultRoute,
 } from '@zodiac/db'
 import { getString, getUUID } from '@zodiac/form-data'
 import {
@@ -136,7 +136,7 @@ export const action = async (args: Route.ActionArgs) =>
             )
 
             if (existingAccount != null && existingWallet != null) {
-              const existingActiveRoute = await findActiveRoute(
+              const existingActiveRoute = await findDefaultRoute(
                 tx,
                 tenant,
                 user,
@@ -172,7 +172,7 @@ export const action = async (args: Route.ActionArgs) =>
                 waypoints: route.waypoints,
               })
 
-              await activateRoute(tx, tenant, user, remoteRoute)
+              await setDefaultRoute(tx, tenant, user, remoteRoute)
             }
 
             return null
@@ -293,10 +293,10 @@ const ListRoutes = ({
         {remoteAccounts.length > 0 && (
           <Accounts>
             {remoteAccounts.map((account) => {
-              const [activeRoute] = account.activeRoutes
+              const [defaultRoute] = account.defaultRoutes
 
-              if (activeRoute != null) {
-                const { wallet } = activeRoute.route
+              if (defaultRoute != null) {
+                const { wallet } = defaultRoute.route
 
                 return (
                   <RemoteAccount

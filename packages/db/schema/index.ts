@@ -231,7 +231,7 @@ export const accountSchema = createSelectSchema(AccountTable, {
 })
 
 const AccountRelations = relations(AccountTable, ({ many }) => ({
-  activeRoutes: many(ActiveRouteTable),
+  defaultRoutes: many(DefaultRouteTable),
 }))
 
 export const WalletTable = pgTable(
@@ -307,8 +307,8 @@ const RouteRelations = relations(RouteTable, ({ one }) => ({
   }),
 }))
 
-export const ActiveRouteTable = pgTable(
-  'ActiveRoute',
+export const DefaultRouteTable = pgTable(
+  'DefaultRoute',
   {
     ...userReference,
     ...accountReference,
@@ -325,14 +325,14 @@ export const ActiveRouteTable = pgTable(
   ],
 )
 
-const ActiveRouteRelations = relations(ActiveRouteTable, ({ one }) => ({
+const DefaultRouteRelations = relations(DefaultRouteTable, ({ one }) => ({
   route: one(RouteTable, {
-    fields: [ActiveRouteTable.routeId],
+    fields: [DefaultRouteTable.routeId],
     references: [RouteTable.id],
   }),
 
   account: one(AccountTable, {
-    fields: [ActiveRouteTable.accountId],
+    fields: [DefaultRouteTable.accountId],
     references: [AccountTable.id],
   }),
 }))
@@ -440,7 +440,7 @@ export const schema = {
   account: AccountTable,
   wallet: WalletTable,
   route: RouteTable,
-  activeRoute: ActiveRouteTable,
+  defaultRoute: DefaultRouteTable,
   activeAccount: ActiveAccountTable,
   signedTransaction: SignedTransactionTable,
   subscriptionPlans: SubscriptionPlanTable,
@@ -452,7 +452,7 @@ export const schema = {
   RouteRelations,
   AccountRelations,
   ActiveFeatureRelations,
-  ActiveRouteRelations,
+  DefaultRouteRelations,
   ActiveAccountRelations,
   ActiveSubscriptionRelations,
   SignedTransactionRelations,

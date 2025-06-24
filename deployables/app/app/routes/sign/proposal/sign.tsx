@@ -6,7 +6,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   confirmTransactionProposal,
   dbClient,
-  getActiveRoute,
+  getDefaultRoute,
   getProposedTransaction,
   getSignedTransaction,
   saveTransaction,
@@ -50,7 +50,7 @@ export const loader = async (args: Route.LoaderArgs) =>
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
 
-      const { route, account } = await getActiveRoute(
+      const { route, account } = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -130,7 +130,7 @@ export const action = async (args: Route.ActionArgs) =>
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
 
-      const { route, account } = await getActiveRoute(
+      const { route, account } = await getDefaultRoute(
         dbClient(),
         tenant,
         user,
@@ -194,7 +194,7 @@ export const action = async (args: Route.ActionArgs) =>
 
         const proposal = await getProposedTransaction(dbClient(), proposalId)
 
-        const { route } = await getActiveRoute(
+        const { route } = await getDefaultRoute(
           dbClient(),
           tenant,
           user,

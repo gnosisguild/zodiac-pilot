@@ -9,10 +9,10 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, EXPLORER_URL } from '@zodiac/chains'
 import {
-  activateRoute,
   dbClient,
   getProposedTransaction,
   getTransactions,
+  setDefaultRoute,
   toExecutionRoute,
 } from '@zodiac/db'
 import {
@@ -135,7 +135,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([])
 
@@ -167,7 +167,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -193,7 +193,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -225,7 +225,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
@@ -256,7 +256,7 @@ describe('Sign', () => {
         account,
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryRoutes.mockResolvedValue([
         toExecutionRoute({ wallet, account, route }),
@@ -291,7 +291,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -320,7 +320,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -355,7 +355,7 @@ describe('Sign', () => {
           account,
         )
 
-        await activateRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
           toExecutionRoute({ wallet, account, route }),
@@ -393,7 +393,7 @@ describe('Sign', () => {
         account,
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockSimulateTransactionBundle.mockResolvedValue({
         error: null,
@@ -436,7 +436,7 @@ describe('Sign', () => {
         account,
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       const testHash = randomHex(18)
 
@@ -483,7 +483,7 @@ describe('Sign', () => {
         account,
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       const testHash = randomHex(18)
 
@@ -530,7 +530,7 @@ describe('Sign', () => {
         account,
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       const testHash = randomHex(18)
 
@@ -586,7 +586,7 @@ describe('Sign', () => {
         },
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryRoutes.mockResolvedValue([])
 
@@ -618,7 +618,7 @@ describe('Sign', () => {
         },
       )
 
-      await activateRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryRoutes.mockResolvedValue([])
 

@@ -3,21 +3,22 @@ import { Page } from '@/components'
 import { ChainSelect, getRouteId } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  activateRoute,
   createRoute as baseCreateRoute,
   createWallet,
   dbClient,
-  findActiveRoute,
   getAccount,
-  getWalletByAddress,
-  removeActiveRoute,
+  getRoute,
+  removeRoute,
+  setDefaultRoute,
   updateAccount,
+  updateRoutePath,
   type DBClient,
 } from '@zodiac/db'
-import type { User } from '@zodiac/db/schema'
+import type { Account, User } from '@zodiac/db/schema'
 import {
   getOptionalHexString,
   getOptionalString,
+  getOptionalUUID,
   getString,
 } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
@@ -27,7 +28,7 @@ import {
   createSafeWaypoint,
   queryRoutes,
 } from '@zodiac/modules'
-import { isUUID, type HexAddress } from '@zodiac/schema'
+import { isUUID, type HexAddress, type Waypoints } from '@zodiac/schema'
 import {
   AddressInput,
   FormLayout,
@@ -83,54 +84,71 @@ export const action = (args: Route.ActionArgs) =>
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       await dbClient().transaction(async (tx) => {
-        const initiator = getOptionalHexString(data, 'initiator')
-
-        const activeRoute = await findActiveRoute(tx, tenant, user, accountId)
-
-        if (initiator != null) {
-          const selectedRouteId = getOptionalString(data, 'routeId')
-
-          await createWallet(tx, user, {
-            address: initiator,
-            label: 'Unnamed wallet',
-          })
-
-          if (
-            activeRoute == null ||
-            activeRoute.route.wallet.address !== initiator ||
-            getRouteId(activeRoute.route.waypoints) !== selectedRouteId
-          ) {
-            const route = await createRoute(tx, user, {
-              accountId,
-              initiator,
-              selectedRouteId,
-            })
-
-            if (activeRoute != null) {
-              await removeActiveRoute(tx, tenant, user, accountId)
-            }
-
-            await activateRoute(tx, tenant, user, route)
-          }
-        } else {
-          await removeActiveRoute(tx, tenant, user, accountId)
-        }
-
         await updateAccount(tx, accountId, {
           label: getString(data, 'label'),
         })
+
+        const initiator = getOptionalHexString(data, 'initiator')
+        const selectedRouteId = getOptionalString(data, 'serRouteId')
+        const routeId = getOptionalUUID(data, 'routeId')
+
+        if (routeId == null) {
+          if (initiator == null) {
+            return
+          }
+
+          const route = await createRoute(tx, user, {
+            accountId,
+            initiator,
+            selectedRouteId,
+          })
+
+          await setDefaultRoute(tx, tenant, user, route)
+
+          return
+        }
+
+        if (initiator == null) {
+          await removeRoute(tx, routeId)
+
+          return
+        }
+
+        const account = await getAccount(tx, accountId)
+        const waypoints = await getWaypoints(
+          initiator,
+          account,
+          selectedRouteId,
+        )
+
+        const route = await getRoute(tx, routeId)
+
+        const wallet = await createWallet(tx, user, {
+          address: initiator,
+          label: 'Unnamed wallet',
+        })
+
+        if (
+          route.fromId !== wallet.id ||
+          getRouteId(route.waypoints) !== selectedRouteId
+        ) {
+          await updateRoutePath(tx, route.id, {
+            walletId: wallet.id,
+            waypoints,
+          })
+        }
       })
 
       return redirect(href('/edit'))
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, params: { accountId } }) {
+      async hasAccess({ tenant, params: { accountId } }) {
         invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
         const account = await getAccount(dbClient(), accountId)
 
-        return account.createdById === user.id
+        return account.tenantId === tenant.id
       },
     },
   )
@@ -200,28 +218,37 @@ const createRoute = async (
   user: User,
   { accountId, initiator, selectedRouteId }: CreateRouteOptions,
 ) => {
-  const wallet = await getWalletByAddress(db, user, initiator)
+  const wallet = await createWallet(db, user, {
+    address: initiator,
+    label: 'Unnamed wallet',
+  })
   const account = await getAccount(db, accountId)
 
+  return baseCreateRoute(db, account.tenantId, {
+    walletId: wallet.id,
+    accountId,
+    waypoints: await getWaypoints(wallet.address, account, selectedRouteId),
+  })
+}
+
+const getWaypoints = async (
+  initiator: HexAddress,
+  account: Account,
+  selectedRouteId?: string,
+): Promise<Waypoints> => {
   if (selectedRouteId == null) {
-    return baseCreateRoute(db, account.tenantId, {
-      walletId: wallet.id,
-      accountId,
-      waypoints: [
-        createEoaStartingPoint({ address: wallet.address }),
-        createSafeWaypoint({
-          chainId: account.chainId,
-          safe: account.address,
-          connection: createOwnsConnection(
-            prefixAddress(undefined, wallet.address),
-          ),
-        }),
-      ],
-    })
+    return [
+      createEoaStartingPoint({ address: initiator }),
+      createSafeWaypoint({
+        chainId: account.chainId,
+        safe: account.address,
+        connection: createOwnsConnection(prefixAddress(undefined, initiator)),
+      }),
+    ]
   }
 
   const { routes } = await queryRoutes(
-    prefixAddress(undefined, wallet.address),
+    prefixAddress(undefined, initiator),
     prefixAddress(account.chainId, account.address),
   )
 
@@ -231,9 +258,5 @@ const createRoute = async (
 
   invariantResponse(selectedRoute != null, 'Could not find selected route')
 
-  return baseCreateRoute(db, account.tenantId, {
-    walletId: wallet.id,
-    accountId,
-    waypoints: selectedRoute.waypoints,
-  })
+  return selectedRoute.waypoints
 }

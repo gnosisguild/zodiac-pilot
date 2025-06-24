@@ -1,11 +1,10 @@
 import { invariant } from '@epic-web/invariant'
-import { isUUID } from '@zodiac/schema'
-import { getString } from './getString'
+import { getOptionalUUID } from './getOptionalUUID'
 
 export const getUUID = (data: FormData, key: string) => {
-  const value = getString(data, key)
+  const value = getOptionalUUID(data, key)
 
-  invariant(isUUID(value), `Value under "${key}" is not a UUID`)
+  invariant(value != null, `value under "${key}" is not present`)
 
   return value
 }

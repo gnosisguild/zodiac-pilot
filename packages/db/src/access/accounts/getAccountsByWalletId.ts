@@ -1,6 +1,5 @@
 import {
   AccountTable,
-  ActiveRouteTable,
   RouteTable,
   type Account,
   type Tenant,
@@ -14,17 +13,16 @@ export const getAccountsByWalletId = async (
   tenant: Tenant,
   walletId: UUID,
 ): Promise<Account[]> => {
-  const activeRoutes = await db
+  const routes = await db
     .select()
     .from(RouteTable)
     .where(
       and(eq(RouteTable.tenantId, tenant.id), eq(RouteTable.fromId, walletId)),
     )
-    .leftJoin(ActiveRouteTable, eq(ActiveRouteTable.routeId, RouteTable.id))
-    .leftJoin(AccountTable, eq(ActiveRouteTable.accountId, AccountTable.id))
+    .leftJoin(AccountTable, eq(RouteTable.toId, AccountTable.id))
     .orderBy(asc(AccountTable.label))
 
-  return activeRoutes.reduce<Account[]>((result, { Account }) => {
+  return routes.reduce<Account[]>((result, { Account }) => {
     if (Account == null) {
       return result
     }

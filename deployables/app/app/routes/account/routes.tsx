@@ -3,14 +3,12 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  findActiveRoute,
   getAccount,
   getRoute,
   getRoutes,
   getWallets,
   updateRouteLabel,
 } from '@zodiac/db'
-import type { Tenant, User } from '@zodiac/db/schema'
 import { getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
@@ -50,15 +48,18 @@ export const loader = (args: Route.LoaderArgs) =>
         '"routeId" is not a UUID',
       )
 
-      const account = await getAccount(dbClient(), accountId)
-      const wallets = await getWallets(dbClient(), user.id)
+      const [account, wallets, routes, route] = await Promise.all([
+        getAccount(dbClient(), accountId),
+        getWallets(dbClient(), user.id),
+        getRoutes(dbClient(), tenant.id, { accountId }),
+        routeId == null ? null : await getRoute(dbClient(), routeId),
+      ])
 
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
 
-      const initiatorAddress = await findInitiator(tenant, user, {
-        accountId: account.id,
+      const initiatorAddress = await findInitiator({
         routeId,
         searchParams: url.searchParams,
       })
@@ -71,13 +72,7 @@ export const loader = (args: Route.LoaderArgs) =>
               prefixAddress(account.chainId, account.address),
             )
 
-      const activeRoute = await findActiveRoute(
-        dbClient(),
-        tenant,
-        user,
-        account.id,
-      )
-      const [defaultRoute] = possibleRoutes.routes
+      const [defaultProposedRoute] = possibleRoutes.routes
 
       return {
         initiatorWallets: wallets.filter((wallet) =>
@@ -88,13 +83,13 @@ export const loader = (args: Route.LoaderArgs) =>
         ),
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
-        routes: await getRoutes(dbClient(), tenant.id, { accountId }),
+        routes,
         comparableId:
-          activeRoute == null
-            ? defaultRoute == null
+          route == null
+            ? defaultProposedRoute == null
               ? undefined
-              : getRouteId(defaultRoute.waypoints)
-            : getRouteId(activeRoute.route.waypoints),
+              : getRouteId(defaultProposedRoute.waypoints)
+            : getRouteId(route.waypoints),
       }
     },
     { ensureSignedIn: true },
@@ -185,6 +180,7 @@ const Routes = ({
         name="initiator"
         value={initiatorAddress ?? ''}
       />
+      <input type="hidden" form={formId} name="routeId" value={routeId ?? ''} />
 
       <Form method="GET">
         {({ submit }) => (
@@ -216,7 +212,7 @@ const Routes = ({
         routes={possibleRoutes}
         defaultValue={comparableId}
         form={formId}
-        name="routeId"
+        name="serRouteId"
         initiator={
           initiatorAddress == null
             ? undefined
@@ -251,7 +247,11 @@ const EditLabel = ({
         Edit route label
       </GhostButton>
 
-      <Modal open={updating} title="Update route label">
+      <Modal
+        open={updating}
+        title="Update route label"
+        onClose={() => setUpdating(false)}
+      >
         <Form context={{ routeId }}>
           <TextInput
             label="Label"
@@ -277,16 +277,14 @@ const EditLabel = ({
 }
 
 type FindInitiatorOptions = {
-  accountId: UUID
   routeId?: UUID
   searchParams: URLSearchParams
 }
 
-const findInitiator = async (
-  tenant: Tenant,
-  user: User,
-  { accountId, routeId, searchParams }: FindInitiatorOptions,
-): Promise<HexAddress | null> => {
+const findInitiator = async ({
+  routeId,
+  searchParams,
+}: FindInitiatorOptions): Promise<HexAddress | null> => {
   if (searchParams.has('transient-initiator')) {
     const initiator = searchParams.get('transient-initiator')
 
@@ -305,13 +303,7 @@ const findInitiator = async (
     return route.wallet.address
   }
 
-  const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)
-
-  if (activeRoute == null) {
-    return null
-  }
-
-  return activeRoute.route.wallet.address
+  return null
 }
 
 enum Intent {
