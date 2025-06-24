@@ -1,5 +1,5 @@
 import { render } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   dbClient,
@@ -329,6 +329,84 @@ describe('Routes', () => {
         getDefaultRoute(dbClient(), tenant, user, account.id),
       ).resolves.toHaveProperty('routeId', routeA.id)
     })
+
+    it('is possible to select a route as the default', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+      const route = await routeFactory.create(account, wallet)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        { tenant, user, features: ['multiple-routes'] },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Edit route' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('checkbox', { name: 'Use as default route' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Update' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', route.id)
+    })
+
+    it('removes the current default route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const routeA = await routeFactory.create(account, wallet)
+      const routeB = await routeFactory.create(account, wallet, {
+        label: 'Route B',
+      })
+
+      await setDefaultRoute(dbClient(), tenant, user, routeA)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: routeA.id,
+        }),
+        { tenant, user, features: ['multiple-routes'] },
+      )
+
+      const { findByRole } = within(
+        await screen.findByRole('tab', { name: 'Route B' }),
+      )
+
+      await userEvent.click(await findByRole('button', { name: 'Edit route' }))
+
+      await userEvent.click(
+        await screen.findByRole('checkbox', { name: 'Use as default route' }),
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Update' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', routeB.id)
+    })
   })
 
   describe('SER Route', () => {
@@ -523,7 +601,7 @@ describe('Routes', () => {
         )
 
         await userEvent.click(
-          await screen.findByRole('button', { name: 'Edit route label' }),
+          await screen.findByRole('button', { name: 'Edit route' }),
         )
         await userEvent.type(
           await screen.findByRole('textbox', { name: 'Label' }),

@@ -3,22 +3,28 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
+  findDefaultRoute,
   getAccount,
   getRoute,
   getRoutes,
   getWallets,
+  removeDefaultRoute,
+  setDefaultRoute,
   updateRouteLabel,
 } from '@zodiac/db'
-import { getString, getUUID } from '@zodiac/form-data'
+import type { Route as DBRoute } from '@zodiac/db/schema'
+import { getBoolean, getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressSelect,
+  Checkbox,
   Feature,
   Form,
   GhostButton,
   Modal,
+  Popover,
   PrimaryButton,
   TextInput,
 } from '@zodiac/ui'
@@ -48,12 +54,15 @@ export const loader = (args: Route.LoaderArgs) =>
         '"routeId" is not a UUID',
       )
 
-      const [account, wallets, routes, route] = await Promise.all([
-        getAccount(dbClient(), accountId),
-        getWallets(dbClient(), user.id),
-        getRoutes(dbClient(), tenant.id, { accountId }),
-        routeId == null ? null : await getRoute(dbClient(), routeId),
-      ])
+      const [account, wallets, routes, route, defaultRoute] = await Promise.all(
+        [
+          getAccount(dbClient(), accountId),
+          getWallets(dbClient(), user.id),
+          getRoutes(dbClient(), tenant.id, { accountId }),
+          routeId == null ? null : await getRoute(dbClient(), routeId),
+          findDefaultRoute(dbClient(), tenant, user, accountId),
+        ],
+      )
 
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
@@ -84,6 +93,7 @@ export const loader = (args: Route.LoaderArgs) =>
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
         routes,
+        defaultRouteId: defaultRoute == null ? null : defaultRoute.routeId,
         comparableId:
           route == null
             ? defaultProposedRoute == null
@@ -98,15 +108,44 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
     args,
-    async ({ request }) => {
+    async ({
+      request,
+      params: { accountId },
+      context: {
+        auth: { tenant, user },
+      },
+    }) => {
       const data = await request.formData()
 
       switch (getString(data, 'intent')) {
-        case Intent.EditLabel: {
+        case Intent.Edit: {
+          invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
           const routeId = getUUID(data, 'routeId')
           const label = getString(data, 'label')
+          const setAsDefault = getBoolean(data, 'defaultRoute')
 
-          await updateRouteLabel(dbClient(), routeId, label)
+          await dbClient().transaction(async (tx) => {
+            const route = await getRoute(tx, routeId)
+            const defaultRoute = await findDefaultRoute(
+              tx,
+              tenant,
+              user,
+              accountId,
+            )
+
+            if (route.label !== label) {
+              await updateRouteLabel(tx, routeId, label)
+            }
+
+            if (setAsDefault) {
+              if (defaultRoute != null && defaultRoute.routeId !== routeId) {
+                await removeDefaultRoute(tx, tenant, user, accountId)
+              }
+
+              await setDefaultRoute(tx, tenant, user, route)
+            }
+          })
 
           return null
         }
@@ -136,6 +175,7 @@ const Routes = ({
     possibleRoutes,
     comparableId,
     routes,
+    defaultRouteId,
   },
   params: { accountId, routeId },
 }: Route.ComponentProps) => {
@@ -146,7 +186,7 @@ const Routes = ({
       <Feature feature="multiple-routes">
         <div
           role="tablist"
-          className="flex items-center gap-2 border-b border-zinc-600"
+          className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-600"
         >
           {routes.map((route) => (
             <NavLink
@@ -166,9 +206,17 @@ const Routes = ({
                 )
               }
             >
+              {defaultRouteId === route.id && (
+                <Popover
+                  popover={<span className="text-sm">Default route</span>}
+                >
+                  <div className="size-2 rounded-full bg-teal-500 dark:bg-indigo-500" />
+                </Popover>
+              )}
+
               <span id={route.id}>{route.label || 'Unnamed route'}</span>
 
-              <EditLabel routeId={route.id} defaultValue={route.label} />
+              <Edit route={route} defaultRouteId={defaultRouteId} />
             </NavLink>
           ))}
         </div>
@@ -225,16 +273,16 @@ const Routes = ({
 
 export default Routes
 
-const EditLabel = ({
-  routeId,
-  defaultValue,
+const Edit = ({
+  route,
+  defaultRouteId,
 }: {
-  routeId: UUID
-  defaultValue: string | null
+  route: DBRoute
+  defaultRouteId: UUID | null
 }) => {
   const [updating, setUpdating] = useState(false)
 
-  useAfterSubmit(Intent.EditLabel, () => setUpdating(false))
+  useAfterSubmit(Intent.Edit, () => setUpdating(false))
 
   return (
     <>
@@ -242,9 +290,14 @@ const EditLabel = ({
         iconOnly
         size="tiny"
         icon={Pencil}
-        onClick={() => setUpdating(true)}
+        onClick={(event) => {
+          event.stopPropagation()
+          event.preventDefault()
+
+          setUpdating(true)
+        }}
       >
-        Edit route label
+        Edit route
       </GhostButton>
 
       <Modal
@@ -252,19 +305,28 @@ const EditLabel = ({
         title="Update route label"
         onClose={() => setUpdating(false)}
       >
-        <Form context={{ routeId }}>
+        <Form context={{ routeId: route.id }}>
           <TextInput
             label="Label"
             name="label"
             placeholder="Route label"
-            defaultValue={defaultValue ?? ''}
+            defaultValue={route.label ?? ''}
           />
+
+          <Checkbox
+            name="defaultRoute"
+            defaultChecked={
+              defaultRouteId != null && defaultRouteId === route.id
+            }
+          >
+            Use as default route
+          </Checkbox>
 
           <Modal.Actions>
             <PrimaryButton
               submit
-              intent={Intent.EditLabel}
-              busy={useIsPending(Intent.EditLabel)}
+              intent={Intent.Edit}
+              busy={useIsPending(Intent.Edit)}
             >
               Update
             </PrimaryButton>
@@ -307,5 +369,5 @@ const findInitiator = async ({
 }
 
 enum Intent {
-  EditLabel = 'EditLabel',
+  Edit = 'Edit',
 }
