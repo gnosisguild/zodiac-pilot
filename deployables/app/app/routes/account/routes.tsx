@@ -50,8 +50,12 @@ export const loader = (args: Route.LoaderArgs) =>
         '"routeId" is not a UUID',
       )
 
-      const account = await getAccount(dbClient(), accountId)
-      const wallets = await getWallets(dbClient(), user.id)
+      const [account, wallets, routes, route] = await Promise.all([
+        getAccount(dbClient(), accountId),
+        getWallets(dbClient(), user.id),
+        getRoutes(dbClient(), tenant.id, { accountId }),
+        routeId == null ? null : await getRoute(dbClient(), routeId),
+      ])
 
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
@@ -71,13 +75,7 @@ export const loader = (args: Route.LoaderArgs) =>
               prefixAddress(account.chainId, account.address),
             )
 
-      const activeRoute = await findDefaultRoute(
-        dbClient(),
-        tenant,
-        user,
-        account.id,
-      )
-      const [defaultRoute] = possibleRoutes.routes
+      const [defaultProposedRoute] = possibleRoutes.routes
 
       return {
         initiatorWallets: wallets.filter((wallet) =>
@@ -88,13 +86,13 @@ export const loader = (args: Route.LoaderArgs) =>
         ),
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
-        routes: await getRoutes(dbClient(), tenant.id, { accountId }),
+        routes,
         comparableId:
-          activeRoute == null
-            ? defaultRoute == null
+          route == null
+            ? defaultProposedRoute == null
               ? undefined
-              : getRouteId(defaultRoute.waypoints)
-            : getRouteId(activeRoute.route.waypoints),
+              : getRouteId(defaultProposedRoute.waypoints)
+            : getRouteId(route.waypoints),
       }
     },
     { ensureSignedIn: true },
@@ -185,6 +183,7 @@ const Routes = ({
         name="initiator"
         value={initiatorAddress ?? ''}
       />
+      <input type="hidden" form={formId} name="routeId" value={routeId ?? ''} />
 
       <Form method="GET">
         {({ submit }) => (
@@ -216,7 +215,7 @@ const Routes = ({
         routes={possibleRoutes}
         defaultValue={comparableId}
         form={formId}
-        name="routeId"
+        name="serRouteId"
         initiator={
           initiatorAddress == null
             ? undefined
