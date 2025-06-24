@@ -5,6 +5,7 @@ import {
   dbClient,
   findActiveRoute,
   getAccount,
+  getRoute,
   getRoutes,
   getWallets,
 } from '@zodiac/db'
@@ -22,7 +23,7 @@ export const loader = (args: Route.LoaderArgs) =>
     args,
     async ({
       request,
-      params: { accountId },
+      params: { accountId, routeId },
       context: {
         auth: { tenant, user },
       },
@@ -30,6 +31,10 @@ export const loader = (args: Route.LoaderArgs) =>
       const url = new URL(request.url)
 
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+      invariantResponse(
+        routeId == null || isUUID(routeId),
+        '"routeId" is not a UUID',
+      )
 
       const account = await getAccount(dbClient(), accountId)
       const wallets = await getWallets(dbClient(), user.id)
@@ -38,12 +43,11 @@ export const loader = (args: Route.LoaderArgs) =>
         prefixAddress(account.chainId, account.address),
       )
 
-      const initiatorAddress = await findInitiator(
-        tenant,
-        user,
-        account.id,
-        url.searchParams,
-      )
+      const initiatorAddress = await findInitiator(tenant, user, {
+        accountId: account.id,
+        routeId,
+        searchParams: url.searchParams,
+      })
 
       const possibleRoutes =
         initiatorAddress == null
@@ -91,7 +95,7 @@ const Routes = ({
     comparableId,
     routes,
   },
-  params: { accountId },
+  params: { accountId, routeId },
 }: Route.ComponentProps) => {
   const { formId } = useOutletContext<{ formId: string }>()
 
@@ -125,6 +129,7 @@ const Routes = ({
         {({ submit }) => (
           <AddressSelect
             isClearable
+            key={routeId}
             isMulti={false}
             label="Pilot Signer"
             clearLabel="Remove Pilot Signer"
@@ -163,11 +168,16 @@ const Routes = ({
 
 export default Routes
 
+type FindInitiatorOptions = {
+  accountId: UUID
+  routeId?: UUID
+  searchParams: URLSearchParams
+}
+
 const findInitiator = async (
   tenant: Tenant,
   user: User,
-  accountId: UUID,
-  searchParams: URLSearchParams,
+  { accountId, routeId, searchParams }: FindInitiatorOptions,
 ): Promise<HexAddress | null> => {
   if (searchParams.has('transient-initiator')) {
     const initiator = searchParams.get('transient-initiator')
@@ -179,6 +189,12 @@ const findInitiator = async (
     const address = addressSchema.parse(initiator)
 
     return address
+  }
+
+  if (routeId != null) {
+    const route = await getRoute(dbClient(), routeId)
+
+    return route.wallet.address
   }
 
   const activeRoute = await findActiveRoute(dbClient(), tenant, user, accountId)

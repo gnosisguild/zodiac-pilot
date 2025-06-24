@@ -35,6 +35,7 @@ import {
   createMockExecutionRoute,
   expectRouteToBe,
   randomAddress,
+  randomEoaAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -263,7 +264,7 @@ describe.sequential('List Routes', () => {
       const avatar = randomPrefixedAddress()
       const route = createMockExecutionRoute({
         avatar,
-        initiator: prefixAddress(undefined, randomAddress()),
+        initiator: randomEoaAddress(),
         label: 'Test account',
       })
 
@@ -311,7 +312,7 @@ describe.sequential('List Routes', () => {
 
       const route = createMockExecutionRoute({
         avatar,
-        initiator: prefixAddress(undefined, randomAddress()),
+        initiator: randomEoaAddress(),
         label: 'Test account',
       })
 
@@ -613,7 +614,7 @@ describe.sequential('List Routes', () => {
       const user = await userFactory.create(tenant)
 
       const route = createMockExecutionRoute({
-        initiator: prefixAddress(undefined, randomAddress()),
+        initiator: randomEoaAddress(),
         avatar: randomPrefixedAddress(),
       })
 

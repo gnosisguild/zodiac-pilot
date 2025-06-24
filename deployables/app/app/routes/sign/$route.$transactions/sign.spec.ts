@@ -8,6 +8,7 @@ import {
   createMockSerRoute,
   createMockTransactionRequest,
   randomAddress,
+  randomEoaAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -15,7 +16,6 @@ import {
   checkPermissions,
   PermissionViolation,
   planExecution,
-  prefixAddress,
   queryRoutes,
   unprefixAddress,
 } from 'ser-kit'
@@ -296,7 +296,7 @@ describe('Sign', () => {
         href('/submit/:route/:transactions', {
           route: encode(
             createMockExecutionRoute({
-              initiator: prefixAddress(undefined, randomAddress()),
+              initiator: randomEoaAddress(),
             }),
           ),
           transactions: encode([createMockTransactionRequest()]),

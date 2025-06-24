@@ -437,5 +437,35 @@ describe('Edit account', () => {
         await screen.findByRole('tab', { name: 'Route B' }),
       ).toBeInTheDocument()
     })
+
+    it('is shows the initiator of the specified route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const walletA = await walletFactory.create(user)
+      const walletB = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const routeA = await routeFactory.create(account, walletA, {
+        label: 'Route A',
+      })
+      await routeFactory.create(account, walletB, {
+        label: 'Route B',
+      })
+
+      await activateRoute(dbClient(), tenant, user, routeA)
+
+      mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
+
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+        tenant,
+        features: ['multiple-routes'],
+      })
+
+      await userEvent.click(await screen.findByRole('tab', { name: 'Route B' }))
+
+      expect(await screen.findByText(walletB.label)).toBeInTheDocument()
+    })
   })
 })
