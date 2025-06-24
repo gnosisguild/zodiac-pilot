@@ -16,7 +16,13 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
-import { randomAddress } from '@zodiac/test-utils'
+import {
+  createMockEoaAccount,
+  createMockRoute,
+  createMockStartingWaypoint,
+  createMockWaypoints,
+  randomAddress,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
 import { getAddress } from 'viem'
@@ -325,41 +331,214 @@ describe('Routes', () => {
     })
   })
 
-  describe('Label', () => {
-    it('is possible to change the label of a route', async () => {
+  describe('SER Route', () => {
+    it('auto-selects the first route', async () => {
       const tenant = await tenantFactory.create()
       const user = await userFactory.create(tenant)
-
-      const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
-      const route = await routeFactory.create(account, wallet, {
-        label: 'Test route',
+      const wallet = await walletFactory.create(user, {
+        label: 'Test wallet',
       })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+      })
+
+      const newRoute = createMockRoute({ id: 'first', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([newRoute])
+
+      const { waitForPendingLoaders, waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test wallet' }),
+      )
+
+      await waitForPendingLoaders()
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      const [route] = await getRoutes(dbClient(), tenant.id, {
+        accountId: account.id,
+      })
+
+      expect(route).toHaveProperty('waypoints', waypoints)
+    })
+
+    it('is possible to change the selected route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+      const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user, {
+        label: 'Test wallet',
+      })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      const waypoints = createMockWaypoints({
+        end: true,
+        start: createMockStartingWaypoint(
+          createMockEoaAccount({ address: randomAddress() }),
+        ),
+      })
+
+      const firstRoute = createMockRoute({
+        id: 'first',
+        waypoints: createMockWaypoints({
+          end: true,
+        }),
+      })
+
+      const route = await routeFactory.create(account, wallet, {
+        waypoints: firstRoute.waypoints,
+      })
+
+      const secondRoute = createMockRoute({ id: 'second', waypoints })
+
+      mockQueryRoutes.mockResolvedValue([firstRoute, secondRoute])
 
       const { waitForPendingActions } = await render(
         href('/account/:accountId/route/:routeId?', {
           accountId: account.id,
           routeId: route.id,
         }),
-        { user, tenant, features: ['multiple-routes'] },
+        { tenant, user },
       )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Edit route label' }),
-      )
-      await userEvent.type(
-        await screen.findByRole('textbox', { name: 'Label' }),
-        ' Updated',
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Update' }),
-      )
+      // click last route in radio select
+      await userEvent.click((await screen.findAllByRole('radio'))[1])
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
       await waitForPendingActions()
 
+      await expect(getRoute(dbClient(), route.id)).resolves.toHaveProperty(
+        'waypoints',
+        waypoints,
+      )
+    })
+  })
+
+  describe('Routes', () => {
+    it('lists all routes', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const routeA = await routeFactory.create(account, wallet, {
+        label: 'Route A',
+      })
+      const routeB = await routeFactory.create(account, wallet, {
+        label: 'Route B',
+      })
+
+      await render(
+        href('/account/:accountId/route/:routeId?', { accountId: account.id }),
+        {
+          user,
+          tenant,
+          features: ['multiple-routes'],
+        },
+      )
+
       expect(
-        await screen.findByRole('tab', { name: `${route.label} Updated` }),
-      ).toBeInTheDocument()
+        await screen.findByRole('tab', { name: 'Route A' }),
+      ).toHaveAttribute(
+        'href',
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: routeA.id,
+        }),
+      )
+      expect(
+        await screen.findByRole('tab', { name: 'Route B' }),
+      ).toHaveAttribute(
+        'href',
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: routeB.id,
+        }),
+      )
+    })
+
+    it('is shows the initiator of the specified route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const route = await routeFactory.create(account, wallet, {
+        label: 'Route B',
+      })
+
+      mockQueryInitiators.mockResolvedValue([wallet.address])
+
+      await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        {
+          user,
+          tenant,
+          features: ['multiple-routes'],
+        },
+      )
+
+      expect(await screen.findByText(wallet.label)).toBeInTheDocument()
+    })
+
+    describe('Label', () => {
+      it('is possible to change the label of a route', async () => {
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+
+        const wallet = await walletFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
+        const route = await routeFactory.create(account, wallet, {
+          label: 'Test route',
+        })
+
+        const { waitForPendingActions } = await render(
+          href('/account/:accountId/route/:routeId?', {
+            accountId: account.id,
+            routeId: route.id,
+          }),
+          { user, tenant, features: ['multiple-routes'] },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Edit route label' }),
+        )
+        await userEvent.type(
+          await screen.findByRole('textbox', { name: 'Label' }),
+          ' Updated',
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Update' }),
+        )
+
+        await waitForPendingActions()
+
+        expect(
+          await screen.findByRole('tab', { name: `${route.label} Updated` }),
+        ).toBeInTheDocument()
+      })
     })
   })
 })

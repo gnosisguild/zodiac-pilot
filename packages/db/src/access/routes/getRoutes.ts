@@ -1,3 +1,4 @@
+import { waypointsSchema } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
@@ -6,12 +7,12 @@ type GetRoutesOptions = {
   accountId: UUID
 }
 
-export const getRoutes = (
+export const getRoutes = async (
   db: DBClient,
   tenantId: UUID,
   { walletId, accountId }: GetRoutesOptions,
-) =>
-  db.query.route.findMany({
+) => {
+  const routes = await db.query.route.findMany({
     where(fields, { eq, and }) {
       let where = and(eq(fields.tenantId, tenantId), eq(fields.toId, accountId))
 
@@ -22,3 +23,9 @@ export const getRoutes = (
       return where
     },
   })
+
+  return routes.map((route) => ({
+    ...route,
+    waypoints: waypointsSchema.parse(route.waypoints),
+  }))
+}
