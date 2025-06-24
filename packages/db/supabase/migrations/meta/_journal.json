@@ -218,6 +218,13 @@
       "when": 1749136693295,
       "tag": "0030_add proposed transaction table",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1750678121760,
+      "tag": "0031_add label to route",
+      "breakpoints": true
     }
   ]
 }

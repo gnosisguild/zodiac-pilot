@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import {
   WalletTable,
   type User,
@@ -17,7 +18,7 @@ export const walletFactory = createFactory<
     return {
       address: randomAddress(),
       belongsToId: user.id,
-      label: 'Test wallet',
+      label: faker.company.buzzPhrase(),
 
       ...wallet,
     }

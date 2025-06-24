@@ -1,6 +1,6 @@
 import type { Waypoints } from '@zodiac/schema'
 
-export const routeId = (waypoints?: Waypoints | null) =>
+export const getRouteId = (waypoints?: Waypoints | null) =>
   waypoints == null
     ? ''
     : waypoints

@@ -9,6 +9,7 @@ import {
   createMockStartingWaypoint,
   createMockWaypoints,
   randomAddress,
+  randomEoaAddress,
 } from '@zodiac/test-utils'
 import { AccountType, prefixAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
@@ -146,7 +147,7 @@ describe('updateChainId', () => {
     })
 
     it('does not update the initiator field when it is an EOA account', () => {
-      const initiator = prefixAddress(undefined, randomAddress())
+      const initiator = randomEoaAddress()
 
       const route = createMockExecutionRoute({
         initiator,
@@ -158,7 +159,7 @@ describe('updateChainId', () => {
     })
 
     it('does not update the from field of a roles waypoint when it is an EOA account', () => {
-      const from = prefixAddress(undefined, randomAddress())
+      const from = randomEoaAddress()
 
       const route = createMockExecutionRoute({
         waypoints: createMockWaypoints({

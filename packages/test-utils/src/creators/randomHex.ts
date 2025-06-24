@@ -20,3 +20,5 @@ export const randomPrefixedAddress = ({
   chainId = 1,
   address = randomAddress(),
 }: RandomPrefixedAddressOptions = {}) => prefixAddress(chainId, address)
+
+export const randomEoaAddress = () => prefixAddress(undefined, randomAddress())

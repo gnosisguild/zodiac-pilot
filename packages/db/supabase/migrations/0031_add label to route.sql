@@ -1,0 +1,1 @@
+ALTER TABLE "Route" ADD COLUMN "label" text;

@@ -408,4 +408,64 @@ describe('Edit account', () => {
       expect(activeRoute.route).toHaveProperty('waypoints', waypoints)
     })
   })
+
+  describe('Routes', () => {
+    it('lists all routes', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      await routeFactory.create(account, wallet, {
+        label: 'Route A',
+      })
+      await routeFactory.create(account, wallet, {
+        label: 'Route B',
+      })
+
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+        tenant,
+        features: ['multiple-routes'],
+      })
+
+      expect(
+        await screen.findByRole('tab', { name: 'Route A' }),
+      ).toBeInTheDocument()
+      expect(
+        await screen.findByRole('tab', { name: 'Route B' }),
+      ).toBeInTheDocument()
+    })
+
+    it('is shows the initiator of the specified route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const walletA = await walletFactory.create(user)
+      const walletB = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const routeA = await routeFactory.create(account, walletA, {
+        label: 'Route A',
+      })
+      await routeFactory.create(account, walletB, {
+        label: 'Route B',
+      })
+
+      await activateRoute(dbClient(), tenant, user, routeA)
+
+      mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
+
+      await render(href('/account/:accountId', { accountId: account.id }), {
+        user,
+        tenant,
+        features: ['multiple-routes'],
+      })
+
+      await userEvent.click(await screen.findByRole('tab', { name: 'Route B' }))
+
+      expect(await screen.findByText(walletB.label)).toBeInTheDocument()
+    })
+  })
 })

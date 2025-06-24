@@ -12,4 +12,9 @@ export { createMockSerRoute } from './createMockSerRoute'
 export { createMockStartingWaypoint } from './createMockStartingWaypoint'
 export { createMockTransactionRequest } from './createMockTransactionRequest'
 export { createMockWaypoints } from './createMockWaypoints'
-export { randomAddress, randomHex, randomPrefixedAddress } from './randomHex'
+export {
+  randomAddress,
+  randomEoaAddress,
+  randomHex,
+  randomPrefixedAddress,
+} from './randomHex'

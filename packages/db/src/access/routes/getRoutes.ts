@@ -2,7 +2,7 @@ import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
 type GetRoutesOptions = {
-  walletId: UUID
+  walletId?: UUID
   accountId: UUID
 }
 
@@ -13,10 +13,12 @@ export const getRoutes = (
 ) =>
   db.query.route.findMany({
     where(fields, { eq, and }) {
-      return and(
-        eq(fields.tenantId, tenantId),
-        eq(fields.fromId, walletId),
-        eq(fields.toId, accountId),
-      )
+      let where = and(eq(fields.tenantId, tenantId), eq(fields.toId, accountId))
+
+      if (walletId != null) {
+        where = and(where, eq(fields.fromId, walletId))
+      }
+
+      return where
     },
   })

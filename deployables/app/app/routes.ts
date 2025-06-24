@@ -49,7 +49,10 @@ export default [
           'routes/legacy-redirects/old-new-route-redirect.ts',
         ),
 
-        route('/account/:accountId', 'routes/account/edit.tsx'),
+        route('/account/:accountId', 'routes/account/edit.tsx', [
+          index('routes/account/load-default-route.ts'),
+          route('route/:routeId?', 'routes/account/routes.tsx'),
+        ]),
 
         ...prefix('/edit', [
           index('routes/edit/list-routes.tsx'),
