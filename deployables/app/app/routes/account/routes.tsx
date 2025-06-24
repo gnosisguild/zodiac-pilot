@@ -247,7 +247,11 @@ const EditLabel = ({
         Edit route label
       </GhostButton>
 
-      <Modal open={updating} title="Update route label">
+      <Modal
+        open={updating}
+        title="Update route label"
+        onClose={() => setUpdating(false)}
+      >
         <Form context={{ routeId }}>
           <TextInput
             label="Label"
