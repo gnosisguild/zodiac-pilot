@@ -8,13 +8,13 @@ ADD COLUMN "waypoints" json;
 --> statement-breakpoint
 UPDATE "SignedTransaction"
 SET
-  "routeLabel" = "Route"."label",
-  "waypoints" = "Route"."waypoints"
+  "routeLabel" = r."label",
+  "waypoints" = r."waypoints"
 FROM
-  "SignedTransaction",
-  "Route"
+  "SignedTransaction" AS s,
+  "Route" AS r
 WHERE
-  "Route"."id" = "routeId";
+  r."id" = s."routeId";
 
 ALTER TABLE "SignedTransaction"
 ALTER COLUMN "waypoints"
