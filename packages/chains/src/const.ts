@@ -26,7 +26,7 @@ export enum Chain {
   UNICHAIN = 130,
   WORLDCHAIN = 480,
   BOB = 60808,
-  MATNLE = 5000,
+  MANTLE = 5000,
 }
 
 const airlock = 'https://airlock.gnosisguild.org/api/v1/'
@@ -48,7 +48,7 @@ export const RPC: Record<ChainId, URL> = {
     'https://worldchain-mainnet.g.alchemy.com/public',
   ),
   [Chain.BOB]: new URL('https://rpc.gobob.xyz'),
-  [Chain.MATNLE]: new URL('https://rpc.mantle.xyz'),
+  [Chain.MANTLE]: new URL('https://rpc.mantle.xyz'),
 }
 
 export const EXPLORER_URL: Record<ChainId, URL> = {
@@ -66,7 +66,7 @@ export const EXPLORER_URL: Record<ChainId, URL> = {
   [Chain.UNICHAIN]: new URL('https://uniscan.xyz'),
   [Chain.WORLDCHAIN]: new URL('https://worldscan.org'),
   [Chain.BOB]: new URL('https://explorer.gobob.xyz'),
-  [Chain.MATNLE]: new URL('https://mantlescan.xyz'),
+  [Chain.MANTLE]: new URL('https://mantlescan.xyz'),
 }
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
@@ -84,7 +84,7 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   [Chain.UNICHAIN]: 'ETH',
   [Chain.WORLDCHAIN]: 'ETH',
   [Chain.BOB]: 'ETH',
-  [Chain.MATNLE]: 'MNT',
+  [Chain.MANTLE]: 'MNT',
 }
 
 export const CHAIN_NAME: Record<ChainId, string> = {
@@ -102,7 +102,7 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.UNICHAIN]: 'Unichain',
   [Chain.WORLDCHAIN]: 'World Chain',
   [Chain.BOB]: 'BOB',
-  [Chain.MATNLE]: 'Matnle',
+  [Chain.MANTLE]: 'Mantle',
 }
 
 /**
@@ -113,5 +113,5 @@ export const HIDDEN_CHAINS = [
   Chain.UNICHAIN,
   Chain.WORLDCHAIN,
   Chain.BOB,
-  Chain.MATNLE,
+  Chain.MANTLE,
 ]
