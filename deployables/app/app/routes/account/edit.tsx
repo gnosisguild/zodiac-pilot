@@ -59,12 +59,12 @@ export const loader = (args: Route.LoaderArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, params: { accountId } }) {
+      async hasAccess({ tenant, params: { accountId } }) {
         invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
         const account = await getAccount(dbClient(), accountId)
 
-        return account.createdById === user.id
+        return account.tenantId === tenant.id
       },
     },
   )
