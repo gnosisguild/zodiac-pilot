@@ -8,7 +8,6 @@ import {
   getRoute,
   getRoutes,
   getWallets,
-  removeDefaultRoute,
   removeRoute,
   setDefaultRoute,
   updateRouteLabel,
@@ -127,11 +126,9 @@ export const action = (args: Route.ActionArgs) =>
             }
 
             if (setAsDefault) {
-              if (defaultRoute != null && defaultRoute.routeId !== routeId) {
-                await removeDefaultRoute(tx, tenant, user, accountId)
+              if (defaultRoute == null || defaultRoute.routeId !== routeId) {
+                await setDefaultRoute(tx, tenant, user, route)
               }
-
-              await setDefaultRoute(tx, tenant, user, route)
             }
           })
 

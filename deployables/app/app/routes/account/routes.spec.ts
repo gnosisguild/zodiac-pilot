@@ -411,6 +411,43 @@ describe('Routes', () => {
         getDefaultRoute(dbClient(), tenant, user, account.id),
       ).resolves.toHaveProperty('routeId', routeB.id)
     })
+
+    it('does not crash if the current default route stays the default', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const route = await routeFactory.create(account, wallet, {
+        label: 'Route',
+      })
+
+      await setDefaultRoute(dbClient(), tenant, user, route)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        { tenant, user, features: ['multiple-routes'] },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Update' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', route.id)
+    })
   })
 
   describe('SER Route', () => {
