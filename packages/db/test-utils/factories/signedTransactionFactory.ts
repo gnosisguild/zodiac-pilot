@@ -6,7 +6,10 @@ import {
   type User,
 } from '@zodiac/db/schema'
 import { jsonStringify } from '@zodiac/schema'
-import { createMockTransactionRequest } from '@zodiac/test-utils'
+import {
+  createMockTransactionRequest,
+  createMockWaypoints,
+} from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
@@ -22,6 +25,7 @@ export const signedTransactionFactory = createFactory<
       walletId: route.fromId,
       tenantId: route.tenantId,
       userId: user.id,
+      waypoints: createMockWaypoints(),
 
       transaction: JSON.parse(jsonStringify([createMockTransactionRequest()])),
 
@@ -44,6 +48,7 @@ export const signedTransactionFactory = createFactory<
       explorerUrl: null,
       safeWalletUrl: null,
       id: randomUUID(),
+      routeLabel: null,
 
       ...data,
     }
