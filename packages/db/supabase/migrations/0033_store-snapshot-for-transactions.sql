@@ -3,7 +3,7 @@ ADD COLUMN "routeLabel" text;
 
 --> statement-breakpoint
 ALTER TABLE "SignedTransaction"
-ADD COLUMN "waypoints" json NOT NULL;
+ADD COLUMN "waypoints" json;
 
 --> statement-breakpoint
 UPDATE "SignedTransaction"
@@ -15,6 +15,11 @@ FROM
   "Route"
 WHERE
   "Route"."id" = "SignedTransaction"."routeId";
+
+ALTER TABLE "SignedTransaction"
+ALTER COLUMN "waypoints"
+SET
+  NOT NULL;
 
 ALTER TABLE "SignedTransaction"
 DROP CONSTRAINT "SignedTransaction_routeId_Route_id_fk";
