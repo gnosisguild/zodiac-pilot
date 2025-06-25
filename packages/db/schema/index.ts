@@ -401,16 +401,17 @@ export const SignedTransactionTable = pgTable(
     explorerUrl: text(),
     safeWalletUrl: text(),
 
+    routeLabel: text(),
+    waypoints: json().$type<Waypoints>().notNull(),
+
     ...walletReference,
     ...accountReference,
     ...userReference,
-    ...routeReference,
     ...tenantReference,
     ...createdTimestamp,
   },
   (table) => [
     index().on(table.accountId),
-    index().on(table.routeId),
     index().on(table.tenantId),
     index().on(table.userId),
     index().on(table.walletId),

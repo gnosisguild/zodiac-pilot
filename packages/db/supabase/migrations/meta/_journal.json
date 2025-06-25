@@ -232,6 +232,13 @@
       "when": 1750757586244,
       "tag": "0032_migrate-active-route-to-default-route",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1750848405722,
+      "tag": "0033_store-snapshot-for-transactions",
+      "breakpoints": true
     }
   ]
 }
