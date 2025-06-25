@@ -98,7 +98,7 @@ const Actions = ({ accountId }: { accountId: string }) => {
           title="Confirm delete"
           description="Are you sure you want to delete this account? This action cannot be undone."
           busy={submitting}
-          intent={Intent.Delete}
+          intent={Intent.RemoteDelete}
           onConfirmChange={setConfirmingDelete}
           style="critical"
           context={{ accountId }}
