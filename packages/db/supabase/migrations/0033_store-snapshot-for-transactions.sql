@@ -14,7 +14,7 @@ FROM
   "SignedTransaction",
   "Route"
 WHERE
-  "Route"."id" = "SignedTransaction"."routeId";
+  "Route"."id" = "routeId";
 
 ALTER TABLE "SignedTransaction"
 ALTER COLUMN "waypoints"
