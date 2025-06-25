@@ -1,9 +1,5 @@
 import type { Waypoints } from '@zodiac/schema'
+import { calculateRouteId } from 'ser-kit'
 
 export const getRouteId = (waypoints?: Waypoints | null) =>
-  waypoints == null
-    ? ''
-    : waypoints
-        .map(({ account }) => account.prefixedAddress)
-        .join(',')
-        .toLowerCase()
+  waypoints == null ? '' : calculateRouteId(waypoints)
