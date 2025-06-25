@@ -183,6 +183,7 @@ const Routes = ({
         >
           {routes.map((route) => (
             <RouteTab
+              key={route.id}
               route={route}
               isDefault={defaultRouteId != null && route.id === defaultRouteId}
             />
