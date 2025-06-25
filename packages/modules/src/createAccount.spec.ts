@@ -1,13 +1,14 @@
 import { Chain } from '@zodiac/chains'
-import { getDefaultProvider } from 'ethers'
+import { AlchemyProvider } from 'ethers'
 import { AccountType, prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { createAccount } from './createAccount'
 
 describe('createAccount', () => {
-  const ethProvider = getDefaultProvider(Chain.ETH, {
-    alchemy: process.env.ALCHEMY_API_KEY,
-  })
+  const ethProvider = new AlchemyProvider(
+    Chain.ETH,
+    process.env.ALCHEMY_API_KEY,
+  )
 
   it('creates an EAO account if the passed address does not have code', async () => {
     const vitalikEoaAddress = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045'
