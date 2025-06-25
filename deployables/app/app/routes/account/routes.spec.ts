@@ -671,7 +671,7 @@ describe('Routes', () => {
 
     describe('Add new', () => {
       it('is possible to add a new route to an account', async () => {
-        expect(false)
+        expect(false).toBeTruthy()
       })
     })
   })
