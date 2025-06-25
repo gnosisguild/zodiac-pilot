@@ -6,6 +6,7 @@ import {
 import { jsonStringify, type MetaTransactionRequest } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
+import { getRoute } from '../routes'
 
 type SaveTransactionOptions = {
   accountId: UUID
@@ -22,14 +23,19 @@ export const saveTransaction = async (
   db: DBClient,
   tenant: Tenant,
   user: User,
-  { transaction, ...options }: SaveTransactionOptions,
+  { transaction, routeId, ...options }: SaveTransactionOptions,
 ) => {
+  const route = await getRoute(db, routeId)
+
   const [result] = await db
     .insert(SignedTransactionTable)
     .values({
       tenantId: tenant.id,
       userId: user.id,
       transaction: JSON.parse(jsonStringify(transaction)),
+
+      routeLabel: route.label,
+      waypoints: route.waypoints,
 
       ...options,
     })
