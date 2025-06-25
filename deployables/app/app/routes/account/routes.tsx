@@ -9,6 +9,7 @@ import {
   getRoutes,
   getWallets,
   removeDefaultRoute,
+  removeRoute,
   setDefaultRoute,
   updateRouteLabel,
 } from '@zodiac/db'
@@ -30,7 +31,7 @@ import {
 } from '@zodiac/ui'
 import classNames from 'classnames'
 import type { UUID } from 'crypto'
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { href, NavLink, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
@@ -149,11 +150,19 @@ export const action = (args: Route.ActionArgs) =>
 
           return null
         }
+
+        case Intent.Remove: {
+          const routeId = getUUID(data, 'routeId')
+
+          await removeRoute(dbClient(), routeId)
+
+          return null
+        }
       }
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ tenant, params: { routeId } }) {
+      async hasAccess({ tenant, params: { routeId, accountId } }) {
         if (routeId == null) {
           return false
         }
@@ -162,7 +171,7 @@ export const action = (args: Route.ActionArgs) =>
 
         const route = await getRoute(dbClient(), routeId)
 
-        return route.tenantId === tenant.id
+        return route.tenantId === tenant.id && route.toId === accountId
       },
     },
   )
@@ -216,7 +225,10 @@ const Routes = ({
 
               <span id={route.id}>{route.label || 'Unnamed route'}</span>
 
-              <Edit route={route} defaultRouteId={defaultRouteId} />
+              <div className="flex items-center">
+                <Edit route={route} defaultRouteId={defaultRouteId} />
+                <Remove routeId={route.id} />
+              </div>
             </NavLink>
           ))}
         </div>
@@ -338,6 +350,42 @@ const Edit = ({
   )
 }
 
+const Remove = ({ routeId }: { routeId: UUID }) => {
+  const [confirmRemove, setConfirmRemove] = useState(false)
+
+  useAfterSubmit(Intent.Remove, () => setConfirmRemove(false))
+
+  return (
+    <>
+      <GhostButton
+        iconOnly
+        icon={Trash2}
+        size="tiny"
+        onClick={() => setConfirmRemove(true)}
+      >
+        Remove route
+      </GhostButton>
+
+      <Modal open={confirmRemove} onClose={() => setConfirmRemove(false)}>
+        Are you sure you want to remove this route?
+        <Modal.Actions>
+          <Form context={{ routeId }}>
+            <PrimaryButton
+              submit
+              style="critical"
+              intent={Intent.Remove}
+              busy={useIsPending(Intent.Remove)}
+            >
+              Remove
+            </PrimaryButton>
+          </Form>
+          <Modal.CloseAction>Cancel</Modal.CloseAction>
+        </Modal.Actions>
+      </Modal>
+    </>
+  )
+}
+
 type FindInitiatorOptions = {
   routeId?: UUID
   searchParams: URLSearchParams
@@ -370,4 +418,5 @@ const findInitiator = async ({
 
 enum Intent {
   Edit = 'Edit',
+  Remove = 'Remove',
 }

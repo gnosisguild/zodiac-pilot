@@ -619,4 +619,36 @@ describe('Routes', () => {
       })
     })
   })
+
+  describe('Remove', () => {
+    it('is possible to remove a route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+      const route = await routeFactory.create(account, wallet)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        { user, tenant, features: ['multiple-routes'] },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove route' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getRoutes(dbClient(), tenant.id, { accountId: account.id }),
+      ).resolves.toEqual([])
+    })
+  })
 })
