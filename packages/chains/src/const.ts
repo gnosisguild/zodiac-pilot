@@ -40,15 +40,13 @@ export const RPC: Record<ChainId, URL> = {
   [Chain.ARB1]: new URL(`${Chain.ARB1}/rpc`, airlock),
   [Chain.AVAX]: new URL(`${Chain.AVAX}/rpc`, airlock),
   [Chain.SEP]: new URL(`${Chain.SEP}/rpc`, airlock),
-  [Chain.CELO]: new URL('https://forno.celo.org'),
-  [Chain.SONIC]: new URL('https://rpc.soniclabs.com'),
-  [Chain.BERACHAIN]: new URL('https://rpc.berachain.com'),
-  [Chain.UNICHAIN]: new URL('https://mainnet.unichain.org'),
-  [Chain.WORLDCHAIN]: new URL(
-    'https://worldchain-mainnet.g.alchemy.com/public',
-  ),
-  [Chain.BOB]: new URL('https://rpc.gobob.xyz'),
-  [Chain.MANTLE]: new URL('https://rpc.mantle.xyz'),
+  [Chain.CELO]: new URL(`${Chain.CELO}/rpc`, airlock),
+  [Chain.SONIC]: new URL(`${Chain.SONIC}/rpc`, airlock),
+  [Chain.BERACHAIN]: new URL(`${Chain.BERACHAIN}/rpc`, airlock),
+  [Chain.UNICHAIN]: new URL(`${Chain.UNICHAIN}/rpc`, airlock),
+  [Chain.WORLDCHAIN]: new URL(`${Chain.WORLDCHAIN}/rpc`, airlock),
+  [Chain.BOB]: new URL(`${Chain.BOB}/rpc`, airlock),
+  [Chain.MANTLE]: new URL(`${Chain.MANTLE}/rpc`, airlock),
 }
 
 export const EXPLORER_URL: Record<ChainId, URL> = {
