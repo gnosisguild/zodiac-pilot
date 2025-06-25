@@ -668,6 +668,12 @@ describe('Routes', () => {
         ).toBeInTheDocument()
       })
     })
+
+    describe('Add new', () => {
+      it('is possible to add a new route to an account', async () => {
+        expect(false)
+      })
+    })
   })
 
   describe('Remove', () => {
