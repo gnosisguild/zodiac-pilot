@@ -42,7 +42,7 @@
     "ethers": "6.14.4",
     "highlight.js": "11.11.1",
     "isbot": "5.1.28",
-    "lucide-react": "0.522.0",
+    "lucide-react": "0.523.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-router": "7.6.2",
