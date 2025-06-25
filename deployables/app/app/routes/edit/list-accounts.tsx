@@ -37,7 +37,7 @@ import {
 import { Suspense, useId, type PropsWithChildren } from 'react'
 import { Await, href, useRevalidator } from 'react-router'
 import { splitPrefixedAddress, unprefixAddress } from 'ser-kit'
-import type { Route } from './+types/list-routes'
+import type { Route } from './+types/list-accounts'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
 import { loadRoutes } from './loadRoutes'

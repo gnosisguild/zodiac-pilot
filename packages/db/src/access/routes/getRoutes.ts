@@ -22,6 +22,9 @@ export const getRoutes = async (
 
       return where
     },
+    orderBy(fields, { asc, desc }) {
+      return [asc(fields.label), desc(fields.createdAt)]
+    },
   })
 
   return routes.map((route) => ({

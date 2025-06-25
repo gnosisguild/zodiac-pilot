@@ -347,8 +347,9 @@ describe('Routes', () => {
       )
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Edit route' }),
+        await screen.findByRole('button', { name: 'Route options' }),
       )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -379,7 +380,7 @@ describe('Routes', () => {
 
       await setDefaultRoute(dbClient(), tenant, user, routeA)
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId/route/:routeId?', {
           accountId: account.id,
           routeId: routeA.id,
@@ -391,7 +392,10 @@ describe('Routes', () => {
         await screen.findByRole('tab', { name: 'Route B' }),
       )
 
-      await userEvent.click(await findByRole('button', { name: 'Edit route' }))
+      await userEvent.click(
+        await findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -402,10 +406,48 @@ describe('Routes', () => {
       )
 
       await waitForPendingActions()
+      await waitForPendingLoaders()
 
       await expect(
         getDefaultRoute(dbClient(), tenant, user, account.id),
       ).resolves.toHaveProperty('routeId', routeB.id)
+    })
+
+    it('does not crash if the current default route stays the default', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const route = await routeFactory.create(account, wallet, {
+        label: 'Route',
+      })
+
+      await setDefaultRoute(dbClient(), tenant, user, route)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        { tenant, user, features: ['multiple-routes'] },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Update' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getDefaultRoute(dbClient(), tenant, user, account.id),
+      ).resolves.toHaveProperty('routeId', route.id)
     })
   })
 
@@ -601,10 +643,18 @@ describe('Routes', () => {
         )
 
         await userEvent.click(
-          await screen.findByRole('button', { name: 'Edit route' }),
+          await screen.findByRole('button', { name: 'Route options' }),
         )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Edit' }),
+        )
+
+        const { findByRole } = within(
+          await screen.findByRole('dialog', { name: 'Edit route' }),
+        )
+
         await userEvent.type(
-          await screen.findByRole('textbox', { name: 'Label' }),
+          await findByRole('textbox', { name: 'Label' }),
           ' Updated',
         )
         await userEvent.click(
@@ -617,6 +667,41 @@ describe('Routes', () => {
           await screen.findByRole('tab', { name: `${route.label} Updated` }),
         ).toBeInTheDocument()
       })
+    })
+  })
+
+  describe('Remove', () => {
+    it('is possible to remove a route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+      const route = await routeFactory.create(account, wallet)
+
+      const { waitForPendingActions } = await render(
+        href('/account/:accountId/route/:routeId?', {
+          accountId: account.id,
+          routeId: route.id,
+        }),
+        { user, tenant, features: ['multiple-routes'] },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await waitForPendingActions()
+
+      await expect(
+        getRoutes(dbClient(), tenant.id, { accountId: account.id }),
+      ).resolves.toEqual([])
     })
   })
 })

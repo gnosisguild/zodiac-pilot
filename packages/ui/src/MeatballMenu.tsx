@@ -35,7 +35,19 @@ export const MeatballMenu = ({
         iconOnly
         size={size}
         icon={Ellipsis}
-        onClick={() => (open ? onRequestHide() : onRequestShow())}
+        onClick={(event) => {
+          // This menu button can be placed in arbitrary places
+          // including links and we don't want to cause a navigation
+          // when someone opens a menu
+          event.preventDefault()
+          event.stopPropagation()
+
+          if (open) {
+            onRequestHide()
+          } else {
+            onRequestShow()
+          }
+        }}
       >
         {label}
       </GhostButton>
