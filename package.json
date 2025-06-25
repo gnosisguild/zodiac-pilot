@@ -28,7 +28,7 @@
     "cspell": "9.1.2",
     "husky": "9.1.7",
     "lint-staged": "16.1.2",
-    "prettier": "3.6.0",
+    "prettier": "3.6.1",
     "prettier-plugin-organize-imports": "4.1.0",
     "prettier-plugin-tailwindcss": "0.6.13",
     "turbo": "2.5.4",
