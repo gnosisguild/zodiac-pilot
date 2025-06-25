@@ -380,7 +380,7 @@ describe('Routes', () => {
 
       await setDefaultRoute(dbClient(), tenant, user, routeA)
 
-      const { waitForPendingActions } = await render(
+      const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/account/:accountId/route/:routeId?', {
           accountId: account.id,
           routeId: routeA.id,
@@ -406,6 +406,7 @@ describe('Routes', () => {
       )
 
       await waitForPendingActions()
+      await waitForPendingLoaders()
 
       await expect(
         getDefaultRoute(dbClient(), tenant, user, account.id),
