@@ -55,7 +55,7 @@ export default [
         ]),
 
         ...prefix('/edit', [
-          index('routes/edit/list-routes.tsx'),
+          index('routes/edit/list-accounts.tsx'),
           route(':routeId', 'routes/edit/$routeId/load-route.ts'),
           route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
 

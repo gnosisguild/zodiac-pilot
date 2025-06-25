@@ -44,7 +44,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
-describe.sequential('List Routes', () => {
+describe.sequential('List Accounts', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue([])
   })
