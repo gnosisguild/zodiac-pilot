@@ -347,8 +347,9 @@ describe('Routes', () => {
       )
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Edit route' }),
+        await screen.findByRole('button', { name: 'Route options' }),
       )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -391,7 +392,10 @@ describe('Routes', () => {
         await screen.findByRole('tab', { name: 'Route B' }),
       )
 
-      await userEvent.click(await findByRole('button', { name: 'Edit route' }))
+      await userEvent.click(
+        await findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -601,10 +605,18 @@ describe('Routes', () => {
         )
 
         await userEvent.click(
-          await screen.findByRole('button', { name: 'Edit route' }),
+          await screen.findByRole('button', { name: 'Route options' }),
         )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Edit' }),
+        )
+
+        const { findByRole } = within(
+          await screen.findByRole('dialog', { name: 'Edit route' }),
+        )
+
         await userEvent.type(
-          await screen.findByRole('textbox', { name: 'Label' }),
+          await findByRole('textbox', { name: 'Label' }),
           ' Updated',
         )
         await userEvent.click(
@@ -638,7 +650,10 @@ describe('Routes', () => {
       )
 
       await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove route' }),
+        await screen.findByRole('button', { name: 'Route options' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
       )
       await userEvent.click(
         await screen.findByRole('button', { name: 'Remove' }),

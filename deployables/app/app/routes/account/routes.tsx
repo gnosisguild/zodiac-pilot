@@ -13,29 +13,16 @@ import {
   setDefaultRoute,
   updateRouteLabel,
 } from '@zodiac/db'
-import type { Route as DBRoute } from '@zodiac/db/schema'
 import { getBoolean, getString, getUUID } from '@zodiac/form-data'
-import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import {
-  AddressSelect,
-  Checkbox,
-  Feature,
-  Form,
-  GhostButton,
-  Modal,
-  Popover,
-  PrimaryButton,
-  TextInput,
-} from '@zodiac/ui'
-import classNames from 'classnames'
+import { AddressSelect, Feature, Form } from '@zodiac/ui'
 import type { UUID } from 'crypto'
-import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
-import { href, NavLink, useOutletContext } from 'react-router'
+import { useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
+import { RouteTab } from './RouteTab'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -186,7 +173,7 @@ const Routes = ({
     routes,
     defaultRouteId,
   },
-  params: { accountId, routeId },
+  params: { routeId },
 }: Route.ComponentProps) => {
   const { formId } = useOutletContext<{ formId: string }>()
 
@@ -198,38 +185,10 @@ const Routes = ({
           className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-600"
         >
           {routes.map((route) => (
-            <NavLink
-              key={route.id}
-              aria-labelledby={route.id}
-              to={href('/account/:accountId/route/:routeId?', {
-                accountId,
-                routeId: route.id,
-              })}
-              role="tab"
-              className={({ isActive }) =>
-                classNames(
-                  'flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
-                  isActive
-                    ? 'border-indigo-500 text-indigo-600 dark:border-teal-300 dark:text-teal-500'
-                    : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-50',
-                )
-              }
-            >
-              {defaultRouteId === route.id && (
-                <Popover
-                  popover={<span className="text-sm">Default route</span>}
-                >
-                  <div className="size-2 rounded-full bg-teal-500 dark:bg-indigo-500" />
-                </Popover>
-              )}
-
-              <span id={route.id}>{route.label || 'Unnamed route'}</span>
-
-              <div className="flex items-center">
-                <Edit route={route} defaultRouteId={defaultRouteId} />
-                <Remove routeId={route.id} />
-              </div>
-            </NavLink>
+            <RouteTab
+              route={route}
+              isDefault={defaultRouteId != null && route.id === defaultRouteId}
+            />
           ))}
         </div>
       </Feature>
@@ -285,107 +244,6 @@ const Routes = ({
 
 export default Routes
 
-const Edit = ({
-  route,
-  defaultRouteId,
-}: {
-  route: DBRoute
-  defaultRouteId: UUID | null
-}) => {
-  const [updating, setUpdating] = useState(false)
-
-  useAfterSubmit(Intent.Edit, () => setUpdating(false))
-
-  return (
-    <>
-      <GhostButton
-        iconOnly
-        size="tiny"
-        icon={Pencil}
-        onClick={(event) => {
-          event.stopPropagation()
-          event.preventDefault()
-
-          setUpdating(true)
-        }}
-      >
-        Edit route
-      </GhostButton>
-
-      <Modal
-        open={updating}
-        title="Update route label"
-        onClose={() => setUpdating(false)}
-      >
-        <Form context={{ routeId: route.id }}>
-          <TextInput
-            label="Label"
-            name="label"
-            placeholder="Route label"
-            defaultValue={route.label ?? ''}
-          />
-
-          <Checkbox
-            name="defaultRoute"
-            defaultChecked={
-              defaultRouteId != null && defaultRouteId === route.id
-            }
-          >
-            Use as default route
-          </Checkbox>
-
-          <Modal.Actions>
-            <PrimaryButton
-              submit
-              intent={Intent.Edit}
-              busy={useIsPending(Intent.Edit)}
-            >
-              Update
-            </PrimaryButton>
-            <Modal.CloseAction>Cancel</Modal.CloseAction>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
-  )
-}
-
-const Remove = ({ routeId }: { routeId: UUID }) => {
-  const [confirmRemove, setConfirmRemove] = useState(false)
-
-  useAfterSubmit(Intent.Remove, () => setConfirmRemove(false))
-
-  return (
-    <>
-      <GhostButton
-        iconOnly
-        icon={Trash2}
-        size="tiny"
-        onClick={() => setConfirmRemove(true)}
-      >
-        Remove route
-      </GhostButton>
-
-      <Modal open={confirmRemove} onClose={() => setConfirmRemove(false)}>
-        Are you sure you want to remove this route?
-        <Modal.Actions>
-          <Form context={{ routeId }}>
-            <PrimaryButton
-              submit
-              style="critical"
-              intent={Intent.Remove}
-              busy={useIsPending(Intent.Remove)}
-            >
-              Remove
-            </PrimaryButton>
-          </Form>
-          <Modal.CloseAction>Cancel</Modal.CloseAction>
-        </Modal.Actions>
-      </Modal>
-    </>
-  )
-}
-
 type FindInitiatorOptions = {
   routeId?: UUID
   searchParams: URLSearchParams
@@ -414,9 +272,4 @@ const findInitiator = async ({
   }
 
   return null
-}
-
-enum Intent {
-  Edit = 'Edit',
-  Remove = 'Remove',
 }

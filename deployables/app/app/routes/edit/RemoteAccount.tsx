@@ -1,22 +1,19 @@
+import { ConfirmableAction } from '@/components'
 import { Chain } from '@/routes-ui'
 import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
 import type { Account, Wallet } from '@zodiac/db/schema'
-import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
+import { useIsPending } from '@zodiac/hooks'
 import {
   Address,
-  Form,
-  GhostButton,
   GhostLinkButton,
   MeatballMenu,
-  Modal,
-  PrimaryButton,
   TableCell,
   TableRow,
   Tag,
 } from '@zodiac/ui'
 import classNames from 'classnames'
-import { Pencil, Trash2 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Pencil } from 'lucide-react'
+import { useState } from 'react'
 import { href } from 'react-router'
 import { Intent } from './intents'
 
@@ -96,64 +93,19 @@ const Actions = ({ accountId }: { accountId: string }) => {
         >
           Edit
         </GhostLinkButton>
-        <Delete accountId={accountId} onConfirmChange={setConfirmingDelete} />
+
+        <ConfirmableAction
+          title="Confirm delete"
+          description="Are you sure you want to delete this account? This action cannot be undone."
+          busy={submitting}
+          intent={Intent.Delete}
+          onConfirmChange={setConfirmingDelete}
+          style="critical"
+          context={{ accountId }}
+        >
+          Delete
+        </ConfirmableAction>
       </MeatballMenu>
     </div>
-  )
-}
-
-const Delete = ({
-  accountId,
-  onConfirmChange,
-}: {
-  accountId: string
-  onConfirmChange: (state: boolean) => void
-}) => {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const submitting = useIsPending(
-    Intent.RemoteDelete,
-    (data) => data.get('accountId') === accountId,
-  )
-
-  useAfterSubmit(Intent.RemoteDelete, () => setConfirmDelete(false))
-
-  useEffect(() => {
-    onConfirmChange(confirmDelete)
-  }, [confirmDelete, onConfirmChange])
-
-  return (
-    <>
-      <GhostButton
-        align="left"
-        size="tiny"
-        icon={Trash2}
-        style="critical"
-        onClick={() => setConfirmDelete(true)}
-        busy={submitting}
-      >
-        Delete
-      </GhostButton>
-
-      <Modal
-        title="Confirm delete"
-        onClose={() => setConfirmDelete(false)}
-        open={confirmDelete}
-        description="Are you sure you want to delete this account? This action cannot be undone."
-      >
-        <Form context={{ accountId }}>
-          <Modal.Actions>
-            <PrimaryButton
-              submit
-              intent={Intent.RemoteDelete}
-              busy={submitting}
-            >
-              Delete
-            </PrimaryButton>
-
-            <Modal.CloseAction>Cancel</Modal.CloseAction>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
   )
 }
