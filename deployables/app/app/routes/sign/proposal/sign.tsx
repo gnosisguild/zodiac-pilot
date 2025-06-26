@@ -169,7 +169,7 @@ export const action = async (args: Route.ActionArgs) =>
         case Intent.SignTransaction: {
           const transaction = await saveTransaction(dbClient(), tenant, user, {
             accountId: proposal.accountId,
-            walletId: route.wallet.id,
+            walletId: route.fromId,
             routeId: route.id,
 
             transaction: metaTransactions,
@@ -201,7 +201,7 @@ export const action = async (args: Route.ActionArgs) =>
           proposal.accountId,
         )
 
-        return route.wallet.belongsToId === user.id
+        return route.userId === user.id
       },
     },
   )
