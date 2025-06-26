@@ -91,6 +91,8 @@ export async function createRenderFramework<
 
   const waitForPendingActions = async () => {
     await Promise.all(pendingActions)
+
+    await waitForPendingLoaders()
   }
 
   return async function renderFramework(

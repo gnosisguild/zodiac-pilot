@@ -54,7 +54,7 @@ export function selectStyles<Option extends BaseOption = BaseOption>({
       ),
     option: ({ isSelected }) =>
       classNames(
-        'text-sm',
+        'text-sm overflow-hidden',
         isSelected != null &&
           'hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50 cursor-pointer',
         inline ? 'px-2 py-1 overflow-hidden' : 'px-4 py-2',

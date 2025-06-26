@@ -2,6 +2,8 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  createRoute,
+  createWallet,
   dbClient,
   findDefaultRoute,
   getAccount,
@@ -12,12 +14,23 @@ import {
   setDefaultRoute,
   updateRouteLabel,
 } from '@zodiac/db'
-import { getBoolean, getString, getUUID } from '@zodiac/form-data'
+import { getBoolean, getHexString, getString, getUUID } from '@zodiac/form-data'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import { AddressSelect, Feature, Form } from '@zodiac/ui'
+import {
+  AddressSelect,
+  Feature,
+  Form,
+  Modal,
+  PrimaryButton,
+  SecondaryButton,
+  TextInput,
+} from '@zodiac/ui'
 import type { UUID } from 'crypto'
-import { useOutletContext } from 'react-router'
+import { Plus } from 'lucide-react'
+import { useState } from 'react'
+import { href, redirect, useLoaderData, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
 import { RouteTab } from './RouteTab'
@@ -71,12 +84,16 @@ export const loader = (args: Route.LoaderArgs) =>
       const [defaultProposedRoute] = possibleRoutes.routes
 
       return {
-        initiatorWallets: wallets.filter((wallet) =>
-          initiators.includes(wallet.address),
-        ),
-        initiatorAddresses: initiators.filter((address) =>
-          wallets.every((wallet) => wallet.address !== address),
-        ),
+        possibleInitiators: [
+          ...wallets
+            .filter((wallet) => initiators.includes(wallet.address))
+            .map(({ address, label }) => ({ address, label })),
+          ...initiators
+            .filter((address) =>
+              wallets.every((wallet) => wallet.address !== address),
+            )
+            .map((address) => ({ address, label: address })),
+        ],
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
         routes,
@@ -104,10 +121,10 @@ export const action = (args: Route.ActionArgs) =>
     }) => {
       const data = await request.formData()
 
+      invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
       switch (getString(data, 'intent')) {
         case Intent.Edit: {
-          invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
-
           const routeId = getUUID(data, 'routeId')
           const label = getString(data, 'label')
           const setAsDefault = getBoolean(data, 'defaultRoute')
@@ -140,7 +157,68 @@ export const action = (args: Route.ActionArgs) =>
 
           await removeRoute(dbClient(), routeId)
 
-          return null
+          const defaultRoute = await findDefaultRoute(
+            dbClient(),
+            tenant,
+            user,
+            accountId,
+          )
+
+          if (defaultRoute != null) {
+            return redirect(
+              href('/account/:accountId/route/:routeId?', {
+                accountId,
+                routeId: defaultRoute.routeId,
+              }),
+            )
+          }
+
+          const [route] = await getRoutes(dbClient(), tenant.id, { accountId })
+
+          if (route != null) {
+            return redirect(
+              href('/account/:accountId/route/:routeId?', {
+                accountId,
+                routeId: route.id,
+              }),
+            )
+          }
+
+          return redirect(
+            href('/account/:accountId/route/:routeId?', { accountId }),
+          )
+        }
+
+        case Intent.AddRoute: {
+          const initiator = getHexString(data, 'initiator')
+          const label = getString(data, 'label')
+
+          const wallet = await createWallet(dbClient(), user, {
+            label: 'Unnamed wallet',
+            address: initiator,
+          })
+          const account = await getAccount(dbClient(), accountId)
+
+          const queryRoutesResult = await queryRoutes(
+            prefixAddress(undefined, initiator),
+            prefixAddress(account.chainId, account.address),
+          )
+
+          const [defaultRoute] = queryRoutesResult.routes
+
+          const route = await createRoute(dbClient(), tenant.id, {
+            walletId: wallet.id,
+            accountId: account.id,
+            waypoints: defaultRoute.waypoints,
+            label,
+          })
+
+          return redirect(
+            href('/account/:accountId/route/:routeId?', {
+              accountId,
+              routeId: route.id,
+            }),
+          )
         }
       }
     },
@@ -148,7 +226,11 @@ export const action = (args: Route.ActionArgs) =>
       ensureSignedIn: true,
       async hasAccess({ tenant, params: { routeId, accountId } }) {
         if (routeId == null) {
-          return false
+          invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
+
+          const account = await getAccount(dbClient(), accountId)
+
+          return account.tenantId === tenant.id
         }
 
         invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
@@ -163,8 +245,7 @@ export const action = (args: Route.ActionArgs) =>
 const Routes = ({
   loaderData: {
     initiatorAddress,
-    initiatorAddresses,
-    initiatorWallets,
+    possibleInitiators,
     possibleRoutes,
     comparableId,
     routes,
@@ -179,15 +260,21 @@ const Routes = ({
       <Feature feature="multiple-routes">
         <div
           role="tablist"
-          className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-600"
+          className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
         >
-          {routes.map((route) => (
-            <RouteTab
-              key={route.id}
-              route={route}
-              isDefault={defaultRouteId != null && route.id === defaultRouteId}
-            />
-          ))}
+          <div className="flex items-center gap-2">
+            {routes.map((route) => (
+              <RouteTab
+                key={route.id}
+                route={route}
+                isDefault={
+                  defaultRouteId != null && route.id === defaultRouteId
+                }
+              />
+            ))}
+          </div>
+
+          <AddRoute />
         </div>
       </Feature>
 
@@ -210,22 +297,14 @@ const Routes = ({
             name="transient-initiator"
             placeholder="Select a wallet form the list"
             defaultValue={initiatorAddress ?? undefined}
-            options={[
-              ...initiatorWallets.map(({ address, label }) => ({
-                address,
-                label,
-              })),
-              ...initiatorAddresses.map((address) => ({
-                address,
-                label: address,
-              })),
-            ]}
-            onChange={() => submit()}
+            options={possibleInitiators}
+            onChange={submit}
           />
         )}
       </Form>
 
       <RouteSelect
+        key={routeId}
         routes={possibleRoutes}
         defaultValue={comparableId}
         form={formId}
@@ -270,4 +349,51 @@ const findInitiator = async ({
   }
 
   return null
+}
+
+const AddRoute = () => {
+  const [adding, setAdding] = useState(false)
+
+  const { possibleInitiators } = useLoaderData<typeof loader>()
+
+  useAfterSubmit(Intent.AddRoute, () => setAdding(false))
+
+  return (
+    <>
+      <SecondaryButton size="small" icon={Plus} onClick={() => setAdding(true)}>
+        Add route
+      </SecondaryButton>
+
+      <Modal title="Add route" open={adding} onClose={() => setAdding(false)}>
+        <Form>
+          <TextInput
+            required
+            label="Label"
+            name="label"
+            placeholder="New route"
+          />
+
+          <AddressSelect
+            required
+            isMulti={false}
+            label="Pilot Signer"
+            name="initiator"
+            placeholder="Select a wallet form the list"
+            options={possibleInitiators}
+          />
+
+          <Modal.Actions>
+            <PrimaryButton
+              submit
+              intent={Intent.AddRoute}
+              busy={useIsPending(Intent.AddRoute)}
+            >
+              Add
+            </PrimaryButton>
+            <Modal.CloseAction>Cancel</Modal.CloseAction>
+          </Modal.Actions>
+        </Form>
+      </Modal>
+    </>
+  )
 }

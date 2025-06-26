@@ -1,4 +1,5 @@
 import { closeCurrentClient, dbClient } from '@zodiac/db'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import { afterAll, beforeEach } from 'vitest'
 import { deleteAllFeatures } from './deleteAllFeatures'
 import { deleteAllSubscriptionPlans } from './deleteAllSubscriptionPlans'
@@ -16,4 +17,8 @@ beforeEach(async () => {
   ])
 })
 
-afterAll(() => closeCurrentClient())
+afterAll(async () => {
+  await sleepTillIdle()
+
+  await closeCurrentClient()
+})
