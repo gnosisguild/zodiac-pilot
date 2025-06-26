@@ -671,7 +671,47 @@ describe('Routes', () => {
 
     describe('Add new', () => {
       it('is possible to add a new route to an account', async () => {
-        expect(false).toBeTruthy()
+        const tenant = await tenantFactory.create()
+        const user = await userFactory.create(tenant)
+
+        const wallet = await walletFactory.create(user, { label: 'New wallet' })
+        const account = await accountFactory.create(tenant, user)
+
+        mockQueryInitiators.mockResolvedValue([wallet.address])
+        mockQueryRoutes.mockResolvedValue([createMockRoute()])
+
+        await render(
+          href('/account/:accountId/route/:routeId?', {
+            accountId: account.id,
+          }),
+          { user, tenant, features: ['multiple-routes'] },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Add route' }),
+        )
+
+        const { findByRole } = within(
+          await screen.findByRole('dialog', { name: 'Add route' }),
+        )
+
+        await userEvent.type(
+          await findByRole('textbox', { name: 'Label' }),
+          'New route',
+        )
+
+        await userEvent.click(
+          await findByRole('combobox', { name: 'Pilot Signer' }),
+        )
+        await userEvent.click(
+          await findByRole('option', { name: 'New wallet' }),
+        )
+
+        await userEvent.click(await findByRole('button', { name: 'Add' }))
+
+        expect(
+          await screen.findByRole('tab', { name: 'New route' }),
+        ).toBeInTheDocument()
       })
     })
   })
