@@ -22,9 +22,9 @@ import {
   AddressSelect,
   Feature,
   Form,
-  GhostButton,
   Modal,
   PrimaryButton,
+  SecondaryButton,
   TextInput,
 } from '@zodiac/ui'
 import type { UUID } from 'crypto'
@@ -260,15 +260,19 @@ const Routes = ({
       <Feature feature="multiple-routes">
         <div
           role="tablist"
-          className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-600"
+          className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
         >
-          {routes.map((route) => (
-            <RouteTab
-              key={route.id}
-              route={route}
-              isDefault={defaultRouteId != null && route.id === defaultRouteId}
-            />
-          ))}
+          <div className="flex items-center gap-2">
+            {routes.map((route) => (
+              <RouteTab
+                key={route.id}
+                route={route}
+                isDefault={
+                  defaultRouteId != null && route.id === defaultRouteId
+                }
+              />
+            ))}
+          </div>
 
           <AddRoute />
         </div>
@@ -356,9 +360,9 @@ const AddRoute = () => {
 
   return (
     <>
-      <GhostButton iconOnly icon={Plus} onClick={() => setAdding(true)}>
+      <SecondaryButton size="small" icon={Plus} onClick={() => setAdding(true)}>
         Add route
-      </GhostButton>
+      </SecondaryButton>
 
       <Modal title="Add route" open={adding} onClose={() => setAdding(false)}>
         <Form>

@@ -65,8 +65,8 @@ export function AddressSelect<Creatable extends boolean>({
       }
     >
       {(props) => (
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex-1 flex-shrink-0">
+        <div className="flex w-full items-center justify-between gap-4">
+          <div className="flex-1 flex-shrink-0 overflow-hidden">
             <Address
               label={
                 props.data.value === props.data.label ||

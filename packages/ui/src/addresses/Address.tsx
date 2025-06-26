@@ -55,7 +55,7 @@ export const Address = ({
   }
 
   return (
-    <div className="flex items-center gap-2 overflow-hidden">
+    <div className="flex max-w-full items-center gap-2 overflow-hidden">
       <Blockie
         address={address}
         className={classNames(
@@ -64,11 +64,13 @@ export const Address = ({
           size === 'tiny' && 'size-3',
         )}
       />
-      {label && <span className="font-semibold">{label}</span>}
+      {label && (
+        <span className="whitespace-nowrap font-semibold">{label}</span>
+      )}
       <code
         aria-hidden={label != null}
         className={classNames(
-          'max-w-full overflow-hidden text-ellipsis text-nowrap font-mono',
+          'max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default',
           shorten && ensName == null && 'uppercase',
           size === 'small' && 'text-xs',
