@@ -102,6 +102,11 @@ export class ForkProvider extends EventEmitter {
         throw new UnsupportedMethodError('eth_sign is not supported')
       }
 
+      // EIP-5792 support is required for enabled Cow TWAPs
+      // makes useIsTxBundlingSupported() return true (https://github.com/cowprotocol/cowswap/blob/13bd0a97550f7ec44ec86533f5b9cbfec3aa7930/libs/wallet/src/api/hooks.ts#L40)
+      case 'wallet_getCapabilities': {
+      }
+
       case 'personal_sign': {
         const [message, from] = params
         if (from.toLowerCase() !== this.avatarAddress.toLowerCase()) {
