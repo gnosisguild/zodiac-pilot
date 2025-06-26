@@ -296,14 +296,11 @@ const ListRoutes = ({
               const [defaultRoute] = account.defaultRoutes
 
               if (defaultRoute != null) {
-                const { wallet } = defaultRoute.route
-
                 return (
                   <RemoteAccount
                     key={account.id}
                     account={account}
                     active={activeRemoteAccountId === account.id}
-                    wallet={wallet}
                   />
                 )
               }
@@ -353,7 +350,7 @@ const ListRoutes = ({
                                 </p>
                               </h2>
 
-                              <Accounts>
+                              <Accounts showSigner>
                                 {localAccounts.map((route) => (
                                   <LocalAccount
                                     key={route.id}
@@ -391,7 +388,10 @@ const ListRoutes = ({
 
 export default ListRoutes
 
-const Accounts = ({ children }: PropsWithChildren) => {
+const Accounts = ({
+  children,
+  showSigner = false,
+}: PropsWithChildren<{ showSigner?: boolean }>) => {
   return (
     <Table
       bleed
@@ -404,7 +404,7 @@ const Accounts = ({ children }: PropsWithChildren) => {
             <span className="sr-only">Active</span>
           </TableHeader>
           <TableHeader>Chain</TableHeader>
-          <TableHeader>Pilot Signer</TableHeader>
+          {showSigner && <TableHeader>Pilot Signer</TableHeader>}
           <TableHeader>Safe Account</TableHeader>
         </TableRow>
       </TableHead>

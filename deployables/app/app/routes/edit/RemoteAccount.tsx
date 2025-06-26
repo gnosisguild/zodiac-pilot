@@ -1,7 +1,7 @@
 import { ConfirmableAction } from '@/components'
 import { Chain } from '@/routes-ui'
-import { CHAIN_NAME, ZERO_ADDRESS } from '@zodiac/chains'
-import type { Account, Wallet } from '@zodiac/db/schema'
+import { CHAIN_NAME } from '@zodiac/chains'
+import type { Account } from '@zodiac/db/schema'
 import { useIsPending } from '@zodiac/hooks'
 import {
   Address,
@@ -19,15 +19,10 @@ import { Intent } from './intents'
 
 type RemoteAccountProps = {
   account: Account
-  wallet?: Wallet
   active: boolean
 }
 
-export const RemoteAccount = ({
-  account,
-  wallet,
-  active,
-}: RemoteAccountProps) => {
+export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
@@ -43,15 +38,6 @@ export const RemoteAccount = ({
       </TableCell>
       <TableCell>
         <Chain chainId={account.chainId}>{CHAIN_NAME[account.chainId]}</Chain>
-      </TableCell>
-      <TableCell>
-        {wallet == null ? (
-          <Address>{ZERO_ADDRESS}</Address>
-        ) : (
-          <Address shorten label={wallet.label}>
-            {wallet.address}
-          </Address>
-        )}
       </TableCell>
       <TableCell>
         <Address shorten>{account.address}</Address>
