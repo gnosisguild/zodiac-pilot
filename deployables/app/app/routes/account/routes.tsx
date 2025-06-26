@@ -157,7 +157,36 @@ export const action = (args: Route.ActionArgs) =>
 
           await removeRoute(dbClient(), routeId)
 
-          return null
+          const defaultRoute = await findDefaultRoute(
+            dbClient(),
+            tenant,
+            user,
+            accountId,
+          )
+
+          if (defaultRoute != null) {
+            return redirect(
+              href('/account/:accountId/route/:routeId?', {
+                accountId,
+                routeId: defaultRoute.routeId,
+              }),
+            )
+          }
+
+          const [route] = await getRoutes(dbClient(), tenant.id, { accountId })
+
+          if (route != null) {
+            return redirect(
+              href('/account/:accountId/route/:routeId?', {
+                accountId,
+                routeId: route.id,
+              }),
+            )
+          }
+
+          return redirect(
+            href('/account/:accountId/route/:routeId?', { accountId }),
+          )
         }
 
         case Intent.AddRoute: {
