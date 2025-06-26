@@ -4,13 +4,14 @@ import type { DBClient } from '../../dbClient'
 
 type GetRoutesOptions = {
   walletId?: UUID
+  userId: UUID
   accountId: UUID
 }
 
 export const getRoutes = async (
   db: DBClient,
   tenantId: UUID,
-  { walletId, accountId }: GetRoutesOptions,
+  { walletId, accountId, userId }: GetRoutesOptions,
 ) => {
   const routes = await db.query.route.findMany({
     where(fields, { eq, and }) {
@@ -18,6 +19,10 @@ export const getRoutes = async (
 
       if (walletId != null) {
         where = and(where, eq(fields.fromId, walletId))
+      }
+
+      if (userId != null) {
+        where = and(where, eq(fields.userId, userId))
       }
 
       return where

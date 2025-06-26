@@ -491,6 +491,7 @@ describe.sequential('List Accounts', () => {
       })
 
       const [remoteRoute] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         walletId: wallet.id,
         accountId: account.id,
       })
@@ -546,6 +547,7 @@ describe.sequential('List Accounts', () => {
       })
 
       const [remoteRoute] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         walletId: wallet.id,
         accountId: account.id,
       })
