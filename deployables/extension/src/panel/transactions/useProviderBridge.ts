@@ -108,11 +108,11 @@ const useHandleProviderRequests = (provider: ForkProvider) => {
 /**
  * Our ForkProvider expects the params to be an array, but the JsonRpcRequest type allows objects.
  */
-const paramsAsArray = ({ params, ...rest }: JsonRpcRequest) => ({
-  ...rest,
-  params: Array.isArray(params)
-    ? params
-    : params == null
-      ? []
-      : Object.values(params),
-})
+const paramsAsArray = (request: JsonRpcRequest) => {
+  if (!request.params || Array.isArray(request.params)) return request
+
+  return {
+    ...request,
+    params: Object.values(request.params),
+  }
+}
