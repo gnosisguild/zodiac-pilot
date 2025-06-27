@@ -99,10 +99,7 @@ describe('Sign', () => {
   const initiator = randomAddress()
 
   beforeEach(() => {
-    vi.mocked(planExecution).mockResolvedValue([
-      createMockExecuteTransactionAction(),
-    ])
-
+    mockPlanExecution.mockResolvedValue([createMockExecuteTransactionAction()])
     mockJsonRpcProvider.mockReturnValue(new MockJsonRpcProvider())
 
     // @ts-expect-error We really only want to use this subset

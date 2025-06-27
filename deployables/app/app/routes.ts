@@ -81,7 +81,10 @@ export default [
               'routes/sign/account.$accountId.$transactions/sign.tsx',
             ),
 
-            route('/proposal/:proposalId', 'routes/sign/proposal/sign.tsx'),
+            ...prefix('proposal/:proposalId', [
+              index('routes/sign/proposal/load-default-route.ts'),
+              route(':routeId', 'routes/sign/proposal/sign.tsx'),
+            ]),
 
             route(
               ':route/:transactions',

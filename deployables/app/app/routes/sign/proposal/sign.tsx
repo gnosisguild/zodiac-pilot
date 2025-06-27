@@ -6,9 +6,12 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   confirmTransactionProposal,
   dbClient,
+  getAccount,
   getDefaultRoute,
   getProposedTransaction,
+  getRoute,
   getSignedTransaction,
+  getWallet,
   saveTransaction,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -40,25 +43,20 @@ export const meta: Route.MetaFunction = ({ matches }) => [
 export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({
-      params: { proposalId },
-      context: {
-        auth: { tenant, user },
-      },
-    }) => {
+    async ({ params: { proposalId, routeId } }) => {
       invariantResponse(isUUID(proposalId), 'Proposal ID is not a UUID')
+      invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
+      const route = await getRoute(dbClient(), routeId)
 
-      const { route, account } = await getDefaultRoute(
-        dbClient(),
-        tenant,
-        user,
-        proposal.accountId,
-      )
+      const [wallet, account] = await Promise.all([
+        getWallet(dbClient(), route.fromId),
+        getAccount(dbClient(), route.toId),
+      ])
 
       const executionRoute = toExecutionRoute({
-        wallet: route.wallet,
+        wallet,
         account,
         route,
       })
