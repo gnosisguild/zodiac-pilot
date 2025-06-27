@@ -110,8 +110,9 @@ describe('Sign', () => {
     )
 
     await expectRouteToBe(
-      href('/submit/proposal/:proposalId', {
+      href('/submit/proposal/:proposalId/:routeId', {
         proposalId: proposedTransaction.id,
+        routeId: route.id,
       }),
     )
   })

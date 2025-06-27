@@ -9,6 +9,7 @@ import {
   getAccount,
   getRoute,
   getRoutes,
+  getWallet,
   getWallets,
   removeRoute,
   setDefaultRoute,
@@ -347,8 +348,9 @@ const findInitiator = async ({
 
   if (routeId != null) {
     const route = await getRoute(dbClient(), routeId)
+    const wallet = await getWallet(dbClient(), route.fromId)
 
-    return route.wallet.address
+    return wallet.address
   }
 
   return null

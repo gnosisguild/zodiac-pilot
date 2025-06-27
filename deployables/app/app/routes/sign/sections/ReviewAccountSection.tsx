@@ -15,7 +15,8 @@ type NonceMap = {
 }
 
 type ReviewAccountSectionProps = {
-  id: string
+  routeId: string
+  routeLabel: string | null | undefined
   isValidRoute: boolean
   hasQueryRoutesError: boolean
   chainId: ChainId
@@ -24,7 +25,8 @@ type ReviewAccountSectionProps = {
 }
 
 export function ReviewAccountSection({
-  id,
+  routeId,
+  routeLabel,
   isValidRoute,
   hasQueryRoutesError,
   chainId,
@@ -48,24 +50,28 @@ export function ReviewAccountSection({
 
       <ChainSelect disabled defaultValue={chainId} />
 
-      <Labeled label="Execution route">
-        <Routes disabled orientation="horizontal">
-          <Route id={id}>
-            {waypoints && (
-              <Waypoints>
-                {waypoints.map(({ account, ...waypoint }, index) => (
-                  <Waypoint
-                    key={`${account.address}-${index}`}
-                    account={account}
-                    connection={
-                      'connection' in waypoint ? waypoint.connection : undefined
-                    }
-                  />
-                ))}
-              </Waypoints>
-            )}
-          </Route>
-        </Routes>
+      <Labeled label="Execution route" description={routeLabel}>
+        {({ inputId, descriptionId }) => (
+          <Routes disabled orientation="horizontal">
+            <Route id={routeId} inputId={inputId} descriptionId={descriptionId}>
+              {waypoints && (
+                <Waypoints>
+                  {waypoints.map(({ account, ...waypoint }, index) => (
+                    <Waypoint
+                      key={`${account.address}-${index}`}
+                      account={account}
+                      connection={
+                        'connection' in waypoint
+                          ? waypoint.connection
+                          : undefined
+                      }
+                    />
+                  ))}
+                </Waypoints>
+              )}
+            </Route>
+          </Routes>
+        )}
       </Labeled>
       <div className="flex flex-col gap-4">
         <Collapsible title="Define custom Safe transaction nonce">

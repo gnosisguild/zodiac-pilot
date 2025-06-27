@@ -8,9 +8,6 @@ export const getRoute = async (db: DBClient, routeId: UUID) => {
     where(fields, { eq }) {
       return eq(fields.id, routeId)
     },
-    with: {
-      wallet: true,
-    },
   })
 
   invariant(route != null, `Could not find route with id "${routeId}"`)

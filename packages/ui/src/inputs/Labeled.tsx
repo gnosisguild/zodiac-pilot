@@ -9,7 +9,7 @@ export type LabeledRenderProps = {
 export type ComposableLabeledProps = {
   label: string
   hideLabel?: boolean
-  description?: string
+  description?: string | null
 }
 
 type LabeledProps = ComposableLabeledProps & {

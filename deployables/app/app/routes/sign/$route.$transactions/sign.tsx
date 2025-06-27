@@ -58,7 +58,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
   return {
     isValidRoute: isValidRoute(queryRoutesResult),
     hasQueryRoutesError: queryRoutesResult.error != null,
-    id: route.id,
+    route,
     initiator: unprefixAddress(route.initiator),
     safeAddress: unprefixAddress(route.avatar),
     chainId: getChainId(route.avatar),
@@ -104,7 +104,7 @@ const SubmitPage = ({
   loaderData: {
     initiator,
     chainId,
-    id,
+    route,
     safeAddress,
     waypoints,
     isValidRoute,
@@ -193,7 +193,8 @@ const SubmitPage = ({
         description="Verify the account and execution route for signing this transaction bundle."
       >
         <ReviewAccountSection
-          id={id}
+          routeId={route.id}
+          routeLabel={route.label}
           isValidRoute={isValidRoute}
           hasQueryRoutesError={hasQueryRoutesError}
           chainId={chainId}

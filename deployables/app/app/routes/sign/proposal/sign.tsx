@@ -6,9 +6,11 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   confirmTransactionProposal,
   dbClient,
-  getDefaultRoute,
+  getAccount,
   getProposedTransaction,
+  getRoute,
   getSignedTransaction,
+  getWallet,
   saveTransaction,
   toExecutionRoute,
 } from '@zodiac/db'
@@ -40,25 +42,20 @@ export const meta: Route.MetaFunction = ({ matches }) => [
 export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({
-      params: { proposalId },
-      context: {
-        auth: { tenant, user },
-      },
-    }) => {
+    async ({ params: { proposalId, routeId } }) => {
       invariantResponse(isUUID(proposalId), 'Proposal ID is not a UUID')
+      invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
+      const route = await getRoute(dbClient(), routeId)
 
-      const { route, account } = await getDefaultRoute(
-        dbClient(),
-        tenant,
-        user,
-        proposal.accountId,
-      )
+      const [wallet, account] = await Promise.all([
+        getWallet(dbClient(), route.fromId),
+        getAccount(dbClient(), route.toId),
+      ])
 
       const executionRoute = toExecutionRoute({
-        wallet: route.wallet,
+        wallet,
         account,
         route,
       })
@@ -87,9 +84,9 @@ export const loader = async (args: Route.LoaderArgs) =>
       return {
         isValidRoute: isValidRoute(queryRoutesResult),
         hasQueryRoutesError: queryRoutesResult.error != null,
-        id: route.id,
+        route,
         account,
-        wallet: route.wallet,
+        wallet,
         simulation: simulate(),
         permissionCheck: permissionCheckResult.permissionCheck,
         waypoints: route.waypoints,
@@ -121,21 +118,20 @@ export const action = async (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { proposalId },
+      params: { proposalId, routeId },
       context: {
         auth: { tenant, user },
       },
     }) => {
       invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
+      invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
-
-      const { route, account } = await getDefaultRoute(
-        dbClient(),
-        tenant,
-        user,
-        proposal.accountId,
-      )
+      const route = await getRoute(dbClient(), routeId)
+      const [wallet, account] = await Promise.all([
+        getWallet(dbClient(), route.fromId),
+        getAccount(dbClient(), route.toId),
+      ])
 
       const data = await request.formData()
 
@@ -152,7 +148,7 @@ export const action = async (args: Route.ActionArgs) =>
           const plan = await planExecution(
             metaTransactions,
             toExecutionRoute({
-              wallet: route.wallet,
+              wallet,
               account,
               route,
             }),
@@ -189,19 +185,12 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, tenant, params: { proposalId } }) {
+      async hasAccess({ tenant, params: { proposalId } }) {
         invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
 
         const proposal = await getProposedTransaction(dbClient(), proposalId)
 
-        const { route } = await getDefaultRoute(
-          dbClient(),
-          tenant,
-          user,
-          proposal.accountId,
-        )
-
-        return route.userId === user.id
+        return proposal.tenantId === tenant.id
       },
     },
   )
@@ -209,7 +198,7 @@ export const action = async (args: Route.ActionArgs) =>
 const SubmitPage = ({
   loaderData: {
     wallet,
-    id,
+    route,
     account,
     waypoints,
     isValidRoute,
@@ -301,7 +290,8 @@ const SubmitPage = ({
         description="Verify the account and execution route for signing this transaction bundle."
       >
         <ReviewAccountSection
-          id={id}
+          routeId={route.id}
+          routeLabel={route.label}
           isValidRoute={isValidRoute}
           hasQueryRoutesError={hasQueryRoutesError}
           chainId={account.chainId}
