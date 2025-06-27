@@ -1,7 +1,7 @@
 import { findRemoteActiveRoute, type FetchOptions } from '@/companion'
 import { findRoute } from '@/execution-routes'
 
-export const findActiveRoute = async (
+export const findDefaultRoute = async (
   accountId: string,
   options: FetchOptions = {},
 ) => {

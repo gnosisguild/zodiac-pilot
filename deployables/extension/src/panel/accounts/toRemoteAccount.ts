@@ -1,7 +1,14 @@
 import type { Account } from '@/companion'
+import { invariant } from '@epic-web/invariant'
+import { isUUID } from '@zodiac/schema'
 import type { RemoteAccount } from './TaggedAccount'
 
-export const toRemoteAccount = (account: Account): RemoteAccount => ({
-  ...account,
-  remote: true,
-})
+export const toRemoteAccount = ({ id, ...account }: Account): RemoteAccount => {
+  invariant(isUUID(id), 'remote accounts must have UUID ids')
+
+  return {
+    ...account,
+    id,
+    remote: true,
+  }
+}
