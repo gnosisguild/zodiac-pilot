@@ -136,6 +136,7 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       const [route] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         accountId: account.id,
       })
 
@@ -173,7 +174,10 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       await expect(
-        getRoutes(dbClient(), tenant.id, { accountId: account.id }),
+        getRoutes(dbClient(), tenant.id, {
+          accountId: account.id,
+          userId: user.id,
+        }),
       ).resolves.toEqual([])
     })
 
@@ -245,6 +249,7 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       const [route] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         accountId: account.id,
       })
 
@@ -283,6 +288,7 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       const [route] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         accountId: account.id,
       })
 
@@ -493,6 +499,7 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       const [route] = await getRoutes(dbClient(), tenant.id, {
+        userId: user.id,
         accountId: account.id,
       })
 
@@ -759,7 +766,10 @@ describe('Routes', () => {
       await waitForPendingActions()
 
       await expect(
-        getRoutes(dbClient(), tenant.id, { accountId: account.id }),
+        getRoutes(dbClient(), tenant.id, {
+          accountId: account.id,
+          userId: user.id,
+        }),
       ).resolves.toEqual([])
     })
 

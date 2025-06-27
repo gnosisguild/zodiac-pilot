@@ -9,6 +9,8 @@ import { deleteAllUsers } from './deleteAllUsers'
 beforeEach(async () => {
   const db = dbClient()
 
+  await sleepTillIdle()
+
   await Promise.all([
     deleteAllTenants(db),
     deleteAllFeatures(db),

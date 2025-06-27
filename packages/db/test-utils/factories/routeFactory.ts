@@ -5,6 +5,7 @@ import {
   type RouteCreateInput,
   type Wallet,
 } from '@zodiac/db/schema'
+import { waypointsSchema } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -48,6 +49,7 @@ export const routeFactory = createFactory<
       toId: account.id,
       fromId: wallet.id,
       waypoints,
+      userId: wallet.belongsToId,
 
       ...route,
     }
@@ -55,7 +57,7 @@ export const routeFactory = createFactory<
   async create(db, data) {
     const [route] = await db.insert(RouteTable).values(data).returning()
 
-    return route
+    return { ...route, waypoints: waypointsSchema.parse(route.waypoints) }
   },
   createWithoutDb(data) {
     return Object.assign(

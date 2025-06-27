@@ -58,7 +58,7 @@ export const loader = (args: Route.LoaderArgs) =>
         [
           getAccount(dbClient(), accountId),
           getWallets(dbClient(), user.id),
-          getRoutes(dbClient(), tenant.id, { accountId }),
+          getRoutes(dbClient(), tenant.id, { accountId, userId: user.id }),
           routeId == null ? null : await getRoute(dbClient(), routeId),
           findDefaultRoute(dbClient(), tenant, user, accountId),
         ],
@@ -173,7 +173,10 @@ export const action = (args: Route.ActionArgs) =>
             )
           }
 
-          const [route] = await getRoutes(dbClient(), tenant.id, { accountId })
+          const [route] = await getRoutes(dbClient(), tenant.id, {
+            accountId,
+            userId: user.id,
+          })
 
           if (route != null) {
             return redirect(

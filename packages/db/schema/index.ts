@@ -277,6 +277,7 @@ export const RouteTable = pgTable(
     waypoints: json().$type<Waypoints>().notNull(),
 
     ...tenantReference,
+    ...userReference,
     ...createdTimestamp,
   },
   (table) => [
