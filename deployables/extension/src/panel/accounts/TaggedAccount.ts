@@ -1,6 +1,6 @@
-import type { Account } from '@/companion'
+import type { PartialLocalAccount, PartialRemoteAccount } from '@/companion'
 
-export type LocalAccount = Account & { remote: false }
-export type RemoteAccount = Account & { remote: true }
+export type LocalAccount = PartialLocalAccount & { remote: false }
+export type RemoteAccount = PartialRemoteAccount & { remote: true }
 
 export type TaggedAccount = LocalAccount | RemoteAccount
