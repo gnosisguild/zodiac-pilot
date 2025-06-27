@@ -138,11 +138,21 @@ export default [
     route('accounts', 'routes/extension/accounts.ts'),
     route('active-account', 'routes/extension/activeAccount.ts'),
     route('remove-active-account', 'routes/extension/removeActiveAccount.ts'),
-    route('account/:accountId', 'routes/extension/account.ts'),
-    route('active-route/:accountId', 'routes/extension/activeRoute.ts'),
+
+    ...prefix('account/:accountId', [
+      index('routes/extension/account.ts'),
+      route('active-route', 'routes/extension/activeRoute.ts'),
+      route('propose-transaction', 'routes/extension/propose-transaction.ts'),
+      route('routes', 'routes/extension/routes.ts'),
+    ]),
+
+    route(
+      'active-route/:accountId',
+      'routes/extension/redirects/activeRoute.ts',
+    ),
     route(
       'propose-transaction/:accountId',
-      'routes/extension/propose-transaction.ts',
+      'routes/extension/redirects/proposeTransaction.ts',
     ),
   ]),
 

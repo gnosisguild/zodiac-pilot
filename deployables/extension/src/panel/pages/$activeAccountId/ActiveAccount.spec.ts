@@ -2,6 +2,7 @@ import {
   findRemoteActiveRoute,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoutes,
   saveRemoteActiveAccount,
 } from '@/companion'
 import {
@@ -36,6 +37,7 @@ mockCompanionAppUrl('http://companion-app.com')
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
 describe('Active Account', () => {
   describe('Account switch', () => {
@@ -152,6 +154,32 @@ describe('Active Account', () => {
         expect.anything(),
       )
     })
+  })
+
+  describe('Route switch', () => {
+    it('shows a select for routes when there is more than one route for an account', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+
+      const wallet = walletFactory.createWithoutDb(user)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      const routeA = routeFactory.createWithoutDb(account, wallet)
+      const routeB = routeFactory.createWithoutDb(account, wallet)
+
+      mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
+
+      await render('/first-route')
+
+      expect(
+        await screen.findByRole('combobox', { name: 'Selected route' }),
+      ).toBeInTheDocument()
+    })
+
+    it.todo('pre-selects the default route')
+    it.todo('pre-selects the first route if there is no default route')
+    it.todo('is possible to change the route')
+    it.todo('uses the selected route to sign the transaction bundle')
   })
 
   describe('Edit', () => {

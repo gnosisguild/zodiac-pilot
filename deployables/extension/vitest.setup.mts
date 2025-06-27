@@ -4,6 +4,7 @@ import {
   getFeatures,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoutes,
   getUser,
 } from '@/companion'
 import { removeStorageEntry } from '@/storage'
@@ -39,6 +40,7 @@ vi.mock('@/companion', async (importOriginal) => {
     findRemoteActiveAccount: vi.fn(),
     getRemoteAccount: vi.fn(),
     getRemoteAccounts: vi.fn(),
+    getRemoteRoutes: vi.fn(),
     getFeatures: vi.fn(),
 
     saveRemoteActiveAccount: vi.fn(),
@@ -49,6 +51,7 @@ vi.mock('@/companion', async (importOriginal) => {
 
 const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
 const mockGetUser = vi.mocked(getUser)
+const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockFindRemoteActiveAccount = vi.mocked(findRemoteActiveAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
@@ -59,6 +62,7 @@ beforeEach(() => {
   const user = userFactory.createWithoutDb(tenant)
   const account = accountFactory.createWithoutDb(tenant, user)
 
+  mockGetRemoteRoutes.mockResolvedValue([])
   mockFindRemoteActiveRoute.mockResolvedValue(null)
   mockFindRemoteActiveAccount.mockResolvedValue(null)
   mockGetUser.mockResolvedValue(null)
