@@ -1,5 +1,6 @@
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { invariant } from '@epic-web/invariant'
+import type { Route as DBRoute } from '@zodiac/db/schema'
 
 import { Collapsible, Error, Labeled, NumberInput, Warning } from '@zodiac/ui'
 
@@ -15,7 +16,7 @@ type NonceMap = {
 }
 
 type ReviewAccountSectionProps = {
-  id: string
+  route: DBRoute
   isValidRoute: boolean
   hasQueryRoutesError: boolean
   chainId: ChainId
@@ -24,7 +25,7 @@ type ReviewAccountSectionProps = {
 }
 
 export function ReviewAccountSection({
-  id,
+  route,
   isValidRoute,
   hasQueryRoutesError,
   chainId,
@@ -48,24 +49,32 @@ export function ReviewAccountSection({
 
       <ChainSelect disabled defaultValue={chainId} />
 
-      <Labeled label="Execution route">
-        <Routes disabled orientation="horizontal">
-          <Route id={id}>
-            {waypoints && (
-              <Waypoints>
-                {waypoints.map(({ account, ...waypoint }, index) => (
-                  <Waypoint
-                    key={`${account.address}-${index}`}
-                    account={account}
-                    connection={
-                      'connection' in waypoint ? waypoint.connection : undefined
-                    }
-                  />
-                ))}
-              </Waypoints>
-            )}
-          </Route>
-        </Routes>
+      <Labeled label="Execution route" description={route.label}>
+        {({ inputId, descriptionId }) => (
+          <Routes disabled orientation="horizontal">
+            <Route
+              id={route.id}
+              inputId={inputId}
+              descriptionId={descriptionId}
+            >
+              {waypoints && (
+                <Waypoints>
+                  {waypoints.map(({ account, ...waypoint }, index) => (
+                    <Waypoint
+                      key={`${account.address}-${index}`}
+                      account={account}
+                      connection={
+                        'connection' in waypoint
+                          ? waypoint.connection
+                          : undefined
+                      }
+                    />
+                  ))}
+                </Waypoints>
+              )}
+            </Route>
+          </Routes>
+        )}
       </Labeled>
       <div className="flex flex-col gap-4">
         <Collapsible title="Define custom Safe transaction nonce">

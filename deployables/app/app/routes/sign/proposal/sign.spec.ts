@@ -238,6 +238,39 @@ describe('Sign', () => {
         ).toBeEnabled()
       })
     })
+
+    it('uses the passed route', async () => {
+      const tenant = await tenantFactory.create()
+      const user = await userFactory.create(tenant)
+
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
+
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
+      const route = await routeFactory.create(account, wallet, {
+        label: 'Test route',
+      })
+
+      mockQueryRoutes.mockResolvedValue([
+        toExecutionRoute({ wallet, account, route }),
+      ])
+
+      await render(
+        href('/submit/proposal/:proposalId/:routeId', {
+          proposalId: proposal.id,
+          routeId: route.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByLabelText('Execution route'),
+      ).toHaveAccessibleDescription('Test route')
+    })
   })
 
   describe('Permissions', () => {

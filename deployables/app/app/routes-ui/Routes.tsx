@@ -87,9 +87,17 @@ export const Routes = ({
 type RouteProps = PropsWithChildren<{
   id?: string
   name?: string
+  inputId?: string
+  descriptionId?: string
 }>
 
-export const Route = ({ children, id, name }: RouteProps) => {
+export const Route = ({
+  children,
+  id,
+  name,
+  inputId,
+  descriptionId,
+}: RouteProps) => {
   const selectedRouteId = useSelectedRouteId()
   const inputRef = useRef<HTMLInputElement>(null)
   const selected = selectedRouteId === id
@@ -116,6 +124,8 @@ export const Route = ({ children, id, name }: RouteProps) => {
       {name && (
         <div className="sr-only">
           <input
+            id={inputId}
+            aria-describedby={descriptionId}
             type="radio"
             ref={inputRef}
             name={name}
@@ -128,6 +138,8 @@ export const Route = ({ children, id, name }: RouteProps) => {
 
       <button
         data-testid={id}
+        id={name == null ? inputId : undefined}
+        aria-describedby={name == null ? descriptionId : undefined}
         type="button"
         disabled={disabled}
         className={classNames(
