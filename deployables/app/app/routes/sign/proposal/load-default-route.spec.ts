@@ -1,6 +1,7 @@
 import { simulateTransactionBundle } from '@/simulation-server'
 import { createMockExecuteTransactionAction, render } from '@/test-utils'
 import { jsonRpcProvider } from '@/utils'
+import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
 import { dbClient, setDefaultRoute } from '@zodiac/db'
 import {
@@ -15,7 +16,7 @@ import { expectRouteToBe, randomAddress } from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { href } from 'react-router'
 import { planExecution, queryRoutes } from 'ser-kit'
-import { beforeEach, describe, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, useConnectorClient } from 'wagmi'
 
 vi.mock('ser-kit', async (importOriginal) => {
@@ -153,6 +154,32 @@ describe('Load default route', () => {
         proposalId: proposal.id,
         routeId: routeA.id,
       }),
+    )
+  })
+
+  it('shows an error when no route has been configured', async () => {
+    const tenant = await tenantFactory.create()
+    const user = await userFactory.create(tenant)
+
+    const account = await accountFactory.create(tenant, user)
+
+    const proposal = await transactionProposalFactory.create(
+      tenant,
+      user,
+      account,
+    )
+
+    await render(
+      href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+      { tenant, user },
+    )
+
+    expect(
+      await screen.findByRole('alert', {
+        name: 'Incomplete account configuration',
+      }),
+    ).toHaveAccessibleDescription(
+      'This transaction cannot be signed because the configuration for this account is incomplete.',
     )
   })
 })

@@ -82,7 +82,7 @@ export default [
             ),
 
             ...prefix('proposal/:proposalId', [
-              index('routes/sign/proposal/load-default-route.ts'),
+              index('routes/sign/proposal/load-default-route.tsx'),
               route(':routeId', 'routes/sign/proposal/sign.tsx'),
             ]),
 

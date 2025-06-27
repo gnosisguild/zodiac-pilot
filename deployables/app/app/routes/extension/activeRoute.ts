@@ -4,6 +4,8 @@ import {
   dbClient,
   findDefaultRoute,
   getAccount,
+  getRoute,
+  getWallet,
   toExecutionRoute,
 } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
@@ -35,11 +37,14 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
-      const { account, route } = defaultRoute
+      const [route, account] = await Promise.all([
+        getRoute(dbClient(), defaultRoute.routeId),
+        getAccount(dbClient(), defaultRoute.accountId),
+      ])
 
       return toExecutionRoute({
-        wallet: route.wallet,
-        account: account,
+        wallet: await getWallet(dbClient(), route.fromId),
+        account,
         route,
       })
     },

@@ -14,6 +14,7 @@ import {
   findWalletByAddress,
   getAccount,
   getAccounts,
+  getRoute,
   setDefaultRoute,
 } from '@zodiac/db'
 import { getString, getUUID } from '@zodiac/form-data'
@@ -136,15 +137,20 @@ export const action = async (args: Route.ActionArgs) =>
             )
 
             if (existingAccount != null && existingWallet != null) {
-              const existingActiveRoute = await findDefaultRoute(
+              const existingDefaultRoute = await findDefaultRoute(
                 tx,
                 tenant,
                 user,
                 existingAccount.id,
               )
 
-              if (existingActiveRoute != null) {
-                if (existingActiveRoute.route.fromId === existingWallet.id) {
+              if (existingDefaultRoute != null) {
+                const route = await getRoute(
+                  dbClient(),
+                  existingDefaultRoute.routeId,
+                )
+
+                if (route.fromId === existingWallet.id) {
                   return {
                     error: `The upload was canceled because it would conflict with the account configuration for the account "${existingAccount.label}"`,
                   }
