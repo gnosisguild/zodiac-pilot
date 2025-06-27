@@ -141,7 +141,7 @@ export default [
 
     ...prefix('account/:accountId', [
       index('routes/extension/account.ts'),
-      route('active-route', 'routes/extension/activeRoute.ts'),
+      route('default-route', 'routes/extension/defaultRoute.ts'),
       route('propose-transaction', 'routes/extension/propose-transaction.ts'),
       route('routes', 'routes/extension/routes.ts'),
     ]),

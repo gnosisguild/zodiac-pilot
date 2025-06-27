@@ -1,4 +1,4 @@
-import { findRemoteActiveRoute, type FetchOptions } from '@/companion'
+import { findRemoteDefaultRoute, type FetchOptions } from '@/companion'
 import { findRoute } from '@/execution-routes'
 
 export const findDefaultRoute = async (
@@ -11,5 +11,5 @@ export const findDefaultRoute = async (
     return route
   }
 
-  return findRemoteActiveRoute(accountId, options)
+  return findRemoteDefaultRoute(accountId, options)
 }

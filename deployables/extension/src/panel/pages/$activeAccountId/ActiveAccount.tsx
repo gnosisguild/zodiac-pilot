@@ -3,6 +3,7 @@ import {
   findDefaultRoute,
   getAccount,
   getAccounts,
+  getRoutes,
   ProvideAccount,
   saveActiveAccount,
 } from '@/accounts'
@@ -25,7 +26,14 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
+import {
+  Blockie,
+  GhostLinkButton,
+  Modal,
+  Page,
+  Select,
+  Spinner,
+} from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
   Outlet,
@@ -46,13 +54,14 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
 
   try {
-    const [account, route] = await Promise.all([
+    const [account, route, routes] = await Promise.all([
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
       findDefaultRoute(activeAccountId, {
         signal: request.signal,
       }),
+      getRoutes(activeAccountId, { signal: request.signal }),
     ])
 
     await saveActiveAccount(account)
@@ -68,6 +77,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
     return {
       route,
+      routes,
       account,
       accounts,
       initialTransactionsSate: await getPersistedTransactionState(),
@@ -139,7 +149,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route, account, accounts, initialTransactionsSate } =
+  const { route, account, accounts, initialTransactionsSate, routes } =
     useLoaderData<typeof loader>()
   const submit = useSubmit()
   const navigation = useNavigation()
@@ -177,6 +187,8 @@ const ActiveRoute = () => {
 
                 <AccountActions />
               </div>
+
+              {routes.length > 1 && <Select label="Selected route" />}
             </Page.Header>
 
             <div className="flex p-2">
