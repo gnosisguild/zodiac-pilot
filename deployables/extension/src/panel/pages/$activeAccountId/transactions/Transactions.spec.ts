@@ -1,6 +1,6 @@
 import {
   createProposal,
-  findRemoteActiveRoute,
+  findRemoteDefaultRoute,
   getRemoteAccount,
 } from '@/companion'
 import { getRoute, saveLastUsedAccountId } from '@/execution-routes'
@@ -46,7 +46,7 @@ import { checkPermissions, PermissionViolation } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
-const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
 
 vi.mock('@/transactions', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/transactions')>()
@@ -288,7 +288,7 @@ describe('Transactions', () => {
         const route = routeFactory.createWithoutDb(account, wallet)
 
         mockGetRemoteAccount.mockResolvedValue(account)
-        mockFindRemoteActiveRoute.mockResolvedValue(
+        mockFindRemoteDefaultRoute.mockResolvedValue(
           toExecutionRoute({ route, wallet, account }),
         )
 
@@ -306,7 +306,7 @@ describe('Transactions', () => {
         const route = routeFactory.createWithoutDb(account, wallet)
 
         mockGetRemoteAccount.mockResolvedValue(account)
-        mockFindRemoteActiveRoute.mockResolvedValue(
+        mockFindRemoteDefaultRoute.mockResolvedValue(
           toExecutionRoute({ route, wallet, account }),
         )
         mockCreateProposal.mockResolvedValue({ proposalId: 'test-proposal-id' })

@@ -1,15 +1,15 @@
-import { getRoute } from '@/execution-routes'
-import type { TaggedAccount } from './TaggedAccount'
-
 import { getRemoteRoutes, type FetchOptions } from '@/companion'
+import { getRoute } from '@/execution-routes'
+import { isUUID } from '@zodiac/schema'
+import type { UUID } from 'crypto'
 
 export const getRoutes = async (
-  account: TaggedAccount,
+  accountId: UUID | string,
   options: FetchOptions,
 ) => {
-  if (!account.remote) {
-    return [await getRoute(account.id)]
+  if (isUUID(accountId)) {
+    return getRemoteRoutes(accountId, options)
   }
 
-  return getRemoteRoutes(account.id, options)
+  return [await getRoute(accountId)]
 }

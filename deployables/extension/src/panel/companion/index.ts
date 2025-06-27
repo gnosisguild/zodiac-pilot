@@ -6,7 +6,7 @@ export {
 } from './CompanionAppSupport'
 export { createProposal } from './createProposal'
 export { findRemoteActiveAccount } from './findRemoteActiveAccount'
-export { findRemoteActiveRoute } from './findRemoteActiveRoute'
+export { findRemoteDefaultRoute } from './findRemoteDefaultRoute'
 export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'

@@ -1,5 +1,5 @@
 import {
-  findRemoteActiveRoute,
+  findRemoteDefaultRoute,
   getRemoteAccount,
   getRemoteAccounts,
   getRemoteRoutes,
@@ -36,7 +36,7 @@ mockCompanionAppUrl('http://companion-app.com')
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
-const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
 const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
 describe('Active Account', () => {
@@ -90,7 +90,7 @@ describe('Active Account', () => {
       })
       const route = routeFactory.createWithoutDb(account, wallet)
 
-      mockFindRemoteActiveRoute.mockResolvedValue(
+      mockFindRemoteDefaultRoute.mockResolvedValue(
         toExecutionRoute({ account, wallet, route }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)
@@ -169,7 +169,7 @@ describe('Active Account', () => {
 
       mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
 
-      await render('/first-route')
+      await render(`/${account.id}`)
 
       expect(
         await screen.findByRole('combobox', { name: 'Selected route' }),
