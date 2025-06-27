@@ -9,7 +9,7 @@ import {
   toExecutionRoute,
 } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
-import type { Route } from './+types/activeRoute'
+import type { Route } from './+types/defaultRoute'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(

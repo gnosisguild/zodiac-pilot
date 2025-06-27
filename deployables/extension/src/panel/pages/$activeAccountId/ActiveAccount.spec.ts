@@ -1,7 +1,8 @@
 import {
-  findRemoteActiveRoute,
+  findRemoteDefaultRoute,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoutes,
   saveRemoteActiveAccount,
 } from '@/companion'
 import {
@@ -35,7 +36,8 @@ mockCompanionAppUrl('http://companion-app.com')
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
-const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
+const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
 describe('Active Account', () => {
   describe('Account switch', () => {
@@ -88,7 +90,7 @@ describe('Active Account', () => {
       })
       const route = routeFactory.createWithoutDb(account, wallet)
 
-      mockFindRemoteActiveRoute.mockResolvedValue(
+      mockFindRemoteDefaultRoute.mockResolvedValue(
         toExecutionRoute({ account, wallet, route }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)
@@ -154,6 +156,32 @@ describe('Active Account', () => {
     })
   })
 
+  describe('Route switch', () => {
+    it('shows a select for routes when there is more than one route for an account', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+
+      const wallet = walletFactory.createWithoutDb(user)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      const routeA = routeFactory.createWithoutDb(account, wallet)
+      const routeB = routeFactory.createWithoutDb(account, wallet)
+
+      mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
+
+      await render(`/${account.id}`)
+
+      expect(
+        await screen.findByRole('combobox', { name: 'Selected route' }),
+      ).toBeInTheDocument()
+    })
+
+    it.todo('pre-selects the default route')
+    it.todo('pre-selects the first route if there is no default route')
+    it.todo('is possible to change the route')
+    it.todo('uses the selected route to sign the transaction bundle')
+  })
+
   describe('Edit', () => {
     describe('Current route', () => {
       describe('Local accounts', () => {
@@ -202,7 +230,7 @@ describe('Active Account', () => {
       })
 
       describe('Remote accounts', () => {
-        it('is possible to edit the current route', async () => {
+        it('is possible to edit the current account', async () => {
           const tenant = tenantFactory.createWithoutDb()
           const user = userFactory.createWithoutDb(tenant)
           const account = accountFactory.createWithoutDb(tenant, user)
@@ -226,6 +254,8 @@ describe('Active Account', () => {
             url: `http://localhost/account/${account.id}`,
           })
         })
+
+        it.todo('respects the currently selected route')
 
         it('activates an existing tab when it already exists', async () => {
           const tenant = tenantFactory.createWithoutDb()

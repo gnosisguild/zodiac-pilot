@@ -1,6 +1,6 @@
 import { getCompanionAppUrl } from '@zodiac/env'
 import { encode } from '@zodiac/schema'
-import { getActiveRoute } from './getActiveRoute'
+import { getDefaultRoute } from './getDefaultRoute'
 import type { TaggedAccount } from './TaggedAccount'
 
 export const editAccount = async (windowId: number, account: TaggedAccount) => {
@@ -25,7 +25,7 @@ export const editAccount = async (windowId: number, account: TaggedAccount) => {
       })
     }
   } else {
-    const route = await getActiveRoute(account.id)
+    const route = await getDefaultRoute(account.id)
 
     const existingTab = tabs.find(
       (tab) =>
