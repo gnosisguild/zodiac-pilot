@@ -1,12 +1,12 @@
 import type { FetchOptions } from '@/companion'
 import { invariant } from '@epic-web/invariant'
-import { findActiveRoute } from './findActiveRoute'
+import { findDefaultRoute } from './findDefaultRoute'
 
-export const getActiveRoute = async (
+export const getDefaultRoute = async (
   accountId: string,
   options: FetchOptions = {},
 ) => {
-  const activeRoute = await findActiveRoute(accountId, options)
+  const activeRoute = await findDefaultRoute(accountId, options)
 
   invariant(
     activeRoute != null,

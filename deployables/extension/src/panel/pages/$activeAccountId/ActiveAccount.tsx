@@ -1,6 +1,6 @@
 import {
   editAccount,
-  findActiveRoute,
+  findDefaultRoute,
   getAccount,
   getAccounts,
   ProvideAccount,
@@ -50,7 +50,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
-      findActiveRoute(activeAccountId, {
+      findDefaultRoute(activeAccountId, {
         signal: request.signal,
       }),
     ])

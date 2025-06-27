@@ -230,7 +230,7 @@ describe('Active Account', () => {
       })
 
       describe('Remote accounts', () => {
-        it('is possible to edit the current route', async () => {
+        it('is possible to edit the current account', async () => {
           const tenant = tenantFactory.createWithoutDb()
           const user = userFactory.createWithoutDb(tenant)
           const account = accountFactory.createWithoutDb(tenant, user)
@@ -254,6 +254,8 @@ describe('Active Account', () => {
             url: `http://localhost/account/${account.id}`,
           })
         })
+
+        it.todo('respects the currently selected route')
 
         it('activates an existing tab when it already exists', async () => {
           const tenant = tenantFactory.createWithoutDb()
