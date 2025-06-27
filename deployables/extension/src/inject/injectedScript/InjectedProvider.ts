@@ -69,6 +69,7 @@ export class InjectedProvider extends EventEmitter {
         {
           type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
           requestId,
+          injectionId,
           request,
         } satisfies InjectedProviderMessage,
         '*',

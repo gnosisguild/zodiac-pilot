@@ -10,6 +10,7 @@ export enum InjectedProviderMessageTyp {
 interface InjectedProviderRequest {
   type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST
   requestId: string
+  injectionId: string
   request: JsonRpcRequest
 }
 

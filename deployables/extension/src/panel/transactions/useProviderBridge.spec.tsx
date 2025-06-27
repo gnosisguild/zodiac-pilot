@@ -69,7 +69,10 @@ describe('Bridge', () => {
         tab: createMockTab({ windowId: 1 }),
       })
 
-      expect(MockProvider.getInstance().request).toHaveBeenCalledWith(request)
+      expect(MockProvider.getInstance().request).toHaveBeenCalledWith(
+        request,
+        expect.anything(),
+      )
     })
 
     it('forwards the response from the provider', async () => {

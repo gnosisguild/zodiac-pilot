@@ -15,15 +15,25 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
-import { metaTransactionRequestEqual } from '@zodiac/schema'
-import { BrowserProvider, toBigInt, toQuantity } from 'ethers'
+import { addressSchema, metaTransactionRequestEqual } from '@zodiac/schema'
+import { BrowserProvider, toQuantity } from 'ethers'
 import EventEmitter from 'events'
+import { nanoid } from 'nanoid'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
+import { toHex } from 'viem'
 import { TenderlyProvider } from './TenderlyProvider'
 import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 
 class UnsupportedMethodError extends Error {
   code = 4200
+}
+
+class Eip5792Error extends Error {
+  code: number
+  constructor(message: string, code: number) {
+    super(message)
+    this.code = code
+  }
 }
 
 export type TransactionResult = {
@@ -45,6 +55,10 @@ export class ForkProvider extends EventEmitter {
 
   private pendingMetaTransaction: Promise<TransactionResult> | undefined
   private isInitialized = false
+
+  // This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
+  // It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
+  private eip5792Calls = new Map<string, `0x${string}`[]>()
 
   constructor({
     chainId,
@@ -72,10 +86,14 @@ export class ForkProvider extends EventEmitter {
     this.isSafePromise = isSmartAccount(this.avatarAddress, this.provider)
   }
 
-  async request(request: {
-    method: string
-    params?: Array<any>
-  }): Promise<any> {
+  async request(
+    request: {
+      method: string
+      params?: Array<any>
+    },
+    /** Can be used to identify the injected provider instance. */
+    injectionId: string = '',
+  ): Promise<any> {
     const { method, params = [] } = request
 
     switch (method) {
@@ -162,10 +180,129 @@ export class ForkProvider extends EventEmitter {
 
         return await this.waitForTransaction({
           to: txData.to || ZERO_ADDRESS,
-          value: txData.value ? toBigInt(txData.value) : 0n,
+          value: txData.value ? BigInt(txData.value) : 0n,
           data: txData.data || '0x',
           operation: 0,
         })
+      }
+
+      // EIP-5792 support is required for enabling Cow TWAPs
+      // makes useIsTxBundlingSupported() return true (https://github.com/cowprotocol/cowswap/blob/13bd0a97550f7ec44ec86533f5b9cbfec3aa7930/libs/wallet/src/api/hooks.ts#L40)
+      case 'wallet_getCapabilities': {
+        return {
+          [toHex(this.chainId)]: {
+            atomicBatch: { supported: true },
+          },
+        }
+      }
+
+      // EIP-5792 batch call support is required for enabling Cow TWAPs
+      case 'wallet_sendCalls': {
+        const [{ calls, id = nanoid() }] = params
+        const uniqueId = injectionId + '_' + id
+
+        if (this.eip5792Calls.has(uniqueId)) {
+          throw new Eip5792Error(
+            `EIP-5792 call with ID ${id} already sent before`,
+            5720,
+          )
+        }
+
+        const txHashes = await Promise.all(
+          calls.map(
+            async (call: {
+              to?: `0x${string}`
+              data?: `0x${string}`
+              value?: `0x${string}`
+            }) => {
+              return await this.waitForTransaction({
+                to: call.to ? addressSchema.parse(call.to) : ZERO_ADDRESS,
+                data: call.data || '0x',
+                value: call.value ? BigInt(call.value) : 0n,
+                operation: 0,
+              })
+            },
+          ),
+        )
+
+        this.eip5792Calls.set(uniqueId, txHashes)
+
+        return {
+          id,
+        }
+      }
+
+      // EIP-5792 support
+      case 'wallet_getCallsStatus': {
+        const [id] = params
+        const uniqueId = injectionId + '_' + id
+
+        const txHashes = this.eip5792Calls.get(uniqueId)
+        if (!txHashes) {
+          throw new Eip5792Error(`Unknown bundle id: ${id}`, 5730)
+        }
+
+        // Get transaction receipts for all transactions in the batch
+        const receipts = await Promise.all(
+          txHashes.map(async (hash) => {
+            try {
+              return await this.provider.request({
+                method: 'eth_getTransactionReceipt',
+                params: [hash],
+              })
+            } catch (error) {
+              console.debug(`Failed to get receipt for ${hash}:`, error)
+              return null
+            }
+          }),
+        )
+
+        // Determine overall status based on receipts
+        const allReceiptsFound = receipts.every((receipt) => receipt !== null)
+        const allSuccessful = receipts.every(
+          (receipt) => receipt?.status === '0x1',
+        )
+        const anyFailed = receipts.some((receipt) => receipt?.status === '0x0')
+
+        let status: 'pending' | 'confirmed' | 'failed'
+        if (!allReceiptsFound) {
+          status = 'pending'
+        } else if (anyFailed) {
+          status = 'failed'
+        } else if (allSuccessful) {
+          status = 'confirmed'
+        } else {
+          status = 'pending'
+        }
+
+        // Map transaction hashes to their individual statuses
+        const transactions = txHashes.map((hash, index) => {
+          const receipt = receipts[index]
+          let transactionStatus: 'pending' | 'confirmed' | 'failed'
+
+          if (!receipt) {
+            transactionStatus = 'pending'
+          } else if (receipt.status === '0x1') {
+            transactionStatus = 'confirmed'
+          } else {
+            transactionStatus = 'failed'
+          }
+
+          return {
+            hash,
+            status: transactionStatus,
+            blockNumber: receipt?.blockNumber,
+            gasUsed: receipt?.gasUsed,
+            effectiveGasPrice: receipt?.effectiveGasPrice,
+          }
+        })
+
+        return {
+          id,
+          status,
+          transactions,
+          atomic: true,
+        }
       }
     }
 
@@ -337,6 +474,7 @@ export class ForkProvider extends EventEmitter {
     })
 
     await this.provider.deleteFork()
+    this.eip5792Calls.clear()
     this.isInitialized = false
   }
 
