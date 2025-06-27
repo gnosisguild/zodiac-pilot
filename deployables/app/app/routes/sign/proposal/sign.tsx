@@ -87,7 +87,7 @@ export const loader = async (args: Route.LoaderArgs) =>
         hasQueryRoutesError: queryRoutesResult.error != null,
         id: route.id,
         account,
-        wallet: route.wallet,
+        wallet,
         simulation: simulate(),
         permissionCheck: permissionCheckResult.permissionCheck,
         waypoints: route.waypoints,
