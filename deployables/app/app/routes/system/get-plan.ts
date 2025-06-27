@@ -16,7 +16,11 @@ export const loader = async ({
 
   const highestPlan = activePlans.reduce<SubscriptionPlan | null>(
     (result, plan) => {
-      if (result != null && plan.priority > result.priority) {
+      if (result == null) {
+        return plan
+      }
+
+      if (plan.priority > result.priority) {
         return plan
       }
 
