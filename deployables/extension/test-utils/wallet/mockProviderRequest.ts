@@ -25,6 +25,7 @@ export const mockProviderRequest = async ({
       type: InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
       request,
       requestId: nanoid(),
+      injectionId: nanoid(),
     } satisfies InjectedProviderMessage,
     { id: chromeMock.runtime.id, tab },
     callback,

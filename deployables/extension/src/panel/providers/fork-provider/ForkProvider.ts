@@ -41,10 +41,6 @@ export type TransactionResult = {
   hash: string
 }
 
-// This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
-// It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
-const eip5792Calls = new Map<string, `0x${string}`[]>()
-
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
 export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
@@ -59,6 +55,10 @@ export class ForkProvider extends EventEmitter {
 
   private pendingMetaTransaction: Promise<TransactionResult> | undefined
   private isInitialized = false
+
+  // This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
+  // It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
+  private eip5792Calls = new Map<string, `0x${string}`[]>()
 
   constructor({
     chainId,
@@ -86,10 +86,14 @@ export class ForkProvider extends EventEmitter {
     this.isSafePromise = isSmartAccount(this.avatarAddress, this.provider)
   }
 
-  async request(request: {
-    method: string
-    params?: Array<any>
-  }): Promise<any> {
+  async request(
+    request: {
+      method: string
+      params?: Array<any>
+    },
+    /** Can be used to identify the injected provider instance. */
+    injectionId: string,
+  ): Promise<any> {
     const { method, params = [] } = request
 
     switch (method) {
@@ -194,10 +198,10 @@ export class ForkProvider extends EventEmitter {
 
       // EIP-5792 batch call support is required for enabling Cow TWAPs
       case 'wallet_sendCalls': {
-        console.log('wallet_sendCalls', params)
         const [{ calls, id = nanoid() }] = params
+        const uniqueId = injectionId + '_' + id
 
-        if (eip5792Calls.has(id)) {
+        if (this.eip5792Calls.has(uniqueId)) {
           throw new Eip5792Error(
             `EIP-5792 call with ID ${id} already sent before`,
             5720,
@@ -223,7 +227,7 @@ export class ForkProvider extends EventEmitter {
           ),
         )
 
-        eip5792Calls.set(id, txHashes)
+        this.eip5792Calls.set(id, txHashes)
 
         return {
           id,
@@ -234,11 +238,11 @@ export class ForkProvider extends EventEmitter {
       case 'wallet_getCallsStatus': {
         const [id] = params
 
-        if (!eip5792Calls.has(id)) {
+        if (!this.eip5792Calls.has(id)) {
           throw new Eip5792Error(`Unknown bundle id: ${id}`, 5730)
         }
 
-        const txHashes = eip5792Calls.get(id)!
+        const txHashes = this.eip5792Calls.get(id)!
 
         // Get transaction receipts for all transactions in the batch
         const receipts = await Promise.all(
@@ -472,6 +476,7 @@ export class ForkProvider extends EventEmitter {
     })
 
     await this.provider.deleteFork()
+    this.eip5792Calls.clear()
     this.isInitialized = false
   }
 

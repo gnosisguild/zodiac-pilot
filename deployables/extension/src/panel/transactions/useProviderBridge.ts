@@ -1,5 +1,5 @@
 import { useWindowId } from '@/port-handling'
-import type { Eip1193Provider } from '@/types'
+import type { ForkProvider } from '@/providers'
 import { getActiveTab, sendMessageToTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import {
@@ -7,6 +7,7 @@ import {
   useTabMessageHandler,
   type InjectedProviderMessage,
   type InjectedProviderResponse,
+  type JsonRpcRequest,
 } from '@zodiac/messages'
 import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
@@ -68,18 +69,18 @@ export const useProviderBridge = ({
   }, [account])
 }
 
-const useHandleProviderRequests = (provider: Eip1193Provider) => {
+const useHandleProviderRequests = (provider: ForkProvider) => {
   const currentWindowId = useWindowId()
 
   useTabMessageHandler(
     InjectedProviderMessageTyp.INJECTED_PROVIDER_REQUEST,
-    ({ request, requestId }, { sendResponse, windowId }) => {
+    ({ request, requestId, injectionId }, { sendResponse, windowId }) => {
       if (currentWindowId !== windowId) {
         return
       }
 
       provider
-        .request(request)
+        .request(paramsAsArray(request), injectionId)
         .then((response) => {
           sendResponse({
             type: InjectedProviderMessageTyp.INJECTED_PROVIDER_RESPONSE,
@@ -103,3 +104,15 @@ const useHandleProviderRequests = (provider: Eip1193Provider) => {
     },
   )
 }
+
+/**
+ * Our ForkProvider expects the params to be an array, but the JsonRpcRequest type allows objects.
+ */
+const paramsAsArray = ({ params, ...rest }: JsonRpcRequest) => ({
+  ...rest,
+  params: Array.isArray(params)
+    ? params
+    : params == null
+      ? []
+      : Object.values(params),
+})

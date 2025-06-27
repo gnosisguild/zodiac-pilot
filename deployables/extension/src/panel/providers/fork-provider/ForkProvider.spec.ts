@@ -21,7 +21,10 @@ describe('Fork provider', () => {
       data: randomHex(),
     } satisfies TransactionData
 
-    provider.request({ method: 'eth_sendTransaction', params: [transaction] })
+    provider.request(
+      { method: 'eth_sendTransaction', params: [transaction] },
+      'test-injection-id',
+    )
 
     expect(handleTransaction).toHaveBeenCalledWith({
       ...transaction,
@@ -46,10 +49,13 @@ describe('Fork provider', () => {
       provider.emit('transactionEnd', transaction, 'result-hash')
     })
 
-    const result = await provider.request({
-      method: 'eth_sendTransaction',
-      params: [transaction],
-    })
+    const result = await provider.request(
+      {
+        method: 'eth_sendTransaction',
+        params: [transaction],
+      },
+      'test-injection-id',
+    )
 
     expect(result).toEqual('result-hash')
   })
