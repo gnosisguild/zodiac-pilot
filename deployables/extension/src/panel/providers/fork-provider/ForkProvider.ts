@@ -15,7 +15,7 @@ import {
   PilotSimulationMessageType,
   type SimulationMessage,
 } from '@zodiac/messages'
-import { metaTransactionRequestEqual } from '@zodiac/schema'
+import { addressSchema, metaTransactionRequestEqual } from '@zodiac/schema'
 import { BrowserProvider, toQuantity } from 'ethers'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
@@ -216,9 +216,7 @@ export class ForkProvider extends EventEmitter {
               value?: `0x${string}`
             }) => {
               return await this.waitForTransaction({
-                to:
-                  (call.to?.toLowerCase() as `0x${Lowercase<string>}`) ||
-                  ZERO_ADDRESS,
+                to: call.to ? addressSchema.parse(call.to) : ZERO_ADDRESS,
                 data: call.data || '0x',
                 value: call.value ? BigInt(call.value) : 0n,
                 operation: 0,
@@ -227,7 +225,7 @@ export class ForkProvider extends EventEmitter {
           ),
         )
 
-        this.eip5792Calls.set(id, txHashes)
+        this.eip5792Calls.set(uniqueId, txHashes)
 
         return {
           id,
@@ -237,12 +235,12 @@ export class ForkProvider extends EventEmitter {
       // EIP-5792 support
       case 'wallet_getCallsStatus': {
         const [id] = params
+        const uniqueId = injectionId + '_' + id
 
-        if (!this.eip5792Calls.has(id)) {
+        const txHashes = this.eip5792Calls.get(uniqueId)
+        if (!txHashes) {
           throw new Eip5792Error(`Unknown bundle id: ${id}`, 5730)
         }
-
-        const txHashes = this.eip5792Calls.get(id)!
 
         // Get transaction receipts for all transactions in the batch
         const receipts = await Promise.all(
