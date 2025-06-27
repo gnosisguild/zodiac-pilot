@@ -92,7 +92,7 @@ export class ForkProvider extends EventEmitter {
       params?: Array<any>
     },
     /** Can be used to identify the injected provider instance. */
-    injectionId: string,
+    injectionId: string = '',
   ): Promise<any> {
     const { method, params = [] } = request
 
