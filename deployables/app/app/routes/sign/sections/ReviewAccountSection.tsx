@@ -1,6 +1,5 @@
 import { ChainSelect, Route, Routes, Waypoint, Waypoints } from '@/routes-ui'
 import { invariant } from '@epic-web/invariant'
-import type { Route as DBRoute } from '@zodiac/db/schema'
 
 import { Collapsible, Error, Labeled, NumberInput, Warning } from '@zodiac/ui'
 
@@ -16,7 +15,8 @@ type NonceMap = {
 }
 
 type ReviewAccountSectionProps = {
-  route: DBRoute
+  routeId: string
+  routeLabel: string | null | undefined
   isValidRoute: boolean
   hasQueryRoutesError: boolean
   chainId: ChainId
@@ -25,7 +25,8 @@ type ReviewAccountSectionProps = {
 }
 
 export function ReviewAccountSection({
-  route,
+  routeId,
+  routeLabel,
   isValidRoute,
   hasQueryRoutesError,
   chainId,
@@ -49,14 +50,10 @@ export function ReviewAccountSection({
 
       <ChainSelect disabled defaultValue={chainId} />
 
-      <Labeled label="Execution route" description={route.label}>
+      <Labeled label="Execution route" description={routeLabel}>
         {({ inputId, descriptionId }) => (
           <Routes disabled orientation="horizontal">
-            <Route
-              id={route.id}
-              inputId={inputId}
-              descriptionId={descriptionId}
-            >
+            <Route id={routeId} inputId={inputId} descriptionId={descriptionId}>
               {waypoints && (
                 <Waypoints>
                   {waypoints.map(({ account, ...waypoint }, index) => (

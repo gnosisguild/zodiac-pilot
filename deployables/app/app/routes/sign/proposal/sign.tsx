@@ -290,7 +290,8 @@ const SubmitPage = ({
         description="Verify the account and execution route for signing this transaction bundle."
       >
         <ReviewAccountSection
-          route={route}
+          routeId={route.id}
+          routeLabel={route.label}
           isValidRoute={isValidRoute}
           hasQueryRoutesError={hasQueryRoutesError}
           chainId={account.chainId}
