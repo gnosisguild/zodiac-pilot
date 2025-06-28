@@ -113,8 +113,8 @@ importers:
         specifier: 1.5.0
         version: 1.5.0(react@19.1.0)
       '@workos-inc/authkit-react-router':
-        specifier: 0.6.0
-        version: 0.6.0(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: 0.6.1
+        version: 0.6.1(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@workos-inc/node':
         specifier: 7.56.0
         version: 7.56.0(express@5.1.0)
@@ -4901,8 +4901,8 @@ packages:
   '@walletconnect/window-metadata@1.0.1':
     resolution: {integrity: sha512-9koTqyGrM2cqFRW517BPY/iEtUDx2r1+Pwwu5m7sJ7ka79wi3EyqhqcICk/yDmv6jAS1rjKgTKXlEhanYjijcA==}
 
-  '@workos-inc/authkit-react-router@0.6.0':
-    resolution: {integrity: sha512-DT2VzIf3+LzVxjAO7sWnjFkqwKTUU1Oa7U/r4YTakgPWyt9M5OVmbC2EW+AH0tgifrUy/5YBsi2fJ039Ed94sg==}
+  '@workos-inc/authkit-react-router@0.6.1':
+    resolution: {integrity: sha512-Jf5AZFctkBEraFLe4okPzrrI8prOcLcpRZWqtQckrNIur5omThiYgqqVMrx+bFB7XaqkI1JLzmuyAAGJylsJ5w==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0.0
@@ -14653,7 +14653,7 @@ snapshots:
       '@walletconnect/window-getters': 1.0.1
       tslib: 1.14.1
 
-  '@workos-inc/authkit-react-router@0.6.0(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@workos-inc/authkit-react-router@0.6.1(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@workos-inc/node': 7.56.0(express@5.1.0)
       iron-session: 8.0.4
@@ -17252,7 +17252,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2):
+  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19794,7 +19794,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19811,7 +19811,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.67)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.67)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
