@@ -60,7 +60,7 @@
     "@zodiac/typescript-config": "workspace:*",
     "date-fns": "4.1.0",
     "drizzle-kit": "0.31.4",
-    "eslint": "9.29.0",
+    "eslint": "9.30.0",
     "eslint-plugin-drizzle": "0.2.3",
     "madge": "8.0.0",
     "supabase": "2.26.9",
