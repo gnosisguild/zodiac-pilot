@@ -116,8 +116,8 @@ importers:
         specifier: 0.6.1
         version: 0.6.1(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@workos-inc/node':
-        specifier: 7.56.0
-        version: 7.56.0(express@5.1.0)
+        specifier: 7.57.0
+        version: 7.57.0(express@5.1.0)
       '@workos-inc/widgets':
         specifier: 1.1.5
         version: 1.1.5(@radix-ui/themes@3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@tanstack/react-query@5.81.5(react@19.1.0))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -664,8 +664,8 @@ importers:
         specifier: 19.1.8
         version: 19.1.8
       '@workos-inc/node':
-        specifier: 7.56.0
-        version: 7.56.0(express@5.1.0)
+        specifier: 7.57.0
+        version: 7.57.0(express@5.1.0)
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -4850,8 +4850,8 @@ packages:
       react-dom: ^18.0 || ^19.0.0
       react-router: ^7.2.0
 
-  '@workos-inc/node@7.56.0':
-    resolution: {integrity: sha512-bBXEurxSjPUPeQ5TqVsrnGv7mzVCbZFfDN45g7J9iTYJi1XnpVCdHyLAJWbKUy3QY8w8EAzM0Dq0iveDQgchmQ==}
+  '@workos-inc/node@7.57.0':
+    resolution: {integrity: sha512-CD+WuxabDc27GHyAytYYy4SbrWA+8rFRO/2PRCVxfHxx8goqNWwzkkz/uVYA7MpGNpNv7B+I1pHvoerEElva+g==}
     engines: {node: '>=16'}
 
   '@workos-inc/widgets@1.1.5':
@@ -14478,7 +14478,7 @@ snapshots:
 
   '@workos-inc/authkit-react-router@0.6.1(express@5.1.0)(react-dom@19.1.0(react@19.1.0))(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@workos-inc/node': 7.56.0(express@5.1.0)
+      '@workos-inc/node': 7.57.0(express@5.1.0)
       iron-session: 8.0.4
       jose: 5.10.0
       react: 19.1.0
@@ -14489,7 +14489,7 @@ snapshots:
       - koa
       - next
 
-  '@workos-inc/node@7.56.0(express@5.1.0)':
+  '@workos-inc/node@7.57.0(express@5.1.0)':
     dependencies:
       iron-session: 6.3.1(express@5.1.0)
       jose: 5.6.3
@@ -17069,7 +17069,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.7(ws@8.18.2):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19599,7 +19599,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19616,7 +19616,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.67)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.67)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
