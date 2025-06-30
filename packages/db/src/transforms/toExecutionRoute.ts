@@ -17,7 +17,7 @@ export const toExecutionRoute = ({
   invariant(route.toId === account.id, 'Route does not match account')
 
   return {
-    id: account.id,
+    id: route.id,
     avatar: prefixAddress(account.chainId, account.address),
     initiator: prefixAddress(undefined, wallet.address),
     waypoints: route.waypoints,

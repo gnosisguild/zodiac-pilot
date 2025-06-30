@@ -1,5 +1,4 @@
 import { getRemoteRoutes, type FetchOptions } from '@/companion'
-import { getRoute } from '@/execution-routes'
 import { isUUID } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 
@@ -11,5 +10,5 @@ export const getRoutes = async (
     return getRemoteRoutes(accountId, options)
   }
 
-  return [await getRoute(accountId)]
+  return []
 }

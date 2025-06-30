@@ -176,7 +176,28 @@ describe('Active Account', () => {
       ).toBeInTheDocument()
     })
 
-    it.todo('pre-selects the default route')
+    it('pre-selects the default route', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+
+      const wallet = walletFactory.createWithoutDb(user)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      const routeA = routeFactory.createWithoutDb(account, wallet)
+      const routeB = routeFactory.createWithoutDb(account, wallet, {
+        label: 'Route B',
+      })
+
+      mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
+      mockFindRemoteDefaultRoute.mockResolvedValue(
+        toExecutionRoute({ wallet, account, route: routeB }),
+      )
+
+      await render(`/${account.id}`)
+
+      expect(await screen.findByText('Route B')).toBeInTheDocument()
+    })
+
     it.todo('pre-selects the first route if there is no default route')
     it.todo('is possible to change the route')
     it.todo('uses the selected route to sign the transaction bundle')

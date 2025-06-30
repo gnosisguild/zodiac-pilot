@@ -26,14 +26,7 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import {
-  Blockie,
-  GhostLinkButton,
-  Modal,
-  Page,
-  Select,
-  Spinner,
-} from '@zodiac/ui'
+import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import {
   Outlet,
@@ -48,13 +41,14 @@ import { AccountActions } from './AccountActions'
 import { AccountSelect } from './AccountSelect'
 import { getActiveAccountId } from './getActiveAccountId'
 import { Intent } from './intents'
+import { RouteSelect } from './RouteSelect'
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const activeAccountId = getActiveAccountId(params)
   const accounts = await getAccounts({ signal: request.signal })
 
   try {
-    const [account, route, routes] = await Promise.all([
+    const [account, defaultRoute, routes] = await Promise.all([
       getAccount(activeAccountId, {
         signal: request.signal,
       }),
@@ -76,7 +70,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     }
 
     return {
-      route,
+      route: defaultRoute,
+      defaultRouteId: defaultRoute?.id,
       routes,
       account,
       accounts,
@@ -149,8 +144,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route, account, accounts, initialTransactionsSate, routes } =
-    useLoaderData<typeof loader>()
+  const {
+    route,
+    account,
+    accounts,
+    initialTransactionsSate,
+    routes,
+    defaultRouteId,
+  } = useLoaderData<typeof loader>()
   const submit = useSubmit()
   const navigation = useNavigation()
 
@@ -188,7 +189,9 @@ const ActiveRoute = () => {
                 <AccountActions />
               </div>
 
-              {routes.length > 1 && <Select label="Selected route" />}
+              {routes.length > 1 && (
+                <RouteSelect routes={routes} value={defaultRouteId} />
+              )}
             </Page.Header>
 
             <div className="flex p-2">

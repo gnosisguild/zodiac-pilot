@@ -22,7 +22,7 @@ const useInline = () => {
   return inline
 }
 
-type BaseOption = { label?: string; value: unknown }
+type BaseOption = { label?: string | null; value: unknown }
 
 type SelectStylesOptions = {
   inline?: boolean
