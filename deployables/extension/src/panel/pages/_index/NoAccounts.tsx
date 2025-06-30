@@ -1,4 +1,4 @@
-import { findActiveAccount, getAccounts, useSaveAccount } from '@/accounts'
+import { useSaveAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useBridgeError } from '@/port-handling'
 import { sendMessageToCompanionApp } from '@/utils'
@@ -10,23 +10,8 @@ import {
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { useEffect } from 'react'
-import { redirect } from 'react-router'
 
-export const loader = async () => {
-  const activeAccount = await findActiveAccount()
-
-  if (activeAccount != null) {
-    return redirect(`/${activeAccount.id}`)
-  }
-
-  const [account] = await getAccounts()
-
-  if (account != null) {
-    return redirect(`/${account.id}`)
-  }
-}
-
-const NoRoutes = () => {
+const NoAccounts = () => {
   useBridgeError(
     'To use Zodiac Pilot with a dApp you need to create an account.',
   )
@@ -88,4 +73,4 @@ const NoRoutes = () => {
   )
 }
 
-export default NoRoutes
+export default NoAccounts

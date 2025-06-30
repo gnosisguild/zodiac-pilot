@@ -5,8 +5,9 @@ import * as ActiveRoute from './pages/$activeAccountId/ActiveRoute'
 import * as LoadDefaultRoute from './pages/$activeAccountId/LoadDefaultRoute'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
 import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
+import * as LoadDefaultAccount from './pages/LoadDefaultAccount'
 import * as Root from './pages/Root'
-import * as NoRoutes from './pages/_index/NoRoutes'
+import * as NoAccounts from './pages/_index/NoAccounts'
 
 export const routes: RouteObject[] = [
   {
@@ -16,7 +17,11 @@ export const routes: RouteObject[] = [
     hasErrorBoundary: true,
     loader: Root.loader,
     children: [
-      { index: true, Component: NoRoutes.default, loader: NoRoutes.loader },
+      { index: true, loader: LoadDefaultAccount.loader },
+      {
+        path: 'no-accounts',
+        Component: NoAccounts.default,
+      },
       {
         path: ':activeAccountId',
         Component: ActiveAccount.default,

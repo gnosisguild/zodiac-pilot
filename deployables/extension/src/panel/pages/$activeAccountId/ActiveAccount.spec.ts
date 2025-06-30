@@ -430,7 +430,7 @@ describe('Active Account', () => {
 
       await render('/deleted-account-id')
 
-      await expectRouteToBe('/')
+      await expectRouteToBe('/no-accounts')
     })
   })
 })

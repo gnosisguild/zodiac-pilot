@@ -20,7 +20,7 @@ import { describe, expect, it, vi } from 'vitest'
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockFindRemoteActiveAccount = vi.mocked(findRemoteActiveAccount)
 
-describe('No routes', () => {
+describe('No accounts', () => {
   describe('Default redirects', () => {
     describe('Logged out', () => {
       it('redirects to the last used route if one is present', async () => {
@@ -68,7 +68,7 @@ describe('No routes', () => {
     })
   })
 
-  describe('No routes available', () => {
+  describe('No accounts available', () => {
     it('allows to create a new route', async () => {
       mockCompanionAppUrl('http://localhost')
 
