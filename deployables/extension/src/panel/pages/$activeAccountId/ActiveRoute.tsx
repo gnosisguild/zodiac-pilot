@@ -2,6 +2,7 @@ import { getRoute, getRoutes } from '@/accounts'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
 import { invariantResponse } from '@epic-web/invariant'
+import { Divider } from '@zodiac/ui'
 import {
   Outlet,
   redirect,
@@ -38,11 +39,23 @@ const ActiveRoute = () => {
   return (
     <ProvideExecutionRoute route={route}>
       {routes.length > 1 && (
-        <RouteSelect
-          routes={routes}
-          value={route == null ? null : route.id}
-          onChange={(routeId) => navigate(`/${accountId}/${routeId}`)}
-        />
+        <>
+          <Divider />
+
+          <div className="py-2 pl-4 pr-2">
+            <RouteSelect
+              routes={routes}
+              value={route == null ? null : route.id}
+              onChange={(routeId) => {
+                if (routeId === route.id) {
+                  return
+                }
+
+                navigate(`/${accountId}/${routeId}`)
+              }}
+            />
+          </div>
+        </>
       )}
       <Outlet />
     </ProvideExecutionRoute>
