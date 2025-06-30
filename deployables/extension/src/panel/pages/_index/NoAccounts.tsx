@@ -54,8 +54,8 @@ const NoAccounts = () => {
           <h2 className="mt-1 text-2xl font-light">Welcome to Zodiac Pilot</h2>
 
           <Info>
-            You haven't created any routes, yet. Click the button below to
-            create your first route.
+            You haven't created any accounts, yet. Click the button below to
+            create your first account.
           </Info>
         </div>
       </Page.Content>
