@@ -331,7 +331,7 @@ describe('Transactions', () => {
 
         expect(chromeMock.tabs.create).toHaveBeenCalledWith({
           active: true,
-          url: `http://localhost/submit/proposal/test-proposal-id`,
+          url: `http://localhost/submit/proposal/test-proposal-id/${route.id}`,
         })
       })
 
@@ -357,8 +357,6 @@ describe('Transactions', () => {
           url: `http://localhost/account/${account.id}`,
         })
       })
-
-      it.todo('respects the currently selected route')
     })
   })
 
