@@ -72,7 +72,6 @@ export const Address = ({
         className={classNames(
           'max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default',
-          shorten && ensName == null && 'uppercase',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',
           label != null && 'opacity-50',
