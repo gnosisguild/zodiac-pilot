@@ -1,8 +1,5 @@
 import { useTransaction } from '@/transactions'
-import {
-  Transaction as Erc20ApproveTransaction,
-  isApplicable as isErc20ApproveApplicable,
-} from './Erc20Approve'
+import * as Erc20Approve from './Erc20Approve'
 
 export const useFriendlyTransaction = (
   transactionId: string,
@@ -13,10 +10,10 @@ export const useFriendlyTransaction = (
   const transaction = useTransaction(transactionId)
 
   // Check if this is an ERC20 approve transaction
-  if (isErc20ApproveApplicable(transaction)) {
+  if (Erc20Approve.isApplicable(transaction)) {
     return {
-      FriendlyTitle: Erc20ApproveTransaction,
-      FriendlyBody: Erc20ApproveTransaction,
+      FriendlyTitle: Erc20Approve.Title,
+      FriendlyBody: Erc20Approve.Body,
     }
   }
 
