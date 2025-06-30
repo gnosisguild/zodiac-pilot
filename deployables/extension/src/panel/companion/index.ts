@@ -10,6 +10,7 @@ export { findRemoteDefaultRoute } from './findRemoteDefaultRoute'
 export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
+export { getRemoteRoute } from './getRemoteRoute'
 export { getRemoteRoutes, type Route } from './getRemoteRoutes'
 export { getUser } from './getUser'
 export type {

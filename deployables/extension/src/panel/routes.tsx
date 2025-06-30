@@ -1,6 +1,8 @@
 import { SentryErrorBoundary } from '@/sentry'
-import { redirect, type RouteObject } from 'react-router'
+import { type RouteObject } from 'react-router'
 import * as ActiveAccount from './pages/$activeAccountId/ActiveAccount'
+import * as ActiveRoute from './pages/$activeAccountId/ActiveRoute'
+import * as LoadDefaultRoute from './pages/$activeAccountId/LoadDefaultRoute'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
 import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
 import * as Root from './pages/Root'
@@ -21,15 +23,27 @@ export const routes: RouteObject[] = [
         loader: ActiveAccount.loader,
         action: ActiveAccount.action,
         children: [
-          { index: true, loader: () => redirect('transactions') },
+          { index: true, loader: LoadDefaultRoute.loader },
           {
-            path: 'transactions',
+            path: 'clear-transactions/:newActiveAccountId',
+            Component: ClearTransactions.default,
+          },
+          {
+            path: 'no-routes',
             Component: Transactions.default,
             action: Transactions.action,
           },
           {
-            path: 'clear-transactions/:newActiveAccountId',
-            Component: ClearTransactions.default,
+            path: ':routeId',
+            Component: ActiveRoute.default,
+            loader: ActiveRoute.loader,
+            children: [
+              {
+                index: true,
+                Component: Transactions.default,
+                action: Transactions.action,
+              },
+            ],
           },
         ],
       },

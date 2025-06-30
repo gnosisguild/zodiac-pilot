@@ -146,6 +146,8 @@ export default [
       route('routes', 'routes/extension/routes.ts'),
     ]),
 
+    ...prefix('route/:routeId', [index('routes/extension/route.ts')]),
+
     route(
       'active-route/:accountId',
       'routes/extension/redirects/activeRoute.ts',

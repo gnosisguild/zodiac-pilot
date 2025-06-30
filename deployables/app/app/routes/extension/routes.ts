@@ -1,6 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { dbClient, getAccount, getRoutes } from '@zodiac/db'
+import { dbClient, getAccount, getRoutes, toExecutionRoute } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
 import type { Route } from './+types/routes'
 
@@ -19,7 +19,14 @@ export const loader = (args: Route.LoaderArgs) =>
 
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
-      return getRoutes(dbClient(), tenant.id, { userId: user.id, accountId })
+      const [routes, account] = await Promise.all([
+        getRoutes(dbClient(), tenant.id, { userId: user.id, accountId }),
+        getAccount(dbClient(), accountId),
+      ])
+
+      return routes.map((route) =>
+        toExecutionRoute({ wallet: route.wallet, account, route }),
+      )
     },
     {
       async hasAccess({ tenant, params: { accountId } }) {

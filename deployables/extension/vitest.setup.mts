@@ -4,6 +4,7 @@ import {
   getFeatures,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoute,
   getRemoteRoutes,
   getUser,
 } from '@/companion'
@@ -15,7 +16,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { sleepTillIdle } from '@zodiac/test-utils'
+import { createMockExecutionRoute, sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 
@@ -38,6 +39,7 @@ vi.mock('@/companion', async (importOriginal) => {
     getUser: vi.fn(),
     findRemoteDefaultRoute: vi.fn(),
     findRemoteActiveAccount: vi.fn(),
+    getRemoteRoute: vi.fn(),
     getRemoteAccount: vi.fn(),
     getRemoteAccounts: vi.fn(),
     getRemoteRoutes: vi.fn(),
@@ -49,6 +51,7 @@ vi.mock('@/companion', async (importOriginal) => {
   }
 })
 
+const mockGetRemoteRoute = vi.mocked(getRemoteRoute)
 const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
 const mockGetUser = vi.mocked(getUser)
 const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
@@ -69,6 +72,7 @@ beforeEach(() => {
   mockGetRemoteAccount.mockResolvedValue(account)
   mockGetRemoteAccounts.mockResolvedValue([])
   mockGetFeatures.mockResolvedValue([])
+  mockGetRemoteRoute.mockResolvedValue(createMockExecutionRoute())
 })
 
 configMocks({ afterEach, afterAll })

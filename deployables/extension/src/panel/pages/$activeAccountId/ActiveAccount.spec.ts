@@ -2,6 +2,7 @@ import {
   findRemoteDefaultRoute,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoute,
   getRemoteRoutes,
   saveRemoteActiveAccount,
 } from '@/companion'
@@ -36,6 +37,7 @@ mockCompanionAppUrl('http://companion-app.com')
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
+const mockGetRemoteRoute = vi.mocked(getRemoteRoute)
 const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
 const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
@@ -56,7 +58,7 @@ describe('Active Account', () => {
         screen.getByRole('option', { name: 'Second route' }),
       )
 
-      await expectRouteToBe(`/second-route/transactions`)
+      await expectRouteToBe(`/second-route/second-route`)
     })
 
     it('lists routes from the zodiac os', async () => {
@@ -90,7 +92,13 @@ describe('Active Account', () => {
       })
       const route = routeFactory.createWithoutDb(account, wallet)
 
+      mockGetRemoteRoutes.mockResolvedValue([
+        toExecutionRoute({ account, wallet, route }),
+      ])
       mockFindRemoteDefaultRoute.mockResolvedValue(
+        toExecutionRoute({ account, wallet, route }),
+      )
+      mockGetRemoteRoute.mockResolvedValue(
         toExecutionRoute({ account, wallet, route }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)
@@ -108,7 +116,7 @@ describe('Active Account', () => {
         await screen.findByRole('option', { name: 'Remote account' }),
       )
 
-      await expectRouteToBe(`/${account.id}/transactions`)
+      await expectRouteToBe(`/${account.id}/${route.id}`)
     })
 
     it('renders when an account from zodiac os is active', async () => {
@@ -167,7 +175,10 @@ describe('Active Account', () => {
       const routeA = routeFactory.createWithoutDb(account, wallet)
       const routeB = routeFactory.createWithoutDb(account, wallet)
 
-      mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
+      mockGetRemoteRoutes.mockResolvedValue([
+        toExecutionRoute({ wallet, account, route: routeA }),
+        toExecutionRoute({ wallet, account, route: routeB }),
+      ])
 
       await render(`/${account.id}`)
 
@@ -188,8 +199,14 @@ describe('Active Account', () => {
         label: 'Route B',
       })
 
-      mockGetRemoteRoutes.mockResolvedValue([routeA, routeB])
+      mockGetRemoteRoutes.mockResolvedValue([
+        toExecutionRoute({ wallet, account, route: routeA }),
+        toExecutionRoute({ wallet, account, route: routeB }),
+      ])
       mockFindRemoteDefaultRoute.mockResolvedValue(
+        toExecutionRoute({ wallet, account, route: routeB }),
+      )
+      mockGetRemoteRoute.mockResolvedValue(
         toExecutionRoute({ wallet, account, route: routeB }),
       )
 
@@ -198,7 +215,33 @@ describe('Active Account', () => {
       expect(await screen.findByText('Route B')).toBeInTheDocument()
     })
 
-    it.todo('pre-selects the first route if there is no default route')
+    it('pre-selects the first route if there is no default route', async () => {
+      const tenant = tenantFactory.createWithoutDb()
+      const user = userFactory.createWithoutDb(tenant)
+
+      const wallet = walletFactory.createWithoutDb(user)
+      const account = accountFactory.createWithoutDb(tenant, user)
+
+      const routeA = routeFactory.createWithoutDb(account, wallet, {
+        label: 'Route A',
+      })
+      const routeB = routeFactory.createWithoutDb(account, wallet, {
+        label: 'Route B',
+      })
+
+      mockGetRemoteRoutes.mockResolvedValue([
+        toExecutionRoute({ wallet, account, route: routeA }),
+        toExecutionRoute({ wallet, account, route: routeB }),
+      ])
+      mockFindRemoteDefaultRoute.mockResolvedValue(null)
+      mockGetRemoteRoute.mockResolvedValue(
+        toExecutionRoute({ wallet, account, route: routeA }),
+      )
+
+      await render(`/${account.id}`)
+
+      expect(await screen.findByText('Route A')).toBeInTheDocument()
+    })
     it.todo('is possible to change the route')
     it.todo('uses the selected route to sign the transaction bundle')
   })
