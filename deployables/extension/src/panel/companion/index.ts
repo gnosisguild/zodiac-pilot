@@ -11,7 +11,7 @@ export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
 export { getRemoteRoute } from './getRemoteRoute'
-export { getRemoteRoutes, type Route } from './getRemoteRoutes'
+export { getRemoteRoutes } from './getRemoteRoutes'
 export { getUser } from './getUser'
 export type {
   CompanionAccount as Account,
