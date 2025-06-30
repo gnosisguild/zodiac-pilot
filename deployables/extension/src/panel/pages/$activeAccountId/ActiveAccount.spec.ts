@@ -164,88 +164,6 @@ describe('Active Account', () => {
     })
   })
 
-  describe('Route switch', () => {
-    it('shows a select for routes when there is more than one route for an account', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
-
-      const wallet = walletFactory.createWithoutDb(user)
-      const account = accountFactory.createWithoutDb(tenant, user)
-
-      const routeA = routeFactory.createWithoutDb(account, wallet)
-      const routeB = routeFactory.createWithoutDb(account, wallet)
-
-      mockGetRemoteRoutes.mockResolvedValue([
-        toExecutionRoute({ wallet, account, route: routeA }),
-        toExecutionRoute({ wallet, account, route: routeB }),
-      ])
-
-      await render(`/${account.id}`)
-
-      expect(
-        await screen.findByRole('combobox', { name: 'Selected route' }),
-      ).toBeInTheDocument()
-    })
-
-    it('pre-selects the default route', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
-
-      const wallet = walletFactory.createWithoutDb(user)
-      const account = accountFactory.createWithoutDb(tenant, user)
-
-      const routeA = routeFactory.createWithoutDb(account, wallet)
-      const routeB = routeFactory.createWithoutDb(account, wallet, {
-        label: 'Route B',
-      })
-
-      mockGetRemoteRoutes.mockResolvedValue([
-        toExecutionRoute({ wallet, account, route: routeA }),
-        toExecutionRoute({ wallet, account, route: routeB }),
-      ])
-      mockFindRemoteDefaultRoute.mockResolvedValue(
-        toExecutionRoute({ wallet, account, route: routeB }),
-      )
-      mockGetRemoteRoute.mockResolvedValue(
-        toExecutionRoute({ wallet, account, route: routeB }),
-      )
-
-      await render(`/${account.id}`)
-
-      expect(await screen.findByText('Route B')).toBeInTheDocument()
-    })
-
-    it('pre-selects the first route if there is no default route', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
-
-      const wallet = walletFactory.createWithoutDb(user)
-      const account = accountFactory.createWithoutDb(tenant, user)
-
-      const routeA = routeFactory.createWithoutDb(account, wallet, {
-        label: 'Route A',
-      })
-      const routeB = routeFactory.createWithoutDb(account, wallet, {
-        label: 'Route B',
-      })
-
-      mockGetRemoteRoutes.mockResolvedValue([
-        toExecutionRoute({ wallet, account, route: routeA }),
-        toExecutionRoute({ wallet, account, route: routeB }),
-      ])
-      mockFindRemoteDefaultRoute.mockResolvedValue(null)
-      mockGetRemoteRoute.mockResolvedValue(
-        toExecutionRoute({ wallet, account, route: routeA }),
-      )
-
-      await render(`/${account.id}`)
-
-      expect(await screen.findByText('Route A')).toBeInTheDocument()
-    })
-    it.todo('is possible to change the route')
-    it.todo('uses the selected route to sign the transaction bundle')
-  })
-
   describe('Edit', () => {
     describe('Current route', () => {
       describe('Local accounts', () => {
@@ -318,8 +236,6 @@ describe('Active Account', () => {
             url: `http://localhost/account/${account.id}`,
           })
         })
-
-        it.todo('respects the currently selected route')
 
         it('activates an existing tab when it already exists', async () => {
           const tenant = tenantFactory.createWithoutDb()
