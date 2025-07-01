@@ -8,7 +8,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.53.1-noble
+      image: mcr.microsoft.com/playwright:v1.53.2-noble
       options: --user 1001
     if: github.event.deployment_status.state == 'success'
 
