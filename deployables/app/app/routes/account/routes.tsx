@@ -3,10 +3,10 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   createRoute,
-  createWallet,
   dbClient,
   findDefaultRoute,
   getAccount,
+  getOrCreateWallet,
   getRoute,
   getRoutes,
   getWallet,
@@ -197,7 +197,7 @@ export const action = (args: Route.ActionArgs) =>
           const initiator = getHexString(data, 'initiator')
           const label = getString(data, 'label')
 
-          const wallet = await createWallet(dbClient(), user, {
+          const wallet = await getOrCreateWallet(dbClient(), user, {
             label: 'Unnamed wallet',
             address: initiator,
           })

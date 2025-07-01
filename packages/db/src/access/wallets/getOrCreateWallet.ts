@@ -8,7 +8,7 @@ type CreateWalletOptions = {
   address: HexAddress
 }
 
-export const createWallet = async (
+export const getOrCreateWallet = async (
   db: DBClient,
   user: User,
   { label, address }: CreateWalletOptions,

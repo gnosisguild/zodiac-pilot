@@ -546,11 +546,14 @@ describe.sequential('List Accounts', () => {
       const account = await accountFactory.create(tenant, user, {
         label: 'Test account',
       })
-      const route = await routeFactory.create(account, wallet)
+      const route = await routeFactory.create(account, wallet, {
+        label: 'Route A',
+      })
 
       await setDefaultRoute(dbClient(), tenant, user, route)
 
       const executionRoute = createMockExecutionRoute({
+        label: 'Route B',
         initiator: prefixAddress(undefined, wallet.address),
         avatar: prefixAddress(account.chainId, account.address),
       })
@@ -586,11 +589,16 @@ describe.sequential('List Accounts', () => {
 
       await waitForPendingActions()
 
-      expect(
-        await screen.findByRole('alert', { name: 'Upload not possible' }),
-      ).toHaveAccessibleDescription(
-        `The upload was canceled because it would conflict with the account configuration for the account "${account.label}"`,
-      )
+      const [, routeB] = await getRoutes(dbClient(), tenant.id, {
+        walletId: wallet.id,
+        userId: user.id,
+        accountId: account.id,
+      })
+
+      expect(routeB).toMatchObject({
+        label: 'Route B',
+        waypoints: executionRoute.waypoints,
+      })
     })
 
     it('removes the local account', async () => {

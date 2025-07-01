@@ -1,6 +1,6 @@
-export { createWallet } from './createWallet'
 export { deleteWallet } from './deleteWallet'
 export { findWalletByAddress } from './findWalletByAddress'
+export { getOrCreateWallet } from './getOrCreateWallet'
 export { getWallet } from './getWallet'
 export { getWalletByAddress } from './getWalletByAddress'
 export { getWallets } from './getWallets'
