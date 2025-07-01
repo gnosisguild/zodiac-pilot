@@ -1,7 +1,7 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl, useCompanionAppUser } from '@/companion'
 import { useWindowId } from '@/port-handling'
-import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
+import { useAfterSubmit, useIsPending, useStableHandler } from '@zodiac/hooks'
 import {
   Divider,
   Form,
@@ -9,8 +9,9 @@ import {
   GhostLinkButton,
   MeatballMenu,
 } from '@zodiac/ui'
-import { CloudOff, List, Pencil, User } from 'lucide-react'
-import { useState } from 'react'
+import { CloudOff, List, Pencil, RefreshCcw, User } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useRevalidator } from 'react-router'
 import { Intent } from './intents'
 
 export const AccountActions = () => {
@@ -34,6 +35,10 @@ export const AccountActions = () => {
         onRequestShow={() => setOpen(true)}
         onRequestHide={() => setOpen(false)}
       >
+        <Refresh onRefresh={() => setOpen(false)} />
+
+        <Divider />
+
         <Form context={{ accountId: account.id, windowId }}>
           <GhostButton
             submit
@@ -89,5 +94,32 @@ export const AccountActions = () => {
         </Form>
       </MeatballMenu>
     </div>
+  )
+}
+
+const Refresh = ({ onRefresh }: { onRefresh: () => void }) => {
+  const revalidator = useRevalidator()
+
+  const onRefreshRef = useStableHandler(onRefresh)
+  const stateRef = useRef(revalidator.state)
+
+  useEffect(() => {
+    if (revalidator.state === 'idle' && stateRef.current === 'loading') {
+      onRefreshRef.current()
+    }
+
+    stateRef.current = revalidator.state
+  }, [onRefreshRef, revalidator.state])
+
+  return (
+    <GhostButton
+      icon={RefreshCcw}
+      size="small"
+      align="left"
+      onClick={() => revalidator.revalidate()}
+      busy={revalidator.state === 'loading'}
+    >
+      Refresh account
+    </GhostButton>
   )
 }
