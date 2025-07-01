@@ -21,7 +21,7 @@ import {
   type Chain,
 } from 'wagmi/chains'
 
-const chains: Record<ChainId, Chain> = {
+export const chains: Record<ChainId, Chain> = {
   [mainnet.id]: mainnet,
   [optimism.id]: optimism,
   [gnosis.id]: gnosis,
@@ -42,7 +42,7 @@ const chains: Record<ChainId, Chain> = {
 const defaultConfig = createConfig({
   chains: Object.values(chains) as any,
   transports: Object.fromEntries(
-    Object.keys(chains).map((chainId) => ({ [chainId]: http() })) as any,
+    Object.keys(chains).map((chainId) => [chainId, http()]) as any,
   ),
 })
 

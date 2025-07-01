@@ -1,5 +1,6 @@
 import { useTransaction, type UnconfirmedTransaction } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
+import type { HexAddress } from '@zodiac/schema'
 import { Address, GhostButton, TokenValue } from '@zodiac/ui'
 import { SquarePen } from 'lucide-react'
 import { decodeFunctionData, erc20Abi, formatUnits } from 'viem'
@@ -63,7 +64,6 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <h5 className="text-sm font-semibold">ERC20 Approve</h5>
       <div className="text-xs text-gray-600 dark:text-gray-400">
         <div>
           Spender: <Address>{spenderAddress as HexAddress}</Address>
