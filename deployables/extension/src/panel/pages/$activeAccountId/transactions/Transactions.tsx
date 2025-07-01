@@ -130,7 +130,7 @@ const Transactions = () => {
   return (
     <>
       <Page.Content ref={scrollContainerRef}>
-        <WagmiProvider>
+        <WagmiProvider chainId={account.chainId}>
           <div className="flex items-center justify-between gap-2">
             <RecordingIndicator />
 

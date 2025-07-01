@@ -8,7 +8,7 @@ import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
 import { useState, type PropsWithChildren } from 'react'
 import { AccountType } from 'ser-kit'
-import { ContractAddress } from './ContractAddress'
+import { AddressField } from './AddressField'
 import { DecodedTransaction } from './DecodedTransaction'
 import { useFriendlyTransaction } from './friendly'
 import { RawTransaction } from './RawTransaction'
@@ -76,10 +76,11 @@ const GenericBody = ({ transactionId }: { transactionId: string }) => {
   const { chainId } = useAccount()
   return (
     <>
-      <ContractAddress
+      <AddressField
         chainId={chainId}
         address={transaction.to}
-        contractInfo={transaction.contractInfo}
+        label="Contract"
+        description={transaction.contractInfo?.name}
       />
 
       <EtherValue value={transaction.value} />

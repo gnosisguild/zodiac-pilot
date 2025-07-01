@@ -1,10 +1,12 @@
+import { useAccount } from '@/accounts'
 import { useTransaction, type UnconfirmedTransaction } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
-import type { HexAddress } from '@zodiac/schema'
-import { Address, GhostButton, TokenValue } from '@zodiac/ui'
-import { SquarePen } from 'lucide-react'
+import { verifyHexAddress } from '@zodiac/schema'
+import { useChainId } from '@zodiac/ui'
 import { decodeFunctionData, erc20Abi, formatUnits } from 'viem'
 import { useReadContracts } from 'wagmi'
+import { AddressField } from '../AddressField'
+import { InplaceEditAmountField } from '../InplaceEditAmountField'
 
 export const isApplicable = (transaction: UnconfirmedTransaction) => {
   try {
@@ -39,15 +41,21 @@ export const Title = ({ transactionId }: { transactionId: string }) => {
   const truncatedSpender = `${spenderAddress.slice(0, 6)}...${spenderAddress.slice(-4)}`
 
   return (
-    <div>
-      Approve {compactAmount(approvalAmount, decimals)} {symbol} to{' '}
-      {truncatedSpender}
+    <div className="flex flex-col gap-1 overflow-hidden">
+      <h5
+        id={transactionId}
+        className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold"
+      >
+        Approve {compactAmount(approvalAmount, decimals)} {symbol} to{' '}
+        {truncatedSpender}
+      </h5>
     </div>
   )
 }
 
 export const Body = ({ transactionId }: { transactionId: string }) => {
   const transaction = useTransaction(transactionId)
+  const chainId = useChainId()
 
   const decoded = decodeFunctionData({
     abi: erc20Abi,
@@ -59,16 +67,41 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
   )
   const [spenderAddress, approvalAmount] = decoded.args
 
-  const { symbol = 'tokens', decimals = 0 } = useTokenInfo(transaction.to)
+  const {
+    symbol = 'tokens',
+    name,
+    decimals = 0,
+    balance,
+  } = useTokenInfo(transaction.to)
   const formattedAmount = formatUnits(approvalAmount, decimals) as `${number}`
+  const formattedBalance =
+    balance === undefined
+      ? undefined
+      : (formatUnits(balance, decimals) as `${number}`)
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="text-xs text-gray-600 dark:text-gray-400">
-        <div>
-          Spender: <Address>{spenderAddress as HexAddress}</Address>
-        </div>
-        <TokenValue
+    <>
+      <AddressField
+        chainId={chainId}
+        label="Token"
+        description={name}
+        address={transaction.to}
+      />
+      <AddressField
+        chainId={chainId}
+        label="Spender"
+        address={verifyHexAddress(spenderAddress)}
+      />
+      <InplaceEditAmountField
+        value={formattedAmount}
+        label="Approved amount"
+        description={symbol}
+        recommendedValue={formattedBalance}
+        onChange={(ev) => {
+          console.log(ev.target.value)
+        }}
+      />
+      {/* <TokenValue
           symbol={symbol}
           action={
             <GhostButton iconOnly size="small" icon={SquarePen}>
@@ -77,13 +110,14 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
           }
         >
           {formattedAmount}
-        </TokenValue>
-      </div>
-    </div>
+        </TokenValue> */}
+    </>
   )
 }
 
 const useTokenInfo = (address: `0x${string}`) => {
+  const account = useAccount()
+
   const { data, error } = useReadContracts({
     contracts: [
       {
@@ -101,6 +135,12 @@ const useTokenInfo = (address: `0x${string}`) => {
         abi: erc20Abi,
         functionName: 'name',
       },
+      {
+        address,
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        args: [account.address],
+      },
     ],
   })
 
@@ -111,15 +151,20 @@ const useTokenInfo = (address: `0x${string}`) => {
   const symbol = data?.[0]?.result
   const decimals = data?.[1]?.result
   const name = data?.[2]?.result
+  const balance = data?.[3]?.result
 
-  return { symbol, decimals, name }
+  return { symbol, decimals, name, balance }
 }
 
 const MAX_UINT256 = (1n << 256n) - 1n
 const THRESHOLD = (MAX_UINT256 * 99n) / 100n
 
+const isInfinite = (amount: bigint) => {
+  return amount >= THRESHOLD
+}
+
 const compactAmount = (amount: bigint, decimals: number) => {
-  if (amount >= THRESHOLD) {
+  if (isInfinite(amount)) {
     return '∞'
   }
 

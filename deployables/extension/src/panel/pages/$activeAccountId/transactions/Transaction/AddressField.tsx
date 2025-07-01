@@ -1,4 +1,3 @@
-import type { ContractInfo } from '@/transactions'
 import { EXPLORER_URL } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { AddressInput, GhostLinkButton } from '@zodiac/ui'
@@ -8,15 +7,21 @@ import type { ChainId } from 'ser-kit'
 interface Props {
   chainId: ChainId
   address: HexAddress
-  contractInfo?: ContractInfo
+  label: string
+  description?: string
 }
 
-export const ContractAddress = ({ chainId, address, contractInfo }: Props) => {
+export const AddressField = ({
+  chainId,
+  address,
+  label,
+  description,
+}: Props) => {
   return (
     <AddressInput
       readOnly
-      label="Contract"
-      description={contractInfo?.name}
+      label={label}
+      description={description}
       value={address}
       action={
         <GhostLinkButton
