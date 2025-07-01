@@ -216,8 +216,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.328
-        version: 0.0.328
+        specifier: 0.0.329
+        version: 0.0.329
       '@types/node':
         specifier: 22.14.1
         version: 22.14.1
@@ -391,8 +391,8 @@ importers:
         specifier: 14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/chrome':
-        specifier: 0.0.328
-        version: 0.0.328
+        specifier: 0.0.329
+        version: 0.0.329
       '@types/events':
         specifier: 3.0.3
         version: 3.0.3
@@ -803,8 +803,8 @@ importers:
         version: 19.1.0
     devDependencies:
       '@types/chrome':
-        specifier: 0.0.328
-        version: 0.0.328
+        specifier: 0.0.329
+        version: 0.0.329
       '@types/node':
         specifier: 22.14.1
         version: 22.14.1
@@ -880,7 +880,7 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 4.0.0
-        version: 4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
+        version: 4.0.0(typescript@5.8.3)(zod@3.25.67)
       '@safe-global/protocol-kit':
         specifier: 6.1.0
         version: 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
@@ -981,8 +981,8 @@ importers:
         specifier: 7.6.3
         version: 7.6.3(@react-router/serve@7.6.3(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(@types/node@22.14.1)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass@1.82.0)(stylus@0.62.0)(typescript@5.8.3)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(stylus@0.62.0)(yaml@2.8.0))(wrangler@4.22.0(@cloudflare/workers-types@4.20250701.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.8.0)
       '@types/chrome':
-        specifier: 0.0.328
-        version: 0.0.328
+        specifier: 0.0.329
+        version: 0.0.329
       '@types/react':
         specifier: 19.1.8
         version: 19.1.8
@@ -4277,8 +4277,8 @@ packages:
   '@types/chrome@0.0.114':
     resolution: {integrity: sha512-i7qRr74IrxHtbnrZSKUuP5Uvd5EOKwlwJq/yp7+yTPihOXnPhNQO4Z5bqb1XTnrjdbUKEJicaVVbhcgtRijmLA==}
 
-  '@types/chrome@0.0.328':
-    resolution: {integrity: sha512-Mv/TQMFMpGBTqWQOQsYcAd3qDncH/Q+Dz7iJVjkwb98uLeM8xZVEYH3VR5Jh+su9IBksbumJeazakK8WqBAgFA==}
+  '@types/chrome@0.0.329':
+    resolution: {integrity: sha512-jAZX4QMnAa1bTSWoQ5/EhhiY1t+1B7a5ZCY5ZEs61tWiQfxXAkfBSxCkQWhGxJoiq/4b4vtcmYEebNEmlLKecg==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -12782,7 +12782,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)':
+  '@safe-global/api-kit@4.0.0(typescript@5.8.3)(zod@3.25.67)':
     dependencies:
       '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.67)
       '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@3.25.67)
@@ -13341,7 +13341,7 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@types/chrome@0.0.328':
+  '@types/chrome@0.0.329':
     dependencies:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
@@ -16828,7 +16828,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.7(ws@8.18.2):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19353,7 +19353,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19370,7 +19370,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.67)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.67)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
