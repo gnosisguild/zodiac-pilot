@@ -11,7 +11,7 @@ type CreateAccountOptions = {
   address: HexAddress
 }
 
-export const createAccount = async (
+export const getOrCreateAccount = async (
   db: DBClient,
   tenant: Tenant,
   user: User,

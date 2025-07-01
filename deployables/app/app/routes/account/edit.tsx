@@ -4,9 +4,9 @@ import { ChainSelect, getRouteId } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   createRoute as baseCreateRoute,
-  createWallet,
   dbClient,
   getAccount,
+  getOrCreateWallet,
   getRoute,
   removeRoute,
   setDefaultRoute,
@@ -123,7 +123,7 @@ export const action = (args: Route.ActionArgs) =>
 
         const route = await getRoute(tx, routeId)
 
-        const wallet = await createWallet(tx, user, {
+        const wallet = await getOrCreateWallet(tx, user, {
           address: initiator,
           label: 'Unnamed wallet',
         })
@@ -218,7 +218,7 @@ const createRoute = async (
   user: User,
   { accountId, initiator, selectedRouteId }: CreateRouteOptions,
 ) => {
-  const wallet = await createWallet(db, user, {
+  const wallet = await getOrCreateWallet(db, user, {
     address: initiator,
     label: 'Unnamed wallet',
   })

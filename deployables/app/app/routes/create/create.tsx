@@ -9,7 +9,7 @@ import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { getSignInUrl } from '@workos-inc/authkit-react-router'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
-import { createAccount, dbClient } from '@zodiac/db'
+import { dbClient, getOrCreateAccount } from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -95,21 +95,17 @@ export const action = (args: Route.ActionArgs) =>
 
       route = updateChainId(updateAvatar(route, { safe: avatar }), chainId)
 
-      if (user != null) {
-        try {
-          const account = await createAccount(dbClient(), tenant, user, {
-            label,
-            chainId,
-            address: avatar,
-          })
-
-          return { account, route }
-        } catch {
-          return { error: 'An account with this address already exists.' }
-        }
+      if (user == null) {
+        return { route }
       }
 
-      return { route }
+      const account = await getOrCreateAccount(dbClient(), tenant, user, {
+        label,
+        chainId,
+        address: avatar,
+      })
+
+      return { account, route }
     },
   )
 

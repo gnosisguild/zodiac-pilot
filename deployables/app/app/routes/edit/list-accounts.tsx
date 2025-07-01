@@ -3,9 +3,7 @@ import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  createAccount,
   createRoute,
-  createWallet,
   dbClient,
   deleteAccount,
   findAccountByAddress,
@@ -14,6 +12,8 @@ import {
   findWalletByAddress,
   getAccount,
   getAccounts,
+  getOrCreateAccount,
+  getOrCreateWallet,
   getRoute,
   setDefaultRoute,
 } from '@zodiac/db'
@@ -158,7 +158,7 @@ export const action = async (args: Route.ActionArgs) =>
               }
             }
 
-            const account = await createAccount(tx, tenant, user, {
+            const account = await getOrCreateAccount(tx, tenant, user, {
               chainId,
               address,
               label: route.label,
@@ -166,7 +166,7 @@ export const action = async (args: Route.ActionArgs) =>
 
             const [, initiator] = splitPrefixedAddress(route.initiator)
 
-            const wallet = await createWallet(tx, user, {
+            const wallet = await getOrCreateWallet(tx, user, {
               label: 'Unnamed wallet',
               address: initiator,
             })
