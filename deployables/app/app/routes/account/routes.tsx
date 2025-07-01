@@ -21,7 +21,6 @@ import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressSelect,
-  Feature,
   Form,
   Modal,
   PrimaryButton,
@@ -261,26 +260,22 @@ const Routes = ({
 
   return (
     <>
-      <Feature feature="multiple-routes">
-        <div
-          role="tablist"
-          className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
-        >
-          <div className="flex items-center gap-2">
-            {routes.map((route) => (
-              <RouteTab
-                key={route.id}
-                route={route}
-                isDefault={
-                  defaultRouteId != null && route.id === defaultRouteId
-                }
-              />
-            ))}
-          </div>
-
-          <AddRoute />
+      <div
+        role="tablist"
+        className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
+      >
+        <div className="flex items-center gap-2">
+          {routes.map((route) => (
+            <RouteTab
+              key={route.id}
+              route={route}
+              isDefault={defaultRouteId != null && route.id === defaultRouteId}
+            />
+          ))}
         </div>
-      </Feature>
+
+        <AddRoute />
+      </div>
 
       <input
         type="hidden"
