@@ -3,8 +3,16 @@ import { useTransaction, type UnconfirmedTransaction } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { verifyHexAddress } from '@zodiac/schema'
 import { useChainId } from '@zodiac/ui'
-import { decodeFunctionData, erc20Abi, formatUnits } from 'viem'
+import {
+  decodeFunctionData,
+  encodeFunctionData,
+  erc20Abi,
+  formatUnits,
+  parseUnits,
+} from 'viem'
 import { useReadContracts } from 'wagmi'
+import { translateTransaction } from '../../../../../transactions/actions'
+import { useDispatch } from '../../../../../transactions/TransactionsContext'
 import { AddressField } from '../AddressField'
 import { InplaceEditAmountField } from '../InplaceEditAmountField'
 
@@ -79,6 +87,25 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
       ? undefined
       : (formatUnits(balance, decimals) as `${number}`)
 
+  const dispatch = useDispatch()
+  const editApprovedAmount = (amount: string) => {
+    dispatch(
+      translateTransaction({
+        id: transaction.id,
+        translations: [
+          {
+            ...transaction,
+            data: encodeFunctionData({
+              abi: erc20Abi,
+              functionName: 'approve',
+              args: [spenderAddress, parseUnits(amount, decimals)],
+            }),
+          },
+        ],
+      }),
+    )
+  }
+
   return (
     <>
       <AddressField
@@ -98,7 +125,7 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
         description={symbol}
         recommendedValue={formattedBalance}
         onChange={(ev) => {
-          console.log(ev.target.value)
+          editApprovedAmount(ev.target.value)
         }}
       />
       {/* <TokenValue
