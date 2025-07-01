@@ -10,7 +10,7 @@ export const createProposal = (
   transaction: MetaTransactionRequest[],
   options: FetchOptions,
 ) =>
-  api(`/extension/propose-transaction/${accountId}`, {
+  api(`/extension/account/${accountId}/propose-transaction`, {
     ...options,
     schema,
     body: { transaction: jsonStringify(transaction) },

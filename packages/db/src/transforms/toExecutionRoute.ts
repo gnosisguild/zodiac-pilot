@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
 import type { Account, Route, Wallet } from '@zodiac/db/schema'
-import { prefixAddress, type Route as SerRoute } from 'ser-kit'
+import type { ExecutionRoute } from '@zodiac/schema'
+import { prefixAddress } from 'ser-kit'
 
 type ToExecutionRouteOptions = {
   wallet: Wallet
@@ -12,12 +13,13 @@ export const toExecutionRoute = ({
   wallet,
   account,
   route,
-}: ToExecutionRouteOptions): SerRoute => {
+}: ToExecutionRouteOptions): ExecutionRoute => {
   invariant(route.fromId === wallet.id, 'Route does not match wallet')
   invariant(route.toId === account.id, 'Route does not match account')
 
   return {
-    id: account.id,
+    id: route.id,
+    label: route.label,
     avatar: prefixAddress(account.chainId, account.address),
     initiator: prefixAddress(undefined, wallet.address),
     waypoints: route.waypoints,

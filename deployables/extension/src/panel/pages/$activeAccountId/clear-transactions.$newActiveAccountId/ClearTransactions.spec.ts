@@ -21,6 +21,6 @@ describe('Clear transactions', () => {
 
     await render('/test-route/clear-transactions/new-route')
 
-    await expectRouteToBe('/new-route/transactions')
+    await expectRouteToBe('/new-route/new-route')
   })
 })

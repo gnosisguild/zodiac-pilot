@@ -6,11 +6,17 @@ export {
 } from './CompanionAppSupport'
 export { createProposal } from './createProposal'
 export { findRemoteActiveAccount } from './findRemoteActiveAccount'
-export { findRemoteActiveRoute } from './findRemoteActiveRoute'
+export { findRemoteDefaultRoute } from './findRemoteDefaultRoute'
 export { getFeatures } from './getFeatures'
 export { getRemoteAccount } from './getRemoteAccount'
 export { getRemoteAccounts } from './getRemoteAccounts'
+export { getRemoteRoute } from './getRemoteRoute'
+export { getRemoteRoutes } from './getRemoteRoutes'
 export { getUser } from './getUser'
-export type { PartialAccount as Account } from './PartialAccount'
+export type {
+  CompanionAccount as Account,
+  PartialLocalAccount,
+  PartialRemoteAccount,
+} from './PartialAccount'
 export { saveRemoteActiveAccount } from './saveRemoteActiveAccount'
 export { toAccount } from './toAccount'

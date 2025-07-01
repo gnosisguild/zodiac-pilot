@@ -1,13 +1,11 @@
 import {
   editAccount,
-  findActiveRoute,
   getAccount,
   getAccounts,
   ProvideAccount,
   saveActiveAccount,
 } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
 import {
   getPersistedTransactionState,
@@ -46,14 +44,9 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const accounts = await getAccounts({ signal: request.signal })
 
   try {
-    const [account, route] = await Promise.all([
-      getAccount(activeAccountId, {
-        signal: request.signal,
-      }),
-      findActiveRoute(activeAccountId, {
-        signal: request.signal,
-      }),
-    ])
+    const account = await getAccount(activeAccountId, {
+      signal: request.signal,
+    })
 
     await saveActiveAccount(account)
 
@@ -67,7 +60,6 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     }
 
     return {
-      route,
       account,
       accounts,
       initialTransactionsSate: await getPersistedTransactionState(),
@@ -139,7 +131,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 }
 
 const ActiveRoute = () => {
-  const { route, account, accounts, initialTransactionsSate } =
+  const { account, accounts, initialTransactionsSate } =
     useLoaderData<typeof loader>()
   const submit = useSubmit()
   const navigation = useNavigation()
@@ -157,57 +149,55 @@ const ActiveRoute = () => {
   return (
     <>
       <ProvideAccount account={account}>
-        <ProvideExecutionRoute route={route}>
-          <Page>
-            <Page.Header>
-              <div className="mx-4 my-2 flex items-center gap-2">
-                <Blockie address={account.address} className="size-6" />
+        <Page>
+          <Page.Header>
+            <div className="mx-4 my-2 flex items-center gap-2">
+              <Blockie address={account.address} className="size-6" />
 
-                <div className="flex-1">
-                  <AccountSelect
-                    accounts={accounts}
-                    onSelect={(accountId) =>
-                      submit(
-                        { intent: Intent.ActivateAccount, accountId },
-                        { method: 'POST' },
-                      )
-                    }
-                  />
-                </div>
-
-                <AccountActions />
+              <div className="flex-1">
+                <AccountSelect
+                  accounts={accounts}
+                  onSelect={(accountId) =>
+                    submit(
+                      { intent: Intent.ActivateAccount, accountId },
+                      { method: 'POST' },
+                    )
+                  }
+                />
               </div>
-            </Page.Header>
 
-            <div className="flex p-2">
-              <GhostLinkButton
-                fluid
-                openInNewWindow
-                size="small"
-                icon={ArrowUpFromLine}
-                to={`${useCompanionAppUrl()}/tokens/send`}
-              >
-                Send tokens
-              </GhostLinkButton>
-
-              <GhostLinkButton
-                fluid
-                openInNewWindow
-                size="small"
-                icon={Landmark}
-                to={`${useCompanionAppUrl()}/tokens/balances`}
-              >
-                View balances
-              </GhostLinkButton>
+              <AccountActions />
             </div>
+          </Page.Header>
 
-            <ProvideTransactions
-              initialState={initialTransactionsSate ?? undefined}
+          <div className="flex p-2">
+            <GhostLinkButton
+              fluid
+              openInNewWindow
+              size="small"
+              icon={ArrowUpFromLine}
+              to={`${useCompanionAppUrl()}/tokens/send`}
             >
-              <Outlet />
-            </ProvideTransactions>
-          </Page>
-        </ProvideExecutionRoute>
+              Send tokens
+            </GhostLinkButton>
+
+            <GhostLinkButton
+              fluid
+              openInNewWindow
+              size="small"
+              icon={Landmark}
+              to={`${useCompanionAppUrl()}/tokens/balances`}
+            >
+              View balances
+            </GhostLinkButton>
+          </div>
+
+          <ProvideTransactions
+            initialState={initialTransactionsSate ?? undefined}
+          >
+            <Outlet />
+          </ProvideTransactions>
+        </Page>
       </ProvideAccount>
 
       <Modal

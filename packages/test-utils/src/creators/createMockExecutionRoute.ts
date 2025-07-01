@@ -1,6 +1,6 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import { type ExecutionRoute } from '@zodiac/schema'
-import { randomUUID } from 'crypto'
+import { nanoid } from 'nanoid'
 import { prefixAddress } from 'ser-kit'
 import { createMockWaypoints } from './createMockWaypoints'
 
@@ -9,7 +9,7 @@ export const createMockExecutionRoute = ({
   waypoints = createMockWaypoints(),
   ...route
 }: Partial<ExecutionRoute> = {}): ExecutionRoute => ({
-  id: randomUUID(),
+  id: nanoid(),
   avatar,
   label: '',
   initiator: undefined,

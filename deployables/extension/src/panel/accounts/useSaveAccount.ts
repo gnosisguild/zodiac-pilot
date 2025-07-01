@@ -12,7 +12,7 @@ import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import type { TaggedAccount } from './TaggedAccount'
-import { findActiveRoute } from './findActiveRoute'
+import { findDefaultRoute } from './findDefaultRoute'
 import { getAccount } from './getAccount'
 import { toLocalAccount } from './toLocalAccount'
 import { toRemoteAccount } from './toRemoteAccount'
@@ -44,7 +44,7 @@ export const useSaveAccount = (
         invariant(tabId != null, `tabId was not provided to launchRoute`)
 
         onSaveRef.current(
-          await findActiveRoute(accountId),
+          await findDefaultRoute(accountId),
           await getAccount(accountId),
           tabId,
         )
@@ -154,7 +154,7 @@ const getIncomingAccountAndRoute = async (
     if (message.account != null) {
       return [
         toRemoteAccount(message.account),
-        await findActiveRoute(message.account.id),
+        await findDefaultRoute(message.account.id),
       ]
     }
 

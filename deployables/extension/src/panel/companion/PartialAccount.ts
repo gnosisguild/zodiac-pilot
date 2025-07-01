@@ -1,6 +1,10 @@
 import type { Account } from '@zodiac/db/schema'
 import type { UUID } from 'crypto'
-
-export type PartialAccount = Pick<Account, 'label' | 'address' | 'chainId'> & {
+type PartialAccount = Pick<Account, 'label' | 'address' | 'chainId'> & {
   id: UUID | string
 }
+
+export type PartialLocalAccount = PartialAccount & { id: string }
+export type PartialRemoteAccount = PartialAccount & { id: UUID }
+
+export type CompanionAccount = PartialLocalAccount | PartialRemoteAccount

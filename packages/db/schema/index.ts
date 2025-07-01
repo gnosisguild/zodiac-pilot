@@ -2,6 +2,7 @@ import type { ChainId } from '@zodiac/chains'
 import {
   addressSchema,
   chainIdSchema,
+  waypointsSchema,
   type HexAddress,
   type MetaTransactionRequest,
   type Waypoints,
@@ -296,6 +297,11 @@ const routeReference = {
 
 export type Route = typeof RouteTable.$inferSelect
 export type RouteCreateInput = typeof RouteTable.$inferInsert
+
+export const routeSchema = createSelectSchema(RouteTable, {
+  waypoints: waypointsSchema,
+  createdAt: z.coerce.date(),
+})
 
 const RouteRelations = relations(RouteTable, ({ one }) => ({
   wallet: one(WalletTable, {

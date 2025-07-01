@@ -37,6 +37,7 @@ import {
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount, useConnectorClient } from 'wagmi'
+import { toSerRoute } from './toSerRoute'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -256,7 +257,7 @@ describe('Sign', () => {
       })
 
       mockQueryRoutes.mockResolvedValue([
-        toExecutionRoute({ wallet, account, route }),
+        toSerRoute(toExecutionRoute({ wallet, account, route })),
       ])
 
       await render(
@@ -289,7 +290,7 @@ describe('Sign', () => {
       await setDefaultRoute(dbClient(), tenant, user, route)
 
       mockQueryRoutes.mockResolvedValue([
-        toExecutionRoute({ wallet, account, route }),
+        toSerRoute(toExecutionRoute({ wallet, account, route })),
       ])
       mockCheckPermissions.mockResolvedValue({
         success: false,
@@ -324,7 +325,7 @@ describe('Sign', () => {
         await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
-          toExecutionRoute({ wallet, account, route }),
+          toSerRoute(toExecutionRoute({ wallet, account, route })),
         ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
@@ -353,7 +354,7 @@ describe('Sign', () => {
         await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
-          toExecutionRoute({ wallet, account, route }),
+          toSerRoute(toExecutionRoute({ wallet, account, route })),
         ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
@@ -388,7 +389,7 @@ describe('Sign', () => {
         await setDefaultRoute(dbClient(), tenant, user, route)
 
         mockQueryRoutes.mockResolvedValue([
-          toExecutionRoute({ wallet, account, route }),
+          toSerRoute(toExecutionRoute({ wallet, account, route })),
         ])
         mockCheckPermissions.mockRejectedValue('Ser is down')
 

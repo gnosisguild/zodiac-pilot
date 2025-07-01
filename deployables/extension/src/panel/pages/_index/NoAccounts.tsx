@@ -1,4 +1,4 @@
-import { findActiveAccount, getAccounts, useSaveAccount } from '@/accounts'
+import { useSaveAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
 import { useBridgeError } from '@/port-handling'
 import { sendMessageToCompanionApp } from '@/utils'
@@ -10,26 +10,13 @@ import {
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { useEffect } from 'react'
-import { redirect } from 'react-router'
+import { useNavigate } from 'react-router'
 
-export const loader = async () => {
-  const activeAccount = await findActiveAccount()
-
-  if (activeAccount != null) {
-    return redirect(`/${activeAccount.id}`)
-  }
-
-  const [account] = await getAccounts()
-
-  if (account != null) {
-    return redirect(`/${account.id}`)
-  }
-}
-
-const NoRoutes = () => {
+const NoAccounts = () => {
   useBridgeError(
     'To use Zodiac Pilot with a dApp you need to create an account.',
   )
+  const navigate = useNavigate()
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -47,6 +34,10 @@ const NoRoutes = () => {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
         route,
       })
+
+      if (route != null) {
+        navigate(`/${route.id}`)
+      }
     },
   })
 
@@ -69,8 +60,8 @@ const NoRoutes = () => {
           <h2 className="mt-1 text-2xl font-light">Welcome to Zodiac Pilot</h2>
 
           <Info>
-            You haven't created any routes, yet. Click the button below to
-            create your first route.
+            You haven't created any accounts, yet. Click the button below to
+            create your first account.
           </Info>
         </div>
       </Page.Content>
@@ -88,4 +79,4 @@ const NoRoutes = () => {
   )
 }
 
-export default NoRoutes
+export default NoAccounts
