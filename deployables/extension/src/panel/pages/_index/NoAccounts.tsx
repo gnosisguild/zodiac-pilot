@@ -10,11 +10,13 @@ import {
 import { Info, Page, PrimaryLinkButton } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 const NoAccounts = () => {
   useBridgeError(
     'To use Zodiac Pilot with a dApp you need to create an account.',
   )
+  const navigate = useNavigate()
 
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
@@ -32,6 +34,10 @@ const NoAccounts = () => {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
         route,
       })
+
+      if (route != null) {
+        navigate(`/${route.id}`)
+      }
     },
   })
 
