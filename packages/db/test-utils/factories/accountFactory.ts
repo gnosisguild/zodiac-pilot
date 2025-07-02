@@ -32,16 +32,16 @@ export const accountFactory = createFactory<
     return account
   },
   createWithoutDb(data) {
-    return Object.assign(
-      {
-        id: randomUUID(),
-        createdAt: new Date(),
-        label: faker.company.buzzNoun(),
-        deleted: false,
-        deletedById: null,
-        deletedAt: null,
-      },
-      data,
-    )
+    return {
+      id: randomUUID(),
+      createdAt: new Date(),
+      label: faker.company.buzzNoun(),
+      deleted: false,
+      deletedById: null,
+      deletedAt: null,
+      updatedAt: null,
+
+      ...data,
+    }
   },
 })
