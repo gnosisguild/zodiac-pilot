@@ -12,7 +12,10 @@ import {
 } from 'viem'
 import { useReadContracts } from 'wagmi'
 import { translateTransaction } from '../../../../../transactions/actions'
-import { useDispatch } from '../../../../../transactions/TransactionsContext'
+import {
+  useDispatch,
+  usePendingTransactions,
+} from '../../../../../transactions/TransactionsContext'
 import { AddressField } from '../AddressField'
 import { InplaceEditAmountField } from '../InplaceEditAmountField'
 
@@ -106,6 +109,8 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
     )
   }
 
+  const pendingTransactions = usePendingTransactions()
+
   return (
     <>
       <AddressField
@@ -124,6 +129,7 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
         label="Approved amount"
         description={symbol}
         recommendedValue={formattedBalance}
+        disabled={pendingTransactions.length > 0}
         onChange={(ev) => {
           editApprovedAmount(ev.target.value)
         }}

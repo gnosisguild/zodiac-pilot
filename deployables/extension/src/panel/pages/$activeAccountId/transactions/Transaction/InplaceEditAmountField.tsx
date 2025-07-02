@@ -20,6 +20,7 @@ interface Props {
   label: string
   description?: string
   onChange: ChangeEventHandler<HTMLInputElement>
+  disabled?: boolean
 }
 
 export const InplaceEditAmountField = ({
@@ -28,6 +29,7 @@ export const InplaceEditAmountField = ({
   label,
   description,
   onChange,
+  disabled,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -47,9 +49,11 @@ export const InplaceEditAmountField = ({
 
   const confirm = () => {
     setIsEditing(false)
-    onChange({
-      target: { value: editedValue },
-    } as ChangeEvent<HTMLInputElement>)
+    if (value !== editedValue) {
+      onChange({
+        target: { value: editedValue },
+      } as ChangeEvent<HTMLInputElement>)
+    }
   }
 
   const cancel = () => {
@@ -60,7 +64,7 @@ export const InplaceEditAmountField = ({
   const setToRecommended = () => {
     invariant(recommendedValue != null, 'No recommended value')
     setEditedValue(recommendedValue)
-    if (!isEditing) {
+    if (!isEditing && value !== recommendedValue) {
       onChange({
         target: { value: recommendedValue },
       } as ChangeEvent<HTMLInputElement>)
@@ -80,7 +84,7 @@ export const InplaceEditAmountField = ({
   return (
     <NumberInput
       ref={inputRef}
-      readOnly={!isEditing}
+      readOnly={!isEditing || disabled}
       label={label}
       description={description}
       value={editedValue}
@@ -89,17 +93,28 @@ export const InplaceEditAmountField = ({
       after={
         <div className="mr-2 flex items-center gap-2">
           {recommendedValue ? (
-            <GhostButton size="tiny" onClick={setToRecommended}>
+            <GhostButton
+              disabled={disabled}
+              size="tiny"
+              onClick={setToRecommended}
+            >
               {compactAmount(recommendedValue)}
             </GhostButton>
           ) : null}
 
           {isEditing ? (
             <>
-              <SecondaryButton iconOnly size="small" icon={X} onClick={cancel}>
+              <SecondaryButton
+                disabled={disabled}
+                iconOnly
+                size="small"
+                icon={X}
+                onClick={cancel}
+              >
                 Cancel
               </SecondaryButton>
               <PrimaryButton
+                disabled={disabled}
                 iconOnly
                 size="small"
                 icon={Check}
@@ -109,7 +124,13 @@ export const InplaceEditAmountField = ({
               </PrimaryButton>
             </>
           ) : (
-            <GhostButton iconOnly size="small" icon={SquarePen} onClick={edit}>
+            <GhostButton
+              disabled={disabled}
+              iconOnly
+              size="small"
+              icon={SquarePen}
+              onClick={edit}
+            >
               Edit amount
             </GhostButton>
           )}
