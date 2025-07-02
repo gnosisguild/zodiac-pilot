@@ -100,6 +100,8 @@ describe('Root', () => {
         {
           type: CompanionAppMessageType.PING,
           signedIn: true,
+          lastAccountsUpdate: new Date(),
+          lastRoutesUpdate: new Date(),
         } satisfies CompanionAppMessage,
         { id: chromeMock.runtime.id, tab: mockedTab },
         vi.fn(),

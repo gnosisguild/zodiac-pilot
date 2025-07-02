@@ -9,7 +9,12 @@ import {
 } from '@/components'
 import { ProvideChains } from '@/routes-ui'
 import { getSignInUrl } from '@workos-inc/authkit-react-router'
-import { dbClient, getActiveFeatures } from '@zodiac/db'
+import {
+  dbClient,
+  getActiveFeatures,
+  getLastAccountsUpdateTime,
+  getLastRoutesUpdateTime,
+} from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
 import {
   Divider,
@@ -59,12 +64,19 @@ export const loader = async (args: Route.LoaderArgs) =>
           features: routeFeatures,
           signInUrl: await getSignInUrl(url.pathname),
           isSystemAdmin: false,
+          lastAccountsUpdate: null,
+          lastRoutesUpdate: null,
         }
       }
 
       const db = dbClient()
 
-      const features = await getActiveFeatures(db, tenant.id)
+      const [features, lastAccountsUpdate, lastRoutesUpdate] =
+        await Promise.all([
+          getActiveFeatures(db, tenant.id),
+          getLastAccountsUpdateTime(db, tenant.id),
+          getLastRoutesUpdateTime(db, tenant.id),
+        ])
 
       return {
         chains,
@@ -73,19 +85,33 @@ export const loader = async (args: Route.LoaderArgs) =>
         features: [...features.map(({ name }) => name), ...routeFeatures],
         signInUrl: await getSignInUrl(url.pathname),
         isSystemAdmin: getAdminOrganizationId() === workOsOrganization.id,
+        lastAccountsUpdate,
+        lastRoutesUpdate,
       }
     },
   )
 
 const PageLayout = ({
-  loaderData: { chains, user, features, signInUrl, role, isSystemAdmin },
+  loaderData: {
+    chains,
+    user,
+    features,
+    signInUrl,
+    role,
+    isSystemAdmin,
+    lastAccountsUpdate,
+    lastRoutesUpdate,
+  },
 }: Route.ComponentProps) => {
   return (
     <FakeBrowser>
       <ProvideUser user={user}>
         <FeatureProvider features={features}>
           <ProvideChains chains={chains}>
-            <ProvidePilotStatus>
+            <ProvidePilotStatus
+              lastAccountsUpdate={lastAccountsUpdate}
+              lastRoutesUpdate={lastRoutesUpdate}
+            >
               <SidebarLayout
                 navbar={null}
                 sidebar={

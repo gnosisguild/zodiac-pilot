@@ -1,6 +1,7 @@
 export { createRoute } from './createRoute'
 export { findDefaultRoute } from './findDefaultRoute'
 export { getDefaultRoute, type DefaultRoute } from './getDefaultRoute'
+export { getLastRoutesUpdateTime } from './getLastRoutesUpdateTime'
 export { getRoute } from './getRoute'
 export { getRoutes } from './getRoutes'
 export { removeDefaultRoute } from './removeDefaultRoute'

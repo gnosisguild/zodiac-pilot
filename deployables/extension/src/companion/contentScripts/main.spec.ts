@@ -59,6 +59,8 @@ describe('Companion App Content Script', () => {
         {
           type: CompanionAppMessageType.PING,
           signedIn: false,
+          lastAccountsUpdate: new Date(),
+          lastRoutesUpdate: new Date(),
         } satisfies CompanionAppMessage,
       ],
       [

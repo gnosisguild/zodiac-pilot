@@ -10,6 +10,8 @@ import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type DisconnectWhenUnreachableOptions = {
   signedIn: boolean
+  lastAccountsUpdate: Date | null
+  lastRoutesUpdate: Date | null
   connected: boolean
   onDisconnect: () => void
   onHeartBeat: (lastTransactionExecutedAt: string | null) => void
@@ -20,6 +22,8 @@ export const useDisconnectWhenUnreachable = ({
   onHeartBeat,
   connected,
   signedIn,
+  lastAccountsUpdate,
+  lastRoutesUpdate,
 }: DisconnectWhenUnreachableOptions) => {
   const onDisconnectRef = useStableHandler(onDisconnect)
   const onHeartBeatRef = useStableHandler(onHeartBeat)
@@ -60,6 +64,8 @@ export const useDisconnectWhenUnreachable = ({
         {
           type: CompanionAppMessageType.PING,
           signedIn,
+          lastAccountsUpdate,
+          lastRoutesUpdate,
         } satisfies CompanionAppMessage,
         '*',
       )
