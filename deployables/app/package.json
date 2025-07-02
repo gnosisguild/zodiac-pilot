@@ -52,7 +52,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "1.45.1",
+    "@dotenvx/dotenvx": "1.45.2",
     "@playwright/test": "1.53.2",
     "@react-router/dev": "7.6.3",
     "@tailwindcss/vite": "4.1.11",
