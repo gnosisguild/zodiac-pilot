@@ -84,6 +84,12 @@ export const InplaceEditAmountField = ({
     }
   }
 
+  const recommendedButton = recommendedValue ? (
+    <GhostButton disabled={disabled} size="tiny" onClick={setToRecommended}>
+      {compactAmount(recommendedValue)}
+    </GhostButton>
+  ) : null
+
   return (
     <NumberInput
       ref={inputRef}
@@ -95,20 +101,16 @@ export const InplaceEditAmountField = ({
       onKeyDown={handleKeyDown}
       after={
         <div className="mr-2 flex items-center gap-2">
-          {recommendedValue ? (
+          {recommendedDescription && recommendedButton ? (
             <Popover
               position="top"
               popover={<div className="text-xs">{recommendedDescription}</div>}
             >
-              <GhostButton
-                disabled={disabled}
-                size="tiny"
-                onClick={setToRecommended}
-              >
-                {compactAmount(recommendedValue)}
-              </GhostButton>
+              {recommendedButton}
             </Popover>
-          ) : null}
+          ) : (
+            recommendedButton
+          )}
 
           {isEditing ? (
             <>
