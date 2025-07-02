@@ -28,6 +28,10 @@ const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 }
 
+const updatedTimestamp = {
+  updatedAt: timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+}
+
 const deletable = {
   deleted: boolean().default(false).notNull(),
   deletedById: uuid()
@@ -44,6 +48,7 @@ export const TenantTable = pgTable(
     externalId: text(),
 
     ...createdTimestamp,
+    ...updatedTimestamp,
   },
   (table) => [index().on(table.externalId)],
 )
@@ -69,6 +74,7 @@ export const UserTable = pgTable(
     fullName: text().notNull().default(''),
     externalId: text(),
     ...createdTimestamp,
+    ...updatedTimestamp,
   },
   (table) => [index().on(table.externalId)],
 )
@@ -159,6 +165,7 @@ export const SubscriptionPlanTable = pgTable(
     priority: integer().notNull().default(0),
 
     ...createdTimestamp,
+    ...updatedTimestamp,
     ...deletable,
   },
   (table) => [index().on(table.deletedById)],
@@ -181,6 +188,7 @@ export const ActiveSubscriptionTable = pgTable(
 
     ...tenantReference,
     ...createdTimestamp,
+    ...updatedTimestamp,
   },
   (table) => [index().on(table.subscriptionPlanId), index().on(table.tenantId)],
 )
@@ -209,6 +217,7 @@ export const AccountTable = pgTable(
 
     ...tenantReference,
     ...createdTimestamp,
+    ...updatedTimestamp,
     ...deletable,
   },
   (table) => [index().on(table.tenantId), index().on(table.createdById)],
@@ -228,6 +237,7 @@ export const accountSchema = createSelectSchema(AccountTable, {
   chainId: chainIdSchema,
   address: addressSchema,
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().optional().nullable(),
 })
 
@@ -247,6 +257,7 @@ export const WalletTable = pgTable(
     address: text().$type<HexAddress>().notNull(),
 
     ...createdTimestamp,
+    ...updatedTimestamp,
     ...deletable,
   },
   (table) => [index().on(table.belongsToId)],
@@ -280,6 +291,7 @@ export const RouteTable = pgTable(
     ...tenantReference,
     ...userReference,
     ...createdTimestamp,
+    ...updatedTimestamp,
   },
   (table) => [
     index().on(table.fromId),
@@ -301,6 +313,7 @@ export type RouteCreateInput = typeof RouteTable.$inferInsert
 export const routeSchema = createSelectSchema(RouteTable, {
   waypoints: waypointsSchema,
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 })
 
 const RouteRelations = relations(RouteTable, ({ one }) => ({

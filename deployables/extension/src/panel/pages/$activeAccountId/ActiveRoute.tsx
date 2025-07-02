@@ -2,12 +2,15 @@ import { getRoute, getRoutes } from '@/accounts'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
 import { invariantResponse } from '@epic-web/invariant'
+import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { Divider } from '@zodiac/ui'
+import { useRef } from 'react'
 import {
   Outlet,
   redirect,
   useLoaderData,
   useNavigate,
+  useRevalidator,
   type LoaderFunctionArgs,
   type Params,
 } from 'react-router'
@@ -35,6 +38,8 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 const ActiveRoute = () => {
   const { route, routes, accountId } = useLoaderData<typeof loader>()
   const navigate = useNavigate()
+
+  useRevalidateOnRoutesUpdate()
 
   return (
     <ProvideExecutionRoute route={route}>
@@ -70,4 +75,17 @@ const getActiveRouteId = (params: Params): string => {
   invariantResponse(routeId != null, 'Could not find routeId param')
 
   return routeId
+}
+
+const useRevalidateOnRoutesUpdate = () => {
+  const lastUpdate = useRef<Date>(null)
+  const revalidator = useRevalidator()
+
+  useTabMessageHandler(CompanionAppMessageType.PING, ({ lastRoutesUpdate }) => {
+    if (lastUpdate.current !== lastRoutesUpdate) {
+      revalidator.revalidate()
+    }
+
+    lastUpdate.current = lastRoutesUpdate
+  })
 }

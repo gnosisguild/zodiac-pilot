@@ -35,6 +35,8 @@ type CompanionAppRequestForkInfoMessage = {
 type CompanionAppPingMessage = {
   type: CompanionAppMessageType.PING
   signedIn: boolean
+  lastAccountsUpdate: Date | null
+  lastRoutesUpdate: Date | null
 }
 
 type CompanionAppRequestVersionMessage = {

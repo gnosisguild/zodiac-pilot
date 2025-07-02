@@ -32,14 +32,14 @@ export const userFactory = createFactory<
     return user
   },
   createWithoutDb(data) {
-    return Object.assign(
-      {
-        id: randomUUID(),
-        createdAt: new Date(),
-        fullName: faker.person.fullName(),
-        externalId: randomUUID(),
-      },
-      data,
-    )
+    return {
+      id: randomUUID(),
+      createdAt: new Date(),
+      fullName: faker.person.fullName(),
+      externalId: randomUUID(),
+      updatedAt: null,
+
+      ...data,
+    }
   },
 })

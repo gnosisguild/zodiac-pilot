@@ -21,13 +21,13 @@ export const tenantFactory = createFactory<TenantCreateInput, Tenant>({
     return tenant
   },
   createWithoutDb(data) {
-    return Object.assign(
-      {
-        createdAt: new Date(),
-        id: randomUUID(),
-        externalId: randomUUID(),
-      },
-      data,
-    )
+    return {
+      createdAt: new Date(),
+      id: randomUUID(),
+      externalId: randomUUID(),
+      updatedAt: null,
+
+      ...data,
+    }
   },
 })

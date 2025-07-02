@@ -25,11 +25,13 @@ import {
 } from '@zodiac/messages'
 import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
+import { useRef } from 'react'
 import {
   Outlet,
   redirect,
   useLoaderData,
   useNavigation,
+  useRevalidator,
   useSubmit,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
@@ -136,6 +138,8 @@ const ActiveRoute = () => {
   const submit = useSubmit()
   const navigation = useNavigation()
 
+  useRevalidateOnAccountsUpdate()
+
   useTabMessageHandler(
     CompanionAppMessageType.REQUEST_ACTIVE_ROUTE,
     async (_, { tabId }) => {
@@ -213,3 +217,19 @@ const ActiveRoute = () => {
 }
 
 export default ActiveRoute
+
+const useRevalidateOnAccountsUpdate = () => {
+  const lastUpdate = useRef<Date>(null)
+  const revalidator = useRevalidator()
+
+  useTabMessageHandler(
+    CompanionAppMessageType.PING,
+    ({ lastAccountsUpdate }) => {
+      if (lastUpdate.current !== lastAccountsUpdate) {
+        revalidator.revalidate()
+      }
+
+      lastUpdate.current = lastAccountsUpdate
+    },
+  )
+}

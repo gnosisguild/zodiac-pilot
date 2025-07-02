@@ -29,15 +29,15 @@ export const walletFactory = createFactory<
     return wallet
   },
   createWithoutDb(data) {
-    return Object.assign(
-      {
-        id: randomUUID(),
-        createdAt: new Date(),
-        deleted: false,
-        deletedById: null,
-        deletedAt: null,
-      },
-      data,
-    )
+    return {
+      id: randomUUID(),
+      createdAt: new Date(),
+      deleted: false,
+      deletedById: null,
+      deletedAt: null,
+      updatedAt: null,
+
+      ...data,
+    }
   },
 })

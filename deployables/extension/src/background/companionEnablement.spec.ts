@@ -106,6 +106,8 @@ describe('Companion Enablement', () => {
         {
           type: CompanionAppMessageType.PING,
           signedIn: false,
+          lastAccountsUpdate: new Date(),
+          lastRoutesUpdate: new Date(),
         } satisfies CompanionAppMessage,
         { tab },
         vi.fn(),
@@ -131,6 +133,8 @@ describe('Companion Enablement', () => {
         {
           type: CompanionAppMessageType.PING,
           signedIn: false,
+          lastAccountsUpdate: new Date(),
+          lastRoutesUpdate: new Date(),
         } satisfies CompanionAppMessage,
         { tab },
         vi.fn(),
