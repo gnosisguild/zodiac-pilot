@@ -3,18 +3,15 @@ import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  createAccount,
   createRoute,
-  createWallet,
   dbClient,
   deleteAccount,
-  findAccountByAddress,
   findActiveAccount,
   findDefaultRoute,
-  findWalletByAddress,
   getAccount,
   getAccounts,
-  getRoute,
+  getOrCreateAccount,
+  getOrCreateWallet,
   setDefaultRoute,
 } from '@zodiac/db'
 import { getString, getUUID } from '@zodiac/form-data'
@@ -37,7 +34,7 @@ import {
 } from '@zodiac/ui'
 import { Suspense, useId, type PropsWithChildren } from 'react'
 import { Await, href, useRevalidator } from 'react-router'
-import { splitPrefixedAddress, unprefixAddress } from 'ser-kit'
+import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/list-accounts'
 import { Intent } from './intents'
 import { loadActiveRouteId } from './loadActiveRouteId'
@@ -126,59 +123,38 @@ export const action = async (args: Route.ActionArgs) =>
               return { error: 'Route has no initiator' }
             }
 
-            const existingAccount = await findAccountByAddress(tx, {
-              tenantId: tenant.id,
-              prefixedAddress: route.avatar,
-            })
-            const existingWallet = await findWalletByAddress(
-              tx,
-              user,
-              unprefixAddress(route.initiator),
-            )
+            const [, initiator] = splitPrefixedAddress(route.initiator)
 
-            if (existingAccount != null && existingWallet != null) {
-              const existingDefaultRoute = await findDefaultRoute(
+            const [account, wallet] = await Promise.all([
+              getOrCreateAccount(tx, tenant, user, {
+                chainId,
+                address,
+                label: route.label,
+              }),
+              getOrCreateWallet(tx, user, {
+                label: 'Unnamed wallet',
+                address: initiator,
+              }),
+            ])
+
+            if (route.waypoints != null) {
+              const defaultRoute = await findDefaultRoute(
                 tx,
                 tenant,
                 user,
-                existingAccount.id,
+                account.id,
               )
 
-              if (existingDefaultRoute != null) {
-                const route = await getRoute(
-                  dbClient(),
-                  existingDefaultRoute.routeId,
-                )
-
-                if (route.fromId === existingWallet.id) {
-                  return {
-                    error: `The upload was canceled because it would conflict with the account configuration for the account "${existingAccount.label}"`,
-                  }
-                }
-              }
-            }
-
-            const account = await createAccount(tx, tenant, user, {
-              chainId,
-              address,
-              label: route.label,
-            })
-
-            const [, initiator] = splitPrefixedAddress(route.initiator)
-
-            const wallet = await createWallet(tx, user, {
-              label: 'Unnamed wallet',
-              address: initiator,
-            })
-
-            if (route.waypoints != null) {
               const remoteRoute = await createRoute(tx, tenant.id, {
+                label: route.label,
                 walletId: wallet.id,
                 accountId: account.id,
                 waypoints: route.waypoints,
               })
 
-              await setDefaultRoute(tx, tenant, user, remoteRoute)
+              if (defaultRoute == null) {
+                await setDefaultRoute(tx, tenant, user, remoteRoute)
+              }
             }
 
             return null

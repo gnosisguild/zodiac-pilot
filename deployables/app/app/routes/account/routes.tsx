@@ -3,10 +3,10 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   createRoute,
-  createWallet,
   dbClient,
   findDefaultRoute,
   getAccount,
+  getOrCreateWallet,
   getRoute,
   getRoutes,
   getWallet,
@@ -21,7 +21,6 @@ import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
 import {
   AddressSelect,
-  Feature,
   Form,
   Modal,
   PrimaryButton,
@@ -197,7 +196,7 @@ export const action = (args: Route.ActionArgs) =>
           const initiator = getHexString(data, 'initiator')
           const label = getString(data, 'label')
 
-          const wallet = await createWallet(dbClient(), user, {
+          const wallet = await getOrCreateWallet(dbClient(), user, {
             label: 'Unnamed wallet',
             address: initiator,
           })
@@ -261,26 +260,22 @@ const Routes = ({
 
   return (
     <>
-      <Feature feature="multiple-routes">
-        <div
-          role="tablist"
-          className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
-        >
-          <div className="flex items-center gap-2">
-            {routes.map((route) => (
-              <RouteTab
-                key={route.id}
-                route={route}
-                isDefault={
-                  defaultRouteId != null && route.id === defaultRouteId
-                }
-              />
-            ))}
-          </div>
-
-          <AddRoute />
+      <div
+        role="tablist"
+        className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
+      >
+        <div className="flex items-center gap-2">
+          {routes.map((route) => (
+            <RouteTab
+              key={route.id}
+              route={route}
+              isDefault={defaultRouteId != null && route.id === defaultRouteId}
+            />
+          ))}
         </div>
-      </Feature>
+
+        <AddRoute />
+      </div>
 
       <input
         type="hidden"

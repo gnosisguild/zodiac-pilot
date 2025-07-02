@@ -1,5 +1,5 @@
 import { authorizedAction } from '@/auth-server'
-import { createWallet, dbClient, findWalletByAddress } from '@zodiac/db'
+import { dbClient, findWalletByAddress, getOrCreateWallet } from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import {
@@ -39,7 +39,7 @@ export const action = (args: Route.ActionArgs) =>
         }
       }
 
-      await createWallet(dbClient(), user, { label, address })
+      await getOrCreateWallet(dbClient(), user, { label, address })
 
       return redirect(href('/profile'))
     },

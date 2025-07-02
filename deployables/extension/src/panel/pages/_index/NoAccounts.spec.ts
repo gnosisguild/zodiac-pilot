@@ -20,7 +20,7 @@ import { describe, expect, it, vi } from 'vitest'
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockFindRemoteActiveAccount = vi.mocked(findRemoteActiveAccount)
 
-describe('No routes', () => {
+describe('No accounts', () => {
   describe('Default redirects', () => {
     describe('Logged out', () => {
       it('redirects to the last used route if one is present', async () => {
@@ -29,7 +29,7 @@ describe('No routes', () => {
 
         await render('/')
 
-        await expectRouteToBe('/test-route/transactions')
+        await expectRouteToBe('/test-route/test-route')
       })
 
       it('redirects to the first route if no route was last used', async () => {
@@ -37,7 +37,7 @@ describe('No routes', () => {
 
         await render('/')
 
-        await expectRouteToBe('/first-route/transactions')
+        await expectRouteToBe('/first-route/first-route')
       })
     })
 
@@ -51,7 +51,7 @@ describe('No routes', () => {
 
         await render('/')
 
-        await expectRouteToBe(`/${account.id}/transactions`)
+        await expectRouteToBe(`/${account.id}/no-routes`)
       })
 
       it('redirects to the first route if no route was last used', async () => {
@@ -63,12 +63,12 @@ describe('No routes', () => {
 
         await render('/')
 
-        await expectRouteToBe(`/${account.id}/transactions`)
+        await expectRouteToBe(`/${account.id}/no-routes`)
       })
     })
   })
 
-  describe('No routes available', () => {
+  describe('No accounts available', () => {
     it('allows to create a new route', async () => {
       mockCompanionAppUrl('http://localhost')
 
@@ -109,7 +109,7 @@ describe('No routes', () => {
             mockedTab,
           )
 
-          await expectRouteToBe(`/${account.id}/transactions`)
+          await expectRouteToBe(`/${account.id}/no-routes`)
         })
       })
 
@@ -121,7 +121,7 @@ describe('No routes', () => {
 
           await mockIncomingAccountLaunch({ route }, mockedTab)
 
-          await expectRouteToBe(`/${route.id}/transactions`)
+          await expectRouteToBe(`/${route.id}/${route.id}`)
         })
       })
     })

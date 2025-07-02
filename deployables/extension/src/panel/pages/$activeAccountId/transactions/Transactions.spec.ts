@@ -1,7 +1,8 @@
 import {
   createProposal,
-  findRemoteActiveRoute,
+  findRemoteDefaultRoute,
   getRemoteAccount,
+  getRemoteRoute,
 } from '@/companion'
 import { getRoute, saveLastUsedAccountId } from '@/execution-routes'
 import {
@@ -46,7 +47,8 @@ import { checkPermissions, PermissionViolation } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
-const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockGetRemoteRoute = vi.mocked(getRemoteRoute)
+const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
 
 vi.mock('@/transactions', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/transactions')>()
@@ -117,7 +119,7 @@ describe('Transactions', () => {
     it('hides the info when Pilot is ready', async () => {
       await mockRoute({ id: 'test-route' })
 
-      await render('/test-route/transactions')
+      await render('/test-route')
 
       expect(
         await screen.findByRole('heading', { name: 'Recording transactions' }),
@@ -127,7 +129,7 @@ describe('Transactions', () => {
     it('intercepts transactions from the provider', async () => {
       await mockRoute({ id: 'test-route' })
 
-      await render('/test-route/transactions')
+      await render('/test-route')
 
       MockProvider.getInstance().emit('transaction', createTransaction())
 
@@ -141,7 +143,7 @@ describe('Transactions', () => {
     it('lists transactions', async () => {
       await mockRoute({ id: 'test-route' })
 
-      await render('/test-route/transactions', {
+      await render('/test-route', {
         initialState: { executed: [createConfirmedTransaction()] },
       })
 
@@ -155,7 +157,7 @@ describe('Transactions', () => {
 
       const now = new Date()
 
-      await render('/test-route/transactions', {
+      await render('/test-route', {
         initialState: {
           executed: [createConfirmedTransaction({ executedAt: now })],
         },
@@ -176,7 +178,7 @@ describe('Transactions', () => {
         hash: randomHex(),
       })
 
-      await render('/test-route/transactions', {
+      await render('/test-route', {
         initialState: { pending: [createTransaction()] },
       })
 
@@ -214,7 +216,7 @@ describe('Transactions', () => {
         hash: randomHex(),
       })
 
-      await render(`/test-route/transactions`, {
+      await render(`/test-route`, {
         initialState: { pending: [createTransaction()] },
       })
 
@@ -232,7 +234,7 @@ describe('Transactions', () => {
           initiator: randomPrefixedAddress(),
         })
 
-        await render('/test-route/transactions')
+        await render('/test-route')
 
         expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
       })
@@ -246,7 +248,7 @@ describe('Transactions', () => {
 
         mockCompanionAppUrl('http://localhost')
 
-        await render('/test-route/transactions', {
+        await render('/test-route', {
           initialState: { executed: [transaction] },
         })
 
@@ -263,7 +265,7 @@ describe('Transactions', () => {
 
         mockCompanionAppUrl('http://localhost')
 
-        await render('/test-route/transactions')
+        await render('/test-route')
 
         await userEvent.click(
           screen.getByRole('button', {
@@ -288,11 +290,14 @@ describe('Transactions', () => {
         const route = routeFactory.createWithoutDb(account, wallet)
 
         mockGetRemoteAccount.mockResolvedValue(account)
-        mockFindRemoteActiveRoute.mockResolvedValue(
+        mockFindRemoteDefaultRoute.mockResolvedValue(
+          toExecutionRoute({ route, wallet, account }),
+        )
+        mockGetRemoteRoute.mockResolvedValue(
           toExecutionRoute({ route, wallet, account }),
         )
 
-        await render(`/${account.id}/transactions`)
+        await render(`/${account.id}`)
 
         expect(screen.getByRole('button', { name: 'Sign' })).toBeDisabled()
       })
@@ -306,7 +311,10 @@ describe('Transactions', () => {
         const route = routeFactory.createWithoutDb(account, wallet)
 
         mockGetRemoteAccount.mockResolvedValue(account)
-        mockFindRemoteActiveRoute.mockResolvedValue(
+        mockFindRemoteDefaultRoute.mockResolvedValue(
+          toExecutionRoute({ route, wallet, account }),
+        )
+        mockGetRemoteRoute.mockResolvedValue(
           toExecutionRoute({ route, wallet, account }),
         )
         mockCreateProposal.mockResolvedValue({ proposalId: 'test-proposal-id' })
@@ -315,7 +323,7 @@ describe('Transactions', () => {
 
         mockCompanionAppUrl('http://localhost')
 
-        await render(`/${account.id}/transactions`, {
+        await render(`/${account.id}`, {
           initialState: { executed: [transaction] },
         })
 
@@ -323,7 +331,7 @@ describe('Transactions', () => {
 
         expect(chromeMock.tabs.create).toHaveBeenCalledWith({
           active: true,
-          url: `http://localhost/submit/proposal/test-proposal-id`,
+          url: `http://localhost/submit/proposal/test-proposal-id/${route.id}`,
         })
       })
 
@@ -336,7 +344,7 @@ describe('Transactions', () => {
 
         mockCompanionAppUrl('http://localhost')
 
-        await render(`/${account.id}/transactions`)
+        await render(`/${account.id}`)
 
         await userEvent.click(
           screen.getByRole('button', {
@@ -356,7 +364,7 @@ describe('Transactions', () => {
     it('stores route data it receives from the companion app', async () => {
       const currentRoute = await mockRoute({ label: 'Test', id: 'test-route' })
 
-      const { mockedTab } = await render('/test-route/transactions')
+      const { mockedTab } = await render('/test-route')
 
       const updatedRoute = { ...currentRoute, label: 'Updated' }
 
@@ -370,7 +378,7 @@ describe('Transactions', () => {
 
       await saveLastUsedAccountId(route.id)
 
-      const { mockedTab } = await render('/test-route/transactions', {
+      const { mockedTab } = await render('/test-route', {
         initialState: { executed: [createConfirmedTransaction()] },
       })
 
@@ -384,7 +392,7 @@ describe('Transactions', () => {
     it('provides the saved route back', async () => {
       const currentRoute = await mockRoute({ id: 'test-route' })
 
-      const { mockedTab } = await render('/test-route/transactions', {
+      const { mockedTab } = await render('/test-route', {
         activeTab: { url: getCompanionAppUrl() },
       })
 
@@ -408,7 +416,7 @@ describe('Transactions', () => {
         })
         await saveLastUsedAccountId(currentRoute.id)
 
-        const { mockedTab } = await render('/test-route/transactions', {
+        const { mockedTab } = await render('/test-route', {
           initialState: { executed: [createConfirmedTransaction()] },
         })
 
@@ -432,7 +440,7 @@ describe('Transactions', () => {
         })
         await saveLastUsedAccountId(currentRoute.id)
 
-        const { mockedTab } = await render('/test-route/transactions', {
+        const { mockedTab } = await render('/test-route', {
           initialState: { executed: [createConfirmedTransaction()] },
         })
 
@@ -456,7 +464,7 @@ describe('Transactions', () => {
         })
         await saveLastUsedAccountId(currentRoute.id)
 
-        const { mockedTab } = await render('/test-route/transactions', {
+        const { mockedTab } = await render('/test-route', {
           initialState: { executed: [createConfirmedTransaction()] },
         })
 
@@ -480,7 +488,7 @@ describe('Transactions', () => {
         })
         await saveLastUsedAccountId(currentRoute.id)
 
-        const { mockedTab } = await render('/test-route/transactions')
+        const { mockedTab } = await render('/test-route')
 
         await mockIncomingRouteUpdate(
           {
@@ -521,7 +529,7 @@ describe('Transactions', () => {
         const currentRoute = await mockRoute({ id: 'test-route' })
         await saveLastUsedAccountId(currentRoute.id)
 
-        const { mockedTab } = await render('/test-route/transactions', {
+        const { mockedTab } = await render('/test-route', {
           initialState: { executed: [createConfirmedTransaction()] },
         })
 
@@ -560,7 +568,7 @@ describe('Transactions', () => {
         mockedTab,
       )
 
-      await expectRouteToBe(`/${account.id}/transactions`)
+      await expectRouteToBe(`/${account.id}/no-routes`)
     })
   })
 })

@@ -34,6 +34,7 @@ import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SignTransaction } from '../SignTransaction'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route } from './+types/sign'
+import { toSerRoute } from './toSerRoute'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Sign transaction bundle') },
@@ -54,11 +55,13 @@ export const loader = async (args: Route.LoaderArgs) =>
         getAccount(dbClient(), route.toId),
       ])
 
-      const executionRoute = toExecutionRoute({
-        wallet,
-        account,
-        route,
-      })
+      const executionRoute = toSerRoute(
+        toExecutionRoute({
+          wallet,
+          account,
+          route,
+        }),
+      )
 
       const [plan, queryRoutesResult, permissionCheckResult] =
         await Promise.all([
@@ -147,11 +150,13 @@ export const action = async (args: Route.ActionArgs) =>
         case Intent.PlanExecution: {
           const plan = await planExecution(
             metaTransactions,
-            toExecutionRoute({
-              wallet,
-              account,
-              route,
-            }),
+            toSerRoute(
+              toExecutionRoute({
+                wallet,
+                account,
+                route,
+              }),
+            ),
             {
               safeTransactionProperties: getNumberMap(data, 'customSafeNonce', {
                 mapValue: (nonce) => ({ nonce }),

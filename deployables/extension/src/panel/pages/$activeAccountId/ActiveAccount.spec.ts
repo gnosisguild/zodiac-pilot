@@ -1,7 +1,9 @@
 import {
-  findRemoteActiveRoute,
+  findRemoteDefaultRoute,
   getRemoteAccount,
   getRemoteAccounts,
+  getRemoteRoute,
+  getRemoteRoutes,
   saveRemoteActiveAccount,
 } from '@/companion'
 import {
@@ -35,7 +37,9 @@ mockCompanionAppUrl('http://companion-app.com')
 
 const mockGetRemoteAccount = vi.mocked(getRemoteAccount)
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
-const mockFindRemoteActiveRoute = vi.mocked(findRemoteActiveRoute)
+const mockGetRemoteRoute = vi.mocked(getRemoteRoute)
+const mockFindRemoteDefaultRoute = vi.mocked(findRemoteDefaultRoute)
+const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
 describe('Active Account', () => {
   describe('Account switch', () => {
@@ -54,7 +58,7 @@ describe('Active Account', () => {
         screen.getByRole('option', { name: 'Second route' }),
       )
 
-      await expectRouteToBe(`/second-route/transactions`)
+      await expectRouteToBe(`/second-route/second-route`)
     })
 
     it('lists routes from the zodiac os', async () => {
@@ -88,7 +92,13 @@ describe('Active Account', () => {
       })
       const route = routeFactory.createWithoutDb(account, wallet)
 
-      mockFindRemoteActiveRoute.mockResolvedValue(
+      mockGetRemoteRoutes.mockResolvedValue([
+        toExecutionRoute({ account, wallet, route }),
+      ])
+      mockFindRemoteDefaultRoute.mockResolvedValue(
+        toExecutionRoute({ account, wallet, route }),
+      )
+      mockGetRemoteRoute.mockResolvedValue(
         toExecutionRoute({ account, wallet, route }),
       )
       mockGetRemoteAccount.mockResolvedValue(account)
@@ -106,7 +116,7 @@ describe('Active Account', () => {
         await screen.findByRole('option', { name: 'Remote account' }),
       )
 
-      await expectRouteToBe(`/${account.id}/transactions`)
+      await expectRouteToBe(`/${account.id}/${route.id}`)
     })
 
     it('renders when an account from zodiac os is active', async () => {
@@ -202,7 +212,7 @@ describe('Active Account', () => {
       })
 
       describe('Remote accounts', () => {
-        it('is possible to edit the current route', async () => {
+        it('is possible to edit the current account', async () => {
           const tenant = tenantFactory.createWithoutDb()
           const user = userFactory.createWithoutDb(tenant)
           const account = accountFactory.createWithoutDb(tenant, user)
@@ -336,7 +346,7 @@ describe('Active Account', () => {
 
       await render('/deleted-account-id')
 
-      await expectRouteToBe('/')
+      await expectRouteToBe('/no-accounts')
     })
   })
 })

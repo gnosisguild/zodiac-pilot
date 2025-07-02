@@ -56,7 +56,7 @@ export const loader = async ({ params }: RouteType.LoaderArgs) => {
     currentRoute: {
       comparableId:
         route.initiator == null ? undefined : getRouteId(route.waypoints),
-      label: route.label,
+      label: route.label ?? undefined,
       initiator: route.initiator,
       avatar: route.avatar,
       waypoints:

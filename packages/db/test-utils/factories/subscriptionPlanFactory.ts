@@ -35,6 +35,7 @@ export const subscriptionPlanFactory = createFactory<
       deletedById: null,
       isDefault: false,
       priority: 0,
+      updatedAt: null,
 
       ...input,
     }

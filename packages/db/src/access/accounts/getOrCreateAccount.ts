@@ -6,12 +6,12 @@ import type { DBClient } from '../../dbClient'
 import { findAccountByAddress } from './findAccountByAddress'
 
 type CreateAccountOptions = {
-  label?: string
+  label?: string | null
   chainId: ChainId
   address: HexAddress
 }
 
-export const createAccount = async (
+export const getOrCreateAccount = async (
   db: DBClient,
   tenant: Tenant,
   user: User,

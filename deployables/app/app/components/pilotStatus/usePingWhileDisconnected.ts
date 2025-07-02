@@ -10,6 +10,8 @@ import { useActiveWhenVisible } from './useActiveWhenVisible'
 
 type PingWhileDisconnectedOptions = {
   signedIn: boolean
+  lastAccountsUpdate: Date | null
+  lastRoutesUpdate: Date | null
   connected: boolean
   onConnect: (lastTransactionExecutedAt: string | null) => void
 }
@@ -18,6 +20,8 @@ export const usePingWhileDisconnected = ({
   onConnect,
   connected,
   signedIn,
+  lastAccountsUpdate,
+  lastRoutesUpdate,
 }: PingWhileDisconnectedOptions) => {
   const onConnectRef = useStableHandler(onConnect)
   const active = useActiveWhenVisible()
@@ -36,6 +40,8 @@ export const usePingWhileDisconnected = ({
         {
           type: CompanionAppMessageType.PING,
           signedIn,
+          lastAccountsUpdate,
+          lastRoutesUpdate,
         } satisfies CompanionAppMessage,
         '*',
       )
@@ -54,5 +60,12 @@ export const usePingWhileDisconnected = ({
       window.removeEventListener('message', handlePong)
       clearInterval(interval)
     }
-  }, [active, connected, onConnectRef, signedIn])
+  }, [
+    active,
+    connected,
+    lastAccountsUpdate,
+    lastRoutesUpdate,
+    onConnectRef,
+    signedIn,
+  ])
 }

@@ -39,7 +39,7 @@ import { Transaction } from './Transaction'
 
 export const action = async ({
   request,
-  params: { activeAccountId },
+  params: { activeAccountId, routeId },
 }: ActionFunctionArgs) => {
   const data = await request.formData()
 
@@ -65,6 +65,11 @@ export const action = async ({
         'Can only create proposals for remote accounts',
       )
 
+      invariantResponse(
+        routeId != null,
+        'No active route selected to create the proposal',
+      )
+
       const { proposalId } = await createProposal(
         activeAccountId,
         transaction,
@@ -75,7 +80,7 @@ export const action = async ({
 
       await chrome.tabs.create({
         active: true,
-        url: `${getCompanionAppUrl()}/submit/proposal/${proposalId}`,
+        url: `${getCompanionAppUrl()}/submit/proposal/${proposalId}/${routeId}`,
       })
 
       return null
