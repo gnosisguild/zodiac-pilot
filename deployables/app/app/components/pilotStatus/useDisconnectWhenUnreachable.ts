@@ -78,5 +78,13 @@ export const useDisconnectWhenUnreachable = ({
 
       clearInterval(interval)
     }
-  }, [active, connected, onDisconnectRef, onHeartBeatRef, signedIn])
+  }, [
+    active,
+    connected,
+    lastAccountsUpdate,
+    lastRoutesUpdate,
+    onDisconnectRef,
+    onHeartBeatRef,
+    signedIn,
+  ])
 }

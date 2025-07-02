@@ -237,6 +237,7 @@ export const accountSchema = createSelectSchema(AccountTable, {
   chainId: chainIdSchema,
   address: addressSchema,
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().optional().nullable(),
 })
 

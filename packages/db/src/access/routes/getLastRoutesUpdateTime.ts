@@ -3,8 +3,8 @@ import type { DBClient } from '../../dbClient'
 
 export const getLastRoutesUpdateTime = async (db: DBClient, tenantId: UUID) => {
   const lastUpdatedRoute = await db.query.route.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.tenantId, tenantId)
+    where(fields, { eq, and, isNotNull }) {
+      return and(eq(fields.tenantId, tenantId), isNotNull(fields.updatedAt))
     },
     orderBy(fields, { desc }) {
       return desc(fields.updatedAt)

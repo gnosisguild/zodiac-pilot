@@ -6,8 +6,12 @@ export const getLastAccountsUpdateTime = async (
   tenantId: UUID,
 ) => {
   const lastUpdatedAccount = await db.query.account.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.tenantId, tenantId)
+    where(fields, { eq, and, isNotNull }) {
+      return and(
+        eq(fields.tenantId, tenantId),
+        isNotNull(fields.updatedAt),
+        eq(fields.deleted, false),
+      )
     },
     orderBy(fields, { desc }) {
       return desc(fields.updatedAt)

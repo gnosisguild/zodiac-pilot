@@ -2,10 +2,16 @@ import { invariant } from '@epic-web/invariant'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
-export const getAccount = async (db: DBClient, accountId: UUID) => {
+type GetAccountOptions = { deleted?: boolean }
+
+export const getAccount = async (
+  db: DBClient,
+  accountId: UUID,
+  { deleted = false }: GetAccountOptions = {},
+) => {
   const account = await db.query.account.findFirst({
-    where(fields, { eq }) {
-      return eq(fields.id, accountId)
+    where(fields, { eq, and }) {
+      return and(eq(fields.id, accountId), eq(fields.deleted, deleted))
     },
   })
 
