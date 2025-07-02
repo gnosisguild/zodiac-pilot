@@ -313,6 +313,7 @@ export type RouteCreateInput = typeof RouteTable.$inferInsert
 export const routeSchema = createSelectSchema(RouteTable, {
   waypoints: waypointsSchema,
   createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
 })
 
 const RouteRelations = relations(RouteTable, ({ one }) => ({
