@@ -59,9 +59,7 @@ export const useDispatch = () => {
 export const useTransactions = () => {
   const state = useContext(TransactionsContext)
 
-  return [...state.pending, ...state.executed].toSorted(
-    (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-  )
+  return [...state.executed, ...state.pending]
 }
 
 export const useTransaction = (transactionId: string) => {
