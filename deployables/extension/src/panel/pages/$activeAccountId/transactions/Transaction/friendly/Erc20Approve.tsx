@@ -135,16 +135,6 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
           editApprovedAmount(ev.target.value)
         }}
       />
-      {/* <TokenValue
-          symbol={symbol}
-          action={
-            <GhostButton iconOnly size="small" icon={SquarePen}>
-              Edit approve amount
-            </GhostButton>
-          }
-        >
-          {formattedAmount}
-        </TokenValue> */}
     </>
   )
 }
