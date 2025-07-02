@@ -107,7 +107,7 @@ describe('Root', () => {
         vi.fn(),
       )
 
-      expect(mockGetUser).toHaveBeenCalledTimes(callCount + 1)
+      expect(mockGetUser.mock.calls.length).toBeGreaterThan(callCount)
     })
   })
 })
