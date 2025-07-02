@@ -129,6 +129,7 @@ export const Body = ({ transactionId }: { transactionId: string }) => {
         label="Approved amount"
         description={symbol}
         recommendedValue={formattedBalance}
+        recommendedDescription="Use current balance"
         disabled={pendingTransactions.length > 0}
         onChange={(ev) => {
           editApprovedAmount(ev.target.value)

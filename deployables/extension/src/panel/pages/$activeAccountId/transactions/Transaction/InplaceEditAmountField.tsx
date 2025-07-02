@@ -2,6 +2,7 @@ import { invariant } from '@epic-web/invariant'
 import {
   GhostButton,
   NumberInput,
+  Popover,
   PrimaryButton,
   SecondaryButton,
 } from '@zodiac/ui'
@@ -17,6 +18,7 @@ import {
 interface Props {
   value: `${number}`
   recommendedValue?: `${number}`
+  recommendedDescription?: string
   label: string
   description?: string
   onChange: ChangeEventHandler<HTMLInputElement>
@@ -26,6 +28,7 @@ interface Props {
 export const InplaceEditAmountField = ({
   value,
   recommendedValue,
+  recommendedDescription,
   label,
   description,
   onChange,
@@ -93,13 +96,18 @@ export const InplaceEditAmountField = ({
       after={
         <div className="mr-2 flex items-center gap-2">
           {recommendedValue ? (
-            <GhostButton
-              disabled={disabled}
-              size="tiny"
-              onClick={setToRecommended}
+            <Popover
+              position="top"
+              popover={<div className="text-xs">{recommendedDescription}</div>}
             >
-              {compactAmount(recommendedValue)}
-            </GhostButton>
+              <GhostButton
+                disabled={disabled}
+                size="tiny"
+                onClick={setToRecommended}
+              >
+                {compactAmount(recommendedValue)}
+              </GhostButton>
+            </Popover>
           ) : null}
 
           {isEditing ? (
