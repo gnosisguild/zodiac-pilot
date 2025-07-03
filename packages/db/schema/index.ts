@@ -132,6 +132,13 @@ export const WorkspaceTable = pgTable(
 export type Workspace = typeof WorkspaceTable.$inferSelect
 export type WorkspaceCreateInput = typeof WorkspaceTable.$inferInsert
 
+const workspaceReference = {
+  workspaceId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => WorkspaceTable.id, { onDelete: 'cascade' }),
+}
+
 export const FeatureTable = pgTable(
   'Feature',
   {
@@ -245,6 +252,7 @@ export const AccountTable = pgTable(
     address: text().$type<HexAddress>().notNull(),
 
     ...tenantReference,
+    ...workspaceReference,
     ...createdTimestamp,
     ...updatedTimestamp,
     ...deletable,
@@ -428,6 +436,7 @@ export const ProposedTransactionTable = pgTable(
     ...userReference,
     ...tenantReference,
     ...accountReference,
+    ...workspaceReference,
     ...createdTimestamp,
   },
   (table) => [
@@ -455,6 +464,7 @@ export const SignedTransactionTable = pgTable(
 
     ...walletReference,
     ...accountReference,
+    ...workspaceReference,
     ...userReference,
     ...tenantReference,
     ...createdTimestamp,
