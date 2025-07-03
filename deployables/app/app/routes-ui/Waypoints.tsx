@@ -29,7 +29,7 @@ export const Waypoints = ({ children }: WaypointsProps) => {
     <ol
       className={classNames(
         'flex flex-1 items-center gap-4',
-        orientation === 'vertical' && 'flex-col',
+        orientation === 'vertical' && 'flex-col overflow-hidden',
       )}
     >
       {Children.map(children, (child, index) => (
