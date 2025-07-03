@@ -33,8 +33,8 @@ describe('Edit account', () => {
 
   describe('Label', () => {
     it('displays the current label', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user, {
         label: 'Test label',
       })
@@ -50,8 +50,8 @@ describe('Edit account', () => {
     })
 
     it('is possible to update the label', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user, { label: '' })
 
       const { waitForPendingActions } = await render(

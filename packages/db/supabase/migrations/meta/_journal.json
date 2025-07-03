@@ -253,6 +253,13 @@
       "when": 1751378933687,
       "tag": "0035_add updated at fields",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1751540414600,
+      "tag": "0036_store who created a tenant",
+      "breakpoints": true
     }
   ]
 }

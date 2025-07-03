@@ -46,6 +46,10 @@ export const TenantTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     name: text().notNull(),
     externalId: text(),
+    createdById: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
 
     ...createdTimestamp,
     ...updatedTimestamp,

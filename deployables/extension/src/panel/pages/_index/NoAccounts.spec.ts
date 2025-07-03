@@ -43,8 +43,8 @@ describe('No accounts', () => {
 
     describe('Logged in', () => {
       it('redirects to the last used route if one is present', async () => {
-        const tenant = tenantFactory.createWithoutDb()
-        const user = userFactory.createWithoutDb(tenant)
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
         const account = accountFactory.createWithoutDb(tenant, user)
 
         mockFindRemoteActiveAccount.mockResolvedValue(account)
@@ -55,8 +55,8 @@ describe('No accounts', () => {
       })
 
       it('redirects to the first route if no route was last used', async () => {
-        const tenant = tenantFactory.createWithoutDb()
-        const user = userFactory.createWithoutDb(tenant)
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
         const account = accountFactory.createWithoutDb(tenant, user)
 
         mockGetRemoteAccounts.mockResolvedValue([account])
@@ -95,8 +95,8 @@ describe('No accounts', () => {
     describe('Incoming route', () => {
       describe('Logged in', () => {
         it('redirects the a new account when one is saved', async () => {
-          const tenant = tenantFactory.createWithoutDb()
-          const user = userFactory.createWithoutDb(tenant)
+          const user = userFactory.createWithoutDb()
+          const tenant = tenantFactory.createWithoutDb(user)
           const account = accountFactory.createWithoutDb(tenant, user)
 
           const { mockedTab } = await render('/')
