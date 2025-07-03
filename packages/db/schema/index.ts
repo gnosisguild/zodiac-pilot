@@ -107,6 +107,31 @@ export const TenantMembershipTable = pgTable(
   ],
 )
 
+export const WorkspaceTable = pgTable(
+  'Workspace',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    label: text().notNull(),
+    createdById: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+
+    ...tenantReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...deletable,
+  },
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.createdById),
+    index().on(table.deletedById),
+  ],
+)
+
+export type Workspace = typeof WorkspaceTable.$inferSelect
+export type WorkspaceCreateInput = typeof WorkspaceTable.$inferInsert
+
 export const FeatureTable = pgTable(
   'Feature',
   {
@@ -471,6 +496,7 @@ export const schema = {
   subscriptionPlans: SubscriptionPlanTable,
   activeSubscriptionPlans: ActiveSubscriptionTable,
   proposedTransactions: ProposedTransactionTable,
+  workspace: WorkspaceTable,
 
   TenantRelations,
   FeatureRelations,
