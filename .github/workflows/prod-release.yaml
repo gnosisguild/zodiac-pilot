@@ -1,7 +1,9 @@
 name: Release Extension
 
 on:
-  pull_request:
+  push:
+    branches:
+      - chore/fix-chrome-publish
   release:
     types: released
 
