@@ -1,4 +1,8 @@
-import { subscriptionPlanFactory, tenantFactory } from '@zodiac/db/test-utils'
+import {
+  subscriptionPlanFactory,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { addDays, subDays } from 'date-fns'
 import { describe, expect, it } from 'vitest'
 import { dbClient } from '../../dbClient'
@@ -7,7 +11,8 @@ import { getActivePlan } from './getActivePlan'
 
 describe('getActivePlan', () => {
   it('retrieves the active plan for a tenant', async () => {
-    const tenant = await tenantFactory.create()
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
     const plan = await subscriptionPlanFactory.create()
 
     await activatePlan(dbClient(), {
@@ -19,7 +24,8 @@ describe('getActivePlan', () => {
   })
 
   it('retrieves only plans that are already valid', async () => {
-    const tenant = await tenantFactory.create()
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create()
     const planB = await subscriptionPlanFactory.create()
 
@@ -38,7 +44,8 @@ describe('getActivePlan', () => {
   })
 
   it('retrieves only plans that are still valid', async () => {
-    const tenant = await tenantFactory.create()
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create()
     const planB = await subscriptionPlanFactory.create()
 
@@ -57,7 +64,8 @@ describe('getActivePlan', () => {
   })
 
   it('retrieves the pan with the highest priority', async () => {
-    const tenant = await tenantFactory.create()
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create({ priority: 1 })
     const planB = await subscriptionPlanFactory.create({ priority: 2 })
 

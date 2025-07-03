@@ -17,8 +17,8 @@ import { describe, expect, it } from 'vitest'
 describe('Subscription plans', () => {
   describe('List', () => {
     it('lists all plans in the system', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await subscriptionPlanFactory.create({ name: 'Open' })
 
@@ -34,8 +34,8 @@ describe('Subscription plans', () => {
     })
 
     it('is possible to add a new plan', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await render(href('/system-admin/subscriptionPlans'), {
         user,
@@ -60,8 +60,8 @@ describe('Subscription plans', () => {
 
   describe('Default plan', () => {
     it('shows the default plan', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await subscriptionPlanFactory.create({ isDefault: true, name: 'Open' })
 
@@ -77,8 +77,8 @@ describe('Subscription plans', () => {
     })
 
     it('is possible to make a plan the default', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const plan = await subscriptionPlanFactory.create({ name: 'Open' })
 
@@ -105,8 +105,8 @@ describe('Subscription plans', () => {
 
   describe('Priority', () => {
     it('is possible to increase the priority of a plan', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const plan = await subscriptionPlanFactory.create({ priority: 1 })
 
@@ -131,8 +131,8 @@ describe('Subscription plans', () => {
     })
 
     it('is possible to decrease the priority of a plan', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const plan = await subscriptionPlanFactory.create({ priority: 2 })
 

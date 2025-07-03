@@ -13,8 +13,8 @@ import { describe, expect, it } from 'vitest'
 describe('Features', () => {
   describe('List', () => {
     it('lists all features', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await featureFactory.create({ name: 'Test feature' })
 
@@ -32,8 +32,8 @@ describe('Features', () => {
 
   describe('Add', () => {
     it('is possible to add a new feature', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await render(href('/system-admin/features'), {
         user,
@@ -60,8 +60,8 @@ describe('Features', () => {
 
   describe('Remove', () => {
     it('is possible to remove a feature', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await featureFactory.create({ name: 'Test feature' })
 

@@ -61,8 +61,8 @@ describe('New SafeAccount', () => {
 
   describe('Logged in', () => {
     it('creates a new account in the DB', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const { waitForPendingActions } = await render('/create', {
         tenant,
@@ -188,8 +188,8 @@ describe('New SafeAccount', () => {
 
   describe('Predefined account', () => {
     it('is possible to preset the chain', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const prefixedAddress = randomPrefixedAddress({ chainId: Chain.GNO })
 
@@ -202,8 +202,8 @@ describe('New SafeAccount', () => {
     })
 
     it('is possible to preset the address', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const address = randomAddress()
 

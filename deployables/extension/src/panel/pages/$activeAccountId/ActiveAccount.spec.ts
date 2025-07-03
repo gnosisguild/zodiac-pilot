@@ -62,8 +62,8 @@ describe('Active Account', () => {
     })
 
     it('lists routes from the zodiac os', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
+      const user = userFactory.createWithoutDb()
+      const tenant = tenantFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
@@ -84,8 +84,8 @@ describe('Active Account', () => {
     })
 
     it('is possible to activate an account from zodiac os', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
+      const user = userFactory.createWithoutDb()
+      const tenant = tenantFactory.createWithoutDb(user)
       const wallet = walletFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
@@ -120,8 +120,8 @@ describe('Active Account', () => {
     })
 
     it('renders when an account from zodiac os is active', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
+      const user = userFactory.createWithoutDb()
+      const tenant = tenantFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
@@ -148,8 +148,8 @@ describe('Active Account', () => {
     })
 
     it('tries to store the new active account on the remote', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
+      const user = userFactory.createWithoutDb()
+      const tenant = tenantFactory.createWithoutDb(user)
 
       const account = accountFactory.createWithoutDb(tenant, user)
 
@@ -213,8 +213,8 @@ describe('Active Account', () => {
 
       describe('Remote accounts', () => {
         it('is possible to edit the current account', async () => {
-          const tenant = tenantFactory.createWithoutDb()
-          const user = userFactory.createWithoutDb(tenant)
+          const user = userFactory.createWithoutDb()
+          const tenant = tenantFactory.createWithoutDb(user)
           const account = accountFactory.createWithoutDb(tenant, user)
 
           mockGetRemoteAccount.mockResolvedValue(account)
@@ -238,8 +238,8 @@ describe('Active Account', () => {
         })
 
         it('activates an existing tab when it already exists', async () => {
-          const tenant = tenantFactory.createWithoutDb()
-          const user = userFactory.createWithoutDb(tenant)
+          const user = userFactory.createWithoutDb()
+          const tenant = tenantFactory.createWithoutDb(user)
           const account = accountFactory.createWithoutDb(tenant, user)
 
           mockGetRemoteAccount.mockResolvedValue(account)

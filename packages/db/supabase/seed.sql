@@ -1,9 +1,18 @@
 INSERT INTO
-  "Tenant" ("id", "name")
+  "User" ("id", "fullName", "externalId")
 VALUES
   (
-    'bf7b4a60-e573-4823-bae4-50e9947cb3dd',
-    'ACME Org'
+    '10ad9e2a-f7b0-4068-87ae-d4871edb7083',
+    'Test User',
+    'user_01JW8GNG1T6YJJ07KWAP0X8G3W'
+  );
+
+INSERT INTO
+  "Tenant" ("name", "createdById")
+VALUES
+  (
+    'ACME Org',
+    '10ad9e2a-f7b0-4068-87ae-d4871edb7083'
   );
 
 INSERT INTO

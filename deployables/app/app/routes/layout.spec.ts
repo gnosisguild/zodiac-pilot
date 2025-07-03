@@ -7,8 +7,8 @@ import { describe, expect, it } from 'vitest'
 describe('Layout', () => {
   describe('Admin link', () => {
     it('offers a link to the admin panel', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await render(href('/'), {
         user,
@@ -22,8 +22,8 @@ describe('Layout', () => {
     })
 
     it('does not show the link in non-admin orgs', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       await render(href('/'), {
         user,

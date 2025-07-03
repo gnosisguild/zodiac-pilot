@@ -20,8 +20,8 @@ import { describe, expect, it } from 'vitest'
 describe('Tenant', () => {
   describe('Features', () => {
     it('is possible to activate a feature', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const feature = await featureFactory.create({ name: 'Test feature' })
 
       const { waitForPendingActions } = await render(
@@ -44,8 +44,8 @@ describe('Tenant', () => {
     })
 
     it('is possible to deactivate a feature', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const feature = await featureFactory.create({ name: 'Test feature' })
 
       await activateFeatures(dbClient(), {
@@ -73,8 +73,8 @@ describe('Tenant', () => {
     })
 
     it('is possible to activate additional features', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const featureA = await featureFactory.create()
       const featureB = await featureFactory.create({ name: 'Test feature' })
@@ -107,8 +107,8 @@ describe('Tenant', () => {
 
   describe('Plans', () => {
     it('is possible to assign a plan to a tenant', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const plan = await subscriptionPlanFactory.create()
 
       const { waitForPendingActions } = await render(
@@ -134,8 +134,8 @@ describe('Tenant', () => {
     })
 
     it('shows the plans that are assigned to a tenant', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const plan = await subscriptionPlanFactory.create({ name: 'Open' })
 
       await activatePlan(dbClient(), {

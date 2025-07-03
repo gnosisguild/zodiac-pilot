@@ -97,8 +97,8 @@ describe('Load default route', () => {
   })
 
   it('loads the default route for an account and redirects the user', async () => {
-    const tenant = await tenantFactory.create()
-    const user = await userFactory.create(tenant)
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
 
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
@@ -127,8 +127,8 @@ describe('Load default route', () => {
   })
 
   it('picks the first route when no default route is set', async () => {
-    const tenant = await tenantFactory.create()
-    const user = await userFactory.create(tenant)
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
 
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
@@ -158,8 +158,8 @@ describe('Load default route', () => {
   })
 
   it('shows an error when no route has been configured', async () => {
-    const tenant = await tenantFactory.create()
-    const user = await userFactory.create(tenant)
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
 
     const account = await accountFactory.create(tenant, user)
 

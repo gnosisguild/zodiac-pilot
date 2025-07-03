@@ -112,11 +112,16 @@ export const getAuth = <Params>(
           isSystemAdmin: false,
         })
       } else {
-        const user = await upsertUser(dbClient(), auth.user)
         const workOsOrganization = await getOrganizationFromAuth(request, auth)
-        const tenant = await upsertTenant(dbClient(), workOsOrganization)
 
-        await addUserToTenant(dbClient(), tenant, user)
+        const [user, tenant] = await dbClient().transaction(async (tx) => {
+          const user = await upsertUser(tx, auth.user)
+          const tenant = await upsertTenant(tx, user, workOsOrganization)
+
+          await addUserToTenant(tx, tenant, user)
+
+          return [user, tenant]
+        })
 
         const isSystemAdmin = getAdminOrganizationId() === workOsOrganization.id
 

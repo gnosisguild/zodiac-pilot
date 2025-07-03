@@ -61,8 +61,8 @@ const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)
 const mockGetFeatures = vi.mocked(getFeatures)
 
 beforeEach(() => {
-  const tenant = tenantFactory.createWithoutDb()
-  const user = userFactory.createWithoutDb(tenant)
+  const user = userFactory.createWithoutDb()
+  const tenant = tenantFactory.createWithoutDb(user)
   const account = accountFactory.createWithoutDb(tenant, user)
 
   mockGetRemoteRoutes.mockResolvedValue([])

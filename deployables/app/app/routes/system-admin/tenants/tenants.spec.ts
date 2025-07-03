@@ -6,11 +6,11 @@ import { describe, expect, it } from 'vitest'
 
 describe('Tenants', () => {
   it('lists all tenants', async () => {
-    const tenant = await tenantFactory.create()
-    const user = await userFactory.create(tenant)
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
 
-    await tenantFactory.create({ name: 'Tenant A' })
-    await tenantFactory.create({ name: 'Tenant B' })
+    await tenantFactory.create(user, { name: 'Tenant A' })
+    await tenantFactory.create(user, { name: 'Tenant B' })
 
     await render(href('/system-admin/tenants'), {
       user,

@@ -23,8 +23,8 @@ const mockGetRemoteRoutes = vi.mocked(getRemoteRoutes)
 
 describe('Active route', () => {
   it('shows a select for routes when there is more than one route for an account', async () => {
-    const tenant = tenantFactory.createWithoutDb()
-    const user = userFactory.createWithoutDb(tenant)
+    const user = userFactory.createWithoutDb()
+    const tenant = tenantFactory.createWithoutDb(user)
 
     const wallet = walletFactory.createWithoutDb(user)
     const account = accountFactory.createWithoutDb(tenant, user)
@@ -45,8 +45,8 @@ describe('Active route', () => {
   })
 
   it('pre-selects the default route', async () => {
-    const tenant = tenantFactory.createWithoutDb()
-    const user = userFactory.createWithoutDb(tenant)
+    const user = userFactory.createWithoutDb()
+    const tenant = tenantFactory.createWithoutDb(user)
 
     const wallet = walletFactory.createWithoutDb(user)
     const account = accountFactory.createWithoutDb(tenant, user)
@@ -73,8 +73,8 @@ describe('Active route', () => {
   })
 
   it('pre-selects the first route if there is no default route', async () => {
-    const tenant = tenantFactory.createWithoutDb()
-    const user = userFactory.createWithoutDb(tenant)
+    const user = userFactory.createWithoutDb()
+    const tenant = tenantFactory.createWithoutDb(user)
 
     const wallet = walletFactory.createWithoutDb(user)
     const account = accountFactory.createWithoutDb(tenant, user)
@@ -101,8 +101,8 @@ describe('Active route', () => {
   })
 
   it('is possible to change the route', async () => {
-    const tenant = tenantFactory.createWithoutDb()
-    const user = userFactory.createWithoutDb(tenant)
+    const user = userFactory.createWithoutDb()
+    const tenant = tenantFactory.createWithoutDb(user)
 
     const wallet = walletFactory.createWithoutDb(user)
     const account = accountFactory.createWithoutDb(tenant, user)

@@ -282,8 +282,8 @@ describe('Transactions', () => {
 
     describe('Logged in', () => {
       it('disables the sign button when there are no transactions', async () => {
-        const tenant = tenantFactory.createWithoutDb()
-        const user = userFactory.createWithoutDb(tenant)
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
         const wallet = walletFactory.createWithoutDb(user)
         const account = accountFactory.createWithoutDb(tenant, user)
 
@@ -303,8 +303,8 @@ describe('Transactions', () => {
       })
 
       it('links to the logged in sign in page', async () => {
-        const tenant = tenantFactory.createWithoutDb()
-        const user = userFactory.createWithoutDb(tenant)
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
         const wallet = walletFactory.createWithoutDb(user)
         const account = accountFactory.createWithoutDb(tenant, user)
 
@@ -336,8 +336,8 @@ describe('Transactions', () => {
       })
 
       it('offers a link to complete the route setup when no active route was found', async () => {
-        const tenant = tenantFactory.createWithoutDb()
-        const user = userFactory.createWithoutDb(tenant)
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
         const account = accountFactory.createWithoutDb(tenant, user)
 
         mockGetRemoteAccount.mockResolvedValue(account)
@@ -557,8 +557,8 @@ describe('Transactions', () => {
 
   describe('Save and launch', () => {
     it('is possible to save and launch a remote account', async () => {
-      const tenant = tenantFactory.createWithoutDb()
-      const user = userFactory.createWithoutDb(tenant)
+      const user = userFactory.createWithoutDb()
+      const tenant = tenantFactory.createWithoutDb(user)
       const account = accountFactory.createWithoutDb(tenant, user)
 
       const { mockedTab } = await render('/')
