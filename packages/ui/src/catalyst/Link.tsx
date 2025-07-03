@@ -7,16 +7,13 @@
  */
 
 import * as Headless from '@headlessui/react'
-import React, { forwardRef } from 'react'
+import React from 'react'
 import { Link as RouterLink } from 'react-router'
 
-export const Link = forwardRef(function Link(
-  props: React.ComponentPropsWithoutRef<typeof RouterLink>,
-  ref: React.ForwardedRef<HTMLAnchorElement>,
-) {
+export const Link = (props: React.ComponentProps<typeof RouterLink>) => {
   return (
     <Headless.DataInteractive>
-      <RouterLink {...props} ref={ref} />
+      <RouterLink {...props} />
     </Headless.DataInteractive>
   )
-})
+}

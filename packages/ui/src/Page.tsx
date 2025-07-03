@@ -1,4 +1,4 @@
-import { type ForwardedRef, forwardRef, type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type Ref } from 'react'
 import { Divider } from './Divider'
 
 export const Page = ({ children }: PropsWithChildren) => (
@@ -15,10 +15,13 @@ const Header = ({ children }: PropsWithChildren) => (
 
 Page.Header = Header
 
-const Content = (
-  { children }: PropsWithChildren,
-  ref: ForwardedRef<HTMLDivElement>,
-) => (
+Page.Content = ({
+  children,
+  ref,
+}: {
+  children: React.ReactNode
+  ref: Ref<HTMLDivElement> | undefined
+}) => (
   <div
     ref={ref}
     className="shadow-xs mx-2 flex flex-1 flex-col gap-4 overflow-y-auto rounded-lg bg-white p-4 ring-1 ring-zinc-950/5 dark:bg-zinc-900 dark:ring-white/10"
@@ -26,8 +29,6 @@ const Content = (
     {children}
   </div>
 )
-
-Page.Content = forwardRef(Content)
 
 const Footer = ({ children }: PropsWithChildren) => (
   <div className="flex flex-col gap-4 p-4">{children}</div>
