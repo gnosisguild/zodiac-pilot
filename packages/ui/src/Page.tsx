@@ -20,7 +20,7 @@ Page.Content = ({
   ref,
 }: {
   children: React.ReactNode
-  ref: Ref<HTMLDivElement> | undefined
+  ref?: Ref<HTMLDivElement>
 }) => (
   <div
     ref={ref}
