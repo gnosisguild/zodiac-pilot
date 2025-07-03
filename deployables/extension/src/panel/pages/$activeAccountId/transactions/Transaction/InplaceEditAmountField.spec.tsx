@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { InplaceEditAmountField } from './InplaceEditAmountField'
 
@@ -22,10 +23,11 @@ describe('InplaceEditAmountField', () => {
   })
 
   it('switches to edit mode when Edit amount button is clicked', async () => {
+    const user = userEvent.setup()
     render(<InplaceEditAmountField {...defaultProps} />)
 
     const editButton = screen.getByRole('button', { name: /edit amount/i })
-    fireEvent.click(editButton)
+    await user.click(editButton)
 
     const input = screen.getByRole('spinbutton')
     await waitFor(() => {
@@ -35,15 +37,17 @@ describe('InplaceEditAmountField', () => {
   })
 
   it('confirms changes when Enter is pressed', async () => {
+    const user = userEvent.setup()
     render(<InplaceEditAmountField {...defaultProps} />)
 
     // Enter edit mode
     const editButton = screen.getByRole('button', { name: /edit amount/i })
-    fireEvent.click(editButton)
+    await user.click(editButton)
 
     const input = screen.getByRole('spinbutton')
-    fireEvent.change(input, { target: { value: '200' } })
-    fireEvent.keyDown(input, { key: 'Enter' })
+    await user.clear(input)
+    await user.type(input, '200')
+    await user.keyboard('{Enter}')
 
     await waitFor(() => {
       expect(defaultProps.onChange).toHaveBeenCalledWith(
@@ -56,15 +60,16 @@ describe('InplaceEditAmountField', () => {
   })
 
   it('cancels changes when Escape is pressed', async () => {
+    const user = userEvent.setup()
     render(<InplaceEditAmountField {...defaultProps} />)
 
     // Enter edit mode
     const editButton = screen.getByRole('button', { name: /edit amount/i })
-    fireEvent.click(editButton)
+    await user.click(editButton)
 
     const input = screen.getByRole('spinbutton')
-    fireEvent.change(input, { target: { value: '200' } })
-    fireEvent.keyDown(input, { key: 'Escape' })
+    await user.type(input, '200')
+    await user.keyboard('{Escape}')
 
     await waitFor(() => {
       expect(input).toHaveValue(100)
@@ -77,7 +82,7 @@ describe('InplaceEditAmountField', () => {
     render(<InplaceEditAmountField {...defaultProps} recommendedValue="500" />)
 
     const recommendedButton = screen.getByRole('button', { name: /500/i })
-    fireEvent.click(recommendedButton)
+    userEvent.click(recommendedButton)
 
     await waitFor(() => {
       expect(defaultProps.onChange).toHaveBeenCalledWith(
