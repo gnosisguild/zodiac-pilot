@@ -47,11 +47,11 @@
     "drizzle-zod": "0.7.1",
     "postgres": "3.4.7",
     "ser-kit": "3.9.1",
-    "zod": "3.25.67"
+    "zod": "3.25.69"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.45.2",
-    "@faker-js/faker": "9.8.0",
+    "@faker-js/faker": "9.9.0",
     "@types/node": "22.14.1",
     "@types/react": "19.1.8",
     "@workos-inc/node": "7.57.0",
