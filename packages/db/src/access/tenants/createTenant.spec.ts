@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto'
 import { describe, expect, it } from 'vitest'
 import { dbClient } from '../../dbClient'
 import { getActivePlan } from '../subscriptionPlans'
+import { getWorkspaces } from '../workspaces'
 import { createTenant } from './createTenant'
 
 describe('createTenant', () => {
@@ -13,9 +14,27 @@ describe('createTenant', () => {
     const tenant = await createTenant(dbClient(), {
       name: 'Test tenant',
       externalId: randomUUID(),
-      createdById: user.id,
+      createdBy: user,
     })
 
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
+  })
+
+  it('creates a default workspace', async () => {
+    const user = await userFactory.create()
+
+    await subscriptionPlanFactory.create({ isDefault: true })
+
+    const tenant = await createTenant(dbClient(), {
+      name: 'Test tenant',
+      externalId: randomUUID(),
+      createdBy: user,
+    })
+
+    await expect(
+      getWorkspaces(dbClient(), { tenantId: tenant.id }),
+    ).resolves.toMatchObject([
+      { tenantId: tenant.id, createdById: user.id, label: 'Default workspace' },
+    ])
   })
 })

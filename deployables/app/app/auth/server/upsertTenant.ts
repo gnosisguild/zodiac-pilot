@@ -16,6 +16,6 @@ export const upsertTenant = async (
   return createTenant(db, {
     name: workOSOrganization.name,
     externalId: workOSOrganization.id,
-    createdById: createdBy.id,
+    createdBy,
   })
 }
