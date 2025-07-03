@@ -17,6 +17,7 @@ export class TenderlyProvider extends EventEmitter {
 
   vnetId: string | undefined
   publicRpc: string | undefined
+  proxiedPublicRpc: string | undefined
 
   constructor(chainId: ChainId) {
     super()
@@ -84,6 +85,7 @@ export class TenderlyProvider extends EventEmitter {
 
     this.vnetId = undefined
     this.publicRpc = undefined
+    this.proxiedPublicRpc = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
 
@@ -137,9 +139,17 @@ export class TenderlyProvider extends EventEmitter {
     const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url
     this.publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC').url
 
+    // Use proxy for admin RPC to hide user IP addresses
+    const proxiedAdminRpc = `${this.tenderlyVnetApi}/rpc/${encodeURIComponent(adminRpc)}`
+
+    // Use proxy for public RPC as well
+    this.proxiedPublicRpc = this.publicRpc
+      ? `${this.tenderlyVnetApi}/rpc/${encodeURIComponent(this.publicRpc)}`
+      : undefined
+
     // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
-    const provider = new JsonRpcProvider(adminRpc, this.chainId)
-    this.emit('update', { rpcUrl: this.publicRpc, vnetId: this.vnetId })
+    const provider = new JsonRpcProvider(proxiedAdminRpc, this.chainId)
+    this.emit('update', { rpcUrl: this.proxiedPublicRpc, vnetId: this.vnetId })
 
     return provider
   }
