@@ -70,7 +70,7 @@ export class ForkProvider extends EventEmitter {
     avatarAddress: HexAddress
     /** If set, will simulate transactions using respective `execTransactionFromModule` calls */
     moduleAddress?: HexAddress
-    /** If set, will enable the the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
+    /** If set, will enable the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
     ownerAddress?: HexAddress
   }) {
     super()

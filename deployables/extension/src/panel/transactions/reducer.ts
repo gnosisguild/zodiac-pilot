@@ -136,13 +136,17 @@ export const transactionsReducer = (
     case Action.Translate: {
       const { id, translations } = payload
 
-      return rollback(
-        {
-          ...state,
-          pending: [...state.pending, ...translations.map(createTransaction)],
-        },
-        id,
-      )
+      const rollbackState = rollback(state, id)
+      return {
+        ...rollbackState,
+
+        // Rollback moves all transactions after the rollback transaction to pending.
+        // Prepend the replacement transactions to keep everything in order.
+        pending: [
+          ...translations.map(createTransaction),
+          ...rollbackState.pending,
+        ],
+      }
     }
 
     case Action.GlobalTranslate: {
@@ -257,7 +261,7 @@ const rollback = (state: State, id: string): State => {
     ...state,
 
     executed: state.executed.slice(0, index),
-    pending: [...state.pending, ...state.executed.slice(index + 1)],
+    pending: [...state.executed.slice(index + 1), ...state.pending],
 
     rollback: transaction,
   }

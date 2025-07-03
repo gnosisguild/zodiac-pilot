@@ -1,4 +1,8 @@
-export { refreshTransactions, rollbackTransaction } from './actions'
+export {
+  refreshTransactions,
+  rollbackTransaction,
+  translateTransaction,
+} from './actions'
 export { clearPersistedTransactionState } from './clearPersistedTransactionState'
 export { ExecutionStatus } from './executionStatus'
 export { getLastTransactionExecutedAt } from './getLastTransactionExecutedAt'
@@ -15,6 +19,7 @@ export type {
 } from './state'
 export {
   ProvideTransactions,
+  useDispatch,
   usePendingTransactions,
   useTransaction,
   useTransactionStatus,

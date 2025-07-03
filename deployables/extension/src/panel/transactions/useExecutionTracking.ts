@@ -1,3 +1,4 @@
+import { sentry } from '@/sentry'
 import { useEffect } from 'react'
 import {
   usePendingTransactions,
@@ -41,6 +42,20 @@ export const useExecutionTracking = () => {
       return
     }
 
-    sendTransaction(nextTransaction).then(markDone)
+    const abortController = new AbortController()
+
+    sendTransaction(nextTransaction)
+      .then(() => {
+        if (!abortController.signal.aborted) {
+          markDone()
+        }
+      })
+      .catch((error) => {
+        sentry.captureException(error)
+      })
+
+    return () => {
+      abortController.abort()
+    }
   }, [markDone, nextTransaction, refresh, rollback, sendTransaction])
 }

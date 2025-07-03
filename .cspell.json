@@ -30,6 +30,7 @@
     "delegatecalls",
     "depay",
     "deployables",
+    "domcontentloaded",
     "duneanalytics",
     "esbuild",
     "ethersproject",
@@ -44,6 +45,7 @@
     "IERC20",
     "Iframe",
     "iframes",
+    "Inplace",
     "instadapp",
     "isbot",
     "KARPATKEY",
@@ -100,6 +102,7 @@
     "spinbutton",
     "staderlabs",
     "Stakewise",
+    "supabase",
     "Sushiswap",
     "tailwindcss",
     "tanstack",
@@ -121,9 +124,7 @@
     "worldchain",
     "xcall",
     "xdai",
-    "xmlhttprequest",
-    "supabase",
-    "domcontentloaded"
+    "xmlhttprequest"
   ],
   "flagWords": [],
   "ignorePaths": [

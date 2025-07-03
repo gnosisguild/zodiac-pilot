@@ -26,6 +26,7 @@ import {
   Modal,
   Page,
   PrimaryLinkButton,
+  WagmiProvider,
 } from '@zodiac/ui'
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -134,53 +135,55 @@ const Transactions = () => {
   return (
     <>
       <Page.Content ref={scrollContainerRef}>
-        <div className="flex items-center justify-between gap-2">
-          <RecordingIndicator />
+        <WagmiProvider chainId={account.chainId}>
+          <div className="flex items-center justify-between gap-2">
+            <RecordingIndicator />
 
-          <div className="flex gap-1">
-            <CopyToClipboard
-              iconOnly
-              disabled={transactions.length === 0}
-              size="small"
-              data={transactions.map(toMetaTransactionRequest)}
-            >
-              Copy batch transaction data to clipboard
-            </CopyToClipboard>
+            <div className="flex gap-1">
+              <CopyToClipboard
+                iconOnly
+                disabled={transactions.length === 0}
+                size="small"
+                data={transactions.map(toMetaTransactionRequest)}
+              >
+                Copy batch transaction data to clipboard
+              </CopyToClipboard>
 
-            <GhostButton
-              iconOnly
-              size="small"
-              icon={RefreshCcw}
-              disabled={
-                transactions.length === 0 || pendingTransactions.length > 0
-              }
-              onClick={() => refreshTransactions()}
-            >
-              Re-simulate on current blockchain head
-            </GhostButton>
+              <GhostButton
+                iconOnly
+                size="small"
+                icon={RefreshCcw}
+                disabled={
+                  transactions.length === 0 || pendingTransactions.length > 0
+                }
+                onClick={() => refreshTransactions()}
+              >
+                Re-simulate on current blockchain head
+              </GhostButton>
 
-            <ClearTransactions
-              disabled={
-                transactions.length === 0 || pendingTransactions.length > 0
-              }
-            />
+              <ClearTransactions
+                disabled={
+                  transactions.length === 0 || pendingTransactions.length > 0
+                }
+              />
+            </div>
           </div>
-        </div>
 
-        {transactions.map((transaction) => (
-          <div id={`t-${transaction.id}`} key={transaction.id}>
-            <Transaction transactionId={transaction.id} />
-          </div>
-        ))}
+          {transactions.map((transaction) => (
+            <div id={`t-${transaction.id}`} key={transaction.id}>
+              <Transaction transactionId={transaction.id} />
+            </div>
+          ))}
 
-        {transactions.length === 0 && (
-          <div className="mt-32 flex flex-col gap-32">
-            <Info title="No transactions">
-              As you interact with apps in the browser, transactions will be
-              recorded here. You can then sign and submit them as a batch.
-            </Info>
-          </div>
-        )}
+          {transactions.length === 0 && (
+            <div className="mt-32 flex flex-col gap-32">
+              <Info title="No transactions">
+                As you interact with apps in the browser, transactions will be
+                recorded here. You can then sign and submit them as a batch.
+              </Info>
+            </div>
+          )}
+        </WagmiProvider>
       </Page.Content>
 
       <Page.Footer>

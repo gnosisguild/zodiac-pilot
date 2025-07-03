@@ -2,6 +2,7 @@ import { ZERO_ADDRESS } from '@zodiac/chains'
 import { addressSchema, type HexAddress } from '@zodiac/schema'
 import classNames from 'classnames'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { getAddress } from 'viem'
 import { Blockie } from '../addresses'
 import { Input, type ComposableInputProps } from './Input'
 import { InputLayout } from './InputLayout'
@@ -53,7 +54,7 @@ export const AddressInput = ({
           pattern="0x\w{40}"
           id={inputId}
           disabled={disabled}
-          value={value == null ? undefined : value}
+          value={value == null ? undefined : getAddress(value)}
           defaultValue={defaultValue}
           aria-describedby={descriptionId}
           aria-errormessage={error ?? undefined}
