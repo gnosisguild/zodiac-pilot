@@ -18,7 +18,7 @@ export const loader = ({ request, ...options }: Route.LoaderArgs) => {
 
           await Promise.all(
             organizations.map(async (organization) => {
-              const tenant = await upsertTenant(db, organization)
+              const tenant = await upsertTenant(db, user, organization)
 
               return addUserToTenant(db, tenant, user)
             }),

@@ -16,8 +16,8 @@ const mockGetUser = vi.mocked(getWorkOS().userManagement.getUser)
 describe('Users', () => {
   describe('System', () => {
     it('lists all users', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant, { fullName: 'John Doe' })
+      const user = await userFactory.create({ fullName: 'John Doe' })
+      const tenant = await tenantFactory.create(user)
 
       await render(href('/system-admin/users'), {
         user,
@@ -33,8 +33,8 @@ describe('Users', () => {
 
   describe('Work OS', () => {
     it('lists users', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const workOsUser = createMockWorkOsUser({
         firstName: 'John',
@@ -60,10 +60,10 @@ describe('Users', () => {
         lastName: 'Doe',
       })
 
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant, {
+      const user = await userFactory.create({
         externalId: workOsUser.id,
       })
+      const tenant = await tenantFactory.create(user)
 
       mockListUsers.mockResolvedValue(createMockListResult([workOsUser]))
 
@@ -80,8 +80,8 @@ describe('Users', () => {
     })
 
     it('is possible to remove a work os user', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const workOsUser = createMockWorkOsUser({
         firstName: 'John',

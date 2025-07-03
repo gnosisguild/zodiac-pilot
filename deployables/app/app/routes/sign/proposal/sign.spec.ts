@@ -122,8 +122,8 @@ describe('Sign', () => {
   describe('Route', () => {
     describe('Unknown route', () => {
       it('shows a warning to the user', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -154,8 +154,8 @@ describe('Sign', () => {
 
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot query routes', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -180,8 +180,8 @@ describe('Sign', () => {
       })
 
       it('shows a warning when ser is unavailable', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -212,8 +212,8 @@ describe('Sign', () => {
       })
 
       it('enables the "Sign" button when ser is unavailable', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -241,8 +241,8 @@ describe('Sign', () => {
     })
 
     it('uses the passed route', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -276,8 +276,8 @@ describe('Sign', () => {
 
   describe('Permissions', () => {
     it('shows the permission error', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -311,8 +311,8 @@ describe('Sign', () => {
 
     describe('Ser unavailability', () => {
       it('shows the page even when ser-kit cannot check permissions', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -340,8 +340,8 @@ describe('Sign', () => {
       })
 
       it('shows a warning when ser is unavailable', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -375,8 +375,8 @@ describe('Sign', () => {
       })
 
       it('enables the "Sign" button when ser is unavailable', async () => {
-        const tenant = await tenantFactory.create()
-        const user = await userFactory.create(tenant)
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -413,8 +413,8 @@ describe('Sign', () => {
     })
 
     it('does not revoke approvals by default', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -456,8 +456,8 @@ describe('Sign', () => {
 
   describe('Sign', () => {
     it('stores a reference to the transaction.', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -503,8 +503,8 @@ describe('Sign', () => {
     })
 
     it('stores a reference to the multisig.', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -550,8 +550,8 @@ describe('Sign', () => {
     })
 
     it('links the proposal and the signed transaction', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -598,8 +598,8 @@ describe('Sign', () => {
 
   describe('Signed proposal', () => {
     it('disables the sign button', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -630,8 +630,8 @@ describe('Sign', () => {
     })
 
     it('shows a message that the proposal has already been signed', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)

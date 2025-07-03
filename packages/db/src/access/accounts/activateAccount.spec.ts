@@ -9,8 +9,8 @@ import { activateAccount } from './activateAccount'
 
 describe('Activate account', () => {
   it('makes sure only one account is active per tenant', async () => {
-    const tenant = await tenantFactory.create()
-    const user = await userFactory.create(tenant)
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
 
     const accountA = await accountFactory.create(tenant, user)
     const accountB = await accountFactory.create(tenant, user)

@@ -1,20 +1,10 @@
 import { faker } from '@faker-js/faker'
-import {
-  TenantMembershipTable,
-  UserTable,
-  type Tenant,
-  type User,
-  type UserCreateInput,
-} from '@zodiac/db/schema'
+import { UserTable, type User, type UserCreateInput } from '@zodiac/db/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
-export const userFactory = createFactory<
-  UserCreateInput,
-  User,
-  [tenant: Tenant]
->({
-  build(_, data) {
+export const userFactory = createFactory<UserCreateInput, User>({
+  build(data) {
     return {
       fullName: faker.person.fullName(),
       externalId: randomUUID(),
@@ -22,12 +12,8 @@ export const userFactory = createFactory<
       ...data,
     }
   },
-  async create(db, data, tenant) {
+  async create(db, data) {
     const [user] = await db.insert(UserTable).values(data).returning()
-
-    await db
-      .insert(TenantMembershipTable)
-      .values({ tenantId: tenant.id, userId: user.id })
 
     return user
   },

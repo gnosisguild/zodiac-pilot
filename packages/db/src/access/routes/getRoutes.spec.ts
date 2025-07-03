@@ -11,10 +11,10 @@ import { getRoutes } from './getRoutes'
 
 describe('getRoutes', () => {
   it('is possible to query all routes for a single user', async () => {
-    const tenant = await tenantFactory.create()
+    const userA = await userFactory.create()
+    const userB = await userFactory.create()
 
-    const userA = await userFactory.create(tenant)
-    const userB = await userFactory.create(tenant)
+    const tenant = await tenantFactory.create([userA, userB])
 
     const walletA = await walletFactory.create(userA)
     const walletB = await walletFactory.create(userB)

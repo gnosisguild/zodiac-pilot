@@ -39,8 +39,8 @@ vi.mock('@/providers', async (importOriginal) => {
 
 describe('Bridge', () => {
   const Wrapper = ({ children }: PropsWithChildren) => {
-    const tenant = tenantFactory.createWithoutDb()
-    const user = userFactory.createWithoutDb(tenant)
+    const user = userFactory.createWithoutDb()
+    const tenant = tenantFactory.createWithoutDb(user)
 
     return (
       <ProvideAccount

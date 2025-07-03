@@ -17,8 +17,8 @@ import { describe, expect, it } from 'vitest'
 describe('Profile', () => {
   describe('List', () => {
     it('lists all existing wallets', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const address = randomAddress()
 
@@ -37,8 +37,8 @@ describe('Profile', () => {
 
   describe('Create', () => {
     it('is possible to add new wallet', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const { waitForPendingActions } = await render(href('/profile'), {
         tenant,
@@ -71,8 +71,8 @@ describe('Profile', () => {
     })
 
     it('is not possible to create duplicate wallets', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const address = randomAddress()
 
@@ -113,8 +113,8 @@ describe('Profile', () => {
 
   describe('Remove', () => {
     it('is possible to remove a wallet', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const wallet = await walletFactory.create(user, {
         label: 'User wallet',
       })
@@ -147,8 +147,8 @@ describe('Profile', () => {
     })
 
     it('lists accounts that use this wallet', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user, {
         label: 'Test account',
       })
@@ -183,8 +183,8 @@ describe('Profile', () => {
 
   describe('Edit', () => {
     it('is possible to rename a wallet', async () => {
-      const tenant = await tenantFactory.create()
-      const user = await userFactory.create(tenant)
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
       const address = randomAddress()
 
