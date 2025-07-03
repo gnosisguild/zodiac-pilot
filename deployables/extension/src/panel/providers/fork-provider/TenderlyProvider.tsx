@@ -137,11 +137,23 @@ export class TenderlyProvider extends EventEmitter {
     const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url
     this.publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC').url
 
-    // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
-    const provider = new JsonRpcProvider(adminRpc, this.chainId)
+    // Proxy the admin RPC through our vnet-api to protect user privacy
+    // Convert https://virtual.mainnet.rpc.tenderly.co/abc123 to https://vnet-api.pilot.gnosisguild.org/rpc/virtual.mainnet.rpc.tenderly.co/abc123
+    const proxiedAdminRpc = this.proxyTenderlyUrl(adminRpc)
+
+    // for requests going through our proxy we use the proxied admin RPC so Pilot can fully control the fork while protecting user privacy
+    const provider = new JsonRpcProvider(proxiedAdminRpc, this.chainId)
     this.emit('update', { rpcUrl: this.publicRpc, vnetId: this.vnetId })
 
     return provider
+  }
+
+  private proxyTenderlyUrl(tenderlyUrl: string): string {
+    // Convert https://virtual.mainnet.rpc.tenderly.co/abc123
+    // to https://vnet-api.pilot.gnosisguild.org/rpc/virtual.mainnet.rpc.tenderly.co/abc123
+    const url = new URL(tenderlyUrl)
+    const hostAndPath = url.host + url.pathname
+    return `${this.tenderlyVnetApi}/rpc/${hostAndPath}`
   }
 
   private increaseBlock = async () => {
