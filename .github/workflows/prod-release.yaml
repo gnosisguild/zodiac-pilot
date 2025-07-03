@@ -40,10 +40,10 @@ jobs:
       - name: Create extension zip file
         run: pnpm zip
 
-      - name: Add zip to Github release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./deployables/extension/zodiac-pilot.zip
+      # - name: Add zip to Github release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: ./deployables/extension/zodiac-pilot.zip
 
       # - name: Publish to Chrome Web Store
       #   uses: puzzlers-labs/chrome-webstore-publish@v1.0.2
