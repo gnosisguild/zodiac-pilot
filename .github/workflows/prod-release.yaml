@@ -1,6 +1,7 @@
 name: Release Extension
 
 on:
+  pull_request:
   release:
     types: released
 
@@ -29,10 +30,10 @@ jobs:
         env:
           NODE_ENV: production
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_RELEASE: ${{ github.event.release.tag_name }}
+          SENTRY_RELEASE: v3.18.0 #${{ github.event.release.tag_name }}
 
       - name: Update manifest.json with release tag
-        run: pnpm update-manifest -v ${{ github.event.release.tag_name }}
+        run: pnpm update-manifest -v v3.18.0 #${{ github.event.release.tag_name }}
 
       - name: Create extension zip file
         run: pnpm zip
@@ -42,26 +43,26 @@ jobs:
         with:
           files: ./deployables/extension/zodiac-pilot.zip
 
-      - name: Publish to Chrome Web Store
-        uses: puzzlers-labs/chrome-webstore-publish@v1.0.2
-        with:
-          extension_id: jklckajipokenkbbodifahogmidkekcb
-          zip_file_path: ./deployables/extension/zodiac-pilot.zip
-          client_id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
-          client_secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
-          refresh_token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
-          publish_target: public
-          expedited_review: true # This does not guarantee an expedited Review process. But it makes an attempt.
-
-      # - name: Upload & release to Chrome Webstore
-      #   uses: mnao305/chrome-extension-upload@v5.0.0
+      # - name: Publish to Chrome Web Store
+      #   uses: puzzlers-labs/chrome-webstore-publish@v1.0.2
       #   with:
-      #     file-path: ./deployables/extension/zodiac-pilot.zip
-      #     extension-id: jklckajipokenkbbodifahogmidkekcb
-      #     client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
-      #     client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
-      #     refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
-      #     publish: true
+      #     extension_id: jklckajipokenkbbodifahogmidkekcb
+      #     zip_file_path: ./deployables/extension/zodiac-pilot.zip
+      #     client_id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
+      #     client_secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
+      #     refresh_token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
+      #     publish_target: public
+      #     expedited_review: true # This does not guarantee an expedited Review process. But it makes an attempt.
+
+      - name: Upload & release to Chrome Webstore
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          file-path: ./deployables/extension/zodiac-pilot.zip
+          extension-id: jklckajipokenkbbodifahogmidkekcb
+          client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
+          publish: true
 
       - name: Create Sentry release
         uses: getsentry/action-release@v3
