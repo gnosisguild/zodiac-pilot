@@ -65,7 +65,15 @@ export const Address = ({
         )}
       />
       {label && (
-        <span className="whitespace-nowrap font-semibold">{label}</span>
+        <span
+          className={classNames(
+            'whitespace-nowrap font-semibold',
+            size === 'small' && 'text-xs',
+            size === 'tiny' && 'text-xs',
+          )}
+        >
+          {label}
+        </span>
       )}
       <code
         aria-hidden={label != null}
@@ -80,7 +88,11 @@ export const Address = ({
         {shorten ? (
           <Popover
             position="bottom"
-            popover={<Address size="small">{children}</Address>}
+            popover={
+              <Address label={ensName} size="small">
+                {children}
+              </Address>
+            }
           >
             {ensName == null ? <ShortAddress>{address}</ShortAddress> : ensName}
           </Popover>
