@@ -42,26 +42,26 @@ jobs:
         with:
           files: ./deployables/extension/zodiac-pilot.zip
 
-      - name: Publish to Chrome Web Store
-        uses: puzzlers-labs/chrome-webstore-publish@v1.0.2
-        with:
-          extension_id: jklckajipokenkbbodifahogmidkekcb
-          zip_file_path: ./deployables/extension/zodiac-pilot.zip
-          client_id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
-          client_secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
-          refresh_token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
-          publish_target: public
-          expedited_review: true # This does not guarantee an expedited Review process. But it makes an attempt.
-
-      # - name: Upload & release to Chrome Webstore
-      #   uses: mnao305/chrome-extension-upload@v5.0.0
+      # - name: Publish to Chrome Web Store
+      #   uses: puzzlers-labs/chrome-webstore-publish@v1.0.2
       #   with:
-      #     file-path: ./deployables/extension/zodiac-pilot.zip
-      #     extension-id: jklckajipokenkbbodifahogmidkekcb
-      #     client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
-      #     client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
-      #     refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
-      #     publish: true
+      #     extension_id: jklckajipokenkbbodifahogmidkekcb
+      #     zip_file_path: ./deployables/extension/zodiac-pilot.zip
+      #     client_id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
+      #     client_secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
+      #     refresh_token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
+      #     publish_target: public
+      #     expedited_review: true # This does not guarantee an expedited Review process. But it makes an attempt.
+
+      - name: Upload & release to Chrome Webstore
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          file-path: ./deployables/extension/zodiac-pilot.zip
+          extension-id: jklckajipokenkbbodifahogmidkekcb
+          client-id: ${{ secrets.CHROME_WEBSTORE_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_WEBSTORE_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_WEBSTORE_REFRESH_TOKEN }}
+          publish: true
 
       - name: Create Sentry release
         uses: getsentry/action-release@v3
