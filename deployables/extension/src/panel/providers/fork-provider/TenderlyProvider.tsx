@@ -138,6 +138,8 @@ export class TenderlyProvider extends EventEmitter {
 
     const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC')
     const publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC')
+    invariant(adminRpc && publicRpc, 'Admin or Public RPC not found')
+
     this.network = publicRpc.network
     this.publicRpcSlug = publicRpc.slug
 
@@ -148,7 +150,7 @@ export class TenderlyProvider extends EventEmitter {
 
     // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
     const provider = new JsonRpcProvider(
-      rpcUrl(this.network, adminRpc.slug),
+      rpcUrl(adminRpc.network, adminRpc.slug),
       this.chainId,
     )
 
