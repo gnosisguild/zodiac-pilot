@@ -1,4 +1,6 @@
 import type { JsonRpcRequest } from '@/types'
+import { invariant } from '@epic-web/invariant'
+import { getCompanionAppUrl } from '@zodiac/env'
 import { JsonRpcProvider } from 'ethers'
 import EventEmitter from 'events'
 import { customAlphabet } from 'nanoid'
@@ -16,12 +18,12 @@ export class TenderlyProvider extends EventEmitter {
   private throttledIncreaseBlock: () => void
 
   vnetId: string | undefined
-  publicRpc: string | undefined
+  publicRpcSlug: string | undefined
 
   constructor(chainId: ChainId) {
     super()
     this.chainId = chainId
-    this.tenderlyVnetApi = 'https://vnet-api.pilot.gnosisguild.org'
+    this.tenderlyVnetApi = `${getCompanionAppUrl()}/vnet`
     this.throttledIncreaseBlock = throttle(this.increaseBlock, 1000)
   }
 
@@ -83,21 +85,19 @@ export class TenderlyProvider extends EventEmitter {
     if (!this.vnetId) return
 
     this.vnetId = undefined
-    this.publicRpc = undefined
+    this.publicRpcSlug = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
 
     // We no longer delete forks/virtual testnets on Tenderly. That way we will be able to persist and share Pilot sessions in the future.
-    // (Also Tenderly doesn't seem to offer a DELETE endpoint for virtual networks.)
     // await fetch(`${this.tenderlyVnetApi}/${vnetId}`, {
     //   method: 'DELETE',
     // })
   }
 
   getTransactionLink(txHash: string) {
-    if (!this.publicRpc) return ''
-    const publicRpcSlug = this.publicRpc.split('/').pop()
-    return `https://dashboard.tenderly.co/explorer/vnet/${publicRpcSlug}/tx/${txHash}`
+    if (!this.publicRpcSlug) return ''
+    return `https://dashboard.tenderly.co/explorer/vnet/${this.publicRpcSlug}/tx/${txHash}`
   }
 
   private async createFork(
@@ -134,26 +134,29 @@ export class TenderlyProvider extends EventEmitter {
     this.vnetId = json.id
     this.blockNumber = json.fork_config.block_number
 
-    const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC').url
-    this.publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC').url
+    const adminRpcSlug = json.rpcs.find(
+      (rpc: any) => rpc.name === 'Admin RPC',
+    ).slug
+    this.publicRpcSlug = json.rpcs.find(
+      (rpc: any) => rpc.name === 'Public RPC',
+    ).slug
 
-    // Proxy the admin RPC through our vnet-api to protect user privacy
-    // Convert https://virtual.mainnet.rpc.tenderly.co/abc123 to https://vnet-api.pilot.gnosisguild.org/rpc/virtual.mainnet.rpc.tenderly.co/abc123
-    const proxiedAdminRpc = this.proxyTenderlyUrl(adminRpc)
-
-    // for requests going through our proxy we use the proxied admin RPC so Pilot can fully control the fork while protecting user privacy
-    const provider = new JsonRpcProvider(proxiedAdminRpc, this.chainId)
-    this.emit('update', { rpcUrl: this.publicRpc, vnetId: this.vnetId })
+    // The API now returns proxied URLs directly, so we can use the admin RPC as-is
+    const provider = new JsonRpcProvider(rpcUrl(adminRpcSlug), this.chainId)
+    this.emit('update', {
+      rpcUrl: rpcUrl(this.publicRpcSlug),
+      vnetId: this.vnetId,
+    })
 
     return provider
   }
 
   private proxyTenderlyUrl(tenderlyUrl: string): string {
     // Convert https://virtual.mainnet.rpc.tenderly.co/abc123
-    // to https://vnet-api.pilot.gnosisguild.org/rpc/virtual.mainnet.rpc.tenderly.co/abc123
+    // to https://app.pilot.gnosisguild.org/vnet/rpc/virtual.mainnet.rpc.tenderly.co/abc123
     const url = new URL(tenderlyUrl)
     const hostAndPath = url.host + url.pathname
-    return `${this.tenderlyVnetApi}/rpc/${hostAndPath}`
+    return `https://app.pilot.gnosisguild.org/vnet/rpc/${hostAndPath}`
   }
 
   private increaseBlock = async () => {
@@ -177,4 +180,9 @@ function throttle(func: (...args: any[]) => void, timeout: number) {
       ready = true
     }, timeout)
   }
+}
+
+export const rpcUrl = (slug: string | undefined) => {
+  invariant(slug, 'slug is required')
+  return `https://app.pilot.gnosisguild.org/vnet/rpc/${slug}`
 }
