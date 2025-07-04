@@ -1,8 +1,0 @@
-name = "vnet-api"
-main = "src/index.ts"
-compatibility_date = "2022-09-20"
-account_id = "32ad23c951551530b7ec3ecd422861a2"
-
-[vars]
-TENDERLY_USER = "gnosisguild"
-TENDERLY_PROJECT = "zodiac-pilot"
