@@ -1,4 +1,5 @@
 import { ConfirmableAction } from '@/components'
+import { useWorkspaceId } from '@/workspaces'
 import type { Route } from '@zodiac/db/schema'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
@@ -31,9 +32,10 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
     <NavLink
       key={route.id}
       aria-labelledby={route.id}
-      to={href('/account/:accountId/route/:routeId?', {
+      to={href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
         accountId: route.toId,
         routeId: route.id,
+        workspaceId: useWorkspaceId(),
       })}
       role="tab"
       className={({ isActive }) =>
@@ -65,8 +67,8 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
         <ConfirmableAction
           title="Remove route"
           description="Are you sure you want to remove this route? This action cannot be undone."
-          intent={Intent.Remove}
-          busy={useIsPending(Intent.Remove)}
+          intent={Intent.RemoveRoute}
+          busy={useIsPending(Intent.RemoveRoute)}
           onConfirmChange={setConfirmDelete}
           context={{ routeId: route.id }}
           style="critical"
@@ -87,7 +89,7 @@ type EditProps = {
 const Edit = ({ route, isDefault, onUpdateChange }: EditProps) => {
   const [updating, setUpdating] = useState(false)
 
-  useAfterSubmit(Intent.Edit, () => setUpdating(false))
+  useAfterSubmit(Intent.EditRoute, () => setUpdating(false))
 
   useEffect(() => {
     onUpdateChange(updating)
@@ -129,8 +131,8 @@ const Edit = ({ route, isDefault, onUpdateChange }: EditProps) => {
           <Modal.Actions>
             <PrimaryButton
               submit
-              intent={Intent.Edit}
-              busy={useIsPending(Intent.Edit)}
+              intent={Intent.EditRoute}
+              busy={useIsPending(Intent.EditRoute)}
             >
               Update
             </PrimaryButton>

@@ -9,7 +9,7 @@ export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
-      params: { accountId },
+      params: { accountId, workspaceId },
       context: {
         auth: { tenant, user },
       },
@@ -25,13 +25,17 @@ export const loader = (args: Route.LoaderArgs) =>
 
       if (defaultRoute == null) {
         return redirect(
-          href('/account/:accountId/route/:routeId?', { accountId }),
+          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+            accountId,
+            workspaceId,
+          }),
         )
       }
 
       return redirect(
-        href('/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
           accountId,
+          workspaceId,
           routeId: defaultRoute.routeId,
         }),
       )

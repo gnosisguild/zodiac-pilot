@@ -74,7 +74,7 @@ export const action = (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { accountId },
+      params: { accountId, workspaceId },
       context: {
         auth: { user, tenant },
       },
@@ -139,7 +139,7 @@ export const action = (args: Route.ActionArgs) =>
         }
       })
 
-      return redirect(href('/edit'))
+      return redirect(href('/workspace/:workspaceId/accounts', { workspaceId }))
     },
     {
       ensureSignedIn: true,
@@ -155,6 +155,7 @@ export const action = (args: Route.ActionArgs) =>
 
 const EditAccount = ({
   loaderData: { label, account, chainId },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   const formId = useId()
 
@@ -193,7 +194,11 @@ const EditAccount = ({
               </PrimaryButton>
             </InlineForm>
 
-            <GhostLinkButton to={href('/edit')}>Cancel</GhostLinkButton>
+            <GhostLinkButton
+              to={href('/workspace/:workspaceId/accounts', { workspaceId })}
+            >
+              Cancel
+            </GhostLinkButton>
           </FormLayout.Actions>
         </FormLayout>
       </Page.Main>
