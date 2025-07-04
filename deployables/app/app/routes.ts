@@ -36,6 +36,11 @@ export default [
     'routes/sign/redirects/offline-sign-transaction.ts',
   ),
 
+  route(
+    '/launch/:prefixedAvatarAddress/:accountLabel',
+    'routes/launch/$prefixedAvatarAddress.$accountLabel.tsx',
+  ),
+
   // BEGIN LEGACY REDIRECTS
 
   route('/offline', 'routes/offline-layout.tsx', [
