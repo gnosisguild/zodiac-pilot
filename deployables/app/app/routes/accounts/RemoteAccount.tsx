@@ -1,5 +1,6 @@
 import { ConfirmableAction } from '@/components'
 import { Chain } from '@/routes-ui'
+import { useWorkspaceId } from '@/workspaces'
 import { CHAIN_NAME } from '@zodiac/chains'
 import type { Account } from '@zodiac/db/schema'
 import { useIsPending } from '@zodiac/hooks'
@@ -26,7 +27,10 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
-      href={href('/account/:accountId', { accountId: account.id })}
+      href={href('/workspace/:workspaceId/account/:accountId', {
+        accountId: account.id,
+        workspaceId: useWorkspaceId(),
+      })}
     >
       <TableCell aria-describedby={account.id}>{account.label}</TableCell>
       <TableCell>
@@ -72,7 +76,10 @@ const Actions = ({ accountId }: { accountId: string }) => {
         onRequestHide={() => setMenuOpen(false)}
       >
         <GhostLinkButton
-          to={href('/account/:accountId', { accountId })}
+          to={href('/workspace/:workspaceId/account/:accountId', {
+            accountId,
+            workspaceId: useWorkspaceId(),
+          })}
           icon={Pencil}
           align="left"
           size="tiny"
@@ -84,7 +91,7 @@ const Actions = ({ accountId }: { accountId: string }) => {
           title="Confirm delete"
           description="Are you sure you want to delete this account? This action cannot be undone."
           busy={submitting}
-          intent={Intent.RemoteDelete}
+          intent={Intent.DeleteAccount}
           onConfirmChange={setConfirmingDelete}
           style="critical"
           context={{ accountId }}
