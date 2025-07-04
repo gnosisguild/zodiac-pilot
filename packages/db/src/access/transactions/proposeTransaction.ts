@@ -7,17 +7,25 @@ type ProposeTransactionOptions = {
   userId: UUID
   tenantId: UUID
   accountId: UUID
+  workspaceId: UUID
   transaction: MetaTransactionRequest[]
 }
 
 export const proposeTransaction = async (
   db: DBClient,
-  { userId, tenantId, accountId, transaction }: ProposeTransactionOptions,
+  {
+    userId,
+    tenantId,
+    accountId,
+    transaction,
+    workspaceId,
+  }: ProposeTransactionOptions,
 ) => {
   const [proposedTransaction] = await db
     .insert(ProposedTransactionTable)
     .values({
       tenantId,
+      workspaceId,
       transaction: JSON.parse(jsonStringify(transaction)),
       userId,
       accountId,

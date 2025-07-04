@@ -21,6 +21,7 @@ export const transactionProposalFactory = createFactory<
       accountId: account.id,
       tenantId: tenant.id,
       userId: user.id,
+      workspaceId: account.workspaceId,
 
       transaction: [createMockTransactionRequest()],
 

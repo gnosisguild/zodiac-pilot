@@ -1,5 +1,7 @@
+import { invariant } from '@epic-web/invariant'
 import {
   SignedTransactionTable,
+  type Account,
   type Route,
   type SignedTransaction,
   type SignedTransactionCreateInput,
@@ -16,14 +18,17 @@ import { createFactory } from './createFactory'
 export const signedTransactionFactory = createFactory<
   SignedTransactionCreateInput,
   SignedTransaction,
-  [route: Route, user: User]
+  [route: Route, user: User, account: Account]
 >({
-  build(route, user, data) {
+  build(route, user, account, data) {
+    invariant(route.toId === account.id, 'Route does not lead to account')
+
     return {
       routeId: route.id,
       accountId: route.toId,
       walletId: route.fromId,
       tenantId: route.tenantId,
+      workspaceId: account.id,
       userId: user.id,
       waypoints: createMockWaypoints(),
 
