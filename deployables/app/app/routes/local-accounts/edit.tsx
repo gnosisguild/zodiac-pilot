@@ -37,7 +37,7 @@ import {
 import { useId } from 'react'
 import { href, redirect, useParams } from 'react-router'
 import { rankRoutes, type ChainId, type PrefixedAddress } from 'ser-kit'
-import type { Route as RouteType } from './+types/edit-route'
+import type { Route as RouteType } from './+types/edit'
 import { Intent } from './intents'
 
 export const meta: RouteType.MetaFunction = ({ data, matches }) => [
@@ -166,6 +166,7 @@ const findSelectedRoute = async (
 export const clientAction = async ({
   serverAction,
   request,
+  params: { workspaceId },
 }: RouteType.ClientActionArgs) => {
   const data = await request.clone().formData()
 
@@ -189,7 +190,11 @@ export const clientAction = async ({
 
       await promise
 
-      return redirect(href('/edit'))
+      return redirect(
+        workspaceId == null
+          ? href('/offline/accounts')
+          : href('/workspace/:workspaceId/local-accounts', { workspaceId }),
+      )
     }
     default:
       return serverResult
