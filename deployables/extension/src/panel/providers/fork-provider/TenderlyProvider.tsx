@@ -141,15 +141,16 @@ export class TenderlyProvider extends EventEmitter {
     this.network = publicRpc.network
     this.publicRpcSlug = publicRpc.slug
 
-    // The API now returns proxied URLs directly, so we can use the admin RPC as-is
-    const provider = new JsonRpcProvider(
-      rpcUrl(this.network, adminRpc.slug),
-      this.chainId,
-    )
     this.emit('update', {
       rpcUrl: rpcUrl(this.network, this.publicRpcSlug),
       vnetId: this.vnetId,
     })
+
+    // for requests going directly to Tenderly provider we use the admin RPC so Pilot can fully control the fork
+    const provider = new JsonRpcProvider(
+      rpcUrl(this.network, adminRpc.slug),
+      this.chainId,
+    )
 
     return provider
   }

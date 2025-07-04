@@ -22,8 +22,6 @@ const vnetResponseSchema = z.object({
 
 export type CreateVnetRequest = Record<string, unknown>
 
-export type CreateVnetResponse = z.infer<typeof vnetResponseSchema>
-
 export async function createVnet(requestBody: CreateVnetRequest) {
   const validatedData = await api('/', {
     schema: vnetResponseSchema,
