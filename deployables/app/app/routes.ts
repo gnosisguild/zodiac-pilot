@@ -13,19 +13,86 @@ export default [
 
   route('/callback', 'routes/auth/callback.ts'),
 
-  layout('routes/layout.tsx', [
-    route('/connect', 'routes/connect.tsx'),
+  route('/offline', 'routes/offline-layout.tsx', [
+    layout('routes/errorBoundary.tsx', { id: 'offline-error-boundary' }, [
+      index('routes/welcome.tsx', { id: 'offline-welcome' }),
 
-    layout('routes/errorBoundary.tsx', [
-      ...prefix('/sign-up', [
+      ...prefix('sign-up', [
         index('routes/auth/sign-up.tsx'),
         route('success', 'routes/auth/sign-up.success.tsx'),
       ]),
 
-      route('/admin', 'routes/auth/admin.tsx'),
+      layout('routes/tokens/index.tsx', { id: 'offline-token-index' }, [
+        ...prefix('tokens', [
+          layout(
+            'routes/tokens/balances/layout.tsx',
+            { id: 'offline-balances-layout' },
+            [
+              route('balances', 'routes/tokens/balances/balances.tsx', {
+                id: 'offline-balances',
+              }),
+            ],
+          ),
+          layout(
+            'routes/tokens/send/layout.tsx',
+            { id: 'offline-send-layout' },
+            [
+              route('send/:chain?/:token?', 'routes/tokens/send/send.tsx', {
+                id: 'offline-send',
+              }),
+            ],
+          ),
+          layout(
+            'routes/tokens/swap/layout.tsx',
+            { id: 'offline-swap-layout' },
+            [
+              route('swap', 'routes/tokens/swap/swap.tsx', {
+                id: 'offline-swap',
+              }),
+            ],
+          ),
+        ]),
+      ]),
+
+      layout('routes/walletProvider.tsx', { id: 'offline-wallet-provider' }, [
+        ...prefix('accounts', [
+          index('routes/local-accounts/list.tsx', {
+            id: 'offline-accounts-list',
+          }),
+          route('create/:prefixedAddress?', 'routes/local-accounts/create.tsx'),
+        ]),
+
+        ...prefix('account', [
+          route(':accountId', 'routes/local-accounts/load-account.ts', {
+            id: 'offline-load-account',
+          }),
+          route(':accountId/:data', 'routes/local-accounts/edit.tsx', {
+            id: 'offline-account-edit',
+          }),
+        ]),
+
+        ...prefix('submit', [
+          layout('routes/sign/layout.tsx', { id: 'offline-sign-layout' }, [
+            index('routes/sign/index.tsx', { id: 'offline-sign-index' }),
+
+            route(
+              ':route/:transactions',
+              'routes/sign/$route.$transactions/sign.tsx',
+            ),
+          ]),
+        ]),
+      ]),
+    ]),
+  ]),
+
+  route('/workspace/:workspaceId', 'routes/workspace-layout.tsx', [
+    layout('routes/errorBoundary.tsx', [
+      index('routes/welcome.tsx'),
+
+      route('admin', 'routes/auth/admin.tsx'),
 
       layout('routes/tokens/index.tsx', [
-        ...prefix('/tokens', [
+        ...prefix('tokens', [
           layout('routes/tokens/balances/layout.tsx', [
             route('balances', 'routes/tokens/balances/balances.tsx'),
           ]),
@@ -39,40 +106,29 @@ export default [
       ]),
 
       layout('routes/walletProvider.tsx', [
-        route('/profile', 'routes/auth/profile.tsx', [
+        route('profile', 'routes/auth/profile.tsx', [
           route('add-wallet', 'routes/auth/add-wallet.tsx'),
           route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
 
-        route(
-          '/new-route',
-          'routes/legacy-redirects/old-new-route-redirect.ts',
-        ),
-
-        route('/account/:accountId', 'routes/account/edit.tsx', [
-          index('routes/account/load-default-route.ts'),
-          route('route/:routeId?', 'routes/account/routes.tsx'),
+        ...prefix('accounts', [
+          index('routes/accounts/list.tsx'),
+          route('create/:prefixedAddress?', 'routes/accounts/create.tsx'),
         ]),
 
-        ...prefix('/edit', [
-          index('routes/edit/list-accounts.tsx'),
-          route(':routeId', 'routes/edit/$routeId/load-route.ts'),
-          route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
-
-          route(
-            ':data',
-            'routes/legacy-redirects/extract-route-id-from-edit.ts',
-          ),
+        route('account/:accountId', 'routes/accounts/edit.tsx', [
+          index('routes/accounts/load-default-route.ts'),
+          route('route/:routeId?', 'routes/accounts/routes.tsx'),
         ]),
 
-        route(
-          '/edit-route/:data',
-          'routes/legacy-redirects/old-edit-redirect.ts',
-        ),
+        route('local-accounts', 'routes/local-accounts/list.tsx'),
 
-        route('/create/:prefixedAddress?', 'routes/create/create.tsx'),
+        ...prefix('local-account', [
+          route(':accountId', 'routes/local-accounts/load-account.ts'),
+          route(':accountId/:data', 'routes/local-accounts/edit.tsx'),
+        ]),
 
-        ...prefix('/submit', [
+        ...prefix('submit', [
           layout('routes/sign/layout.tsx', [
             index('routes/sign/index.tsx'),
 
@@ -85,11 +141,6 @@ export default [
               index('routes/sign/proposal/load-default-route.tsx'),
               route(':routeId', 'routes/sign/proposal/sign.tsx'),
             ]),
-
-            route(
-              ':route/:transactions',
-              'routes/sign/$route.$transactions/sign.tsx',
-            ),
           ]),
         ]),
       ]),

@@ -40,7 +40,7 @@ import {
   User,
 } from 'lucide-react'
 import { href, NavLink, Outlet } from 'react-router'
-import type { Route } from './+types/layout'
+import type { Route } from './+types/workspace-layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
