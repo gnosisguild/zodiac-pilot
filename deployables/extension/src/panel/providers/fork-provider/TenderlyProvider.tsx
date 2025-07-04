@@ -151,14 +151,6 @@ export class TenderlyProvider extends EventEmitter {
     return provider
   }
 
-  private proxyTenderlyUrl(tenderlyUrl: string): string {
-    // Convert https://virtual.mainnet.rpc.tenderly.co/abc123
-    // to https://app.pilot.gnosisguild.org/vnet/rpc/virtual.mainnet.rpc.tenderly.co/abc123
-    const url = new URL(tenderlyUrl)
-    const hostAndPath = url.host + url.pathname
-    return `https://app.pilot.gnosisguild.org/vnet/rpc/${hostAndPath}`
-  }
-
   private increaseBlock = async () => {
     if (!this.forkProviderPromise || !this.blockNumber) return
     const provider = await this.forkProviderPromise
@@ -184,5 +176,5 @@ function throttle(func: (...args: any[]) => void, timeout: number) {
 
 export const rpcUrl = (slug: string | undefined) => {
   invariant(slug, 'slug is required')
-  return `https://app.pilot.gnosisguild.org/vnet/rpc/${slug}`
+  return `${getCompanionAppUrl()}/vnet/rpc/${slug}`
 }
