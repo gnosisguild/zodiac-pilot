@@ -15,6 +15,7 @@ import { getDefaultNonces } from '../getDefaultNonces'
 import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
 import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SignTransaction } from '../SignTransaction'
+import { SignTransactionWithCallback } from '../SignTransactionWithCallback'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route as RouteType } from './+types/sign'
 
@@ -114,7 +115,9 @@ const SubmitPage = ({
     defaultSafeNonces,
   },
   actionData,
+  params,
 }: RouteType.ComponentProps) => {
+  const transactions = parseTransactionData(params.transactions)
   return (
     <Form>
       <Form.Section
@@ -211,12 +214,23 @@ const SubmitPage = ({
       </Form.Section>
 
       <Form.Actions>
-        <SignTransaction
-          chainId={chainId}
-          walletAddress={initiator}
-          safeAddress={safeAddress}
-          executionPlan={actionData == null ? null : actionData.plan}
-        />
+        {sessionStorage.getItem(`pilot_launch_${route.id}`) ? (
+          <SignTransactionWithCallback
+            chainId={chainId}
+            walletAddress={initiator}
+            safeAddress={safeAddress}
+            executionPlan={actionData == null ? null : actionData.plan}
+            routeId={route.id}
+            transactions={transactions}
+          />
+        ) : (
+          <SignTransaction
+            chainId={chainId}
+            walletAddress={initiator}
+            safeAddress={safeAddress}
+            executionPlan={actionData == null ? null : actionData.plan}
+          />
+        )}
       </Form.Actions>
     </Form>
   )
