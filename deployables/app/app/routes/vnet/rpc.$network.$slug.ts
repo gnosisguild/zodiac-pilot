@@ -1,18 +1,22 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
+import type { LoaderFunctionArgs } from 'react-router'
 import { cors } from 'remix-utils/cors'
+import type { Route } from './+types/rpc.$network.$slug'
+
+// CORS configuration - keep consistent between loader and action
+const corsConfig = {
+  origin: true,
+  methods: ['POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   // Handle preflight OPTIONS requests
-  return await cors(request, new Response(null, { status: 200 }), {
-    origin: true,
-    methods: ['POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
+  return await cors(request, new Response(null, { status: 200 }), corsConfig)
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
-  // Reconstruct the Tenderly URL
-  const tenderlyRpcUrl = `https://virtual.mainnet.rpc.tenderly.co/${params.slug}`
+export async function action({ request, params }: Route.ActionArgs) {
+  // Reconstruct the Tenderly URL with network parameter
+  const tenderlyRpcUrl = `https://virtual.${params.network}.rpc.tenderly.co/${params.slug}`
 
   // Forward the request to Tenderly
   const tenderlyRequest = new Request(tenderlyRpcUrl, {
@@ -30,10 +34,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     headers: tenderlyResponse.headers,
   })
 
-  // Apply CORS headers using remix-utils
-  return await cors(request, response, {
-    origin: true,
-    methods: ['POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
-  })
+  // Apply CORS headers using remix-utils - use same config as loader
+  return await cors(request, response, corsConfig)
 }

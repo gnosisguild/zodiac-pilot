@@ -18,6 +18,7 @@ export class TenderlyProvider extends EventEmitter {
   private throttledIncreaseBlock: () => void
 
   vnetId: string | undefined
+  network: string | undefined
   publicRpcSlug: string | undefined
 
   constructor(chainId: ChainId) {
@@ -85,6 +86,7 @@ export class TenderlyProvider extends EventEmitter {
     if (!this.vnetId) return
 
     this.vnetId = undefined
+    this.network = undefined
     this.publicRpcSlug = undefined
     this.forkProviderPromise = undefined
     this.blockNumber = undefined
@@ -134,17 +136,18 @@ export class TenderlyProvider extends EventEmitter {
     this.vnetId = json.id
     this.blockNumber = json.fork_config.block_number
 
-    const adminRpcSlug = json.rpcs.find(
-      (rpc: any) => rpc.name === 'Admin RPC',
-    ).slug
-    this.publicRpcSlug = json.rpcs.find(
-      (rpc: any) => rpc.name === 'Public RPC',
-    ).slug
+    const adminRpc = json.rpcs.find((rpc: any) => rpc.name === 'Admin RPC')
+    const publicRpc = json.rpcs.find((rpc: any) => rpc.name === 'Public RPC')
+    this.network = publicRpc.network
+    this.publicRpcSlug = publicRpc.slug
 
     // The API now returns proxied URLs directly, so we can use the admin RPC as-is
-    const provider = new JsonRpcProvider(rpcUrl(adminRpcSlug), this.chainId)
+    const provider = new JsonRpcProvider(
+      rpcUrl(this.network, adminRpc.slug),
+      this.chainId,
+    )
     this.emit('update', {
-      rpcUrl: rpcUrl(this.publicRpcSlug),
+      rpcUrl: rpcUrl(this.network, this.publicRpcSlug),
       vnetId: this.vnetId,
     })
 
@@ -174,7 +177,10 @@ function throttle(func: (...args: any[]) => void, timeout: number) {
   }
 }
 
-export const rpcUrl = (slug: string | undefined) => {
-  invariant(slug, 'slug is required')
-  return `${getCompanionAppUrl()}/vnet/rpc/${slug}`
+export const rpcUrl = (
+  network: string | undefined,
+  slug: string | undefined,
+) => {
+  invariant(slug && network, 'slug and network are required')
+  return `${getCompanionAppUrl()}/vnet/rpc/${network}/${slug}`
 }

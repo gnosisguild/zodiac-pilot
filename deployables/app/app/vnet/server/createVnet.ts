@@ -35,13 +35,22 @@ export async function createVnet(requestBody: CreateVnetRequest) {
     ...validatedData,
     rpcs: validatedData.rpcs.map((rpc) => {
       invariant(
-        rpc.url.includes('virtual.mainnet.rpc.tenderly.co/') ||
+        rpc.url.includes('//virtual.') &&
+          rpc.url.includes('.rpc.tenderly.co/') &&
           !rpc.url.endsWith('/'),
         'Unexpected RPC URL',
       )
+
+      // Parse network and slug from URL: https://virtual.{network}.rpc.tenderly.co/{slug}
+      const urlParts = rpc.url.split('/')
+      const domainParts = urlParts[2].split('.') // virtual.{network}.rpc.tenderly.co
+      const network = domainParts[1] // Extract network from domain
+      const slug = urlParts[urlParts.length - 1] // Get the last part as slug
+
       return {
         name: rpc.name,
-        slug: rpc.url.split('/').pop(),
+        network,
+        slug,
       }
     }),
   }

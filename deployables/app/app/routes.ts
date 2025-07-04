@@ -164,7 +164,7 @@ export default [
 
   ...prefix('/vnet', [
     index('routes/vnet/index.ts'),
-    route('rpc/:slug', 'routes/vnet/rpc.$slug.ts'),
+    route('rpc/:network/:slug', 'routes/vnet/rpc.$network.$slug.ts'),
   ]),
 
   ...prefix('/dev', [

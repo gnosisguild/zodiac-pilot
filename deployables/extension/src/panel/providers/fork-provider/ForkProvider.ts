@@ -446,7 +446,7 @@ export class ForkProvider extends EventEmitter {
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
       chainId: this.chainId,
-      rpcUrl: rpcUrl(this.provider.publicRpcSlug),
+      rpcUrl: rpcUrl(this.provider.network, this.provider.publicRpcSlug),
       vnetId: this.provider.vnetId,
     })
 
