@@ -4,11 +4,13 @@ import type { z, ZodTypeAny } from 'zod'
 type VnetApiOptions<Schema extends ZodTypeAny> = {
   schema: Schema
   searchParams?: Record<string, string | number | boolean | string[] | number[]>
+  method?: 'GET' | 'POST'
+  body?: Record<string, unknown>
 }
 
 export const api = async <Schema extends ZodTypeAny>(
   endpoint: `/${string}`,
-  { schema, searchParams = {} }: VnetApiOptions<Schema>,
+  { schema, searchParams = {}, method = 'GET', body }: VnetApiOptions<Schema>,
 ) => {
   const { TENDERLY_ACCESS_KEY, TENDERLY_PROJECT, TENDERLY_USER } =
     getTenderlyCredentials()
@@ -18,6 +20,14 @@ export const api = async <Schema extends ZodTypeAny>(
       endpoint,
   )
 
+  const fetchOptions: RequestInit = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Key': TENDERLY_ACCESS_KEY,
+    },
+  }
+
   Object.entries(searchParams).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       value.forEach((entry) => url.searchParams.append(key, entry.toString()))
@@ -26,12 +36,11 @@ export const api = async <Schema extends ZodTypeAny>(
     }
   })
 
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Access-Key': TENDERLY_ACCESS_KEY,
-    },
-  })
+  if (method === 'POST' && body) {
+    fetchOptions.body = JSON.stringify(body)
+  }
+
+  const response = await fetch(url, fetchOptions)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch VNet API: ${response.status}`)

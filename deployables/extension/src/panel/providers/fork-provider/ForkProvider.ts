@@ -21,7 +21,7 @@ import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
 import type { ChainId, MetaTransactionRequest } from 'ser-kit'
 import { toHex } from 'viem'
-import { TenderlyProvider } from './TenderlyProvider'
+import { rpcUrl, TenderlyProvider } from './TenderlyProvider'
 import { translateSignSnapshotVote } from './translateSignSnapshotVote'
 
 class UnsupportedMethodError extends Error {
@@ -446,7 +446,7 @@ export class ForkProvider extends EventEmitter {
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
       chainId: this.chainId,
-      rpcUrl: this.provider.publicRpc,
+      rpcUrl: rpcUrl(this.provider.network, this.provider.publicRpcSlug),
       vnetId: this.provider.vnetId,
     })
 

@@ -162,6 +162,11 @@ export default [
     route('get-plan/:prefixedAddress', 'routes/system/get-plan.ts'),
   ]),
 
+  ...prefix('/vnet', [
+    index('routes/vnet/index.ts'),
+    route('rpc/:network/:slug', 'routes/vnet/rpc.$network.$slug.ts'),
+  ]),
+
   ...prefix('/dev', [
     route('decode/:data', 'routes/dev/decode.tsx'),
 
