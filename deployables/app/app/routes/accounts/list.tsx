@@ -152,10 +152,7 @@ const ListRoutes = ({
 
 export default ListRoutes
 
-const Accounts = ({
-  children,
-  showSigner = false,
-}: PropsWithChildren<{ showSigner?: boolean }>) => {
+const Accounts = ({ children }: PropsWithChildren) => {
   return (
     <Table
       bleed
@@ -168,7 +165,6 @@ const Accounts = ({
             <span className="sr-only">Active</span>
           </TableHeader>
           <TableHeader>Chain</TableHeader>
-          {showSigner && <TableHeader>Pilot Signer</TableHeader>}
           <TableHeader>Safe Account</TableHeader>
         </TableRow>
       </TableHead>
