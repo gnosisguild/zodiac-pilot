@@ -19,4 +19,8 @@ export const useUser = () => {
   return user
 }
 
-export const useIsSignedIn = () => useUser() != null
+export const useIsSignedIn = () => {
+  const user = useContext(UserContext)
+
+  return user != null
+}
