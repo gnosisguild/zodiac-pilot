@@ -7,15 +7,14 @@ import {
 } from '@react-router/dev/routes'
 
 export default [
-  index('routes/index.tsx'),
+  index('routes/load-default-workspace.ts'),
 
   route('/robots.txt', 'routes/robots.ts'),
 
   route('/callback', 'routes/auth/callback.ts'),
+  route('/welcome', 'routes/welcome.tsx'),
 
-  layout('routes/layout.tsx', [
-    route('/connect', 'routes/connect.tsx'),
-
+  layout('routes/sidebar-layout.tsx', [
     layout('routes/errorBoundary.tsx', [
       ...prefix('/sign-up', [
         index('routes/auth/sign-up.tsx'),
@@ -49,28 +48,50 @@ export default [
           'routes/legacy-redirects/old-new-route-redirect.ts',
         ),
 
-        route('/account/:accountId', 'routes/account/edit.tsx', [
-          index('routes/account/load-default-route.ts'),
-          route('route/:routeId?', 'routes/account/routes.tsx'),
+        ...prefix('/:workspaceId', [
+          index('routes/workspaces/welcome.tsx'),
+
+          route('accounts', 'routes/accounts/list.tsx'),
+          route(
+            'accounts/create/:prefixedAddress?',
+            'routes/create/create.tsx',
+          ),
+
+          route('account/:accountId', 'routes/accounts/edit.tsx', [
+            index('routes/accounts/load-default-route.ts'),
+            route('route/:routeId?', 'routes/accounts/routes.tsx'),
+          ]),
         ]),
 
-        ...prefix('/edit', [
+        route('/local-accounts', 'routes/local-accounts/list.tsx'),
+
+        ...prefix('/local-account', [
+          route(':accountId', 'routes/local-accounts/load-account.ts'),
+          route(':accountId/:data', 'routes/local-accounts/edit.tsx'),
+        ]),
+
+        ...prefix('edit', [
+          // turn into redirect
           index('routes/edit/list-accounts.tsx'),
+          // turn into redirect
           route(':routeId', 'routes/edit/$routeId/load-route.ts'),
+          // turn into redirect
           route(':routeId/:data', 'routes/edit/$routeId.$data/edit-route.tsx'),
 
           route(
             ':data',
             'routes/legacy-redirects/extract-route-id-from-edit.ts',
           ),
+
+          route(
+            'edit-route/:data',
+            'routes/legacy-redirects/old-edit-redirect.ts',
+          ),
+
+          route('/create/:prefixedAddress?', 'routes/create/create.tsx', {
+            id: 'create-local-account',
+          }),
         ]),
-
-        route(
-          '/edit-route/:data',
-          'routes/legacy-redirects/old-edit-redirect.ts',
-        ),
-
-        route('/create/:prefixedAddress?', 'routes/create/create.tsx'),
 
         ...prefix('/submit', [
           layout('routes/sign/layout.tsx', [
