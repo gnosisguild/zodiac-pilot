@@ -13,6 +13,9 @@ export default [
 
   route('/callback', 'routes/auth/callback.ts'),
 
+  // Railgun integration launch route
+  route('/launch/:prefixedAvatarAddress/:accountLabel', 'routes/launch.tsx'),
+
   layout('routes/layout.tsx', [
     route('/connect', 'routes/connect.tsx'),
 
