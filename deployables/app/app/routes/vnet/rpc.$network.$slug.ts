@@ -17,7 +17,7 @@ const SENSITIVE_HEADERS = new Set([
   'origin', // Prevent origin leakage
 ])
 
-// CORS configuration - same as middleware.ts
+// CORS configuration – maximum permissiveness
 const corsConfig = {
   origin: true,
   methods: ['POST', 'OPTIONS'],
@@ -89,18 +89,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const tenderlyRequest = new Request(tenderlyRpcUrl, {
     method: request.method,
     headers: filteredHeaders,
-    body: await request.clone().arrayBuffer(), // need to clone the body to prevent error "duplex option is required when sending a body."
+    // need to clone the body to prevent error "duplex option is required when sending a body."
+    body: await request.clone().arrayBuffer(),
   })
 
   const tenderlyResponse = await fetch(tenderlyRequest)
 
-  // Create a new response with the Tenderly response data
+  // Clone the response to prevent TypeError: immutable
   const response = new Response(tenderlyResponse.body, {
     status: tenderlyResponse.status,
     statusText: tenderlyResponse.statusText,
     headers: tenderlyResponse.headers,
   })
 
-  // Apply CORS headers using remix-utils
+  // Apply CORS headers
   return await cors(request, response, corsConfig)
 }

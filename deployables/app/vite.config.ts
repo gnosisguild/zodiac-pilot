@@ -27,6 +27,7 @@ export default defineConfig((config) => ({
 
   server: {
     port: 3040,
+    // this is important to make the cors config in the vnet/rpc.$network.$slug.ts loader take effect
     cors: false,
   },
 
