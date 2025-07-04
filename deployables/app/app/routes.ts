@@ -72,6 +72,11 @@ export default [
 
         route('/create/:prefixedAddress?', 'routes/create/create.tsx'),
 
+        route(
+          '/launch/:prefixedAvatarAddress/:accountLabel',
+          'routes/launch/$prefixedAvatarAddress.$accountLabel.tsx',
+        ),
+
         ...prefix('/submit', [
           layout('routes/sign/layout.tsx', [
             index('routes/sign/index.tsx'),
