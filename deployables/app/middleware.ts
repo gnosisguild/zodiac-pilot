@@ -16,7 +16,6 @@ import type { Connect } from 'vite'
  * - Access-Control-Allow-Methods: 'POST, OPTIONS' - Allows POST requests and preflight OPTIONS
  * - Access-Control-Allow-Headers: Comprehensive list of common headers to be as permissive as possible
  * - Access-Control-Max-Age: '86400' - Caches preflight results for 24 hours (performance optimization)
- * - Access-Control-Allow-Credentials: 'true' - Allows credentials if needed
  */
 export function corsMiddleware(): Connect.HandleFunction {
   return (req, res, next) => {
@@ -30,7 +29,6 @@ export function corsMiddleware(): Connect.HandleFunction {
         'Content-Type, Authorization, X-Requested-With, Accept, Accept-Language, Cache-Control, Connection, Cookie, DNT, Host, If-Modified-Since, If-None-Match, Origin, Pragma, Referer, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, User-Agent, X-Forwarded-For, X-Forwarded-Proto, X-Real-IP, X-Requested-With',
       )
       res.setHeader('Access-Control-Max-Age', '86400')
-      res.setHeader('Access-Control-Allow-Credentials', 'true')
 
       // Handle OPTIONS requests
       if (req.method === 'OPTIONS') {
