@@ -21,7 +21,7 @@ import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
-const Balances = () => {
+const Balances = ({ params: { workspaceId } }: Route.ComponentProps) => {
   const [{ data, isForked }, state] = useTokenBalances()
   if (data.length === 0 && state !== 'loading') {
     return (
@@ -86,10 +86,17 @@ const Balances = () => {
                     <GhostLinkButton
                       icon={ArrowUpFromLine}
                       size="tiny"
-                      to={href('/tokens/send/:chain?/:token?', {
-                        chain,
-                        token: contractId,
-                      })}
+                      to={
+                        workspaceId == null
+                          ? href('/offline/tokens/send/:chain?/:token?', {
+                              chain,
+                              token: contractId,
+                            })
+                          : href(
+                              '/workspace/:workspaceId/tokens/send/:chain?/:token?',
+                              { workspaceId },
+                            )
+                      }
                     >
                       Send
                     </GhostLinkButton>

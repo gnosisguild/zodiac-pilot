@@ -32,15 +32,22 @@ export const loader = async ({
   return { defaultToken: null }
 }
 
-const Send = ({ loaderData: { defaultToken } }: Route.ComponentProps) => {
+const Send = ({
+  loaderData: { defaultToken },
+  params: { workspaceId },
+}: Route.ComponentProps) => {
   const { sendToken, isSuccess, isPending, error } = useSendToken()
   const navigate = useNavigate()
 
   useEffect(() => {
     if (isSuccess) {
-      navigate(href('/tokens/balances'))
+      navigate(
+        workspaceId == null
+          ? href('/offline/tokens/balances')
+          : href('/workspace/:workspaceId/tokens/balances', { workspaceId }),
+      )
     }
-  }, [isSuccess, navigate])
+  }, [isSuccess, navigate, workspaceId])
 
   return (
     <Form

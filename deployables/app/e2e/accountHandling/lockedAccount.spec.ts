@@ -14,7 +14,7 @@ test.describe('Locked account', () => {
     })
 
     await page.goto(
-      href('/submit/:route/:transactions', {
+      href('/offline/submit/:route/:transactions', {
         route: encode(route),
         transactions: encode([transaction]),
       }),
@@ -35,7 +35,7 @@ test.describe('Locked account', () => {
     })
 
     await page.goto(
-      href('/submit/:route/:transactions', {
+      href('/offline/submit/:route/:transactions', {
         route: encode(route),
         transactions: encode([transaction]),
       }),

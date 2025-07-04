@@ -103,7 +103,7 @@ const OfflineLayout = ({
                       </Navigation.Link>
 
                       <Navigation.Link
-                        to={href('/offline/accounts/create/:prefixedAddress?')}
+                        to={href('/offline/accounts/create')}
                         icon={Plus}
                         reloadDocument={(location) =>
                           location.pathname.startsWith('/tokens')
