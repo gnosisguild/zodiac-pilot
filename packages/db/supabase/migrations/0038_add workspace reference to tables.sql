@@ -1,6 +1,23 @@
 ALTER TABLE "Account"
 ADD COLUMN "workspaceId" uuid;
 
+UPDATE "Account"
+SET
+  "workspaceId" = r."workspaceId"
+FROM
+  (
+    SELECT
+      w."id" AS "workspaceId",
+      a."id" AS "accountId"
+    FROM
+      "Account" AS a,
+      "Workspace" AS w
+    WHERE
+      a."tenantId" = w."tenantId"
+  ) AS r
+WHERE
+  "id" = r."accountId";
+
 -- Migrate data
 --> statement-breakpoint
 ALTER TABLE "Account"
@@ -11,6 +28,23 @@ SET
 ALTER TABLE "ProposedTransaction"
 ADD COLUMN "workspaceId" uuid;
 
+UPDATE "ProposedTransaction"
+SET
+  "workspaceId" = r."workspaceId"
+FROM
+  (
+    SELECT
+      w."id" AS "workspaceId",
+      a."id" AS "proposedTransactionId"
+    FROM
+      "ProposedTransaction" AS a,
+      "Workspace" AS w
+    WHERE
+      a."tenantId" = w."tenantId"
+  ) AS r
+WHERE
+  "id" = r."proposedTransactionId";
+
 -- Migarte data
 ALTER TABLE "ProposedTransaction"
 ALTER COLUMN "workspaceId"
@@ -20,6 +54,23 @@ SET
 --> statement-breakpoint
 ALTER TABLE "SignedTransaction"
 ADD COLUMN "workspaceId" uuid;
+
+UPDATE "SignedTransaction"
+SET
+  "workspaceId" = r."workspaceId"
+FROM
+  (
+    SELECT
+      w."id" AS "workspaceId",
+      a."id" AS "signedTransactionId"
+    FROM
+      "SignedTransaction" AS a,
+      "Workspace" AS w
+    WHERE
+      a."tenantId" = w."tenantId"
+  ) AS r
+WHERE
+  "id" = r."signedTransactionId";
 
 -- Migrate data
 ALTER TABLE "SignedTransaction"
