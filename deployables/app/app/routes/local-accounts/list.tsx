@@ -196,9 +196,7 @@ const ListRoutes = ({ loaderData, actionData }: Route.ComponentProps) => {
                       Add your Safe to start recording transactions for it.
                       <div className="mt-4 flex">
                         <SecondaryLinkButton
-                          to={href(
-                            '/offline/accounts/create/:prefixedAddress?',
-                          )}
+                          to={href('/offline/accounts/create')}
                         >
                           Add Safe Account
                         </SecondaryLinkButton>

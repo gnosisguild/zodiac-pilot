@@ -6,9 +6,11 @@ test.describe('Create new account', () => {
 
   test.describe('Logged out', () => {
     test('it is possible to create a new route', async ({ page }) => {
-      await page.goto(href('/create/:prefixedAddress?'))
+      await page.goto(href('/'))
 
       const extension = await loadExtension(page)
+
+      await page.getByRole('link', { name: 'New Safe Account' }).click()
 
       await page.getByRole('textbox', { name: 'Label' }).fill('New route')
 
@@ -28,11 +30,13 @@ test.describe('Create new account', () => {
   test.describe('Logged in', () => {
     test.describe.skip('With open extension', () => {
       test('it is possible to create a new route', async ({ page }) => {
-        await page.goto(href('/create/:prefixedAddress?'))
+        await page.goto(href('/'))
 
         const extension = await loadExtension(page)
 
         await signIn(page)
+
+        await page.getByRole('link', { name: 'New Safe Account' }).click()
 
         await page.getByRole('textbox', { name: 'Label' }).fill('New route')
 
@@ -51,9 +55,11 @@ test.describe('Create new account', () => {
 
     test.describe('With closed extension', () => {
       test('it is possible to create a new route', async ({ page }) => {
-        await page.goto(href('/create/:prefixedAddress?'))
+        await page.goto(href('/'))
 
         await signIn(page)
+
+        await page.getByRole('link', { name: 'New Safe Account' }).click()
 
         await page.getByRole('textbox', { name: 'Label' }).fill('New route')
 

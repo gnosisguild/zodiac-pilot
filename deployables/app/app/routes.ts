@@ -59,7 +59,7 @@ export default [
           index('routes/local-accounts/list.tsx', {
             id: 'offline-accounts-list',
           }),
-          route('create/:prefixedAddress?', 'routes/local-accounts/create.tsx'),
+          route('create', 'routes/local-accounts/create.tsx'),
         ]),
 
         ...prefix('account', [

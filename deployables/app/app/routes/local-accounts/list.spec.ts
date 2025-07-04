@@ -24,6 +24,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
@@ -59,7 +60,7 @@ describe.sequential('List Accounts', () => {
           label: 'Test account',
         })
 
-        await render(href('/edit'), { tenant, user })
+        await render(href('/offline/accounts'), { tenant, user })
 
         expect(
           await screen.findByRole('cell', { name: 'Test account' }),
@@ -73,10 +74,11 @@ describe.sequential('List Accounts', () => {
       it('is possible to edit a route', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
+        const workspace = await workspaceFactory.create(tenant, user)
 
         const account = await accountFactory.create(tenant, user)
 
-        await render(href('/edit'), {
+        await render(href('/offline/accounts'), {
           tenant,
           user,
         })
@@ -87,8 +89,9 @@ describe.sequential('List Accounts', () => {
         await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
         await expectRouteToBe(
-          href('/account/:accountId/route/:routeId?', {
+          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
             accountId: account.id,
+            workspaceId: workspace.id,
           }),
         )
       })
@@ -98,7 +101,7 @@ describe.sequential('List Accounts', () => {
       it('is possible to edit a route', async () => {
         const route = createMockExecutionRoute({ label: 'Test route' })
 
-        await render(href('/edit'), {
+        await render(href('/offline/accounts'), {
           availableRoutes: [route],
         })
 
@@ -120,8 +123,8 @@ describe.sequential('List Accounts', () => {
         await loadRoutes()
 
         await expectRouteToBe(
-          href('/edit/:routeId/:data', {
-            routeId: route.id,
+          href('/offline/account/:accountId/:data', {
+            accountId: route.id,
             data: encode(route),
           }),
         )
@@ -137,10 +140,13 @@ describe.sequential('List Accounts', () => {
 
         const account = await accountFactory.create(tenant, user)
 
-        const { waitForPendingActions } = await render(href('/edit'), {
-          tenant,
-          user,
-        })
+        const { waitForPendingActions } = await render(
+          href('/offline/accounts'),
+          {
+            tenant,
+            user,
+          },
+        )
 
         await userEvent.click(
           await screen.findByRole('button', { name: 'Account options' }),
@@ -177,7 +183,7 @@ describe.sequential('List Accounts', () => {
         const route = createMockExecutionRoute({ label: 'Test route' })
         const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-        await render(href('/edit'), {
+        await render(href('/offline/accounts'), {
           availableRoutes: [route],
         })
 
@@ -208,7 +214,7 @@ describe.sequential('List Accounts', () => {
       it('hides the dialog once the delete is confirmed', async () => {
         const route = createMockExecutionRoute({ label: 'Test route' })
 
-        await render(href('/edit'), {
+        await render(href('/offline/accounts'), {
           availableRoutes: [route],
         })
 
@@ -250,20 +256,23 @@ describe.sequential('List Accounts', () => {
         label: 'Test account',
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -298,20 +307,23 @@ describe.sequential('List Accounts', () => {
         label: 'Test account',
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -344,20 +356,23 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -391,20 +406,23 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -435,20 +453,23 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -491,20 +512,23 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -558,20 +582,23 @@ describe.sequential('List Accounts', () => {
         avatar: prefixAddress(account.chainId, account.address),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [executionRoute],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route: executionRoute,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [executionRoute],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route: executionRoute,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(executionRoute)
 
@@ -610,7 +637,7 @@ describe.sequential('List Accounts', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      await render(href('/edit'), {
+      await render(href('/offline/accounts'), {
         availableRoutes: [route],
         tenant,
         user,
@@ -653,20 +680,23 @@ describe.sequential('List Accounts', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      const { waitForPendingActions } = await render(href('/edit'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      const { waitForPendingActions } = await render(
+        href('/offline/accounts'),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -698,7 +728,7 @@ describe.sequential('List Accounts', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      await render(href('/edit'), {
+      await render(href('/offline/accounts'), {
         availableRoutes: [route],
       })
 

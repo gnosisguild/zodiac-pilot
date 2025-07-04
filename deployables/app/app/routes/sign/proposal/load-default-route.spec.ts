@@ -11,6 +11,7 @@ import {
   transactionProposalFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe, randomAddress } from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
@@ -99,6 +100,7 @@ describe('Load default route', () => {
   it('loads the default route for an account and redirects the user', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
 
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
@@ -114,14 +116,18 @@ describe('Load default route', () => {
     await setDefaultRoute(dbClient(), tenant, user, route)
 
     await render(
-      href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+      href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+        proposalId: proposal.id,
+        workspaceId: workspace.id,
+      }),
       { tenant, user },
     )
 
     await expectRouteToBe(
-      href('/submit/proposal/:proposalId/:routeId', {
+      href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
         proposalId: proposal.id,
         routeId: route.id,
+        workspaceId: workspace.id,
       }),
     )
   })
@@ -129,6 +135,7 @@ describe('Load default route', () => {
   it('picks the first route when no default route is set', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
 
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
@@ -145,14 +152,18 @@ describe('Load default route', () => {
     )
 
     await render(
-      href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+      href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+        proposalId: proposal.id,
+        workspaceId: workspace.id,
+      }),
       { tenant, user },
     )
 
     await expectRouteToBe(
-      href('/submit/proposal/:proposalId/:routeId', {
+      href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
         proposalId: proposal.id,
         routeId: routeA.id,
+        workspaceId: workspace.id,
       }),
     )
   })
@@ -160,6 +171,7 @@ describe('Load default route', () => {
   it('shows an error when no route has been configured', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
 
     const account = await accountFactory.create(tenant, user)
 
@@ -170,7 +182,10 @@ describe('Load default route', () => {
     )
 
     await render(
-      href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+      href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+        proposalId: proposal.id,
+        workspaceId: workspace.id,
+      }),
       { tenant, user },
     )
 
