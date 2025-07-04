@@ -30,7 +30,7 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
   return (
     <TableRow
       className="group"
-      href={href('/edit/:routeId', { routeId: route.id })}
+      href={href('/offline/account/:accountId', { accountId: route.id })}
     >
       <TableCell aria-describedby={route.id}>{route.label}</TableCell>
       <TableCell>
@@ -141,7 +141,7 @@ const Upload = ({ routeId }: { routeId: string }) => {
 
 const Edit = ({ routeId }: { routeId: string }) => (
   <GhostLinkButton
-    to={href('/edit/:routeId', { routeId })}
+    to={href('/offline/account/:accountId', { accountId: routeId })}
     align="left"
     size="tiny"
     icon={Pencil}

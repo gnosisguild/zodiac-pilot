@@ -4,4 +4,7 @@ export enum Intent {
   UpdateChain = 'UpdateChain',
   Save = 'Save',
   SaveAsCopy = 'SaveAsCopy',
+  Upload = 'Upload',
+  Edit = 'Edit',
+  Delete = 'Delete',
 }
