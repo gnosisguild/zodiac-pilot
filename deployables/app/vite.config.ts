@@ -3,7 +3,6 @@ import { sentryReactRouter } from '@sentry/react-router'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { corsMiddleware } from './middleware'
 
 const sentryConfig = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -42,13 +41,6 @@ export default defineConfig((config) => ({
     reactRouter(),
     tsconfigPaths(),
     sentryReactRouter(sentryConfig, config),
-    // allow calling fork RPC from any app
-    {
-      name: 'cors-middleware',
-      configureServer(server) {
-        server.middlewares.use(corsMiddleware())
-      },
-    },
   ],
 
   sentryConfig,
