@@ -6,6 +6,7 @@ import {
   type AccountCreateInput,
   type Tenant,
   type User,
+  type Workspace,
 } from '@zodiac/db/schema'
 import { randomAddress } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
@@ -14,14 +15,15 @@ import { createFactory } from './createFactory'
 export const accountFactory = createFactory<
   AccountCreateInput,
   Account,
-  [tenant: Tenant, owner: User]
+  [tenant: Tenant, owner: User, workspace: Workspace]
 >({
-  build(tenant, user, account) {
+  build(tenant, user, workspace, account) {
     return {
       address: randomAddress(),
       chainId: Chain.ETH,
       createdById: user.id,
       tenantId: tenant.id,
+      workspaceId: workspace.id,
 
       ...account,
     }

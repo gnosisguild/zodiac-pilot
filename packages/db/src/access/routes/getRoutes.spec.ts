@@ -4,6 +4,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { describe, expect, it } from 'vitest'
 import { dbClient } from '../../dbClient'
@@ -15,11 +16,12 @@ describe('getRoutes', () => {
     const userB = await userFactory.create()
 
     const tenant = await tenantFactory.create([userA, userB])
+    const workspace = await workspaceFactory.create(tenant, userA)
 
     const walletA = await walletFactory.create(userA)
     const walletB = await walletFactory.create(userB)
 
-    const account = await accountFactory.create(tenant, userA)
+    const account = await accountFactory.create(tenant, userA, workspace)
 
     await routeFactory.create(account, walletA)
 

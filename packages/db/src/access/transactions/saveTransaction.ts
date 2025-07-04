@@ -12,6 +12,7 @@ type SaveTransactionOptions = {
   accountId: UUID
   walletId: UUID
   routeId: UUID
+  workspaceId: UUID
 
   transaction: MetaTransactionRequest[]
 
