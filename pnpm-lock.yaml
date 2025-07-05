@@ -182,7 +182,7 @@ importers:
         specifier: 7.6.3
         version: 7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       remix-utils:
-        specifier: ^8.7.0
+        specifier: 8.7.0
         version: 8.7.0(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@3.25.74)
       ser-kit:
         specifier: 3.9.1
