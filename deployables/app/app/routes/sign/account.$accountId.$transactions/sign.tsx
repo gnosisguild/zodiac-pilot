@@ -9,7 +9,7 @@ export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
-      params: { transactions, accountId },
+      params: { transactions, accountId, workspaceId },
       context: {
         auth: { tenant, user },
       },
@@ -24,7 +24,10 @@ export const loader = async (args: Route.LoaderArgs) =>
       })
 
       return redirect(
-        href('/submit/proposal/:proposalId', { proposalId: proposal.id }),
+        href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
+          workspaceId,
+        }),
       )
     },
     {

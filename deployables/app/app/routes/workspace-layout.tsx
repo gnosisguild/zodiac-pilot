@@ -1,26 +1,22 @@
 import { ProvideUser } from '@/auth-client'
 import { authorizedLoader } from '@/auth-server'
 import { getAvailableChains } from '@/balances-server'
-import {
-  FakeBrowser,
-  Navigation,
-  PilotStatus,
-  ProvidePilotStatus,
-} from '@/components'
+import { Navigation, PilotStatus, ProvidePilotStatus } from '@/components'
 import { ProvideChains } from '@/routes-ui'
-import { getSignInUrl } from '@workos-inc/authkit-react-router'
+import { ProvideWorkspace } from '@/workspaces'
+import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   getActiveFeatures,
   getLastAccountsUpdateTime,
   getLastRoutesUpdateTime,
+  getWorkspace,
 } from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
+import { isUUID } from '@zodiac/schema'
 import {
   Divider,
   FeatureProvider,
-  GhostLinkButton,
-  PrimaryLinkButton,
   Sidebar,
   SidebarBody,
   SidebarFooter,
@@ -40,7 +36,7 @@ import {
   User,
 } from 'lucide-react'
 import { href, NavLink, Outlet } from 'react-router'
-import type { Route } from './+types/layout'
+import type { Route } from './+types/workspace-layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -49,45 +45,46 @@ export const loader = async (args: Route.LoaderArgs) =>
       context: {
         auth: { tenant, workOsOrganization, user, role },
       },
+      params: { workspaceId },
       request,
     }) => {
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
+
       const url = new URL(request.url)
       const routeFeatures = url.searchParams.getAll('feature')
 
       const chains = await getAvailableChains()
 
-      if (tenant == null) {
-        return {
-          chains,
-          user: null,
-          role: null,
-          features: routeFeatures,
-          signInUrl: await getSignInUrl(url.pathname),
-          isSystemAdmin: false,
-          lastAccountsUpdate: null,
-          lastRoutesUpdate: null,
-        }
-      }
-
       const db = dbClient()
 
-      const [features, lastAccountsUpdate, lastRoutesUpdate] =
+      const [features, lastAccountsUpdate, lastRoutesUpdate, workspace] =
         await Promise.all([
           getActiveFeatures(db, tenant.id),
           getLastAccountsUpdateTime(db, tenant.id),
           getLastRoutesUpdateTime(db, tenant.id),
+          getWorkspace(db, workspaceId),
         ])
 
       return {
         chains,
         user,
         role,
+        workspace,
         features: [...features.map(({ name }) => name), ...routeFeatures],
-        signInUrl: await getSignInUrl(url.pathname),
         isSystemAdmin: getAdminOrganizationId() === workOsOrganization.id,
         lastAccountsUpdate,
         lastRoutesUpdate,
       }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ tenant, params: { workspaceId } }) {
+        invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
+
+        const workspace = await getWorkspace(dbClient(), workspaceId)
+
+        return workspace.tenantId === tenant.id
+      },
     },
   )
 
@@ -96,15 +93,16 @@ const PageLayout = ({
     chains,
     user,
     features,
-    signInUrl,
     role,
     isSystemAdmin,
     lastAccountsUpdate,
     lastRoutesUpdate,
+    workspace,
   },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
-    <FakeBrowser>
+    <ProvideWorkspace workspace={workspace}>
       <ProvideUser user={user}>
         <FeatureProvider features={features}>
           <ProvideChains chains={chains}>
@@ -129,7 +127,10 @@ const PageLayout = ({
                             reloadDocument={(location) =>
                               !location.pathname.startsWith('/tokens')
                             }
-                            to={href('/tokens/send/:chain?/:token?')}
+                            to={href(
+                              '/workspace/:workspaceId/tokens/send/:chain?/:token?',
+                              { workspaceId },
+                            )}
                             icon={ArrowUpFromLine}
                           >
                             Send Tokens
@@ -139,7 +140,12 @@ const PageLayout = ({
                             reloadDocument={(location) =>
                               !location.pathname.startsWith('/tokens')
                             }
-                            to={href('/tokens/balances')}
+                            to={href(
+                              '/workspace/:workspaceId/tokens/balances',
+                              {
+                                workspaceId,
+                              },
+                            )}
                             icon={Landmark}
                           >
                             Balances
@@ -149,7 +155,9 @@ const PageLayout = ({
                             reloadDocument={(location) =>
                               !location.pathname.startsWith('/tokens')
                             }
-                            to={href('/tokens/swap')}
+                            to={href('/workspace/:workspaceId/tokens/swap', {
+                              workspaceId,
+                            })}
                             icon={ArrowRightLeft}
                           >
                             Swap
@@ -158,7 +166,9 @@ const PageLayout = ({
 
                         <Navigation.Section title="Safe Accounts">
                           <Navigation.Link
-                            to={href('/edit')}
+                            to={href('/workspace/:workspaceId/accounts', {
+                              workspaceId,
+                            })}
                             icon={List}
                             reloadDocument={(location) =>
                               location.pathname.startsWith('/tokens')
@@ -168,7 +178,22 @@ const PageLayout = ({
                           </Navigation.Link>
 
                           <Navigation.Link
-                            to={href('/create/:prefixedAddress?')}
+                            to={href('/workspace/:workspaceId/local-accounts', {
+                              workspaceId,
+                            })}
+                            icon={List}
+                            reloadDocument={(location) =>
+                              location.pathname.startsWith('/tokens')
+                            }
+                          >
+                            Local Safe Accounts
+                          </Navigation.Link>
+
+                          <Navigation.Link
+                            to={href(
+                              '/workspace/:workspaceId/accounts/create/:prefixedAddress?',
+                              { workspaceId },
+                            )}
                             icon={Plus}
                             reloadDocument={(location) =>
                               location.pathname.startsWith('/tokens')
@@ -180,7 +205,9 @@ const PageLayout = ({
 
                         <Navigation.Section title="Transactions">
                           <Navigation.Link
-                            to={href('/submit')}
+                            to={href('/workspace/:workspaceId/submit', {
+                              workspaceId,
+                            })}
                             icon={Signature}
                           >
                             Sign a transaction
@@ -190,7 +217,9 @@ const PageLayout = ({
                         {role === 'admin' && (
                           <Navigation.Section title="Organization">
                             <Navigation.Link
-                              to={href('/admin')}
+                              to={href('/workspace/:workspaceId/admin', {
+                                workspaceId,
+                              })}
                               icon={ShieldUser}
                             >
                               User Management
@@ -219,42 +248,24 @@ const PageLayout = ({
                       <div className="flex flex-col gap-4">
                         <Divider />
 
-                        {user ? (
-                          <NavLink
-                            to={href('/profile')}
-                            className="group flex items-center gap-x-2 text-sm/6 font-semibold text-zinc-950 dark:text-white"
-                          >
-                            <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
-                              <User size={16} />
-                            </div>
-
-                            <span className="sr-only">Your profile</span>
-                            <span
-                              aria-hidden="true"
-                              className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
-                            >
-                              {user.fullName}
-                            </span>
-                          </NavLink>
-                        ) : (
-                          <div className="flex gap-2">
-                            <GhostLinkButton
-                              fluid
-                              to={href('/sign-up')}
-                              size="small"
-                            >
-                              Sign Up
-                            </GhostLinkButton>
-
-                            <PrimaryLinkButton
-                              fluid
-                              to={signInUrl}
-                              size="small"
-                            >
-                              Sign In
-                            </PrimaryLinkButton>
+                        <NavLink
+                          to={href('/workspace/:workspaceId/profile', {
+                            workspaceId,
+                          })}
+                          className="group flex items-center gap-x-2 text-sm/6 font-semibold text-zinc-950 dark:text-white"
+                        >
+                          <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-zinc-800 text-white">
+                            <User size={16} />
                           </div>
-                        )}
+
+                          <span className="sr-only">Your profile</span>
+                          <span
+                            aria-hidden="true"
+                            className="flex-1 rounded px-4 py-2 group-hover:bg-zinc-950/5 group-hover:dark:bg-white/5"
+                          >
+                            {user.fullName}
+                          </span>
+                        </NavLink>
                       </div>
                     </SidebarFooter>
                   </Sidebar>
@@ -266,7 +277,7 @@ const PageLayout = ({
           </ProvideChains>
         </FeatureProvider>
       </ProvideUser>
-    </FakeBrowser>
+    </ProvideWorkspace>
   )
 }
 

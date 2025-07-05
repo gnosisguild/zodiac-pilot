@@ -114,7 +114,7 @@ export const action = (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { accountId },
+      params: { accountId, workspaceId },
       context: {
         auth: { tenant, user },
       },
@@ -124,7 +124,7 @@ export const action = (args: Route.ActionArgs) =>
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       switch (getString(data, 'intent')) {
-        case Intent.Edit: {
+        case Intent.EditRoute: {
           const routeId = getUUID(data, 'routeId')
           const label = getString(data, 'label')
           const setAsDefault = getBoolean(data, 'defaultRoute')
@@ -152,7 +152,7 @@ export const action = (args: Route.ActionArgs) =>
           return null
         }
 
-        case Intent.Remove: {
+        case Intent.RemoveRoute: {
           const routeId = getUUID(data, 'routeId')
 
           await removeRoute(dbClient(), routeId)
@@ -166,10 +166,14 @@ export const action = (args: Route.ActionArgs) =>
 
           if (defaultRoute != null) {
             return redirect(
-              href('/account/:accountId/route/:routeId?', {
-                accountId,
-                routeId: defaultRoute.routeId,
-              }),
+              href(
+                '/workspace/:workspaceId/account/:accountId/route/:routeId?',
+                {
+                  accountId,
+                  workspaceId,
+                  routeId: defaultRoute.routeId,
+                },
+              ),
             )
           }
 
@@ -180,15 +184,22 @@ export const action = (args: Route.ActionArgs) =>
 
           if (route != null) {
             return redirect(
-              href('/account/:accountId/route/:routeId?', {
-                accountId,
-                routeId: route.id,
-              }),
+              href(
+                '/workspace/:workspaceId/account/:accountId/route/:routeId?',
+                {
+                  accountId,
+                  workspaceId,
+                  routeId: route.id,
+                },
+              ),
             )
           }
 
           return redirect(
-            href('/account/:accountId/route/:routeId?', { accountId }),
+            href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+              accountId,
+              workspaceId,
+            }),
           )
         }
 
@@ -217,8 +228,9 @@ export const action = (args: Route.ActionArgs) =>
           })
 
           return redirect(
-            href('/account/:accountId/route/:routeId?', {
+            href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
               accountId,
+              workspaceId,
               routeId: route.id,
             }),
           )

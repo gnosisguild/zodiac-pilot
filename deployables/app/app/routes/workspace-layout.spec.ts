@@ -4,7 +4,7 @@ import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
-describe('Layout', () => {
+describe('Workspace Layout', () => {
   describe('Admin link', () => {
     it('offers a link to the admin panel', async () => {
       const user = await userFactory.create()

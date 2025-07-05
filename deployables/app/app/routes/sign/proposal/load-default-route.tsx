@@ -15,7 +15,7 @@ export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
-      params: { proposalId },
+      params: { proposalId, workspaceId },
       context: {
         auth: { tenant, user },
       },
@@ -33,8 +33,9 @@ export const loader = (args: Route.LoaderArgs) =>
 
       if (defaultRoute != null) {
         return redirect(
-          href('/submit/proposal/:proposalId/:routeId', {
+          href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
             proposalId,
+            workspaceId,
             routeId: defaultRoute.routeId,
           }),
         )
@@ -47,8 +48,9 @@ export const loader = (args: Route.LoaderArgs) =>
 
       if (route != null) {
         return redirect(
-          href('/submit/proposal/:proposalId/:routeId', {
+          href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
             proposalId,
+            workspaceId,
             routeId: route.id,
           }),
         )

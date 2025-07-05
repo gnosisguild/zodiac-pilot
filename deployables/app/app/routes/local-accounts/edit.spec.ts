@@ -38,7 +38,7 @@ vi.mock('ser-kit', async (importOriginal) => {
 
 const mockQueryRoutes = vi.mocked(queryRoutes)
 
-describe('Edit route', () => {
+describe('Edit local account', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
       Object.entries(CHAIN_NAME).map(([chainId, name]) =>
