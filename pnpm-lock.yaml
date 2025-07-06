@@ -92,8 +92,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@icons-pack/react-simple-icons':
-        specifier: 13.3.0
-        version: 13.3.0(react@19.1.0)
+        specifier: 13.4.0
+        version: 13.4.0(react@19.1.0)
       '@radix-ui/themes':
         specifier: 3.2.1
         version: 3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -487,8 +487,8 @@ importers:
         specifier: 2.2.4
         version: 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@icons-pack/react-simple-icons':
-        specifier: 13.3.0
-        version: 13.3.0(react@19.1.0)
+        specifier: 13.4.0
+        version: 13.4.0(react@19.1.0)
       '@react-router/serve':
         specifier: 7.6.3
         version: 7.6.3(react-router@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
@@ -862,7 +862,7 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 4.0.0
-        version: 4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.74)
+        version: 4.0.0(typescript@5.8.3)(zod@3.25.74)
       '@safe-global/protocol-kit':
         specifier: 6.1.0
         version: 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.74)
@@ -2312,8 +2312,8 @@ packages:
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
 
-  '@icons-pack/react-simple-icons@13.3.0':
-    resolution: {integrity: sha512-+7IxrUMLjfHBdDtW3aBlvELvjbQTX29cbrpc3UcCBhE51uL7GP1bkIEcaFM30f5rSB0oSqeg3MAmTIZV6nzY7A==}
+  '@icons-pack/react-simple-icons@13.4.0':
+    resolution: {integrity: sha512-SBBR2Jq88IEhr5NEg22MtF5WxlC6B5uRgXCL8tFHS/CBr5WBepEIFIcHG8ijNjfjIQa8YuO73Q2UvVHoM148fA==}
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
@@ -10821,7 +10821,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@icons-pack/react-simple-icons@13.3.0(react@19.1.0)':
+  '@icons-pack/react-simple-icons@13.4.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
@@ -12707,7 +12707,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.74)':
+  '@safe-global/api-kit@4.0.0(typescript@5.8.3)(zod@3.25.74)':
     dependencies:
       '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.74)
       '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@3.25.74)
@@ -16680,7 +16680,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+  isows@1.0.7(ws@8.18.2):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19208,7 +19208,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19225,7 +19225,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.74)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2)
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.74)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:

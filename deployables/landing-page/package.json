@@ -6,7 +6,7 @@
   "dependencies": {
     "@duneanalytics/client-sdk": "0.2.5",
     "@epic-web/invariant": "1.0.0",
-    "@icons-pack/react-simple-icons": "13.3.0",
+    "@icons-pack/react-simple-icons": "13.4.0",
     "@react-router/serve": "7.6.3",
     "@headlessui/react": "2.2.4",
     "@zodiac/env": "workspace:*",
