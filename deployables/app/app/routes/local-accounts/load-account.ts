@@ -4,7 +4,7 @@ import { href, redirect } from 'react-router'
 import type { Route } from './+types/load-account'
 
 export const clientLoader = async ({
-  params: { accountId },
+  params: { accountId, workspaceId },
 }: Route.ClientLoaderArgs) => {
   const { promise, resolve, reject } = Promise.withResolvers<string>()
 
@@ -21,10 +21,16 @@ export const clientLoader = async ({
       }
 
       resolve(
-        href('/offline/accounts/:accountId/:data', {
-          accountId: route.id,
-          data: encode(route),
-        }),
+        workspaceId == null
+          ? href('/offline/accounts/:accountId/:data', {
+              accountId: route.id,
+              data: encode(route),
+            })
+          : href('/workspace/:workspaceId/local-accounts/:accountId/:data', {
+              workspaceId,
+              accountId: route.id,
+              data: encode(route),
+            }),
       )
     },
   )

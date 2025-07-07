@@ -1,5 +1,7 @@
 import { useIsSignedIn } from '@/auth-client'
 import { Chain } from '@/routes-ui'
+import { useOptionalWorkspaceId } from '@/workspaces'
+import { invariant } from '@epic-web/invariant'
 import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -28,10 +30,7 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
   const chainId = getChainId(route.avatar)
 
   return (
-    <TableRow
-      className="group"
-      href={href('/offline/accounts/:accountId', { accountId: route.id })}
-    >
+    <TableRow className="group" href={useAccountUrl(route.id)}>
       <TableCell aria-describedby={route.id}>{route.label}</TableCell>
       <TableCell>
         {active && (
@@ -203,4 +202,20 @@ const Delete = ({
       </Modal>
     </>
   )
+}
+
+const useAccountUrl = (accountId: string) => {
+  const isSignedIn = useIsSignedIn()
+  const workspaceId = useOptionalWorkspaceId()
+
+  if (isSignedIn) {
+    invariant(workspaceId != null, 'A signed in user needs a workspace')
+
+    return href('/workspace/:workspaceId/local-accounts/:accountId', {
+      workspaceId,
+      accountId,
+    })
+  }
+
+  return href('/offline/accounts/:accountId', { accountId })
 }
