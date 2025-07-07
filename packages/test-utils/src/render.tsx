@@ -65,6 +65,8 @@ export const render = async (
 }
 
 export const expectRouteToBe = async (expectedPathName: string) => {
+  // Importing this dynamically, because otherwise vitest
+  // pollutes the global space and might conflight with playwright
   const { expect } = await import('vitest')
 
   return waitFor(() => {
