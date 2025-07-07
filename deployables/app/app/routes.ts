@@ -13,6 +13,22 @@ export default [
 
   route('/callback', 'routes/auth/callback.ts'),
 
+  // BEGIN LEGACY REDIRECTS
+
+  route('/tokens/send', 'routes/tokens/redirects/send-redirect.ts'),
+  route('/tokens/balances', 'routes/tokens/redirects/balances-redirect.ts'),
+
+  route(
+    '/edit/:routeId/:data',
+    'routes/local-accounts/redirects/edit-redirect.ts',
+  ),
+  route('/edit', 'routes/local-accounts/redirects/list-redirect.ts'),
+  route('/create', 'routes/local-accounts/redirects/create-redirect.ts'),
+
+  route('/account/:accountId', 'routes/accounts/redirects/account-redirect.ts'),
+
+  // BEGIN LEGACY REDIRECTS
+
   route('/offline', 'routes/offline-layout.tsx', [
     layout('routes/errorBoundary.tsx', { id: 'offline-error-boundary' }, [
       index('routes/welcome.tsx', { id: 'offline-welcome' }),
