@@ -22,8 +22,9 @@ import {
 import {
   ArrowRightLeft,
   ArrowUpFromLine,
+  Bookmark,
+  BookmarkX,
   Landmark,
-  List,
   Shield,
   ShieldUser,
   Signature,
@@ -146,7 +147,7 @@ const PageLayout = ({
                       to={href('/workspace/:workspaceId/accounts', {
                         workspaceId,
                       })}
-                      icon={List}
+                      icon={Bookmark}
                       reloadDocument={(location) =>
                         location.pathname.startsWith('/tokens')
                       }
@@ -158,7 +159,7 @@ const PageLayout = ({
                       to={href('/workspace/:workspaceId/local-accounts', {
                         workspaceId,
                       })}
-                      icon={List}
+                      icon={BookmarkX}
                       reloadDocument={(location) =>
                         location.pathname.startsWith('/tokens')
                       }

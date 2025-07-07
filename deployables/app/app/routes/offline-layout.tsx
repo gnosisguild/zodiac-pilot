@@ -15,8 +15,8 @@ import {
 import {
   ArrowRightLeft,
   ArrowUpFromLine,
+  BookmarkX,
   Landmark,
-  List,
   Signature,
 } from 'lucide-react'
 import { href, Outlet } from 'react-router'
@@ -79,12 +79,12 @@ const OfflineLayout = ({ loaderData: { signInUrl } }: Route.ComponentProps) => {
                 <Navigation.Section title="Safe Accounts">
                   <Navigation.Link
                     to={href('/offline/accounts')}
-                    icon={List}
+                    icon={BookmarkX}
                     reloadDocument={(location) =>
                       location.pathname.startsWith('/tokens')
                     }
                   >
-                    Safe Accounts
+                    Local Safe Accounts
                   </Navigation.Link>
                 </Navigation.Section>
 
