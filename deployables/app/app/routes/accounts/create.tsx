@@ -4,12 +4,7 @@ import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
-import {
-  dbClient,
-  getOrCreateAccount,
-  getWorkspace,
-  toExecutionRoute,
-} from '@zodiac/db'
+import { dbClient, getOrCreateAccount, getWorkspace } from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -18,6 +13,12 @@ import {
 } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
+import {
+  createBlankRoute,
+  updateAvatar,
+  updateChainId,
+  updateLabel,
+} from '@zodiac/modules'
 import { isUUID, verifyPrefixedAddress } from '@zodiac/schema'
 import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
@@ -67,7 +68,16 @@ export const action = (args: Route.ActionArgs) =>
         address: avatar,
       })
 
-      return { route: toExecutionRoute({ account }) }
+      let route = updateChainId(
+        updateAvatar(createBlankRoute(), { safe: account.address }),
+        account.chainId,
+      )
+
+      if (account.label != null) {
+        route = updateLabel(route, account.label)
+      }
+
+      return { route }
     },
     {
       ensureSignedIn: true,

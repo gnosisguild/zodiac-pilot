@@ -1,10 +1,10 @@
-import { invariant } from '@epic-web/invariant'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import {
   createMemoryRouter,
   RouterProvider,
   type RouteObject,
 } from 'react-router'
+import { expect } from 'vitest'
 import { InspectRoute } from './InspectRoute'
 import { TestElement, waitForTestElement } from './TestElement'
 import { sleepTillIdle } from './sleepTillIdle'
@@ -70,8 +70,5 @@ export const expectRouteToBe = (expectedPathName: string) =>
     const testElement = screen.getByTestId('test-route-element-id')
     const foundPathName = testElement.getAttribute('data-pathname')
 
-    invariant(
-      expectedPathName === foundPathName,
-      `Expected pathname to be "${expectedPathName}" but got "${foundPathName}"`,
-    )
+    expect(foundPathName).toEqual(expectedPathName)
   })

@@ -1,6 +1,10 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
-import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import {
+  tenantFactory,
+  userFactory,
+  workspaceFactory,
+} from '@zodiac/db/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -9,6 +13,8 @@ describe('Workspace Layout', () => {
     it('offers a link to the admin panel', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+
+      await workspaceFactory.create(tenant, user)
 
       await render(href('/'), {
         user,
@@ -24,6 +30,8 @@ describe('Workspace Layout', () => {
     it('does not show the link in non-admin orgs', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+
+      await workspaceFactory.create(tenant, user)
 
       await render(href('/'), {
         user,

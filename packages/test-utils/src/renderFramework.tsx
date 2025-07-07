@@ -90,6 +90,8 @@ export async function createRenderFramework<
   }
 
   const waitForPendingActions = async () => {
+    await sleepTillIdle()
+
     await Promise.all(pendingActions)
 
     await waitForPendingLoaders()

@@ -24,6 +24,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
@@ -152,6 +153,7 @@ describe.sequential('List Accounts', () => {
     it('is possible to migrate a local account to the cloud', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const avatar = randomPrefixedAddress()
       const route = createMockExecutionRoute({
@@ -161,7 +163,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -201,6 +205,7 @@ describe.sequential('List Accounts', () => {
     it('reuses existing accounts', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
       const account = await accountFactory.create(tenant, user)
 
       const avatar = prefixAddress(account.chainId, account.address)
@@ -212,7 +217,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -249,6 +256,7 @@ describe.sequential('List Accounts', () => {
     it('creates a wallet for the initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const initiator = randomAddress()
 
@@ -257,7 +265,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -294,6 +304,7 @@ describe.sequential('List Accounts', () => {
     it('reuses existing wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
       const wallet = await walletFactory.create(user)
 
       const initiator = wallet.address
@@ -303,7 +314,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -338,6 +351,7 @@ describe.sequential('List Accounts', () => {
     it('stores the selected route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const initiator = randomAddress()
 
@@ -346,7 +360,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -393,6 +409,7 @@ describe.sequential('List Accounts', () => {
     it('marks the route as active', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const initiator = randomAddress()
 
@@ -401,7 +418,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,
@@ -450,6 +469,7 @@ describe.sequential('List Accounts', () => {
     it('does not create duplicates', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user, {
         label: 'Test account',
@@ -467,7 +487,9 @@ describe.sequential('List Accounts', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [executionRoute],
           tenant,
@@ -511,26 +533,32 @@ describe.sequential('List Accounts', () => {
     it('removes the local account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const route = createMockExecutionRoute({
         initiator: randomEoaAddress(),
         avatar: randomPrefixedAddress(),
       })
 
-      await render(href('/offline/accounts'), {
-        availableRoutes: [route],
-        tenant,
-        user,
-        autoRespond: {
-          [CompanionAppMessageType.DELETE_ROUTE]: {
-            type: CompanionResponseMessageType.DELETED_ROUTE,
-          },
-          [CompanionAppMessageType.REQUEST_ROUTE]: {
-            type: CompanionResponseMessageType.PROVIDE_ROUTE,
-            route,
+      await render(
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
+        {
+          availableRoutes: [route],
+          tenant,
+          user,
+          autoRespond: {
+            [CompanionAppMessageType.DELETE_ROUTE]: {
+              type: CompanionResponseMessageType.DELETED_ROUTE,
+            },
+            [CompanionAppMessageType.REQUEST_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route,
+            },
           },
         },
-      })
+      )
 
       await loadAndActivateRoute(route)
 
@@ -551,13 +579,16 @@ describe.sequential('List Accounts', () => {
     it('does not remove the local account when the server action fails', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const route = createMockExecutionRoute({
         avatar: randomPrefixedAddress(),
       })
 
       const { waitForPendingActions } = await render(
-        href('/offline/accounts'),
+        href('/workspace/:workspaceId/local-accounts', {
+          workspaceId: workspace.id,
+        }),
         {
           availableRoutes: [route],
           tenant,

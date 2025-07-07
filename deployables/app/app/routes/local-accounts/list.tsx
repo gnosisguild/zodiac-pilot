@@ -10,6 +10,7 @@ import {
   findDefaultRoute,
   getOrCreateAccount,
   getOrCreateWallet,
+  getWorkspace,
   setDefaultRoute,
 } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
@@ -19,6 +20,7 @@ import {
   CompanionResponseMessageType,
   useExtensionMessageHandler,
 } from '@zodiac/messages'
+import { isUUID } from '@zodiac/schema'
 import {
   Error,
   Info,
@@ -114,8 +116,12 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess() {
-        return true
+      async hasAccess({ params: { workspaceId }, tenant }) {
+        invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
+
+        const workspace = await getWorkspace(dbClient(), workspaceId)
+
+        return workspace.tenantId === tenant.id
       },
     },
   )
