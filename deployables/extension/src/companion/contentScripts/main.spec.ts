@@ -8,7 +8,7 @@ import {
   type CompanionResponseMessage,
   type Message,
 } from '@zodiac/messages'
-import { createMockExecutionRoute } from '@zodiac/test-utils'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import { createMockManifest, createMockTab } from '@zodiac/test-utils/chrome'
 import { randomUUID } from 'crypto'
 import { describe, expect, it, vi } from 'vitest'

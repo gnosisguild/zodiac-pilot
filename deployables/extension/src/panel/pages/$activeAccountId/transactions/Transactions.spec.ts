@@ -34,14 +34,13 @@ import {
   CompanionResponseMessageType,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { encode, toMetaTransactionRequest } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   createMockRoleWaypoint,
   createMockWaypoints,
-  expectRouteToBe,
-  randomHex,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
+import { encode, toMetaTransactionRequest } from '@zodiac/schema'
+import { expectRouteToBe, randomHex } from '@zodiac/test-utils'
 import { User } from 'lucide-react'
 import { checkPermissions, PermissionViolation } from 'ser-kit'
 import { describe, expect, it, vi } from 'vitest'

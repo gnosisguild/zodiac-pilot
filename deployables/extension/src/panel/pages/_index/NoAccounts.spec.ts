@@ -14,7 +14,8 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { createMockExecutionRoute, expectRouteToBe } from '@zodiac/test-utils'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
 const mockGetRemoteAccounts = vi.mocked(getRemoteAccounts)

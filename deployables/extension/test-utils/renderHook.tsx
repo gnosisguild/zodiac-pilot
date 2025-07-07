@@ -1,8 +1,8 @@
 import { ProvideAccount, toLocalAccount, type TaggedAccount } from '@/accounts'
 import { toAccount } from '@/companion'
 import { ProvideTransactions, type State } from '@/transactions'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import {
-  createMockExecutionRoute,
   renderHook as renderHookBase,
   type RenderHookOptions,
 } from '@zodiac/test-utils'

@@ -1,5 +1,5 @@
 import { type UnconfirmedTransaction } from '@/transactions'
-import { createMockTransactionRequest } from '@zodiac/test-utils'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { nanoid } from 'nanoid'
 
 export const createTransaction = (
