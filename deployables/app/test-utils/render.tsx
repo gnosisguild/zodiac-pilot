@@ -1,3 +1,4 @@
+import { ProvideUser } from '@/auth-client'
 import { ProvideExtensionVersion } from '@/components'
 import { getOrganization, getOrganizationsForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
@@ -22,6 +23,7 @@ import {
   sleepTillIdle,
   type RenderFrameworkOptions,
 } from '@zodiac/test-utils'
+import { FeatureProvider } from '@zodiac/ui'
 import type { PropsWithChildren, Ref } from 'react'
 import type { Register } from 'react-router'
 import { data } from 'react-router'
@@ -75,6 +77,11 @@ type CommonOptions = Omit<RenderFrameworkOptions, 'loadActions'> & {
    * and automatically responds with the provided data
    */
   autoRespond?: Partial<RequestResponseTypes>
+
+  /**
+   * Activates the given set of feautres.
+   */
+  features?: string[]
 }
 
 type SignedInOptions = CommonOptions & {
@@ -87,11 +94,6 @@ type SignedInOptions = CommonOptions & {
    * Render the route in a logged in context
    */
   user: User
-
-  /**
-   * Activates the given set of feautres for a tenant.
-   */
-  features?: string[]
 
   /**
    * Stub for the work OS organization that should
@@ -152,6 +154,7 @@ export const render = async (
     availableRoutes = [],
     activeRouteId = null,
     autoRespond = {},
+    features = [],
     ...options
   }: Options = {},
 ) => {
@@ -172,7 +175,7 @@ export const render = async (
   })
 
   if (options.tenant != null) {
-    const { tenant, features } = options
+    const { tenant } = options
 
     if (features != null) {
       const dbFeatures = await Promise.all(
@@ -199,10 +202,16 @@ export const render = async (
     },
   )
 
+  const FinalWrapper = ({ children }: PropsWithChildren) => (
+    <RenderWrapper user={options.user || null} features={features}>
+      {children}
+    </RenderWrapper>
+  )
+
   const renderResult = await baseRender(path, {
     ...options,
 
-    wrapper: RenderWrapper,
+    wrapper: FinalWrapper,
     async loadActions() {
       await loadRoutes(...availableRoutes)
 
@@ -226,8 +235,17 @@ export const render = async (
   return renderResult
 }
 
-const RenderWrapper = ({ children }: PropsWithChildren) => (
-  <ProvideExtensionVersion>{children}</ProvideExtensionVersion>
+type RenderWrapperOptions = PropsWithChildren<{
+  user: User | null
+  features: string[]
+}>
+
+const RenderWrapper = ({ children, user, features }: RenderWrapperOptions) => (
+  <ProvideExtensionVersion>
+    <ProvideUser user={user}>
+      <FeatureProvider features={features}>{children}</FeatureProvider>
+    </ProvideUser>
+  </ProvideExtensionVersion>
 )
 
 const createAuth = (user?: AuthorizedData['user'] | null) => {

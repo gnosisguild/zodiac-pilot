@@ -4,6 +4,7 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
 import { randomAddress } from '@zodiac/test-utils'
+import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
@@ -41,7 +42,7 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
       createMockTokenBalance({ name: 'Test token' }),
     ])
 
-    await render('/tokens/send')
+    await render(href('/offline/tokens/send/:chain?/:token?'))
 
     await userEvent.click(
       await screen.findByRole('combobox', {
@@ -63,7 +64,7 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
       }),
     ])
 
-    await render('/tokens/send')
+    await render(href('/offline/tokens/send/:chain?/:token?'))
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),
@@ -89,7 +90,7 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
       }),
     ])
 
-    await render('/tokens/send')
+    await render(href('/offline/tokens/send/:chain?/:token?'))
 
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Available tokens' }),

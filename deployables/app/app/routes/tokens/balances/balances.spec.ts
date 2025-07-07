@@ -3,6 +3,7 @@ import { createMockTokenBalance, render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
 import { randomAddress } from '@zodiac/test-utils'
+import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAccount } from 'wagmi'
 
@@ -37,7 +38,7 @@ describe('Token balances', () => {
       createMockTokenBalance({ contractId: address }),
     ])
 
-    await render('/tokens/balances')
+    await render(href('/offline/tokens/balances'))
 
     expect(await screen.findByRole('link', { name: 'Send' })).toHaveAttribute(
       'href',

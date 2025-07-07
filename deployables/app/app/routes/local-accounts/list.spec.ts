@@ -24,7 +24,6 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
@@ -50,196 +49,101 @@ describe.sequential('List Accounts', () => {
     mockGetAvailableChains.mockResolvedValue([])
   })
 
-  describe('List', () => {
-    describe('Logged in', () => {
-      it('lists all accounts', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        await accountFactory.create(tenant, user, {
-          label: 'Test account',
-        })
-
-        await render(href('/offline/accounts'), { tenant, user })
-
-        expect(
-          await screen.findByRole('cell', { name: 'Test account' }),
-        ).toBeInTheDocument()
-      })
-    })
-  })
-
   describe('Edit', () => {
-    describe('Logged in', () => {
-      it('is possible to edit a route', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+    it('is possible to edit a route', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
 
-        const account = await accountFactory.create(tenant, user)
-
-        await render(href('/offline/accounts'), {
-          tenant,
-          user,
-        })
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Account options' }),
-        )
-        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
-
-        await expectRouteToBe(
-          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
-            accountId: account.id,
-            workspaceId: workspace.id,
-          }),
-        )
+      await render(href('/offline/accounts'), {
+        availableRoutes: [route],
       })
-    })
 
-    describe('Logged out', () => {
-      it('is possible to edit a route', async () => {
-        const route = createMockExecutionRoute({ label: 'Test route' })
-
-        await render(href('/offline/accounts'), {
-          availableRoutes: [route],
-        })
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-          activeRouteId: route.id,
-        })
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Account options' }),
-        )
-        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ROUTE,
-          route,
-        })
-
-        await loadRoutes()
-
-        await expectRouteToBe(
-          href('/offline/account/:accountId/:data', {
-            accountId: route.id,
-            data: encode(route),
-          }),
-        )
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+        activeRouteId: route.id,
       })
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+      await postMessage({
+        type: CompanionResponseMessageType.PROVIDE_ROUTE,
+        route,
+      })
+
+      await loadRoutes()
+
+      await expectRouteToBe(
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
+          data: encode(route),
+        }),
+      )
     })
   })
 
   describe('Remove', () => {
-    describe('Logged in', () => {
-      it('is possible to remove an account', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
+    it('is possible to remove an account', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
+      const mockPostMessage = vi.spyOn(window, 'postMessage')
 
-        const account = await accountFactory.create(tenant, user)
-
-        const { waitForPendingActions } = await render(
-          href('/offline/accounts'),
-          {
-            tenant,
-            user,
-          },
-        )
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Account options' }),
-        )
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Delete' }),
-        )
-
-        const { getByRole } = within(
-          screen.getByRole('dialog', { name: 'Confirm delete' }),
-        )
-
-        await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-        await waitForPendingActions()
-
-        const [deletedAccount] = await getAccounts(dbClient(), {
-          userId: user.id,
-          tenantId: tenant.id,
-          deleted: true,
-        })
-
-        expect(deletedAccount).toMatchObject({
-          id: account.id,
-
-          deleted: true,
-          deletedById: user.id,
-        })
+      await render(href('/offline/accounts'), {
+        availableRoutes: [route],
       })
+
+      await loadAndActivateRoute(route)
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Delete' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Confirm delete' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.DELETE_ROUTE,
+          routeId: route.id,
+        } satisfies CompanionAppMessage,
+        '*',
+      )
     })
 
-    describe('Logged out', () => {
-      it('is possible to remove an account', async () => {
-        const route = createMockExecutionRoute({ label: 'Test route' })
-        const mockPostMessage = vi.spyOn(window, 'postMessage')
+    it('hides the dialog once the delete is confirmed', async () => {
+      const route = createMockExecutionRoute({ label: 'Test route' })
 
-        await render(href('/offline/accounts'), {
-          availableRoutes: [route],
-        })
-
-        await loadAndActivateRoute(route)
-
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Account options' }),
-        )
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Delete' }),
-        )
-
-        const { getByRole } = within(
-          screen.getByRole('dialog', { name: 'Confirm delete' }),
-        )
-
-        await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-        expect(mockPostMessage).toHaveBeenCalledWith(
-          {
-            type: CompanionAppMessageType.DELETE_ROUTE,
-            routeId: route.id,
-          } satisfies CompanionAppMessage,
-          '*',
-        )
+      await render(href('/offline/accounts'), {
+        availableRoutes: [route],
       })
 
-      it('hides the dialog once the delete is confirmed', async () => {
-        const route = createMockExecutionRoute({ label: 'Test route' })
+      await loadAndActivateRoute(route)
 
-        await render(href('/offline/accounts'), {
-          availableRoutes: [route],
-        })
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Delete' }),
+      )
 
-        await loadAndActivateRoute(route)
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Confirm delete' }),
+      )
 
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Account options' }),
-        )
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Delete' }),
-        )
+      await userEvent.click(getByRole('button', { name: 'Delete' }))
 
-        const { getByRole } = within(
-          screen.getByRole('dialog', { name: 'Confirm delete' }),
-        )
+      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
 
-        await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-        await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
-
-        await waitFor(() => {
-          expect(
-            screen.queryByRole('dialog', { name: 'Confirm delete' }),
-          ).not.toBeInTheDocument()
-        })
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('dialog', { name: 'Confirm delete' }),
+        ).not.toBeInTheDocument()
       })
     })
   })
@@ -327,12 +231,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -376,12 +276,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -426,12 +322,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -473,12 +365,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -532,12 +420,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -602,12 +486,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(executionRoute)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -654,12 +534,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(
@@ -700,12 +576,8 @@ describe.sequential('List Accounts', () => {
 
       await loadAndActivateRoute(route)
 
-      const { findByRole } = within(
-        await screen.findByRole('region', { name: 'Local Accounts' }),
-      )
-
       await userEvent.click(
-        await findByRole('button', { name: 'Account options' }),
+        await screen.findByRole('button', { name: 'Account options' }),
       )
 
       await userEvent.click(

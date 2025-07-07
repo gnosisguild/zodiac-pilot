@@ -7,7 +7,7 @@ const UserContext = createContext<User | null>(null)
 export const ProvideUser = ({
   user,
   children,
-}: PropsWithChildren<{ user: User }>) => (
+}: PropsWithChildren<{ user: User | null }>) => (
   <UserContext value={user}>{children}</UserContext>
 )
 

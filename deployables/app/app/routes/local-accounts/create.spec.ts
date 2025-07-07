@@ -57,7 +57,7 @@ describe('New SafeAccount', () => {
   })
 
   it('creates a new route with a given avatar', async () => {
-    await render('/create')
+    await render(href('/offline/accounts/create'))
 
     const address = randomAddress()
 
@@ -77,7 +77,7 @@ describe('New SafeAccount', () => {
   })
 
   it('uses the selected chain', async () => {
-    await render('/create')
+    await render(href('/offline/accounts/create'))
 
     const address = randomAddress()
 
@@ -101,7 +101,7 @@ describe('New SafeAccount', () => {
 
   describe('Label', () => {
     it('is possible to give label the account', async () => {
-      await render('/create')
+      await render(href('/offline/accounts/create'))
 
       const address = randomAddress()
 
@@ -127,7 +127,7 @@ describe('New SafeAccount', () => {
 
     describe('Save', () => {
       it('redirects to the accounts page', async () => {
-        await render('/create')
+        await render(href('/offline/accounts/create'))
 
         const address = randomAddress()
 

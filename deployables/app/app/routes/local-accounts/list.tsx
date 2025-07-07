@@ -170,7 +170,10 @@ export const clientAction = async ({
   }
 }
 
-const ListRoutes = ({ loaderData, actionData }: Route.ComponentProps) => {
+const ListRoutes = ({
+  loaderData: { localAccounts, activeRouteId },
+  actionData,
+}: Route.ComponentProps) => {
   return (
     <Page fullWidth>
       <Page.Header>
@@ -188,7 +191,7 @@ const ListRoutes = ({ loaderData, actionData }: Route.ComponentProps) => {
 
         <OnlyConnected showWarning>
           <Suspense>
-            <Await resolve={loaderData.localAccounts}>
+            <Await resolve={localAccounts}>
               {(localAccounts) => {
                 if (localAccounts.length === 0) {
                   return (
@@ -207,7 +210,7 @@ const ListRoutes = ({ loaderData, actionData }: Route.ComponentProps) => {
 
                 return (
                   <Suspense>
-                    <Await resolve={loaderData.activeRouteId}>
+                    <Await resolve={activeRouteId}>
                       {(activeRouteId) => (
                         <>
                           <RevalidateWhenActiveRouteChanges
