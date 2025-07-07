@@ -5,7 +5,7 @@ import {
   startPilotSession,
 } from '@/test-utils'
 import { Chain } from '@zodiac/chains'
-import { getCompanionAppUrl } from '@zodiac/env'
+import { getVnetApiUrl } from '@zodiac/env'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { trackSessions } from '../sessions'
 import { detectNetworkOfRpcUrl } from './detectNetworkOfRpcUrl'
@@ -190,7 +190,7 @@ describe('RPC Tracking', () => {
 
       await mockWebRequest(tab, {
         method: 'POST',
-        url: `${getCompanionAppUrl()}/vnet/rpc/mainnet/some-slug`,
+        url: `${getVnetApiUrl()}/rpc/mainnet/some-slug`,
         requestBody: { jsonrpc: '2.0' },
       })
 

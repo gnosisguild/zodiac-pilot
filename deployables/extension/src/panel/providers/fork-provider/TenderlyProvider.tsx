@@ -1,6 +1,6 @@
 import type { JsonRpcRequest } from '@/types'
 import { invariant } from '@epic-web/invariant'
-import { getCompanionAppUrl } from '@zodiac/env'
+import { getCompanionAppUrl, getVnetApiUrl } from '@zodiac/env'
 import { JsonRpcProvider } from 'ethers'
 import EventEmitter from 'events'
 import { customAlphabet } from 'nanoid'
@@ -185,5 +185,5 @@ export const rpcUrl = (
   slug: string | undefined,
 ) => {
   invariant(slug && network, 'slug and network are required')
-  return `${getCompanionAppUrl()}/vnet/rpc/${network}/${slug}`
+  return `${getVnetApiUrl()}/rpc/${network}/${slug}`
 }
