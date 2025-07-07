@@ -42,7 +42,10 @@ describe('Token balances', () => {
 
     expect(await screen.findByRole('link', { name: 'Send' })).toHaveAttribute(
       'href',
-      `/tokens/send/eth/${address}`,
+      href(`/offline/tokens/send/:chain?/:token?`, {
+        chain: 'eth',
+        token: address,
+      }),
     )
   })
 })

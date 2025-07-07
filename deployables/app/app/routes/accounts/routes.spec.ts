@@ -68,7 +68,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([address])
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -100,7 +100,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -126,7 +126,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -168,7 +168,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -209,7 +209,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -247,7 +247,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([walletAddress])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -290,7 +290,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -337,7 +337,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeB.id,
@@ -373,7 +373,7 @@ describe('Routes', () => {
       const route = await routeFactory.create(account, wallet)
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -417,7 +417,7 @@ describe('Routes', () => {
       await setDefaultRoute(dbClient(), tenant, user, routeA)
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeA.id,
@@ -465,7 +465,7 @@ describe('Routes', () => {
       await setDefaultRoute(dbClient(), tenant, user, route)
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -511,7 +511,7 @@ describe('Routes', () => {
       mockQueryRoutes.mockResolvedValue([newRoute])
 
       const { waitForPendingLoaders, waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
         }),
@@ -573,7 +573,7 @@ describe('Routes', () => {
       mockQueryRoutes.mockResolvedValue([firstRoute, secondRoute])
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -612,7 +612,7 @@ describe('Routes', () => {
       })
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -627,7 +627,7 @@ describe('Routes', () => {
         await screen.findByRole('tab', { name: 'Route A' }),
       ).toHaveAttribute(
         'href',
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeA.id,
@@ -637,7 +637,7 @@ describe('Routes', () => {
         await screen.findByRole('tab', { name: 'Route B' }),
       ).toHaveAttribute(
         'href',
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeB.id,
@@ -660,7 +660,7 @@ describe('Routes', () => {
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -688,7 +688,7 @@ describe('Routes', () => {
         })
 
         const { waitForPendingActions } = await render(
-          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
             workspaceId: workspace.id,
             accountId: account.id,
             routeId: route.id,
@@ -736,7 +736,7 @@ describe('Routes', () => {
         mockQueryRoutes.mockResolvedValue([createMockRoute()])
 
         await render(
-          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
             workspaceId: workspace.id,
             accountId: account.id,
           }),
@@ -802,7 +802,7 @@ describe('Routes', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -843,7 +843,7 @@ describe('Routes', () => {
       await setDefaultRoute(dbClient(), tenant, user, routeB)
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeC.id,
@@ -854,7 +854,7 @@ describe('Routes', () => {
       await removeRoute(routeC)
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeB.id,
@@ -883,7 +883,7 @@ describe('Routes', () => {
       await setDefaultRoute(dbClient(), tenant, user, routeB)
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeB.id,
@@ -894,7 +894,7 @@ describe('Routes', () => {
       await removeRoute(routeB)
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: routeA.id,
@@ -917,7 +917,7 @@ describe('Routes', () => {
       await setDefaultRoute(dbClient(), tenant, user, route)
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
           routeId: route.id,
@@ -928,7 +928,7 @@ describe('Routes', () => {
       await removeRoute(route)
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
         }),

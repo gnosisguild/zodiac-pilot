@@ -117,7 +117,12 @@ describe.sequential('Send Tokens', { skip: process.env.CI != null }, () => {
       }),
     ])
 
-    await render(`/tokens/send/eth/${address}`)
+    await render(
+      href(`/offline/tokens/send/:chain?/:token?`, {
+        chain: 'eth',
+        token: address,
+      }),
+    )
 
     await waitFor(
       async () => {

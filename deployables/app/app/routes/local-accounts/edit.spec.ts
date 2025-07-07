@@ -60,7 +60,7 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),
@@ -77,7 +77,7 @@ describe('Edit local account', () => {
       })
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),
@@ -112,7 +112,7 @@ describe('Edit local account', () => {
         )
 
         await render(
-          href('/offline/account/:accountId/:data', {
+          href('/offline/accounts/:accountId/:data', {
             accountId: route.id,
             data: encode(route),
           }),
@@ -131,7 +131,7 @@ describe('Edit local account', () => {
       })
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),
@@ -163,7 +163,7 @@ describe('Edit local account', () => {
       mockQueryRoutes.mockResolvedValue([newRoute])
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),
@@ -188,7 +188,7 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute()
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),
@@ -221,7 +221,7 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),

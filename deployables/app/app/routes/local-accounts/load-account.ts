@@ -21,7 +21,7 @@ export const clientLoader = async ({
       }
 
       resolve(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),

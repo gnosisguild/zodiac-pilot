@@ -59,16 +59,18 @@ export default [
           index('routes/local-accounts/list.tsx', {
             id: 'offline-accounts-list',
           }),
-          route('create', 'routes/local-accounts/create.tsx'),
-        ]),
+          route('create', 'routes/local-accounts/create.tsx', {
+            id: 'offline-create-account',
+          }),
 
-        ...prefix('account', [
-          route(':accountId', 'routes/local-accounts/load-account.ts', {
-            id: 'offline-load-account',
-          }),
-          route(':accountId/:data', 'routes/local-accounts/edit.tsx', {
-            id: 'offline-account-edit',
-          }),
+          ...prefix(':accountId', [
+            index('routes/local-accounts/load-account.ts', {
+              id: 'offline-load-account',
+            }),
+            route(':data', 'routes/local-accounts/edit.tsx', {
+              id: 'offline-account-edit',
+            }),
+          ]),
         ]),
 
         ...prefix('submit', [
@@ -114,18 +116,20 @@ export default [
         ...prefix('accounts', [
           index('routes/accounts/list.tsx'),
           route('create/:prefixedAddress?', 'routes/accounts/create.tsx'),
+          route(':accountId', 'routes/accounts/edit.tsx', [
+            index('routes/accounts/load-default-route.ts'),
+            route('route/:routeId?', 'routes/accounts/routes.tsx'),
+          ]),
         ]),
 
-        route('account/:accountId', 'routes/accounts/edit.tsx', [
-          index('routes/accounts/load-default-route.ts'),
-          route('route/:routeId?', 'routes/accounts/routes.tsx'),
-        ]),
+        ...prefix('local-accounts', [
+          index('routes/local-accounts/list.tsx'),
+          route('create', 'routes/local-accounts/create.tsx'),
 
-        route('local-accounts', 'routes/local-accounts/list.tsx'),
-
-        ...prefix('local-account', [
-          route(':accountId', 'routes/local-accounts/load-account.ts'),
-          route(':accountId/:data', 'routes/local-accounts/edit.tsx'),
+          ...prefix(':accountId', [
+            index('routes/local-accounts/load-account.ts'),
+            route(':data', 'routes/local-accounts/edit.tsx'),
+          ]),
         ]),
 
         ...prefix('submit', [

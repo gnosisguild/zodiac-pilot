@@ -25,7 +25,7 @@ export const loader = (args: Route.LoaderArgs) =>
 
       if (defaultRoute == null) {
         return redirect(
-          href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
             accountId,
             workspaceId,
           }),
@@ -33,7 +33,7 @@ export const loader = (args: Route.LoaderArgs) =>
       }
 
       return redirect(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId,
           workspaceId,
           routeId: defaultRoute.routeId,

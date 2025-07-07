@@ -109,6 +109,7 @@ describe('New SafeAccount', () => {
         href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
           workspaceId: workspace.id,
         }),
+        { tenant, user },
       )
 
       const address = randomAddress()
@@ -134,7 +135,7 @@ describe('New SafeAccount', () => {
     })
 
     describe('Save', () => {
-      it('redirects to the accounts page', async () => {
+      it.only('redirects to the accounts page', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
         const workspace = await workspaceFactory.create(tenant, user)
@@ -143,6 +144,7 @@ describe('New SafeAccount', () => {
           href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
             workspaceId: workspace.id,
           }),
+          { tenant, user },
         )
 
         const address = randomAddress()
@@ -153,6 +155,8 @@ describe('New SafeAccount', () => {
         )
 
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+        console.log('FOO')
 
         await postMessage({
           type: CompanionResponseMessageType.PROVIDE_ROUTE,

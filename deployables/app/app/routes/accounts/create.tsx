@@ -4,11 +4,23 @@ import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
-import { dbClient, getOrCreateAccount, getWorkspace } from '@zodiac/db'
-import { getHexString, getInt, getOptionalString } from '@zodiac/form-data'
+import {
+  dbClient,
+  getOrCreateAccount,
+  getWorkspace,
+  toExecutionRoute,
+} from '@zodiac/db'
+import {
+  getBoolean,
+  getHexString,
+  getInt,
+  getOptionalString,
+} from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { isUUID, verifyPrefixedAddress } from '@zodiac/schema'
 import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { href, redirect } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/create'
 
@@ -68,6 +80,38 @@ export const action = (args: Route.ActionArgs) =>
       },
     },
   )
+
+export const clientAction = async ({
+  request,
+  serverAction,
+  params: { workspaceId },
+}: Route.ClientActionArgs) => {
+  const data = await request.clone().formData()
+
+  const { error, account } = await serverAction()
+
+  if (error != null) {
+    return { error }
+  }
+
+  if (getBoolean(data, 'connected')) {
+    const { promise, resolve } = Promise.withResolvers<void>()
+
+    console.log('HERE')
+    companionRequest(
+      {
+        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
+        data: toExecutionRoute({ account }),
+      },
+      () => resolve(),
+    )
+    console.log('HERE2')
+
+    await promise
+  }
+
+  return redirect(href(`/workspace/:workspaceId/accounts`, { workspaceId }))
+}
 
 const CreateAccount = ({
   loaderData: { defaultChainId, defaultAddress },

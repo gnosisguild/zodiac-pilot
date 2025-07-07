@@ -167,7 +167,7 @@ export const action = (args: Route.ActionArgs) =>
           if (defaultRoute != null) {
             return redirect(
               href(
-                '/workspace/:workspaceId/account/:accountId/route/:routeId?',
+                '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
                 {
                   accountId,
                   workspaceId,
@@ -185,7 +185,7 @@ export const action = (args: Route.ActionArgs) =>
           if (route != null) {
             return redirect(
               href(
-                '/workspace/:workspaceId/account/:accountId/route/:routeId?',
+                '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
                 {
                   accountId,
                   workspaceId,
@@ -196,10 +196,13 @@ export const action = (args: Route.ActionArgs) =>
           }
 
           return redirect(
-            href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
-              accountId,
-              workspaceId,
-            }),
+            href(
+              '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
+              {
+                accountId,
+                workspaceId,
+              },
+            ),
           )
         }
 
@@ -228,11 +231,14 @@ export const action = (args: Route.ActionArgs) =>
           })
 
           return redirect(
-            href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
-              accountId,
-              workspaceId,
-              routeId: route.id,
-            }),
+            href(
+              '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
+              {
+                accountId,
+                workspaceId,
+                routeId: route.id,
+              },
+            ),
           )
         }
       }

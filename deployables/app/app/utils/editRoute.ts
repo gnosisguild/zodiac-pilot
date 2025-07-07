@@ -3,7 +3,7 @@ import { href, redirect } from 'react-router'
 
 export const editRoute = (route: ExecutionRoute) =>
   redirect(
-    href('/offline/account/:accountId/:data', {
+    href('/offline/accounts/:accountId/:data', {
       data: encode(route),
       accountId: route.id,
     }),

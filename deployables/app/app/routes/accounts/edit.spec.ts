@@ -42,7 +42,7 @@ describe('Edit account', () => {
       })
 
       await render(
-        href('/workspace/:workspaceId/account/:accountId', {
+        href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),
@@ -64,7 +64,7 @@ describe('Edit account', () => {
       const account = await accountFactory.create(tenant, user, { label: '' })
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/account/:accountId', {
+        href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: workspace.id,
         }),

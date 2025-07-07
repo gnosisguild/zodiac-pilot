@@ -27,7 +27,7 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
       className="group"
-      href={href('/workspace/:workspaceId/account/:accountId', {
+      href={href('/workspace/:workspaceId/accounts/:accountId', {
         accountId: account.id,
         workspaceId: useWorkspaceId(),
       })}
@@ -76,7 +76,7 @@ const Actions = ({ accountId }: { accountId: string }) => {
         onRequestHide={() => setMenuOpen(false)}
       >
         <GhostLinkButton
-          to={href('/workspace/:workspaceId/account/:accountId', {
+          to={href('/workspace/:workspaceId/accounts/:accountId', {
             accountId,
             workspaceId: useWorkspaceId(),
           })}

@@ -75,7 +75,7 @@ describe.sequential('List Accounts', () => {
       await loadRoutes()
 
       await expectRouteToBe(
-        href('/offline/account/:accountId/:data', {
+        href('/offline/accounts/:accountId/:data', {
           accountId: route.id,
           data: encode(route),
         }),

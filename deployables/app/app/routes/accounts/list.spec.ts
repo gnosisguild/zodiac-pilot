@@ -67,7 +67,7 @@ describe.sequential('List Accounts', () => {
       await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           workspaceId: workspace.id,
           accountId: account.id,
         }),

@@ -6,7 +6,7 @@ import { route } from './fixture'
 test.describe('Edit route', () => {
   test('it is possible to save a route', async ({ page }) => {
     await page.goto(
-      href('/offline/account/:accountId/:data', {
+      href('/offline/accounts/:accountId/:data', {
         accountId: route.id,
         data: encode(route),
       }),
@@ -22,7 +22,7 @@ test.describe('Edit route', () => {
 
   test('the new route shows up in the list afterwards', async ({ page }) => {
     await page.goto(
-      href('/offline/account/:accountId/:data', {
+      href('/offline/accounts/:accountId/:data', {
         accountId: route.id,
         data: encode(route),
       }),

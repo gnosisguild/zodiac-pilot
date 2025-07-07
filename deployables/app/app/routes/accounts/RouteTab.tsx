@@ -32,7 +32,7 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
     <NavLink
       key={route.id}
       aria-labelledby={route.id}
-      to={href('/workspace/:workspaceId/account/:accountId/route/:routeId?', {
+      to={href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
         accountId: route.toId,
         routeId: route.id,
         workspaceId: useWorkspaceId(),
