@@ -12,6 +12,7 @@ import { getString, getUUID } from '@zodiac/form-data'
 import {
   Info,
   PrimaryLinkButton,
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableHead,
@@ -100,7 +101,20 @@ const ListRoutes = ({
 }: Route.ComponentProps) => {
   return (
     <Page fullWidth>
-      <Page.Header>Safe Accounts</Page.Header>
+      <Page.Header
+        action={
+          <SecondaryLinkButton
+            to={href(
+              '/workspace/:workspaceId/accounts/create/:prefixedAddress?',
+              { workspaceId },
+            )}
+          >
+            Create new account
+          </SecondaryLinkButton>
+        }
+      >
+        Safe Accounts
+      </Page.Header>
 
       <Page.Main>
         {accounts.length === 0 && (

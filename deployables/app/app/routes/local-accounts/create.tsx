@@ -92,7 +92,7 @@ const CreateLocalAccount = ({ actionData }: Route.ComponentProps) => {
           />
         }
       >
-        New Safe Account
+        New local Safe Account
       </Page.Header>
 
       <Page.Main>

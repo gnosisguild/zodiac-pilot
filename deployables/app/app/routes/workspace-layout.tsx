@@ -24,7 +24,6 @@ import {
   ArrowUpFromLine,
   Landmark,
   List,
-  Plus,
   Shield,
   ShieldUser,
   Signature,
@@ -165,19 +164,6 @@ const PageLayout = ({
                       }
                     >
                       Local Safe Accounts
-                    </Navigation.Link>
-
-                    <Navigation.Link
-                      to={href(
-                        '/workspace/:workspaceId/accounts/create/:prefixedAddress?',
-                        { workspaceId },
-                      )}
-                      icon={Plus}
-                      reloadDocument={(location) =>
-                        location.pathname.startsWith('/tokens')
-                      }
-                    >
-                      New Safe Account
                     </Navigation.Link>
                   </Navigation.Section>
 

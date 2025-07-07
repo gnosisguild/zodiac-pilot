@@ -17,18 +17,15 @@ import {
   ArrowUpFromLine,
   Landmark,
   List,
-  Plus,
   Signature,
 } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/offline-layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
-  authorizedLoader(args, async ({ request }) => {
-    const url = new URL(request.url)
-
+  authorizedLoader(args, async () => {
     return {
-      signInUrl: await getSignInUrl(url.pathname),
+      signInUrl: await getSignInUrl(),
     }
   })
 
@@ -88,16 +85,6 @@ const OfflineLayout = ({ loaderData: { signInUrl } }: Route.ComponentProps) => {
                     }
                   >
                     Safe Accounts
-                  </Navigation.Link>
-
-                  <Navigation.Link
-                    to={href('/offline/accounts/create')}
-                    icon={Plus}
-                    reloadDocument={(location) =>
-                      location.pathname.startsWith('/tokens')
-                    }
-                  >
-                    New Safe Account
                   </Navigation.Link>
                 </Navigation.Section>
 

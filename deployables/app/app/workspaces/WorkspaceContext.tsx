@@ -26,3 +26,13 @@ export const useWorkspaceId = () => {
 
   return workspace.id
 }
+
+export const useOptionalWorkspaceId = () => {
+  const workspace = useContext(WorkspaceContext)
+
+  if (workspace == null) {
+    return null
+  }
+
+  return workspace.id
+}

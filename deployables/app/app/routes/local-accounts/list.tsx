@@ -1,7 +1,9 @@
+import { useIsSignedIn } from '@/auth-client'
 import { authorizedAction } from '@/auth-server'
 import { OnlyConnected, Page } from '@/components'
 import { parseRouteData, routeTitle } from '@/utils'
-import { invariantResponse } from '@epic-web/invariant'
+import { useOptionalWorkspaceId } from '@/workspaces'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import {
   createRoute,
   dbClient,
@@ -176,7 +178,13 @@ const ListRoutes = ({
 }: Route.ComponentProps) => {
   return (
     <Page fullWidth>
-      <Page.Header>
+      <Page.Header
+        action={
+          <SecondaryLinkButton to={useCreateUrl()}>
+            Create new local account
+          </SecondaryLinkButton>
+        }
+      >
         Local Safe Accounts
         <p aria-hidden className="my-2 text-sm opacity-80">
           Local accounts live only on your machine. They are only usable when
@@ -282,4 +290,19 @@ const RevalidateWhenActiveRouteChanges = ({
   )
 
   return null
+}
+
+const useCreateUrl = () => {
+  const isSignedIn = useIsSignedIn()
+  const workspaceId = useOptionalWorkspaceId()
+
+  if (isSignedIn) {
+    invariant(workspaceId != null, 'A signed in user needs a workspace')
+
+    return href('/workspace/:workspaceId/local-accounts/create', {
+      workspaceId,
+    })
+  }
+
+  return href('/offline/accounts/create')
 }
