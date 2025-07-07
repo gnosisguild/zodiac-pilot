@@ -7,6 +7,6 @@ test('connection to companion app', async ({ page }) => {
   await loadExtension(page)
 
   await expect(
-    page.getByRole('heading', { name: 'New Safe Account' }),
+    page.getByRole('heading', { name: 'New local Safe Account' }),
   ).toBeInViewport()
 })
