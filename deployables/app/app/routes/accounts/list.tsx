@@ -103,14 +103,16 @@ const ListRoutes = ({
     <Page fullWidth>
       <Page.Header
         action={
-          <SecondaryLinkButton
-            to={href(
-              '/workspace/:workspaceId/accounts/create/:prefixedAddress?',
-              { workspaceId },
-            )}
-          >
-            Create new account
-          </SecondaryLinkButton>
+          accounts.length > 0 && (
+            <SecondaryLinkButton
+              to={href(
+                '/workspace/:workspaceId/accounts/create/:prefixedAddress?',
+                { workspaceId },
+              )}
+            >
+              Create new account
+            </SecondaryLinkButton>
+          )
         }
       >
         Safe Accounts

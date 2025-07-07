@@ -156,8 +156,6 @@ describe('New SafeAccount', () => {
 
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-        console.log('FOO')
-
         await postMessage({
           type: CompanionResponseMessageType.PROVIDE_ROUTE,
           route: createMockExecutionRoute(),

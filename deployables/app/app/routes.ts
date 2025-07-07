@@ -116,6 +116,7 @@ export default [
         ...prefix('accounts', [
           index('routes/accounts/list.tsx'),
           route('create/:prefixedAddress?', 'routes/accounts/create.tsx'),
+
           route(':accountId', 'routes/accounts/edit.tsx', [
             index('routes/accounts/load-default-route.ts'),
             route('route/:routeId?', 'routes/accounts/routes.tsx'),

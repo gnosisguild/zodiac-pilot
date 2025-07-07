@@ -67,7 +67,7 @@ export const action = (args: Route.ActionArgs) =>
         address: avatar,
       })
 
-      return { account }
+      return { route: toExecutionRoute({ account }) }
     },
     {
       ensureSignedIn: true,
@@ -88,7 +88,7 @@ export const clientAction = async ({
 }: Route.ClientActionArgs) => {
   const data = await request.clone().formData()
 
-  const { error, account } = await serverAction()
+  const { error, route } = await serverAction()
 
   if (error != null) {
     return { error }
@@ -97,15 +97,13 @@ export const clientAction = async ({
   if (getBoolean(data, 'connected')) {
     const { promise, resolve } = Promise.withResolvers<void>()
 
-    console.log('HERE')
     companionRequest(
       {
         type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-        data: toExecutionRoute({ account }),
+        data: route,
       },
       () => resolve(),
     )
-    console.log('HERE2')
 
     await promise
   }

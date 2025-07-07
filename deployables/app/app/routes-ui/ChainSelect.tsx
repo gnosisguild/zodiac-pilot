@@ -42,7 +42,7 @@ export const ChainSelect = ({
       isDisabled={disabled}
       dropdownLabel="Select a different chain"
       isMulti={false}
-      options={options}
+      options={options.toSorted((a, b) => a.label.localeCompare(b.label))}
       name={name}
       value={valueOption}
       defaultValue={defaultValueOption}
