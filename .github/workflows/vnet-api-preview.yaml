@@ -1,34 +1,33 @@
-name: Landing Page Preview
+name: Vnet API Preview
 
 on:
   pull_request:
-    paths: ['deployables/landing-page/**', '**/landing-page-preview.yaml']
+    paths: ['deployables/vnet-api/**', '**/vnet-api-release.yaml']
+
+defaults:
+  run:
+    working-directory: ./deployables/vnet-api
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./deployables/landing-page
+    name: Deploy
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: latest
           cache: 'pnpm'
           cache-dependency-path: '**/pnpm-lock.yaml'
-
       - run: pnpm install --prefer-offline
-
-      - run: pnpm build
 
       - uses: cloudflare/wrangler-action@v3
         id: preview
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          workingDirectory: ./deployables/landing-page
+          workingDirectory: ./deployables/vnet-api
           command: versions upload
 
       - uses: peter-evans/find-comment@v3
@@ -36,7 +35,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: Landing page preview
+          body-includes: Vnet API preview
 
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v4
@@ -45,6 +44,18 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           body: |
-            ## Landing page preview
-
+            ## Vnet API preview
             ${{ steps.preview.outputs.deployment-url }}
+
+      # - name: Publish
+      #   uses: cloudflare/wrangler-action@v3.14.1
+      #   with:
+      #     workingDirectory: deployables/vnet-api
+      #     apiToken: ${{ secrets.CF_API_TOKEN }}
+      #     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+      #     secrets: |
+      #       TENDERLY_ACCESS_KEY
+      #   env:
+      #     TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
+      #     TENDERLY_USER: gnosisguild
+      #     TENDERLY_PROJECT: zodiac-pilot

@@ -1,0 +1,7 @@
+{
+  "extends": "@zodiac/typescript-config",
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "types": ["@cloudflare/workers-types"]
+  }
+}

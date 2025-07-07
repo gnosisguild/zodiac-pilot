@@ -1,5 +1,5 @@
 import { sentry } from '@/sentry'
-import { getCompanionAppUrl } from '@zodiac/env'
+import { getVnetApiUrl } from '@zodiac/env'
 import type { ChainId } from 'ser-kit'
 import type { Event } from '../events'
 import { createEventListener } from '../events'
@@ -109,7 +109,7 @@ const trackRequest = async ({
   }
 
   // ignore requests to fork Rpcs
-  if (url.startsWith(`${getCompanionAppUrl()}/vnet/rpc/`)) {
+  if (url.startsWith(`${getVnetApiUrl()}/rpc/`)) {
     return { newEndpoint: false }
   }
 
